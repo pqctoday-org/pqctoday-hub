@@ -14,6 +14,7 @@ import { describe, it, expect } from 'vitest'
 import {
   auditCtas,
   extractBoardHrefs,
+  businessToolHrefIsWellFormed,
   extractAppRoutes,
   extractPlaygroundToolIds,
   resolvesToRealRoute,
@@ -39,15 +40,41 @@ const SEGMENTS = new Set(['assess', 'report', 'playground', 'hsm', 'cacp', 'migr
 const TOOL_IDS = new Set(['hsm-capacity', 'tls-simulator'])
 
 describe('extractBoardHrefs', () => {
-  it('picks up both primary and secondary CTA hrefs', () => {
-    const src = `
-      ctaPrimaryHref: '/assess',
-      ctaSecondaryHref: '/report?example=1',
-      ctaPrimaryHref: '/playground/hsm-capacity',
-    `
-    expect(new Set(extractBoardHrefs(src))).toEqual(
+  const csv = [
+    'role_id,variant_id,slot,slot_index,content,status,deprecated_at,deprecated_reason,last_reviewed,notes',
+    'executive,default,cta_primary_href,,/assess,active,,,2026-08-02,',
+    'executive,default,cta_secondary_href,,/report?example=1,active,,,2026-08-02,',
+    'ops,default,cta_primary_href,,/playground/hsm-capacity,active,,,2026-08-02,',
+    'ops,default,headline,,Not an href at all,active,,,2026-08-02,',
+  ].join('\n')
+
+  it('picks up both primary and secondary CTA hrefs, and nothing else', () => {
+    expect(new Set(extractBoardHrefs(csv))).toEqual(
       new Set(['/assess', '/report?example=1', '/playground/hsm-capacity'])
     )
+  })
+
+  it('skips deprecated rows — a retired CTA should not keep demanding a fresh claim', () => {
+    const withRetired =
+      csv +
+      '\ncurious,default,cta_primary_href,,/retired-route,deprecated,2026-07-01,replaced,2026-08-02,'
+    expect(extractBoardHrefs(withRetired)).not.toContain('/retired-route')
+  })
+
+  /**
+   * REGRESSION (2026-08-02). This function used to scrape `ctaPrimaryHref: '…'`
+   * out of personaConfig.ts. The CSV migration moved those literals into the
+   * generated module, so the scrape silently began returning zero hrefs and the
+   * whole gate went blind while still exiting 0. Feeding it the OLD input shape
+   * must now produce nothing, which is what makes main()'s "refuse to pass over
+   * zero CTAs" guard the thing that catches a future repeat.
+   */
+  it('returns nothing for personaConfig-style TS source — the input that silently blinded this gate', () => {
+    const tsSource = `
+      ctaPrimaryHref: '/assess',
+      ctaSecondaryHref: '/report?example=1',
+    `
+    expect(extractBoardHrefs(tsSource)).toEqual([])
   })
 })
 
@@ -193,5 +220,31 @@ describe('parseCtaRegistry', () => {
 describe('daysSince', () => {
   it('returns null for an unparseable date rather than throwing or coercing to 0', () => {
     expect(daysSince('not-a-date', NOW)).toBeNull()
+  })
+})
+
+/**
+ * REGRESSION (2026-08-02). 14 board CTAs were written as `/tools/<id>`. Every
+ * segment resolved — 'tools' is a declared route segment and the id is a real
+ * business tool — so the gate passed. All 14 fell through to the catch-all
+ * route and rendered the HOME BOARD instead of the tool: nothing errored, the
+ * visitor silently got the wrong page. Caught only by loading them in a
+ * browser and noticing all 14 returned byte-identical content.
+ */
+describe('businessToolHrefIsWellFormed', () => {
+  const ids = new Set(['program-charter', 'risk-register', 'roadmap-builder'])
+
+  it('rejects a business tool href missing the /business prefix — the shipped defect', () => {
+    expect(businessToolHrefIsWellFormed('/tools/program-charter', ids)).toBe(false)
+  })
+
+  it('accepts the real nested path', () => {
+    expect(businessToolHrefIsWellFormed('/business/tools/program-charter', ids)).toBe(true)
+  })
+
+  it('ignores hrefs that are not business tools at all', () => {
+    expect(businessToolHrefIsWellFormed('/playground/tls-simulator', ids)).toBe(true)
+    expect(businessToolHrefIsWellFormed('/migrate?tab=roadmaps', ids)).toBe(true)
+    expect(businessToolHrefIsWellFormed('/library', ids)).toBe(true)
   })
 })

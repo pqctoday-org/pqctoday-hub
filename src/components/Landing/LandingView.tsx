@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { motion } from 'framer-motion'
 import { ArrowRight, Save, Upload } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useRoleBoardVariantStore } from '@/store/useRoleBoardVariantStore'
+import { resolveRoleBoardVariant, RESEARCHER_FIELD_WATCH_VARIANT_ID } from '@/data/personaConfig'
 import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -205,6 +207,31 @@ export const LandingView = () => {
     skipPersonalization,
   } = usePersonaStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
+
+  // Board-option selection. Precedence is `?variant=` over the persisted
+  // choice, so a shared or bookmarked link always shows what the sender saw —
+  // the reader's own stored preference must not silently rewrite someone
+  // else's link. PersonaBoardView falls back to the role's order-1 board when
+  // neither resolves to a real variant, which is what makes a stale stored id
+  // or a hand-typed URL harmless.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedVariantByRole = useRoleBoardVariantStore((s) => s.selectedVariantByRole)
+  const selectVariant = useRoleBoardVariantStore((s) => s.selectVariant)
+  const urlVariant = searchParams.get('variant') ?? undefined
+  const activeVariantId =
+    urlVariant ??
+    // eslint-disable-next-line security/detect-object-injection -- selectedPersona is the typed PersonaId union, not user input
+    (selectedPersona ? selectedVariantByRole[selectedPersona] : undefined)
+
+  const handleSelectVariant = (variantId: string) => {
+    if (selectedPersona) selectVariant(selectedPersona, variantId)
+    // Keep the URL honest about what is on screen, so copying the address bar
+    // shares the board actually being read. `replace` — switching options is
+    // not a navigation the back button should have to walk through.
+    const next = new URLSearchParams(searchParams)
+    next.set('variant', variantId)
+    setSearchParams(next, { replace: true })
+  }
   // Persona-journeys A-grade redesign (2026-08-01): Curious's mobile board is
   // a structurally different, standalone layout (own header/bottom-tab-bar —
   // see CuriousMobileBoard.tsx), not a responsive variant of PersonaBoardView.
@@ -345,8 +372,14 @@ export const LandingView = () => {
       <div className="w-full space-y-16 md:space-y-24">
         <PersonaBoardView
           personaId={selectedPersona}
+          variantId={activeVariantId}
+          onSelectVariant={handleSelectVariant}
           customSideCard={
-            selectedPersona === 'researcher' ? <ResearcherFieldWatchCard /> : undefined
+            selectedPersona === 'researcher' &&
+            resolveRoleBoardVariant(selectedPersona, activeVariantId).id ===
+              RESEARCHER_FIELD_WATCH_VARIANT_ID ? (
+              <ResearcherFieldWatchCard />
+            ) : undefined
           }
         />
 

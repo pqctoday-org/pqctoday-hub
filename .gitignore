@@ -299,6 +299,22 @@ scripts/*
 !scripts/audit-role-board-ctas.ts
 !scripts/audit-role-board-ctas.local.test.ts
 
+# Role-board content generator — runs in `npm run build` (npm run generate:
+# role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD
+# export now comes from its OUTPUT (src/data/generated/roleBoardContent.
+# generated.ts, not scripts/-ignored — see the entry for that path below).
+# Same failure mode as the CTA gate two entries up if left ignored: every
+# checkout but the one that wrote it gets file-not-found. `lib/` holds the
+# token registry both this script and any future role-board tooling shares.
+!scripts/generate-role-board-content.ts
+!scripts/lib/
+!scripts/lib/roleBoardTokens.ts
+
+# Role-board content maintenance aid — npm run audit:role-board-content,
+# backing the audit-role-board-content skill. Same reason: referenced by a
+# committed package.json script.
+!scripts/audit-role-board-content.ts
+
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,

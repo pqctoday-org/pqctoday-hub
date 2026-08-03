@@ -4,8 +4,6 @@ import { PERSONAS } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
 import type { AssessmentMode } from '../store/useAssessmentStore'
 import type { PhaseId } from './frameworkPhases'
-import { libraryData } from './libraryData'
-import { authoritativeSources } from './authoritativeSourcesData'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { TYPE_LABELS } from './artifactLabels'
 // Value import; `reportSectionToCswp39` imports ReportSectionId back from here
@@ -14,6 +12,10 @@ import { TYPE_LABELS } from './artifactLabels'
 import { REPORT_SECTION_LABELS } from './reportSectionToCswp39'
 import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
 import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
+import {
+  getCrqcConsensus,
+  CRQC_ESTIMATES,
+} from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -1263,6 +1265,15 @@ export interface PersonaJourneyBoard {
     rows: { label: string; value: string }[]
     punchline: string
     footnote?: string
+    /**
+     * Copy shown when a live side card has nothing to report yet — researcher
+     * only, where `ResearcherFieldWatchCard` replaces the static rows with a
+     * computed field watch and needs a prompt before any field is followed.
+     * Lives here, in the CSV, rather than hardcoded in the component: the
+     * component's own hardcoded strings were exactly what the 2026-08-02
+     * editorial pass could not see or fix.
+     */
+    emptyState?: string
   }
   gridTitle: string
   gridSub: string
@@ -1280,47 +1291,65 @@ export interface PersonaJourneyBoard {
 }
 
 /**
- * Live active-row count for the library corpus, read from the same loader
- * every other page uses (`libraryData.ts`, already filtered to `status !==
- * 'deprecated'/'obsolete'` rows). The design mockup's "691 sources" was a
- * snapshot against an older CSV — hardcoding it here would reintroduce the
- * exact staleness problem this redesign exists to fix, so it is recomputed
- * from the live import instead every time this module loads.
+ * One of the three board options a role can be shown, with the grounding that
+ * justifies it existing.
+ *
+ * The three options per role are the top three use cases for that role in
+ * supporting a PQC migration, drawn from the Simulation's own phase vocabulary
+ * (`frameworkPhases.ts`) and cross-checked against `BC_ZONE_EMPHASIS_BY_PERSONA`.
+ * `curious` is the deliberate exception: that persona is not running a
+ * migration, so its three are entry points and carry no `phaseId`/`cswp39Zone`
+ * — forcing the phase axis onto it would invent a use case it does not have.
+ *
+ * A board carries whichever tools genuinely fit its use case and role — a
+ * business tool, a playground workshop, or one of each. Neither kind is
+ * mandatory and neither is used by more than one board.
+ *
+ * ALLOCATION PRIORITY (set 2026-08-02). No destination may serve two boards,
+ * so two boards wanting the same tool is a conflict that needs a rule rather
+ * than a coin toss. Resolve in this order:
+ *
+ *   1. DEVELOPER-SPECIFIC RESOURCES GO TO DEVELOPER. Tools whose audience is
+ *      someone writing code — OpenSSL Studio, the JWT workshop, the hybrid KEM
+ *      pipeline, the cert calculator, and the developer-facing business tools —
+ *      are developer's regardless of anything below.
+ *   2. Otherwise, first claim in this order wins:
+ *        curious > developer > ops > architect > researcher > executive
+ *      Curious leads because it is the entry persona: a first-time visitor gets
+ *      the single most legible tool, and if that board fails to land, the other
+ *      seventeen never get read. Researcher and executive rank last because
+ *      they have the most substitutes — the corpus and the business-tool shelf
+ *      both offer several equally good options for any given board.
+ *
+ * Worked example: curious/break and developer/pilot both wanted the TLS 1.3
+ * simulator. Rule 1 does not apply (a protocol demo is not developer-only), so
+ * rule 2 gives it to curious, and developer/pilot took the hybrid KEM pipeline
+ * — which is the more developer-specific tool anyway.
+ *
+ * `moduleIds`, `workshopIds` and `businessToolIds` are not decoration. A priv-side validator
+ * asserts every workshop id is a real `workshopRegistry.tsx` entry and every
+ * module id sits on THAT ROLE's own `recommendedPath` — which is what makes
+ * "relevant for this role" a check rather than a claim.
  */
-const LIBRARY_ACTIVE_SOURCE_COUNT = libraryData.length
-
-/** Formats an ISO `YYYY-MM-DD` as "D Mon YYYY" (UTC — no local-timezone drift). */
-function formatVerifiedDate(isoDate: string): string {
-  const d = new Date(`${isoDate}T00:00:00Z`)
-  if (Number.isNaN(d.getTime())) return isoDate
-  return d.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+export interface RoleBoardVariant {
+  id: string
+  /** 1-based; order 1 is what the role opens on. */
+  order: number
+  /** Chip text in the switcher. */
+  chipLabel: string
+  /** One line of "what this option is for". */
+  chipDescription: string
+  /** `frameworkPhases.ts` phase id, or '' for the curious entry-point axis. */
+  phaseId: string
+  /** `cswp39ZoneData.ts` ZoneId, or '' for the curious entry-point axis. */
+  cswp39Zone: string
+  moduleIds: string[]
+  /** Playground workshop ids this board links to (`/playground/:toolId`). */
+  workshopIds: string[]
+  /** Business tool ids this board links to (`/tools/:toolId`). */
+  businessToolIds: string[]
+  board: PersonaJourneyBoard
 }
-
-/**
- * Live "regulatory data last verified" date for the executive board's proof
- * chip — the most recent `lastVerifiedDate` among authoritative sources that
- * actually feed the compliance CSV (`complianceCsv === true`), read from
- * `authoritativeSourcesData.ts`. The design mockup's "30 Jul 2026" was a
- * snapshot of when the mockup was authored, not a computed value; there is no
- * single existing "compliance data verified as of" field anywhere else in the
- * codebase, so this derives the closest real equivalent from data that already
- * exists rather than hardcoding a date or inventing new plumbing. `undefined`
- * only if the authoritative-sources CSV somehow has zero compliance-tagged
- * rows with a verified date, which is not expected in practice.
- */
-const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
-  const dates = authoritativeSources
-    .filter((s) => s.complianceCsv && s.lastVerifiedDate)
-    .map((s) => s.lastVerifiedDate)
-    .sort()
-  const latest = dates[dates.length - 1]
-  return latest ? formatVerifiedDate(latest) : undefined
-})()
 
 /* ──────────────────────────────────────────────────────────────────────────────
  * Persona-board copy helpers — 2026-08-01 dynamic-data remediation
@@ -1345,18 +1374,18 @@ const SMALL_NUMBER_WORDS = [
   'ten',
 ]
 
-function toWordIfSmall(n: number): string {
+export function toWordIfSmall(n: number): string {
   // eslint-disable-next-line security/detect-object-injection -- n is bounds-checked above
   return n >= 0 && n < SMALL_NUMBER_WORDS.length ? SMALL_NUMBER_WORDS[n] : String(n)
 }
 
-function capitalizedSmallNumberWord(n: number): string {
+export function capitalizedSmallNumberWord(n: number): string {
   const word = toWordIfSmall(n)
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
 /** "a, b and c" — no Oxford comma, matching this page's existing house style. */
-function joinWithAnd(items: string[]): string {
+export function joinWithAnd(items: string[]): string {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]
   return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`
@@ -1368,9 +1397,66 @@ function formatBytes(n: number): string {
 
 const ML_DSA_65 = ALGORITHM_REGISTRY['ML-DSA-65']
 
-const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
-const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
-const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
+export const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
+export const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
+export const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
+
+/* ── Executive side card: Mosca exposure window ──────────────────────────────
+ *
+ * WHY THESE ARE DERIVED (2026-08-02). All four values on this card — the three
+ * rows and the punchline — were hand-typed literals in the CSV, and the
+ * punchline had drifted out of agreement with its own rows: it read "You are
+ * four years short" above "Data must stay secret 12 yrs / Your migration takes
+ * 5 yrs / Cryptanalytic quantum computer 2032 ±4". Mosca's inequality on those
+ * numbers gives 11, not 4. ("Four" is what 12 would have been if the secrecy
+ * figure were still 5, which is the likeliest history.) A literal conclusion
+ * sitting above literal premises cannot be kept honest by review alone, so the
+ * conclusion is now computed from the premises.
+ *
+ * The CRQC year is no longer a literal either. It comes from
+ * `getCrqcConsensus()` — the single place the Threats page reduces its six
+ * sourced `CRQC_ESTIMATES` rows to headline numbers, which every Q-Day figure
+ * on that page already calls so they agree by construction. Its current output
+ * (zEstimate 2033, consensus window 2030–2036) does not match the card's old
+ * hand-typed "2032 ±4" either, and the old footnote's "median across 4
+ * published expert surveys ... interquartile range" misdescribed both the
+ * source count and the derivation.
+ *
+ * The punchline is expressed as a START-BY YEAR rather than a countdown from
+ * "now" deliberately: a `Date.now()`-dependent string would make the generated
+ * board differ every day and turn the CSV-vs-generated drift gate permanently
+ * red. `z - y` is stable, derived, and the more actionable number for the
+ * reader anyway.
+ */
+
+/** Illustrative planning assumptions for the executive board's exposure card. */
+export const EXEC_EXPOSURE = {
+  /** Mosca's x — how long the data must stay confidential. */
+  secrecyYears: 12,
+  /** Mosca's y — how long a migration of this estate takes. */
+  migrationYears: 5,
+} as const
+
+const CRQC = getCrqcConsensus()
+
+/** e.g. "2033 (2030–2036)" — consensus estimate with its data-derived window. */
+export const EXEC_CRQC_ESTIMATE_ROW = `${CRQC.zEstimate} (${CRQC.qdayLow}–${CRQC.qdayHigh})`
+
+/** e.g. "12 yrs" / "5 yrs". */
+export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
+export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
+
+/**
+ * Mosca's inequality restated as a deadline: a migration taking `y` years must
+ * BEGIN by `z - y` to finish before the threat arrives.
+ */
+export const EXEC_MOSCA_START_BY_YEAR = CRQC.zEstimate - EXEC_EXPOSURE.migrationYears
+
+/** e.g. "Start by 2028, or your 12-year secrets are already late." */
+export const EXEC_MOSCA_PUNCHLINE = `Start by ${EXEC_MOSCA_START_BY_YEAR}, or your ${EXEC_EXPOSURE.secrecyYears}-year secrets are already late.`
+
+/** Footnote describing the derivation, with the real source count. */
+export const EXEC_MOSCA_FOOTNOTE = `Mosca's inequality: a ${EXEC_EXPOSURE.migrationYears}-year migration must finish before the machine arrives, so it has to start by ${EXEC_MOSCA_START_BY_YEAR}. The ${CRQC.zEstimate} estimate is the median across ${CRQC_ESTIMATES.length} tracked sources; ${CRQC.qdayLow}–${CRQC.qdayHigh} is the consensus window, not a forecast.`
 
 /**
  * ops sideCard's "150 ops/s · ~133× slower than ECDSA" — both figures already
@@ -1380,7 +1466,7 @@ const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextByte
  * (a truncated grep hid the `opsPerSec` block further down the file) — it
  * exists, so this is a plain wiring fix like the byte-size rows above.
  */
-const OPS_SIDECARD_THROUGHPUT_ROW = `${CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']} ops/s · ~${Math.round(
+export const OPS_SIDECARD_THROUGHPUT_ROW = `${CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']} ops/s · ~${Math.round(
   CLASSICAL_HSM_DEFAULT.opsPerSec['ecdsa-p256'] / CLASSICAL_HSM_DEFAULT.opsPerSec['ml-dsa-65']
 )}× slower than ECDSA`
 
@@ -1388,13 +1474,13 @@ const OCSP_CRL_SIGNATURE_ONLY_KB = (ML_DSA_65.signatureOrCiphertextBytes / 1000)
 const OCSP_CRL_WITH_KEY_KB = Math.round(
   (ML_DSA_65.signatureOrCiphertextBytes + ML_DSA_65.publicKeyBytes) / 1000
 )
-const OPS_SIDECARD_OCSP_ROW = `+${OCSP_CRL_SIGNATURE_ONLY_KB} KB · ~${OCSP_CRL_WITH_KEY_KB} KB with key`
+export const OPS_SIDECARD_OCSP_ROW = `+${OCSP_CRL_SIGNATURE_ONLY_KB} KB · ~${OCSP_CRL_WITH_KEY_KB} KB with key`
 
 /** HSM Capacity Calculator's real workflow count — "ten enterprise use cases". */
-const HSM_CAPACITY_USE_CASE_COUNT = USE_CASES.length
+export const HSM_CAPACITY_USE_CASE_COUNT = USE_CASES.length
 
 /** The CACP migration tab's real estate size — "seven-key business estate". */
-const MIGRATION_ESTATE_KEY_COUNT = MIGRATION_KEYS.length
+export const MIGRATION_ESTATE_KEY_COUNT = MIGRATION_KEYS.length
 
 /**
  * Combines a persona's featured artifacts across the given Fig 3 zones, in
@@ -1404,7 +1490,7 @@ const MIGRATION_ESTATE_KEY_COUNT = MIGRATION_KEYS.length
  * flow (e.g. a trailing item moved earlier to match config order); the set of
  * artifacts named is what matters and stays exact.
  */
-function combinedArtifacts(personaId: PersonaId, zones: ZoneId[]): string[] {
+export function combinedArtifacts(personaId: PersonaId, zones: ZoneId[]): string[] {
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
   const emphasis = BC_ZONE_EMPHASIS_BY_PERSONA[personaId]
   if (!emphasis) return []
@@ -1437,12 +1523,15 @@ const REPORT_SECTION_SHORT_LABEL: Partial<Record<ReportSectionId, string>> = {
   hndlHnfl: 'HNDL',
 }
 
-function reportSectionLabel(id: ReportSectionId): string {
+export function reportSectionLabel(id: ReportSectionId): string {
   // eslint-disable-next-line security/detect-object-injection -- id is a ReportSectionId union, not user input
   return REPORT_SECTION_SHORT_LABEL[id] ?? REPORT_SECTION_LABELS[id] ?? id
 }
 
-function reportSectionsByState(personaId: PersonaId, state: SectionState): ReportSectionId[] {
+export function reportSectionsByState(
+  personaId: PersonaId,
+  state: SectionState
+): ReportSectionId[] {
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
   const config = PERSONA_REPORT_CONFIG[personaId] ?? {}
   return (Object.entries(config) as [ReportSectionId, ReportSectionConfig][])
@@ -1450,8 +1539,8 @@ function reportSectionsByState(personaId: PersonaId, state: SectionState): Repor
     .map(([id]) => id)
 }
 
-const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
-const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
+export const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
+export const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
 
 /**
  * One real milestone label per distinct insertion point in a persona's path
@@ -1462,7 +1551,7 @@ const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.develo
  * this fix made the id computed-instead-of-hardcoded but missed that it was
  * still the wrong thing to show at all.
  */
-function firstMilestoneLabelPerCheckpoint(personaId: PersonaId): string[] {
+export function firstMilestoneLabelPerCheckpoint(personaId: PersonaId): string[] {
   const seen = new Set<string>()
   const labels: string[] = []
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
@@ -1488,7 +1577,7 @@ function firstMilestoneLabelPerCheckpoint(personaId: PersonaId): string[] {
  * approximation — same as its hand-typed predecessor, just computed instead
  * of typed, so it can't drift further without this formula changing with it.
  */
-function formatEssentialsVsFull(personaId: PersonaId): string {
+export function formatEssentialsVsFull(personaId: PersonaId): string {
   // eslint-disable-next-line security/detect-object-injection -- personaId is a PersonaId union, not user input
   const persona = PERSONAS[personaId]
   const essentialsH = Math.floor(persona.essentialsMinutes / 60)
@@ -1511,403 +1600,57 @@ function formatEssentialsVsFull(personaId: PersonaId): string {
   return `${essentialsPhrase}, not ${fullWhole}${fractionGlyph}`
 }
 
-export const PERSONA_JOURNEY_BOARD: Record<PersonaId, PersonaJourneyBoard> = {
-  executive: {
-    heroEyebrow: "Illustrative — this user's inputs",
-    heroBadge: {
-      text: 'Default: Americas · Finance & Banking — scenario shown: EU',
-      tone: 'illustrative',
-    },
-    headline: 'Answer the board in eleven minutes.',
-    sub: 'Eight questions about your estate. You get a defensible risk position, the regulatory dates that already bind you under NIS2 and DORA, and a board pack you can present on Thursday.',
-    ctaPrimary: 'Start — 8 questions, about 6 minutes',
-    ctaPrimaryHref: '/assess',
-    ctaSecondary: 'See a finished example',
-    // 2026-08-02: was bare '/report'. `ReportView`'s empty state only offered
-    // the worked example to the curious persona, so an executive clicking
-    // "See a finished example" landed on "No Report Yet" telling them to go
-    // complete the assessment — the exact dead end this CTA promises to
-    // avoid. `?example=1` renders the example directly (ReportView's
-    // hydration effect); the empty-state link is now ungated too (RP-5).
-    ctaSecondaryHref: '/report?example=1',
-    proofChips: [
-      'Verified in your browser against NIST ACVP vectors',
-      `${LIBRARY_ACTIVE_SOURCE_COUNT} sources, trust-tiered`,
-      REGULATORY_DATA_VERIFIED_DATE
-        ? `Regulatory data verified ${REGULATORY_DATA_VERIFIED_DATE}`
-        : 'Regulatory data verified against source',
-      'How we verify',
-    ],
-    sideCard: {
-      title: 'Your exposure window',
-      tone: 'bad',
-      provenance: 'illustrative',
-      rows: [
-        { label: 'Data must stay secret', value: '12 yrs' },
-        { label: 'Your migration takes', value: '5 yrs' },
-        { label: 'Cryptanalytic quantum computer', value: '2032 ±4' },
-      ],
-      punchline: 'You are four years short.',
-      footnote:
-        "Mosca's inequality. The 2032 estimate is a median across 4 published expert surveys; the ±4 band is their interquartile range, not a forecast.",
-    },
-    gridTitle: 'What you walk out with',
-    gridSub: 'Generated from your 8 answers',
-    gridCards: [
-      {
-        title: 'Risk position',
-        body: `From ${joinWithAnd(['riskScore', 'keyFindings', 'riskBreakdown'].map((id) => reportSectionLabel(id as ReportSectionId)))} — three of the ${REPORT_SECTION_TOTAL_COUNT} report sections, all open by default for your role.`,
-      },
-      {
-        title: 'Two already bind you',
-        // NIS2/DORA/roadmap dates are intentionally NOT wired live here — see
-        // COMPLIANCE-DEADLINE-DATE-FIELDS-PLAN-2026-08-01.md. 3 of these 4
-        // dates aren't in a structured CSV field on their own record today;
-        // that's a separate CSV-schema task, decoupled from this one.
-        body: 'NIS2 (since Oct 2024) · DORA (since Jan 2025) · National PQC roadmap due (Dec 2026) · High-risk systems migrated (Dec 2030)',
-      },
-      {
-        title: 'Your board pack',
-        body: `The ${toWordIfSmall(combinedArtifacts('executive', ['governance']).length)} artifacts already featured in your Governance zone: ${combinedArtifacts('executive', ['governance']).join(', ')}.`,
-      },
-    ],
-    trackTitle: `Then, if you want the background: ${formatEssentialsVsFull('executive')}.`,
-    trackNote: `${capitalizedSmallNumberWord(PERSONAS.executive.essentials.length)} essentials against the full ${PERSONAS.executive.recommendedPath.filter((id) => id !== 'quiz').length}-module, ${PERSONAS.executive.estimatedMinutes}-minute path. The path already inserts real actions like ${joinWithAnd(firstMilestoneLabelPerCheckpoint('executive'))} right where they're relevant.`,
-    trackChips: [
-      'PQC 101',
-      'Quantum impact',
-      'Quantum threats',
-      'Risk management',
-      'Business case',
-      'Governance',
-      'Compliance strategy',
-    ],
-    capstoneChip: { label: 'Board-Ready' },
-  },
+/**
+ * Role-home board content — GENERATED from src/data/role_board_content_*.csv
+ * (2026-08-02 migration). Edit the CSV, not this import; regenerate with
+ * `npm run generate:role-board-content`, wired into `npm run build`.
+ *
+ * The helper functions and constants above (toWordIfSmall, joinWithAnd,
+ * combinedArtifacts, formatEssentialsVsFull, etc., plus the ML_DSA_65 /
+ * OPS_SIDECARD / HSM_CAPACITY_USE_CASE_COUNT / MIGRATION_ESTATE_KEY_COUNT /
+ * REPORT_SECTION_TOTAL_COUNT / DEVELOPER_REPORT_OVERRIDE_COUNT constants) are
+ * NOT dead code even though nothing in the browser bundle calls them anymore
+ * — `scripts/generate-role-board-content.ts` loads this file via Vite's SSR
+ * module loader at BUILD time and calls them directly through
+ * `scripts/lib/roleBoardTokens.ts`'s token registry. They must stay exported
+ * for that pipeline to keep working; do not remove them as unused.
+ */
+export {
+  PERSONA_JOURNEY_BOARD,
+  PERSONA_JOURNEY_BOARD_VARIANTS,
+} from './generated/roleBoardContent.generated'
 
-  developer: {
-    heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
-    heroBadge: { text: 'Americas · Technology', tone: 'sourced' },
-    headline: 'Five minutes to a real ML-KEM handshake.',
-    sub: 'Not a diagram. Real WASM crypto in this tab, with the PKCS#11 call log open and a plain-English column beside it. Then we tell you what to change in your stack.',
-    ctaPrimary: 'Run X25519MLKEM768 now',
-    ctaPrimaryHref: '/playground/tls-simulator',
-    ctaSecondary: 'Compare against my stack',
-    ctaSecondaryHref: '/migrate',
-    proofChips: [
-      'Real liboqs + SoftHSMv3 in your browser',
-      'Verified against NIST ACVP vectors',
-      'No signup, no key required',
-    ],
-    sideCard: {
-      title: 'What this breaks in your code',
-      tone: 'warn',
-      provenance: 'sourced',
-      rows: [
-        { label: 'ML-DSA-65 public key', value: ML_DSA_65_PUBLIC_KEY_ROW },
-        { label: 'ML-DSA-65 signature', value: ML_DSA_65_SIGNATURE_ROW },
-        { label: 'Your VARCHAR(256) key column', value: 'overflows' },
-      ],
-      punchline: 'Your schema breaks before your crypto does.',
-      footnote:
-        'Real sizes, not illustrative — the second of the four anti-patterns the Crypto Agility module already teaches.',
-    },
-    gridTitle: 'What you walk out with',
-    gridSub: 'Real surfaces mapped to what you actually own',
-    gridCards: [
-      {
-        title: 'Migrate, scoped to your layers',
-        body: `Your persona gives you ${joinWithAnd(PERSONA_MIGRATE_LAYERS.developer)} — the catalogue opens pre-filtered to the ${toWordIfSmall(PERSONA_MIGRATE_LAYERS.developer.length)} you actually own.`,
-      },
-      {
-        title: 'Command Center · Implementation View',
-        body: `Opens on the Migration zone with ${joinWithAnd(combinedArtifacts('developer', ['migration', 'mitigation', 'governance']))} featured.`,
-      },
-      {
-        title: 'A report that is finally yours',
-        body:
-          DEVELOPER_REPORT_OVERRIDE_COUNT === 0
-            ? `All ${REPORT_SECTION_TOTAL_COUNT} report sections, at their defaults — opening with ${reportSectionLabel('algorithmMigration')} and ${reportSectionLabel('cbom')}.`
-            : `${DEVELOPER_REPORT_OVERRIDE_COUNT} report section${DEVELOPER_REPORT_OVERRIDE_COUNT === 1 ? ' is' : 's are'} tailored to your role, opening with ${reportSectionLabel('algorithmMigration')} and ${reportSectionLabel('cbom')}.`,
-      },
-    ],
-    trackTitle: `Then, the background: ${formatEssentialsVsFull('developer')}.`,
-    trackChips: [
-      'PQC 101',
-      'Dev quantum impact',
-      'PQC candidates',
-      'TLS basics',
-      'Hybrid crypto',
-      'Crypto agility',
-      'PKI workshop',
-      'Crypto dev APIs',
-    ],
-    capstoneChip: { label: 'capstone' },
-  },
+import { PERSONA_JOURNEY_BOARD_VARIANTS as BOARD_VARIANTS } from './generated/roleBoardContent.generated'
 
-  architect: {
-    heroEyebrow: 'Security architect · Multi-region PKI · 40k certificates',
-    heroBadge: { text: 'Global · Technology, Telecommunications', tone: 'sourced' },
-    headline: 'Change one policy line. Watch the estate rekey.',
-    sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
-    ctaPrimary: 'Open the control plane',
-    ctaPrimaryHref: '/playground/cacp',
-    ctaSecondary: `See the ${toWordIfSmall(MIGRATION_ESTATE_KEY_COUNT)}-key estate`,
-    ctaSecondaryHref: '/playground/cacp?plane=migration',
-    proofChips: [
-      'Real ML-KEM / ML-DSA / SLH-DSA, no server',
-      'KMIP 3.0 conformance corpus replays live',
-      'All 66 KMIP operations documented',
-    ],
-    sideCard: {
-      title: 'Why agility, not just algorithms',
-      tone: 'info',
-      provenance: 'illustrative',
-      rows: [
-        { label: 'Algorithms you will migrate to', value: '3' },
-        { label: 'Times you will migrate again', value: '≥ 2' },
-        { label: 'Cost of the second migration', value: 'near zero' },
-      ],
-      punchline: 'Agility is the deliverable. PQC is the first test of it.',
-    },
-    gridTitle: 'What you walk out with',
-    gridSub: 'Real artifacts from your zone configuration',
-    gridCards: [
-      {
-        title: 'A rekey lineage',
-        body: `Old to new across the ${toWordIfSmall(MIGRATION_ESTATE_KEY_COUNT)}-key business estate, per mode, with the KMIP log per key — from the CACP migration tab.`,
-      },
-      {
-        title: 'Command Center · System View',
-        body: `Governance zone featuring ${joinWithAnd(combinedArtifacts('architect', ['governance']))}.`,
-      },
-      {
-        title: 'Migration artifacts',
-        body: `${joinWithAnd(combinedArtifacts('architect', ['migration']))} — the full migration set.`,
-      },
-    ],
-    trackTitle: `Then, the background: ${formatEssentialsVsFull('architect')}.`,
-    trackChips: [
-      'PQC 101',
-      'Arch quantum impact',
-      'PQC candidates',
-      'Crypto agility',
-      'Crypto mgmt modernization',
-      'Hybrid crypto',
-      'KMS',
-      'HSM',
-      'PKI workshop',
-    ],
-    capstoneChip: { label: 'capstone' },
-  },
-
-  ops: {
-    heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
-    heroBadge: {
-      text: 'Americas · Energy & Utilities, Telecommunications',
-      tone: 'sourced',
-    },
-    // 2026-08-02: was 'Will your HSMs survive the cutover?' — an over-promise.
-    // The tool this hero describes sizes ten workflows and tells you whether a
-    // configured fleet clears the resulting demand. It knows nothing about HSM
-    // firmware support for ML-DSA, key migration, or downtime, so it cannot
-    // answer whether anything "survives" a cutover. It was also the only
-    // rhetorical question among the six persona headlines. Replaced with what
-    // the page actually does, tied to the eyebrow's 90-day renewal window.
-    headline: 'Size your fleet before renewal day.',
-    sub: `${capitalizedSmallNumberWord(HSM_CAPACITY_USE_CASE_COUNT)} enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.`,
-    ctaPrimary: 'Size my fleet',
-    // 2026-08-02: was '/playground/hsm', which is `HsmPlayground` — the
-    // PKCS#11 engine workbench (App.tsx's static `playground/hsm` route). It
-    // does not size anything. Every other element of this hero describes the
-    // HSM Capacity Calculator — the sub's "ten enterprise workflows … with a
-    // totals row", the "A sizing verdict" grid card, and the side card's
-    // footnote claiming these are "the same defaults behind the HSM Capacity
-    // Calculator this page opens with", which was simply false. The
-    // calculator is registered as `hsm-capacity` (workshopRegistry.tsx) and
-    // resolves through `PlaygroundToolRoute`.
-    ctaPrimaryHref: '/playground/hsm-capacity',
-    // 2026-08-02: was 'Import my cert inventory' → '/migrate'. There is no
-    // import, upload or inventory-ingest affordance anywhere under
-    // `src/components/Migrate/` — or anywhere else in the app. The link
-    // resolved, so it wasn't dead in the routing sense, but it promised a
-    // capability the product does not have. Replaced with the real follow-up
-    // question to fleet sizing: will my vendor support ML-DSA in time?
-    // `?tab=roadmaps` is honored by MigrationWorkbench's `tab` param.
-    ctaSecondary: "Check your HSM vendor's roadmap",
-    ctaSecondaryHref: '/migrate?tab=roadmaps',
-    proofChips: [
-      'Sizing from real FIPS 203/204 key sizes',
-      'Benchmarked through a real PKCS#11 engine',
-      'CNSA 2.0 mandate dates built in',
-    ],
-    sideCard: {
-      title: 'What changes on renewal day',
-      tone: 'warn',
-      provenance: 'sourced',
-      rows: [
-        { label: 'ML-DSA-65 signature', value: ML_DSA_65_SIGNATURE_ONLY },
-        // Tightened from the design mockup's ambiguous "classical HSM" label —
-        // the ops/s figure needs to name which algorithm it's benchmarking, or
-        // it doesn't disambiguate against the ML-DSA-65 signature row above.
-        {
-          label: "ML-DSA-65 sign rate on today's HSM",
-          value: OPS_SIDECARD_THROUGHPUT_ROW,
-        },
-        { label: 'Per OCSP / CRL response', value: OPS_SIDECARD_OCSP_ROW },
-      ],
-      punchline: 'Your next renewal window is your migration window.',
-      footnote:
-        'Real figures, not illustrative — the same defaults behind the HSM Capacity Calculator this page links to.',
-    },
-    gridTitle: 'What you walk out with',
-    gridSub: 'Real zones and artifacts for your fleet',
-    gridCards: [
-      {
-        title: 'A sizing verdict',
-        body: `Per workflow: storage MB, aggregate network MB/s, CPU cores, and whether your fleet clears it — across the calculator's ${toWordIfSmall(HSM_CAPACITY_USE_CASE_COUNT)} enterprise use cases.`,
-      },
-      {
-        title: 'Command Center · Run View',
-        body: `Opens on Migration with ${joinWithAnd(combinedArtifacts('ops', ['mitigation', 'risk-management', 'migration', 'governance']))}. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.`,
-      },
-      {
-        title: 'A report built for the cutover',
-        body: `Your report opens ${joinWithAnd(reportSectionsByState('ops', 'open').map(reportSectionLabel))}, and hides ${joinWithAnd(reportSectionsByState('ops', 'hidden').map(reportSectionLabel))} — the emphasis a cutover needs.`,
-      },
-    ],
-    trackTitle: `Then, the background: ${formatEssentialsVsFull('ops')}.`,
-    trackChips: [
-      'PQC 101',
-      'Ops quantum impact',
-      'TLS basics',
-      'VPN/SSH',
-      'PKI workshop',
-      'Crypto agility',
-      'Migration program',
-      'KMS',
-      'HSM',
-    ],
-    capstoneChip: { label: 'capstone' },
-  },
-
-  researcher: {
-    heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
-    heroBadge: { text: 'All regions · unfiltered', tone: 'illustrative' },
-    headline: 'Check our work.',
-    sub: 'Every claim on this site carries a source tier, a verification date, and where one exists, the strongest published argument against it. Run the known-answer tests yourself in this tab.',
-    ctaPrimary: 'Open the evidence workspace',
-    ctaPrimaryHref: '/library',
-    ctaSecondary: 'Run the ACVP vectors',
-    ctaSecondaryHref: '/playground/hsm',
-    proofChips: [
-      'ACVP + KAT run locally, not asserted',
-      'Authoritative / High / Moderate / Low source tiers',
-      'Counter-claims dataset · CVE snapshots',
-      'Drift guards fail the build on silent data change',
-    ],
-    // NOTE: the researcher side-card is intentionally a stub. Per
-    // IMPLEMENTATION-PLAN-2026-08-01.md §6, "Changed in your fields since
-    // [date]" is a separate, real, in-scope workstream (a new persisted
-    // followed-fields store + a live revision/deprecation counter), owned by
-    // ResearcherFieldWatchCard — NOT this static config. That component
-    // overrides this whole sideCard at render time with its own live-computed
-    // title/rows/punchline/footnote. rows: [] only exists so this object still
-    // satisfies the PersonaJourneyBoard type; do not add real row content here.
-    sideCard: {
-      title: 'Changed in your fields since your last visit',
-      tone: 'info',
-      provenance: 'illustrative',
-      rows: [],
-      punchline: '',
-    },
-    gridTitle: 'What the workspace gives you',
-    gridSub: 'Instruments and evidence, every claim traceable to its source',
-    gridCards: [
-      {
-        title: 'Provenance on every claim',
-        body: 'Source tier, verification date, and the counter-claim where one is on file. Nothing in the Library or the Migrate catalogue is filtered out for this role — the corpus arrives whole, by design.',
-      },
-      {
-        title: 'Reproducible verification',
-        body: 'ACVP vectors, KATs and the 25-check TCG V1.85 runner, all in your browser, log exportable.',
-      },
-      {
-        title: 'Command Center · Risk Analysis',
-        body: `The one persona that opens on the risk-management zone: ${joinWithAnd(combinedArtifacts('researcher', ['risk-management', 'governance']))} as citable evidence.`,
-      },
-    ],
-    trackTitle: 'Learning path: available, never pushed.',
-    trackNote:
-      'For this persona it is a reference shelf, not a curriculum, and the UI should say so.',
-    trackChips: [
-      'PQC 101',
-      'Research quantum impact',
-      'PQC candidates',
-      'Entropy & randomness',
-      'Hybrid crypto',
-      'Crypto agility',
-      'Standards bodies',
-      'TLS basics',
-      'PKI workshop',
-    ],
-    // Deliberately no capstoneChip — the only persona without one, matching
-    // the "no funnel" framing. Do not add one.
-  },
-
-  curious: {
-    heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-    heroBadge: { text: 'Americas · unfiltered', tone: 'illustrative' },
-    headline: 'What actually breaks, and when.',
-    sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
-    ctaPrimary: 'Show me',
-    ctaPrimaryHref: '/playground/tls-simulator',
-    ctaSecondary: 'I have 30 seconds — the short version',
-    ctaSecondaryHref: '/timeline',
-    proofChips: [
-      'Real cryptography, running here',
-      'Plain English by default',
-      'Every term explained on hover',
-    ],
-    sideCard: {
-      title: 'The bit that surprises people',
-      tone: 'bad',
-      provenance: 'illustrative',
-      rows: [
-        { label: 'Encrypted data captured today', value: 'still readable later' },
-        { label: 'If it must stay secret for', value: '12 years' },
-        { label: 'And the machine arrives in', value: '~2032' },
-      ],
-      punchline: 'The deadline already passed for some data.',
-      footnote:
-        'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
-    },
-    gridTitle: 'Where you can go next',
-    gridSub: 'Optional, none of it locked — all of it real',
-    gridCards: [
-      {
-        title: 'The short version',
-        body: `${capitalizedSmallNumberWord(PERSONAS.curious.essentials.length)} modules, ${PERSONAS.curious.essentialsMinutes} minutes, plain language throughout. Milestones already sit in the path: ${PERSONA_MILESTONES.curious.map((m) => m.label).join(', ')}.`,
-      },
-      {
-        title: 'A library worth browsing',
-        body: `A shortlist rather than the whole corpus: ${joinWithAnd(PERSONA_LIBRARY_CATEGORIES.curious)}. Everything else is still one click away.`,
-      },
-      {
-        title: 'A read on your own risk',
-        body: `Today the report hides ${joinWithAnd(reportSectionsByState('curious', 'hidden').map(reportSectionLabel))} and caps actions at ${PERSONA_REPORT_CONFIG.curious.recommendedActions?.maxItems}. Here it explains rather than withholds.`,
-      },
-    ],
-    trackTitle: `${capitalizedSmallNumberWord(PERSONAS.curious.essentials.length)} modules, ${PERSONAS.curious.essentialsMinutes} minutes — and yes, that is still a lot.`,
-    trackNote: `Worth saying plainly: at ${PERSONAS.curious.essentialsMinutes} minutes this is longer than the executive track (${PERSONAS.executive.essentialsMinutes} min), which is not what you would expect. Take it in pieces — your progress is saved between visits.`,
-    trackChips: [
-      'PQC 101',
-      'PQC candidates',
-      'Quantum threats',
-      'Risk basics',
-      'Compliance timelines',
-      'TLS basics',
-    ],
-    capstoneChip: { label: 'Quantum-Native' },
-  },
+/**
+ * The board option to render for `personaId`, given a requested variant id
+ * that may be stale, hand-typed, or absent.
+ *
+ * Falls back to the role's order-1 variant rather than throwing: the id can
+ * arrive from a persisted store or a `?variant=` URL, neither of which stays
+ * trustworthy once a variant is renamed or retired.
+ *
+ * Exported so PersonaBoardView and LandingView resolve this the SAME way.
+ * They both need the answer — the board to draw, and whether the researcher's
+ * live field-watch card belongs on it — and two copies of the fallback rule
+ * would be free to disagree the moment one of them changed.
+ */
+export function resolveRoleBoardVariant(
+  personaId: PersonaId,
+  variantId: string | undefined
+): RoleBoardVariant {
+  // eslint-disable-next-line security/detect-object-injection -- personaId is the typed PersonaId union, not user input
+  const variants = BOARD_VARIANTS[personaId]
+  return variants.find((v) => v.id === variantId) ?? variants[0]
 }
+
+/**
+ * The one researcher variant whose side card is the live field watch.
+ *
+ * `ResearcherFieldWatchCard` reports what changed in the library corpus, which
+ * is the "trace every claim" option's subject — not the other two, which
+ * carry their own authored side cards (the reproducibility surface, and the
+ * CRQC consensus). Before this was scoped, the custom card replaced the side
+ * card on ALL THREE researcher boards, silently discarding two of them.
+ */
+export const RESEARCHER_FIELD_WATCH_VARIANT_ID = 'provenance'
