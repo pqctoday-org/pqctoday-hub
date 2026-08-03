@@ -69,14 +69,16 @@ describe('CuriousMobileBoard', () => {
     })
 
     it('tapping "I have 30 seconds" navigates to the curious board\'s configured ctaSecondaryHref', () => {
-      // Routed via the shared '/timeline' fixture above — true today because
-      // PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref is '/timeline'; this
-      // assertion fails loudly (not silently) if that config value ever
-      // changes without this test being updated to match.
-      expect(PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref).toBe('/timeline')
+      // Routed via the shared '/faq' fixture above. Was '/timeline' until
+      // 2026-08-02, when the board-options work gave each of the 18 boards its
+      // own destination — /playground/tls-simulator had been on six boards and
+      // /migrate on five — and curious/break's secondary became the FAQ. The
+      // literal is asserted rather than just read from config, so a silent
+      // change to this persona's href still fails loudly here.
+      expect(PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref).toBe('/faq')
       renderBoard()
       fireEvent.click(screen.getByRole('button', { name: 'I have 30 seconds' }))
-      expect(screen.getByText('Timeline Page')).toBeInTheDocument()
+      expect(screen.getByText('FAQ Page')).toBeInTheDocument()
     })
   })
 
