@@ -58,7 +58,14 @@ export async function invalidateSearchCache(): Promise<void> {
 
 export async function search(
   query: string,
-  opts?: { limit?: number; sources?: string[]; authoritativeOnly?: boolean }
+  opts?: {
+    limit?: number
+    sources?: string[]
+    authoritativeOnly?: boolean
+    /** See UnifiedSearchService.searchPalette — guarantees narrow sources a grouped-UI slot. */
+    ensureSources?: string[]
+    ensureLimit?: number
+  }
 ): Promise<SearchResult[]> {
   await getSearchIndex()
   return UnifiedSearchService.getInstance().searchPalette(query, opts) as SearchResult[]

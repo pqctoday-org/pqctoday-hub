@@ -5,6 +5,7 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import { chunkToResource, trustTierMultiplier } from './chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { TrustTier } from '@/data/trustScore'
+import { TOOL_ENTRIES_VERSION, toolSearchEntries } from './toolSearchEntries'
 
 /**
  * UnifiedSearchService — single MiniSearch instance + entityIndex + corpus map
@@ -27,6 +28,17 @@ import type { TrustTier } from '@/data/trustScore'
 
 const CORPUS_PATH = '/data/rag-corpus.json'
 const CACHE_KEY = 'pqc-search-index-v2'
+
+/**
+ * WS6a (2026-08-02) — the 71 browser-runnable tools are appended to the loaded
+ * corpus so every one of them is a global ⌘K result. Derived from the two
+ * registries at load time, never written to rag-corpus.json, so a renamed tool
+ * cannot drift out of search. Sandbox scenarios are excluded (browser-only
+ * grading scope) — see toolSearchEntries.ts.
+ */
+function withToolEntries(chunks: RAGChunk[]): RAGChunk[] {
+  return [...chunks, ...toolSearchEntries()]
+}
 
 const MINISEARCH_CONFIG = {
   fields: ['title', 'content', 'category'],
@@ -138,10 +150,10 @@ export class UnifiedSearchService {
     const data = await response.json()
 
     if (Array.isArray(data)) {
-      this._corpus = data
+      this._corpus = withToolEntries(data)
       this._generatedAt = null
     } else {
-      this._corpus = data.chunks ?? []
+      this._corpus = withToolEntries(data.chunks ?? [])
       this._generatedAt = data.generatedAt ?? null
     }
 
@@ -247,9 +259,16 @@ export class UnifiedSearchService {
     const response = await fetch(CORPUS_PATH)
     if (!response.ok) throw new Error(`Failed to fetch corpus: ${response.status}`)
     const data = await response.json()
-    const chunks: RAGChunk[] = Array.isArray(data) ? data : (data.chunks ?? [])
-    const version: string = (Array.isArray(data) ? null : (data.generatedAt ?? null)) ?? 'unknown'
-    this._generatedAt = version === 'unknown' ? null : version
+    const chunks: RAGChunk[] = withToolEntries(Array.isArray(data) ? data : (data.chunks ?? []))
+    const corpusVersion: string =
+      (Array.isArray(data) ? null : (data.generatedAt ?? null)) ?? 'unknown'
+    this._generatedAt = corpusVersion === 'unknown' ? null : corpusVersion
+    // Tool entries are registry-derived, not part of the corpus, so
+    // `generatedAt` alone cannot express "this index was built without them".
+    // Compounding the key means an index cached before WS6a is discarded
+    // instead of served — otherwise the first visit after this ships would
+    // restore a tool-less index and search would look unchanged.
+    const version = `${corpusVersion}+tools${TOOL_ENTRIES_VERSION}`
 
     try {
       const cached = await localforage.getItem<CachedIndex>(CACHE_KEY)
@@ -296,10 +315,26 @@ export class UnifiedSearchService {
    *
    * `opts.authoritativeOnly` (§14.3 step 5) hard-filters to Authoritative
    * and High tiers — the user-facing "Authoritative only" toggle.
+   *
+   * `opts.ensureSources` (WS6a, 2026-08-02) guarantees a grouped-UI slot to
+   * narrow sources. ⌘K renders results grouped by source (`groupResults` in
+   * CommandPalette.tsx) but fetches one flat global top-`limit`, so a source
+   * that never wins on raw relevance is absent from its own group entirely —
+   * for "ML-KEM" the corpus returns thousands of prose chunks and the first
+   * tool sits at rank 207, far outside the fetch. Sources named here get their
+   * own top-`ensureLimit` appended if the global slice contains none of them.
+   * Purely additive: nothing already in the slice is displaced or reordered,
+   * so this cannot demote substantive library or Learn results.
    */
   searchPalette(
     query: string,
-    opts?: { limit?: number; sources?: string[]; authoritativeOnly?: boolean }
+    opts?: {
+      limit?: number
+      sources?: string[]
+      authoritativeOnly?: boolean
+      ensureSources?: string[]
+      ensureLimit?: number
+    }
   ): PaletteResult[] {
     if (!this._index) return []
     const raw = this._index.search(query)
@@ -310,8 +345,45 @@ export class UnifiedSearchService {
       return { r, chunk, tier, score: r.score * multiplier }
     })
     rescored.sort((a, b) => b.score - a.score)
-    const sliced = rescored.slice(0, opts?.limit ?? 50)
-    let results = sliced.map(({ r, chunk, score }) => ({
+
+    // Both filters run BEFORE `slice(0, limit)`. They used to run after it,
+    // which made each one behave like "of the global top-`limit`, keep these"
+    // instead of "the top `limit` of these" — so a narrow filter returned
+    // nothing whenever none of the global top-50 happened to qualify. Found by
+    // the WS6a integration test asking the palette for tools only; it affected
+    // every caller passing `sources` or `authoritativeOnly`.
+    let narrowed = rescored
+    if (opts?.sources && opts.sources.length > 0) {
+      const wanted = new Set(opts.sources)
+      narrowed = narrowed.filter(({ chunk }) => wanted.has(chunk?.source ?? ''))
+    }
+    if (opts?.authoritativeOnly) {
+      const allowed = new Set<TrustTier>(['Authoritative', 'High'])
+      narrowed = narrowed.filter(({ tier }) => tier !== null && allowed.has(tier))
+    }
+
+    const limit = opts?.limit ?? 50
+    const selected = narrowed.slice(0, limit)
+
+    // Guarantee a grouped-UI slot to named narrow sources — see the
+    // `ensureSources` note in the docstring. Append-only, after the slice.
+    if (opts?.ensureSources && opts.ensureSources.length > 0) {
+      const ensureLimit = opts.ensureLimit ?? 3
+      const alreadyPresent = new Set(selected.map(({ chunk }) => chunk?.source ?? ''))
+      const taken = new Set(selected.map(({ r }) => r.id))
+      for (const source of opts.ensureSources) {
+        if (alreadyPresent.has(source)) continue
+        const extra = narrowed
+          .filter(({ r, chunk }) => chunk?.source === source && !taken.has(r.id))
+          .slice(0, ensureLimit)
+        for (const hit of extra) {
+          taken.add(hit.r.id)
+          selected.push(hit)
+        }
+      }
+    }
+
+    return selected.map(({ r, chunk, score }) => ({
       id: r.id,
       source: chunk?.source ?? '',
       title: chunk?.title ?? '',
@@ -323,18 +395,6 @@ export class UnifiedSearchService {
       score,
       match: r.match as Record<string, string[]>,
     }))
-    if (opts?.sources && opts.sources.length > 0) {
-      results = results.filter((r) => opts.sources!.includes(r.source))
-    }
-    if (opts?.authoritativeOnly) {
-      const allowed = new Set<TrustTier>(['Authoritative', 'High'])
-      results = results.filter((r) => {
-        const chunk = this._corpusById.get(r.id)
-        const tier = chunk ? this.resolveTier(chunk) : null
-        return tier !== null && allowed.has(tier)
-      })
-    }
-    return results
   }
 
   private resolveTier(chunk: RAGChunk): TrustTier | null {
