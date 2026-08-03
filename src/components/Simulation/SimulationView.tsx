@@ -3,16 +3,27 @@
  * SimulationView — the PQC-migration "Mission Control" console.
  *
  * A serious-game over the existing hub: pick an organisation profile, race the
- * Mosca clock (X+Y>Z), and climb each of the framework's 9 phases (P0–P7 + the
- * terminal Verification & Closure band) up a 0–4 maturity ladder — staffing/
- * briefing an AI team and choosing sound vs trap
- * "next moves". A conductor over the hub: every resource is a real Command-
- * Center tool / Playground sandbox / Learn workshop. State persists via
- * useSimulationStore. Design: reports/framework-gap/SIMULATION-DESIGN.md +
- * the Mission Control handoff.
+ * Mosca clock (X+Y>Z), and climb the framework's phases up a 0–4 maturity ladder
+ * — staffing/briefing an AI team and choosing sound vs trap "next moves". A
+ * conductor over the hub: every resource is a real Command-Center tool /
+ * Playground sandbox / Learn workshop. State persists via useSimulationStore.
+ * Design: reports/framework-gap/SIMULATION-DESIGN.md + the Mission Control handoff.
+ *
+ * PHASE COUNT: the played lifecycle is 9 (P0–P7 + the terminal Verification &
+ * Closure band), which is what LIFECYCLE_PHASES/the ladder renders — but PhaseId
+ * has TEN values. The spanning `foundations` band is a real, separately-selectable
+ * `sel` that renders through this same per-phase view; it is reached from its own
+ * dashed row under the ladder, not from LIFECYCLE. This comment said "9 phases"
+ * flatly until 2026-08-02, which is why the distinction is spelled out here.
+ *
+ * PER-PHASE VIEW (2026-08-02): the active phase opens on ONE thing — the decision
+ * — with gates, resources and intel behind Decide/Progress/Resources/Signals tabs
+ * (`activePhaseTab`), one panel mounted at a time. This replaced both a ~9-block
+ * co-render and the GUIDED-vs-Expert mode split that existed only to hide the
+ * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Monitor } from 'lucide-react'
+import { Monitor, Pencil } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -67,6 +78,7 @@ import { TransformationStatusPanel } from './autorun/TransformationStatusPanel'
 import { RunActionsMenu, type RunActionItem } from './RunActionsMenu'
 import { SimTermsPanel } from './SimTermsPanel'
 import { EmbedLoading } from './EmbedLoading'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { TimelineEmbed } from '@/components/shared/widgets/TimelineEmbed'
 import { LibraryEmbed } from '@/components/shared/widgets/LibraryEmbed'
@@ -120,7 +132,7 @@ import {
 } from '@/simulation/simRoadmap'
 import { sectorStepsForPhase } from '@/simulation/sectorTrack'
 import { getBalance, type DifficultyId } from '@/data/simBalance'
-import { Eyebrow, Ring, Dial, ReadonlyDial, Stat, PlanningBadge, MandateBadge } from './atoms'
+import { Eyebrow, Ring, Dial, PlanningBadge, MandateBadge } from './atoms'
 import { RibbonTermTooltip } from './RibbonTermTooltip'
 import { SimTour } from './SimTour'
 import { KIND_CHIP, markSimResume, markSimExited, clearSimExcursion } from './simChrome'
@@ -212,6 +224,9 @@ const nowMs = () => Date.now()
 
 // phases that act on the estate / infrastructure → the architecture view is shown
 const ARCH_PHASES = new Set<PhaseId>(['p1', 'p5', 'p6'])
+/** The active phase's four views. 'decide' is the default on every phase switch —
+ *  a player should never land on another phase's Resources tab by accident. */
+type PhaseTab = 'decide' | 'progress' | 'resources' | 'signals'
 // the Learn modules + artifact types the simulation tracks (from every tree) —
 // RESET clears only these, not the player's unrelated hub progress.
 const SIM_TRACKED = (() => {
@@ -292,10 +307,13 @@ function SimModuleCompletionWatcher({ moduleId, title }: { moduleId: string; tit
 // ---- main ----------------------------------------------------------------
 export function SimulationView() {
   const navigate = useNavigate()
-  // PR3 — the Expert intel rail pins 3 panels (Threat & readiness [WP4.7] +
-  // Critical assets + Artifacts) and collapses the rest behind a "Show N more"
-  // disclosure. Default collapsed.
-  const [railExpanded, setRailExpanded] = useState(false)
+  // Per-phase progressive disclosure (2026-08-02): the active phase's view opens
+  // on the ONE thing to act on — the decision — and everything else (gates,
+  // resources, intel signals) sits behind an explicit tab rather than being
+  // co-rendered. Replaces both the GUIDED/Expert mode split and the old rail's
+  // "Show N more" disclosure boolean. Local state, deliberately not persisted:
+  // it always resets to 'decide' on a phase switch, so there is nothing to keep.
+  const [activePhaseTab, setActivePhaseTab] = useState<PhaseTab>('decide')
   const {
     size,
     country,
@@ -330,8 +348,6 @@ export function SimulationView() {
     setDifficulty,
     tourSeen,
     markTourSeen,
-    guided,
-    setGuided,
     runCompleteSeen,
     markRunComplete,
     recordObjectiveAchieved,
@@ -349,6 +365,13 @@ export function SimulationView() {
   } = useSimulationStore()
   // WS-14: the active difficulty balance the engine + scoring read (config swap).
   const balance = getBalance(difficulty)
+  // Every phase opens on Decide. Keyed on `sel`, so this covers BOTH ways the
+  // phase changes — a manual ladder click and the narrated auto-run, which
+  // advances through the same setSel store action (useSimAutoRunPlayer). One
+  // interaction model, click-driven or AI-driven.
+  useEffect(() => {
+    setActivePhaseTab('decide')
+  }, [sel])
   const [report, setReport] = useState<QuarterReportData | null>(null)
   // re-opened the sim from the top nav → start a clean excursion (clears both the
   // "peek" resume flag and any prior HUB-quit marker the hub header reads)
@@ -1043,6 +1066,21 @@ export function SimulationView() {
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[1]
   const sectorOpt = SECTORS.find((s) => s.id === sector) ?? SECTORS[0]
   const jur = JURISDICTION_RULES[country]
+  // Merged profile line (2026-08-02) — ORG/JURISDICTION/SECTOR were 3 separate
+  // read-only dials for facts that are all "from your assessment" and none
+  // clickable; combined into one line. Their individual tooltips (the modelled-
+  // archetype note + the assessment-industry mapping) both survive, joined.
+  const profileTitle = [
+    'Org size, jurisdiction and sector — sourced from your assessment.',
+    assessJurisdiction && !assessJurisdiction.exact
+      ? `${assessJurisdiction.displayName} isn't modelled 1:1 — sim rules use the ${assessJurisdiction.countryCode} archetype.`
+      : undefined,
+    assessSnap?.result.assessmentProfile?.industry
+      ? `Mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}.`
+      : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ')
   const seatOpt = SEATS.find((s) => s.id === seat) ?? SEATS[0]
   // Researcher / Curious hold no FrameworkRoleId in ROLE_CROSSWALK (personaToRoles
   // deliberately maps them to [] — spec §4 orphan-personas decision, audience
@@ -1128,8 +1166,8 @@ export function SimulationView() {
   // store flag (run-slice, cleared by RESET) keeps it from re-firing on reload and
   // lets a fresh run celebrate again. Deferred out of render via setTimeout(0).
   const [runCompleteOpen, setRunCompleteOpen] = useState(false)
-  // Re-openable guide: shows on first run (!tourSeen) or when the player turns on
-  // Guided mode (the novice walkthrough), independent of the one-time tourSeen flag.
+  // Re-openable guide: shows on first run (!tourSeen), and stays re-openable from
+  // the ⋯ MORE menu afterwards, independent of the one-time tourSeen flag.
   const [tourOpen, setTourOpen] = useState(false)
   // Shared by the completion effect (WP4.5 lifetime counters) and the ceremony's
   // own score card — computed once so both read the same number.
@@ -1153,16 +1191,11 @@ export function SimulationView() {
     objectivesOnTime,
   ])
 
-  // First-visit default: start non-technical roles (executive / curious) in the
-  // low-density Guided view instead of the dense Expert console. Gated on
-  // `!tourSeen`, so it fires only on the very first visit and never overrides a
-  // later manual toggle; technical roles are untouched and keep Expert as default.
-  // `guided` is intentionally NOT a dependency — re-asserting it would fight a
-  // user who turns it off while still on their first visit.
-  useEffect(() => {
-    if (tourSeen) return
-    if (selectedPersona === 'executive' || selectedPersona === 'curious') setGuided(true)
-  }, [tourSeen, selectedPersona, setGuided])
+  // (Retired 2026-08-02) A first-visit effect used to flip executive/curious
+  // personas into GUIDED mode to spare them the dense Expert console. There is no
+  // dense console left to spare anyone from — every phase opens on Decide alone
+  // and the intel panels sit behind the Signals tab for all players — so the
+  // persona special-case is gone rather than reproduced.
 
   // Record the program year each objective is FIRST achieved, for the ceremony's on-time
   // badges (idempotent — recordObjectiveAchieved ignores an id already set).
@@ -1419,18 +1452,20 @@ export function SimulationView() {
             />
             <div className="max-md:min-w-0">
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-                PQC Migration Simulation
+              {/* 2026-08-02 — subtitle + framework attribution merged into one line
+                (was 2 lines); the version stays a real link, just compacted. */}
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50 max-md:truncate">
+                Migration Sim ·{' '}
+                <a
+                  href={FRAMEWORK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+                  className="underline decoration-dotted underline-offset-2 hover:text-background/80"
+                >
+                  {FRAMEWORK_VERSION} ↗
+                </a>
               </div>
-              <a
-                href={FRAMEWORK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70 max-md:block max-md:truncate"
-              >
-                Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
-              </a>
             </div>
           </div>
           <Link
@@ -1512,16 +1547,21 @@ export function SimulationView() {
     (sel === 'p3' || sel === 'p5') && (assessBacklog.length > 0 || !!assessTwoTrack)
   const showRailBoosts = sel === 'p0' && assessBoosts.length > 0
   const showRailDrivers = sel === 'p3' && !!assessDrivers
-  const railMoreShown = [
-    showRailKpis && 'Assessment KPIs',
-    showRailTrend && 'Readiness trend',
-    showRailCompliance && 'Applicable compliance',
-    showRailBoosts && 'Situational factors',
-    'Cyber insurance',
-    showRailArch && 'Architecture',
-    showRailQuantum && 'Quantum risk',
-    showRailBacklog && 'Migration backlog',
-  ].filter(Boolean) as string[]
+  // Signals tab — how many "From your assessment" panels does THIS phase have?
+  // Each is phase-gated (p0 / p3 / p5), so most phases have only the always-on
+  // Assessment KPIs. The group renders whenever there's at least one panel, but
+  // its HEADING only appears at 2+: a section header introducing a single card
+  // reads as broken, and the KPI card already says "· informational" so its
+  // provenance is clear without one.
+  const assessmentSignalCount = [
+    showRailKpis,
+    showRailCompliance,
+    showRailBoosts,
+    showRailQuantum,
+    showRailBacklog,
+    showRailDrivers && !!assessDrivers,
+  ].filter(Boolean).length
+  const hasAssessmentSignals = assessmentSignalCount > 0
 
   return (
     <>
@@ -1674,7 +1714,10 @@ export function SimulationView() {
 
       {/* Full simulation — hidden on phones, shown on tablet+ */}
       <div className="hidden md:flex flex-col fixed inset-0 bg-background text-foreground">
-        {/* header — command bar */}
+        {/* header — command bar. 2026-08-02: a GUARANTEED 2-row layout (flex-col),
+          not incidental flex-wrap — row 1 is identity/context, row 2 is actions,
+          so the split is predictable at any viewport width rather than only
+          appearing once row 1's content happens to overflow. */}
         <header className="flex shrink-0 flex-wrap items-center gap-3 bg-foreground px-4 py-2 text-background">
           <div className="flex shrink-0 items-center gap-2">
             <img
@@ -1684,58 +1727,61 @@ export function SimulationView() {
             />
             <div>
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
+              {/* 2026-08-02 — subtitle + framework attribution merged into one line
+                (was 2 lines); the version stays a real link, just compacted. */}
               <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-                PQC Migration Simulation
+                Migration Sim ·{' '}
+                <a
+                  href={FRAMEWORK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
+                  className="underline decoration-dotted underline-offset-2 hover:text-background/80"
+                >
+                  {FRAMEWORK_VERSION} ↗
+                </a>
               </div>
-              <a
-                href={FRAMEWORK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={`${FRAMEWORK_NAME} ${FRAMEWORK_VERSION} — ${FRAMEWORK_AUTHOR} (${FRAMEWORK_LICENSE})`}
-                className="font-mono text-sim-micro font-semibold tracking-[0.08em] text-background/40 underline decoration-dotted underline-offset-2 hover:text-background/70"
-              >
-                Built on the {FRAMEWORK_NAME} {FRAMEWORK_VERSION} ↗
-              </a>
             </div>
           </div>
           {/* ORG / JURISDICTION / SECTOR are READ-ONLY — sourced from the user's
-            assessment (single source of truth). SEAT + MODE stay switchable. */}
+            assessment (single source of truth) — one single-line pill, same
+            visual family as the SEAT/MODE dials (2026-08-02: was its own 3-line
+            box; "Profile"/"Seat"/"Mode" now read as one grouping, not three
+            different shapes). The edit-pencil replaces the separate "change in
+            /assess →" text link — same destination, docked to what it edits. */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <ReadonlyDial label="ORG" value={sizeOpt.label} hint="from your assessment" />
-            <ReadonlyDial
-              label="JURISDICTION"
-              value={assessJurisdiction?.displayName ?? country}
-              hint="from your assessment"
-              badge={<MandateBadge country={country} />}
-              note={
-                assessJurisdiction && !assessJurisdiction.exact
-                  ? `(rules modeled on ${assessJurisdiction.countryCode})`
-                  : undefined
-              }
-              title={
-                assessJurisdiction && !assessJurisdiction.exact
-                  ? `${assessJurisdiction.displayName} isn't modelled 1:1 — sim rules use the ${assessJurisdiction.countryCode} archetype`
-                  : undefined
-              }
-            />
-            <ReadonlyDial
-              label="SECTOR"
-              value={sectorOpt.label}
-              hint={`shelf-life X ≈ ${sectorOpt.shelfLifeYears}y`}
-              badge={
+            <div
+              title={profileTitle}
+              aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. From your assessment.`}
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 py-1.5 pl-3 pr-1.5"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+                Profile
+              </span>
+              <span className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {sizeOpt.label}
+                <span className="text-background/30">·</span>
+                {assessJurisdiction?.displayName ?? country}
+                <MandateBadge country={country} />
+                <span className="text-background/30">·</span>
+                {sectorOpt.label}
                 <PlanningBadge
                   label="est."
                   tip={`Shelf-life X (${sectorOpt.shelfLifeYears}y for ${sectorOpt.label}) is an illustrative planning anchor for how long this sector's data must stay secret — not a published figure. Re-check the live source.`}
                 />
-              }
-              title={
-                assessSnap?.result.assessmentProfile?.industry
-                  ? `mapped from your assessment industry: ${assessSnap.result.assessmentProfile.industry}`
-                  : undefined
-              }
-            />
+              </span>
+              <Link
+                to="/assess"
+                onClick={() => markSimResume()}
+                title="Change your organization profile in the assessment"
+                aria-label="Change organization profile in the assessment"
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/50 hover:bg-background/20 hover:text-background"
+              >
+                <Pencil size={11} aria-hidden="true" />
+              </Link>
+            </div>
             <Dial
-              label="SEAT"
+              label="Seat"
               value={seatOpt.label}
               hint={isOrphanSeatPersona ? 'no role for your persona' : 'rest = AI team'}
               title={
@@ -1746,191 +1792,234 @@ export function SimulationView() {
               onClick={() => setSeat(cycle(SEATS, seat))}
             />
             <Dial
-              label="MODE"
+              label="Mode"
               value={difficulty[0].toUpperCase() + difficulty.slice(1)}
-              hint="clock + budget"
-              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Realistic is recommended for a first run."
+              hint="clock + budget + stakes"
+              title="Difficulty — Easy / Realistic / Hard tune the Mosca clock pressure and your budget. Easy also lets you retry a wrong Next-Move pick for free; on Realistic and Hard the pick stands and costs you rework. Realistic is recommended for a first run."
               onClick={() =>
                 setDifficulty(DIFF_ORDER[(DIFF_ORDER.indexOf(difficulty) + 1) % DIFF_ORDER.length])
               }
             />
-            <Dial
-              label="GUIDED"
-              value={guided ? 'On' : 'Off'}
-              hint="simpler view + help"
-              title="Guided mode — a focused, low-density view: hides the advanced intel panels, defines unfamiliar terms (Mosca's inequality, HNDL, hybrid vs pure), and captions the dials in plain language. Turn off for the full Expert console. Independent of difficulty."
-              onClick={() => {
-                const next = !guided
-                setGuided(next)
-                if (next) setTourOpen(true) // novice turning guidance on → show the walkthrough
-              }}
-            />
-            <Link
-              to="/assess"
-              onClick={() => markSimResume()}
-              className="self-center rounded-md px-1.5 font-mono text-sim-micro font-bold text-background/60 underline-offset-2 hover:text-background hover:underline"
-            >
-              change in /assess →
-            </Link>
           </div>
-          <div className="ml-auto flex shrink-0 items-center gap-2.5">
-            {autoRunPlayer.resumable ? (
-              <>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => autoRunPlayer.start({ mode: autoRunPlayer.resumeMode })}
-                  disabled={autoRunPlayer.running}
-                  title="Resume the migration run from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning."
-                  className="h-auto rounded-md border border-secondary/50 bg-secondary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-secondary/25 disabled:opacity-40"
+          {/* KPI cluster (2026-08-02) — one bordered strip with internal dividers,
+            not 4 separate bordered boxes competing with the dials for the same
+            row. Folded into the header row itself (sized to the logo's own
+            height) rather than a separate full-width ribbon below. Full
+            explanatory sub-text lives in each segment's title tooltip. */}
+          <div className="flex items-stretch divide-x divide-background/15 overflow-hidden rounded-lg border border-background/20 bg-background/5">
+            {!suppressWinUI && (
+              <div
+                title="Program-wide maturity — full detail (objectives, HNDL/TNFL tracks) is in the Signals tab."
+                className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+              >
+                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                  Maturity
+                </span>
+                <span
+                  className={`text-[12.5px] font-bold ${txStatus.maturity >= PHASE_WIN_LEVEL ? 'text-success' : 'text-background'}`}
                 >
-                  ▶ Resume
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setPlayModalOpen(true)}
-                  disabled={autoRunPlayer.running}
-                  title="Start a different path instead of resuming"
-                  className="h-auto rounded-md px-1.5 font-mono text-sim-micro text-background/60 hover:text-background hover:underline"
-                >
-                  ↻ start a different path
-                </Button>
-              </>
-            ) : (
+                  {txStatus.maturity.toFixed(1)}/4
+                </span>
+              </div>
+            )}
+            <div
+              title={
+                scoreboard.complete
+                  ? 'Governance floor (L2) — Milestone: program complete ✓'
+                  : 'Governance floor (L2) — Milestone: full win needs each phase at its own top band'
+              }
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Gov L2
+              </span>
+              <span className="text-[12.5px] font-bold text-success">
+                {scoreboard.milestone.cleared}/{scoreboard.milestone.total}
+              </span>
+            </div>
+            <div
+              title={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Q-Day
+              </span>
+              <span
+                className={`text-[12.5px] font-bold ${clock.atRisk ? 'text-destructive' : 'text-background'}`}
+              >
+                {clock.yearsToHorizon.toFixed(1)}y
+              </span>
+            </div>
+            <div
+              title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
+              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
+            >
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                Budget
+              </span>
+              <span
+                className={`text-[12.5px] font-bold ${budgetSecured > 0 ? 'text-success' : 'text-background/50'}`}
+              >
+                €{budgetSecured}M
+              </span>
+            </div>
+          </div>
+          {/* actions. Play/Resume and End Quarter are the only filled/gradient
+            buttons ("the two real commitments: start a run, close a quarter");
+            Commit Plan/Exit/More drop to outline/icon-only so they read as
+            secondary without disappearing. Single flex-wrap row with everything
+            above — wraps naturally if it doesn't fit, no forced line break. */}
+          {autoRunPlayer.resumable ? (
+            <>
+              {/* Resume carries the same primary/gradient emphasis as Play (2026-08-02)
+                — it IS the "start/continue a run" commitment once a run exists. */}
+              <Button
+                type="button"
+                onClick={() => autoRunPlayer.start({ mode: autoRunPlayer.resumeMode })}
+                disabled={autoRunPlayer.running}
+                title="Resume the migration run from where you left off (it picks up at the first step you haven’t completed). Use Reset run to start over from the beginning."
+                className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-3 py-1.5 font-mono text-sim-chip font-bold text-background disabled:opacity-40"
+              >
+                ▶ Resume
+              </Button>
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setPlayModalOpen(true)}
                 disabled={autoRunPlayer.running}
-                title="Choose how to play the simulation — Executive Overview, Full Migration Journey, or a single phase, each with an optional deep-dive."
-                className="h-auto rounded-md border border-primary/50 bg-primary/15 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/25 disabled:opacity-40"
+                title="Start a different path instead of resuming"
+                className="h-auto rounded-md px-1.5 font-mono text-sim-micro text-background/60 hover:text-background hover:underline"
               >
-                ▶ PLAY
+                ↻ start a different path
               </Button>
-            )}
-            <SimAutoRunOverlay player={autoRunPlayer} />
-            <SimConceptPeek
-              concepts={conceptPeeks}
-              onDismiss={markConceptPeekSeen}
-              onLearnMore={(moduleId) =>
-                openStep({
-                  kind: 'learn',
-                  label: `Learn: ${moduleId}`,
-                  to: `/learn/${moduleId}`,
-                  moduleId,
-                })
-              }
-            />
-            <SimArtifactReveal type={autoRunPlayer.reveal} />
-            {autoRunPlayer.scenarioIntro && (
-              <SimScenarioIntroCard
-                scenario={autoRunPlayer.scenarioIntro}
-                onBegin={autoRunPlayer.beginScenario}
-              />
-            )}
-            {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
-              <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
-            )}
-            {autoRunPlayer.phaseIntro && (
-              <SimPhaseIntroModal
-                phase={autoRunPlayer.phaseIntro.phase}
-                onBegin={autoRunPlayer.beginPhase}
-              />
-            )}
-            {viewDoc && (
-              <ArtifactDrawer
-                document={viewDoc}
-                mode="view"
-                readOnly
-                onClose={() => setViewDoc(null)}
-                onModeChange={() => {}}
-              />
-            )}
+            </>
+          ) : (
             <Button
               type="button"
-              variant="ghost"
-              onClick={commitPlan}
-              title="Save this run as a draft roadmap in the Command Center"
-              className="h-auto rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-primary/20"
+              onClick={() => setPlayModalOpen(true)}
+              disabled={autoRunPlayer.running}
+              title="Choose how to play the simulation — Executive Overview, Full Migration Journey, or a single phase, each with an optional deep-dive."
+              className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-3 py-1.5 font-mono text-sim-chip font-bold text-background disabled:opacity-40"
             >
-              ▸ COMMIT PLAN
+              ▶ Play
             </Button>
-            <input
-              ref={importFileRef}
-              type="file"
-              accept="application/json,.json"
-              onChange={onImportFile}
-              className="hidden"
-              aria-hidden="true"
+          )}
+          <SimAutoRunOverlay player={autoRunPlayer} />
+          <SimConceptPeek
+            concepts={conceptPeeks}
+            onDismiss={markConceptPeekSeen}
+            onLearnMore={(moduleId) =>
+              openStep({
+                kind: 'learn',
+                label: `Learn: ${moduleId}`,
+                to: `/learn/${moduleId}`,
+                moduleId,
+              })
+            }
+          />
+          <SimArtifactReveal type={autoRunPlayer.reveal} />
+          {autoRunPlayer.scenarioIntro && (
+            <SimScenarioIntroCard
+              scenario={autoRunPlayer.scenarioIntro}
+              onBegin={autoRunPlayer.beginScenario}
             />
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                markSimExited()
-                navigate('/')
-              }}
-              title="Leave the simulation and return to the hub"
-              className="h-auto rounded-md border border-background/30 bg-background/10 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-background/20"
-            >
-              ← Exit to hub
-            </Button>
-            <RunActionsMenu
-              items={
-                [
-                  {
-                    key: 'terms',
-                    label: 'Terms & glossary',
-                    description: 'Plain-English sim vocabulary + the full PQC glossary.',
-                    onSelect: () => setTermsOpen(true),
-                  },
-                  {
-                    key: 'challenge',
-                    label: 'Challenge a colleague',
-                    description: 'Copy a link — same world, different choices.',
-                    onSelect: copyChallenge,
-                  },
-                  {
-                    key: 'export',
-                    label: 'Export',
-                    description: 'Download this run as a JSON save.',
-                    onSelect: exportRun,
-                  },
-                  {
-                    key: 'import',
-                    label: 'Import',
-                    description: 'Restore a run from a JSON save.',
-                    onSelect: () => importFileRef.current?.click(),
-                  },
-                  {
-                    key: 'reset',
-                    label: 'Reset run',
-                    description: 'Clear this run (your progress) — keeps your assessment.',
-                    onSelect: resetAll,
-                    tone: 'destructive',
-                  },
-                  {
-                    key: 'startover',
-                    label: 'Start over',
-                    description: 'Clear the run AND assessment — start from /assess again.',
-                    onSelect: startOver,
-                    tone: 'destructive',
-                  },
-                ] satisfies RunActionItem[]
-              }
+          )}
+          {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
+            <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          )}
+          {autoRunPlayer.phaseIntro && (
+            <SimPhaseIntroModal
+              phase={autoRunPlayer.phaseIntro.phase}
+              onBegin={autoRunPlayer.beginPhase}
             />
-            <span className="font-mono text-[11px] font-bold text-background/70">
-              TURN · Q{q} {year}
-            </span>
-            <Button
-              type="button"
-              onClick={endQuarter}
-              className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-4 py-2 text-[12px] font-extrabold text-background"
-            >
-              End Quarter →
-            </Button>
-          </div>
+          )}
+          {viewDoc && (
+            <ArtifactDrawer
+              document={viewDoc}
+              mode="view"
+              readOnly
+              onClose={() => setViewDoc(null)}
+              onModeChange={() => {}}
+            />
+          )}
+          {/* Demoted to a plain outline (2026-08-02, was tinted primary/10) — Commit
+              Plan is a real action but not one of the two primary commitments. */}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={commitPlan}
+            title="Save this run as a draft roadmap in the Command Center"
+            className="h-auto rounded-md border border-background/30 px-2.5 py-1.5 font-mono text-sim-chip font-bold text-background hover:bg-background/10"
+          >
+            Commit plan
+          </Button>
+          <input
+            ref={importFileRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={onImportFile}
+            className="hidden"
+            aria-hidden="true"
+          />
+          {/* Icon-only (2026-08-02, was "← Exit to hub") — secondary tier alongside
+              Commit Plan/More; full label survives in title + aria-label. */}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              markSimExited()
+              navigate('/')
+            }}
+            title="Exit to hub — leave the simulation and return to the hub"
+            aria-label="Exit to hub"
+            className="grid h-auto place-items-center rounded-md border border-background/30 px-2.5 py-1.5 text-background hover:bg-background/10"
+          >
+            ←
+          </Button>
+          <RunActionsMenu
+            items={
+              [
+                {
+                  key: 'terms',
+                  label: 'Terms & glossary',
+                  description: 'Plain-English sim vocabulary + the full PQC glossary.',
+                  onSelect: () => setTermsOpen(true),
+                },
+                {
+                  key: 'challenge',
+                  label: 'Challenge a colleague',
+                  description: 'Copy a link — same world, different choices.',
+                  onSelect: copyChallenge,
+                },
+                {
+                  key: 'export',
+                  label: 'Export',
+                  description: 'Download this run as a JSON save.',
+                  onSelect: exportRun,
+                },
+                {
+                  key: 'import',
+                  label: 'Import',
+                  description: 'Restore a run from a JSON save.',
+                  onSelect: () => importFileRef.current?.click(),
+                },
+                {
+                  key: 'reset',
+                  label: 'Reset run',
+                  description: 'Clear this run (your progress) — keeps your assessment.',
+                  onSelect: resetAll,
+                  tone: 'destructive',
+                },
+                {
+                  key: 'startover',
+                  label: 'Start over',
+                  description: 'Clear the run AND assessment — start from /assess again.',
+                  onSelect: startOver,
+                  tone: 'destructive',
+                },
+              ] satisfies RunActionItem[]
+            }
+          />
         </header>
 
         {/* Live-feed ticker dropped for now: it was a hand-maintained CSV
@@ -1940,44 +2029,6 @@ export function SimulationView() {
           quarterEngine's event draw) are left in place so it can be re-enabled
           and wired to the hub timeline (QC_FIRST_YEAR / regulatoryTimelines / …)
           when we invest in doing it properly. */}
-
-        {/* KPI ribbon — WP4.7 (Wave 4 ribbon slimming): scoreboard + clock + budget
-          only. HNDL/TNFL risk and readiness moved to the Expert rail's pinned
-          "Threat & readiness" panel below — they're real signals, but a novice
-          had no action to take on them here, just more numbers to chase. */}
-        <div className="flex shrink-0 flex-wrap items-stretch gap-3 border-b border-border bg-card px-4 py-3">
-          {!suppressWinUI && <TransformationStatusPanel status={txStatus} />}
-          <Stat
-            label="Governance floor (L2)"
-            value={`${scoreboard.milestone.cleared}/${scoreboard.milestone.total}`}
-            sub={
-              scoreboard.complete
-                ? 'Milestone — program complete ✓'
-                : 'Milestone — full win needs each phase at its own top band'
-            }
-            tone="text-success"
-          />
-          <Stat
-            label="Years to Q-Day"
-            value={`${clock.yearsToHorizon.toFixed(1)}y`}
-            sub={`Q-Day horizon ≈ ${horizonYear} · X+Y>Z`}
-            tone={clock.atRisk ? 'text-destructive' : 'text-foreground'}
-            className="min-w-[132px]"
-            def="mosca"
-            badge={
-              <PlanningBadge
-                label="planning"
-                tip={`The Q-Day horizon (Z ≈ ${horizonYear}) is one of the illustrative planning anchors — a modelled year the CRQC could arrive, not a published date. Re-check the live source.`}
-              />
-            }
-          />
-          <Stat
-            label="Budget secured"
-            value={`€${budgetSecured}M`}
-            sub={`of €${budgetTarget}M — P0 L${p0Level}`}
-            tone={budgetSecured > 0 ? 'text-success' : 'text-muted-foreground'}
-          />
-        </div>
 
         {/* body — swaps to the embedded Learn module / activity tool when one is open.
           The sim header above stays, AND a persistent "Simulation mode" bar sits on
@@ -2336,10 +2387,7 @@ export function SimulationView() {
                 </Button>
               </div>
             )}
-            <div
-              data-sim-board
-              className={`grid min-h-0 flex-1 gap-3.5 p-4 ${guided ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-[minmax(0,1fr)_332px]'}`}
-            >
+            <div data-sim-board className="grid min-h-0 flex-1 grid-cols-1 gap-3.5 p-4">
               {/* PR7 — board-main: left (team/journey) + center (active-phase ops)
             stay together as one unit so the rail reflows beside it (lg) or below
             it as a 2-up band (md), instead of being buried under the tall centre
@@ -2348,51 +2396,10 @@ export function SimulationView() {
                 data-board-main
                 className="grid min-h-0 grid-cols-1 gap-3.5 md:grid-cols-[300px_minmax(0,1fr)]"
               >
-                {/* left — team (who runs this phase) above the phase journey */}
+                {/* left — the phase journey ladder. The Team card that used to sit
+                above it (2026-08-02) moved into the Decide tab's compact role row —
+                phase-relevant. */}
                 <div className="flex min-h-0 flex-col gap-3.5 overflow-auto">
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <Eyebrow className="mb-2.5 block">Team — who runs this phase</Eyebrow>
-                    <div className="flex flex-col gap-2">
-                      {phaseRoles.length === 0 && (
-                        <p className="text-sm text-muted-foreground">
-                          No role mapped (overlay gap).
-                        </p>
-                      )}
-                      {phaseRoles.map((r) => {
-                        const you = r.persona === seat
-                        return (
-                          <div key={r.id} className="flex items-center gap-2.5">
-                            <span
-                              className={`grid h-[25px] w-[25px] shrink-0 place-items-center rounded-md text-[11px] font-extrabold ${
-                                you
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {r.label[0]}
-                            </span>
-                            <div className="min-w-0 flex-1">
-                              <div className="text-[11.5px] font-bold text-foreground">
-                                {r.label}
-                              </div>
-                              <div className="font-mono text-sim-micro text-muted-foreground">
-                                {r.typicalFte} FTE
-                              </div>
-                            </div>
-                            <span
-                              className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
-                                you
-                                  ? 'bg-primary/15 text-primary'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {you ? 'YOU' : 'AI'}
-                            </span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
                   <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-3">
                     <div className="mb-2 flex items-center justify-between">
                       <Eyebrow>Phase journey</Eyebrow>
@@ -2493,11 +2500,9 @@ export function SimulationView() {
                   </div>
                 </div>
 
-                {/* center — active phase ops */}
-                <div className="flex min-h-0 flex-col overflow-auto rounded-xl border border-border bg-card p-5">
-                  {/* PR-5: misconception telemetry — which Common Failures you fall for most,
-                linked to the lesson that fixes each. Collapsed by default. */}
-                  <TrapInsightsPanel />
+                {/* center — active phase ops. The phase's identity (badge · name ·
+                gate) stays above the tab strip; its four VIEWS live in the tabs. */}
+                <div className="flex min-h-0 flex-col rounded-xl border border-border bg-card p-5">
                   <div className="mb-1 flex flex-wrap items-center gap-2.5">
                     <span
                       className={`rounded-full px-2 py-0.5 font-mono text-sim-micro font-bold ${
@@ -2528,167 +2533,257 @@ export function SimulationView() {
                       </span>
                     )}
                   </div>
-                  <p className="mb-4 mt-1.5 text-sim-body leading-relaxed text-muted-foreground">
-                    {mission?.mission}{' '}
-                    <b className="text-foreground">
-                      {phaseOwned
-                        ? 'You own this phase.'
-                        : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
-                    </b>
-                  </p>
+                  {/* Turn + End Quarter (2026-08-02, moved out of the top header) —
+                  pinned here, above the tabs, so it's visible no matter which tab
+                  is open, right where you're looking once you've decided you're
+                  done with this phase. */}
+                  <div className="mb-2 flex shrink-0 items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-1.5">
+                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      Turn · Q{q} {year}
+                    </span>
+                    <Button
+                      type="button"
+                      onClick={endQuarter}
+                      className="h-auto rounded-md bg-gradient-to-r from-primary to-secondary px-4 py-1.5 text-[12px] font-extrabold text-background"
+                    >
+                      End Quarter →
+                    </Button>
+                  </div>
+                  <Tabs
+                    value={activePhaseTab}
+                    onValueChange={(v) => setActivePhaseTab(v as PhaseTab)}
+                    className="mt-2 flex min-h-0 flex-1 flex-col"
+                  >
+                    <TabsList className="shrink-0">
+                      <TabsTrigger value="decide">Decide</TabsTrigger>
+                      <TabsTrigger value="progress">Progress</TabsTrigger>
+                      <TabsTrigger value="resources">Resources</TabsTrigger>
+                      <TabsTrigger value="signals">Signals</TabsTrigger>
+                    </TabsList>
 
-                  {/* role delegation — phases outside the player's role: auto-complete or do it */}
-                  {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
-                    <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
-                      <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
-                        {phaseAutoActive ? (
-                          <>
-                            <b className="text-foreground">{phase.name}</b> is being run by your AI
-                            team.
-                          </>
-                        ) : (
-                          <>
-                            Not your role — your AI team can run{' '}
-                            <b className="text-foreground">{phase.name}</b>, or you can do it
-                            yourself.
-                          </>
-                        )}
-                      </span>
-                      {phaseAutoActive ? (
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => clearAuto(sel)}
-                          className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
-                        >
-                          ↺ I’ll do it
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          onClick={delegateToAI}
-                          disabled={!canAffordDelegation}
-                          title={
-                            canAffordDelegation
-                              ? undefined
-                              : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
-                          }
-                          className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          Auto-complete ▸ €{delegationCostM}M
-                        </Button>
+                    {/* ---- DECIDE — the one thing to act on right now ---- */}
+                    <TabsContent
+                      value="decide"
+                      className="flex min-h-0 flex-1 flex-col overflow-auto"
+                    >
+                      {/* Team — who runs this phase (2026-08-02: merged in from its own
+                      left-column card). Compact chip row; FTE detail dropped — a
+                      staffing-planning number, not something the mission line or the
+                      decision below needs. */}
+                      {phaseRoles.length === 0 && (
+                        <p className="mb-2 text-[11px] text-muted-foreground">
+                          No role mapped (overlay gap).
+                        </p>
                       )}
-                    </div>
-                  )}
+                      {phaseRoles.length > 0 && (
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          {phaseRoles.map((r) => {
+                            const you = r.persona === seat
+                            return (
+                              <span
+                                key={r.id}
+                                // FTE is the one datum the Team-card merge dropped from
+                                // view; kept here on hover (2026-08-02 gap analysis) so
+                                // the staffing figure isn't lost outright.
+                                title={`${r.label} — ${r.typicalFte} FTE · ${you ? 'your seat' : 'run by your AI team'}`}
+                                className="flex items-center gap-1.5 rounded-full border border-border bg-muted/40 py-0.5 pl-0.5 pr-2"
+                              >
+                                <span
+                                  className={`grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-extrabold ${
+                                    you
+                                      ? 'bg-primary text-primary-foreground'
+                                      : 'bg-muted text-muted-foreground'
+                                  }`}
+                                >
+                                  {r.label[0]}
+                                </span>
+                                <span className="text-[11px] font-semibold text-foreground">
+                                  {r.label}
+                                </span>
+                                <span
+                                  className={`font-mono text-sim-chip font-bold ${you ? 'text-primary' : 'text-muted-foreground'}`}
+                                >
+                                  {you ? 'YOU' : 'AI'}
+                                </span>
+                              </span>
+                            )
+                          })}
+                        </div>
+                      )}
+                      <p className="mb-4 mt-1.5 text-sim-body leading-relaxed text-muted-foreground">
+                        {mission?.mission}{' '}
+                        <b className="text-foreground">
+                          {phaseOwned
+                            ? 'You own this phase.'
+                            : `Run by your AI team${phaseRoles[0] ? ` (${phaseRoles[0].label})` : ''}.`}
+                        </b>
+                      </p>
 
-                  <DecisionSection
-                    phaseId={sel}
-                    ctx={moveCtx}
-                    nextMove={nextMove}
-                    level={level}
-                    stepsDone={stepsDone}
-                    stepsTotal={stepsTotal}
-                    gate={phaseTree?.gate}
-                    pitfalls={phaseTree?.pitfalls ?? []}
-                    onVisitRef={markRefVisited}
-                    canEmbed={canEmbedStep}
-                    onOpenStep={openStep}
-                    assessRec={nextMoveRec}
-                    onTrapPicked={incrementTrapsThisRun}
-                    guided={guided}
-                    wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
-                    onWrongPick={(label) => {
-                      // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
-                      // Inventory (p1) / Pilots (p5), where the I1 pilot found the
-                      // sharpest real-world cost (re-discovery, re-piloting).
-                      const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
-                      // On Pilots (p5) a wrong call also rolls back a migrated estate link,
-                      // so readiness visibly drops on a specific edge (re-doable).
-                      const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
-                      const extra = revertId ? ` — rolled back link ${revertId}` : ''
-                      applyDecisionSetback(
-                        quarters,
-                        `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
-                        revertId
-                      )
-                    }}
-                  />
+                      {/* role delegation — phases outside the player's role: auto-complete or do it */}
+                      {!phaseOwned && (phaseAutoActive || stepsDone < stepsTotal) && (
+                        <div className="mb-3 flex items-center gap-2 rounded-lg border border-secondary/40 bg-secondary/5 px-3 py-2">
+                          <span className="min-w-0 flex-1 text-[11px] leading-tight text-muted-foreground">
+                            {phaseAutoActive ? (
+                              <>
+                                <b className="text-foreground">{phase.name}</b> is being run by your
+                                AI team.
+                              </>
+                            ) : (
+                              <>
+                                Not your role — your AI team can run{' '}
+                                <b className="text-foreground">{phase.name}</b>, or you can do it
+                                yourself.
+                              </>
+                            )}
+                          </span>
+                          {phaseAutoActive ? (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              onClick={() => clearAuto(sel)}
+                              className="h-auto shrink-0 rounded-md border border-border px-2.5 py-1 text-[10.5px] font-bold text-foreground hover:bg-muted"
+                            >
+                              ↺ I’ll do it
+                            </Button>
+                          ) : (
+                            <Button
+                              type="button"
+                              onClick={delegateToAI}
+                              disabled={!canAffordDelegation}
+                              title={
+                                canAffordDelegation
+                                  ? undefined
+                                  : `Needs €${delegationCostM}M — only €${availableBudgetM}M available. Do it yourself, or free up budget first.`
+                              }
+                              className="h-auto shrink-0 rounded-md bg-secondary px-2.5 py-1 text-[10.5px] font-bold text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Auto-complete ▸ €{delegationCostM}M
+                            </Button>
+                          )}
+                        </div>
+                      )}
 
-                  {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
+                      <DecisionSection
+                        phaseId={sel}
+                        ctx={moveCtx}
+                        nextMove={nextMove}
+                        level={level}
+                        stepsDone={stepsDone}
+                        stepsTotal={stepsTotal}
+                        gate={phaseTree?.gate}
+                        pitfalls={phaseTree?.pitfalls ?? []}
+                        onVisitRef={markRefVisited}
+                        canEmbed={canEmbedStep}
+                        onOpenStep={openStep}
+                        assessRec={nextMoveRec}
+                        onTrapPicked={incrementTrapsThisRun}
+                        allowRetry={balance.decisions.freeRetryOnWrongPick}
+                        wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
+                        onWrongPick={(label) => {
+                          // WP4.4 — uniform stakes: 1 quarter of rework everywhere, 2 on
+                          // Inventory (p1) / Pilots (p5), where the I1 pilot found the
+                          // sharpest real-world cost (re-discovery, re-piloting).
+                          const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
+                          // On Pilots (p5) a wrong call also rolls back a migrated estate link,
+                          // so readiness visibly drops on a specific edge (re-doable).
+                          const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+                          const extra = revertId ? ` — rolled back link ${revertId}` : ''
+                          applyDecisionSetback(
+                            quarters,
+                            `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
+                            revertId
+                          )
+                        }}
+                      />
+
+                      {/* PR-5: misconception telemetry — which Common Failures you fall for
+                  most, linked to the lesson that fixes each. Its own collapsed
+                  accordion, sitting under the decision it explains. */}
+                      <TrapInsightsPanel />
+
+                      {/* C1 #3 + W2c — phase debrief: study what the run skipped. Opens each
                 module embedded in the sim (no navigate-away). Shows for a cleared
                 phase OR a delegated one, with honest framing for the AI-run case. */}
-                  {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
-                    <div
-                      className={`mb-4 rounded-lg border p-3 ${
-                        phaseAutoActive
-                          ? 'border-warning/30 bg-warning/5'
-                          : 'border-success/30 bg-success/5'
-                      }`}
-                    >
-                      {phaseAutoActive ? (
-                        <Eyebrow className="text-warning">
-                          ⚠ Run by your AI team — study to verify
-                        </Eyebrow>
-                      ) : (
-                        <Eyebrow className="text-success">
-                          ✓ Phase cleared — recommended study
-                        </Eyebrow>
-                      )}
-                      <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
-                        {phaseAutoActive
-                          ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
-                          : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {recommendedStudy.map((s) => (
-                          <Button
-                            key={s.moduleId}
-                            type="button"
-                            variant="ghost"
-                            onClick={() => openStep(s)}
-                            className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
-                          >
-                            {s.label}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* maturity gates — read-only; each level is earned only by passing its
-              gate (completing that level's activities from real hub state) */}
-                  {phaseTree && (
-                    <>
-                      <div className="mb-2 flex items-center justify-between">
-                        <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
-                        <span
-                          className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
+                      {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
+                        <div
+                          className={`mb-4 rounded-lg border p-3 ${
+                            phaseAutoActive
+                              ? 'border-warning/30 bg-warning/5'
+                              : 'border-success/30 bg-success/5'
+                          }`}
                         >
-                          {phaseCleared
-                            ? '✓ phase cleared'
-                            : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
-                        </span>
-                      </div>
-                      {/* DERIVED program maturity — read-only, rises as phases are
+                          {phaseAutoActive ? (
+                            <Eyebrow className="text-warning">
+                              ⚠ Run by your AI team — study to verify
+                            </Eyebrow>
+                          ) : (
+                            <Eyebrow className="text-success">
+                              ✓ Phase cleared — recommended study
+                            </Eyebrow>
+                          )}
+                          <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
+                            {phaseAutoActive
+                              ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
+                              : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {recommendedStudy.map((s) => (
+                              <Button
+                                key={s.moduleId}
+                                type="button"
+                                variant="ghost"
+                                onClick={() => openStep(s)}
+                                className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
+                              >
+                                {s.label}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    {/* ---- PROGRESS — what this phase demands, and how far you've got ---- */}
+                    <TabsContent
+                      value="progress"
+                      className="flex min-h-0 flex-1 flex-col overflow-auto"
+                    >
+                      {/* maturity gates — read-only; each level is earned only by passing its
+              gate (completing that level's activities from real hub state) */}
+                      {phaseTree && (
+                        <>
+                          <div className="mb-2 flex items-center justify-between">
+                            <Eyebrow>Maturity gates — pass each to advance</Eyebrow>
+                            <span
+                              className={`text-[11px] font-bold ${phaseCleared ? 'text-success' : 'text-muted-foreground'}`}
+                            >
+                              {phaseCleared
+                                ? '✓ phase cleared'
+                                : `at L${level} · ${MATURITY_LEVEL_NAMES[level]}`}
+                            </span>
+                          </div>
+                          {/* DERIVED program maturity — read-only, rises as phases are
                     completed. Aware (L1) from your assessment; L2–5 earned in-sim;
                     overall = your weakest area. */}
-                      <p className="mb-2 text-sim-micro text-muted-foreground">
-                        <span className="font-bold text-foreground">
-                          Program maturity: L{maturity.overall} ·{' '}
-                          {MATURITY_LEVELS[maturity.overall].name}
-                        </span>
-                        {maturity.overall < 5 && maturity.gating.length > 0 && (
-                          <>
-                            {' '}
-                            — weakest:{' '}
-                            {maturity.gating
-                              .map((id) => MATURITY_DOMAINS.find((d) => d.id === id)?.name ?? id)
-                              .join(' · ')}
-                          </>
-                        )}{' '}
-                        <span className="italic">(rises as you complete phases)</span>
-                      </p>
-                      {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (the first
+                          <p className="mb-2 text-sim-micro text-muted-foreground">
+                            <span className="font-bold text-foreground">
+                              Program maturity: L{maturity.overall} ·{' '}
+                              {MATURITY_LEVELS[maturity.overall].name}
+                            </span>
+                            {maturity.overall < 5 && maturity.gating.length > 0 && (
+                              <>
+                                {' '}
+                                — weakest:{' '}
+                                {maturity.gating
+                                  .map(
+                                    (id) => MATURITY_DOMAINS.find((d) => d.id === id)?.name ?? id
+                                  )
+                                  .join(' · ')}
+                              </>
+                            )}{' '}
+                            <span className="italic">(rises as you complete phases)</span>
+                          </p>
+                          {/* ANY-ORDER WITHIN THE ACTIVE LEVEL: the in-progress band (the first
                     not-yet-earned band, in ascending order) expands its steps as
                     individually-openable controls — the player can open/complete ALL of
                     them in ANY ORDER, not forced through a single sequential step.
@@ -2703,1010 +2798,1037 @@ export function SimulationView() {
                     first not-yet-earned band BY POSITION instead of by raw level-number
                     arithmetic fixes P6 and is a no-op for every other phase, whose bands
                     already run 1,2,3[,4] with no gaps. */}
-                      <div className="mb-4 flex flex-col gap-1.5">
-                        {(() => {
-                          const firstUnearnedIdx = phaseTree.levels.findIndex(
-                            (b) => level < b.level
-                          )
-                          return phaseTree.levels.map((band, bandIdx) => {
-                            // Required (gating) steps only — bonus scenario labs don't count
-                            // toward the band's "checks" tally (they never gate the level).
-                            const total = band.activities.reduce(
-                              (n, a) => n + a.steps.filter(isGatingStep).length,
-                              0
-                            )
-                            const done = band.activities.reduce(
-                              (n, a) =>
-                                n +
-                                a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel)).length,
-                              0
-                            )
-                            const earned = level >= band.level
-                            const current = bandIdx === firstUnearnedIdx // the gate in progress
-                            const locked = !earned && !current
-                            const goal = band.level === PHASE_WIN_LEVEL
-                            // the active band's leaf steps — openable in any order
-                            const bandSteps = current ? band.activities.flatMap((a) => a.steps) : []
-                            // optional, non-gating extra practice/reading for the active band
-                            // (never affects `total`/`done`/`earned` above — those only read
-                            // `a.steps`, exactly like the bonus `scenario` steps already do).
-                            const bandDeepDive = current
-                              ? band.activities.flatMap((a) => a.deepDive ?? [])
-                              : []
+                          <div className="mb-4 flex flex-col gap-1.5">
+                            {(() => {
+                              const firstUnearnedIdx = phaseTree.levels.findIndex(
+                                (b) => level < b.level
+                              )
+                              return phaseTree.levels.map((band, bandIdx) => {
+                                // Required (gating) steps only — bonus scenario labs don't count
+                                // toward the band's "checks" tally (they never gate the level).
+                                const total = band.activities.reduce(
+                                  (n, a) => n + a.steps.filter(isGatingStep).length,
+                                  0
+                                )
+                                const done = band.activities.reduce(
+                                  (n, a) =>
+                                    n +
+                                    a.steps.filter((s) => isGatingStep(s) && stepDone(s, sel))
+                                      .length,
+                                  0
+                                )
+                                const earned = level >= band.level
+                                const current = bandIdx === firstUnearnedIdx // the gate in progress
+                                const locked = !earned && !current
+                                const goal = band.level === PHASE_WIN_LEVEL
+                                // the active band's leaf steps — openable in any order
+                                const bandSteps = current
+                                  ? band.activities.flatMap((a) => a.steps)
+                                  : []
+                                // optional, non-gating extra practice/reading for the active band
+                                // (never affects `total`/`done`/`earned` above — those only read
+                                // `a.steps`, exactly like the bonus `scenario` steps already do).
+                                const bandDeepDive = current
+                                  ? band.activities.flatMap((a) => a.deepDive ?? [])
+                                  : []
+                                return (
+                                  <div key={band.level}>
+                                    <div
+                                      className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+                                        goal
+                                          ? 'border-warning'
+                                          : earned
+                                            ? 'border-success'
+                                            : 'border-border'
+                                      } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
+                                    >
+                                      <span
+                                        className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
+                                          earned
+                                            ? 'bg-success text-success-foreground'
+                                            : 'bg-card text-muted-foreground'
+                                        }`}
+                                      >
+                                        {earned ? '✓' : locked ? '🔒' : band.level}
+                                      </span>
+                                      <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
+                                        L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
+                                      </span>
+                                      <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
+                                        {band.indicator}
+                                      </span>
+                                      <span
+                                        className={`shrink-0 font-mono text-sim-micro font-bold ${
+                                          earned
+                                            ? 'text-success'
+                                            : current
+                                              ? 'text-primary'
+                                              : 'text-muted-foreground'
+                                        }`}
+                                      >
+                                        {earned ? 'passed ✓' : `${done}/${total} checks`}
+                                      </span>
+                                      {goal && (
+                                        <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
+                                          GOAL
+                                        </span>
+                                      )}
+                                    </div>
+                                    {/* active band → open any of its steps, in any order */}
+                                    {current && bandSteps.length > 0 && (
+                                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
+                                        <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
+                                          Do these in any order to pass L{band.level}
+                                        </span>
+                                        {bandSteps.map((step, i) => {
+                                          const sDone = stepDone(step, sel)
+                                          const embeddable = canEmbedStep(step)
+                                          const navigable = canResolveDeepLink(step.to)
+                                          const chip = (
+                                            <span
+                                              className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
+                                            >
+                                              {step.kind}
+                                            </span>
+                                          )
+                                          const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
+                                            sDone
+                                              ? 'border-success/40 bg-success/5'
+                                              : 'border-border bg-card hover:bg-muted/60'
+                                          }`
+                                          // completed → static ✓ row
+                                          if (sDone)
+                                            return (
+                                              <div key={`${step.to}-${i}`} className={cls}>
+                                                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                                  ✓
+                                                </span>
+                                                {chip}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-success">
+                                                  done
+                                                </span>
+                                              </div>
+                                            )
+                                          // scenario lab needs a running sandbox — when none is
+                                          // reachable show it LOCKED (bonus, non-gating) instead
+                                          // of opening a broken/unreachable panel.
+                                          if (isScenarioStep(step) && sandboxAvail !== 'available')
+                                            return (
+                                              <div
+                                                key={`${step.to}-${i}`}
+                                                aria-disabled="true"
+                                                title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
+                                                className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
+                                              >
+                                                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
+                                                  🔒
+                                                </span>
+                                                {chip}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                                  {sandboxAvail === 'checking'
+                                                    ? 'checking sandbox…'
+                                                    : 'bonus · start sandbox'}
+                                                </span>
+                                              </div>
+                                            )
+                                          // open IN the sim (embed) when possible
+                                          if (embeddable)
+                                            return (
+                                              <Button
+                                                key={`${step.to}-${i}`}
+                                                type="button"
+                                                variant="ghost"
+                                                onClick={() => openStep(step)}
+                                                className={`h-auto justify-start whitespace-normal ${cls}`}
+                                              >
+                                                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                  ✓
+                                                </span>
+                                                {chip}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                                  open here →
+                                                </span>
+                                              </Button>
+                                            )
+                                          // else navigate to the real hub resource (reference)
+                                          if (navigable)
+                                            return (
+                                              <Link
+                                                key={`${step.to}-${i}`}
+                                                to={step.to}
+                                                onClick={() => {
+                                                  markSimResume()
+                                                  if (step.kind === 'reference' && step.refId)
+                                                    markRefVisited(step.refId)
+                                                }}
+                                                className={cls}
+                                              >
+                                                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                  ✓
+                                                </span>
+                                                {chip}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-primary">
+                                                  open →
+                                                </span>
+                                              </Link>
+                                            )
+                                          // WS-06: target no longer resolves — never a dead link
+                                          return (
+                                            <div
+                                              key={`${step.to}-${i}`}
+                                              aria-disabled="true"
+                                              title="This resource has moved — it'll return when the link is updated."
+                                              className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
+                                            >
+                                              {chip}
+                                              <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                {step.label}
+                                              </span>
+                                              <span className="shrink-0 font-mono text-sim-micro text-warning">
+                                                resource moved
+                                              </span>
+                                            </div>
+                                          )
+                                        })}
+                                      </div>
+                                    )}
+                                    {/* Deep dive — optional, non-gating extra practice/reading for
+                                  the active band. Never counted in `total`/`done` above. Boxed
+                                  (not just indented) and badged per-row so it reads as a distinct
+                                  zone even mid-scroll, not a continuation of the required list. */}
+                                    {current && bandDeepDive.length > 0 && (
+                                      <div className="ml-3 mt-2 flex flex-col gap-1.5 rounded-lg border border-dashed border-primary/30 bg-primary/[0.03] p-2.5">
+                                        <span className="flex items-center gap-1.5 font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary/70">
+                                          <span aria-hidden="true">✦</span> Deep dive — optional,
+                                          doesn&rsquo;t affect your level
+                                        </span>
+                                        {bandDeepDive.map((step, i) => {
+                                          const sDone = stepDone(step, sel)
+                                          const embeddable = canEmbedStep(step)
+                                          const navigable = canResolveDeepLink(step.to)
+                                          const chip = (
+                                            <span
+                                              className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase opacity-70 ${KIND_CHIP[step.kind]}`}
+                                            >
+                                              {step.kind}
+                                            </span>
+                                          )
+                                          const optionalBadge = (
+                                            <span className="shrink-0 rounded-full border border-dashed border-primary/40 px-1.5 py-0.5 font-mono text-sim-chip font-bold uppercase tracking-wide text-primary/60">
+                                              optional
+                                            </span>
+                                          )
+                                          const cls = `flex w-full items-center gap-2 rounded-md border border-dashed px-2.5 py-1.5 ${
+                                            sDone
+                                              ? 'border-success/40 bg-success/5'
+                                              : 'border-border/60 bg-card/60 hover:bg-muted/60'
+                                          }`
+                                          if (embeddable)
+                                            return (
+                                              <Button
+                                                key={`${step.to}-${i}`}
+                                                type="button"
+                                                variant="ghost"
+                                                onClick={() => openStep(step)}
+                                                className={`h-auto justify-start whitespace-normal ${cls}`}
+                                              >
+                                                {sDone ? (
+                                                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                                    ✓
+                                                  </span>
+                                                ) : (
+                                                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                    ✓
+                                                  </span>
+                                                )}
+                                                {chip}
+                                                {optionalBadge}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-primary/70">
+                                                  {sDone ? 'done' : 'open here →'}
+                                                </span>
+                                              </Button>
+                                            )
+                                          if (navigable)
+                                            return (
+                                              <Link
+                                                key={`${step.to}-${i}`}
+                                                to={step.to}
+                                                onClick={() => {
+                                                  markSimResume()
+                                                  if (step.kind === 'reference' && step.refId)
+                                                    markRefVisited(step.refId)
+                                                }}
+                                                className={cls}
+                                              >
+                                                {sDone ? (
+                                                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
+                                                    ✓
+                                                  </span>
+                                                ) : (
+                                                  <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
+                                                    ✓
+                                                  </span>
+                                                )}
+                                                {chip}
+                                                {optionalBadge}
+                                                <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                  {step.label}
+                                                </span>
+                                                <span className="shrink-0 font-mono text-sim-micro text-primary/70">
+                                                  {sDone ? 'done' : 'open →'}
+                                                </span>
+                                              </Link>
+                                            )
+                                          // WS-06: target no longer resolves — never a dead link
+                                          return (
+                                            <div
+                                              key={`${step.to}-${i}`}
+                                              aria-disabled="true"
+                                              title="This resource has moved — it'll return when the link is updated."
+                                              className="flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60"
+                                            >
+                                              {chip}
+                                              {optionalBadge}
+                                              <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
+                                                {step.label}
+                                              </span>
+                                              <span className="shrink-0 font-mono text-sim-micro text-warning">
+                                                resource moved
+                                              </span>
+                                            </div>
+                                          )
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })
+                            })()}
+                          </div>
+
+                          {/* Sector track — optional non-gating learn steps for the
+                          player's specific industry. Completed via the learn module's
+                          own progress (isModuleComplete), same as tree learn steps. */}
+                          {sectorStepsForPhase(sector, sel).map((ss) => {
+                            const ssDone = moduleDone(ss.moduleId)
+                            const ssStep: TreeStep = {
+                              kind: 'learn',
+                              label: ss.label,
+                              to: ss.to,
+                              moduleId: ss.moduleId,
+                            }
                             return (
-                              <div key={band.level}>
+                              <Button
+                                key={ss.moduleId}
+                                variant="ghost"
+                                onClick={() => canEmbedStep(ssStep) && openStep(ssStep)}
+                                className="mt-1 flex h-auto w-full items-center gap-2.5 rounded-lg border border-dashed border-primary/30 bg-primary/5 px-3 py-2 text-left hover:bg-primary/10"
+                              >
+                                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-primary/60">
+                                  For your sector
+                                </span>
+                                <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
+                                  {ss.label}
+                                </span>
+                                {ssDone && (
+                                  <span className="shrink-0 text-success" aria-label="completed">
+                                    ✓
+                                  </span>
+                                )}
+                              </Button>
+                            )
+                          })}
+                        </>
+                      )}
+
+                      {/* Artifacts this phase produces — completed vs still to generate.
+                      Relocated here from the Expert rail (2026-08-02): it is
+                      phase-scoped, interactive, and reports how much of THIS phase
+                      you have produced — progress, not a signal. */}
+                      <div className="mt-3.5 rounded-xl border border-border bg-card p-4">
+                        <Eyebrow className="mb-2.5 block">
+                          {phase.name} artifacts{' '}
+                          <span className="text-muted-foreground">
+                            · {phaseDocs.length}/{phaseArtifactTypes.size}
+                          </span>
+                        </Eyebrow>
+                        {/* import a completed assessment as the P0 scoping artifact (Assess→Sim, data only) */}
+                        {assessSnap &&
+                          phaseArtifactTypes.has('initial-scoping') &&
+                          !docTypes.has('initial-scoping') && (
+                            <div className="mb-2">
+                              <Button
+                                type="button"
+                                onClick={importAssessReport}
+                                className="h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
+                              >
+                                ▸ Import assessment as scoping artifact
+                              </Button>
+                              <p className="mt-1 px-0.5 text-sim-micro leading-snug text-muted-foreground">
+                                Also sets the org dials (industry · size · country) from your
+                                assessment — you can still change them.
+                              </p>
+                            </div>
+                          )}
+                        {phaseArtifactTypes.size === 0 ? (
+                          <p className="text-[11px] text-muted-foreground">
+                            This phase produces no Command-Center artifact — progress comes from
+                            Learn modules and reference look-ups.
+                          </p>
+                        ) : (
+                          <div className="flex flex-col gap-1.5">
+                            {phaseArtifacts.map((a) => {
+                              const made = phaseDocs.find((d) => d.type === a.type)
+                              return (
                                 <div
-                                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-                                    goal
-                                      ? 'border-warning'
-                                      : earned
-                                        ? 'border-success'
-                                        : 'border-border'
-                                  } ${earned ? 'bg-success/10' : 'bg-muted'} ${locked ? 'opacity-50' : ''}`}
+                                  key={a.type}
+                                  role={made ? 'button' : undefined}
+                                  tabIndex={made ? 0 : undefined}
+                                  onClick={made ? () => setViewDoc(made) : undefined}
+                                  onKeyDown={
+                                    made
+                                      ? (e) => {
+                                          if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault()
+                                            setViewDoc(made)
+                                          }
+                                        }
+                                      : undefined
+                                  }
+                                  title={made ? 'View this artifact (read-only)' : undefined}
+                                  className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                                    made
+                                      ? 'cursor-pointer border-success/40 bg-success/5 hover:bg-success/10'
+                                      : 'border-dashed border-border bg-muted/40'
+                                  }`}
                                 >
                                   <span
-                                    className={`grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md font-mono text-sim-micro font-extrabold ${
-                                      earned
+                                    className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
+                                      made
                                         ? 'bg-success text-success-foreground'
                                         : 'bg-card text-muted-foreground'
                                     }`}
                                   >
-                                    {earned ? '✓' : locked ? '🔒' : band.level}
+                                    {made ? '✓' : '○'}
                                   </span>
-                                  <span className="w-[88px] shrink-0 text-[11.5px] font-bold text-foreground">
-                                    L{band.level} · {MATURITY_LEVEL_NAMES[band.level]}
+                                  <span className="min-w-0 flex-1">
+                                    <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                                      {made ? made.title : a.label}
+                                    </span>
+                                    <span className="block font-mono text-sim-micro text-muted-foreground">
+                                      {made ? a.type : 'not generated yet'}
+                                    </span>
                                   </span>
-                                  <span className="flex-1 text-sim-body leading-tight text-muted-foreground">
-                                    {band.indicator}
-                                  </span>
-                                  <span
-                                    className={`shrink-0 font-mono text-sim-micro font-bold ${
-                                      earned
-                                        ? 'text-success'
-                                        : current
-                                          ? 'text-primary'
-                                          : 'text-muted-foreground'
-                                    }`}
-                                  >
-                                    {earned ? 'passed ✓' : `${done}/${total} checks`}
-                                  </span>
-                                  {goal && (
-                                    <span className="shrink-0 rounded-full bg-warning/15 px-2 py-0.5 font-mono text-sim-chip font-bold text-warning">
-                                      GOAL
+                                  {made && (
+                                    <span className="shrink-0 font-mono text-sim-micro font-bold text-success">
+                                      view →
                                     </span>
                                   )}
                                 </div>
-                                {/* active band → open any of its steps, in any order */}
-                                {current && bandSteps.length > 0 && (
-                                  <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-primary/30 pl-3">
-                                    <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary">
-                                      Do these in any order to pass L{band.level}
-                                    </span>
-                                    {bandSteps.map((step, i) => {
-                                      const sDone = stepDone(step, sel)
-                                      const embeddable = canEmbedStep(step)
-                                      const navigable = canResolveDeepLink(step.to)
-                                      const chip = (
-                                        <span
-                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${KIND_CHIP[step.kind]}`}
-                                        >
-                                          {step.kind}
-                                        </span>
-                                      )
-                                      const cls = `flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 ${
-                                        sDone
-                                          ? 'border-success/40 bg-success/5'
-                                          : 'border-border bg-card hover:bg-muted/60'
-                                      }`
-                                      // completed → static ✓ row
-                                      if (sDone)
-                                        return (
-                                          <div key={`${step.to}-${i}`} className={cls}>
-                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
-                                              ✓
-                                            </span>
-                                            {chip}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-success">
-                                              done
-                                            </span>
-                                          </div>
-                                        )
-                                      // scenario lab needs a running sandbox — when none is
-                                      // reachable show it LOCKED (bonus, non-gating) instead
-                                      // of opening a broken/unreachable panel.
-                                      if (isScenarioStep(step) && sandboxAvail !== 'available')
-                                        return (
-                                          <div
-                                            key={`${step.to}-${i}`}
-                                            aria-disabled="true"
-                                            title="Hands-on lab — start a sandbox to run it. Optional: it never blocks your maturity level."
-                                            className="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1.5 opacity-60"
-                                          >
-                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-muted-foreground">
-                                              🔒
-                                            </span>
-                                            {chip}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                                              {sandboxAvail === 'checking'
-                                                ? 'checking sandbox…'
-                                                : 'bonus · start sandbox'}
-                                            </span>
-                                          </div>
-                                        )
-                                      // open IN the sim (embed) when possible
-                                      if (embeddable)
-                                        return (
-                                          <Button
-                                            key={`${step.to}-${i}`}
-                                            type="button"
-                                            variant="ghost"
-                                            onClick={() => openStep(step)}
-                                            className={`h-auto justify-start whitespace-normal ${cls}`}
-                                          >
-                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                              ✓
-                                            </span>
-                                            {chip}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                              open here →
-                                            </span>
-                                          </Button>
-                                        )
-                                      // else navigate to the real hub resource (reference)
-                                      if (navigable)
-                                        return (
-                                          <Link
-                                            key={`${step.to}-${i}`}
-                                            to={step.to}
-                                            onClick={() => {
-                                              markSimResume()
-                                              if (step.kind === 'reference' && step.refId)
-                                                markRefVisited(step.refId)
-                                            }}
-                                            className={cls}
-                                          >
-                                            <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                              ✓
-                                            </span>
-                                            {chip}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-primary">
-                                              open →
-                                            </span>
-                                          </Link>
-                                        )
-                                      // WS-06: target no longer resolves — never a dead link
-                                      return (
-                                        <div
-                                          key={`${step.to}-${i}`}
-                                          aria-disabled="true"
-                                          title="This resource has moved — it'll return when the link is updated."
-                                          className={`flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60`}
-                                        >
-                                          {chip}
-                                          <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                            {step.label}
-                                          </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-warning">
-                                            resource moved
-                                          </span>
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                )}
-                                {/* Deep dive — optional, non-gating extra practice/reading for
-                                  the active band. Never counted in `total`/`done` above. Boxed
-                                  (not just indented) and badged per-row so it reads as a distinct
-                                  zone even mid-scroll, not a continuation of the required list. */}
-                                {current && bandDeepDive.length > 0 && (
-                                  <div className="ml-3 mt-2 flex flex-col gap-1.5 rounded-lg border border-dashed border-primary/30 bg-primary/[0.03] p-2.5">
-                                    <span className="flex items-center gap-1.5 font-mono text-sim-micro font-bold uppercase tracking-[0.12em] text-primary/70">
-                                      <span aria-hidden="true">✦</span> Deep dive — optional,
-                                      doesn&rsquo;t affect your level
-                                    </span>
-                                    {bandDeepDive.map((step, i) => {
-                                      const sDone = stepDone(step, sel)
-                                      const embeddable = canEmbedStep(step)
-                                      const navigable = canResolveDeepLink(step.to)
-                                      const chip = (
-                                        <span
-                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase opacity-70 ${KIND_CHIP[step.kind]}`}
-                                        >
-                                          {step.kind}
-                                        </span>
-                                      )
-                                      const optionalBadge = (
-                                        <span className="shrink-0 rounded-full border border-dashed border-primary/40 px-1.5 py-0.5 font-mono text-sim-chip font-bold uppercase tracking-wide text-primary/60">
-                                          optional
-                                        </span>
-                                      )
-                                      const cls = `flex w-full items-center gap-2 rounded-md border border-dashed px-2.5 py-1.5 ${
-                                        sDone
-                                          ? 'border-success/40 bg-success/5'
-                                          : 'border-border/60 bg-card/60 hover:bg-muted/60'
-                                      }`
-                                      if (embeddable)
-                                        return (
-                                          <Button
-                                            key={`${step.to}-${i}`}
-                                            type="button"
-                                            variant="ghost"
-                                            onClick={() => openStep(step)}
-                                            className={`h-auto justify-start whitespace-normal ${cls}`}
-                                          >
-                                            {sDone ? (
-                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
-                                                ✓
-                                              </span>
-                                            ) : (
-                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                                ✓
-                                              </span>
-                                            )}
-                                            {chip}
-                                            {optionalBadge}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-primary/70">
-                                              {sDone ? 'done' : 'open here →'}
-                                            </span>
-                                          </Button>
-                                        )
-                                      if (navigable)
-                                        return (
-                                          <Link
-                                            key={`${step.to}-${i}`}
-                                            to={step.to}
-                                            onClick={() => {
-                                              markSimResume()
-                                              if (step.kind === 'reference' && step.refId)
-                                                markRefVisited(step.refId)
-                                            }}
-                                            className={cls}
-                                          >
-                                            {sDone ? (
-                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-success text-sim-chip font-bold text-success-foreground">
-                                                ✓
-                                              </span>
-                                            ) : (
-                                              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full border border-border text-transparent">
-                                                ✓
-                                              </span>
-                                            )}
-                                            {chip}
-                                            {optionalBadge}
-                                            <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                              {step.label}
-                                            </span>
-                                            <span className="shrink-0 font-mono text-sim-micro text-primary/70">
-                                              {sDone ? 'done' : 'open →'}
-                                            </span>
-                                          </Link>
-                                        )
-                                      // WS-06: target no longer resolves — never a dead link
-                                      return (
-                                        <div
-                                          key={`${step.to}-${i}`}
-                                          aria-disabled="true"
-                                          title="This resource has moved — it'll return when the link is updated."
-                                          className="flex w-full items-center gap-2 rounded-md border border-warning/40 bg-warning/5 px-2.5 py-1.5 opacity-60"
-                                        >
-                                          {chip}
-                                          {optionalBadge}
-                                          <span className="min-w-0 flex-1 truncate text-left text-[11.5px] font-semibold text-foreground">
-                                            {step.label}
-                                          </span>
-                                          <span className="shrink-0 font-mono text-sim-micro text-warning">
-                                            resource moved
-                                          </span>
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                )}
-                              </div>
-                            )
-                          })
-                        })()}
-                      </div>
-
-                      {/* Sector track — optional non-gating learn steps for the
-                          player's specific industry. Completed via the learn module's
-                          own progress (isModuleComplete), same as tree learn steps. */}
-                      {sectorStepsForPhase(sector, sel).map((ss) => {
-                        const ssDone = moduleDone(ss.moduleId)
-                        const ssStep: TreeStep = {
-                          kind: 'learn',
-                          label: ss.label,
-                          to: ss.to,
-                          moduleId: ss.moduleId,
-                        }
-                        return (
-                          <Button
-                            key={ss.moduleId}
-                            variant="ghost"
-                            onClick={() => canEmbedStep(ssStep) && openStep(ssStep)}
-                            className="mt-1 flex h-auto w-full items-center gap-2.5 rounded-lg border border-dashed border-primary/30 bg-primary/5 px-3 py-2 text-left hover:bg-primary/10"
-                          >
-                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-primary/60">
-                              For your sector
-                            </span>
-                            <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
-                              {ss.label}
-                            </span>
-                            {ssDone && (
-                              <span className="shrink-0 text-success" aria-label="completed">
-                                ✓
-                              </span>
-                            )}
-                          </Button>
-                        )
-                      })}
-                    </>
-                  )}
-
-                  {/* resources */}
-                  <Eyebrow className="mb-2">
-                    Open a resource — every activity is a real hub tool
-                  </Eyebrow>
-                  <div className="mt-auto grid gap-2.5 md:grid-cols-3">
-                    <ResCol
-                      title="Learn"
-                      items={resLinks('learn', sel, sector, seat).map((it) => {
-                        const step: TreeStep = {
-                          kind: 'learn',
-                          label: it.label,
-                          to: it.to,
-                          moduleId: it.id,
-                        }
-                        return {
-                          ...it,
-                          done: moduleDone(it.id),
-                          onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                        }
-                      })}
-                    />
-                    <ResCol
-                      title="Activities"
-                      items={resLinks('activities', sel, sector, seat).map((it) => {
-                        // Business tools embed via the ACTIVITY arm (they emit an artifact).
-                        // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
-                        // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
-                        // workshops embed through — so route them via the WORKSHOP arm too,
-                        // keeping them UNDER the "● Simulation mode" header instead of
-                        // navigating out to /playground (where the player leaves the sim).
-
-                        const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
-
-                        const artifactType = TOOL_TO_ARTIFACT[it.id]
-                        const step: TreeStep = isWorkshopTool
-                          ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
-                          : { kind: 'activity', label: it.label, to: it.to, artifactType }
-                        return {
-                          ...it,
-                          done: isWorkshopTool
-                            ? visitedWorkshops.includes(it.id)
-                            : artifactDone(artifactType),
-                          onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                        }
-                      })}
-                    />
-                    <ResCol
-                      title="Reference"
-                      items={resLinks('reference', sel, sector, seat).map((it) => {
-                        const step: TreeStep = {
-                          kind: 'reference',
-                          label: it.label,
-                          to: it.to,
-                          refId: it.id,
-                        }
-                        // the assess-engine ref opens the wizard IN the sim (embed);
-                        // every other reference navigates to its deep link as before.
-                        return {
-                          ...it,
-                          done: refDone(it.id),
-                          onClick: () => markRefVisited(it.id),
-                          onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
-                        }
-                      })}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* right — phase-relevant intel (Expert only; Guided hides it for a
-            focused, low-density view). Architecture only for estate/infra phases.
-            PR7 — 2-up panel grid below lg so it's a compact band, 1-col beside
-            the board at lg. */}
-              {!guided && (
-                <div className="grid min-h-0 grid-cols-1 gap-3.5 overflow-auto sm:grid-cols-2 lg:grid-cols-1">
-                  {/* PR3 — rail disclosure. Threat & readiness + Critical assets +
-                Artifacts stay pinned (always rendered below); the rest collapse
-                here to calm the Expert rail. Count + named list are phase-aware. */}
-                  {railMoreShown.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      aria-expanded={railExpanded}
-                      onClick={() => setRailExpanded((v) => !v)}
-                      className="flex h-auto w-full items-start justify-between gap-2 whitespace-normal rounded-xl border border-dashed border-border bg-card/50 px-3 py-2 text-left hover:bg-muted/50 sm:col-span-2 lg:col-span-1"
-                    >
-                      <span className="flex min-w-0 flex-col">
-                        <span className="text-sim-body font-bold text-foreground">
-                          {railExpanded
-                            ? 'Hide extra panels'
-                            : `Show ${railMoreShown.length} more panel${
-                                railMoreShown.length === 1 ? '' : 's'
-                              }`}
-                        </span>
-                        {!railExpanded && (
-                          <span className="text-sim-micro leading-tight text-muted-foreground">
-                            {railMoreShown.join(' · ')}
-                          </span>
+                              )
+                            })}
+                          </div>
                         )}
-                      </span>
-                      <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                        {railExpanded ? '▴' : '▾'}
-                      </span>
-                    </Button>
-                  )}
-                  {/* Assessment KPIs — read-only category scores (informational; never
-                grant maturity, which is earned in-game) */}
-                  {railExpanded && showRailKpis && (
-                    <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
-                      <Eyebrow className="mb-2 block">
-                        Assessment KPIs{' '}
-                        <span className="text-muted-foreground">· informational</span>
-                      </Eyebrow>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {(
-                          [
-                            ['Quantum exposure', assessKpis.quantumExposure, true],
-                            ['Migration complexity', assessKpis.migrationComplexity, true],
-                            ['Regulatory pressure', assessKpis.regulatoryPressure, true],
-                            ['Org readiness', assessKpis.organizationalReadiness, false],
-                          ] as const
-                        ).map(([label, val, higherIsWorse]) => {
-                          const tone =
-                            val >= 67
-                              ? higherIsWorse
-                                ? 'text-destructive'
-                                : 'text-success'
-                              : val >= 34
-                                ? 'text-warning'
-                                : higherIsWorse
-                                  ? 'text-success'
-                                  : 'text-destructive'
-                          return (
-                            <div
-                              key={label}
-                              className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
-                            >
-                              <span className="text-sim-micro leading-tight text-muted-foreground">
-                                {label}
-                              </span>
-                              <span className={`font-mono text-[13px] font-extrabold ${tone}`}>
-                                {Math.round(val)}
-                              </span>
-                            </div>
-                          )
-                        })}
                       </div>
-                    </div>
-                  )}
+                    </TabsContent>
 
-                  {/* Readiness trend — assessed baseline vs in-sim maturity (sim-local) */}
-                  {railExpanded && showRailTrend && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        Readiness trend{' '}
-                        <span className="text-muted-foreground">· assessed → in-sim</span>
+                    {/* ---- RESOURCES — the real hub tools behind this phase ---- */}
+                    <TabsContent
+                      value="resources"
+                      className="flex min-h-0 flex-1 flex-col overflow-auto"
+                    >
+                      <Eyebrow className="mb-2">
+                        Open a resource — every activity is a real hub tool
                       </Eyebrow>
-                      <div className="flex items-baseline justify-between font-mono">
-                        <span className="text-[11px] text-muted-foreground">
-                          Assessed{' '}
-                          <span className="text-[15px] font-extrabold text-foreground">
-                            {readinessTrend.baseline}
-                          </span>
-                        </span>
-                        <span className="text-muted-foreground/50">→</span>
-                        <span className="text-[11px] text-muted-foreground">
-                          In-sim{' '}
-                          <span className="text-[15px] font-extrabold text-success">
-                            {readinessTrend.projected}
-                          </span>
-                        </span>
-                        <span
-                          className={`rounded-full px-1.5 py-0.5 text-sim-micro font-bold ${
-                            readinessTrend.delta > 0
-                              ? 'bg-success/15 text-success'
-                              : 'bg-muted text-muted-foreground'
-                          }`}
-                        >
-                          {readinessTrend.delta > 0 ? `▲ +${readinessTrend.delta}` : '—'}
-                        </span>
-                      </div>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full bg-success"
-                          style={{ width: `${readinessTrend.projected}%` }}
+                      <div className="grid gap-2.5 md:grid-cols-3">
+                        <ResCol
+                          title="Learn"
+                          items={resLinks('learn', sel, sector, seat).map((it) => {
+                            const step: TreeStep = {
+                              kind: 'learn',
+                              label: it.label,
+                              to: it.to,
+                              moduleId: it.id,
+                            }
+                            return {
+                              ...it,
+                              done: moduleDone(it.id),
+                              onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                            }
+                          })}
                         />
-                        <div
-                          className="-mt-2 h-2 border-r-2 border-foreground/40"
-                          style={{ width: `${readinessTrend.baseline}%` }}
+                        <ResCol
+                          title="Activities"
+                          items={resLinks('activities', sel, sector, seat).map((it) => {
+                            // Business tools embed via the ACTIVITY arm (they emit an artifact).
+                            // Playground/workshop tools (RNG, TLS sim, VPN sim, envelope-encrypt
+                            // …) live in WORKSHOP_TOOL_COMPONENTS — the same registry the journey
+                            // workshops embed through — so route them via the WORKSHOP arm too,
+                            // keeping them UNDER the "● Simulation mode" header instead of
+                            // navigating out to /playground (where the player leaves the sim).
+
+                            const isWorkshopTool = !!WORKSHOP_TOOL_COMPONENTS[it.id]
+
+                            const artifactType = TOOL_TO_ARTIFACT[it.id]
+                            const step: TreeStep = isWorkshopTool
+                              ? { kind: 'workshop', label: it.label, to: it.to, workshopId: it.id }
+                              : { kind: 'activity', label: it.label, to: it.to, artifactType }
+                            return {
+                              ...it,
+                              done: isWorkshopTool
+                                ? visitedWorkshops.includes(it.id)
+                                : artifactDone(artifactType),
+                              onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                            }
+                          })}
+                        />
+                        <ResCol
+                          title="Reference"
+                          items={resLinks('reference', sel, sector, seat).map((it) => {
+                            const step: TreeStep = {
+                              kind: 'reference',
+                              label: it.label,
+                              to: it.to,
+                              refId: it.id,
+                            }
+                            // the assess-engine ref opens the wizard IN the sim (embed);
+                            // every other reference navigates to its deep link as before.
+                            return {
+                              ...it,
+                              done: refDone(it.id),
+                              onClick: () => markRefVisited(it.id),
+                              onOpen: canEmbedStep(step) ? () => openStep(step) : undefined,
+                            }
+                          })}
                         />
                       </div>
-                      <p className="mt-1.5 text-sim-micro leading-snug text-muted-foreground">
-                        Projection rises as you clear framework maturity in-game — sim-local, never
-                        written back to your assessment.
-                      </p>
-                    </div>
-                  )}
+                    </TabsContent>
 
-                  {/* WP4.7 — ribbon slimming: HNDL/TNFL risk + readiness were three of
-                      six ribbon stats novices had no action to take on. Pinned here
-                      (Expert rail, not behind "show more") since they're live risk
-                      signals, not assessment-context — same visibility tier as
-                      Critical assets below, just no longer competing for header space. */}
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <Eyebrow className="mb-2 block">Threat &amp; readiness</Eyebrow>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <RibbonTermTooltip concept="hndl">
-                          <span className="block text-sim-micro leading-tight text-muted-foreground">
-                            HNDL risk
-                          </span>
-                        </RibbonTermTooltip>
-                        <span
-                          className={`block font-mono text-[13px] font-extrabold ${threat.hndl.tone}`}
-                        >
-                          {threat.hndl.label}
-                        </span>
-                      </div>
-                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <RibbonTermTooltip concept="tnfl">
-                          <span className="block text-sim-micro leading-tight text-muted-foreground">
-                            TNFL risk
-                          </span>
-                        </RibbonTermTooltip>
-                        <span
-                          className={`block font-mono text-[13px] font-extrabold ${threat.tnfl.tone}`}
-                        >
-                          {threat.tnfl.label}
-                        </span>
-                      </div>
-                      <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
-                        <RibbonTermTooltip concept="readiness">
-                          <span className="block text-sim-micro leading-tight text-muted-foreground">
-                            Readiness
-                          </span>
-                        </RibbonTermTooltip>
-                        <span className="block font-mono text-[13px] font-extrabold text-primary">
-                          {readiness.pct}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <Eyebrow className="mb-2 block">
-                      Critical assets{' '}
-                      <span className="text-muted-foreground">· €{totalValueM}M</span>
-                    </Eyebrow>
-                    {!assetsDiscovered && (
-                      <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
-                        Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover &amp;
-                        confirm.
-                      </p>
-                    )}
-                    <div className="flex flex-col gap-1.5">
-                      {assets.map((a) => {
-                        const hot = a.exposurePct >= 0.6 // medium+ exposure
-                        return (
-                          <div
-                            key={a.id}
-                            className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                              hot
-                                ? 'border-destructive/40 bg-destructive/5'
-                                : 'border-border bg-muted/40'
-                            }`}
-                          >
-                            <span
-                              className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${TIER_CHIP[a.tier]}`}
-                            >
-                              {a.tier}
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                                {a.label}
-                              </span>
-                              <span className="block font-mono text-sim-micro text-muted-foreground">
-                                {a.exposure} · €{a.valueM}M · {Math.round(a.exposurePct * 100)}%
-                                exposed
-                              </span>
-                            </span>
-                            <span
-                              className={`shrink-0 font-mono text-sim-micro font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
-                            >
-                              €{a.exposedM}M
-                            </span>
-                          </div>
-                        )
-                      })}
-                    </div>
-                    <div className="mt-2 flex items-center justify-between font-mono text-sim-micro">
-                      <span className="text-muted-foreground">Quantum-exposed value</span>
-                      <span className="font-bold text-destructive">€{exposedValueM}M</span>
-                    </div>
-                  </div>
-
-                  {/* Applicable compliance — from the assessment; scoping context for P0 */}
-                  {railExpanded && showRailCompliance && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        Applicable compliance{' '}
-                        <span className="text-muted-foreground">· from assessment</span>
-                      </Eyebrow>
-                      <div className="flex flex-col gap-1.5">
-                        {assessCompliance.map((c) => (
-                          <div
-                            key={c.framework}
-                            className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
-                          >
-                            <span
-                              className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
-                                c.requiresPQC
-                                  ? 'bg-destructive/15 text-destructive'
-                                  : c.requiresPQC === false
-                                    ? 'bg-muted text-muted-foreground'
-                                    : 'bg-warning/15 text-warning'
-                              }`}
-                            >
-                              {c.requiresPQC ? 'PQC' : c.requiresPQC === false ? 'n/a' : '?'}
-                            </span>
-                            <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
-                              {c.framework}
-                            </span>
-                            {c.deadline && (
-                              <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
-                                {c.deadline}
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Situational factors — boosts that elevated the composite score */}
-                  {railExpanded && showRailBoosts && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        Situational factors{' '}
-                        <span className="text-muted-foreground">· from assessment</span>
-                      </Eyebrow>
-                      <div className="flex flex-col gap-1.5">
-                        {assessBoosts.map((b) => (
-                          <div
-                            key={b.id}
-                            className="flex items-center justify-between rounded-lg border border-status-warning/30 bg-status-warning/10 px-2.5 py-1.5"
-                          >
-                            <span className="text-[11.5px] font-semibold text-foreground">
-                              {b.label}
-                            </span>
-                            <span className="font-mono text-sim-micro font-bold text-status-warning">
-                              +{Math.round(b.delta * 100)} pts
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
-                        These conditions pushed your risk score above the base category weighting.
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Cyber insurance — policy limit vs the quantum-exposed value */}
-                  {railExpanded && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">Cyber insurance</Eyebrow>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-[19px] font-extrabold text-foreground">
-                          €{insurancePolicyM}M
-                        </span>
-                        <span className="font-mono text-sim-micro text-muted-foreground">
-                          covers critical + high
-                        </span>
-                      </div>
-                      <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
-                        <span className="text-muted-foreground">Annual premium · 0.15%</span>
-                        <span className="font-bold text-foreground">
-                          {premiumM >= 1 ? `€${premiumM}M` : `€${Math.round(premiumM * 1000)}k`}/yr
-                        </span>
-                      </div>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className={uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'}
-                          style={{
-                            width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
-                        <span className="text-muted-foreground">Uninsured quantum exposure</span>
-                        <span
-                          className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
-                        >
-                          €{uninsuredM}M
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Artifacts this phase produces — completed vs still to generate */}
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <Eyebrow className="mb-2.5 block">
-                      {phase.name} artifacts{' '}
-                      <span className="text-muted-foreground">
-                        · {phaseDocs.length}/{phaseArtifactTypes.size}
-                      </span>
-                    </Eyebrow>
-                    {/* import a completed assessment as the P0 scoping artifact (Assess→Sim, data only) */}
-                    {assessSnap &&
-                      phaseArtifactTypes.has('initial-scoping') &&
-                      !docTypes.has('initial-scoping') && (
-                        <div className="mb-2">
-                          <Button
-                            type="button"
-                            onClick={importAssessReport}
-                            className="h-auto w-full rounded-md bg-secondary px-2.5 py-1.5 text-[11px] font-bold text-secondary-foreground"
-                          >
-                            ▸ Import assessment as scoping artifact
-                          </Button>
-                          <p className="mt-1 px-0.5 text-sim-micro leading-snug text-muted-foreground">
-                            Also sets the org dials (industry · size · country) from your assessment
-                            — you can still change them.
-                          </p>
+                    {/* ---- SIGNALS — the phase-relevant intel that used to be the
+                    Expert-only right rail. Split into what this RUN is doing vs. what
+                    came in FROM THE ASSESSMENT (the six panels that already carried
+                    "· from assessment" in their own eyebrow). Architecture only for
+                    estate/infra phases. ---- */}
+                    <TabsContent
+                      value="signals"
+                      className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-auto"
+                    >
+                      {/* PROGRAM STATUS (2026-08-02) — the full Transformation detail
+                      (ring, 3 objectives, 4 HNDL/TNFL bars) that used to sit always-
+                      visible below the header; the header now keeps only a one-line
+                      Maturity glance in its compact KPI cluster. This is program-wide,
+                      not phase-specific, so it renders identically on every phase's
+                      Signals tab — same as Critical assets and the other run-level
+                      panels below, already duplicated across phases today. */}
+                      {!suppressWinUI && (
+                        <div>
+                          <Eyebrow className="mb-1.5 block">Program status</Eyebrow>
+                          <TransformationStatusPanel status={txStatus} />
                         </div>
                       )}
-                    {phaseArtifactTypes.size === 0 ? (
-                      <p className="text-[11px] text-muted-foreground">
-                        This phase produces no Command-Center artifact — progress comes from Learn
-                        modules and reference look-ups.
-                      </p>
-                    ) : (
-                      <div className="flex flex-col gap-1.5">
-                        {phaseArtifacts.map((a) => {
-                          const made = phaseDocs.find((d) => d.type === a.type)
-                          return (
-                            <div
-                              key={a.type}
-                              role={made ? 'button' : undefined}
-                              tabIndex={made ? 0 : undefined}
-                              onClick={made ? () => setViewDoc(made) : undefined}
-                              onKeyDown={
-                                made
-                                  ? (e) => {
-                                      if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault()
-                                        setViewDoc(made)
-                                      }
-                                    }
-                                  : undefined
-                              }
-                              title={made ? 'View this artifact (read-only)' : undefined}
-                              className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
-                                made
-                                  ? 'cursor-pointer border-success/40 bg-success/5 hover:bg-success/10'
-                                  : 'border-dashed border-border bg-muted/40'
-                              }`}
-                            >
-                              <span
-                                className={`grid h-4 w-4 shrink-0 place-items-center rounded-full text-sim-micro font-bold ${
-                                  made
-                                    ? 'bg-success text-success-foreground'
-                                    : 'bg-card text-muted-foreground'
-                                }`}
-                              >
-                                {made ? '✓' : '○'}
+                      <Eyebrow className="block">This run</Eyebrow>
+                      <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+                        {/* VITAL SIGNS (2026-08-02) — one card replacing three small always-on
+                      readouts that each carried their own border for the sake of ~7
+                      numbers: Threat & readiness (WP4.7's ribbon-slimming panel),
+                      Readiness trend, and Cyber insurance. All three are live/derived
+                      from THIS run, hence the grouping.
+
+                      NAMING: the two rows below deliberately do NOT both say
+                      "readiness". `readiness.pct` (computeReadiness) is the grounded
+                      fraction of vulnerable connections actually migrated — labelled
+                      "Estate migrated". `readinessTrend` (projectReadiness) is the
+                      ASSESSMENT's org-readiness score projected forward by in-sim
+                      maturity — labelled "Org readiness". They were ambiguous while
+                      sitting in separate cards; adjacent they would mislead. */}
+                        <div className="rounded-xl border border-border bg-card p-4 md:col-span-2">
+                          <Eyebrow className="mb-2 block">Vital signs</Eyebrow>
+                          {/* HNDL/TNFL risk chips were REMOVED here 2026-08-02: the
+                          Program status panel directly above shows both, in more
+                          detail (live harvest-now exposure % + per-tier track bars),
+                          and stacking them adjacently said the same thing twice.
+                          Their plain-English RibbonTermTooltip definitions moved
+                          onto Program status's own track labels so the educational
+                          affordance survives the de-duplication. */}
+                          <div className="grid grid-cols-1 gap-1.5">
+                            <div className="rounded-lg border border-border bg-muted/40 px-2 py-1.5">
+                              <RibbonTermTooltip concept="readiness">
+                                <span className="block text-sim-micro leading-tight text-muted-foreground">
+                                  Estate migrated
+                                </span>
+                              </RibbonTermTooltip>
+                              <span className="block font-mono text-[13px] font-extrabold text-primary">
+                                {readiness.pct}%
                               </span>
-                              <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[11.5px] font-semibold text-foreground">
-                                  {made ? made.title : a.label}
-                                </span>
-                                <span className="block font-mono text-sim-micro text-muted-foreground">
-                                  {made ? a.type : 'not generated yet'}
-                                </span>
-                              </span>
-                              {made && (
-                                <span className="shrink-0 font-mono text-sim-micro font-bold text-success">
-                                  view →
-                                </span>
-                              )}
                             </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
+                          </div>
 
-                  {/* Architecture view — only for phases that act on the estate/infra */}
-                  {railExpanded && showRailArch && (
-                    <ArchitecturePanel
-                      size={size as 'small' | 'mid' | 'large' | 'global'}
-                      country={country}
-                      p5Frac={p5Frac}
-                    />
-                  )}
+                          {/* Org readiness — assessed baseline vs in-sim maturity (sim-local) */}
+                          {showRailTrend && (
+                            <div className="mt-3 border-t border-border pt-2.5">
+                              <span className="mb-1 block text-sim-micro font-semibold text-muted-foreground">
+                                Org readiness{' '}
+                                <span className="text-muted-foreground">· assessed → in-sim</span>
+                              </span>
+                              <div className="flex items-baseline justify-between font-mono">
+                                <span className="text-[11px] text-muted-foreground">
+                                  Assessed{' '}
+                                  <span className="text-[15px] font-extrabold text-foreground">
+                                    {readinessTrend.baseline}
+                                  </span>
+                                </span>
+                                <span className="text-muted-foreground/50">→</span>
+                                <span className="text-[11px] text-muted-foreground">
+                                  In-sim{' '}
+                                  <span className="text-[15px] font-extrabold text-success">
+                                    {readinessTrend.projected}
+                                  </span>
+                                </span>
+                                <span
+                                  className={`rounded-full px-1.5 py-0.5 text-sim-micro font-bold ${
+                                    readinessTrend.delta > 0
+                                      ? 'bg-success/15 text-success'
+                                      : 'bg-muted text-muted-foreground'
+                                  }`}
+                                >
+                                  {readinessTrend.delta > 0 ? `▲ +${readinessTrend.delta}` : '—'}
+                                </span>
+                              </div>
+                              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                  className="h-full bg-success"
+                                  style={{ width: `${readinessTrend.projected}%` }}
+                                />
+                                <div
+                                  className="-mt-2 h-2 border-r-2 border-foreground/40"
+                                  style={{ width: `${readinessTrend.baseline}%` }}
+                                />
+                              </div>
+                              <p className="mt-1.5 text-sim-micro leading-snug text-muted-foreground">
+                                Projection rises as you clear framework maturity in-game —
+                                sim-local, never written back to your assessment.
+                              </p>
+                            </div>
+                          )}
 
-                  {/* PQC migration backlog + two-track split — from the assessment, for
-                the remediation phases (P3 plan, P5 execute) */}
-                  {railExpanded && showRailQuantum && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        Quantum risk — four scoring dimensions{' '}
-                        <span className="text-muted-foreground">· from assessment</span>
-                      </Eyebrow>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {(
-                          [
-                            ['HNDL exposure', assessFrameworkRisk.hndl],
-                            ['TNFL (signatures)', assessFrameworkRisk.tnfl],
-                            ['Regulatory', assessFrameworkRisk.regulatory],
-                            ['Feasibility', assessFrameworkRisk.feasibility],
-                          ] as const
-                        ).map(([dimLabel, val]) => (
-                          <div
-                            key={dimLabel}
-                            className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sim-micro font-semibold text-foreground">
-                                {dimLabel}
+                          {/* Cyber insurance — policy limit vs the quantum-exposed value */}
+                          <div className="mt-3 border-t border-border pt-2.5">
+                            <span className="mb-1 block text-sim-micro font-semibold text-muted-foreground">
+                              Cyber insurance
+                            </span>
+                            <div className="flex items-baseline justify-between">
+                              <span className="text-[19px] font-extrabold text-foreground">
+                                €{insurancePolicyM}M
                               </span>
                               <span className="font-mono text-sim-micro text-muted-foreground">
-                                {val}/100
+                                covers critical + high
                               </span>
                             </div>
-                            <div className="mt-1 h-1 rounded-full bg-muted">
+                            <div className="mt-0.5 flex items-center justify-between font-mono text-sim-micro">
+                              <span className="text-muted-foreground">Annual premium · 0.15%</span>
+                              <span className="font-bold text-foreground">
+                                {premiumM >= 1
+                                  ? `€${premiumM}M`
+                                  : `€${Math.round(premiumM * 1000)}k`}
+                                /yr
+                              </span>
+                            </div>
+                            <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted">
                               <div
-                                className={`h-1 rounded-full ${
-                                  val >= 70
-                                    ? 'bg-destructive'
-                                    : val >= 40
-                                      ? 'bg-warning'
-                                      : 'bg-success'
-                                }`}
-                                style={{ width: `${Math.max(0, Math.min(100, val))}%` }}
+                                className={
+                                  uninsuredM > 0 ? 'h-full bg-warning' : 'h-full bg-success'
+                                }
+                                style={{
+                                  width: `${exposedValueM > 0 ? Math.min(100, (Math.min(insurancePolicyM, exposedValueM) / exposedValueM) * 100) : 100}%`,
+                                }}
                               />
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
-                        These are the framework's Phase-3 scoring dimensions for your org — they
-                        feed the Quantum Readiness Assessment on your Report page.
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Score drivers — why each category scored high or low */}
-                  {railExpanded && showRailDrivers && assessDrivers && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        Score drivers{' '}
-                        <span className="text-muted-foreground">· why these scores</span>
-                      </Eyebrow>
-                      <div className="flex flex-col gap-2">
-                        {(
-                          [
-                            ['Quantum exposure', assessDrivers.quantumExposure],
-                            ['Migration complexity', assessDrivers.migrationComplexity],
-                            ['Regulatory pressure', assessDrivers.regulatoryPressure],
-                            ['Org readiness', assessDrivers.organizationalReadiness],
-                          ] as const
-                        ).map(([label, text]) => (
-                          <div key={label}>
-                            <span className="text-sim-micro font-semibold text-foreground">
-                              {label}
-                            </span>
-                            <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
-                              {text}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {railExpanded && showRailBacklog && (
-                    <div className="rounded-xl border border-border bg-card p-4">
-                      <Eyebrow className="mb-2 block">
-                        PQC migration backlog{' '}
-                        <span className="text-muted-foreground">· from assessment</span>
-                      </Eyebrow>
-                      {assessTwoTrack && (
-                        <div className="mb-2.5 flex flex-col gap-1.5">
-                          {(['A', 'B'] as const).map((t) => {
-                            const track = t === 'A' ? assessTwoTrack.trackA : assessTwoTrack.trackB
-                            const lead = assessTwoTrack.leadTrack === t
-                            return (
-                              <div
-                                key={t}
-                                className={`rounded-lg border px-2.5 py-1.5 ${
-                                  track.isAtRisk
-                                    ? 'border-destructive/40 bg-destructive/5'
-                                    : 'border-border bg-muted/40'
-                                }`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span className="shrink-0 rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
-                                    {track.label.split('—')[0].trim()}
-                                  </span>
-                                  {lead && (
-                                    <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-sim-chip font-bold text-secondary">
-                                      lead
-                                    </span>
-                                  )}
-                                  <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-foreground">
-                                    {track.focus}
-                                  </span>
-                                </div>
-                                <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
-                                  {track.effort.length} algo
-                                  {track.effort.length !== 1 ? 's' : ''} · {track.actions.length}{' '}
-                                  action
-                                  {track.actions.length !== 1 ? 's' : ''}
-                                </p>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      )}
-                      {assessBacklog.length > 0 && (
-                        <div className="flex flex-col gap-1.5">
-                          {assessBacklog.map((m) => (
-                            <div
-                              key={m.classical}
-                              className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
-                            >
-                              <span
-                                className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
-                                  m.urgency === 'immediate'
-                                    ? 'bg-destructive/15 text-destructive'
-                                    : m.urgency === 'near-term'
-                                      ? 'bg-warning/15 text-warning'
-                                      : 'bg-muted text-muted-foreground'
-                                }`}
-                              >
-                                {m.urgency}
+                            <div className="mt-1.5 flex items-center justify-between font-mono text-sim-micro">
+                              <span className="text-muted-foreground">
+                                Uninsured quantum exposure
                               </span>
-                              <span className="min-w-0 flex-1 truncate font-mono text-sim-micro text-foreground">
-                                {m.classical} <span className="text-muted-foreground">→</span>{' '}
-                                {m.replacement}
+                              <span
+                                className={`font-bold ${uninsuredM > 0 ? 'text-destructive' : 'text-success'}`}
+                              >
+                                €{uninsuredM}M
                               </span>
                             </div>
-                          ))}
+                          </div>
                         </div>
+
+                        {/* Critical assets — discovered in P0; value + date-driven quantum exposure */}
+                        <div className="rounded-xl border border-border bg-card p-4">
+                          <Eyebrow className="mb-2 block">
+                            Critical assets{' '}
+                            <span className="text-muted-foreground">· €{totalValueM}M</span>
+                          </Eyebrow>
+                          {!assetsDiscovered && (
+                            <p className="mb-2 rounded-md border border-dashed border-warning/50 bg-warning/5 px-2 py-1 text-sim-chip text-warning">
+                              Estimated — run P0 “Assess Data &amp; Asset Sensitivity” to discover
+                              &amp; confirm.
+                            </p>
+                          )}
+                          <div className="flex flex-col gap-1.5">
+                            {assets.map((a) => {
+                              const hot = a.exposurePct >= 0.6 // medium+ exposure
+                              return (
+                                <div
+                                  key={a.id}
+                                  className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+                                    hot
+                                      ? 'border-destructive/40 bg-destructive/5'
+                                      : 'border-border bg-muted/40'
+                                  }`}
+                                >
+                                  <span
+                                    className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${TIER_CHIP[a.tier]}`}
+                                  >
+                                    {a.tier}
+                                  </span>
+                                  <span className="min-w-0 flex-1">
+                                    <span className="block truncate text-[11.5px] font-semibold text-foreground">
+                                      {a.label}
+                                    </span>
+                                    <span className="block font-mono text-sim-micro text-muted-foreground">
+                                      {a.exposure} · €{a.valueM}M ·{' '}
+                                      {Math.round(a.exposurePct * 100)}% exposed
+                                    </span>
+                                  </span>
+                                  <span
+                                    className={`shrink-0 font-mono text-sim-micro font-bold ${hot ? 'text-destructive' : 'text-muted-foreground'}`}
+                                  >
+                                    €{a.exposedM}M
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                          <div className="mt-2 flex items-center justify-between font-mono text-sim-micro">
+                            <span className="text-muted-foreground">Quantum-exposed value</span>
+                            <span className="font-bold text-destructive">€{exposedValueM}M</span>
+                          </div>
+                        </div>
+
+                        {/* Architecture view — only for phases that act on the estate/infra */}
+                        {showRailArch && (
+                          <ArchitecturePanel
+                            size={size as 'small' | 'mid' | 'large' | 'global'}
+                            country={country}
+                            p5Frac={p5Frac}
+                          />
+                        )}
+                      </div>
+
+                      {/* ---- From your assessment — imported context, not live run state.
+                Every panel below already carried "· from assessment" in its own
+                eyebrow; the heading just makes the provenance split explicit. Each
+                is phase-gated (p0 / p3 / p5), so on most phases only the always-on
+                Assessment KPIs is present — and a heading over ONE card reads as
+                broken, so the heading needs 2+ panels to appear. ---- */}
+                      {hasAssessmentSignals && (
+                        <>
+                          {assessmentSignalCount > 1 && (
+                            <Eyebrow className="block">From your assessment</Eyebrow>
+                          )}
+                          <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+                            {/* Assessment KPIs — read-only category scores (informational; never
+                grant maturity, which is earned in-game) */}
+                            {showRailKpis && (
+                              <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-4">
+                                <Eyebrow className="mb-2 block">
+                                  Assessment KPIs{' '}
+                                  <span className="text-muted-foreground">· informational</span>
+                                </Eyebrow>
+                                <div className="grid grid-cols-2 gap-1.5">
+                                  {(
+                                    [
+                                      ['Quantum exposure', assessKpis.quantumExposure, true],
+                                      [
+                                        'Migration complexity',
+                                        assessKpis.migrationComplexity,
+                                        true,
+                                      ],
+                                      ['Regulatory pressure', assessKpis.regulatoryPressure, true],
+                                      ['Org readiness', assessKpis.organizationalReadiness, false],
+                                    ] as const
+                                  ).map(([label, val, higherIsWorse]) => {
+                                    const tone =
+                                      val >= 67
+                                        ? higherIsWorse
+                                          ? 'text-destructive'
+                                          : 'text-success'
+                                        : val >= 34
+                                          ? 'text-warning'
+                                          : higherIsWorse
+                                            ? 'text-success'
+                                            : 'text-destructive'
+                                    return (
+                                      <div
+                                        key={label}
+                                        className="flex items-baseline justify-between rounded-lg border border-border bg-card px-2 py-1.5"
+                                      >
+                                        <span className="text-sim-micro leading-tight text-muted-foreground">
+                                          {label}
+                                        </span>
+                                        <span
+                                          className={`font-mono text-[13px] font-extrabold ${tone}`}
+                                        >
+                                          {Math.round(val)}
+                                        </span>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Applicable compliance — from the assessment; scoping context for P0 */}
+                            {showRailCompliance && (
+                              <div className="rounded-xl border border-border bg-card p-4">
+                                <Eyebrow className="mb-2 block">
+                                  Applicable compliance{' '}
+                                  <span className="text-muted-foreground">· from assessment</span>
+                                </Eyebrow>
+                                <div className="flex flex-col gap-1.5">
+                                  {assessCompliance.map((c) => (
+                                    <div
+                                      key={c.framework}
+                                      className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                                    >
+                                      <span
+                                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
+                                          c.requiresPQC
+                                            ? 'bg-destructive/15 text-destructive'
+                                            : c.requiresPQC === false
+                                              ? 'bg-muted text-muted-foreground'
+                                              : 'bg-warning/15 text-warning'
+                                        }`}
+                                      >
+                                        {c.requiresPQC
+                                          ? 'PQC'
+                                          : c.requiresPQC === false
+                                            ? 'n/a'
+                                            : '?'}
+                                      </span>
+                                      <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold text-foreground">
+                                        {c.framework}
+                                      </span>
+                                      {c.deadline && (
+                                        <span className="shrink-0 font-mono text-sim-micro text-muted-foreground">
+                                          {c.deadline}
+                                        </span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Situational factors — boosts that elevated the composite score */}
+                            {showRailBoosts && (
+                              <div className="rounded-xl border border-border bg-card p-4">
+                                <Eyebrow className="mb-2 block">
+                                  Situational factors{' '}
+                                  <span className="text-muted-foreground">· from assessment</span>
+                                </Eyebrow>
+                                <div className="flex flex-col gap-1.5">
+                                  {assessBoosts.map((b) => (
+                                    <div
+                                      key={b.id}
+                                      className="flex items-center justify-between rounded-lg border border-status-warning/30 bg-status-warning/10 px-2.5 py-1.5"
+                                    >
+                                      <span className="text-[11.5px] font-semibold text-foreground">
+                                        {b.label}
+                                      </span>
+                                      <span className="font-mono text-sim-micro font-bold text-status-warning">
+                                        +{Math.round(b.delta * 100)} pts
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                                <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
+                                  These conditions pushed your risk score above the base category
+                                  weighting.
+                                </p>
+                              </div>
+                            )}
+
+                            {/* PQC migration backlog + two-track split — from the assessment, for
+                the remediation phases (P3 plan, P5 execute) */}
+                            {showRailQuantum && (
+                              <div className="rounded-xl border border-border bg-card p-4">
+                                <Eyebrow className="mb-2 block">
+                                  Quantum risk — four scoring dimensions{' '}
+                                  <span className="text-muted-foreground">· from assessment</span>
+                                </Eyebrow>
+                                <div className="grid grid-cols-2 gap-1.5">
+                                  {(
+                                    [
+                                      ['HNDL exposure', assessFrameworkRisk.hndl],
+                                      ['TNFL (signatures)', assessFrameworkRisk.tnfl],
+                                      ['Regulatory', assessFrameworkRisk.regulatory],
+                                      ['Feasibility', assessFrameworkRisk.feasibility],
+                                    ] as const
+                                  ).map(([dimLabel, val]) => (
+                                    <div
+                                      key={dimLabel}
+                                      className="rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                                    >
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sim-micro font-semibold text-foreground">
+                                          {dimLabel}
+                                        </span>
+                                        <span className="font-mono text-sim-micro text-muted-foreground">
+                                          {val}/100
+                                        </span>
+                                      </div>
+                                      <div className="mt-1 h-1 rounded-full bg-muted">
+                                        <div
+                                          className={`h-1 rounded-full ${
+                                            val >= 70
+                                              ? 'bg-destructive'
+                                              : val >= 40
+                                                ? 'bg-warning'
+                                                : 'bg-success'
+                                          }`}
+                                          style={{ width: `${Math.max(0, Math.min(100, val))}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                                <p className="mt-2 text-sim-micro leading-snug text-muted-foreground">
+                                  These are the framework's Phase-3 scoring dimensions for your org
+                                  — they feed the Quantum Readiness Assessment on your Report page.
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Score drivers — why each category scored high or low */}
+                            {showRailDrivers && assessDrivers && (
+                              <div className="rounded-xl border border-border bg-card p-4">
+                                <Eyebrow className="mb-2 block">
+                                  Score drivers{' '}
+                                  <span className="text-muted-foreground">· why these scores</span>
+                                </Eyebrow>
+                                <div className="flex flex-col gap-2">
+                                  {(
+                                    [
+                                      ['Quantum exposure', assessDrivers.quantumExposure],
+                                      ['Migration complexity', assessDrivers.migrationComplexity],
+                                      ['Regulatory pressure', assessDrivers.regulatoryPressure],
+                                      ['Org readiness', assessDrivers.organizationalReadiness],
+                                    ] as const
+                                  ).map(([label, text]) => (
+                                    <div key={label}>
+                                      <span className="text-sim-micro font-semibold text-foreground">
+                                        {label}
+                                      </span>
+                                      <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
+                                        {text}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {showRailBacklog && (
+                              <div className="rounded-xl border border-border bg-card p-4">
+                                <Eyebrow className="mb-2 block">
+                                  PQC migration backlog{' '}
+                                  <span className="text-muted-foreground">· from assessment</span>
+                                </Eyebrow>
+                                {assessTwoTrack && (
+                                  <div className="mb-2.5 flex flex-col gap-1.5">
+                                    {(['A', 'B'] as const).map((t) => {
+                                      const track =
+                                        t === 'A' ? assessTwoTrack.trackA : assessTwoTrack.trackB
+                                      const lead = assessTwoTrack.leadTrack === t
+                                      return (
+                                        <div
+                                          key={t}
+                                          className={`rounded-lg border px-2.5 py-1.5 ${
+                                            track.isAtRisk
+                                              ? 'border-destructive/40 bg-destructive/5'
+                                              : 'border-border bg-muted/40'
+                                          }`}
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <span className="shrink-0 rounded bg-primary px-1 font-mono text-sim-chip font-extrabold text-primary-foreground">
+                                              {track.label.split('—')[0].trim()}
+                                            </span>
+                                            {lead && (
+                                              <span className="shrink-0 rounded-full bg-secondary/20 px-1.5 py-0.5 font-mono text-sim-chip font-bold text-secondary">
+                                                lead
+                                              </span>
+                                            )}
+                                            <span className="min-w-0 flex-1 truncate text-[10.5px] font-semibold text-foreground">
+                                              {track.focus}
+                                            </span>
+                                          </div>
+                                          <p className="mt-0.5 text-sim-micro leading-snug text-muted-foreground">
+                                            {track.effort.length} algo
+                                            {track.effort.length !== 1 ? 's' : ''} ·{' '}
+                                            {track.actions.length} action
+                                            {track.actions.length !== 1 ? 's' : ''}
+                                          </p>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+                                {assessBacklog.length > 0 && (
+                                  <div className="flex flex-col gap-1.5">
+                                    {assessBacklog.map((m) => (
+                                      <div
+                                        key={m.classical}
+                                        className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5"
+                                      >
+                                        <span
+                                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-sim-micro font-bold uppercase ${
+                                            m.urgency === 'immediate'
+                                              ? 'bg-destructive/15 text-destructive'
+                                              : m.urgency === 'near-term'
+                                                ? 'bg-warning/15 text-warning'
+                                                : 'bg-muted text-muted-foreground'
+                                          }`}
+                                        >
+                                          {m.urgency}
+                                        </span>
+                                        <span className="min-w-0 flex-1 truncate font-mono text-sim-micro text-foreground">
+                                          {m.classical}{' '}
+                                          <span className="text-muted-foreground">→</span>{' '}
+                                          {m.replacement}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </>
                       )}
-                    </div>
-                  )}
+                    </TabsContent>
+                  </Tabs>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}
@@ -3721,8 +3843,6 @@ export function SimulationView() {
         {((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
           tourOpen) && (
           <SimTour
-            guided={guided}
-            onEnableGuided={() => setGuided(true)}
             onClose={() => {
               markTourSeen()
               setTourOpen(false)

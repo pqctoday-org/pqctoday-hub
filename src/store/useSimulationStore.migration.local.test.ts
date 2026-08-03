@@ -33,7 +33,6 @@ describe('migrateSimulationState', () => {
     expect(typeof out.seed).toBe('number')
     expect(out.difficulty).toBe('realistic')
     expect(out.tourSeen).toBe(false)
-    expect(out.guided).toBe(false)
     expect(out.seenConceptPeeks).toEqual([])
     expect(out.securedBudgetM).toBe(0)
     expect(out.spentBudgetM).toBe(0)
@@ -64,7 +63,6 @@ describe('migrateSimulationState', () => {
       seed: 12345,
       difficulty: 'hard',
       tourSeen: true,
-      guided: true,
       // no seenConceptPeeks — the field this migration introduced
     }
     const out = migrateSimulationState(legacy)
@@ -80,8 +78,20 @@ describe('migrateSimulationState', () => {
     expect(out.seed).toBe(12345)
     expect(out.difficulty).toBe('hard')
     expect(out.tourSeen).toBe(true)
-    expect(out.guided).toBe(true)
     expect(out.seenConceptPeeks).toEqual([]) // new field defaults cleanly, doesn't crash
+  })
+
+  // v16 → v17 (2026-08-02): GUIDED mode was retired. The field is DROPPED rather
+  // than translated — mapping guided:true → difficulty:'easy' would also silently
+  // change the budget multiplier, event probabilities, CRQC creep and AI advance
+  // chance for a player who only ever wanted the calmer layout. Pinned so a later
+  // "helpful" migration can't quietly rebalance someone's run.
+  it('drops the retired `guided` field without touching difficulty (v16 → v17)', () => {
+    const v16 = { difficulty: 'realistic', guided: true, tourSeen: true }
+    const out = migrateSimulationState(v16)
+    expect('guided' in out).toBe(false)
+    expect(out.difficulty).toBe('realistic')
+    expect(out.tourSeen).toBe(true)
   })
 
   it('preserves seenConceptPeeks when a future re-migration already carries it', () => {

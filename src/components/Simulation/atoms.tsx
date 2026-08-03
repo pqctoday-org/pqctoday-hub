@@ -8,8 +8,6 @@ import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
-import { RibbonTermTooltip } from './RibbonTermTooltip'
-import type { TourConceptId } from './autorun/execTourConfig'
 
 export const eyebrow =
   'font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-muted-foreground'
@@ -219,17 +217,23 @@ export function Dial({
   /** Tooltip — defaults to "click to change"; override to explain what the dial does. */
   title?: string
 }) {
+  // Single-line pill (2026-08-02, header compaction) — was a 3-line stack
+  // (LABEL ⟳ / value / hint). `hint` no longer has room to stay always-visible,
+  // so it folds into the tooltip/aria-label instead of being dropped.
   return (
     <Button
       variant="ghost"
       type="button"
       onClick={onClick}
-      title={title}
-      aria-label={`${label}: ${value}. Activate to change.`}
-      className="h-auto items-start justify-start whitespace-normal flex flex-col gap-px rounded-lg border border-background/20 bg-background/10 px-3 py-1.5 text-left hover:bg-background/20"
+      title={`${title} — ${hint}`}
+      aria-label={`${label}: ${value}. ${hint}. Activate to change.`}
+      className="h-auto flex-row items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 px-3 py-1.5 hover:bg-background/20"
     >
-      <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-        {label} ⟳
+      <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+        {label}
+      </span>
+      <span aria-hidden="true" className="text-background/40">
+        ⟳
       </span>
       {/* aria-live so cycling the dial announces the new value to screen
           readers (07-29 review U7) — the button's aria-label alone is only
@@ -237,86 +241,6 @@ export function Dial({
       <span aria-live="polite" className="text-[12.5px] font-bold text-background">
         {value}
       </span>
-      <span className="text-sim-micro text-background/50">{hint}</span>
     </Button>
-  )
-}
-
-/**
- * Read-only counterpart to {@link Dial} for org facts that now come from the
- * user's assessment (single source of truth) — no click-to-cycle, no ⟳ glyph.
- * Renders as a static value tile with a "from your assessment" hint; `note`
- * surfaces extra context (e.g. the mapped industry, or a modelled-archetype note).
- */
-export function ReadonlyDial({
-  label,
-  value,
-  hint,
-  note,
-  title,
-  badge,
-}: {
-  label: string
-  value: string
-  hint: string
-  note?: string
-  title?: string
-  /** Optional affordance (e.g. a {@link PlanningBadge}) shown next to the label. */
-  badge?: ReactNode
-}) {
-  return (
-    <div
-      title={title}
-      aria-label={`${label}: ${value}. ${hint}.`}
-      className="flex flex-col gap-px rounded-lg border border-background/20 bg-background/5 px-3 py-1.5 text-left"
-    >
-      <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
-        {label}
-        {badge}
-      </span>
-      <span className="text-[12.5px] font-bold text-background">{value}</span>
-      <span className="text-sim-micro text-background/50">{hint}</span>
-      {note && <span className="text-sim-micro italic text-background/40">{note}</span>}
-    </div>
-  )
-}
-
-export function Stat({
-  label,
-  value,
-  sub,
-  tone = 'text-foreground',
-  badge,
-  className = '',
-  def,
-}: {
-  label: string
-  value: string
-  sub: string
-  tone?: string
-  /** Optional adornment next to the value — e.g. a <PlanningBadge> marking the
-   *  figure as an illustrative anchor rather than a published fact. */
-  badge?: ReactNode
-  /** Extra classes on the tile — e.g. a min-width so a value+badge pair has
-   *  room to sit inline in the otherwise-narrow KPI ribbon. */
-  className?: string
-  /** Wraps the label in a hover/tap plain-English definition (educational-value
-   *  gap-closing, 07182026) — see RibbonTermTooltip. */
-  def?: TourConceptId
-}) {
-  const labelEl = <Eyebrow>{label}</Eyebrow>
-  return (
-    <div
-      className={`min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 ${className}`}
-    >
-      {def ? <RibbonTermTooltip concept={def}>{labelEl}</RibbonTermTooltip> : labelEl}
-      {/* Badge rides next to the value (short, e.g. "3.0y"), not the label —
-          the label can wrap in a narrow tile and would clip the badge. */}
-      <div className="mt-0.5 flex items-center gap-1.5">
-        <span className={`text-xl font-extrabold ${tone}`}>{value}</span>
-        {badge}
-      </div>
-      <div className="truncate text-[10.5px] text-muted-foreground">{sub}</div>
-    </div>
   )
 }
