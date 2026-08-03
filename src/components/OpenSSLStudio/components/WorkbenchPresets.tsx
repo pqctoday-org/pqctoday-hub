@@ -97,7 +97,7 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
       {
         label: 'ML-KEM-768 decapsulate',
         // -out (not -secret) is the correct decap output flag — verified
-        // against the bundled OpenSSL 3.6.2 binary's real `pkeyutl -decap`
+        // against the bundled OpenSSL 3.6.3 binary's real `pkeyutl -decap`
         // behavior; -secret is documented for encapsulation only. See the
         // `pkeyutl -decap` KAT test for the regression guard.
         cmd: 'openssl pkeyutl -decap -inkey ml-kem-768.key -in ciphertext.bin -out recovered.bin',

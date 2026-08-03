@@ -43,7 +43,7 @@ describe('algorithmListParser — parses the real openssl list output', () => {
 
     expect(byKey.default, raw).toBeTruthy()
     expect(byKey.default.reportedStatus).toBe('active')
-    expect(byKey.default.version).toBe('3.6.2')
+    expect(byKey.default.version).toBe('3.6.3')
 
     expect(byKey.pkcs11, raw).toBeTruthy()
     expect(byKey.pkcs11.reportedStatus).toBe('active')
