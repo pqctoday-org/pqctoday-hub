@@ -14,7 +14,7 @@ export const PqcVersionNote: React.FC = () => (
     <Info size={13} className="shrink-0 mt-0.5 text-status-warning" aria-hidden="true" />
     <p>
       Native PQC algorithm support requires <span className="font-semibold">OpenSSL 3.5+</span>{' '}
-      (this Studio runs 3.6.2). On older or distro OpenSSL, this command fails with{' '}
+      (this Studio runs 3.6.3). On older or distro OpenSSL, this command fails with{' '}
       <code className="bg-muted px-1 rounded">unsupported</code> or{' '}
       <code className="bg-muted px-1 rounded">no such algorithm</code> unless you install{' '}
       <a

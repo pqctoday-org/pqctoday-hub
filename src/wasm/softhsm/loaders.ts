@@ -122,14 +122,17 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_Sign: rustShim._C_Sign,
         _C_SignUpdate: () => CKR_NOT_IMPL,
         _C_SignFinal: () => CKR_NOT_IMPL,
-        _C_SignRecoverInit: () => CKR_NOT_IMPL,
-        _C_SignRecover: () => CKR_NOT_IMPL,
+        // RSA sign/verify-with-recovery (PKCS#11 v3.2 §5.13). The engine really
+        // implements these (rust/src/ffi.rs, added 2026-07-25) — delegate rather
+        // than hardcoding CKR_NOT_IMPL, which masked the working implementation.
+        _C_SignRecoverInit: rustShim._C_SignRecoverInit,
+        _C_SignRecover: rustShim._C_SignRecover,
         _C_VerifyInit: rustShim._C_VerifyInit,
         _C_Verify: rustShim._C_Verify,
         _C_VerifyUpdate: () => CKR_NOT_IMPL,
         _C_VerifyFinal: () => CKR_NOT_IMPL,
-        _C_VerifyRecoverInit: () => CKR_NOT_IMPL,
-        _C_VerifyRecover: () => CKR_NOT_IMPL,
+        _C_VerifyRecoverInit: rustShim._C_VerifyRecoverInit,
+        _C_VerifyRecover: rustShim._C_VerifyRecover,
 
         // ── Message-based sign/verify (PKCS#11 v3.2) ─────────────────────
         _C_MessageSignInit: rustShim._C_MessageSignInit,

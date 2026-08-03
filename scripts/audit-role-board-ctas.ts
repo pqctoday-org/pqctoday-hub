@@ -40,10 +40,11 @@
  *   npm run audit:role-board-ctas -- --json
  */
 
-import { readFileSync, existsSync, readdirSync } from 'fs'
+import { readFileSync, existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
+import { latestDatedCsv, ROLE_BOARD_CTAS_RE, ROLE_BOARD_CONTENT_RE } from './lib/latestDatedCsv'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -77,10 +78,13 @@ export interface CtaFinding {
 /** Latest dated `role_board_ctas_*.csv` under src/data. */
 export function latestCtaCsv(dataDir = join(ROOT, 'src/data')): string | null {
   if (!existsSync(dataDir)) return null
-  const files = readdirSync(dataDir)
-    .filter((f) => /^role_board_ctas_\d{8}\.csv$/.test(f))
-    .sort()
-  return files.length ? join(dataDir, files[files.length - 1]) : null
+  return latestDatedCsv(dataDir, ROLE_BOARD_CTAS_RE)
+}
+
+/** Latest dated `role_board_content_*.csv` under src/data. */
+export function latestContentCsv(dataDir = join(ROOT, 'src/data')): string | null {
+  if (!existsSync(dataDir)) return null
+  return latestDatedCsv(dataDir, ROLE_BOARD_CONTENT_RE)
 }
 
 export function parseCtaRegistry(csvText: string): CtaRegistryRow[] {
@@ -92,15 +96,48 @@ export function parseCtaRegistry(csvText: string): CtaRegistryRow[] {
 }
 
 /**
- * The set of hrefs a role board can point at, extracted from personaConfig's
- * source rather than by importing it — the module pulls in the whole data layer
- * (library CSVs, algorithm registry, KMIP fixtures), which is far more than a
- * lint gate should load, and several of those imports assume a browser.
+ * The set of hrefs a role board can point at, read from the role-board content
+ * CSV's own `cta_primary_href` / `cta_secondary_href` rows.
+ *
+ * WHY THE CSV, NOT personaConfig.ts. This function used to regex-scrape
+ * `ctaPrimaryHref: '…'` out of `src/data/personaConfig.ts`. The 2026-08-02
+ * CSV migration moved those literals into
+ * `src/data/generated/roleBoardContent.generated.ts`, leaving personaConfig.ts
+ * with only a `ctaPrimaryHref: string` TYPE declaration — so the scrape started
+ * returning ZERO hrefs. The gate reported "0 CTAs, 11 registered", flagged all
+ * eleven registry rows as orphans (advice which, followed, would have deleted
+ * the entire capability-claim registry), and still exited 0, because
+ * ORPHAN_REGISTRY_ROW is not a blocking code. Every real check — route
+ * resolution, MISSING_CLAIM, STALE_VERIFICATION, UNREGISTERED — was dead for
+ * that whole window.
+ *
+ * Reading the CSV rather than the generated file is deliberate: the CSV is the
+ * source of truth maintainers edit, and the generated file is one more derived
+ * artifact that can drift from it (a drift the generator's own gate now
+ * covers separately). Pointing the gate at the source means a bad href is
+ * caught at the point it is written.
+ *
+ * Still a text-level read rather than an import: the generated module pulls in
+ * the whole data layer (library CSVs, algorithm registry, KMIP fixtures),
+ * which is far more than a lint gate should load, and several of those imports
+ * assume a browser.
+ *
+ * Deprecated rows are skipped — a CTA that is no longer served should not keep
+ * demanding a fresh capability claim.
  */
-export function extractBoardHrefs(personaConfigSrc: string): string[] {
+export function extractBoardHrefs(contentCsvText: string): string[] {
+  const rows = Papa.parse<Record<string, string>>(contentCsvText, {
+    header: true,
+    skipEmptyLines: true,
+  }).data
   const hrefs = new Set<string>()
-  for (const m of personaConfigSrc.matchAll(/ctaPrimaryHref:\s*'([^']+)'/g)) hrefs.add(m[1])
-  for (const m of personaConfigSrc.matchAll(/ctaSecondaryHref:\s*'([^']+)'/g)) hrefs.add(m[1])
+  for (const row of rows) {
+    if (!row || !row.role_id) continue
+    if ((row.status ?? 'active') !== 'active') continue
+    if (row.slot !== 'cta_primary_href' && row.slot !== 'cta_secondary_href') continue
+    const href = (row.content ?? '').trim()
+    if (href) hrefs.add(href)
+  }
   return [...hrefs]
 }
 
@@ -133,6 +170,45 @@ export function extractAppRoutes(appSrc: string): Set<string> {
     }
   }
   return segments
+}
+
+/**
+ * Business tool ids, which resolve through BusinessToolRoute's `:toolId`
+ * (`/tools/:toolId`).
+ *
+ * ADDED 2026-08-02. The gate previously knew only about playground tools, so
+ * every `/tools/<id>` destination would have been reported UNRESOLVED_ROUTE —
+ * the 'tools' segment exists in App.tsx but the id segment does not. The role
+ * boards now lean on business tools as heavily as on playground workshops, so
+ * the gate has to be able to see both.
+ */
+export const BUSINESS_TOOL_PREFIX = '/business/tools/'
+
+/**
+ * Business tool hrefs must carry their real nesting.
+ *
+ * REGRESSION GUARD (2026-08-02). `resolvesToRealRoute` checks SEGMENT
+ * CONTAINMENT, and says so in its own doc comment: it would accept a segment
+ * pair that exists separately but is never nested together. That is exactly
+ * what happened — 14 board CTAs were written as `/tools/<id>`, every segment
+ * resolved ('tools' is declared, the id is a real business tool), the gate
+ * passed, and every one of them fell through to the catch-all route and
+ * rendered the HOME BOARD instead of the tool. Nothing errored; the visitor
+ * just silently got the wrong page. Business tools live under
+ * `/business/tools/:toolId`, so the prefix is checked explicitly rather than
+ * inferred from segments.
+ */
+export function businessToolHrefIsWellFormed(href: string, businessToolIds: Set<string>): boolean {
+  const path = href.split('?')[0]
+  const id = path.split('/').filter(Boolean).pop() ?? ''
+  if (!businessToolIds.has(id)) return true // not a business tool href
+  return path.startsWith(BUSINESS_TOOL_PREFIX)
+}
+
+export function extractBusinessToolIds(registrySrc: string): Set<string> {
+  const ids = new Set<string>()
+  for (const m of registrySrc.matchAll(/^\s*id:\s*'([a-z0-9-]+)',$/gm)) ids.add(m[1])
+  return ids
 }
 
 /** Playground tool ids, which resolve through PlaygroundToolRoute's `:toolId`. */
@@ -244,13 +320,47 @@ function main() {
     process.exit(1)
   }
   const registry = parseCtaRegistry(readFileSync(csvPath, 'utf8'))
-  const boardHrefs = extractBoardHrefs(
-    readFileSync(join(ROOT, 'src/data/personaConfig.ts'), 'utf8')
-  )
+  const contentCsvPath = latestContentCsv()
+  if (!contentCsvPath) {
+    console.error('✗ No src/data/role_board_content_YYYYMMDD.csv found.')
+    process.exit(1)
+  }
+  const boardHrefs = extractBoardHrefs(readFileSync(contentCsvPath, 'utf8'))
+  // A gate that finds no CTAs at all is not a passing gate — it is a broken
+  // one. This is exactly how the personaConfig.ts scrape failed silently after
+  // the CSV migration (see extractBoardHrefs), so fail loudly instead.
+  if (boardHrefs.length === 0) {
+    console.error(
+      `✗ No CTA hrefs found in ${contentCsvPath.replace(ROOT + '/', '')}.\n` +
+        `  Expected rows with slot=cta_primary_href / cta_secondary_href.\n` +
+        `  Refusing to report a pass over zero CTAs.`
+    )
+    process.exit(1)
+  }
   const routeSegments = extractAppRoutes(readFileSync(join(ROOT, 'src/App.tsx'), 'utf8'))
-  const toolIds = extractPlaygroundToolIds(
-    readFileSync(join(ROOT, 'src/components/Playground/workshopRegistry.tsx'), 'utf8')
+  // Both tool registries — the boards resolve into /playground/:toolId and
+  // /tools/:toolId alike.
+  const toolIds = new Set([
+    ...extractPlaygroundToolIds(
+      readFileSync(join(ROOT, 'src/components/Playground/workshopRegistry.tsx'), 'utf8')
+    ),
+    ...extractBusinessToolIds(
+      readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
+    ),
+  ])
+
+  const businessToolIds = extractBusinessToolIds(
+    readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
   )
+  const malformed = boardHrefs.filter((h) => !businessToolHrefIsWellFormed(h, businessToolIds))
+  if (malformed.length > 0) {
+    console.error(
+      `✗ ${malformed.length} business-tool href(s) missing the ${BUSINESS_TOOL_PREFIX} prefix:\n` +
+        malformed.map((h) => `   ${h}`).join('\n') +
+        `\n  These resolve segment-wise but fall through to the catch-all route and render the home board.`
+    )
+    process.exit(1)
+  }
 
   const findings = auditCtas(boardHrefs, registry, routeSegments, toolIds, new Date())
   const blocking = findings.filter((f) => f.code !== 'ORPHAN_REGISTRY_ROW')

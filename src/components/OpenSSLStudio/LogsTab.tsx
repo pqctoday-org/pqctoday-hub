@@ -3,9 +3,10 @@ import { useOpenSSLStore } from './store'
 import { Trash2 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 
 export const LogsTab = () => {
-  const { structuredLogs, clearStructuredLogs } = useOpenSSLStore()
+  const { structuredLogs, clearStructuredLogs, pkcs11Log, clearPkcs11Log } = useOpenSSLStore()
 
   const getPerformanceColor = (ms: number): string => {
     if (ms < 100) return 'text-status-success'
@@ -23,84 +24,101 @@ export const LogsTab = () => {
   }
 
   return (
-    // Same hard max-height backstop as TerminalOutput.tsx, and for the same
-    // reason -- see that component's comment. Both share the ancestor chain
-    // whose flex-1/min-h-0 sizing has no bounded ceiling in this app's real
-    // layout, so either panel's `overflow-y-auto` can silently stop working
-    // once its content is long enough.
-    <div className="h-full max-h-[70vh] flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
-      {/* Toolbar */}
-      <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
-        <Button
-          variant="ghost"
-          onClick={clearStructuredLogs}
-          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-        >
-          <Trash2 size={12} /> Clear
-        </Button>
-      </div>
+    <div className="h-full max-h-[70vh] flex flex-col gap-3 min-h-0">
+      {/* Real PKCS#11 call trace — the same panel the HSM Workshop, VPN and
+          SSH simulators use, so a learner meets one log format across every
+          playground. Scope is stated in the empty message rather than left
+          implicit: only calls that cross the JS boundary can appear here. */}
+      <Pkcs11LogPanel
+        log={pkcs11Log}
+        onClear={clearPkcs11Log}
+        title="PKCS#11 Call Log (token lifecycle + HSM keygen)"
+        className="shrink-0"
+        // Most of what's traceable here IS the lifecycle, so the default
+        // "Crypto Only" filter would hide nearly every row.
+        defaultHideAdminOps={false}
+        emptyMessage="No PKCS#11 calls yet. Calls appear when a command touches the token — generating an HSM-backed key, or the first pkcs11: operation that provisions it. Note: crypto driven through a pkcs11: URI runs inside openssl.wasm (CLI → pkcs11-provider → engine) and never crosses into JavaScript, so those individual operations cannot be traced here."
+      />
 
-      {/* Logs Table */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-muted/50 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
-            <tr>
-              <th className="p-3 font-bold w-20 hidden sm:table-cell">Time</th>
-              <th className="p-3 font-bold w-24">Type</th>
-              <th className="p-3 font-bold">Command</th>
-              <th className="p-3 font-bold hidden sm:table-cell">File</th>
-              <th className="p-3 font-bold w-20 text-right">Duration</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {structuredLogs.length === 0 ? (
+      {/* Same hard max-height backstop as TerminalOutput.tsx, and for the same
+          reason -- see that component's comment. Both share the ancestor chain
+          whose flex-1/min-h-0 sizing has no bounded ceiling in this app's real
+          layout, so either panel's `overflow-y-auto` can silently stop working
+          once its content is long enough. */}
+      <div className="flex-1 min-h-0 flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
+        {/* Toolbar */}
+        <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
+          <Button
+            variant="ghost"
+            onClick={clearStructuredLogs}
+            className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+          >
+            <Trash2 size={12} /> Clear
+          </Button>
+        </div>
+
+        {/* Logs Table */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-muted/50 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
               <tr>
-                <td colSpan={5} className="p-8 text-center text-foreground/20 italic">
-                  No operations recorded yet.
-                </td>
+                <th className="p-3 font-bold w-20 hidden sm:table-cell">Time</th>
+                <th className="p-3 font-bold w-24">Type</th>
+                <th className="p-3 font-bold">Command</th>
+                <th className="p-3 font-bold hidden sm:table-cell">File</th>
+                <th className="p-3 font-bold w-20 text-right">Duration</th>
               </tr>
-            ) : (
-              structuredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-muted/50 transition-colors group">
-                  <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top hidden sm:table-cell">
-                    {log.timestamp}
-                  </td>
-                  <td className="p-3 text-xs font-medium text-foreground align-top">
-                    {log.operationType}
-                  </td>
-                  <td className="p-3 text-xs text-muted-foreground break-all align-top font-mono">
-                    <div className="text-foreground/80">{log.command}</div>
-                    {log.details && (
-                      <div className="text-[10px] text-foreground/40 mt-1">{log.details}</div>
-                    )}
-                  </td>
-                  <td className="p-3 text-xs text-muted-foreground align-top hidden sm:table-cell">
-                    {log.fileName ? (
-                      <div>
-                        <div className="text-secondary font-medium">{log.fileName}</div>
-                        {log.fileSize !== undefined && (
-                          <div className="text-[10px] text-foreground/40">
-                            {formatSize(log.fileSize)}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-foreground/20">-</span>
-                    )}
-                  </td>
-                  <td
-                    className={clsx(
-                      'p-3 text-right text-xs font-bold whitespace-nowrap align-top',
-                      getPerformanceColor(log.executionTime)
-                    )}
-                  >
-                    {log.executionTime.toFixed(2)} ms
+            </thead>
+            <tbody className="divide-y divide-border">
+              {structuredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-foreground/20 italic">
+                    No operations recorded yet.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                structuredLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-muted/50 transition-colors group">
+                    <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top hidden sm:table-cell">
+                      {log.timestamp}
+                    </td>
+                    <td className="p-3 text-xs font-medium text-foreground align-top">
+                      {log.operationType}
+                    </td>
+                    <td className="p-3 text-xs text-muted-foreground break-all align-top font-mono">
+                      <div className="text-foreground/80">{log.command}</div>
+                      {log.details && (
+                        <div className="text-[10px] text-foreground/40 mt-1">{log.details}</div>
+                      )}
+                    </td>
+                    <td className="p-3 text-xs text-muted-foreground align-top hidden sm:table-cell">
+                      {log.fileName ? (
+                        <div>
+                          <div className="text-secondary font-medium">{log.fileName}</div>
+                          {log.fileSize !== undefined && (
+                            <div className="text-[10px] text-foreground/40">
+                              {formatSize(log.fileSize)}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-foreground/20">-</span>
+                      )}
+                    </td>
+                    <td
+                      className={clsx(
+                        'p-3 text-right text-xs font-bold whitespace-nowrap align-top',
+                        getPerformanceColor(log.executionTime)
+                      )}
+                    >
+                      {log.executionTime.toFixed(2)} ms
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )

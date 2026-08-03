@@ -328,7 +328,7 @@ describe('Workbench', () => {
       capturedProps.setConfigUtlInFile('my.cnf')
       capturedProps.setConfigUtlOutFile('out.cnf')
     })
-    // Real `openssl configutl -help` (checked against the bundled 3.6.2
+    // Real `openssl configutl -help` (checked against the bundled 3.6.3
     // binary) only supports -help/-config/-out/-noheader — there is no
     // -dump flag. Regression guard for that hallucinated flag.
     await waitFor(() =>
@@ -416,7 +416,7 @@ describe('Workbench', () => {
       capturedProps.setKemAction('decap')
     })
     // -out is the correct, documented decap output flag (verified against
-    // the bundled OpenSSL 3.6.2 binary's real `pkeyutl -decap` behavior) —
+    // the bundled OpenSSL 3.6.3 binary's real `pkeyutl -decap` behavior) —
     // regression guard for the builder/preset flag divergence fixed here.
     await waitFor(() =>
       expect(mockSetCommand).toHaveBeenCalledWith(

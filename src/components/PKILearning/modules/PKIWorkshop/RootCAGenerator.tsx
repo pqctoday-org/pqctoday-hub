@@ -381,6 +381,15 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
 
       let keyId = ''
       let keyFilename = ''
+      /** A freshly generated key, held back until its certificate also succeeds
+       *  (see the comment at the addKey site below). Undefined when reusing an
+       *  existing key, which is already in the store and must not be re-added. */
+      let pendingKey:
+        | {
+            artifact: Parameters<typeof addKey>[0]
+            studioFile: Parameters<typeof addFile>[0]
+          }
+        | undefined
 
       // 1. Generate Root Key
       if (selectedKeyId.startsWith('new-')) {
@@ -406,28 +415,36 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
         keyContent = new TextDecoder().decode(generatedKeyFile.data)
         keyId = `root-key-${Date.now()}`
 
-        addKey({
-          id: keyId,
-          name: keyName,
-          algorithm: currentAlgo.name,
-          keySize: parseKeySize(currentAlgo.keySizeLabel),
-          created: Date.now(),
-          publicKey: '',
-          privateKey: keyContent,
-          description: 'Root CA Private Key',
-        })
+        // DEFERRED, not saved here. Persisting the key at this point orphaned it
+        // whenever certificate generation later failed (OpenSSL error, missing
+        // output file, or the 30s timeout below): the key landed in the store,
+        // the certificate never did, and Step 3 then reported "No Root CA
+        // certificates exist yet — go to Step 2 and generate one first" even
+        // though Step 2 had been run. The key and its certificate are now
+        // committed together, after the certificate exists, so a failure leaves
+        // no half-built CA behind.
+        pendingKey = {
+          artifact: {
+            id: keyId,
+            name: keyName,
+            algorithm: currentAlgo.name,
+            keySize: parseKeySize(currentAlgo.keySizeLabel),
+            created: Date.now(),
+            publicKey: '',
+            privateKey: keyContent,
+            description: 'Root CA Private Key',
+          },
+          studioFile: {
+            name: keyName,
+            type: 'key' as const,
+            content: generatedKeyFile.data,
+            size: generatedKeyFile.data.length,
+            timestamp: Date.now(),
+          },
+        }
 
-        setOutput((prev) => prev + 'Root CA private key generated and saved.\n')
+        setOutput((prev) => prev + 'Root CA private key generated.\n')
         keyFile = generatedKeyFile
-
-        // Sync to OpenSSL Studio
-        addFile({
-          name: keyName,
-          type: 'key',
-          content: generatedKeyFile.data,
-          size: generatedKeyFile.data.length,
-          timestamp: Date.now(),
-        })
       } else {
         // Using an existing key
         const existingKey = artifacts.keys.find((k) => k.id === selectedKeyId)
@@ -649,6 +666,14 @@ x509_extensions = v3_ca
           if (serialMatch) actualSerial = serialMatch[1].toUpperCase()
         }
 
+        // Commit the key FIRST, now that we know the certificate exists — both
+        // land together or neither does. A no-op when reusing an existing key.
+        if (pendingKey) {
+          addKey(pendingKey.artifact)
+          addFile(pendingKey.studioFile)
+          setOutput((prev) => prev + 'Root CA private key saved.\n')
+        }
+
         addCertificate({
           id: `root-cert-${Date.now()}`,
           name: certName,
@@ -746,7 +771,13 @@ x509_extensions = v3_ca
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       const hint = getCryptoErrorHint(errorMessage)?.summary
       setErrorHint(hint || null)
-      setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
+      setOutput(
+        (prev) =>
+          prev +
+          `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}` +
+          `  Nothing was saved — the Root CA key and certificate are stored together\n` +
+          `  or not at all, so you can simply run this step again.\n`
+      )
     } finally {
       setIsGenerating(false)
     }

@@ -22,6 +22,12 @@ import type { TpmObjectEntry } from './TpmPlayground'
 const executeTpmCommand = vi.fn()
 vi.mock('../../../wasm/tpmBridge', () => ({
   executeTpmCommand: (cmd: Uint8Array) => executeTpmCommand(cmd),
+  // CommandBuilder renders useTpmBusy(), which useSyncExternalStore's against
+  // these two. This factory replaces the whole module, so omitting them makes
+  // the component throw on render rather than fail an assertion. Model an idle
+  // TPM: a stable `false` snapshot and a no-op unsubscribe.
+  isTpmBusy: () => false,
+  subscribeTpmBusy: () => () => {},
 }))
 
 /** A minimal, well-formed TPM2_Encapsulate NO_SESSIONS success response. */

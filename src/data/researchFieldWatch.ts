@@ -53,9 +53,9 @@ export interface FieldWatchRow {
 export interface FieldWatchEntry {
   fieldId: string
   label: string
-  /** Rows mapped to this field whose last-update date falls after `lastVisitedAt`. */
+  /** Rows mapped to this field whose last-update date falls inside the window. */
   revisionCount: number
-  /** Rows mapped to this field that deprecated (deprecated_at) after `lastVisitedAt`. */
+  /** Rows mapped to this field that deprecated (deprecated_at) inside the window. */
   deprecatedCount: number
 }
 
@@ -64,41 +64,59 @@ export interface ResearchFieldWatchSummary {
    *  An id that isn't a real bucket (stale/renamed) is silently dropped rather
    *  than surfaced as a meaningless 0-count row. */
   fields: FieldWatchEntry[]
-  /** Sum of `deprecatedCount` across all followed fields. */
-  totalDeprecatedSinceVisit: number
+  /** Sum of `deprecatedCount` across the followed fields — NOT a corpus-wide total. */
+  totalDeprecatedInWindow: number
   /**
-   * "Nothing you cited has been retracted" per the design mockup's punchline.
+   * True iff nothing in the researcher's followed fields was retracted inside
+   * the window.
    *
-   * SIMPLIFICATION (flagged per the task spec, not silently papered over):
-   * the app has no real per-user "citations" concept anywhere.
-   * `useBookmarkStore`'s `libraryBookmarks` is the closest analog but is a
-   * general save-for-later list, not a citation register — wiring this flag
-   * to bookmarks would make it misleadingly `true` whenever the researcher
-   * simply hasn't bookmarked anything yet. Per the task's own fallback
-   * instruction, this treats EVERY deprecated row in a followed field as the
-   * relevant signal instead: `true` iff `totalDeprecatedSinceVisit === 0`.
+   * The card's punchline used to read "Nothing you cited has been retracted",
+   * which the app cannot know: there is no per-user citation concept anywhere.
+   * (`useBookmarkStore`'s `libraryBookmarks` is a general save-for-later list,
+   * not a citation register — wiring this to bookmarks would make it
+   * misleadingly `true` whenever the researcher simply hasn't bookmarked
+   * anything.) The card's own footnote conceded the gap in fine print while the
+   * headline asserted it anyway. The claim is now scoped to what is actually
+   * computed: the researcher's followed fields.
    */
   nothingRetracted: boolean
 }
 
 const BUCKET_LABEL = new Map(RESEARCH_FIELD_BUCKETS.map((b) => [b.id, b.label]))
 
-/** True when `ms` is a real timestamp strictly after `threshold`. `threshold === null`
- *  (first visit, no baseline yet) always yields `false` — nothing counts as
- *  "since last visit" until there has been one. */
+/** True when `ms` is a real timestamp strictly after `threshold`. */
 function isAfter(ms: number | null, threshold: number | null): boolean {
   return threshold !== null && ms !== null && ms > threshold
 }
 
 /**
- * Pure computation — given the researcher's followed field ids, their last
- * visit timestamp (`null` on a first visit), and the loaded row data, returns
- * per-field revision/deprecation counts since that visit. No I/O; safe to
- * unit test directly against fabricated fixtures.
+ * Pure computation — given the researcher's followed field ids, the start of
+ * the reporting window, and the loaded row data, returns per-field
+ * revision/deprecation counts inside that window. No I/O; safe to unit test
+ * directly against fabricated fixtures.
+ *
+ * WHY A CORPUS WINDOW, NOT "SINCE YOUR LAST VISIT" (changed 2026-08-02).
+ * This used to take the visitor's `lastVisitedAt` timestamp and count rows
+ * whose `last_update_date` fell after it. That could never return a non-zero
+ * number for a real visitor, and the reason is a category error rather than a
+ * tuning problem: `last_update_date` is the DOCUMENT's publication date, while
+ * the boundary was BROWSING time. Measured against `library_07312026_r2.csv`,
+ * the newest `last_update_date` in the entire 1,011-row catalog was
+ * 2026-06-29 — 34 days before the release — so every visitor arriving after
+ * late June saw "0 revisions" on every field they followed, permanently. A
+ * deploy could add fifty documents and the count would stay 0 if they happened
+ * to be older RFCs. (It was worse than that: the card called `markVisited()`
+ * on every mount, so opening the home page twice reset the boundary to minutes
+ * earlier.)
+ *
+ * The window is now anchored to the CORPUS RELEASE — "what changed in this
+ * release of the library" — which is a question the data can actually answer,
+ * and which is the same for every visitor. `windowStartMs === null` disables
+ * counting entirely rather than silently reporting zeros as a finding.
  */
 export function computeResearchFieldWatch(
   followedFieldIds: string[],
-  lastVisitedAt: number | null,
+  windowStartMs: number | null,
   rows: FieldWatchRow[]
 ): ResearchFieldWatchSummary {
   const counts = new Map<string, { revisionCount: number; deprecatedCount: number }>()
@@ -109,8 +127,8 @@ export function computeResearchFieldWatch(
     for (const fieldId of fieldIds) {
       const bucket = counts.get(fieldId)
       if (!bucket) continue // not a field this researcher follows
-      if (isAfter(row.lastUpdateDateMs, lastVisitedAt)) bucket.revisionCount += 1
-      if (row.isDeprecated && isAfter(row.deprecatedAtMs, lastVisitedAt)) {
+      if (isAfter(row.lastUpdateDateMs, windowStartMs)) bucket.revisionCount += 1
+      if (row.isDeprecated && isAfter(row.deprecatedAtMs, windowStartMs)) {
         bucket.deprecatedCount += 1
       }
     }
@@ -130,12 +148,12 @@ export function computeResearchFieldWatch(
     ]
   })
 
-  const totalDeprecatedSinceVisit = fields.reduce((sum, f) => sum + f.deprecatedCount, 0)
+  const totalDeprecatedInWindow = fields.reduce((sum, f) => sum + f.deprecatedCount, 0)
 
   return {
     fields,
-    totalDeprecatedSinceVisit,
-    nothingRetracted: totalDeprecatedSinceVisit === 0,
+    totalDeprecatedInWindow,
+    nothingRetracted: totalDeprecatedInWindow === 0,
   }
 }
 
@@ -160,17 +178,40 @@ function transformFieldWatchRow(row: RawFieldWatchRow): FieldWatchRow | null {
   }
 }
 
-let cachedRows: FieldWatchRow[] | null = null
+/**
+ * How far back from the corpus release date the card reports.
+ *
+ * 90 days, chosen against the real catalog rather than picked as a round
+ * number: measured on `library_07312026_r2.csv`, a 30-day window yields 0
+ * updated documents (the newest `last_update_date` is 2026-06-29, a month
+ * before the release), 60 days yields 20, and 90 yields 54 updated + 222
+ * retracted. A window that reports zero across the whole corpus tells the
+ * researcher nothing, which is the failure this card is being rescued from.
+ */
+export const FIELD_WATCH_WINDOW_DAYS = 90
+
+const MS_PER_DAY = 86_400_000
+
+export interface FieldWatchCorpus {
+  rows: FieldWatchRow[]
+  /** Release date of the library CSV this was loaded from, ms since epoch, or `null`. */
+  releaseDateMs: number | null
+  /** Start of the reporting window (`releaseDateMs` - 90 days), or `null`. */
+  windowStartMs: number | null
+}
+
+let cachedCorpus: FieldWatchCorpus | null = null
 
 /**
  * Loads every library row — active AND deprecated, deliberately NOT filtered
- * the way `libraryData.ts` filters — as `FieldWatchRow`s, via the same
- * `loadLatestCSV` + `import.meta.glob('./library_*.csv', ...)` pattern
- * `libraryData.ts` itself uses. Memoized at module scope (the CSV is static
- * per deploy); pass `forceReload: true` to bypass the cache (tests only).
+ * the way `libraryData.ts` filters — as `FieldWatchRow`s, plus the corpus
+ * release date and the derived reporting window, via the same `loadLatestCSV`
+ * + `import.meta.glob('./library_*.csv', ...)` pattern `libraryData.ts` itself
+ * uses. Memoized at module scope (the CSV is static per deploy); pass
+ * `forceReload: true` to bypass the cache (tests only).
  */
-export function loadFieldWatchRows(forceReload = false): FieldWatchRow[] {
-  if (cachedRows && !forceReload) return cachedRows
+export function loadFieldWatchCorpus(forceReload = false): FieldWatchCorpus {
+  if (cachedCorpus && !forceReload) return cachedCorpus
 
   const modules = import.meta.glob('./library_*.csv', {
     query: '?raw',
@@ -178,12 +219,20 @@ export function loadFieldWatchRows(forceReload = false): FieldWatchRow[] {
     eager: true,
   })
 
-  const { data } = loadLatestCSV<RawFieldWatchRow, FieldWatchRow>(
+  const { data, metadata } = loadLatestCSV<RawFieldWatchRow, FieldWatchRow>(
     modules,
     /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
     transformFieldWatchRow
   )
 
-  cachedRows = data
-  return data
+  // The release date comes from the CSV FILENAME (loadLatestCSV's parsed
+  // metadata), not from any row inside it. That is the point: it is the date
+  // this corpus snapshot shipped, which is what "changed in this release"
+  // means — and unlike a row's `last_update_date` it cannot lag the catalog.
+  const releaseDateMs = metadata ? metadata.lastUpdate.getTime() : null
+  const windowStartMs =
+    releaseDateMs === null ? null : releaseDateMs - FIELD_WATCH_WINDOW_DAYS * MS_PER_DAY
+
+  cachedCorpus = { rows: data, releaseDateMs, windowStartMs }
+  return cachedCorpus
 }

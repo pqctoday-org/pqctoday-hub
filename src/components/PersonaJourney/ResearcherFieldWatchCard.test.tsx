@@ -5,8 +5,11 @@ import { ResearcherFieldWatchCard } from './ResearcherFieldWatchCard'
 import { useResearchFieldsStore } from '@/store/useResearchFieldsStore'
 import type { FieldWatchRow } from '@/data/researchFieldWatch'
 
-const OLD_VISIT = Date.now() - 10 * 24 * 60 * 60 * 1000 // 10 days ago
-const ROW_TIMESTAMP = Date.now() - 1 * 24 * 60 * 60 * 1000 // 1 day ago — after OLD_VISIT, before "now"
+// The card reports against the CORPUS RELEASE window, not a per-visitor
+// timestamp, so the fixtures model a release and a row dated inside its window.
+const RELEASE = Date.parse('2026-07-31T00:00:00Z')
+const WINDOW_START = RELEASE - 90 * 24 * 60 * 60 * 1000
+const ROW_TIMESTAMP = RELEASE - 10 * 24 * 60 * 60 * 1000 // inside the window
 
 const FIXTURE_ROWS: FieldWatchRow[] = [
   {
@@ -49,7 +52,7 @@ const MULTI_DEPRECATED_ROWS: FieldWatchRow[] = [
 
 let activeFixtureRows = FIXTURE_ROWS
 
-// Mock only `loadFieldWatchRows` (the I/O adapter) — keep the real
+// Mock only `loadFieldWatchCorpus` (the I/O adapter) — keep the real
 // `computeResearchFieldWatch` so this test still exercises the real seam
 // between the card and the compute module, per repo convention (test the
 // seam, not just each half in isolation).
@@ -57,15 +60,16 @@ vi.mock('@/data/researchFieldWatch', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/data/researchFieldWatch')>()
   return {
     ...actual,
-    loadFieldWatchRows: () => activeFixtureRows,
+    loadFieldWatchCorpus: () => ({
+      rows: activeFixtureRows,
+      releaseDateMs: RELEASE,
+      windowStartMs: WINDOW_START,
+    }),
   }
 })
 
-function resetStore(overrides: { followedFields?: string[]; lastVisitedAt?: number | null } = {}) {
-  useResearchFieldsStore.setState({
-    followedFields: overrides.followedFields ?? [],
-    lastVisitedAt: overrides.lastVisitedAt ?? null,
-  })
+function resetStore(overrides: { followedFields?: string[] } = {}) {
+  useResearchFieldsStore.setState({ followedFields: overrides.followedFields ?? [] })
 }
 
 describe('ResearcherFieldWatchCard', () => {
@@ -77,12 +81,12 @@ describe('ResearcherFieldWatchCard', () => {
   it('renders the illustrative provenance chip and the title', () => {
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByText(/illustrative/i)).toBeInTheDocument()
-    expect(screen.getByText('Changed in your fields since your last visit')).toBeInTheDocument()
+    expect(screen.getByText('Changed in your fields')).toBeInTheDocument()
   })
 
   it('empty state: no followed fields yet shows the picker prompt, no data rows', () => {
     render(<ResearcherFieldWatchCard />)
-    expect(screen.getByText(/Pick a few fields below to start tracking/i)).toBeInTheDocument()
+    expect(screen.getByText(/Pick a few fields/i)).toBeInTheDocument()
     expect(screen.queryAllByTestId('field-watch-row')).toHaveLength(0)
     expect(screen.queryByTestId('field-watch-punchline')).toBeNull()
   })
@@ -93,13 +97,13 @@ describe('ResearcherFieldWatchCard', () => {
   })
 
   it('the field picker is collapsed by default once fields are already followed', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
     expect(screen.queryByTestId('filter-dropdown')).toBeNull()
   })
 
   it('"Edit your fields" toggles the picker open and closed for a returning user', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
     expect(screen.queryByTestId('filter-dropdown')).toBeNull()
 
@@ -110,60 +114,68 @@ describe('ResearcherFieldWatchCard', () => {
     expect(screen.queryByTestId('filter-dropdown')).toBeNull()
   })
 
-  it('shows one row per followed field with the correct revision count, using the PREVIOUS visit boundary (not "now") even after markVisited() fires on mount', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+  it('shows one row per followed field with the count of documents updated inside the release window', () => {
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     const row = screen.getByTestId('field-watch-row')
     expect(row).toHaveTextContent('Lattice-based')
-    expect(row).toHaveTextContent('1 revision')
+    expect(row).toHaveTextContent('1 updated')
   })
 
-  it('shows the corpus-deprecated count and the honest (non-hardcoded) punchline when something WAS deprecated', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+  it('states the window it is reporting over, so the number is not a bare unexplained count', () => {
+    resetStore({ followedFields: ['lattice-based'] })
+    render(<ResearcherFieldWatchCard />)
+    expect(screen.getByTestId('field-watch-window')).toHaveTextContent(
+      /In the 90 days to 31 Jul 2026/
+    )
+  })
+
+  it('shows the field-scoped retracted count and the honest punchline when something WAS retracted', () => {
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-1 docs')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(/retracted/i)
     expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(
-      'Nothing you cited has been retracted.'
+      'Nothing in the fields you follow was retracted.'
     )
   })
 
-  it('uses the plural punchline copy ("documents ... have been retracted") when more than one document was retracted', () => {
+  it('uses the plural punchline copy when more than one document was retracted', () => {
     activeFixtureRows = MULTI_DEPRECATED_ROWS
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     expect(screen.getByTestId('corpus-deprecated')).toHaveTextContent('-2 docs')
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      '2 documents in your followed fields have been retracted since your last visit.'
+      '2 documents in the fields you follow were retracted.'
     )
   })
 
   it('shows the "nothing retracted" punchline when the followed field has no deprecations in range', () => {
-    resetStore({ followedFields: ['qkd-quantum'], lastVisitedAt: OLD_VISIT }) // no fixture row maps here
+    resetStore({ followedFields: ['qkd-quantum'] }) // no fixture row maps here
     render(<ResearcherFieldWatchCard />)
     expect(screen.getByTestId('field-watch-punchline')).toHaveTextContent(
-      'Nothing you cited has been retracted.'
+      'Nothing in the fields you follow was retracted.'
     )
   })
 
-  it('calls markVisited() on mount, updating the store for the NEXT visit, without changing what THIS visit displays', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+  /**
+   * REGRESSION (2026-08-02). The punchline used to read "Nothing you cited has
+   * been retracted", a claim about a per-user citation list this app has never
+   * had — asserted in the headline while the card's own footnote admitted the
+   * gap in fine print. Whatever the copy says, it must not claim to know what
+   * the researcher cited.
+   */
+  it('never claims to know what the researcher cited', () => {
+    resetStore({ followedFields: ['qkd-quantum'] })
     render(<ResearcherFieldWatchCard />)
-
-    const after = useResearchFieldsStore.getState().lastVisitedAt
-    expect(after).not.toBe(OLD_VISIT)
-    expect(after).toBeGreaterThan(OLD_VISIT)
-
-    // Still showing the count computed against the OLD boundary, not zeroed
-    // out by the just-written "now" value.
-    expect(screen.getByTestId('field-watch-row')).toHaveTextContent('1 revision')
+    expect(screen.getByTestId('field-watch-punchline')).not.toHaveTextContent(/you cited/i)
   })
 
   it('toggling a new field on via the picker adds it to the store (multi-select reconciliation)', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     fireEvent.click(screen.getByRole('button', { name: /edit your fields/i }))
@@ -175,7 +187,7 @@ describe('ResearcherFieldWatchCard', () => {
   })
 
   it('toggling an already-followed field off via the picker removes it from the store', () => {
-    resetStore({ followedFields: ['lattice-based'], lastVisitedAt: OLD_VISIT })
+    resetStore({ followedFields: ['lattice-based'] })
     render(<ResearcherFieldWatchCard />)
 
     fireEvent.click(screen.getByRole('button', { name: /edit your fields/i }))
@@ -188,7 +200,6 @@ describe('ResearcherFieldWatchCard', () => {
   it('renders at most 3 field rows even when more are followed', () => {
     resetStore({
       followedFields: ['lattice-based', 'hash-based', 'code-based', 'qkd-quantum'],
-      lastVisitedAt: OLD_VISIT,
     })
     render(<ResearcherFieldWatchCard />)
     expect(screen.getAllByTestId('field-watch-row')).toHaveLength(3)
