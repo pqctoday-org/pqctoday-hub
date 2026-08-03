@@ -35,6 +35,17 @@ export interface LearnSectionProps {
   children: React.ReactNode
 }
 
+/**
+ * How long a section must stay ≥50% on screen before it counts as read.
+ *
+ * Without a dwell, `IntersectionObserver` fires on the very first frame, so
+ * every section visible at page load was marked read before the reader touched
+ * anything — and a module with only its top section left would complete itself
+ * the instant it was opened. Exported so tests can assert the behaviour rather
+ * than sleep on a magic number.
+ */
+export const SECTION_READ_DWELL_MS = 1500
+
 /** Reads the deep-link target from either `#section-id` or `?section=`. */
 export const useDeepLinkTarget = (): string => {
   const location = useLocation()
@@ -77,7 +88,7 @@ export const useSectionAnchors = (): void => {
     return () => cancelAnimationFrame(raf)
   }, [target])
 
-  // Mark each section read once half of it has been on screen.
+  // Mark each section read once half of it has been on screen FOR A WHILE.
   useEffect(() => {
     if (!moduleId) return
     // Both anchor styles. Some modules mark sections with `data-section-id`;
@@ -88,20 +99,52 @@ export const useSectionAnchors = (): void => {
     // looked for one attribute.
     const els = document.querySelectorAll<HTMLElement>('[data-section-id], section[id]')
     if (els.length === 0) return
+
+    // Whatever is on screen when the page loads used to be marked read
+    // instantly: opening a module recorded its top section before the reader
+    // had done anything, and if that was the last unread section the module
+    // completed itself on arrival, firing the completion card. Requiring the
+    // section to STAY half-visible for a beat fixes that without weakening
+    // genuine reading — you cannot dwell on something you scrolled straight
+    // past, and anything still on screen after the dwell really is being read.
+    const timers = new Map<string, ReturnType<typeof setTimeout>>()
+    const clear = (id: string) => {
+      const t = timers.get(id)
+      if (t) {
+        clearTimeout(t)
+        timers.delete(id)
+      }
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
+          const el = entry.target as HTMLElement
+          const id = el.dataset.sectionId ?? el.id
+          if (!id) continue
           if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            const el = entry.target as HTMLElement
-            const id = el.dataset.sectionId ?? el.id
-            if (id) markLearnSectionRead(moduleId, id)
+            if (timers.has(id)) continue
+            timers.set(
+              id,
+              setTimeout(() => {
+                timers.delete(id)
+                markLearnSectionRead(moduleId, id)
+              }, SECTION_READ_DWELL_MS)
+            )
+          } else {
+            // Scrolled away before the dwell elapsed — it was passed, not read.
+            clear(id)
           }
         }
       },
       { threshold: [0.5] }
     )
     els.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      timers.forEach((t) => clearTimeout(t))
+      timers.clear()
+    }
   }, [moduleId, markLearnSectionRead])
 }
 
@@ -156,23 +199,36 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
     return () => cancelAnimationFrame(raf)
   }, [isTarget])
 
-  // Mark read once half the section is on screen — but only while it is open,
-  // so a collapsed header scrolling past does not count as having read it.
+  // Mark read once half the section has been on screen for a beat — but only
+  // while it is open, so a collapsed header scrolling past does not count as
+  // having read it. The dwell matches useSectionAnchors above: an accordion
+  // already expanded on arrival would otherwise be marked read on load.
   useEffect(() => {
     const el = ref.current
     if (!el || !moduleId || !isOpen) return
+    let timer: ReturnType<typeof setTimeout> | undefined
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            markLearnSectionRead(moduleId, sectionId)
+            if (timer) continue
+            timer = setTimeout(() => {
+              timer = undefined
+              markLearnSectionRead(moduleId, sectionId)
+            }, SECTION_READ_DWELL_MS)
+          } else if (timer) {
+            clearTimeout(timer)
+            timer = undefined
           }
         }
       },
       { threshold: [0.5] }
     )
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      if (timer) clearTimeout(timer)
+    }
   }, [moduleId, sectionId, isOpen, markLearnSectionRead])
 
   return (
