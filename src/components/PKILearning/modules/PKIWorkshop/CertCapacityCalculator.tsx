@@ -96,8 +96,16 @@ function SliderRow({
       <div className="flex items-center justify-between">
         <label className="text-xs font-medium text-foreground flex items-center gap-1">
           {label}
-          <span title={tooltip} className="text-muted-foreground cursor-help" aria-label={tooltip}>
-            <Info size={11} />
+          {/* role="img" so the aria-label is permitted: `aria-label` on a bare
+              <span> is an aria-prohibited-attr violation, and dropping it would
+              lose the tooltip text for screen readers entirely. */}
+          <span
+            title={tooltip}
+            role="img"
+            aria-label={tooltip}
+            className="text-muted-foreground cursor-help"
+          >
+            <Info size={11} aria-hidden="true" />
           </span>
         </label>
       </div>
@@ -122,6 +130,10 @@ function SliderRow({
             if (v >= min && v <= max) onChange(v)
           }}
           className="w-24 h-7 text-xs font-mono"
+          // The visible <label> above is not associated with this input (it has
+          // no htmlFor), and the slider next to it owns the same name — so
+          // without this the number field is an unlabelled form control.
+          aria-label={`${label} (exact value)`}
         />
       </div>
     </div>

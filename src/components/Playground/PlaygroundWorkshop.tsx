@@ -687,7 +687,7 @@ const SandboxRuntimeToggle: React.FC = () => {
           />
         </span>
       </Button>
-      <p className="px-2.5 pt-1 text-[10px] leading-snug text-muted-foreground/80">{hint}</p>
+      <p className="px-2.5 pt-1 text-[10px] leading-snug text-muted-foreground">{hint}</p>
       {open && !runtimeOn && (
         <div
           role="dialog"
@@ -1042,7 +1042,7 @@ export const PlaygroundWorkshop = () => {
             setActiveNav('overview')
           }}
         />
-        <p className="mt-3 mb-1 px-1 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground/80">
+        <p className="mt-3 mb-1 px-1 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">
           Categories
         </p>
         {SIDEBAR_CATEGORIES.map((cat) => {
