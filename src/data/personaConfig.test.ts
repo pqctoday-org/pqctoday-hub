@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
+import { getCrqcConsensus } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getBeltTierLabel,
   PERSONA_BELT_TIER_LABELS,
@@ -220,7 +221,12 @@ describe("exec/researcher exposure card — Mosca's inequality", () => {
   // question. These pin the formula itself, not the rendered string.
 
   it('start-by year is z - x - y, not z - y', () => {
-    const z = EXEC_MOSCA_START_BY_YEAR + EXEC_EXPOSURE.secrecyYears + EXEC_EXPOSURE.migrationYears
+    // z comes from the CRQC source of truth, NOT back-derived from the value
+    // under test — an earlier version of this test computed z from
+    // EXEC_MOSCA_START_BY_YEAR itself and was therefore tautological: it passed
+    // against the very `z - y` formula it was written to reject (caught by
+    // re-running it against a deliberately reverted fix).
+    const z = getCrqcConsensus().zEstimate
     expect(EXEC_MOSCA_START_BY_YEAR).toBe(
       z - EXEC_EXPOSURE.secrecyYears - EXEC_EXPOSURE.migrationYears
     )
@@ -235,6 +241,7 @@ describe("exec/researcher exposure card — Mosca's inequality", () => {
   })
 
   it('the footnote shows the working, including x', () => {
+    expect(EXEC_MOSCA_FOOTNOTE).toContain(`Z ${getCrqcConsensus().zEstimate}`)
     expect(EXEC_MOSCA_FOOTNOTE).toContain(`X ${EXEC_EXPOSURE.secrecyYears} yrs`)
     expect(EXEC_MOSCA_FOOTNOTE).toContain(`Y ${EXEC_EXPOSURE.migrationYears} yrs`)
     expect(EXEC_MOSCA_FOOTNOTE).toContain(`= ${EXEC_MOSCA_START_BY_YEAR}`)
