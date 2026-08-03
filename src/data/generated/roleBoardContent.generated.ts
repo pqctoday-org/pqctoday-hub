@@ -246,15 +246,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: 'p5',
       cswp39Zone: 'migration',
       moduleIds: ['tls-basics', 'hybrid-crypto'],
-      workshopIds: ['tls-simulator'],
+      workshopIds: ['hybrid-encrypt'],
       businessToolIds: ['crypto-api-refactor-audit'],
       board: {
         heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
         headline: 'Five minutes to a real ML-KEM handshake.',
-        sub: 'Not a diagram. Real WASM crypto in this tab, with the PKCS#11 call log open and a plain-English column beside it. Then we tell you what to change in your stack.',
-        ctaPrimary: 'Run a TLS 1.3 hybrid handshake',
-        ctaPrimaryHref: '/playground/tls-simulator',
+        sub: 'Not a diagram. ML-KEM and X25519 combined through a real HKDF pipeline in this tab, every intermediate value inspectable. Then we tell you what to change in your stack.',
+        ctaPrimary: 'Run ML-KEM + X25519 now',
+        ctaPrimaryHref: '/playground/hybrid-encrypt',
         ctaSecondary: 'Grade your crypto agility',
         ctaSecondaryHref: '/tools/crypto-api-refactor-audit',
         proofChips: [
@@ -279,16 +279,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'A handshake you have actually run',
         gridCards: [
           {
-            title: 'A real TLS 1.3 hybrid handshake',
-            body: 'Configure cipher suites, key-exchange groups and mTLS, then run the handshake — including X25519MLKEM768 and the other hybrid groups.',
+            title: 'A real hybrid KEM pipeline',
+            body: "ML-KEM encapsulation combined with an X25519 ECDH share and run through HKDF — the exact construction a hybrid handshake negotiates, with each step's bytes shown.",
           },
           {
             title: 'A grade on your call sites',
             body: 'The Crypto API Refactor Audit (CSWP.39 §4.1) grades how agile your current crypto call sites are, and what refactoring this pilot implies for them.',
           },
           {
-            title: 'The negotiation, not the diagram',
-            body: 'The simulator is the workshop this board rests on — real WASM crypto in the tab, with the wire messages inspectable.',
+            title: 'The construction, not the diagram',
+            body: 'This is the primitive underneath every hybrid key exchange you will ship. Getting it right here is what makes the protocol-level work uneventful.',
           },
         ] as [
           { title: string; body: string },
@@ -1155,7 +1155,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: '',
       cswp39Zone: '',
       moduleIds: ['pqc-101', 'quantum-threats'],
-      workshopIds: ['hybrid-certs'],
+      workshopIds: ['tls-simulator'],
       businessToolIds: ['breach-simulator'],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
@@ -1165,8 +1165,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         },
         headline: 'What actually breaks, and when.',
         sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
-        ctaPrimary: 'Build a hybrid certificate',
-        ctaPrimaryHref: '/playground/hybrid-certs',
+        ctaPrimary: 'Watch a real handshake',
+        ctaPrimaryHref: '/playground/tls-simulator',
         ctaSecondary: 'See what a breach costs',
         ctaSecondaryHref: '/tools/breach-simulator',
         proofChips: [
@@ -1191,16 +1191,16 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Optional, none of it locked',
         gridCards: [
           {
-            title: 'A certificate you build yourself',
-            body: 'Generate and compare six X.509 hybrid certificate formats through a real PKCS#11 HSM, with genuine DER encoding.',
+            title: 'A real connection, in this tab',
+            body: 'The TLS 1.3 simulator runs an actual handshake — the same negotiation your browser does for the padlock — so you can see which part the quantum threat lands on.',
           },
           {
             title: 'What it would actually cost',
             body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
           },
           {
-            title: 'The hands-on version',
-            body: "Hybrid certificates are the clearest place to see 'old and new lock together' as an actual file rather than a metaphor.",
+            title: 'Why a handshake, of all things',
+            body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
           },
         ] as [
           { title: string; body: string },
