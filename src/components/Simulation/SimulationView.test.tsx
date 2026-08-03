@@ -67,10 +67,8 @@ beforeEach(() => {
   // console renders (gameplay tests assume it). Tests that need the gate reset it.
   useAssessmentResultStore.setState({ lastResult: null, completedAt: null })
   seedAssessment()
-  // suppress the first-run tour (WS-12) for the gameplay tests; guided defaults
-  // to false (Expert console) — reset() preserves it like tourSeen, so a test
-  // that flips it must not leak into the next one.
-  useSimulationStore.setState({ tourSeen: true, guided: false })
+  // suppress the first-run tour (WS-12) for the gameplay tests.
+  useSimulationStore.setState({ tourSeen: true })
   Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
 })
 
@@ -78,44 +76,47 @@ describe('SimulationView (Mission Control)', () => {
   it('renders the console shell, setup dials and KPI ribbon', () => {
     renderPage()
     expect(screen.getByText('PQC Today Sim')).toBeInTheDocument()
-    expect(screen.getByText('PQC Migration Simulation')).toBeInTheDocument()
-    // ORG is now read-only (sourced from the assessment) — label has no ⟳ glyph,
-    // and the dial is not a button.
-    const org = screen.getByText('ORG')
-    expect(org).toBeInTheDocument()
-    expect(org.textContent).not.toContain('⟳')
-    expect(org.closest('button')).toBeNull()
-    // SEAT stays switchable — it keeps the ⟳ glyph on a button.
-    expect(screen.getByText('SEAT ⟳')).toBeInTheDocument()
-    expect(screen.getByText(/Transformation/)).toBeInTheDocument()
+    // subtitle + framework attribution merged onto one line (2026-08-02)
+    expect(screen.getByText(/Migration Sim/)).toBeInTheDocument()
+    // ORG/JURISDICTION/SECTOR merged into one read-only Profile pill (2026-08-02):
+    // still not a button, still sourced from the assessment.
+    const profile = screen.getByText('Profile')
+    expect(profile).toBeInTheDocument()
+    expect(profile.closest('button')).toBeNull()
+    // Seat stays switchable — a real button that cycles.
+    expect(screen.getByRole('button', { name: /^Seat:/ })).toBeInTheDocument()
+    // The full Transformation panel moved into the Signals tab (2026-08-02);
+    // the header keeps a one-line Maturity glance in its compact KPI cluster.
+    expect(screen.getByText('Maturity')).toBeInTheDocument()
     // WP2.2: relabeled from "Phases cleared" — the L2 count is a milestone,
     // not the win condition (see scoreboard.ts).
-    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
+    expect(screen.getByText('Gov L2')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /End Quarter/ })).toBeInTheDocument()
     // exit affordance back to the hub is a visible button on the console
     expect(screen.getByRole('button', { name: /Exit to hub/i })).toBeInTheDocument()
   })
 
   // WP4.7 — ribbon slimming: the KPI ribbon keeps only scoreboard + clock +
-  // budget; HNDL/TNFL risk and readiness moved to the Expert rail's pinned
-  // "Threat & readiness" panel (Guided mode never sees the rail at all).
-  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness to the Expert rail', () => {
+  // budget; HNDL/TNFL risk and readiness moved off it. Since 2026-08-02 they
+  // live in the Signals tab's Vital signs card, so they are NOT co-rendered with
+  // the ribbon any more — the tab has to be opened first.
+  it('slims the ribbon to scoreboard + clock + budget, moving threat/readiness into Signals', () => {
     renderPage()
     expect(screen.queryByText('Est. readiness')).not.toBeInTheDocument()
-    expect(screen.getByText('Threat & readiness')).toBeInTheDocument()
-    expect(screen.getAllByText('HNDL risk').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('TNFL risk').length).toBeGreaterThan(0)
+    // not rendered until the Signals tab is opened (one panel at a time)
+    expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
+    expect(screen.getByText('Vital signs')).toBeInTheDocument()
+    // HNDL/TNFL de-duplicated out of Vital signs (2026-08-02) — Program status
+    // above it already shows both, with per-tier track bars.
+    expect(screen.getByText('Program status')).toBeInTheDocument()
+    expect(screen.getAllByText(/HNDL ·/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/TNFL ·/).length).toBeGreaterThan(0)
     // scoreboard + clock + budget still present on the ribbon (Budget secured
     // also appears in the mobile fallback summary, hence getAllByText)
-    expect(screen.getByText('Governance floor (L2)')).toBeInTheDocument()
-    expect(screen.getByText('Years to Q-Day')).toBeInTheDocument()
-    expect(screen.getAllByText('Budget secured').length).toBeGreaterThan(0)
-  })
-
-  it('hides the Expert rail (and its Threat & readiness panel) in Guided mode', () => {
-    useSimulationStore.setState({ guided: true })
-    renderPage()
-    expect(screen.queryByText('Threat & readiness')).not.toBeInTheDocument()
+    expect(screen.getByText('Gov L2')).toBeInTheDocument()
+    expect(screen.getByText('Q-Day')).toBeInTheDocument()
+    expect(screen.getAllByText(/Budget/).length).toBeGreaterThan(0)
   })
 
   // The sim runs on the user's assessed org (single source of truth): with no
@@ -153,8 +154,11 @@ describe('SimulationView (Mission Control)', () => {
       assessmentStatus: 'complete',
     })
     renderPage()
-    expect(screen.getByText('Australia')).toBeInTheDocument()
-    expect(screen.queryByText('Germany')).not.toBeInTheDocument()
+    // jurisdiction is a bare text node inside the merged Profile pill now (it
+    // shares its element with org size + sector), so assert on the pill itself.
+    const pill = screen.getByLabelText(/^Profile:/)
+    expect(pill.textContent).toContain('Australia')
+    expect(pill.textContent).not.toContain('Germany')
     useAssessmentFormStore.getState().reset()
   })
 
@@ -197,6 +201,8 @@ describe('SimulationView (Mission Control)', () => {
 
   it('opening a Learn/Activity resource from the list keeps the sim header (embeds, no navigation)', () => {
     renderPage()
+    // the resource columns live in their own tab since 2026-08-02
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
     // the "Open a resource" lists now embed in-sim: such items say "opens in simulation"
     const embeddable = screen.getAllByText('opens in simulation')
     expect(embeddable.length).toBeGreaterThan(0)
@@ -223,16 +229,47 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.getByText('✕ Common failure')).toBeInTheDocument()
   })
 
-  it('right column shows phase artifacts and gates the architecture view by phase', () => {
+  it('shows phase artifacts under Progress and gates the architecture view by phase', () => {
     renderPage()
-    // p0 (Executive Mandate) produces artifacts but is not an architecture phase
+    // Artifacts moved out of the old Expert rail into the Progress tab (2026-08-02)
+    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
     expect(screen.getByText(/Executive Mandate artifacts/)).toBeInTheDocument()
+    // p0 (Executive Mandate) produces artifacts but is not an architecture phase
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
     expect(screen.queryByText(/Your architecture/)).not.toBeInTheDocument()
-    // P1 (Discovery) acts on the estate → architecture view appears, now behind
-    // the Expert rail's "Show more" disclosure (PR3)
+    // P1 (Discovery) acts on the estate → architecture view appears in Signals.
+    // Switching phase resets the tab to Decide, so Signals is re-opened here.
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
-    fireEvent.click(screen.getByRole('button', { name: /Show \d+ more panel/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
     expect(screen.getByText(/Your architecture/)).toBeInTheDocument()
+  })
+
+  // Per-phase progressive disclosure (2026-08-02) — the point of the tabs is that
+  // only ONE panel is mounted at a time, and that a phase always opens on Decide.
+  it('opens every phase on Decide and mounts only the active tab', () => {
+    renderPage()
+    // Decide's content is up; the other tabs' content is not merely hidden but absent
+    expect(screen.queryByText(/Maturity gates/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
+    expect(screen.getByText(/Maturity gates/)).toBeInTheDocument()
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
+    expect(screen.queryByText(/Maturity gates/)).not.toBeInTheDocument()
+  })
+
+  it('resets to the Decide tab when the phase changes', () => {
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
+    // switching phase must not land the player on the new phase's Resources tab
+    fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
+    expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Decide' })).toHaveAttribute('data-state', 'active')
   })
 
   it('End Quarter advances the turn and opens the Quarter Report', () => {
@@ -333,7 +370,7 @@ describe('SimulationView (Mission Control)', () => {
   it('"Challenge a colleague" copies a ?seed= link for THIS run\'s seed', async () => {
     useSimulationStore.setState({ seed: 999888 })
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /⋯ MORE/i }))
+    fireEvent.click(screen.getByRole('button', { name: /More run actions/i }))
     fireEvent.click(screen.getByRole('menuitem', { name: /challenge a colleague/i }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining('/simulation?seed=999888')
@@ -352,7 +389,7 @@ describe('SimulationView — unified PLAY modal', () => {
 
   it('clicking ▶ PLAY opens the modal with all 3 scopes visible', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
     expect(screen.getByText('Executive Overview')).toBeInTheDocument()
     expect(screen.getByText('Full Migration Journey')).toBeInTheDocument()
@@ -361,7 +398,7 @@ describe('SimulationView — unified PLAY modal', () => {
 
   it('with no persona set, Full Migration Journey is the recommended default', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
     expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()
@@ -370,7 +407,7 @@ describe('SimulationView — unified PLAY modal', () => {
   it('a business persona (executive) recommends Executive Overview instead', () => {
     usePersonaStore.getState().setPersona('executive')
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const execCard = within(dialog).getByText('Executive Overview').closest('div')!
     expect(within(execCard).getByText(/recommended for you/i)).toBeInTheDocument()
@@ -382,7 +419,7 @@ describe('SimulationView — unified PLAY modal', () => {
   it('a technical persona (developer) recommends Full Migration Journey', () => {
     usePersonaStore.getState().setPersona('developer')
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: /^▶ PLAY$/ }))
+    fireEvent.click(screen.getByRole('button', { name: /^▶ Play$/ }))
     const dialog = screen.getByRole('dialog', { name: /choose how to play/i })
     const journeyCard = within(dialog).getByText('Full Migration Journey').closest('div')!
     expect(within(journeyCard).getByText(/recommended for you/i)).toBeInTheDocument()

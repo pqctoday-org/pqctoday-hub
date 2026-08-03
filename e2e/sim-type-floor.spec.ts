@@ -18,9 +18,8 @@ test.describe('Simulation — type floor & Guided mode (PR-4)', () => {
         JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
       )
       localStorage.setItem('pqc-tour-completed', 'true')
-      // tourSeen so the first-run tour doesn't auto-open; guided starts off.
-      // Guard so a RELOAD doesn't re-seed (clobbering the guided pref we set) —
-      // addInitScript runs on every navigation, including reload.
+      // tourSeen so the first-run tour doesn't auto-open. Guard so a RELOAD
+      // doesn't re-seed — addInitScript runs on every navigation, including reload.
       if (!localStorage.getItem('pqc-simulation')) {
         localStorage.setItem(
           'pqc-simulation',
@@ -102,26 +101,5 @@ test.describe('Simulation — type floor & Guided mode (PR-4)', () => {
       return out
     })
     expect(offenders, JSON.stringify(offenders)).toEqual([])
-  })
-
-  // QUARANTINED 2026-06-25 (e2e-strategy triage): asserts the testid
-  // `mosca-guided-caption`, which no longer exists in the source (removed before
-  // this branch — fails on main too). Re-enable once the Guided caption is
-  // re-added with a stable testid, or delete if the feature is gone for good.
-  test.skip('Guided mode captions the dials and persists across reload', async ({ page }) => {
-    // off by default — no plain-language caption
-    await expect(page.getByTestId('mosca-guided-caption')).toHaveCount(0)
-    // turn Guided on via the dial (this also opens the novice walkthrough)
-    await page.getByRole('button', { name: /GUIDED: Off/i }).click()
-    await page.getByRole('button', { name: /^Skip$/ }).click()
-    // the plain-language X/Y/Z caption is now shown
-    await expect(page.getByTestId('mosca-guided-caption')).toBeVisible()
-    await expect(page.getByTestId('mosca-guided-caption')).toContainText(/how long this data/i)
-    // …and the preference survives a reload (persisted, independent of difficulty)
-    await page.reload({ waitUntil: 'networkidle' })
-    await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({
-      timeout: 30_000,
-    })
-    await expect(page.getByTestId('mosca-guided-caption')).toBeVisible()
   })
 })
