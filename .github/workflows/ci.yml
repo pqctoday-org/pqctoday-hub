@@ -153,6 +153,24 @@ jobs:
         # file was hand-edited. Keeps the sim/pages in sync with the one source.
         run: npm run gen:timeline-facts:check
 
+      - name: Role board content derived from the CSV (single source of truth)
+        # Same contract as the timeline check above, for the role-home boards:
+        # fails if src/data/generated/roleBoardContent.generated.ts is stale vs
+        # role_board_content_*.csv. Only predev/build regenerate it, so without
+        # this a CSV-only commit ships correct copy in the production bundle
+        # while tests and type checks silently run against the OLD board.
+        run: npm run audit:role-board-drift
+
+      - name: Audit role-board CTAs (registered, resolving, claim in date)
+        # Every role-board CTA href must have a registry row whose written
+        # capability_claim was verified inside the freshness window, and must
+        # resolve to a real route or playground tool id. Added to CI 2026-08-02:
+        # the gate existed and passed locally but ran in NO workflow, and had
+        # additionally gone blind after the CSV migration (it read CTA literals
+        # out of personaConfig.ts, which no longer holds any) — reporting
+        # "0 CTAs, 11 registered" and still exiting 0.
+        run: npm run audit:role-board-ctas
+
       - name: Audit content freshness (dated claims < 90d)
         # Non-blocking on first rollout — flags time-sensitive claims (CMVP/FIPS
         # status, protocol-matrix snapshot, Q-Day anchor) that have aged past the

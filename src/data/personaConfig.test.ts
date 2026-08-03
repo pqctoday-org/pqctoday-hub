@@ -7,6 +7,7 @@ import {
   PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS,
   PERSONA_SIM_PRACTICE_PHASES,
   PERSONA_JOURNEY_BOARD,
+  PERSONA_JOURNEY_BOARD_VARIANTS,
   PERSONA_MIGRATE_LAYERS,
   PERSONA_LIBRARY_CATEGORIES,
 } from './personaConfig'
@@ -173,16 +174,32 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
     expect(PERSONA_LIBRARY_CATEGORIES.researcher).toEqual([])
   })
 
-  it("researcher: gridCards[1] cites the TCG V1.85 runner's real check count", () => {
-    const body = PERSONA_JOURNEY_BOARD.researcher.gridCards[1].body
-    const match = /(\d+)-check TCG V1\.85 runner/.exec(body)
-    expect(match, `expected an "N-check TCG V1.85 runner" phrase in: ${body}`).not.toBeNull()
-    expect(Number(match?.[1])).toBe(INITIAL_CHECKS.length)
+  /**
+   * Both guards below became VARIANT-AWARE on 2026-08-02. Each role now has
+   * three boards, and these two live facts sit on the board whose subject they
+   * actually are — the TCG runner on researcher/reproduce, the mitigation-zone
+   * citation on ops/capacity — not necessarily on the role's order-1 board.
+   * Scanning every variant keeps the guard honest wherever the copy moves,
+   * which is the point of a drift guard: it must follow the claim.
+   */
+  it('researcher: the TCG V1.85 runner claim cites its real check count, on whichever board makes it', () => {
+    const bodies = PERSONA_JOURNEY_BOARD_VARIANTS.researcher.flatMap((v) =>
+      v.board.gridCards.map((c) => c.body)
+    )
+    const claims = bodies.filter((b) => /TCG V1\.85 runner/.test(b))
+    expect(claims, 'no researcher board mentions the TCG V1.85 runner').not.toHaveLength(0)
+    for (const body of claims) {
+      const match = /(\d+)-check TCG V1\.85 runner/.exec(body)
+      expect(match, `expected an "N-check TCG V1.85 runner" phrase in: ${body}`).not.toBeNull()
+      expect(Number(match?.[1])).toBe(INITIAL_CHECKS.length)
+    }
   })
 
-  it("ops: gridCards[1]'s CSWP.39 §4.6 citation matches the mitigation zone's own reference", () => {
-    const body = PERSONA_JOURNEY_BOARD.ops.gridCards[1].body
+  it("ops: the CSWP.39 §4.6 citation matches the mitigation zone's own reference", () => {
     expect(CSWP39_ZONE_DETAILS.mitigation.cswpRef).toContain('§4.6')
-    expect(body).toContain('CSWP.39 §4.6')
+    const bodies = PERSONA_JOURNEY_BOARD_VARIANTS.ops.flatMap((v) =>
+      v.board.gridCards.map((c) => c.body)
+    )
+    expect(bodies.filter((b) => b.includes('CSWP.39 §4.6'))).not.toHaveLength(0)
   })
 })
