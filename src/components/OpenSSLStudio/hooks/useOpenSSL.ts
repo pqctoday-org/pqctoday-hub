@@ -3,6 +3,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useOpenSSLStore } from '../store'
 import type { WorkerMessage, WorkerResponse } from '../worker/types'
 import { parseOpensslArgs } from '../worker/commandParser'
+import { lookupCkr } from '../../../wasm/pkcs11Inspect'
 
 interface PendingRun {
   resolve: (result: { stdout: string }) => void
@@ -51,6 +52,7 @@ export const useOpenSSL = () => {
     addStructuredLog,
     setIsReady,
     setLoadError,
+    addPkcs11LogEntry,
   } = useOpenSSLStore()
 
   const startTimeRef = useRef<number | null>(null)
@@ -88,6 +90,22 @@ export const useOpenSSL = () => {
             if (pending && event.data.stream === 'stderr') pending.stderr.push(event.data.message)
           }
           break
+        case 'P11CALL': {
+          // A real C_* call the worker made against the linked engine. `ok`
+          // is derived from the actual CK_RV — never assumed — so a rejected
+          // call can't render as a success (the failure mode this panel
+          // exists to make visible).
+          const { name } = lookupCkr(event.data.rv)
+          addPkcs11LogEntry({
+            fn: event.data.fn,
+            args: event.data.args,
+            rvHex: `0x${event.data.rv.toString(16).padStart(8, '0')}`,
+            rvName: name,
+            ms: event.data.ms,
+            ok: event.data.rv === 0,
+          })
+          break
+        }
         case 'FILE_CREATED':
           addFile({
             name: event.data.name,

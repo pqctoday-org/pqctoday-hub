@@ -4,7 +4,7 @@
  *
  * Strategy: Node 24's built-in `crypto` (OpenSSL 3.5.4 backend) generates
  * a fresh keypair and signs a known message. Our `public/wasm/openssl.wasm`
- * (OpenSSL 3.6.2 backend) verifies the signature via `pkeyutl -verify -rawin`.
+ * (OpenSSL 3.6.3 backend) verifies the signature via `pkeyutl -verify -rawin`.
  *
  * If both implementations match FIPS 204 / 205, verify returns rc=0. If
  * either implementation has a bug in the signature OID encoding, the

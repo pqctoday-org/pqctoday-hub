@@ -1078,26 +1078,26 @@ export function _C_SignMessageNext(h_session, _p_param, _ul_param_len, p_part, u
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_data
- * @param {number} _ul_data_len
- * @param {number} _p_signature
- * @param {number} _pul_signature_len
+ * @param {number} h_session
+ * @param {number} p_data
+ * @param {number} ul_data_len
+ * @param {number} p_signature
+ * @param {number} pul_signature_len
  * @returns {number}
  */
-export function _C_SignRecover(_h_session, _p_data, _ul_data_len, _p_signature, _pul_signature_len) {
-    const ret = wasm._C_SignRecover(_h_session, _p_data, _ul_data_len, _p_signature, _pul_signature_len);
+export function _C_SignRecover(h_session, p_data, ul_data_len, p_signature, pul_signature_len) {
+    const ret = wasm._C_SignRecover(h_session, p_data, ul_data_len, p_signature, pul_signature_len);
     return ret >>> 0;
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_mechanism
- * @param {number} _h_key
+ * @param {number} h_session
+ * @param {number} p_mechanism
+ * @param {number} h_key
  * @returns {number}
  */
-export function _C_SignRecoverInit(_h_session, _p_mechanism, _h_key) {
-    const ret = wasm._C_SignRecoverInit(_h_session, _p_mechanism, _h_key);
+export function _C_SignRecoverInit(h_session, p_mechanism, h_key) {
+    const ret = wasm._C_SignRecoverInit(h_session, p_mechanism, h_key);
     return ret >>> 0;
 }
 
@@ -1226,26 +1226,26 @@ export function _C_VerifyMessageNext(h_session, _p_param, _ul_param_len, p_part,
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_signature
- * @param {number} _ul_signature_len
- * @param {number} _p_data
- * @param {number} _pul_data_len
+ * @param {number} h_session
+ * @param {number} p_signature
+ * @param {number} ul_signature_len
+ * @param {number} p_data
+ * @param {number} pul_data_len
  * @returns {number}
  */
-export function _C_VerifyRecover(_h_session, _p_signature, _ul_signature_len, _p_data, _pul_data_len) {
-    const ret = wasm._C_VerifyRecover(_h_session, _p_signature, _ul_signature_len, _p_data, _pul_data_len);
+export function _C_VerifyRecover(h_session, p_signature, ul_signature_len, p_data, pul_data_len) {
+    const ret = wasm._C_VerifyRecover(h_session, p_signature, ul_signature_len, p_data, pul_data_len);
     return ret >>> 0;
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_mechanism
- * @param {number} _h_key
+ * @param {number} h_session
+ * @param {number} p_mechanism
+ * @param {number} h_key
  * @returns {number}
  */
-export function _C_VerifyRecoverInit(_h_session, _p_mechanism, _h_key) {
-    const ret = wasm._C_VerifyRecoverInit(_h_session, _p_mechanism, _h_key);
+export function _C_VerifyRecoverInit(h_session, p_mechanism, h_key) {
+    const ret = wasm._C_VerifyRecoverInit(h_session, p_mechanism, h_key);
     return ret >>> 0;
 }
 

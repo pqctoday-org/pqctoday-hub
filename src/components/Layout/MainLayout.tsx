@@ -195,8 +195,8 @@ const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
     text: 'Explore post-quantum cryptography standards, drafts, and key documents.',
   },
   '/openssl': {
-    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.2 in Your Browser',
-    text: 'Run real OpenSSL 3.6.2 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
+    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.3 in Your Browser',
+    text: 'Run real OpenSSL 3.6.3 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
   },
   '/patents': {
     title: 'PQC Patents — Post-Quantum Migration Patent Corpus',

@@ -4,7 +4,7 @@
  *
  * Strategy: Node 24's built-in `crypto.encapsulate` (OpenSSL 3.5.4)
  * produces a (ciphertext, sharedKey) pair against an ML-KEM-{512,768,1024}
- * public key. Our `public/wasm/openssl.wasm` (OpenSSL 3.6.2) decapsulates
+ * public key. Our `public/wasm/openssl.wasm` (OpenSSL 3.6.3) decapsulates
  * the ciphertext using the matching private key via `pkeyutl -decap`,
  * and the test asserts the recovered shared secret is byte-equal.
  *
