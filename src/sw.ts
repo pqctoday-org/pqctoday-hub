@@ -47,8 +47,13 @@ const chunkCache = new CacheFirst({
   plugins: [new ExpirationPlugin({ maxEntries: 40, maxAgeSeconds: 30 * 24 * 60 * 60 })],
 })
 
-/** Mirrors `injectManifest.globIgnores` in vite.config.ts. */
-const IGNORED_CHUNK_RE = /\/assets\/(useModalPosition|patentsData|index|App)-[^/]*\.js$/
+/**
+ * Mirrors `injectManifest.globIgnores` in vite.config.ts — keep the two in sync.
+ * These chunks are excluded from the install-time precache and served from
+ * `chunk-cache` on first use instead.
+ */
+const IGNORED_CHUNK_RE =
+  /\/assets\/(useModalPosition|patentsData|index|App|timelineEnrichmentData|trustScoreData|SupplyChainRiskMatrix)-[^/]*\.js$/
 
 // ── Cross-Origin Isolation ─────────────────────────────────────────────────
 // Inject COEP:credentialless + COOP:same-origin on every response so that
