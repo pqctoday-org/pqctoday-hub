@@ -415,6 +415,9 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
   onStartRuntime,
   onToggleBookmark,
 }) => {
+  const caps = useDeviceCapabilities()
+  const modalUnmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
+
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -538,6 +541,27 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
                 })}
               </div>
             </>
+          )}
+
+          {/* WS8c — explain WHY, before the visitor clicks Open and waits on a
+              spinner that cannot resolve. Only for browser tools whose declared
+              requirements this device does not meet; container scenarios have
+              their own runtime messaging below. */}
+          {!tool.sandbox && modalUnmet.length > 0 && (
+            <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-border bg-muted/40 p-3.5">
+              <span className="mt-0.5 flex w-[26px] h-[26px] shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <Monitor className="w-3.5 h-3.5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[12px] font-semibold text-foreground">
+                  This tool will not run on this device
+                </p>
+                <p className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground">
+                  It needs {modalUnmet.map((r) => REQUIREMENT_LABELS[r]).join(' and ')}. The rest of
+                  the page still works — the live crypto steps are what require it.
+                </p>
+              </div>
+            </div>
           )}
 
           <div className="mt-6 flex gap-2.5">
