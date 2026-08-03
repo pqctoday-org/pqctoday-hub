@@ -50,8 +50,38 @@ if (!existsSync(resolve(hsmPath, '.git'))) {
   process.exit(0)
 }
 
+/**
+ * git's own hook environment must be stripped before shelling out to the OTHER
+ * repository. `git push` exports GIT_DIR (and friends) to every hook it runs,
+ * and those env vars take precedence over `-C` — so under .husky/pre-push this
+ * ran every command against the HUB repo while appearing to target hsm.
+ * `rev-parse HEAD` returned the hub's HEAD and every `<hsmCommit>..HEAD` range
+ * was "Invalid revision range", which the catch below reported as "not in hsm
+ * history — rebuild". The bundles were current the whole time; the check simply
+ * could not pass at push time, on any push, from the moment it was wired into
+ * the hook (2026-08-02). Found on the first real push after that.
+ */
+const HOOK_GIT_ENV = [
+  'GIT_DIR',
+  'GIT_WORK_TREE',
+  'GIT_INDEX_FILE',
+  'GIT_PREFIX',
+  'GIT_COMMON_DIR',
+  'GIT_OBJECT_DIRECTORY',
+  'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+] as const
+
+const cleanGitEnv = (): NodeJS.ProcessEnv => {
+  const env = { ...process.env }
+  for (const key of HOOK_GIT_ENV) delete env[key]
+  return env
+}
+
 const git = (...args: string[]) =>
-  execFileSync('git', ['-C', hsmPath, ...args], { encoding: 'utf8' }).trim()
+  execFileSync('git', ['-C', hsmPath, ...args], {
+    encoding: 'utf8',
+    env: cleanGitEnv(),
+  }).trim()
 
 let drift = false
 const head = git('rev-parse', 'HEAD')
