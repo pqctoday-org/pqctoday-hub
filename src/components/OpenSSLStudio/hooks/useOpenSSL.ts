@@ -5,6 +5,15 @@ import type { WorkerMessage, WorkerResponse } from '../worker/types'
 import { parseOpensslArgs } from '../worker/commandParser'
 import { lookupCkr } from '../../../wasm/pkcs11Inspect'
 
+/** One object really resident on the PKCS#11 token, as reported by a live
+ *  C_FindObjects sweep (not by what this UI thinks it created). */
+export interface TokenObject {
+  handle: number
+  cls: number
+  keyType: number
+  label: string
+}
+
 interface PendingRun {
   resolve: (result: { stdout: string }) => void
   reject: (error: Error) => void
@@ -64,6 +73,10 @@ export const useOpenSSL = () => {
   const pendingKeygenRef = useRef<
     Map<string, { resolve: (r: { uri: string }) => void; reject: (e: Error) => void }>
   >(new Map())
+  /** In-flight HSM_LIST_OBJECTS requests, settled by HSM_OBJECTS / ERROR. */
+  const pendingListRef = useRef<
+    Map<string, { resolve: (r: TokenObject[]) => void; reject: (e: Error) => void }>
+  >(new Map())
 
   useEffect(() => {
     // Track if this effect instance is active
@@ -90,6 +103,15 @@ export const useOpenSSL = () => {
             if (pending && event.data.stream === 'stderr') pending.stderr.push(event.data.message)
           }
           break
+        case 'HSM_OBJECTS': {
+          setIsProcessing(false)
+          if (event.data.requestId) {
+            const pending = pendingListRef.current.get(event.data.requestId)
+            pendingListRef.current.delete(event.data.requestId)
+            pending?.resolve(event.data.objects)
+          }
+          break
+        }
         case 'P11CALL': {
           // A real C_* call the worker made against the linked engine. `ok`
           // is derived from the actual CK_RV — never assumed — so a rejected
@@ -154,6 +176,13 @@ export const useOpenSSL = () => {
             const pk = pendingKeygenRef.current.get(event.data.requestId)!
             pendingKeygenRef.current.delete(event.data.requestId)
             pk.reject(new Error(event.data.error || 'HSM key generation failed'))
+          }
+          // Must reject here too, or a failed sweep leaves the caller's promise
+          // pending forever and the Refresh button stuck mid-flight.
+          if (event.data.requestId && pendingListRef.current.has(event.data.requestId)) {
+            const pl = pendingListRef.current.get(event.data.requestId)!
+            pendingListRef.current.delete(event.data.requestId)
+            pl.reject(new Error(event.data.error || 'Listing token objects failed'))
           }
           if (event.data.requestId && pendingRunsRef.current.has(event.data.requestId)) {
             const pending = pendingRunsRef.current.get(event.data.requestId)!
@@ -427,6 +456,26 @@ export const useOpenSSL = () => {
     [setIsProcessing]
   )
 
+  /**
+   * Ask the token what it actually holds, via a real C_FindObjects sweep.
+   * Distinct from the Studio's own `pkcs11Keys` list, which only ever knew
+   * about keys this session created.
+   */
+  const hsmListObjects = useCallback((): Promise<TokenObject[]> => {
+    if (!workerRef.current) {
+      return Promise.reject(new Error('OpenSSL WASM engine is not ready yet.'))
+    }
+    const requestId = `hsmls_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+    setIsProcessing(true)
+    return new Promise((resolve, reject) => {
+      pendingListRef.current.set(requestId, { resolve, reject })
+      workerRef.current!.postMessage({
+        type: 'HSM_LIST_OBJECTS',
+        requestId,
+      } as WorkerMessage)
+    })
+  }, [setIsProcessing])
+
   const executeSkey = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (opType: 'create' | 'derive', params: Record<string, any>) => {
@@ -450,5 +499,5 @@ export const useOpenSSL = () => {
     [setIsProcessing, clearTerminalLogs, addLog, setLastExecutionTime]
   )
 
-  return { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen }
+  return { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen, hsmListObjects }
 }

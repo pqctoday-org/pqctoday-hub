@@ -65,4 +65,27 @@ test.describe('OpenSSL Studio — PKCS#11 call log', () => {
     // which is the whole point of showing the trace.
     await expect(page.getByText('CKR_OK').first()).toBeVisible()
   })
+
+  // The Studio's key list was previously just React state it populated when it
+  // created a key — it could not show a key made elsewhere, and would still
+  // list one the token had lost. This asks the token instead.
+  test('Token Inventory reads real objects back out of the token', async ({ page }) => {
+    await openStudio(page)
+    await page.getByRole('button', { name: 'Workbench', exact: true }).first().click()
+    await page.getByRole('button', { name: 'PKCS#11 (HSM)' }).click({ timeout: 60_000 })
+
+    await page
+      .getByRole('button', { name: /Generate Key in HSM Token/i })
+      .click({ timeout: 60_000 })
+    await expect(page.getByText(/pkcs11:object=/i).first()).toBeVisible({ timeout: 120_000 })
+
+    // Nothing is listed until the token is actually queried.
+    await page.getByRole('button', { name: /Read from token/i }).click()
+
+    // A keypair must come back as two distinct PKCS#11 object classes. That
+    // pairing is what proves this is a genuine C_FindObjects sweep and not a
+    // re-render of the UI's own key list, which tracks one entry per keypair.
+    await expect(page.getByText('CKO_PRIVATE_KEY').first()).toBeVisible({ timeout: 120_000 })
+    await expect(page.getByText('CKO_PUBLIC_KEY').first()).toBeVisible()
+  })
 })
