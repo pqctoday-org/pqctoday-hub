@@ -4,7 +4,7 @@
 // Enables SharedArrayBuffer for WASM threading on GitHub Pages without server-side headers.
 
 import { PrecacheController, cleanupOutdatedCaches } from 'workbox-precaching'
-import { StaleWhileRevalidate } from 'workbox-strategies'
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 
 declare const self: ServiceWorkerGlobalScope & {
@@ -30,6 +30,25 @@ const dataCache = new StaleWhileRevalidate({
   cacheName: 'data-cache',
   plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 })],
 })
+
+// WASM engines are no longer precached at install (WS3, 2026-08-02 — see the
+// injectManifest note in vite.config.ts). CacheFirst keeps repeat visits
+// instant and preserves offline-after-first-use: the first visit pays the
+// network cost for whichever engine that route needs, and only that one.
+const wasmCache = new CacheFirst({
+  cacheName: 'wasm-cache',
+  plugins: [new ExpirationPlugin({ maxEntries: 30, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+})
+
+// Large route-specific JS chunks are excluded from the precache via
+// globIgnores. Same treatment: cache them the first time a route pulls one in.
+const chunkCache = new CacheFirst({
+  cacheName: 'chunk-cache',
+  plugins: [new ExpirationPlugin({ maxEntries: 40, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+})
+
+/** Mirrors `injectManifest.globIgnores` in vite.config.ts. */
+const IGNORED_CHUNK_RE = /\/assets\/(useModalPosition|patentsData|index|App)-[^/]*\.js$/
 
 // ── Cross-Origin Isolation ─────────────────────────────────────────────────
 // Inject COEP:credentialless + COOP:same-origin on every response so that
@@ -61,12 +80,21 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async (): Promise<Response> => {
-      // WASM files: serve from precache (revision-controlled, always fresh after deploy).
-      // Falls through to network if not precached (e.g. dynamically loaded WASM).
+      // WASM files: precache first (for anything still revision-controlled),
+      // then the CacheFirst `wasm-cache`, then network. Since WS3 removed
+      // `wasm` from globPatterns, the second tier is now the normal path.
+      // Every branch stays wrapped in withCOIHeaders — SharedArrayBuffer on
+      // GitHub Pages depends on it (see the note above the wrapper).
       if (url.pathname.endsWith('.wasm')) {
         const precachedWasm = await precache.matchPrecache(request)
         if (precachedWasm) return withCOIHeaders(precachedWasm, url)
-        return withCOIHeaders(await fetch(request), url)
+        return withCOIHeaders(await wasmCache.handle({ event, request }), url)
+      }
+
+      // Oversized route-specific JS chunks: excluded from the precache by
+      // globIgnores, cached on first use so a repeat visit is still instant.
+      if (IGNORED_CHUNK_RE.test(url.pathname)) {
+        return withCOIHeaders(await chunkCache.handle({ event, request }), url)
       }
 
       // JSON/CSV data: StaleWhileRevalidate

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { search as searchIndex, getSearchIndex } from '@/services/search/SearchIndex'
 import type { SearchResult } from '@/services/search/SearchIndex'
 import { chunkToRoute, SOURCE_LABELS, ADVANCED_SOURCES } from '@/data/searchRoutes'
+import { BUSINESS_TOOL_SOURCE, WORKSHOP_TOOL_SOURCE } from '@/services/search/toolSearchEntries'
 import { useSearchHistoryStore } from '@/store/useSearchHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -112,7 +113,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     setLoading(true)
     setError(null)
 
-    searchIndex(query, { limit: 60, authoritativeOnly })
+    // `ensureSources` (WS6a): the two tool registries are narrow sources in a
+    // corpus of thousands of prose chunks, so on a broad algorithm query like
+    // "ML-KEM" they never reach the global top-60 and disappear from their own
+    // group. This guarantees them a slot without displacing anything.
+    searchIndex(query, {
+      limit: 60,
+      authoritativeOnly,
+      ensureSources: [WORKSHOP_TOOL_SOURCE, BUSINESS_TOOL_SOURCE],
+      ensureLimit: 3,
+    })
       .then((raw) => {
         if (cancelled) return
         const filtered =

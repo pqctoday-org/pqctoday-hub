@@ -58,6 +58,10 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
+      // PWA icons only. `data/rag-corpus.json` and `data/compliance-data.json`
+      // were removed here (WS3, 2026-08-02): sw.ts already serves both through
+      // its StaleWhileRevalidate `data-cache` route, so search and the
+      // assistant keep working from first use without paying 21 MB at install.
       includeAssets: [
         'favicon.svg',
         'favicon-32x32.png',
@@ -67,12 +71,36 @@ export default defineConfig({
         'pwa-1024x1024.png',
         'pwa-maskable-192.png',
         'pwa-maskable-512.png',
-        'data/rag-corpus.json',
-        'data/compliance-data.json',
       ],
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
-        maximumFileSizeToCacheInBytes: 48 * 1024 * 1024, // 48 MB — accommodates the @huggingface/transformers ONNX Runtime SIMD WASM (~23.6 MB) loaded by the embedding-driven semantic-search pipeline, plus the existing softhsm/liboqs WASM bundles, plus the App-* JS chunk which has grown to ~33.6 MB as of 2026-06-01 (CI failure at 32 MB triggered this bump). 48 MB leaves ~14 MB of headroom; further growth above ~45 MB should trigger a code-split refactor rather than another bump.
+        // WS3 (2026-08-02) — install-time precache was 377 MB across 1,357
+        // files, because the glob matched every WASM engine, every prerendered
+        // route's JSON and every image. A cold first visit downloaded all of
+        // it. Dropping wasm/json/png takes it to ~197 MB; `globIgnores` below
+        // takes out the oversized JS chunks, which are the rest of the bulk.
+        //
+        // Runtime coverage for everything removed here already exists in
+        // src/sw.ts: `.wasm` has a CacheFirst `wasm-cache` route plus network
+        // fallback, and `/(data|dist)/*.{json,csv}` has `data-cache`. Nothing
+        // becomes unreachable — it becomes offline-capable after first use
+        // instead of before it.
+        globPatterns: ['**/*.{js,css,html,svg}'],
+        // The four largest JS chunks are 6–43 MB each and are route-specific:
+        // precaching them at install buys nothing for a first visit that lands
+        // on one route. They stay network-served and are picked up by the
+        // browser's own HTTP cache.
+        globIgnores: [
+          '**/assets/useModalPosition-*.js',
+          '**/assets/patentsData-*.js',
+          '**/assets/index-*.js',
+          '**/assets/App-*.js',
+        ],
+        // 48 MB stays. The ceiling is JS-bound, NOT WASM-bound: the largest
+        // single precachable asset is the ~43 MB app chunk (was ~33.6 MB on
+        // 2026-06-01, CI failed at 32 MB). Lowering this after taking WASM out
+        // of the glob would fail the build on that chunk. Reducing it is a
+        // code-splitting task — see the globIgnores note above.
+        maximumFileSizeToCacheInBytes: 48 * 1024 * 1024,
       },
       manifest: {
         name: 'PQC Today',
