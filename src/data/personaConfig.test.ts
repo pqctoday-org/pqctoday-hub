@@ -8,6 +8,12 @@ import {
   PERSONA_SIM_PRACTICE_PHASES,
   PERSONA_JOURNEY_BOARD,
   PERSONA_JOURNEY_BOARD_VARIANTS,
+  EXEC_EXPOSURE,
+  EXEC_MOSCA_AS_OF_YEAR,
+  EXEC_MOSCA_START_BY_YEAR,
+  EXEC_MOSCA_COMPLETE_BY_YEAR,
+  EXEC_MOSCA_PUNCHLINE,
+  EXEC_MOSCA_FOOTNOTE,
   PERSONA_MIGRATE_LAYERS,
   PERSONA_LIBRARY_CATEGORIES,
 } from './personaConfig'
@@ -201,5 +207,53 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
       v.board.gridCards.map((c) => c.body)
     )
     expect(bodies.filter((b) => b.includes('CSWP.39 §4.6'))).not.toHaveLength(0)
+  })
+})
+
+describe("exec/researcher exposure card — Mosca's inequality", () => {
+  // Regressions for two defects that both shipped on this card. The first was a
+  // hand-typed conclusion ("You are four years short.") sitting above literal
+  // premises it did not follow from. The fix computed the conclusion but used
+  // `z - y`, dropping x — so the card printed "12 yrs" as its own first row and
+  // then never used it, and the number it produced (2028) disagreed by 12 years
+  // with SectorExposureHero's `z - dataLife - MIGRATION_YEARS` for the same
+  // question. These pin the formula itself, not the rendered string.
+
+  it('start-by year is z - x - y, not z - y', () => {
+    const z = EXEC_MOSCA_START_BY_YEAR + EXEC_EXPOSURE.secrecyYears + EXEC_EXPOSURE.migrationYears
+    expect(EXEC_MOSCA_START_BY_YEAR).toBe(
+      z - EXEC_EXPOSURE.secrecyYears - EXEC_EXPOSURE.migrationYears
+    )
+    // The specific wrong answer, named so it cannot come back silently.
+    expect(EXEC_MOSCA_START_BY_YEAR).not.toBe(z - EXEC_EXPOSURE.migrationYears)
+  })
+
+  it('complete-by year is z - x, and start-by precedes it by the migration length', () => {
+    expect(EXEC_MOSCA_COMPLETE_BY_YEAR - EXEC_MOSCA_START_BY_YEAR).toBe(
+      EXEC_EXPOSURE.migrationYears
+    )
+  })
+
+  it('the footnote shows the working, including x', () => {
+    expect(EXEC_MOSCA_FOOTNOTE).toContain(`X ${EXEC_EXPOSURE.secrecyYears} yrs`)
+    expect(EXEC_MOSCA_FOOTNOTE).toContain(`Y ${EXEC_EXPOSURE.migrationYears} yrs`)
+    expect(EXEC_MOSCA_FOOTNOTE).toContain(`= ${EXEC_MOSCA_START_BY_YEAR}`)
+  })
+
+  it('the punchline never claims a passed deadline is still ahead of the reader', () => {
+    const isPast = EXEC_MOSCA_AS_OF_YEAR > EXEC_MOSCA_START_BY_YEAR
+    if (isPast) {
+      expect(EXEC_MOSCA_PUNCHLINE).toMatch(/past it|was /)
+      expect(EXEC_MOSCA_PUNCHLINE).not.toMatch(/^Start by/)
+    } else {
+      expect(EXEC_MOSCA_PUNCHLINE).toMatch(/^Start by/)
+    }
+  })
+
+  it('the declared reference year has not drifted behind the real clock', () => {
+    // EXEC_MOSCA_AS_OF_YEAR is declared, not clock-derived, so the generated
+    // board stays byte-stable for the drift gate. This is what stops it rotting:
+    // it fails once the constant is more than a year stale.
+    expect(new Date().getFullYear() - EXEC_MOSCA_AS_OF_YEAR).toBeLessThanOrEqual(1)
   })
 })
