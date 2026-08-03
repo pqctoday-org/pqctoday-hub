@@ -19,6 +19,16 @@ const renderWorkbench = (path = '/playground') =>
     </MemoryRouter>
   )
 
+/**
+ * The run-context filter defaults to 'browser' (WS6a-bis) so a visitor's first
+ * view holds only tools they can actually execute. Docker sandbox scenarios are
+ * one click away behind the "Show them" affordance — click it, the way a user
+ * would, before asserting anything about sandbox cards.
+ */
+const revealSandboxScenarios = () => {
+  fireEvent.click(screen.getByRole('button', { name: /^Show (them|it)$/i }))
+}
+
 beforeEach(() => {
   usePersonaStore.setState({ selectedPersona: null })
   useBookmarkStore.setState({ myPlaygroundTools: [], showOnlyPlaygroundTools: false })
@@ -105,11 +115,23 @@ describe('Crypto Lab Workbench', () => {
     expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
   })
 
+  it('defaults to the browser catalogue and keeps the hidden container count visible', () => {
+    // WS6a-bis: WORKSHOP_TOOLS carries 24 Docker scenarios, so an 'all' default
+    // meant ~41% of the cards on screen could not run in the browser at all.
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    expect(screen.queryByText('OpenSSL TLS 1.3 + Composite Cert')).toBeNull()
+    // Breadth is never concealed: the count is on screen and one click reveals.
+    expect(screen.getByText(/Docker scenarios? in this category/i)).toBeInTheDocument()
+    revealSandboxScenarios()
+    expect(screen.getByText('OpenSSL TLS 1.3 + Composite Cert')).toBeInTheDocument()
+  })
+
   it('dims (not hides) Docker-sandbox scenarios when the runtime is offline, with a Connect hint', () => {
     // OpenSSL TLS 1.3 sandbox scenario is re-homed to Protocol Simulations.
     renderWorkbench('/playground?cat=Protocol%20Simulations')
-    // Offline (beforeEach): the sandbox demo stays in the grid, dimmed/locked
-    // (Phase 9.4) — never removed from the list entirely.
+    revealSandboxScenarios()
+    // Offline (beforeEach): once revealed, the sandbox demo stays in the grid,
+    // dimmed/locked (Phase 9.4) — never removed from the list entirely.
     const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
@@ -131,6 +153,7 @@ describe('Crypto Lab Workbench', () => {
   it('shows Docker-sandbox scenarios with a Sandbox badge when the runtime is online', () => {
     useSandboxStore.setState({ status: 'online' })
     renderWorkbench('/playground?cat=Protocol%20Simulations')
+    revealSandboxScenarios()
     const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()

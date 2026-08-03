@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useEffect } from 'react'
-import { Link } from 'react-router'
+import { useMemo, useEffect, useCallback } from 'react'
+import { Link, useSearchParams } from 'react-router'
 import { Search, Wrench, Filter } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
@@ -52,12 +52,60 @@ const AUDIENCE_FILTER_ITEMS: { id: string; label: string }[] = [
   { id: 'developer', label: 'Developer' },
 ]
 
+/** Query-param names for the grid's five facets. */
+const PARAM = {
+  q: 'q',
+  category: 'cat',
+  zone: 'zone',
+  phase: 'phase',
+  audience: 'audience',
+} as const
+
 export const BusinessToolsGrid = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [zoneFilter, setZoneFilter] = useState<'all' | ZoneId>('all')
-  const [phaseFilter, setPhaseFilter] = useState<'all' | PhaseId>('all')
-  const [audienceFilter, setAudienceFilter] = useState<'all' | BusinessToolAudience>('all')
+  // WS6b (2026-08-02) — all five facets live in the URL. They were local
+  // useState, so no filtered view of the Command Center was linkable,
+  // shareable, or reachable from another surface: the grid filtered correctly
+  // and then threw the result away on navigation. Mirrors the `update()`
+  // pattern in Algorithms/IndustryLandscapeView.tsx, including `replace: true`
+  // so filtering does not stack history entries.
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const searchQuery = searchParams.get(PARAM.q) ?? ''
+  const activeCategory = searchParams.get(PARAM.category)
+  const zoneFilter = (searchParams.get(PARAM.zone) ?? 'all') as 'all' | ZoneId
+  const phaseFilter = (searchParams.get(PARAM.phase) ?? 'all') as 'all' | PhaseId
+  const audienceFilter = (searchParams.get(PARAM.audience) ?? 'all') as 'all' | BusinessToolAudience
+
+  const update = useCallback(
+    (updates: Record<string, string | null>) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(updates)) {
+            // `all` and empty string are the defaults — omit them so a default
+            // view has a clean URL rather than ?zone=all&phase=all&...
+            if (v === null || v === '' || v === 'all') next.delete(k)
+            else next.set(k, v)
+          }
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const setSearchQuery = useCallback((v: string) => update({ [PARAM.q]: v }), [update])
+  const setActiveCategory = useCallback(
+    (v: string | null) => update({ [PARAM.category]: v }),
+    [update]
+  )
+  const setZoneFilter = useCallback((v: 'all' | ZoneId) => update({ [PARAM.zone]: v }), [update])
+  const setPhaseFilter = useCallback((v: 'all' | PhaseId) => update({ [PARAM.phase]: v }), [update])
+  const setAudienceFilter = useCallback(
+    (v: 'all' | BusinessToolAudience) => update({ [PARAM.audience]: v }),
+    [update]
+  )
 
   useEffect(() => {
     if (!searchQuery.trim()) return
