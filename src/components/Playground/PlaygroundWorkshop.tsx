@@ -28,6 +28,7 @@ import {
   RefreshCw,
   Zap,
   Command,
+  Monitor,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -38,6 +39,7 @@ import {
   type WorkshopTool,
   type WorkshopCategory,
   type ToolDifficulty,
+  type ToolRuntimeRequirement,
 } from './workshopRegistry'
 import {
   CATEGORY_META,
@@ -64,6 +66,11 @@ import { CommandPalette } from './CommandPalette'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import {
+  useDeviceCapabilities,
+  unmetRequirements,
+  REQUIREMENT_LABELS,
+} from '@/hooks/useDeviceCapabilities'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 
@@ -147,6 +154,26 @@ const ForYouBadge: React.FC = () => (
   <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-secondary/15 text-secondary">
     <Star className="w-2.5 h-2.5 fill-current" aria-hidden="true" />
     for you
+  </span>
+)
+
+/**
+ * "Needs a desktop" (WS8c, 2026-08-02) — shown only when THIS device does not
+ * meet what the tool declares in `requires`. Deliberately silent in the common
+ * case: a badge on every runnable card would be noise, and the honest signal is
+ * the exception. The `title` names the missing capability so the answer to "why
+ * not?" is one hover away rather than a spinner that never resolves.
+ *
+ * Container scenarios are not badged here — they already carry SandboxBadge,
+ * and they are not failing a capability check.
+ */
+const DeviceUnmetBadge: React.FC<{ unmet: ToolRuntimeRequirement[] }> = ({ unmet }) => (
+  <span
+    className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-muted text-muted-foreground border border-border"
+    title={`Needs ${unmet.map((r) => REQUIREMENT_LABELS[r]).join(' and ')}`}
+  >
+    <Monitor className="w-2.5 h-2.5" aria-hidden="true" />
+    Needs a desktop
   </span>
 )
 
@@ -238,6 +265,10 @@ const ToolCardView: React.FC<ToolCardProps> = ({
   onToggleBookmark,
 }) => {
   const Icon = tool.icon
+  const caps = useDeviceCapabilities()
+  // Only compute this for tools that declare something — 26 of the 34 browser
+  // tools declare nothing and can never be unmet.
+  const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
   return (
     <div className="relative">
       <div
@@ -265,6 +296,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
               <DifficultyBadge level={tool.difficulty} />
               {tool.sandbox && <SandboxBadge />}
               {tool.wip && !tool.sandbox && <WipBadge />}
+              {!tool.sandbox && unmet.length > 0 && <DeviceUnmetBadge unmet={unmet} />}
               {recommended && <ForYouBadge />}
               {showCategory && <CategoryChip label={tool.category} />}
             </div>

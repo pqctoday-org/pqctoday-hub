@@ -89,11 +89,24 @@ export default defineConfig({
         // precaching them at install buys nothing for a first visit that lands
         // on one route. They stay network-served and are picked up by the
         // browser's own HTTP cache.
+        // Measured on a real build: precaching everything was 377 MB / 1,357
+        // files. Dropping wasm+json+png took it to ~197 MB; excluding these
+        // route-specific chunks takes it to ~44 MB / ~700 files. Each one is
+        // either a giant app chunk or a data bundle only one route needs, so
+        // precaching it at install buys a first visit nothing.
+        //
+        // KEEP IN SYNC with IGNORED_CHUNK_RE in src/sw.ts — that is what routes
+        // these to the CacheFirst chunk-cache instead. If you add a pattern
+        // here without adding it there, the chunk still works (network
+        // fallback) but stops being cached for repeat visits.
         globIgnores: [
           '**/assets/useModalPosition-*.js',
           '**/assets/patentsData-*.js',
           '**/assets/index-*.js',
           '**/assets/App-*.js',
+          '**/assets/timelineEnrichmentData-*.js',
+          '**/assets/trustScoreData-*.js',
+          '**/assets/SupplyChainRiskMatrix-*.js',
         ],
         // 48 MB stays. The ceiling is JS-bound, NOT WASM-bound: the largest
         // single precachable asset is the ~43 MB app chunk (was ~33.6 MB on

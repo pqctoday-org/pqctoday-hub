@@ -20,6 +20,7 @@ import { WorkshopToolsTab } from './tabs/WorkshopToolsTab'
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { useHsmContext } from './hsm/HsmContext'
 import { Button } from '../ui/button'
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities'
 
 const MobilePlaygroundView = lazy(() =>
   import('./MobilePlaygroundView').then((m) => ({ default: m.MobilePlaygroundView }))
@@ -162,12 +163,15 @@ function MobileOpsContent() {
 }
 
 export const MobilePlaygroundOps = () => {
-  const [status, setStatus] = useState<CapabilityStatus>(() => {
-    const hasSharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined'
-    const deviceMemory = (navigator as { deviceMemory?: number }).deviceMemory
-    const lowMemory = deviceMemory !== undefined && deviceMemory < 2
-    return !hasSharedArrayBuffer || lowMemory ? 'unsupported' : 'supported'
-  })
+  // WS8b (2026-08-02): the probe that used to be inlined here now lives in
+  // useDeviceCapabilities, so the catalogue's device badges and this warning
+  // read the same source instead of two implementations that could disagree.
+  // Behaviour is unchanged — same trigger (no SAB, or reported memory < 2 GB),
+  // same warning, same *Continue Anyway* escape.
+  const caps = useDeviceCapabilities()
+  const [status, setStatus] = useState<CapabilityStatus>(() =>
+    !caps.sab || caps.lowMemory ? 'unsupported' : 'supported'
+  )
   const [showFallback, setShowFallback] = useState(false)
 
   if (showFallback) {
