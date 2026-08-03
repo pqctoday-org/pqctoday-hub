@@ -113,7 +113,8 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
   // exact same worker/WASM instance as the Workbench instead of each tab
   // mounting its own useOpenSSL() and reloading the engine on tab switch.
-  const { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen } = useOpenSSL()
+  const { executeCommand, executeSkey, runCommand, retryLoad, hsmKeygen, hsmListObjects } =
+    useOpenSSL()
 
   const handleCategoryChange = useCallback(
     (cat: OpenSSLCategory) => {
@@ -288,6 +289,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                     executeSkey={executeSkey}
                     retryLoad={retryLoad}
                     hsmKeygen={hsmKeygen}
+                    hsmListObjects={hsmListObjects}
                   />
                 </div>
 

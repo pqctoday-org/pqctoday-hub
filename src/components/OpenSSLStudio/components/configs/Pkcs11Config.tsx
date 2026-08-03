@@ -52,8 +52,34 @@ const OPS_FOR_KIND: Record<Pkcs11Key['kind'], Array<{ id: Pkcs11Operation; label
   ],
 }
 
+/** PKCS#11 v3.2 §4 object classes and §6 key types, for rendering a real
+ *  C_FindObjects sweep. Values from pkcs11t.h, not inferred. */
+const CKO_NAMES: Record<number, string> = {
+  0x00000000: 'CKO_DATA',
+  0x00000001: 'CKO_CERTIFICATE',
+  0x00000002: 'CKO_PUBLIC_KEY',
+  0x00000003: 'CKO_PRIVATE_KEY',
+  0x00000004: 'CKO_SECRET_KEY',
+}
+
+const CKK_NAMES_P11: Record<number, string> = {
+  0x00000000: 'RSA',
+  0x00000003: 'EC',
+  0x00000010: 'GENERIC_SECRET',
+  0x0000001f: 'AES',
+  0x00000040: 'EC_EDWARDS',
+  0x00000041: 'EC_MONTGOMERY',
+  0x00000049: 'ML-KEM',
+  0x0000004a: 'ML-DSA',
+  0x0000004b: 'SLH-DSA',
+}
+
 interface Pkcs11ConfigProps {
   hsmKeygen: (algorithm: string, keyId: string) => Promise<{ uri: string }>
+  /** Live C_FindObjects sweep of the token — see useOpenSSL.hsmListObjects. */
+  hsmListObjects?: () => Promise<
+    Array<{ handle: number; cls: number; keyType: number; label: string }>
+  >
   pkcs11Keys: Pkcs11Key[]
   addPkcs11Key: (key: Pkcs11Key) => void
   pkcs11SelectedKeyId: string
@@ -89,6 +115,7 @@ interface Pkcs11ConfigProps {
 
 export const Pkcs11Config: React.FC<Pkcs11ConfigProps> = ({
   hsmKeygen,
+  hsmListObjects,
   pkcs11Keys,
   addPkcs11Key,
   pkcs11SelectedKeyId,
@@ -123,6 +150,29 @@ export const Pkcs11Config: React.FC<Pkcs11ConfigProps> = ({
   const [keyLabel, setKeyLabel] = useState(`studio-key-${pkcs11Keys.length + 1}`)
   const [isGenerating, setIsGenerating] = useState(false)
   const [copiedUri, setCopiedUri] = useState<string | null>(null)
+  // Result of the last real token sweep. `null` = never asked (distinct from
+  // an empty array, which means "asked, and the token genuinely has nothing").
+  const [tokenObjects, setTokenObjects] = useState<Array<{
+    handle: number
+    cls: number
+    keyType: number
+    label: string
+  }> | null>(null)
+  const [isListing, setIsListing] = useState(false)
+  const [listError, setListError] = useState<string | null>(null)
+
+  const handleListObjects = async () => {
+    if (!hsmListObjects) return
+    setIsListing(true)
+    setListError(null)
+    try {
+      setTokenObjects(await hsmListObjects())
+    } catch (e) {
+      setListError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setIsListing(false)
+    }
+  }
 
   const selectedKey = pkcs11Keys.find((k) => k.id === pkcs11SelectedKeyId) ?? null
 
@@ -284,6 +334,63 @@ export const Pkcs11Config: React.FC<Pkcs11ConfigProps> = ({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Token inventory — what the token ACTUALLY holds.
+          The list above is only what this session generated; it can't show a
+          key made in another tab, restored from a snapshot, or left by an
+          earlier session, and it would still list a key the token had lost.
+          This asks the token via a real C_FindObjects sweep. */}
+      {hsmListObjects && (
+        <div className="space-y-2 pb-4 border-b border-border">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Token Inventory
+            </span>
+            <Button
+              variant="ghost"
+              onClick={handleListObjects}
+              disabled={isListing}
+              className="text-[11px] px-2 py-1 h-auto min-h-0 border border-border rounded hover:bg-muted"
+            >
+              {isListing ? 'Reading token…' : 'Read from token'}
+            </Button>
+          </div>
+
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            Runs a real <code>C_FindObjects</code> sweep and reads <code>CKA_CLASS</code>/
+            <code>CKA_KEY_TYPE</code>/<code>CKA_LABEL</code> per object. Private key material is{' '}
+            <code>CKA_SENSITIVE</code> and is never requested.
+          </p>
+
+          {listError && <p className="text-[11px] text-status-error">{listError}</p>}
+
+          {tokenObjects !== null &&
+            (tokenObjects.length === 0 ? (
+              <p className="text-[11px] text-muted-foreground italic">
+                The token reports no objects.
+              </p>
+            ) : (
+              <div className="space-y-1">
+                {tokenObjects.map((o) => (
+                  <div
+                    key={o.handle}
+                    className="flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-[11px] font-mono"
+                  >
+                    <span className="truncate text-foreground">
+                      {o.label || <span className="text-muted-foreground italic">(no label)</span>}
+                    </span>
+                    <span className="shrink-0 text-muted-foreground">
+                      {CKO_NAMES[o.cls] ?? `class 0x${o.cls.toString(16)}`}
+                      {o.keyType >= 0 &&
+                        ` · ${CKK_NAMES_P11[o.keyType] ?? `0x${o.keyType.toString(16)}`}`}
+                      {` · h=${o.handle}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
         </div>
       )}
 

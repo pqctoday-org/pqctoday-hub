@@ -142,6 +142,9 @@ interface WorkbenchConfigProps {
   setKdfScryptP: (value: string) => void
   // PKCS#11 Options
   hsmKeygen: (algorithm: string, keyId: string) => Promise<{ uri: string }>
+  hsmListObjects?: () => Promise<
+    Array<{ handle: number; cls: number; keyType: number; label: string }>
+  >
   pkcs11Keys: Pkcs11Key[]
   addPkcs11Key: (key: Pkcs11Key) => void
   pkcs11SelectedKeyId: string
@@ -348,6 +351,7 @@ export const WorkbenchConfig: React.FC<WorkbenchConfigProps> = (props) => {
       return (
         <Pkcs11Config
           hsmKeygen={props.hsmKeygen}
+          hsmListObjects={props.hsmListObjects}
           pkcs11Keys={props.pkcs11Keys}
           addPkcs11Key={props.addPkcs11Key}
           pkcs11SelectedKeyId={props.pkcs11SelectedKeyId}

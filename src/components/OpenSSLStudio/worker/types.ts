@@ -25,6 +25,7 @@ export type WorkerMessage =
    * lookups fail. See openssl.worker.ts's in-token keygen section.
    */
   | { type: 'HSM_KEYGEN'; algorithm: string; keyId: string; requestId?: string }
+  | { type: 'HSM_LIST_OBJECTS'; requestId?: string }
   | {
       type: 'TLS_SIMULATE'
       clientConfig: string
@@ -61,6 +62,13 @@ export type WorkerResponse =
       /** Raw CK_RV as returned by the engine (unsigned). */
       rv: number
       ms: number
+      requestId?: string
+    }
+  | {
+      // Result of a real C_FindObjects sweep of the token — what the token
+      // actually holds, as opposed to what the UI thinks it created.
+      type: 'HSM_OBJECTS'
+      objects: Array<{ handle: number; cls: number; keyType: number; label: string }>
       requestId?: string
     }
   | { type: 'FILE_CREATED'; name: string; data: Uint8Array; requestId?: string }
