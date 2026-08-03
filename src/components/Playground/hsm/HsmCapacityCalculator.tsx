@@ -462,13 +462,17 @@ function SliderRow({
       <div className="flex items-center justify-between gap-2">
         <label className="text-xs font-medium text-foreground flex items-center gap-1">
           {label}
+          {/* role="img" so aria-label is permitted — on a bare <span> it is an
+              aria-prohibited-attr violation, and removing it would lose the
+              tooltip text for screen readers. */}
           {tooltip && (
             <span
               title={tooltip}
-              className="text-muted-foreground cursor-help"
+              role="img"
               aria-label={tooltip}
+              className="text-muted-foreground cursor-help"
             >
-              <Info size={11} />
+              <Info size={11} aria-hidden="true" />
             </span>
           )}
         </label>
@@ -528,13 +532,17 @@ function NumericSliderRow({
       <div className="flex items-center justify-between gap-2">
         <label className="text-xs font-medium text-foreground flex items-center gap-1">
           {label}
+          {/* role="img" so aria-label is permitted — on a bare <span> it is an
+              aria-prohibited-attr violation, and removing it would lose the
+              tooltip text for screen readers. */}
           {tooltip && (
             <span
               title={tooltip}
-              className="text-muted-foreground cursor-help"
+              role="img"
               aria-label={tooltip}
+              className="text-muted-foreground cursor-help"
             >
-              <Info size={11} />
+              <Info size={11} aria-hidden="true" />
             </span>
           )}
         </label>
