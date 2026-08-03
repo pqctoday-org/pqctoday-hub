@@ -1118,6 +1118,27 @@ var commandUsesPkcs11 = (args: string[]): boolean => {
   return false
 }
 
+/**
+ * True for `-out pkcs11:...`, the one shape that silently does the OPPOSITE
+ * of what it reads like.
+ *
+ * `-out` goes through a BIO (POSIX open()), so this writes a PLAIN,
+ * EXPORTABLE PEM into MEMFS and never puts anything in the token — a later
+ * `pkcs11:object=<id>` lookup then fails, and the user is left holding an
+ * exportable private key while believing it is token-resident and
+ * non-extractable. See the in-token keygen doc comment above for why
+ * C_GenerateKeyPair with CKA_TOKEN=TRUE is the only real path.
+ *
+ * Not blocked — this is a teaching tool and the failure is instructive — but
+ * it must never pass silently.
+ */
+var commandWritesKeyToPkcs11Uri = (args: string[]): boolean => {
+  for (var i = 0; i < args.length; i++) {
+    if (args[i] === '-out' && (args[i + 1] || '').indexOf('pkcs11:') === 0) return true
+  }
+  return false
+}
+
 // ----------------------------------------------------------------------------
 // Persistent virtual filesystem (VFS)
 //
@@ -1411,6 +1432,24 @@ var executeCommand = async (
       commandTouchedToken = true
       const hsmErr = ensureHsmToken(openSSLModule, requestId)
       if (hsmErr) throw new Error(hsmErr)
+    }
+
+    // `-out pkcs11:...` looks like "generate into the token" and does the
+    // opposite. Say so before the command runs, or the user walks away with
+    // an exportable PEM believing it is a non-extractable token key.
+    if (commandWritesKeyToPkcs11Uri(args)) {
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stderr',
+        message:
+          '[HSM] Warning: "-out pkcs11:..." does NOT create a key in the token. ' +
+          '-out writes through a file BIO, so this produces an ordinary, EXPORTABLE ' +
+          'PEM in the virtual filesystem and the token stays empty — a later ' +
+          'pkcs11:object=<id> reference will not find it. To get a real ' +
+          'token-resident key, use "Generate Key in HSM Token" (PKCS#11 (HSM) ' +
+          'category), which calls C_GenerateKeyPair with CKA_TOKEN=TRUE.',
+        requestId,
+      })
     }
 
     self.postMessage({
