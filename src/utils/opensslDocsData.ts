@@ -54,7 +54,7 @@ export const getOpenSSLDocEntry = (command: string): DocsMapEntry | undefined =>
 
 export const getOpenSSLDocUrl = (commandLine: string): string => {
   // Must match the OpenSSL version actually bundled in public/wasm/openssl.wasm
-  // (verified via the driver harness: `openssl version` reports 3.6.2), which
+  // (verified via the driver harness: `openssl version` reports 3.6.3), which
   // also matches the version claim in OpenSSLStudioView's PageHeader.
   const BASE_URL = 'https://www.openssl.org/docs/man3.6/man1'
   const DEFAULT_DOC = 'openssl.html'

@@ -67,7 +67,7 @@ const COMMAND_ENTRIES: Record<string, TagGlossaryEntry> = {
     def: 'docs.openssl.org/3.6/man1/openssl-configutl — new in OpenSSL 3.6. Parses a config file and (with -out) re-dumps its linearized, expanded form.',
   },
   version: {
-    def: 'docs.openssl.org/3.6/man1/openssl-version — reports the OpenSSL build in use; -a includes build flags and platform. This Studio runs 3.6.2.',
+    def: 'docs.openssl.org/3.6/man1/openssl-version — reports the OpenSSL build in use; -a includes build flags and platform. This Studio runs 3.6.3.',
   },
   'ML-KEM': {
     def: "FIPS 203, Module-Lattice-Based Key-Encapsulation Mechanism. Native in OpenSSL's default provider since 3.5. -512/-768/-1024 name the parameter set.",

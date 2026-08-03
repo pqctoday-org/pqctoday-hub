@@ -199,6 +199,18 @@ interface Pkcs11LogPanelProps {
    * Only" toggle.
    */
   lessonMode?: boolean
+  /**
+   * Start with the "Crypto Only" filter OFF, while keeping the toggle itself
+   * available (unlike `lessonMode`, which also hides it).
+   *
+   * For a surface whose traced calls are mostly token lifecycle —
+   * OpenSSL Studio, where the crypto itself runs provider-internally inside
+   * openssl.wasm and only Initialize/InitToken/Login/OpenSession/keygen cross
+   * into JS — defaulting the filter ON hides nearly every row and reads as
+   * "the log is broken". Defaults to the existing behaviour so no other
+   * caller changes.
+   */
+  defaultHideAdminOps?: boolean
 }
 
 export const Pkcs11LogPanel = ({
@@ -211,12 +223,13 @@ export const Pkcs11LogPanel = ({
   filterFns,
   showBeginnerMode = false,
   lessonMode = false,
+  defaultHideAdminOps,
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
   const [beginnerMode, setBeginnerMode] = useState(false)
-  const [hideAdminOps, setHideAdminOps] = useState(!lessonMode)
+  const [hideAdminOps, setHideAdminOps] = useState(defaultHideAdminOps ?? !lessonMode)
 
   const visibleLog = log.filter((e) => {
     if (e.isStepHeader) return true

@@ -203,6 +203,8 @@ export const _C_SignMessageNext: (
   f: number,
   g: number
 ) => number
+export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_SignRecoverInit: (a: number, b: number, c: number) => number
 export const _C_SignUpdate: (a: number, b: number, c: number) => number
 export const _C_UnwrapKey: (
   a: number,
@@ -248,6 +250,8 @@ export const _C_VerifyMessageNext: (
   f: number,
   g: number
 ) => number
+export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number
+export const _C_VerifyRecoverInit: (a: number, b: number, c: number) => number
 export const _C_VerifySignature: (a: number, b: number, c: number) => number
 export const _C_VerifySignatureFinal: (a: number) => number
 export const _C_VerifySignatureInit: (
@@ -309,15 +313,11 @@ export const softhsmrust_new: () => number
 export const _C_GetFunctionStatus: (a: number) => number
 export const _C_AsyncGetID: (a: number, b: number, c: number) => number
 export const _C_GetOperationState: (a: number, b: number, c: number) => number
-export const _C_SignRecoverInit: (a: number, b: number, c: number) => number
-export const _C_VerifyRecoverInit: (a: number, b: number, c: number) => number
 export const _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_SignRecover: (a: number, b: number, c: number, d: number, e: number) => number
-export const _C_VerifyRecover: (a: number, b: number, c: number, d: number, e: number) => number
 export const wasm_start: () => void
+export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const _free: (a: number, b: number) => void
 export const _malloc: (a: number) => number
-export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const __wbindgen_exn_store: (a: number) => void
 export const __externref_table_alloc: () => number
 export const __wbindgen_externrefs: WebAssembly.Table

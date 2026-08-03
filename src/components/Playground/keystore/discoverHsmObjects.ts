@@ -14,6 +14,10 @@ export const CKK_NAMES: Record<number, string> = {
   0x10: 'CKK_GENERIC_SECRET',
   0x1f: 'CKK_AES',
   0x40: 'CKK_EC_EDWARDS',
+  0x41: 'CKK_EC_MONTGOMERY',
+  0x46: 'CKK_HSS',
+  0x47: 'CKK_XMSS',
+  0x48: 'CKK_XMSSMT',
   0x49: 'CKK_ML_KEM',
   0x4a: 'CKK_ML_DSA',
   0x4b: 'CKK_SLH_DSA',
@@ -25,6 +29,11 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x10: 'hmac',
   0x1f: 'aes',
   0x40: 'eddsa',
+  // 0x41 CKK_EC_MONTGOMERY (X25519/X448) is key agreement, not signing — it must
+  // map to 'ecdh' to match what HsmKeyAgreementPanel registers directly. Without
+  // this entry it fell through the `?? 'aes'` default below and every discovered
+  // Montgomery key was silently filed as a symmetric AES key.
+  0x41: 'ecdh',
   0x49: 'ml-kem',
   0x4a: 'ml-dsa',
   0x4b: 'slh-dsa',

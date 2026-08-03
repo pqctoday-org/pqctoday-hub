@@ -107,7 +107,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab, structuredLogs, setActiveTab, isReady, loadError } =
+  const { editingFile, activeTab, structuredLogs, pkcs11Log, setActiveTab, isReady, loadError } =
     useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   // Hoisted here (not inside WorkbenchPreview) so the Learn tab shares the
@@ -154,7 +154,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           <PageHeader
             icon={Terminal}
             title="OpenSSL Studio"
-            description="Interactive OpenSSL v3.6.2 environment running entirely in your browser via WebAssembly. Educational use only — not a FIPS-validated module; the pending FIPS 140-3 validation submission covers the OpenSSL 3.5.4 provider (Oct 2025), not the 3.6.x line."
+            description="Interactive OpenSSL v3.6.3 environment running entirely in your browser via WebAssembly. Educational use only — not a FIPS-validated module; the pending FIPS 140-3 validation submission covers the OpenSSL 3.5.4 provider (Oct 2025), not the 3.6.x line."
           />
         )}
 
@@ -408,7 +408,13 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                     </div>
                     {showTerminal && (
                       <div className="flex-1 overflow-hidden">
-                        {structuredLogs.length === 0 ? (
+                        {/* `pkcs11Log` is part of this condition because an HSM
+                            keygen records PKCS#11 calls without producing a
+                            structuredLogs row — gating on structuredLogs alone
+                            hid the PKCS#11 trace at exactly the moment it was
+                            most useful (right after generating a token key,
+                            before running any CLI command). */}
+                        {structuredLogs.length === 0 && pkcs11Log.length === 0 ? (
                           <div className="flex flex-col items-start justify-center h-full p-6 gap-4">
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Terminal size={16} />
