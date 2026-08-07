@@ -123,6 +123,8 @@ interface AlgorithmFiltersProps {
   availableLevels?: number[]
   /** Active persona — drives QuickView surface (binary personas hide the 5-dropdown bar by default). */
   persona?: PersonaId | null
+  /** Which QuickView preset (if any) is currently applied. Owned by useAlgorithmExplorer. */
+  quickView?: 'none' | 'nist-picks' | 'fips-validated'
   /** Called when a QuickView preset is selected. Implementation lives in AlgorithmsView. */
   onQuickView?: (preset: QuickViewPreset) => void
   /** CNSA 2.0 lens state — rendered as a Row-1 toggle inside the deck. */
@@ -146,26 +148,20 @@ interface AlgorithmFiltersProps {
  * architect / researcher) still see the dropdowns inline.
  */
 function QuickViewSegmented({
-  status,
-  cryptoFamily,
-  functionGroup,
+  quickView,
   onQuickView,
 }: {
-  status: string
-  cryptoFamily: string
-  functionGroup: string
+  quickView: 'none' | 'nist-picks' | 'fips-validated'
   onQuickView: (preset: QuickViewPreset) => void
 }) {
-  // Reverse-derive the active preset from current filter state so the
-  // segmented chip shows which preset matches the live filters.
-  let active: QuickViewPreset | null = null
-  if (status === 'All' && cryptoFamily === 'All' && functionGroup === 'All') {
-    active = 'everything'
-  } else if (status === 'Certified' && cryptoFamily === 'Lattice') {
-    active = 'nist-picks'
-  } else if (status === 'Certified' && cryptoFamily === 'All' && functionGroup === 'All') {
-    active = 'fips-validated'
-  }
+  // quickView is tracked directly (see useAlgorithmExplorer.ts) rather than
+  // reverse-derived from the Family/Function/Status dropdowns — that reverse
+  // derivation was itself part of the bug: it made "FIPS-validated" mean
+  // "status=Certified" (which also includes non-FIPS regional standards like
+  // AIMer/HAETAE/Classic-McEliece) and "NIST picks" mean "family=Lattice"
+  // (which excludes SLH-DSA, a Hash-based algorithm this preset's own
+  // tooltip claims to include).
+  const active: QuickViewPreset = quickView === 'none' ? 'everything' : quickView
 
   const options: Array<{ id: QuickViewPreset; label: string; icon: typeof Star; title: string }> = [
     {
@@ -230,6 +226,7 @@ export function AlgorithmFilters({
   totalCount,
   availableLevels,
   persona = null,
+  quickView = 'none',
   onQuickView,
   cnsaLens = false,
   onToggleCnsaLens,
@@ -255,7 +252,8 @@ export function AlgorithmFilters({
     securityLevel !== 'All' ||
     region !== 'All' ||
     status !== 'All' ||
-    searchQuery !== ''
+    searchQuery !== '' ||
+    quickView !== 'none'
 
   return (
     <div className="glass-panel p-3 md:p-4 space-y-3">
@@ -277,14 +275,7 @@ export function AlgorithmFilters({
           />
         </div>
 
-        {onQuickView && (
-          <QuickViewSegmented
-            status={status}
-            cryptoFamily={cryptoFamily}
-            functionGroup={functionGroup}
-            onQuickView={onQuickView}
-          />
-        )}
+        {onQuickView && <QuickViewSegmented quickView={quickView} onQuickView={onQuickView} />}
 
         {/* CNSA 2.0 lens toggle — primary-tinted when active */}
         {onToggleCnsaLens && (

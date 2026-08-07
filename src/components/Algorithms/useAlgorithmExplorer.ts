@@ -24,6 +24,35 @@ import { getAlgorithmDefaults, type AlgorithmTabId } from '../../data/personaCon
 
 export const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
+// True FIPS validation, grounded in the literal NIST FIPS numbering
+// convention: the algorithm's own standards-document field (`fipsStandard` on
+// Detailed-Comparison rows, `status` on Transition rows) is a bare, non-draft
+// "FIPS <number>" designation — not a Special Publication, RFC, ISO/ETSI/
+// BSI/ANSSI/KpqC/CRYPTREC regional standard, or an in-development FIPS (e.g.
+// 'FIPS 206 (in development)'). Verified against
+// pqc_complete_algorithm_reference_07302026.csv, whose fips_standard values
+// spell this out explicitly per row (e.g. "BSI TR-02102-1 ... NOT in NIST
+// FIPS"). The moment a value like FIPS 206 drops its "(in development)"
+// suffix in the data, it starts matching here automatically.
+// Bounded \d+, no nested/overlapping quantifiers — linear-time, not vulnerable to backtracking.
+// eslint-disable-next-line security/detect-unsafe-regex
+const BARE_FIPS_RE = /^FIPS \d+(-\d+)?$/
+export function isFipsValidated(fipsOrStatus: string): boolean {
+  return BARE_FIPS_RE.test(fipsOrStatus.trim())
+}
+
+// NIST's three flagship PQC picks (FIPS 203 ML-KEM, FIPS 204 ML-DSA, FIPS 205
+// SLH-DSA — the trio AlgorithmsView's own hero copy calls out by name).
+// Deliberately NOT a crypto-family filter: SLH-DSA is Hash-based while
+// ML-KEM/ML-DSA are Lattice-based, so no single family value covers all
+// three. FIPS 206 (FN-DSA) joins automatically once isFipsValidated() stops
+// seeing "(in development)" on it.
+const PQC_NIST_PICK_FIPS = new Set(['FIPS 203', 'FIPS 204', 'FIPS 205', 'FIPS 206'])
+export function isNistPick(fipsOrStatus: string): boolean {
+  const v = fipsOrStatus.trim()
+  return isFipsValidated(v) && PQC_NIST_PICK_FIPS.has(v)
+}
+
 /**
  * Map a transition row's (classical, keySize) fields to the matching AlgorithmDetail name.
  * Returns null when no match exists in the loaded algorithm data.
@@ -114,10 +143,12 @@ export function useAlgorithmExplorer(
     setFilterSecurityLevel('All')
     setFilterRegion('All')
     setFilterStatus('All')
+    setQuickView('none')
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
         next.delete('from_search')
+        next.delete('quickview')
         return next
       },
       { replace: true }
@@ -188,6 +219,15 @@ export function useAlgorithmExplorer(
   // Research-gap filter — additive, same pattern as cnsaLens. Narrows to
   // algorithms with at least one 'Research needed' field. Synced to ?gap=1.
   const [researchGapOnly, setResearchGapOnly] = useState(() => searchParams.get('gap') === '1')
+
+  // QuickView preset — 'nist-picks' / 'fips-validated'. Independent of the
+  // Family/Function/Status dropdowns (not reverse-derived from them, which is
+  // what let these two presets silently drift out of sync with their own
+  // labels — see isFipsValidated()/isNistPick() below). Synced to ?quickview=.
+  const [quickView, setQuickView] = useState<'none' | 'nist-picks' | 'fips-validated'>(() => {
+    const qv = searchParams.get('quickview')
+    return qv === 'nist-picks' || qv === 'fips-validated' ? qv : 'none'
+  })
 
   // --- Comparison state (synced to URL) ---
   const [compareKeys, setCompareKeys] = useState<string[]>(() => {
@@ -345,31 +385,31 @@ export function useAlgorithmExplorer(
   // Everything resets all filters back to "All".
   const handleQuickView = useCallback(
     (preset: 'nist-picks' | 'fips-validated' | 'everything') => {
-      if (preset === 'nist-picks') {
-        setFilterCryptoFamily('Lattice')
-        setFilterFunction('All')
-        setFilterStatus('Certified')
-        updateSearchParams({
-          family: 'Lattice',
-          fn: null,
-          status: 'Certified',
-        })
-      } else if (preset === 'fips-validated') {
+      // Family/Function/Status are cleared for either real preset — they'd
+      // otherwise combine with the new quickView gate in ways the button
+      // never promised (e.g. a leftover Region/Status pick silently hiding
+      // FIPS-validated rows). Region and Level are left alone; combining
+      // e.g. "NIST picks" with a Level filter is a legitimate refinement.
+      if (preset === 'nist-picks' || preset === 'fips-validated') {
+        setQuickView(preset)
         setFilterCryptoFamily('All')
         setFilterFunction('All')
-        setFilterStatus('Certified')
+        setFilterStatus('All')
         updateSearchParams({
+          quickview: preset,
           family: null,
           fn: null,
-          status: 'Certified',
+          status: null,
         })
       } else {
+        setQuickView('none')
         setFilterCryptoFamily('All')
         setFilterFunction('All')
         setFilterSecurityLevel('All')
         setFilterRegion('All')
         setFilterStatus('All')
         updateSearchParams({
+          quickview: null,
           family: null,
           fn: null,
           level: null,
@@ -445,6 +485,13 @@ export function useAlgorithmExplorer(
   // the whitelist is exactly ['final', 'regional']. The 'Candidate' /
   // 'To Be Checked' dropdown options remain raw-string matches since those
   // are literal values the CSVs still use verbatim.
+  //
+  // NOTE: 'regional' means "final within its own jurisdiction (KpqC/BSI
+  // winners), not FIPS-Certified" (algorithmStatusTier.ts) — e.g. AIMer,
+  // HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1). This
+  // "Certified" bucket is deliberately broader than FIPS and is fine for a
+  // plain Status dropdown labeled "Certified" — but it must never back
+  // anything claiming to be "FIPS-validated". See isFipsValidated() below.
   const matchesStatusFilter = useCallback(
     (status: string, tier: AlgorithmStatusTier) => {
       if (filterStatus === 'All') return true
@@ -471,6 +518,8 @@ export function useAlgorithmExplorer(
     (algo: AlgorithmDetail, opts: { applyLevel: boolean } = { applyLevel: true }) => {
       if (cnsaLens && !passesCnsa20Filter(algo)) return false
       if (researchGapOnly && !algo.hasResearchGap) return false
+      if (quickView === 'nist-picks' && !isNistPick(algo.fipsStandard)) return false
+      if (quickView === 'fips-validated' && !isFipsValidated(algo.fipsStandard)) return false
       if (filterCryptoFamily !== 'All' && algo.cryptoFamily !== filterCryptoFamily) return false
       if (filterFunction !== 'All') {
         const group = getFunctionGroup(algo)
@@ -501,6 +550,7 @@ export function useAlgorithmExplorer(
     [
       cnsaLens,
       researchGapOnly,
+      quickView,
       filterCryptoFamily,
       filterFunction,
       filterSecurityLevel,
@@ -521,6 +571,8 @@ export function useAlgorithmExplorer(
   const filteredTransitions = useMemo(() => {
     return transitionData.filter((t) => {
       if (cnsaLens && !passesCnsa20Filter({ name: t.pqc, family: '' })) return false
+      if (quickView === 'nist-picks' && !isNistPick(t.status)) return false
+      if (quickView === 'fips-validated' && !isFipsValidated(t.status)) return false
       if (filterFunction !== 'All') {
         const group = getTransitionFunctionGroup(t.function)
         if (group !== filterFunction) return false
@@ -554,6 +606,7 @@ export function useAlgorithmExplorer(
     searchQuery,
     semanticAlgoNameSet,
     cnsaLens,
+    quickView,
   ])
 
   // --- Available security levels ---
@@ -597,6 +650,7 @@ export function useAlgorithmExplorer(
     searchQuery,
     cnsaLens,
     researchGapOnly,
+    quickView,
     detailMode,
     // url sync
     searchParams,
