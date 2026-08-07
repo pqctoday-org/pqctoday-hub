@@ -25,6 +25,8 @@ export interface TrustedSource {
   timelineCsv: boolean
   complianceCsv: boolean
   migrateCsv: boolean
+  /** ADDED 2026-08-07 — patents provenance, see authoritativeSourcesData ViewType. */
+  patentsCsv: boolean
   localDocCount: number
   lastDownloadDate: string
   downloadStatus: 'Active' | 'Partial' | 'Blocked' | 'None'
@@ -34,6 +36,14 @@ export interface TrustedSource {
   dateStamp?: string
 }
 
+/**
+ * NOTE (2026-08-07): this is a SECOND, hand-mirrored copy of the `ViewType`
+ * union declared in authoritativeSourcesData.ts. Adding 'Patents' there did
+ * not add it here, and the only thing that caught the divergence was
+ * `Record<ViewType, keyof TrustedSource>` failing to compile — i.e. luck of
+ * the filter map's shape, not a guard. Worth collapsing to one exported
+ * union; left as-is for now to keep this change to patents provenance.
+ */
 export type ViewType =
   | 'Timeline'
   | 'Library'
@@ -42,6 +52,7 @@ export type ViewType =
   | 'Algorithms'
   | 'Compliance'
   | 'Migrate'
+  | 'Patents'
 
 interface RawTrustedSourceRow {
   source_id: string
@@ -60,6 +71,7 @@ interface RawTrustedSourceRow {
   timeline_csv: string
   compliance_csv: string
   migrate_csv: string
+  patents_csv: string
   local_doc_count: string
   last_download_date: string
   download_status: string
@@ -95,6 +107,7 @@ const { data, metadata } = loadLatestCSV<RawTrustedSourceRow, TrustedSource>(
     timelineCsv: parseBoolYesNo(row.timeline_csv),
     complianceCsv: parseBoolYesNo(row.compliance_csv),
     migrateCsv: parseBoolYesNo(row.migrate_csv),
+    patentsCsv: parseBoolYesNo(row.patents_csv),
     localDocCount: parseIntSafe(row.local_doc_count),
     lastDownloadDate: row.last_download_date ?? '',
     downloadStatus: (row.download_status as TrustedSource['downloadStatus']) ?? 'None',
@@ -124,6 +137,7 @@ export function getSourcesForView(viewType: ViewType): TrustedSource[] {
     Algorithms: 'algorithmCsv',
     Compliance: 'complianceCsv',
     Migrate: 'migrateCsv',
+    Patents: 'patentsCsv',
   }
 
   const filterKey = filterMap[viewType]
