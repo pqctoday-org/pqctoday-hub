@@ -17,6 +17,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { buttonVariants } from '../ui/button-variants'
+import { cn } from '../../lib/utils'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
@@ -283,23 +285,36 @@ const RailRow: React.FC<RailRowProps> = ({
     : // eslint-disable-next-line security/detect-object-injection
       ROW_TREATMENT_CLASS[treatment]
 
+  // bplus-programme WS7b (2026-08-07): this used to be <NavLink><Button>…
+  // </Button></NavLink> — a real <button> nested inside a real <a>, invalid
+  // HTML that gave every nav row two separate keyboard/screen-reader stops
+  // instead of one (measured live: tabbing through the rail visited "Home"
+  // as a link, then "Home view" as a button, for every single row). Fixed by
+  // applying Button's own `buttonVariants` styling directly to the NavLink,
+  // so there's exactly one focusable, one accessible element per row —
+  // pixel-identical, since it reuses the exact same class-generating
+  // function Button itself calls. `aria-current="page"` no longer needs
+  // manual handling: NavLink sets it automatically when active.
   return (
-    <NavLink to={path} end={path === '/'} onClick={onNavigate} className="block w-full">
-      {({ isActive }) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={`${label} view`}
-          aria-current={isActive ? 'page' : undefined}
-          title={title ?? label}
-          className={`w-full justify-start gap-2 min-h-[36px] rounded-md ${
-            isMore ? 'pl-3 pr-2 text-[11px]' : 'pl-2 pr-2 text-[11px]'
-          } ${treatmentClass}`}
-        >
-          <Icon size={isMore ? 13 : 16} aria-hidden="true" className="shrink-0" />
-          <span className="truncate">{label}</span>
-        </Button>
+    <NavLink
+      to={path}
+      end={path === '/'}
+      onClick={onNavigate}
+      title={title ?? label}
+      aria-label={`${label} view`}
+      className={cn(
+        buttonVariants({ variant: 'ghost', size: 'sm' }),
+        'w-full justify-start gap-2 min-h-[36px] rounded-md',
+        isMore ? 'pl-3 pr-2 text-[11px]' : 'pl-2 pr-2 text-[11px]',
+        treatmentClass
       )}
+    >
+      {React.createElement(Icon, {
+        size: isMore ? 13 : 16,
+        'aria-hidden': true,
+        className: 'shrink-0',
+      })}
+      <span className="truncate">{label}</span>
     </NavLink>
   )
 }
@@ -984,31 +999,30 @@ export const MainLayout = () => {
                   {mobileVisiblePaths.map((path) => {
                     const Icon = iconFor(path)
                     const label = labelFor(path)
+                    // bplus-programme WS7b (2026-08-07): collapsed from
+                    // <NavLink><Button>…</Button></NavLink> (a <button>
+                    // nested inside an <a>) into one element, same fix and
+                    // same reasoning as RailRow above.
                     return (
                       <NavLink
                         key={path}
                         to={path}
                         end={path === '/'}
-                        className="flex-1 flex justify-center"
+                        aria-label={`${label} view`}
+                        className={({ isActive }) =>
+                          cn(
+                            buttonVariants({ variant: 'ghost', size: 'sm' }),
+                            'flex-1 flex-col items-center justify-center gap-0 px-2 min-h-[44px]',
+                            isActive
+                              ? 'bg-primary/10 text-foreground border border-primary/20'
+                              : 'text-muted-foreground hover:text-foreground'
+                          )
+                        }
                       >
-                        {({ isActive }) => (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            aria-label={`${label} view`}
-                            aria-current={isActive ? 'page' : undefined}
-                            className={
-                              isActive
-                                ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px] flex-col items-center gap-0'
-                                : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px] flex-col items-center gap-0'
-                            }
-                          >
-                            <Icon size={18} aria-hidden="true" />
-                            <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
-                              {label === 'Command Center' ? 'Command' : label}
-                            </span>
-                          </Button>
-                        )}
+                        <Icon size={18} aria-hidden="true" />
+                        <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
+                          {label === 'Command Center' ? 'Command' : label}
+                        </span>
                       </NavLink>
                     )
                   })}
@@ -1088,30 +1102,29 @@ export const MainLayout = () => {
                   </span>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     {mobileSheetForYou.map((path) => (
+                      // bplus-programme WS7b (2026-08-07): same nested
+                      // button-in-link fix as RailRow/mobile nav row above.
                       <NavLink
                         key={path}
                         to={path}
                         end={path === '/'}
                         onClick={() => setMoreMenuOpen(false)}
+                        aria-label={`${labelFor(path)} view`}
+                        className={({ isActive }) =>
+                          cn(
+                            buttonVariants({ variant: 'ghost' }),
+                            'w-full min-h-[44px] justify-start gap-2',
+                            isActive
+                              ? 'bg-primary/10 text-foreground border border-primary/20'
+                              : 'text-muted-foreground hover:text-foreground'
+                          )
+                        }
                       >
-                        {({ isActive }) => (
-                          <Button
-                            variant="ghost"
-                            className={`w-full min-h-[44px] justify-start gap-2 ${
-                              isActive
-                                ? 'bg-primary/10 text-foreground border border-primary/20'
-                                : 'text-muted-foreground hover:text-foreground'
-                            }`}
-                            aria-label={`${labelFor(path)} view`}
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            {React.createElement(iconFor(path), {
-                              size: 18,
-                              'aria-hidden': true,
-                            })}
-                            <span>{labelFor(path)}</span>
-                          </Button>
-                        )}
+                        {React.createElement(iconFor(path), {
+                          size: 18,
+                          'aria-hidden': true,
+                        })}
+                        <span>{labelFor(path)}</span>
                       </NavLink>
                     ))}
                   </div>
@@ -1125,30 +1138,29 @@ export const MainLayout = () => {
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {mobileSheetMore.map((path) => (
+                      // bplus-programme WS7b (2026-08-07): same nested
+                      // button-in-link fix as the other rail/mobile spots.
                       <NavLink
                         key={path}
                         to={path}
                         end={path === '/'}
                         onClick={() => setMoreMenuOpen(false)}
+                        aria-label={`${labelFor(path)} view`}
+                        className={({ isActive }) =>
+                          cn(
+                            buttonVariants({ variant: 'ghost' }),
+                            'w-full min-h-[44px] justify-start gap-2 text-xs',
+                            isActive
+                              ? 'text-foreground'
+                              : 'text-muted-foreground hover:text-foreground'
+                          )
+                        }
                       >
-                        {({ isActive }) => (
-                          <Button
-                            variant="ghost"
-                            className={`w-full min-h-[44px] justify-start gap-2 text-xs ${
-                              isActive
-                                ? 'text-foreground'
-                                : 'text-muted-foreground hover:text-foreground'
-                            }`}
-                            aria-label={`${labelFor(path)} view`}
-                            aria-current={isActive ? 'page' : undefined}
-                          >
-                            {React.createElement(iconFor(path), {
-                              size: 16,
-                              'aria-hidden': true,
-                            })}
-                            <span>{labelFor(path)}</span>
-                          </Button>
-                        )}
+                        {React.createElement(iconFor(path), {
+                          size: 16,
+                          'aria-hidden': true,
+                        })}
+                        <span>{labelFor(path)}</span>
                       </NavLink>
                     ))}
                   </div>
