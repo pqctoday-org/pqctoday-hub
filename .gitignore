@@ -459,6 +459,15 @@ public/data/rag-index-freshness.json
 !scripts/audit-csv-archival.ts
 !scripts/audit-csv-archival.test.ts
 
+# Merge-all coverage gate: the sibling failure mode to the above — a loader
+# that MERGES every dated file (not "newest wins") silently loses a document
+# the moment it's archived out of a directory the loader's glob doesn't cover.
+# Broke the CSWP.39 maturity corpus for 12 days starting 2026-07-26; see
+# archive-sweep-audit-08072026.md. Pure read-only against src/data/ + the
+# registered loader source files.
+!scripts/audit-merge-all-coverage.ts
+!scripts/audit-merge-all-coverage.test.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 

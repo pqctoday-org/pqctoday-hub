@@ -22,6 +22,10 @@ export type ThreatEnrichmentLookup = Record<string, ThreatEnrichment>
 // Auto-discover threat enrichment markdown files via import.meta.glob
 // ---------------------------------------------------------------------------
 
+// 2026-08-07 archive-sweep audit: merge-all source with 10 archived files across
+// three tiers this glob can't see. Deliberately NOT widened — the audit found
+// zero net key loss (every archived key is re-covered by a newer live file).
+// Left as is.
 const threatModules = import.meta.glob('./doc-enrichments/threats_doc_enrichments_*.md', {
   query: '?raw',
   import: 'default',
