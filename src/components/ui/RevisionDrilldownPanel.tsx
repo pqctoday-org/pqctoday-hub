@@ -116,7 +116,10 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
   return (
     <div className="py-2.5 border-b border-border last:border-0">
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-1.5 min-w-0">
+        {/* flex-wrap + a shrinkable suffix: `approved_via` is free text and
+            runs to a full sentence, which as a `shrink-0` span overran the
+            merge date to its right. */}
+        <div className="flex flex-wrap items-center gap-1.5 min-w-0 flex-1">
           {r.authored_by_llm ? (
             <Bot className="w-3.5 h-3.5 shrink-0 text-accent" aria-label="LLM-authored" />
           ) : (
@@ -127,7 +130,9 @@ function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
           )}
           <span className="text-sm text-foreground truncate">{r.reviewer_display}</span>
           {offlineSuffix && (
-            <span className="text-xs text-muted-foreground shrink-0">{offlineSuffix}</span>
+            <span className="text-xs text-muted-foreground min-w-0 break-words">
+              {offlineSuffix}
+            </span>
           )}
         </div>
         <span className="text-xs text-muted-foreground shrink-0">
