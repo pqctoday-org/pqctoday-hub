@@ -16,6 +16,10 @@ import {
   runBenchmark,
 } from '../../services/crypto/algorithmEngineResolver'
 import { WorkshopOperationLog, type LogEntry } from '../PKILearning/common/WorkshopOperationLog'
+import { TrustScoreBadge } from '../ui/TrustScoreBadge'
+import { ReviewedBadge } from '../ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import clsx from 'clsx'
 
 interface ComparisonField {
@@ -97,6 +101,8 @@ export function AlgorithmComparisonPanel({
   baseline,
   onClose,
 }: AlgorithmComparisonPanelProps) {
+  const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
+  const { revisions } = useRevisions()
   if (algorithms.length < 2) return null
 
   // Build deduplicated allAlgos: fixed baseline first, then selected algorithms
@@ -232,9 +238,40 @@ export function AlgorithmComparisonPanel({
                 </tr>
               )
             })}
+            {/* Trust + review provenance lives here, in the detail pane — not in
+                the browse rows, where the reviewer/approved_via string is
+                unbounded and wraps across the table. */}
+            <tr className="border-b border-border/50 hover:bg-muted/30">
+              <td className="sticky left-0 z-10 bg-background px-3 py-2 text-xs font-medium text-muted-foreground whitespace-nowrap">
+                Trust &amp; review
+              </td>
+              {allAlgos.map((a) => (
+                <td key={a.name} className="px-3 py-2 text-xs">
+                  <div className="flex flex-col items-start gap-1">
+                    <TrustScoreBadge resourceType="algorithm" resourceId={a.name} size="sm" />
+                    <ReviewedBadge
+                      domain="algorithms"
+                      entityId={a.name}
+                      showUnreviewed={false}
+                      onOpenDrilldown={() => setDrilldownAlgo(a.name)}
+                    />
+                  </div>
+                </td>
+              ))}
+            </tr>
           </tbody>
         </table>
       </div>
+
+      {drilldownAlgo && (
+        <RevisionDrilldownPanel
+          domain="algorithms"
+          entityId={drilldownAlgo}
+          entityLabel={drilldownAlgo}
+          revisions={byRecord(revisions, 'algorithms', drilldownAlgo)}
+          onClose={() => setDrilldownAlgo(null)}
+        />
+      )}
 
       {/* Benchmark section */}
       <BenchmarkSection algorithms={allAlgos} baseline={baseline} />
