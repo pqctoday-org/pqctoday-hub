@@ -33,7 +33,7 @@ import {
   hsmNestingVerify,
   type HsmHybridKeyPair,
 } from '../services/HybridSignatureHsmService'
-import { getSoftHSMCppModule } from '@/wasm/softhsm'
+import { getSoftHSMRustModule } from '@/wasm/softhsm'
 import {
   hsm_initialize,
   hsm_getFirstSlot,
@@ -279,9 +279,13 @@ export const HybridSignatures: React.FC = () => {
     async function init() {
       // Stage tracker — populated as we cross each init boundary so the captured
       // error message tells us WHICH step failed (module load vs token init vs session).
-      let stage = 'getSoftHSMCppModule'
+      // Rust engine (softhsmrustv3), not the C++ fork. The C++ fork's only
+      // crypto backend is OpenSSL libcrypto, so it is not an independent
+      // implementation; the Rust engine is (RustCrypto + patched
+      // fips204/205/ml-kem). Prefer Rust wherever the needed operations exist.
+      let stage = 'getSoftHSMRustModule'
       try {
-        const M = await getSoftHSMCppModule()
+        const M = await getSoftHSMRustModule()
         stage = 'C_Initialize'
         try {
           hsm_initialize(M)
