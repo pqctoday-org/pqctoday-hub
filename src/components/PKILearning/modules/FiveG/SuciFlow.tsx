@@ -1615,26 +1615,6 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </div>
         </div>
 
-        <LiveHSMToggle hsm={hsm} operations={SUCI_LIVE_OPERATIONS} />
-
-        <div
-          className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md w-fit ${
-            hsm.isReady
-              ? 'bg-status-success/10 text-status-success border border-status-success/20'
-              : 'bg-muted text-muted-foreground border border-border'
-          }`}
-        >
-          {hsm.isReady ? (
-            <>
-              <ShieldCheck size={11} /> Running in PKCS#11 / softhsmv3 mode
-            </>
-          ) : (
-            <>
-              <Shield size={11} /> Running in OpenSSL software mode (HSM off)
-            </>
-          )}
-        </div>
-
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
           <Info size={13} className="shrink-0" />
           <span>
@@ -1643,6 +1623,35 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </span>
         </div>
       </ConfigureCard>
+
+      {/* Deliberately OUTSIDE ConfigureCard. That card renders its children as
+          `{expanded && ...}`, so while collapsed they are UNMOUNTED, not
+          hidden — and it starts collapsed for first-time visitors. With the
+          toggle inside it, LiveHSMToggle's autoInit effect never ran, so
+          hsm.initialize() never fired, hsm.isReady stayed false, and this
+          entire tool ran in software mode with no PKCS#11 trace and no key
+          inventory, despite importing a dozen real hsm_* helpers. The trace
+          panel below is gated on hsm.isReady, so it was unreachable too.
+          Whether the engine runs is not a setting to go hunting for. */}
+      <LiveHSMToggle hsm={hsm} operations={SUCI_LIVE_OPERATIONS} />
+
+      <div
+        className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md w-fit ${
+          hsm.isReady
+            ? 'bg-status-success/10 text-status-success border border-status-success/20'
+            : 'bg-muted text-muted-foreground border border-border'
+        }`}
+      >
+        {hsm.isReady ? (
+          <>
+            <ShieldCheck size={11} /> Running in PKCS#11 / softhsmv3 mode
+          </>
+        ) : (
+          <>
+            <Shield size={11} /> Running in OpenSSL software mode (HSM off)
+          </>
+        )}
+      </div>
 
       <StepWizard
         key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change
