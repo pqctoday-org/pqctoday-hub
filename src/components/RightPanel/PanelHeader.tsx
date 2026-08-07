@@ -12,6 +12,7 @@ import {
   Minimize2,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 interface PanelHeaderProps {
   activeTab: RightPanelTab
@@ -47,8 +48,20 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
             window to reach the close/minimize icon" — the tab row's natural
             width previously always won the fight for space against the
             close button). overflow-x-auto lets tabs scroll internally at
-            narrow widths rather than clipping. */}
-        <div className="flex items-center gap-1 min-w-0 overflow-x-auto" role="tablist">
+            narrow widths rather than clipping.
+            bplus-programme WS7b (2026-08-07): at 1280px — an ordinary desktop
+            width, not a mobile edge case — the panel's own column is narrow
+            enough that all 5 full-label tabs don't fit (measured: 271px
+            visible of 534px total), silently hiding Bookmarks and FAQ off the
+            right edge with zero visual signal that they exist. The scroll
+            itself always worked; nothing told a visitor to look for it.
+            ScrollFadeContainer (already used elsewhere for this exact
+            problem) adds the fade hint and keyboard-scroll focusability. */}
+        <ScrollFadeContainer
+          className="min-w-0"
+          scrollClassName="flex items-center gap-1"
+          scrollProps={{ role: 'tablist' }}
+        >
           {tabs.map((tab) => (
             <Button
               variant="ghost"
@@ -66,7 +79,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
               <span className="hidden sm:inline">{tab.label}</span>
             </Button>
           ))}
-        </div>
+        </ScrollFadeContainer>
         {/* shrink-0: this cluster (expand/minimize/close) must ALWAYS stay
             fully visible and reachable, regardless of how little room the
             tab list above is willing to give up. */}
