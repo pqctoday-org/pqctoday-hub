@@ -17,6 +17,7 @@ import {
   EXEC_MOSCA_FOOTNOTE,
   PERSONA_MIGRATE_LAYERS,
   PERSONA_LIBRARY_CATEGORIES,
+  PERSONA_REPORT_CONFIG,
 } from './personaConfig'
 import { ROLE_CROSSWALK, personaToRoles } from './roleCrosswalk'
 import { PERSONAS, type PersonaId } from './learningPersonas'
@@ -25,6 +26,7 @@ import { EXEC_TOUR_STAGES } from '@/components/Simulation/autorun/execTourConfig
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 import { INITIAL_CHECKS } from '@/components/Playground/TpmPlayground/ComplianceRunner'
 import { CSWP39_ZONE_DETAILS } from './cswp39ZoneData'
+import { REPORT_SECTION_ORDER } from './reportSectionToCswp39'
 
 describe('getBeltTierLabel', () => {
   it('returns null when no persona is selected', () => {
@@ -262,5 +264,45 @@ describe("exec/researcher exposure card — Mosca's inequality", () => {
     // board stays byte-stable for the drift gate. This is what stops it rotting:
     // it fails once the constant is more than a year stale.
     expect(new Date().getFullYear() - EXEC_MOSCA_AS_OF_YEAR).toBeLessThanOrEqual(1)
+  })
+})
+
+describe('PERSONA_REPORT_CONFIG — no persona gets the generic report', () => {
+  // WS4a (2026-08-02). `developer` was `{}` for long enough that the codebase
+  // grew a counter for its own gap (DEVELOPER_REPORT_OVERRIDE_COUNT) and the
+  // page rendered "All N report sections, at their defaults". This guard makes
+  // that state fail a test instead of shipping quietly, for every persona.
+  const personaIds = Object.keys(PERSONA_REPORT_CONFIG) as PersonaId[]
+
+  it('covers every persona id', () => {
+    for (const id of Object.keys(PERSONAS) as PersonaId[]) {
+      expect(PERSONA_REPORT_CONFIG[id], `no report config entry for "${id}"`).toBeDefined()
+    }
+  })
+
+  it.each(personaIds)('%s declares at least one override', (personaId) => {
+    const overrides = Object.keys(PERSONA_REPORT_CONFIG[personaId])
+    expect(
+      overrides.length,
+      `PERSONA_REPORT_CONFIG.${personaId} is empty — that persona renders the ` +
+        `no-persona report. Give it a real profile or delete the persona.`
+    ).toBeGreaterThan(0)
+  })
+
+  it.each(personaIds)('%s only overrides real report section ids', (personaId) => {
+    // A typo'd key is silently ignored at runtime — it just never applies.
+    for (const sectionId of Object.keys(PERSONA_REPORT_CONFIG[personaId])) {
+      expect(REPORT_SECTION_ORDER, `"${sectionId}" is not a report section`).toContain(sectionId)
+    }
+  })
+
+  it('developer opens the sections an implementer acts on, and hides none', () => {
+    const dev = PERSONA_REPORT_CONFIG.developer
+    expect(dev.cbom?.state).toBe('open')
+    expect(dev.discovery?.state).toBe('open')
+    expect(dev.migrationToolkit?.state).toBe('open')
+    // Board framing is demoted, never removed — a developer sometimes has to
+    // present upward, so 'hidden' would be the wrong tool here.
+    expect(Object.values(dev).every((c) => c.state !== 'hidden')).toBe(true)
   })
 })
