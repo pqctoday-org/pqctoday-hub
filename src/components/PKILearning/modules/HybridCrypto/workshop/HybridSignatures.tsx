@@ -34,6 +34,9 @@ import {
   type HsmHybridKeyPair,
 } from '../services/HybridSignatureHsmService'
 import { getSoftHSMRustModule } from '@/wasm/softhsm'
+import { createLoggingProxy } from '@/wasm/softhsm/logging'
+import type { Pkcs11LogEntry } from '@/wasm/softhsm'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import {
   hsm_initialize,
   hsm_getFirstSlot,
@@ -243,6 +246,10 @@ export const HybridSignatures: React.FC = () => {
   const [hsmStatus, setHsmStatus] = useState<HsmStatus>('loading')
   const [hsmInitError, setHsmInitError] = useState<string | null>(null)
   const hsmRef = useRef<{ M: SoftHSMModule; hSession: number } | null>(null)
+  // Real C_* trace. This tool drives the engine through the module directly
+  // rather than useHSM, so it does not inherit that hook's logging proxy —
+  // without wrapping here, every PKCS#11 call it makes is invisible.
+  const [pkcs11Log, setPkcs11Log] = useState<Pkcs11LogEntry[]>([])
 
   const [state, setState] = useState<Record<ConstructionId, ConstructionState>>({
     concatenation: {
@@ -285,7 +292,10 @@ export const HybridSignatures: React.FC = () => {
       // fips204/205/ml-kem). Prefer Rust wherever the needed operations exist.
       let stage = 'getSoftHSMRustModule'
       try {
-        const M = await getSoftHSMRustModule()
+        // Wrapped so every C_* this tool issues lands in the panel below.
+        const M = createLoggingProxy(await getSoftHSMRustModule(), (e) =>
+          setPkcs11Log((prev) => [...prev, e])
+        )
         stage = 'C_Initialize'
         try {
           hsm_initialize(M)
@@ -780,6 +790,16 @@ export const HybridSignatures: React.FC = () => {
 
       {/* Operation log + indeterminate progress bar (A7) */}
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-40" />}
+
+      {/* The operation log above narrates the workshop in prose; this is the
+          actual PKCS#11 wire trace behind it, in the same format every other
+          HSM-backed playground uses. ML-DSA-65 runs on softhsmv3 (Rust); the
+          EC-Schnorr half is @noble, since PKCS#11 has no Schnorr mechanism. */}
+      <Pkcs11LogPanel
+        log={pkcs11Log}
+        title="Hybrid Signatures — PKCS#11 trace (ML-DSA-65 via softhsmv3)"
+        emptyMessage="No PKCS#11 calls yet — generate a key pair to see the ML-DSA-65 operations. The EC-Schnorr component runs in @noble and will not appear here."
+      />
 
       {/* Error */}
       {current.error && (
