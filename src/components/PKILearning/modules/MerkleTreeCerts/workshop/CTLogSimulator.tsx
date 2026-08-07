@@ -1161,13 +1161,29 @@ export const CTLogSimulator: React.FC = () => {
     const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
     setCAKeyHandles({ pubHandle, privHandle })
     setCAPubKeyBytes(pubBytes)
+    const generatedAt = new Date().toISOString()
     hsm.addKey({
       handle: pubHandle,
       family: 'ml-dsa',
       role: 'public',
       label: `CT Log CA Public Key (${caAlgo}, ${caSize.pubKey.toLocaleString()} B)`,
       variant: String(caSize.level),
-      generatedAt: new Date().toISOString(),
+      generatedAt,
+    })
+    // Register the PRIVATE half too. C_GenerateKeyPair produced both, and this
+    // is the handle every Signed Tree Head is signed with, but only the public
+    // key was ever added -- so the key inspector showed a CA that verifies and
+    // apparently cannot sign. Registering it also makes the private object's
+    // attributes (CKA_SENSITIVE, CKA_EXTRACTABLE, CKA_NEVER_EXTRACTABLE)
+    // inspectable, which is the point of the panel on a page about who can
+    // forge a log entry.
+    hsm.addKey({
+      handle: privHandle,
+      family: 'ml-dsa',
+      role: 'private',
+      label: `CT Log CA Private Key (${caAlgo})`,
+      variant: String(caSize.level),
+      generatedAt,
     })
   }, [hsm, caAlgo])
 

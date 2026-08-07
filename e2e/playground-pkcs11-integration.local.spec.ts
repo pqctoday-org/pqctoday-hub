@@ -68,7 +68,19 @@ const TOOLS: Tool[] = [
     // The wizard does nothing until a firmware image is supplied — the first
     // step IS the upload, and "Next Step" stays disabled without it.
     uploadsFile: true,
-    steps: ['Next Step', 'Next Step', 'Next Step', 'Next Step', 'Run NIST KAT'],
+    // StepWizard shows step.actionLabel while a step is INCOMPLETE and only
+    // swaps to "Next Step" once it has run, so a list of "Next Step" entries
+    // drives exactly one step and then finds nothing. These are the real
+    // action labels; keygen/sign/verify are steps 2-4.
+    steps: [
+      'Confirm Configuration',
+      'Next Step',
+      'Generate Both Keys',
+      'Next Step',
+      'Sign Both',
+      'Next Step',
+      'Verify Both Signatures',
+    ],
   },
   {
     id: 'kdf-derivation',
@@ -96,7 +108,15 @@ const TOOLS: Tool[] = [
     // numbered "2Step 2: Create Root CA" tabs ARE gated on completing the
     // previous part, and an earlier step list matched those and silently
     // skipped every one of them.
-    steps: ['Step 2', 'Generate Root Key', 'Generate Root CA'],
+    //
+    // "Generate Root CA" alone still isn't enough: selectedKeyId already
+    // defaults to a 'new-…' id, so clicking it regenerates a key CLASSICALLY
+    // (OpenSSL) without ever calling handleKeySourceSelect — the only place
+    // the HSM demo (hsm_generateRSAKeyPair et al.) runs. That handler fires
+    // only when the Key Type dropdown is actually used, so the flow has to
+    // open it (its trigger shows the current selection, "RSA (4096 bits)")
+    // and pick an option ("ML-DSA-87 (FIPS 204)") before generating.
+    steps: ['Step 2', 'RSA (4096 bits)', 'ML-DSA-87', 'Generate Root CA'],
   },
   {
     id: 'merkle-proof',
@@ -105,7 +125,11 @@ const TOOLS: Tool[] = [
     // Same shape as pki-workshop: the HSM surface is the CT Log simulator in
     // Step 5, reachable directly via the compact nav. Steps 1-4 are pure
     // hashing and never touch the engine.
-    steps: ['Step 5', 'Generate CA Key', 'Add Certificate'],
+    // "CA Key" rather than "Generate CA Key": the button interpolates the
+    // selected algorithm ("Generate ML-DSA-65 CA Key"), and step entries are
+    // matched as CONTIGUOUS substrings. Loading samples then signs the tree
+    // head with that key.
+    steps: ['Step 5', 'CA Key', 'Load 5 samples'],
   },
   {
     id: 'suci-flow',
@@ -186,11 +210,17 @@ async function driveSteps(page: Page, steps: string[]): Promise<number> {
   return clicks
 }
 
-/** Per-panel log lengths, straight off Pkcs11LogPanel's data attribute. */
+/**
+ * Per-panel counts of CRYPTOGRAPHIC calls — the log minus session/slot/token
+ * management. Raw log length is the wrong measure: useHSM's initialize()
+ * emits ~18 setup calls on mount, and a panel that only appears partway
+ * through a flow brings all of them with it, so its arrival alone would read
+ * as "the tool did 18 calls' worth of work".
+ */
 async function readLogEntries(page: Page): Promise<number[]> {
   return page
     .locator('[data-testid="pkcs11-log-panel"]')
-    .evaluateAll((els) => els.map((e) => Number(e.getAttribute('data-pkcs11-log-entries') ?? 0)))
+    .evaluateAll((els) => els.map((e) => Number(e.getAttribute('data-pkcs11-crypto-entries') ?? 0)))
 }
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
