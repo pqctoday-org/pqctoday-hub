@@ -42,10 +42,7 @@ import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
-import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
 import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
-import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { conceptIdForFramework, deadlinePhasesFor } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
@@ -455,8 +452,6 @@ function FrameworkCard({
   const [expanded, setExpanded] = useState(false)
   const [graphOpen, setGraphOpen] = useState(false)
   const [maturityOpen, setMaturityOpen] = useState(false)
-  const [drilldownOpen, setDrilldownOpen] = useState(false)
-  const { revisions } = useRevisions()
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
@@ -511,12 +506,19 @@ function FrameworkCard({
                   onSelectDetail(fw)
                 }}
                 aria-label={`View details for ${fw.label}`}
-                className="h-auto p-0 text-sm font-semibold text-foreground hover:bg-transparent"
+                // The shared Button base is `whitespace-nowrap justify-center` —
+                // correct for a label-sized control, wrong for a framework NAME
+                // that is a full sentence ("CCCS ITSP.40.111 — Cryptographic
+                // Algorithms for UNCLASSIFIED/PROTECTED A and PROTECTED B
+                // Information"). Left unset it renders on one unbreakable line
+                // and spills out of the tile. min-w-0 lets it shrink inside the
+                // flex-wrap h4; break-words handles single long tokens.
+                className="h-auto min-w-0 p-0 text-left text-sm font-semibold text-foreground whitespace-normal break-words justify-start hover:bg-transparent"
               >
                 {fw.label}
               </Button>
             ) : (
-              <span>{fw.label}</span>
+              <span className="min-w-0 break-words">{fw.label}</span>
             )}
             {personaEmphasis && (
               <span
@@ -529,15 +531,10 @@ function FrameworkCard({
           </h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-            <span onClick={(e) => e.stopPropagation()}>
-              <ReviewedBadge
-                domain="compliance"
-                entityId={fw.id}
-                showUnreviewed={false}
-                onOpenDrilldown={() => setDrilldownOpen(true)}
-              />
-            </span>
+            {/* The "reviewed by / LLM · <reviewer> · <month> · via <method>"
+                provenance line lives in the framework detail view, not here:
+                the reviewer string is free text and routinely longer than a
+                tile is wide. The tile keeps the at-a-glance trust score. */}
             {fw.bodyType === 'industry_alliance' && (
               <span
                 className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-semibold"
@@ -680,7 +677,10 @@ function FrameworkCard({
       <SourcePassagesDrawer chunkId={`compliance-${fw.id}`} />
 
       {(hasRefs || fw.notes || fw.website) && (
-        <div className="flex items-center gap-2 mt-auto pt-1">
+        /* flex-wrap: at the 3-column breakpoint a tile is ~256px, which the
+           Site / N refs / Timeline / Certs / Certified products / Notes chip
+           row outgrows — without it the trailing chips spilled past the edge. */
+        <div className="flex flex-wrap items-center gap-2 mt-auto pt-1">
           {fw.website && (
             <a
               href={fw.website}
@@ -911,18 +911,6 @@ function FrameworkCard({
               </ul>
             </div>
           )}
-        </div>
-      )}
-      {drilldownOpen && (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div onClick={(e) => e.stopPropagation()}>
-          <RevisionDrilldownPanel
-            domain="compliance"
-            entityId={fw.id}
-            entityLabel={fw.label}
-            revisions={byRecord(revisions, 'compliance', fw.id)}
-            onClose={() => setDrilldownOpen(false)}
-          />
         </div>
       )}
     </div>
