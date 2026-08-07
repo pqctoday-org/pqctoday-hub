@@ -261,13 +261,13 @@ export const SourceCombiningDemo: React.FC = () => {
               href="https://github.com/pqctoday-org/pqctoday-hsm"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1"
+              className="text-primary underline inline-flex items-center gap-1"
             >
               SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION}
               <ExternalLink size={12} />
             </a>{' '}
             PKCS#11 (pqctoday fork of{' '}
-            <Link to="/migrate?highlight=SoftHSM2" className="text-primary hover:underline">
+            <Link to="/migrate?highlight=SoftHSM2" className="text-primary underline">
               SoftHSM2
             </Link>
             ).

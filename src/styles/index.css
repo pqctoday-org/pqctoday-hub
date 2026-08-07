@@ -262,7 +262,11 @@
        that pairing measured 2.09:1. 25% is the measured floor for 4.5:1 there. */
     --primary-legible: 189 90% 25%;
     --secondary: 255 85% 60%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* a11y (WS9, 2026-08-02): dark slate on this purple was 3.14:1 — below the
+       4.5:1 WCAG AA floor for normal text, so every `variant="secondary"`
+       button label failed axe. White gives 5.68:1. The background is
+       unchanged, so no brand colour moves; only the text on it does. */
+    --secondary-foreground: 0 0% 100%;
     --tertiary: 270 95% 65%;
     --tertiary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
@@ -276,7 +280,11 @@
     --accent-legible: 153 60% 32%;
     --success-legible: 142.1 76.2% 26%;
     --warning-legible: 38 92% 30%;
-    --info-legible: 217 91% 53%;
+    /* a11y (WS9, 2026-08-02): 53% lightness gave 4.39:1 on the light page
+       background — just under the 4.5:1 WCAG AA floor, so `.text-status-info`
+       failed axe at 12px. 50% gives 4.83:1. This token exists precisely to be
+       the legible-on-background variant of --info, so it has to clear AA. */
+    --info-legible: 217 91% 50%;
     --destructive-legible: 0 84.2% 38%;
     --destructive: 0 84.2% 50%;
     --destructive-foreground: 210 40% 98%;
@@ -343,7 +351,10 @@
     /* --primary already clears AA against the dark background at text sizes. */
     --primary-legible: 189 83% 53%;
     --secondary: 255 91% 76%;
-    --secondary-foreground: 210 40% 98%;
+    /* a11y (WS9, 2026-08-02): near-white on this light lavender was 2.63:1 —
+       the worst contrast failure in the token set. Dark slate gives 6.49:1.
+       Background unchanged. */
+    --secondary-foreground: 222.2 47.4% 11.2%;
     --tertiary: 270 91% 65%;
     --tertiary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -504,7 +515,8 @@
       --primary: 189 90% 40%;
       --primary-foreground: 210 40% 98%;
       --secondary: 255 85% 60%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
+      /* See the a11y note in the :root block — white is 5.68:1 here. */
+      --secondary-foreground: 0 0% 100%;
       --tertiary: 270 95% 65%;
       --tertiary-foreground: 210 40% 98%;
       --muted: 210 40% 96.1%;

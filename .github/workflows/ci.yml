@@ -179,6 +179,45 @@ jobs:
         run: npm run audit:content-freshness
         continue-on-error: true
 
+      - name: Validate data integrity (full check suite)
+        # ADDED 2026-08-07 (maintenance-flow audit 2026-08-03, finding A-4).
+        # scripts/validate-data-integrity.ts runs the whole CM-*/N*/QA-*/GC-*
+        # suite — 145 checks — and was the single strongest validator in the
+        # repo with NO automated caller anywhere: not in this workflow, not in
+        # any other. The published OSCAL assessment plan used to claim ERROR
+        # findings blocked merge; on 2026-08-01 that claim was corrected to
+        # say they did not, which was honest but left the gap open.
+        #
+        # --exclude-checks carries the priv-only checks that structurally
+        # cannot pass here: they verify real on-disk files under
+        # pqctoday-priv/local-evidence-cache/, which is gitignored by design
+        # and never checked out in CI. The flag exists for exactly this (see
+        # its 2026-07-13 docblock) — excluding them keeps their full local-dev
+        # value instead of weakening their logic to survive CI.
+        #
+        # continue-on-error on first rollout, per the remediation plan's own
+        # sequencing: the suite exits 0 with 0 errors locally today, but that
+        # was measured WITH priv present. Remove this line after one clean CI
+        # run confirms the excluded set is right — leaving it forever would
+        # make this theatre.
+        run: >-
+          npm run validate:data --
+          --exclude-checks N18-library-local-files,N18-local-resources,N18-products-directory,N22-library,N22-timeline,N22-threats,MP-2,TP-1
+        continue-on-error: true
+
+      - name: Audit leaders proof-gate refs
+        # Leaders is the weakest trust chain in the registry (75% of curated
+        # KeyResourceRefs resolve) and the source where fabricated profiles
+        # have actually been found (2026-06-24 re-audit, 9 of them). This gate
+        # existed and was human-typed-only.
+        run: npm run audit:leaders-refs
+
+      - name: Audit timeline enrichment freshness
+        # Declared as a `verify:` step for library/timeline/threats/
+        # vendor-roadmaps/industry-landscape in the maintenance registry, but
+        # ran nowhere automatically.
+        run: npm run audit:enrichment-freshness
+
       - name: Verify trust-engine attestations
         # Verify ML-DSA-65 signatures on committed trust artifacts
         # (revisions.jsonl, rag-corpus.json, OSCAL exports, CBOM,

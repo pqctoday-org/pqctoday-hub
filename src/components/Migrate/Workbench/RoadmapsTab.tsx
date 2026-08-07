@@ -44,6 +44,26 @@ const ROADMAP_ENTRIES: RoadmapEntry[] = (() => {
   return entries
 })()
 
+/**
+ * Vendors that have publicly committed to PQC in some form — the honest
+ * denominator for "how much of the field publishes a roadmap".
+ *
+ * ADDED 2026-08-07. The maintenance framework scores this source's
+ * completeness as (vendors with a tracked roadmap row) / (vendors with a PQC
+ * commitment) and reported ~24% against an 80% target for months. That was
+ * accepted as the STRUCTURAL CEILING rather than a backlog: most vendors
+ * simply do not publish a PQC roadmap, and this catalogue is proof-gated, so
+ * a row cannot exist without a real published document. The gap is in the
+ * world, not the pipeline.
+ *
+ * Accepting a ceiling privately and showing a bare count publicly would let
+ * a reader assume this list is the whole field. It is not, and the page now
+ * says so.
+ */
+const COMMITTED_VENDOR_COUNT = [...vendorMap.values()].filter((vendor) =>
+  ['Active', 'Partial', 'Announced'].includes(vendor.pqcCommitment)
+).length
+
 // Vendors present only via enrichment (no real published roadmap page) —
 // counted separately so the headline doesn't conflate the two (Phase 5, U5).
 const enrichmentOnlyCount = [...enrichmentByVendorId.keys()].filter(
@@ -122,6 +142,19 @@ export function RoadmapsTab() {
               enrichment-derived info only
             </>
           )}
+          {COMMITTED_VENDOR_COUNT > 0 && (
+            <>
+              {' '}
+              · of <span className="text-foreground">{COMMITTED_VENDOR_COUNT}</span> vendors with a
+              stated PQC commitment
+            </>
+          )}
+        </p>
+        {/* The ceiling, stated plainly — see COMMITTED_VENDOR_COUNT above. */}
+        <p className="w-full text-xs text-muted-foreground">
+          Most vendors with a PQC commitment publish no roadmap at all. Every row here is backed by
+          a real published document, so this list is what the field has actually released — not a
+          complete picture of who is working on PQC.
         </p>
         <div className="relative w-full sm:w-64">
           <Search

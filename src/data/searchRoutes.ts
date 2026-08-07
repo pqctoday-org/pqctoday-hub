@@ -168,6 +168,20 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'vendor-roadmap':
       return '/migrate'
 
+    // WS6a — registry-derived tool entries. These always carry an explicit
+    // `deepLink`, so the fallthrough above normally handles them; these cases
+    // exist so a tool whose deepLink is ever dropped still lands on its own
+    // route from `metadata.toolId` rather than silently falling back to '/'.
+    case 'workshop-tool': {
+      const toolId = (metadata?.toolId as string | undefined) ?? ''
+      return toolId ? `/playground/${encodeURIComponent(toolId)}` : '/playground'
+    }
+
+    case 'business-tool': {
+      const toolId = (metadata?.toolId as string | undefined) ?? ''
+      return toolId ? `/business/tools/${encodeURIComponent(toolId)}` : '/business/tools'
+    }
+
     default:
       return '/'
   }
@@ -222,6 +236,12 @@ export const SOURCE_LABELS: Record<string, string> = {
   'regulatory-timeline': 'Regulatory Timeline',
   'standard-algo-xref': 'Standards Map',
   'vendor-roadmap': 'Vendor Roadmaps',
+  // WS6a (2026-08-02) — the tools themselves, not their guide prose. Before
+  // this, `playground-guide` and `business-center` were the only tool-adjacent
+  // sources, so no individual tool was ever a search result. Populated from
+  // the two registries by services/search/toolSearchEntries.ts.
+  'workshop-tool': 'Crypto Lab Tools',
+  'business-tool': 'Business Tools',
 }
 
 /** Sources hidden from curious persona when advancedViewsUnlocked is false */

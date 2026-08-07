@@ -49,6 +49,46 @@ export type WorkshopCategory = (typeof CATEGORIES)[number]
 
 export type ToolDifficulty = 'beginner' | 'intermediate' | 'advanced'
 
+/**
+ * What a tool needs from the runtime before it can actually run (WS8a,
+ * 2026-08-02).
+ *
+ * Why this exists: the capability probe in MobilePlaygroundOps.tsx is per-page,
+ * so it could only warn *after* a visitor had chosen a tool and started loading
+ * it, and nothing in this registry declared what any tool needed — so the
+ * catalogue had nothing to filter or badge on. A phone user browsed the whole
+ * grid with no signal about which tools would run.
+ *
+ * `'chromium'` is not a capability but an engine gate, and it belongs here for
+ * the same reason: `utils/browserDetect.ts` + `ChromiumGateBanner` already
+ * disable live crypto on Safari and Firefox for the strongSwan/SSH paths. Left
+ * out, a desktop Safari user would be told "Runs here" and then meet a gate.
+ *
+ * Every value is derived from the tool's own component tree, not assumed —
+ * `workshopRequirements.driftguard.test.ts` re-derives them from source on
+ * every run and fails if a declaration and the code disagree. That guard is
+ * what stops `requires: []` from becoming a rubber stamp that satisfies
+ * typecheck while telling the visitor nothing.
+ *
+ * NOT covered: `'wide-viewport'`. Whether a tool is usable at 390 px cannot be
+ * read off an import graph — it needs a real browser at a real width. No tool
+ * declares it yet; that measurement is WS0's job and this is the field it
+ * lands in.
+ */
+export type ToolRuntimeRequirement =
+  /** SharedArrayBuffer — hard gate. Needs crossOriginIsolated (see src/sw.ts). */
+  | 'sab'
+  /** Emscripten pthread build (strongSwan / OpenSSH engines). Implies `sab`. */
+  | 'threads'
+  /** WASM SIMD. */
+  | 'wasm-simd'
+  /** Not usable below a desktop-ish width. Requires a real-browser measurement. */
+  | 'wide-viewport'
+  /** Chromium-family engine — see utils/browserDetect.ts. */
+  | 'chromium'
+  /** Not browser-runnable at all: needs the access-gated Docker sandbox. */
+  | 'container'
+
 export interface WorkshopTool {
   id: string
   /** Unique tracking ID (e.g. 'PT-001') — stable across renames */
@@ -63,6 +103,15 @@ export interface WorkshopTool {
   moduleLink: string
   keywords: string[]
   difficulty: ToolDifficulty
+  /**
+   * Runtime capabilities this tool needs to actually run. Empty array = runs
+   * anywhere. Drives the device badge and the "runs on this device" filter.
+   *
+   * REQUIRED on purpose: an optional field would let a new tool ship with no
+   * device signal, which is the state WS8a exists to end. See
+   * {@link ToolRuntimeRequirement}.
+   */
+  requires: ToolRuntimeRequirement[]
   /** Personas for whom this tool is a primary (★★) fit */
   recommendedPersonas: PersonaId[]
   /**
@@ -96,6 +145,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/slh-dsa',
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -113,6 +163,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/stateful-signatures',
     keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'sp 800-208'],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -130,6 +181,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/hybrid-crypto',
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -147,6 +199,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/kms-pqc',
     keywords: ['envelope', 'kms', 'key wrap', 'ml-kem', 'aes', 'dek', 'kek'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -164,6 +217,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/iam-pqc',
     keywords: ['token', 'migration', 'iam', 'ml-dsa', 'ecdsa', 'rsa', 'multi-algorithm', 'jwt'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -181,6 +235,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/confidential-computing',
     keywords: ['tee', 'trusted execution', 'confidential', 'channel', 'attestation', 'hsm'],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -198,6 +253,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/secure-boot-pqc',
     keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -227,6 +283,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'kem',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -267,6 +324,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'rpc',
     ],
     difficulty: 'advanced',
+    requires: ['sab', 'threads', 'chromium'],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -299,6 +357,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'userauth',
     ],
     difficulty: 'advanced',
+    requires: ['sab', 'threads', 'chromium'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -318,6 +377,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/entropy-randomness',
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
+    requires: [],
     recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
   },
   {
@@ -332,6 +392,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/entropy-randomness',
     keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
   },
   {
@@ -347,6 +408,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/entropy-randomness',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
+    requires: [],
     recommendedPersonas: ['researcher', 'curious'],
   },
   {
@@ -373,6 +435,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'rbg',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
   },
   {
@@ -397,6 +460,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'random',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['architect', 'developer', 'researcher'],
   },
 
@@ -424,6 +488,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'chain',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
     hasOutput: true,
     outputSpec:
@@ -442,6 +507,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/hybrid-crypto',
     keywords: ['certificate', 'x509', 'composite', 'hybrid', 'pqc', 'openssl', 'der'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -471,6 +537,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'consistency',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'researcher', 'curious'],
     hasOutput: true,
     outputSpec:
@@ -500,6 +567,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'sizing',
     ],
     difficulty: 'beginner',
+    requires: [],
     recommendedPersonas: ['architect', 'ops', 'executive'],
     hasOutput: false,
   },
@@ -547,6 +615,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'dnssec',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['architect', 'ops', 'executive'],
     hasOutput: false,
   },
@@ -578,6 +647,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'pqc-transition',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -597,6 +667,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/5g-security',
     keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
     difficulty: 'advanced',
+    requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
 
@@ -624,6 +695,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'attestation',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
 
@@ -640,6 +712,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/digital-assets',
     keywords: ['bitcoin', 'secp256k1', 'ecdsa', 'transaction', 'utxo', 'sha256', 'ripemd160'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -657,6 +730,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/digital-assets',
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -674,6 +748,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/digital-assets',
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -717,6 +792,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'command line',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -750,6 +826,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'simulation',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
     hasOutput: true,
     outputSpec:
@@ -768,6 +845,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/playground/tpm-playground',
     keywords: ['tpm', 'pqc', 'wasm', 'ml-kem', 'ml-dsa', 'hardware', 'tcg'],
     difficulty: 'advanced',
+    requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -801,6 +879,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'issuance',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -849,6 +928,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'pkcs11',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -897,6 +977,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'pkcs11',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     hasOutput: true,
     outputSpec:
@@ -925,6 +1006,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'ml-dsa',
     ],
     difficulty: 'intermediate',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     opensourceTool: {
       name: 'openmls',
@@ -970,6 +1052,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'wasm',
     ],
     difficulty: 'advanced',
+    requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
     opensourceTool: {
       name: 'pqctoday-kmip',
@@ -1061,6 +1144,10 @@ const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
     new Set([s.id, s.tool.name, s.trackId, 'sandbox', ...s.algorithms].map((k) => k.toLowerCase()))
   ),
   difficulty: s.difficulty,
+  // One shared declaration for all 24 scenarios: they are not browser-runnable
+  // at all. Declaring a browser capability like 'sab' here would make the device
+  // badge lie — these do not fail a capability check, they run somewhere else.
+  requires: ['container'],
   recommendedPersonas: SANDBOX_TRACK_PERSONAS[s.trackId],
   wip: true,
   opensourceTool: { name: s.tool.name, url: s.tool.url },

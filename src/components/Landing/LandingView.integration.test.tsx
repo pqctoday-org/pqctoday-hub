@@ -94,17 +94,17 @@ function expandAllForYouGroups(rail: HTMLElement) {
 function expectDesktopRailCoversForYou(persona: PersonaId | null) {
   const rail = getRailNav()
   expandAllForYouGroups(rail)
-  expect(within(rail).getByRole('button', { name: /home view/i })).toBeInTheDocument()
-  expect(within(rail).getByRole('button', { name: /about view/i })).toBeInTheDocument()
-  expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
-  expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
-  expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('link', { name: /home view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('link', { name: /about view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('link', { name: /learn view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('link', { name: /timeline view/i })).toBeInTheDocument()
+  expect(within(rail).getByRole('link', { name: /threats view/i })).toBeInTheDocument()
 
   const { forYou } = getRailSections(persona)
   for (const path of forYou) {
     // eslint-disable-next-line security/detect-object-injection -- path comes from getRailSections' own return value, not user input
     const label = NAV_PATH_LABELS[path]
-    expect(within(rail).getByRole('button', { name: `${label} view` })).toBeInTheDocument()
+    expect(within(rail).getByRole('link', { name: `${label} view` })).toBeInTheDocument()
   }
 }
 
@@ -162,7 +162,7 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     // MORE used to carry it, that section is gone now, so it has no desktop
     // rail row at all.
     const rail = getRailNav()
-    expect(within(rail).queryByRole('button', { name: /community view/i })).not.toBeInTheDocument()
+    expect(within(rail).queryByRole('link', { name: /community view/i })).not.toBeInTheDocument()
   })
 
   it('curious on a desktop-width viewport gets PersonaBoardView, not CuriousMobileBoard', () => {

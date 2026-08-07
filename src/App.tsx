@@ -187,6 +187,8 @@ function AnalyticsTracker() {
 }
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
+import { SpecDrawerHost } from './components/Library/SpecDrawerHost'
+import { TryToolModalHost } from './components/Playground/TryToolModalHost'
 import { useTheme } from './hooks/useTheme'
 import { useUrlPersonaOverride } from './hooks/useUrlPersonaOverride'
 
@@ -477,6 +479,10 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
+      {/* After <Routes> on purpose: the drawer and the page header are both
+          z-50, so DOM order decides which paints on top. */}
+      <SpecDrawerHost />
+      <TryToolModalHost />
     </BrowserRouter>
   )
 }

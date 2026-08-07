@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { VendorRoadmapEnrichment } from '../types/MigrateTypes'
 
+// 2026-08-07 archive-sweep audit: merge-all source with 3 archived files this
+// glob can't see. Deliberately NOT widened — the audit found zero net key loss
+// (every archived key is re-covered by a newer live file). Left as is.
 const modules = import.meta.glob('./doc-enrichments/vendor_roadmap_enrichments_*.md', {
   query: '?raw',
   import: 'default',

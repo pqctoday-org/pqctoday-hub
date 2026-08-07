@@ -19,6 +19,16 @@ const renderWorkbench = (path = '/playground') =>
     </MemoryRouter>
   )
 
+/**
+ * The run-context filter defaults to 'browser' (WS6a-bis) so a visitor's first
+ * view holds only tools they can actually execute. Docker sandbox scenarios are
+ * one click away behind the "Show them" affordance — click it, the way a user
+ * would, before asserting anything about sandbox cards.
+ */
+const revealSandboxScenarios = () => {
+  fireEvent.click(screen.getByRole('button', { name: /^Show (them|it)$/i }))
+}
+
 beforeEach(() => {
   usePersonaStore.setState({ selectedPersona: null })
   useBookmarkStore.setState({ myPlaygroundTools: [], showOnlyPlaygroundTools: false })
@@ -105,11 +115,23 @@ describe('Crypto Lab Workbench', () => {
     expect(within(dialog).getByText(/Runs instantly in your browser/i)).toBeInTheDocument()
   })
 
+  it('defaults to the browser catalogue and keeps the hidden container count visible', () => {
+    // WS6a-bis: WORKSHOP_TOOLS carries 24 Docker scenarios, so an 'all' default
+    // meant ~41% of the cards on screen could not run in the browser at all.
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    expect(screen.queryByText('OpenSSL TLS 1.3 + Composite Cert')).toBeNull()
+    // Breadth is never concealed: the count is on screen and one click reveals.
+    expect(screen.getByText(/Docker scenarios? in this category/i)).toBeInTheDocument()
+    revealSandboxScenarios()
+    expect(screen.getByText('OpenSSL TLS 1.3 + Composite Cert')).toBeInTheDocument()
+  })
+
   it('dims (not hides) Docker-sandbox scenarios when the runtime is offline, with a Connect hint', () => {
     // OpenSSL TLS 1.3 sandbox scenario is re-homed to Protocol Simulations.
     renderWorkbench('/playground?cat=Protocol%20Simulations')
-    // Offline (beforeEach): the sandbox demo stays in the grid, dimmed/locked
-    // (Phase 9.4) — never removed from the list entirely.
+    revealSandboxScenarios()
+    // Offline (beforeEach): once revealed, the sandbox demo stays in the grid,
+    // dimmed/locked (Phase 9.4) — never removed from the list entirely.
     const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
@@ -131,6 +153,7 @@ describe('Crypto Lab Workbench', () => {
   it('shows Docker-sandbox scenarios with a Sandbox badge when the runtime is online', () => {
     useSandboxStore.setState({ status: 'online' })
     renderWorkbench('/playground?cat=Protocol%20Simulations')
+    revealSandboxScenarios()
     const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
     expect(card).not.toBeNull()
     expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
@@ -192,5 +215,61 @@ describe('Crypto Lab Workbench', () => {
     expect(screen.getByRole('dialog', { name: /Sandbox access/i })).toBeInTheDocument()
     expect(screen.getByText('Container access required')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Retry probe/i })).toBeInTheDocument()
+  })
+})
+
+describe('WS8c — device fitness badge', () => {
+  // The badge must appear only when THIS device fails what the tool declares.
+  // jsdom exposes no SharedArrayBuffer and crossOriginIsolated is undefined, so
+  // the four sab-declaring tools are legitimately unmet here — which makes this
+  // environment a realistic stand-in for a device that cannot run them.
+  it('badges a tool whose declared requirements this device does not meet', () => {
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    // PQC VPN Simulator declares ['sab','threads','chromium'].
+    const card = screen.getByText('PQC VPN Simulator').closest('[role="button"]')
+    expect(card).not.toBeNull()
+    expect(within(card as HTMLElement).getByText('Needs a desktop')).toBeInTheDocument()
+  })
+
+  it('names the missing capability rather than only saying no', () => {
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    const card = screen.getByText('PQC VPN Simulator').closest('[role="button"]')
+    const badge = within(card as HTMLElement).getByText('Needs a desktop')
+    expect(badge).toHaveAttribute('title', expect.stringContaining('SharedArrayBuffer'))
+  })
+
+  it('stays silent for a tool that declares no requirements', () => {
+    // 26 of the 34 browser tools declare nothing — a badge on those would be
+    // noise, and would also be a lie.
+    renderWorkbench('/playground?cat=Entropy%20%26%20Random')
+    const card = screen.getByText('Random Generation').closest('[role="button"]')
+    expect(card).not.toBeNull()
+    expect(within(card as HTMLElement).queryByText('Needs a desktop')).toBeNull()
+  })
+
+  it('does not badge container scenarios as a capability failure', () => {
+    // A Docker scenario runs elsewhere; it is not failing a browser check.
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    revealSandboxScenarios()
+    const card = screen.getByText('OpenSSL TLS 1.3 + Composite Cert').closest('[role="button"]')
+    expect(within(card as HTMLElement).queryByText('Needs a desktop')).toBeNull()
+    expect(within(card as HTMLElement).getByText('Sandbox')).toBeInTheDocument()
+  })
+})
+
+describe('WS8c — the modal explains why a tool cannot run', () => {
+  it('names the missing capability instead of offering a spinner that cannot resolve', () => {
+    renderWorkbench('/playground?cat=Protocol%20Simulations')
+    fireEvent.click(screen.getByText('PQC VPN Simulator').closest('[role="button"]') as HTMLElement)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).getByText(/will not run on this device/i)).toBeInTheDocument()
+    expect(within(dialog).getByText(/SharedArrayBuffer/i)).toBeInTheDocument()
+  })
+
+  it('stays silent for a tool this device can run', () => {
+    renderWorkbench('/playground?cat=Entropy%20%26%20Random')
+    fireEvent.click(screen.getByText('Random Generation').closest('[role="button"]') as HTMLElement)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).queryByText(/will not run on this device/i)).toBeNull()
   })
 })

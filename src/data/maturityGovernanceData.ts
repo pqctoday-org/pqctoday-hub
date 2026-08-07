@@ -5,11 +5,29 @@
  * spans multiple run dates (each enrichment script appends to the date it ran).
  * Deduplication key: ref_id + pillar + maturity_level + requirement[:60].
  *
- * Iteration order: filename DESCENDING so the most recent revision wins on
+ * Iteration order: BASENAME descending so the most recent revision wins on
  * dedup-key collisions. Enrichment runs that *replace* an earlier paraphrase
  * (e.g. the 2026-05-15 audit fixes in *_r1.csv) must shadow the older row, not
  * be shadowed by it. Pure additions (new tier behaviours, new sources) still
  * load regardless of order since they don't share dedup keys with prior rows.
+ *
+ * ⚠️  THIS SOURCE IS EXEMPT FROM THE `src/data/archive/` CONVENTION.
+ * Everywhere else in src/data, "latest dated file wins, move the older ones to
+ * archive/" is correct, because those loaders read only the newest file. Here
+ * older files are ADDITIVE, not superseded — each enrichment run appends a new
+ * dated file covering *different documents*. Archiving one deletes its
+ * documents from the app.
+ *
+ * That is not hypothetical: the 2026-07-26 archival sweep (v4.27.0, 1a18b2830)
+ * moved pqc_maturity_governance_requirements_05152026.csv into archive/, and
+ * because the glob below does not descend into subdirectories, the corpus
+ * silently collapsed from 189 documents / 1,382 requirements to 1 / 50. No
+ * build error, no failing test. Every CSWP.39 surface (compliance drawer +
+ * tiles, library popover, agility explorer) degraded for 12 days.
+ *
+ * So we deliberately glob BOTH directories, and the tests in maturityModel.test.ts
+ * assert a floor on corpus size to catch any repeat. Do not "tidy" the archive
+ * glob away.
  */
 import Papa from 'papaparse'
 import type { MaturityRequirement, MaturityCategory } from '@/types/MaturityTypes'
@@ -48,18 +66,33 @@ const VALID_CATEGORIES = new Set<MaturityCategory>([
   'Standardization Bodies',
 ])
 
-const modules = import.meta.glob('./pqc_maturity_governance_requirements_*.csv', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-})
+// Two explicit globs rather than one clever pattern: `*` does not cross `/`, and
+// spelling both directories out states the intent that archive/ is IN scope here.
+const modules = {
+  ...import.meta.glob('./pqc_maturity_governance_requirements_*.csv', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }),
+  ...import.meta.glob('./archive/pqc_maturity_governance_requirements_*.csv', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }),
+}
 
 const seen = new Set<string>()
 const merged: MaturityRequirement[] = []
 
-// Iterate in filename DESCENDING order so newer revisions win on dedup-key
-// collisions (e.g. *_r1 > base file > previous month's file).
-const orderedEntries = Object.entries(modules).sort(([a], [b]) => b.localeCompare(a))
+// Iterate in BASENAME descending order so newer revisions win on dedup-key
+// collisions (e.g. *_r1 > base file > previous month's file). Compare basenames,
+// not full paths — otherwise './archive/..._05152026.csv' would sort above
+// './..._07192026.csv' purely because of the directory prefix, and a stale
+// paraphrase would shadow the row that was meant to replace it.
+const basename = (p: string) => p.slice(p.lastIndexOf('/') + 1)
+const orderedEntries = Object.entries(modules).sort(([a], [b]) =>
+  basename(b).localeCompare(basename(a))
+)
 for (const [, content] of orderedEntries) {
   if (typeof content !== 'string') continue
   const { data } = Papa.parse<RawMaturityRow>(content.trim(), {

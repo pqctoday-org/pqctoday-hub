@@ -504,7 +504,14 @@ export const HsmKeyInspector = ({
 
   if (keys.length === 0) {
     return (
-      <div className="glass-panel p-5 flex flex-col items-center gap-2 text-muted-foreground">
+      // Same rationale as Pkcs11LogPanel's hooks: an empty inspector is still
+      // an inspector, so it carries the testid and reports a count of 0 rather
+      // than reading as "this tool has no key inventory at all".
+      <div
+        className="glass-panel p-5 flex flex-col items-center gap-2 text-muted-foreground"
+        data-testid="hsm-key-inspector"
+        data-hsm-key-count={0}
+      >
         <Lock size={24} className="opacity-30" />
         <p className="text-sm">No keys yet — click Execute to run the provisioning flow.</p>
       </div>
@@ -513,7 +520,11 @@ export const HsmKeyInspector = ({
 
   return (
     <>
-      <div className="glass-panel p-4 space-y-3">
+      <div
+        className="glass-panel p-4 space-y-3"
+        data-testid="hsm-key-inspector"
+        data-hsm-key-count={keys.length}
+      >
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-sm flex items-center gap-2">

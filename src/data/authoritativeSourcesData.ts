@@ -21,6 +21,8 @@ export interface AuthoritativeSource {
   timelineCsv: boolean
   complianceCsv: boolean
   migrateCsv: boolean
+  /** ADDED 2026-08-07 — see ViewType 'Patents' below. */
+  patentsCsv: boolean
   lastVerifiedDate: string
 }
 
@@ -32,6 +34,13 @@ export type ViewType =
   | 'Algorithms'
   | 'Compliance'
   | 'Migrate'
+  // ADDED 2026-08-07. /patents was the one data page with no provenance
+  // surface at all — not because a column was missing, but because NEITHER
+  // registry contained a single patent authority. USPTO (the issuing
+  // authority for all 1,185 active rows) and Google Patents (the index the
+  // harvester actually queries) are now registered, so this ViewType finally
+  // has sources to point at.
+  | 'Patents'
 
 interface RawSourceRow {
   id: string
@@ -47,6 +56,7 @@ interface RawSourceRow {
   Timeline_CSV: string
   Compliance_CSV: string
   Migrate_CSV: string
+  Patents_CSV: string
   Last_Verified_Date: string
 }
 
@@ -73,6 +83,7 @@ const { data, metadata } = loadLatestCSV<RawSourceRow, AuthoritativeSource>(
     timelineCsv: parseBoolYesNo(row.Timeline_CSV),
     complianceCsv: parseBoolYesNo(row.Compliance_CSV),
     migrateCsv: parseBoolYesNo(row.Migrate_CSV),
+    patentsCsv: parseBoolYesNo(row.Patents_CSV),
     lastVerifiedDate: row.Last_Verified_Date,
   })
 )
@@ -91,6 +102,7 @@ export function getSourcesForView(viewType: ViewType): AuthoritativeSource[] {
     Algorithms: 'algorithmCsv',
     Compliance: 'complianceCsv',
     Migrate: 'migrateCsv',
+    Patents: 'patentsCsv',
   }
 
   const filterKey = filterMap[viewType]

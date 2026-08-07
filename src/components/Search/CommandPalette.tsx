@@ -5,15 +5,43 @@ import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { Search, Clock, X, ArrowRight, CornerDownLeft, ChevronUp, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { search as searchIndex, getSearchIndex } from '@/services/search/SearchIndex'
 import type { SearchResult } from '@/services/search/SearchIndex'
 import { chunkToRoute, SOURCE_LABELS, ADVANCED_SOURCES } from '@/data/searchRoutes'
+import { BUSINESS_TOOL_SOURCE, WORKSHOP_TOOL_SOURCE } from '@/services/search/toolSearchEntries'
 import { useSearchHistoryStore } from '@/store/useSearchHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 interface CommandPaletteProps {
   isOpen: boolean
   onClose: () => void
+}
+
+/**
+ * The search stack is loaded on demand, NOT statically.
+ *
+ * CommandPalette is rendered by MainLayout, so it is mounted on every page. A
+ * static import of SearchIndex therefore put the whole search + trust-score data
+ * layer into the global chrome's import graph:
+ *
+ *   MainLayout → CommandPalette → SearchIndex → UnifiedSearchService
+ *              → data/trustScore → trustScoreData.ts (6.0 MB)
+ *              → timelineEnrichmentData.ts (15.0 MB)
+ *
+ * Both data modules inline src/data/doc-enrichments/*.md as raw string literals
+ * via eager import.meta.glob, so that edge cost every visitor ~21 MB of JS before
+ * anything could be rendered. Worse, scripts/prerender.ts snapshots the live DOM
+ * (`page.content()`), which baked the runtime-injected `<link rel="modulepreload">`
+ * for those chunks into the shipped index.html — so every browser was told to
+ * preload all 21 MB whether or not the visitor ever opened search.
+ *
+ * Loading on open keeps that cost with the feature that needs it. Both call sites
+ * were already promise-based, so nothing about the search behaviour changes.
+ */
+type SearchModule = typeof import('@/services/search/SearchIndex')
+let searchModulePromise: Promise<SearchModule> | null = null
+const loadSearchModule = (): Promise<SearchModule> => {
+  searchModulePromise ??= import('@/services/search/SearchIndex')
+  return searchModulePromise
 }
 
 const EXAMPLE_QUERIES = [
@@ -83,10 +111,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   const curiousLocked = selectedPersona === 'curious' && viewAccess === 'gated'
 
-  // Pre-warm index on mount so it's ready when the user types
+  // Pre-warm the index when the palette OPENS, not on mount. Pre-warming on mount
+  // meant every page load pulled the 21 MB search/trust-score graph even for the
+  // majority of visitors who never open search. Opening still happens well before
+  // the user finishes typing a query, so the index is warm by the time it matters.
   useEffect(() => {
-    getSearchIndex().catch(() => undefined)
-  }, [])
+    if (!isOpen) return
+    loadSearchModule()
+      .then((m) => m.getSearchIndex())
+      .catch(() => undefined)
+  }, [isOpen])
 
   // Focus input when opened
   useEffect(() => {
@@ -112,7 +146,19 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     setLoading(true)
     setError(null)
 
-    searchIndex(query, { limit: 60, authoritativeOnly })
+    // `ensureSources` (WS6a): the two tool registries are narrow sources in a
+    // corpus of thousands of prose chunks, so on a broad algorithm query like
+    // "ML-KEM" they never reach the global top-60 and disappear from their own
+    // group. This guarantees them a slot without displacing anything.
+    loadSearchModule()
+      .then((m) =>
+        m.search(query, {
+          limit: 60,
+          authoritativeOnly,
+          ensureSources: [WORKSHOP_TOOL_SOURCE, BUSINESS_TOOL_SOURCE],
+          ensureLimit: 3,
+        })
+      )
       .then((raw) => {
         if (cancelled) return
         const filtered =

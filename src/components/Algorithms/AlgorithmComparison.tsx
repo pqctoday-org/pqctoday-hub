@@ -13,22 +13,15 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Code2,
 } from 'lucide-react'
-import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { Button } from '../ui/button'
 import clsx from 'clsx'
 import { useState, useEffect, useMemo } from 'react'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
 import { MobileTransitionWizard } from './MobileTransitionWizard'
-import { AlgorithmImplementationsModal } from './AlgorithmImplementationsModal'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
-import { ReviewedBadge } from '../ui/ReviewedBadge'
-import { TrustScoreBadge } from '../ui/TrustScoreBadge'
-import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
-import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
 
@@ -80,10 +73,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 }) => {
   const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
-  const [implModalAlgo, setImplModalAlgo] = useState<string | null>(null)
   const [showFullTable, setShowFullTable] = useState(false)
-  const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
-  const { revisions } = useRevisions()
 
   useEffect(() => {
     loadPQCAlgorithmsData()
@@ -597,38 +587,21 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 </span>
                               </div>
                             )}
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <AskAssistantButton
-                                variant="text"
-                                label="Ask about this"
-                                question={`How does ${algo.pqc} compare to ${algo.classical} in terms of security and performance, and why should organizations migrate?`}
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setImplModalAlgo(algo.pqc)}
-                                className="h-auto py-0.5 px-1.5 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
-                                title="View known implementations"
-                              >
-                                <Code2 size={12} />
-                                Implementations
-                              </Button>
-                            </div>
-                            <AlgoCtaStrip algoName={pqcName} />
-                            {pqcDetail && <AlgorithmCheckButton algorithm={pqcDetail} />}
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <TrustScoreBadge
-                                resourceType="algorithm"
-                                resourceId={pqcName}
-                                size="sm"
-                              />
-                              <ReviewedBadge
-                                domain="algorithms"
-                                entityId={pqcName}
-                                showUnreviewed={false}
-                                onOpenDrilldown={() => setDrilldownAlgo(pqcName)}
-                              />
-                            </div>
+                            {/* "Ask about this" and "Implementations" are deliberately not in
+                                this tab — they added a second CTA row per record. The live-check
+                                play button rides in the strip's trailing slot for the same
+                                reason: one CTA row per record, not three. */}
+                            <AlgoCtaStrip
+                              algoName={pqcName}
+                              trailing={
+                                pqcDetail ? <AlgorithmCheckButton algorithm={pqcDetail} /> : null
+                              }
+                            />
+                            {/* Revision provenance (ReviewedBadge / drilldown) and the trust
+                                score are deliberately NOT rendered here — their text is
+                                unbounded and wrapped across the row, breaking the table
+                                layout. Both live on the Detailed Comparison tab (trust score
+                                also in the global revisions feed / trust surfaces). */}
                           </div>
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.region}px` }}>
@@ -718,23 +691,6 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
             </div>
           </div>
         </>
-      )}
-
-      {implModalAlgo && (
-        <AlgorithmImplementationsModal
-          algorithmName={implModalAlgo}
-          isOpen={true}
-          onClose={() => setImplModalAlgo(null)}
-        />
-      )}
-      {drilldownAlgo && (
-        <RevisionDrilldownPanel
-          domain="algorithms"
-          entityId={drilldownAlgo}
-          entityLabel={drilldownAlgo}
-          revisions={byRecord(revisions, 'algorithms', drilldownAlgo)}
-          onClose={() => setDrilldownAlgo(null)}
-        />
       )}
     </div>
   )

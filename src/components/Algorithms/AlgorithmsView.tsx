@@ -53,6 +53,7 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
 
 export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
 
@@ -75,6 +76,7 @@ export function AlgorithmsView() {
     searchQuery,
     cnsaLens,
     researchGapOnly,
+    quickView,
     searchParams,
     setSearchParams,
     updateSearchParams,
@@ -116,12 +118,11 @@ export function AlgorithmsView() {
   const [hintDismissed, setHintDismissed] = useState(false)
 
   // Clear every active filter + search in one action (deck "Clear all").
+  // Reuses the 'everything' preset so quickView resets along with the
+  // dropdowns — a second reset path here previously let quickView survive
+  // "Clear all", pinning stale FIPS-validated/NIST-picks results.
   const handleClearAllFilters = () => {
-    handleCryptoFamilyChange('All')
-    handleFunctionChange('All')
-    handleSecurityLevelChange('All')
-    handleRegionChange('All')
-    handleStatusChange('All')
+    handleQuickView('everything')
     handleSearchChange('')
   }
 
@@ -143,6 +144,7 @@ export function AlgorithmsView() {
       'section',
       'cnsa',
       'gap',
+      'quickview',
       'mode',
       'protocol',
       'matrixView',
@@ -250,6 +252,7 @@ export function AlgorithmsView() {
 
       <AlgorithmEntryStrip
         persona={selectedPersona}
+        region={selectedRegion}
         hasActiveParams={hasActiveParams}
         onApply={updateSearchParams}
       />
@@ -367,6 +370,7 @@ export function AlgorithmsView() {
                 totalCount={totalAlgoCount}
                 availableLevels={availableLevels}
                 persona={selectedPersona}
+                quickView={quickView}
                 onQuickView={handleQuickView}
                 cnsaLens={cnsaLens}
                 onToggleCnsaLens={handleToggleCnsaLens}

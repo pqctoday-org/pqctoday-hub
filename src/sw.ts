@@ -4,7 +4,7 @@
 // Enables SharedArrayBuffer for WASM threading on GitHub Pages without server-side headers.
 
 import { PrecacheController, cleanupOutdatedCaches } from 'workbox-precaching'
-import { StaleWhileRevalidate } from 'workbox-strategies'
+import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 
 declare const self: ServiceWorkerGlobalScope & {
@@ -29,6 +29,34 @@ self.addEventListener('activate', (event) => {
 const dataCache = new StaleWhileRevalidate({
   cacheName: 'data-cache',
   plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 })],
+})
+
+// ── Runtime tiers added 2026-08-07 (Phase 4) ───────────────────────────────
+// These three caches hold what used to be precached at install: 13 WASM engines
+// (86 MB), 72 infographics (51 MB), and ~700 route chunks (81 MB). None of it is
+// needed to render a page, so paying for all of it before the first paint meant a
+// ~300 MB / 81-second install that most visits never finished — and until that
+// install completed there was NO offline capability at all.
+//
+// CacheFirst, not StaleWhileRevalidate: every one of these URLs is content-hashed
+// or versioned per deploy, so a cached copy is never stale. Fetch once, then it is
+// offline-capable for good.
+const wasmCache = new CacheFirst({
+  cacheName: 'wasm-cache',
+  plugins: [new ExpirationPlugin({ maxEntries: 30, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+})
+
+// Sized for the ~700 route chunks: a visitor who explores widely should not evict
+// the chunks for routes they still use. 30 days matches a deploy cadence measured
+// in days, and stale entries are unreachable anyway once the hash changes.
+const chunkCache = new CacheFirst({
+  cacheName: 'chunk-cache',
+  plugins: [new ExpirationPlugin({ maxEntries: 400, maxAgeSeconds: 30 * 24 * 60 * 60 })],
+})
+
+const imageCache = new CacheFirst({
+  cacheName: 'image-cache',
+  plugins: [new ExpirationPlugin({ maxEntries: 150, maxAgeSeconds: 30 * 24 * 60 * 60 })],
 })
 
 // ── Cross-Origin Isolation ─────────────────────────────────────────────────
@@ -61,12 +89,12 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async (): Promise<Response> => {
-      // WASM files: serve from precache (revision-controlled, always fresh after deploy).
-      // Falls through to network if not precached (e.g. dynamically loaded WASM).
+      // WASM: no longer precached (Phase 4). Precache is still consulted first so
+      // that anything a future config DOES precache keeps working, then CacheFirst.
       if (url.pathname.endsWith('.wasm')) {
         const precachedWasm = await precache.matchPrecache(request)
         if (precachedWasm) return withCOIHeaders(precachedWasm, url)
-        return withCOIHeaders(await fetch(request), url)
+        return withCOIHeaders(await wasmCache.handle({ event, request }), url)
       }
 
       // JSON/CSV data: StaleWhileRevalidate
@@ -80,9 +108,28 @@ self.addEventListener('fetch', (event) => {
         if (cached) return withCOIHeaders(cached, url)
       }
 
-      // Precached static assets (JS, CSS, images, fonts)
+      // Precached static assets (boot JS, CSS, fonts, icons, prerendered HTML)
       const precached = await precache.matchPrecache(request)
       if (precached) return withCOIHeaders(precached, url)
+
+      // Everything below is a deliberate precache MISS.
+      //
+      // Routing on the miss — rather than on a regex listing the excluded chunks —
+      // is what keeps this file from drifting out of sync with vite.config.ts. The
+      // config decides what is boot-critical; the worker just asks "was it
+      // precached?" and routes the answer. There is no second copy of the rule to
+      // maintain, and therefore no way for the two to disagree.
+      if (url.origin === self.location.origin) {
+        // Route chunks: everything under /assets/*.js that is not a boot chunk.
+        if (/^\/assets\/.+\.js$/.test(url.pathname)) {
+          return withCOIHeaders(await chunkCache.handle({ event, request }), url)
+        }
+        // Infographics and other images (the 8 launcher icons ARE precached and
+        // were already returned above).
+        if (/\.(png|jpe?g|gif|webp|avif)$/i.test(url.pathname)) {
+          return withCOIHeaders(await imageCache.handle({ event, request }), url)
+        }
+      }
 
       // Network fallback
       try {
