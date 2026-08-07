@@ -31,6 +31,15 @@ interface Tool {
   route: string
   /** Some tools need a specific first click to reach their live panel. */
   warmup?: RegExp
+  /**
+   * Explicit click sequence for tools the generic driver cannot walk.
+   * Needed because several tools are numbered wizards whose buttons don't
+   * match an "action verb" shape ("2Step 2: Create Root CA"), or gate their
+   * real action behind a data-loading click ("Load 8 sample certs"). Entries
+   * are matched as substrings and skipped when absent or disabled, so a tool
+   * that changes its labels degrades to "not driven" rather than a false pass.
+   */
+  steps?: string[]
 }
 
 // Playground-reachable tools whose components claim PKCS#11.
@@ -46,12 +55,44 @@ const TOOLS: Tool[] = [
   { id: 'lms-hss', label: 'Stateful Hash Signatures', route: '/playground/lms-hss' },
   { id: 'slh-dsa', label: 'SLH-DSA Sign & Verify', route: '/playground/slh-dsa' },
   { id: 'hybrid-certs', label: 'Hybrid Certificates', route: '/playground/hybrid-certs' },
-  { id: 'firmware-signing', label: 'Firmware Signing', route: '/playground/firmware-signing' },
-  { id: 'kdf-derivation', label: 'SP 800-108 KDF', route: '/playground/kdf-derivation' },
-  { id: 'hybrid-sigs', label: 'Hybrid Signature Spectrums', route: '/playground/hybrid-sigs' },
-  { id: 'pki-workshop', label: 'PKI Workshop', route: '/playground/pki-workshop' },
-  { id: 'merkle-proof', label: 'Merkle Tree Workshop', route: '/playground/merkle-proof' },
-  { id: 'suci-flow', label: '5G SUCI Construction', route: '/playground/suci-flow' },
+  {
+    id: 'firmware-signing',
+    label: 'Firmware Signing',
+    route: '/playground/firmware-signing',
+    steps: ['Next Step', 'Next Step', 'Next Step', 'Next Step', 'Run NIST KAT'],
+  },
+  {
+    id: 'kdf-derivation',
+    label: 'SP 800-108 KDF',
+    route: '/playground/kdf-derivation',
+    steps: ['Fetch QKD Key', 'Run NIST KAT'],
+  },
+  {
+    id: 'hybrid-sigs',
+    label: 'Hybrid Signature Spectrums',
+    route: '/playground/hybrid-sigs',
+    // "Retry" is present because this tool's HSM init fails on load, leaving
+    // "Generate Key Pairs" disabled — retry first, then walk the flow.
+    steps: ['Retry', 'Generate Key Pairs', 'Sign', 'Verify'],
+  },
+  {
+    id: 'pki-workshop',
+    label: 'PKI Workshop',
+    route: '/playground/pki-workshop',
+    steps: ['Generate New RSA', 'Step 2', 'Step 3', 'Step 4', 'Step 5'],
+  },
+  {
+    id: 'merkle-proof',
+    label: 'Merkle Tree Workshop',
+    route: '/playground/merkle-proof',
+    steps: ['Load 8 sample certs', 'Build Tree', 'Step 2', 'Step 3', 'Step 4', 'Step 5'],
+  },
+  {
+    id: 'suci-flow',
+    label: '5G SUCI Construction',
+    route: '/playground/suci-flow',
+    steps: ['Execute Step', 'Execute Step', 'Execute Step', 'Execute Step', 'Run NIST KAT'],
+  },
 ]
 
 const ACTION =
@@ -103,6 +144,21 @@ async function driveFlow(page: Page, maxSteps = 8): Promise<number> {
   return clicks
 }
 
+/** Walk an explicit step list. Each entry is matched as a substring against
+ *  ENABLED buttons only; a missing or still-disabled step is skipped rather
+ *  than failing, so the verdict reflects how far the tool actually got. */
+async function driveSteps(page: Page, steps: string[]): Promise<number> {
+  let clicks = 0
+  for (const step of steps) {
+    const btn = page.locator('button:not([disabled])', { hasText: step }).first()
+    if (!(await btn.count())) continue
+    await btn.click({ timeout: 20_000 }).catch(() => {})
+    clicks++
+    await page.waitForTimeout(9_000)
+  }
+  return clicks
+}
+
 test.describe('hub playground — in-browser PKCS#11 integration', () => {
   for (const tool of TOOLS) {
     test(`${tool.label} executes real PKCS#11 calls`, async ({ page }) => {
@@ -117,7 +173,7 @@ test.describe('hub playground — in-browser PKCS#11 integration', () => {
         await page.waitForTimeout(3_000)
       }
 
-      const clicks = await driveFlow(page)
+      const clicks = tool.steps ? await driveSteps(page, tool.steps) : await driveFlow(page)
 
       // Pkcs11LogPanel's header TOGGLES, and tools differ on whether it
       // starts open (SSH sim passes defaultOpen) or collapsed (the default).
