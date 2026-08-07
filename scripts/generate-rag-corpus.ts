@@ -1400,14 +1400,54 @@ function processPatents(): RAGChunk[] {
 /**
  * Process pqc_maturity_governance_requirements_*.csv → one chunk per requirement.
  * Source: 'governance-maturity'. Backs the Compliance CSWP.39 Maturity Evidence Grid
- * and the Business Center 5-step view. ~176 chunks at maturity levels 2 and 3,
- * across pillars: governance, inventory, observability, assurance, lifecycle.
+ * and the Business Center 5-step view, across pillars: governance, inventory,
+ * observability, assurance, lifecycle.
+ *
+ * MERGE-ALL, mirroring src/data/maturityGovernanceData.ts — this corpus spans
+ * multiple run dates and each dated file covers DIFFERENT documents, so reading
+ * only the newest indexes a single run's worth. This used findLatestCSV until
+ * 2026-08-07 and had therefore never held more than one file: 34 chunks indexed
+ * against 1,396 requirements live in the app.
+ *
+ * Reads src/data/ AND src/data/archive/ for the same reason the app loader does
+ * (see that file's header): the 2026-07-26 archival sweep moved this source's
+ * bulk file into archive/, and for a merge-all source that removes documents
+ * rather than retiring stale rows. Dedup key and "newest basename wins"
+ * precedence match the app loader exactly, so RAG and UI agree on which
+ * paraphrase of a requirement is current.
  */
-function processGovernanceMaturity(): RAGChunk[] {
-  const file = findLatestCSV('pqc_maturity_governance_requirements_')
-  if (!file) return []
+function findAllMaturityCSVs(): string[] {
+  const prefix = 'pqc_maturity_governance_requirements_'
+  const out: string[] = []
+  for (const dir of [DATA_DIR, path.join(DATA_DIR, 'archive')]) {
+    if (!fs.existsSync(dir)) continue
+    for (const f of fs.readdirSync(dir)) {
+      if (f.startsWith(prefix) && f.endsWith('.csv')) out.push(path.join(dir, f))
+    }
+  }
+  // Basename descending — newest revision first, so it wins the dedup below.
+  // Compare basenames, not full paths, or './archive/...' sorts on its directory.
+  return out.sort((a, b) => path.basename(b).localeCompare(path.basename(a)))
+}
 
-  const records = readCSVWithHeaders(file)
+function processGovernanceMaturity(): RAGChunk[] {
+  const files = findAllMaturityCSVs()
+  if (files.length === 0) return []
+
+  // Same dedup key as maturityGovernanceData.ts: ref_id|pillar|level|requirement[:60].
+  const seenKey = new Set<string>()
+  const records: Record<string, string>[] = []
+  for (const file of files) {
+    for (const r of readCSVWithHeaders(file)) {
+      const status = (r.status ?? '').trim()
+      if (status && status !== 'active') continue
+      const key = `${r.ref_id}|${r.pillar}|${r.maturity_level}|${(r.requirement ?? '').slice(0, 60)}`
+      if (seenKey.has(key)) continue
+      seenKey.add(key)
+      records.push(r)
+    }
+  }
+
   const chunks: RAGChunk[] = []
   const seenId = new Map<string, number>()
 

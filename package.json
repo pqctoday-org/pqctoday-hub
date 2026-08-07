@@ -61,6 +61,7 @@
     "audit:trusted-source-freshness": "tsx scripts/audit-trusted-source-freshness.ts",
     "audit:trusted-source-freshness:baseline": "tsx scripts/audit-trusted-source-freshness.ts --baseline",
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
+    "audit:merge-all-coverage": "tsx scripts/audit-merge-all-coverage.ts",
     "audit:leaders-refs": "tsx scripts/audit-leaders-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",
     "audit:content-revision-coverage": "tsx scripts/audit-content-revision-coverage.ts",
