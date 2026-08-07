@@ -40,6 +40,12 @@ interface Tool {
    * that changes its labels degrades to "not driven" rather than a false pass.
    */
   steps?: string[]
+  /**
+   * Set for tools whose entire flow is gated behind a file upload — every
+   * later step stays disabled until a file lands, so without this the tool
+   * looks inert and reports zero PKCS#11 activity.
+   */
+  uploadsFile?: boolean
 }
 
 // Playground-reachable tools whose components claim PKCS#11.
@@ -59,13 +65,19 @@ const TOOLS: Tool[] = [
     id: 'firmware-signing',
     label: 'Firmware Signing',
     route: '/playground/firmware-signing',
+    // The wizard does nothing until a firmware image is supplied — the first
+    // step IS the upload, and "Next Step" stays disabled without it.
+    uploadsFile: true,
     steps: ['Next Step', 'Next Step', 'Next Step', 'Next Step', 'Run NIST KAT'],
   },
   {
     id: 'kdf-derivation',
     label: 'SP 800-108 KDF',
     route: '/playground/kdf-derivation',
-    steps: ['Fetch QKD Key', 'Run NIST KAT'],
+    // The two middle steps are where the PKCS#11 work happens
+    // (C_CreateObject then C_DeriveKey); an earlier list skipped straight from
+    // the fetch to the KAT and so never touched the engine.
+    steps: ['Fetch QKD Key', 'Import into HSM', 'Run KDF', 'Run NIST KAT'],
   },
   {
     id: 'hybrid-sigs',
@@ -79,19 +91,34 @@ const TOOLS: Tool[] = [
     id: 'pki-workshop',
     label: 'PKI Workshop',
     route: '/playground/pki-workshop',
-    steps: ['Generate New RSA', 'Step 2', 'Step 3', 'Step 4', 'Step 5'],
+    // The PKCS#11 work lives in Step 2 (RootCAGenerator), not Step 1. The
+    // compact "Step N" nav jumps parts directly and is never disabled; the
+    // numbered "2Step 2: Create Root CA" tabs ARE gated on completing the
+    // previous part, and an earlier step list matched those and silently
+    // skipped every one of them.
+    steps: ['Step 2', 'Generate Root Key', 'Generate Root CA'],
   },
   {
     id: 'merkle-proof',
     label: 'Merkle Tree Workshop',
     route: '/playground/merkle-proof',
-    steps: ['Load 8 sample certs', 'Build Tree', 'Step 2', 'Step 3', 'Step 4', 'Step 5'],
+    // Same shape as pki-workshop: the HSM surface is the CT Log simulator in
+    // Step 5, reachable directly via the compact nav. Steps 1-4 are pure
+    // hashing and never touch the engine.
+    steps: ['Step 5', 'Generate CA Key', 'Add Certificate'],
   },
   {
     id: 'suci-flow',
     label: '5G SUCI Construction',
     route: '/playground/suci-flow',
-    steps: ['Execute Step', 'Execute Step', 'Execute Step', 'Execute Step', 'Run NIST KAT'],
+    steps: [
+      'Execute Step',
+      'Execute Step',
+      'Execute Step',
+      'Execute Step',
+      'Execute Step',
+      'Run NIST KAT',
+    ],
   },
 ]
 
@@ -159,6 +186,15 @@ async function driveSteps(page: Page, steps: string[]): Promise<number> {
   return clicks
 }
 
+/** Per-panel log lengths, straight off Pkcs11LogPanel's data attribute. */
+async function readLogEntries(page: Page): Promise<number[]> {
+  return page
+    .locator('[data-testid="pkcs11-log-panel"]')
+    .evaluateAll((els) => els.map((e) => Number(e.getAttribute('data-pkcs11-log-entries') ?? 0)))
+}
+
+const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
+
 test.describe('hub playground — in-browser PKCS#11 integration', () => {
   for (const tool of TOOLS) {
     test(`${tool.label} executes real PKCS#11 calls`, async ({ page }) => {
@@ -172,6 +208,24 @@ test.describe('hub playground — in-browser PKCS#11 integration', () => {
         if (await w.count()) await w.click().catch(() => {})
         await page.waitForTimeout(3_000)
       }
+
+      if (tool.uploadsFile) {
+        const input = page.locator('input[type=file]').first()
+        if (await input.count()) {
+          await input.setInputFiles({
+            name: 'firmware.bin',
+            mimeType: 'application/octet-stream',
+            buffer: Buffer.from(new Uint8Array(2048).fill(0x5a)),
+          })
+          await page.waitForTimeout(5_000)
+        }
+      }
+
+      // Baseline BEFORE driving. useHSM's initialize() already logs ~18 calls
+      // of session setup (C_Initialize / C_GetSlotList / C_InitToken /
+      // C_OpenSession / C_Login ...) on mount, so a non-zero log is NOT
+      // evidence that the tool's own flow did any crypto. Only the delta is.
+      const entriesBefore = await readLogEntries(page)
 
       const clicks = tool.steps ? await driveSteps(page, tool.steps) : await driveFlow(page)
 
@@ -196,40 +250,64 @@ test.describe('hub playground — in-browser PKCS#11 integration', () => {
       const cCalls = [...new Set(body.match(/\bC_[A-Z][A-Za-z]+/g) ?? [])]
       const rvs = [...new Set(body.match(/\bCKR_[A-Z_]+/g) ?? [])]
 
-      // ── Dimension 2: is a call LOG actually exposed to the user? ───────
-      // Note the C_* + CKR_* pair asserted below already proves a LIVE
-      // trace — static UI labels never carry return codes. So this dimension
-      // is specifically about whether the user can SEE it: a tool can drive
-      // the engine correctly and still surface nothing.
-      // Not asserted via a "(N calls)" count: panels render their size
-      // differently (the SSH panel uses "(N calls)", others don't), and an
-      // absent count was misread as a failure on the first run.
-      const logPanelPresent = /PKCS#11\s*(Call Log|trace|Calls)/i.test(body)
-      const zeroCallCount = /\(0\s+calls?\)/.test(body)
+      // ── Dimensions 2 & 3 are read from the shared components' own DOM
+      // hooks, never from rendered prose. ───────────────────────────────
+      //
+      // The first version of this spec pattern-matched panel titles
+      // (/PKCS#11 (Call Log|trace|Calls)/) and inventory copy. That produced
+      // FALSE failures: tools title their panels freely — "PKCS#11 Call Log —
+      // Envelope Encryption", but also "Rust Engine · PKCS#11 Log" (lms-hss)
+      // and "PKCS#11 Hybrid Cert Gen Log" (hybrid-certs), neither of which
+      // matched. Loosening the regex is not the fix, because unrelated prose
+      // mentions PKCS#11 too (a VPN tooltip describes "all PKCS#11 calls ...
+      // logged"), so a looser pattern trades false negatives for false
+      // positives. Pkcs11LogPanel and HsmKeyInspector therefore expose
+      // data-testid + a count attribute, and this reads those.
+      //
+      // Counts come from the FULL log, not the visible rows, so a collapsed or
+      // filtered panel is judged on what the engine recorded rather than on
+      // what happens to be painted.
+      const logCounts = await readLogEntries(page)
+      const logPanelPresent = logCounts.length > 0
+      // A tool may mount several panels (lms-hss shows one per engine), and
+      // some legitimately stay empty — only ALL-zero means "mounted, not fed".
+      const zeroCallCount = logPanelPresent && logCounts.every((n) => n === 0)
+      const logDelta = sum(logCounts) - sum(entriesBefore)
 
-      // ── Dimension 3: does the KEY INVENTORY reflect what was created? ──
-      // Detected by HsmKeyInspector's own states, NOT by a loose "\d+ keys"
-      // match — that grabbed the "256" out of "AES-256" on the first run.
-      // Empty state is the literal "No keys yet"; presence is the registry
-      // heading. Anything else means this tool has no inventory surface.
-      const hasInventory = /Key Registry|Key Inspector/i.test(body)
-      const inventoryEmpty = /No keys yet/i.test(body)
+      const inventories = await page.locator('[data-testid="hsm-key-inspector"]').all()
+      const keyCounts = await Promise.all(
+        inventories.map(async (p) => Number((await p.getAttribute('data-hsm-key-count')) ?? 0))
+      )
+      const hasInventory = inventories.length > 0
+      const inventoryEmpty = hasInventory && keyCounts.every((n) => n === 0)
+
+      // A tool with no log panel at all can only be judged from rendered text,
+      // where a C_* name alone proves nothing (several tools print operation
+      // names as static labels via LiveHSMToggle's `operations` prop) — so
+      // there it takes a C_* AND a CKR_* return code, which static copy never
+      // carries.
+      const textEvidence = cCalls.length > 0 && rvs.length > 0
+      const droveTheEngine = logPanelPresent ? logDelta > 0 : textEvidence
 
       const diag =
-        `clicks=${clicks} C_*=[${cCalls.join(',')}] CKR=[${rvs.join(',')}] ` +
+        `clicks=${clicks} logDelta=${logDelta} (before=[${entriesBefore.join(',')}] after=[${logCounts.join(',')}]) ` +
+        `C_*=[${cCalls.join(',')}] CKR=[${rvs.join(',')}] ` +
         `logPanel=${logPanelPresent ? (zeroCallCount ? 'PRESENT-BUT-0' : 'present') : 'absent'} ` +
-        `inventory=${hasInventory ? (inventoryEmpty ? 'EMPTY' : 'populated') : 'absent'}`
+        `inventory=${hasInventory ? (inventoryEmpty ? 'EMPTY' : `populated keys=[${keyCounts.join(',')}]`) : 'absent'}`
 
-      // Dimension 1 — real crypto reached the engine.
+      // ── Dimension 1: did the tool's own flow reach the engine? ─────────
+      // Measured as the GROWTH in logged calls across the driven flow, not as
+      // text scraped from the panel. Two earlier instruments were wrong:
+      // scraping rows misses a collapsed panel entirely (hybrid-certs was
+      // reported as making zero calls while its log held 1000 entries), and an
+      // absolute count credits useHSM's ~18 mount-time setup calls to the tool.
+      // The delta comes from the logging proxy wrapping the real module, so it
+      // cannot be faked by static UI copy.
       expect(clicks, `${tool.id}: no action button was driven — ${diag}`).toBeGreaterThan(0)
       expect(
-        cCalls.length,
-        `${tool.id}: no C_* calls after driving the flow — ${diag}`
-      ).toBeGreaterThan(0)
-      expect(
-        rvs.length,
-        `${tool.id}: C_* names present but no CK_RV return code, so the names may be static labels rather than a live trace — ${diag}`
-      ).toBeGreaterThan(0)
+        droveTheEngine,
+        `${tool.id}: driving the flow produced no new PKCS#11 calls, so its crypto is not running on the engine — ${diag}`
+      ).toBe(true)
 
       // Dimension 2 — the user can see the trace, and it isn't stuck at zero.
       expect(

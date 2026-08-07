@@ -283,7 +283,18 @@ export const Pkcs11LogPanel = ({
   }
 
   return (
-    <div className={`glass-panel p-3 ${className}`}>
+    // The data-* hooks let a test assert "this tool exposes a live call log"
+    // without pattern-matching the title, which varies per tool ("PKCS#11 Call
+    // Log — Envelope Encryption", "Rust Engine · PKCS#11 Log", "PKCS#11 Hybrid
+    // Cert Gen Log", ...). Title-matching gave false "no log panel" verdicts on
+    // tools whose logs were working. `data-pkcs11-log-entries` is the FULL log
+    // length, not the filtered/visible count, so a panel that is collapsed or
+    // filtered down to nothing still reports what the engine actually recorded.
+    <div
+      className={`glass-panel p-3 ${className}`}
+      data-testid="pkcs11-log-panel"
+      data-pkcs11-log-entries={log.length}
+    >
       {/* Header */}
       <div className="w-full flex items-center justify-between gap-2 text-sm font-semibold">
         <Button
