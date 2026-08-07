@@ -187,8 +187,18 @@ async function driveFlow(page: Page, maxSteps = 8): Promise<number> {
     clicked.add(next.text)
     const btn = page.getByRole('button', { name: next.text, exact: true }).first()
     if (!(await btn.count())) continue
-    await btn.click({ timeout: 20_000 }).catch(() => {})
-    clicks++
+    // Swallowing the click's own failure here is deliberate — Playwright
+    // throws on things like "element outside viewport" that a wider page
+    // setup elsewhere should prevent, and one blocked step shouldn't abort
+    // the whole flow. But `clicks` must reflect what actually landed: pki-
+    // workshop's dropdown option was silently unreachable at the default
+    // 720px viewport, and counting the swallowed failure as a click made the
+    // whole flow read as "driven" while nothing downstream ever ran.
+    const landed = await btn
+      .click({ timeout: 20_000 })
+      .then(() => true)
+      .catch(() => false)
+    if (landed) clicks++
     // WASM keygen (SLH-DSA especially) is slow; give each step real time.
     await page.waitForTimeout(9_000)
   }
@@ -203,8 +213,13 @@ async function driveSteps(page: Page, steps: string[]): Promise<number> {
   for (const step of steps) {
     const btn = page.locator('button:not([disabled])', { hasText: step }).first()
     if (!(await btn.count())) continue
-    await btn.click({ timeout: 20_000 }).catch(() => {})
-    clicks++
+    // See driveFlow's comment on why the click failure is swallowed but the
+    // count is not: a silently-failed click must not read as a driven step.
+    const landed = await btn
+      .click({ timeout: 20_000 })
+      .then(() => true)
+      .catch(() => false)
+    if (landed) clicks++
     await page.waitForTimeout(9_000)
   }
   return clicks
@@ -229,6 +244,17 @@ test.describe('hub playground — in-browser PKCS#11 integration', () => {
   for (const tool of TOOLS) {
     test(`${tool.label} executes real PKCS#11 calls`, async ({ page }) => {
       test.setTimeout(240_000)
+      // Taller than Playwright's 720px default. pki-workshop's Key Type
+      // control is a position:fixed FilterDropdown menu, computed once from
+      // the trigger's rect at open time and never re-clamped against the
+      // viewport bottom. At 720px it renders partly off-screen; Playwright's
+      // real .click() then fails with "element is outside of the viewport"
+      // and retries until timeout. The old driveSteps swallowed that behind
+      // `.catch(() => {})`, so the click silently no-opped while `clicks`
+      // still counted it as a success — the flow LOOKED driven and wasn't.
+      // Applied to every tool since it's a strict superset of the default and
+      // several of these are long wizard pages.
+      await page.setViewportSize({ width: 1280, height: 2200 })
       await suppressModals(page)
       await page.goto(tool.route)
       await page.waitForTimeout(7_000)
