@@ -29,6 +29,7 @@ import {
   Zap,
   Command,
   Monitor,
+  GraduationCap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -74,6 +75,7 @@ import {
 } from '@/hooks/useDeviceCapabilities'
 import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { logEvent, personaLabel } from '@/utils/analytics'
 
 // ---------------------------------------------------------------------------
@@ -419,6 +421,15 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
 }) => {
   const caps = useDeviceCapabilities()
   const modalUnmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
+  // WS6d: the reverse of ModuleShell's existing "Related tool" link. Every
+  // non-sandbox WorkshopTool already carries a populated moduleLink (verified
+  // against workshopRegistry.tsx) — it was just never rendered anywhere. No
+  // new data, only surfacing what's already there.
+  const relatedModuleId = tool.moduleLink.startsWith('/learn/')
+    ? tool.moduleLink.slice('/learn/'.length)
+    : null
+  // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
+  const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
@@ -522,6 +533,24 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
               </span>
             ))}
           </div>
+
+          {relatedModuleId && relatedModuleTitle && (
+            <Link
+              to={tool.moduleLink}
+              onClick={onClose}
+              className="mt-5 flex items-center gap-2.5 rounded-xl border border-border p-3 transition-colors hover:border-primary/40 hover:bg-primary/5"
+            >
+              <GraduationCap className="w-4 h-4 shrink-0 text-primary" aria-hidden="true" />
+              <span className="min-w-0">
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Related module
+                </span>
+                <span className="block truncate text-[12.5px] font-medium text-foreground">
+                  Learn the concepts in {relatedModuleTitle}
+                </span>
+              </span>
+            </Link>
+          )}
 
           {tool.recommendedPersonas.length > 0 && (
             <>
