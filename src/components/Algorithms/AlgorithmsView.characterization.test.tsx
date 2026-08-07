@@ -60,26 +60,35 @@ describe('AlgorithmsView — URL-sync characterization (pre-refactor net)', () =
     })
   })
 
-  it('the NIST-picks quick view writes family=Lattice + status=Certified to the URL', async () => {
-    renderAt()
+  // NIST picks / FIPS-validated used to write family=Lattice / status=Certified
+  // — a proxy that both mislabeled results (status=Certified also matches
+  // non-FIPS regional standards like AIMer/HAETAE/Classic-McEliece) and
+  // excluded results the preset's own tooltip promised (family=Lattice
+  // excludes SLH-DSA, which is Hash-based). Both presets now write a
+  // dedicated `quickview` param instead, resolved against the algorithm's own
+  // FIPS designation (see isFipsValidated/isNistPick in useAlgorithmExplorer.ts).
+  it('the NIST-picks quick view writes quickview=nist-picks and clears family/status', async () => {
+    renderAt('/algorithms?family=Composite&status=Candidate')
     fireEvent.click(await screen.findByRole('button', { name: /NIST picks/i }))
-    await waitFor(() => expect(urlSearch()).toContain('family=Lattice'))
-    expect(urlSearch()).toContain('status=Certified')
+    await waitFor(() => expect(urlSearch()).toContain('quickview=nist-picks'))
+    expect(urlSearch()).not.toContain('family=')
+    expect(urlSearch()).not.toContain('status=')
   })
 
-  it('the FIPS-validated quick view writes status=Certified with no family', async () => {
+  it('the FIPS-validated quick view writes quickview=fips-validated with no family', async () => {
     renderAt()
     fireEvent.click(await screen.findByRole('button', { name: /FIPS-validated/i }))
-    await waitFor(() => expect(urlSearch()).toContain('status=Certified'))
+    await waitFor(() => expect(urlSearch()).toContain('quickview=fips-validated'))
     expect(urlSearch()).not.toContain('family=')
   })
 
-  it('the Everything quick view clears all filter params', async () => {
-    renderAt('/algorithms?family=Lattice&status=Certified&level=5')
+  it('the Everything quick view clears all filter + quickview params', async () => {
+    renderAt('/algorithms?family=Lattice&status=Certified&level=5&quickview=nist-picks')
     fireEvent.click(await screen.findByRole('button', { name: /^Everything/i }))
     await waitFor(() => expect(urlSearch()).not.toContain('family='))
     expect(urlSearch()).not.toContain('status=')
     expect(urlSearch()).not.toContain('level=')
+    expect(urlSearch()).not.toContain('quickview=')
   })
 
   it('honours a deep-linked tab (?tab=detailed) over the persona default', async () => {
@@ -91,7 +100,7 @@ describe('AlgorithmsView — URL-sync characterization (pre-refactor net)', () =
     renderAt('/algorithms?tab=detailed')
     await screen.findByTestId('detailed-body')
     fireEvent.click(await screen.findByRole('button', { name: /NIST picks/i }))
-    await waitFor(() => expect(urlSearch()).toContain('family=Lattice'))
+    await waitFor(() => expect(urlSearch()).toContain('quickview=nist-picks'))
     // the detailed tab is still active + in the URL
     expect(urlSearch()).toContain('tab=detailed')
     expect(screen.getByTestId('detailed-body')).toBeInTheDocument()
