@@ -96,6 +96,14 @@ interface RawAlgorithmRow {
  * PQShield's 2025 report that these four were the final KpqC competition
  * winners (announced Jan 2025) — even though this CSV's own fips_standard
  * text still says "KR-PQC Round 1", which is stale. See PR description.
+ *
+ * Aigis-enc/Aigis-sig were ALSO tagged "KR-PQC Round 1 (KPQC)" until
+ * 2026-08-07, but that was an outright misclassification, not staleness —
+ * they're CACR (China) 2020 competition winners with no KpqC connection at
+ * all (the CSV's own use_case_notes/vetting_body/region already said
+ * "CACR"/China; only fips_standard/status_url/trusted_source_id were
+ * wrong). See ALGORITHMS-AIGIS-CACR-MISCLASSIFICATION-REMEDIATION-PLAN-08072026.md
+ * in pqctoday-priv/maintenance/ for the full verification trail.
  */
 const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'FIPS 203|||FIPS 203': 'final',
@@ -172,7 +180,8 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
     'final',
   'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — verified KpqC winners
-  'To Be Checked|||KR-PQC Round 1 (KPQC)': 'unverified', // Aigis-enc/sig
+  'To Be Checked|||CACR 1st Prize (2020, China) — PKC 2020 (Zhang et al.); NOT an adopted national/international standard':
+    'unverified', // Aigis-enc/sig — corrected 2026-08-07 from a mistaken KpqC/Korea tag
   'CACR competition winner (2020); ELIMINATED from NIST Round 2 (not advanced); NOT an adopted national standard — do not treat as deployable|||CACR national competition winner (as LAC.KEX, ~2018-2020) — NOT an issued OSCCA/GB national standard':
     'eliminated', // LAC
   'CONFIRMED PLACEHOLDER — official ICCS program track name (Block Cipher category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
