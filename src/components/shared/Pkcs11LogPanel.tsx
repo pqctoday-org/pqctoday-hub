@@ -213,6 +213,38 @@ interface Pkcs11LogPanelProps {
   defaultHideAdminOps?: boolean
 }
 
+/**
+ * PKCS#11 v3.2 §5.4-5.6 session, slot/token and object-management calls —
+ * everything a consumer runs just to HAVE a usable token, before any crypto.
+ * useHSM's initialize() emits ~18 of these on mount, so a raw log length says
+ * nothing about whether a tool actually computed anything. Counting only the
+ * rest gives "did this surface do cryptographic work", which is what the
+ * playground validation spec asserts growth in.
+ */
+const SESSION_MGMT_FNS = new Set([
+  'C_Initialize',
+  'C_Finalize',
+  'C_GetInfo',
+  'C_GetFunctionList',
+  'C_GetSlotList',
+  'C_GetSlotInfo',
+  'C_GetTokenInfo',
+  'C_GetMechanismList',
+  'C_GetMechanismInfo',
+  'C_InitToken',
+  'C_InitPIN',
+  'C_SetPIN',
+  'C_OpenSession',
+  'C_CloseSession',
+  'C_CloseAllSessions',
+  'C_GetSessionInfo',
+  'C_Login',
+  'C_Logout',
+])
+
+const countCryptoCalls = (log: Pkcs11LogEntry[]) =>
+  log.reduce((n, e) => (SESSION_MGMT_FNS.has(e.fn) ? n : n + 1), 0)
+
 export const Pkcs11LogPanel = ({
   log,
   onClear,
@@ -283,7 +315,19 @@ export const Pkcs11LogPanel = ({
   }
 
   return (
-    <div className={`glass-panel p-3 ${className}`}>
+    // The data-* hooks let a test assert "this tool exposes a live call log"
+    // without pattern-matching the title, which varies per tool ("PKCS#11 Call
+    // Log — Envelope Encryption", "Rust Engine · PKCS#11 Log", "PKCS#11 Hybrid
+    // Cert Gen Log", ...). Title-matching gave false "no log panel" verdicts on
+    // tools whose logs were working. `data-pkcs11-log-entries` is the FULL log
+    // length, not the filtered/visible count, so a panel that is collapsed or
+    // filtered down to nothing still reports what the engine actually recorded.
+    <div
+      className={`glass-panel p-3 ${className}`}
+      data-testid="pkcs11-log-panel"
+      data-pkcs11-log-entries={log.length}
+      data-pkcs11-crypto-entries={countCryptoCalls(log)}
+    >
       {/* Header */}
       <div className="w-full flex items-center justify-between gap-2 text-sm font-semibold">
         <Button
