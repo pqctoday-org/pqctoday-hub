@@ -208,76 +208,92 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                 )}
               </div>
               <div className="space-y-4">
-                {section.fields.map((field) => (
-                  <div key={field.id}>
-                    <label className="block text-sm font-medium text-foreground mb-1.5">
-                      {field.label}
-                    </label>
-                    {field.type === 'text' && (
-                      <Input
-                        placeholder={field.placeholder}
-                        value={(formData[section.id]?.[field.id] as string) || ''}
-                        onChange={(e) => updateField(section.id, field.id, e.target.value)}
-                      />
-                    )}
-                    {field.type === 'date' && (
-                      <Input
-                        type="date"
-                        placeholder={field.placeholder}
-                        value={(formData[section.id]?.[field.id] as string) || ''}
-                        onChange={(e) => updateField(section.id, field.id, e.target.value)}
-                      />
-                    )}
-                    {field.type === 'textarea' && (
-                      <Textarea
-                        className="min-h-[100px] resize-y"
-                        placeholder={field.placeholder}
-                        value={(formData[section.id]?.[field.id] as string) || ''}
-                        onChange={(e) => updateField(section.id, field.id, e.target.value)}
-                      />
-                    )}
-                    {field.type === 'select' && (
-                      <FilterDropdown
-                        noContainer
-                        selectedId={(formData[section.id]?.[field.id] as string) || 'All'}
-                        onSelect={(id) => updateField(section.id, field.id, id === 'All' ? '' : id)}
-                        defaultLabel={field.placeholder || 'Select...'}
-                        items={(field.options ?? []).map((opt) => ({
-                          id: opt.value,
-                          label: opt.label,
-                        }))}
-                      />
-                    )}
-                    {field.type === 'checklist' && (
-                      <div className="space-y-2 mt-1">
-                        {field.options?.map((opt) => {
-                          const checked = (
-                            (formData[section.id]?.[field.id] as string[]) || []
-                          ).includes(opt.value)
-                          return (
-                            <label
-                              key={opt.value}
-                              className="flex items-center gap-2 cursor-pointer text-sm text-foreground"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={() =>
-                                  toggleChecklistItem(section.id, field.id, opt.value)
-                                }
-                                className="rounded border-input"
-                              />
-                              {opt.label}
-                            </label>
-                          )
-                        })}
-                      </div>
-                    )}
-                    {field.helperText && (
-                      <p className="text-xs text-muted-foreground mt-1">{field.helperText}</p>
-                    )}
-                  </div>
-                ))}
+                {section.fields.map((field) => {
+                  // a11y (WS9, 2026-08-02): the label carried no `htmlFor` and no
+                  // control carried an `id`, so every text/date/textarea field in
+                  // every artifact builder was an unlabelled form control — a
+                  // critical axe violation, systemic across the Command Center
+                  // because all 37 business tools render through this component.
+                  const controlId = `${section.id}-${field.id}`
+                  return (
+                    <div key={field.id}>
+                      <label
+                        htmlFor={controlId}
+                        className="block text-sm font-medium text-foreground mb-1.5"
+                      >
+                        {field.label}
+                      </label>
+                      {field.type === 'text' && (
+                        <Input
+                          id={controlId}
+                          placeholder={field.placeholder}
+                          value={(formData[section.id]?.[field.id] as string) || ''}
+                          onChange={(e) => updateField(section.id, field.id, e.target.value)}
+                        />
+                      )}
+                      {field.type === 'date' && (
+                        <Input
+                          id={controlId}
+                          type="date"
+                          placeholder={field.placeholder}
+                          value={(formData[section.id]?.[field.id] as string) || ''}
+                          onChange={(e) => updateField(section.id, field.id, e.target.value)}
+                        />
+                      )}
+                      {field.type === 'textarea' && (
+                        <Textarea
+                          id={controlId}
+                          className="min-h-[100px] resize-y"
+                          placeholder={field.placeholder}
+                          value={(formData[section.id]?.[field.id] as string) || ''}
+                          onChange={(e) => updateField(section.id, field.id, e.target.value)}
+                        />
+                      )}
+                      {field.type === 'select' && (
+                        <FilterDropdown
+                          noContainer
+                          selectedId={(formData[section.id]?.[field.id] as string) || 'All'}
+                          onSelect={(id) =>
+                            updateField(section.id, field.id, id === 'All' ? '' : id)
+                          }
+                          defaultLabel={field.placeholder || 'Select...'}
+                          items={(field.options ?? []).map((opt) => ({
+                            id: opt.value,
+                            label: opt.label,
+                          }))}
+                        />
+                      )}
+                      {field.type === 'checklist' && (
+                        <div className="space-y-2 mt-1">
+                          {field.options?.map((opt) => {
+                            const checked = (
+                              (formData[section.id]?.[field.id] as string[]) || []
+                            ).includes(opt.value)
+                            return (
+                              <label
+                                key={opt.value}
+                                className="flex items-center gap-2 cursor-pointer text-sm text-foreground"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() =>
+                                    toggleChecklistItem(section.id, field.id, opt.value)
+                                  }
+                                  className="rounded border-input"
+                                />
+                                {opt.label}
+                              </label>
+                            )
+                          })}
+                        </div>
+                      )}
+                      {field.helperText && (
+                        <p className="text-xs text-muted-foreground mt-1">{field.helperText}</p>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           ))}

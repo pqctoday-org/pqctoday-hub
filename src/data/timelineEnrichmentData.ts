@@ -19,12 +19,36 @@ export const timelineToLibraryRef: Record<string, string> = Object.fromEntries(
   libraryData.filter((item) => item.downloadUrl).map((item) => [item.downloadUrl, item.referenceId])
 )
 
+// Reads all three archive tiers this dataset has accumulated, not just the live
+// directory — same fix as src/data/maturityGovernanceData.ts (2026-08-07). This is a
+// merge-all source (mergeEnrichmentFiles reads every dated file's own filename date,
+// oldest to newest), so a file sitting in an archive dir was invisible to the glob
+// even though its content was never superseded. Confirmed real loss: 6 live,
+// non-deprecated timeline rows (Brazil:ITI, G7:G7 CEG, Germany:BSI, Hong Kong:HKMA,
+// Malaysia:NACSA, Singapore:CSA/GovTech/IMDA) had no enrichment without this.
 function loadTimelineEnrichments(): EnrichmentLookup {
-  const modules = import.meta.glob('./doc-enrichments/timeline_doc_enrichments_*.md', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  }) as Record<string, string>
+  const modules = {
+    ...import.meta.glob('./doc-enrichments/timeline_doc_enrichments_*.md', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }),
+    ...import.meta.glob('./archive/timeline_doc_enrichments_*.md', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }),
+    ...import.meta.glob('./doc-enrichments/archive/timeline_doc_enrichments_*.md', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }),
+    ...import.meta.glob('./doc-enrichments/archive_v1/timeline_doc_enrichments_*.md', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }),
+  } as Record<string, string>
   return mergeEnrichmentFiles(modules)
 }
 

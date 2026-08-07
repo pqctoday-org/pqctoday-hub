@@ -34,6 +34,59 @@ export type {
 
 // ── Singleton loaders ────────────────────────────────────────────────────────
 let cppModulePromise: Promise<SoftHSMModule> | null = null
+
+/**
+ * Load /wasm/softhsm.js once, and make every caller wait for the SAME load —
+ * across module copies.
+ *
+ * This file and ./softhsm/loaders.ts each hold their own `cppModulePromise`,
+ * so a component importing from one path does not share the other's singleton.
+ * They did share the DOM script tag, and the old guard was
+ * `if (!document.querySelector('script[data-softhsm-cpp]')) { await inject }`
+ * — so whichever copy lost the race saw the tag, SKIPPED the wait, read
+ * `globalThis.createSoftHSMModule` while the script was still in flight, and
+ * threw "createSoftHSMModule not available after script load". That is a real
+ * user-facing failure: it left the Hybrid Signature Spectrums tool showing
+ * "softhsmv3 WASM failed to load" with its Generate button disabled behind a
+ * Retry, and made other tools intermittently fail to initialise.
+ *
+ * The load promise is parked on globalThis precisely because module-level
+ * state is NOT shared between the two copies — that is the bug being fixed.
+ */
+const CPP_LOAD_KEY = '__pqctoday_softhsm_cpp_load__'
+function ensureCppScriptLoaded(version: string): Promise<void> {
+  const g = globalThis as Record<string, unknown>
+  // Already loaded and initialised — nothing to wait for.
+  if (typeof g['createSoftHSMModule'] === 'function') return Promise.resolve()
+  const existing = g[CPP_LOAD_KEY] as Promise<void> | undefined
+  if (existing) return existing
+
+  const load = new Promise<void>((resolve, reject) => {
+    const done = () => resolve()
+    const fail = () => reject(new Error('Failed to load /wasm/softhsm.js (C++)'))
+    // Attach to an in-flight tag rather than assuming a present tag is ready.
+    const prior = document.querySelector<HTMLScriptElement>('script[data-softhsm-cpp]')
+    if (prior) {
+      if (typeof g['createSoftHSMModule'] === 'function') return done()
+      prior.addEventListener('load', done)
+      prior.addEventListener('error', fail)
+      return
+    }
+    const s = document.createElement('script')
+    s.src = `/wasm/softhsm.js?v=${version}`
+    s.dataset.softhsmCpp = '1'
+    s.onload = done
+    s.onerror = fail
+    document.head.appendChild(s)
+  }).catch((e) => {
+    // Let a later attempt retry instead of caching the failure forever.
+    delete g[CPP_LOAD_KEY]
+    throw e
+  })
+
+  g[CPP_LOAD_KEY] = load
+  return load
+}
 let rustModulePromise: Promise<SoftHSMModule> | null = null
 
 /**
@@ -44,16 +97,7 @@ let rustModulePromise: Promise<SoftHSMModule> | null = null
 export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
   if (!cppModulePromise) {
     cppModulePromise = (async () => {
-      if (!document.querySelector('script[data-softhsm-cpp]')) {
-        await new Promise<void>((resolve, reject) => {
-          const s = document.createElement('script')
-          s.src = `/wasm/softhsm.js?v=${_WASM_VERSION}`
-          s.dataset.softhsmCpp = '1'
-          s.onload = () => resolve()
-          s.onerror = () => reject(new Error('Failed to load /wasm/softhsm.js (C++)'))
-          document.head.appendChild(s)
-        })
-      }
+      await ensureCppScriptLoaded(_WASM_VERSION)
       const createFn = (globalThis as Record<string, unknown>)['createSoftHSMModule'] as
         | ((arg?: Record<string, unknown>) => Promise<SoftHSMModule>)
         | undefined

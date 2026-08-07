@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useEffect } from 'react'
-import { Link } from 'react-router'
+import { useMemo, useEffect, useCallback } from 'react'
+import { Link, useSearchParams } from 'react-router'
 import { Search, Wrench, Filter } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
@@ -52,12 +52,82 @@ const AUDIENCE_FILTER_ITEMS: { id: string; label: string }[] = [
   { id: 'developer', label: 'Developer' },
 ]
 
+/** Query-param names for the grid's five facets, plus the grouping mode. */
+const PARAM = {
+  q: 'q',
+  category: 'cat',
+  zone: 'zone',
+  phase: 'phase',
+  audience: 'audience',
+  group: 'group',
+} as const
+
+// WS6c: the zone/phase metadata every tool already carries was only ever
+// exposed as a *filter* (narrow to one zone, lose everything else). Grouping
+// is the other half — see the whole catalogue organized by zone or phase at
+// once, the same way it's always been organized by category. `groupBy`
+// defaults to 'category' so today's view is unchanged unless a visitor
+// explicitly asks for the other lens.
+type GroupMode = 'category' | 'phase' | 'zone'
+const GROUP_MODE_ITEMS: { id: GroupMode; label: string }[] = [
+  { id: 'category', label: 'Category' },
+  { id: 'phase', label: 'Framework phase' },
+  { id: 'zone', label: 'CSWP.39 zone' },
+]
+
 export const BusinessToolsGrid = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
-  const [zoneFilter, setZoneFilter] = useState<'all' | ZoneId>('all')
-  const [phaseFilter, setPhaseFilter] = useState<'all' | PhaseId>('all')
-  const [audienceFilter, setAudienceFilter] = useState<'all' | BusinessToolAudience>('all')
+  // WS6b (2026-08-02) — all five facets live in the URL. They were local
+  // useState, so no filtered view of the Command Center was linkable,
+  // shareable, or reachable from another surface: the grid filtered correctly
+  // and then threw the result away on navigation. Mirrors the `update()`
+  // pattern in Algorithms/IndustryLandscapeView.tsx, including `replace: true`
+  // so filtering does not stack history entries.
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const searchQuery = searchParams.get(PARAM.q) ?? ''
+  const activeCategory = searchParams.get(PARAM.category)
+  const zoneFilter = (searchParams.get(PARAM.zone) ?? 'all') as 'all' | ZoneId
+  const phaseFilter = (searchParams.get(PARAM.phase) ?? 'all') as 'all' | PhaseId
+  const audienceFilter = (searchParams.get(PARAM.audience) ?? 'all') as 'all' | BusinessToolAudience
+  const groupBy = (searchParams.get(PARAM.group) ?? 'category') as GroupMode
+
+  const update = useCallback(
+    (updates: Record<string, string | null>) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(updates)) {
+            // `all` and empty string are the defaults — omit them so a default
+            // view has a clean URL rather than ?zone=all&phase=all&...
+            if (v === null || v === '' || v === 'all') next.delete(k)
+            else next.set(k, v)
+          }
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const setSearchQuery = useCallback((v: string) => update({ [PARAM.q]: v }), [update])
+  const setActiveCategory = useCallback(
+    (v: string | null) => update({ [PARAM.category]: v }),
+    [update]
+  )
+  const setZoneFilter = useCallback((v: 'all' | ZoneId) => update({ [PARAM.zone]: v }), [update])
+  const setPhaseFilter = useCallback((v: 'all' | PhaseId) => update({ [PARAM.phase]: v }), [update])
+  const setAudienceFilter = useCallback(
+    (v: 'all' | BusinessToolAudience) => update({ [PARAM.audience]: v }),
+    [update]
+  )
+  // 'category' is the default lens (matches every prior release), so it is
+  // omitted from the URL the same way 'all' is for the other facets — a
+  // default view keeps a clean URL.
+  const setGroupBy = useCallback(
+    (v: GroupMode) => update({ [PARAM.group]: v === 'category' ? null : v }),
+    [update]
+  )
 
   useEffect(() => {
     if (!searchQuery.trim()) return
@@ -83,10 +153,30 @@ export const BusinessToolsGrid = () => {
     })
   }, [searchQuery, activeCategory, zoneFilter, phaseFilter, audienceFilter])
 
+  // Section order + label per grouping mode. `frameworkPhase`/`cswp39Zone` are
+  // required (non-optional) fields on every BusinessTool — verified against
+  // businessToolsRegistry.tsx — so grouping by either needs no "uncategorized"
+  // fallback bucket the way an optional field would.
+  const groupSections: { key: string; label: string }[] = useMemo(() => {
+    if (groupBy === 'phase') {
+      return PHASE_ORDER.map((p) => ({ key: p, label: FRAMEWORK_PHASES[p].name }))
+    }
+    if (groupBy === 'zone') {
+      return CSWP39_ZONE_ORDER.map((z) => ({ key: z, label: CSWP39_ZONE_DETAILS[z].title }))
+    }
+    return BUSINESS_CATEGORIES.map((c) => ({ key: c, label: c }))
+  }, [groupBy])
+
+  const groupKeyFor = useCallback(
+    (t: (typeof filteredTools)[number]): string =>
+      groupBy === 'phase' ? t.frameworkPhase : groupBy === 'zone' ? t.cswp39Zone : t.category,
+    [groupBy]
+  )
+
   const groupedTools: Record<string, typeof filteredTools> = {}
-  for (const cat of BUSINESS_CATEGORIES) {
-    const tools = filteredTools.filter((t) => t.category === cat)
-    if (tools.length > 0) groupedTools[cat] = tools
+  for (const section of groupSections) {
+    const tools = filteredTools.filter((t) => groupKeyFor(t) === section.key)
+    if (tools.length > 0) groupedTools[section.key] = tools
   }
 
   return (
@@ -208,6 +298,28 @@ export const BusinessToolsGrid = () => {
             className="max-md:[&_button]:min-h-[44px]"
           />
         </div>
+
+        {/* WS6c: how the grid is sectioned — independent of the facets above,
+            which narrow WHICH tools show; this changes how the remaining
+            ones are organized into headed groups. */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground shrink-0">Group by</span>
+          {GROUP_MODE_ITEMS.map((mode) => (
+            <Button
+              key={mode.id}
+              variant="ghost"
+              onClick={() => setGroupBy(mode.id)}
+              aria-pressed={groupBy === mode.id}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors max-md:min-h-[44px] ${
+                groupBy === mode.id
+                  ? 'bg-primary/10 text-primary border-primary/30'
+                  : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+              }`}
+            >
+              {mode.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Start-here sequence — only on the unfiltered view, so it reads as a
@@ -248,14 +360,14 @@ export const BusinessToolsGrid = () => {
         />
       )}
 
-      {/* Tool grid by category */}
-      {BUSINESS_CATEGORIES.map((category) => {
-        const tools = groupedTools[category]
+      {/* Tool grid, sectioned per the active Group-by mode */}
+      {groupSections.map((section) => {
+        const tools = groupedTools[section.key]
         if (!tools) return null
         return (
-          <div key={category}>
+          <div key={section.key}>
             <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              {category}
+              {section.label}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {tools.map((tool) => {

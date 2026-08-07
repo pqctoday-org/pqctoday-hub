@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.41.0",
+  "version": "4.42.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -21,7 +21,7 @@
     "predev": "npm run gen:timeline-facts && npm run generate:role-board-content && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
     "prebuild": "npm run gen:timeline-facts",
     "dev": "vite",
-    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && npm run generate:sitemap && npm run generate:role-board-content && tsc -b && NODE_OPTIONS=--max-old-space-size=6144 vite build && NODE_OPTIONS=--max-old-space-size=6144 npm run prerender && cp dist/index.html dist/404.html",
+    "build": "npm run build:sdk && rm -rf public/dist && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && npm run generate:sitemap && npm run generate:role-board-content && tsc -b && NODE_OPTIONS=--max-old-space-size=6144 vite build && NODE_OPTIONS=--max-old-space-size=6144 npm run prerender && cp dist/index.html dist/404.html && npm run gate:precache",
     "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
     "lint": "eslint --no-error-on-unmatched-pattern src e2e *.ts *.js *.cjs",
     "gate:cacp": "npm run test -- src/components/Playground/kmip src/wasm/kmip && npm run test:local && npm run sync:wasm:check:cacp-kmip",
@@ -61,6 +61,7 @@
     "audit:trusted-source-freshness": "tsx scripts/audit-trusted-source-freshness.ts",
     "audit:trusted-source-freshness:baseline": "tsx scripts/audit-trusted-source-freshness.ts --baseline",
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
+    "audit:merge-all-coverage": "tsx scripts/audit-merge-all-coverage.ts",
     "audit:leaders-refs": "tsx scripts/audit-leaders-refs.ts",
     "audit:module-infographics": "tsx scripts/audit-module-infographics.ts",
     "audit:content-revision-coverage": "tsx scripts/audit-content-revision-coverage.ts",
@@ -109,6 +110,7 @@
     "trust-engine:sign": "tsx ../pqctoday-priv/attestation/sign-all.ts",
     "trust-engine:verify": "tsx ../pqctoday-priv/attestation/verify-all.ts",
     "verify-attestations": "tsx scripts/ci/verify-attestations.ts",
+    "gate:precache": "tsx scripts/ci/precache-budget.ts",
     "trust-engine:sign-revisions": "tsx ../pqctoday-priv/attestation/sign-revisions.ts",
     "trust-engine:verify-revisions": "tsx ../pqctoday-priv/attestation/verify-revisions.ts",
     "trust-engine:keygen": "tsx ../pqctoday-priv/attestation/generate-attestation-key.ts",

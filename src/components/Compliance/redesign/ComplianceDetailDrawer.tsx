@@ -5,7 +5,7 @@
 // requires a scheme → which covers algorithms → with live cert evidence.
 // Supersedes FrameworkDetailPopover for the redesigned Landscape.
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
@@ -30,6 +30,9 @@ import { buildDrawerDetail, type PillarId } from './pillarModel'
 import { pillClasses, TONES } from './tones'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import {
   buildFrameworkEndorsementUrl,
   buildFrameworkFlagUrl,
@@ -111,6 +114,8 @@ export function ComplianceDetailDrawer({
   onSelectRelated,
 }: ComplianceDetailDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null)
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -246,6 +251,20 @@ export function ComplianceDetailDrawer({
                       </dd>
                     </div>
                   )}
+                  {/* Review provenance ("LLM · <reviewer> · <month> · via
+                      <method>") lives here rather than on the landscape tile —
+                      the reviewer string is free text and was overflowing the
+                      tile. Click-through opens the full revision history. */}
+                  <div className="flex items-start justify-between gap-3">
+                    <dt className="shrink-0 text-muted-foreground">Last reviewed</dt>
+                    <dd className="min-w-0 text-right">
+                      <ReviewedBadge
+                        domain="compliance"
+                        entityId={framework.id}
+                        onOpenDrilldown={() => setDrilldownOpen(true)}
+                      />
+                    </dd>
+                  </div>
                 </dl>
               </section>
             )}
@@ -451,6 +470,15 @@ export function ComplianceDetailDrawer({
           </div>
         </div>
       </div>
+      {drilldownOpen && (
+        <RevisionDrilldownPanel
+          domain="compliance"
+          entityId={framework.id}
+          entityLabel={framework.label}
+          revisions={byRecord(revisions, 'compliance', framework.id)}
+          onClose={() => setDrilldownOpen(false)}
+        />
+      )}
     </FocusLock>,
     document.body
   )

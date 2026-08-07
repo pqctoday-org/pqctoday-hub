@@ -3,19 +3,35 @@
 export interface AlgoCtas {
   /** Route to a playground tool that demonstrates this algorithm. */
   try?: string
-  /** Internal library route highlighting the algorithm's NIST/IETF specification. */
-  spec?: string
+  /**
+   * Library `reference_id` of this algorithm's NIST/IETF specification — a bare
+   * id (e.g. `FIPS 203`), never a URL. The Spec CTA opens it in place via
+   * `?spec=<id>` (SpecDrawerHost); `librarySpecHref` builds the /library
+   * fallback from the same id, so there is one source of truth.
+   */
+  specRef?: string
   /** Internal learn module route explaining why this algorithm matters. */
   why: string
 }
 
-/** Ordered prefix lookup table — first match wins. */
-const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
+/** Full-page fallback for a spec, used when the in-place drawer can't resolve it. */
+export function librarySpecHref(specRef: string): string {
+  return `/library?ref=${encodeURIComponent(specRef)}`
+}
+
+/**
+ * Ordered prefix lookup table — first match wins.
+ *
+ * Each `specRef` must still exist as a `reference_id` in the wired library CSV
+ * — algorithmCtaMap.test.ts enforces that, so a renamed document fails the
+ * suite instead of silently opening nothing.
+ */
+export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
   [
     'ML-KEM',
     {
       try: '/playground/hybrid-encrypt',
-      spec: '/library?highlight=FIPS 203',
+      specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
   ],
@@ -23,7 +39,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'ML-DSA',
     {
       try: '/playground/token-migration',
-      spec: '/library?highlight=FIPS 204',
+      specRef: 'FIPS 204',
       why: '/learn/pqc-101',
     },
   ],
@@ -31,7 +47,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'SLH-DSA',
     {
       try: '/playground/slh-dsa',
-      spec: '/library?highlight=FIPS 205',
+      specRef: 'FIPS 205',
       why: '/learn/slh-dsa',
     },
   ],
@@ -39,7 +55,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'FN-DSA',
     {
       try: '/playground/interactive?algo=FN-DSA-512&tab=sign_verify',
-      spec: '/library?highlight=FIPS 206',
+      specRef: 'FIPS 206',
       why: '/learn/pqc-101',
     },
   ],
@@ -47,7 +63,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'LMS',
     {
       try: '/playground/lms-hss',
-      spec: '/library?highlight=NIST SP 800-208',
+      specRef: 'NIST SP 800-208',
       why: '/learn/stateful-signatures',
     },
   ],
@@ -55,7 +71,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'XMSS',
     {
       try: '/playground/lms-hss',
-      spec: '/library?highlight=NIST SP 800-208',
+      specRef: 'NIST SP 800-208',
       why: '/learn/stateful-signatures',
     },
   ],
@@ -63,7 +79,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'HQC',
     {
       try: '/playground/interactive?algo=HQC-128&tab=keystore',
-      spec: '/library?highlight=HQC Specification',
+      specRef: 'HQC Specification',
       why: '/learn/hybrid-crypto',
     },
   ],
@@ -126,7 +142,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'X25519MLKEM',
     {
       try: '/playground/hybrid-encrypt',
-      spec: '/library?highlight=FIPS 203',
+      specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
   ],
@@ -134,7 +150,7 @@ const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'SecP',
     {
       try: '/playground/hybrid-encrypt',
-      spec: '/library?highlight=FIPS 203',
+      specRef: 'FIPS 203',
       why: '/learn/hybrid-crypto',
     },
   ],

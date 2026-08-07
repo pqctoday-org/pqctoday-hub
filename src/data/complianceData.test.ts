@@ -6,6 +6,7 @@ import {
   conceptIdForFramework,
 } from './complianceData'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
+import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
 
 describe('complianceData', () => {
   it('loads without error', () => {
@@ -143,5 +144,37 @@ describe('complianceCuriousPrefaces', () => {
       }
     }
     expect(offenders).toEqual([])
+  })
+})
+
+// 2026-08-07: the v4.27.0 archival sweep (1a18b2830) moved
+// pqc_maturity_governance_requirements_05152026.csv into src/data/archive/,
+// following the repo-wide "latest dated file wins, archive the older ones"
+// convention. maturityGovernanceData is the ONE source that merges every dated
+// file instead of picking the newest, so that move didn't retire stale rows — it
+// disconnected 1,332 requirements across 188 documents. The loader's glob didn't
+// descend into archive/, so the corpus collapsed to 1 document / 50 requirements
+// with no build error and no failing test, and every CSWP.39 surface silently
+// degraded for 12 days.
+//
+// These are the guards that would have caught it on the day. Floors, not exact
+// counts, so ordinary enrichment growth doesn't churn them — they should trend
+// up, never down.
+describe('CSWP.39 maturity corpus', () => {
+  it('loads the full multi-document corpus, not just one file', () => {
+    // Broken state scored 1 and 50 here. Real state (2026-08-07): 189 / 1382.
+    expect(maturityByRefId.size).toBeGreaterThan(100)
+    expect(maturityRequirements.length).toBeGreaterThan(1000)
+  })
+
+  it('keeps compliance rows joined to their extracted requirements', () => {
+    // The invariant that actually matters: this fails the moment the corpus
+    // disconnects, whatever the file layout or glob pattern happens to be.
+    // Drives the "Open CSWP.39 crosswalk" button and the tile req-count badge.
+    const joined = complianceFrameworks.filter((fw) =>
+      fw.libraryRefs.some((ref) => maturityByRefId.has(ref))
+    )
+    // Broken state scored 8. Real state (2026-08-07): 118 of 202 active rows.
+    expect(joined.length).toBeGreaterThan(100)
   })
 })

@@ -319,6 +319,21 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // entries above. Deprecated rows aren't tier-scored, so they surface here.
   // Expected; corpus lags until the next refresh-index run.
   threats: 38,
+  // 2026-08-07: governance-maturity — 168 chunks across 29 distinct ref_ids,
+  // ALL because processGovernanceMaturity() switched from findLatestCSV to a
+  // merge-all read of every dated pqc_maturity_governance_requirements_*.csv
+  // (current + archive), restoring years of requirement rows a sort-order bug
+  // had silently dropped (34 -> 1,363 chunks). Each of the 29 ref_ids is a
+  // library document that was DEPRECATED — mostly IETF drafts superseded by a
+  // later revision or the final RFC (e.g. draft-ietf-lamps-pq-composite-kem-12,
+  // draft-ietf-cose-dilithium) — after the requirement citing it was recorded,
+  // so a snapshot from an earlier run date cites a now-superseded version.
+  // Verified: every failing chunk resolves to a real (not absent) library row
+  // with status=deprecated. Not a routing gap and not corpus lag — this is the
+  // number after a full local `npm run refresh-index`. Drive down by re-citing
+  // each requirement against its document's current `superseded_by` successor,
+  // or by teaching chunkToResource to follow that single hop for this source.
+  'governance-maturity': 168,
 }
 
 /**

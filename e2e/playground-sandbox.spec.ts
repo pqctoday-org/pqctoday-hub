@@ -29,6 +29,17 @@ async function stubSandbox(page: import('@playwright/test').Page) {
 const SANDBOX_TILE = 'OpenSSL TLS 1.3 + Composite Cert'
 const PROTOCOL_SIMS_URL = '/playground?cat=Protocol%20Simulations'
 
+// bplus-programme WS9 test triage (2026-08-07): the Crypto Lab grid now
+// defaults to `runFilter: 'browser'` (WS6a-bis, shipped before this file was
+// last touched), which hides every Docker/sandbox scenario — including
+// SANDBOX_TILE — behind a "Show them" affordance. Without switching the
+// filter first, every locator below waits forever for a card that is
+// deliberately not rendered. Click the "Sandbox" chip (stable, exact label —
+// unlike the count-dependent "Show it"/"Show them" copy) to reveal it.
+async function showSandboxScenarios(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: 'Sandbox', exact: true }).click()
+}
+
 test.describe('Crypto Lab Workbench — Sandbox facet', () => {
   test.beforeEach(async ({ page }) => {
     // Suppress the blocking overlays that intercept pointer events.
@@ -52,6 +63,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     await page.goto(PROTOCOL_SIMS_URL)
     // Wait for the runtime probe to settle online.
     await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+    await showSandboxScenarios(page)
 
     const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
     await expect(card).toBeVisible({ timeout: 10000 })
@@ -70,6 +82,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
     // Fix (playground.md Phase 9.4): sandbox tools stay in the grid, shown with
     // a Sandbox badge, dimmed/locked — never stripped out entirely.
     await expect(page.getByText(/Docker scenarios locked/i)).toBeVisible({ timeout: 10000 })
+    await showSandboxScenarios(page)
 
     // The scenario card stays in the grid, dimmed.
     const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
@@ -97,6 +110,7 @@ test.describe('Crypto Lab Workbench — Sandbox facet', () => {
   test('opening an unlocked sandbox scenario routes to its embedded iframe', async ({ page }) => {
     await page.goto(PROTOCOL_SIMS_URL)
     await expect(page.getByText(/Runtime active/i)).toBeVisible({ timeout: 10000 })
+    await showSandboxScenarios(page)
 
     const card = page.locator('[role="button"]', { hasText: SANDBOX_TILE }).first()
     await card.click()

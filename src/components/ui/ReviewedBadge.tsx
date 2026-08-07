@@ -58,12 +58,19 @@ export function ReviewedBadge({
   const llmPrefix = latest.authored_by_llm ? 'LLM · ' : ''
   const title = `Reviewed by ${latest.reviewer_display} via ${latest.approval_method}${offlineSuffix}`
 
+  // The reviewer string is free text and can be long — "claude-agent
+  // (automated remediation) · via <run id>" is ~60 chars, which on one
+  // unbreakable line is several times the width of a compliance tile. Keep the
+  // text in ONE shrinkable child (separate text nodes become separate flex
+  // items that will not wrap) and let it break.
   const inner = (
     <>
       <CheckCircle className="w-3 h-3 shrink-0" aria-hidden="true" />
-      {llmPrefix}
-      {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
-      {offlineSuffix}
+      <span className="min-w-0 break-words">
+        {llmPrefix}
+        {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
+        {offlineSuffix}
+      </span>
     </>
   )
 
@@ -72,7 +79,7 @@ export function ReviewedBadge({
       <Button
         variant="ghost"
         size="sm"
-        className={`inline-flex items-center gap-1 h-auto p-0 text-xs text-status-success cursor-pointer hover:opacity-80 ${className}`}
+        className={`inline-flex max-w-full items-center gap-1 h-auto p-0 text-left text-xs text-status-success whitespace-normal cursor-pointer hover:opacity-80 ${className}`}
         title={title}
         onClick={onOpenDrilldown}
       >
@@ -83,7 +90,7 @@ export function ReviewedBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1 text-xs text-status-success ${className}`}
+      className={`inline-flex max-w-full items-center gap-1 text-xs text-status-success ${className}`}
       title={title}
     >
       {inner}

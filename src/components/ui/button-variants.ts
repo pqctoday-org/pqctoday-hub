@@ -9,7 +9,12 @@ export const buttonVariants = cva(
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline: 'border border-border bg-transparent hover:bg-muted/20 hover:text-foreground',
-        secondary: 'bg-secondary text-foreground hover:bg-secondary/80',
+        // a11y (WS9, 2026-08-02): this paired `bg-secondary` with `text-foreground`
+        // — near-white on light lavender in dark mode, 2.63:1, well under the
+        // 4.5:1 WCAG AA floor, so every secondary button's label failed axe. Every
+        // other `bg-secondary` surface in the codebase already uses
+        // `text-secondary-foreground`; this variant was the outlier.
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-muted/20 hover:text-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
         gradient:
