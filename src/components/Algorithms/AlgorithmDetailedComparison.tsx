@@ -23,12 +23,9 @@ import {
 import clsx from 'clsx'
 import { resolveAlgoXrefs } from '../../data/algoProductXrefData'
 import { isDraftTier } from '../../data/algorithmStatusTier'
-import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
-import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
-import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
-import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 import { MAX_COMPARE } from './useAlgorithmExplorer'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
@@ -413,8 +410,6 @@ function BrowseTable({
 }: BrowseTableProps) {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
-  const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
-  const { revisions } = useRevisions()
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -591,21 +586,13 @@ function BrowseTable({
                       />
                     </div>
                   </td>
-                  <td className="p-3 align-top">
+                  {/* min-width sized so the CTA strip below reads as ONE line, the
+                      same as the Transition Guide's row. The table scrolls
+                      horizontally, so widening this column is free. */}
+                  <td className="p-3 align-top min-w-[19.5rem]">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-semibold text-foreground">{algo.name}</span>
-                        <TrustScoreBadge
-                          resourceType="algorithm"
-                          resourceId={algo.name}
-                          size="sm"
-                        />
-                        <ReviewedBadge
-                          domain="algorithms"
-                          entityId={algo.name}
-                          showUnreviewed={false}
-                          onOpenDrilldown={() => setDrilldownAlgo(algo.name)}
-                        />
                         <DraftBadge algo={algo} />
                         <Cnsa20Badge algo={algo} />
                         <ResearchNeededBadge algo={algo} />
@@ -621,7 +608,10 @@ function BrowseTable({
                           Level {algo.securityLevel}
                         </span>
                       )}
-                      <AlgoCtaStrip algoName={algo.name} />
+                      <AlgoCtaStrip
+                        algoName={algo.name}
+                        trailing={<AlgorithmCheckButton algorithm={algo} />}
+                      />
                     </div>
                   </td>
                   <td className="p-3 align-top text-sm text-muted-foreground">{algo.family}</td>
@@ -734,7 +724,10 @@ function BrowseTable({
                   </span>
                 )}
               </div>
-              <AlgoCtaStrip algoName={algo.name} />
+              <AlgoCtaStrip
+                algoName={algo.name}
+                trailing={<AlgorithmCheckButton algorithm={algo} />}
+              />
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground block">Pub key</span>
@@ -796,15 +789,6 @@ function BrowseTable({
           )
         })}
       </div>
-      {drilldownAlgo && (
-        <RevisionDrilldownPanel
-          domain="algorithms"
-          entityId={drilldownAlgo}
-          entityLabel={drilldownAlgo}
-          revisions={byRecord(revisions, 'algorithms', drilldownAlgo)}
-          onClose={() => setDrilldownAlgo(null)}
-        />
-      )}
     </div>
   )
 }
