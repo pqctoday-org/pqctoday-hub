@@ -12,7 +12,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Papa from 'papaparse'
-import { INTENTS, PERSONA_INTENTS } from './AlgorithmEntryStrip'
+import { INTENTS, PERSONA_INTENTS, EU_EXECUTIVE_INTENTS } from './AlgorithmEntryStrip'
 import { STATUS_ITEMS } from './AlgorithmFilters'
 
 const dataDir = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'data')
@@ -51,7 +51,7 @@ describe('AlgorithmEntryStrip status params (ACCURACY-0705)', () => {
   const validStatusIds = new Set(STATUS_ITEMS.map((item) => item.id))
 
   it('every intent whose params include a status uses a real STATUS_ITEMS id', () => {
-    const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS)]
+    const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS), ...EU_EXECUTIVE_INTENTS]
     const offenders = allIntents
       .filter((intent) => intent.params.status != null)
       .filter((intent) => !validStatusIds.has(intent.params.status as string))
@@ -71,7 +71,7 @@ describe('AlgorithmEntryStrip section params', () => {
   const validSectionIds = new Set(['attacks', 'kat'])
 
   it('every intent whose params include a section targets tab=validation with a real section id', () => {
-    const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS)]
+    const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS), ...EU_EXECUTIVE_INTENTS]
     const offenders = allIntents
       .filter((intent) => intent.params.section != null)
       .filter(
@@ -105,7 +105,7 @@ describe('AlgorithmEntryStrip highlight params — drift guard (bplus WS4c)', ()
   )
   const byName = new Map(referenceRows.map((r) => [(r.algorithm || '').trim(), r]))
 
-  const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS)]
+  const allIntents = [...INTENTS, ...Object.values(PERSONA_INTENTS), ...EU_EXECUTIVE_INTENTS]
   const highlightNames = allIntents
     .filter((intent) => typeof intent.params.highlight === 'string')
     .flatMap((intent) => (intent.params.highlight as string).split(','))
@@ -119,12 +119,91 @@ describe('AlgorithmEntryStrip highlight params — drift guard (bplus WS4c)', ()
     expect(missing).toEqual([])
   })
 
-  it('every highlighted algorithm carries a finalized FIPS status, matching the "FIPS-required" claim', () => {
-    const notFinalFips = highlightNames
-      .filter((name) => byName.has(name))
-      .map((name) => ({ name, status: byName.get(name)!.status }))
+  it('the default (US) executive pick carries a finalized FIPS status, matching its "FIPS-required" claim', () => {
+    // Scoped to PERSONA_INTENTS.executive only — the ONE intent that actually
+    // claims FIPS-required status. EU_EXECUTIVE_INTENTS below make different,
+    // separately-verified claims (BSI/ANSSI recommendations, not FIPS), so
+    // they are checked against their own allowlists, not this rule.
+    const names = (PERSONA_INTENTS.executive?.params.highlight as string).split(',')
+    const notFinalFips = names
+      .map((name) => ({ name, status: byName.get(name)?.status }))
       .filter(({ status }) => !/^FIPS \d+$/.test((status || '').trim()))
 
     expect(notFinalFips).toEqual([])
+  })
+})
+
+// bplus-programme WS4c EU split (2026-08-07): BSI and ANSSI recommend
+// different, non-overlapping algorithm sets (see the comment above
+// EU_EXECUTIVE_INTENTS in AlgorithmEntryStrip.tsx for the full picture). This
+// guard checks each authority's entry against an allowlist HAND-TRANSCRIBED
+// from that authority's own document — not derived from the app's `region`
+// column, which groups BSI and ANSSI together and would hide exactly the
+// disagreement this feature exists to show.
+describe('AlgorithmEntryStrip EU entries — drift guard against primary sources', () => {
+  const referenceRows2 = parseRows(
+    findWiredCsv(/^pqc_complete_algorithm_reference_\d{8}(?:_r\d+)?\.csv$/)
+  )
+  const byName2 = new Map(referenceRows2.map((r) => [(r.algorithm || '').trim(), r]))
+
+  const bsiEntry = EU_EXECUTIVE_INTENTS.find((i) => i.label.startsWith('BSI'))
+  const anssiEntry = EU_EXECUTIVE_INTENTS.find((i) => i.label.startsWith('ANSSI'))
+
+  // Transcribed 2026-08-07 from pqctoday-priv/local-evidence-cache/library/
+  // BSI-TR-02102-1.pdf (2026-01 edition), Tables 2.5 (FrodoKEM), 2.6 (Classic
+  // McEliece), 2.7 (ML-KEM), 5.6 (SLH-DSA — Category 3/5 ONLY, no Category
+  // 1/128-bit entry exists in the table), 5.7 (ML-DSA — Category 3/5 only,
+  // ML-DSA-44 is absent).
+  const BSI_TR_02102_1_RECOMMENDED = new Set([
+    'ML-KEM-768',
+    'ML-KEM-1024',
+    'ML-DSA-65',
+    'ML-DSA-87',
+    'SLH-DSA-SHA2-192s',
+    'SLH-DSA-SHAKE-192s',
+    'SLH-DSA-SHA2-192f',
+    'SLH-DSA-SHAKE-192f',
+    'SLH-DSA-SHA2-256s',
+    'SLH-DSA-SHAKE-256s',
+    'SLH-DSA-SHA2-256f',
+    'SLH-DSA-SHAKE-256f',
+    'FrodoKEM-976',
+    'FrodoKEM-1344',
+    'Classic-McEliece-460896',
+    'Classic-McEliece-6688128',
+    'Classic-McEliece-8192128',
+  ])
+
+  it('BSI entry exists and only highlights algorithms in the verified BSI-recommended set', () => {
+    expect(bsiEntry).toBeDefined()
+    const names = (bsiEntry!.params.highlight as string).split(',')
+    const unverified = names.filter((n) => !BSI_TR_02102_1_RECOMMENDED.has(n))
+    expect(unverified).toEqual([])
+  })
+
+  it("BSI entry does not highlight the Category-1 SLH-DSA pick (absent from BSI's own table)", () => {
+    const names = (bsiEntry!.params.highlight as string).split(',')
+    expect(names).not.toContain('SLH-DSA-SHA2-128s')
+  })
+
+  it("ANSSI entry exists and its FrodoKEM pick matches ANSSI PG-083's stated preference (976, not 640)", () => {
+    expect(anssiEntry).toBeDefined()
+    const names = (anssiEntry!.params.highlight as string).split(',')
+    const frodo = names.filter((n) => n.startsWith('FrodoKEM'))
+    expect(frodo).toEqual(['FrodoKEM-976'])
+  })
+
+  it('ANSSI entry does not attribute Classic McEliece to ANSSI (zero mentions in ANSSI-PG-083-v3-2026.pdf)', () => {
+    const names = (anssiEntry!.params.highlight as string).split(',')
+    expect(names.some((n) => n.includes('McEliece'))).toBe(false)
+  })
+
+  it('every BSI- and ANSSI-highlighted algorithm still exists in the wired reference catalog', () => {
+    const names = [
+      ...(bsiEntry!.params.highlight as string).split(','),
+      ...(anssiEntry!.params.highlight as string).split(','),
+    ]
+    const missing = names.filter((n) => !byName2.has(n))
+    expect(missing).toEqual([])
   })
 })
