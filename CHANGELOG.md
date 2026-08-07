@@ -29,6 +29,33 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.42.0] - 2026-08-07
+
+The app installs roughly 250 MB lighter and works offline sooner, algorithm pages let you read a spec or try a tool without losing your place, and Compliance's maturity data is reconnected after a data-archival sweep silently broke it.
+
+### Added
+
+- **Algorithm pages let you read the spec or try a tool without losing your place** [view:/algorithms] [persona:developer] [persona:researcher] [persona:architect]: the Spec and Try links on every algorithm's CTA row used to navigate you away, so opening a spec meant re-applying your filters and sort when you came back. Both now open in place — a specification drawer or an in-workshop try panel over the page you were already on.
+- **Patents now has a Sources button, like every other data page** [view:/patents] [persona:researcher]: it was the only page missing one. The gap wasn't a missing button — neither of the two source registries the site tracks contained a single patent-issuing authority. Every one of the 1,185 patent records is now traceable to the USPTO record of grant.
+- **The crypto lab warns you before you open a tool your device can't run** [view:/playground] [persona:developer]: opening a tool that needs SharedArrayBuffer or a Chromium-based browser used to just spin until it silently failed. It now names the missing capability up front.
+- **Command Center's filters are shareable** [view:/business] [persona:ops] [persona:architect]: search, category, CSWP.39 zone, framework phase and audience filters used to reset on navigation. A filtered view can now be linked, bookmarked or shared and comes back exactly as you left it.
+- **Developers get a report built for developers** [view:/report] [persona:developer]: every other role had a tailored readiness report; picking the developer persona silently fell back to the generic, no-persona version. It now opens with your CBOM, discovery and migration-toolkit sections up front.
+
+### Fixed
+
+- **Compliance's maturity and governance requirements are reconnected on every pillar** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: a data-archival sweep on 07-26 silently broke the link between three cited documents and the maturity corpus that powers the pillar view. The corpus is restored and reconnected across all pillars, with a new coverage-merge check to catch the next silent loss before it ships.
+- **Compliance detail tiles no longer overflow their own card** [view:/compliance] [persona:executive]: long framework text spilled out of its tile. Review provenance — who reviewed it, and when — now lives in the detail view instead of competing for the same cramped space.
+- **The CT Log simulator's Certificate Authority can now sign, not just verify** [view:/learn] [persona:developer] [persona:architect]: the key inspector only ever registered the CA's public key, even though every Signed Tree Head is signed with the private half it never showed — so the panel displayed a CA that verified but apparently could not sign.
+- **Eight real accessibility violations fixed across the business and crypto-lab tools** [view:/business] [view:/playground] [persona:ops] [persona:researcher]: unlabelled form fields on every business tool (37 tools share one builder), three tooltips a screen reader couldn't read, contrast failures on the secondary button and info text in both themes, and in-paragraph links only distinguishable by color. This is the first real accessibility scan of this tier — it had been excluded from the page-level scan because the tools' WASM load times made a scan unreliable.
+
+### Changed
+
+- **First-visit install size cut by roughly 250 MB** [persona:developer] [persona:ops]: the offline install used to pull in every WASM crypto engine, every infographic and every route's JS chunk before it could finish — 289 MB across 927 files, up to 81 seconds, with zero offline capability until it completed. Only what's needed to boot is precached now; everything else loads once on first use and is cached from then on, so the app installs in a fraction of the time and works offline sooner. A new build gate fails the build if the install payload creeps back up.
+- **Search loads only when you open it** [persona:developer]: the search index and trust-score data, about 21 MB, used to load on every page whether or not you ever opened search. It now loads the first time you open the search box.
+- **The crypto lab grid shows browser-runnable tools by default** [view:/playground] [persona:developer]: roughly 41% of the tool cards were Docker-only sandbox scenarios mixed in with the 34 tools that actually run in your browser. The grid now defaults to what you can run here, with the rest one click away.
+- **Search finds workshop and business tools even on broad queries** [view:/] [persona:developer] [persona:ops]: a broad query like "ML-KEM" could push the two tool registries out of the results entirely, since they're a small slice of a much larger document corpus. Tool results are now guaranteed a slot.
+- **The vendor roadmap tracker states its real denominator** [view:/migrate] [persona:executive] [persona:ops]: the headline count of vendors with a published roadmap didn't say what it was a fraction of, reading like a count of the whole field. It now spells out "of N vendors with a stated PQC commitment" plainly.
+
 ## [4.41.0] - 2026-08-02
 
 Every role's home page now offers three different ways in rather than one, each
