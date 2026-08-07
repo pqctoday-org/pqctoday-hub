@@ -58,20 +58,53 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
-      includeAssets: [
-        'favicon.svg',
-        'favicon-32x32.png',
-        'apple-touch-icon.png',
-        'pwa-192x192.png',
-        'pwa-512x512.png',
-        'pwa-1024x1024.png',
-        'pwa-maskable-192.png',
-        'pwa-maskable-512.png',
-        'data/rag-corpus.json',
-        'data/compliance-data.json',
-      ],
+      // Deliberately empty. Every entry that used to live here was ALSO matched by
+      // `globPatterns` below, so each one was injected into the precache manifest
+      // twice — 927 listed entries resolving to 917 unique files, with
+      // data/rag-corpus.json (19 MB) and data/compliance-data.json (2.6 MB)
+      // duplicated outright.
+      //
+      // The 8 icons stay covered by the `svg`/`png` globs. If a future change
+      // removes `png` from globPatterns (see the note below), the icons MUST be
+      // reinstated here or they silently leave the precache.
+      includeAssets: [],
+      // The 8 icons in `manifest.icons` below are ALSO injected into the precache
+      // by the plugin itself when this is true (its default), on top of the `png`
+      // and `svg` globs that already match them — so every icon was listed twice.
+      // Same caveat as above: if `png` ever leaves globPatterns, either flip this
+      // back to true or list the icons in includeAssets.
+      includeManifestIcons: false,
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
+        // `woff2` added 2026-08-07. It was missing, so the site's only web font was
+        // never precached and failed offline (measured against production:
+        // `net::ERR_ABORTED font /fonts/inter-latin-wght-normal.woff2`), leaving the
+        // app rendering in a fallback face with no network.
+        //
+        // STILL OVERSIZED: wasm (86 MB) and png (59 MB) remain here and belong in
+        // runtime CacheFirst routes instead — see
+        // pwa-offline-remediation-plan-08072026.md, Phase 4. This change is
+        // deliberately limited to reductions that cannot alter behaviour.
+        globPatterns: ['**/*.{js,css,html,svg,png,wasm,json,woff2}'],
+        globIgnores: [
+          // data/ and dist/ JSON is UNREACHABLE from the precache. The fetch handler
+          // in src/sw.ts routes /(data|dist)/*.{json,csv} to the StaleWhileRevalidate
+          // `data-cache` BEFORE it ever consults the precache, so these files could
+          // not be served from the precache under any code path. Measured on
+          // production: after the worker activated, the origin fetched a further
+          // 19 MB into data-cache — rag-corpus.json, re-downloaded despite already
+          // sitting in the precache, i.e. stored twice and paid for twice.
+          //
+          // Worth 26 MB of unique files (49.5 MB of manifest entries, since
+          // rag-corpus.json and compliance-data.json were each listed twice).
+          //
+          // Scoped to data/ and dist/ ON PURPOSE. The other 30 precached JSON files
+          // — workshop fixtures, kmip-corpus, and the per-source manifest.json
+          // files, 1.95 MB in total — live outside those directories, so the
+          // data-cache route does NOT match them and they ARE served from the
+          // precache. A blanket removal of `json` would silently break them offline.
+          'data/**/*.json',
+          'dist/**/*.json',
+        ],
         maximumFileSizeToCacheInBytes: 48 * 1024 * 1024, // 48 MB — accommodates the @huggingface/transformers ONNX Runtime SIMD WASM (~23.6 MB) loaded by the embedding-driven semantic-search pipeline, plus the existing softhsm/liboqs WASM bundles, plus the App-* JS chunk which has grown to ~33.6 MB as of 2026-06-01 (CI failure at 32 MB triggered this bump). 48 MB leaves ~14 MB of headroom; further growth above ~45 MB should trigger a code-split refactor rather than another bump.
       },
       manifest: {
