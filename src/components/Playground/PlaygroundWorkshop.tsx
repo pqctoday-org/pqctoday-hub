@@ -28,6 +28,7 @@ import {
   RefreshCw,
   Zap,
   Command,
+  Monitor,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -38,6 +39,7 @@ import {
   type WorkshopTool,
   type WorkshopCategory,
   type ToolDifficulty,
+  type ToolRuntimeRequirement,
 } from './workshopRegistry'
 import {
   CATEGORY_META,
@@ -64,6 +66,11 @@ import { CommandPalette } from './CommandPalette'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import {
+  useDeviceCapabilities,
+  unmetRequirements,
+  REQUIREMENT_LABELS,
+} from '@/hooks/useDeviceCapabilities'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 
@@ -147,6 +154,26 @@ const ForYouBadge: React.FC = () => (
   <span className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-secondary/15 text-secondary">
     <Star className="w-2.5 h-2.5 fill-current" aria-hidden="true" />
     for you
+  </span>
+)
+
+/**
+ * "Needs a desktop" (WS8c, 2026-08-02) — shown only when THIS device does not
+ * meet what the tool declares in `requires`. Deliberately silent in the common
+ * case: a badge on every runnable card would be noise, and the honest signal is
+ * the exception. The `title` names the missing capability so the answer to "why
+ * not?" is one hover away rather than a spinner that never resolves.
+ *
+ * Container scenarios are not badged here — they already carry SandboxBadge,
+ * and they are not failing a capability check.
+ */
+const DeviceUnmetBadge: React.FC<{ unmet: ToolRuntimeRequirement[] }> = ({ unmet }) => (
+  <span
+    className="inline-flex items-center gap-1 text-[10px] leading-none px-1.5 py-0.5 rounded font-semibold bg-muted text-muted-foreground border border-border"
+    title={`Needs ${unmet.map((r) => REQUIREMENT_LABELS[r]).join(' and ')}`}
+  >
+    <Monitor className="w-2.5 h-2.5" aria-hidden="true" />
+    Needs a desktop
   </span>
 )
 
@@ -238,6 +265,10 @@ const ToolCardView: React.FC<ToolCardProps> = ({
   onToggleBookmark,
 }) => {
   const Icon = tool.icon
+  const caps = useDeviceCapabilities()
+  // Only compute this for tools that declare something — 26 of the 34 browser
+  // tools declare nothing and can never be unmet.
+  const unmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
   return (
     <div className="relative">
       <div
@@ -265,6 +296,7 @@ const ToolCardView: React.FC<ToolCardProps> = ({
               <DifficultyBadge level={tool.difficulty} />
               {tool.sandbox && <SandboxBadge />}
               {tool.wip && !tool.sandbox && <WipBadge />}
+              {!tool.sandbox && unmet.length > 0 && <DeviceUnmetBadge unmet={unmet} />}
               {recommended && <ForYouBadge />}
               {showCategory && <CategoryChip label={tool.category} />}
             </div>
@@ -383,6 +415,9 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
   onStartRuntime,
   onToggleBookmark,
 }) => {
+  const caps = useDeviceCapabilities()
+  const modalUnmet = tool.requires.length > 0 ? unmetRequirements(tool.requires, caps) : []
+
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -506,6 +541,27 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
                 })}
               </div>
             </>
+          )}
+
+          {/* WS8c — explain WHY, before the visitor clicks Open and waits on a
+              spinner that cannot resolve. Only for browser tools whose declared
+              requirements this device does not meet; container scenarios have
+              their own runtime messaging below. */}
+          {!tool.sandbox && modalUnmet.length > 0 && (
+            <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-border bg-muted/40 p-3.5">
+              <span className="mt-0.5 flex w-[26px] h-[26px] shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <Monitor className="w-3.5 h-3.5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[12px] font-semibold text-foreground">
+                  This tool will not run on this device
+                </p>
+                <p className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground">
+                  It needs {modalUnmet.map((r) => REQUIREMENT_LABELS[r]).join(' and ')}. The rest of
+                  the page still works — the live crypto steps are what require it.
+                </p>
+              </div>
+            </div>
           )}
 
           <div className="mt-6 flex gap-2.5">
@@ -655,7 +711,7 @@ const SandboxRuntimeToggle: React.FC = () => {
           />
         </span>
       </Button>
-      <p className="px-2.5 pt-1 text-[10px] leading-snug text-muted-foreground/80">{hint}</p>
+      <p className="px-2.5 pt-1 text-[10px] leading-snug text-muted-foreground">{hint}</p>
       {open && !runtimeOn && (
         <div
           role="dialog"
@@ -731,7 +787,13 @@ export const PlaygroundWorkshop = () => {
   // Local UI state.
   const [searchText, setSearchText] = useState('')
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
-  const [runFilter, setRunFilter] = useState<RunValue>('all')
+  // WS6a-bis (2026-08-02): default to the browser catalogue. `WORKSHOP_TOOLS`
+  // includes 24 Docker sandbox scenarios (workshopRegistry.tsx pushes them in),
+  // so an 'all' default meant ~41% of the cards a visitor scrolled could not be
+  // executed in the browser at all — a discoverability tax on the 34 that can.
+  // The Sandbox/All chips are one click away and `hiddenSandboxInCategory`
+  // below keeps the hidden count visible, so breadth is never concealed.
+  const [runFilter, setRunFilter] = useState<RunValue>('browser')
   const [selectedTool, setSelectedTool] = useState<WorkshopTool | null>(null)
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -936,10 +998,25 @@ export const PlaygroundWorkshop = () => {
   // removed from the grid, see `visibleTools` above).
   const lockedSandboxInCategory = useMemo(() => {
     if (runtimeOn || activeNav === 'overview' || activeNav === 'mytools') return 0
+    // Only meaningful while sandbox cards are actually rendered — when the run
+    // filter is 'browser' they are filtered out, and `hiddenSandboxInCategory`
+    // owns the messaging instead.
+    if (runFilter === 'browser') return 0
     return WORKSHOP_TOOLS.filter(
       (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
     ).length
-  }, [runtimeOn, activeNav])
+  }, [runtimeOn, activeNav, runFilter])
+
+  // How many container scenarios the browser-default filter is holding back in
+  // this category. WS6a-bis's mitigation: the count is always visible and one
+  // click reveals them, so defaulting to the browser catalogue never hides the
+  // breadth of what the sandbox offers.
+  const hiddenSandboxInCategory = useMemo(() => {
+    if (runFilter !== 'browser' || activeNav === 'overview' || activeNav === 'mytools') return 0
+    return WORKSHOP_TOOLS.filter(
+      (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
+    ).length
+  }, [runFilter, activeNav])
 
   const renderGrid = (tools: WorkshopTool[], showCategory?: boolean) => (
     <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -989,7 +1066,7 @@ export const PlaygroundWorkshop = () => {
             setActiveNav('overview')
           }}
         />
-        <p className="mt-3 mb-1 px-1 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground/80">
+        <p className="mt-3 mb-1 px-1 text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">
           Categories
         </p>
         {SIDEBAR_CATEGORIES.map((cat) => {
@@ -1228,6 +1305,26 @@ export const PlaygroundWorkshop = () => {
               className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
             >
               Connect runtime
+            </Button>
+          </div>
+        )}
+
+        {hiddenSandboxInCategory > 0 && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-muted/40 p-3.5">
+            <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Container className="w-4 h-4" aria-hidden="true" />
+            </span>
+            <p className="flex-1 text-[12px] leading-snug text-foreground/80">
+              Showing tools that run in your browser. {hiddenSandboxInCategory} Docker{' '}
+              {hiddenSandboxInCategory === 1 ? 'scenario' : 'scenarios'} in this category{' '}
+              {hiddenSandboxInCategory === 1 ? 'needs' : 'need'} an access-gated container.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => setRunFilter('all')}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
+            >
+              Show {hiddenSandboxInCategory === 1 ? 'it' : 'them'}
             </Button>
           </div>
         )}

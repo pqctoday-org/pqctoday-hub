@@ -545,7 +545,10 @@ export const RoadmapBuilder: React.FC<RoadmapBuilderProps> = ({ onOutput }) => {
                 href="https://www.federalregister.gov/documents/2026/06/25/2026-12909/securing-the-nation-against-advanced-cryptographic-attacks"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                // `underline`, not `hover:underline`: this link sits inside a
+                // paragraph, so colour alone is not a sufficient affordance
+                // (axe link-in-text-block / WCAG 1.4.1).
+                className="text-primary underline"
               >
                 Executive Order 14412, &ldquo;Securing the Nation Against Advanced Cryptographic
                 Attacks&rdquo;
