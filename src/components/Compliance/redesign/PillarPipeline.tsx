@@ -140,11 +140,20 @@ export function PillarPipeline({
         })}
       </div>
 
-      {/* Active-pillar table */}
+      {/* Active-pillar table.
+
+          maturityByRefId is passed on ALL three pillars. CSWP.39 requirements are
+          extracted from the library document a row cites, not from its body_type,
+          so a certification scheme (EUCC v2.0) or a technical standard (NIST IR
+          8547) can carry them just as well as a compliance framework. The old
+          `activePillar === 'comply'` gate meant those rows got a working drawer
+          button but a silent tile. FrameworkCard already no-ops when a row
+          resolves nothing (`maturityCount > 0`, `maturityRefId &&`), so passing
+          this unconditionally cannot render an empty affordance. */}
       <ComplianceLandscape
         frameworks={activeFrameworks}
         showDeadlineTimeline={false}
-        maturityByRefId={activePillar === 'comply' ? maturityByRefId : undefined}
+        maturityByRefId={maturityByRefId}
         {...landscape}
       />
     </div>
