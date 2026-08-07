@@ -53,6 +53,17 @@ describe('module manifest conformance (A1)', () => {
     }
   })
 
+  // bplus-programme WS2 (2026-08-07): `difficulty` is optional on
+  // ModuleManifest, but 64 of today's 65 modules already declare it — only
+  // the synthetic `custom: true` quiz module legitimately has none (a quiz
+  // has no difficulty tier of its own). Nothing enforced that split; a new
+  // real module could ship without one and nobody would notice until a
+  // catalogue view that sorts/filters by difficulty quietly misplaces it.
+  it('every non-custom manifest declares a difficulty', () => {
+    const missing = MANIFESTS.filter((m) => !m.custom && !m.difficulty).map((m) => m.id)
+    expect(missing).toEqual([])
+  })
+
   // Reverse coverage: every enrichment-map key must own a real catalog module
   // (or be explicitly exempt) — catches orphan keys like the non-module
   // 'hybrid-certs' taxonomy alias before the fan-out relies on them.
