@@ -140,9 +140,9 @@ describe('MainLayout', () => {
       // forYou.length === 0 (no persona) means there's no 'reference' group to
       // carry Learn/Timeline/Threats — they fall back to plain rows right
       // after the "Everything, unfiltered" text instead.
-      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /timeline view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /threats view/i })).toBeInTheDocument()
       // Reachability fix (Grade-A remediation Phase 2, 2026-08-02): the
       // desktop rail's MORE section was removed entirely in the 2026-08-01
       // declutter follow-up ("remove more and revisions from the left bar"),
@@ -153,43 +153,41 @@ describe('MainLayout', () => {
       // empty, restoring a real desktop rail row for all 13 previously
       // orphaned routes, including the core funnel (/assess, /report).
       expect(within(rail).getByText('More')).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /community view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /patents view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /explore view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /algorithms view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /community view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /patents view/i })).toBeInTheDocument()
       // /revisions stays excluded from this restored fallback — that specific
       // 2026-08-01 decision is unrelated to the reachability bug and is
       // deliberately preserved (still reachable via ⌘K search, direct URL, or
       // the mobile "More" sheet, same as for every other persona).
-      expect(
-        within(rail).queryByRole('button', { name: /revisions view/i })
-      ).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /revisions view/i })).not.toBeInTheDocument()
     })
 
     it('always-visible pages (Home/Learn/Timeline/Threats/About) render outside FOR YOU/MORE', () => {
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).getByRole('button', { name: /home view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /about view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /home view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /timeline view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /threats view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /about view/i })).toBeInTheDocument()
     })
 
     it('never renders /openssl as its own rail row', () => {
       renderLayout()
       const rail = getRailNav()
       expect(
-        within(rail).queryByRole('button', { name: /openssl studio view/i })
+        within(rail).queryByRole('link', { name: /openssl studio view/i })
       ).not.toBeInTheDocument()
     })
 
@@ -200,7 +198,7 @@ describe('MainLayout', () => {
 
     it('does not add the architect-only CACP shortcut', () => {
       renderLayout()
-      expect(screen.queryByRole('button', { name: /cacp view/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /cacp view/i })).not.toBeInTheDocument()
     })
   })
 
@@ -213,7 +211,7 @@ describe('MainLayout', () => {
       renderLayout()
       const rail = getRailNav()
       // /migrate is in developer's PERSONA_NAV_PATHS, under the Workflow group.
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /migrate view/i })).toBeInTheDocument()
       // /leaders ("Community") is NOT in developer's PERSONA_NAV_PATHS. It used
       // to live in the collapsible MORE section; that section was removed
       // entirely (2026-08-01 follow-up: "remove more and revisions from the
@@ -223,9 +221,7 @@ describe('MainLayout', () => {
       expect(
         within(rail).queryByRole('button', { name: /show more pages/i })
       ).not.toBeInTheDocument()
-      expect(
-        within(rail).queryByRole('button', { name: /community view/i })
-      ).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /community view/i })).not.toBeInTheDocument()
     })
 
     // 2026-08-01 final self-review correction: developer's '/simulation' row
@@ -238,7 +234,7 @@ describe('MainLayout', () => {
     it('gives /simulation the plain/active treatment, NOT dashed (exit-affordance dependency already shipped)', () => {
       renderLayout('/simulation')
       const rail = getRailNav()
-      const button = within(rail).getByRole('button', { name: /simulation view/i })
+      const button = within(rail).getByRole('link', { name: /simulation view/i })
       expect(button.className).not.toMatch(/border-dashed/)
       expect(button.className).toMatch(/border-l-primary/)
     })
@@ -257,7 +253,7 @@ describe('MainLayout', () => {
     it('gives /simulation the featured (accent) treatment, not dashed', () => {
       renderLayout()
       const rail = getRailNav()
-      const button = within(rail).getByRole('button', { name: /simulation view/i })
+      const button = within(rail).getByRole('link', { name: /simulation view/i })
       expect(button.className).toMatch(/border-l-accent/)
       expect(button.className).not.toMatch(/border-dashed/)
       expect(button).toHaveAttribute('title', expect.stringContaining('Executive Overview'))
@@ -266,7 +262,7 @@ describe('MainLayout', () => {
     it('gives /playground the dashed "marked" treatment', () => {
       renderLayout()
       const rail = getRailNav()
-      const button = within(rail).getByRole('button', { name: /playground view/i })
+      const button = within(rail).getByRole('link', { name: /playground view/i })
       expect(button.className).toMatch(/border-dashed/)
     })
 
@@ -284,11 +280,11 @@ describe('MainLayout', () => {
     it('does NOT add a direct CACP shortcut row (removed 2026-08-01: "CACP is fold in playground no direct access")', () => {
       renderLayout()
       const rail = getRailNav()
-      expect(within(rail).queryByRole('button', { name: /cacp view/i })).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /cacp view/i })).not.toBeInTheDocument()
       expect(within(rail).queryByRole('link', { name: 'CACP' })).not.toBeInTheDocument()
       // CACP is reachable via the Playground grid's own featured card only —
       // /playground itself is still a real row for architect.
-      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /playground view/i })).toBeInTheDocument()
     })
   })
 
@@ -307,7 +303,7 @@ describe('MainLayout', () => {
         within(rail).queryByRole('button', { name: /show more pages/i })
       ).not.toBeInTheDocument()
       expect(
-        within(rail).queryByRole('button', { name: /command center view/i })
+        within(rail).queryByRole('link', { name: /command center view/i })
       ).not.toBeInTheDocument()
     })
 
@@ -328,15 +324,15 @@ describe('MainLayout', () => {
       // Learn/Timeline/Threats live inside Reference, which is COLLAPSED by
       // default for every persona (2026-08-01 "collapse reference by default").
       // Their header is present; the rows appear on expand, same as elsewhere.
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /compliance view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /assess view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /report view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /command center view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /business tools view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /explore view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /compliance view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /assess view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /report view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /command center view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /business tools view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /explore view/i })).toBeInTheDocument()
       // Reference members (Algorithms, Library, Community, Patents, plus the
       // render-added Learn/Timeline/Threats) are inside the collapsed group —
       // asserted against getRailSections directly instead, so this test checks
@@ -347,9 +343,7 @@ describe('MainLayout', () => {
       }
       // /revisions stays excluded — same deliberate 2026-08-01 decision as the
       // no-persona case above, unrelated to this reachability fix.
-      expect(
-        within(rail).queryByRole('button', { name: /revisions view/i })
-      ).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /revisions view/i })).not.toBeInTheDocument()
       expect(forYou).not.toContain('/revisions')
     })
   })
@@ -369,17 +363,15 @@ describe('MainLayout', () => {
       ).not.toBeInTheDocument()
       // developer's MORE (railNav.ts) = /explore, /leaders — neither renders
       // anywhere in the desktop rail now.
-      expect(within(rail).queryByRole('button', { name: /explore view/i })).not.toBeInTheDocument()
-      expect(
-        within(rail).queryByRole('button', { name: /community view/i })
-      ).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /explore view/i })).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /community view/i })).not.toBeInTheDocument()
     })
 
     it('/revisions has no desktop rail row for any persona (dropped from every PERSONA_NAV_PATHS array, and MORE — which would have carried it — is gone)', () => {
       for (const persona of ['executive', 'developer', 'architect', 'ops', 'curious'] as const) {
         usePersonaStore.getState().setPersona(persona)
         const { unmount } = renderLayout()
-        expect(screen.queryByRole('button', { name: /revisions view/i })).not.toBeInTheDocument()
+        expect(screen.queryByRole('link', { name: /revisions view/i })).not.toBeInTheDocument()
         unmount()
       }
     })
@@ -397,7 +389,7 @@ describe('MainLayout', () => {
       renderLayout()
       const rail = getRailNav()
       const rows = within(rail)
-        .getAllByRole('button')
+        .getAllByRole('link')
         .map((b) => b.getAttribute('aria-label') ?? '')
         .filter((n) => /view$/i.test(n))
       expect(rows[0]).toMatch(/home view/i)
@@ -412,8 +404,8 @@ describe('MainLayout', () => {
       // explicitly — the property under test is that Learn survives it, which
       // is independent of what the default happens to be.
       toggleForYouGroup(rail, 'Reference')
-      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /library view/i })).not.toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /learn view/i })).toBeInTheDocument()
     })
 
     it('renders exactly one Learn row once Reference is expanded', () => {
@@ -423,7 +415,7 @@ describe('MainLayout', () => {
       // Reference is expanded by default as of 2026-08-02, so no toggle needed.
       // The regression this guards: leaving '/learn' in the Reference display
       // list as well as the new unconditional row would render it twice.
-      expect(within(rail).getAllByRole('button', { name: /learn view/i })).toHaveLength(1)
+      expect(within(rail).getAllByRole('link', { name: /learn view/i })).toHaveLength(1)
     })
 
     it('Workflow, Practice AND Reference all start expanded (2026-08-02)', () => {
@@ -446,9 +438,9 @@ describe('MainLayout', () => {
         'true'
       )
       // All three groups' rows are therefore visible without any interaction.
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /library view/i })).toBeInTheDocument()
     })
 
     it('clicking the Reference toggle reveals its rows and flips aria-expanded/its label; clicking again re-collapses', () => {
@@ -459,17 +451,17 @@ describe('MainLayout', () => {
 
       // Starts EXPANDED as of 2026-08-02, so the round-trip runs the other way.
       expect(toggle()).toHaveAttribute('aria-expanded', 'true')
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /library view/i })).toBeInTheDocument()
 
       fireEvent.click(toggle())
       expect(toggle()).toHaveAttribute('aria-expanded', 'false')
       expect(toggle()).toHaveAccessibleName(/show reference/i)
-      expect(within(rail).queryByRole('button', { name: /library view/i })).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /library view/i })).not.toBeInTheDocument()
 
       fireEvent.click(toggle())
       expect(toggle()).toHaveAttribute('aria-expanded', 'true')
       expect(toggle()).toHaveAccessibleName(/hide reference/i)
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /library view/i })).toBeInTheDocument()
     })
 
     it('auto-expands Reference when the CURRENT route lives in it, so active-route highlighting is never hidden behind a collapsed section', () => {
@@ -485,7 +477,7 @@ describe('MainLayout', () => {
         'aria-expanded',
         'true'
       )
-      const timelineButton = within(rail).getByRole('button', { name: /timeline view/i })
+      const timelineButton = within(rail).getByRole('link', { name: /timeline view/i })
       expect(timelineButton).toHaveAttribute('aria-current', 'page')
     })
 
@@ -498,7 +490,7 @@ describe('MainLayout', () => {
       expect(toggle()).toHaveAttribute('aria-expanded', 'true')
       fireEvent.click(toggle())
       expect(toggle()).toHaveAttribute('aria-expanded', 'false')
-      expect(within(rail).queryByRole('button', { name: /migrate view/i })).not.toBeInTheDocument()
+      expect(within(rail).queryByRole('link', { name: /migrate view/i })).not.toBeInTheDocument()
     })
   })
 
@@ -513,9 +505,9 @@ describe('MainLayout', () => {
       // Grouping is presentational only — every row is still reachable.
       // All three groups start expanded (2026-08-02), so every row is visible
       // without interaction.
-      expect(within(rail).getByRole('button', { name: /migrate view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /simulation view/i })).toBeInTheDocument()
-      expect(within(rail).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /migrate view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /simulation view/i })).toBeInTheDocument()
+      expect(within(rail).getByRole('link', { name: /library view/i })).toBeInTheDocument()
     })
 
     it('renders the standard sub-group headers for researcher (2026-08-02)', () => {
@@ -713,7 +705,7 @@ describe('MainLayout', () => {
     it('marks the active route with aria-current in the rail', () => {
       renderLayout('/about')
       const rail = getRailNav()
-      const button = within(rail).getByRole('button', { name: /about view/i })
+      const button = within(rail).getByRole('link', { name: /about view/i })
       expect(button).toHaveAttribute('aria-current', 'page')
     })
   })
