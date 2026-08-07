@@ -53,6 +53,7 @@ const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
 
 export function AlgorithmsView() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const viewAccess = usePersonaStore((s) => s.viewAccess)
   const setAdvancedViewsUnlocked = usePersonaStore((s) => s.setAdvancedViewsUnlocked)
 
@@ -250,6 +251,7 @@ export function AlgorithmsView() {
 
       <AlgorithmEntryStrip
         persona={selectedPersona}
+        region={selectedRegion}
         hasActiveParams={hasActiveParams}
         onApply={updateSearchParams}
       />

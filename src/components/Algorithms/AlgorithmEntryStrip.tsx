@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react'
 import { ArrowRight, FlaskConical, Network, Shuffle, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PersonaId } from '@/data/learningPersonas'
+import type { Region } from '@/store/usePersonaStore'
 
 const DISMISS_KEY = 'algorithms-entry-strip-dismissed'
 
 interface AlgorithmEntryStripProps {
   persona: PersonaId | null
+  region: Region | null
   /** Strip is hidden when the page was loaded with existing URL filter/tab state. */
   hasActiveParams: boolean
   onApply: (params: Record<string, string | null>) => void
@@ -81,8 +83,56 @@ export const PERSONA_INTENTS: Partial<Record<PersonaId, Intent>> = {
   },
 }
 
+// bplus-programme WS4c (2026-08-07): the executive default above is a US/NIST
+// FIPS claim, which is wrong to show unqualified to an EU visitor — BSI and
+// ANSSI have their OWN, DIFFERENT positions, verified against their primary
+// documents (both cached in pqctoday-priv/local-evidence-cache/library/):
+// BSI-TR-02102-1.pdf (2026-01 ed.) and ANSSI-PG-083-v3-2026.pdf. They are
+// shown as two separate entries, never merged into one line, because they
+// disagree on more than the "which alternate" question:
+//   - BSI: ML-KEM/ML-DSA are listed as suitable standalone (no hybrid
+//     language in their sections). SLH-DSA is recommended ONLY at NIST
+//     Category 3/5 (192-/256-bit) — Category 1 (128-bit) is absent from its
+//     recommended-parameters table. Two hybrid-mode conservative KEM
+//     alternates are named: FrodoKEM-976/1344 and Classic McEliece
+//     (460896/6688128/8192128).
+//   - ANSSI: explicit rule — "used without hybridization, regardless of
+//     parameter set, ML-KEM/ML-DSA do not respect RègleSécuAsym." Standalone
+//     PQC is not compliant for these two mechanisms at all. SLH-DSA is the
+//     one exception ANSSI calls out as compliant standalone, with no
+//     category restriction stated. Its named hybrid KEM alternate is
+//     FrodoKEM-976 only — Classic McEliece appears nowhere in the document
+//     (checked: zero matches for "McEliece" or "Goppa").
+// Drift-guarded in AlgorithmEntryStrip.driftguard.test.ts against a
+// hand-verified allowlist transcribed from BSI's own recommended-parameter
+// tables, so a future edit can't silently attribute an unverified algorithm
+// to either authority.
+export const EU_EXECUTIVE_INTENTS: Intent[] = [
+  {
+    label: 'BSI (Germany)',
+    description:
+      'ML-KEM-768 and ML-DSA-65 usable standalone; SLH-DSA recommended at 192-bit+, not 128; FrodoKEM-976 or Classic McEliece for hybrid high-assurance',
+    icon: <ArrowRight size={15} />,
+    params: {
+      tab: 'detailed',
+      highlight: 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-192s,FrodoKEM-976,Classic-McEliece-6688128',
+    },
+  },
+  {
+    label: 'ANSSI (France)',
+    description:
+      'ML-KEM-768 and ML-DSA-65 require hybridization with a classical algorithm — no standalone PQC yet; SLH-DSA is usable alone; FrodoKEM-976 is the hybrid pick',
+    icon: <ArrowRight size={15} />,
+    params: {
+      tab: 'detailed',
+      highlight: 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,FrodoKEM-976',
+    },
+  },
+]
+
 export function AlgorithmEntryStrip({
   persona,
+  region,
   hasActiveParams,
   onApply,
 }: AlgorithmEntryStripProps) {
@@ -111,7 +161,15 @@ export function AlgorithmEntryStrip({
     setDismissed(true)
   }
 
-  const personaIntent = persona ? PERSONA_INTENTS[persona] : undefined
+  // EU: BSI and ANSSI diverge (see the comment above EU_EXECUTIVE_INTENTS), so
+  // the executive persona gets both entries, distinctly labeled, instead of
+  // one line that would have to pick a side or blur the disagreement.
+  const personaIntents: Intent[] | undefined =
+    persona === 'executive' && region === 'eu'
+      ? EU_EXECUTIVE_INTENTS
+      : persona && PERSONA_INTENTS[persona]
+        ? [PERSONA_INTENTS[persona]]
+        : undefined
 
   return (
     <div className="glass-panel p-4 mb-4 relative">
@@ -125,22 +183,26 @@ export function AlgorithmEntryStrip({
         <X size={13} />
       </Button>
 
-      {personaIntent ? (
-        /* Known persona — single focused CTA */
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 pr-6">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground">{personaIntent.label}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{personaIntent.description}</p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleApply(personaIntent.params)}
-            className="shrink-0 flex items-center gap-1.5"
-          >
-            {personaIntent.icon}
-            Go
-          </Button>
+      {personaIntents ? (
+        /* Known persona — one or more focused CTAs (EU: BSI + ANSSI, shown separately) */
+        <div className="flex flex-col gap-3 pr-6">
+          {personaIntents.map((intent) => (
+            <div key={intent.label} className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground">{intent.label}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{intent.description}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleApply(intent.params)}
+                className="shrink-0 flex items-center gap-1.5"
+              >
+                {intent.icon}
+                Go
+              </Button>
+            </div>
+          ))}
         </div>
       ) : (
         /* Unknown persona — show 3 intent choices */
