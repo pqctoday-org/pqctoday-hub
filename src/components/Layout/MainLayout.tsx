@@ -104,13 +104,21 @@ const COPYRIGHT_YEAR = new Date().getFullYear()
 // `suppressSources` at all). Caught auditing Sources coverage for this
 // review; fixed by omission rather than adding a suppression mechanism, since
 // '/compliance' is the only route that ever needed one.
-const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
+export const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
   '/timeline': 'Timeline',
   '/library': 'Library',
   '/threats': 'Threats',
   '/leaders': 'Leaders',
   '/algorithms': 'Algorithms',
   '/migrate': 'Migrate',
+  // ADDED 2026-08-07. /patents had no Sources button since the page shipped.
+  // The cause was not a missing route entry: NEITHER source registry
+  // contained a single patent authority, so a 'Patents' ViewType would have
+  // filtered to zero rows. USPTO (issuing authority for all 1,185 active
+  // patent rows) and Google Patents (the index harvest_google_patents.py
+  // actually queries) are now registered in both registries with
+  // patents_csv=Yes, so this finally resolves to real sources.
+  '/patents': 'Patents',
   // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
   // (it reuses the Library authoritative-sources list — there is no distinct
   // "OpenSSL" ViewType) — preserved here so /openssl keeps its Sources button.
