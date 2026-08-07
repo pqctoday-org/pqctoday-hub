@@ -18,6 +18,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import {
   buildFrameworkEndorsementUrl,
   buildFrameworkFlagUrl,
@@ -58,6 +61,10 @@ export const FrameworkDetailPopover = ({
       : undefined
   const popoverRef = useRef<HTMLDivElement>(null)
   const [graphOpen, setGraphOpen] = useState(false)
+  // Review provenance moved here from the landscape tile (2026-08-07): the
+  // reviewer string is free text and was overflowing the tile.
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
   const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
   const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
@@ -149,6 +156,13 @@ export const FrameworkDetailPopover = ({
                   {framework.label}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">{framework.enforcementBody}</p>
+                <ReviewedBadge
+                  domain="compliance"
+                  entityId={framework.id}
+                  showUnreviewed={false}
+                  className="mt-1"
+                  onOpenDrilldown={() => setDrilldownOpen(true)}
+                />
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <EndorseButton
@@ -384,6 +398,19 @@ export const FrameworkDetailPopover = ({
           centerConceptId={graphConceptId}
           title={framework.label}
         />
+      )}
+      {drilldownOpen && (
+        // The panel is `fixed z-50`; the popover shell above sets zIndex 9999,
+        // so the panel needs its own higher stacking context to sit on top.
+        <div className="relative" style={{ zIndex: 10000 }}>
+          <RevisionDrilldownPanel
+            domain="compliance"
+            entityId={framework.id}
+            entityLabel={framework.label}
+            revisions={byRecord(revisions, 'compliance', framework.id)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        </div>
       )}
     </>
   )
