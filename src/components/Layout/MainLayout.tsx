@@ -506,7 +506,14 @@ export const MainLayout = () => {
   // icon in the mobile row, grouped the same way the desktop rail is (FOR YOU
   // then MORE) so the two surfaces never disagree about what's reachable.
   const mobileSheetForYou = forYou.filter((p) => !mobileVisiblePaths.includes(p))
-  const mobileSheetMore = more.filter((p) => !mobileVisiblePaths.includes(p))
+  // '/about' is deliberately excluded from both `forYou` and `more`
+  // (RAIL_ALWAYS_VISIBLE_PATHS — see railNav.ts) because the desktop rail
+  // self-places it as its own last row (below). Mobile has no equivalent
+  // self-placed row, so without this it had NO reachable nav entry point on
+  // mobile at all (bug found 2026-08-07). Appended to `more` here so it rides
+  // along as the last item of the sheet's "More" group, mirroring "About
+  // renders last, after MORE" on desktop.
+  const mobileSheetMore = [...more.filter((p) => !mobileVisiblePaths.includes(p)), '/about']
   // CACP has no direct shortcut anywhere in nav (2026-08-01 follow-up) —
   // Playground grid only.
   const mobileSheetAllPaths = [...mobileSheetForYou, ...mobileSheetMore]
