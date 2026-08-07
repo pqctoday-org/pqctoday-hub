@@ -121,7 +121,9 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA (legacy ≤07082026 snapshots)
   'Draft|||NIST SP 800-230 (Draft)': 'sp-draft', // SLH-DSA-*-24
   'Candidate|||draft-ietf-tls-hybrid-design': 'ietf-draft', // X25519MLKEM768 etc.
-  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft',
+  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft', // pre-08072026 snapshots
+  'IETF Internet-Draft|||IETF Internet-Draft — In RFC Editor queue (not yet published, v19, 2026-04-21)':
+    'ietf-draft', // composite-sigs — passed IESG review, in RFC Editor queue, still not an RFC
   'IETF Internet-Draft (alias for HPKE with PQ KEM)|||IETF Internet-Draft — DRAFT (not yet RFC)':
     'ietf-draft', // HPKE-PQ
   'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK (pre-2026-07-27 snapshots)
@@ -185,7 +187,8 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // registering their status pair throws rather than defaulting to Certified.
   'Candidate|||draft-connolly-cfrg-xwing-kem': 'ietf-draft', // X-Wing
   'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
   // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
   // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
   // algorithm, but the tier describes the standards status of the mechanism
