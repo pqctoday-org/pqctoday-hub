@@ -28,7 +28,7 @@ import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
 import {
-  getSoftHSMCppModule,
+  getSoftHSMRustModule,
   hsm_generateRSAKeyPair,
   hsm_generateMLDSAKeyPair,
   hsm_extractKeyValue,
@@ -82,7 +82,7 @@ export interface VpnSimulationPanelProps {
 }
 
 type SoftHSMWasmModule = NonNullable<
-  ReturnType<typeof getSoftHSMCppModule> extends Promise<infer T> ? T : never
+  ReturnType<typeof getSoftHSMRustModule> extends Promise<infer T> ? T : never
 >
 
 // DER (ASN.1) encoders are shared from ../derCodec (see derCat/derTLV/etc. imports).
@@ -361,8 +361,8 @@ function buildHsmMlDsaSelfSignedCert(
 
   // 6. SubjectKeyIdentifier extension — must match CKA_ID embedded at keygen time so
   //    strongSwan's pkcs11 plugin can locate the private key via C_FindObjects({CKA_ID=ski}).
-  //    The Rust softhsm-wasm module stubs C_SetAttributeValue (→ CKR_MECHANISM_INVALID),
-  //    so keyId is set at keygen time instead of stamped post-hoc. RFC 5280 §4.2.1.2
+  //    keyId is set at keygen time rather than stamped post-hoc — simpler, and it
+  //    keeps the ID present for the whole life of the object. RFC 5280 §4.2.1.2
   //    method 2 (arbitrary 20-byte ID) — not SHA-1 of the pubkey.
   let extensions: X509Extensions | undefined
   if (keyId && keyId.length === 20) {
@@ -2609,7 +2609,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     // into the shared softhsmv3 module for the lifetime of the /playground
     // route — the mode-change path below already did this, Reset never did.
     //
-    // Deliberately NOT C_Finalize: the C++ module is a shared singleton
+    // Deliberately NOT C_Finalize: the module is a shared singleton
     // (HsmContext, TokenSetupPanel, HybridSignatures and useHSM all hold it),
     // so finalizing here would tear the token out from under the HSM Workshop
     // whenever both are mounted. Whole-token teardown stays with
@@ -2617,7 +2617,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     // only place that actually owns it.
     void (async () => {
       try {
-        const M = await getSoftHSMCppModule()
+        const M = await getSoftHSMRustModule()
         for (const hSess of vpnStateRef.current.sessions.keys()) {
           try {
             M._C_CloseSession(hSess)
@@ -2643,17 +2643,27 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     try {
       // ── 1. Initialize softhsmv3 slots (first run only; idempotent on regenerate) ─
       if (!vpnRpcInitRef.current) {
-        // VPN sim REQUIRES the C++ softhsm: it implements C_SetAttributeValue
-        // (the Rust build stubs it → CKR_NOT_IMPL=0x70). We need to set
-        // CKA_ID = SHA-1(raw_pubkey_bytes) on ML-DSA keys after keygen so
-        // charon's pkcs11 plugin can locate the private key by KEYID_PUBKEY_SHA1
-        // fingerprint at IKE_AUTH time. Override the user's HsmContext engine
-        // selector and replace moduleRef.current globally.
-        const rawM = await getSoftHSMCppModule()
+        // The VPN sim pins ONE engine for the whole run. Both the cert
+        // provisioning below and the SAB-RPC dispatcher must operate on the
+        // same softhsm instance — handles from one module are meaningless in
+        // another — so moduleRef.current is replaced globally here rather than
+        // following the user's HsmContext engine selector.
+        //
+        // That engine is the Rust build. It used to be the C++ fork, on the
+        // grounds that "the Rust build stubs C_SetAttributeValue
+        // (→ CKR_NOT_IMPL=0x70)" — which we need, because CKA_ID must be set
+        // to SHA-1(raw_pubkey_bytes) on ML-DSA keys after keygen so charon's
+        // pkcs11 plugin can find the private key by KEYID_PUBKEY_SHA1
+        // fingerprint at IKE_AUTH time. That claim came from a capability map
+        // in a duplicate loader that had drifted from the engine, not from the
+        // engine itself; e2e/rust-setattributevalue.local.spec.ts drives the
+        // shipped Rust wasm and round-trips CKA_ID through
+        // C_SetAttributeValue to keep the correction honest.
+        const rawM = await getSoftHSMRustModule()
         if (moduleRef.current && moduleRef.current !== rawM) {
           strongSwanEngine.dispatchLog({
             level: 'info',
-            text: '[CERT] Replacing shared softhsm module with C++ build (VPN sim needs C_SetAttributeValue support).',
+            text: '[CERT] Pinning the VPN run to the softhsmv3 Rust engine (cert provisioning and the RPC dispatcher must share one instance).',
           })
         }
         moduleRef.current = rawM
@@ -2679,8 +2689,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         }
 
         // Single-slot pattern (mirroring the working ML-KEM flow): charon's
-        // pkcs11_manager only enumerates one token-present slot when the C++
-        // softhsm doesn't auto-extend on probe. Putting BOTH initiator and
+        // pkcs11_manager only enumerates one token-present slot when the
+        // engine doesn't auto-extend on probe. Putting BOTH initiator and
         // responder ML-DSA keypairs in the SAME slot means charon's
         // find_lib_by_keyid (after KEYID_PUBKEY_SHA1 fingerprint computation)
         // can locate either key by its CKA_ID. Each role gets its own
@@ -4251,14 +4261,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     // NOTE: moduleRef.current may already be set by another HSM panel —
                     // we guard with vpnRpcInitRef, not moduleRef.
                     if (rpcMode) {
-                      // Same as generateCerts: force C++ softhsm so the SAB-RPC
-                      // dispatcher and the cert provisioning operate on the same
-                      // softhsm instance, and so C_SetAttributeValue is real.
-                      const rawM = await getSoftHSMCppModule()
+                      // Same as generateCerts: pin the Rust engine so the
+                      // SAB-RPC dispatcher and the cert provisioning operate on
+                      // the same softhsm instance.
+                      const rawM = await getSoftHSMRustModule()
                       if (moduleRef.current && moduleRef.current !== rawM) {
                         strongSwanEngine.dispatchLog({
                           level: 'info',
-                          text: '[VPN] Replacing shared softhsm module with C++ build (VPN sim needs C_SetAttributeValue support).',
+                          text: '[VPN] Pinning the VPN run to the softhsmv3 Rust engine (the RPC dispatcher and cert provisioning must share one instance).',
                         })
                       }
                       moduleRef.current = rawM
