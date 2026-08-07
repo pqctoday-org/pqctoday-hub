@@ -370,6 +370,15 @@ export const LandingView = () => {
   if (selectedPersona) {
     return (
       <div className="w-full space-y-16 md:space-y-24">
+        {/* The persona-journeys redesign (PersonaBoardView, above) replaced the
+            old generic hero, which is where ResumeBanner used to live — the
+            redesign dropped it by omission, not by decision. Restored at the
+            top: this is the most-visited state (picking a role is the
+            encouraged path), so a returning visitor's "continue where I left
+            off" affordance needs to survive scanning, not require scrolling
+            past the whole board to find it. */}
+        <ResumeBanner dismissKey="landing-persona-board" />
+
         <PersonaBoardView
           personaId={selectedPersona}
           variantId={activeVariantId}

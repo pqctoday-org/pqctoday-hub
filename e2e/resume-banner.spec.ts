@@ -7,6 +7,14 @@ import { test, expect } from '@playwright/test'
  * Renders when the user has at least one module with status !== 'not-started'.
  * Picks the most-recently-visited and shows "Continue {Title}". Dismiss
  * persists per-route per session via sessionStorage.
+ *
+ * bplus-programme (2026-08-07): the persona-journeys redesign replaced
+ * Landing's old generic hero — where this banner used to render unconditionally
+ * — with PersonaBoardView, which is what actually renders once a persona is
+ * selected. That's the common case (the homepage actively steers visitors
+ * toward picking one), so the banner now lives inside that branch. This test
+ * must seed a persona too, or it exercises the no-persona fallback view that
+ * most real visitors never see.
  */
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -18,6 +26,18 @@ test.beforeEach(async ({ page }) => {
     localStorage.setItem(
       'pqc-version-storage',
       JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+    )
+    // Select a persona so Landing renders PersonaBoardView, not the picker.
+    localStorage.setItem(
+      'pqc-learning-persona',
+      JSON.stringify({
+        state: {
+          selectedPersona: 'developer',
+          hasSeenPersonaPicker: true,
+          selectedRegion: 'global',
+        },
+        version: 10,
+      })
     )
     // Seed module store with pqc-101 in-progress (most-recent visit).
     // Schema must satisfy the v14 migrate() guard, but only the fields the
