@@ -69,8 +69,10 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import {
   useDeviceCapabilities,
   unmetRequirements,
+  toolFitness,
   REQUIREMENT_LABELS,
 } from '@/hooks/useDeviceCapabilities'
+import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
 
@@ -787,6 +789,17 @@ export const PlaygroundWorkshop = () => {
   // Local UI state.
   const [searchText, setSearchText] = useState('')
   const [difficulty, setDifficulty] = useState<DifficultyValue>('All')
+  const caps = useDeviceCapabilities()
+  const isBelowLg = useIsBelowLgViewport()
+  // WS8c (2026-08-07): the device-fitness badge and modal explanation already
+  // shipped (WS8) — this is the filter itself, the piece the plan flagged as
+  // still missing. Default follows the plan's own spec: off on desktop (a
+  // wide-screen visitor is rarely capability-constrained and defaulting on
+  // would silently hide tools for no reason), on below `lg` (the viewport
+  // where a real capability mismatch — Safari/Firefox missing SAB, mainly —
+  // is actually common). A one-time default, not a live viewport tracker: a
+  // visitor's own toggle should not be overridden by a later resize.
+  const [runsHereOnly, setRunsHereOnly] = useState(() => isBelowLg)
   // WS6a-bis (2026-08-02): default to the browser catalogue. `WORKSHOP_TOOLS`
   // includes 24 Docker sandbox scenarios (workshopRegistry.tsx pushes them in),
   // so an 'all' default meant ~41% of the cards a visitor scrolled could not be
@@ -902,8 +915,14 @@ export const PlaygroundWorkshop = () => {
     let base = WORKSHOP_TOOLS.filter((t) => !isEnvironmentTool(t.id))
     if (runFilter !== 'all') base = base.filter((t) => runFor(t) === runFilter)
     if (difficulty !== 'All') base = base.filter((t) => t.difficulty === difficulty)
+    // WS8c: sandbox scenarios keep their own separate lock/dim treatment
+    // (isLocked, above) — device fitness is a browser-tool-only concept, same
+    // scope as the per-card DeviceUnmetBadge (`!tool.sandbox && unmet...`).
+    if (runsHereOnly) {
+      base = base.filter((t) => t.sandbox || toolFitness(t.requires, caps) === 'runs')
+    }
     return base
-  }, [difficulty, runFilter])
+  }, [difficulty, runFilter, runsHereOnly, caps])
 
   // Stable sort: recommended-for-role first, locked sandbox scenarios last.
   const sortTools = useCallback(
@@ -1017,6 +1036,21 @@ export const PlaygroundWorkshop = () => {
       (t) => !isEnvironmentTool(t.id) && t.sandbox && t.category === activeNav
     ).length
   }, [runFilter, activeNav])
+
+  // WS8c: how many browser tools in this category the "Runs on this device"
+  // filter is holding back — same visible-count-plus-one-click-reveal
+  // mitigation as hiddenSandboxInCategory above, so defaulting the filter on
+  // (mobile) never silently conceals the catalogue's breadth.
+  const hiddenByDeviceInCategory = useMemo(() => {
+    if (!runsHereOnly || activeNav === 'overview' || activeNav === 'mytools') return 0
+    return WORKSHOP_TOOLS.filter(
+      (t) =>
+        !isEnvironmentTool(t.id) &&
+        !t.sandbox &&
+        t.category === activeNav &&
+        toolFitness(t.requires, caps) !== 'runs'
+    ).length
+  }, [runsHereOnly, activeNav, caps])
 
   const renderGrid = (tools: WorkshopTool[], showCategory?: boolean) => (
     <div className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -1329,6 +1363,26 @@ export const PlaygroundWorkshop = () => {
           </div>
         )}
 
+        {hiddenByDeviceInCategory > 0 && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-border bg-muted/40 p-3.5">
+            <span className="flex w-[30px] h-[30px] shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Monitor className="w-4 h-4" aria-hidden="true" />
+            </span>
+            <p className="flex-1 text-[12px] leading-snug text-foreground/80">
+              Showing tools that run on this device. {hiddenByDeviceInCategory}{' '}
+              {hiddenByDeviceInCategory === 1 ? 'tool' : 'tools'} in this category{' '}
+              {hiddenByDeviceInCategory === 1 ? 'needs' : 'need'} a desktop browser.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => setRunsHereOnly(false)}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-[11.5px] font-semibold"
+            >
+              Show {hiddenByDeviceInCategory === 1 ? 'it' : 'them'}
+            </Button>
+          </div>
+        )}
+
         {categoryBody}
       </section>
     )
@@ -1541,6 +1595,21 @@ export const PlaygroundWorkshop = () => {
                 </Button>
               )
             })}
+          </div>
+          <div className="flex gap-1.5">
+            <Button
+              variant="ghost"
+              onClick={() => setRunsHereOnly((v) => !v)}
+              aria-pressed={runsHereOnly}
+              className={cn(
+                'rounded-lg px-3 py-1.5 text-[11.5px] h-auto font-medium',
+                runsHereOnly
+                  ? 'bg-primary/15 text-primary font-semibold'
+                  : 'border border-border bg-muted/30 text-muted-foreground hover:border-primary/40'
+              )}
+            >
+              Runs on this device
+            </Button>
           </div>
         </div>
 
