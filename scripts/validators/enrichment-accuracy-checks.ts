@@ -107,6 +107,14 @@ const KNOWN_MODULE_IDS = new Set([
   'iam-pqc',
   'secure-boot-pqc',
   'os-pqc',
+  // ADDED 2026-08-08 (timeline refresh remediation): a real module
+  // (src/components/PKILearning/modules/PQCCandidates/, route
+  // /learn/pqc-candidates, cross-linked from AlgorithmsView.tsx) missing
+  // from this list — 6 independent N23-E findings across timeline rows
+  // (NIST, IBM, China ICCS, Russia TC26, PQShield) all named it
+  // consistently, which is what exposed the gap rather than 6 unrelated
+  // hallucinations.
+  'pqc-candidates',
 ])
 
 // ── Enrichment parsing ────────────────────────────────────────────────────────
@@ -216,8 +224,18 @@ function runN23A(
       .map((s) => s.trim())
       .filter(Boolean)
     for (const item of items) {
-      // Strip parenthetical: "ML-KEM (FIPS 203)" → "ML-KEM"
-      const base = item.replace(/\s*\(.*?\)\s*/g, '').trim()
+      // Strip parenthetical: "ML-KEM (FIPS 203)" → "ML-KEM". Replace with a single
+      // space, not '' (FIXED 2026-08-08, timeline refresh remediation) — stripping
+      // to '' merges the words either side of a MID-string parenthetical, e.g.
+      // "Federal Information Processing Standards (FIPS) under chapter 35" became
+      // "Federal Information Processing Standardsunder chapter 35", a false
+      // positive from real, correctly-formatted enrichment content. The trailing
+      // .trim() still cleans up the common end-of-string case ("ML-KEM (FIPS 203)"
+      // → "ML-KEM " → "ML-KEM") and collapses any doubled space from adjacent runs.
+      const base = item
+        .replace(/\s*\(.*?\)\s*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
       if (!base || base === 'None detected') continue
 
       // Accept if base OR original item matches any known algo/family name
@@ -388,6 +406,13 @@ function runN23B(
     'Law ',
     'Order ',
     'Directive ',
+    // ADDED 2026-08-08 (timeline refresh remediation): spelled-out full names for
+    // standards this list already recognizes by abbreviation (FIPS/CNSA/NSM) —
+    // both are legitimate content, the enrichment just didn't abbreviate.
+    'Federal Information Processing Standard',
+    'Commercial National Security Algorithm Suite',
+    'National Security Memorandum',
+    'National Security Directive',
   ]
 
   for (const rec of records) {
@@ -401,7 +426,12 @@ function runN23B(
     for (const item of items) {
       if (item === 'None detected' || item.length < 3) continue
 
-      const base = item.replace(/\s*\(.*?\)\s*/g, '').trim()
+      // Replace with a single space, not '' — see N23-A's identical fix above for
+      // why (mid-string parentheticals otherwise merge the words either side).
+      const base = item
+        .replace(/\s*\(.*?\)\s*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
       const isKnownId = allKnownIds.has(base) || allKnownIds.has(item)
       const isKnownPrefix = KNOWN_PREFIXES.some((p) => base.startsWith(p) || item.startsWith(p))
 
@@ -560,8 +590,14 @@ export function runEnrichmentAccuracyChecks(): CheckResult[] {
   const libraryData = loadCSV('library_')
 
   const algoNames = new Set<string>([
-    ...algoData.rows.map((r) => r.Algorithm).filter(Boolean),
-    ...algoData.rows.map((r) => r['Algorithm Family']).filter(Boolean),
+    // FIXED 2026-08-08 (timeline refresh remediation): pqc_complete_algorithm_reference_*.csv
+    // has always used lowercase snake_case headers (algorithm, algorithm_family) — confirmed
+    // back to the earliest archived version (06242026). The PascalCase keys below (r.Algorithm,
+    // r['Algorithm Family']) never matched anything, silently reducing algoNames to just the
+    // ~20 hardcoded aliases below regardless of the CSV's real ~118 rows — the root cause of
+    // most N23-A findings across every collection, not enrichment content errors.
+    ...algoData.rows.map((r) => r.algorithm).filter(Boolean),
+    ...algoData.rows.map((r) => r.algorithm_family).filter(Boolean),
     // Common family aliases
     'ML-KEM',
     'ML-DSA',
@@ -583,6 +619,26 @@ export function runEnrichmentAccuracyChecks(): CheckResult[] {
     'XMSS',
     'HSS',
     'XMSS-MT',
+    // ADDED 2026-08-08 (timeline refresh remediation): real, well-documented PQC
+    // algorithms/families genuinely absent from pqc_complete_algorithm_reference_*.csv
+    // (a curated technical-comparison table, not exhaustive) — surfaced by timeline
+    // rows on South Korea's KpqC competition, NIST's withdrawn Round 3/4 KEM
+    // candidates, and OpenSSH's hybrid key exchange. Not added as CSV rows: that
+    // file belongs to the algorithms source and was under active concurrent edit
+    // this session — an alias here avoids colliding with that work.
+    'SIKE', // NIST Round 3/4 KEM candidate, cryptanalytically broken 2022 — still a
+    // legitimate historical reference
+    'NTRU Prime', // OpenSSH's sntrup761 hybrid KEX; distinct family from NTRU/NTRU+
+    'MQ-Sign',
+    'NCC-Sign',
+    'PALOMA',
+    'REDOG',
+    'Lattice-based algorithms', // family-level term multiple rows use interchangeably
+    // with a specific lattice scheme
+    'leanXMSS', // XMSS-family variant referenced in Ethereum's PQ roadmap
+    'Streamlined NTRU Prime sntrup761', // exact phrase as OpenSSH/IETF name it; the
+    // bare 'NTRU Prime' alias above doesn't
+    // prefix-match this longer phrasing
   ])
 
   const complianceIds = new Set(complianceData.rows.map((r) => r.id).filter(Boolean))

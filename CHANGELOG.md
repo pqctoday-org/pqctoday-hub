@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.43.0] - 2026-08-08
+
+Algorithm status pages get corrected for two real misclassifications, threat and timeline records gain dozens of missing links and cross-references, the PKI CRL workshop stops mislabeling a duplicate certificate, and About is reachable from mobile navigation again.
+
+### Fixed
+
+- **About is reachable from the mobile navigation menu again** [view:/about] [persona:curious]: it was missing from the mobile "More" sheet — reachable on desktop only.
+- **The CRL Generator workshop no longer lists a phantom duplicate certificate, and explains real failures instead of a bare status code** [view:/learn] [persona:developer] [persona:architect]: OpenSSL Studio's own achievement tracking was silently mirroring every certificate a second time, and that mirror could show up in the revocation list as a duplicate — or, for the CA's own certificate, as itself. Error messages from failed OpenSSL operations now show the actual reason instead of just "exited with an error."
+- **Two algorithm status mislabels corrected** [view:/algorithms] [persona:researcher] [persona:architect]: SMAUG-T, NTRU+, HAETAE and AIMer were still shown as "Round 1 candidates" — they're South Korea's actual 2025 KpqC competition winners. Separately, Aigis-enc and Aigis-sig were mislabeled as Korean KpqC submissions; they're Chinese CACR submissions and are now linked to their real source.
+- **Timeline and Compliance cross-references filled in** [view:/timeline] [view:/compliance] [persona:researcher] [persona:ops]: 5 new government milestones added (Australia's APRA, France's AMF, Brazil's BACEN, Uruguay's AGESIC, plus a Denmark record correctly relinked instead of duplicated), 15 records got their missing source-authority link resolved, and a Thailand record's protocol claim was corrected after tracing a fabricated version number back to its source.
+- **Every threat-landscape record now links to the Learn module that explains it** [view:/threats] [persona:ops] [persona:developer]: the last 21 records missing that link have been filled in by hand.
+- **Three role-board tiles showed a placeholder label instead of a real one** [persona:executive] [persona:developer] [persona:architect] [persona:ops]: the developer, architect and ops boards' capstone tile said the literal word "capstone" instead of a real title.
+
+### Security
+
+- Patched 3 known vulnerabilities in bundled third-party libraries: a sanitizer bypass, a diagram-rendering prototype-pollution/DoS issue, and an ID generator that could loop indefinitely on bad input. A 4th (an image-dimension parser, pulled in by the PPTX export feature) has no upstream fix available yet; we've confirmed the affected code path isn't reachable from anything this site actually does with it.
+
 ## [4.42.0] - 2026-08-07
 
 The app installs roughly 250 MB lighter and works offline sooner, algorithm pages let you read a spec or try a tool without losing your place, and Compliance's maturity data is reconnected after a data-archival sweep silently broke it.
