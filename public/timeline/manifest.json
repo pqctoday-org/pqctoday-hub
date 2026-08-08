@@ -1985,6 +1985,15 @@
       "sizeBytes": 878320,
       "contentType": "text/html",
       "sha256": "3f8864c82130c5fdaae27fdf0891016db62ffc181a8e268007b47cdaeb0ae052"
+    },
+    {
+      "label": "European Union:European Commission \u2014 EUDI Wallet Available in All Member States",
+      "url": "https://eur-lex.europa.eu/eli/reg/2024/1183/oj",
+      "status": "downloaded",
+      "file": "timeline/European_Union_European_Commission_EUDI_Wallet_Available_in_All_Member_States.html",
+      "sizeBytes": 836564,
+      "contentType": "text/html; charset=UTF-8",
+      "sha256": "14b1c4cfe3ed85f3825e75272cc151ca5647761212b8ce9927809f2a4556d038"
     }
   ]
 }
