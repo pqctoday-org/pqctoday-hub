@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1166,
+  "count": 1172,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9426,6 +9426,48 @@
       "url": "https://github.com/cryptoquick/libbitcoinpqc",
       "file": "libbitcoinpqc-7b8f1d70.html",
       "bytes": 369823,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "entrust-cryptographic-platform",
+      "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
+      "file": "entrust-cryptographic-platform-c357c543.html",
+      "bytes": 195601,
+      "tier": "curl_cffi:chrome120"
+    },
+    {
+      "product_id": "Libpqsecure-rs",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20431",
+      "file": "Libpqsecure-rs-2401bdaf.html",
+      "bytes": 57473,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "PhioTX",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18783",
+      "file": "PhioTX-e74f542f.html",
+      "bytes": 41353,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Secure-IC-PQC-Solutions",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18755",
+      "file": "Secure-IC-PQC-Solutions-a177df8e.html",
+      "bytes": 50677,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Uni-sentry-SecIP-PQCHSM-Secure-Hardware",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20999",
+      "file": "Uni-sentry-SecIP-PQCHSM-Secure-Hardware-9f5750a7.html",
+      "bytes": 90350,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "TASS-Crypto-Engine-LMS",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19710",
+      "file": "TASS-Crypto-Engine-LMS-7345f34f.html",
+      "bytes": 42271,
       "tier": "curl_cffi:chrome124"
     }
   ]
