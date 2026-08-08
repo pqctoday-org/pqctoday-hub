@@ -38,7 +38,7 @@
 import Papa from 'papaparse'
 import type { MaturityRequirement, MaturityCategory } from '@/types/MaturityTypes'
 import { parseIntSafe } from './csvUtils'
-import { filterActive, type RowWithStatus } from './loaderUtils'
+import { type RowWithStatus } from './loaderUtils'
 
 interface RawMaturityRow extends RowWithStatus {
   ref_id: string
@@ -105,7 +105,16 @@ for (const [, content] of orderedEntries) {
     header: true,
     skipEmptyLines: true,
   })
-  for (const row of filterActive(data)) {
+  // NOT filterActive(data) here. That call, on the whole array before the
+  // loop, silently defeats the supersession this loop exists to do: a
+  // deprecated row would be dropped before it ever reaches `seen`, so it
+  // could never suppress an active row with the same key sitting in an
+  // OLDER file — precisely the "stale paraphrase shadows the row that was
+  // meant to replace it" failure the comment above already names. A row is
+  // now filtered for activeness per-row, AFTER it claims its key, so a
+  // deprecated row in a newer file still consumes the key and correctly
+  // blocks the older active duplicate underneath it from loading.
+  for (const row of data) {
     const level = parseIntSafe(row.maturity_level)
     const pillar = row.pillar?.trim() ?? ''
     const category = row.category?.trim() ?? ''
@@ -113,6 +122,7 @@ for (const [, content] of orderedEntries) {
     const key = `${row.ref_id}|${pillar}|${level}|${(row.requirement ?? '').slice(0, 60)}`
     if (seen.has(key)) continue
     seen.add(key)
+    if (row.status && row.status !== 'active') continue
     merged.push({
       refId: row.ref_id?.trim() ?? '',
       sourceName: row.source_name?.trim() ?? '',
