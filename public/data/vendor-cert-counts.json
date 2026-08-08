@@ -1,45 +1,59 @@
 [
   {
-    "vendor": "THALES DIS FRANCE SA (Scheme: FR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 99,
-    "total": 99
+    "vendor": "STMicroelectronics",
+    "fips": 5,
+    "acvp": 15,
+    "cc": 122,
+    "total": 142
   },
   {
-    "vendor": "STMicroelectronics (Scheme: FR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 88,
-    "total": 88
+    "vendor": "Cisco Systems, Inc.",
+    "fips": 33,
+    "acvp": 1,
+    "cc": 89,
+    "total": 123
   },
   {
-    "vendor": "Cisco Systems, Inc. (Scheme: US)",
-    "fips": 0,
+    "vendor": "Infineon Technologies AG",
+    "fips": 4,
     "acvp": 0,
-    "cc": 75,
-    "total": 75
+    "cc": 115,
+    "total": 119
   },
   {
-    "vendor": "Infineon Technologies AG (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 73,
-    "total": 73
+    "vendor": "Samsung Electronics Co., Ltd.",
+    "fips": 25,
+    "acvp": 2,
+    "cc": 81,
+    "total": 108
   },
   {
-    "vendor": "Samsung Electronics Co., Ltd. (Scheme: FR)",
+    "vendor": "THALES DIS FRANCE SA",
     "fips": 0,
     "acvp": 0,
-    "cc": 59,
-    "total": 59
+    "cc": 101,
+    "total": 101
   },
   {
-    "vendor": "IN SMART IDENTITY FRANCE (Scheme: FR)",
+    "vendor": "Apple Inc.",
+    "fips": 32,
+    "acvp": 3,
+    "cc": 35,
+    "total": 70
+  },
+  {
+    "vendor": "NXP Semiconductors Germany GmbH",
     "fips": 0,
     "acvp": 0,
-    "cc": 50,
-    "total": 50
+    "cc": 64,
+    "total": 64
+  },
+  {
+    "vendor": "IN SMART IDENTITY FRANCE",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 52,
+    "total": 52
   },
   {
     "vendor": "Amazon Web Services, Inc.",
@@ -56,17 +70,10 @@
     "total": 41
   },
   {
-    "vendor": "STMicroelectronics",
-    "fips": 5,
-    "acvp": 15,
-    "cc": 20,
-    "total": 40
-  },
-  {
-    "vendor": "NXP Semiconductors Germany GmbH (Scheme: NL)",
-    "fips": 0,
+    "vendor": "Palo Alto Networks, Inc.",
+    "fips": 32,
     "acvp": 0,
-    "cc": 38,
+    "cc": 6,
     "total": 38
   },
   {
@@ -77,74 +84,74 @@
     "total": 37
   },
   {
-    "vendor": "Apple Inc.",
-    "fips": 32,
-    "acvp": 3,
-    "cc": 0,
-    "total": 35
-  },
-  {
-    "vendor": "Cisco Systems, Inc.",
-    "fips": 33,
-    "acvp": 1,
-    "cc": 0,
-    "total": 34
-  },
-  {
-    "vendor": "Infineon Technologies AG (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 34,
-    "total": 34
-  },
-  {
-    "vendor": "Palo Alto Networks, Inc.",
-    "fips": 32,
-    "acvp": 0,
-    "cc": 0,
-    "total": 32
-  },
-  {
-    "vendor": "Ricoh Company, Ltd. (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 28,
-    "total": 28
-  },
-  {
-    "vendor": "Samsung Electronics Co., Ltd.",
-    "fips": 25,
-    "acvp": 2,
-    "cc": 0,
-    "total": 27
-  },
-  {
     "vendor": "Juniper Networks, Inc.",
     "fips": 27,
     "acvp": 0,
-    "cc": 0,
+    "cc": 7,
+    "total": 34
+  },
+  {
+    "vendor": "Ricoh Company, Ltd.",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 32,
+    "total": 32
+  },
+  {
+    "vendor": "Oracle Corporation",
+    "fips": 23,
+    "acvp": 1,
+    "cc": 7,
+    "total": 31
+  },
+  {
+    "vendor": "Microsoft Corporation",
+    "fips": 25,
+    "acvp": 0,
+    "cc": 4,
+    "total": 29
+  },
+  {
+    "vendor": "HPE Juniper Networking",
+    "fips": 4,
+    "acvp": 0,
+    "cc": 24,
+    "total": 28
+  },
+  {
+    "vendor": "Fortinet, Inc.",
+    "fips": 10,
+    "acvp": 0,
+    "cc": 17,
     "total": 27
   },
   {
-    "vendor": "KONICA MINOLTA, INC. (Scheme: JP)",
+    "vendor": "KONICA MINOLTA, INC.",
     "fips": 0,
     "acvp": 0,
     "cc": 26,
     "total": 26
   },
   {
-    "vendor": "Microsoft Corporation",
-    "fips": 25,
-    "acvp": 0,
-    "cc": 0,
+    "vendor": "IBM Corporation",
+    "fips": 7,
+    "acvp": 2,
+    "cc": 16,
     "total": 25
   },
   {
-    "vendor": "Oracle Corporation",
-    "fips": 23,
-    "acvp": 1,
-    "cc": 0,
-    "total": 24
+    "vendor": "Thales",
+    "fips": 15,
+    "acvp": 2,
+    "cc": 6,
+    "total": 23
+  },
+  {
+    "vendor": "F5, Inc.",
+    "fips": 17,
+    "acvp": 0,
+    "cc": 6,
+    "total": 23
   },
   {
     "vendor": "Google, LLC",
@@ -154,21 +161,35 @@
     "total": 22
   },
   {
-    "vendor": "NXP Semiconductors Germany GmbH (Scheme: FR)",
+    "vendor": "Idemia",
     "fips": 0,
     "acvp": 0,
-    "cc": 22,
-    "total": 22
+    "cc": 21,
+    "total": 21
   },
   {
-    "vendor": "Lexmark International, Inc. (Scheme: CA)",
+    "vendor": "HP Inc.",
+    "fips": 5,
+    "acvp": 0,
+    "cc": 16,
+    "total": 21
+  },
+  {
+    "vendor": "NXP Semiconductors",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 18,
+    "total": 20
+  },
+  {
+    "vendor": "Lexmark International, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 20,
     "total": 20
   },
   {
-    "vendor": "Toshiba TEC Corporation (Scheme: JP)",
+    "vendor": "Toshiba TEC Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 20,
@@ -182,6 +203,20 @@
     "total": 20
   },
   {
+    "vendor": "Motorola Solutions, Inc.",
+    "fips": 17,
+    "acvp": 0,
+    "cc": 2,
+    "total": 19
+  },
+  {
+    "vendor": "KYOCERA Document Solutions Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 17,
+    "total": 18
+  },
+  {
     "vendor": "Classified",
     "fips": 18,
     "acvp": 0,
@@ -189,73 +224,52 @@
     "total": 18
   },
   {
-    "vendor": "Thales",
-    "fips": 15,
-    "acvp": 2,
-    "cc": 0,
+    "vendor": "FUJIFILM Business Innovation Corp.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 16,
     "total": 17
   },
   {
-    "vendor": "Xerox Corporation (Scheme: CA)",
+    "vendor": "Xerox Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 17,
     "total": 17
   },
   {
-    "vendor": "KYOCERA Document Solutions Inc. (Scheme: SE)",
-    "fips": 0,
+    "vendor": "Trellix",
+    "fips": 13,
     "acvp": 0,
-    "cc": 17,
+    "cc": 4,
     "total": 17
   },
   {
-    "vendor": "F5, Inc.",
-    "fips": 17,
-    "acvp": 0,
-    "cc": 0,
-    "total": 17
-  },
-  {
-    "vendor": "Motorola Solutions, Inc.",
-    "fips": 17,
-    "acvp": 0,
-    "cc": 0,
-    "total": 17
-  },
-  {
-    "vendor": "Nuvoton Technology (Scheme: FR)",
+    "vendor": "Nuvoton Technology",
     "fips": 0,
     "acvp": 0,
     "cc": 16,
     "total": 16
   },
   {
-    "vendor": "Apple Inc. (Scheme: FR)",
+    "vendor": "Austria Card plastikkarten und Ausweissysteme Gmbh",
     "fips": 0,
     "acvp": 0,
     "cc": 16,
     "total": 16
   },
   {
-    "vendor": "Austria Card plastikkarten und Ausweissysteme Gmbh (Scheme: FR)",
-    "fips": 0,
+    "vendor": "SUSE LLC",
+    "fips": 10,
     "acvp": 0,
-    "cc": 16,
+    "cc": 6,
     "total": 16
   },
   {
-    "vendor": "Idemia (Scheme: FR)",
-    "fips": 0,
+    "vendor": "NetApp, Inc.",
+    "fips": 6,
     "acvp": 0,
-    "cc": 16,
-    "total": 16
-  },
-  {
-    "vendor": "FUJIFILM Business Innovation Corp. (Scheme: JP)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 16,
+    "cc": 10,
     "total": 16
   },
   {
@@ -280,21 +294,14 @@
     "total": 14
   },
   {
-    "vendor": "NXP Semiconductors Netherlands N.V. (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 14,
+    "vendor": "Hewlett Packard Enterprise",
+    "fips": 7,
+    "acvp": 1,
+    "cc": 6,
     "total": 14
   },
   {
-    "vendor": "STMicroelectronics (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 14,
-    "total": 14
-  },
-  {
-    "vendor": "HPE Juniper Networking (Scheme: AU)",
+    "vendor": "NXP Semiconductors Netherlands N.V.",
     "fips": 0,
     "acvp": 0,
     "cc": 14,
@@ -315,46 +322,18 @@
     "total": 13
   },
   {
-    "vendor": "MaskTech International GmbH (Scheme: DE)",
+    "vendor": "MaskTech International GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 13,
     "total": 13
   },
   {
-    "vendor": "NXP Semiconductors (Scheme: NL)",
-    "fips": 0,
+    "vendor": "Red Hat, Inc.",
+    "fips": 6,
     "acvp": 0,
-    "cc": 13,
+    "cc": 7,
     "total": 13
-  },
-  {
-    "vendor": "Apple Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 13,
-    "total": 13
-  },
-  {
-    "vendor": "Trellix",
-    "fips": 13,
-    "acvp": 0,
-    "cc": 0,
-    "total": 13
-  },
-  {
-    "vendor": "Samsung Electronics Co., Ltd. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 12,
-    "total": 12
-  },
-  {
-    "vendor": "IBM Corporation (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 12,
-    "total": 12
   },
   {
     "vendor": "Red Hat\u00ae, Inc.",
@@ -364,6 +343,13 @@
     "total": 12
   },
   {
+    "vendor": "Ciena Corporation",
+    "fips": 5,
+    "acvp": 2,
+    "cc": 4,
+    "total": 11
+  },
+  {
     "vendor": "Nuvoton Technology Corporation",
     "fips": 10,
     "acvp": 1,
@@ -371,11 +357,46 @@
     "total": 11
   },
   {
-    "vendor": "Secunet Security Networks AG (Scheme: DE)",
+    "vendor": "Securosys SA",
+    "fips": 0,
+    "acvp": 7,
+    "cc": 4,
+    "total": 11
+  },
+  {
+    "vendor": "Huawei Technologies Co., Ltd.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 10,
+    "total": 11
+  },
+  {
+    "vendor": "Secunet Security Networks AG",
     "fips": 0,
     "acvp": 0,
     "cc": 11,
     "total": 11
+  },
+  {
+    "vendor": "Nokia Corporation",
+    "fips": 7,
+    "acvp": 0,
+    "cc": 4,
+    "total": 11
+  },
+  {
+    "vendor": "LG Electronics, Inc.",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 11,
+    "total": 11
+  },
+  {
+    "vendor": "Broadcom Inc.",
+    "fips": 6,
+    "acvp": 3,
+    "cc": 1,
+    "total": 10
   },
   {
     "vendor": "Thales Trusted Cyber Technologies",
@@ -392,31 +413,24 @@
     "total": 10
   },
   {
-    "vendor": "HPE Juniper Networking (Scheme: US)",
+    "vendor": "Zebra Technologies Corporation",
+    "fips": 6,
+    "acvp": 0,
+    "cc": 4,
+    "total": 10
+  },
+  {
+    "vendor": "Pure Storage, Inc.",
+    "fips": 4,
+    "acvp": 0,
+    "cc": 6,
+    "total": 10
+  },
+  {
+    "vendor": "Power Plus Communications AG",
     "fips": 0,
     "acvp": 0,
     "cc": 10,
-    "total": 10
-  },
-  {
-    "vendor": "Power Plus Communications AG (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 10,
-    "total": 10
-  },
-  {
-    "vendor": "Fortinet, Inc.",
-    "fips": 10,
-    "acvp": 0,
-    "cc": 0,
-    "total": 10
-  },
-  {
-    "vendor": "SUSE LLC",
-    "fips": 10,
-    "acvp": 0,
-    "cc": 0,
     "total": 10
   },
   {
@@ -441,13 +455,6 @@
     "total": 10
   },
   {
-    "vendor": "Broadcom Inc.",
-    "fips": 6,
-    "acvp": 3,
-    "cc": 0,
-    "total": 9
-  },
-  {
     "vendor": "Ctrl IQ, Inc.",
     "fips": 8,
     "acvp": 1,
@@ -462,13 +469,6 @@
     "total": 9
   },
   {
-    "vendor": "IBM Corporation",
-    "fips": 7,
-    "acvp": 2,
-    "cc": 0,
-    "total": 9
-  },
-  {
     "vendor": "Intel Corporation",
     "fips": 8,
     "acvp": 1,
@@ -476,14 +476,35 @@
     "total": 9
   },
   {
-    "vendor": "Fortinet, Inc. (Scheme: US)",
+    "vendor": "Senetas Corporation Ltd, Distributed by Thales SA (SafeNet)",
     "fips": 0,
     "acvp": 0,
     "cc": 9,
     "total": 9
   },
   {
-    "vendor": "High Security Labs Ltd. (Scheme: CA)",
+    "vendor": "Canon Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 8,
+    "total": 9
+  },
+  {
+    "vendor": "HPE Aruba Networking",
+    "fips": 4,
+    "acvp": 0,
+    "cc": 5,
+    "total": 9
+  },
+  {
+    "vendor": "Check Point Software Technologies Ltd.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 7,
+    "total": 9
+  },
+  {
+    "vendor": "High Security Labs Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 9,
@@ -504,17 +525,17 @@
     "total": 9
   },
   {
-    "vendor": "Hewlett Packard Enterprise",
-    "fips": 7,
-    "acvp": 1,
-    "cc": 0,
-    "total": 8
-  },
-  {
     "vendor": "Rambus Inc.",
     "fips": 6,
     "acvp": 2,
     "cc": 0,
+    "total": 8
+  },
+  {
+    "vendor": "Utimaco IS GmbH",
+    "fips": 2,
+    "acvp": 2,
+    "cc": 4,
     "total": 8
   },
   {
@@ -532,91 +553,63 @@
     "total": 8
   },
   {
-    "vendor": "OpenText (Scheme: SE)",
+    "vendor": "OpenText",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
     "total": 8
   },
   {
-    "vendor": "KOMSCO (Scheme: KR)",
+    "vendor": "KOMSCO",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
     "total": 8
   },
   {
-    "vendor": "Samsung Electronics Co., Ltd. (Scheme: NL)",
+    "vendor": "Google LLC",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 7,
+    "total": 8
+  },
+  {
+    "vendor": "Giesecke+Devrient ePayments GmbH",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 7,
+    "total": 8
+  },
+  {
+    "vendor": "Open Text Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
     "total": 8
   },
   {
-    "vendor": "Infineon Technologies AG (Scheme: FR)",
+    "vendor": "Cloud Software Group",
+    "fips": 5,
+    "acvp": 0,
+    "cc": 3,
+    "total": 8
+  },
+  {
+    "vendor": "Belkin International, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
     "total": 8
   },
   {
-    "vendor": "HP Inc. (Scheme: SE)",
+    "vendor": "Cigent Technology, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
     "total": 8
   },
   {
-    "vendor": "HP Inc. (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "Canon Inc. (Scheme: JP)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "Cisco Systems, Inc. (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "Belkin International, Inc. (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "NetApp, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "Cigent Technology, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "fiskaly GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 8,
-    "total": 8
-  },
-  {
-    "vendor": "LG Electronics, Inc. (Scheme: ES)",
+    "vendor": "fiskaly GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 8,
@@ -637,23 +630,9 @@
     "total": 8
   },
   {
-    "vendor": "Ciena Corporation",
-    "fips": 5,
-    "acvp": 2,
-    "cc": 0,
-    "total": 7
-  },
-  {
     "vendor": "Legion of the Bouncy Castle Inc.",
     "fips": 3,
     "acvp": 4,
-    "cc": 0,
-    "total": 7
-  },
-  {
-    "vendor": "Securosys SA",
-    "fips": 0,
-    "acvp": 7,
     "cc": 0,
     "total": 7
   },
@@ -679,28 +658,28 @@
     "total": 7
   },
   {
-    "vendor": "Giesecke+Devrient ePayments GmbH (Scheme: DE)",
-    "fips": 0,
+    "vendor": "OPSWAT, Inc.",
+    "fips": 1,
     "acvp": 0,
-    "cc": 7,
+    "cc": 6,
     "total": 7
   },
   {
-    "vendor": "Juniper Networks, Inc. (Scheme: AU)",
-    "fips": 0,
+    "vendor": "Symantec, A Division of Broadcom",
+    "fips": 5,
     "acvp": 0,
-    "cc": 7,
+    "cc": 2,
+    "total": 7
+  },
+  {
+    "vendor": "Honeywell International Inc.",
+    "fips": 3,
+    "acvp": 0,
+    "cc": 4,
     "total": 7
   },
   {
     "vendor": "Ruckus Wireless LLC",
-    "fips": 7,
-    "acvp": 0,
-    "cc": 0,
-    "total": 7
-  },
-  {
-    "vendor": "Nokia Corporation",
     "fips": 7,
     "acvp": 0,
     "cc": 0,
@@ -721,150 +700,108 @@
     "total": 6
   },
   {
-    "vendor": "OPSWAT, Inc. (Scheme: IT)",
+    "vendor": "Worldlline Healthcare GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Senetas Corporation Ltd, Distributed by Thales SA (SafeNet) (Scheme: CA)",
+    "vendor": "Beijing TsingTeng MicroSystem Co.,Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Worldlline Healthcare GmbH (Scheme: DE)",
+    "vendor": "Ivanti, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Ivanti, Inc. (Scheme: US)",
+    "vendor": "BlackBerry Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "SEIKO EPSON CORPORATION (Scheme: JP)",
+    "vendor": "SEIKO EPSON CORPORATION",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "F5 Networks, Inc. (Scheme: SE)",
+    "vendor": "F5 Networks, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Evertz Microsystems (Scheme: US)",
+    "vendor": "Evertz Microsystems",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Huawei Technologies Co., Ltd. (Scheme: NL)",
+    "vendor": "Broadcom",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Palo Alto Networks, Inc. (Scheme: US)",
+    "vendor": "SonicWALL, Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Fortinet, Inc. (Scheme: CA)",
+    "vendor": "Thales Norway AS",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "SonicWALL, Inc (Scheme: US)",
+    "vendor": "Continental Automotive Technologies GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "F5, Inc. (Scheme: SE)",
+    "vendor": "Kaytus Systems PTE. Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "SUSE LLC (Scheme: DE)",
+    "vendor": "Theben Smart Energy GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Thales Norway AS (Scheme: NO)",
+    "vendor": "Stoneridge Electronics AB",
     "fips": 0,
     "acvp": 0,
     "cc": 6,
     "total": 6
   },
   {
-    "vendor": "Continental Automotive Technologies GmbH (Scheme: DE)",
-    "fips": 0,
+    "vendor": "Information Security Corporation",
+    "fips": 1,
     "acvp": 0,
-    "cc": 6,
-    "total": 6
-  },
-  {
-    "vendor": "Apple Inc. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 6,
-    "total": 6
-  },
-  {
-    "vendor": "Theben Smart Energy GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 6,
-    "total": 6
-  },
-  {
-    "vendor": "Stoneridge Electronics AB (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 6,
-    "total": 6
-  },
-  {
-    "vendor": "Zebra Technologies Corporation",
-    "fips": 6,
-    "acvp": 0,
-    "cc": 0,
-    "total": 6
-  },
-  {
-    "vendor": "NetApp, Inc.",
-    "fips": 6,
-    "acvp": 0,
-    "cc": 0,
-    "total": 6
-  },
-  {
-    "vendor": "Red Hat, Inc.",
-    "fips": 6,
-    "acvp": 0,
-    "cc": 0,
+    "cc": 5,
     "total": 6
   },
   {
@@ -903,94 +840,52 @@
     "total": 5
   },
   {
-    "vendor": "Oracle Corporation (Scheme: CA)",
+    "vendor": "Dreamsecurity Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 5,
     "total": 5
   },
   {
-    "vendor": "Dreamsecurity Co., Ltd. (Scheme: KR)",
+    "vendor": "BULL S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 5,
     "total": 5
   },
   {
-    "vendor": "NXP Semiconductors (Scheme: FR)",
+    "vendor": "Zebra Technologies",
     "fips": 0,
     "acvp": 0,
     "cc": 5,
     "total": 5
   },
   {
-    "vendor": "Idemia (Scheme: NL)",
+    "vendor": "Trend Micro Inc.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 3,
+    "total": 5
+  },
+  {
+    "vendor": "Nutanix, Inc.",
+    "fips": 3,
+    "acvp": 0,
+    "cc": 2,
+    "total": 5
+  },
+  {
+    "vendor": "Ampex Data Systems Corporation",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 4,
+    "total": 5
+  },
+  {
+    "vendor": "Sagemcom Dr. Neuhaus GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "BULL S.A. (Scheme: FR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "Zebra Technologies (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "HPE Aruba Networking (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "Red Hat, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "Sagemcom Dr. Neuhaus GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "Information Security Corporation (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 5,
-    "total": 5
-  },
-  {
-    "vendor": "HP Inc.",
-    "fips": 5,
-    "acvp": 0,
-    "cc": 0,
-    "total": 5
-  },
-  {
-    "vendor": "Cloud Software Group",
-    "fips": 5,
-    "acvp": 0,
-    "cc": 0,
-    "total": 5
-  },
-  {
-    "vendor": "Symantec, A Division of Broadcom",
-    "fips": 5,
-    "acvp": 0,
-    "cc": 0,
     "total": 5
   },
   {
@@ -1043,17 +938,17 @@
     "total": 4
   },
   {
-    "vendor": "Utimaco IS GmbH",
-    "fips": 2,
-    "acvp": 2,
-    "cc": 0,
+    "vendor": "EFR GmbH",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Infineon Technologies AG",
-    "fips": 4,
+    "vendor": "Kernkonzept GmbH",
+    "fips": 0,
     "acvp": 0,
-    "cc": 0,
+    "cc": 4,
     "total": 4
   },
   {
@@ -1078,336 +973,224 @@
     "total": 4
   },
   {
-    "vendor": "Shanghai Fudan Microelectronics Group Co., Ltd. (Scheme: NL)",
+    "vendor": "Waterfall Security Solutions Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Research Industrial Systems Engineering &#x28;RISE&#x29; Forschungs-, Entwicklungs- und Gro&szlig;projekteberatung GmbH (Scheme: DE)",
+    "vendor": "KLC Group LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "NXP Semiconductors Germany GmbH (Scheme: DE)",
+    "vendor": "Shanghai Fudan Microelectronics Group Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "MK Smart Joint Stock Company (Scheme: ES)",
+    "vendor": "Research Industrial Systems Engineering &#x28;RISE&#x29; Forschungs-, Entwicklungs- und Gro&szlig;projekteberatung GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Qualcomm Technologies Inc. (Scheme: NL)",
+    "vendor": "MK Smart Joint Stock Company",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "CEC Huada Electronic Design Co., Ltd. (Scheme: NL)",
+    "vendor": "Qualcomm Technologies Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Toshiba Infrastructure Systems &amp; Solutions Corporation (Scheme: NL)",
+    "vendor": "CEC Huada Electronic Design Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "FeliCa Networks, Inc (Scheme: NL)",
+    "vendor": "Toshiba Infrastructure Systems &amp; Solutions Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "The Government of Japan (Scheme: NL)",
+    "vendor": "FeliCa Networks, Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Tongxin Microelectronics Co., Ltd. (Scheme: ES)",
+    "vendor": "The Government of Japan",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Polska Wytw&oacute;rnia Papier&oacute;w Warto&#x15b;ciowych S.A. (Scheme: NL)",
+    "vendor": "Tongxin Microelectronics Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Eviden Germany GmbH (Scheme: DE)",
+    "vendor": "Polska Wytw&oacute;rnia Papier&oacute;w Warto&#x15b;ciowych S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "SEALSQ France (Scheme: FR)",
+    "vendor": "Eviden Germany GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Thales (Scheme: FR)",
+    "vendor": "SEALSQ France",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Beijing TsingTeng MicroSystem Co.,Ltd. (Scheme: NL)",
+    "vendor": "Cellcrypt, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Zebra Technologies Corporation (Scheme: US)",
+    "vendor": "New H3C technologies Co.,Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Google LLC (Scheme: US)",
+    "vendor": "ForeScout Technologies, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Honeywell International Inc. (Scheme: US)",
+    "vendor": "Gigamon, Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Ricoh Company, Ltd. (Scheme: JP)",
+    "vendor": "NetScout Systems, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "BlackBerry Ltd. (Scheme: US)",
+    "vendor": "Infinera Corporation",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 2,
+    "total": 4
+  },
+  {
+    "vendor": "Crestron Electronics, Inc.",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 2,
+    "total": 4
+  },
+  {
+    "vendor": "Galleon Embedded Computing",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Open Text Corporation (Scheme: NL)",
+    "vendor": "Entrust EU, SL",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Pure Storage, Inc. (Scheme: US)",
+    "vendor": "SENTRY",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Cellcrypt, Inc. (Scheme: US)",
+    "vendor": "Sistemas Inform&aacute;ticos Abiertos S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "ForeScout Technologies, Inc. (Scheme: US)",
+    "vendor": "UD Info Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Broadcom (Scheme: US)",
+    "vendor": "ATEN International Co., LTD",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Trellix (Scheme: US)",
+    "vendor": "IOGEAR",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Ciena Corporation (Scheme: US)",
+    "vendor": "Solarwinds Worldwide, LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Gigamon, Inc (Scheme: US)",
+    "vendor": "Bundesdruckerei GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "NetScout Systems, Inc. (Scheme: CA)",
+    "vendor": "KoCo Connector GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
     "total": 4
   },
   {
-    "vendor": "Kernkonzept GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Galleon Embedded Computing (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "EFR GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Open Text Corporation (Scheme: SE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Entrust EU, SL (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "SENTRY (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Ampex Data Systems Corporation (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Kaytus Systems PTE. Ltd. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Sistemas Inform&aacute;ticos Abiertos S.A. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "UD Info Corporation (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "ATEN International Co., LTD (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "IOGEAR (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Hewlett Packard Enterprise (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Solarwinds Worldwide, LLC (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Bundesdruckerei GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "KoCo Connector GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Curtiss-Wright Defense Solutions (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Securosys SA (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 4,
-    "total": 4
-  },
-  {
-    "vendor": "Utimaco IS GmbH (Scheme: NL)",
+    "vendor": "Curtiss-Wright Defense Solutions",
     "fips": 0,
     "acvp": 0,
     "cc": 4,
@@ -1435,13 +1218,6 @@
     "total": 4
   },
   {
-    "vendor": "HPE Aruba Networking",
-    "fips": 4,
-    "acvp": 0,
-    "cc": 0,
-    "total": 4
-  },
-  {
     "vendor": "Juniper Networks, Inc",
     "fips": 4,
     "acvp": 0,
@@ -1450,13 +1226,6 @@
   },
   {
     "vendor": "NXP Semiconductors, Inc.",
-    "fips": 4,
-    "acvp": 0,
-    "cc": 0,
-    "total": 4
-  },
-  {
-    "vendor": "Pure Storage, Inc.",
     "fips": 4,
     "acvp": 0,
     "cc": 0,
@@ -1505,6 +1274,13 @@
     "total": 4
   },
   {
+    "vendor": "General Dynamics Mission Systems",
+    "fips": 2,
+    "acvp": 0,
+    "cc": 2,
+    "total": 4
+  },
+  {
     "vendor": "L3Harris Technologies, Inc.",
     "fips": 4,
     "acvp": 0,
@@ -1513,13 +1289,6 @@
   },
   {
     "vendor": "Cloud Linux Software, Inc. d/b/a TuxCare",
-    "fips": 4,
-    "acvp": 0,
-    "cc": 0,
-    "total": 4
-  },
-  {
-    "vendor": "HPE Juniper Networking",
     "fips": 4,
     "acvp": 0,
     "cc": 0,
@@ -1568,6 +1337,13 @@
     "total": 3
   },
   {
+    "vendor": "Novachips Co., Ltd.",
+    "fips": 0,
+    "acvp": 1,
+    "cc": 2,
+    "total": 3
+  },
+  {
     "vendor": "Shanghai Uni-Sentry Intelligent Technology Co., LTD",
     "fips": 0,
     "acvp": 3,
@@ -1596,6 +1372,13 @@
     "total": 3
   },
   {
+    "vendor": "ID QUANTIQUE SA",
+    "fips": 0,
+    "acvp": 0,
+    "cc": 3,
+    "total": 3
+  },
+  {
     "vendor": "ICAO BAC",
     "fips": 0,
     "acvp": 0,
@@ -1603,147 +1386,119 @@
     "total": 3
   },
   {
-    "vendor": "CyberArk Software, Ltd (Scheme: NL)",
+    "vendor": "CyberArk Software, Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Cisco Systems, Inc. (Scheme: CA)",
+    "vendor": "G&uuml;venpark Bili&#x15f;im Teknolojileri Ar-Ge Tic. Ltd. &#x15e;ti",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "G&uuml;venpark Bili&#x15f;im Teknolojileri Ar-Ge Tic. Ltd. &#x15e;ti (Scheme: ES)",
+    "vendor": "KSign Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "KSign Co., Ltd. (Scheme: KR)",
+    "vendor": "Shenzhen Goodix Technology Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Deutsche Telekom Security GmbH (Scheme: DE)",
+    "vendor": "Deutsche Telekom Security GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "JDM Payment Solutions SAS (Scheme: DE)",
+    "vendor": "JDM Payment Solutions SAS",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Google LLC (Scheme: NL)",
+    "vendor": "Sindoh Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Sindoh Co., Ltd. (Scheme: KR)",
+    "vendor": "Extreme Networks, Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 2,
+    "total": 3
+  },
+  {
+    "vendor": "Corelight, Inc.",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 2,
+    "total": 3
+  },
+  {
+    "vendor": "Trend Micro",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Cisco Systems, Inc. (Scheme: AU)",
+    "vendor": "Commscope Technologies, LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Trend Micro Inc. (Scheme: MY)",
+    "vendor": "CACI",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Check Point Software Technologies Ltd. (Scheme: US)",
+    "vendor": "Guntermann & Drunck GmbH",
+    "fips": 1,
+    "acvp": 0,
+    "cc": 2,
+    "total": 3
+  },
+  {
+    "vendor": "Shift5, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Senetas Corporation Ltd, Distributed by Thales SA (SafeNet) (Scheme: US)",
+    "vendor": "EMH metering GmbH &amp; Co. KG",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Trend Micro (Scheme: US)",
+    "vendor": "Dell Technologies",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
     "total": 3
   },
   {
-    "vendor": "Cloud Software Group (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "Commscope Technologies, LLC (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "CACI (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "LG Electronics, Inc. (Scheme: KR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "Shift5, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "EMH metering GmbH &amp; Co. KG (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "Dell Technologies (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 3,
-    "total": 3
-  },
-  {
-    "vendor": "I4P-informatikai Kft. (I4P Informatics Ltd.) (Scheme: IT)",
+    "vendor": "I4P-informatikai Kft. (I4P Informatics Ltd.)",
     "fips": 0,
     "acvp": 0,
     "cc": 3,
@@ -1904,13 +1659,6 @@
     "total": 3
   },
   {
-    "vendor": "Honeywell International Inc.",
-    "fips": 3,
-    "acvp": 0,
-    "cc": 0,
-    "total": 3
-  },
-  {
     "vendor": "Pitney Bowes, Inc.",
     "fips": 3,
     "acvp": 0,
@@ -1954,13 +1702,6 @@
   },
   {
     "vendor": "Seagate Technology LLC",
-    "fips": 3,
-    "acvp": 0,
-    "cc": 0,
-    "total": 3
-  },
-  {
-    "vendor": "Nutanix, Inc.",
     "fips": 3,
     "acvp": 0,
     "cc": 0,
@@ -2079,1092 +1820,819 @@
     "total": 2
   },
   {
-    "vendor": "RathonTech (Scheme: KR)",
+    "vendor": "RathonTech",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "AirCUVE (Scheme: KR)",
+    "vendor": "AirCUVE",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "KSign Co., LTD. (Scheme: KR)",
+    "vendor": "KSign Co., LTD.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "PENTA SECURITY SYSTEMS INC. (Scheme: KR)",
+    "vendor": "PENTA SECURITY SYSTEMS INC.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Pradotec Sales & Services Sdn Bhd (Scheme: MY)",
+    "vendor": "Pradotec Sales & Services Sdn Bhd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Advenica AB (Scheme: SE)",
+    "vendor": "Advenica AB",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Arbit Cyber Defence Systems ApS (Scheme: DE)",
+    "vendor": "Arbit Cyber Defence Systems ApS",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Fortinet, Inc. (Scheme: NL)",
+    "vendor": "Everfox LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Everfox LLC (Scheme: IT)",
+    "vendor": "Autek Ingenier&iacute;a, S.L.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Autek Ingenier&iacute;a, S.L. (Scheme: ES)",
+    "vendor": "Clavister AB",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Waterfall Security Solutions Ltd. (Scheme: SG)",
+    "vendor": "INFODAS GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Waterfall Security Solutions Ltd. (Scheme: NL)",
+    "vendor": "Radware, LTD.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Clavister AB (Scheme: SE)",
+    "vendor": "Commvault Systems Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "INFODAS GmbH (Scheme: DE)",
+    "vendor": "OpenText Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Radware, LTD. (Scheme: ES)",
+    "vendor": "Alphabit Co.,Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Commvault Systems Inc. (Scheme: IT)",
+    "vendor": "AllWipe Oy Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Huawei Technologies Co., Ltd. (Scheme: IT)",
+    "vendor": "ST Engineering Electronics",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Symantec, A Division of Broadcom (Scheme: NL)",
+    "vendor": "OWL Systems Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "OpenText Inc. (Scheme: NL)",
+    "vendor": "BlueMoonSoft Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Alphabit Co.,Ltd. (Scheme: KR)",
+    "vendor": "INEB Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "AllWipe Oy Ltd. (Scheme: NL)",
+    "vendor": "Hancom With Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "ST Engineering Electronics (Scheme: SG)",
+    "vendor": "UbimInfo Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "OWL Systems Inc. (Scheme: KR)",
+    "vendor": "Cohesity Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "BlueMoonSoft Inc. (Scheme: KR)",
+    "vendor": "Ziperase",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "INEB Inc. (Scheme: KR)",
+    "vendor": "SINSIWAY Co., LTD.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Hancom With Inc. (Scheme: KR)",
+    "vendor": "Symantec Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "UbimInfo Co., Ltd. (Scheme: KR)",
+    "vendor": "Vectra AI Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Cohesity Inc. (Scheme: MY)",
+    "vendor": "TR7 Siber Savunma Anonim Sirketi",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Ziperase (Scheme: AU)",
+    "vendor": "NOKIA NETWORKS FRANCE",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "KLC Group LLC (Scheme: CA)",
+    "vendor": "STMicroelectronics S.r.l",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Oracle Corporation (Scheme: SE)",
+    "vendor": "Megahunt Technologies inc",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "SINSIWAY Co., LTD. (Scheme: KR)",
+    "vendor": "HumanCard Technology Sdn Bhd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Symantec Corporation (Scheme: MY)",
+    "vendor": "IDEMIA Germany GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Vectra AI Inc. (Scheme: SE)",
+    "vendor": "IDEMIA Smart Identity",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "TR7 Siber Savunma Anonim Sirketi (Scheme: TR)",
+    "vendor": "TOPPAN Security S.r.l.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "NOKIA NETWORKS FRANCE (Scheme: FR)",
+    "vendor": "Winbond Electonics Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "IN SMART IDENTITY FRANCE (Scheme: NL)",
+    "vendor": "STMicroelectronics S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "ID QUANTIQUE SA (Scheme: FR)",
+    "vendor": "NXP Semiconductors Germany GmbH, Business Unit Security and Connectivity",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Shenzhen Goodix Technology Co., Ltd. (Scheme: ES)",
+    "vendor": "Beijing SmartChip Microelectronics  Technology Company Limited",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "STMicroelectronics S.r.l (Scheme: NL)",
+    "vendor": "AKD d.o.o.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Megahunt Technologies inc (Scheme: NL)",
+    "vendor": "A.E.T. Europe B.V.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "HumanCard Technology Sdn Bhd (Scheme: MY)",
+    "vendor": "STMicroelectronics S.r.l et STMicroelectronics",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "IDEMIA Germany GmbH (Scheme: DE)",
+    "vendor": "GDV Dienstleistungs-GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "IDEMIA Smart Identity (Scheme: NL)",
+    "vendor": "Samsung SDS Co., Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "THALES DIS FRANCE SA (Scheme: NL)",
+    "vendor": "Motorola Mobility LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "TOPPAN Security S.r.l. (Scheme: NL)",
+    "vendor": "Pepperl+Fuchs SE",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Winbond Electonics Corporation (Scheme: ES)",
+    "vendor": "ALE USA Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "STMicroelectronics S.A. (Scheme: NL)",
+    "vendor": "genua GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "NXP Semiconductors Germany GmbH, Business Unit Security and Connectivity (Scheme: NL)",
+    "vendor": "m-privacy GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Beijing SmartChip Microelectronics  Technology Company Limited (Scheme: NL)",
+    "vendor": "Tutus Data AB",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "AKD d.o.o. (Scheme: NL)",
+    "vendor": "Thinklogical LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "A.E.T. Europe B.V. (Scheme: NL)",
+    "vendor": "MontaVista Software, LLC.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "STMicroelectronics S.r.l et STMicroelectronics (Scheme: NL)",
+    "vendor": "New H3C Technologies Co Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Motorola Solutions, Inc. (Scheme: US)",
+    "vendor": "sayTEC AG",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "GDV Dienstleistungs-GmbH (Scheme: DE)",
+    "vendor": "RedSeal, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Samsung SDS Co., Ltd. (Scheme: US)",
+    "vendor": "Brocade Communications Systems LLC A Broadcom Inc. Company",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "BlackBerry Ltd. (Scheme: DE)",
+    "vendor": "Rohde &amp; Schwarz Topex S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Motorola Mobility LLC (Scheme: US)",
+    "vendor": "Berryville Holdings LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Pepperl+Fuchs SE (Scheme: MY)",
+    "vendor": "Endace Measurement Systems Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Microsoft Corporation (Scheme: US)",
+    "vendor": "CAE Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Extreme Networks, Inc. (Scheme: US)",
+    "vendor": "Klas",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "ALE USA Inc (Scheme: US)",
+    "vendor": "QuintessenceLabs Pty Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "genua GmbH (Scheme: DE)",
+    "vendor": "macmon secure GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "m-privacy GmbH (Scheme: DE)",
+    "vendor": "NIKSUN, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Tutus Data AB (Scheme: SE)",
+    "vendor": "Persistent Systems LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Thinklogical LLC (Scheme: NL)",
+    "vendor": "Array Networks, Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "MontaVista Software, LLC. (Scheme: SE)",
+    "vendor": "Market Central, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Nokia Corporation (Scheme: CA)",
+    "vendor": "H3C Technologies Co. Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "New H3C Technologies Co Ltd (Scheme: NL)",
+    "vendor": "Huawei Technologies Espa\u00f1a, SL",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "sayTEC AG (Scheme: TR)",
+    "vendor": "KATIM L.L.C.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "RedSeal, Inc. (Scheme: US)",
+    "vendor": "Cogito Group",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "New H3C technologies Co.,Ltd. (Scheme: NL)",
+    "vendor": "Infosys Gateway Sdn Bhd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Brocade Communications Systems LLC A Broadcom Inc. Company (Scheme: DE)",
+    "vendor": "Northrop Grumman Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Nokia Corporation (Scheme: US)",
+    "vendor": "GMV SOLUCIONES GLOBALES INTERNET, S.A.U.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Rohde &amp; Schwarz Topex S.A. (Scheme: DE)",
+    "vendor": "ESET spol. s r.o.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Berryville Holdings LLC (Scheme: US)",
+    "vendor": "SUSE Software Solutions Germany GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Endace Measurement Systems Ltd (Scheme: AU)",
+    "vendor": "NVIDIA Corporation",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "CAE Inc. (Scheme: US)",
+    "vendor": "Holley Technology Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Klas (Scheme: US)",
+    "vendor": "Saab Danmark AS",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "QuintessenceLabs Pty Ltd. (Scheme: US)",
+    "vendor": "Keyfactor",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "macmon secure GmbH (Scheme: DE)",
+    "vendor": "Rheinmetall Barzan Advanced Technologies QSTP-LLC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "NIKSUN, Inc. (Scheme: US)",
+    "vendor": "Bastille Networks",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Persistent Systems LLC (Scheme: US)",
+    "vendor": "Belgian Mobile ID NV",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Hewlett Packard Enterprise (Scheme: AU)",
+    "vendor": "Fibernet Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Array Networks, Inc (Scheme: IN)",
+    "vendor": "Ningbo Sanxing Smart Electric Co.,Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Market Central, Inc. (Scheme: CA)",
+    "vendor": "eSTORM",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Corelight, Inc. (Scheme: US)",
+    "vendor": "c-trace GmbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Infinera Corporation (Scheme: US)",
+    "vendor": "MilDef",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "H3C Technologies Co. Ltd. (Scheme: ES)",
+    "vendor": "Hangzhou Hikvision Digital Technology Co.,Ltd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Crestron Electronics, Inc. (Scheme: US)",
+    "vendor": "Wasion Group Limited",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Huawei Technologies Espa\u00f1a, SL (Scheme: ES)",
+    "vendor": "Defendable Technologies",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Microsoft Corporation (Scheme: ES)",
+    "vendor": "Tomato System",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "KATIM L.L.C. (Scheme: ES)",
+    "vendor": "Tenable, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Huawei Technologies Co., Ltd. (Scheme: ES)",
+    "vendor": "WEY Group AG / WEYTEC",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Cogito Group (Scheme: AU)",
+    "vendor": "CB ELECTRONICS Sp. z o.o.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Infosys Gateway Sdn Bhd (Scheme: MY)",
+    "vendor": "Illumio",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Samsung Electronics Co., Ltd. (Scheme: KR)",
+    "vendor": "HCL Technologies Limited",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Northrop Grumman Corporation (Scheme: AU)",
+    "vendor": "GRUPO SALLEN TECH SLU",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "GMV SOLUCIONES GLOBALES INTERNET, S.A.U. (Scheme: ES)",
+    "vendor": "Netin Systems S.L.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "ESET spol. s r.o. (Scheme: ES)",
+    "vendor": "SOFFID IAM, S.L.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "SUSE Software Solutions Germany GmbH (Scheme: DE)",
+    "vendor": "Advanced Product Design Sdn. Bhd.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Guntermann & Drunck GmbH (Scheme: IT)",
+    "vendor": "SailPoint Technologies, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Nutanix, Inc. (Scheme: IT)",
+    "vendor": "MOBA Mobile Automation AG",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Red Hat, Inc. (Scheme: IT)",
+    "vendor": "L3Harris",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "NVIDIA Corporation (Scheme: NL)",
+    "vendor": "Swissbit AG",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Holley Technology Ltd. (Scheme: IT)",
+    "vendor": "GT German Telematics Gesellschaft f\u00fcr Telematikdienste mbH",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Saab Danmark AS (Scheme: NO)",
+    "vendor": "Cytomate Solutions & Services",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "IBM Corporation (Scheme: DE)",
+    "vendor": "Veritas Technologies",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Keyfactor (Scheme: US)",
+    "vendor": "Venafi, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Beijing TsingTeng MicroSystem Co.,Ltd. (Scheme: ES)",
+    "vendor": "Axway",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Rheinmetall Barzan Advanced Technologies QSTP-LLC (Scheme: QA)",
+    "vendor": "Aventra Oy",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Bastille Networks (Scheme: US)",
+    "vendor": "Marvell Semiconductor, Inc",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Belgian Mobile ID NV (Scheme: NL)",
+    "vendor": "Nextsense Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Fibernet Ltd. (Scheme: NL)",
+    "vendor": "KRYPTUS Seguran\u00e7a da Informa\u00e7\u00e3o S.A.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Ningbo Sanxing Smart Electric Co.,Ltd. (Scheme: IT)",
+    "vendor": "Cryptomathic A&#x2f;S",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "eSTORM (Scheme: KR)",
+    "vendor": "Entrust, Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Pure Storage, Inc. (Scheme: SE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "c-trace GmbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "MilDef (Scheme: SE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "New H3C technologies Co.,Ltd. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Hangzhou Hikvision Digital Technology Co.,Ltd. (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Wasion Group Limited (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Defendable Technologies (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Tomato System (Scheme: KR)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "IBM Corporation (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Check Point Software Technologies Ltd. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Tenable, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "WEY Group AG / WEYTEC (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "CB ELECTRONICS Sp. z o.o. (Scheme: PL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Illumio (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "HCL Technologies Limited (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "GRUPO SALLEN TECH SLU (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Netin Systems S.L. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "SOFFID IAM, S.L. (Scheme: ES)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Novachips Co., Ltd. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Check Point Software Technologies Ltd. (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Advanced Product Design Sdn. Bhd. (Scheme: MY)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "SailPoint Technologies, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "MOBA Mobile Automation AG (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Kaytus Systems PTE. Ltd. (Scheme: CA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "L3Harris (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Swissbit AG (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "GT German Telematics Gesellschaft f\u00fcr Telematikdienste mbH (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Cytomate Solutions & Services (Scheme: QA)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Veritas Technologies (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Venafi, Inc. (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Axway (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "KLC Group LLC (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Aventra Oy (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Marvell Semiconductor, Inc (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Thales (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Nextsense Ltd (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "KRYPTUS Seguran\u00e7a da Informa\u00e7\u00e3o S.A. (Scheme: IT)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Cryptomathic A&#x2f;S (Scheme: NL)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Entrust, Inc. (Scheme: SG)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "NSING TECHNOLOGIES PTE. LTD. (Scheme: FR)",
+    "vendor": "NSING TECHNOLOGIES PTE. LTD.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
@@ -3360,13 +2828,6 @@
     "total": 2
   },
   {
-    "vendor": "Trend Micro Inc.",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
     "vendor": "IBM(R) Corporation",
     "fips": 2,
     "acvp": 0,
@@ -3549,13 +3010,6 @@
     "total": 2
   },
   {
-    "vendor": "Infinera Corporation",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
     "vendor": "Barracuda Networks",
     "fips": 2,
     "acvp": 0,
@@ -3612,13 +3066,6 @@
     "total": 2
   },
   {
-    "vendor": "General Dynamics Mission Systems",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
     "vendor": "cPacket Networks, Inc.",
     "fips": 2,
     "acvp": 0,
@@ -3627,13 +3074,6 @@
   },
   {
     "vendor": "WISeKey Semiconductors",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
-    "vendor": "Check Point Software Technologies Ltd.",
     "fips": 2,
     "acvp": 0,
     "cc": 0,
@@ -3689,13 +3129,6 @@
     "total": 2
   },
   {
-    "vendor": "NXP Semiconductors",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
     "vendor": "Fortanix, Inc.",
     "fips": 1,
     "acvp": 1,
@@ -3704,13 +3137,6 @@
   },
   {
     "vendor": "Futurex",
-    "fips": 2,
-    "acvp": 0,
-    "cc": 0,
-    "total": 2
-  },
-  {
-    "vendor": "Crestron Electronics, Inc.",
     "fips": 2,
     "acvp": 0,
     "cc": 0,
@@ -3752,56 +3178,35 @@
     "total": 2
   },
   {
-    "vendor": "Invicta Internet Veri Iletisimi Chip Teknolojileri Ar-Ge ve Bilgi Guvenligi San. ve Tic. Ltd. Sti. (Scheme: TR)",
+    "vendor": "Invicta Internet Veri Iletisimi Chip Teknolojileri Ar-Ge ve Bilgi Guvenligi San. ve Tic. Ltd. Sti.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Crunchy Data Solutions Inc. (Scheme: CA)",
+    "vendor": "Crunchy Data Solutions Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "General Dynamics Mission Systems (Scheme: US)",
+    "vendor": "Centre For Development of Telematics (C-DOT)",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "NetApp, Inc. (Scheme: CA)",
+    "vendor": "Adva Network Security Gmbh Hermann-Dorner-Allee 9112489 Berlin, Germany",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
     "total": 2
   },
   {
-    "vendor": "Centre For Development of Telematics (C-DOT) (Scheme: IN)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Adva Network Security Gmbh Hermann-Dorner-Allee 9112489 Berlin, Germany (Scheme: IN)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Broadcom (Scheme: DE)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 2,
-    "total": 2
-  },
-  {
-    "vendor": "Advanced Design Technology (ADT) (Scheme: AU)",
+    "vendor": "Advanced Design Technology (ADT)",
     "fips": 0,
     "acvp": 0,
     "cc": 2,
@@ -3948,13 +3353,6 @@
     "total": 1
   },
   {
-    "vendor": "Novachips Co., Ltd.",
-    "fips": 0,
-    "acvp": 1,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Open Security Research Inc.",
     "fips": 0,
     "acvp": 1,
@@ -4057,13 +3455,6 @@
     "fips": 0,
     "acvp": 1,
     "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "ID QUANTIQUE SA",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
     "total": 1
   },
   {
@@ -4284,35 +3675,28 @@
     "total": 1
   },
   {
-    "vendor": "INITECH (Scheme: KR)",
+    "vendor": "INITECH",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
     "total": 1
   },
   {
-    "vendor": "Rubrik Inc. (Scheme: AU)",
+    "vendor": "Rubrik Inc.",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
     "total": 1
   },
   {
-    "vendor": "Shenzhen Goodix Technology Co., Ltd. (Scheme: NL)",
+    "vendor": "Korea Information Security System Co., Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
     "total": 1
   },
   {
-    "vendor": "Korea Information Security System Co., Ltd (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
-    "vendor": "Agiletech Systems (M) Sdn. Bhd. (Scheme: MY)",
+    "vendor": "Agiletech Systems (M) Sdn. Bhd.",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
@@ -4348,13 +3732,6 @@
   },
   {
     "vendor": "EZ Data Shield Sdn Bhd",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Google LLC",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -4487,13 +3864,6 @@
     "total": 1
   },
   {
-    "vendor": "OPSWAT, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Koninklijke Philips N.V.",
     "fips": 1,
     "acvp": 0,
@@ -4558,13 +3928,6 @@
   },
   {
     "vendor": "Kloudfuse Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Corelight, Inc.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -4718,13 +4081,6 @@
     "total": 1
   },
   {
-    "vendor": "Giesecke+Devrient ePayments GmbH",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "ICU Medical",
     "fips": 1,
     "acvp": 0,
@@ -4823,21 +4179,7 @@
     "total": 1
   },
   {
-    "vendor": "KYOCERA Document Solutions Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Skydio, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Guntermann & Drunck GmbH",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -4852,13 +4194,6 @@
   },
   {
     "vendor": "Cambium Networks Ltd.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Information Security Corporation",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -4956,13 +4291,6 @@
     "total": 1
   },
   {
-    "vendor": "Ampex Data Systems Corporation",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "Silvus Technologies, Inc.",
     "fips": 1,
     "acvp": 0,
@@ -5013,13 +4341,6 @@
   },
   {
     "vendor": "Quadient Technologies",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "FUJIFILM Business Innovation Corp.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -5195,13 +4516,6 @@
   },
   {
     "vendor": "Masimo Corporation",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Canon Inc.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -5614,13 +4928,6 @@
     "total": 1
   },
   {
-    "vendor": "Extreme Networks, Inc.",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
     "vendor": "NextFlex",
     "fips": 1,
     "acvp": 0,
@@ -5650,13 +4957,6 @@
   },
   {
     "vendor": "Marvell",
-    "fips": 1,
-    "acvp": 0,
-    "cc": 0,
-    "total": 1
-  },
-  {
-    "vendor": "Huawei Technologies Co., Ltd.",
     "fips": 1,
     "acvp": 0,
     "cc": 0,
@@ -6139,28 +5439,21 @@
     "total": 1
   },
   {
-    "vendor": "Duruan Co., Ltd (Scheme: KR)",
+    "vendor": "Duruan Co., Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
     "total": 1
   },
   {
-    "vendor": "Broadcom Inc. (Scheme: CA)",
+    "vendor": "CACI idt",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
     "total": 1
   },
   {
-    "vendor": "CACI idt (Scheme: US)",
-    "fips": 0,
-    "acvp": 0,
-    "cc": 1,
-    "total": 1
-  },
-  {
-    "vendor": "Progress Software Technologies Ltd (Scheme: US)",
+    "vendor": "Progress Software Technologies Ltd",
     "fips": 0,
     "acvp": 0,
     "cc": 1,
