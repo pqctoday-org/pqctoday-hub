@@ -1,10 +1,6 @@
 [
   {
-    "ref_id": "CA-B-Forum-Ballot-SMC013",
-    "reason": "no requirements key; got []"
-  },
-  {
-    "ref_id": "PKCS11-V32-OS-OASIS",
+    "ref_id": "NIST-SP-800-63-3",
     "reason": "no requirements key; got []"
   }
 ]
