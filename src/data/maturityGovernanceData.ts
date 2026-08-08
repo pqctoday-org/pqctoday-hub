@@ -25,9 +25,15 @@
  * build error, no failing test. Every CSWP.39 surface (compliance drawer +
  * tiles, library popover, agility explorer) degraded for 12 days.
  *
- * So we deliberately glob BOTH directories, and the tests in maturityModel.test.ts
- * assert a floor on corpus size to catch any repeat. Do not "tidy" the archive
- * glob away.
+ * So we deliberately glob BOTH directories. Two guards catch a repeat, and
+ * neither is in maturityModel.test.ts — that file tests deriveMaturity() and
+ * imports nothing from this loader (an earlier version of this comment pointed
+ * there, which sent readers looking for a floor test that does not exist):
+ *   - complianceData.test.ts asserts the corpus floors (maturityByRefId.size
+ *     and maturityRequirements.length) against this loader's real output.
+ *   - scripts/audit-merge-all-coverage.ts re-derives the globs below and fails
+ *     if any on-disk file is unreachable by them. It runs in CI.
+ * Do not "tidy" the archive glob away.
  */
 import Papa from 'papaparse'
 import type { MaturityRequirement, MaturityCategory } from '@/types/MaturityTypes'
