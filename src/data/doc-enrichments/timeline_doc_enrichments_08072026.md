@@ -110,7 +110,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Cryptography Bill of Materials (CBOM); assessment of crypto agility
-- **Relevant PQC Today Features**: Threats; Assess; Governance; Migration Program; PQC Risk Management
+- **Relevant PQC Today Features**: Threats; Assess; pqc-governance; migration-program; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptography Bill of Materials (CBOM); cryptographic inventory
 - **Testing & Validation Methods**: None detected
@@ -178,7 +178,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Policy Maker
 - **Implementation Prerequisites**: OpenSSL 3+; Nginx Web Server; Java JDK; BouncyCastle PQC
-- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Assess; OpenSSL Studio
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; Assess; OpenSSL
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: System survey and assessment
 - **Testing & Validation Methods**: None detected
@@ -7246,7 +7246,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: Ultra fast delivers high-performance PQC optimizing key encapsulations per second; Ultra small targets memory-constrained devices and is the smallest implementation of PQC on the market.
 - **Target Audience**: Researcher; Security Architect
 - **Implementation Prerequisites**: ASIC or FPGA hardware; compliance with CNSA 2.0 and NIST standards; FIPS 140-3 certified modules; update to Secure Boot and Secure Update mechanisms
-- **Relevant PQC Today Features**: vpn-ssh-pqc; pqc-candidates; research
+- **Relevant PQC Today Features**: vpn-ssh-pqc; pqc-candidates
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification
@@ -8302,7 +8302,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: upgrades PKI/HSM/KMS/libraries to PQC
-- **Relevant PQC Today Features**: Timeline; Migration; Compliance; qkd
+- **Relevant PQC Today Features**: Timeline; Migrate; Compliance; qkd
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17806,7 +17806,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Operations
 - **Implementation Prerequisites**: OpenSSL Library 3.6.1; OpenSSL Library 3.5.5; OpenSSL Library 3.4.4; OpenSSL Library 3.3.6; OpenSSL Library 3.0.19; OpenSSL Library 1.1.1ze; OpenSSL Library 1.0.2zn
-- **Relevant PQC Today Features**: OpenSSL Studio; migration-program; vendor-risk
+- **Relevant PQC Today Features**: OpenSSL; migration-program; vendor-risk
 - **Implementation Attack Surface**: Stack buffer overflow; NULL dereference; Heap out-of-bounds write; Out of bounds write; Type Confusion; Excessive memory allocation
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
