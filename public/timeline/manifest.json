@@ -1994,6 +1994,42 @@
       "sizeBytes": 836564,
       "contentType": "text/html; charset=UTF-8",
       "sha256": "14b1c4cfe3ed85f3825e75272cc151ca5647761212b8ce9927809f2a4556d038"
+    },
+    {
+      "label": "Australia:APRA \u2014 System Risk Outlook Flags Quantum Computing Risk",
+      "url": "https://www.apra.gov.au/apras-system-risk-outlook-may-2026",
+      "status": "downloaded",
+      "file": "timeline/Australia_APRA_System_Risk_Outlook_May_2026.html",
+      "sizeBytes": 1047081,
+      "contentType": "text/html",
+      "sha256": "589fba20503c9f2b2356a3f338e120a65d80cbb1423b3c37195f267c73a14ada"
+    },
+    {
+      "label": "France:AMF \u2014 AMF Sets 2026 Priorities, Names Quantum Computing in Cyber Inspections",
+      "url": "https://www.amf-france.org/en/news-publications/news-releases/amf-news-releases/amf-sets-its-priorities-2026-deeper-safer-and-more-resilient-financial-markets-open-innovation",
+      "status": "downloaded",
+      "file": "timeline/France_AMF_AMF_2026_Priorities_Name_Quantum-Computing_Risk_in_Cyber_Supervision.html",
+      "sizeBytes": 73026,
+      "contentType": "text/html",
+      "sha256": "6cad2269b686279efba7f92545315fe05625a6cf80e8fa2a1a3ef8e32e638729"
+    },
+    {
+      "label": "Brazil:BACEN \u2014 LIFT Papers Post-Quantum Cryptography Feasibility Study for Pix",
+      "url": "https://www.fenasbac.com.br/documentos/criptografia-pos-quantica-pt.pdf",
+      "status": "downloaded",
+      "file": "timeline/Brazil_BACEN_LIFT_PQC_Pix_Feasibility_Study.pdf",
+      "sizeBytes": 910778,
+      "contentType": "application/pdf",
+      "sha256": "5a6f6baaf10c0abb5cbd48e70904ccd2de9f91be2ab9bced21e3b0fb2a1f287a"
+    },
+    {
+      "label": "Uruguay:AGESIC \u2014 National Cybersecurity Strategy 2024-2030 Commits to Quantum-Resistant PKI",
+      "url": "https://www.gub.uy/agencia-gobierno-electronico-sociedad-informacion-conocimiento/book/8671/download",
+      "status": "downloaded",
+      "file": "timeline/Uruguay_AGESIC_Estrategia_Nacional_Ciberseguridad_2024-2030.pdf",
+      "sizeBytes": 5388246,
+      "contentType": "application/pdf",
+      "sha256": "6ef23d27ac57eae323703351c66ed1bc0061e69d6a0395f03b210fbebb32a68f"
     }
   ]
 }
