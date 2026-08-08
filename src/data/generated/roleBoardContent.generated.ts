@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_08022026.csv
+ * Source: src/data/role_board_content_08072026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -307,7 +307,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PKI workshop',
           'Crypto dev APIs',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Pilot-Ready' },
       },
     },
     {
@@ -379,7 +379,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PKI workshop',
           'Crypto dev APIs',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Pilot-Ready' },
       },
     },
     {
@@ -451,7 +451,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'PKI workshop',
           'Crypto dev APIs',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Pilot-Ready' },
       },
     },
   ],
@@ -527,7 +527,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSM',
           'PKI workshop',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Agility-Ready' },
       },
     },
     {
@@ -603,7 +603,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSM',
           'PKI workshop',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Agility-Ready' },
       },
     },
     {
@@ -679,7 +679,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'HSM',
           'PKI workshop',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Agility-Ready' },
       },
     },
   ],
@@ -760,7 +760,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'KMS',
           'HSM',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Cutover-Ready' },
       },
     },
     {
@@ -836,7 +836,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'KMS',
           'HSM',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Cutover-Ready' },
       },
     },
     {
@@ -912,7 +912,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'KMS',
           'HSM',
         ],
-        capstoneChip: { label: 'capstone' },
+        capstoneChip: { label: 'Cutover-Ready' },
       },
     },
   ],
