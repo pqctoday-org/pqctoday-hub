@@ -142,7 +142,13 @@ class OpenSSLService {
       case 'DONE':
         this.pendingRequests.delete(requestId)
         if (request.result.error) {
-          request.reject(new Error(request.result.error))
+          // request.result.error is the generic "OpenSSL exited with status N" —
+          // the actual reason (e.g. "Problem with index file: ...") only ever
+          // reached request.result.stderr via printErr. Append it so callers and
+          // the UI see why the command failed, not just that it failed.
+          const detail = request.result.stderr.trim()
+          const message = detail ? `${request.result.error}: ${detail}` : request.result.error
+          request.reject(new Error(message))
         } else {
           request.resolve(request.result)
         }

@@ -67,9 +67,17 @@ export const CRLGenerator: React.FC<CRLGeneratorProps> = ({ onComplete }) => {
     (c) => c.tags.includes('root') && c.tags.includes('ca')
   )
   const rootKeys = artifacts.keys.filter((k) => k.description === 'Root CA Private Key')
-  // End-entity certs that can be revoked
+  // End-entity certs that can be revoked. Excludes root/ca certs AND their
+  // 'openssl-studio' mirror — useOpenSSLStore.addFile() (OpenSSLStudio/store.ts)
+  // silently re-adds every generated cert a second time under a distinct
+  // "openssl::<filename>" id, tagged only 'openssl-studio', for the achievement
+  // system. Without this exclusion that mirror slips past the root/ca check
+  // (it carries neither tag) and shows up as a same-named, empty-metadata
+  // duplicate of the real cert — or, for the CA's own mirror, as the CA itself
+  // wrongly offered up for revocation.
   const endEntityCerts = artifacts.certificates.filter(
-    (c) => !(c.tags?.includes('root') && c.tags?.includes('ca'))
+    (c) =>
+      !(c.tags?.includes('root') && c.tags?.includes('ca')) && !c.tags?.includes('openssl-studio')
   )
 
   const handleAddToRevocationList = async () => {
@@ -169,8 +177,11 @@ export const CRLGenerator: React.FC<CRLGeneratorProps> = ({ onComplete }) => {
           )
         }
       } else {
-        // S5-C: empty index.txt — add a newline so OpenSSL doesn't fail on empty file
-        indexContent = '\n'
+        // A genuinely empty (0-byte) index.txt parses fine — OpenSSL's TXT_DB loader
+        // splits each line into 6 tab-delimited fields, so a blank line here (zero
+        // fields) instead fails the whole load with "Problem with index file:
+        // index.txt (could not load/parse file)".
+        indexContent = ''
         setOutput(
           (prev) =>
             prev +
