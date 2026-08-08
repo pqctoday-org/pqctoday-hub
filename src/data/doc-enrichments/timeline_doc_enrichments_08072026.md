@@ -172,8 +172,8 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: No
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: TLS-1.3
-- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Nginx Web Server ... support PQC TLS Handshake"
+- **PQC Heatmap Protocols Covered**: TLS
+- **PQC Heatmap Protocols Evidence**: TLS: "Nginx Web Server ... support PQC TLS Handshake" (corrected 2026-08-08: the source's "1.3" version number comes from an unrelated interactive-lab illustrative YAML sample, `tls_config: version: "1.3"`, not from the roadmap's own substantive content — no specific TLS version is claimed anywhere in the actual roadmap text)
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Policy Maker
