@@ -1,10 +1,6 @@
 [
   {
-    "ref_id": "ASC-X9-PQC-Readiness-2025",
-    "reason": "no requirements key; got []"
-  },
-  {
-    "ref_id": "PSD2-Directive-EU-2015-2366",
-    "reason": "no requirements key; got []"
+    "ref_id": "DFARS-252.204-7019",
+    "reason": "Probable landing page, not the document (113,145 bytes of markup, only 7,401 chars of text). Re-fetch the linked document before treating this as covered."
   }
 ]

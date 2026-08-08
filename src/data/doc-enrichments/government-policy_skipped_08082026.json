@@ -1,6 +1,14 @@
 [
   {
-    "ref_id": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
+    "ref_id": "G7-Financial-PQC-Roadmap-2026",
+    "reason": "Probable landing page, not the document (109,912 bytes of markup, only 2,916 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "UK-DSIT-CNI-PQC-Perspectives-2025",
+    "reason": "Probable landing page, not the document (73,284 bytes of markup, only 3,676 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "AUSTRAC-AML-CTF-Act",
     "reason": "no requirements key; got []"
   }
 ]
