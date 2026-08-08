@@ -561,7 +561,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Essential Eight, Protective Security Policy Framework (PSPF), Public Governance, Performance and Accountability Act 2013
+- **Compliance Frameworks Referenced**: Essential Eight; Protective Security Policy Framework (PSPF); Public Governance, Performance and Accountability Act 2013
 - **Classical Algorithms Referenced**: None detected
 - **Key Takeaways**: Entities should start preparing for Post Quantum Cryptography by locating and assessing algorithms that will need to transition; Organizations should continue to implement Essential Eight mitigation strategies to at least Maturity Level 2; Entities should prioritize effective logging to identify malicious activity; Supply chain risk assessments should be a core output for new IT procurements
 - **Security Levels & Parameters**: None detected
@@ -1476,7 +1476,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1542,7 +1542,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1608,7 +1608,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1674,7 +1674,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1740,7 +1740,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1806,7 +1806,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -1938,7 +1938,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
-- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (per ITSP.40.111 recommendations for UNCLASSIFIED, PROTECTED A, PROTECTED B information)
 - **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
 - **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
@@ -4050,7 +4050,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Contenu Menu république française Rechercher Menu ANSSI Agence nationale de la sécurité des systèmes d'information Fermer Rechercher Rechercher Fermer Nous connaître L'Agence Écosystème Publications Sécurisation 10 règles d’or en matière de sécurité
-- **PQC Algorithms Covered**: cryptographie post-quantique à base de réseaux euclidiens
+- **PQC Algorithms Covered**: Lattice-based algorithms
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025, 2027
 - **Applicable Regions / Bodies**: Regions: France, Bodies: ANSSI
@@ -4116,7 +4116,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: ANSSI issued France's first two security certifications for products integrating lattice-based post-quantum cryptography algorithms.
-- **PQC Algorithms Covered**: Lattice-based algorithms (cryptographie post-quantique à base de réseaux euclidiens)
+- **PQC Algorithms Covered**: Lattice-based algorithms
 - **Quantum Threats Addressed**: Quantum computer threat (menace quantique; ordinateur quantique)
 - **Migration Timeline Info**: 2027: PQC integration obligation for certain product typologies during qualification entry
 - **Applicable Regions / Bodies**: Regions: France; Bodies: ANSSI, CEA-Leti, CCN
@@ -4191,7 +4191,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: IPsec
 - **Infrastructure Layers**: PKI/IGC, systèmes d'information vitale (SIIV), systèmes embarqués
 - **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: Référentiel général de sécurité, dispositif SAIV, Visas de sécurité ANSSI
+- **Compliance Frameworks Referenced**: Référentiel général de sécurité; dispositif SAIV; Visas de sécurité ANSSI
 - **Classical Algorithms Referenced**: None detected
 - **Key Takeaways**: Organizations must start a cryptographic inventory immediately to identify critical data and usage cases; Hybridation is essential for short and medium term except for hash-based signatures; It will be unreasonable to purchase products without PQC after 2030; ANSSI aims to implement PQC obligations for product qualification starting in 2027.
 - **Security Levels & Parameters**: IND-CCA2
@@ -4323,7 +4323,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: IPsec
 - **Infrastructure Layers**: PKI/IGC, systèmes d'information vitale (SIIV), systèmes embarqués
 - **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: Référentiel général de sécurité, dispositif SAIV, Visas de sécurité ANSSI
+- **Compliance Frameworks Referenced**: Référentiel général de sécurité; dispositif SAIV; Visas de sécurité ANSSI
 - **Classical Algorithms Referenced**: None detected
 - **Key Takeaways**: Organizations must start a cryptographic inventory immediately to identify critical data and usage cases; Hybridation is essential for short and medium term except for hash-based signatures; It will be unreasonable to purchase products without PQC after 2030; ANSSI aims to implement PQC obligations for product qualification starting in 2027.
 - **Security Levels & Parameters**: IND-CCA2
@@ -4389,7 +4389,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: IPsec
 - **Infrastructure Layers**: PKI, Cloud
 - **Standardization Bodies**: NIST, ANSSI
-- **Compliance Frameworks Referenced**: Référentiel général de sécurité, dispositif SAIV, Visas de sécurité ANSSI
+- **Compliance Frameworks Referenced**: Référentiel général de sécurité; dispositif SAIV; Visas de sécurité ANSSI
 - **Classical Algorithms Referenced**: None detected
 - **Key Takeaways**: Organizations must start a cryptographic inventory immediately to identify critical data and usage cases; Hybridation is essential for short and medium term except for hash-based signatures; It will be unreasonable to purchase products without PQC after 2030; ANSSI aims to implement PQC obligations for product qualification starting in 2027.
 - **Security Levels & Parameters**: IND-CCA2
@@ -4578,7 +4578,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: ANSSI announces the first PQC security certifications in France and mandates PQC integration for cryptographic solutions entering qualification starting in 2027.
-- **PQC Algorithms Covered**: cryptographie post-quantique à base de réseaux euclidiens
+- **PQC Algorithms Covered**: Lattice-based algorithms
 - **Quantum Threats Addressed**: menace quantique; ordinateur quantique
 - **Migration Timeline Info**: Starting 2027: PQC integration mandatory for cryptographic solutions entering ANSSI qualification process for certain product types.
 - **Applicable Regions / Bodies**: Regions: France; Bodies: ANSSI, CEA-Leti, CCN, CESTI
@@ -5973,7 +5973,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Protocols Covered**: TLS, S/MIME, DNSSEC, ACME
 - **Infrastructure Layers**: Code Signing, DNSSEC, Email
 - **Standardization Bodies**: NIST, CA/Browser Forum
-- **Compliance Frameworks Referenced**: Baseline Requirements for the Issuance and Management of Publicly-Trusted S/MIME Certificates (S/MIME BR v1.0.11), CA/Browser Forum Intellectual Property Rights Policy (v1.3)
+- **Compliance Frameworks Referenced**: Baseline Requirements for the Issuance and Management of Publicly-Trusted S/MIME Certificates (S/MIME BR v1.0.11); CA/Browser Forum Intellectual Property Rights Policy (v1.3)
 - **Classical Algorithms Referenced**: SHA-1
 - **Key Takeaways**: Ballot SMC013 enables single-key/non-hybrid PQC certificates for S/MIME; The ballot specifies ML-DSA and ML-KEM algorithms standardized by NIST; Adoption requires two-thirds of Certificate Issuer votes and 50% plus one of Certificate Consumer votes; Additional requirements on PQC use may be imposed by Root programs
 - **Security Levels & Parameters**: None detected
@@ -6096,7 +6096,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Ethereum Foundation's roadmap and technical approach for migrating Ethereum's cryptographic primitives to post-quantum secure alternatives by 2029.
-- **PQC Algorithms Covered**: leanXMSS, STARKs, Lattice-based commitments, ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: leanXMSS; STARKs; Lattice-based commitments; ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Shor's algorithm; Harvest now, decrypt later
 - **Migration Timeline Info**: 2026: Google internal deadline for PQC migration; 2026: Hegotá hard fork (EIP-8141); 2029: Target for full post-quantum protection on Ethereum; 2030: NIST anticipates deprecating ECDSA; 2035: NIST anticipates disallowing ECDSA
 - **Applicable Regions / Bodies**: Bodies: Ethereum Foundation, NIST, Google Quantum AI
@@ -7482,7 +7482,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Validated
 - **Main Topic**: Errata for the TCG TPM 2.0 Library Specification v1.85, providing corrections to ML-DSA, ML-KEM, and Labeled KEM command definitions.
-- **PQC Algorithms Covered**: ML-DSA; ML-KEM; Labeled KEM
+- **PQC Algorithms Covered**: ML-DSA; ML-KEM
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: 2030: NIST CNSA 2.0 firmware-signing deadline
 - **Applicable Regions / Bodies**: None detected
@@ -15336,7 +15336,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: New
 - **Main Topic**: A GSA Federal Acquisition Service guide providing federal agencies with practical guidance on acquiring and implementing Post-Quantum Cryptography products, services, and solutions to protect against quantum computer attacks.
-- **PQC Algorithms Covered**: FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: ML-DSA (FIPS 204); SLH-DSA (FIPS 205)
 - **Quantum Threats Addressed**: Cryptographically relevant quantum computers (CRQC); harvest now, decrypt later approach
 - **Migration Timeline Info**: NIST anticipates 10 to 20 years from algorithm standardization to full integration; initial CRQC-vulnerable system inventories due May 4, 2023; annual inventory and funding assessments required following initial submission
 - **Applicable Regions / Bodies**: United States; U.S. General Services Administration (GSA); National Institute of Standards and Technology (NIST); Office of the National Cybersecurity Director (ONCD); Department of Homeland Security (DHS); Cybersecurity and Infrastructure Security Agency (CISA); Office of Management and Budget (OMB)
