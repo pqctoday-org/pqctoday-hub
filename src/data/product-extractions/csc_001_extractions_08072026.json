@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "TASS Crypto Engine (LMS)",
+    "category": "Cryptographic Libraries",
+    "product_name": "TASS Crypto Engine (LMS)",
+    "product_brief": "TASS Crypto Engine Cryptographic Algorithm Implementation.",
+    "pqc_support": "Yes (LMS)",
+    "pqc_capability_description": "The implementation supports the LMS (Leighton-Micali Signature) algorithm family, specifically covering LMS KeyGen, LMS SigGen, and LMS SigVer operations. It is a FIPS-validated cryptographic algorithm implementation.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "LMS",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "H2.00.00",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (First Validated: 5/27/2025)",
+    "primary_platforms": "Intel Rocket Lake Intel Xeon E-2334",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "LMS",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (Cryptographic Algorithm Validation Program)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-07"
+    }
+  }
+]
