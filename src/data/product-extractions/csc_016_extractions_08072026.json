@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Libpqsecure-rs",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "Libpqsecure-rs",
+    "product_brief": "Rust implementation of post-quantum cryptography algorithms with no_std support.",
+    "pqc_support": "Yes (LMS, ML-DSA, ML-KEM, SLH-DSA)",
+    "pqc_capability_description": "Rust implementation of post-quantum cryptography algorithms with no_std support. Supports LMS (KeyGen, SigGen, SigVer), ML-DSA (KeyGen, SigGen, SigVer), ML-KEM (EncapDecap, KeyGen), and SLH-DSA (KeyGen, SigGen, SigVer). Validated on Raspberry Pi OS (Debian 12) in ARM Cortex-A76.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "LMS, ML-DSA, ML-KEM, SLH-DSA, SHA2-256, SHA2-384, SHA2-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "1.0",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (First Validated: 10/29/2025 via CAVP)",
+    "primary_platforms": "Raspberry Pi OS (Debian 12) in ARM Cortex-A76",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "LMS, ML-DSA, SLH-DSA",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (First Validated: 10/29/2025)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Validated on ARM Cortex-A76; supports no_std.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-07"
+    }
+  }
+]

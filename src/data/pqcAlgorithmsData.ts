@@ -92,10 +92,26 @@ interface RawAlgorithmRow {
  * enumerated by hand against `pqc_complete_algorithm_reference_07062026.csv`.
  * Reconfirm this table against the actual wired filename if it changes.
  *
- * SMAUG-T/NTRU+/HAETAE/AIMer (KpqC) are tiered 'regional' — verified via
- * PQShield's 2025 report that these four were the final KpqC competition
- * winners (announced Jan 2025) — even though this CSV's own fips_standard
- * text still says "KR-PQC Round 1", which is stale. See PR description.
+ * SMAUG-T/NTRU+/HAETAE/AIMer (KpqC) are tiered 'regional' — these four are
+ * the final KpqC competition winners, officially announced 2025-01-16 at
+ * https://www.kpqc.or.kr/competition_02.html (verified 2026-08-08, direct
+ * fetch of the official page — supersedes the earlier PQShield-sourced
+ * verification). Until 2026-08-08 this CSV's own fips_standard text still
+ * said "KR-PQC Round 1 (KPQC)", which was wrong on two counts: they are
+ * final winners, not Round 1 candidates, and Round 1 was Nov 2022, two
+ * rounds before the Jan 2025 final selection. Note these are NOT yet a
+ * published Korean national standard (KS) — the official page only
+ * confirms competition selection; a secondary source (postquantum.com)
+ * reports a KS draft expected 2026 and final ~2027, not independently
+ * re-verified against a primary source this pass.
+ *
+ * Aigis-enc/Aigis-sig were ALSO tagged "KR-PQC Round 1 (KPQC)" until
+ * 2026-08-07, but that was an outright misclassification, not staleness —
+ * they're CACR (China) 2020 competition winners with no KpqC connection at
+ * all (the CSV's own use_case_notes/vetting_body/region already said
+ * "CACR"/China; only fips_standard/status_url/trusted_source_id were
+ * wrong). See ALGORITHMS-AIGIS-CACR-MISCLASSIFICATION-REMEDIATION-PLAN-08072026.md
+ * in pqctoday-priv/maintenance/ for the full verification trail.
  */
 const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'FIPS 203|||FIPS 203': 'final',
@@ -121,7 +137,9 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Candidate|||FIPS 206 (Draft)': 'fips-draft', // FN-DSA (legacy ≤07082026 snapshots)
   'Draft|||NIST SP 800-230 (Draft)': 'sp-draft', // SLH-DSA-*-24
   'Candidate|||draft-ietf-tls-hybrid-design': 'ietf-draft', // X25519MLKEM768 etc.
-  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft',
+  'IETF Internet-Draft|||IETF Internet-Draft — DRAFT (not yet RFC)': 'ietf-draft', // pre-08072026 snapshots
+  'IETF Internet-Draft|||IETF Internet-Draft — In RFC Editor queue (not yet published, v19, 2026-04-21)':
+    'ietf-draft', // composite-sigs — passed IESG review, in RFC Editor queue, still not an RFC
   'IETF Internet-Draft (alias for HPKE with PQ KEM)|||IETF Internet-Draft — DRAFT (not yet RFC)':
     'ietf-draft', // HPKE-PQ
   'Candidate|||NIST Additional Signatures Round 2': 'round2-candidate', // MAYO, HAWK (pre-2026-07-27 snapshots)
@@ -169,8 +187,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
     'final',
   'ISO 18033-2 Amd2; Standardised (BSI TR-02102-1)|||BSI/conservative national security recs; NOT in NIST FIPS':
     'final',
-  'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — verified KpqC winners
-  'To Be Checked|||KR-PQC Round 1 (KPQC)': 'unverified', // Aigis-enc/sig
+  'Candidate|||KR-PQC Round 1 (KPQC)': 'regional', // SMAUG-T/NTRU+/HAETAE/AIMer (pre-08082026 snapshots)
+  'Candidate|||KpqC competition winner, announced 2025-01-16 — KS national standard TBD (draft expected 2026, final ~2027)':
+    'regional', // SMAUG-T/NTRU+/HAETAE/AIMer — corrected 2026-08-08, was mislabeled "Round 1"
+  'To Be Checked|||CACR 1st Prize (2020, China) — PKC 2020 (Zhang et al.); NOT an adopted national/international standard':
+    'unverified', // Aigis-enc/sig — corrected 2026-08-07 from a mistaken KpqC/Korea tag
   'CACR competition winner (2020); ELIMINATED from NIST Round 2 (not advanced); NOT an adopted national standard — do not treat as deployable|||CACR national competition winner (as LAC.KEX, ~2018-2020) — NOT an issued OSCCA/GB national standard':
     'eliminated', // LAC
   'CONFIRMED PLACEHOLDER — official ICCS program track name (Block Cipher category); no winning algorithm selected yet|||NGCC TBD — submission window open, candidates not yet selected':
@@ -185,7 +206,8 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // registering their status pair throws rather than defaulting to Certified.
   'Candidate|||draft-connolly-cfrg-xwing-kem': 'ietf-draft', // X-Wing
   'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
-  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
   // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
   // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
   // algorithm, but the tier describes the standards status of the mechanism
