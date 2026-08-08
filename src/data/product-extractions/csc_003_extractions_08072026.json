@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "PhioTX",
+    "category": "Key Management Systems (KMS)",
+    "product_name": "PhioTX",
+    "product_brief": "Key Management System",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-KEM (EncapDecap and KeyGen). Validated under NIST CAVP.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Unknown",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "4.2.1",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (NIST CAVP validated; First Validated: 11/4/2024)",
+    "primary_platforms": "Debian 11 on PhioTX-D with Intel(R) Celeron(R) CPU 3865U @ 1.80GHz",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "Unknown",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (NIST Cryptographic Algorithm Validation Program)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-07"
+    }
+  }
+]

@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Uni-sentry SecIP-PQCHSM Secure Hardware",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Uni-sentry SecIP-PQCHSM Secure Hardware",
+    "product_brief": "Hardware HSM IP integrating classical and postquantum cryptography for secure key management and highperformance cryptographic services for ECUs.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Integrates classical and postquantum cryptography. Supports ML-KEM (KeyGen, EncapDecap), ML-DSA (KeyGen, SigGen, SigVer), and SLH-DSA (KeyGen, SigGen, SigVer). Validated on Xilinx Kintex-7 XC7K325T.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-CBC, AES-CCM, AES-CFB1, AES-CFB128, AES-CFB8, AES-CMAC, AES-CTR, AES-ECB, AES-GCM, AES-GMAC, AES-OFB, AES-XTS, ECDSA, EDDSA, Hash DRBG, HMAC-SHA2-256, HMAC-SHA2-384, HMAC-SHA2-512, HMAC-SHA3-256, HMAC-SHA3-384, HMAC-SHA3-512, KDF IKEv1, KDF IKEv2, KDF KMAC Sp800-108r1, KDF SP800-108, ML-DSA, ML-KEM, RSA, SHA2-256, SHA2-384, SHA2-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256, SLH-DSA",
+    "key_management_model": "HSM-backed",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "v1.0",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (First Validated: 3/30/2026; Algorithms reference FIPS 186-4, FIPS 186-5, FIPS 202)",
+    "primary_platforms": "Xilinx Kintex-7 XC7K325T",
+    "target_industries": "Automotive (ECUs)",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, EDDSA, ML-DSA, RSA, SLH-DSA",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (Cryptographic Algorithm Validation Program)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Designed for ECUs (Electronic Control Units); implemented on Xilinx Kintex-7 FPGA.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-07"
+    }
+  }
+]

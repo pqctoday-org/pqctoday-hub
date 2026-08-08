@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Secure-IC PQC Solutions",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "Secure-IC PQC Solutions",
+    "product_brief": "Hardware-optimized PQC algorithms (ML-KEM, ML-DSA, SLH-DSA, LMS) embedded in Secure Elements and Crypto co-processors.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-KEM, ML-DSA, SLH-DSA, and LMS algorithms. Optimized for faster throughput in hardware implementations. Embedded in Secure-IC's integrated Secure Elements (Securyzr™ iSEs S100, S300, S700, S900 neo series) and Securyzr™ Crypto Solutions/Crypto co-processors. Strictly follows NIST PQC requirements.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM, ML-DSA, SLH-DSA, LMS, SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256",
+    "key_management_model": "Unknown",
+    "supported_blockchains": "Unknown",
+    "architecture_type": "Hardware (Integrated Secure Elements, Crypto co-processors)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "1.0",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (CAVP Validated; First Validated: 10/30/2024)",
+    "primary_platforms": "XC7Z020 (xc7z020clg484-1)",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Unknown",
+    "consensus_mechanism": "Unknown",
+    "signature_schemes": "ML-DSA, SLH-DSA, LMS",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "ACVP/CAVP conformance (Validated via Cryptographic Algorithm Validation Program)",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Embedded in Secure Elements (Securyzr™ iSEs) and Crypto co-processors; optimized for hardware implementations.",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-07"
+    }
+  }
+]
