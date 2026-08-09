@@ -1,125 +1,127 @@
 ---
 generated: 2026-08-09
 category: Technical Standards
-document_count: 4
-requirement_count: 82
+document_count: 1
+requirement_count: 111
 ---
 
-## ASC-X9-IR-F01-2022
-- **Source**: ASC X9 IR 01-2022 — Quantum Computing Risks to the Financial Services Industry
-- **URL**: https://x9.org/wp-content/uploads/2022/11/X9F-Quantum-Computing-Risk-Study-Group-IR-F01-2022_20221129-Published-PDF.pdf
-- **Requirement count**: 29
+## KMIP-V2-1-OASIS
+- **Source**: Key Management Interoperability Protocol (KMIP) Version 2.1
+- **URL**: https://docs.oasis-open.org/kmip/kmip-spec/v2.1/os/kmip-spec-v2.1-os.html
+- **Requirement count**: 111
 - **Assurance / FIPS**:
-    - _T2 Risk-Informed · all_: Validate the suitability of identified quantum-safe solutions, including proof-of-concept projects, as an item in the migration roadmap.
-    - _T2 Risk-Informed · all_: Assess the quantum resilience of cryptographic algorithms used to protect assets.
-    - _T2 Risk-Informed · all_: Validate the suitability of identified solutions through proof-of-concept projects as an item in the migration roadmap.
-    - _T3 Repeatable · keys_: Use random number generators certified to comply with BSI AIS.31 or NIST SP 800-90B requirements for cryptographic key generation.
+    - _T2 Risk-Informed · all_: Support attestation requirements by returning specific error codes when attestation fails or is required, enabling integration with external validation systems.
+    - _T3 Repeatable · all_: Enforce non-extraction of key material by defaulting the extractable attribute to true only if explicitly allowed, otherwise preventing retrieval to assure key confinement.
+    - _T3 Repeatable · all_: Maintain immutable server-side records of whether key material has ever been extractable to support security posture verification and compliance auditing.
+    - _T3 Repeatable · all_: Enforce attestation checks during key management operations, rejecting requests if attestation fails or is required but not provided, to ensure operational integrity.
+    - _T3 Repeatable · all_: Implement attestation checks that block cryptographic operations if the server or module fails validation requirements.
+    - _T3 Repeatable · all_: Implement attestation checks for protocol operations; servers SHALL return 'Attestation Failed' or 'Attestation Required' errors when attestation conditions are not met during operations like Destroy or Discover Versions.
+    - _T3 Repeatable · all_: Support attestation checks by returning specific error codes (Attestation Failed, Attestation Required) when operations fail due to attestation issues.
+    - _T3 Repeatable · all_: Support attestation checks during operations, failing requests with specific error codes if attestation requirements are not met or fail validation.
+    - _T3 Repeatable · all_: Query and record server-asserted formal validation details and supported attestation types to verify cryptographic module compliance.
+    - _T3 Repeatable · all_: Support attestation checks during operations to ensure cryptographic modules meet validation requirements.
+    - _T3 Repeatable · all_: Enforce attestation checks during key and certificate operations, failing requests if attestation is required but fails.
+    - _T3 Repeatable · all_: Enforce attestation checks for cryptographic operations, failing requests if attestation is required but fails or is missing.
+    - _T3 Repeatable · all_: Enable querying of client-supported attestation types and formal validation details to verify the security posture and compliance status of managed endpoints.
+    - _T3 Repeatable · all_: Record and transmit formal validation details (authority, version, type, level) for cryptographic modules to prove compliance status.
+    - _T3 Repeatable · all_: Support attestation capabilities by indicating client ability to create attestation credentials and handling failures if attestation is required but not supported.
+    - _T3 Repeatable · all_: Record and manage cryptographic module validation details, including authority type, country, URI, version, and certificate identifiers, to prove compliance status.
+    - _T3 Repeatable · keys_: Record and preserve the specific Random Number Generator details used during key creation to provide evidence of cryptographic material generation quality and compliance.
+    - _T3 Repeatable · keys_: Enforce conformance to defined server profiles for all KMIP server implementations to ensure standardized cryptographic management behavior.
+    - _T3 Repeatable · software_: Implement attestation credentials using nonces and measurements to verify the integrity of client software before granting access.
+    - _T3 Repeatable · software_: Implementers SHALL NOT use Tag Values marked as Reserved in enumerations to ensure protocol compliance and prevent undefined behavior.
+    - _T3 Repeatable · software_: KMIP Servers and Clients SHALL establish and maintain channel confidentiality and integrity, and provide assurance of authenticity for KMIP messaging.
+    - _T3 Repeatable · software_: Enforce conformance to defined client profiles for all KMIP client implementations to ensure standardized cryptographic management behavior.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Discuss quantum-safe migration plans with suppliers and partners and coordinate activities as an explicit phase in the migration roadmap.
-    - _T2 Risk-Informed · all_: Update policies, processes, and procedures to reflect changes for developers, users, and other entities affected by the migration.
-    - _T2 Risk-Informed · all_: Appoint a person or team to track quantum computing development rates and algorithmic advances to adjust the migration plan accordingly.
-    - _T2 Risk-Informed · all_: Review and update organizational policies, procedures, and guidelines to address quantum vulnerabilities.
-    - _T2 Risk-Informed · all_: Update policies to require quantum-safe protections where reasonable.
-    - _T2 Risk-Informed · all_: Review security policies to make recommended controls, such as multi-factor authentication, mandatory where appropriate.
-    - _T2 Risk-Informed · all_: Incorporate quantum-safe technology selection into the general strategy for managing cryptography.
-    - _T2 Risk-Informed · all_: Formulate and execute a documented quantum-safe migration strategy with a roadmap including milestones and timelines.
-    - _T2 Risk-Informed · all_: Engage suppliers to learn their plans for implementing quantum-safe migration strategies.
-    - _T2 Risk-Informed · all_: Include quantum computing threats in normal information security training and awareness programs.
-    - _T2 Risk-Informed · all_: Update policies, processes, and procedures to reflect migration changes for developers, users, and other entities.
+    - _T2 Risk-Informed · all_: Define server policies to restrict attribute characteristics and manage object lifecycle states, ensuring management-approved rules govern attribute retention and modification.
+    - _T2 Risk-Informed · all_: Define server policies regarding attribute retention after object destruction to ensure consistent data handling practices.
+    - _T2 Risk-Informed · all_: Optionally classify keys according to NIST SP 800-57 key types to align with standard cryptographic material definitions, ensuring immutability once set.
+    - _T2 Risk-Informed · all_: Define server policies that dictate when objects are destroyed or state transitions occur, ensuring management-approved rules govern lifecycle actions.
+    - _T2 Risk-Informed · all_: Define and enforce server policies regarding authentication requirements for different types of requests.
+    - _T3 Repeatable · all_: Enforce strict authorization policies by validating operation rights against delegated credentials before executing cryptographic functions.
+    - _T3 Repeatable · all_: Enforce strict attribute integrity during object import by requiring all attributes to be explicitly set to supplied values, bypassing server-generated defaults.
+    - _T3 Repeatable · all_: Enforce access control policies by returning Permission Denied errors when unauthorized clients attempt to perform operations on managed objects.
+    - _T3 Repeatable · all_: Enforce permission controls on cryptographic operations, returning Permission Denied if access is not authorized.
+    - _T3 Repeatable · all_: Enforce permission controls on cryptographic operations, denying access if the client lacks the necessary permissions.
+    - _T3 Repeatable · all_: Enforce strict error handling for unknown protocol extensions based on criticality indicators to maintain protocol integrity.
+    - _T3 Repeatable · keys_: Enforce sensitivity controls that prevent retrieval of key values unless wrapped, ensuring that access policies are strictly applied to protect sensitive cryptographic material.
+    - _T3 Repeatable · keys_: Enforce server-side policy checks on cryptographic usage masks and lease times before granting object access, returning specific policy violation attributes to the client.
+    - _T3 Repeatable · keys_: Enforce access controls and permission checks; operations SHALL return 'Permission Denied' if the client lacks authorization, ensuring that only authorized entities can manage or use cryptographic objects.
+    - _T3 Repeatable · keys_: Enforce strict usage controls by defining and applying cryptographic usage masks that restrict keys to specific operations such as sign, verify, encrypt, decrypt, and wrap.
 - **Inventory**:
-    - _T2 Risk-Informed · all_: Maintain complete and current inventories of cryptographic assets to understand quantum vulnerabilities and assess impact.
-    - _T2 Risk-Informed · all_: Identify where and how the organization consumes quantum-vulnerable cryptography and non-cryptographic vulnerabilities, including within supply chains.
-    - _T2 Risk-Informed · all_: Maintain a complete and accurate inventory of tangible and intangible assets to mitigate quantum risk.
-    - _T2 Risk-Informed · all_: Inventory information security standards and track progress toward quantum-safe updates.
-    - _T2 Risk-Informed · all_: Inventory compliance requirements and designate a team to track quantum-safe updates to those requirements.
-    - _T2 Risk-Informed · all_: Perform asset, cryptographic, and standards inventories to identify tangible/intangible assets, crypto usage, and compliance requirements.
-    - _T2 Risk-Informed · all_: Understand information security dependencies between different systems and processes.
-    - _T2 Risk-Informed · software_: Inventory software assets to identify quantum vulnerabilities and plan updates or replacements.
+    - _T2 Risk-Informed · keys_: Maintain inventory attributes for key storage status (online, archival, destroyed) and protection storage location (hardware, software, on-premises, etc.).
+    - _T3 Repeatable · all_: Maintain a complete inventory of managed cryptographic objects by enforcing mandatory attributes (e.g., Unique Identifier, Cryptographic Algorithm) upon creation or registration.
+    - _T3 Repeatable · all_: Maintain immutable records of cryptographic algorithm and key length for all managed objects from creation to destruction to ensure complete estate visibility.
+    - _T3 Repeatable · all_: Record and preserve the cryptographic length of keys and certificates as an immutable attribute throughout the object's lifecycle.
+    - _T3 Repeatable · all_: Automatically record and lock the initial creation or registration timestamp for every managed cryptographic object to establish an immutable audit trail of asset origin.
+    - _T3 Repeatable · all_: Automatically record and lock the destruction timestamp for every managed cryptographic object to ensure accurate lifecycle termination logging.
+    - _T3 Repeatable · all_: Enforce server-side generation of SHA-256 digests for all managed objects upon creation or registration to maintain a verifiable inventory of cryptographic material integrity.
+    - _T3 Repeatable · all_: Maintain immutable records of object creation dates and last modification timestamps to support complete audit trails and estate visibility.
+    - _T3 Repeatable · all_: Record the original creation date of cryptographic objects, ensuring it is immutable once set, to distinguish between generation and registration events.
+    - _T3 Repeatable · all_: Enforce unique naming conventions for cryptographic objects within the key management server to ensure unambiguous identification and retrieval.
+    - _T3 Repeatable · all_: Maintain explicit linkage attributes between related cryptographic objects (e.g., keys and certificates) to map dependencies and chain of trust.
+    - _T3 Repeatable · all_: Assign a unique, immutable identifier to every managed cryptographic object at creation or registration to ensure distinct tracking within the key management system.
+    - _T3 Repeatable · all_: Implement server-side search capabilities to locate managed objects based on specified attributes, supporting pagination via Maximum Items and Offset Items fields.
+    - _T3 Repeatable · all_: Interrogate the server to obtain a complete inventory of supported object types, operations, and application namespaces for asset discovery.
+    - _T3 Repeatable · all_: Enforce mandatory registration of cryptographic objects with specific attributes (algorithm, length, usage mask) to maintain a complete inventory.
+    - _T3 Repeatable · all_: Maintain a discoverable inventory of supported operations, object types, and capabilities by responding to server queries with complete lists of supported features.
+    - _T3 Repeatable · certificates_: Automatically extract and lock X.509 certificate identifiers (Issuer DN, Serial Number) and subject details at registration to maintain immutable inventory records.
+    - _T3 Repeatable · keys_: Assign and maintain immutable unique identifiers for all managed cryptographic objects to ensure complete inventory tracking and prevent unauthorized modification of object identity.
+    - _T3 Repeatable · keys_: Maintain immutable audit trails for object identity by ensuring the Subject Distinguished Name is set by the server and cannot be changed or deleted before object destruction.
+    - _T3 Repeatable · keys_: Maintain automated lineage records linking derived keys to their base objects to ensure complete traceability of key derivation.
+    - _T3 Repeatable · keys_: Maintain retrievable metadata for all managed objects; servers SHALL return all attributes or specific attribute lists upon request, enabling complete inventory visibility of key properties.
+    - _T3 Repeatable · keys_: Implement Locate operations to query and retrieve unique identifiers of managed cryptographic objects based on specific attributes, usage masks, and storage status.
+    - _T3 Repeatable · keys_: Enforce strict filtering of inventory queries to exclude destroyed or archived objects unless explicitly requested via Storage Status Mask, ensuring accurate current-state visibility.
+    - _T3 Repeatable · keys_: Maintain precise inventory records of key lifecycle events by tracking activation, deactivation, destruction, compromise, and last change dates for all managed keys.
 - **Lifecycle / CLM**:
-    - _T2 Risk-Informed · all_: Map post-quantum solutions to identified vulnerabilities as a specific item on the migration roadmap.
-    - _T2 Risk-Informed · all_: Engage suppliers to learn their plans for implementing quantum-safe migration strategies.
-    - _T2 Risk-Informed · all_: Ensure adequate quantum-safe protections are applied at each stage of the asset lifecycle, including end-of-life.
-    - _T2 Risk-Informed · all_: Include explicit timelines for assessing quantum vulnerabilities in the organization's migration roadmap.
-    - _T2 Risk-Informed · all_: Map known post-quantum solutions to specific vulnerabilities as an item on the migration roadmap.
-    - _T2 Risk-Informed · software_: Integrate crypto agility into systems that cannot be immediately upgraded to expedite updates once standards permit.
-
-## ENISA-Crypto-Market-Analysis-2024
-- **Source**: Cryptographic Products and Services Market Analysis
-- **URL**: https://www.enisa.europa.eu/publications/cryptographic-products-and-services-market-analysis
-- **Requirement count**: 9
-- **Assurance / FIPS**:
-    - _T2 Risk-Informed · all_: Adopt harmonized criteria for the risk-based selection of recommended cryptographic mechanisms and utilize publicly available evaluation procedures.
-    - _T3 Repeatable · all_: Ensure cryptographic products and services comply with the EU cybersecurity certification framework established by the Cybersecurity Act.
-- **Governance**:
-    - _T2 Risk-Informed · all_: Establish documented rules and guidelines for cryptographic mechanisms, key sizes, and key management for government-operated information systems.
-    - _T2 Risk-Informed · libraries_: Utilize harmonized technical specifications and centralized repositories for lightweight cryptographic libraries to ensure secure integration into IoT products.
-    - _T2 Risk-Informed · software_: Declare to ANSSI before importing or supplying crypto-enabled items on French territory; obtain export authorization for transfers outside the EU.
-- **Inventory**:
-    - _T2 Risk-Informed · all_: Develop an inventory or catalogue of cryptographic products and services to capture supply-chain information and support risk assessment.
-    - _T2 Risk-Informed · all_: Maintain visibility and transferability of Intellectual Property Rights via Bills of Materials (BOMs) to assess risks to economic security.
-- **Lifecycle / CLM**:
-    - _T2 Risk-Informed · all_: Develop and implement strategic migration plans for post-quantum cryptography, engaging necessary actors and following regulatory roadmaps.
-    - _T3 Repeatable · software_: Implement cybersecurity requirements for products with digital elements to ensure secure hardware and software throughout their lifecycle.
-
-## ENISA-State-of-Cybersecurity-2024
-- **Source**: 2024 Report on the State of Cybersecurity in the Union
-- **URL**: https://www.enisa.europa.eu/publications/2024-report-on-the-state-of-the-cybersecurity-in-the-union
-- **Requirement count**: 7
-- **Assurance / FIPS**:
-    - _T2 Risk-Informed · software_: Consider supplier certification and security risk ratings when assessing third-party risks to ensure the cybersecurity of acquired products and services.
-- **Governance**:
-    - _T2 Risk-Informed · all_: Establish and maintain documented ICT security policies, including measures and procedures, with management review and sign-off to ensure organizational commitment.
-    - _T2 Risk-Informed · all_: Implement a third-party risk management policy for supply chain cybersecurity, ensuring top management commitment and dedicated resources for assessment.
-    - _T2 Risk-Informed · all_: Implement a risk-based vulnerability management process as a mandatory cybersecurity risk management measure under NIS2.
-    - _T2 Risk-Informed · all_: Adopt vulnerability management and disclosure policies, potentially using templates provided by national competent authorities.
-- **Lifecycle / CLM**:
-    - _T2 Risk-Informed · software_: Establish a rigid patching policy covering the majority of assets, ensuring critical vulnerabilities are patched within defined timeframes.
+    - _T3 Repeatable · all_: Enforce automated lifecycle management by requiring explicit client requests for attribute deletion and object destruction, preventing unauthorized or accidental removal.
+    - _T3 Repeatable · all_: Enforce activation dates by preventing cryptographic usage of objects before the designated activation time has been reached.
+    - _T3 Repeatable · all_: Automatically record the date and time of compromise upon revocation to support incident response and lifecycle state tracking.
+    - _T3 Repeatable · all_: Track archival status by setting the Archive Date when objects are placed in archival storage and deleting it upon recovery.
+    - _T3 Repeatable · all_: Enforce strict state transitions by locking the deactivation date attribute once set, preventing unauthorized modification until object destruction to ensure compliant retirement.
+    - _T3 Repeatable · all_: Enforce cryptographic usage policies by locking the usage mask attribute after initial setup, preventing clients from altering permitted operations on managed keys.
+    - _T3 Repeatable · all_: Enforce process start dates to prevent the use of cryptographic objects for processing protected information before their designated activation time.
+    - _T3 Repeatable · all_: Enforce protect stop dates to automatically prohibit the use of cryptographic objects for applying protection after their designated expiration time.
+    - _T3 Repeatable · all_: Implement lease-based access controls requiring clients to renew leases via protocol calls before continuing to use managed objects.
+    - _T3 Repeatable · certificates_: Automate the creation of bidirectional links between generated certificates and their corresponding public keys to ensure traceability in the inventory.
+    - _T3 Repeatable · certificates_: Automate certificate renewal by linking the new certificate to the replaced one and updating the public key's certificate link attribute.
+    - _T3 Repeatable · certificates_: Automatically invalidate the current client credential upon successful re-provisioning to prevent concurrent usage.
+    - _T3 Repeatable · certificates_: Support automated replacement of expiring certificates via server-push mechanisms, allowing the server to push new objects as replacements for existing ones.
+    - _T3 Repeatable · keys_: Enforce automated key rotation based on configured intervals and offsets, tracking generation counts and latest status to ensure continuous renewal without manual intervention.
+    - _T3 Repeatable · keys_: Enforce strict state transitions for cryptographic objects, preventing usage in Pre-Active or Deactivated states and restricting operations based on Process Start and Protect Stop dates.
+    - _T3 Repeatable · keys_: Enforce automated state transitions for cryptographic objects based on defined dates (Activation, Deactivation) or explicit operations (Activate, Revoke, Destroy) to manage lifecycle without manual intervention.
+    - _T3 Repeatable · keys_: Automatically restrict cryptographic usage based on object state; prohibit protection operations for Deactivated or Compromised objects and allow only processing operations under strict conditions.
+    - _T3 Repeatable · keys_: Implement automated state transitions for cryptographic objects, specifically enforcing the change from Pre-Active to Active state upon activation to ensure controlled lifecycle progression.
+    - _T3 Repeatable · keys_: Enforce policy-driven archival of managed objects, where the timing and location of archiving are determined by system policies rather than manual client specification.
+    - _T3 Repeatable · keys_: Automate the creation of linked attributes between private keys and public keys upon generation to maintain accurate key pair inventory relationships.
+    - _T3 Repeatable · keys_: Enforce state-based access controls to prevent cryptographic operations on keys that are not in an active lifecycle state.
+    - _T3 Repeatable · keys_: Automate the destruction of key material while retaining metadata for audit purposes, restricted to specific lifecycle states.
+    - _T3 Repeatable · keys_: Enforce state-based destruction controls; keys SHALL only be destroyed if in Pre-Active or Deactivated state, ensuring metadata retention and preventing accidental deletion of active keys.
+    - _T3 Repeatable · keys_: Enforce usage limits on cryptographic operations; the server SHALL obtain an allocation from Usage Limits before encryption, failing with Permission Denied if limits are exceeded.
+    - _T3 Repeatable · keys_: Enforce usage limits by requiring explicit allocation requests before applying cryptographic protection with managed objects possessing Usage Limits attributes.
+    - _T3 Repeatable · keys_: Automate enforcement of usage allocations by prohibiting further cryptographic protection operations once the allocated amount is consumed until a new allocation is obtained.
+    - _T3 Repeatable · keys_: Enforce lease-based access control: clients MUST NOT use cryptographic objects after lease expiration until a new lease is obtained from the server.
+    - _T3 Repeatable · keys_: Automate the transition of compromised keys to a 'compromised' state and record the exact compromise occurrence date upon revocation.
+    - _T3 Repeatable · keys_: Automate the transition of non-compromised keys to a 'deactivated' state and record the deactivation date upon revocation.
+    - _T3 Repeatable · keys_: Automatically link replacement keys to original keys using Link attributes to maintain lineage during rotation.
+    - _T3 Repeatable · keys_: Automatically propagate lifecycle dates (Activation, Protect Stop, Deactivation) from original to replacement keys during rotation.
+    - _T3 Repeatable · keys_: Automatically link replacement asymmetric key pairs to original keys to maintain lineage during rotation.
+    - _T3 Repeatable · keys_: Automatically propagate lifecycle dates from original asymmetric key pairs to replacements during rotation.
+    - _T3 Repeatable · keys_: Enforce usage limits on cryptographic objects by allocating usage counts prior to operations and denying access when limits are exceeded.
+    - _T3 Repeatable · keys_: Configure and enforce automated key rotation policies by specifying rotation intervals, offsets, dates, and generation rules within the key management system.
 - **Observability**:
-    - _T2 Risk-Informed · all_: Maintain visibility over the patching status of information assets to identify gaps in coverage, particularly for OT systems and wide geographic spreads.
-
-## PSD2-Directive-EU-2015-2366
-- **Source**: Directive (EU) 2015/2366 on payment services in the internal market (PSD2)
-- **URL**: https://www.legislation.gov.uk/eudr/2015/2366/data.htm
-- **Requirement count**: 37
-- **Assurance / FIPS**:
-    - _T2 Risk-Informed · all_: Apply strong customer authentication for online account access, electronic payment initiation, and remote actions implying fraud risk.
-    - _T2 Risk-Informed · all_: Implement strong customer authentication that dynamically links the transaction to a specific amount and payee for remote payments.
-    - _T2 Risk-Informed · all_: Maintain adequate security measures to protect the confidentiality and integrity of users' personalised security credentials.
-    - _T2 Risk-Informed · software_: Prove that the payment transaction was authenticated and accurately recorded.
-- **Governance**:
-    - _T2 Risk-Informed · all_: Submit a security policy document with detailed risk assessment and description of security control and mitigation measures to protect users against fraud and illegal use of data.
-    - _T2 Risk-Informed · all_: Provide a description of governance arrangements and internal control mechanisms, including administrative, risk management, and accounting procedures, demonstrating they are proportionate, appropriate, sound, and adequate.
-    - _T2 Risk-Informed · all_: Describe the procedure in place to monitor, handle, and follow up security incidents and security-related customer complaints, including an incident reporting mechanism.
-    - _T2 Risk-Informed · all_: Describe the process in place to file, monitor, track, and restrict access to sensitive payment data.
-    - _T2 Risk-Informed · all_: Establish robust governance arrangements with clear organisational structure, defined lines of responsibility, and effective risk identification, management, monitoring, and reporting procedures.
-    - _T2 Risk-Informed · all_: Implement adequate internal control mechanisms, including sound administrative and accounting procedures, proportionate to the nature, scale, and complexity of payment services.
-    - _T2 Risk-Informed · all_: Ensure shareholders or members with qualifying holdings are suitable to ensure sound and prudent management of the payment institution.
-    - _T2 Risk-Informed · all_: Inform competent authorities without undue delay of any changes affecting the accuracy of information and evidence provided for authorisation.
-    - _T2 Risk-Informed · all_: Communicate internal control mechanisms used by agents to comply with money laundering and terrorist financing obligations, updating without delay upon material changes.
-    - _T2 Risk-Informed · all_: Define internal control mechanisms for agents to ensure compliance with money laundering and terrorist financing obligations.
-    - _T2 Risk-Informed · all_: Ensure outsourcing of important operational functions does not impair internal control or supervisory monitoring capabilities.
-    - _T2 Risk-Informed · all_: Maintain senior management responsibility and ensure authorisation conditions are not undermined when outsourcing important functions.
-    - _T2 Risk-Informed · all_: Take reasonable steps to ensure third-party providers of operational functions comply with directive requirements.
-    - _T2 Risk-Informed · all_: Accept full liability for acts of employees, agents, branches, or outsourced entities.
-    - _T2 Risk-Informed · all_: Establish a framework with mitigation measures and control mechanisms to manage operational and security risks.
-    - _T2 Risk-Informed · all_: Provide an annual assessment of operational and security risks and the adequacy of mitigation measures to the competent authority.
-    - _T2 Risk-Informed · all_: Establish and maintain effective incident management procedures, including for detection and classification of major incidents.
-    - _T2 Risk-Informed · all_: Provide statistical data on fraud relating to different means of payment to competent authorities at least annually.
-    - _T2 Risk-Informed · keys_: Ensure personalised security credentials are not accessible to parties other than the user and issuer.
-    - _T2 Risk-Informed · software_: Ensure security control measures indicate how they ensure a high level of technical security and data protection for software and IT systems used by the applicant or outsourced undertakings.
-- **Inventory**:
-    - _T2 Risk-Informed · all_: Keep appropriate records for at least 5 years to demonstrate compliance with the directive.
-- **Lifecycle / CLM**:
-    - _T2 Risk-Informed · keys_: Transmit personalised security credentials through safe and efficient channels.
-    - _T2 Risk-Informed · keys_: Unblock or replace the payment instrument once reasons for blocking no longer exist.
-    - _T2 Risk-Informed · keys_: Allow access to the payment account once reasons for denying access no longer exist.
-    - _T2 Risk-Informed · keys_: Prevent all use of the payment instrument once notification of loss/theft is made.
-    - _T2 Risk-Informed · software_: Communicate securely with payment initiation service providers.
-    - _T2 Risk-Informed · software_: Communicate securely with account information service providers.
-    - _T2 Risk-Informed · software_: Identify itself and communicate securely with the account servicing provider, payer, and payee.
-    - _T2 Risk-Informed · software_: Identify itself and securely communicate with the account servicing provider and user.
-- **Observability**:
-    - _T2 Risk-Informed · all_: Implement controls that are proportionate, adequate, and responsive to risks to check continued compliance.
-    - _T2 Risk-Informed · all_: Notify the competent authority without undue delay in the case of a major operational or security incident.
-    - _T2 Risk-Informed · all_: Inform payment service users without undue delay if an incident impacts their financial interests.
-    - _T2 Risk-Informed · software_: Immediately report incidents relating to AIS/PISP to the competent authority.
+    - _T2 Risk-Informed · all_: Log server correlation values with each request to enable audit trails and traceability of cryptographic operations.
+    - _T2 Risk-Informed · all_: Log client correlation values to support debugging and auditing of client-initiated cryptographic requests.
+    - _T3 Repeatable · all_: Track key distribution status by automatically flagging objects as 'fresh' until served, enabling detection of whether key material has been exposed to clients.
+    - _T3 Repeatable · all_: Enable querying of server capabilities, supported profiles, and validation information to monitor compliance and feature support.
+    - _T3 Repeatable · all_: Implement server-to-client notifications to detect attribute changes or deletions on managed objects in real-time, ensuring immediate awareness of state drift.
+    - _T3 Repeatable · all_: Log client correlation values provided in requests to enable tracing and auditing of cryptographic operations.
+    - _T3 Repeatable · certificates_: Validate certificate chains against defined trust anchors and validity dates to detect invalid or expired certificates in real-time.
+    - _T3 Repeatable · keys_: Record and maintain immutable audit trails for key revocation, including specific reason codes and optional messages, to enable detection of policy drift or compromise events.
+    - _T3 Repeatable · keys_: Implement usage limits that automatically decrement upon cryptographic protection operations and prevent modification once usage begins, ensuring accurate tracking of object consumption.
+    - _T3 Repeatable · keys_: Log and report specific policy denial reasons (e.g., Usage Limit Exceeded, Incompatible Cryptographic Usage Mask) when access checks fail to enable drift detection.
+    - _T3 Repeatable · keys_: Monitor and enforce usage limits on cryptographic objects, returning specific error codes when usage limits are exceeded during operations.
+    - _T3 Repeatable · keys_: Detect and report invalid key lifecycle states during cryptographic operations to prevent usage of keys in inappropriate states (e.g., pre-activation or post-destruction).
+    - _T3 Repeatable · keys_: Implement cache consistency checks by comparing the server-provided Last Change Date against locally cached attribute timestamps to detect drift.
+    - _T3 Repeatable · keys_: Monitor key validity status and usage limits by tracking validity indicators and counting usage against defined limits to detect policy drift or exhaustion.
+    - _T3 Repeatable · software_: KMIP Servers SHALL support authentication mechanisms as defined in the KMIP Profile to ensure client and server identity verification.
