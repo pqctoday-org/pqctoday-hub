@@ -2,126 +2,19 @@
 generated: 2026-08-09
 category: Technical Standards
 document_count: 1
-requirement_count: 111
+requirement_count: 6
 ---
 
-## KMIP-V2-1-OASIS
-- **Source**: Key Management Interoperability Protocol (KMIP) Version 2.1
-- **URL**: https://docs.oasis-open.org/kmip/kmip-spec/v2.1/os/kmip-spec-v2.1-os.html
-- **Requirement count**: 111
+## NIST-SP-800-171Ar3
+- **Source**: NIST SP 800-171Ar3: Assessing Security Requirements for CUI
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171Ar3.pdf
+- **Requirement count**: 6
 - **Assurance / FIPS**:
-    - _T2 Risk-Informed · all_: Support attestation requirements by returning specific error codes when attestation fails or is required, enabling integration with external validation systems.
-    - _T3 Repeatable · all_: Enforce non-extraction of key material by defaulting the extractable attribute to true only if explicitly allowed, otherwise preventing retrieval to assure key confinement.
-    - _T3 Repeatable · all_: Maintain immutable server-side records of whether key material has ever been extractable to support security posture verification and compliance auditing.
-    - _T3 Repeatable · all_: Enforce attestation checks during key management operations, rejecting requests if attestation fails or is required but not provided, to ensure operational integrity.
-    - _T3 Repeatable · all_: Implement attestation checks that block cryptographic operations if the server or module fails validation requirements.
-    - _T3 Repeatable · all_: Implement attestation checks for protocol operations; servers SHALL return 'Attestation Failed' or 'Attestation Required' errors when attestation conditions are not met during operations like Destroy or Discover Versions.
-    - _T3 Repeatable · all_: Support attestation checks by returning specific error codes (Attestation Failed, Attestation Required) when operations fail due to attestation issues.
-    - _T3 Repeatable · all_: Support attestation checks during operations, failing requests with specific error codes if attestation requirements are not met or fail validation.
-    - _T3 Repeatable · all_: Query and record server-asserted formal validation details and supported attestation types to verify cryptographic module compliance.
-    - _T3 Repeatable · all_: Support attestation checks during operations to ensure cryptographic modules meet validation requirements.
-    - _T3 Repeatable · all_: Enforce attestation checks during key and certificate operations, failing requests if attestation is required but fails.
-    - _T3 Repeatable · all_: Enforce attestation checks for cryptographic operations, failing requests if attestation is required but fails or is missing.
-    - _T3 Repeatable · all_: Enable querying of client-supported attestation types and formal validation details to verify the security posture and compliance status of managed endpoints.
-    - _T3 Repeatable · all_: Record and transmit formal validation details (authority, version, type, level) for cryptographic modules to prove compliance status.
-    - _T3 Repeatable · all_: Support attestation capabilities by indicating client ability to create attestation credentials and handling failures if attestation is required but not supported.
-    - _T3 Repeatable · all_: Record and manage cryptographic module validation details, including authority type, country, URI, version, and certificate identifiers, to prove compliance status.
-    - _T3 Repeatable · keys_: Record and preserve the specific Random Number Generator details used during key creation to provide evidence of cryptographic material generation quality and compliance.
-    - _T3 Repeatable · keys_: Enforce conformance to defined server profiles for all KMIP server implementations to ensure standardized cryptographic management behavior.
-    - _T3 Repeatable · software_: Implement attestation credentials using nonces and measurements to verify the integrity of client software before granting access.
-    - _T3 Repeatable · software_: Implementers SHALL NOT use Tag Values marked as Reserved in enumerations to ensure protocol compliance and prevent undefined behavior.
-    - _T3 Repeatable · software_: KMIP Servers and Clients SHALL establish and maintain channel confidentiality and integrity, and provide assurance of authenticity for KMIP messaging.
-    - _T3 Repeatable · software_: Enforce conformance to defined client profiles for all KMIP client implementations to ensure standardized cryptographic management behavior.
+    - _T2 Risk-Informed · all_: Conduct security assessments to gather information and produce evidence determining the effectiveness of security requirements and identifying weaknesses.
+    - _T2 Risk-Informed · all_: Build an assurance case by compiling evidence from various sources to demonstrate compliance with security requirements.
+    - _T2 Risk-Informed · libraries_: Compile evidence from third-party assessments of cryptographic modules to demonstrate compliance with security requirements.
 - **Governance**:
-    - _T2 Risk-Informed · all_: Define server policies to restrict attribute characteristics and manage object lifecycle states, ensuring management-approved rules govern attribute retention and modification.
-    - _T2 Risk-Informed · all_: Define server policies regarding attribute retention after object destruction to ensure consistent data handling practices.
-    - _T2 Risk-Informed · all_: Optionally classify keys according to NIST SP 800-57 key types to align with standard cryptographic material definitions, ensuring immutability once set.
-    - _T2 Risk-Informed · all_: Define server policies that dictate when objects are destroyed or state transitions occur, ensuring management-approved rules govern lifecycle actions.
-    - _T2 Risk-Informed · all_: Define and enforce server policies regarding authentication requirements for different types of requests.
-    - _T3 Repeatable · all_: Enforce strict authorization policies by validating operation rights against delegated credentials before executing cryptographic functions.
-    - _T3 Repeatable · all_: Enforce strict attribute integrity during object import by requiring all attributes to be explicitly set to supplied values, bypassing server-generated defaults.
-    - _T3 Repeatable · all_: Enforce access control policies by returning Permission Denied errors when unauthorized clients attempt to perform operations on managed objects.
-    - _T3 Repeatable · all_: Enforce permission controls on cryptographic operations, returning Permission Denied if access is not authorized.
-    - _T3 Repeatable · all_: Enforce permission controls on cryptographic operations, denying access if the client lacks the necessary permissions.
-    - _T3 Repeatable · all_: Enforce strict error handling for unknown protocol extensions based on criticality indicators to maintain protocol integrity.
-    - _T3 Repeatable · keys_: Enforce sensitivity controls that prevent retrieval of key values unless wrapped, ensuring that access policies are strictly applied to protect sensitive cryptographic material.
-    - _T3 Repeatable · keys_: Enforce server-side policy checks on cryptographic usage masks and lease times before granting object access, returning specific policy violation attributes to the client.
-    - _T3 Repeatable · keys_: Enforce access controls and permission checks; operations SHALL return 'Permission Denied' if the client lacks authorization, ensuring that only authorized entities can manage or use cryptographic objects.
-    - _T3 Repeatable · keys_: Enforce strict usage controls by defining and applying cryptographic usage masks that restrict keys to specific operations such as sign, verify, encrypt, decrypt, and wrap.
-- **Inventory**:
-    - _T2 Risk-Informed · keys_: Maintain inventory attributes for key storage status (online, archival, destroyed) and protection storage location (hardware, software, on-premises, etc.).
-    - _T3 Repeatable · all_: Maintain a complete inventory of managed cryptographic objects by enforcing mandatory attributes (e.g., Unique Identifier, Cryptographic Algorithm) upon creation or registration.
-    - _T3 Repeatable · all_: Maintain immutable records of cryptographic algorithm and key length for all managed objects from creation to destruction to ensure complete estate visibility.
-    - _T3 Repeatable · all_: Record and preserve the cryptographic length of keys and certificates as an immutable attribute throughout the object's lifecycle.
-    - _T3 Repeatable · all_: Automatically record and lock the initial creation or registration timestamp for every managed cryptographic object to establish an immutable audit trail of asset origin.
-    - _T3 Repeatable · all_: Automatically record and lock the destruction timestamp for every managed cryptographic object to ensure accurate lifecycle termination logging.
-    - _T3 Repeatable · all_: Enforce server-side generation of SHA-256 digests for all managed objects upon creation or registration to maintain a verifiable inventory of cryptographic material integrity.
-    - _T3 Repeatable · all_: Maintain immutable records of object creation dates and last modification timestamps to support complete audit trails and estate visibility.
-    - _T3 Repeatable · all_: Record the original creation date of cryptographic objects, ensuring it is immutable once set, to distinguish between generation and registration events.
-    - _T3 Repeatable · all_: Enforce unique naming conventions for cryptographic objects within the key management server to ensure unambiguous identification and retrieval.
-    - _T3 Repeatable · all_: Maintain explicit linkage attributes between related cryptographic objects (e.g., keys and certificates) to map dependencies and chain of trust.
-    - _T3 Repeatable · all_: Assign a unique, immutable identifier to every managed cryptographic object at creation or registration to ensure distinct tracking within the key management system.
-    - _T3 Repeatable · all_: Implement server-side search capabilities to locate managed objects based on specified attributes, supporting pagination via Maximum Items and Offset Items fields.
-    - _T3 Repeatable · all_: Interrogate the server to obtain a complete inventory of supported object types, operations, and application namespaces for asset discovery.
-    - _T3 Repeatable · all_: Enforce mandatory registration of cryptographic objects with specific attributes (algorithm, length, usage mask) to maintain a complete inventory.
-    - _T3 Repeatable · all_: Maintain a discoverable inventory of supported operations, object types, and capabilities by responding to server queries with complete lists of supported features.
-    - _T3 Repeatable · certificates_: Automatically extract and lock X.509 certificate identifiers (Issuer DN, Serial Number) and subject details at registration to maintain immutable inventory records.
-    - _T3 Repeatable · keys_: Assign and maintain immutable unique identifiers for all managed cryptographic objects to ensure complete inventory tracking and prevent unauthorized modification of object identity.
-    - _T3 Repeatable · keys_: Maintain immutable audit trails for object identity by ensuring the Subject Distinguished Name is set by the server and cannot be changed or deleted before object destruction.
-    - _T3 Repeatable · keys_: Maintain automated lineage records linking derived keys to their base objects to ensure complete traceability of key derivation.
-    - _T3 Repeatable · keys_: Maintain retrievable metadata for all managed objects; servers SHALL return all attributes or specific attribute lists upon request, enabling complete inventory visibility of key properties.
-    - _T3 Repeatable · keys_: Implement Locate operations to query and retrieve unique identifiers of managed cryptographic objects based on specific attributes, usage masks, and storage status.
-    - _T3 Repeatable · keys_: Enforce strict filtering of inventory queries to exclude destroyed or archived objects unless explicitly requested via Storage Status Mask, ensuring accurate current-state visibility.
-    - _T3 Repeatable · keys_: Maintain precise inventory records of key lifecycle events by tracking activation, deactivation, destruction, compromise, and last change dates for all managed keys.
-- **Lifecycle / CLM**:
-    - _T3 Repeatable · all_: Enforce automated lifecycle management by requiring explicit client requests for attribute deletion and object destruction, preventing unauthorized or accidental removal.
-    - _T3 Repeatable · all_: Enforce activation dates by preventing cryptographic usage of objects before the designated activation time has been reached.
-    - _T3 Repeatable · all_: Automatically record the date and time of compromise upon revocation to support incident response and lifecycle state tracking.
-    - _T3 Repeatable · all_: Track archival status by setting the Archive Date when objects are placed in archival storage and deleting it upon recovery.
-    - _T3 Repeatable · all_: Enforce strict state transitions by locking the deactivation date attribute once set, preventing unauthorized modification until object destruction to ensure compliant retirement.
-    - _T3 Repeatable · all_: Enforce cryptographic usage policies by locking the usage mask attribute after initial setup, preventing clients from altering permitted operations on managed keys.
-    - _T3 Repeatable · all_: Enforce process start dates to prevent the use of cryptographic objects for processing protected information before their designated activation time.
-    - _T3 Repeatable · all_: Enforce protect stop dates to automatically prohibit the use of cryptographic objects for applying protection after their designated expiration time.
-    - _T3 Repeatable · all_: Implement lease-based access controls requiring clients to renew leases via protocol calls before continuing to use managed objects.
-    - _T3 Repeatable · certificates_: Automate the creation of bidirectional links between generated certificates and their corresponding public keys to ensure traceability in the inventory.
-    - _T3 Repeatable · certificates_: Automate certificate renewal by linking the new certificate to the replaced one and updating the public key's certificate link attribute.
-    - _T3 Repeatable · certificates_: Automatically invalidate the current client credential upon successful re-provisioning to prevent concurrent usage.
-    - _T3 Repeatable · certificates_: Support automated replacement of expiring certificates via server-push mechanisms, allowing the server to push new objects as replacements for existing ones.
-    - _T3 Repeatable · keys_: Enforce automated key rotation based on configured intervals and offsets, tracking generation counts and latest status to ensure continuous renewal without manual intervention.
-    - _T3 Repeatable · keys_: Enforce strict state transitions for cryptographic objects, preventing usage in Pre-Active or Deactivated states and restricting operations based on Process Start and Protect Stop dates.
-    - _T3 Repeatable · keys_: Enforce automated state transitions for cryptographic objects based on defined dates (Activation, Deactivation) or explicit operations (Activate, Revoke, Destroy) to manage lifecycle without manual intervention.
-    - _T3 Repeatable · keys_: Automatically restrict cryptographic usage based on object state; prohibit protection operations for Deactivated or Compromised objects and allow only processing operations under strict conditions.
-    - _T3 Repeatable · keys_: Implement automated state transitions for cryptographic objects, specifically enforcing the change from Pre-Active to Active state upon activation to ensure controlled lifecycle progression.
-    - _T3 Repeatable · keys_: Enforce policy-driven archival of managed objects, where the timing and location of archiving are determined by system policies rather than manual client specification.
-    - _T3 Repeatable · keys_: Automate the creation of linked attributes between private keys and public keys upon generation to maintain accurate key pair inventory relationships.
-    - _T3 Repeatable · keys_: Enforce state-based access controls to prevent cryptographic operations on keys that are not in an active lifecycle state.
-    - _T3 Repeatable · keys_: Automate the destruction of key material while retaining metadata for audit purposes, restricted to specific lifecycle states.
-    - _T3 Repeatable · keys_: Enforce state-based destruction controls; keys SHALL only be destroyed if in Pre-Active or Deactivated state, ensuring metadata retention and preventing accidental deletion of active keys.
-    - _T3 Repeatable · keys_: Enforce usage limits on cryptographic operations; the server SHALL obtain an allocation from Usage Limits before encryption, failing with Permission Denied if limits are exceeded.
-    - _T3 Repeatable · keys_: Enforce usage limits by requiring explicit allocation requests before applying cryptographic protection with managed objects possessing Usage Limits attributes.
-    - _T3 Repeatable · keys_: Automate enforcement of usage allocations by prohibiting further cryptographic protection operations once the allocated amount is consumed until a new allocation is obtained.
-    - _T3 Repeatable · keys_: Enforce lease-based access control: clients MUST NOT use cryptographic objects after lease expiration until a new lease is obtained from the server.
-    - _T3 Repeatable · keys_: Automate the transition of compromised keys to a 'compromised' state and record the exact compromise occurrence date upon revocation.
-    - _T3 Repeatable · keys_: Automate the transition of non-compromised keys to a 'deactivated' state and record the deactivation date upon revocation.
-    - _T3 Repeatable · keys_: Automatically link replacement keys to original keys using Link attributes to maintain lineage during rotation.
-    - _T3 Repeatable · keys_: Automatically propagate lifecycle dates (Activation, Protect Stop, Deactivation) from original to replacement keys during rotation.
-    - _T3 Repeatable · keys_: Automatically link replacement asymmetric key pairs to original keys to maintain lineage during rotation.
-    - _T3 Repeatable · keys_: Automatically propagate lifecycle dates from original asymmetric key pairs to replacements during rotation.
-    - _T3 Repeatable · keys_: Enforce usage limits on cryptographic objects by allocating usage counts prior to operations and denying access when limits are exceeded.
-    - _T3 Repeatable · keys_: Configure and enforce automated key rotation policies by specifying rotation intervals, offsets, dates, and generation rules within the key management system.
+    - _T2 Risk-Informed · all_: Establish documented security assessment procedures and policies to generate evidence of compliance with security requirements for systems processing CUI.
+    - _T2 Risk-Informed · all_: Define organization-defined parameters (ODPs) for security requirements to establish specific compliance criteria.
 - **Observability**:
-    - _T2 Risk-Informed · all_: Log server correlation values with each request to enable audit trails and traceability of cryptographic operations.
-    - _T2 Risk-Informed · all_: Log client correlation values to support debugging and auditing of client-initiated cryptographic requests.
-    - _T3 Repeatable · all_: Track key distribution status by automatically flagging objects as 'fresh' until served, enabling detection of whether key material has been exposed to clients.
-    - _T3 Repeatable · all_: Enable querying of server capabilities, supported profiles, and validation information to monitor compliance and feature support.
-    - _T3 Repeatable · all_: Implement server-to-client notifications to detect attribute changes or deletions on managed objects in real-time, ensuring immediate awareness of state drift.
-    - _T3 Repeatable · all_: Log client correlation values provided in requests to enable tracing and auditing of cryptographic operations.
-    - _T3 Repeatable · certificates_: Validate certificate chains against defined trust anchors and validity dates to detect invalid or expired certificates in real-time.
-    - _T3 Repeatable · keys_: Record and maintain immutable audit trails for key revocation, including specific reason codes and optional messages, to enable detection of policy drift or compromise events.
-    - _T3 Repeatable · keys_: Implement usage limits that automatically decrement upon cryptographic protection operations and prevent modification once usage begins, ensuring accurate tracking of object consumption.
-    - _T3 Repeatable · keys_: Log and report specific policy denial reasons (e.g., Usage Limit Exceeded, Incompatible Cryptographic Usage Mask) when access checks fail to enable drift detection.
-    - _T3 Repeatable · keys_: Monitor and enforce usage limits on cryptographic objects, returning specific error codes when usage limits are exceeded during operations.
-    - _T3 Repeatable · keys_: Detect and report invalid key lifecycle states during cryptographic operations to prevent usage of keys in inappropriate states (e.g., pre-activation or post-destruction).
-    - _T3 Repeatable · keys_: Implement cache consistency checks by comparing the server-provided Last Change Date against locally cached attribute timestamps to detect drift.
-    - _T3 Repeatable · keys_: Monitor key validity status and usage limits by tracking validity indicators and counting usage against defined limits to detect policy drift or exhaustion.
-    - _T3 Repeatable · software_: KMIP Servers SHALL support authentication mechanisms as defined in the KMIP Profile to ensure client and server identity verification.
+    - _T2 Risk-Informed · all_: Support continuous monitoring activities and provide information security situational awareness through the security assessment process.
