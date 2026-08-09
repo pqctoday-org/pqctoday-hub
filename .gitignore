@@ -335,7 +335,6 @@ scripts/*
 # must be tracked or those workflows fail file-not-found (the scrape-nvd.py
 # failure mode above). Sanitized ports: public inputs (trusted_sources CSV,
 # pqcProtocolMatrix.ts, IETF datatracker), public outputs. No LLM phase.
-!scripts/audit-trusted-source-freshness.ts
 !scripts/enrich-protocol-matrix.py
 !scripts/apply-protocol-matrix-updates.ts
 # Its unit tests — the downgrade guard (F8, 2026-07-25) is the reason this
@@ -454,7 +453,6 @@ public/data/rag-index-freshness.json
 # pqctoday-priv's (by 22 and 305 lines), so moving them means syncing content
 # first, not deleting. audit-timeline-evidence.ts must stay public regardless —
 # CI runs it.
-!scripts/download-timeline-evidence.ts
 !scripts/audit-timeline-evidence.ts
 !scripts/sync-timeline-csv-from-manifest.ts
 !scripts/audit-timeline-enrichment-freshness.ts
