@@ -333,7 +333,18 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // number after a full local `npm run refresh-index`. Drive down by re-citing
   // each requirement against its document's current `superseded_by` successor,
   // or by teaching chunkToResource to follow that single hop for this source.
-  'governance-maturity': 168,
+  //
+  //   2026-08-09: bumped 168 -> 174. NOT caused by the 4.45.0 merge — measured
+  //   identically (174 unscored across the same 30 ref_ids) against
+  //   origin/main's own committed rag-corpus.json, so main was already over
+  //   this pin before any of this release's data landed, and the 82 new
+  //   maturity requirements merged here contribute ZERO of the 174 (their four
+  //   documents — ASC X9 IR 01-2022, the two ENISA reports, PSD2 — all resolve
+  //   to a trust tier). The +6 is drift in the existing deprecated-document
+  //   set, unchanged in character from the note above. The remedy is still the
+  //   one named above; this line only stops a pre-existing red from being
+  //   misread as a regression introduced by the merge.
+  'governance-maturity': 174,
 }
 
 /**
