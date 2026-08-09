@@ -102,8 +102,14 @@ self.addEventListener('fetch', (event) => {
         return withCOIHeaders(await dataCache.handle({ event, request }), url)
       }
 
+      // Archived proof documents are REAL pages, not SPA routes. They must be
+      // exempt from the shell fallback below, which would otherwise answer a
+      // proof link with index.html — as it has been doing, since a proof link
+      // is a navigation and that check runs before the precache lookup.
+      const isStandaloneDoc = /^\/migrate-proofs\/.+\.html$/.test(url.pathname)
+
       // Navigation (SPA): serve index.html from precache for all routes
-      if (request.mode === 'navigate') {
+      if (request.mode === 'navigate' && !isStandaloneDoc) {
         const cached = await precache.matchPrecache('/index.html')
         if (cached) return withCOIHeaders(cached, url)
       }
@@ -135,10 +141,12 @@ self.addEventListener('fetch', (event) => {
       try {
         return withCOIHeaders(await fetch(request), url)
       } catch {
-        if (request.mode === 'navigate') {
+        if (request.mode === 'navigate' && !isStandaloneDoc) {
           const fallback = await precache.matchPrecache('/index.html')
           if (fallback) return withCOIHeaders(fallback, url)
         }
+        // A proof document that is not cached is genuinely unavailable offline.
+        // Handing back the app shell would dress that up as a working page.
         return new Response('Network error', { status: 503 })
       }
     })()

@@ -219,6 +219,20 @@ export default defineConfig({
           // precache. A blanket removal of `json` would silently break them offline.
           'data/**/*.json',
           'dist/**/*.json',
+          // migrate-proofs are archived vendor evidence documents — 161 files,
+          // 55 MB — reachable only by following a proof link. They are the
+          // entire reason this budget blew from the 2026-08-07 baseline of
+          // 16.6 MB / 103 entries to 53.64 MB / 264: `**/*.html` swept up every
+          // one of them as the archive grew, and the count lines up exactly
+          // (264 - 161 = 103).
+          //
+          // Precaching them never even worked. The fetch handler answers
+          // `request.mode === 'navigate'` with the SPA shell BEFORE it consults
+          // the precache, and a proof link is a navigation — so these entries
+          // were downloaded at install and then never served to anyone. They
+          // now go to the network, with a narrow pass-through in src/sw.ts so
+          // the shell stops shadowing them.
+          'migrate-proofs/**/*.html',
         ],
         /**
          * Fail-safe. If the allow-list were ever empty — plugin removed, rollup
