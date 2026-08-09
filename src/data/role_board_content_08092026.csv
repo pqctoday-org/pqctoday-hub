@@ -41,7 +41,7 @@ ops,capacity,track_chip,6,Migration program,active,,,2026-08-02,
 ops,capacity,track_chip,7,KMS,active,,,2026-08-02,
 ops,capacity,track_chip,8,HSM,active,,,2026-08-02,
 ops,capacity,capstone_chip_label,,Cutover-Ready,active,,,2026-08-07,
-executive,mandate,hero_eyebrow,,Illustrative — this user's inputs,active,,,2026-08-02,
+executive,mandate,hero_eyebrow,,Executive / GRC · the decision that unlocks budget and names an owner,active,,,2026-08-09,"Reworded 2026-08-09 editorial pass: this was the literal string ""Illustrative — this user's inputs"", which is a provenance label, not an eyebrow — and the identical words already render below it as the side card's provenance chip, so the phrase appeared twice. Every other executive board carries a descriptive role/context eyebrow; at six chips the odd one out is obvious when switching between them."
 executive,mandate,hero_badge_text,,Default: Americas · Finance & Banking — scenario shown: EU,active,,,2026-08-02,
 executive,mandate,hero_badge_tone,,illustrative,active,,,2026-08-02,
 executive,mandate,headline,,Answer the board in eleven minutes.,active,,,2026-08-02,
@@ -722,7 +722,7 @@ executive,verify,hero_eyebrow,,Executive / GRC · due diligence · nothing taken
 executive,verify,hero_badge_text,,Default: Americas · Finance & Banking — scenario shown: EU,active,,,2026-08-09,
 executive,verify,hero_badge_tone,,illustrative,active,,,2026-08-09,
 executive,verify,headline,,See the whole programme before you fund it.,active,,,2026-08-09,
-executive,verify,sub,,"Nine phases played through with a real organisation's data — discovery, CBOM, risk scoring, roadmap, pilots, closure. Eleven minutes to know what you are being asked to sign off on.",active,,,2026-08-09,
+executive,verify,sub,,"Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. Eleven minutes to know what you are being asked to sign off on.",active,,,2026-08-09,"Reworded 2026-08-09 editorial pass: this read ""played through with a real organisation's data"" while the board's own side-card footnote said the walkthrough uses an illustrative organisation, not real data. The two contradicted each other on the same screen."
 executive,verify,cta_primary_label,,Play the executive walkthrough,active,,,2026-08-09,
 executive,verify,cta_primary_href,,/simulation?run=exec,active,,,2026-08-09,
 executive,verify,cta_secondary_label,,Open the Command Center,active,,,2026-08-09,
@@ -769,11 +769,11 @@ developer,algorithm,side_card_title,,What the choice costs you,active,,,2026-08-
 developer,algorithm,side_card_tone,,warn,active,,,2026-08-09,
 developer,algorithm,side_card_provenance,,sourced,active,,,2026-08-09,
 developer,algorithm,side_card_row_label,0,ML-DSA-44 signature,active,,,2026-08-09,
-developer,algorithm,side_card_row_value,0,"2,420 B",active,,,2026-08-09,
+developer,algorithm,side_card_row_value,0,{ml_dsa_signature:44},active,,,2026-08-09,"Tokenised 2026-08-09: was the literal 2,420 B, sitting next to a live token for ML-DSA-65. Two of three numbers maintained and one not is the drift this page's token vocabulary exists to prevent."
 developer,algorithm,side_card_row_label,1,ML-DSA-65 signature,active,,,2026-08-09,
 developer,algorithm,side_card_row_value,1,{ml_dsa_65_signature_only},active,,,2026-08-09,
 developer,algorithm,side_card_row_label,2,ML-DSA-87 signature,active,,,2026-08-09,
-developer,algorithm,side_card_row_value,2,"4,627 B",active,,,2026-08-09,
+developer,algorithm,side_card_row_value,2,{ml_dsa_signature:87},active,,,2026-08-09,"Tokenised 2026-08-09: was the literal 4,627 B. See the ML-DSA-44 row."
 developer,algorithm,side_card_punchline,,The security level you pick is a byte budget you pay on every message.,active,,,2026-08-09,
 developer,algorithm,side_card_footnote,,"Signature sizes are read from the algorithm registry, which takes them from FIPS 204 directly.",active,,,2026-08-09,
 developer,algorithm,grid_title,,What you walk out with,active,,,2026-08-09,
@@ -861,7 +861,7 @@ developer,binds,track_title,,"Then, the background: {essentials_vs_full:develope
 architect,protocols,hero_eyebrow,,"Security Architect · protocol readiness · ready, draft, or absent",active,,,2026-08-09,
 architect,protocols,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-09,
 architect,protocols,hero_badge_tone,,sourced,active,,,2026-08-09,
-architect,protocols,headline,,Half the protocols you depend on are still drafts.,active,,,2026-08-09,
+architect,protocols,headline,,Most of the protocols you depend on are still drafts.,active,,,2026-08-09,"Reworded 2026-08-09 editorial pass: read ""Half the protocols"", a quantity nothing on the board backs. The matrix carries 17 rfc-published stages against 53 still in flight, so ""half"" was both unsourced and an understatement."
 architect,protocols,sub,,"TLS 1.3 has hybrid groups today. Your VPN, your enrollment protocol and your messaging layer are at different stages, and a design that treats them as one migration will stall on the slowest.",active,,,2026-08-09,
 architect,protocols,cta_primary_label,,Check protocol readiness,active,,,2026-08-09,
 architect,protocols,cta_primary_href,,/algorithms?tab=support&matrixView=heatmap,active,,,2026-08-09,
@@ -1143,7 +1143,7 @@ researcher,field,hero_eyebrow,,Researcher · from the paper to the payment termi
 researcher,field,hero_badge_text,,All regions · unfiltered,active,,,2026-08-09,
 researcher,field,hero_badge_tone,,illustrative,active,,,2026-08-09,
 researcher,field,headline,,Follow the algorithm into production.,active,,,2026-08-09,
-researcher,field,sub,,"ML-KEM in a 5G SUCI construction, ML-DSA in a payment scheme, SLH-DSA in firmware. Which sectors have adopted what, in which product, under which regulation — with the shipping evidence, not the announcement.",active,,,2026-08-09,
+researcher,field,sub,,"ML-KEM in a 5G SUCI construction, ML-DSA in payment rails, SLH-DSA in firmware signing — three sectors, three different stages. Which has adopted what, in which product and under which regulation, with the evidence attached rather than the announcement.",active,,,2026-08-09,"Reworded 2026-08-09 editorial pass: the original listed the three as though each were a shipping deployment. Only what the proof-gated catalogue actually holds evidence for can be claimed, and the board's own side card says adoption is uneven."
 researcher,field,cta_primary_label,,See what has actually shipped,active,,,2026-08-09,
 researcher,field,cta_primary_href,,/migrate?tab=replace,active,,,2026-08-09,
 researcher,field,cta_secondary_label,,Map the supply chain,active,,,2026-08-09,
