@@ -21,7 +21,7 @@
  * fresh. The scheduled workflow inspects the report to open a tracking issue;
  * `npm run refresh-index` runs it as a post-rebuild sanity check.
  */
-import { createHash } from 'crypto'
+import { corpusContentHash } from '../lib/corpusContentHash'
 import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync, statSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -99,13 +99,18 @@ function main(): number {
   // gate reports "in sync". embeddings-meta already records the corpusHash it
   // was built from; it just was not being compared. (Found 2026-07-31 by
   // editing two QA answers and watching the gate pass.)
+  // 2026-08-09: hash the CHUNKS, not the file. The file's leading `generatedAt`
+  // timestamp meant a regeneration that changed nothing still failed this check
+  // and forced a ~40-minute re-encode; with concurrent data jobs it could also
+  // invalidate an encode that was correct. The 07-31 guarantee is unchanged —
+  // any edit to any chunk's text still moves this hash. See corpusContentHash.ts.
   if (meta.corpusHash) {
-    const actualCorpusHash = createHash('sha256').update(readFileSync(CORPUS)).digest('hex')
+    const actualCorpusHash = corpusContentHash(JSON.parse(readFileSync(CORPUS, 'utf-8')))
     if (actualCorpusHash !== meta.corpusHash)
       findings.push(
-        `embeddings were built from corpus ${meta.corpusHash.slice(0, 12)}… but the committed ` +
-          `corpus hashes to ${actualCorpusHash.slice(0, 12)}… — chunk text changed since the ` +
-          `vectors were generated; re-run npm run refresh-index`
+        `embeddings were built from corpus content ${meta.corpusHash.slice(0, 12)}… but the ` +
+          `committed corpus content hashes to ${actualCorpusHash.slice(0, 12)}… — chunk text ` +
+          `changed since the vectors were generated; re-run npm run refresh-index`
       )
   }
   const corpusCount = committed.size
