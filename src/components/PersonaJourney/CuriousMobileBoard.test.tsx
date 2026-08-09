@@ -18,10 +18,12 @@ import { PERSONA_JOURNEY_BOARD_VARIANTS, resolveRoleBoardVariant } from '@/data/
  */
 const DEFAULT_BOARD = PERSONA_JOURNEY_BOARD_VARIANTS.curious[0].board
 
-const TestTimeline = () => <div>Timeline Page</div>
-const TestThreats = () => <div>Threats Page</div>
-const TestLearn = () => <div>Learn Page</div>
-const TestFaq = () => <div>FAQ Page</div>
+const TAB_ROUTES: [string, string][] = [
+  ['/timeline', 'Timeline Page'],
+  ['/threats', 'Threats Page'],
+  ['/learn', 'Learn Page'],
+  ['/faq', 'FAQ Page'],
+]
 // Destination page for the hero's primary CTA — routed at whatever
 // PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref actually is (not hardcoded),
 // so this test tracks the real data source instead of assuming its value.
@@ -36,15 +38,36 @@ function renderBoard(initialEntry = '/') {
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
         <Route path="/" element={<CuriousMobileBoard />} />
-        <Route path="/timeline" element={<TestTimeline />} />
-        <Route path="/threats" element={<TestThreats />} />
-        <Route path="/learn" element={<TestLearn />} />
-        <Route path="/faq" element={<TestFaq />} />
+        {/* Tab routes, minus any the board's own CTAs already claim. The two
+            can collide: the 2026-08-09 re-rank made `short` the default board
+            and its primary CTA is /learn, which is also a bottom tab. Two
+            <Route> elements with the same path make react-router pick one
+            arbitrarily, so the CTA assertions below would pass or fail on
+            declaration order. Filtering keeps exactly one route per path. */}
+        {TAB_ROUTES.filter(
+          ([path]) =>
+            path !== DEFAULT_BOARD.ctaPrimaryHref && path !== DEFAULT_BOARD.ctaSecondaryHref
+        ).map(([path, label]) => (
+          <Route key={path} path={path} element={<div>{label}</div>} />
+        ))}
         <Route path={DEFAULT_BOARD.ctaPrimaryHref} element={<TestCtaPrimaryDestination />} />
         <Route path={DEFAULT_BOARD.ctaSecondaryHref} element={<TestCtaSecondaryDestination />} />
       </Routes>
     </MemoryRouter>
   )
+}
+
+/**
+ * What actually renders at a tab's path. A tab path can be the same as one of
+ * the board's own CTA hrefs (`short`'s primary CTA is /learn, which is also a
+ * tab), and in that case the CTA destination stub is the single route
+ * registered there. The tab tests care that navigation LANDED on the path, not
+ * which stub happened to own it.
+ */
+function destinationTextFor(path: string, fallback: string): string {
+  if (path === DEFAULT_BOARD.ctaPrimaryHref) return 'CTA Primary Destination Page'
+  if (path === DEFAULT_BOARD.ctaSecondaryHref) return 'CTA Secondary Destination Page'
+  return fallback
 }
 
 function getBottomNav() {
@@ -235,19 +258,19 @@ describe('CuriousMobileBoard', () => {
     it('tapping Timeline navigates to /timeline', () => {
       renderBoard()
       fireEvent.click(within(getBottomNav()).getByRole('button', { name: /timeline view/i }))
-      expect(screen.getByText('Timeline Page')).toBeInTheDocument()
+      expect(screen.getByText(destinationTextFor('/timeline', 'Timeline Page'))).toBeInTheDocument()
     })
 
     it('tapping Threats navigates to /threats', () => {
       renderBoard()
       fireEvent.click(within(getBottomNav()).getByRole('button', { name: /threats view/i }))
-      expect(screen.getByText('Threats Page')).toBeInTheDocument()
+      expect(screen.getByText(destinationTextFor('/threats', 'Threats Page'))).toBeInTheDocument()
     })
 
     it('tapping Learn navigates to /learn', () => {
       renderBoard()
       fireEvent.click(within(getBottomNav()).getByRole('button', { name: /learn view/i }))
-      expect(screen.getByText('Learn Page')).toBeInTheDocument()
+      expect(screen.getByText(destinationTextFor('/learn', 'Learn Page'))).toBeInTheDocument()
     })
 
     it('the Start tab links to "/"', () => {

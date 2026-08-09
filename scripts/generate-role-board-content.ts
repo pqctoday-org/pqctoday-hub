@@ -77,7 +77,7 @@ interface ContentRow {
 
 const ROLES = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curious'] as const
 const REQUIRED_GRID_CARDS = 3
-const REQUIRED_VARIANTS_PER_ROLE = 3
+const REQUIRED_VARIANTS_PER_ROLE = 6
 
 // Slots every board must carry — everything except the two optional ones
 // (heroBadge, capstoneChip — absent for researcher by design) and footnote/
