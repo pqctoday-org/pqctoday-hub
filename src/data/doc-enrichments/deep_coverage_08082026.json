@@ -1,0 +1,225 @@
+[
+  {
+    "total_chars": 86596,
+    "covered_chars": 86596,
+    "coverage_pct": 100.0,
+    "windows_run": 7,
+    "windows_possible": 7,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ACSC-Essential-Eight"
+  },
+  {
+    "total_chars": 427444,
+    "covered_chars": 109500,
+    "coverage_pct": 25.6,
+    "windows_run": 8,
+    "windows_possible": 32,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      4
+    ],
+    "ref_id": "ASC-X9-IR-F01-2022"
+  },
+  {
+    "total_chars": 147137,
+    "covered_chars": 109500,
+    "coverage_pct": 74.4,
+    "windows_run": 8,
+    "windows_possible": 11,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ASC-X9-TR-50-2019"
+  },
+  {
+    "total_chars": 23668,
+    "covered_chars": 23668,
+    "coverage_pct": 100.0,
+    "windows_run": 2,
+    "windows_possible": 2,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0
+    ],
+    "ref_id": "AU-Privacy-Act-APPs"
+  },
+  {
+    "total_chars": 21870,
+    "covered_chars": 21870,
+    "coverage_pct": 100.0,
+    "windows_run": 2,
+    "windows_possible": 2,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0
+    ],
+    "ref_id": "AUSTRAC-AML-CTF-Act"
+  },
+  {
+    "total_chars": 128582,
+    "covered_chars": 109500,
+    "coverage_pct": 85.2,
+    "windows_run": 8,
+    "windows_possible": 10,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      5,
+      0
+    ],
+    "ref_id": "ENISA PQC Guidelines"
+  },
+  {
+    "total_chars": 220270,
+    "covered_chars": 109500,
+    "coverage_pct": 49.7,
+    "windows_run": 8,
+    "windows_possible": 17,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ENISA-Crypto-Market-Analysis-2024"
+  },
+  {
+    "total_chars": 194347,
+    "covered_chars": 109500,
+    "coverage_pct": 56.3,
+    "windows_run": 8,
+    "windows_possible": 15,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      4,
+      0
+    ],
+    "ref_id": "ENISA-State-of-Cybersecurity-2024"
+  },
+  {
+    "total_chars": 247181,
+    "covered_chars": 109500,
+    "coverage_pct": 44.3,
+    "windows_run": 8,
+    "windows_possible": 19,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ENISA-Threat-Landscape-2025"
+  },
+  {
+    "total_chars": 218742,
+    "covered_chars": 109500,
+    "coverage_pct": 50.1,
+    "windows_run": 8,
+    "windows_possible": 17,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      6,
+      3,
+      0,
+      4,
+      0,
+      2
+    ],
+    "ref_id": "NIST NCCoE SP 1800-38C"
+  },
+  {
+    "total_chars": 20385,
+    "covered_chars": 20385,
+    "coverage_pct": 100.0,
+    "windows_run": 2,
+    "windows_possible": 2,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0
+    ],
+    "ref_id": "PQCC-Inventory-Workbook-2025"
+  },
+  {
+    "total_chars": 319255,
+    "covered_chars": 109500,
+    "coverage_pct": 34.3,
+    "windows_run": 8,
+    "windows_possible": 24,
+    "fully_covered": false,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0
+    ],
+    "ref_id": "PSD2-Directive-EU-2015-2366"
+  },
+  {
+    "total_chars": 36833,
+    "covered_chars": 36833,
+    "coverage_pct": 100.0,
+    "windows_run": 3,
+    "windows_possible": 3,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0
+    ],
+    "ref_id": "3GPP-PQC-Study-2025"
+  }
+]

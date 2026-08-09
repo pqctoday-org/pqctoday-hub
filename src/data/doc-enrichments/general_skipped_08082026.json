@@ -1,0 +1,6 @@
+[
+  {
+    "ref_id": "DFARS-252.204-7019",
+    "reason": "Probable landing page, not the document (113,145 bytes of markup, only 7,401 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]
