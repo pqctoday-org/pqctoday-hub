@@ -29,6 +29,28 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.44.0] - 2026-08-08
+
+Compliance maturity coverage more than quadruples as documents that were being read only part-way through are now read in full, a batch of library entries that pointed at landing pages get their real source documents, invented requirements are removed, and installing the site for offline use gets dramatically lighter.
+
+### Added
+
+- **Compliance maturity coverage more than quadruples — from 48 tracked requirements to 200** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: the extraction had been stopping part-way through long documents, so anything past that point was invisible. Re-reading them end to end surfaced 152 more requirements, including a GSMA guidance document whose extraction a timeout had cut off mid-way.
+- **15 new documents in the library, and 24 compliance records now link straight to the source document they are based on** [view:/library] [view:/compliance] [persona:researcher] [persona:architect]: previously several records cited a framework without any way to open the thing they cited.
+
+### Fixed
+
+- **Installing the site for offline use is roughly three times lighter** [view:/] [persona:curious] [persona:ops]: the install was pulling down all 161 archived vendor proof documents — around 55 MB of evidence pages nobody needs to start the app — which pushed the offline install to 53.64 MB across 264 files. It is back to 16.82 MB across 103. The proof documents are still available; they now load when you open one instead of all at once, up front.
+- **Vendor proof documents open properly instead of showing the site's own home page** [view:/migrate] [persona:architect] [persona:ops]: following a proof link handed back the app shell rather than the evidence page.
+- **Invented requirements removed, and repaired records for Canada's CSE and FIPS-198** [view:/compliance] [persona:executive] [persona:researcher]: a set of CMMC, NZISM and KMIP requirements did not exist in the documents they claimed to come from, and have been withdrawn rather than left in place.
+- **12 library documents pointed at a landing page instead of the document itself** [view:/library] [persona:researcher]: each now resolves to the real source.
+- **Three broken tool links in the sandbox scenarios** [view:/playground] [persona:developer]: they pointed at repositories that have moved or never existed.
+
+### Data
+
+- **The SSH sandbox scenario now covers OpenSSH 10.4 and compares two post-quantum signature schemes side by side** [view:/playground] [persona:developer] [persona:architect]: a hardware-backed ML-DSA-65 key next to OpenSSH's own software-only composite scheme — the same handshake, with the difference being where the key actually lives.
+- **The migrate catalog gains the pqctoday-strongswan-pkcs11 fork** [view:/migrate] [persona:developer] [persona:ops].
+
 ## [4.43.0] - 2026-08-08
 
 Algorithm status pages get corrected for two real misclassifications, threat and timeline records gain dozens of missing links and cross-references, the PKI CRL workshop stops mislabeling a duplicate certificate, and About is reachable from mobile navigation again.
