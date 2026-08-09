@@ -67,9 +67,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Phase 0 exists because a programme without a named sponsor and a standing committee stalls at the first budget review, whatever the inventory says.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
         trackNote:
@@ -143,9 +143,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'A number persuades a meeting once. A register with an owner against each risk is what survives the meeting and gets re-read next quarter.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
 
@@ -218,9 +218,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Harvest-now-decrypt-later work and signature/PKI work have different deadlines and different owners — a single ordered list hides that.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
 
@@ -291,9 +291,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'This is the primitive underneath every hybrid key exchange you will ship. Getting it right here is what makes the protocol-level work uneventful.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -363,9 +363,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Studio is where you read what a key or certificate really contains — the step before a CBOM is worth writing.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -435,9 +435,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Token payloads, certificate chains and TLS records — the three places the new sizes surface in a service first.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -510,9 +510,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The control plane is the workshop this board rests on: the policy line you change is a real one, and the estate rekeys against it.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -586,9 +586,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -662,9 +662,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The envelope workshop is what this board rests on: it is the difference between a key policy you wrote and one you have executed.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -743,9 +743,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -819,9 +819,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The cutover rarely fails in the protocol you rehearsed — which is why this board carries both.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -895,9 +895,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'If a supplier cannot enrol a PQC certificate, their roadmap date is a press release. This board lets you check both.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -971,9 +971,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Both destinations are read-only records: the corpus with its tiers, and the log of every correction made to it. Nothing here asks you to trust a summary.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -1048,9 +1048,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Both workshops run real implementations compiled to WebAssembly, alongside the 25-check TCG V1.85 runner. The log is exportable, so the claim is yours to check.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -1125,9 +1125,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The consensus is a median across tracked sources, each with its own date, tier and link — and the published objections are on file too.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -1203,9 +1203,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
         trackNote:
@@ -1277,9 +1277,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'If you stop here you already have the argument. Everything above is optional detail.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Start anywhere. Nothing is locked.',
         trackNote:
@@ -1351,9 +1351,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             body: 'Identity and money are the everyday systems whose data outlives the lock protecting it — which is what makes them the clear cases.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Start anywhere. Nothing is locked.',
         trackNote:

@@ -248,18 +248,39 @@ export function PersonaBoardView({
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           {board.gridCards.map((card, i) => {
             const highlighted = i === 2
-            return (
+            const body = (
+              <>
+                <h3 className="text-sm font-bold text-foreground">{card.title}</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">{card.body}</p>
+              </>
+            )
+            const className = cn(
+              'glass-panel flex flex-col gap-2 p-4',
+              highlighted && 'border-accent/50 bg-accent/5',
+              // Only linked cards get affordances — an unlinked card must stay
+              // visually identical to how every card rendered before hrefs existed.
+              card.href && 'transition-colors hover:border-primary/40 hover:bg-primary/5'
+            )
+            // A card with no href stays a plain <div>: same markup as before,
+            // so no card ever looks clickable without being clickable.
+            return card.href ? (
+              <Link
+                key={card.title}
+                to={card.href}
+                data-testid={`grid-card-${i}`}
+                data-highlighted={highlighted}
+                className={className}
+              >
+                {body}
+              </Link>
+            ) : (
               <div
                 key={card.title}
                 data-testid={`grid-card-${i}`}
                 data-highlighted={highlighted}
-                className={cn(
-                  'glass-panel flex flex-col gap-2 p-4',
-                  highlighted && 'border-accent/50 bg-accent/5'
-                )}
+                className={className}
               >
-                <h3 className="text-sm font-bold text-foreground">{card.title}</h3>
-                <p className="text-xs leading-relaxed text-muted-foreground">{card.body}</p>
+                {body}
               </div>
             )
           })}

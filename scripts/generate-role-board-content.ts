@@ -317,13 +317,46 @@ async function main() {
 
       for (const req of REQUIRED_SCALAR_SLOTS) requireScalar(slots, req, ctx)
 
-      const gridTitles = repeating(slots, 'grid_card_title')
-      const gridBodies = repeating(slots, 'grid_card_body')
-      if (gridTitles.length !== REQUIRED_GRID_CARDS || gridBodies.length !== REQUIRED_GRID_CARDS) {
+      /**
+       * Grid cards are paired by `slot_index`, not by array position — same
+       * hazard `byIndex` documents for side-card rows. Titles at indices 0,1,2
+       * zipped against bodies at 0,1,3 have equal LENGTH, so a count check
+       * passes and body[2] silently pairs with title[2].
+       *
+       * `grid_card_href` (2026-08-09) is optional and keyed on the SAME index:
+       * a card with no href renders exactly as it always has. An href with no
+       * matching title is always an authoring error, so it throws.
+       */
+      const gridTitleByIndex = byIndex(slots, 'grid_card_title')
+      const gridBodyByIndex = byIndex(slots, 'grid_card_body')
+      const gridHrefByIndex = byIndex(slots, 'grid_card_href')
+      const gridIndices = [...gridTitleByIndex.keys()].sort((a, b) => Number(a) - Number(b))
+      if (
+        gridIndices.length !== REQUIRED_GRID_CARDS ||
+        gridBodyByIndex.size !== REQUIRED_GRID_CARDS
+      ) {
         throw new Error(
-          `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridTitles.length}/${gridBodies.length}`
+          `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridIndices.length}/${gridBodyByIndex.size}`
         )
       }
+      for (const idx of gridIndices) {
+        if (!gridBodyByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_title[${idx}] has no matching grid_card_body`)
+        }
+      }
+      for (const idx of gridBodyByIndex.keys()) {
+        if (!gridTitleByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_body[${idx}] has no matching grid_card_title`)
+        }
+      }
+      for (const idx of gridHrefByIndex.keys()) {
+        if (!gridTitleByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_href[${idx}] has no matching grid_card_title`)
+        }
+      }
+      const gridTitles = gridIndices.map((i) => gridTitleByIndex.get(i)!)
+      const gridBodies = gridIndices.map((i) => gridBodyByIndex.get(i)!)
+      const gridHrefs = gridIndices.map((i) => gridHrefByIndex.get(i))
       // Paired by slot_index, not by position — see `byIndex`.
       const labelByIndex = byIndex(slots, 'side_card_row_label')
       const valueByIndex = byIndex(slots, 'side_card_row_value')
@@ -384,10 +417,17 @@ async function main() {
         },
         gridTitle: ${jsString(requireScalar(slots, 'grid_title', ctx))},
         gridSub: ${jsString(requireScalar(slots, 'grid_sub', ctx))},
-        gridCards: [${gridTitles.map((title, i) => `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])} }`).join(', ')}] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+        gridCards: [${gridTitles
+          .map(
+            (title, i) =>
+              `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])}${
+                gridHrefs[i] !== undefined ? `, href: ${jsString(gridHrefs[i]!)}` : ''
+              } }`
+          )
+          .join(', ')}] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: ${jsString(requireScalar(slots, 'track_title', ctx))},
         ${trackNote !== undefined ? `trackNote: ${jsString(trackNote)},` : ''}
