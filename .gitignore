@@ -300,6 +300,15 @@ scripts/*
 !scripts/audit-role-board-ctas.ts
 !scripts/audit-role-board-ctas.local.test.ts
 
+# Role-board coverage gate — the SAME gap, third occurrence (found 2026-08-09
+# merging the six-use-cases-per-role work). The 08-09 commit added both the
+# ci.yml step and the package.json script but not the file they invoke, because
+# `scripts/*` swallowed it: CI would have hard-failed with file-not-found on a
+# fresh clone while every local run stayed green. Adding a gate to ci.yml or
+# package.json without a matching `!scripts/...` line here is the recurring
+# defect — check for one whenever a new scripts/ entry point lands.
+!scripts/audit-role-board-coverage.ts
+
 # Role-board content generator — runs in `npm run build` (npm run generate:
 # role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD
 # export now comes from its OUTPUT (src/data/generated/roleBoardContent.
