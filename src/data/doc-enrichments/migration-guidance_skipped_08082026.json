@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "PKI-Consortium-PQC-2025",
+    "reason": "Probable landing page, not the document (79,601 bytes of markup, only 6,223 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "RFC-9958",
+    "reason": "no requirements key; got []"
+  }
+]

@@ -22,6 +22,7 @@ openssl-3.6.0-src/
 openssl-3.6.0-src.bak/
 openssl-3.6.1-src/
 openssl-3.6.2-src/
+openssl-3.6.3-src/
 lms-wasm/
 *.o
 *.wasm.map

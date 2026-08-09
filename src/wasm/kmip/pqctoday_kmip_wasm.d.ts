@@ -220,7 +220,7 @@ export function _C_CopyObject(h_session: number, h_object: number, p_template: n
 
 export function _C_CreateObject(_h_session: number, p_template: number, count: number, ph_object: number): number;
 
-export function _C_DecapsulateKey(_h_session: number, p_mechanism: number, h_private_key: number, _p_template: number, _ul_attribute_count: number, p_ciphertext: number, ul_ciphertext_len: number, ph_key: number): number;
+export function _C_DecapsulateKey(h_session: number, p_mechanism: number, h_private_key: number, p_template: number, ul_attribute_count: number, p_ciphertext: number, ul_ciphertext_len: number, ph_key: number): number;
 
 export function _C_Decrypt(h_session: number, p_encrypted_data: number, ul_encrypted_data_len: number, p_data: number, pul_data_len: number): number;
 
@@ -256,7 +256,7 @@ export function _C_DigestKey(_h_session: number, _h_key: number): number;
 
 export function _C_DigestUpdate(h_session: number, p_part: number, ul_part_len: number): number;
 
-export function _C_EncapsulateKey(_h_session: number, p_mechanism: number, h_key: number, _p_template: number, _ul_attribute_count: number, p_ciphertext: number, pul_ciphertext_len: number, ph_key: number): number;
+export function _C_EncapsulateKey(h_session: number, p_mechanism: number, h_key: number, p_template: number, ul_attribute_count: number, p_ciphertext: number, pul_ciphertext_len: number, ph_key: number): number;
 
 export function _C_Encrypt(h_session: number, p_data: number, ul_data_len: number, p_encrypted_data: number, pul_encrypted_data_len: number): number;
 
@@ -282,7 +282,7 @@ export function _C_FindObjectsInit(h_session: number, p_template: number, ul_cou
 
 export function _C_GenerateKey(_h_session: number, p_mechanism: number, p_template: number, ul_count: number, ph_key: number): number;
 
-export function _C_GenerateKeyPair(_h_session: number, p_mechanism: number, p_public_key_template: number, ul_public_key_attribute_count: number, p_private_key_template: number, ul_private_key_attribute_count: number, ph_public_key: number, ph_private_key: number): number;
+export function _C_GenerateKeyPair(h_session: number, p_mechanism: number, p_public_key_template: number, ul_public_key_attribute_count: number, p_private_key_template: number, ul_private_key_attribute_count: number, ph_public_key: number, ph_private_key: number): number;
 
 export function _C_GenerateRandom(_h_session: number, p_random_data: number, ul_random_len: number): number;
 

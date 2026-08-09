@@ -47,13 +47,14 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'SSH PQC Authentication + KEX',
     emoji: '💻',
     useCase:
-      'Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined with draft-ietf-sshm-mlkem-hybrid-kex hybrid ML-KEM key exchange (mlkem768x25519). Every auth signature traverses C_Sign on the HSM token; the ephemeral ML-KEM KEX runs in-process inside OpenSSH.',
+      "Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined with draft-ietf-sshm-mlkem-hybrid-kex hybrid ML-KEM key exchange (mlkem768x25519). Every auth signature traverses C_Sign on the HSM token; the ephemeral ML-KEM KEX runs in-process inside OpenSSH. Run the signature matrix to compare that HSM-backed pure ML-DSA-65 against OpenSSH 10.4's own software-only composite ML-DSA-44+Ed25519 side by side — same handshake, different key custody.",
     algorithms: [
       'ML-DSA-65',
       'SLH-DSA-SHA2-128s',
       'ML-KEM hybrid KEX',
-      'OpenSSH 10.3',
+      'OpenSSH 10.4',
       'PKCS#11 v3.2',
+      'ML-DSA-44+Ed25519 (upstream)',
     ],
     difficulty: 'intermediate',
     trackId: 'protocol-simulation',
@@ -154,7 +155,10 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     algorithms: ['TPM 2.0 V1.85', 'ML-DSA-65', 'ML-KEM-768', 'softhsmv3'],
     difficulty: 'advanced',
     trackId: 'supply-chain',
-    tool: { name: 'pqctoday-tpm + pqctoday-hsm', url: 'https://github.com/pqctoday/pqctoday-tpm' },
+    tool: {
+      name: 'pqctoday-tpm + pqctoday-hsm',
+      url: 'https://github.com/pqctoday-org/pqctoday-tpm',
+    },
   },
   {
     id: 'supply-chain-signing',
@@ -195,7 +199,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     trackId: 'secrets-kms',
     tool: {
       name: 'pqctoday-kmip (Rust KMIP 3.0)',
-      url: 'https://github.com/pqctoday/pqctoday-kmip',
+      url: 'https://github.com/pqctoday-org/pqctoday-hsm/tree/main/kmip',
     },
   },
   {
@@ -306,7 +310,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     trackId: 'applications',
     tool: {
       name: 'SoftHSMv3 (PKCS#11 CKM_HSS) + OpenSSL',
-      url: 'https://github.com/pqctoday/softhsmv3',
+      url: 'https://github.com/pqctoday-org/pqctoday-hsm',
     },
   },
   {
