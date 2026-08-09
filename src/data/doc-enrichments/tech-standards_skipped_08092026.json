@@ -1,0 +1,14 @@
+[
+  {
+    "ref_id": "3GPP-PQC-Study-2025",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "TCG-TPM-V185-Part3",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "FIPS 206",
+    "reason": "Probable landing page, not the document (61,853 bytes of markup, only 5,594 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]
