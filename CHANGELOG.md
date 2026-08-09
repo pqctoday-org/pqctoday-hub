@@ -50,6 +50,7 @@ Compliance maturity coverage more than quadruples as documents that were being r
 
 - **The SSH sandbox scenario now covers OpenSSH 10.4 and compares two post-quantum signature schemes side by side** [view:/playground] [persona:developer] [persona:architect]: a hardware-backed ML-DSA-65 key next to OpenSSH's own software-only composite scheme — the same handshake, with the difference being where the key actually lives.
 - **The migrate catalog gains the pqctoday-strongswan-pkcs11 fork** [view:/migrate] [persona:developer] [persona:ops].
+- **Every in-browser crypto engine rebuilt against the current HSM release, and OpenSSL moved to 3.6.3** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: the KMIP, PKCS#11, SSH and OpenSSL engines that run inside your browser had drifted behind the HSM they are built from. All five were rebuilt and re-verified in a real browser — a live SSH handshake signing with ML-DSA-65 and a full hybrid ML-KEM key exchange, and a KMIP round trip that creates a key, signs with it, and verifies the signature entirely in WebAssembly.
 
 ## [4.43.0] - 2026-08-08
 
