@@ -997,8 +997,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-lamps-pq-composite-kem-18 is 'Waiting for AD Go-Ahead' — IETF Last Call has CLOSED and no ballot is open, so Last Call is the last completed milestone.",
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1338,9 +1339,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'wg-last-call',
         stageNote:
-          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete PQ algorithm profile (draft-reddy) remains an individual draft with no IETF standing',
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-cose-hpke-26 is in 'AD Evaluation' — with the IESG but before IETF Last Call. This scale has no rung for that, so wg-last-call is the closest honest label below ietf-last-call.",
         refs: [
           {
             kind: 'draft',
@@ -1360,9 +1361,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'wg-last-call',
         stageNote:
-          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing',
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Same document as pure KEM: draft-ietf-cose-hpke-26 in 'AD Evaluation', pre-Last-Call.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
@@ -1665,8 +1666,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Inherits draft-ietf-lamps-pq-composite-kem-18, 'Waiting for AD Go-Ahead' (Last Call closed, no ballot).",
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1823,8 +1825,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'individual-draft',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
         refs: [
           {
