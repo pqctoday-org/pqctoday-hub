@@ -59,6 +59,26 @@ jobs:
         run: npm ci
 
       - name: Security Audit
+        # KNOWN RED since 2026-08-07, deliberately not suppressed (decision
+        # 2026-08-09). Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
+        # (ICNS parser infinite loop) and GHSA-5p2g-fcmc-qvqq (JXL/HEIF parser
+        # infinite loops) — reach us transitively through `pptxgenjs`, which
+        # backs the .pptx export in ExportableArtifact.
+        #
+        # There is NO upstream fix. The advisory covers `*`: forcing
+        # image-size 2.0.2 via an override was tried and still audits dirty,
+        # and pptxgenjs 4.0.1 (latest) still declares `image-size: ^1.2.1`.
+        # `npm audit fix --force` "fixes" it only by downgrading pptxgenjs to
+        # 1.1.5, a 9-year-old jQuery-era API.
+        #
+        # Exposure is believed nil: both CVEs are DoS in raster-image PARSERS,
+        # and our export builds slides from markdown with no user-supplied
+        # ICNS/JXL/HEIF input, so that code path should never execute.
+        #
+        # BEFORE YOU DEBUG A RED BUILD: if this is the ONLY failing step, it is
+        # this. Every other gate in this job is expected green. Re-check
+        # `npm view pptxgenjs dependencies` — the day it stops depending on a
+        # vulnerable image-size, delete this comment and the note in CHANGELOG.
         run: npm audit --audit-level=high --omit=dev
 
       - name: Check Formatting
