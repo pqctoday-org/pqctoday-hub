@@ -27,6 +27,7 @@ import { render, screen, within, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from '../Layout/MainLayout'
 import { LandingView } from './LandingView'
+import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { NAV_PATH_LABELS } from '../../data/personaConfig'
 import { getRailSections } from '../Layout/railNav'
@@ -169,8 +170,11 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     mockViewport(false)
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderApp()
+    // Read from the data, not a literal: which board curious OPENS on is a
+    // ranking decision that has already moved once (2026-08-09, `break` ->
+    // `short`), and this assertion is about which COMPONENT rendered.
     expect(
-      screen.getByRole('heading', { name: /what actually breaks, and when/i })
+      screen.getByRole('heading', { name: PERSONA_JOURNEY_BOARD.curious.headline })
     ).toBeInTheDocument()
     expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
     expectDesktopRailCoversForYou('curious')

@@ -1299,11 +1299,24 @@ export interface PersonaJourneyBoard {
   }
   gridTitle: string
   gridSub: string
-  /** Always exactly 3 cards; the renderer highlights index [2]. */
+  /**
+   * Always exactly 3 cards; the renderer highlights index [2].
+   *
+   * `href` (2026-08-09) is optional. Where present the card renders as a real
+   * link; where absent it renders as static copy, exactly as every card did
+   * before. It exists because a board's only outbound links were its two CTAs
+   * and the track chips — 12 link slots per role against 18 sections — so
+   * per-role coverage of the site was arithmetically impossible without it.
+   * A card headed "What you walk out with" that names a destination and then
+   * does not go there was also a small, repeated dead end.
+   *
+   * Every href is registered and proof-gated in `role_board_ctas_*.csv` on the
+   * same terms as a CTA — see `scripts/audit-role-board-ctas.ts`.
+   */
   gridCards: [
-    { title: string; body: string },
-    { title: string; body: string },
-    { title: string; body: string },
+    { title: string; body: string; href?: string },
+    { title: string; body: string; href?: string },
+    { title: string; body: string; href?: string },
   ]
   trackTitle: string
   trackNote?: string
