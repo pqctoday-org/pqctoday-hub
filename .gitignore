@@ -444,11 +444,19 @@ public/data/rag-index-freshness.json
 # Downloads SourceUrl content per active CSV row to public/timeline/ and emits
 # public/timeline/evidence/manifest.json so the Gantt popover can prove its
 # claims are backed by on-disk documents. Audit script is the CI gate.
+#
+# 2026-08-09: the two snapshotters (wayback-snapshot-timeline.ts,
+# snapshot-timeline-via-playwright.ts) were REMOVED from this list and deleted
+# here — scrapers live in pqctoday-priv, which already held byte-identical
+# copies of both. Nothing referenced them: no npm script, no CI step, no test.
+# The rest of the pipeline stays public for now because the hub copies of
+# download-timeline-evidence.ts and enrich-protocol-matrix.py are AHEAD of
+# pqctoday-priv's (by 22 and 305 lines), so moving them means syncing content
+# first, not deleting. audit-timeline-evidence.ts must stay public regardless —
+# CI runs it.
 !scripts/download-timeline-evidence.ts
 !scripts/audit-timeline-evidence.ts
 !scripts/sync-timeline-csv-from-manifest.ts
-!scripts/wayback-snapshot-timeline.ts
-!scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
 
 # Content-freshness audit — CI gate that flags time-sensitive sim claims
