@@ -1,0 +1,125 @@
+---
+generated: 2026-08-09
+category: Technical Standards
+document_count: 4
+requirement_count: 82
+---
+
+## ASC-X9-IR-F01-2022
+- **Source**: ASC X9 IR 01-2022 — Quantum Computing Risks to the Financial Services Industry
+- **URL**: https://x9.org/wp-content/uploads/2022/11/X9F-Quantum-Computing-Risk-Study-Group-IR-F01-2022_20221129-Published-PDF.pdf
+- **Requirement count**: 29
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Validate the suitability of identified quantum-safe solutions, including proof-of-concept projects, as an item in the migration roadmap.
+    - _T2 Risk-Informed · all_: Assess the quantum resilience of cryptographic algorithms used to protect assets.
+    - _T2 Risk-Informed · all_: Validate the suitability of identified solutions through proof-of-concept projects as an item in the migration roadmap.
+    - _T3 Repeatable · keys_: Use random number generators certified to comply with BSI AIS.31 or NIST SP 800-90B requirements for cryptographic key generation.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Discuss quantum-safe migration plans with suppliers and partners and coordinate activities as an explicit phase in the migration roadmap.
+    - _T2 Risk-Informed · all_: Update policies, processes, and procedures to reflect changes for developers, users, and other entities affected by the migration.
+    - _T2 Risk-Informed · all_: Appoint a person or team to track quantum computing development rates and algorithmic advances to adjust the migration plan accordingly.
+    - _T2 Risk-Informed · all_: Review and update organizational policies, procedures, and guidelines to address quantum vulnerabilities.
+    - _T2 Risk-Informed · all_: Update policies to require quantum-safe protections where reasonable.
+    - _T2 Risk-Informed · all_: Review security policies to make recommended controls, such as multi-factor authentication, mandatory where appropriate.
+    - _T2 Risk-Informed · all_: Incorporate quantum-safe technology selection into the general strategy for managing cryptography.
+    - _T2 Risk-Informed · all_: Formulate and execute a documented quantum-safe migration strategy with a roadmap including milestones and timelines.
+    - _T2 Risk-Informed · all_: Engage suppliers to learn their plans for implementing quantum-safe migration strategies.
+    - _T2 Risk-Informed · all_: Include quantum computing threats in normal information security training and awareness programs.
+    - _T2 Risk-Informed · all_: Update policies, processes, and procedures to reflect migration changes for developers, users, and other entities.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Maintain complete and current inventories of cryptographic assets to understand quantum vulnerabilities and assess impact.
+    - _T2 Risk-Informed · all_: Identify where and how the organization consumes quantum-vulnerable cryptography and non-cryptographic vulnerabilities, including within supply chains.
+    - _T2 Risk-Informed · all_: Maintain a complete and accurate inventory of tangible and intangible assets to mitigate quantum risk.
+    - _T2 Risk-Informed · all_: Inventory information security standards and track progress toward quantum-safe updates.
+    - _T2 Risk-Informed · all_: Inventory compliance requirements and designate a team to track quantum-safe updates to those requirements.
+    - _T2 Risk-Informed · all_: Perform asset, cryptographic, and standards inventories to identify tangible/intangible assets, crypto usage, and compliance requirements.
+    - _T2 Risk-Informed · all_: Understand information security dependencies between different systems and processes.
+    - _T2 Risk-Informed · software_: Inventory software assets to identify quantum vulnerabilities and plan updates or replacements.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Map post-quantum solutions to identified vulnerabilities as a specific item on the migration roadmap.
+    - _T2 Risk-Informed · all_: Engage suppliers to learn their plans for implementing quantum-safe migration strategies.
+    - _T2 Risk-Informed · all_: Ensure adequate quantum-safe protections are applied at each stage of the asset lifecycle, including end-of-life.
+    - _T2 Risk-Informed · all_: Include explicit timelines for assessing quantum vulnerabilities in the organization's migration roadmap.
+    - _T2 Risk-Informed · all_: Map known post-quantum solutions to specific vulnerabilities as an item on the migration roadmap.
+    - _T2 Risk-Informed · software_: Integrate crypto agility into systems that cannot be immediately upgraded to expedite updates once standards permit.
+
+## ENISA-Crypto-Market-Analysis-2024
+- **Source**: Cryptographic Products and Services Market Analysis
+- **URL**: https://www.enisa.europa.eu/publications/cryptographic-products-and-services-market-analysis
+- **Requirement count**: 9
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Adopt harmonized criteria for the risk-based selection of recommended cryptographic mechanisms and utilize publicly available evaluation procedures.
+    - _T3 Repeatable · all_: Ensure cryptographic products and services comply with the EU cybersecurity certification framework established by the Cybersecurity Act.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish documented rules and guidelines for cryptographic mechanisms, key sizes, and key management for government-operated information systems.
+    - _T2 Risk-Informed · libraries_: Utilize harmonized technical specifications and centralized repositories for lightweight cryptographic libraries to ensure secure integration into IoT products.
+    - _T2 Risk-Informed · software_: Declare to ANSSI before importing or supplying crypto-enabled items on French territory; obtain export authorization for transfers outside the EU.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Develop an inventory or catalogue of cryptographic products and services to capture supply-chain information and support risk assessment.
+    - _T2 Risk-Informed · all_: Maintain visibility and transferability of Intellectual Property Rights via Bills of Materials (BOMs) to assess risks to economic security.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Develop and implement strategic migration plans for post-quantum cryptography, engaging necessary actors and following regulatory roadmaps.
+    - _T3 Repeatable · software_: Implement cybersecurity requirements for products with digital elements to ensure secure hardware and software throughout their lifecycle.
+
+## ENISA-State-of-Cybersecurity-2024
+- **Source**: 2024 Report on the State of Cybersecurity in the Union
+- **URL**: https://www.enisa.europa.eu/publications/2024-report-on-the-state-of-the-cybersecurity-in-the-union
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · software_: Consider supplier certification and security risk ratings when assessing third-party risks to ensure the cybersecurity of acquired products and services.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish and maintain documented ICT security policies, including measures and procedures, with management review and sign-off to ensure organizational commitment.
+    - _T2 Risk-Informed · all_: Implement a third-party risk management policy for supply chain cybersecurity, ensuring top management commitment and dedicated resources for assessment.
+    - _T2 Risk-Informed · all_: Implement a risk-based vulnerability management process as a mandatory cybersecurity risk management measure under NIS2.
+    - _T2 Risk-Informed · all_: Adopt vulnerability management and disclosure policies, potentially using templates provided by national competent authorities.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · software_: Establish a rigid patching policy covering the majority of assets, ensuring critical vulnerabilities are patched within defined timeframes.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Maintain visibility over the patching status of information assets to identify gaps in coverage, particularly for OT systems and wide geographic spreads.
+
+## PSD2-Directive-EU-2015-2366
+- **Source**: Directive (EU) 2015/2366 on payment services in the internal market (PSD2)
+- **URL**: https://www.legislation.gov.uk/eudr/2015/2366/data.htm
+- **Requirement count**: 37
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Apply strong customer authentication for online account access, electronic payment initiation, and remote actions implying fraud risk.
+    - _T2 Risk-Informed · all_: Implement strong customer authentication that dynamically links the transaction to a specific amount and payee for remote payments.
+    - _T2 Risk-Informed · all_: Maintain adequate security measures to protect the confidentiality and integrity of users' personalised security credentials.
+    - _T2 Risk-Informed · software_: Prove that the payment transaction was authenticated and accurately recorded.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Submit a security policy document with detailed risk assessment and description of security control and mitigation measures to protect users against fraud and illegal use of data.
+    - _T2 Risk-Informed · all_: Provide a description of governance arrangements and internal control mechanisms, including administrative, risk management, and accounting procedures, demonstrating they are proportionate, appropriate, sound, and adequate.
+    - _T2 Risk-Informed · all_: Describe the procedure in place to monitor, handle, and follow up security incidents and security-related customer complaints, including an incident reporting mechanism.
+    - _T2 Risk-Informed · all_: Describe the process in place to file, monitor, track, and restrict access to sensitive payment data.
+    - _T2 Risk-Informed · all_: Establish robust governance arrangements with clear organisational structure, defined lines of responsibility, and effective risk identification, management, monitoring, and reporting procedures.
+    - _T2 Risk-Informed · all_: Implement adequate internal control mechanisms, including sound administrative and accounting procedures, proportionate to the nature, scale, and complexity of payment services.
+    - _T2 Risk-Informed · all_: Ensure shareholders or members with qualifying holdings are suitable to ensure sound and prudent management of the payment institution.
+    - _T2 Risk-Informed · all_: Inform competent authorities without undue delay of any changes affecting the accuracy of information and evidence provided for authorisation.
+    - _T2 Risk-Informed · all_: Communicate internal control mechanisms used by agents to comply with money laundering and terrorist financing obligations, updating without delay upon material changes.
+    - _T2 Risk-Informed · all_: Define internal control mechanisms for agents to ensure compliance with money laundering and terrorist financing obligations.
+    - _T2 Risk-Informed · all_: Ensure outsourcing of important operational functions does not impair internal control or supervisory monitoring capabilities.
+    - _T2 Risk-Informed · all_: Maintain senior management responsibility and ensure authorisation conditions are not undermined when outsourcing important functions.
+    - _T2 Risk-Informed · all_: Take reasonable steps to ensure third-party providers of operational functions comply with directive requirements.
+    - _T2 Risk-Informed · all_: Accept full liability for acts of employees, agents, branches, or outsourced entities.
+    - _T2 Risk-Informed · all_: Establish a framework with mitigation measures and control mechanisms to manage operational and security risks.
+    - _T2 Risk-Informed · all_: Provide an annual assessment of operational and security risks and the adequacy of mitigation measures to the competent authority.
+    - _T2 Risk-Informed · all_: Establish and maintain effective incident management procedures, including for detection and classification of major incidents.
+    - _T2 Risk-Informed · all_: Provide statistical data on fraud relating to different means of payment to competent authorities at least annually.
+    - _T2 Risk-Informed · keys_: Ensure personalised security credentials are not accessible to parties other than the user and issuer.
+    - _T2 Risk-Informed · software_: Ensure security control measures indicate how they ensure a high level of technical security and data protection for software and IT systems used by the applicant or outsourced undertakings.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Keep appropriate records for at least 5 years to demonstrate compliance with the directive.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · keys_: Transmit personalised security credentials through safe and efficient channels.
+    - _T2 Risk-Informed · keys_: Unblock or replace the payment instrument once reasons for blocking no longer exist.
+    - _T2 Risk-Informed · keys_: Allow access to the payment account once reasons for denying access no longer exist.
+    - _T2 Risk-Informed · keys_: Prevent all use of the payment instrument once notification of loss/theft is made.
+    - _T2 Risk-Informed · software_: Communicate securely with payment initiation service providers.
+    - _T2 Risk-Informed · software_: Communicate securely with account information service providers.
+    - _T2 Risk-Informed · software_: Identify itself and communicate securely with the account servicing provider, payer, and payee.
+    - _T2 Risk-Informed · software_: Identify itself and securely communicate with the account servicing provider and user.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Implement controls that are proportionate, adequate, and responsive to risks to check continued compliance.
+    - _T2 Risk-Informed · all_: Notify the competent authority without undue delay in the case of a major operational or security incident.
+    - _T2 Risk-Informed · all_: Inform payment service users without undue delay if an incident impacts their financial interests.
+    - _T2 Risk-Informed · software_: Immediately report incidents relating to AIS/PISP to the competent authority.
