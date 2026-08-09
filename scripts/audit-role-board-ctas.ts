@@ -96,8 +96,22 @@ export function parseCtaRegistry(csvText: string): CtaRegistryRow[] {
 }
 
 /**
+ * Every content slot that carries an outbound href, and is therefore subject to
+ * the full proof gate — registration, route resolution, a capability claim, and
+ * a verification no older than `VERIFICATION_MAX_AGE_DAYS`.
+ *
+ * `grid_card_href` joined on 2026-08-09. It is optional per card, but an
+ * optional link is not an unverified one: a grid card is rendered on the same
+ * board, at the same level of trust, as the two CTAs above it. Leaving it out
+ * of this list would have shipped roughly a hundred links with no proof gate
+ * behind them — a bigger unverified surface than the CTAs this gate was
+ * written to protect.
+ */
+const HREF_SLOTS = new Set(['cta_primary_href', 'cta_secondary_href', 'grid_card_href'])
+
+/**
  * The set of hrefs a role board can point at, read from the role-board content
- * CSV's own `cta_primary_href` / `cta_secondary_href` rows.
+ * CSV's own href-bearing rows (see `HREF_SLOTS`).
  *
  * WHY THE CSV, NOT personaConfig.ts. This function used to regex-scrape
  * `ctaPrimaryHref: '…'` out of `src/data/personaConfig.ts`. The 2026-08-02
@@ -134,7 +148,7 @@ export function extractBoardHrefs(contentCsvText: string): string[] {
   for (const row of rows) {
     if (!row || !row.role_id) continue
     if ((row.status ?? 'active') !== 'active') continue
-    if (row.slot !== 'cta_primary_href' && row.slot !== 'cta_secondary_href') continue
+    if (!HREF_SLOTS.has(row.slot)) continue
     const href = (row.content ?? '').trim()
     if (href) hrefs.add(href)
   }
@@ -332,7 +346,7 @@ function main() {
   if (boardHrefs.length === 0) {
     console.error(
       `✗ No CTA hrefs found in ${contentCsvPath.replace(ROOT + '/', '')}.\n` +
-        `  Expected rows with slot=cta_primary_href / cta_secondary_href.\n` +
+        `  Expected rows with slot=${[...HREF_SLOTS].join(' / ')}.\n` +
         `  Refusing to report a pass over zero CTAs.`
     )
     process.exit(1)
