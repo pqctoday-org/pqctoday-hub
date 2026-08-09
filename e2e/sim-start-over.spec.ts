@@ -81,13 +81,19 @@ test('START OVER clears the assessment and re-locks the sim', async ({ page }) =
   await page.goto('/simulation', { waitUntil: 'domcontentloaded', timeout: 45_000 })
   await expect(page.getByRole('button', { name: /End Quarter/i })).toBeVisible({ timeout: 45_000 })
 
-  // "Start over" lives in the "⋯ MORE" overflow menu (RunActionsMenu, PR2 —
-  // collapsed the secondary run actions out of the header; TRIAGE 2026-07-03:
-  // the old always-visible "START OVER" button no longer exists, so the test
-  // must open the menu first). The confirm is a styled in-app dialog
-  // (SimConfirmDialog), not a native window.confirm — no page.on('dialog')
-  // needed; click its own "Start over" confirm button instead.
-  await page.getByRole('button', { name: '⋯ MORE' }).click()
+  // "Start over" lives in the overflow menu (RunActionsMenu, PR2 — collapsed the
+  // secondary run actions out of the header; TRIAGE 2026-07-03: the old
+  // always-visible "START OVER" button no longer exists, so the test must open
+  // the menu first). The confirm is a styled in-app dialog (SimConfirmDialog),
+  // not a native window.confirm — no page.on('dialog') needed; click its own
+  // "Start over" confirm button instead.
+  //
+  // 2026-08-02 made that trigger ICON-ONLY (was the literal text "⋯ MORE"), so
+  // it is addressed by its aria-label now. Locating it by the visible glyph
+  // would re-break the moment the icon changes; the accessible name is the
+  // stable contract, and asserting on it also keeps the control keyboard- and
+  // screen-reader-reachable.
+  await page.getByRole('button', { name: /More run actions/i }).click()
   await page.getByRole('menuitem', { name: /Start over/i }).click()
   await page
     .getByRole('alertdialog', { name: /Start over completely/i })
