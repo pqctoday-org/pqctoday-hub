@@ -100,6 +100,17 @@ test.describe('Simulation — Executive Report embeds under the sim header', () 
     // wording stays on the sibling migration-verification tool step. Filtering
     // by "open here →" scopes to the journey band, not the resource rail
     // ("opens in simulation") or a decision-panel "Option A: …" move button.
+    // 2026-08-02 (PR #496) put the phase card's content behind tabs — Decide /
+    // Progress / Resources / Signals — and "Decide" is the default. The journey
+    // band (and its "open here →" affordances) lives under PROGRESS, so the tab
+    // has to be opened before any journey step is reachable. Measured, not
+    // guessed: on the Progress tab the page carries "Executive Report" and 4
+    // "open here" affordances; on Decide and Resources it carries none.
+    await page
+      .getByRole('button', { name: /^Progress$/i })
+      .first()
+      .click()
+
     const reportStep = page
       .getByRole('button', { name: /Executive Report/i })
       .filter({ hasText: /open here/i })
