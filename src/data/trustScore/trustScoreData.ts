@@ -271,6 +271,39 @@ function computeAllScores(): Map<string, TrustScore> {
     })
   }
 
+  // Superseded library ids inherit their survivor's score (2026-08-09).
+  //
+  // `libraryData` holds ACTIVE rows only — transformLibraryRow drops anything
+  // whose status is not 'active' — so every reference to a document that has
+  // since been replaced (an IETF draft superseded by a later revision or by the
+  // final RFC) resolved to NO score at all and fell back to the 0.95 "unknown
+  // trust" multiplier. That is wrong twice over: the citation is to a real,
+  // vetted document, and "unknown" ranks it BELOW a Moderate-tier source.
+  //
+  // It is measurable: corpus-trust-invariants (C3) pinned 174 governance-
+  // maturity chunks as unscored for exactly this reason, every one of them a
+  // requirement citing a document whose successor is right there in the same
+  // CSV. The pin's own note names this fix — follow the single supersession
+  // hop — as the remedy.
+  //
+  // Done here rather than in chunkToResource because this is a property of the
+  // library data, not of search: every getTrustScore caller has the same gap,
+  // and chunkToResource is deliberately import-light (types only) so that the
+  // search path does not pull the library CSVs in.
+  //
+  // One hop only, and never overwriting: attachPriorRevisions already collapses
+  // a whole supersession chain onto the surviving record, so `priorRevisions`
+  // holds every ancestor. A prior that is itself an active row keeps its own
+  // score.
+  for (const item of libraryData ?? []) {
+    const survivorScore = scores.get(`library:${item.referenceId}`)
+    if (!survivorScore) continue
+    for (const prior of item.priorRevisions ?? []) {
+      const key = `library:${prior.referenceId}`
+      if (!scores.has(key)) scores.set(key, survivorScore)
+    }
+  }
+
   // Timeline events — xrefs use the event title as resource ID
   for (const country of timelineData ?? []) {
     for (const body of country.bodies) {
