@@ -446,9 +446,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/openssl',
           },
           {
-            title: 'A pitch you can deliver',
-            body: 'The board-facing version of the argument, in your own numbers.',
-            href: '/business/tools/board-pitch',
+            title: 'Everything else here, by topic',
+            body: 'Topic-first navigation rather than role-first — useful when the question is “what else is on this site” rather than “what should I do next”.',
+            href: '/explore',
           },
         ] as [
           { title: string; body: string; href?: string },
