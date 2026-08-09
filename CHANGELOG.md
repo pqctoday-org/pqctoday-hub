@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.45.0] - 2026-08-09
 
-Whichever role you pick, your home page now reaches every part of the site rather than a sixth of it; the protocol readiness matrix stops overstating how far six protocols have actually got; and the quiz gains questions for the two audiences that had the fewest.
+Whichever role you pick, your home page now reaches every part of the site rather than a sixth of it; the protocol readiness matrix stops overstating how far six protocols have actually got; the quiz gains questions for the two audiences that had the fewest; and compliance maturity coverage grows again as four more documents are read to their real ending.
 
 ### Added
 
@@ -51,6 +51,7 @@ Whichever role you pick, your home page now reaches every part of the site rathe
 
 - **Known-vulnerability data rebuilt against the current product cross-reference** [view:/migrate] [persona:ops] [persona:developer]: it had been generated from a superseded product file. Now 153 products and 1,152 vulnerabilities.
 - **Industry Landscape: the crypto each of three industries actually relies on, filled in from their own cited documents** [view:/algorithms] [persona:researcher] [persona:architect]: payment ecosystems, telecoms subscriber security and rail signalling. The remaining incomplete rows were left blank on purpose — for most of them, the cited document genuinely contains no post-quantum content, and an honest blank beats a plausible guess.
+- **Eighty-two more compliance maturity requirements, from four documents read to their actual end** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: the EU payment services directive, the ASC X9 financial-services quantum risk report and two ENISA reports. This continues the previous release's work — the extraction had been stopping partway through long documents, and these four were still short of their real ending.
 - **Eleven more compliance records name the standards they depend on** [view:/compliance] [persona:architect].
 - **Nine more product certification links** [view:/migrate] [persona:ops].
 
