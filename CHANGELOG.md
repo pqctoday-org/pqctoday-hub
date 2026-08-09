@@ -45,6 +45,7 @@ Whichever role you pick, your home page now reaches every part of the site rathe
 - **Hand-written notes in the readiness matrix are no longer overwritten by the updater** [view:/algorithms] [persona:architect]: an automated refresh could replace a multi-line, human-verified explanation with a generated one-line summary — including, on one run, a note that existed specifically to record an earlier mistake and stop it recurring. The updater now leaves any note a person wrote alone and reports it instead.
 - **The "just curious" home page works on a phone again** [view:/] [persona:curious]: its mobile board could not be reached at all, and what it showed was hard-coded rather than drawn from the same content as every other role.
 - **Two compliance records now link to the document they rely on, not a company homepage** [view:/compliance] [persona:architect] [persona:ops]: the UAE National Encryption Policy and the TCG TPM 2.0 entries each cited a site's front page, which cannot evidence the requirement claimed against it. Both now point at the actual published document.
+- **Search now ranks documents that have been replaced by a newer version properly** [view:/library] [persona:researcher] [persona:architect]: when a standard or draft was superseded, anything citing the older version lost its trust rating entirely and was ranked as an unknown source — below results from sources we actually rate lower. Those citations now inherit the rating of the document that replaced them. It affects 97 compliance maturity requirements and 15 document summaries.
 - **Forty-five quiz questions no persona filter could ever reach are back in circulation** [view:/learn] [persona:architect] [persona:developer] [persona:ops] [persona:executive]: their persona tags were separated with commas where the quiz reads them as pipe-separated, so those questions matched nobody and silently never appeared. Architects regain 45, developers 36, ops 6 and executives 2.
 
 ### Data
@@ -57,6 +58,7 @@ Whichever role you pick, your home page now reaches every part of the site rathe
 
 ### Security
 
+- **Refreshing the site's search index no longer takes 40 minutes for no reason** [persona:ops]: the index file stamps itself with the time it was built, so rebuilding it looked like a change even when nothing had actually changed — and the freshness check then demanded a full rebuild. It now compares the content itself. It still catches a genuinely edited entry, which is what the check exists for.
 - **A build check that could never have run is now able to run** [persona:ops]: the check that proves every role's home page reaches every section was added without the file it invokes, so it would have failed to start on any machine but the one that wrote it. Third time this particular trap has caught a check here; the rule that hides these files now names it explicitly.
 
 ## [4.44.0] - 2026-08-08
