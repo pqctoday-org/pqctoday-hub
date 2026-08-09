@@ -79,6 +79,9 @@ const ROLES = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curi
 const REQUIRED_GRID_CARDS = 3
 const REQUIRED_VARIANTS_PER_ROLE = 6
 
+/** See PersonaJourneyBoard['sideCard']['provenance'] for what each one means. */
+const SIDE_CARD_PROVENANCE = new Set(['sourced', 'illustrative', 'guidance'])
+
 // Slots every board must carry — everything except the two optional ones
 // (heroBadge, capstoneChip — absent for researcher by design) and footnote/
 // trackNote, which the type itself marks optional.
@@ -374,6 +377,15 @@ async function main() {
       const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
       const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
 
+      // `as '…'` in the emitted string is a cast, not a check — a typo'd
+      // provenance would compile and render an empty chip. Validate on read.
+      const provenance = requireScalar(slots, 'side_card_provenance', ctx)
+      if (!SIDE_CARD_PROVENANCE.has(provenance)) {
+        throw new Error(
+          `${ctx}: unknown side_card_provenance "${provenance}" (expected ${[...SIDE_CARD_PROVENANCE].join(', ')})`
+        )
+      }
+
       const heroBadgeText = scalar(slots, 'hero_badge_text')
       const heroBadgeTone = scalar(slots, 'hero_badge_tone')
       const sideCardFootnote = scalar(slots, 'side_card_footnote')
@@ -409,7 +421,7 @@ async function main() {
         sideCard: {
           title: ${jsString(requireScalar(slots, 'side_card_title', ctx))},
           tone: ${jsString(requireScalar(slots, 'side_card_tone', ctx))} as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative',
+          provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative' | 'guidance',
           rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
           punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
           ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
