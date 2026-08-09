@@ -6,7 +6,17 @@ import '@testing-library/jest-dom'
 import { CuriousMobileBoard } from './CuriousMobileBoard'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
+import { PERSONA_JOURNEY_BOARD_VARIANTS, resolveRoleBoardVariant } from '@/data/personaConfig'
+
+/**
+ * The board this surface shows by default. Every assertion below reads from
+ * this rather than from a copy literal: until 2026-08-09 the component's
+ * eyebrow, headline, sub, both CTA LABELS, side-card rows and punchline were
+ * hardcoded, and these tests froze those literals in place — so the tests
+ * agreed with the component while both disagreed with the CSV that is supposed
+ * to own the copy.
+ */
+const DEFAULT_BOARD = PERSONA_JOURNEY_BOARD_VARIANTS.curious[0].board
 
 const TestTimeline = () => <div>Timeline Page</div>
 const TestThreats = () => <div>Threats Page</div>
@@ -30,14 +40,8 @@ function renderBoard(initialEntry = '/') {
         <Route path="/threats" element={<TestThreats />} />
         <Route path="/learn" element={<TestLearn />} />
         <Route path="/faq" element={<TestFaq />} />
-        <Route
-          path={PERSONA_JOURNEY_BOARD.curious.ctaPrimaryHref}
-          element={<TestCtaPrimaryDestination />}
-        />
-        <Route
-          path={PERSONA_JOURNEY_BOARD.curious.ctaSecondaryHref}
-          element={<TestCtaSecondaryDestination />}
-        />
+        <Route path={DEFAULT_BOARD.ctaPrimaryHref} element={<TestCtaPrimaryDestination />} />
+        <Route path={DEFAULT_BOARD.ctaSecondaryHref} element={<TestCtaSecondaryDestination />} />
       </Routes>
     </MemoryRouter>
   )
@@ -56,13 +60,15 @@ describe('CuriousMobileBoard', () => {
   describe('Hero', () => {
     it('renders the eyebrow, headline, sub-copy and both CTAs', () => {
       renderBoard()
-      expect(screen.getByText('About 6 minutes · nothing to install')).toBeInTheDocument()
-      expect(
-        screen.getByRole('heading', { name: 'What actually breaks, and when.' })
-      ).toBeInTheDocument()
-      expect(screen.getByText(/The padlock in your browser relies on maths/)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Show me' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'I have 30 seconds' })).toBeInTheDocument()
+      expect(screen.getByText(DEFAULT_BOARD.heroEyebrow)).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: DEFAULT_BOARD.headline })).toBeInTheDocument()
+      expect(screen.getByText(DEFAULT_BOARD.sub)).toBeInTheDocument()
+      // The CTA LABELS come from the board too. They used to be the literals
+      // 'Show me' and 'I have 30 seconds' — and the second one was actively
+      // wrong: it promised the 30-second board while navigating to
+      // ctaSecondaryHref, the breach-cost tool.
+      expect(screen.getByRole('button', { name: DEFAULT_BOARD.ctaPrimary })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: DEFAULT_BOARD.ctaSecondary })).toBeInTheDocument()
     })
 
     // 2026-08-02 bug fix: both hero CTAs rendered as inert <Button>s with no
@@ -70,19 +76,19 @@ describe('CuriousMobileBoard', () => {
     // already fixed 2026-08-01 (see PersonaBoardView.test.tsx). Presence
     // checks alone (above) don't catch this; these assert the click actually
     // navigates, to whatever PERSONA_JOURNEY_BOARD.curious's own hrefs are.
-    it('tapping "Show me" navigates to the curious board\'s configured ctaPrimaryHref', () => {
+    it("tapping the primary CTA navigates to the board's configured ctaPrimaryHref", () => {
       renderBoard()
-      fireEvent.click(screen.getByRole('button', { name: 'Show me' }))
+      fireEvent.click(screen.getByRole('button', { name: DEFAULT_BOARD.ctaPrimary }))
       expect(screen.getByText('CTA Primary Destination Page')).toBeInTheDocument()
     })
 
-    it('tapping "I have 30 seconds" navigates to the curious board\'s configured ctaSecondaryHref', () => {
+    it("tapping the secondary CTA navigates to the board's configured ctaSecondaryHref", () => {
       // Routed at whatever the curious board's real ctaSecondaryHref is, so this
       // tracks the data rather than a literal. The href changed twice on
       // 2026-08-02 (/timeline -> /faq -> /tools/breach-simulator) as the 18
       // boards were given non-overlapping destinations.
       renderBoard()
-      fireEvent.click(screen.getByRole('button', { name: 'I have 30 seconds' }))
+      fireEvent.click(screen.getByRole('button', { name: DEFAULT_BOARD.ctaSecondary }))
       expect(screen.getByText('CTA Secondary Destination Page')).toBeInTheDocument()
     })
   })
@@ -96,14 +102,94 @@ describe('CuriousMobileBoard', () => {
       const rowLabels = within(card)
         .getAllByRole('term')
         .map((el) => el.textContent)
-      expect(rowLabels).toEqual(['Data captured today', 'Must stay secret for', 'Machine arrives'])
+      expect(rowLabels).toEqual(DEFAULT_BOARD.sideCard.rows.map((r) => r.label))
 
       const rowValues = within(card)
         .getAllByRole('definition')
         .map((el) => el.textContent)
-      expect(rowValues).toEqual(['readable later', '12 years', '~2032'])
+      expect(rowValues).toEqual(DEFAULT_BOARD.sideCard.rows.map((r) => r.value))
 
-      expect(screen.getByText('The deadline already passed for some data.')).toBeInTheDocument()
+      expect(screen.getByText(DEFAULT_BOARD.sideCard.punchline)).toBeInTheDocument()
+    })
+  })
+
+  /**
+   * The defect these cover: this board read `PERSONA_JOURNEY_BOARD.curious` —
+   * the order-1 board alone — so every other curious board was unreachable
+   * below `lg`. Two of three were invisible on mobile; at six it would have
+   * been five of six.
+   */
+  describe('Board options', () => {
+    it('renders a chip for every curious board, not just the default', () => {
+      renderBoard()
+      const chips = within(screen.getByTestId('board-variant-chips')).getAllByRole('radio')
+      expect(chips).toHaveLength(PERSONA_JOURNEY_BOARD_VARIANTS.curious.length)
+      expect(chips.map((c) => c.textContent)).toEqual(
+        PERSONA_JOURNEY_BOARD_VARIANTS.curious.map((v) => v.chipLabel)
+      )
+    })
+
+    it('marks exactly the active board as checked', () => {
+      const target = PERSONA_JOURNEY_BOARD_VARIANTS.curious[1]
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path="/" element={<CuriousMobileBoard variantId={target.id} />} />
+          </Routes>
+        </MemoryRouter>
+      )
+      const checked = within(screen.getByTestId('board-variant-chips'))
+        .getAllByRole('radio')
+        .filter((c) => c.getAttribute('aria-checked') === 'true')
+      expect(checked).toHaveLength(1)
+      expect(checked[0]).toHaveTextContent(target.chipLabel)
+    })
+
+    it('renders the requested board, and its copy actually changes with it', () => {
+      const target = PERSONA_JOURNEY_BOARD_VARIANTS.curious[1]
+      const other = resolveRoleBoardVariant('curious', undefined).board
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path="/" element={<CuriousMobileBoard variantId={target.id} />} />
+          </Routes>
+        </MemoryRouter>
+      )
+      // Selecting a board has to change the WORDS, not just the CTA targets.
+      // With the copy hardcoded, switching option would have moved the
+      // destinations while every visible string stayed put.
+      expect(screen.getByRole('heading', { name: target.board.headline })).toBeInTheDocument()
+      expect(screen.queryByRole('heading', { name: other.headline })).not.toBeInTheDocument()
+      expect(screen.getByText(target.board.sideCard.punchline)).toBeInTheDocument()
+    })
+
+    it('reports the chosen board id to its parent', () => {
+      const seen: string[] = []
+      const target = PERSONA_JOURNEY_BOARD_VARIANTS.curious[2]
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route
+              path="/"
+              element={<CuriousMobileBoard onSelectVariant={(id) => seen.push(id)} />}
+            />
+          </Routes>
+        </MemoryRouter>
+      )
+      fireEvent.click(screen.getByTestId(`board-variant-chip-${target.id}`))
+      expect(seen).toEqual([target.id])
+    })
+
+    it('falls back to the default board when given an id that no longer exists', () => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path="/" element={<CuriousMobileBoard variantId="deleted-long-ago" />} />
+          </Routes>
+        </MemoryRouter>
+      )
+      // A stale persisted id or a hand-typed ?variant= must be harmless, not blank.
+      expect(screen.getByRole('heading', { name: DEFAULT_BOARD.headline })).toBeInTheDocument()
     })
   })
 

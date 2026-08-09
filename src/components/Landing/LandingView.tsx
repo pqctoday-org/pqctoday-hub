@@ -343,8 +343,12 @@ export const LandingView = () => {
   // only; MainLayout.tsx suppresses its own header chrome for this exact same
   // condition so the two never fight over the screen (see MainLayout.tsx's
   // `isCuriousMobileTakeover`).
+  // Variant selection is passed through so mobile reaches every curious board,
+  // not just order 1 (2026-08-09). It uses the SAME `activeVariantId` and
+  // `handleSelectVariant` as the desktop board, so switching option on one
+  // surface and resizing into the other keeps the same board on screen.
   if (selectedPersona === 'curious' && isBelowLg) {
-    return <CuriousMobileBoard />
+    return <CuriousMobileBoard variantId={activeVariantId} onSelectVariant={handleSelectVariant} />
   }
 
   // A persona is selected (and we're not in the Curious-mobile case above) —
