@@ -96,6 +96,18 @@ jobs:
         # pqctoday-priv/maintenance/REVISIONS-INTEGRITY-REMEDIATION-PLAN-07262026.md.
         run: npm run audit:csv-archival
 
+      - name: Audit merge-all loader coverage (archived files still reachable)
+        # The counterpart to the archival gate above. A handful of loaders merge
+        # EVERY dated file instead of picking the latest, so for them archiving a
+        # file deletes its data from the app unless the loader's glob descends
+        # into archive/. That is not hypothetical: the 2026-07-26 archival sweep
+        # collapsed the CSWP.39 maturity corpus from 189 documents to 1 with no
+        # build error and no failing test, and it shipped that way for 12 days.
+        # This script re-derives each registered loader's real import.meta.glob
+        # patterns and fails if any on-disk file is unreachable by them.
+        # See scripts/audit-merge-all-coverage.ts.
+        run: npm run audit:merge-all-coverage
+
       - name: Audit module infographic coverage
         # Verifies every MODULE_CATALOG entry has public/images/infographics/pqcstd_<id>.png.
         # CuriousSummaryBanner has no fallback chain — a missing PNG renders as a broken image.

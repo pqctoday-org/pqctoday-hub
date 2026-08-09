@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:e4d90e25-218f-4759-9cc0-07738e39b192",
+  "serialNumber": "urn:uuid:70e4e325-51b5-4c68-b41f-89ed6b273869",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-31T00:00:00.000Z",
+    "timestamp": "2026-08-08T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -34922,6 +34922,56 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "bb3c58810958704b",
+      "name": "strongSwan (pqctoday-hsm PQC fork)",
+      "version": "6.0.7 + pqctoday patches",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "strongSwan 6.0.7 patched by pqctoday-hsm (strongswan-pqc.patch, strongswan-pqc-supplement.patch, strongswan-pqc-slhdsa.patch, plus a PKCS#11 plugin patch) to add post-quantum IKEv2 AUTHENTICATION on top of upstream's ML-KEM key exchange. The patches introduce KEY_ML_DSA_44/65/87 and SIGN_ML_DSA_44/65/87 to libstrongswan's key-type and signature-scheme enums, the id-ml-dsa-* OIDs, and proposal keywords (mldsa65 / ike:mldsa65); private keys stay in a softhsmv3 PKCS#11 v3.2 token and are never exported. UPSTREAM strongSwan does NOT ship this -- those enum values do not exist in 6.0.7 and its first-party release notes document ML-KEM key exchange only, with IKEv2 authentication remaining PSK/RSA/ECDSA. See the separate `strongswan` row for the upstream product; this row is the fork.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pqctoday-strongswan-pkcs11"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "VPN and IPsec Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Network"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
         }
       ]
     }

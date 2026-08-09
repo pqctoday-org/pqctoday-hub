@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1172,
+  "count": 1173,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9468,6 +9468,13 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19710",
       "file": "TASS-Crypto-Engine-LMS-7345f34f.html",
       "bytes": 42271,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "pqctoday-strongswan-pkcs11",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "file": "pqctoday-strongswan-pkcs11-85241c05.html",
+      "bytes": 867792,
       "tier": "curl_cffi:chrome124"
     }
   ]
