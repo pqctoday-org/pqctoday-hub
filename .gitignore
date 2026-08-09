@@ -329,7 +329,6 @@ scripts/*
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
 # calls the public NVD API, writes public cve-snapshot.json: nothing private.
-!scripts/scrape-nvd.py
 # Weekly-cron CI scripts — invoked on GitHub runners by
 # .github/workflows/trusted-source-freshness.yml and update-protocol-matrix.yml;
 # must be tracked or those workflows fail file-not-found (the scrape-nvd.py
