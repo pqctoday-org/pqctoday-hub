@@ -42,9 +42,19 @@ test('command palette opens and returns ranked results for "ML-KEM"', async ({ p
   await expect(input).toBeVisible({ timeout: 5_000 })
   await input.fill('ML-KEM')
 
-  // At least one result row should appear within 5s. Result rows have a
-  // recognisable structure but no fixed test id; rely on text presence.
+  // At least one result row should appear. Result rows have a recognisable
+  // structure but no fixed test id; rely on text presence.
+  //
+  // 15s, not 5s. The palette pre-loads the search index on first ⌘K open
+  // (SearchIndex.ts → unified.loadCached()), and that fetches and parses
+  // public/data/rag-corpus.json — currently 21.3 MB. Locally the file is warm
+  // in the HTTP cache and results land in well under a second, which is why
+  // this passed on every dev machine while failing in CI, where each run
+  // fetches it cold. 5s was an under-estimate of a real load, not a flake:
+  // the palette opened and accepted input every time, only the results were
+  // late. Matches the 15s used elsewhere in this suite for index-dependent
+  // assertions.
   await expect(
     page.locator('[role="option"], [role="listbox"] button, [role="listbox"] a').first()
-  ).toBeVisible({ timeout: 5_000 })
+  ).toBeVisible({ timeout: 15_000 })
 })
