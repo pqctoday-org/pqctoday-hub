@@ -1,6 +1,30 @@
 [
   {
-    "ref_id": "QCCPA-2022",
-    "reason": "Probable landing page, not the document (361,621 bytes of markup, only 2,553 chars of text). Re-fetch the linked document before treating this as covered."
+    "ref_id": "BSI TR-02102-1",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "ANSSI PQC Position Paper",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "ANSSI PQC Follow-up Paper",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "UK NCSC PQC Guidance",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "eIDAS-2-Regulation",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "ISO-18013-5-mDL",
+    "reason": "Probable landing page, not the document (79,714 bytes of markup, only 3,850 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "NIST SP 800-82 Rev. 3",
+    "reason": "no requirements key; got []"
   }
 ]
