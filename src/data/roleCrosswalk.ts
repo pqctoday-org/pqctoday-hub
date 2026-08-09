@@ -65,7 +65,45 @@ export interface RoleMapping {
   phases: PhaseId[]
   /** CSWP.39 5-step spine ids advanced across this role's phases (drift key). */
   cswp39Steps: Cswp39StepId[]
+  /**
+   * Where this mapping's two external anchors come from.
+   *
+   * Added 2026-08-09: all eight roles reported "cites no source" in the
+   * business-tools content inventory — 8 of the 14 uncited items — because this
+   * file had no citation field at all. The mapping was never uncited in
+   * substance, only in form.
+   *
+   * Both documents are named per role rather than once for the file, because
+   * the honest citation differs by direction: `niceRoles` are defined by the
+   * NICE Framework, `cswp39Steps` by CSWP.39. Note what is deliberately NOT
+   * cited — the role list itself and `typicalFte` are the hub's own Skills &
+   * Team model (PHASE-OVERLAY-SPEC §7.1–7.2), not anything NIST publishes, and
+   * claiming otherwise would be the same overstatement the compliance review
+   * spent today removing.
+   */
+  sources: { label: string; url: string }[]
 }
+
+/**
+ * The two external documents every role mapping is anchored to.
+ *
+ * Exported so the Skills & Team table can cite them without re-typing a URL in
+ * the component — the mistake `CSWP39ZonePanel` had made with a hardcoded DOI.
+ * Note this is distinct from `RoleDetail.source` in `teamModel.ts`, which means
+ * STAFFING source ("Internal senior PM with PQC training") — where the person
+ * comes from, not where the mapping comes from. The table showed the former and
+ * nothing showed the latter.
+ */
+export const ROLE_SOURCES: { label: string; url: string }[] = [
+  {
+    label: 'NICE Framework Components v2.2.0 (NIST SP 800-181 Rev. 1) — defines niceRoles',
+    url: 'https://csrc.nist.gov/pubs/sp/800/181/r1/final',
+  },
+  {
+    label: 'NIST CSWP.39 (upd1) — defines the 5-step spine in cswp39Steps',
+    url: 'https://doi.org/10.6028/NIST.CSWP.39-upd1',
+  },
+]
 
 /**
  * The §7.2 crosswalk table. `persona` notes:
@@ -80,6 +118,7 @@ export interface RoleMapping {
 export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   qrpm: {
     id: 'qrpm',
+    sources: ROLE_SOURCES,
     label: 'Quantum-Readiness Program Manager',
     typicalFte: '1.0',
     persona: 'executive',
@@ -90,6 +129,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'exec-sponsor': {
     id: 'exec-sponsor',
+    sources: ROLE_SOURCES,
     label: 'Executive Sponsor',
     typicalFte: '1.0',
     persona: 'executive',
@@ -100,6 +140,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'crypto-architect': {
     id: 'crypto-architect',
+    sources: ROLE_SOURCES,
     label: 'Cryptographic Architect',
     typicalFte: '0.5–1.0',
     persona: 'architect',
@@ -111,6 +152,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'security-eng': {
     id: 'security-eng',
+    sources: ROLE_SOURCES,
     label: 'Security Engineers (PQC)',
     typicalFte: '2–4',
     persona: 'developer',
@@ -126,6 +168,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'appsec-lead': {
     id: 'appsec-lead',
+    sources: ROLE_SOURCES,
     label: 'Application Security Lead',
     typicalFte: '1.0',
     persona: 'developer',
@@ -136,6 +179,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'ot-specialist': {
     id: 'ot-specialist',
+    sources: ROLE_SOURCES,
     label: 'OT Security Specialist',
     typicalFte: '0.5–1.0 (if OT)',
     persona: 'ops',
@@ -146,6 +190,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'vendor-lead': {
     id: 'vendor-lead',
+    sources: ROLE_SOURCES,
     label: 'Vendor / Procurement Lead',
     typicalFte: '0.5',
     persona: 'executive',
@@ -156,6 +201,7 @@ export const ROLE_CROSSWALK: Record<FrameworkRoleId, RoleMapping> = {
   },
   'pmo-analyst': {
     id: 'pmo-analyst',
+    sources: ROLE_SOURCES,
     label: 'PMO Analyst',
     typicalFte: '0.5–1.0',
     persona: 'executive',
