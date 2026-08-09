@@ -513,7 +513,16 @@ export const MainLayout = () => {
   // mobile at all (bug found 2026-08-07). Appended to `more` here so it rides
   // along as the last item of the sheet's "More" group, mirroring "About
   // renders last, after MORE" on desktop.
-  const mobileSheetMore = [...more.filter((p) => !mobileVisiblePaths.includes(p)), '/about']
+  // `/revisions` is filtered out here for the same reason the desktop MORE
+  // section filters it (see the rail render below): it was removed from every
+  // persona's nav on 2026-08-01, deliberately. Mobile built from the same
+  // `more` list without the filter, so the sheet still offered it — the two
+  // surfaces disagreed about what is reachable, which the comment above
+  // asserts they never do (2026-08-09).
+  const mobileSheetMore = [
+    ...more.filter((p) => !mobileVisiblePaths.includes(p) && p !== '/revisions'),
+    '/about',
+  ]
   // CACP has no direct shortcut anywhere in nav (2026-08-01 follow-up) —
   // Playground grid only.
   const mobileSheetAllPaths = [...mobileSheetForYou, ...mobileSheetMore]

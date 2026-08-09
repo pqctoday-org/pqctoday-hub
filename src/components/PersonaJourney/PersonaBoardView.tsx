@@ -83,7 +83,7 @@ const TONE_TEXT: Record<SideCardTone, string> = {
  * data it read and not a placeholder for yours. Labelling it honestly is the
  * whole point — a page that grades its own claims cannot mis-grade them.
  */
-const PROVENANCE_LABEL: Record<SideCardProvenance, string> = {
+export const PROVENANCE_LABEL: Record<SideCardProvenance, string> = {
   sourced: 'SOURCED — REPO DATA',
   illustrative: "ILLUSTRATIVE — THIS USER'S INPUTS",
   guidance: 'GUIDANCE — OUR RULE OF THUMB',

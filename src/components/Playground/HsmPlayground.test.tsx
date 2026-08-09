@@ -9,6 +9,14 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { PersonaId } from '@/data/learningPersonas'
+// Imported statically, NOT with a dynamic import inside each test.
+// `vi.mock` calls are hoisted above imports by vitest, so a static import
+// still receives every mock below — the dynamic form bought nothing and cost
+// a lot: it charged the whole HsmPlayground module graph (WASM bindings and
+// all) to the FIRST test's 5s budget. The file passed on its own in ~1.3s and
+// timed out only in a loaded full-suite run, where exactly one of the three
+// tests failed — whichever one happened to trigger the import.
+import { HsmPlayground } from './HsmPlayground'
 
 let mockPersona: PersonaId | null = 'developer'
 
@@ -56,33 +64,31 @@ vi.mock('../../wasm/softhsm', async (importOriginal) => {
 })
 
 function renderHsmPlayground() {
-  return import('./HsmPlayground').then(({ HsmPlayground }) =>
-    render(
-      <MemoryRouter>
-        <HsmPlayground />
-      </MemoryRouter>
-    )
+  return render(
+    <MemoryRouter>
+      <HsmPlayground />
+    </MemoryRouter>
   )
 }
 
 describe('HsmPlayground persona gating', () => {
-  it('shows the ACVP tab and engine selector for a non-gated persona', async () => {
+  it('shows the ACVP tab and engine selector for a non-gated persona', () => {
     mockPersona = 'developer'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.getByRole('tab', { name: /acvp/i })).toBeInTheDocument()
     expect(screen.getByText('Engine:')).toBeInTheDocument()
   })
 
-  it('hides the ACVP tab and engine selector for curious', async () => {
+  it('hides the ACVP tab and engine selector for curious', () => {
     mockPersona = 'curious'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.queryByRole('tab', { name: /acvp/i })).not.toBeInTheDocument()
     expect(screen.queryByText('Engine:')).not.toBeInTheDocument()
   })
 
-  it('hides the ACVP tab and engine selector for executive, alongside the existing advisory banner', async () => {
+  it('hides the ACVP tab and engine selector for executive, alongside the existing advisory banner', () => {
     mockPersona = 'executive'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.queryByRole('tab', { name: /acvp/i })).not.toBeInTheDocument()
     expect(screen.queryByText('Engine:')).not.toBeInTheDocument()
     expect(screen.getByText(/hands-on engineering workbench/i)).toBeInTheDocument()
