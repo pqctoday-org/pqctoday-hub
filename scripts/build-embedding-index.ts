@@ -29,6 +29,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import path from 'node:path'
+import { corpusContentHash } from './lib/corpusContentHash'
 
 // CI hard-fail per §6.4 — keep this at the very top so even a misconfigured
 // workflow file fails closed with a clear log line, no time wasted spinning
@@ -189,8 +190,12 @@ async function main(): Promise<number> {
   console.log('')
 
   const corpus = loadCorpus()
-  const corpusHash = sha256Hex(readFileSync(CORPUS_PATH))
-  console.log(`Loaded ${corpus.length} chunks (corpus sha256: ${corpusHash.slice(0, 12)}...)`)
+  // Hash the CHUNKS, not the file — the file carries a `generatedAt` timestamp
+  // that changes on every regeneration, which made this hash (and so the
+  // incremental-rebuild check just below, and check-index-freshness) miss every
+  // time the corpus was regenerated without changing. See corpusContentHash.ts.
+  const corpusHash = corpusContentHash(corpus)
+  console.log(`Loaded ${corpus.length} chunks (corpus content sha256: ${corpusHash.slice(0, 12)}...)`)
 
   // Incremental rebuild: if the existing meta's corpusHash matches AND the
   // model matches, the work is already done.

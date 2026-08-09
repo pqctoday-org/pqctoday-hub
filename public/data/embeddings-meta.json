@@ -2,7 +2,7 @@
   "version": 1,
   "model": "Xenova/bge-base-en-v1.5",
   "modelHash": "0fb6250c0ee24063375ad208aadc1052c32aadc65896d261bd83f67d92ca4f8b",
-  "corpusHash": "6cc7221d7bbf9d16e5712f48d1ba91fed333a96e4a1fa295b4e3ce38e188b711",
+  "corpusHash": "2ae40b21ac94139031b2a7d6f399e43a20c9faba8bf5283d8fb7f2cab271f5be",
   "dimensions": 768,
   "dtype": "float32",
   "generatedAt": "2026-08-09T20:05:44.638Z",
