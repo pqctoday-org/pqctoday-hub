@@ -29,6 +29,35 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.45.0] - 2026-08-09
+
+Whichever role you pick, your home page now reaches every part of the site rather than a sixth of it; the protocol readiness matrix stops overstating how far six protocols have actually got; and the quiz gains questions for the two audiences that had the fewest.
+
+### Added
+
+- **Your home page now reaches the whole site, whichever role you picked** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: each role's home page offered six destinations, so most of the site was only one click away if you happened to have chosen the "right" role — and invisible otherwise. Every role now opens onto all eighteen sections, with six use cases apiece written for that role, and the cards in each board's grid are links in their own right rather than decoration. A new check fails the build if any role ever stops reaching any section, so this cannot quietly erode again.
+- **Twelve new quiz questions for the two audiences that had the fewest** [view:/learn] [persona:curious] [persona:executive]: someone arriving simply curious had 103 questions available to them against an architect's 630 — six times fewer, for the widest possible audience. Eight new questions are written in plain language for that reader, and four more for executives cover the decisions they actually face: what to ask a vendor, what the 2030 and 2035 dates really bind you to, and what the budget shape looks like.
+- **Forty-four more people in the PQC community roster** [view:/leaders] [persona:researcher] [persona:curious]: 345 entries to 389.
+
+### Fixed
+
+- **Six protocols in the readiness matrix were shown one stage further along than they are** [view:/algorithms] [persona:architect] [persona:developer]: TLS 1.3, DTLS 1.3, FIDO2, MACsec and S/MIME each read as further through standardisation than the IETF's own record supports, because a working group handing a draft to the IESG had been recorded as the later IESG review step. All six now match what the datatracker actually says, checked by hand rather than taken from the feed. Six further changes the feed proposed were deliberately not made: each rested on a related enabling document rather than on the mechanism for that protocol.
+- **Hand-written notes in the readiness matrix are no longer overwritten by the updater** [view:/algorithms] [persona:architect]: an automated refresh could replace a multi-line, human-verified explanation with a generated one-line summary — including, on one run, a note that existed specifically to record an earlier mistake and stop it recurring. The updater now leaves any note a person wrote alone and reports it instead.
+- **The "just curious" home page works on a phone again** [view:/] [persona:curious]: its mobile board could not be reached at all, and what it showed was hard-coded rather than drawn from the same content as every other role.
+- **Two compliance records now link to the document they rely on, not a company homepage** [view:/compliance] [persona:architect] [persona:ops]: the UAE National Encryption Policy and the TCG TPM 2.0 entries each cited a site's front page, which cannot evidence the requirement claimed against it. Both now point at the actual published document.
+- **Forty-five quiz questions no persona filter could ever reach are back in circulation** [view:/learn] [persona:architect] [persona:developer] [persona:ops] [persona:executive]: their persona tags were separated with commas where the quiz reads them as pipe-separated, so those questions matched nobody and silently never appeared. Architects regain 45, developers 36, ops 6 and executives 2.
+
+### Data
+
+- **Known-vulnerability data rebuilt against the current product cross-reference** [view:/migrate] [persona:ops] [persona:developer]: it had been generated from a superseded product file. Now 153 products and 1,152 vulnerabilities.
+- **Industry Landscape: the crypto each of three industries actually relies on, filled in from their own cited documents** [view:/algorithms] [persona:researcher] [persona:architect]: payment ecosystems, telecoms subscriber security and rail signalling. The remaining incomplete rows were left blank on purpose — for most of them, the cited document genuinely contains no post-quantum content, and an honest blank beats a plausible guess.
+- **Eleven more compliance records name the standards they depend on** [view:/compliance] [persona:architect].
+- **Nine more product certification links** [view:/migrate] [persona:ops].
+
+### Security
+
+- **A build check that could never have run is now able to run** [persona:ops]: the check that proves every role's home page reaches every section was added without the file it invokes, so it would have failed to start on any machine but the one that wrote it. Third time this particular trap has caught a check here; the rule that hides these files now names it explicitly.
+
 ## [4.44.0] - 2026-08-08
 
 Compliance maturity coverage more than quadruples as documents that were being read only part-way through are now read in full, a batch of library entries that pointed at landing pages get their real source documents, invented requirements are removed, and installing the site for offline use gets dramatically lighter.
