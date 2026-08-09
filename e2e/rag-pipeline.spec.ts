@@ -2,6 +2,17 @@ import { test, expect } from '@playwright/test'
 
 test.describe('ASR Copilot RAG Agent Pipeline', () => {
   test.setTimeout(30000)
+  // The PWA service worker installs on first visit and its fetch handler is a
+  // catch-all that falls through to `fetch(request)` for cross-origin requests.
+  // That means the Gemini call is issued BY THE SERVICE WORKER, not the page —
+  // and `page.route` cannot intercept those. The mock below silently did
+  // nothing, the real endpoint was hit with the fake key, and it answered 400:
+  //
+  //   HTTP400 .../v1beta/models/gemini-2.5-flash:streamGenerateContent?key=fake-key&alt=sse
+  //
+  // i.e. the exact URL the route pattern targets. Blocking service workers for
+  // this spec puts the request back on the page, where the mock applies.
+  test.use({ serviceWorkers: 'block' })
   test('validates offline RAG pipeline execution without typing interactions', async ({ page }) => {
     // Intercept console to debug
     page.on('console', (msg) => console.log('RAG-BROWSER:', msg.text()))
