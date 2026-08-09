@@ -13,9 +13,11 @@
  *   1. Flags every row whose `last_reviewed` is older than the freshness
  *      window (matches the CTA gate's 180-day threshold, for one consistent
  *      number across both role-board maintenance surfaces).
- *   2. Renders every role's board (`default` variant) against a running dev
- *      server and writes the visible text to `reports/role-board-audit-
- *      <date>/<role>.txt` — the raw material for the tone/language pass.
+ *   2. Renders EVERY board option for every role against a running dev server
+ *      and writes the visible text to `reports/role-board-audit-
+ *      <date>/<role>-<variant>.txt` — the raw material for the tone/language
+ *      pass. It used to render only each role's default option, so two thirds
+ *      of the boards had no text in a report that looked complete.
  *   3. Cross-references every `cta_*_href` slot value against the CTA
  *      registry via the SAME parser `audit-role-board-ctas.ts` uses (not a
  *      reimplementation) and reports any href with no matching row —
@@ -35,12 +37,13 @@
  *          npm run audit:role-board-content -- --base-url http://localhost:5175
  */
 
-import { readFileSync, readdirSync, mkdirSync, writeFileSync } from 'fs'
+import { readFileSync, mkdirSync, writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { chromium } from 'playwright'
 import Papa from 'papaparse'
 import { latestCtaCsv, parseCtaRegistry } from './audit-role-board-ctas'
+import { latestDatedCsv, ROLE_BOARD_CONTENT_RE, ROLE_BOARD_VARIANTS_RE } from './lib/latestDatedCsv'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -57,13 +60,49 @@ interface ContentRow {
   last_reviewed: string
 }
 
+/**
+ * The live content CSV, via the SAME shared picker the generator and the CTA
+ * gate use.
+ *
+ * This re-implemented the pick with a plain lexical `.sort()` over
+ * `role_board_content_\d{8}\.csv`. The filenames are MMDDYYYY, so lexical order
+ * is not date order: a `12312025` file sorts above `01012026` and the audit
+ * would have reported on a superseded CSV while the app rendered the current
+ * one — silently, with no error, because both files parse fine. Nothing had
+ * crossed a year boundary yet, so it had never bitten.
+ */
 function latestContentCsv(): string {
-  const dataDir = join(ROOT, 'src/data')
-  const files = readdirSync(dataDir)
-    .filter((f) => /^role_board_content_\d{8}\.csv$/.test(f))
-    .sort()
-  if (files.length === 0) throw new Error('No src/data/role_board_content_*.csv found.')
-  return join(dataDir, files[files.length - 1])
+  const path = latestDatedCsv(join(ROOT, 'src/data'), ROLE_BOARD_CONTENT_RE)
+  if (!path) throw new Error('No src/data/role_board_content_*.csv found.')
+  return path
+}
+
+/**
+ * Every active board option per role, in chip order — so the render pass can
+ * capture ALL of them.
+ *
+ * It only ever screenshotted each role's DEFAULT board. Options 2 and 3 were
+ * never rendered, so the editorial pass this script exists to feed had no text
+ * for two thirds of the boards, and no reviewer would have noticed the absence
+ * — the report looked complete, one file per role.
+ */
+function variantIdsByRole(): Map<string, string[]> {
+  const path = latestDatedCsv(join(ROOT, 'src/data'), ROLE_BOARD_VARIANTS_RE)
+  if (!path) throw new Error('No src/data/role_board_variants_*.csv found.')
+  const rows =
+    Papa.parse<Record<string, string>>(readFileSync(path, 'utf8'), {
+      header: true,
+      skipEmptyLines: true,
+    }).data ?? []
+  const byRole = new Map<string, { id: string; order: number }[]>()
+  for (const r of rows) {
+    if (!r || !r.role_id || (r.status ?? 'active') !== 'active') continue
+    if (!byRole.has(r.role_id)) byRole.set(r.role_id, [])
+    byRole.get(r.role_id)!.push({ id: r.variant_id, order: Number(r.order) })
+  }
+  return new Map(
+    [...byRole].map(([role, vs]) => [role, vs.sort((a, b) => a.order - b.order).map((v) => v.id)])
+  )
 }
 
 function daysSince(iso: string, now: Date): number | null {
@@ -106,9 +145,11 @@ async function main() {
   const ctaCsvPath = latestCtaCsv()
   const ctaRows = ctaCsvPath ? parseCtaRegistry(readFileSync(ctaCsvPath, 'utf8')) : []
   const ctaHrefs = new Set(ctaRows.map((r) => r.href))
-  const boardHrefSlots = rows.filter(
-    (r) => r.slot === 'cta_primary_href' || r.slot === 'cta_secondary_href'
-  )
+  // Grid-card hrefs are gated exactly like CTAs (2026-08-09), so they belong in
+  // this cross-reference too — otherwise the freshness report stays silent
+  // about the larger half of the board's outbound links.
+  const HREF_SLOTS = new Set(['cta_primary_href', 'cta_secondary_href', 'grid_card_href'])
+  const boardHrefSlots = rows.filter((r) => HREF_SLOTS.has(r.slot))
   const unregistered = boardHrefSlots.filter((r) => !ctaHrefs.has(r.content))
   if (unregistered.length === 0) {
     console.log(`\n✓ Every board CTA href is registered in the CTA gate.`)
@@ -122,7 +163,9 @@ async function main() {
   const stamp = now.toISOString().slice(0, 10)
   const outDir = join(ROOT, 'reports', `role-board-audit-${stamp}`)
   mkdirSync(outDir, { recursive: true })
-  console.log(`\nRendering ${ROLES.length} roles against ${baseUrl} …`)
+  const variantsByRole = variantIdsByRole()
+  const boardCount = ROLES.reduce((n, r) => n + (variantsByRole.get(r)?.length ?? 0), 0)
+  console.log(`\nRendering ${boardCount} boards across ${ROLES.length} roles against ${baseUrl} …`)
 
   let browser
   try {
@@ -157,23 +200,31 @@ async function main() {
         [role]
       )
       const page = await ctx.newPage()
-      let reachable = true
-      try {
-        await page.goto(baseUrl, { waitUntil: 'networkidle', timeout: 15000 })
-      } catch {
-        reachable = false
+      // One context per role (the persona lives in localStorage), one
+      // navigation per board option. `?variant=` takes precedence over the
+      // persisted choice, which is what makes each option addressable here.
+      for (const variantId of variantsByRole.get(role) ?? []) {
+        let reachable = true
+        try {
+          await page.goto(`${baseUrl}/?variant=${encodeURIComponent(variantId)}`, {
+            waitUntil: 'networkidle',
+            timeout: 15000,
+          })
+        } catch {
+          reachable = false
+        }
+        if (!reachable) {
+          console.error(`✗ ${baseUrl} is not reachable — start the dev server first (npm run dev).`)
+          await ctx.close()
+          await browser.close()
+          process.exit(1)
+        }
+        await page.waitForTimeout(1200)
+        const text = await page.locator('body').innerText()
+        const outFile = join(outDir, `${role}-${variantId}.txt`)
+        writeFileSync(outFile, text)
+        console.log(`   wrote ${outFile.replace(ROOT + '/', '')}`)
       }
-      if (!reachable) {
-        console.error(`✗ ${baseUrl} is not reachable — start the dev server first (npm run dev).`)
-        await ctx.close()
-        await browser.close()
-        process.exit(1)
-      }
-      await page.waitForTimeout(1200)
-      const text = await page.locator('body').innerText()
-      const outFile = join(outDir, `${role}.txt`)
-      writeFileSync(outFile, text)
-      console.log(`   wrote ${outFile.replace(ROOT + '/', '')}`)
       await ctx.close()
     }
   } finally {
