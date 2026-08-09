@@ -1436,6 +1436,21 @@ export const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)
 export const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
 export const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
 
+/**
+ * Signature size for any ML-DSA parameter set, read from the same registry.
+ *
+ * The 2026-08-09 "choose the algorithm" board compares 44/65/87 side by side.
+ * Only 65 had a derived constant, so 44 and 87 would have been hand-typed
+ * literals sitting next to a live one — the exact drift this file's derived
+ * values exist to prevent, and harder to spot because two of the three numbers
+ * would still look maintained.
+ */
+export function mlDsaSignatureBytes(paramSet: string): string {
+  const entry = ALGORITHM_REGISTRY[`ML-DSA-${paramSet}` as keyof typeof ALGORITHM_REGISTRY]
+  if (!entry) throw new Error(`mlDsaSignatureBytes: no registry entry for ML-DSA-${paramSet}`)
+  return formatBytes(entry.signatureOrCiphertextBytes)
+}
+
 /* ── Executive side card: Mosca exposure window ──────────────────────────────
  *
  * WHY THESE ARE DERIVED (2026-08-02). All four values on this card — the three

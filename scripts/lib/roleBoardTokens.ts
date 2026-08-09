@@ -191,6 +191,11 @@ const RESOLVERS: Record<string, Resolver> = {
       ? `All ${total} report sections, at their defaults — opening with ${opens}.`
       : `${n} report section${n === 1 ? ' is' : 's are'} tailored to your role, opening with ${opens}.`
   },
+  /** `{ml_dsa_signature:44}` — any parameter set, from the algorithm registry. */
+  ml_dsa_signature: (mod, args) => {
+    requireArgs('ml_dsa_signature', args, 1)
+    return mod.mlDsaSignatureBytes(args[0])
+  },
   ml_dsa_65_signature_only: (mod, args) => {
     requireArgs('ml_dsa_65_signature_only', args, 0)
     return mod.ML_DSA_65_SIGNATURE_ONLY
