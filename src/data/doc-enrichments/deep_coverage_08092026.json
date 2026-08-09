@@ -1,0 +1,171 @@
+[
+  {
+    "total_chars": 427444,
+    "covered_chars": 427444,
+    "coverage_pct": 100.0,
+    "windows_run": 24,
+    "windows_possible": 32,
+    "fully_covered": true,
+    "per_window_yield": [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      9,
+      4,
+      6,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ASC-X9-IR-F01-2022"
+  },
+  {
+    "total_chars": 147137,
+    "covered_chars": 147137,
+    "coverage_pct": 100.0,
+    "windows_run": 3,
+    "windows_possible": 11,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ASC-X9-TR-50-2019"
+  },
+  {
+    "total_chars": 128582,
+    "covered_chars": 128582,
+    "coverage_pct": 100.0,
+    "windows_run": 2,
+    "windows_possible": 10,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0
+    ],
+    "ref_id": "ENISA PQC Guidelines"
+  },
+  {
+    "total_chars": 220270,
+    "covered_chars": 220270,
+    "coverage_pct": 100.0,
+    "windows_run": 9,
+    "windows_possible": 17,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      5,
+      4,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ENISA-Crypto-Market-Analysis-2024"
+  },
+  {
+    "total_chars": 194347,
+    "covered_chars": 194347,
+    "coverage_pct": 100.0,
+    "windows_run": 7,
+    "windows_possible": 15,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      3,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ENISA-State-of-Cybersecurity-2024"
+  },
+  {
+    "total_chars": 247181,
+    "covered_chars": 247181,
+    "coverage_pct": 100.0,
+    "windows_run": 11,
+    "windows_possible": 19,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "ENISA-Threat-Landscape-2025"
+  },
+  {
+    "total_chars": 218742,
+    "covered_chars": 218742,
+    "coverage_pct": 100.0,
+    "windows_run": 9,
+    "windows_possible": 17,
+    "fully_covered": true,
+    "per_window_yield": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "NIST NCCoE SP 1800-38C"
+  },
+  {
+    "total_chars": 319255,
+    "covered_chars": 319255,
+    "coverage_pct": 100.0,
+    "windows_run": 16,
+    "windows_possible": 24,
+    "fully_covered": true,
+    "per_window_yield": [
+      5,
+      0,
+      5,
+      7,
+      0,
+      0,
+      0,
+      0,
+      11,
+      0,
+      0,
+      9,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ref_id": "PSD2-Directive-EU-2015-2366"
+  }
+]
