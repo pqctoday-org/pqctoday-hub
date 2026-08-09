@@ -25,16 +25,17 @@
  *      resolves on disk; `source_passages` is populated.
  *   3. Freshness: no chunk's `prov.was_generated_by` date is in the future.
  *   4. Embedding coverage (T16): byteOffsets present for every chunk; bin
- *      length matches dims × chunkCount; corpusHash matches the corpus
- *      sha256 — the last one is maintainer-local.
+ *      length matches dims × chunkCount; corpusHash matches the corpus CONTENT
+ *      hash (the chunks, not the file — the file carries a `generatedAt`
+ *      timestamp) — the last one is maintainer-local.
  *
  * Run locally: `npx vitest run src/__tests__/corpus-trust-invariants.test.ts`
  */
 import { describe, it, expect } from 'vitest'
 import fs from 'fs'
-import { createHash } from 'node:crypto'
 import path from 'path'
 
+import { corpusContentHash } from '../../scripts/lib/corpusContentHash'
 import { chunkToResource } from '@/services/search/chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { RAGChunk } from '@/types/ChatTypes'
@@ -311,7 +312,12 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     doc-enrichment chunk that is now unscored for the same deprecation
   //     reason as the PKCS#11 entry above. Expected, not a routing gap; drops
   //     to 0 on the next refresh-index run per the data-PR-lag convention.
-  'document-enrichment': 165,
+  //   2026-08-09: 165 -> 150. Not a change aimed at this source — the library
+  //   supersession aliasing added to trustScoreData.ts for governance-maturity
+  //   resolves 15 doc-enrichment chunks too, since several enrichment refIds
+  //   also name a superseded IETF draft. Tightened to the measured value so the
+  //   ratchet keeps its teeth.
+  'document-enrichment': 150,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
@@ -344,7 +350,18 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   set, unchanged in character from the note above. The remedy is still the
   //   one named above; this line only stops a pre-existing red from being
   //   misread as a regression introduced by the merge.
-  'governance-maturity': 174,
+  //
+  //   2026-08-09 (later): 174 -> 77. The remedy named above is now IMPLEMENTED
+  //   — trustScoreData.ts aliases each superseded library id to its surviving
+  //   record's score, one hop, never overwriting an id that scores on its own.
+  //   That is a real fix, not a pin move: 97 of the 174 were requirements
+  //   citing a document whose successor sits in the same CSV, and they now
+  //   resolve to that successor's tier instead of falling back to the 0.95
+  //   "unknown trust" multiplier that ranked them below a Moderate source.
+  //   The remaining 77 are deprecated rows with an EMPTY superseded_by — there
+  //   is no successor recorded to follow, so they are a data gap (fill
+  //   superseded_by, or re-cite the requirement), not a routing one.
+  'governance-maturity': 77,
 }
 
 /**
@@ -700,12 +717,18 @@ describeMaintainerLocal('corpus trust invariants — embedding coverage (T16)', 
     expect(actual).toBe(expected)
   })
 
-  it('embeddings-meta corpusHash matches current rag-corpus.json sha256', () => {
+  it('embeddings-meta corpusHash matches the current corpus CONTENT hash', () => {
     const meta = loadMetaOrSkip()
     if (!meta) return
-    const corpusBuf = fs.readFileSync(path.join(REPO_ROOT, 'public/data/rag-corpus.json'))
-    const actualHash = createHash('sha256').update(corpusBuf).digest('hex')
-    expect(meta.corpusHash).toBe(actualHash)
+    // Hashes the chunks, not the file — rag-corpus.json carries a `generatedAt`
+    // timestamp, so hashing the file bytes failed this test on any regeneration
+    // that changed nothing and demanded a ~40-minute re-encode. Same helper the
+    // encoder and check-index-freshness now use, so all three agree; an edit to
+    // any chunk's text still moves the hash. (2026-08-09)
+    const parsed = JSON.parse(
+      fs.readFileSync(path.join(REPO_ROOT, 'public/data/rag-corpus.json'), 'utf-8')
+    )
+    expect(meta.corpusHash).toBe(corpusContentHash(parsed))
   })
 })
 
