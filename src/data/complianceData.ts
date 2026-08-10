@@ -461,26 +461,38 @@ export const complianceAsIndustryConfigs: IndustryComplianceConfig[] = framework
  * Maps compliance frameworks to the COMPLIANCE_DB shape
  * for backward compatibility with assessment scoring.
  */
-export const complianceDB: Record<
-  string,
-  { requiresPQC: boolean; deadline: string; notes: string }
-> = frameworks.reduce<Record<string, { requiresPQC: boolean; deadline: string; notes: string }>>(
-  (acc, fw) => {
-    // Some labels appear on more than one row (e.g. a `compliance_framework` row and a
-    // `standardization_body` row both labelled "ANSSI"). Resolve such collisions
-    // deterministically: a row that REQUIRES PQC wins over one that does not, so the
-    // stronger obligation is never silently dropped by CSV import order.
+type ComplianceDBEntry = { requiresPQC: boolean; deadline: string; notes: string }
+
+/**
+ * Collapse rows by `label`, resolving collisions deterministically.
+ *
+ * Some labels appear on more than one row (e.g. a `compliance_framework` row and a
+ * `standardization_body` row both labelled "ANSSI"). A row that REQUIRES PQC wins
+ * over one that does not, so the stronger obligation is never silently dropped by
+ * CSV import order. Among rows with the SAME requiresPQC, the later one wins,
+ * matching the prior Object.fromEntries last-wins for deadline/notes.
+ *
+ * EXPORTED so the behaviour can be tested against a fixture rather than against
+ * live rows. It used to be pinned to whichever real framework happened to claim
+ * requires_pqc=yes, and that pin has now had to move twice as the data got more
+ * accurate — ANSSI on 2026-07-31, CRYPTREC on 2026-08-09. After the second move
+ * no active duplicate-label pair claims 'yes' at all, so the live-data version of
+ * the test could no longer distinguish "the merge works" from "everything is
+ * false". A fixture can; the live values are pinned separately, as data.
+ */
+export function mergeFrameworksByLabel(
+  rows: Array<Pick<ComplianceFramework, 'label' | 'requiresPQC' | 'deadline' | 'notes'>>
+): Record<string, ComplianceDBEntry> {
+  return rows.reduce<Record<string, ComplianceDBEntry>>((acc, fw) => {
     const existing = acc[fw.label]
-    // Prefer a PQC-requiring row; among rows with the SAME requiresPQC, keep the
-    // later one — matching the prior Object.fromEntries last-wins for deadline/notes
-    // so this only changes the silently-dropped requiresPQC flag, nothing else.
     if (!existing || fw.requiresPQC || !existing.requiresPQC) {
       acc[fw.label] = { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes }
     }
     return acc
-  },
-  {}
-)
+  }, {})
+}
+
+export const complianceDB: Record<string, ComplianceDBEntry> = mergeFrameworksByLabel(frameworks)
 
 /**
  * Canonical concept_id for a compliance framework — PR 3c.
