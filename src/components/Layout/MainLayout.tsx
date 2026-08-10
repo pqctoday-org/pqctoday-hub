@@ -14,6 +14,7 @@ import {
   Map,
   Wrench,
   ChevronDown,
+  ChevronRight,
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -77,6 +78,8 @@ import {
   getRowTreatment,
   getMobileVisiblePaths,
   getForYouGroups,
+  getGroupAbsences,
+  FOR_YOU_GROUP_BLURBS,
   RAIL_ICON_MAP,
   type RailRowTreatment,
 } from './railNav'
@@ -250,6 +253,41 @@ function iconFor(path: string): LucideIcon {
   // eslint-disable-next-line security/detect-object-injection
   return RAIL_ICON_MAP[path] ?? Info
 }
+
+/**
+ * "Not offered for your role — and why" (B+ remediation 1.3, 2026-08-10).
+ *
+ * The programme's second grading principle: a deliberate absence must be
+ * visible where it takes effect. Ops without Patents and curious without the
+ * Command Center are correct decisions that lived only in `personaConfig.ts`
+ * doc comments — on screen they were indistinguishable from a missing row,
+ * which is to say from a bug. This renders in the footer of the group the row
+ * would have belonged to, states the reason in one plain sentence, and points
+ * at the surface that meets the same need for this role.
+ *
+ * Deliberately NOT a link to the absent route: the point is that the role
+ * isn't being sent there. The route itself stays live (URL, deep link, ⌘K).
+ */
+const RailAbsenceNotice: React.FC<{
+  label: string
+  reason: string
+  insteadPath: string
+  insteadLabel: string
+}> = ({ label, reason, insteadPath, insteadLabel }) => (
+  <div className="mx-2 mt-1 mb-0.5 rounded-md border border-dashed border-border px-2 py-1.5">
+    <p className="text-[11px] leading-snug text-muted-foreground">
+      <span className="font-semibold text-foreground/80">{label}</span> — not offered for your role.{' '}
+      {reason}
+    </p>
+    <NavLink
+      to={insteadPath}
+      className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
+    >
+      Go to {insteadLabel}
+      <ChevronRight size={11} aria-hidden="true" />
+    </NavLink>
+  </div>
+)
 
 interface RailRowProps {
   path: string
@@ -785,7 +823,13 @@ export const MainLayout = () => {
                     aria-expanded={groupExpanded}
                     aria-controls={groupContentId}
                     aria-label={`${groupExpanded ? 'Hide' : 'Show'} ${group.label} (${group.paths.length})`}
-                    title={groupExpanded ? `Hide ${group.label}` : `Show ${group.label}`}
+                    // B+ remediation 1.3 (2026-08-10): the group name alone was
+                    // the hub's vocabulary, not the reader's. The blurb now
+                    // leads the tooltip (the collapse/expand hint follows it,
+                    // since the chevron already says that visually) and repeats
+                    // as sub-text below when the group is open, so the rail
+                    // explains itself in place rather than needing decoding.
+                    title={`${FOR_YOU_GROUP_BLURBS[group.id]} — click to ${groupExpanded ? 'hide' : 'show'}`}
                     className="w-full h-auto justify-between gap-1 px-2 pt-2 pb-0.5 rounded-md text-sm font-bold uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-transparent"
                   >
                     <span>{group.label}</span>
@@ -796,6 +840,11 @@ export const MainLayout = () => {
                     />
                   </Button>
                 ) : null}
+                {groupExpanded && forYouGroups.length > 1 && (
+                  <p className="px-2 pb-1 text-[11px] leading-snug text-muted-foreground/80 normal-case">
+                    {FOR_YOU_GROUP_BLURBS[group.id]}
+                  </p>
+                )}
                 {groupExpanded && (
                   <div id={groupContentId} className="flex flex-col gap-0.5">
                     {displayPaths.map((path) => {
@@ -818,11 +867,40 @@ export const MainLayout = () => {
                         />
                       )
                     })}
+                    {/* B+ remediation 1.3: routes deliberately not offered to
+                        this role render their reason here, in the group the row
+                        would have occupied — a documented absence made visible
+                        instead of an apparently missing row. */}
+                    {getGroupAbsences(selectedPersona, group.id).map((absence) => (
+                      <RailAbsenceNotice
+                        key={absence.path}
+                        label={absence.label}
+                        reason={absence.reason}
+                        insteadPath={absence.insteadPath}
+                        insteadLabel={absence.insteadLabel}
+                      />
+                    ))}
                   </div>
                 )}
               </React.Fragment>
             )
           })}
+          {/* Dashed-row legend — B+ remediation 1.3 (2026-08-10). The marked
+              treatment (a dashed left border) carried its meaning only in a
+              per-row `title` tooltip, so a reader who never hovered saw an
+              unexplained visual difference. Rendered once, and only for the
+              personas that actually have a marked row, so it never states a
+              rule about styling that isn't on screen. */}
+          {markedPaths.length > 0 && (
+            <p className="mx-2 mt-2 flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
+              <span
+                className="mt-1 h-3 w-0 shrink-0 border-l-2 border-dashed border-l-warning/70"
+                aria-hidden="true"
+              />
+              <span>A dashed row works, but isn’t tailored to your role yet.</span>
+            </p>
+          )}
+
           {/* CACP is deliberately NOT a direct rail shortcut (2026-08-01
               follow-up: "CACP is fold in playground no direct access") —
               reachable via the Playground grid's own featured card only. */}

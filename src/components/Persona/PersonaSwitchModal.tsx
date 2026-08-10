@@ -3,7 +3,7 @@
    typed union (Region / PersonaId) or a value drawn from AVAILABLE_INDUSTRIES itself, never
    free-form user input; RegionIndustryPill.tsx (folded into this modal) used the same
    file-level suppression for the identical pattern. */
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   X,
@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown, type FilterDropdownItem } from '@/components/common/FilterDropdown'
 import { PERSONAS } from '@/data/learningPersonas'
+import { personaTradeSentence, describePersonaAdaptation } from '@/data/personaConfig'
 import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { Region } from '@/store/usePersonaStore'
@@ -134,6 +135,15 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
     return () => document.removeEventListener('keydown', handler)
   }, [onClose])
 
+  // B+ remediation 1.2 (2026-08-10). "Choosing a role shrinks the navigation,
+  // and the shrink is never explained at the moment of choosing — the reward
+  // for telling the hub who you are is fewer doors." `previewId` is whichever
+  // tile the pointer or keyboard focus is on; falling back to the active role
+  // means the panel is never empty, so the trade is legible before any click.
+  const [previewId, setPreviewId] = useState<PersonaId | null>(null)
+  const shownId = previewId ?? selectedPersona
+  const shownAdaptation = shownId ? describePersonaAdaptation(shownId) : null
+
   const handleSelect = (id: PersonaId) => {
     if (id !== selectedPersona) {
       setPersona(id)
@@ -199,6 +209,10 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                   // retired wizard used, so the workshop's role cues still select
                   // the active tile via [data-workshop-target^="persona-role-"].
                   data-workshop-target={`persona-role-${id}`}
+                  onMouseEnter={() => setPreviewId(id)}
+                  onMouseLeave={() => setPreviewId(null)}
+                  onFocus={() => setPreviewId(id)}
+                  onBlur={() => setPreviewId(null)}
                 >
                   <Icon
                     size={16}
@@ -215,6 +229,42 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
               )
             })}
           </div>
+
+          {/* What this role changes — stated at selection time, not discovered
+              later. Every line below is DERIVED from personaConfig
+              (`describePersonaAdaptation`), so it cannot drift from the gating
+              it describes. `aria-live` announces it as the reader moves across
+              the tiles with a keyboard. */}
+          {shownId && shownAdaptation && (
+            <div
+              className="mt-4 rounded-xl border border-border bg-muted/20 p-3"
+              aria-live="polite"
+            >
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                <span className="font-semibold text-foreground">{PERSONAS[shownId].label}:</span>{' '}
+                {personaTradeSentence(shownId)}
+              </p>
+              {shownAdaptation.reportOpenLabels.length > 0 && (
+                <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                  Your report opens on {shownAdaptation.reportOpenLabels.slice(0, 3).join(', ')}
+                  {shownAdaptation.reportOpenLabels.length > 3
+                    ? ` and ${shownAdaptation.reportOpenLabels.length - 3} more`
+                    : ''}
+                  ; Algorithms lands on the {shownAdaptation.algorithmsLanding.tab} view.
+                </p>
+              )}
+              {/* The single worst cell driver on this feature: curious drops
+                  into preview access with no announcement at all. Say it, and
+                  say what completes it. */}
+              {shownId === 'curious' && (
+                <p className="mt-2 rounded-md border border-primary/30 bg-primary/5 px-2 py-1.5 text-[11px] leading-relaxed text-foreground">
+                  This role starts in <strong>preview</strong>: the deep technical views open in a
+                  simplified form until you finish the assessment, which is what unlocks the full
+                  bench. Nothing is hidden from you — it is labelled where it applies.
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="mt-5 pt-4 border-t border-border grid grid-cols-2 gap-3">
             <div data-workshop-target="persona-region-select">
