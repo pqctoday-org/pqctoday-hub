@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import { ReleaseNotesSection } from './sections/ReleaseNotesSection'
 import { VisionSection } from './sections/VisionSection'
+import { PersonalizationSection } from './sections/PersonalizationSection'
 import { TransparencySection } from './sections/TransparencySection'
 import { TrustEngineSection } from './sections/TrustEngineSection'
 import { CloudSyncPrivacySection } from './sections/CloudSyncPrivacySection'
@@ -56,6 +57,13 @@ export function AboutView() {
       {isExecutive && !isEmbedded && <ExecutiveAboutSummary />}
       <AboutSection slug="vision">
         <VisionSection defaultExpanded={isExecutive} />
+      </AboutSection>
+      {/* B+ remediation 1.1 (2026-08-10): placed second, directly under Vision
+          and above everything else, because the review traced relevance
+          penalties on other pages back to this one unexplained mechanic —
+          it has to be read early to do its job. */}
+      <AboutSection slug="personalization">
+        <PersonalizationSection />
       </AboutSection>
       <AboutSection slug="release-notes">
         <ReleaseNotesSection />
