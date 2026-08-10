@@ -105,3 +105,18 @@ describe('OpsRotationView', () => {
     expect(screen.getAllByText('FIPS 140-3').length).toBeGreaterThan(0)
   })
 })
+
+describe('OPS_EVIDENCE_ARTIFACTS — B+ remediation 4.6', () => {
+  it('every artifact points at a business tool that exists', async () => {
+    // A "produce it →" link to a renamed tool is a 404 at the end of a list
+    // whose whole promise is that the artifact is producible here.
+    const { BUSINESS_TOOLS } = await import('@/components/BusinessCenter/businessToolsRegistry')
+    const ids = new Set(BUSINESS_TOOLS.map((t) => t.id))
+    const { OPS_EVIDENCE_ARTIFACTS } = await import('./OpsRotationView')
+    expect(OPS_EVIDENCE_ARTIFACTS.length).toBeGreaterThanOrEqual(5)
+    for (const a of OPS_EVIDENCE_ARTIFACTS) {
+      expect(ids.has(a.tool), `tool "${a.tool}" for "${a.artifact}"`).toBe(true)
+      expect(a.whyAsked.length).toBeGreaterThan(40)
+    }
+  })
+})

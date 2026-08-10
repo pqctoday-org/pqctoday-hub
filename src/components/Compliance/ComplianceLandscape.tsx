@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useRef } from 'react'
+
+/** Remembers that a reader opened the full landscape — B+ remediation 4.6. */
+const FULL_LANDSCAPE_KEY = 'pqc-compliance-full-landscape'
 import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
 import { ScrollFadeContainer } from '@/components/ui/ScrollFadeContainer'
@@ -1445,6 +1448,54 @@ export function ComplianceLandscape({
     return baseFrameworks
   }, [baseFrameworks, pqcRequiredOnly, hasDeadlineOnly])
 
+  /**
+   * Role reduction — B+ remediation 4.6 (2026-08-10).
+   *
+   * "Role emphasis only tints a ring — the entire framework landscape still
+   * renders for everyone, so personalising this page reduces nothing.
+   * Reduction is the whole point of declaring a role, and this page currently
+   * refuses to reduce."
+   *
+   * So it reduces: a persona with an emphasis set sees that set, and everything
+   * else sits behind one control. Two deliberate limits on that.
+   *
+   * First, it applies ONLY when no other filter is doing the narrowing. If the
+   * reader has picked a country, an industry or a search term, they have said
+   * what they want and a second invisible filter on top would be a page lying
+   * about its own result count.
+   *
+   * Second, EXPANSION STICKS (per user decision, 2026-08-10). Once a reader
+   * opens the full landscape it stays open for them across visits — the point
+   * of reducing is a calmer first screen, not repeatedly hiding something
+   * somebody has already told us they want to see.
+   */
+  const [fullLandscapeOpen, setFullLandscapeOpen] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(FULL_LANDSCAPE_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+
+  const emphasisSet = selectedPersona
+    ? displayedFrameworks.filter((f) => isComplianceFrameworkEmphasized(selectedPersona, f.id))
+    : []
+  // Never reduce to nothing, and never reduce a set the reader has already
+  // narrowed themselves — either would read as broken rather than as focused.
+  const roleReductionActive =
+    !fullLandscapeOpen && emphasisSet.length > 0 && emphasisSet.length < displayedFrameworks.length
+  const gridFrameworks = roleReductionActive ? emphasisSet : displayedFrameworks
+  const hiddenByRole = displayedFrameworks.length - gridFrameworks.length
+
+  const openFullLandscape = () => {
+    setFullLandscapeOpen(true)
+    try {
+      localStorage.setItem(FULL_LANDSCAPE_KEY, '1')
+    } catch {
+      /* storage unavailable — reduction simply reapplies next visit */
+    }
+  }
+
   // Stats — always reflect what's currently visible in the grid
   const pqcCount = displayedFrameworks.filter((f) => hasPQCMandate(f.pqcRequirement)).length
   const deadlineCount = displayedFrameworks.filter((f) => extractYear(f.deadline) !== null).length
@@ -1769,7 +1820,7 @@ export function ComplianceLandscape({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {displayedFrameworks.map((fw) => (
+            {gridFrameworks.map((fw) => (
               <FrameworkCard
                 key={fw.id}
                 fw={fw}
@@ -1783,7 +1834,47 @@ export function ComplianceLandscape({
           </div>
         )
       ) : (
-        <FrameworkTable frameworks={displayedFrameworks} onSelectFramework={onSelectFramework} />
+        <FrameworkTable frameworks={gridFrameworks} onSelectFramework={onSelectFramework} />
+      )}
+
+      {/* The reduction says what it did and offers the way out, immediately
+          below the grid. A page that quietly shows you 6 of 197 is worse than
+          one that shows all 197 — the count and the control are what make this
+          a lens rather than a silent omission. */}
+      {roleReductionActive && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
+          <p className="flex-1 text-xs leading-relaxed text-muted-foreground">
+            Showing the {gridFrameworks.length} frameworks that matter most for your role.{' '}
+            <span className="text-foreground">{hiddenByRole}</span> more are tracked and still
+            searchable.
+          </p>
+          <Button variant="outline" size="sm" onClick={openFullLandscape} className="text-xs">
+            Show the full landscape
+          </Button>
+        </div>
+      )}
+
+      {/* Once opened it stays open, so say so rather than leaving the reader
+          wondering why the reduction stopped happening. */}
+      {fullLandscapeOpen && emphasisSet.length > 0 && (
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          Showing every framework, because you opened the full landscape earlier.{' '}
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() => {
+              setFullLandscapeOpen(false)
+              try {
+                localStorage.removeItem(FULL_LANDSCAPE_KEY)
+              } catch {
+                /* storage unavailable */
+              }
+            }}
+          >
+            Narrow it back to my role
+          </Button>
+        </p>
       )}
     </div>
   )
