@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   patchMatrix,
   narrowToApprovedItems,
+  isCuratedNote,
   type ApprovedItem,
 } from './apply-protocol-matrix-updates'
 
@@ -169,5 +170,99 @@ describe('narrowToApprovedItems', () => {
     ])
     expect(narrowed).toHaveLength(2)
     expect(stale).toHaveLength(0)
+  })
+})
+
+/**
+ * Curated-note guard (2026-08-09, global maintenance audit).
+ *
+ * `/stageNote:\s*'[^']*'/` matches across newlines, so a multi-line
+ * hand-written note was replaced wholesale by a generated one-liner. The run
+ * that exposed this overwrote ike-ipsec:hybridKem — a note whose text is a
+ * record of this same mistake being made and reverted on 2026-07-27 — and
+ * re-introduced the wrong value it warned about. The script cannot judge
+ * whether a ref evidences a cell; it can refuse to erase the human who did.
+ */
+const curatedMatrix = `
+export const PQC_PROTOCOL_MATRIX = [
+  {
+    id: 'ike-ipsec',
+    hybridKem: {
+      value: 'draft',
+      stage: 'rfc-editor-queue',
+      stageNote:
+        'REVERTED 2026-07-27: a hand-verified apply incorrectly set this to rfc-published on the strength of RFC 9370 alone — RFC 9370 is the shared multi-KE enabler, not the hybrid-KEM mechanism.',
+    },
+    pureKem: {
+      value: 'draft',
+      stage: 'wg-document',
+      stageNote: 'wg document (datatracker 2026-01-01)',
+    },
+  },
+]
+`
+
+const ikeDelta = (dim: string, encoded: string, current: string) =>
+  ({
+    row_id: 'ike-ipsec',
+    dimension: dim,
+    encoded_stage: encoded,
+    current_stage: current,
+    last_updated: '2026-05-20',
+  }) as never
+
+describe('isCuratedNote', () => {
+  it("treats this generator's own output as not curated", () => {
+    expect(isCuratedNote('rfc published (datatracker 2026-05-20)')).toBe(false)
+    expect(isCuratedNote('iesg submitted (datatracker 2026-08-03)')).toBe(false)
+    expect(isCuratedNote('wg document')).toBe(false)
+  })
+
+  it('treats human prose as curated', () => {
+    expect(isCuratedNote('REVERTED 2026-07-27: a hand-verified apply incorrectly set this…')).toBe(
+      true
+    )
+    expect(
+      isCuratedNote('Individual submission (draft-bokovoy-kitten-pkinit-pqc-01) — not adopted')
+    ).toBe(true)
+    expect(
+      isCuratedNote('IETF Last Call (datatracker 2026-07-22; was IESG-submitted Apr 2026)')
+    ).toBe(true)
+  })
+
+  it('treats an absent or empty note as not curated, so new cells still fill in', () => {
+    expect(isCuratedNote(undefined)).toBe(false)
+    expect(isCuratedNote('   ')).toBe(false)
+  })
+})
+
+describe('patchMatrix curated-note guard', () => {
+  it('refuses to overwrite a multi-line human note, even on a genuine advance', () => {
+    const r = patchMatrix(curatedMatrix, [
+      ikeDelta('hybridKem', 'rfc-editor-queue', 'rfc-published'),
+    ])
+    expect(r.applied).toBe(0)
+    expect(r.curatedNotes).toHaveLength(1)
+    expect(r.curatedNotes[0]).toContain('ike-ipsec::hybridKem')
+    expect(r.next).toBe(curatedMatrix)
+    expect(r.next).toContain('REVERTED 2026-07-27')
+  })
+
+  it("still applies where the note is this script's own output", () => {
+    const r = patchMatrix(curatedMatrix, [ikeDelta('pureKem', 'wg-document', 'rfc-published')])
+    expect(r.applied).toBe(1)
+    expect(r.curatedNotes).toHaveLength(0)
+    expect(r.next).toContain("stage: 'rfc-published'")
+    // the curated sibling is untouched
+    expect(r.next).toContain('REVERTED 2026-07-27')
+  })
+
+  it('reports a downgrade as a downgrade even when the note is curated', () => {
+    const r = patchMatrix(curatedMatrix, [
+      ikeDelta('hybridKem', 'rfc-editor-queue', 'individual-draft'),
+    ])
+    expect(r.downgrades).toHaveLength(1)
+    expect(r.curatedNotes).toHaveLength(0)
+    expect(r.applied).toBe(0)
   })
 })

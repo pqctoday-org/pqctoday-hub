@@ -1,0 +1,12 @@
+[
+  {
+    "ref_id": "UK NCSC PQC Guidance",
+    "framework_id": "UK-NCSC",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "G7-CEG-Financial-PQC-2026",
+    "framework_id": "JORDAN-CBJ-PQC",
+    "reason": "local_file missing"
+  }
+]

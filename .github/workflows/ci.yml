@@ -203,6 +203,16 @@ jobs:
         # "0 CTAs, 11 registered" and still exiting 0.
         run: npm run audit:role-board-ctas
 
+      - name: Audit role-board coverage (every role reaches every section)
+        # The 2026-08-09 expansion to six use cases per role exists so that each
+        # role's home page reaches the whole site. Nothing enforced that
+        # afterwards: repointing the one link carrying a section for a role
+        # leaves every other gate green — the CTA still resolves, the claim is
+        # still fresh, the generated file still matches the CSV — and coverage
+        # would just quietly stop being true. Also fails when a NEW top-level
+        # route appears with no home route and no recorded exemption.
+        run: npm run audit:role-board-coverage
+
       - name: Audit content freshness (dated claims < 90d)
         # Non-blocking on first rollout — flags time-sensitive claims (CMVP/FIPS
         # status, protocol-matrix snapshot, Q-Day anchor) that have aged past the

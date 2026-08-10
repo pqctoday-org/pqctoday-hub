@@ -86,6 +86,28 @@ async function decapWithWasm(
 const nodeMajor = parseInt(process.versions.node.split('.')[0], 10)
 const describeIfNode24 = nodeMajor >= 24 ? describe : describe.skip
 
+// These KATs are the only thing that checks our WASM crypto against a SECOND
+// implementation, and on Node < 24 they silently vanish: the run still prints
+// "passed", just with a smaller number nobody reads. That is how a rebuilt
+// bundle can be declared verified when the cross-impl checks never executed —
+// it happened on 2026-08-09 during the softhsmrustv3 rebuild.
+//
+// CI is fine (a dedicated Node 24 job runs src/test/kat/). This guard is for
+// everyone else: set REQUIRE_PQC_KAT=1 whenever a run is being used as EVIDENCE
+// that the crypto still works, and the skip becomes a failure instead.
+describe('cross-impl KAT preconditions', () => {
+  it('runs on a Node that can actually generate the fixtures', () => {
+    if (nodeMajor < 24 && process.env.REQUIRE_PQC_KAT) {
+      throw new Error(
+        `REQUIRE_PQC_KAT is set but Node ${process.versions.node} cannot generate ` +
+          `PQC fixtures (needs >= 24). These KATs would have SKIPPED, and a skip ` +
+          `here is indistinguishable from a pass. Re-run under Node 24.`
+      )
+    }
+    expect(nodeMajor).toBeGreaterThan(0)
+  })
+})
+
 describeIfNode24('ML-KEM cross-impl KAT — Node encap → WASM decap', () => {
   const cases: Array<{ alg: KEMFixture['alg']; ctLen: number; ssLen: number }> = [
     { alg: 'ml-kem-512', ctLen: 768, ssLen: 32 },

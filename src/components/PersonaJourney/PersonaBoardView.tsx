@@ -50,6 +50,7 @@ export interface PersonaBoardViewProps {
 }
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
+type SideCardProvenance = PersonaJourneyBoard['sideCard']['provenance']
 
 /** bad -> critical, warn -> warning, info -> primary (NOT text-status-info —
  *  see IMPLEMENTATION-PLAN-2026-08-01.md §5 on the info/cyan vs --info hue
@@ -68,20 +69,39 @@ const TONE_TEXT: Record<SideCardTone, string> = {
   accent: 'text-accent',
 }
 
-function ProvenanceChip({
-  provenance,
-  label,
-}: {
-  provenance: 'sourced' | 'illustrative'
-  label: string
-}) {
+/**
+ * What a side card's numbers ARE, said in the card's own chip.
+ *
+ * Two values used to cover three meanings. `illustrative` rendered as
+ * "ILLUSTRATIVE — THIS USER'S INPUTS", which is true of a card standing in for
+ * an answer you have not given yet (your exposure window, your score) and
+ * false of a card stating a general rule — "Hybrid vs pure: a policy call, not
+ * a maths one" is not this user's input and never becomes it. Sixteen of
+ * thirty-six boards carried that label over content it did not describe.
+ *
+ * `guidance` is the third meaning: a rule of thumb this site is asserting, not
+ * data it read and not a placeholder for yours. Labelling it honestly is the
+ * whole point — a page that grades its own claims cannot mis-grade them.
+ */
+export const PROVENANCE_LABEL: Record<SideCardProvenance, string> = {
+  sourced: 'SOURCED — REPO DATA',
+  illustrative: "ILLUSTRATIVE — THIS USER'S INPUTS",
+  guidance: 'GUIDANCE — OUR RULE OF THUMB',
+}
+
+const PROVENANCE_CLASS: Record<SideCardProvenance, string> = {
+  sourced: 'border-accent/30 bg-accent/10 text-accent',
+  illustrative: 'border-border bg-muted/40 text-muted-foreground',
+  // Distinct from illustrative: this is us talking, not your data pending.
+  guidance: 'border-primary/25 bg-primary/5 text-primary/90',
+}
+
+function ProvenanceChip({ provenance, label }: { provenance: SideCardProvenance; label: string }) {
   return (
     <span
       className={cn(
         'inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide',
-        provenance === 'sourced'
-          ? 'border-accent/30 bg-accent/10 text-accent'
-          : 'border-border bg-muted/40 text-muted-foreground'
+        PROVENANCE_CLASS[provenance]
       )}
     >
       {label}
@@ -203,11 +223,7 @@ export function PersonaBoardView({
             >
               <ProvenanceChip
                 provenance={board.sideCard.provenance}
-                label={
-                  board.sideCard.provenance === 'sourced'
-                    ? 'SOURCED — REPO DATA'
-                    : "ILLUSTRATIVE — THIS USER'S INPUTS"
-                }
+                label={PROVENANCE_LABEL[board.sideCard.provenance]}
               />
 
               <h2 className={cn('text-lg font-bold', TONE_TEXT[board.sideCard.tone])}>
@@ -248,18 +264,39 @@ export function PersonaBoardView({
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           {board.gridCards.map((card, i) => {
             const highlighted = i === 2
-            return (
+            const body = (
+              <>
+                <h3 className="text-sm font-bold text-foreground">{card.title}</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">{card.body}</p>
+              </>
+            )
+            const className = cn(
+              'glass-panel flex flex-col gap-2 p-4',
+              highlighted && 'border-accent/50 bg-accent/5',
+              // Only linked cards get affordances — an unlinked card must stay
+              // visually identical to how every card rendered before hrefs existed.
+              card.href && 'transition-colors hover:border-primary/40 hover:bg-primary/5'
+            )
+            // A card with no href stays a plain <div>: same markup as before,
+            // so no card ever looks clickable without being clickable.
+            return card.href ? (
+              <Link
+                key={card.title}
+                to={card.href}
+                data-testid={`grid-card-${i}`}
+                data-highlighted={highlighted}
+                className={className}
+              >
+                {body}
+              </Link>
+            ) : (
               <div
                 key={card.title}
                 data-testid={`grid-card-${i}`}
                 data-highlighted={highlighted}
-                className={cn(
-                  'glass-panel flex flex-col gap-2 p-4',
-                  highlighted && 'border-accent/50 bg-accent/5'
-                )}
+                className={className}
               >
-                <h3 className="text-sm font-bold text-foreground">{card.title}</h3>
-                <p className="text-xs leading-relaxed text-muted-foreground">{card.body}</p>
+                {body}
               </div>
             )
           })}

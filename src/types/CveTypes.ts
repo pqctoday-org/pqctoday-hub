@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/** Slim CVE record produced by `scripts/scrape-nvd.py`. The per-CPE sweep keeps
+/** Slim CVE record produced by `pqctoday-priv/scripts/scrape-nvd.py`. The per-CPE sweep keeps
  *  only Medium+, but a small curated set of famous teaching CVEs (Heartbleed,
  *  POODLE, FREAK, Logjam, DROWN, BEAST) is pinned in even when modern CVSS v3
  *  scores them LOW — so `'LOW'` can appear, but only for those pinned entries. */

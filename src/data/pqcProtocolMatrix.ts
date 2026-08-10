@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-07-29'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-09'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -729,8 +729,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-28)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. draft-ietf-tls-mlkem-09 entered Last Call 2026-07-30 (ends 2026-08-13).",
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -996,8 +997,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-lamps-pq-composite-kem-18 is 'Waiting for AD Go-Ahead' — IETF Last Call has CLOSED and no ballot is open, so Last Call is the last completed milestone.",
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1207,8 +1209,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'Publication Requested — submitted to IESG (Jun 2026)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. draft-ietf-lamps-cms-composite-kem-01 entered Last Call 2026-08-04 (ends 2026-08-18).",
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1336,9 +1339,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'wg-last-call',
         stageNote:
-          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete PQ algorithm profile (draft-reddy) remains an individual draft with no IETF standing',
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-cose-hpke-26 is in 'AD Evaluation' — with the IESG but before IETF Last Call. This scale has no rung for that, so wg-last-call is the closest honest label below ietf-last-call.",
         refs: [
           {
             kind: 'draft',
@@ -1358,9 +1361,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'wg-last-call',
         stageNote:
-          'HPKE-in-COSE enabling framework (draft-ietf-cose-hpke-25) in IESG AD evaluation as of 2026-04-07; concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing',
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Same document as pure KEM: draft-ietf-cose-hpke-26 in 'AD Evaluation', pre-Last-Call.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
@@ -1663,8 +1666,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Inherits draft-ietf-lamps-pq-composite-kem-18, 'Waiting for AD Go-Ahead' (Last Call closed, no ballot).",
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1821,8 +1825,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-27)',
+        stage: 'individual-draft',
+        stageNote:
+          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
         note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
         refs: [
           {
@@ -2212,8 +2217,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (datatracker 2026-07-22; was IESG-submitted Apr 2026)',
+        stage: 'iesg-submitted',
+        stageNote:
+          'IESG Evaluation, verified live 2026-08-09: draft-ietf-ipsecme-ikev2-pqc-auth-11 moved to IESG Evaluation 2026-07-31, ballot issued, on the 2026-08-20 telechat agenda. Supersedes the 2026-07-22 Last Call reading.',
         refs: [
           {
             kind: 'draft',
@@ -2940,8 +2946,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-28)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3037,8 +3044,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-28)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3120,8 +3128,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2026-07-28)',
+        stage: 'ietf-last-call',
+        stageNote:
+          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {

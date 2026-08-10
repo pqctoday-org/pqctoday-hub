@@ -84,8 +84,48 @@ const git = (...args: string[]) =>
   }).trim()
 
 let drift = false
-const head = git('rev-parse', 'HEAD')
-console.log(`wasm provenance vs pqctoday-hsm @ ${head.slice(0, 9)} (${hsmPath})\n`)
+
+/**
+ * The baseline is hsm's SHIPPABLE ref, not whatever branch hsm has checked out.
+ *
+ * This used to be `rev-parse HEAD`, which made the verdict depend on a sibling
+ * repo's working state. On 2026-08-09 that blocked a hub push with three bundles
+ * reported STALE: hsm was on `feat/kmip-bench-followups`, and every one of the
+ * 9 "changes to rust/" was a bench-harness commit that exists only on that
+ * branch. Against main, `openssl-pkcs11` and `softhsmrustv3-engine` had zero
+ * relevant commits and `cacp-kmip` had one — also bench-only. Rebuilding to
+ * satisfy the check would have baked bench-harness code into shipped wasm:
+ * the check would go green while the artefacts got genuinely wrong.
+ *
+ * `track: 'tip'` means "track hsm's tip" — and the tip that ships is main.
+ * Anyone who genuinely wants to gate against a feature branch can still say so
+ * explicitly with HSM_BASELINE_REF.
+ *
+ * (Second baseline bug in this file; see the GIT_DIR note above for the first.
+ * Both had the same shape — the comparison silently pointed somewhere other
+ * than where the message claimed.)
+ */
+const resolveBaseline = (): { ref: string; sha: string } => {
+  const explicit = process.env.HSM_BASELINE_REF
+  const candidates = explicit ? [explicit] : ['origin/main', 'main']
+  for (const ref of candidates) {
+    try {
+      return { ref, sha: git('rev-parse', '--verify', `${ref}^{commit}`) }
+    } catch {
+      /* try the next candidate */
+    }
+  }
+  console.log(
+    `  ⚠️  no ${candidates.join(' or ')} in hsm — falling back to HEAD, so this verdict ` +
+      `reflects hsm's checked-out branch rather than what ships.`
+  )
+  return { ref: 'HEAD', sha: git('rev-parse', 'HEAD') }
+}
+
+const baseline = resolveBaseline()
+console.log(
+  `wasm provenance vs pqctoday-hsm ${baseline.ref} @ ${baseline.sha.slice(0, 9)} (${hsmPath})\n`
+)
 
 for (const b of manifest.bundles) {
   if (ONLY.size > 0 && !ONLY.has(b.name)) {
@@ -102,7 +142,7 @@ for (const b of manifest.bundles) {
   }
   let behind = '0'
   try {
-    behind = git('rev-list', '--count', `${b.hsmCommit}..HEAD`, '--', ...b.sourceDirs)
+    behind = git('rev-list', '--count', `${b.hsmCommit}..${baseline.sha}`, '--', ...b.sourceDirs)
   } catch {
     console.log(
       `  ⚠️  ${b.name}: recorded commit ${b.hsmCommit.slice(0, 9)} not in hsm history — rebuild`
