@@ -8,6 +8,7 @@ import { Button } from '../../ui/button'
 import { Pill } from './workbenchUi'
 import { productFipsBadge, productPqcStatus, productVerificationBadge } from './productStatus'
 import { ProductDetail } from './ProductDetail'
+import { proofFreshness } from './proofFreshness'
 
 interface ProductRowProps {
   product: SoftwareItem
@@ -42,6 +43,11 @@ export function ProductRow({
   const verification = productVerificationBadge(product)
   const vendor = product.vendorId ? vendorMap.get(product.vendorId) : undefined
   const sponsored = !!(vendor && isSponsor(vendor.vendorDisplayName || vendor.vendorName))
+  // B+ remediation 3.7 (2026-08-10): the row asserted PQC support and said
+  // nothing about what that assertion rests on. The proof URL and its date were
+  // already stored and already rendered — but only inside the expanded detail,
+  // which is not where an operator scans.
+  const proof = proofFreshness(product)
 
   return (
     <div
@@ -91,10 +97,19 @@ export function ProductRow({
                 Sponsor
               </Pill>
             )}
+            <Pill tone={proof.tone} title={proof.detail}>
+              {proof.label}
+            </Pill>
             {extraBadges}
           </div>
           <p className="mt-1 pl-6 font-mono text-[11px] text-muted-foreground">
             {product.categoryName}
+          </p>
+          {/* One line of what the proof actually demonstrates, in the row
+              rather than two clicks in. "The page stops asserting and starts
+              evidencing" is the whole item. */}
+          <p className="mt-0.5 pl-6 text-[11px] leading-snug text-muted-foreground">
+            {proof.detail}
           </p>
         </div>
         {onChoose && (
