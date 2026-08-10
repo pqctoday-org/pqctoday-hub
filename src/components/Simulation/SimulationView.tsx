@@ -1837,12 +1837,20 @@ export function SimulationView() {
                 {scoreboard.milestone.cleared}/{scoreboard.milestone.total}
               </span>
             </div>
-            <div
-              title={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
-              className="flex flex-col gap-px px-2.5 py-1.5 text-left"
-            >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+            <div className="flex flex-col gap-px px-2.5 py-1.5 text-left">
+              <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
                 Q-Day
+                {/* The horizon is a SOFT figure and must carry a PlanningBadge, like
+                    the sector shelf-life above. It regressed to a bare `title` on the
+                    parent div, which is invisible to keyboard and screen-reader users
+                    and silently un-marks the estimate as an estimate. Caught by
+                    e2e/sim-planning-badges.spec.ts, which asserts a real focusable
+                    <button> "not a bare title attribute" — the suite could not run
+                    between 2026-08-02 and 2026-08-09 (the build died at gate:precache),
+                    which is why a week passed before it surfaced. */}
+                <PlanningBadge
+                  tip={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
+                />
               </span>
               <span
                 className={`text-[12.5px] font-bold ${clock.atRisk ? 'text-destructive' : 'text-background'}`}
