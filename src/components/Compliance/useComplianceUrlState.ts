@@ -82,7 +82,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries, selectedRegion, selectedPersona } = usePersonaStore()
+  const { selectedIndustries, selectedRegion } = usePersonaStore()
 
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
@@ -99,13 +99,42 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
 
   // ── Tab state ──────────────────────────────────────────────────────────
 
+  /**
+   * The tab to show when the URL names none.
+   *
+   * ONE definition, used by both the `useState` initialiser below and the
+   * URL→state sync effect further down. That sharing is the point, and it is a
+   * bug fix rather than tidying: the sync effect used to hardcode `'standards'`
+   * as its fallback, so on any load without `?tab=` it overwrote whatever
+   * persona default the initialiser had chosen, one tick later. Developer's
+   * `'records'` default had been silently dead for exactly that reason — both
+   * halves looked correct in isolation. Found 2026-08-10 by probing the
+   * rendered page, which is the only place the interaction was visible.
+   *
+   * Reads the persona from the store directly rather than from this hook's
+   * render value: the initialiser runs during first render, and Zustand's
+   * persist middleware may not have rehydrated by then — the same race
+   * TimelineView documents around its own region default.
+   */
+  const defaultTab = useCallback((): MobileSection => {
+    if (certParam) return 'records'
+    if (complianceHint) return complianceHint.section as MobileSection
+    const persona = usePersonaStore.getState().selectedPersona
+    if (persona === 'developer') return 'records'
+    // B+ remediation 4.6: curious opens on the one view written for it.
+    // Without this the whole CuriousOrientationView — its "does this affect
+    // me?" card and its "who makes the rules, and when they start" list —
+    // was unreachable unless the reader found the For You tab unaided.
+    if (persona === 'curious') return 'foryou'
+    return 'standards'
+  }, [certParam, complianceHint])
+
   const [activeTab, setActiveTab] = useState<MobileSection>(() => {
     const tab = searchParams.get('tab') as MobileSection | null
     if (tab) return tab
     const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
     if (hashTab) return hashTab
-    if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
-    return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
+    return defaultTab()
   })
 
   const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
@@ -324,7 +353,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── URL → state sync (back/forward navigation) ─────────────────────────
 
   useEffect(() => {
-    const tab = (searchParams.get('tab') as MobileSection | null) ?? 'standards'
+    // `defaultTab()` rather than a hardcoded 'standards' — see its doc comment.
+    const tab = (searchParams.get('tab') as MobileSection | null) ?? defaultTab()
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
