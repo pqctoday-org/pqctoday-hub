@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
 import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
+import { PERSONAS } from '@/data/learningPersonas'
 
 interface ExploreTile {
   icon: LucideIcon
@@ -29,6 +30,18 @@ interface ExploreTile {
   /** Alternate destination for gated-curious users (avoids sending them to blocked routes). */
   gatedPath?: string
   accent: string
+  /**
+   * Minutes for a FIRST LOOK — long enough to decide whether this door is the
+   * one you wanted, not to finish anything behind it. B+ remediation 4.6
+   * (2026-08-10): "twenty tiles that all look equally important, and none says
+   * what it costs in time".
+   *
+   * These are authored estimates, and the page says so rather than presenting
+   * them as measurements. The one exception is '/learn', whose figure is
+   * DERIVED from the active persona's real `essentialsMinutes` at render time
+   * — that number exists, so quoting anything else would be worse.
+   */
+  firstLookMinutes: number
 }
 
 const TILES: ExploreTile[] = [
@@ -38,6 +51,7 @@ const TILES: ExploreTile[] = [
     description:
       "Start with the essentials. Why quantum computers threaten today's encryption and what's being done about it.",
     path: '/learn',
+    firstLookMinutes: 2,
     accent: 'text-primary bg-primary/10',
   },
   {
@@ -46,6 +60,7 @@ const TILES: ExploreTile[] = [
     description:
       'See which governments and organizations have already committed to post-quantum cryptography — and when.',
     path: '/timeline',
+    firstLookMinutes: 3,
     accent: 'text-secondary bg-secondary/10',
   },
   {
@@ -54,6 +69,7 @@ const TILES: ExploreTile[] = [
     description:
       '"Harvest now, decrypt later" attacks are happening today. Learn what data is already at risk.',
     path: '/threats',
+    firstLookMinutes: 3,
     accent: 'text-status-warning bg-status-warning/10',
   },
   {
@@ -62,6 +78,7 @@ const TILES: ExploreTile[] = [
     description:
       'NIST, FIPS, NSA CNSA — see which regulations apply to your industry and how to stay ahead.',
     path: '/compliance',
+    firstLookMinutes: 4,
     accent: 'text-accent bg-accent/10',
   },
   {
@@ -70,6 +87,7 @@ const TILES: ExploreTile[] = [
     description:
       "A short questionnaire that estimates your organization's exposure to the quantum threat.",
     path: '/assess',
+    firstLookMinutes: 10,
     accent: 'text-primary bg-primary/10',
   },
   {
@@ -78,6 +96,7 @@ const TILES: ExploreTile[] = [
     description:
       'Track PQC readiness across your software and infrastructure stack — libraries, protocols, hardware, and more.',
     path: '/migrate',
+    firstLookMinutes: 4,
     accent: 'text-secondary bg-secondary/10',
   },
   {
@@ -86,6 +105,7 @@ const TILES: ExploreTile[] = [
     description:
       'Executive planning tools — ROI calculators, board packs, vendor scorecards, and a sequenced migration roadmap.',
     path: '/business',
+    firstLookMinutes: 5,
     gatedPath: '/learn/pqc-business-case',
     accent: 'text-accent bg-accent/10',
   },
@@ -95,6 +115,7 @@ const TILES: ExploreTile[] = [
     description:
       'ML-KEM, ML-DSA, SLH-DSA — compare the new NIST-standardized algorithms side by side.',
     path: '/algorithms',
+    firstLookMinutes: 4,
     gatedPath: '/learn/pqc-101',
     accent: 'text-secondary bg-secondary/10',
   },
@@ -104,6 +125,7 @@ const TILES: ExploreTile[] = [
     description:
       'Generate post-quantum keys, encrypt, sign, and verify with ML-KEM, ML-DSA, and 40+ algorithms — right in your browser.',
     path: '/playground',
+    firstLookMinutes: 5,
     accent: 'text-primary bg-primary/10',
   },
   {
@@ -112,6 +134,7 @@ const TILES: ExploreTile[] = [
     description:
       'Standards, research papers, and migration guides — curated and searchable in one place.',
     path: '/library',
+    firstLookMinutes: 3,
     accent: 'text-accent bg-accent/10',
   },
 ]
@@ -139,6 +162,17 @@ export function ExploreView() {
   const orderedTiles = [...TILES].sort(
     (a, b) => Number(isTileRecommended(b)) - Number(isTileRecommended(a))
   )
+
+  // '/learn' is the one tile whose time is a real figure rather than an
+  // estimate: every persona carries `essentialsMinutes` for its own essentials
+  // track. Quoting the authored 2 minutes next to a page that opens on a
+  // several-hour path would be the kind of small dishonesty that costs a
+  // reader's trust in every other number on the page.
+  const tileMinutes = (tile: ExploreTile): number =>
+    tile.path === '/learn' && selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection -- typed PersonaId union
+        PERSONAS[selectedPersona].essentialsMinutes
+      : tile.firstLookMinutes
 
   return (
     <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
@@ -184,6 +218,9 @@ export function ExploreView() {
               </span>
               <span className="text-sm text-muted-foreground leading-relaxed">
                 {tile.description}
+              </span>
+              <span className="mt-2 text-[11px] font-mono text-muted-foreground/80">
+                ~{tileMinutes(tile)} min for a first look
               </span>
             </Button>
           )
