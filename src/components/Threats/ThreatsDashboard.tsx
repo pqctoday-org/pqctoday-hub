@@ -18,7 +18,7 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
-import { threatsData, threatsMetadata } from '../../data/threatsData'
+import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -45,7 +45,12 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 
-type SortField = 'industry' | 'threatId' | 'criticality'
+// B+ remediation 4.3 (2026-08-10): 'evidence' added. "The researcher corpus
+// sorts by recency rather than evidence strength" — and every field the sort
+// needs was already on the row (confidenceScore on 114/114, peerReviewed on
+// 114/114, a trusted-source id on 107/114, accuracyPct on 93/114). This is a
+// new ORDERING over existing data, not new data.
+type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 type SortDirection = 'asc' | 'desc'
 
 const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
@@ -438,6 +443,9 @@ export const ThreatsDashboard: React.FC<{
       } else if (sortField === 'criticality') {
         valA = getCriticalityVal(a.criticality)
         valB = getCriticalityVal(b.criticality)
+      } else if (sortField === 'evidence') {
+        valA = evidenceStrength(a)
+        valB = evidenceStrength(b)
       }
 
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1
@@ -913,6 +921,7 @@ export const ThreatsDashboard: React.FC<{
                       items={filteredAndSortedData}
                       sortField={sortField}
                       sortDirection={sortDirection}
+                      showEvidence={selectedPersona === 'researcher'}
                       onSort={handleSort}
                       onItemClick={(item) => {
                         setSelectedThreat(item)
