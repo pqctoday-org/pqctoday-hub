@@ -58,29 +58,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Security Audit
-        # KNOWN RED since 2026-08-07, deliberately not suppressed (decision
-        # 2026-08-09). Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
-        # (ICNS parser infinite loop) and GHSA-5p2g-fcmc-qvqq (JXL/HEIF parser
-        # infinite loops) — reach us transitively through `pptxgenjs`, which
-        # backs the .pptx export in ExportableArtifact.
-        #
-        # There is NO upstream fix. The advisory covers `*`: forcing
-        # image-size 2.0.2 via an override was tried and still audits dirty,
-        # and pptxgenjs 4.0.1 (latest) still declares `image-size: ^1.2.1`.
-        # `npm audit fix --force` "fixes" it only by downgrading pptxgenjs to
-        # 1.1.5, a 9-year-old jQuery-era API.
-        #
-        # Exposure is believed nil: both CVEs are DoS in raster-image PARSERS,
-        # and our export builds slides from markdown with no user-supplied
-        # ICNS/JXL/HEIF input, so that code path should never execute.
-        #
-        # BEFORE YOU DEBUG A RED BUILD: if this is the ONLY failing step, it is
-        # this. Every other gate in this job is expected green. Re-check
-        # `npm view pptxgenjs dependencies` — the day it stops depending on a
-        # vulnerable image-size, delete this comment and the note in CHANGELOG.
-        run: npm audit --audit-level=high --omit=dev
-
       - name: Check Formatting
         run: npm run format:check
 
@@ -415,6 +392,43 @@ jobs:
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npx tsx scripts/ci/validate-offline-attestation.ts
+
+      - name: Security Audit
+        # MOVED TO THE END OF THIS JOB on 2026-08-09. It used to run 5th, right
+        # after `npm ci`, and because a failing step aborts the job, its known-red
+        # status meant the ~20 gates below it NEVER RAN — format, lint, every
+        # audit:*, the build, the unit suite and the e2e smoke were all skipped on
+        # every single PR. CI reported failure while validating essentially
+        # nothing, and two releases the same day had to have that whole list run
+        # by hand instead. Running it last keeps the signal (the job is still red,
+        # merging still needs an override) while letting the gates that can
+        # actually catch a regression do their job.
+        #
+        # KNOWN RED since 2026-08-07, deliberately not suppressed (decision
+        # 2026-08-09). Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
+        # (ICNS parser infinite loop) and GHSA-5p2g-fcmc-qvqq (JXL/HEIF parser
+        # infinite loops) — reach us transitively through `pptxgenjs`, which
+        # backs the .pptx export in ExportableArtifact.
+        #
+        # There is NO upstream fix. The advisory covers `*`: forcing
+        # image-size 2.0.2 via an override was tried and still audits dirty,
+        # and pptxgenjs 4.0.1 (latest) still declares `image-size: ^1.2.1`.
+        # `npm audit fix --force` "fixes" it only by downgrading pptxgenjs to
+        # 1.1.5, a 9-year-old jQuery-era API.
+        #
+        # Exposure is believed nil: both CVEs are DoS in raster-image PARSERS,
+        # and our export builds slides from markdown with no user-supplied
+        # ICNS/JXL/HEIF input, so that code path should never execute.
+        #
+        # BEFORE YOU DEBUG A RED BUILD: if this is the ONLY failing step, it is
+        # this. Every other gate in this job is expected green — and since the
+        # move above, they have actually RUN, so "everything else is green" is
+        # now an observation rather than an assumption. If anything above this
+        # step is red, that one is real and this one is not your problem.
+        # Re-check `npm view pptxgenjs dependencies` — the day it stops
+        # depending on a vulnerable image-size, delete this comment, move the
+        # step back wherever you like, and drop the note in CHANGELOG.
+        run: npm audit --audit-level=high --omit=dev
 
   kat-node24:
     # Cross-impl KATs (mldsa-cross-impl / mlkem-cross-impl): Node's own
