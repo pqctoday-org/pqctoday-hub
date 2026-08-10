@@ -895,9 +895,23 @@ export const PERSONA_REPORT_CONFIG: Record<
     assessmentProfile: { state: 'open' },
     threatLandscape: { state: 'open' },
   },
+  // B+ remediation 4.4 (2026-08-10): researcher had been inheriting the
+  // architect profile wholesale (the two entries were byte-identical). A
+  // researcher reads for METHOD before conclusions — what went in, how it was
+  // scored, and what the evidence behind each claim is — so the inputs and the
+  // threat corpus lead, the derived score keeps its working open beneath them,
+  // and the programme-management sections that assume you are running a
+  // migration are demoted rather than hidden.
   researcher: {
     assessmentProfile: { state: 'open' },
     threatLandscape: { state: 'open' },
+    riskBreakdown: { state: 'open' },
+    hndlHnfl: { state: 'open' },
+    // Not a migration this reader is running: kept, but out of the way.
+    migrationRoadmap: { state: 'collapsed' },
+    migrationToolkit: { state: 'collapsed' },
+    recommendedActions: { state: 'collapsed' },
+    executiveSummary: { state: 'collapsed' },
   },
   ops: {
     hndlHnfl: { state: 'hidden' },

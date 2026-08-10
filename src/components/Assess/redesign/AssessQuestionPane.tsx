@@ -4,7 +4,15 @@
 // (slot-prop-suppressed) step body + footer control deck. Reuses the legacy step
 // components for the option grids so all dynamic data logic is preserved.
 import React, { useState } from 'react'
-import { ChevronLeft, ChevronRight, Info, AlertCircle, RotateCcw, Link2 } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  AlertCircle,
+  RotateCcw,
+  Link2,
+  ArrowRight,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button } from '../../ui/button'
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
@@ -80,7 +88,19 @@ export const AssessQuestionPane: React.FC<AssessQuestionPaneProps> = ({
         <h2 className="mb-1.5 text-[21px] font-bold tracking-tight text-foreground">
           {meta.question}
         </h2>
-        <p className="mb-4 text-[13px] leading-relaxed text-muted-foreground">{meta.subtitle}</p>
+        <p className="mb-2 text-[13px] leading-relaxed text-muted-foreground">{meta.subtitle}</p>
+        {/* B+ remediation 4.4 (2026-08-10): what THIS answer changes downstream.
+            The review's cheapest educational move — the wizard's real failure
+            mode is people answering "I don't know" to the questions that matter
+            most, because nothing tells them the answer is load-bearing. Kept
+            above the fold and not behind the "why we ask" disclosure for
+            exactly that reason. */}
+        <p className="mb-4 flex items-start gap-1.5 text-[12px] leading-relaxed text-foreground/80">
+          <ArrowRight size={12} aria-hidden="true" className="mt-[3px] shrink-0 text-primary" />
+          <span>
+            <span className="font-medium">In your report:</span> {meta.changesInReport}
+          </span>
+        </p>
 
         <AssessAssistStrip key={activeKey} why={meta.why} />
 
