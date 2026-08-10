@@ -37,27 +37,56 @@ import {
  * `personaConfig.test.ts` pins this relationship (owned ⊆ set, extras ⊆
  * allowlist) so it can't silently drift further.
  *
- * Personas with no entry here (researcher / curious / none) see the CTA on
- * every phase — a deliberate broad fallback (neither holds a program role in
- * `ROLE_CROSSWALK`, so there is no "owned" set to link to; see item 1).
+ * B+ remediation 2.5 (2026-08-10) — the broad fallback is REVERSED for the two
+ * personas that have no phase set. Showing "Practice in the Simulation" on
+ * every single module for researcher and curious was a call to action for a
+ * migration neither of them is running; a prompt on everything is a prompt on
+ * nothing. `PERSONA_SIM_PRACTICE_NONE` below names them explicitly (rather
+ * than leaving it to `undefined`, which cannot distinguish "no mapping yet"
+ * from "deliberately none"), and `personaPracticesModulePhase` returns false
+ * for them. `null` (no persona chosen) keeps the broad fallback — we know
+ * nothing about that visitor, so we suppress nothing.
  */
 export const PERSONA_SIM_PRACTICE_PHASES: Partial<Record<PersonaId, PhaseId[]>> = {
   executive: ['p0', 'p1', 'p2', 'p3', 'p4', 'p7', 'verify-close', 'foundations'],
   architect: ['p1', 'p2', 'p3', 'p5'],
+  // B+ remediation 2.5 asked to "add developer's selection phase; add ops
+  // verify-and-close" — REJECTED after checking ROLE_CROSSWALK, and recorded
+  // here so it isn't re-proposed. `p4` (selection) is owned by 'qrpm' and
+  // 'pmo-analyst', both executive-mapped; 'verify-close' by 'qrpm' alone.
+  // Neither developer seat ('security-eng', 'appsec-lead') nor the ops seat
+  // ('ot-specialist') drives either phase in-sim. Adding them here would make
+  // the CTA offer a rehearsal for a phase the player's own seat cannot act in
+  // — precisely the drift `personaConfig.test.ts`'s guard exists to catch, and
+  // a worse outcome than the missing prompt it was meant to fix. If these
+  // phases should genuinely be practised by those roles, the change belongs in
+  // ROLE_CROSSWALK (seat ownership), not in this CTA map.
   ops: ['p5', 'p6'],
   developer: ['p5', 'p6'],
-  // researcher / curious / (no persona) → undefined ⇒ broad (see helper)
+  // researcher / curious → deliberately none, see PERSONA_SIM_PRACTICE_NONE
 }
 
 /**
+ * Personas for which the "Practice in the Simulation" CTA is deliberately
+ * never shown, rather than merely unmapped. Neither holds a program role in
+ * `ROLE_CROSSWALK` — there is no seat for them at the table the sim models —
+ * so pointing them at a migration rehearsal is noise. This is a *decision*
+ * recorded as data; `PERSONA_SIM_PRACTICE_PHASES` leaving them undefined only
+ * recorded an absence of one.
+ */
+export const PERSONA_SIM_PRACTICE_NONE: readonly PersonaId[] = ['researcher', 'curious']
+
+/**
  * True when the active persona practices this module's phase in the sim, so the
- * "Practice in the Simulation" CTA should show. No persona — or a persona with
- * no phase set (researcher / curious) — returns true (broad fallback).
+ * "Practice in the Simulation" CTA should show. A persona listed in
+ * `PERSONA_SIM_PRACTICE_NONE` never shows it (B+ remediation 2.5). No persona
+ * at all still returns true — the broad fallback for an unknown visitor.
  */
 export function personaPracticesModulePhase(
   persona: PersonaId | null,
   frameworkPhase: PhaseId | PhaseId[]
 ): boolean {
+  if (persona && PERSONA_SIM_PRACTICE_NONE.includes(persona)) return false
   // eslint-disable-next-line security/detect-object-injection
   const phases = persona ? PERSONA_SIM_PRACTICE_PHASES[persona] : undefined
   if (!phases) return true
@@ -159,9 +188,18 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/report',
     '/algorithms',
     '/library',
-    '/leaders',
     '/playground',
-    '/patents',
+    // B+ remediation 2.2 (2026-08-10). Two changes to this list:
+    //  - '/patents' removed entirely — it now carries a PERSONA_ABSENT_PATHS
+    //    entry instead, so the rail says "not offered, and why" rather than
+    //    offering a newcomer a patent database. Patent law is further from a
+    //    first-time reader than from an operator, and ops was already excluded.
+    //  - '/leaders' demoted to MORE (dropped from this list, no absence entry)
+    //    — still one click away, just not a FOR YOU row for someone who has no
+    //    reason yet to care who any of these people are.
+    // '/migrate' and '/compliance' are deliberately KEPT: the handoff's own
+    // §4.6 specifies curious lenses for both ("who has already moved" /
+    // "who makes the rules"), which its §2.2 rail list contradicted.
     // Persona-journeys A-grade redesign (2026-08-01): /simulation added as a
     // plain (non-featured, non-marked) entry — curious keeps every route
     // reachable but gives simulation no special rail treatment, per design.
@@ -213,6 +251,85 @@ export const PERSONA_MARKED_NAV_PATHS: Record<PersonaId, string[]> = {
   ops: [],
   // curious: every route is already reachable and un-gated — nothing marked.
   curious: [],
+}
+
+/**
+ * Routes deliberately NOT offered to a persona, with the reason and the place
+ * that need is met instead.
+ *
+ * The B+ remediation program's second grading principle: *a deliberate absence
+ * must be visible where it takes effect*. Several correct decisions on this
+ * page (ops without `/patents`, curious without `/business`) previously lived
+ * only in the doc comments above and therefore read as bugs on screen — a
+ * missing row is indistinguishable from a broken one. Every entry here is
+ * rendered by the rail as a "not offered for your role — why" affordance in
+ * the owning group's footer (`MainLayout.tsx`), and summarised in the persona
+ * picker and on About via `describePersonaAdaptation` below.
+ *
+ * IMPORTANT — this is NOT "everything missing from `PERSONA_NAV_PATHS`". A path
+ * left out of a persona's FOR YOU list still renders as a MORE row and stays
+ * one click away; that is *deprioritisation*, and it needs no notice. An entry
+ * here is stronger: `getRailSections` drops the path from FOR YOU **and** MORE,
+ * so the rail offers no row at all, and this notice takes its place. Reserve it
+ * for routes a role genuinely should not be pointed at (the route itself stays
+ * live — URL, deep link and ⌘K all still work).
+ *
+ * `insteadPath` MUST be reachable by that same persona — an absence notice
+ * that points at another closed door is worse than no notice. Enforced by
+ * `scripts/audit-persona-lens.ts`.
+ */
+export interface PersonaAbsence {
+  /** One plain sentence: why this role isn't offered this route. */
+  reason: string
+  /** Where the same underlying need is met for this role. */
+  insteadPath: string
+  insteadLabel: string
+}
+
+export const PERSONA_ABSENT_PATHS: Record<PersonaId, Record<string, PersonaAbsence>> = {
+  executive: {},
+  developer: {
+    // Settled 2026-08-10 (B+ remediation 4.1): a developer role board links
+    // /leaders while the rail excludes it — a live contradiction. Kept OFF the
+    // rail (a directory is not a build surface) and stated here instead, so
+    // the board link still works and the rail explains why it isn't a row.
+    '/leaders': {
+      reason:
+        'The community directory is a reading list, not a build surface — your boards still link it where a name matters.',
+      insteadPath: '/library',
+      insteadLabel: 'Library',
+    },
+  },
+  architect: {},
+  // researcher: PERSONA_NAV_PATHS is null — no gating at all, so no absences.
+  researcher: {},
+  ops: {
+    // The O1 decision (07-19 follow-up remediation), previously recorded only
+    // in PERSONA_NAV_PATHS' comment above.
+    '/patents': {
+      reason:
+        'Patent research is not an operations task. The licensing angle you need rides on the vendors in the migration catalog.',
+      insteadPath: '/migrate',
+      insteadLabel: 'Migrate',
+    },
+  },
+  curious: {
+    '/business': {
+      reason:
+        'The Command Center works from your own assessment answers, so it opens after you finish the assessment.',
+      insteadPath: '/assess',
+      insteadLabel: 'Assess',
+    },
+    // Added 2026-08-10 (B+ remediation 2.2): patent law is further from a
+    // newcomer than from an operator, and ops is already excluded above — the
+    // previous shape had this exactly the wrong way round.
+    '/patents': {
+      reason:
+        'Patent law is a specialist read, and none of it changes what post-quantum means for you.',
+      insteadPath: '/algorithms',
+      insteadLabel: 'Algorithms',
+    },
+  },
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -336,10 +453,14 @@ export const NAV_PATH_LABELS: Record<string, string> = {
  */
 export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   executive: ['/learn', '/assess', '/business', '/compliance'],
-  developer: ['/learn', '/algorithms', '/playground', '/openssl'],
+  // B+ remediation 4.6 (2026-08-10): '/openssl' is rail-hidden
+  // (RAIL_HIDDEN_PATHS) — badging it "Recommended" on a landing card that
+  // the rail then refuses to show was the second half of the two-front-doors
+  // contradiction. Recommend the Playground, whose PT-023 card IS the door.
+  developer: ['/learn', '/algorithms', '/playground'],
   architect: ['/learn', '/timeline', '/assess', '/business'],
   researcher: ['/learn', '/algorithms', '/playground', '/library', '/patents'],
-  ops: ['/learn', '/migrate', '/openssl', '/assess'],
+  ops: ['/learn', '/migrate', '/playground', '/assess'],
   curious: ['/learn', '/timeline', '/assess', '/threats'],
 }
 
@@ -787,7 +908,11 @@ export const PERSONA_REPORT_CONFIG: Record<
   curious: {
     hndlHnfl: { state: 'hidden' },
     algorithmMigration: { state: 'hidden' },
-    migrationRoadmap: { state: 'hidden' },
+    // B+ remediation 4.4 (2026-08-10): was 'hidden'. The roadmap was curious's
+    // only "what happens next", and hiding it left the report ending on a score
+    // with no follow-on. Collapsed (not open) and capped at three steps keeps it
+    // a simplified answer rather than a programme plan.
+    migrationRoadmap: { state: 'collapsed', maxItems: 3 },
     migrationToolkit: { state: 'hidden' },
     recommendedActions: { state: 'open', maxItems: 3 },
   },
@@ -963,12 +1088,12 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   ],
   researcher: [
     { label: 'Compare algorithms', path: '/algorithms', icon: 'BarChart3' },
-    { label: 'Explore in OpenSSL', path: '/openssl', icon: 'Terminal' },
+    { label: 'Explore in OpenSSL', path: '/playground/openssl-studio', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
   ops: [
     { label: 'Browse migration catalog', path: '/migrate', icon: 'Package' },
-    { label: 'Try OpenSSL Studio', path: '/openssl', icon: 'Terminal' },
+    { label: 'Try OpenSSL Studio', path: '/playground/openssl-studio', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
   curious: [
@@ -987,45 +1112,179 @@ export interface JourneyMilestoneConfig {
   afterPhase: string
   route: string
   label: string
+  /**
+   * One line saying what this milestone is FOR — B+ remediation 4.6
+   * (2026-08-10). "A milestone is a page visit with no stated purpose" was the
+   * review's whole finding here; a nudge without a reason is not a nudge.
+   * Required (not optional) so a new milestone cannot be added without one.
+   */
+  purpose: string
 }
 
 export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
   executive: [
-    { afterPhase: 'exec-cp-3', route: '/assess', label: 'Run Risk Assessment' },
-    { afterPhase: 'exec-cp-3', route: '/compliance', label: 'Check Compliance Deadlines' },
-    { afterPhase: 'exec-cp-4', route: '/business', label: 'Explore Business Tools' },
-    { afterPhase: 'exec-cp-4', route: '/migrate', label: 'Browse Migration Workbench' },
+    {
+      afterPhase: 'exec-cp-3',
+      route: '/assess',
+      label: 'Run Risk Assessment',
+      purpose: 'Fifteen questions produce the risk score your board paper needs.',
+    },
+    {
+      afterPhase: 'exec-cp-3',
+      route: '/compliance',
+      label: 'Check Compliance Deadlines',
+      purpose: 'See which of the frameworks you answer to have already set a date.',
+    },
+    {
+      afterPhase: 'exec-cp-4',
+      route: '/business',
+      label: 'Explore Business Tools',
+      purpose: 'Turn the assessment into a charter, a risk register and a roadmap.',
+    },
+    {
+      afterPhase: 'exec-cp-4',
+      route: '/migrate',
+      label: 'Browse Migration Workbench',
+      purpose: 'Check whether the products you already run have shipped post-quantum support.',
+    },
   ],
   developer: [
-    { afterPhase: 'dev-cp-3', route: '/playground', label: 'Try the Playground' },
-    { afterPhase: 'dev-cp-3', route: '/openssl', label: 'OpenSSL Studio' },
-    { afterPhase: 'dev-cp-4', route: '/assess', label: 'Run Risk Assessment' },
-    { afterPhase: 'dev-cp-5', route: '/migrate', label: 'Browse Migration Workbench' },
-    { afterPhase: 'dev-cp-5', route: '/playground', label: 'Run ACVP Tests' },
+    {
+      afterPhase: 'dev-cp-3',
+      route: '/playground',
+      label: 'Try the Playground',
+      purpose: 'Run the algorithms yourself — real ML-KEM and ML-DSA, in your browser.',
+    },
+    {
+      afterPhase: 'dev-cp-3',
+      route: '/playground/openssl-studio',
+      label: 'OpenSSL Studio',
+      purpose: 'Drive the same commands you would run in production, against a real OpenSSL build.',
+    },
+    {
+      afterPhase: 'dev-cp-4',
+      route: '/assess',
+      label: 'Run Risk Assessment',
+      purpose: 'Fifteen questions produce the risk score your board paper needs.',
+    },
+    {
+      afterPhase: 'dev-cp-5',
+      route: '/migrate',
+      label: 'Browse Migration Workbench',
+      purpose: 'Check whether the products you already run have shipped post-quantum support.',
+    },
+    {
+      afterPhase: 'dev-cp-5',
+      route: '/playground',
+      label: 'Run ACVP Tests',
+      purpose:
+        "Verify our numbers against NIST's own known-answer vectors rather than trusting them.",
+    },
   ],
   architect: [
-    { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },
-    { afterPhase: 'arch-cp-2', route: '/compliance', label: 'Check Compliance Deadlines' },
-    { afterPhase: 'arch-cp-3b', route: '/playground', label: 'Try the Playground' },
-    { afterPhase: 'arch-cp-4', route: '/migrate', label: 'Browse Migration Workbench' },
+    {
+      afterPhase: 'arch-cp-2',
+      route: '/assess',
+      label: 'Run Risk Assessment',
+      purpose: 'Fifteen questions produce the risk score your board paper needs.',
+    },
+    {
+      afterPhase: 'arch-cp-2',
+      route: '/compliance',
+      label: 'Check Compliance Deadlines',
+      purpose: 'See which of the frameworks you answer to have already set a date.',
+    },
+    {
+      afterPhase: 'arch-cp-3b',
+      route: '/playground',
+      label: 'Try the Playground',
+      purpose: 'Run the algorithms yourself — real ML-KEM and ML-DSA, in your browser.',
+    },
+    {
+      afterPhase: 'arch-cp-4',
+      route: '/migrate',
+      label: 'Browse Migration Workbench',
+      purpose: 'Check whether the products you already run have shipped post-quantum support.',
+    },
   ],
   researcher: [
-    { afterPhase: 'res-cp-2', route: '/playground', label: 'Try the Playground' },
-    { afterPhase: 'res-cp-2', route: '/algorithms', label: 'Compare Algorithms' },
-    { afterPhase: 'res-cp-4', route: '/openssl', label: 'OpenSSL Studio' },
-    { afterPhase: 'res-cp-5', route: '/assess', label: 'Run Risk Assessment' },
+    {
+      afterPhase: 'res-cp-2',
+      route: '/playground',
+      label: 'Try the Playground',
+      purpose: 'Run the algorithms yourself — real ML-KEM and ML-DSA, in your browser.',
+    },
+    {
+      afterPhase: 'res-cp-2',
+      route: '/algorithms',
+      label: 'Compare Algorithms',
+      purpose: 'Put the parameter sets side by side — sizes, levels and standardisation status.',
+    },
+    {
+      afterPhase: 'res-cp-4',
+      route: '/playground/openssl-studio',
+      label: 'OpenSSL Studio',
+      purpose: 'Drive the same commands you would run in production, against a real OpenSSL build.',
+    },
+    {
+      afterPhase: 'res-cp-5',
+      route: '/assess',
+      label: 'Run Risk Assessment',
+      purpose: 'Fifteen questions produce the risk score your board paper needs.',
+    },
   ],
   ops: [
-    { afterPhase: 'ops-cp-2', route: '/openssl', label: 'OpenSSL Studio' },
-    { afterPhase: 'ops-cp-3', route: '/playground', label: 'Try the Playground' },
-    { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
-    { afterPhase: 'ops-cp-3', route: '/playground', label: 'Run ACVP Tests' },
-    { afterPhase: 'ops-cp-4a', route: '/migrate', label: 'Browse Migration Workbench' },
+    {
+      afterPhase: 'ops-cp-2',
+      route: '/playground/openssl-studio',
+      label: 'OpenSSL Studio',
+      purpose: 'Drive the same commands you would run in production, against a real OpenSSL build.',
+    },
+    {
+      afterPhase: 'ops-cp-3',
+      route: '/playground',
+      label: 'Try the Playground',
+      purpose: 'Run the algorithms yourself — real ML-KEM and ML-DSA, in your browser.',
+    },
+    {
+      afterPhase: 'ops-cp-3',
+      route: '/assess',
+      label: 'Run Risk Assessment',
+      purpose: 'Fifteen questions produce the risk score your board paper needs.',
+    },
+    {
+      afterPhase: 'ops-cp-3',
+      route: '/playground',
+      label: 'Run ACVP Tests',
+      purpose:
+        "Verify our numbers against NIST's own known-answer vectors rather than trusting them.",
+    },
+    {
+      afterPhase: 'ops-cp-4a',
+      route: '/migrate',
+      label: 'Browse Migration Workbench',
+      purpose: 'Check whether the products you already run have shipped post-quantum support.',
+    },
   ],
   curious: [
-    { afterPhase: 'curious-cp-2', route: '/assess', label: 'Take Assessment' },
-    { afterPhase: 'curious-cp-3', route: '/timeline', label: 'Explore Timeline' },
-    { afterPhase: 'curious-cp-4', route: '/threats', label: 'Explore Threat Landscape' },
+    {
+      afterPhase: 'curious-cp-2',
+      route: '/assess',
+      label: 'Take Assessment',
+      purpose: 'Ten minutes, plain questions, and a picture of what actually reaches you.',
+    },
+    {
+      afterPhase: 'curious-cp-3',
+      route: '/timeline',
+      label: 'Explore Timeline',
+      purpose: "See when your own country's deadlines land.",
+    },
+    {
+      afterPhase: 'curious-cp-4',
+      route: '/threats',
+      label: 'Explore Threat Landscape',
+      purpose: 'See which threats apply to the industry you work in.',
+    },
   ],
 }
 
@@ -1052,11 +1311,16 @@ export const PERSONA_WORKFLOW_LABELS: Record<PersonaId, Record<WorkflowPhaseId, 
     migrate: 'Evaluate Infrastructure Options',
     timeline: 'Plan Migration Phases',
   },
+  // B+ remediation 4.1 (2026-08-10): researcher was the only role given the
+  // generic phase names while every other role got copy in its own language.
+  // These read as a research workflow — characterise, corroborate, compare
+  // evidence, track the record — not as a migration programme the researcher
+  // is not running.
   researcher: {
-    assess: 'Risk Assessment',
-    comply: 'Compliance Review',
-    migrate: 'Product Selection',
-    timeline: 'Timeline Review',
+    assess: 'Characterise the Exposure',
+    comply: 'Corroborate the Mandates',
+    migrate: 'Compare Vendor Claims to Evidence',
+    timeline: 'Track the Standardisation Record',
   },
   ops: {
     assess: 'Infrastructure Risk Assessment',
@@ -1130,9 +1394,14 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
   ],
   developer: [
     'first-exec-doc',
-    'business-first',
-    'business-strategist',
-    'business-complete',
+    // B+ remediation 2.3 (2026-08-10): the three 'business-*' achievements were
+    // excluded here while the developer role boards send this persona to FIVE
+    // Command Center tools (compliance-checklist, crypto-api-refactor-audit,
+    // crypto-cbom-builder, migration-verification, mti-negotiator — see
+    // role_board_content_08092026.csv). Sending someone somewhere they can earn
+    // nothing is the live contradiction the review named; the exclusions are
+    // removed, not the board links. `recordBusinessToolUsage` is wired from
+    // BusinessToolRoute.tsx, so these unlock for real.
     // Curious-only (CC-15)
     'first-jargon-decoded',
     'first-standard-read',
@@ -1146,6 +1415,10 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'met-the-quantum-threat',
   ],
   researcher: [
+    // B+ remediation 2.3: researcher's own ladder is the three 'research-*'
+    // achievements added to achievementCatalog.ts (cite → reproduce →
+    // counter-claim). Nothing is excluded here — every other rung is genuinely
+    // reachable for this persona, whose PERSONA_NAV_PATHS is `null` (sees all).
     // Curious-only (CC-15)
     'first-jargon-decoded',
     'first-standard-read',
@@ -1167,11 +1440,30 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'first-cert',
     'first-key',
     'five-keys',
-    'business-first',
+    // B+ remediation 2.3: 'business-first' un-excluded. The curious role boards
+    // link three Command Center tools (breach-simulator, cost-of-inaction,
+    // initial-scoping) and '/business/tools' is a rail row for every persona,
+    // so opening one is genuinely reachable — the same contradiction developer
+    // had, in smaller form. 'business-strategist' (5 tools) and
+    // 'business-complete' (all 14) stay excluded: those are a practitioner's
+    // ladder, and offering a newcomer a rung they will never climb is the
+    // structural hole this item removes rather than adds.
     'business-strategist',
     'business-complete',
   ],
 }
+
+/**
+ * The three research-ladder achievements (see `achievementCatalog.ts`) are
+ * researcher-shaped, not researcher-gated — anyone can trace a citation or
+ * reproduce an operation. Named here so the ladder has one place to be read
+ * from, and so `getPersonaLadder` below can lead with it for researcher.
+ */
+export const RESEARCH_LADDER_ACHIEVEMENTS: readonly string[] = [
+  'research-sourced',
+  'research-reproduced',
+  'research-counter-claim',
+]
 
 /**
  * Compliance frameworks each persona benefits from emphasizing in the
@@ -1222,6 +1514,16 @@ export const PERSONA_BELT_TIER_LABELS: Partial<
 > = {
   executive: ['Briefed', 'Aligned', 'Sponsoring', 'Board-Ready'],
   curious: ['Aware', 'Informed', 'Confident', 'Quantum-Native'],
+  // B+ remediation 2.3 (2026-08-10): four of six roles previously fell through
+  // to the generic karate-belt names while executive and curious got ladders
+  // written in their own language — "generic copy on the one reader who reads
+  // most closely is the most conspicuous possible place to leave it
+  // unfinished". Each ladder below is that role's own progression vocabulary,
+  // in the same four-tier shape the belt index maps onto.
+  developer: ['Reading', 'Building', 'Shipping', 'Migration-Ready'],
+  architect: ['Scoping', 'Designing', 'Reviewing', 'Blueprint-Ready'],
+  ops: ['Inventorying', 'Piloting', 'Rolling Out', 'Run-Ready'],
+  researcher: ['Sourcing', 'Reproducing', 'Corroborating', 'Peer-Ready'],
 }
 
 const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
@@ -1236,8 +1538,9 @@ const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
 
 /**
  * Returns a persona-flavored tier label for the active belt, or null when the
- * persona doesn't have an override (developer / architect / ops / researcher
- * keep the generic belt name). Returns null for unknown belt names too.
+ * persona doesn't have an override. Every one of the six personas now has one
+ * (B+ remediation 2.3) — the null path survives for `null` persona and for
+ * unknown belt names, both of which are real states, not leftovers.
  */
 export function getBeltTierLabel(persona: PersonaId | null, beltName: string): string | null {
   if (!persona) return null
@@ -1754,3 +2057,132 @@ export function resolveRoleBoardVariant(
  * card on ALL THREE researcher boards, silently discarding two of them.
  */
 export const RESEARCHER_FIELD_WATCH_VARIANT_ID = 'provenance'
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * "How this hub adapts to you" — B+ remediation 1.1 / 1.2 / 1.3 (2026-08-10)
+ *
+ * Personalisation is the hub's largest mechanic and was, until this point,
+ * entirely unexplained: choosing a role shrinks the navigation, and the shrink
+ * was never stated at the moment of choosing. The reward for telling the hub
+ * who you are read as "fewer doors".
+ *
+ * This block is the single source that says what a role changes. It is
+ * DERIVED from the config above, never typed alongside it — the repo has
+ * burned itself on typed conclusions drifting from their premises twice (see
+ * the Mosca-window comment and `mlDsaSignatureBytes`). Three surfaces read it:
+ * the About page's "How this hub adapts to you" section, the persona picker's
+ * at-selection-time summary, and the rail's absence notices. If the config
+ * changes, all three change with it and none of them can be stale.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+export interface PersonaAdaptation {
+  personaId: PersonaId
+  /** Rail rows this role gets in FOR YOU, as human labels, in rail order. */
+  focusLabels: string[]
+  /** Reachable but demoted behind MORE / search, as human labels. */
+  behindSearchLabels: string[]
+  /** Routes deliberately not offered at all, with the reason and the alternative. */
+  absences: (PersonaAbsence & { path: string; label: string })[]
+  /** Report sections this role opens by default, as human labels. */
+  reportOpenLabels: string[]
+  /** Report sections this role does not get at all, as human labels. */
+  reportHiddenLabels: string[]
+  /** Compliance frameworks emphasised on the landscape grid. */
+  emphasisedFrameworks: readonly string[]
+  /** Where /algorithms lands this role on first paint. */
+  algorithmsLanding: { tab: AlgorithmTabId; filterSummary: string }
+  /** Which region the Timeline falls back to before the reader picks one. */
+  timelineRegion: Region | 'All'
+  /** The role's own four-tier progress ladder. */
+  beltLadder: readonly string[] | null
+  /** True when the sim's "practice this phase" prompt is deliberately never shown. */
+  simPracticeSuppressed: boolean
+}
+
+/**
+ * Everything a persona changes about the hub, computed from the config above.
+ *
+ * `researcher` is the deliberate special case throughout this file:
+ * `PERSONA_NAV_PATHS.researcher` is `null` ("no gating at all"), which is
+ * load-bearing in `ReportContent.tsx` and `GuidedTour.tsx`. Here that reads as
+ * "every route is in focus, nothing is behind search, nothing is absent" —
+ * which is exactly true and worth saying out loud on the picker.
+ */
+export function describePersonaAdaptation(personaId: PersonaId): PersonaAdaptation {
+  // eslint-disable-next-line security/detect-object-injection -- typed PersonaId union, not user input
+  const navPaths = PERSONA_NAV_PATHS[personaId]
+  // eslint-disable-next-line security/detect-object-injection
+  const absenceMap = PERSONA_ABSENT_PATHS[personaId] ?? {}
+  const labelFor = (path: string): string =>
+    // eslint-disable-next-line security/detect-object-injection -- keys come from this file's own config, not user input
+    NAV_PATH_LABELS[path] ?? path
+
+  const gateable = Object.keys(NAV_PATH_LABELS).filter(
+    (p) => !ALWAYS_VISIBLE_PATHS.includes(p) && !RAIL_HIDDEN_PATHS.includes(p)
+  )
+  const focus = navPaths ?? gateable
+  const behindSearch = gateable.filter((p) => !focus.includes(p) && !(p in absenceMap))
+
+  // eslint-disable-next-line security/detect-object-injection
+  const reportOverrides = PERSONA_REPORT_CONFIG[personaId]
+  const reportOpen: string[] = []
+  const reportHidden: string[] = []
+  for (const id of Object.keys(REPORT_SECTION_DEFAULTS) as ReportSectionId[]) {
+    const state = getReportSectionConfig(personaId, id).state
+    if (state === 'open') reportOpen.push(reportSectionLabel(id))
+    if (state === 'hidden') reportHidden.push(reportSectionLabel(id))
+  }
+  void reportOverrides
+
+  const algo = getAlgorithmDefaults(personaId)
+  const filterValues = Object.values(algo.filters).filter(Boolean)
+
+  return {
+    personaId,
+    focusLabels: focus.map(labelFor),
+    behindSearchLabels: behindSearch.map(labelFor),
+    absences: Object.entries(absenceMap).map(([path, absence]) => ({
+      ...absence,
+      path,
+      label: labelFor(path),
+    })),
+    reportOpenLabels: reportOpen,
+    reportHiddenLabels: reportHidden,
+    // eslint-disable-next-line security/detect-object-injection
+    emphasisedFrameworks: PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS[personaId] ?? [],
+    algorithmsLanding: {
+      tab: algo.tab,
+      filterSummary: filterValues.length > 0 ? filterValues.join(' · ') : 'no preset filter',
+    },
+    // eslint-disable-next-line security/detect-object-injection
+    timelineRegion: PERSONA_TIMELINE_REGION[personaId],
+    // eslint-disable-next-line security/detect-object-injection
+    beltLadder: PERSONA_BELT_TIER_LABELS[personaId] ?? null,
+    simPracticeSuppressed: PERSONA_SIM_PRACTICE_NONE.includes(personaId),
+  }
+}
+
+/**
+ * The one-line version of the above, for the persona picker — the sentence the
+ * review asked for at selection time: what gets emphasised AND what leaves the
+ * rail. Deliberately names the loss; "a silent downgrade is the worst kind of
+ * downgrade", and saying it converts a confusing loss into an understood trade.
+ */
+export function personaTradeSentence(personaId: PersonaId): string {
+  const a = describePersonaAdaptation(personaId)
+  const focus = a.focusLabels.slice(0, 3)
+  const focusPart =
+    focus.length > 0
+      ? `Your rail leads with ${joinWithAnd(focus)}`
+      : 'Your rail keeps every page in view'
+  const movedCount = a.behindSearchLabels.length
+  const movedPart =
+    movedCount > 0
+      ? `${toWordIfSmall(movedCount)} other ${movedCount === 1 ? 'page moves' : 'pages move'} behind More and search`
+      : 'nothing is moved out of reach'
+  const absencePart =
+    a.absences.length > 0
+      ? `; ${joinWithAnd(a.absences.map((x) => x.label))} ${a.absences.length === 1 ? 'is' : 'are'} not offered for this role, and the rail says why`
+      : ''
+  return `${focusPart} · ${movedPart}${absencePart}.`
+}
