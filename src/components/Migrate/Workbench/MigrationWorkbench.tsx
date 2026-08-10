@@ -31,6 +31,7 @@ import { PlanTab } from './PlanTab'
 import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
+import { WhoHasMovedPanel } from './WhoHasMovedPanel'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -240,6 +241,13 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           // rollout existed to stop.
         />
       )}
+
+      {/* B+ remediation 4.6 (2026-08-10): a newcomer meets an unfiltered vendor
+          catalog they have no basis to evaluate. Their question is not "which
+          product" but "is anyone actually doing this" — answered here, from the
+          live catalog, and counting only products whose support we hold a proof
+          document for. */}
+      {!embedded && persona === 'curious' && <WhoHasMovedPanel />}
 
       {!embedded && priorSelection && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
