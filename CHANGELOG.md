@@ -31,7 +31,7 @@ first time (don't ship dev-speak and reformat later):
 
 ## [4.45.0] - 2026-08-09
 
-Whichever role you pick, your home page now reaches every part of the site rather than a sixth of it; the protocol readiness matrix stops overstating how far six protocols have actually got; the quiz gains questions for the two audiences that had the fewest; and compliance maturity coverage grows again as four more documents are read to their real ending.
+Whichever role you pick, your home page now reaches every part of the site rather than a sixth of it; the protocol readiness matrix stops overstating how far six protocols have actually got; the quiz gains questions for the two audiences that had the fewest; and compliance maturity coverage grows from four source documents to forty-eight.
 
 ### Added
 
@@ -52,7 +52,9 @@ Whichever role you pick, your home page now reaches every part of the site rathe
 
 - **Known-vulnerability data rebuilt against the current product cross-reference** [view:/migrate] [persona:ops] [persona:developer]: it had been generated from a superseded product file. Now 153 products and 1,152 vulnerabilities.
 - **Industry Landscape: the crypto each of three industries actually relies on, filled in from their own cited documents** [view:/algorithms] [persona:researcher] [persona:architect]: payment ecosystems, telecoms subscriber security and rail signalling. The remaining incomplete rows were left blank on purpose — for most of them, the cited document genuinely contains no post-quantum content, and an honest blank beats a plausible guess.
-- **Eighty-two more compliance maturity requirements, from four documents read to their actual end** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: the EU payment services directive, the ASC X9 financial-services quantum risk report and two ENISA reports. This continues the previous release's work — the extraction had been stopping partway through long documents, and these four were still short of their real ending.
+- **Compliance maturity coverage goes from four source documents to forty-eight** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: 82 requirements to 475. The first four were the EU payment services directive, the ASC X9 financial-services quantum risk report and two ENISA reports — documents the extraction had been stopping partway through. A full sweep then took the same treatment across the rest of the catalogue: certification schemes, standards bodies, government policy and technical standards, including a re-read of KMIP and the NIST assessment guidance. Where a document was skipped, that is recorded rather than left as a silent gap.
+- **Forty-six people in the community roster still have no peer-review status, down from a hundred and twenty-one** [view:/leaders] [persona:researcher]: each classification says whether that person's own named technical work has actually completed formal peer review or standardisation, verified against a primary artefact rather than inferred. Eight entries that recorded a citation where a person's name belongs now name their real authors.
+- **Dead and redirected links repaired across the community roster, vendors and patents** [view:/leaders] [view:/migrate] [view:/patents] [persona:researcher] [persona:ops]: fifteen or so links that had rotted — a renamed BSI path, two vendor pages that moved, and one that looked missing but turned out to be a page returning a "not found" message with a success code, so no automated check had ever caught it. Neither patent flagged as missing was fabricated; both were real and simply relocated.
 - **Eleven more compliance records name the standards they depend on** [view:/compliance] [persona:architect].
 - **Nine more product certification links** [view:/migrate] [persona:ops].
 
