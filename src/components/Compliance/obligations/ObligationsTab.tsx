@@ -1,0 +1,345 @@
+// SPDX-License-Identifier: GPL-3.0-only
+/**
+ * Obligations — the register. "Which rules bind me, and why?"
+ *
+ * The page's other tabs browse a 197-row catalogue. This one answers the
+ * question the catalogue makes you work out for yourself, using the tiering the
+ * applicability engine already computes. Three rules hold it honest:
+ *
+ *  - Reasons are the engine's own strings, rendered verbatim. "Your regulator:
+ *    ANSSI" is a claim the engine can defend; a paraphrase is not.
+ *  - Requirement counts are context, never a denominator. Nothing here shows a
+ *    percentage over requirements, because the requirement corpus is
+ *    model-extracted and a percentage would claim more than it can carry.
+ *  - The advisory band collapses on arrival. For an EU finance profile it is 23
+ *    sector-matched global standards against 12 mandatory; expanded by default
+ *    it would recreate the catalogue-browser problem this tab replaces.
+ */
+import { useMemo, useState } from 'react'
+import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { EmptyState } from '@/components/ui/empty-state'
+import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
+import type { ComplianceFramework, PQCRequirement } from '@/data/complianceData'
+import {
+  TIER_META,
+  TIER_ORDER,
+  type ApplicabilityTier,
+  type UserProfile,
+} from '@/utils/applicabilityEngine'
+import {
+  buildObligations,
+  groupObligations,
+  summarize,
+  COLLAPSED_BY_DEFAULT,
+  type ObligationRow,
+} from './obligationsModel'
+
+const TIER_TONE: Record<ApplicabilityTier, string> = {
+  mandatory: 'text-status-error',
+  recognized: 'text-status-warning',
+  'cross-border': 'text-status-info',
+  advisory: 'text-status-info',
+  derived: 'text-muted-foreground',
+  informational: 'text-muted-foreground',
+}
+
+const PQC_LABEL: Record<PQCRequirement, string> = {
+  yes: 'Mandated',
+  partial: 'Partial',
+  expected: 'Expected',
+  guidance: 'Guidance',
+  no: 'None',
+}
+
+const PQC_TONE: Record<PQCRequirement, string> = {
+  yes: 'text-status-error',
+  partial: 'text-status-warning',
+  expected: 'text-status-warning',
+  guidance: 'text-status-info',
+  no: 'text-muted-foreground',
+}
+
+const COUNTRY_ANY = 'All'
+
+/** Region codes are storage values; these are what a reader should see. */
+const REGION_LABEL: Record<string, string> = {
+  eu: 'European Union',
+  americas: 'Americas',
+  apac: 'Asia-Pacific',
+  mena: 'Middle East & Africa',
+  global: 'Global',
+}
+
+interface ObligationsTabProps {
+  /** Scope the register is computed for. `country` may be null — see the note. */
+  profile: UserProfile
+  /** Page-local country override; `All` means "fall back to the profile". */
+  countryValue: string
+  onCountryChange: (country: string) => void
+  onOpenDetail: (framework: ComplianceFramework) => void
+}
+
+export function ObligationsTab({
+  profile,
+  countryValue,
+  onCountryChange,
+  onOpenDetail,
+}: ObligationsTabProps) {
+  const rows = useMemo(() => buildObligations(profile), [profile])
+  const groups = useMemo(() => groupObligations(rows), [rows])
+  const totals = useMemo(() => summarize(rows), [rows])
+
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
+  const isOpen = (tier: ApplicabilityTier) => expanded[tier] ?? !COLLAPSED_BY_DEFAULT.has(tier)
+
+  const countryItems = useMemo(
+    () => [COUNTRY_ANY, ...ALL_JURISDICTIONS.map((j) => j.name).sort((a, b) => a.localeCompare(b))],
+    []
+  )
+
+  return (
+    <div className="space-y-4">
+      <ScopeBar
+        profile={profile}
+        countryValue={countryValue}
+        countryItems={countryItems}
+        onCountryChange={onCountryChange}
+        totals={totals}
+      />
+
+      {rows.length === 0 ? (
+        <EmptyState
+          icon={<ShieldCheck size={28} className="text-muted-foreground" />}
+          title="No scope set"
+          description="Pick a country and a sector and this page lists the instruments that bind you, and why each one applies. Without them the applicability tiers cannot be computed at all."
+        />
+      ) : (
+        groups.map((group) => {
+          const open = isOpen(group.tier)
+          const meta = TIER_META[group.tier]
+          return (
+            <section
+              key={group.tier}
+              className="overflow-hidden rounded-xl border border-border bg-card"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                aria-expanded={open}
+                onClick={() => setExpanded((prev) => ({ ...prev, [group.tier]: !open }))}
+                className="h-auto w-full justify-start gap-2 rounded-none border-b border-border bg-muted/40 px-4 py-3 text-left"
+              >
+                {open ? (
+                  <ChevronDown size={15} className="shrink-0 text-muted-foreground" />
+                ) : (
+                  <ChevronRight size={15} className="shrink-0 text-muted-foreground" />
+                )}
+                <span className={`text-sm font-bold ${TIER_TONE[group.tier]}`}>{meta.label}</span>
+                <span className="rounded-full bg-background px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                  {group.rows.length}
+                </span>
+                <span className="min-w-0 truncate text-xs font-normal text-muted-foreground">
+                  {meta.description}
+                </span>
+              </Button>
+
+              {open && (
+                <ul className="divide-y divide-border">
+                  {group.rows.map((row) => (
+                    <ObligationListRow key={row.framework.id} row={row} onOpen={onOpenDetail} />
+                  ))}
+                </ul>
+              )}
+            </section>
+          )
+        })
+      )}
+    </div>
+  )
+}
+
+// ── Scope bar ───────────────────────────────────────────────────────────
+
+function ScopeBar({
+  profile,
+  countryValue,
+  countryItems,
+  onCountryChange,
+  totals,
+}: {
+  profile: UserProfile
+  countryValue: string
+  countryItems: string[]
+  onCountryChange: (c: string) => void
+  totals: ReturnType<typeof summarize>
+}) {
+  // TIER_ORDER, not map-insertion order — the summary must read strongest-first
+  // for the same reason the bands are stacked that way.
+  const tierSummary = TIER_ORDER.filter((tier) => (totals.byTier[tier] ?? 0) > 0)
+    .map((tier) => `${totals.byTier[tier]} ${TIER_META[tier].label.toLowerCase()}`)
+    .join(' · ')
+
+  // The control shows the country the register actually used. When the page has
+  // no override of its own the engine falls back to the assessment answer, and
+  // a control reading "Any" beside a list of French regulators would be a lie.
+  const inheritedCountry = countryValue === COUNTRY_ANY && !!profile.country
+  const shownCountry = inheritedCountry ? (profile.country as string) : countryValue
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <ScopeChip
+          label="Region"
+          value={profile.region ? (REGION_LABEL[profile.region] ?? profile.region) : 'any'}
+        />
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+            Country
+          </span>
+          <FilterDropdown
+            items={countryItems}
+            selectedId={shownCountry}
+            onSelect={onCountryChange}
+            size="sm"
+            searchable
+            defaultLabel="Any"
+            label="Country"
+          />
+          {inheritedCountry && (
+            <span className="text-[10.5px] text-muted-foreground">from your profile</span>
+          )}
+        </div>
+        <ScopeChip label="Sector" value={profile.industry ?? 'any'} />
+      </div>
+
+      <p className="mt-3 text-xs text-muted-foreground">
+        {totals.total > 0 ? (
+          <>
+            <span className="font-semibold text-foreground">{totals.total}</span> instruments in
+            scope — {tierSummary}.{' '}
+            <span className="font-semibold text-foreground">{totals.pqcMandated}</span> of them
+            actually mandate post-quantum cryptography.
+          </>
+        ) : (
+          'Applicability tiers are unavailable without a country and a sector.'
+        )}
+      </p>
+
+      {totals.total > 0 && totals.pqcMandated === 0 && (
+        <p className="mt-1.5 flex items-start gap-1.5 text-xs text-muted-foreground">
+          <Info size={13} className="mt-0.5 shrink-0 text-primary" />
+          None of these instruments mandates PQC today. Several expect it or publish guidance — the
+          PQC column says which.
+        </p>
+      )}
+    </div>
+  )
+}
+
+function ScopeChip({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11.5px] font-semibold text-foreground">
+      <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      {value}
+    </span>
+  )
+}
+
+// ── Row ─────────────────────────────────────────────────────────────────
+
+function ObligationListRow({
+  row,
+  onOpen,
+}: {
+  row: ObligationRow
+  onOpen: (framework: ComplianceFramework) => void
+}) {
+  const fw = row.framework
+  const shown = row.milestones.slice(0, 2)
+  const extra = row.milestones.length - shown.length
+
+  return (
+    <li className="grid gap-3 p-4 md:grid-cols-[minmax(0,2fr)_190px_120px] md:items-start">
+      {/* Obligation & why it applies. The NAME is the focusable action — the row
+          is deliberately not a button, so the chips inside it stay reachable
+          without the nested-interactive violation FrameworkCard was refactored
+          away from. */}
+      <div className="min-w-0">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => onOpen(fw)}
+          className="h-auto justify-start whitespace-normal p-0 text-left text-[13.5px] font-bold text-foreground hover:text-primary"
+        >
+          {fw.label}
+        </Button>
+
+        <p className={`mt-0.5 text-[11.5px] ${TIER_TONE[row.tier]}`}>
+          {row.reason}
+          {fw.countries.length > 0 && (
+            <span className="text-muted-foreground"> · {fw.countries.join(', ')}</span>
+          )}
+        </p>
+
+        {fw.notes && (
+          <p className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">{fw.notes}</p>
+        )}
+
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10.5px] text-muted-foreground">
+          {typeof fw.confidenceScore === 'number' && <span>Trust {fw.confidenceScore}</span>}
+          {fw.industries.slice(0, 2).map((ind) => (
+            <span key={ind} className="rounded bg-muted px-1.5 py-0.5">
+              {ind}
+            </span>
+          ))}
+          {(fw.cswp39Tags ?? []).slice(0, 2).map((tag) => (
+            <span key={tag} className="rounded bg-muted px-1.5 py-0.5 font-mono">
+              {tag.replace('cswp39:', '')}
+            </span>
+          ))}
+          <span>
+            {row.requirementCount > 0
+              ? `${row.requirementCount} requirements`
+              : 'no extracted requirements'}
+          </span>
+          {fw.website && (
+            <a
+              href={fw.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 text-primary hover:underline"
+            >
+              Site <ExternalLink size={10} />
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Timeline & key milestones — verbatim text, then structured dates. */}
+      <div className="min-w-0 text-[11.5px]">
+        <p className="text-foreground">{fw.deadline}</p>
+        {shown.map((m) => (
+          <p key={`${m.year}-${m.label}`} className="mt-0.5 text-muted-foreground">
+            <span className="font-mono text-[10.5px] text-foreground">{m.year}</span> {m.label}
+          </p>
+        ))}
+        {extra > 0 && <p className="mt-0.5 text-[10.5px] text-muted-foreground">+{extra} more</p>}
+        {fw.deadlineKind && (
+          <p className="mt-1 font-mono text-[9.5px] uppercase text-muted-foreground">
+            {fw.deadlineKind}
+          </p>
+        )}
+      </div>
+
+      {/* PQC stance — the column the "0 of these mandate PQC" headline reads. */}
+      <div className={`text-[11.5px] font-semibold ${PQC_TONE[fw.pqcRequirement]}`}>
+        <span className="md:hidden text-muted-foreground">PQC: </span>
+        {PQC_LABEL[fw.pqcRequirement]}
+      </div>
+    </li>
+  )
+}

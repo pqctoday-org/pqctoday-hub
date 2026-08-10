@@ -73,15 +73,17 @@ import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
 import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
 import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
 import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
+import { ObligationsTab } from './obligations/ObligationsTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
 // in place via the shared control deck) — it never reorders the bar.
 
-type StableTab = 'landscape' | 'records' | 'foryou' | 'cswp39'
+type StableTab = 'obligations' | 'landscape' | 'records' | 'foryou' | 'cswp39'
 
 const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
+  { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
   { id: 'landscape', label: 'Landscape', icon: Layers },
   { id: 'records', label: 'Product Records', icon: GlobeLock },
   { id: 'foryou', label: 'For You', icon: Sparkles },
@@ -90,6 +92,7 @@ const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
 
 function stableTabFor(activeTab: MobileSection): StableTab {
   if (isLandscapeTab(activeTab)) return 'landscape'
+  if (activeTab === 'obligations') return 'obligations'
   if (activeTab === 'records') return 'records'
   if (activeTab === 'cswp39') return 'cswp39'
   if (activeTab === 'foryou') return 'foryou'
@@ -940,6 +943,26 @@ export const ComplianceView = ({
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-5/6" />
+          </div>
+        )}
+
+        {/* ── Obligations — the register ── */}
+        {activeStableTab === 'obligations' && !error && !showComplianceSkeleton && (
+          <div className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<ShieldCheck size={20} className="text-primary" />}
+              title="Obligations"
+              description="The instruments that bind your country and sector, why each one applies, and what it says about post-quantum cryptography. Tiers come from the same applicability engine For You uses."
+            />
+            <ObligationsTab
+              profile={forYouProfile}
+              countryValue={lsCountry}
+              onCountryChange={handleLsCountryChange}
+              onOpenDetail={(fw) => {
+                setDrawerPillar(pillarForBodyType(fw.bodyType))
+                setDrawerFramework(fw)
+              }}
+            />
           </div>
         )}
 

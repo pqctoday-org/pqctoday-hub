@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 import type { RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import type { FrameworkSortOption } from './ComplianceLandscape'
 import type { SortColumn, SortDirection } from './ComplianceTable'
@@ -19,6 +18,7 @@ import type { ViewMode } from '@/components/Library/ViewToggle'
 // oddly. Removing it would be a silent breaking change to whatever old
 // links are already out in the wild.
 export type MobileSection =
+  | 'obligations'
   | 'foryou'
   | 'standards'
   | 'technical'
@@ -35,9 +35,31 @@ export function isLandscapeTab(tab: MobileSection): boolean {
   )
 }
 
+/**
+ * The tab to show when the URL names none.
+ *
+ * Used by BOTH the initial state and the URL→state sync effect. They disagreed
+ * until 2026-08-10: the initializer honoured `?cert=` by opening Product
+ * Records, and the sync effect — which runs on mount, not just on back/forward
+ * — immediately overwrote it with a hardcoded `'standards'`. A `?cert=` deep
+ * link therefore landed on Landscape with the requested record nowhere on
+ * screen. The simulation trees rely on those links (simTree.p6/p7), and
+ * `deepLinks.test.ts` only asserts the route resolves, not what it renders,
+ * so nothing caught it.
+ */
+function defaultTabFor(certParam: string | undefined): MobileSection {
+  // A cert deep link is a request for one record and outranks any default.
+  if (certParam) return 'records'
+  // Otherwise the register: it answers "which rules bind me, and why" directly,
+  // where every other tab asks the visitor to filter a 197-row catalogue until
+  // relevance falls out.
+  return 'obligations'
+}
+
 function parseTabFromHash(hash: string): MobileSection | null {
   const clean = hash.replace(/^#/, '').trim() as MobileSection
   if (
+    clean === 'obligations' ||
     clean === 'foryou' ||
     clean === 'standards' ||
     clean === 'technical' ||
@@ -82,20 +104,15 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries, selectedRegion, selectedPersona } = usePersonaStore()
+  const { selectedIndustries } = usePersonaStore()
 
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
 
-  // Resolve the persona-based hint once so it can influence the default tab
-  const primaryIndustry = selectedIndustries[0] ?? null
-
-  const complianceHint = primaryIndustry
-    ? INDUSTRY_COMPLIANCE_HINT[primaryIndustry]
-    : selectedRegion
-      ? // eslint-disable-next-line security/detect-object-injection
-        REGION_COMPLIANCE_HINT[selectedRegion]
-      : undefined
+  // The industry/region compliance hint used to pick the opening tab. The
+  // register replaced that job (see the default below), so the computation is
+  // gone from here — `INDUSTRY_COMPLIANCE_HINT` / `REGION_COMPLIANCE_HINT`
+  // remain in use in ComplianceView, which renders them as copy.
 
   // ── Tab state ──────────────────────────────────────────────────────────
 
@@ -104,8 +121,10 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     if (tab) return tab
     const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
     if (hashTab) return hashTab
-    if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
-    return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
+    // Supersedes two earlier defaults: the developer persona's jump to Product
+    // Records, and the industry/region hint that picked a Landscape pillar.
+    // Both were compensating for the register not existing.
+    return defaultTabFor(certParam)
   })
 
   const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
@@ -324,7 +343,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── URL → state sync (back/forward navigation) ─────────────────────────
 
   useEffect(() => {
-    const tab = (searchParams.get('tab') as MobileSection | null) ?? 'standards'
+    const tab = (searchParams.get('tab') as MobileSection | null) ?? defaultTabFor(certParam)
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
@@ -376,7 +395,10 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       const nextCert = searchParams.get('cert') ?? undefined
       setRecCertId((prev) => (prev !== nextCert ? nextCert : prev))
     }
-  }, [searchParams, selectedIndustries])
+    // `certParam` is derived from `searchParams` in the same render, so it can
+    // never be stale here — it is listed to keep exhaustive-deps quiet rather
+    // than to change when this runs.
+  }, [searchParams, selectedIndustries, certParam])
 
   // ── Debounced search callbacks ─────────────────────────────────────────
 
