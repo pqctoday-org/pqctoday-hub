@@ -101,7 +101,10 @@ test.describe('Simulation — planning-estimate badges (PR-1)', () => {
   // Q-Day figure the desktop console previously lacked (it only had a bare
   // "outlives Q-Day 2029" sentence in the HNDL tile). See e2e/TRIAGE.md.
   test('the Mosca Q-Day / deadline horizon carries a planning badge', async ({ page }) => {
-    const badge = page.getByRole('button', { name: /Q-Day.*illustrative planning anchors/i })
+    // "anchor", not "anchors": every PlanningBadge in the codebase phrases it in
+    // the singular ("is an illustrative planning anchor"), including this test's
+    // own comment three lines up. The plural was a typo in the regex.
+    const badge = page.getByRole('button', { name: /Q-Day.*illustrative planning anchor/i })
     await expect(badge).toBeVisible({ timeout: 15_000 })
     await expect(badge).toHaveText(/planning/i)
     // Keyboard reachable (a real focusable <button>, not a bare title attribute).
