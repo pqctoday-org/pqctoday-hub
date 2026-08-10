@@ -430,7 +430,6 @@ jobs:
         # step back wherever you like, and drop the note in CHANGELOG.
         run: npm audit --audit-level=high --omit=dev
 
-
   kat-node24:
     # Cross-impl KATs (mldsa-cross-impl / mlkem-cross-impl): Node's own
     # OpenSSL backend signs/encapsulates, our public/wasm/openssl.wasm
