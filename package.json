@@ -55,6 +55,7 @@
     "export:learn-snapshot": "tsx scripts/export-learn-manifest-snapshot.ts",
     "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
+    "audit:persona-lens": "tsx scripts/audit-persona-lens.ts",
     "audit:role-board-ctas": "tsx scripts/audit-role-board-ctas.ts",
     "audit:role-board-coverage": "tsx scripts/audit-role-board-coverage.ts",
     "audit:role-board-content": "tsx scripts/audit-role-board-content.ts",
