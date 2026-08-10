@@ -156,6 +156,19 @@ jobs:
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
 
+      - name: Audit SBOM versions (About page matches package.json)
+        # The About page states, by hand, which version of ~88 components this
+        # app is built from. Nothing checked it, and on 2026-08-09 eleven were
+        # wrong in BOTH directions — React Router listed as 7.17.0 while the app
+        # shipped 8.3.0, Framer Motion listed AHEAD of what was installed. Being
+        # confidently wrong there is worse than saying nothing, because a reader
+        # cannot tell which entries to trust.
+        #
+        # It belongs in CI rather than the pre-push hook specifically because
+        # the drift is CAUSED by dependabot, whose bumps only ever exist on
+        # GitHub — a local-only gate would never see the thing that breaks it.
+        run: npm run audit:sbom-versions
+
       - name: Timeline facts derived from the CSV (single source of truth)
         # Fails if src/data/timelineFacts.generated.ts is stale vs the timeline
         # CSV — i.e. the CSV was edited without regenerating, or the generated
