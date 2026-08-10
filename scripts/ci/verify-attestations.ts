@@ -24,9 +24,12 @@ import path from 'node:path'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 
 // ── Trust artifact registry ────────────────────────────────────────────────
-// Mirrors the private `scripts/attestation/artifacts.ts` list. Kept in sync
-// manually — both files iterate this set, so adding a new attested artifact
-// requires editing both. (Future cleanup: extract to a single shared module.)
+// FIXED 2026-08-10 (remediation plan item 3.1). This used to be a hand-mirrored
+// second copy of the private `scripts/attestation/artifacts.ts` list, carrying
+// its own "(Future cleanup: extract to a single shared module.)" note. Both
+// sides now read `scripts/ci/trust-artifacts.json` — public, so the private
+// signer and this public verifier can share it without either importing the
+// other. Adding an attested artifact is one edit, in one file.
 
 interface TrustArtifact {
   path: string
@@ -34,26 +37,27 @@ interface TrustArtifact {
   label: string
 }
 
-const TRUST_ARTIFACTS: TrustArtifact[] = [
-  { path: 'public/data/revisions.jsonl', required: true, label: 'revisions log' },
-  { path: 'public/data/rag-corpus.json', required: true, label: 'rag corpus' },
-  { path: 'public/data/pqctoday-oscal.json', required: true, label: 'OSCAL combined' },
-  {
-    path: 'public/data/pqctoday-oscal-governance.json',
-    required: true,
-    label: 'OSCAL governance subset',
-  },
-  { path: 'public/data/pqctoday-oscal-full.json', required: true, label: 'OSCAL full inventory' },
-  {
-    path: 'public/data/pqctoday-oscal-assessment-plan.json',
-    required: true,
-    label: 'OSCAL assessment plan',
-  },
-  { path: 'public/data/pqctoday-cbom.json', required: true, label: 'CBOM' },
-  { path: 'public/data/community-signals.json', required: false, label: 'community signals' },
-]
-
 const REPO_ROOT = path.resolve(process.cwd())
+const TRUST_ARTIFACTS_REGISTRY = 'scripts/ci/trust-artifacts.json'
+
+function loadTrustArtifacts(): TrustArtifact[] {
+  const registry = path.join(REPO_ROOT, TRUST_ARTIFACTS_REGISTRY)
+  const parsed = JSON.parse(readFileSync(registry, 'utf-8')) as { artifacts?: unknown }
+  if (!Array.isArray(parsed.artifacts) || parsed.artifacts.length === 0) {
+    // Verifying an empty list would exit 0 having checked nothing — the exact
+    // shape of a gate that looks green and guards nothing.
+    throw new Error(`${TRUST_ARTIFACTS_REGISTRY} declares no artifacts`)
+  }
+  return parsed.artifacts.map((a) => {
+    const entry = a as Partial<TrustArtifact>
+    if (typeof entry.path !== 'string' || typeof entry.label !== 'string') {
+      throw new Error(`${TRUST_ARTIFACTS_REGISTRY}: entry missing path/label: ${JSON.stringify(a)}`)
+    }
+    return { path: entry.path, required: entry.required === true, label: entry.label }
+  })
+}
+
+const TRUST_ARTIFACTS: TrustArtifact[] = loadTrustArtifacts()
 const ATTESTATION_DIR = path.join(REPO_ROOT, 'public/data/attestation')
 const DEFAULT_PUBKEY_PATH = path.join(ATTESTATION_DIR, 'maintainer-public.key')
 
