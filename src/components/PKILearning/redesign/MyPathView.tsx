@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */ // keys are trusted module/persona ids
 import { useMemo } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   PlayCircle,
   Trophy,
@@ -13,6 +13,7 @@ import {
   Award,
   Info,
   X,
+  FlaskConical,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PERSONAS, essentialsQuizCategories, type PersonaId } from '@/data/learningPersonas'
@@ -254,6 +255,47 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
         </div>
         <ProgressDial progress={dialProgress} />
       </div>
+
+      {/* Researcher capstone — B+ remediation 4.6 / 4.2 (2026-08-10).
+          "Multiple choice is a weak instrument for an expert-tier reader… the
+          format simply cannot measure what a researcher knows", and researcher
+          was deliberately given no capstone, so its path had no end.
+
+          This is the capstone that fits the reader: reproduce a published
+          known-answer test against our implementation and check the bytes
+          yourself. It points at a surface that already exists and already runs
+          real ACVP vectors in the browser — no new machinery, and nothing here
+          claims to have verified the reader did it. The claim is the task, not
+          a score. */}
+      {personaId === 'researcher' && (
+        <div className="glass-panel rounded-xl border-l-4 border-l-primary p-4">
+          <div className="mb-1 flex items-center gap-2">
+            <FlaskConical size={15} className="shrink-0 text-primary" aria-hidden="true" />
+            <span className="text-sm font-semibold text-foreground">
+              Your capstone: reproduce a known-answer test
+            </span>
+          </div>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            A quiz can tell you whether you read the module. It cannot tell you whether our
+            implementation is right — and that is the question you would actually ask. Run NIST's
+            own ACVP vectors against the in-browser build, compare the bytes, and you have checked
+            us rather than taken our word for it. If the output disagrees with the published vector,
+            that is a finding worth telling us about.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Link to="/algorithms?tab=validation">
+              <Button variant="gradient" size="sm">
+                Run the ACVP vectors
+              </Button>
+            </Link>
+            <Link to="/library?q=ACVP">
+              <Button variant="outline" size="sm">
+                Find the published vectors
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Body: Essentials list (default) or the full journey spine */}
       {tier === 'essentials' ? (
