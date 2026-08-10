@@ -32,6 +32,7 @@ import { RoadmapsTab } from './RoadmapsTab'
 import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 import { WhoHasMovedPanel } from './WhoHasMovedPanel'
+import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmentPanel'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -248,6 +249,14 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
           live catalog, and counting only products whose support we hold a proof
           document for. */}
       {!embedded && persona === 'curious' && <WhoHasMovedPanel />}
+
+      {/* B+ remediation 4.6 (2026-08-10): the page answers a question neither
+          of these roles asked. An executive wants to know whether their
+          suppliers have committed; a researcher wants the corpus of claims and
+          what backs each. Both are rendered from data the catalog already
+          holds, so neither can assert more than the rows support. */}
+      {!embedded && persona === 'executive' && <VendorCommitmentPanel />}
+      {!embedded && persona === 'researcher' && <ClaimsAndEvidencePanel />}
 
       {!embedded && priorSelection && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
