@@ -196,6 +196,20 @@ export const AssessViewRedesign: React.FC<{
     setAssessmentMode(mode)
   }
 
+  /**
+   * Load a reference estate and go straight to review — B+ remediation 4.4.
+   *
+   * Straight to REVIEW, not to the wizard: every question is already answered,
+   * so walking the reader through thirteen pre-filled steps would waste their
+   * time and imply they are expected to edit an estate that is deliberately
+   * fixed. Review is also where they can see the whole profile at once, which
+   * is what someone evaluating the tool actually wants to look at.
+   */
+  const handleStartScenario = (estateId: string) => {
+    useAssessmentStore.getState().loadReferenceEstate(estateId)
+    setScreen('review')
+  }
+
   // Switch track from the control deck / rail. Preserve the current question
   // across the switch when it exists in the new track; otherwise restart at step 0.
   const handleSwitchTrack = (mode: AssessmentMode) => {
@@ -478,7 +492,11 @@ export const AssessViewRedesign: React.FC<{
         )}
 
       {!effectiveAssessmentMode ? (
-        <AssessTrackChooser onStart={handleStart} recommendedMode={recommendedMode} />
+        <AssessTrackChooser
+          onStart={handleStart}
+          onStartScenario={handleStartScenario}
+          recommendedMode={recommendedMode}
+        />
       ) : screen === 'review' ? (
         <AssessReview
           mode={effectiveAssessmentMode}
