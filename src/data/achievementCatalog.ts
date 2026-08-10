@@ -353,6 +353,55 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════
+  // RESEARCH LADDER (B+ remediation 2.3, 2026-08-10)
+  //
+  // Researcher was the one persona with neither a named belt ladder nor a
+  // capstone — "a ladder with no rungs demotivates more than no ladder at
+  // all". The handoff offered a choice between a research ladder and a clean
+  // exemption; this is the ladder, shaped as the review specified:
+  // cite → reproduce → counter-claim.
+  //
+  // Every condition below reads a field that is ACTUALLY WRITTEN today —
+  // `sectionsVisited` via AchievementSectionTracker, `playgroundToolsUsed`
+  // via PlaygroundToolRoute/TryToolModalHost/WorkshopToolsTab, and
+  // `endorsementCount` derived from the endorsement records store. No new
+  // tracking was invented for these, deliberately: an achievement whose
+  // signal nothing records is exactly the missing rung this item exists to
+  // remove. Category is 'cross-feature' rather than a new 'research' one so
+  // the existing category filters/badges keep working unchanged.
+  // ═══════════════════════════════════════════════════════════════
+  {
+    id: 'research-sourced',
+    title: 'Followed the Citation',
+    description: 'Read a claim in the Library and traced it into the Timeline',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'BookOpen',
+    condition: (s: ActivitySnapshot) =>
+      s.sectionsVisited.includes('library') && s.sectionsVisited.includes('timeline'),
+  },
+  {
+    id: 'research-reproduced',
+    title: 'Reproduced It',
+    description: 'Ran a real cryptographic operation instead of taking the number on trust',
+    category: 'cross-feature',
+    rarity: 'uncommon',
+    icon: 'Microscope',
+    // Any Playground tool counts: the point of the rung is that the reader
+    // executed the primitive themselves, not which primitive it was.
+    condition: (s: ActivitySnapshot) => s.playgroundToolsUsed.length >= 1,
+  },
+  {
+    id: 'research-counter-claim',
+    title: 'Put It on the Record',
+    description: 'Endorsed or challenged three sources — the hub’s counter-claim mechanism',
+    category: 'cross-feature',
+    rarity: 'rare',
+    icon: 'Scale',
+    condition: (s: ActivitySnapshot) => s.endorsementCount >= 3,
+  },
+
+  // ═══════════════════════════════════════════════════════════════
   // SIMULATION (Wave 4, WP4.5) — condition fields sourced from
   // useSimulationStore's lifetime counters (useAchievementChecker.ts).
   // ═══════════════════════════════════════════════════════════════

@@ -33,11 +33,15 @@ describe('getBeltTierLabel', () => {
     expect(getBeltTierLabel(null, 'White Belt')).toBeNull()
   })
 
-  it('returns null for personas without tier overrides', () => {
-    expect(getBeltTierLabel('developer', 'White Belt')).toBeNull()
-    expect(getBeltTierLabel('architect', 'Black Belt')).toBeNull()
-    expect(getBeltTierLabel('researcher', 'Green Belt')).toBeNull()
-    expect(getBeltTierLabel('ops', 'Brown Belt')).toBeNull()
+  // B+ remediation 2.3 (2026-08-10): the four roles asserted null here now
+  // carry their own ladders. The inverted assertion is the point of the item —
+  // "generic copy on the one reader who reads most closely is the most
+  // conspicuous possible place to leave it unfinished".
+  it('gives every persona a ladder in its own vocabulary', () => {
+    expect(getBeltTierLabel('developer', 'White Belt')).toBe('Reading')
+    expect(getBeltTierLabel('architect', 'Black Belt')).toBe('Blueprint-Ready')
+    expect(getBeltTierLabel('researcher', 'Green Belt')).toBe('Reproducing')
+    expect(getBeltTierLabel('ops', 'Brown Belt')).toBe('Rolling Out')
   })
 
   it('maps executive belts to "Briefed → Aligned → Sponsoring → Board-Ready"', () => {
@@ -65,8 +69,8 @@ describe('getBeltTierLabel', () => {
     expect(getBeltTierLabel('curious', '')).toBeNull()
   })
 
-  it('exposes only executive + curious tier overrides', () => {
-    expect(Object.keys(PERSONA_BELT_TIER_LABELS).sort()).toEqual(['curious', 'executive'])
+  it('covers all six personas — no role falls back to a generic belt name', () => {
+    expect(Object.keys(PERSONA_BELT_TIER_LABELS).sort()).toEqual(Object.keys(PERSONAS).sort())
   })
 })
 
