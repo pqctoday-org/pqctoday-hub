@@ -1,9 +1,10 @@
 ---
 generated: 2026-08-09
 category: Certification Schemes
-document_count: 8
-requirement_count: 48
+document_count: 9
+requirement_count: 50
 ---
+
 
 ## CC-2022-CEM
 - **Source**: Common Evaluation Methodology (CEM) 2022 R1
@@ -118,3 +119,11 @@ requirement_count: 48
 - **Observability**:
     - _T3 Repeatable · all_: Implement health tests as an integral part of the entropy source design to detect failure modes and ensure continued expected operation.
     - _T3 Repeatable · all_: Implement continuous health tests on the noise source to detect failures quickly and with high probability during operation.
+
+## NIST-SP-800-140A
+- **Source**: NIST SP 800-140A — CMVP Documentation Requirements
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140A.pdf
+- **Requirement count**: 2
+- **Assurance / FIPS**:
+    - _T3 Repeatable · all_: Provide vendor documentation fulfilling minimum requirements specified by the validation authority and management documentation for cryptographic modules undergoing independent verification.
+    - _T3 Repeatable · all_: Verify that vendors provide documentation meeting minimum validation authority and management documentation requirements for cryptographic modules.
