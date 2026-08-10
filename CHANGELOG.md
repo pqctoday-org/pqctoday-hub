@@ -61,6 +61,20 @@ Whichever role you pick, your home page now reaches every part of the site rathe
 - **Refreshing the site's search index no longer takes 40 minutes for no reason** [persona:ops]: the index file stamps itself with the time it was built, so rebuilding it looked like a change even when nothing had actually changed — and the freshness check then demanded a full rebuild. It now compares the content itself. It still catches a genuinely edited entry, which is what the check exists for.
 - **A build check that could never have run is now able to run** [persona:ops]: the check that proves every role's home page reaches every section was added without the file it invokes, so it would have failed to start on any machine but the one that wrote it. Third time this particular trap has caught a check here; the rule that hides these files now names it explicitly.
 
+## [4.44.1] - 2026-08-09
+
+Product catalog corrections: a tool that has shipped for weeks stops being listed as unfinished, two rows that contradicted their own descriptions are resolved, and rows claiming post-quantum support now say which algorithms they actually mean.
+
+### Fixed
+
+- **A working KMIP server was listed as still in development** [view:/migrate] [persona:architect] [persona:developer] [persona:ops]: the pqctoday-kmip entry said "planned / in-development" and credited a third-party library it does not use. Running it shows the opposite — it creates and signs with ML-DSA-65, does ML-KEM-768 key establishment, and runs on our own software HSM. The claim came from a research pass that never executed the thing it described.
+- **25 catalog entries said "yes, with details" and then named no details** [view:/migrate] [persona:architect] [persona:ops]: each made an unqualified post-quantum claim with no algorithm behind it. All 25 now name the algorithms their own capability descriptions already documented. Nine further rows were deliberately left unfilled, because their own text names no specific algorithm and inventing one is the defect being fixed.
+- **Two entries contradicted their own descriptions** [view:/migrate] [persona:developer]: SOPS is now marked as delegating post-quantum key wrapping to its age plugin rather than providing it directly, and osslsigncode is marked partial — its ML-DSA-65 signing is real, its Windows validation chain is not post-quantum capable.
+
+### Data
+
+- **Four tools added to the migrate catalog** [view:/migrate] [persona:developer] [persona:ops]: the software HSM, benchmark harness and age plugin the sandbox has been running with no catalog entry at all, plus OpenSSL 3.6 — recorded with the fact a reader adopting it most needs, that 3.6 is not a long-term-support branch and reaches end of life on 2026-11-01.
+
 ## [4.44.0] - 2026-08-08
 
 Compliance maturity coverage more than quadruples as documents that were being read only part-way through are now read in full, a batch of library entries that pointed at landing pages get their real source documents, invented requirements are removed, and installing the site for offline use gets dramatically lighter.
