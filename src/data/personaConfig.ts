@@ -1283,7 +1283,16 @@ export interface PersonaJourneyBoard {
   sideCard: {
     title: string
     tone: 'bad' | 'warn' | 'info' | 'accent'
-    provenance: 'sourced' | 'illustrative'
+    /**
+     * What the rows ARE. Three meanings, three values — `illustrative` used to
+     * carry two of them, and its chip says "THIS USER'S INPUTS", which is
+     * false of a card asserting a general rule (2026-08-09).
+     *   sourced      — read from repo data (sizes, dates, counts)
+     *   illustrative — a placeholder for an answer you have not given yet
+     *   guidance     — a rule of thumb this site is asserting, and will never
+     *                  become your data
+     */
+    provenance: 'sourced' | 'illustrative' | 'guidance'
     rows: { label: string; value: string }[]
     punchline: string
     footnote?: string

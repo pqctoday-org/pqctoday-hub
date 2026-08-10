@@ -13,6 +13,12 @@ import {
   resolveRoleBoardVariant,
 } from '@/data/personaConfig'
 import { RAIL_ICON_MAP } from '@/components/Layout/railNav'
+// The SAME label map the desktop board uses, for the same reason the icons
+// above are shared: the two surfaces must never disagree about what a tile's
+// numbers ARE. This board rendered no provenance chip at all, so five of
+// curious's six tiles read as plain fact on mobile while desktop labelled
+// them our own rule of thumb (2026-08-09).
+import { PROVENANCE_LABEL } from './PersonaBoardView'
 
 /**
  * CuriousMobileBoard — the Curious persona's 390px mobile board
@@ -267,6 +273,12 @@ export function CuriousMobileBoard({ variantId, onSelectVariant }: CuriousMobile
             punchline all come from the active board, so each option gets its
             own card rather than every option showing the HNDL one. */}
         <section data-testid="hndl-card" className={cn('glass-panel mt-6 p-4', tone.panel)}>
+          <span
+            data-testid="side-card-provenance"
+            className="mb-2 inline-flex w-fit items-center rounded-full border border-border bg-background/60 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground"
+          >
+            {PROVENANCE_LABEL[board.sideCard.provenance]}
+          </span>
           <p className={cn('text-[10.5px] font-bold uppercase tracking-[0.12em]', tone.label)}>
             {board.sideCard.title}
           </p>
