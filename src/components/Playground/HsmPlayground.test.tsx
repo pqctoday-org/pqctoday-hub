@@ -9,6 +9,14 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { PersonaId } from '@/data/learningPersonas'
+// Imported statically, NOT with a dynamic import inside each test.
+// `vi.mock` calls are hoisted above imports by vitest, so a static import
+// still receives every mock below — the dynamic form bought nothing and cost
+// a lot: it charged the whole HsmPlayground module graph (WASM bindings and
+// all) to the FIRST test's 5s budget. The file passed on its own in ~1.3s and
+// timed out only in a loaded full-suite run, where exactly one of the three
+// tests failed — whichever one happened to trigger the import.
+import { HsmPlayground } from './HsmPlayground'
 
 let mockPersona: PersonaId | null = 'developer'
 
@@ -56,50 +64,51 @@ vi.mock('../../wasm/softhsm', async (importOriginal) => {
 })
 
 function renderHsmPlayground() {
-  return import('./HsmPlayground').then(({ HsmPlayground }) =>
-    render(
-      <MemoryRouter>
-        <HsmPlayground />
-      </MemoryRouter>
-    )
+  return render(
+    <MemoryRouter>
+      <HsmPlayground />
+    </MemoryRouter>
   )
 }
 
 /**
- * 20s, not the 5s default (2026-08-09). `renderHsmPlayground` dynamically
- * imports HsmPlayground, which pulls the SoftHSM wasm module graph — cheap when
- * this file runs alone (it passes in well under a second), but under a full
- * `npm run test` across 559 files it competes for CPU and can pass 5s.
+ * Why the static import above matters more than a bigger timeout (2026-08-09).
  *
- * The timeout did not fail alone. A timed-out test still had its import in
- * flight, so the render landed in `document.body` AFTER the global afterEach
- * cleanup, and the NEXT test then found two "hands-on engineering workbench"
- * banners — four Playground components render that same text — and failed on
- * an ambiguous query rather than on anything it was testing. One slow import
- * therefore took out all three tests, with only the last one looking like a
- * real assertion failure.
+ * Two sessions diagnosed this file independently and landed different fixes;
+ * this is the merge of the two. The other fix raised the describe timeout to
+ * 20s, which works but treats the symptom. The static import removes the cause
+ * — 859ms -> 176ms — so that is what ships.
  *
- * Observed across three consecutive full-suite runs on the same tree before
- * this change: 1 failure, then 0, then 3. Isolated: 3/3 pass every time.
+ * The other diagnosis found the part worth keeping: the timeout never failed
+ * alone. A timed-out test still had its dynamic import in flight, so its render
+ * landed in `document.body` AFTER the global afterEach cleanup, and the NEXT
+ * test then found two "hands-on engineering workbench" banners — four Playground
+ * components render that text — and failed on an ambiguous query rather than on
+ * anything it was testing. One slow import took out all three tests, and only
+ * the last looked like a real assertion failure. Across three consecutive
+ * full-suite runs on the same tree: 1 failure, then 0, then 3.
+ *
+ * So if this file ever goes flaky again, distrust the failure message: look for
+ * a slow import first, not for whatever the failing assertion claims.
  */
-describe('HsmPlayground persona gating', { timeout: 20_000 }, () => {
-  it('shows the ACVP tab and engine selector for a non-gated persona', async () => {
+describe('HsmPlayground persona gating', () => {
+  it('shows the ACVP tab and engine selector for a non-gated persona', () => {
     mockPersona = 'developer'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.getByRole('tab', { name: /acvp/i })).toBeInTheDocument()
     expect(screen.getByText('Engine:')).toBeInTheDocument()
   })
 
-  it('hides the ACVP tab and engine selector for curious', async () => {
+  it('hides the ACVP tab and engine selector for curious', () => {
     mockPersona = 'curious'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.queryByRole('tab', { name: /acvp/i })).not.toBeInTheDocument()
     expect(screen.queryByText('Engine:')).not.toBeInTheDocument()
   })
 
-  it('hides the ACVP tab and engine selector for executive, alongside the existing advisory banner', async () => {
+  it('hides the ACVP tab and engine selector for executive, alongside the existing advisory banner', () => {
     mockPersona = 'executive'
-    await renderHsmPlayground()
+    renderHsmPlayground()
     expect(screen.queryByRole('tab', { name: /acvp/i })).not.toBeInTheDocument()
     expect(screen.queryByText('Engine:')).not.toBeInTheDocument()
     expect(screen.getByText(/hands-on engineering workbench/i)).toBeInTheDocument()

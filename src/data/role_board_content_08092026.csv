@@ -138,7 +138,7 @@ architect,controlplane,proof_chip,1,KMIP 3.0 conformance corpus replays live,act
 architect,controlplane,proof_chip,2,All 66 KMIP operations documented,active,,,2026-08-02,
 architect,controlplane,side_card_title,,"Why agility, not just algorithms",active,,,2026-08-02,
 architect,controlplane,side_card_tone,,info,active,,,2026-08-02,
-architect,controlplane,side_card_provenance,,illustrative,active,,,2026-08-02,
+architect,controlplane,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,controlplane,side_card_row_label,0,Algorithms you will migrate to,active,,,2026-08-02,
 architect,controlplane,side_card_row_value,0,3,active,,,2026-08-02,
 architect,controlplane,side_card_row_label,1,Times you will migrate again,active,,,2026-08-02,
@@ -217,7 +217,7 @@ curious,break,proof_chip,1,Plain English by default,active,,,2026-08-02,
 curious,break,proof_chip,2,Every term explained on hover,active,,,2026-08-02,
 curious,break,side_card_title,,The bit that surprises people,active,,,2026-08-02,
 curious,break,side_card_tone,,bad,active,,,2026-08-02,
-curious,break,side_card_provenance,,illustrative,active,,,2026-08-02,
+curious,break,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,break,side_card_row_label,0,Encrypted data captured today,active,,,2026-08-02,
 curious,break,side_card_row_value,0,still readable later,active,,,2026-08-02,
 curious,break,side_card_row_label,1,If it must stay secret for,active,,,2026-08-02,
@@ -387,7 +387,7 @@ architect,inventory,proof_chip,1,KMIP 3.0 conformance corpus replays live,active
 architect,inventory,proof_chip,2,"Real ML-KEM / ML-DSA / SLH-DSA, no server",active,,,2026-08-02,
 architect,inventory,side_card_title,,What the as-is must name,active,,,2026-08-02,
 architect,inventory,side_card_tone,,info,active,,,2026-08-02,
-architect,inventory,side_card_provenance,,illustrative,active,,,2026-08-02,
+architect,inventory,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,inventory,side_card_row_label,0,Layers in the catalogue,active,,,2026-08-02,
 architect,inventory,side_card_row_value,0,{migrate_layers_count:architect},active,,,2026-08-02,
 architect,inventory,side_card_row_label,1,Agility tracked per,active,,,2026-08-02,
@@ -451,7 +451,7 @@ ops,cutover,proof_chip,1,Hybrid groups X25519MLKEM768 and friends,active,,,2026-
 ops,cutover,proof_chip,2,Log exportable,active,,,2026-08-02,
 ops,cutover,side_card_title,,What the rehearsal covers,active,,,2026-08-02,
 ops,cutover,side_card_tone,,info,active,,,2026-08-02,
-ops,cutover,side_card_provenance,,illustrative,active,,,2026-08-02,
+ops,cutover,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 ops,cutover,side_card_row_label,0,Protocols exercised,active,,,2026-08-02,
 ops,cutover,side_card_row_value,0,"TLS 1.3, IPsec, SSH",active,,,2026-08-02,
 ops,cutover,side_card_row_label,1,What fails first,active,,,2026-08-02,
@@ -483,7 +483,7 @@ ops,suppliers,proof_chip,1,CNSA 2.0 mandate dates built in,active,,,2026-08-02,
 ops,suppliers,proof_chip,2,Every roadmap links to the vendor's own source,active,,,2026-08-02,
 ops,suppliers,side_card_title,,What to ask a supplier,active,,,2026-08-02,
 ops,suppliers,side_card_tone,,info,active,,,2026-08-02,
-ops,suppliers,side_card_provenance,,illustrative,active,,,2026-08-02,
+ops,suppliers,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 ops,suppliers,side_card_row_label,0,Named algorithms,active,,,2026-08-02,
 ops,suppliers,side_card_row_value,0,not the words quantum-safe,active,,,2026-08-02,
 ops,suppliers,side_card_row_label,1,A dated commitment,active,,,2026-08-02,
@@ -583,7 +583,7 @@ curious,short,proof_chip,1,Every term explained on hover,active,,,2026-08-02,
 curious,short,proof_chip,2,Nothing to install,active,,,2026-08-02,
 curious,short,side_card_title,,The one idea,active,,,2026-08-02,
 curious,short,side_card_tone,,bad,active,,,2026-08-02,
-curious,short,side_card_provenance,,illustrative,active,,,2026-08-02,
+curious,short,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,short,side_card_row_label,0,Recorded today,active,,,2026-08-02,
 curious,short,side_card_row_value,0,opened later,active,,,2026-08-02,
 curious,short,side_card_row_label,1,Nothing you do now,active,,,2026-08-02,
@@ -616,7 +616,7 @@ curious,mylife,proof_chip,1,Plain English by default,active,,,2026-08-02,
 curious,mylife,proof_chip,2,Every term explained on hover,active,,,2026-08-02,
 curious,mylife,side_card_title,,Three things it touches,active,,,2026-08-02,
 curious,mylife,side_card_tone,,info,active,,,2026-08-02,
-curious,mylife,side_card_provenance,,illustrative,active,,,2026-08-02,
+curious,mylife,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,mylife,side_card_row_label,0,Payments,active,,,2026-08-02,
 curious,mylife,side_card_row_value,0,the card in your pocket,active,,,2026-08-02,
 curious,mylife,side_card_row_label,1,Identity,active,,,2026-08-02,
@@ -635,19 +635,8 @@ curious,mylife,grid_card_title,2,Why these two,active,,,2026-08-02,"Rewritten 20
 curious,mylife,grid_card_body,2,Identity and money are the everyday systems whose data outlives the lock protecting it — which is what makes them the clear cases.,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 curious,mylife,track_title,,Start anywhere. Nothing is locked.,active,,,2026-08-02,
 curious,mylife,track_note,,"Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.",active,,,2026-08-02,
-executive,mandate,grid_card_href,2,/business?zone=risk-management,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-developer,pilot,grid_card_href,2,/explore,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-developer,inventory,grid_card_href,2,/assess?mode=quick,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-developer,sizing,grid_card_href,2,/business?zone=mitigation,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-architect,controlplane,grid_card_href,2,/explore,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-architect,inventory,grid_card_href,0,/algorithms?tab=landscape,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-architect,inventory,grid_card_href,2,/openssl,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-architect,keystores,grid_card_href,2,/leaders,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-ops,capacity,grid_card_href,2,/business?zone=management-tools,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-ops,suppliers,grid_card_href,0,/patents,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-ops,suppliers,grid_card_href,2,/leaders,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-curious,break,grid_card_href,2,/openssl,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
-curious,mylife,grid_card_href,2,/playground?verb=discover,active,,,2026-08-09,Retro-fitted 2026-08-09 — closes this role's last uncovered section.
+architect,inventory,grid_card_href,0,/business/tools/crypto-architecture-diagram,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,suppliers,grid_card_href,0,/migrate?tab=roadmaps,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 executive,deadlines,hero_eyebrow,,Executive / GRC · the dates you did not choose,active,,,2026-08-09,
 executive,deadlines,hero_badge_text,,Default: Americas · Finance & Banking — scenario shown: EU,active,,,2026-08-09,
 executive,deadlines,hero_badge_tone,,illustrative,active,,,2026-08-09,
@@ -679,9 +668,8 @@ executive,deadlines,grid_card_href,0,/algorithms?tab=transition,active,,,2026-08
 executive,deadlines,grid_card_title,1,The zones a regulator will ask about,active,,,2026-08-09,
 executive,deadlines,grid_card_body,1,"Your obligations grouped the way NIST CSWP.39 groups them, so the gaps map onto the questions.",active,,,2026-08-09,
 executive,deadlines,grid_card_href,1,/compliance?tab=cswp39,active,,,2026-08-09,
-executive,deadlines,grid_card_title,2,Your own compliance calendar,active,,,2026-08-09,
-executive,deadlines,grid_card_body,2,"The mandates that reach you, on one dated plan you can take to a board.",active,,,2026-08-09,
-executive,deadlines,grid_card_href,2,/business/tools/compliance-timeline,active,,,2026-08-09,
+executive,deadlines,grid_card_title,2,Two of these dates are not yours,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,deadlines,grid_card_body,2,You can change how long your migration takes. You cannot change when CNSA 2.0 lands or when the machine arrives — so the only variable you control is when you start.,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 executive,deadlines,track_title,,"Then, if you want the background: {essentials_vs_full:executive}.",active,,,2026-08-09,
 executive,evidence,hero_eyebrow,,Executive / GRC · the question your CFO will ask,active,,,2026-08-09,
 executive,evidence,hero_badge_text,,Default: Americas · Finance & Banking — scenario shown: EU,active,,,2026-08-09,
@@ -697,7 +685,7 @@ executive,evidence,proof_chip,1,Every correction logged and dated,active,,,2026-
 executive,evidence,proof_chip,2,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-09,
 executive,evidence,side_card_title,,What backs a claim here,active,,,2026-08-09,
 executive,evidence,side_card_tone,,info,active,,,2026-08-09,
-executive,evidence,side_card_provenance,,illustrative,active,,,2026-08-09,
+executive,evidence,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 executive,evidence,side_card_row_label,0,Source tier,active,,,2026-08-09,
 executive,evidence,side_card_row_value,0,"Authoritative to Low, always shown",active,,,2026-08-09,
 executive,evidence,side_card_row_label,1,Verification date,active,,,2026-08-09,
@@ -706,7 +694,7 @@ executive,evidence,side_card_row_label,2,Retractions,active,,,2026-08-09,
 executive,evidence,side_card_row_value,2,"logged, never deleted",active,,,2026-08-09,
 executive,evidence,side_card_punchline,,A claim without a date is an opinion.,active,,,2026-08-09,
 executive,evidence,side_card_footnote,,Tiers and verification dates come from the trusted-sources registry every record on this site is joined against.,active,,,2026-08-09,
-executive,evidence,grid_title,,What you walk out with,active,,,2026-08-09,
+executive,evidence,grid_title,,Where to check us,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 executive,evidence,grid_sub,,Provenance you can hand to an auditor,active,,,2026-08-09,
 executive,evidence,grid_card_title,0,Everything we have corrected,active,,,2026-08-09,
 executive,evidence,grid_card_body,0,"The full revision log — what changed, when, and which record it touched.",active,,,2026-08-09,
@@ -714,9 +702,8 @@ executive,evidence,grid_card_href,0,/revisions,active,,,2026-08-09,
 executive,evidence,grid_card_title,1,"Who is filing, not just announcing",active,,,2026-08-09,
 executive,evidence,grid_card_body,1,"Cryptographic patents relevant to migration. Research only, explicitly not legal advice.",active,,,2026-08-09,
 executive,evidence,grid_card_href,1,/patents,active,,,2026-08-09,
-executive,evidence,grid_card_title,2,"Your suppliers, scored on evidence",active,,,2026-08-09,
-executive,evidence,grid_card_body,2,Vendor risk built from proof-gated roadmap claims rather than marketing copy.,active,,,2026-08-09,
-executive,evidence,grid_card_href,2,/migrate?tab=vendorrisk,active,,,2026-08-09,
+executive,evidence,grid_card_title,2,A claim you cannot date is not evidence,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,evidence,grid_card_body,2,"Anyone can publish a number. The tier, the date and the correction history are what let you put it in front of an auditor.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 executive,evidence,track_title,,"Then, if you want the background: {essentials_vs_full:executive}.",active,,,2026-08-09,
 executive,verify,hero_eyebrow,,Executive / GRC · due diligence · nothing taken on trust,active,,,2026-08-09,
 executive,verify,hero_badge_text,,Default: Americas · Finance & Banking — scenario shown: EU,active,,,2026-08-09,
@@ -732,7 +719,7 @@ executive,verify,proof_chip,1,Nine phases from the published framework,active,,,
 executive,verify,proof_chip,2,Organised around the NIST CSWP.39 zones,active,,,2026-08-09,
 executive,verify,side_card_title,,What eleven minutes shows you,active,,,2026-08-09,
 executive,verify,side_card_tone,,info,active,,,2026-08-09,
-executive,verify,side_card_provenance,,illustrative,active,,,2026-08-09,
+executive,verify,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 executive,verify,side_card_row_label,0,Phases played,active,,,2026-08-09,
 executive,verify,side_card_row_value,0,nine,active,,,2026-08-09,
 executive,verify,side_card_row_label,1,Decisions you make,active,,,2026-08-09,
@@ -741,17 +728,16 @@ executive,verify,side_card_row_label,2,What a dry run costs,active,,,2026-08-09,
 executive,verify,side_card_row_value,2,nothing,active,,,2026-08-09,
 executive,verify,side_card_punchline,,A dry run is cheaper than a steering committee.,active,,,2026-08-09,
 executive,verify,side_card_footnote,,"The walkthrough uses an illustrative organisation, not your data — the phases and gates are the framework's own.",active,,,2026-08-09,
-executive,verify,grid_title,,What you walk out with,active,,,2026-08-09,
+executive,verify,grid_title,,Where to look next,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 executive,verify,grid_sub,,"The programme, seen once through",active,,,2026-08-09,
 executive,verify,grid_card_title,0,The labs your teams will cite,active,,,2026-08-09,
 executive,verify,grid_card_body,0,"Every hands-on demo on this site, running real cryptography in a browser tab.",active,,,2026-08-09,
 executive,verify,grid_card_href,0,/playground,active,,,2026-08-09,
 executive,verify,grid_card_title,1,"The command line, in a browser",active,,,2026-08-09,
 executive,verify,grid_card_body,1,"The same OpenSSL commands your engineers would run, with nothing to install.",active,,,2026-08-09,
-executive,verify,grid_card_href,1,/openssl,active,,,2026-08-09,
-executive,verify,grid_card_title,2,"Everything else here, by topic",active,,,2026-08-09,
-executive,verify,grid_card_body,2,Topic-first navigation rather than role-first — useful when the question is “what else is on this site” rather than “what should I do next”.,active,,,2026-08-09,
-executive,verify,grid_card_href,2,/explore,active,,,2026-08-09,
+executive,verify,grid_card_href,1,/explore,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,verify,grid_card_title,2,Nobody has to take our word for it,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,verify,grid_card_body,2,"Every number on this board is either a published figure or a run you can repeat yourself. That is the point of the walkthrough, not the polish.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 executive,verify,track_title,,"Then, if you want the background: {essentials_vs_full:executive}.",active,,,2026-08-09,
 developer,algorithm,hero_eyebrow,,Developer / Engineer · parameter sets · sizes · who owns them,active,,,2026-08-09,
 developer,algorithm,hero_badge_text,,Americas · Technology,active,,,2026-08-09,
@@ -776,7 +762,7 @@ developer,algorithm,side_card_row_label,2,ML-DSA-87 signature,active,,,2026-08-0
 developer,algorithm,side_card_row_value,2,{ml_dsa_signature:87},active,,,2026-08-09,"Tokenised 2026-08-09: was the literal 4,627 B. See the ML-DSA-44 row."
 developer,algorithm,side_card_punchline,,The security level you pick is a byte budget you pay on every message.,active,,,2026-08-09,
 developer,algorithm,side_card_footnote,,"Signature sizes are read from the algorithm registry, which takes them from FIPS 204 directly.",active,,,2026-08-09,
-developer,algorithm,grid_title,,What you walk out with,active,,,2026-08-09,
+developer,algorithm,grid_title,,Where to check the choice,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 developer,algorithm,grid_sub,,A choice you can defend in review,active,,,2026-08-09,
 developer,algorithm,grid_card_title,0,The specs behind the parameter sets,active,,,2026-08-09,
 developer,algorithm,grid_card_body,0,"The standards and drafts themselves, not summaries of them.",active,,,2026-08-09,
@@ -784,9 +770,8 @@ developer,algorithm,grid_card_href,0,/library?purpose=reference,active,,,2026-08
 developer,algorithm,grid_card_title,1,The people who wrote them,active,,,2026-08-09,
 developer,algorithm,grid_card_body,1,"Named contributors behind each document, every entry proof-gated.",active,,,2026-08-09,
 developer,algorithm,grid_card_href,1,/leaders,active,,,2026-08-09,
-developer,algorithm,grid_card_title,2,"What is patented, and by whom",active,,,2026-08-09,
-developer,algorithm,grid_card_body,2,"Filings across the algorithms you are about to depend on. Research only, not legal advice.",active,,,2026-08-09,
-developer,algorithm,grid_card_href,2,/patents,active,,,2026-08-09,
+developer,algorithm,grid_card_title,2,"The parameter set is a budget, not a badge",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,algorithm,grid_card_body,2,"Picking 87 because it sounds safer costs you bytes on every message for the life of the key. Choose it against a threat model, not a preference.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 developer,algorithm,track_title,,"Then, the background: {essentials_vs_full:developer}.",active,,,2026-08-09,
 developer,closure,hero_eyebrow,,Developer / Engineer · tested · recorded · reviewable,active,,,2026-08-09,
 developer,closure,hero_badge_text,,Americas · Technology,active,,,2026-08-09,
@@ -802,7 +787,7 @@ developer,closure,proof_chip,1,Every correction logged and dated,active,,,2026-0
 developer,closure,proof_chip,2,"No signup, no key required",active,,,2026-08-09,
 developer,closure,side_card_title,,What closure has to assert,active,,,2026-08-09,
 developer,closure,side_card_tone,,info,active,,,2026-08-09,
-developer,closure,side_card_provenance,,illustrative,active,,,2026-08-09,
+developer,closure,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 developer,closure,side_card_row_label,0,Vectors,active,,,2026-08-09,
 developer,closure,side_card_row_value,0,"NIST ACVP, not fixtures",active,,,2026-08-09,
 developer,closure,side_card_row_label,1,Coverage,active,,,2026-08-09,
@@ -819,9 +804,8 @@ developer,closure,grid_card_href,0,/report?example=1,active,,,2026-08-09,
 developer,closure,grid_card_title,1,What changed in the data you depend on,active,,,2026-08-09,
 developer,closure,grid_card_body,1,"The revision log for every record on this site, filterable by domain.",active,,,2026-08-09,
 developer,closure,grid_card_href,1,/revisions,active,,,2026-08-09,
-developer,closure,grid_card_title,2,Where verification sits in the programme,active,,,2026-08-09,
-developer,closure,grid_card_body,2,"The closure phase in context, with the gates either side of it.",active,,,2026-08-09,
-developer,closure,grid_card_href,2,/simulation?phase=verify-close,active,,,2026-08-09,
+developer,closure,grid_card_title,2,A test that cannot fail proves nothing,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,closure,grid_card_body,2,"Closure is only worth recording if a failing service would have shown up. Coverage per service, not per fleet, is what makes it a control.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 developer,closure,track_title,,"Then, the background: {essentials_vs_full:developer}.",active,,,2026-08-09,
 developer,binds,hero_eyebrow,,"Developer / Engineer · what is actually mandatory, and by when",active,,,2026-08-09,
 developer,binds,hero_badge_text,,Americas · Technology,active,,,2026-08-09,
@@ -837,7 +821,7 @@ developer,binds,proof_chip,1,"Draft and final are labelled, never merged",active
 developer,binds,proof_chip,2,Every requirement links to its source,active,,,2026-08-09,
 developer,binds,side_card_title,,What counts as binding,active,,,2026-08-09,
 developer,binds,side_card_tone,,warn,active,,,2026-08-09,
-developer,binds,side_card_provenance,,illustrative,active,,,2026-08-09,
+developer,binds,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 developer,binds,side_card_row_label,0,A published FIPS,active,,,2026-08-09,
 developer,binds,side_card_row_value,0,binding,active,,,2026-08-09,
 developer,binds,side_card_row_label,1,An IETF draft,active,,,2026-08-09,
@@ -846,7 +830,7 @@ developer,binds,side_card_row_label,2,A vendor roadmap,active,,,2026-08-09,
 developer,binds,side_card_row_value,2,a press release,active,,,2026-08-09,
 developer,binds,side_card_punchline,,“Quantum-safe” is a marketing term until a document says otherwise.,active,,,2026-08-09,
 developer,binds,side_card_footnote,,"Lifecycle status comes from each standard's own publisher, and drafts are never displayed as final.",active,,,2026-08-09,
-developer,binds,grid_title,,What you walk out with,active,,,2026-08-09,
+developer,binds,grid_title,,Where to look it up,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 developer,binds,grid_sub,,A sprint order with dates behind it,active,,,2026-08-09,
 developer,binds,grid_card_title,0,"The mandates, in date order",active,,,2026-08-09,
 developer,binds,grid_card_body,0,Government and regulator milestones on one chronology.,active,,,2026-08-09,
@@ -854,9 +838,8 @@ developer,binds,grid_card_href,0,/timeline,active,,,2026-08-09,
 developer,binds,grid_card_title,1,What the attack actually costs,active,,,2026-08-09,
 developer,binds,grid_card_body,1,"Threat economics and the CRQC horizon, with the dissent shown.",active,,,2026-08-09,
 developer,binds,grid_card_href,1,/threats,active,,,2026-08-09,
-developer,binds,grid_card_title,2,What you would have to replace,active,,,2026-08-09,
-developer,binds,grid_card_body,2,"The catalogued products and their PQC readiness, compared against what you run.",active,,,2026-08-09,
-developer,binds,grid_card_href,2,/migrate?tab=replace,active,,,2026-08-09,
+developer,binds,grid_card_title,2,Draft is not the same as done,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,binds,grid_card_body,2,"A published FIPS binds you. An IETF draft does not, however far along it looks — and a vendor roadmap never did.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 developer,binds,track_title,,"Then, the background: {essentials_vs_full:developer}.",active,,,2026-08-09,
 architect,protocols,hero_eyebrow,,"Security Architect · protocol readiness · ready, draft, or absent",active,,,2026-08-09,
 architect,protocols,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-09,
@@ -872,7 +855,7 @@ architect,protocols,proof_chip,1,Draft and RFC are never merged,active,,,2026-08
 architect,protocols,proof_chip,2,Hybrid groups X25519MLKEM768 and friends,active,,,2026-08-09,
 architect,protocols,side_card_title,,Where the design stalls,active,,,2026-08-09,
 architect,protocols,side_card_tone,,warn,active,,,2026-08-09,
-architect,protocols,side_card_provenance,,illustrative,active,,,2026-08-09,
+architect,protocols,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,protocols,side_card_row_label,0,TLS 1.3,active,,,2026-08-09,
 architect,protocols,side_card_row_value,0,hybrid groups shipping,active,,,2026-08-09,
 architect,protocols,side_card_row_label,1,Enrollment,active,,,2026-08-09,
@@ -881,7 +864,7 @@ architect,protocols,side_card_row_label,2,Messaging,active,,,2026-08-09,
 architect,protocols,side_card_row_value,2,earlier than you think,active,,,2026-08-09,
 architect,protocols,side_card_punchline,,You migrate at the speed of your slowest protocol.,active,,,2026-08-09,
 architect,protocols,side_card_footnote,,"Readiness per protocol is read from the protocol matrix, where every cell cites the document behind it.",active,,,2026-08-09,
-architect,protocols,grid_title,,What you walk out with,active,,,2026-08-09,
+architect,protocols,grid_title,,Where to check each claim,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 architect,protocols,grid_sub,,A design that names its dependencies,active,,,2026-08-09,
 architect,protocols,grid_card_title,0,The specs under each cell,active,,,2026-08-09,
 architect,protocols,grid_card_body,0,"The RFCs and drafts themselves, so a review can check the claim.",active,,,2026-08-09,
@@ -889,9 +872,8 @@ architect,protocols,grid_card_href,0,/library?purpose=reference,active,,,2026-08
 architect,protocols,grid_card_title,1,What a regulator counts as a standard,active,,,2026-08-09,
 architect,protocols,grid_card_body,1,"The standards pillar of the compliance landscape, by body and lifecycle.",active,,,2026-08-09,
 architect,protocols,grid_card_href,1,/compliance?tab=standards,active,,,2026-08-09,
-architect,protocols,grid_card_title,2,What is patented in the path,active,,,2026-08-09,
-architect,protocols,grid_card_body,2,Filings across the protocols and constructions in your design. Research only.,active,,,2026-08-09,
-architect,protocols,grid_card_href,2,/patents,active,,,2026-08-09,
+architect,protocols,grid_card_title,2,You migrate at the speed of your slowest protocol,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,protocols,grid_card_body,2,"A design that treats TLS, enrollment and messaging as one migration stalls on whichever is furthest behind — so name their stages separately.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 architect,protocols,track_title,,"Then, the background: {essentials_vs_full:architect}.",active,,,2026-08-09,
 architect,sequence,hero_eyebrow,,Security Architect · order of operations · dependencies first,active,,,2026-08-09,
 architect,sequence,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-09,
@@ -907,7 +889,7 @@ architect,sequence,proof_chip,1,Deadlines derived from the published timeline,ac
 architect,sequence,proof_chip,2,Organised around the NIST CSWP.39 zones,active,,,2026-08-09,
 architect,sequence,side_card_title,,What has to move first,active,,,2026-08-09,
 architect,sequence,side_card_tone,,info,active,,,2026-08-09,
-architect,sequence,side_card_provenance,,illustrative,active,,,2026-08-09,
+architect,sequence,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,sequence,side_card_row_label,0,Roots and issuing CAs,active,,,2026-08-09,
 architect,sequence,side_card_row_value,0,before anything they sign,active,,,2026-08-09,
 architect,sequence,side_card_row_label,1,Key stores,active,,,2026-08-09,
@@ -916,7 +898,7 @@ architect,sequence,side_card_row_label,2,Data at rest,active,,,2026-08-09,
 architect,sequence,side_card_row_value,2,"last, and longest",active,,,2026-08-09,
 architect,sequence,side_card_punchline,,Sequencing errors are the expensive kind — you pay twice.,active,,,2026-08-09,
 architect,sequence,side_card_footnote,,Sequences the catalogued products this site holds evidence for; it does not import an inventory of your own.,active,,,2026-08-09,
-architect,sequence,grid_title,,What you walk out with,active,,,2026-08-09,
+architect,sequence,grid_title,,Where the sequence is evidenced,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 architect,sequence,grid_sub,,A sequence with dependencies named,active,,,2026-08-09,
 architect,sequence,grid_card_title,0,"The same sequencing, played through",active,,,2026-08-09,
 architect,sequence,grid_card_body,0,"The roadmap phase of a full migration, gate by gate.",active,,,2026-08-09,
@@ -924,9 +906,8 @@ architect,sequence,grid_card_href,0,/simulation?phase=p4,active,,,2026-08-09,
 architect,sequence,grid_card_title,1,The artifacts each phase owes,active,,,2026-08-09,
 architect,sequence,grid_card_body,1,"The Command Center's migration zone, and what it expects you to produce.",active,,,2026-08-09,
 architect,sequence,grid_card_href,1,/business?zone=migration,active,,,2026-08-09,
-architect,sequence,grid_card_title,2,The fixed dates you sequence against,active,,,2026-08-09,
-architect,sequence,grid_card_body,2,"Government and regulator milestones, in chronological order.",active,,,2026-08-09,
-architect,sequence,grid_card_href,2,/timeline,active,,,2026-08-09,
+architect,sequence,grid_card_title,2,Sequencing errors are the expensive kind,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,sequence,grid_card_body,2,"Move a certificate before the key store behind it and you pay for the same work twice. The order is not a preference, it is the dependency graph.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 architect,sequence,track_title,,"Then, the background: {essentials_vs_full:architect}.",active,,,2026-08-09,
 architect,defend,hero_eyebrow,,"Security Architect · the review, and what survives it",active,,,2026-08-09,
 architect,defend,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-09,
@@ -942,7 +923,7 @@ architect,defend,proof_chip,1,Authoritative / High / Moderate / Low source tiers
 architect,defend,proof_chip,2,TPM 2.0 conformance checks run locally,active,,,2026-08-09,
 architect,defend,side_card_title,,What a reviewer will push on,active,,,2026-08-09,
 architect,defend,side_card_tone,,warn,active,,,2026-08-09,
-architect,defend,side_card_provenance,,illustrative,active,,,2026-08-09,
+architect,defend,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,defend,side_card_row_label,0,Hybrid vs pure,active,,,2026-08-09,
 architect,defend,side_card_row_value,0,"a policy call, not a maths one",active,,,2026-08-09,
 architect,defend,side_card_row_label,1,Parameter set,active,,,2026-08-09,
@@ -951,7 +932,7 @@ architect,defend,side_card_row_label,2,Residual risk,active,,,2026-08-09,
 architect,defend,side_card_row_value,2,"named, or it is hidden",active,,,2026-08-09,
 architect,defend,side_card_punchline,,An unnamed risk is an accepted one.,active,,,2026-08-09,
 architect,defend,side_card_footnote,,"Counter-claims are published objections on file with their own sources, not our summary of them.",active,,,2026-08-09,
-architect,defend,grid_title,,What you walk out with,active,,,2026-08-09,
+architect,defend,grid_title,,Where the answers are,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 architect,defend,grid_sub,,Answers with sources behind them,active,,,2026-08-09,
 architect,defend,grid_card_title,0,The written position,active,,,2026-08-09,
 architect,defend,grid_card_body,0,"A worked example of the generated report, section by section.",active,,,2026-08-09,
@@ -959,9 +940,8 @@ architect,defend,grid_card_href,0,/report?example=1,active,,,2026-08-09,
 architect,defend,grid_card_title,1,What has been corrected since,active,,,2026-08-09,
 architect,defend,grid_card_body,1,"The revision log — every change to every record, dated.",active,,,2026-08-09,
 architect,defend,grid_card_href,1,/revisions,active,,,2026-08-09,
-architect,defend,grid_card_title,2,Your own scored starting point,active,,,2026-08-09,
-architect,defend,grid_card_body,2,"The full assessment, not the ten-minute version.",active,,,2026-08-09,
-architect,defend,grid_card_href,2,/assess?mode=comprehensive,active,,,2026-08-09,
+architect,defend,grid_card_title,2,An unnamed risk is an accepted one,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,defend,grid_card_body,2,Every choice on this board will be questioned. The ones that survive review are the ones whose residual risk was written down before someone else found it.,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 architect,defend,track_title,,"Then, the background: {essentials_vs_full:architect}.",active,,,2026-08-09,
 ops,standing,hero_eyebrow,,IT Ops · before anyone asks · about 10 minutes,active,,,2026-08-09,
 ops,standing,hero_badge_text,,"Americas · Energy & Utilities, Telecommunications",active,,,2026-08-09,
@@ -986,17 +966,16 @@ ops,standing,side_card_row_label,2,Time,active,,,2026-08-09,
 ops,standing,side_card_row_value,2,about ten minutes,active,,,2026-08-09,
 ops,standing,side_card_punchline,,A rough number beats no number by a wide margin.,active,,,2026-08-09,
 ops,standing,side_card_footnote,,Scored from your own answers; nothing is inferred about your estate that you did not enter.,active,,,2026-08-09,
-ops,standing,grid_title,,What you walk out with,active,,,2026-08-09,
+ops,standing,grid_title,,Where to take it next,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 ops,standing,grid_sub,,A position you can report upward,active,,,2026-08-09,
 ops,standing,grid_card_title,0,The records behind each requirement,active,,,2026-08-09,
 ops,standing,grid_card_body,0,"Product compliance records, per framework and per certification.",active,,,2026-08-09,
 ops,standing,grid_card_href,0,/compliance?tab=records,active,,,2026-08-09,
-ops,standing,grid_card_title,1,The artifacts this phase owes,active,,,2026-08-09,
-ops,standing,grid_card_body,1,The Command Center's discovery zone and what it expects from you.,active,,,2026-08-09,
-ops,standing,grid_card_href,1,/business?zone=assets,active,,,2026-08-09,
-ops,standing,grid_card_title,2,Not sure where to start?,active,,,2026-08-09,
-ops,standing,grid_card_body,2,"Every part of this site, arranged by topic instead of by role.",active,,,2026-08-09,
-ops,standing,grid_card_href,2,/explore,active,,,2026-08-09,
+ops,standing,grid_card_title,1,Not sure where to start?,active,,,2026-08-09,"Restored 2026-08-09: this card was ""Not sure where to start?"" -> /explore before the tile review moved things around. It is the one place a topic-first door genuinely fits an ops board, and Command Center is already reached from `capacity`."
+ops,standing,grid_card_body,1,"Every part of this site arranged by topic instead of by role — for when the question is what exists, not what to do next.",active,,,2026-08-09,"Restored 2026-08-09: this card was ""Not sure where to start?"" -> /explore before the tile review moved things around. It is the one place a topic-first door genuinely fits an ops board, and Command Center is already reached from `capacity`."
+ops,standing,grid_card_href,1,/explore,active,,,2026-08-09,"Restored 2026-08-09: this card was ""Not sure where to start?"" -> /explore before the tile review moved things around. It is the one place a topic-first door genuinely fits an ops board, and Command Center is already reached from `capacity`."
+ops,standing,grid_card_title,2,A rough number beats no number,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,standing,grid_card_body,2,Ten minutes of your own answers is more defensible than a quarter spent waiting for a perfect inventory that nobody has ever finished.,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 ops,standing,track_title,,"Then, the background: {essentials_vs_full:ops}.",active,,,2026-08-09,
 ops,suites,hero_eyebrow,,IT Ops · named suites · not “enable PQC”,active,,,2026-08-09,
 ops,suites,hero_badge_text,,"Americas · Energy & Utilities, Telecommunications",active,,,2026-08-09,
@@ -1012,7 +991,7 @@ ops,suites,proof_chip,1,Hybrid groups X25519MLKEM768 and friends,active,,,2026-0
 ops,suites,proof_chip,2,"Real PKI enrollment flows, in your browser",active,,,2026-08-09,
 ops,suites,side_card_title,,What you actually configure,active,,,2026-08-09,
 ops,suites,side_card_tone,,warn,active,,,2026-08-09,
-ops,suites,side_card_provenance,,illustrative,active,,,2026-08-09,
+ops,suites,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 ops,suites,side_card_row_label,0,TLS,active,,,2026-08-09,
 ops,suites,side_card_row_value,0,"a named group, per version",active,,,2026-08-09,
 ops,suites,side_card_row_label,1,SSH,active,,,2026-08-09,
@@ -1021,7 +1000,7 @@ ops,suites,side_card_row_label,2,IPsec,active,,,2026-08-09,
 ops,suites,side_card_row_value,2,"a proposal, plus fragmentation",active,,,2026-08-09,
 ops,suites,side_card_punchline,,The config line is small. Finding which one is the work.,active,,,2026-08-09,
 ops,suites,side_card_footnote,,"Suite and group names are quoted from the protocol specifications, not paraphrased.",active,,,2026-08-09,
-ops,suites,grid_title,,What you walk out with,active,,,2026-08-09,
+ops,suites,grid_title,,Where to look it up,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 ops,suites,grid_sub,,Config you can put in a change ticket,active,,,2026-08-09,
 ops,suites,grid_card_title,0,The dates the rollout is measured against,active,,,2026-08-09,
 ops,suites,grid_card_body,0,"Government and regulator milestones, in chronological order.",active,,,2026-08-09,
@@ -1029,9 +1008,8 @@ ops,suites,grid_card_href,0,/timeline,active,,,2026-08-09,
 ops,suites,grid_card_title,1,Why this is urgent and not routine,active,,,2026-08-09,
 ops,suites,grid_card_body,1,"Threat economics, and how long your data has to stay secret.",active,,,2026-08-09,
 ops,suites,grid_card_href,1,/threats,active,,,2026-08-09,
-ops,suites,grid_card_title,2,The specs behind each suite,active,,,2026-08-09,
-ops,suites,grid_card_body,2,"The RFCs and drafts themselves, so you can check the claim.",active,,,2026-08-09,
-ops,suites,grid_card_href,2,/library?purpose=reference,active,,,2026-08-09,
+ops,suites,grid_card_title,2,Finding the config line is the work,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,suites,grid_card_body,2,"The change itself is one named group in one protocol version. Knowing which one, on which build, across which fleet, is the part that takes a quarter.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 ops,suites,track_title,,"Then, the background: {essentials_vs_full:ops}.",active,,,2026-08-09,
 ops,closeout,hero_eyebrow,,IT Ops · after the change window · what you can show,active,,,2026-08-09,
 ops,closeout,hero_badge_text,,"Americas · Energy & Utilities, Telecommunications",active,,,2026-08-09,
@@ -1047,7 +1025,7 @@ ops,closeout,proof_chip,1,Log exportable,active,,,2026-08-09,
 ops,closeout,proof_chip,2,Every claim links to its own source,active,,,2026-08-09,
 ops,closeout,side_card_title,,What closure has to show,active,,,2026-08-09,
 ops,closeout,side_card_tone,,info,active,,,2026-08-09,
-ops,closeout,side_card_provenance,,illustrative,active,,,2026-08-09,
+ops,closeout,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 ops,closeout,side_card_row_label,0,Negotiated suite,active,,,2026-08-09,
 ops,closeout,side_card_row_value,0,"per endpoint, not per fleet",active,,,2026-08-09,
 ops,closeout,side_card_row_label,1,Downgrade,active,,,2026-08-09,
@@ -1056,7 +1034,7 @@ ops,closeout,side_card_row_label,2,Rollback,active,,,2026-08-09,
 ops,closeout,side_card_row_value,2,"tested, not written down",active,,,2026-08-09,
 ops,closeout,side_card_punchline,,"If your monitoring cannot see a downgrade, you did not migrate.",active,,,2026-08-09,
 ops,closeout,side_card_footnote,,The example report is generated from sample answers — your own numbers replace them once you run an assessment.,active,,,2026-08-09,
-ops,closeout,grid_title,,What you walk out with,active,,,2026-08-09,
+ops,closeout,grid_title,,Where the evidence lives,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 ops,closeout,grid_sub,,"Evidence, not an assertion",active,,,2026-08-09,
 ops,closeout,grid_card_title,0,Where closure sits in the programme,active,,,2026-08-09,
 ops,closeout,grid_card_body,0,"The verification phase in context, with the gates either side of it.",active,,,2026-08-09,
@@ -1064,9 +1042,8 @@ ops,closeout,grid_card_href,0,/simulation?phase=verify-close,active,,,2026-08-09
 ops,closeout,grid_card_title,1,The commands behind the check,active,,,2026-08-09,
 ops,closeout,grid_card_body,1,"The same OpenSSL invocations, running in a browser tab.",active,,,2026-08-09,
 ops,closeout,grid_card_href,1,/openssl,active,,,2026-08-09,
-ops,closeout,grid_card_title,2,What changed in the data you rely on,active,,,2026-08-09,
-ops,closeout,grid_card_body,2,The revision log for every record on this site.,active,,,2026-08-09,
-ops,closeout,grid_card_href,2,/revisions,active,,,2026-08-09,
+ops,closeout,grid_card_title,2,"If monitoring cannot see a downgrade, you did not migrate",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,closeout,grid_card_body,2,"A cutover you cannot observe is a cutover you cannot defend. Closure is the evidence, not the change window.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 ops,closeout,track_title,,"Then, the background: {essentials_vs_full:ops}.",active,,,2026-08-09,
 researcher,standards,hero_eyebrow,,"Researcher · status, provenance, and what moved",active,,,2026-08-09,
 researcher,standards,hero_badge_text,,All regions · unfiltered,active,,,2026-08-09,
@@ -1099,9 +1076,8 @@ researcher,standards,grid_card_href,0,/timeline,active,,,2026-08-09,
 researcher,standards,grid_card_title,1,The people behind each document,active,,,2026-08-09,
 researcher,standards,grid_card_body,1,"Named contributors, every entry proof-gated against a published source.",active,,,2026-08-09,
 researcher,standards,grid_card_href,1,/leaders,active,,,2026-08-09,
-researcher,standards,grid_card_title,2,What has been filed against it,active,,,2026-08-09,
-researcher,standards,grid_card_body,2,"Cryptographic patents across the candidates. Research only, not legal advice.",active,,,2026-08-09,
-researcher,standards,grid_card_href,2,/patents,active,,,2026-08-09,
+researcher,standards,grid_card_title,2,“Standardised” is four states wearing one word,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,standards,grid_card_body,2,"Published, selected-but-unstandardised, draft and withdrawn are different claims with different citations. Flattening them is how a roadmap ends up wrong.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 researcher,standards,track_title,,"Learning path: available, never pushed.",active,,,2026-08-09,
 researcher,commandline,hero_eyebrow,,Researcher · a real prompt · keep the log,active,,,2026-08-09,
 researcher,commandline,hero_badge_text,,All regions · unfiltered,active,,,2026-08-09,
@@ -1135,9 +1111,8 @@ researcher,commandline,grid_card_href,0,/simulation?run=climb-deep,active,,,2026
 researcher,commandline,grid_card_title,1,"Everything else on the site, by topic",active,,,2026-08-09,
 researcher,commandline,grid_card_body,1,Topic-first navigation rather than role-first.,active,,,2026-08-09,
 researcher,commandline,grid_card_href,1,/explore,active,,,2026-08-09,
-researcher,commandline,grid_card_title,2,"Every lab, by what it does",active,,,2026-08-09,
-researcher,commandline,grid_card_body,2,The workshop catalogue grouped by the verb rather than the technology.,active,,,2026-08-09,
-researcher,commandline,grid_card_href,2,/playground?verb=benchmark,active,,,2026-08-09,
+researcher,commandline,grid_card_title,2,"If it only reproduces behind a button, it does not reproduce",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,commandline,grid_card_body,2,"An in-tab lab is a convenience, not a result. The claim only holds once you have run it with your own invocation and kept the log.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 researcher,commandline,track_title,,"Learning path: available, never pushed.",active,,,2026-08-09,
 researcher,field,hero_eyebrow,,Researcher · from the paper to the payment terminal,active,,,2026-08-09,
 researcher,field,hero_badge_text,,All regions · unfiltered,active,,,2026-08-09,
@@ -1153,7 +1128,7 @@ researcher,field,proof_chip,1,Every product claim links to the vendor's own sour
 researcher,field,proof_chip,2,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-09,
 researcher,field,side_card_title,,Adoption is uneven,active,,,2026-08-09,
 researcher,field,side_card_tone,,info,active,,,2026-08-09,
-researcher,field,side_card_provenance,,illustrative,active,,,2026-08-09,
+researcher,field,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 researcher,field,side_card_row_label,0,Furthest along,active,,,2026-08-09,
 researcher,field,side_card_row_value,0,network and web protocols,active,,,2026-08-09,
 researcher,field,side_card_row_label,1,Slowest,active,,,2026-08-09,
@@ -1162,17 +1137,16 @@ researcher,field,side_card_row_label,2,Hardest to verify,active,,,2026-08-09,
 researcher,field,side_card_row_value,2,embedded and OT,active,,,2026-08-09,
 researcher,field,side_card_punchline,,The gap between selected and deployed is where the research is.,active,,,2026-08-09,
 researcher,field,side_card_footnote,,"Every catalogued product carries a link to the vendor's own published evidence, or it is not shown.",active,,,2026-08-09,
-researcher,field,grid_title,,What the workspace gives you,active,,,2026-08-09,
+researcher,field,grid_title,,Where the evidence lives,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 researcher,field,grid_sub,,"Deployment, with its evidence",active,,,2026-08-09,
-researcher,field,grid_card_title,0,The regulation each sector answers to,active,,,2026-08-09,
-researcher,field,grid_card_body,0,"The compliance pillar, by country, industry and enforcement body.",active,,,2026-08-09,
-researcher,field,grid_card_href,0,/compliance?tab=compliance,active,,,2026-08-09,
-researcher,field,grid_card_title,1,The artifacts a migration produces,active,,,2026-08-09,
-researcher,field,grid_card_body,1,The Command Center's migration zone and its deliverables.,active,,,2026-08-09,
-researcher,field,grid_card_href,1,/business?zone=migration,active,,,2026-08-09,
-researcher,field,grid_card_title,2,The full assessment instrument,active,,,2026-08-09,
-researcher,field,grid_card_body,2,"Every question, not the ten-minute subset.",active,,,2026-08-09,
-researcher,field,grid_card_href,2,/assess?mode=comprehensive,active,,,2026-08-09,
+researcher,field,grid_card_title,0,Which sectors use which mechanisms,active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_body,0,"The industry landscape — 22 sectors, the crypto each use case actually relies on, and the standards behind them.",active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_href,0,/algorithms?tab=landscape,active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_title,1,The regulation each sector answers to,active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_body,1,"The compliance pillar, by country, industry and enforcement body.",active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_href,1,/compliance?tab=compliance,active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
+researcher,field,grid_card_title,2,The gap between selected and deployed is the research,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,field,grid_card_body,2,"Standardisation is settled. Which sectors have actually shipped it, and which cannot, is the open question worth your time.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 researcher,field,track_title,,"Learning path: available, never pushed.",active,,,2026-08-09,
 curious,howbad,hero_eyebrow,,No background needed · about 6 minutes · nothing to install,active,,,2026-08-09,
 curious,howbad,hero_badge_text,,Americas · unfiltered,active,,,2026-08-09,
@@ -1188,7 +1162,7 @@ curious,howbad,proof_chip,1,The estimate carries its dissent,active,,,2026-08-09
 curious,howbad,proof_chip,2,"When we get it wrong, we say so",active,,,2026-08-09,
 curious,howbad,side_card_title,,What is and is not settled,active,,,2026-08-09,
 curious,howbad,side_card_tone,,warn,active,,,2026-08-09,
-curious,howbad,side_card_provenance,,illustrative,active,,,2026-08-09,
+curious,howbad,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,howbad,side_card_row_label,0,The maths breaking,active,,,2026-08-09,
 curious,howbad,side_card_row_value,0,settled,active,,,2026-08-09,
 curious,howbad,side_card_row_label,1,The year it breaks,active,,,2026-08-09,
@@ -1205,9 +1179,8 @@ curious,howbad,grid_card_href,0,/assess?mode=quick,active,,,2026-08-09,
 curious,howbad,grid_card_title,1,Everything we have corrected,active,,,2026-08-09,
 curious,howbad,grid_card_body,1,When we get something wrong we log it here rather than quietly fixing it.,active,,,2026-08-09,
 curious,howbad,grid_card_href,1,/revisions,active,,,2026-08-09,
-curious,howbad,grid_card_title,2,The plain-language explainers,active,,,2026-08-09,
-curious,howbad,grid_card_body,2,"The part of the library written to be read, not cited.",active,,,2026-08-09,
-curious,howbad,grid_card_href,2,/library?purpose=education,active,,,2026-08-09,
+curious,howbad,grid_card_title,2,"Uncertain timing, certain outcome",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,howbad,grid_card_body,2,"Nobody can give you the year. That is not the same as nobody knowing what breaks, or what replaces it — both of those are settled.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 curious,howbad,track_title,,Start anywhere. Nothing is locked.,active,,,2026-08-09,
 curious,anyone,hero_eyebrow,,No background needed · about 5 minutes · nothing to install,active,,,2026-08-09,
 curious,anyone,hero_badge_text,,Americas · unfiltered,active,,,2026-08-09,
@@ -1223,7 +1196,7 @@ curious,anyone,proof_chip,1,Every term explained on hover,active,,,2026-08-09,
 curious,anyone,proof_chip,2,Every claim links to its own source,active,,,2026-08-09,
 curious,anyone,side_card_title,,Where it already stands,active,,,2026-08-09,
 curious,anyone,side_card_tone,,info,active,,,2026-08-09,
-curious,anyone,side_card_provenance,,illustrative,active,,,2026-08-09,
+curious,anyone,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,anyone,side_card_row_label,0,Replacements,active,,,2026-08-09,
 curious,anyone,side_card_row_value,0,"published, not proposed",active,,,2026-08-09,
 curious,anyone,side_card_row_label,1,Deadlines,active,,,2026-08-09,
@@ -1240,9 +1213,8 @@ curious,anyone,grid_card_href,0,/compliance?tab=foryou,active,,,2026-08-09,
 curious,anyone,grid_card_title,1,"Who is building it, not just talking",active,,,2026-08-09,
 curious,anyone,grid_card_body,1,"Patent filings across the field. Research only, not legal advice.",active,,,2026-08-09,
 curious,anyone,grid_card_href,1,/patents,active,,,2026-08-09,
-curious,anyone,grid_card_title,2,"Everything here, by topic",active,,,2026-08-09,
-curious,anyone,grid_card_body,2,Pick a subject instead of a role.,active,,,2026-08-09,
-curious,anyone,grid_card_href,2,/explore,active,,,2026-08-09,
+curious,anyone,grid_card_title,2,The fix exists. Fitting it everywhere is the slow part,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,anyone,grid_card_body,2,This is not a problem waiting on a discovery. It is waiting on millions of systems being changed one at a time.,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 curious,anyone,track_title,,Start anywhere. Nothing is locked.,active,,,2026-08-09,
 curious,whattake,hero_eyebrow,,No background needed · about 11 minutes · nothing to install,active,,,2026-08-09,
 curious,whattake,hero_badge_text,,Americas · unfiltered,active,,,2026-08-09,
@@ -1258,7 +1230,7 @@ curious,whattake,proof_chip,1,Plain English by default,active,,,2026-08-09,
 curious,whattake,proof_chip,2,Nothing to install,active,,,2026-08-09,
 curious,whattake,side_card_title,,Why it takes years,active,,,2026-08-09,
 curious,whattake,side_card_tone,,warn,active,,,2026-08-09,
-curious,whattake,side_card_provenance,,illustrative,active,,,2026-08-09,
+curious,whattake,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 curious,whattake,side_card_row_label,0,Finding the crypto,active,,,2026-08-09,
 curious,whattake,side_card_row_value,0,the longest phase,active,,,2026-08-09,
 curious,whattake,side_card_row_label,1,Changing it,active,,,2026-08-09,
@@ -1275,7 +1247,63 @@ curious,whattake,grid_card_href,0,/migrate,active,,,2026-08-09,
 curious,whattake,grid_card_title,1,The tools people use to do it,active,,,2026-08-09,
 curious,whattake,grid_card_body,1,The working artifacts a real migration produces.,active,,,2026-08-09,
 curious,whattake,grid_card_href,1,/business,active,,,2026-08-09,
-curious,whattake,grid_card_title,2,What comes out at the end,active,,,2026-08-09,
-curious,whattake,grid_card_body,2,A worked example of the report the whole thing produces.,active,,,2026-08-09,
-curious,whattake,grid_card_href,2,/report?example=1,active,,,2026-08-09,
+curious,whattake,grid_card_title,2,"The hard problem is inventory, not cryptography",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,whattake,grid_card_body,2,Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 curious,whattake,track_title,,Start anywhere. Nothing is locked.,active,,,2026-08-09,
+executive,mandate,grid_card_href,0,/assess,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,mandate,grid_card_href,1,/business/tools/program-charter,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,risk,grid_card_href,0,/report?example=1,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,risk,grid_card_href,1,/business/tools/risk-register,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,roadmap,grid_card_href,0,/business/tools/roadmap-builder,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,roadmap,grid_card_href,1,/compliance,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,pilot,grid_card_href,0,/playground/hybrid-encrypt,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,pilot,grid_card_href,1,/business/tools/crypto-api-refactor-audit,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,inventory,grid_card_href,0,/playground/openssl-studio,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,inventory,grid_card_href,1,/business/tools/crypto-cbom-builder,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,sizing,grid_card_href,0,/playground/api-security-jwt,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,sizing,grid_card_href,1,/playground/cert-capacity,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,controlplane,grid_card_href,0,/playground/cacp,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,controlplane,grid_card_href,1,/business/tools/hybrid-transition-planner,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,inventory,grid_card_href,1,/playground/pki-workshop,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,keystores,grid_card_href,0,/playground/envelope-encrypt,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,keystores,grid_card_href,1,/business/tools/infra-modernization-planner,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,capacity,grid_card_href,0,/playground/hsm-capacity,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,capacity,grid_card_href,1,/business?zone=management-tools,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,cutover,grid_card_href,0,/playground/vpn-sim,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,cutover,grid_card_href,1,/business/tools/deployment-playbook,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+ops,suppliers,grid_card_href,1,/business/tools/vendor-scorecard,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,provenance,grid_card_href,0,/library,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,provenance,grid_card_href,1,/revisions,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,reproduce,grid_card_href,0,/playground/slh-dsa,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,reproduce,grid_card_href,1,/playground/entropy-test,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,threatmodel,grid_card_href,0,/business/tools/crqc-scenario,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+researcher,threatmodel,grid_card_href,1,/threats,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,short,grid_card_href,0,/learn,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,short,grid_card_href,1,/business/tools/cost-of-inaction,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,break,grid_card_href,0,/playground/tls-simulator,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,break,grid_card_href,1,/business/tools/breach-simulator,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,mylife,grid_card_href,0,/playground/digital-id,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+curious,mylife,grid_card_href,1,/playground/bitcoin-flow,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+executive,verify,grid_card_href,2,/openssl,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+executive,evidence,grid_card_href,2,/migrate?tab=vendorrisk,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+developer,pilot,grid_card_href,2,/simulation?phase=p5,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+developer,inventory,grid_card_href,2,/assess?mode=quick,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+developer,sizing,grid_card_href,2,/business?zone=mitigation,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+developer,algorithm,grid_card_href,2,/patents,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+developer,closure,grid_card_href,2,/migrate?tab=replace,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+architect,controlplane,grid_card_href,2,/assess?mode=comprehensive,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+architect,inventory,grid_card_href,2,/openssl,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+architect,keystores,grid_card_href,2,/leaders,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+architect,protocols,grid_card_href,2,/patents,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+architect,sequence,grid_card_href,2,/timeline,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+ops,capacity,grid_card_href,2,/library?purpose=reference,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+ops,suppliers,grid_card_href,2,/patents,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+ops,cutover,grid_card_href,2,/revisions,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+ops,closeout,grid_card_href,2,/leaders,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+researcher,reproduce,grid_card_href,2,/assess?mode=comprehensive,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+researcher,threatmodel,grid_card_href,2,/patents,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+curious,short,grid_card_href,2,/explore,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+curious,break,grid_card_href,2,/openssl,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+curious,mylife,grid_card_href,2,/library?purpose=education,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+curious,whattake,grid_card_href,2,/report?example=1,active,,,2026-08-09,"Argument card, linked 2026-08-09 to where its claim is evidenced — not to fill a slot. Cards 1-2 name destinations; card 3 states the board's point and links only when a page actually backs that point."
+researcher,field,grid_card_href,2,/business?zone=migration,active,,,2026-08-09,"Reshuffled 2026-08-09 so the industry-landscape tab keeps a home. researcher/field is the one board whose subject IS sector-by-sector adoption, so it takes card 1; the regulation card moves to card 2 and the argument card carries the migration zone."
