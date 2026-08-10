@@ -1213,8 +1213,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/envelope-encrypt',
           },
           {
-            title: 'The whole site, by topic',
-            body: 'Every section arranged by subject instead of by role — for when the question is what exists, not what to do next.',
+            title: 'The parts list, not the route',
+            body: 'Every section indexed by subject — for checking whether a capability exists at all, before deciding where it belongs in the design.',
             href: '/explore',
           },
           {
