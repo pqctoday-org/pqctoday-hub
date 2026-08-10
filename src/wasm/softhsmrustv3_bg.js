@@ -159,18 +159,18 @@ export function _C_CreateObject(_h_session, p_template, count, ph_object) {
 }
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} h_private_key
- * @param {number} _p_template
- * @param {number} _ul_attribute_count
+ * @param {number} p_template
+ * @param {number} ul_attribute_count
  * @param {number} p_ciphertext
  * @param {number} ul_ciphertext_len
  * @param {number} ph_key
  * @returns {number}
  */
-export function _C_DecapsulateKey(_h_session, p_mechanism, h_private_key, _p_template, _ul_attribute_count, p_ciphertext, ul_ciphertext_len, ph_key) {
-    const ret = wasm._C_DecapsulateKey(_h_session, p_mechanism, h_private_key, _p_template, _ul_attribute_count, p_ciphertext, ul_ciphertext_len, ph_key);
+export function _C_DecapsulateKey(h_session, p_mechanism, h_private_key, p_template, ul_attribute_count, p_ciphertext, ul_ciphertext_len, ph_key) {
+    const ret = wasm._C_DecapsulateKey(h_session, p_mechanism, h_private_key, p_template, ul_attribute_count, p_ciphertext, ul_ciphertext_len, ph_key);
     return ret >>> 0;
 }
 
@@ -387,18 +387,18 @@ export function _C_DigestUpdate(h_session, p_part, ul_part_len) {
 }
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} h_key
- * @param {number} _p_template
- * @param {number} _ul_attribute_count
+ * @param {number} p_template
+ * @param {number} ul_attribute_count
  * @param {number} p_ciphertext
  * @param {number} pul_ciphertext_len
  * @param {number} ph_key
  * @returns {number}
  */
-export function _C_EncapsulateKey(_h_session, p_mechanism, h_key, _p_template, _ul_attribute_count, p_ciphertext, pul_ciphertext_len, ph_key) {
-    const ret = wasm._C_EncapsulateKey(_h_session, p_mechanism, h_key, _p_template, _ul_attribute_count, p_ciphertext, pul_ciphertext_len, ph_key);
+export function _C_EncapsulateKey(h_session, p_mechanism, h_key, p_template, ul_attribute_count, p_ciphertext, pul_ciphertext_len, ph_key) {
+    const ret = wasm._C_EncapsulateKey(h_session, p_mechanism, h_key, p_template, ul_attribute_count, p_ciphertext, pul_ciphertext_len, ph_key);
     return ret >>> 0;
 }
 
@@ -551,7 +551,7 @@ export function _C_GenerateKey(_h_session, p_mechanism, p_template, ul_count, ph
 }
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} p_public_key_template
  * @param {number} ul_public_key_attribute_count
@@ -561,8 +561,8 @@ export function _C_GenerateKey(_h_session, p_mechanism, p_template, ul_count, ph
  * @param {number} ph_private_key
  * @returns {number}
  */
-export function _C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key) {
-    const ret = wasm._C_GenerateKeyPair(_h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key);
+export function _C_GenerateKeyPair(h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key) {
+    const ret = wasm._C_GenerateKeyPair(h_session, p_mechanism, p_public_key_template, ul_public_key_attribute_count, p_private_key_template, ul_private_key_attribute_count, ph_public_key, ph_private_key);
     return ret >>> 0;
 }
 
