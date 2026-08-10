@@ -110,6 +110,16 @@ test.describe('Simulation — Verification & Closure is played (PR-3)', () => {
       .click()
     // The active-phase header reflects the terminal closure band…
     await expect(page.getByText(/Verification & Closure/i).first()).toBeVisible()
+    // 2026-08-02 (PR #496) put the phase card's content behind tabs — Decide /
+    // Progress / Resources / Signals — and the two things this test proves now
+    // live on DIFFERENT tabs. Measured per tab, not assumed:
+    //
+    //   Decide (default) : the L1 activity title      ✓   5-point summary  ✗
+    //   Progress         : the L1 activity title      ✗   5-point summary  ✓
+    //
+    // So the L1 title is asserted first, on the default tab, and only then does
+    // the test switch to Progress for the L2 goal band. Clicking Progress up
+    // front hides the title and fails the first assertion instead.
     // …and its real activity tree renders (07292026: re-anchored to what a
     // FRESH run actually shows — the 07182026 tree revision renamed the dossier
     // step to "Assemble the migration evidence dossier" AND moved it into the
@@ -120,8 +130,12 @@ test.describe('Simulation — Verification & Closure is played (PR-3)', () => {
     await expect(
       page.getByText(/Set the Verification Standard & Closure Plan/i).first()
     ).toBeVisible({ timeout: 15_000 })
+    await page
+      .getByRole('button', { name: /^Progress$/i })
+      .first()
+      .click()
     await expect(
       page.getByText(/verified against the 5-point evidence standard/i).first()
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 15_000 })
   })
 })
