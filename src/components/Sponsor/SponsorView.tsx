@@ -85,7 +85,19 @@ const TIERS: Tier[] = [
   },
 ]
 
-interface SponsorPersona {
+/**
+ * A sponsor AUDIENCE — B+ remediation 4.1 (2026-08-10), renamed from
+ * `SponsorPersona`/`PERSONAS`.
+ *
+ * This page defined its own list of "personas" (vendors, foundations,
+ * individuals) with no relationship whatsoever to the six the rest of the hub
+ * runs on (executive, developer, architect, researcher, ops, curious). Two
+ * unrelated persona models sharing one word, in one codebase, is a real trap
+ * for whoever edits next — a reader of `PERSONAS` in this file would
+ * reasonably assume it meant `learningPersonas.PERSONAS`. Nothing about the
+ * page's behaviour changes; the vocabulary stops colliding.
+ */
+interface SponsorAudience {
   icon: LucideIcon
   title: string
   description: string
@@ -94,7 +106,7 @@ interface SponsorPersona {
   cta?: { label: string; to: string }
 }
 
-const PERSONAS: SponsorPersona[] = [
+const SPONSOR_AUDIENCES: SponsorAudience[] = [
   {
     icon: Building2,
     title: 'Vendors',
@@ -209,26 +221,26 @@ function MarketContext() {
   )
 }
 
-function Personas() {
+function SponsorAudiences() {
   return (
     <section className="mb-12">
       <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6 text-center">
         Who sponsors PQC Today
       </h2>
       <div className="grid md:grid-cols-3 gap-4">
-        {PERSONAS.map((persona) => {
-          const Icon = persona.icon
+        {SPONSOR_AUDIENCES.map((audience) => {
+          const Icon = audience.icon
           return (
-            <div key={persona.title} className="glass-panel p-6 flex flex-col">
+            <div key={audience.title} className="glass-panel p-6 flex flex-col">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Icon className="text-primary" size={22} />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">{persona.title}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{audience.title}</h3>
               </div>
-              <p className="text-sm text-secondary mb-4">{persona.description}</p>
+              <p className="text-sm text-secondary mb-4">{audience.description}</p>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {persona.bullets.map((bullet) => (
+                {audience.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-start gap-2">
                     <CheckCircle2
                       size={14}
@@ -239,12 +251,12 @@ function Personas() {
                   </li>
                 ))}
               </ul>
-              {persona.cta && (
+              {audience.cta && (
                 <Link
-                  to={persona.cta.to}
+                  to={audience.cta.to}
                   className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
                 >
-                  {persona.cta.label}
+                  {audience.cta.label}
                   <ArrowRight size={14} aria-hidden="true" />
                 </Link>
               )}
@@ -470,7 +482,7 @@ export function SponsorView() {
     <div className="mx-auto max-w-6xl px-4 py-8">
       <Hero />
       <MarketContext />
-      <Personas />
+      <SponsorAudiences />
       <Tiers />
       <EditorialPromise />
       <Goal />

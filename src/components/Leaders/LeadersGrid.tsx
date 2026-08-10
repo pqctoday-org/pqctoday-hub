@@ -27,6 +27,8 @@ import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
 import { LeadersTable } from './LeadersTable'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { PERSONA_LEADER_GUIDANCE } from './leadersConstants'
+import { PERSONAS } from '@/data/learningPersonas'
 import { LeadersExecutivePanel } from './LeadersExecutivePanel'
 import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
@@ -659,6 +661,35 @@ export const LeadersGrid = () => {
       {/* Executive overview — institutional influence + why each group matters.
           Exec only; other roles see the directory unchanged. */}
       {selectedPersona === 'executive' && <LeadersExecutivePanel leaders={leadersData} />}
+
+      {/* B+ remediation 4.1 (2026-08-10): "who to follow and why", per role.
+          The grid was byte-identical for every role that could see it and
+          listed people without saying why any of them should matter to the
+          reader. Each button applies the category filter this page already
+          has, so the guidance is also the shortest route to acting on it —
+          the directory becomes a reading list rather than a phone book. */}
+      {selectedPersona && (PERSONA_LEADER_GUIDANCE[selectedPersona]?.length ?? 0) > 0 && (
+        <div className="rounded-lg border border-border bg-muted/20 p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Where to start as {PERSONAS[selectedPersona].label}
+          </p>
+          <ul className="space-y-2">
+            {PERSONA_LEADER_GUIDANCE[selectedPersona].map((g) => (
+              <li key={g.category} className="text-sm leading-snug">
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => handleCategorySelect(g.category)}
+                  className="h-auto p-0 text-sm font-semibold text-primary"
+                >
+                  {g.category}
+                </Button>
+                <span className="text-muted-foreground"> — {g.why}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Curious user intro context */}
       {(selectedPersona === 'curious' || experienceLevel === 'curious') && (
