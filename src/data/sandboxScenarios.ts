@@ -254,7 +254,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'HSM Performance Benchmark',
     emoji: '📊',
     useCase:
-      "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment; 32 with --include-slow, which adds the six SLH-DSA small-signature parameter sets) — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers.",
+      "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment; 32 with --include-slow, which adds the six SLH-DSA small-signature parameter sets) — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers. A second access path measures the same operations through a REAL KMIP 3.0 client over TLS against pqc-kmip:5696 — remote protocol calls that each pay a full TLS handshake, so they are deliberately never plotted against the in-process PKCS#11 numbers.",
     algorithms: ['ML-DSA', 'ML-KEM', 'Benchmark'],
     difficulty: 'advanced',
     trackId: 'web',
