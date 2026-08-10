@@ -1,0 +1,12 @@
+[
+  {
+    "ref_id": "BSI TR-02102-1",
+    "body_name": "BSI Post-Quantum Cryptography",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "ISO/IEC 14888-4:2024",
+    "body_name": "ISO/IEC JTC 1 SC 27",
+    "reason": "Probable landing page, not the document (74,337 bytes of markup, only 2,852 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]
