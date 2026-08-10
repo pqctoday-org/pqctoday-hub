@@ -313,6 +313,32 @@ export const ChangelogView = () => {
     })).filter((v) => v.sections.length > 0)
   }, [filters, personaOnly, selectedPersona, personaKeyword, normalizedQuery])
 
+  // B+ remediation 4.1 (2026-08-10). The "For me" control was a keyword regex
+  // presented to the reader as a filter: only ~25 of ~1,150 entries carry an
+  // explicit [persona:X] tag, so the overwhelming majority of what it returned
+  // was a GUESS, and the control said nothing about that. "This is an accuracy
+  // fix before it is a usability one: the current control tells the reader
+  // something untrue about what it is doing."
+  //
+  // Retro-tagging 1,150 historical entries is not something this change can do
+  // honestly — nobody can now reconstruct which roles a 2025 entry was for. So
+  // the fix is to STATE the split rather than hide it, and to make the tag the
+  // documented convention for new entries (see CHANGELOG.md's own header).
+  const personaMatchSplit = useMemo(() => {
+    if (!personaOnly || !selectedPersona) return null
+    let tagged = 0
+    let guessed = 0
+    for (const v of filteredVersions) {
+      for (const s of v.sections) {
+        for (const e of s.entries) {
+          if (e.meta.personas.includes(selectedPersona)) tagged++
+          else guessed++
+        }
+      }
+    }
+    return { tagged, guessed }
+  }, [filteredVersions, personaOnly, selectedPersona])
+
   const groupedByDate = useMemo(() => groupVersionsByDate(filteredVersions), [filteredVersions])
 
   const allFiltersActive =
@@ -488,7 +514,7 @@ export const ChangelogView = () => {
                     ? 'bg-primary/20 border-primary/50 text-primary'
                     : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
                 )}
-                title="Show only entries tagged or relevant to the selected persona"
+                title="Entries tagged for your role, plus a keyword guess over the untagged ones — see the note below when active"
               >
                 <UserCheck size={14} />
                 <span>For me</span>
@@ -596,6 +622,37 @@ export const ChangelogView = () => {
           </Button>
         </div>
       </motion.div>
+
+      {/* B+ remediation 4.1: say what the "For me" filter actually did. A
+          filter that is mostly a keyword guess is fine; a filter that hides
+          that fact from the reader is not. */}
+      {personaMatchSplit && (
+        <p className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{personaMatchSplit.tagged}</span>{' '}
+          {personaMatchSplit.tagged === 1 ? 'entry' : 'entries'} explicitly tagged for your role
+          {personaMatchSplit.guessed > 0 && (
+            <>
+              , plus{' '}
+              <span className="font-semibold text-foreground">{personaMatchSplit.guessed}</span>{' '}
+              matched by keyword — a guess, not a tag. Older entries pre-date the role tag, so the
+              keyword pass is how they surface at all
+            </>
+          )}
+          .
+        </p>
+      )}
+
+      {/* B+ remediation 4.1: a first-time non-technical reader arriving at
+          ~1,150 engineering entries needs to be told what this page is before
+          it is useful. Stated, not hidden — the page stays fully reachable. */}
+      {selectedPersona === 'curious' && (
+        <p className="rounded-lg border border-primary/25 bg-primary/5 px-3 py-2 text-xs leading-relaxed text-foreground">
+          This is the engineering record of every change to the site — useful if you want to check
+          that it is actively maintained, and not somewhere you need to read. The{' '}
+          <span className="font-semibold">Revisions</span> feed summarises what changed in the
+          content itself, which is usually the question behind the question.
+        </p>
+      )}
 
       {/* Changelog Content — vertical timeline layout */}
       <motion.div
