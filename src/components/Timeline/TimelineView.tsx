@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
-import { Globe, Link2, Check, Search, Download, Lightbulb, AlertTriangle } from 'lucide-react'
+import {
+  Globe,
+  Link2,
+  Check,
+  Search,
+  Download,
+  Lightbulb,
+  AlertTriangle,
+  CalendarPlus,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
@@ -30,6 +39,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { phasesToIcs, downloadIcs } from '../../utils/timelineIcs'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -297,6 +307,35 @@ export const TimelineView = () => {
     [ganttData]
   )
 
+  /**
+   * Calendar export — B+ remediation 4.3 (2026-08-10). "Ops can act on the
+   * dates instead of transcribing them." Exports whatever the reader has
+   * already filtered to, so the calendar matches the chart in front of them
+   * rather than the whole world.
+   */
+  const handleExportIcs = useCallback(() => {
+    // `mobileGanttData` is the region/country/search-filtered set (its name is
+    // historical — it is not mobile-only). Exporting it rather than `ganttData`
+    // means the calendar matches what the reader has narrowed to.
+    if (mobileGanttData.length === 0) return
+    const chunks = mobileGanttData.map((gcd: GanttCountryData) =>
+      phasesToIcs(gcd.phases, {
+        countryName: gcd.country.countryName,
+        bodyName: gcd.country.bodies[0]?.name ?? 'Regulator',
+      })
+    )
+    // One calendar, many events: concatenating VCALENDARs is not valid, so
+    // splice the VEVENT blocks of every country into the first file's envelope.
+    const first = chunks[0]
+    const events = chunks
+      .slice(1)
+      .map((c: string) => c.split('\r\n').slice(6, -2).join('\r\n'))
+      .filter(Boolean)
+      .join('\r\n')
+    const merged = events ? first.replace('END:VCALENDAR', `${events}\r\nEND:VCALENDAR`) : first
+    downloadIcs('pqc-timeline.ics', merged)
+  }, [mobileGanttData])
+
   // Register this page's actions with the global top bar (HEADER-TOPBAR-
   // STANDARDIZATION-PLAN-2026-08-01.md §3/§4) — info/export/endorse/flag
   // render there now, not as a row on the page itself.
@@ -505,6 +544,22 @@ export const TimelineView = () => {
             />
           </aside>
           <div className="flex-1 min-w-0">
+            {/* B+ remediation 4.3: the operator's next move after reading a
+                deadline is to schedule around it. Offered where the dates are,
+                and only to the role whose grade named it — every other reader
+                already has the CSV export in the top bar. */}
+            {selectedPersona === 'ops' && mobileGanttData.length > 0 && (
+              <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
+                <CalendarPlus size={14} className="shrink-0 text-primary" aria-hidden="true" />
+                <p className="flex-1 text-xs leading-snug text-muted-foreground">
+                  Put these phases in your own calendar as all-day windows — the corpus records
+                  years, not dates, and the export says so on every entry.
+                </p>
+                <Button variant="outline" size="sm" onClick={handleExportIcs} className="text-xs">
+                  Export {mobileGanttData.length} matching as .ics
+                </Button>
+              </div>
+            )}
             {ganttDataEmpty ? (
               <EmptyState
                 icon={<Globe size={28} aria-hidden="true" />}

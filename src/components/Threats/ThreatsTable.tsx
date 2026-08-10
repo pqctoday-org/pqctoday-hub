@@ -2,6 +2,7 @@
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lucide-react'
+import { evidenceStrength } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -14,12 +15,20 @@ import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
 
-export type SortField = 'industry' | 'threatId' | 'criticality'
+// B+ remediation 4.3 (2026-08-10): 'evidence' — see ThreatsDashboard's own
+// SortField and `evidenceStrength`. The header for it is rendered only for
+// researcher, since it is that reader's specific complaint.
+export type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 export type SortDirection = 'asc' | 'desc'
 
 interface ThreatsTableProps {
   items: ThreatItem[]
   sortField: SortField
+  /** Renders the evidence-strength column + sort. B+ remediation 4.3
+   *  (2026-08-10) — researcher's specific complaint was that this corpus
+   *  ordered by recency, so the control is offered where that complaint is,
+   *  rather than adding a ninth column for every reader. */
+  showEvidence?: boolean
   sortDirection: SortDirection
   onSort: (field: SortField) => void
   onItemClick: (item: ThreatItem) => void
@@ -28,6 +37,7 @@ interface ThreatsTableProps {
 export const ThreatsTable = ({
   items,
   sortField,
+  showEvidence = false,
   sortDirection,
   onSort,
   onItemClick,
@@ -97,6 +107,23 @@ export const ThreatsTable = ({
                     (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </div>
               </th>
+              {showEvidence && (
+                <th
+                  className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => onSort('evidence')}
+                  title="Peer review, a trusted-source id, extraction confidence and stated accuracy, combined. Sorting by this puts the best-evidenced records first, not the newest."
+                >
+                  <div className="flex items-center justify-center gap-1 md:justify-start">
+                    <span>Evidence</span>
+                    {sortField === 'evidence' &&
+                      (sortDirection === 'asc' ? (
+                        <ChevronUp size={14} />
+                      ) : (
+                        <ChevronDown size={14} />
+                      ))}
+                  </div>
+                </th>
+              )}
               <th className="p-4 font-semibold text-sm">Crypto</th>
               <th className="p-4 font-semibold text-sm">PQC Repl.</th>
               <th className="hidden lg:table-cell p-4 font-semibold text-sm text-center">
@@ -200,6 +227,16 @@ export const ThreatsTable = ({
                               <ThreatClassBadge threat={item} />
                             </div>
                           </td>
+                          {showEvidence && (
+                            <td className="p-4 text-center text-xs font-mono">
+                              <span
+                                className="text-muted-foreground"
+                                title={`Peer-reviewed: ${item.peerReviewed ?? 'unknown'} · trusted source: ${item.trustedSourceId ?? 'none recorded'} · confidence: ${item.confidenceScore ?? '—'} · stated accuracy: ${item.accuracyPct ?? '—'}%`}
+                              >
+                                {evidenceStrength(item)}
+                              </span>
+                            </td>
+                          )}
                           <td className="p-4 text-xs font-mono overflow-hidden">
                             <div className="flex flex-wrap items-center gap-1">
                               {/* Shor tier describes the urgency of breaking this specific

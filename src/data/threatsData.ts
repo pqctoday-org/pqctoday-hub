@@ -17,6 +17,11 @@ export interface ThreatData {
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   sourceUrlQuality?: string
+  /** The trusted-sources registry id backing this record. Present on 107 of 114
+   *  active rows; parsed from the CSV since 2026-08-10 (B+ remediation 4.3) so
+   *  `evidenceStrength` can weigh "who says this" rather than only how
+   *  confident the extraction was. */
+  trustedSourceId?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
   confidenceScore?: number
@@ -100,6 +105,7 @@ function transformThreat(row: RawThreatRow): ThreatData | null {
           .filter(Boolean)
       : undefined,
     sourceUrlQuality: row.source_url_quality || undefined,
+    trustedSourceId: row.trusted_source_id || undefined,
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
@@ -147,4 +153,22 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
     skipEmptyLines: true,
   })
   return (data as RawThreatRow[]).map(transformThreat).filter((r): r is ThreatData => r !== null)
+}
+
+/**
+ * How well-evidenced a threat record is, 0–100 — B+ remediation 4.3
+ * (2026-08-10). Composed only of fields the corpus actually carries, and
+ * weighted the way the rest of the site weights evidence: who says it and
+ * whether it was reviewed outrank how confident the extraction was.
+ *
+ * A record missing a field scores zero for that component rather than being
+ * excluded or imputed — "we don't know" must sort below "we checked", never
+ * above it.
+ */
+export function evidenceStrength(threat: ThreatItem): number {
+  const peer = threat.peerReviewed === 'yes' ? 40 : threat.peerReviewed === 'partial' ? 20 : 0
+  const sourced = threat.trustedSourceId?.trim() ? 25 : 0
+  const confidence = Math.min(20, ((threat.confidenceScore ?? 0) / 100) * 20)
+  const accuracy = Math.min(15, ((threat.accuracyPct ?? 0) / 100) * 15)
+  return Math.round(peer + sourced + confidence + accuracy)
 }
