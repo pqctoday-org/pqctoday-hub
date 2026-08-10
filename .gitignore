@@ -309,6 +309,16 @@ scripts/*
 # defect — check for one whenever a new scripts/ entry point lands.
 !scripts/audit-role-board-coverage.ts
 
+# SBOM version-drift gate — FOURTH occurrence of the trap described directly
+# above, and this line exists because the check was written on 2026-08-09,
+# `git check-ignore` was run before committing, and it reported the file as
+# swallowed. That check is now the habit worth keeping: after adding any
+# scripts/ entry point, run
+#     git check-ignore -v scripts/<new-file>
+# and if it prints a match, add the `!scripts/...` line here BEFORE committing
+# the ci.yml or package.json side. Three of the four occurrences shipped.
+!scripts/audit-sbom-versions.ts
+
 # Role-board content generator — runs in `npm run build` (npm run generate:
 # role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD
 # export now comes from its OUTPUT (src/data/generated/roleBoardContent.
