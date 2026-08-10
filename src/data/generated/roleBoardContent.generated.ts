@@ -2783,7 +2783,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The tools people use to do it',
-            body: 'The working artifacts a real migration produces.',
+            body: 'The working artifacts a real migration produces. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business',
           },
           {

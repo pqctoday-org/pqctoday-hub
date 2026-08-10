@@ -18,6 +18,7 @@ import {
   PanelLeft,
   Network,
   ArrowRight,
+  Wrench,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
@@ -46,6 +47,43 @@ const DEV_CHEATSHEET: QuickCmd[] = [
   { label: 'kem', cmd: 'kem', hint: 'ML-KEM encapsulate / decapsulate' },
   { label: 'enc', cmd: 'enc', hint: 'Symmetric encryption / decryption' },
 ]
+/**
+ * Ops strip — B+ remediation 4.6 (2026-08-10). The review: "Four role-specific
+ * strips exist inside the page and not one says what a recipe proves. Ops has
+ * no strip at all."
+ *
+ * Rotation and inspection, because those are the two things an operator does to
+ * a live estate: replace a key that is about to expire, and find out what is
+ * actually deployed. Same shape as the developer strip so the page keeps one
+ * pattern.
+ */
+const OPS_CHEATSHEET: QuickCmd[] = [
+  { label: 'genpkey', cmd: 'genpkey', hint: 'Mint the replacement key before you rotate to it' },
+  { label: 'x509', cmd: 'x509', hint: 'Inspect a deployed certificate: issuer, expiry, algorithm' },
+  { label: 'req', cmd: 'req', hint: 'Produce the CSR your CA needs for the new key' },
+  // 'pkcs12' rather than a 'verify' command: the category union in
+  // categories.ts has no 'verify', and a quick-jump that resolves to nothing
+  // would be a dead button on a strip whose whole promise is that these run.
+  {
+    label: 'pkcs12',
+    cmd: 'pkcs12',
+    hint: 'Bundle key + chain the way a server or appliance wants it',
+  },
+]
+
+/**
+ * What each strip PROVES — the outcome line the review asked for. "The outcome
+ * line is what turns a command into a lesson"; a quick-jump bar without one is
+ * a menu of verbs.
+ */
+const STRIP_OUTCOMES: Record<string, string> = {
+  developer:
+    'Run any of these and you have done the real operation, not read about it — the same binary, the same flags you would put in a script.',
+  ops: 'Together these are a rotation rehearsal: mint, request, verify, inspect. Nothing here touches your estate, so it is safe to get wrong first.',
+  researcher:
+    'Each link lands on the specification behind what the tool just did, so a result can be traced to the document that defines it.',
+}
+
 const RESEARCHER_LINKS = [
   { label: 'ML-KEM', to: '/algorithms?highlight=ML-KEM-768&tab=detailed' },
   { label: 'ML-DSA', to: '/algorithms?highlight=ML-DSA-65&tab=detailed' },
@@ -207,6 +245,37 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                 {label}
               </Button>
             ))}
+            <p className="w-full text-[11px] leading-snug text-muted-foreground">
+              {STRIP_OUTCOMES.developer}
+            </p>
+          </div>
+        )}
+        {!embedded && selectedPersona === 'ops' && (
+          <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2 text-xs">
+            <Wrench size={13} className="shrink-0 text-primary" aria-hidden="true" />
+            <span className="shrink-0 font-medium text-muted-foreground">
+              Rotation &amp; inspection:
+            </span>
+            {OPS_CHEATSHEET.map(({ label, cmd, hint }) => (
+              <Button
+                key={cmd}
+                variant="ghost"
+                size="sm"
+                title={hint}
+                onClick={() => handleCategoryChange(cmd)}
+                className={clsx(
+                  'h-auto rounded border px-2 py-0.5 font-mono text-[11px] transition-colors',
+                  category === cmd
+                    ? 'border-primary/30 bg-primary/15 text-primary'
+                    : 'border-border text-muted-foreground hover:border-primary/20 hover:bg-muted/30 hover:text-foreground'
+                )}
+              >
+                {label}
+              </Button>
+            ))}
+            <p className="w-full text-[11px] leading-snug text-muted-foreground">
+              {STRIP_OUTCOMES.ops}
+            </p>
           </div>
         )}
         {!embedded && selectedPersona === 'researcher' && (
@@ -222,6 +291,9 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
                 {label} ↗
               </Link>
             ))}
+            <p className="w-full text-[11px] leading-snug text-muted-foreground">
+              {STRIP_OUTCOMES.researcher}
+            </p>
           </div>
         )}
 
