@@ -104,6 +104,20 @@ export interface QuizQuestion {
   explanation: string
   /** Optional link to relevant app page for deeper learning */
   learnMorePath?: string
+  /**
+   * Provenance (added 2026-08-10). `source` names the document the question's
+   * correct answer rests on — a library reference_id where one exists, or the
+   * document's own title; `sourceUrl` is the link to it.
+   *
+   * Distinct from `learnMorePath`, which points at OUR page about the topic:
+   * that is a teaching link, not a citation, and the quiz source's trust chain
+   * read n/a for exactly that reason — nothing recorded where a claim came
+   * from. Optional on purpose: the columns start empty across all 1,027 rows
+   * and are filled by review, never generated, so a populated value always
+   * means someone checked.
+   */
+  source?: string
+  sourceUrl?: string
   /** Personas that this question is relevant for */
   personas: string[]
   /** Industries this question is relevant to (empty = industry-agnostic, always included) */
