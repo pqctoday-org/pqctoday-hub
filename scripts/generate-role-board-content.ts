@@ -77,7 +77,10 @@ interface ContentRow {
 
 const ROLES = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curious'] as const
 const REQUIRED_GRID_CARDS = 3
-const REQUIRED_VARIANTS_PER_ROLE = 3
+const REQUIRED_VARIANTS_PER_ROLE = 6
+
+/** See PersonaJourneyBoard['sideCard']['provenance'] for what each one means. */
+const SIDE_CARD_PROVENANCE = new Set(['sourced', 'illustrative', 'guidance'])
 
 // Slots every board must carry — everything except the two optional ones
 // (heroBadge, capstoneChip — absent for researcher by design) and footnote/
@@ -317,13 +320,46 @@ async function main() {
 
       for (const req of REQUIRED_SCALAR_SLOTS) requireScalar(slots, req, ctx)
 
-      const gridTitles = repeating(slots, 'grid_card_title')
-      const gridBodies = repeating(slots, 'grid_card_body')
-      if (gridTitles.length !== REQUIRED_GRID_CARDS || gridBodies.length !== REQUIRED_GRID_CARDS) {
+      /**
+       * Grid cards are paired by `slot_index`, not by array position — same
+       * hazard `byIndex` documents for side-card rows. Titles at indices 0,1,2
+       * zipped against bodies at 0,1,3 have equal LENGTH, so a count check
+       * passes and body[2] silently pairs with title[2].
+       *
+       * `grid_card_href` (2026-08-09) is optional and keyed on the SAME index:
+       * a card with no href renders exactly as it always has. An href with no
+       * matching title is always an authoring error, so it throws.
+       */
+      const gridTitleByIndex = byIndex(slots, 'grid_card_title')
+      const gridBodyByIndex = byIndex(slots, 'grid_card_body')
+      const gridHrefByIndex = byIndex(slots, 'grid_card_href')
+      const gridIndices = [...gridTitleByIndex.keys()].sort((a, b) => Number(a) - Number(b))
+      if (
+        gridIndices.length !== REQUIRED_GRID_CARDS ||
+        gridBodyByIndex.size !== REQUIRED_GRID_CARDS
+      ) {
         throw new Error(
-          `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridTitles.length}/${gridBodies.length}`
+          `${ctx}: expected exactly ${REQUIRED_GRID_CARDS} grid_card_title/grid_card_body pairs, got ${gridIndices.length}/${gridBodyByIndex.size}`
         )
       }
+      for (const idx of gridIndices) {
+        if (!gridBodyByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_title[${idx}] has no matching grid_card_body`)
+        }
+      }
+      for (const idx of gridBodyByIndex.keys()) {
+        if (!gridTitleByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_body[${idx}] has no matching grid_card_title`)
+        }
+      }
+      for (const idx of gridHrefByIndex.keys()) {
+        if (!gridTitleByIndex.has(idx)) {
+          throw new Error(`${ctx}: grid_card_href[${idx}] has no matching grid_card_title`)
+        }
+      }
+      const gridTitles = gridIndices.map((i) => gridTitleByIndex.get(i)!)
+      const gridBodies = gridIndices.map((i) => gridBodyByIndex.get(i)!)
+      const gridHrefs = gridIndices.map((i) => gridHrefByIndex.get(i))
       // Paired by slot_index, not by position — see `byIndex`.
       const labelByIndex = byIndex(slots, 'side_card_row_label')
       const valueByIndex = byIndex(slots, 'side_card_row_value')
@@ -340,6 +376,15 @@ async function main() {
       }
       const rowLabels = rowIndices.map((i) => labelByIndex.get(i)!)
       const rowValues = rowIndices.map((i) => valueByIndex.get(i)!)
+
+      // `as '…'` in the emitted string is a cast, not a check — a typo'd
+      // provenance would compile and render an empty chip. Validate on read.
+      const provenance = requireScalar(slots, 'side_card_provenance', ctx)
+      if (!SIDE_CARD_PROVENANCE.has(provenance)) {
+        throw new Error(
+          `${ctx}: unknown side_card_provenance "${provenance}" (expected ${[...SIDE_CARD_PROVENANCE].join(', ')})`
+        )
+      }
 
       const heroBadgeText = scalar(slots, 'hero_badge_text')
       const heroBadgeTone = scalar(slots, 'hero_badge_tone')
@@ -376,7 +421,7 @@ async function main() {
         sideCard: {
           title: ${jsString(requireScalar(slots, 'side_card_title', ctx))},
           tone: ${jsString(requireScalar(slots, 'side_card_tone', ctx))} as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative',
+          provenance: ${jsString(requireScalar(slots, 'side_card_provenance', ctx))} as 'sourced' | 'illustrative' | 'guidance',
           rows: [${rowLabels.map((label, i) => `{ label: ${jsString(label)}, value: ${jsString(rowValues[i])} }`).join(', ')}],
           punchline: ${jsString(requireScalar(slots, 'side_card_punchline', ctx))},
           ${sideCardFootnote !== undefined ? `footnote: ${jsString(sideCardFootnote)},` : ''}
@@ -384,10 +429,17 @@ async function main() {
         },
         gridTitle: ${jsString(requireScalar(slots, 'grid_title', ctx))},
         gridSub: ${jsString(requireScalar(slots, 'grid_sub', ctx))},
-        gridCards: [${gridTitles.map((title, i) => `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])} }`).join(', ')}] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+        gridCards: [${gridTitles
+          .map(
+            (title, i) =>
+              `{ title: ${jsString(title)}, body: ${jsString(gridBodies[i])}${
+                gridHrefs[i] !== undefined ? `, href: ${jsString(gridHrefs[i]!)}` : ''
+              } }`
+          )
+          .join(', ')}] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: ${jsString(requireScalar(slots, 'track_title', ctx))},
         ${trackNote !== undefined ? `trackNote: ${jsString(trackNote)},` : ''}

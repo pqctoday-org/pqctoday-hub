@@ -1,0 +1,17 @@
+[
+  {
+    "total_chars": 209465,
+    "covered_chars": 55500,
+    "coverage_pct": 26.5,
+    "windows_run": 4,
+    "windows_possible": 16,
+    "fully_covered": false,
+    "per_window_yield": [
+      3,
+      3,
+      0,
+      0
+    ],
+    "ref_id": "NIST-SP-800-171Ar3"
+  }
+]

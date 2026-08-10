@@ -12,12 +12,13 @@
  */
 import {
   ROLE_CROSSWALK,
+  ROLE_SOURCES,
   FTE_PER_CRYPTO_INSTANCES,
   type FrameworkRoleId,
   type RoleMapping,
 } from '@/data/roleCrosswalk'
 
-export { ROLE_CROSSWALK, FTE_PER_CRYPTO_INSTANCES }
+export { ROLE_CROSSWALK, ROLE_SOURCES, FTE_PER_CRYPTO_INSTANCES }
 export type { FrameworkRoleId, RoleMapping }
 
 /** The seven core roles in the order the framework table lists them (p. 160–161). */

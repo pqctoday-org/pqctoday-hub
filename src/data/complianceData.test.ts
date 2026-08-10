@@ -4,6 +4,7 @@ import {
   allComplianceFrameworks,
   complianceDB,
   conceptIdForFramework,
+  mergeFrameworksByLabel,
 } from './complianceData'
 import { COMPLIANCE_CURIOUS_PREFACES } from './complianceCuriousPrefaces'
 import { maturityByRefId, maturityRequirements } from './maturityGovernanceData'
@@ -69,28 +70,42 @@ describe('complianceData', () => {
   })
 
   it('resolves duplicate-label rows deterministically, order-independent', () => {
-    // ANSSI and CRYPTREC each appear as a compliance_framework row AND a
-    // standardization_body row. The mechanism under test: a row that REQUIRES
-    // PQC wins over one that does not, so a real obligation is never silently
-    // shadowed by CSV import order. That mechanism is unchanged.
+    // The mechanism: when two rows share a label, the one that REQUIRES PQC wins,
+    // whichever order they arrive in — so a real obligation is never silently
+    // shadowed by CSV import order.
     //
-    // CHANGED 2026-07-31 (WP-2.2 remediation): ANSSI-BODY's requires_pqc was
-    // 'yes' before this pass — one of 20 organization rows (standards/
-    // certification bodies) wrongly claiming a PQC mandate, which is exactly
-    // the defect class R6 in validators.py exists to catch. Its own cited
-    // page states ANSSI "vise la mise en place d'obligations PQC... a partir
-    // de 2027" — a real, dated, but not-yet-in-force, narrowly-scoped
-    // obligation — so it is now 'expected', not 'yes'. The sibling
-    // compliance_framework row (id=ANSSI) was already 'guidance', unchanged
-    // by this pass and never flagged. With neither surviving ANSSI row making
-    // an unconditional 'yes' claim, the honestly-merged answer is false — the
-    // data got MORE accurate, and this pin needed to move with it.
+    // Driven by a FIXTURE, not by live rows. This assertion used to pin whichever
+    // real framework happened to claim requires_pqc=yes, and that pin has had to
+    // move twice as the data got more accurate: ANSSI on 2026-07-31, then CRYPTREC
+    // on 2026-08-09 (its cited standard still lists RSA/ECDSA and the binding body
+    // is the Cybersecurity Strategic HQ, so 'guidance' is the honest value).
     //
-    // CRYPTREC is the control case proving the dedup mechanism itself still
-    // works: its compliance_framework row (id=CRYPTREC, untouched by WP-2.2)
-    // independently states requires_pqc=yes, so it still wins the merge.
+    // After the second move, NO active duplicate-label pair claims 'yes' — the two
+    // that exist are ANSSI/ANSSI-BODY and CRYPTREC/CRYPTREC-BODY, all now
+    // guidance/expected. A live-data version of this test would therefore assert
+    // only that both merge to false, which is equally true if the merge is broken.
+    // The fixture keeps the test about the code; the live values are pinned below
+    // as data, where they belong.
+    const weak = { label: 'DUP', requiresPQC: false, deadline: 'none', notes: 'weak' }
+    const strong = { label: 'DUP', requiresPQC: true, deadline: '2030', notes: 'strong' }
+
+    expect(mergeFrameworksByLabel([weak, strong])['DUP'].requiresPQC).toBe(true)
+    expect(mergeFrameworksByLabel([strong, weak])['DUP'].requiresPQC).toBe(true)
+    // and the winning row's own deadline/notes travel with it, not the loser's
+    expect(mergeFrameworksByLabel([strong, weak])['DUP'].notes).toBe('strong')
+
+    // Same requiresPQC on both: last one wins, matching the prior last-wins behaviour.
+    const a = { label: 'SAME', requiresPQC: false, deadline: 'x', notes: 'first' }
+    const b = { label: 'SAME', requiresPQC: false, deadline: 'y', notes: 'second' }
+    expect(mergeFrameworksByLabel([a, b])['SAME'].notes).toBe('second')
+  })
+
+  it('pins the current merged values for the two real duplicate-label pairs', () => {
+    // Data pins, deliberately separate from the mechanism test above so that a
+    // legitimate data correction cannot quietly hollow out the mechanism check.
+    // Both pairs are guidance/expected as of 2026-08-09, so both merge to false.
     expect(complianceDB['ANSSI'].requiresPQC).toBe(false)
-    expect(complianceDB['CRYPTREC'].requiresPQC).toBe(true)
+    expect(complianceDB['CRYPTREC'].requiresPQC).toBe(false)
   })
 
   it('has no unexpected duplicate labels in active rows', () => {

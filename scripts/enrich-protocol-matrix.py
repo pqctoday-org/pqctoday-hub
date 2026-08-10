@@ -99,17 +99,31 @@ DATATRACKER_TO_STAGE: dict[str, tuple[str, int]] = {
     "rfcqueue": ("rfc-editor-queue", 6),
     "ann": ("rfc-editor-queue", 6),
     "approved": ("rfc-editor-queue", 6),
-    "sub-pub": ("iesg-submitted", 5),      # added 07-27 (draft-stream-ietf's own "submitted" slug)
+    # FIXED 2026-08-09. These five all occur BEFORE IETF Last Call in the real
+    # flow (WG handoff -> Publication Requested -> AD Evaluation -> shepherd
+    # writeup -> Last Call Requested -> IN Last Call), but were labelled
+    # "iesg-submitted", which this scale defines as IESG review/telechat AFTER
+    # Last Call (level 6 vs Last Call's 5). Every doc sitting in one of them
+    # was therefore encoded a full level too high, and when the datatracker
+    # later reported the doc genuinely IN Last Call, the applier correctly read
+    # the correction as a downgrade and blocked it. Five live cells were stuck
+    # that way (tls-1-3/dtls-1-3/fido-2/macsec pureKem, smime hybridKem).
+    # wg-last-call is the closest honest label below ietf-last-call; the scale
+    # has no "with the IESG but pre-Last-Call" rung.
+    "sub-pub": ("wg-last-call", 4),        # draft-stream-ietf WG handoff, pre-LC
     "iesg-eva": ("iesg-submitted", 5),
     "lc": ("ietf-last-call", 6),
-    "lc-req": ("iesg-submitted", 5),       # added 07-27
+    "lc-req": ("wg-last-call", 4),         # Last Call REQUESTED — LC has not started
     "review-e": ("iesg-submitted", 5),     # added 07-27
-    "goaheadw": ("iesg-submitted", 5),     # added 07-27
+    # Waiting for AD Go-Ahead = Last Call has CLOSED, no ballot yet. Verified
+    # live 2026-08-09 on draft-ietf-jose-hpke-encrypt (telechat date None, no
+    # ballot): ietf-last-call is the last completed milestone, not IESG review.
+    "goaheadw": ("ietf-last-call", 5),
     "defer": ("iesg-submitted", 5),        # added 07-27
     "watching": ("iesg-submitted", 5),
-    "writeupw": ("iesg-submitted", 5),
-    "pub-req": ("iesg-submitted", 5),
-    "ad-eval": ("iesg-submitted", 5),
+    "writeupw": ("wg-last-call", 4),       # shepherd writeup, pre-LC
+    "pub-req": ("wg-last-call", 4),        # Publication Requested, first IESG state, pre-LC
+    "ad-eval": ("wg-last-call", 4),        # AD Evaluation, pre-LC
     "wg-lc": ("wg-last-call", 4),          # FIXED 07-27 — was "wglc" (typo'd, never matched)
     "waiting-for-implementation": ("wg-last-call", 4),  # added 07-27
     "chair-w": ("wg-last-call", 4),        # added 07-27

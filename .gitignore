@@ -300,6 +300,15 @@ scripts/*
 !scripts/audit-role-board-ctas.ts
 !scripts/audit-role-board-ctas.local.test.ts
 
+# Role-board coverage gate — the SAME gap, third occurrence (found 2026-08-09
+# merging the six-use-cases-per-role work). The 08-09 commit added both the
+# ci.yml step and the package.json script but not the file they invoke, because
+# `scripts/*` swallowed it: CI would have hard-failed with file-not-found on a
+# fresh clone while every local run stayed green. Adding a gate to ci.yml or
+# package.json without a matching `!scripts/...` line here is the recurring
+# defect — check for one whenever a new scripts/ entry point lands.
+!scripts/audit-role-board-coverage.ts
+
 # Role-board content generator — runs in `npm run build` (npm run generate:
 # role-board-content), and personaConfig.ts's live PERSONA_JOURNEY_BOARD
 # export now comes from its OUTPUT (src/data/generated/roleBoardContent.
@@ -320,13 +329,11 @@ scripts/*
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
 # calls the public NVD API, writes public cve-snapshot.json: nothing private.
-!scripts/scrape-nvd.py
 # Weekly-cron CI scripts — invoked on GitHub runners by
 # .github/workflows/trusted-source-freshness.yml and update-protocol-matrix.yml;
 # must be tracked or those workflows fail file-not-found (the scrape-nvd.py
 # failure mode above). Sanitized ports: public inputs (trusted_sources CSV,
 # pqcProtocolMatrix.ts, IETF datatracker), public outputs. No LLM phase.
-!scripts/audit-trusted-source-freshness.ts
 !scripts/enrich-protocol-matrix.py
 !scripts/apply-protocol-matrix-updates.ts
 # Its unit tests — the downgrade guard (F8, 2026-07-25) is the reason this
@@ -435,11 +442,18 @@ public/data/rag-index-freshness.json
 # Downloads SourceUrl content per active CSV row to public/timeline/ and emits
 # public/timeline/evidence/manifest.json so the Gantt popover can prove its
 # claims are backed by on-disk documents. Audit script is the CI gate.
-!scripts/download-timeline-evidence.ts
+#
+# 2026-08-09: the two snapshotters (wayback-snapshot-timeline.ts,
+# snapshot-timeline-via-playwright.ts) were REMOVED from this list and deleted
+# here — scrapers live in pqctoday-priv, which already held byte-identical
+# copies of both. Nothing referenced them: no npm script, no CI step, no test.
+# The rest of the pipeline stays public for now because the hub copies of
+# download-timeline-evidence.ts and enrich-protocol-matrix.py are AHEAD of
+# pqctoday-priv's (by 22 and 305 lines), so moving them means syncing content
+# first, not deleting. audit-timeline-evidence.ts must stay public regardless —
+# CI runs it.
 !scripts/audit-timeline-evidence.ts
 !scripts/sync-timeline-csv-from-manifest.ts
-!scripts/wayback-snapshot-timeline.ts
-!scripts/snapshot-timeline-via-playwright.ts
 !scripts/audit-timeline-enrichment-freshness.ts
 
 # Content-freshness audit — CI gate that flags time-sensitive sim claims

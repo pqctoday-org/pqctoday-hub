@@ -173,7 +173,12 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             {showAdvancedZoneMetadata(density) && (
               <>
                 <a
-                  href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
+                  // Was a hardcoded DOI here. The link now comes from the zone
+                  // record itself (2026-08-09), so `cswpRef` and the document it
+                  // points at cannot drift apart, and the content inventory can
+                  // see that these zones cite a source — it reads the data file,
+                  // not the component.
+                  href={detail.cswpUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60 hover:bg-muted hover:text-primary transition-colors"

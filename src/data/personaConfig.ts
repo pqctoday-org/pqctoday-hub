@@ -1283,7 +1283,16 @@ export interface PersonaJourneyBoard {
   sideCard: {
     title: string
     tone: 'bad' | 'warn' | 'info' | 'accent'
-    provenance: 'sourced' | 'illustrative'
+    /**
+     * What the rows ARE. Three meanings, three values — `illustrative` used to
+     * carry two of them, and its chip says "THIS USER'S INPUTS", which is
+     * false of a card asserting a general rule (2026-08-09).
+     *   sourced      — read from repo data (sizes, dates, counts)
+     *   illustrative — a placeholder for an answer you have not given yet
+     *   guidance     — a rule of thumb this site is asserting, and will never
+     *                  become your data
+     */
+    provenance: 'sourced' | 'illustrative' | 'guidance'
     rows: { label: string; value: string }[]
     punchline: string
     footnote?: string
@@ -1299,11 +1308,24 @@ export interface PersonaJourneyBoard {
   }
   gridTitle: string
   gridSub: string
-  /** Always exactly 3 cards; the renderer highlights index [2]. */
+  /**
+   * Always exactly 3 cards; the renderer highlights index [2].
+   *
+   * `href` (2026-08-09) is optional. Where present the card renders as a real
+   * link; where absent it renders as static copy, exactly as every card did
+   * before. It exists because a board's only outbound links were its two CTAs
+   * and the track chips — 12 link slots per role against 18 sections — so
+   * per-role coverage of the site was arithmetically impossible without it.
+   * A card headed "What you walk out with" that names a destination and then
+   * does not go there was also a small, repeated dead end.
+   *
+   * Every href is registered and proof-gated in `role_board_ctas_*.csv` on the
+   * same terms as a CTA — see `scripts/audit-role-board-ctas.ts`.
+   */
   gridCards: [
-    { title: string; body: string },
-    { title: string; body: string },
-    { title: string; body: string },
+    { title: string; body: string; href?: string },
+    { title: string; body: string; href?: string },
+    { title: string; body: string; href?: string },
   ]
   trackTitle: string
   trackNote?: string
@@ -1422,6 +1444,21 @@ const ML_DSA_65 = ALGORITHM_REGISTRY['ML-DSA-65']
 export const ML_DSA_65_PUBLIC_KEY_ROW = `${formatBytes(ML_DSA_65.publicKeyBytes)} · was 64`
 export const ML_DSA_65_SIGNATURE_ROW = `${formatBytes(ML_DSA_65.signatureOrCiphertextBytes)} · was 64`
 export const ML_DSA_65_SIGNATURE_ONLY = formatBytes(ML_DSA_65.signatureOrCiphertextBytes)
+
+/**
+ * Signature size for any ML-DSA parameter set, read from the same registry.
+ *
+ * The 2026-08-09 "choose the algorithm" board compares 44/65/87 side by side.
+ * Only 65 had a derived constant, so 44 and 87 would have been hand-typed
+ * literals sitting next to a live one — the exact drift this file's derived
+ * values exist to prevent, and harder to spot because two of the three numbers
+ * would still look maintained.
+ */
+export function mlDsaSignatureBytes(paramSet: string): string {
+  const entry = ALGORITHM_REGISTRY[`ML-DSA-${paramSet}` as keyof typeof ALGORITHM_REGISTRY]
+  if (!entry) throw new Error(`mlDsaSignatureBytes: no registry entry for ML-DSA-${paramSet}`)
+  return formatBytes(entry.signatureOrCiphertextBytes)
+}
 
 /* ── Executive side card: Mosca exposure window ──────────────────────────────
  *

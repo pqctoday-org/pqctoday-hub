@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
 import {
   ROLE_CROSSWALK,
+  ROLE_SOURCES,
   CORE_ROLE_ORDER,
   ROLE_DETAIL,
   SIZING,
@@ -155,6 +156,30 @@ const Step1ChallengeAndRoles: React.FC = () => (
         <p className="text-xs text-muted-foreground">
           The <span className="text-accent font-semibold">core</span> badge marks the three
           dedicated-overhead roles &mdash; they are staffed regardless of estate size.
+        </p>
+        {/* The Source column above is the STAFFING source (where the person comes
+            from). Until 2026-08-09 nothing on this page said where the role model
+            itself came from. Cited once rather than per row because all eight
+            roles share the same two documents — and deliberately worded so the
+            role list and FTE figures are not attributed to NIST, which does not
+            publish them. */}
+        <p className="text-xs text-muted-foreground">
+          Role &rarr; skill-set mappings are anchored to{' '}
+          {ROLE_SOURCES.map((s, i) => (
+            <span key={s.url}>
+              {i > 0 && ' and '}
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                {s.label.split(' — ')[0]}
+              </a>
+            </span>
+          ))}
+          . The role list itself and the FTE figures are this site&rsquo;s own Skills &amp; Team
+          model, not a NIST publication.
         </p>
       </div>
     </section>

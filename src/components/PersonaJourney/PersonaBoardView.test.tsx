@@ -177,10 +177,10 @@ describe('PersonaBoardView', () => {
  * Board options — the three top use cases per role, added 2026-08-02.
  */
 describe('PersonaBoardView — board options', () => {
-  it.each(ALL_PERSONAS)('%s offers exactly 3 options, each a real chip', (personaId) => {
+  it.each(ALL_PERSONAS)('%s offers a chip for every one of its options', (personaId) => {
     renderBoard(<PersonaBoardView personaId={personaId} />)
     const chips = screen.getAllByRole('radio')
-    expect(chips).toHaveLength(3)
+    expect(chips).toHaveLength(PERSONA_JOURNEY_BOARD_VARIANTS[personaId].length)
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     for (const v of PERSONA_JOURNEY_BOARD_VARIANTS[personaId]) {
       expect(screen.getByText(v.chipLabel)).toBeInTheDocument()
@@ -201,9 +201,12 @@ describe('PersonaBoardView — board options', () => {
   it.each(ALL_PERSONAS)('%s renders the requested variant, not the default', (personaId) => {
     // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
     const variants = PERSONA_JOURNEY_BOARD_VARIANTS[personaId]
-    const third = variants[2]
-    renderBoard(<PersonaBoardView personaId={personaId} variantId={third.id} />)
-    expect(screen.getByText(third.board.headline)).toBeInTheDocument()
+    // The LAST option, not a fixed index. At three variants `variants[2]` was
+    // the last one; at six it is the middle, so a hardcoded index would have
+    // quietly stopped covering the tail of the chip row.
+    const last = variants[variants.length - 1]
+    renderBoard(<PersonaBoardView personaId={personaId} variantId={last.id} />)
+    expect(screen.getByText(last.board.headline)).toBeInTheDocument()
     expect(screen.queryByText(variants[0].board.headline)).toBeNull()
   })
 
@@ -266,10 +269,12 @@ describe('resolveRoleBoardVariant — one fallback rule, shared by both callers'
     expect(resolveRoleBoardVariant('curious', 'nope').order).toBe(1)
   })
 
-  it("every role's variants are ordered 1..3", () => {
+  it("every role's variants are ordered 1..6, with no gaps or repeats", () => {
     for (const personaId of ALL_PERSONAS) {
       // eslint-disable-next-line security/detect-object-injection -- personaId is drawn from ALL_PERSONAS itself
-      expect(PERSONA_JOURNEY_BOARD_VARIANTS[personaId].map((v) => v.order)).toEqual([1, 2, 3])
+      expect(PERSONA_JOURNEY_BOARD_VARIANTS[personaId].map((v) => v.order)).toEqual([
+        1, 2, 3, 4, 5, 6,
+      ])
     }
   })
 

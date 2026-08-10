@@ -82,6 +82,38 @@ function todayIso(): string {
 }
 
 /**
+ * The exact shape THIS script writes into `stageNote` — "<stage words>
+ * (datatracker <ISO date>)" — and nothing else.
+ *
+ * CURATED-NOTE GUARD (2026-08-09, global maintenance audit). The applier
+ * replaced `stageNote` unconditionally, and `/stageNote:\s*'[^']*'/` matches
+ * across newlines, so a multi-line hand-written note was silently swallowed by
+ * a one-line generated one. Measured damage on a real run: it overwrote
+ * ike-ipsec:hybridKem's note — whose text is literally a record of this same
+ * mistake being made and reverted on 2026-07-27 ("a hand-verified apply
+ * incorrectly set this to rfc-published on the strength of RFC 9370 alone")
+ * — and re-introduced that exact wrong value, because RFC 9370 is the shared
+ * multi-KE enabler both dimensions cite, not the hybrid-KEM mechanism. It did
+ * the same to kerberos:pureKem off RFC 9935, an X.509 OID RFC.
+ *
+ * The script cannot judge whether a ref really evidences a cell — that is the
+ * SME review this data depends on. What it CAN do is refuse to destroy the
+ * record of that review. So: a cell whose stageNote is anything other than
+ * this generator's own output is treated as human-curated and skipped, and
+ * reported the same way a downgrade is. Same rank as the downgrade guard,
+ * same reason: the failure is silent and the loss is unrecoverable from the
+ * file itself.
+ */
+const GENERATED_NOTE_RE = /^[a-z][a-z ]*(?: \(datatracker \d{4}-\d{2}-\d{2}\))?$/
+
+export function isCuratedNote(note: string | undefined): boolean {
+  if (note === undefined) return false
+  const trimmed = note.trim()
+  if (trimmed === '') return false
+  return !GENERATED_NOTE_RE.test(trimmed)
+}
+
+/**
  * Locate the dimension block of a row and patch its `stage:` and `stageNote:`
  * lines. The matrix file follows a strict shape so a small regex over the
  * file body is sufficient; if shape changes, the audit script will flag it.
@@ -104,6 +136,7 @@ export function patchMatrix(
   }
 
   const downgrades: string[] = []
+  const curatedNotes: string[] = []
 
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
@@ -135,6 +168,25 @@ export function patchMatrix(
         )
         continue
       }
+    }
+    // CURATED-NOTE GUARD — see isCuratedNote above. Checked AFTER the
+    // downgrade guard so a cell that is both reports as the downgrade it is.
+    const existingNoteMatch = (() => {
+      const rowAnchorRe = new RegExp(`id:\\s*'${rowId}'`)
+      const rIdx = next.search(rowAnchorRe)
+      if (rIdx < 0) return undefined
+      const dRel = next.slice(rIdx).search(new RegExp(`${dim}:\\s*\\{`))
+      if (dRel < 0) return undefined
+      const slice = next.slice(rIdx + dRel, rIdx + dRel + 4000)
+      const nm = slice.match(/stageNote:\s*'([^']*)'/)
+      return nm ? nm[1] : undefined
+    })()
+    if (isCuratedNote(existingNoteMatch)) {
+      curatedNotes.push(
+        `${rowId}::${dim}: ${oldStage ?? '(none)'} -> ${newStage} — stageNote is human-curated: ` +
+          `"${(existingNoteMatch ?? '').slice(0, 90)}${(existingNoteMatch ?? '').length > 90 ? '…' : ''}"`
+      )
+      continue
     }
     const newNote = ds[0].last_updated
       ? `${newStage.replace(/-/g, ' ')} (datatracker ${ds[0].last_updated})`
@@ -192,7 +244,7 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, appliedKeys, downgrades }
+  return { next, applied, appliedKeys, downgrades, curatedNotes }
 }
 
 /** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
@@ -339,7 +391,10 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, appliedKeys, downgrades } = patchMatrix(source, deltasToPatch)
+  const { next, applied, appliedKeys, downgrades, curatedNotes } = patchMatrix(
+    source,
+    deltasToPatch
+  )
 
   // Reported before anything else, and on stderr, because a downgrade is not
   // routine: it means the feed disagreed with the matrix in the one direction
@@ -355,13 +410,25 @@ function main(): void {
     console.error('')
   }
 
+  if (curatedNotes.length > 0) {
+    console.error(
+      `BLOCKED ${curatedNotes.length} cell(s) with a HUMAN-CURATED stageNote — not applied:`
+    )
+    for (const c of curatedNotes) console.error(`  ${c}`)
+    console.error('These notes record an SME decision about whether a ref actually')
+    console.error('evidences this cell — exactly what this script cannot judge. Applying')
+    console.error('would overwrite the decision with a generated one-liner. Update the')
+    console.error('cell by hand, or clear the note first if it is genuinely obsolete.')
+    console.error('')
+  }
+
   if (applied === 0) {
     if (itemsFilter) printResultJson([], staleItems, downgrades)
-    if (downgrades.length > 0) {
+    if (downgrades.length > 0 || curatedNotes.length > 0) {
       // Exit 1 = "drift detected, nothing applied" (the documented meaning),
       // NOT 0. Reporting "matrix already matches" here would be false: the
       // feed disagreed, we refused to act on it, and that needs attention.
-      console.error('No forward drift to apply; only blocked downgrades.')
+      console.error('No forward drift to apply; only blocked downgrades/curated cells.')
       process.exit(1)
     }
     console.log('Patch found no targets to update (matrix already matches).')

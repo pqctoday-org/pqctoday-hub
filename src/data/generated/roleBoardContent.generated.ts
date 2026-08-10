@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_08072026.csv
+ * Source: src/data/role_board_content_08092026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -21,7 +21,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: [],
       businessToolIds: ['program-charter'],
       board: {
-        heroEyebrow: "Illustrative — this user's inputs",
+        heroEyebrow: 'Executive / GRC · the decision that unlocks budget and names an owner',
         heroBadge: {
           text: 'Default: Americas · Finance & Banking — scenario shown: EU',
           tone: 'illustrative' as 'sourced' | 'illustrative',
@@ -34,14 +34,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Verified in your browser against NIST ACVP vectors',
-          '804 sources, trust-tiered',
+          '803 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'How we verify',
         ],
         sideCard: {
           title: 'Your exposure window',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Data must stay secret', value: '12 yrs' },
             { label: 'Your migration takes', value: '5 yrs' },
@@ -57,19 +57,21 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Eight questions, one risk position',
             body: 'The assessment turns 8 answers about your estate into a defensible risk position, with the regulatory dates that already bind you attached to it.',
+            href: '/assess',
           },
           {
             title: 'A drafted mandate',
             body: 'The Program Charter tool drafts the Phase 0 mandate — sponsor sign-off, steering committee, the QRPM appointment and the governance model.',
+            href: '/business/tools/program-charter',
           },
           {
             title: 'Why the mandate comes first',
             body: 'Phase 0 exists because a programme without a named sponsor and a standing committee stalls at the first budget review, whatever the inventory says.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
         trackNote:
@@ -87,8 +89,84 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'risk',
+      id: 'deadlines',
       order: 2,
+      chipLabel: 'Know your deadlines',
+      chipDescription: 'The mandates that already bind you, and the year that ends RSA.',
+      phaseId: 'p3',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['compliance-strategy', 'pqc-risk-management'],
+      workshopIds: [],
+      businessToolIds: ['compliance-timeline'],
+      board: {
+        heroEyebrow: 'Executive / GRC · the dates you did not choose',
+        heroBadge: {
+          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'The dates were set without you.',
+        sub: 'CNSA 2.0, NIS2, DORA and every national mandate carry fixed years. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
+        ctaPrimary: 'See the mandate timeline',
+        ctaPrimaryHref: '/timeline',
+        ctaSecondary: 'Read the threat economics',
+        ctaSecondaryHref: '/threats',
+        proofChips: [
+          'Deadlines derived from the published timeline',
+          'Regulatory data verified 16 Jul 2026',
+          'The CRQC estimate carries its dissent',
+        ],
+        sideCard: {
+          title: 'The three dates that matter',
+          tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'CNSA 2.0 full transition', value: '2033' },
+            { label: 'CRQC consensus', value: '2033 (2030–2036)' },
+            { label: 'Your migration takes', value: '5 yrs' },
+          ],
+          punchline: 'Two of these three are not yours to move.',
+          footnote:
+            'Mandate dates are read from the published timeline; the CRQC window is the consensus estimate with its range shown, not a point forecast.',
+        },
+        gridTitle: 'What you walk out with',
+        gridSub: 'Dates with sources attached',
+        gridCards: [
+          {
+            title: 'What replaces what, and when',
+            body: 'The transition guide, algorithm by algorithm, each status linked to the NIST publication that set it.',
+            href: '/algorithms?tab=transition',
+          },
+          {
+            title: 'The zones a regulator will ask about',
+            body: 'Your obligations grouped the way NIST CSWP.39 groups them, so the gaps map onto the questions.',
+            href: '/compliance?tab=cswp39',
+          },
+          {
+            title: 'Two of these dates are not yours',
+            body: 'You can change how long your migration takes. You cannot change when CNSA 2.0 lands or when the machine arrives — so the only variable you control is when you start.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Quantum threats',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Compliance strategy',
+        ],
+        capstoneChip: { label: 'Board-Ready' },
+      },
+    },
+    {
+      id: 'risk',
+      order: 3,
       chipLabel: 'Know your exposure',
       chipDescription: 'A defensible risk position and the dates that already bind you.',
       phaseId: 'p3',
@@ -109,7 +187,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '804 sources, trust-tiered',
+          '803 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
@@ -117,7 +195,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What the score is built from',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Questions you answer', value: '8' },
             { label: 'Report sections generated', value: '17' },
@@ -133,19 +211,21 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A finished report, before you start',
             body: 'The worked example renders a complete report under its own authored persona — you can read the output before committing to the assessment.',
+            href: '/report?example=1',
           },
           {
             title: 'A register with owners on it',
             body: 'The Risk Register Builder turns the score into named risks with impact, likelihood, an owner and a mitigation each — the form a risk committee accepts.',
+            href: '/business/tools/risk-register',
           },
           {
             title: 'Why a register, not just a score',
             body: 'A number persuades a meeting once. A register with an owner against each risk is what survives the meeting and gets re-read next quarter.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
 
@@ -163,7 +243,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'roadmap',
-      order: 3,
+      order: 4,
       chipLabel: 'Show a credible plan',
       chipDescription: 'The roadmap, policy and KPIs a regulator will accept.',
       phaseId: 'p4',
@@ -192,7 +272,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What the plan contains',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Governance artifacts', value: 'four' },
             { label: 'Report sections', value: '17' },
@@ -208,19 +288,176 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A two-track roadmap',
             body: "The Roadmap Builder sequences key-exchange/HNDL work alongside signatures and PKI across the framework's eight phases — a shape, not just a deadline.",
+            href: '/business/tools/roadmap-builder',
           },
           {
             title: 'What already binds you',
             body: 'The compliance view lists the standardization and certification frameworks in force and what each one already requires of you.',
+            href: '/compliance',
           },
           {
             title: 'Two tracks, not one list',
             body: 'Harvest-now-decrypt-later work and signature/PKI work have different deadlines and different owners — a single ordered list hides that.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Quantum threats',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Compliance strategy',
+        ],
+        capstoneChip: { label: 'Board-Ready' },
+      },
+    },
+    {
+      id: 'evidence',
+      order: 5,
+      chipLabel: 'Check the evidence',
+      chipDescription: 'Where every number on this site came from, and who stands behind it.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'assets',
+      moduleIds: ['standards-bodies', 'vendor-risk'],
+      workshopIds: [],
+      businessToolIds: ['stakeholder-comms'],
+      board: {
+        heroEyebrow: 'Executive / GRC · the question your CFO will ask',
+        heroBadge: {
+          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Where did these numbers come from?',
+        sub: 'Every figure in your board pack traces to a dated, tiered source. The corrections are public, the people behind the standards are named, and the patent filings show who is actually building this rather than announcing it.',
+        ctaPrimary: 'Open the evidence corpus',
+        ctaPrimaryHref: '/library?purpose=planning',
+        ctaSecondary: 'See who is behind the standards',
+        ctaSecondaryHref: '/leaders',
+        proofChips: [
+          '803 sources, trust-tiered',
+          'Every correction logged and dated',
+          'Authoritative / High / Moderate / Low source tiers',
+        ],
+        sideCard: {
+          title: 'What backs a claim here',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Source tier', value: 'Authoritative to Low, always shown' },
+            { label: 'Verification date', value: 'on every record' },
+            { label: 'Retractions', value: 'logged, never deleted' },
+          ],
+          punchline: 'A claim without a date is an opinion.',
+          footnote:
+            'Tiers and verification dates come from the trusted-sources registry every record on this site is joined against.',
+        },
+        gridTitle: 'Where to check us',
+        gridSub: 'Provenance you can hand to an auditor',
+        gridCards: [
+          {
+            title: 'Everything we have corrected',
+            body: 'The full revision log — what changed, when, and which record it touched.',
+            href: '/revisions',
+          },
+          {
+            title: 'Who is filing, not just announcing',
+            body: 'Cryptographic patents relevant to migration. Research only, explicitly not legal advice.',
+            href: '/patents',
+          },
+          {
+            title: 'A claim you cannot date is not evidence',
+            body: 'Anyone can publish a number. The tier, the date and the correction history are what let you put it in front of an auditor.',
+            href: '/migrate?tab=vendorrisk',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Quantum impact',
+          'Quantum threats',
+          'Risk management',
+          'Business case',
+          'Governance',
+          'Compliance strategy',
+        ],
+        capstoneChip: { label: 'Board-Ready' },
+      },
+    },
+    {
+      id: 'verify',
+      order: 6,
+      chipLabel: 'Verify it yourself',
+      chipDescription:
+        'Everything here you can check with your own hands, before you sign anything.',
+      phaseId: 'p0',
+      cswp39Zone: 'governance',
+      moduleIds: ['pqc-governance', 'migration-program'],
+      workshopIds: [],
+      businessToolIds: ['board-pitch'],
+      board: {
+        heroEyebrow: 'Executive / GRC · due diligence · nothing taken on trust',
+        heroBadge: {
+          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'See the whole programme before you fund it.',
+        sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. Eleven minutes to know what you are being asked to sign off on.',
+        ctaPrimary: 'Play the executive walkthrough',
+        ctaPrimaryHref: '/simulation?run=exec',
+        ctaSecondary: 'Open the Command Center',
+        ctaSecondaryHref: '/business?zone=governance',
+        proofChips: [
+          'Deterministic run — same seed, same outcome',
+          'Nine phases from the published framework',
+          'Organised around the NIST CSWP.39 zones',
+        ],
+        sideCard: {
+          title: 'What eleven minutes shows you',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Phases played', value: 'nine' },
+            { label: 'Decisions you make', value: 'one at each gate' },
+            { label: 'What a dry run costs', value: 'nothing' },
+          ],
+          punchline: 'A dry run is cheaper than a steering committee.',
+          footnote:
+            "The walkthrough uses an illustrative organisation, not your data — the phases and gates are the framework's own.",
+        },
+        gridTitle: 'Where to look next',
+        gridSub: 'The programme, seen once through',
+        gridCards: [
+          {
+            title: 'The labs your teams will cite',
+            body: 'Every hands-on demo on this site, running real cryptography in a browser tab.',
+            href: '/playground',
+          },
+          {
+            title: 'The command line, in a browser',
+            body: 'The same OpenSSL commands your engineers would run, with nothing to install.',
+            href: '/explore',
+          },
+          {
+            title: 'Nobody has to take our word for it',
+            body: 'Every number on this board is either a published figure or a run you can repeat yourself. That is the point of the walkthrough, not the polish.',
+            href: '/openssl',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 10¼.',
 
@@ -265,7 +502,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What this breaks in your code',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'ML-DSA-65 public key', value: '1,952 B · was 64' },
             { label: 'ML-DSA-65 signature', value: '3,309 B · was 64' },
@@ -281,19 +518,98 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A real hybrid KEM pipeline',
             body: "ML-KEM encapsulation combined with an X25519 ECDH share and run through HKDF — the exact construction a hybrid handshake negotiates, with each step's bytes shown.",
+            href: '/playground/hybrid-encrypt',
           },
           {
-            title: 'A grade on your call sites',
-            body: 'The Crypto API Refactor Audit (CSWP.39 §4.1) grades how agile your current crypto call sites are, and what refactoring this pilot implies for them.',
+            title: 'Everything else, arranged by topic',
+            body: 'The whole site indexed by subject rather than by role — for when you know the primitive you need but not which page covers it.',
+            href: '/explore',
           },
           {
             title: 'The construction, not the diagram',
             body: 'This is the primitive underneath every hybrid key exchange you will ship. Getting it right here is what makes the protocol-level work uneventful.',
+            href: '/simulation?phase=p5',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Dev quantum impact',
+          'PQC candidates',
+          'TLS basics',
+          'Hybrid crypto',
+          'Crypto agility',
+          'PKI workshop',
+          'Crypto dev APIs',
+        ],
+        capstoneChip: { label: 'Pilot-Ready' },
+      },
+    },
+    {
+      id: 'algorithm',
+      order: 2,
+      chipLabel: 'Choose the algorithm',
+      chipDescription:
+        'Which parameter set for which job, with the sizes and the literature attached.',
+      phaseId: 'p5',
+      cswp39Zone: 'mitigation',
+      moduleIds: ['pqc-candidates', 'hybrid-crypto'],
+      workshopIds: ['hybrid-sigs'],
+      businessToolIds: ['mti-negotiator'],
+      board: {
+        heroEyebrow: 'Developer / Engineer · parameter sets · sizes · who owns them',
+        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+        headline: 'Pick the parameter set on purpose.',
+        sub: 'ML-KEM-768 or 1024. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
+        ctaPrimary: 'Compare the algorithms',
+        ctaPrimaryHref: '/algorithms?tab=detailed&mode=compare',
+        ctaSecondary: 'Negotiate the mandatory suite',
+        ctaSecondaryHref: '/business/tools/mti-negotiator',
+        proofChips: [
+          'Sizes from FIPS 203/204/205, not estimates',
+          'Every status links to its NIST publication',
+          'No signup, no key required',
+        ],
+        sideCard: {
+          title: 'What the choice costs you',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'ML-DSA-44 signature', value: '2,420 B' },
+            { label: 'ML-DSA-65 signature', value: '3,309 B' },
+            { label: 'ML-DSA-87 signature', value: '4,627 B' },
+          ],
+          punchline: 'The security level you pick is a byte budget you pay on every message.',
+          footnote:
+            'Signature sizes are read from the algorithm registry, which takes them from FIPS 204 directly.',
+        },
+        gridTitle: 'Where to check the choice',
+        gridSub: 'A choice you can defend in review',
+        gridCards: [
+          {
+            title: 'The specs behind the parameter sets',
+            body: 'The standards and drafts themselves, not summaries of them.',
+            href: '/library?purpose=reference',
+          },
+          {
+            title: 'The people who wrote them',
+            body: 'Named contributors behind each document, every entry proof-gated.',
+            href: '/leaders',
+          },
+          {
+            title: 'The parameter set is a budget, not a badge',
+            body: 'Picking 87 because it sounds safer costs you bytes on every message for the life of the key. Choose it against a threat model, not a preference.',
+            href: '/patents',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -312,7 +628,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'inventory',
-      order: 2,
+      order: 3,
       chipLabel: 'Find the crypto in your code',
       chipDescription: 'Build the CBOM before you plan a single change.',
       phaseId: 'p2',
@@ -337,7 +653,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What a CBOM has to name',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Algorithms in use', value: 'every suite you negotiate' },
             { label: 'Where they came from', value: 'library defaults, not just your code' },
@@ -353,19 +669,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A full OpenSSL environment',
             body: 'OpenSSL Studio is OpenSSL 3.6.2 compiled to WASM — keygen, certificates, CSR, KEM, signing, KDF and encryption — with 11 guided lessons.',
+            href: '/playground/openssl-studio',
           },
           {
             title: 'The CBOM itself',
             body: 'The CBOM Builder assembles a Crypto Bill of Materials from an SBOM, library posture or HSM inventory — the artifact an inventory pass is supposed to produce.',
+            href: '/business/tools/crypto-cbom-builder',
           },
           {
             title: 'Inspect before you inventory',
             body: 'Studio is where you read what a key or certificate really contains — the step before a CBOM is worth writing.',
+            href: '/assess?mode=quick',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -384,7 +703,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'sizing',
-      order: 3,
+      order: 4,
       chipLabel: 'See what the sizes break',
       chipDescription: 'Bigger keys and signatures hit schemas and budgets first.',
       phaseId: 'p6',
@@ -409,7 +728,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What the calculator tells you',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Enterprise workflows sized', value: 'ten' },
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
@@ -425,19 +744,172 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A signed token you can measure',
             body: 'The JWT workshop signs with ML-DSA-44/65/87, SLH-DSA and composite ML-DSA-65+Ed25519, so you can weigh each payload against your own header budget.',
+            href: '/playground/api-security-jwt',
           },
           {
             title: 'The same question, at PKI scale',
             body: 'The Cert Capacity Calculator models storage, bandwidth and CPU for migrating a PKI to ML-DSA, with adjustable certificate counts and renewal cadence.',
+            href: '/playground/cert-capacity',
           },
           {
             title: 'Where the bytes land',
             body: 'Token payloads, certificate chains and TLS records — the three places the new sizes surface in a service first.',
+            href: '/business?zone=mitigation',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Dev quantum impact',
+          'PQC candidates',
+          'TLS basics',
+          'Hybrid crypto',
+          'Crypto agility',
+          'PKI workshop',
+          'Crypto dev APIs',
+        ],
+        capstoneChip: { label: 'Pilot-Ready' },
+      },
+    },
+    {
+      id: 'closure',
+      order: 5,
+      chipLabel: 'Prove it, then close it out',
+      chipDescription:
+        'Known-answer tests, a closure record, and the audit trail behind what you inherited.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['pqc-testing-validation', 'crypto-registry'],
+      workshopIds: [],
+      businessToolIds: ['migration-verification'],
+      board: {
+        heroEyebrow: 'Developer / Engineer · tested · recorded · reviewable',
+        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+        headline: 'A green test, not a green slide.',
+        sub: 'Known-answer tests against the published NIST vectors, a closure record that says which services actually moved, and the dated audit trail behind every data claim you are about to inherit.',
+        ctaPrimary: 'Run the validation vectors',
+        ctaPrimaryHref: '/algorithms?tab=validation',
+        ctaSecondary: 'Close out the migration',
+        ctaSecondaryHref: '/business/tools/migration-verification',
+        proofChips: [
+          'ACVP + KAT run locally, not asserted',
+          'Every correction logged and dated',
+          'No signup, no key required',
+        ],
+        sideCard: {
+          title: 'What closure has to assert',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Vectors', value: 'NIST ACVP, not fixtures' },
+            { label: 'Coverage', value: 'per service, not per fleet' },
+            { label: 'Failure', value: 'recorded, not rounded up' },
+          ],
+          punchline: 'A test that cannot fail is documentation.',
+          footnote:
+            "The closure tool checks against the framework's own five-point evidence standard, not a checklist we invented.",
+        },
+        gridTitle: 'What you walk out with',
+        gridSub: 'Evidence a reviewer will take',
+        gridCards: [
+          {
+            title: 'The report the closure feeds',
+            body: 'A worked example of the generated report, before you run an assessment of your own.',
+            href: '/report?example=1',
+          },
+          {
+            title: 'What changed in the data you depend on',
+            body: 'The revision log for every record on this site, filterable by domain.',
+            href: '/revisions',
+          },
+          {
+            title: 'A test that cannot fail proves nothing',
+            body: 'Closure is only worth recording if a failing service would have shown up. Coverage per service, not per fleet, is what makes it a control.',
+            href: '/migrate?tab=replace',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
+
+        trackChips: [
+          'PQC 101',
+          'Dev quantum impact',
+          'PQC candidates',
+          'TLS basics',
+          'Hybrid crypto',
+          'Crypto agility',
+          'PKI workshop',
+          'Crypto dev APIs',
+        ],
+        capstoneChip: { label: 'Pilot-Ready' },
+      },
+    },
+    {
+      id: 'binds',
+      order: 6,
+      chipLabel: 'Know what binds your code',
+      chipDescription: 'The standards, mandates and dates that decide your sprint order.',
+      phaseId: 'p4',
+      cswp39Zone: 'governance',
+      moduleIds: ['crypto-mgmt-modernization', 'iam-pqc'],
+      workshopIds: [],
+      businessToolIds: ['compliance-checklist'],
+      board: {
+        heroEyebrow: 'Developer / Engineer · what is actually mandatory, and by when',
+        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+        headline: 'Someone already decided your deadline.',
+        sub: 'Not every PQC “requirement” is one. Here is which standards are final, which mandates carry dates that reach your service, and what you would actually have to replace.',
+        ctaPrimary: 'See what already binds you',
+        ctaPrimaryHref: '/compliance?tab=technical',
+        ctaSecondary: 'Work the compliance checklist',
+        ctaSecondaryHref: '/business/tools/compliance-checklist',
+        proofChips: [
+          'Regulatory data verified 16 Jul 2026',
+          'Draft and final are labelled, never merged',
+          'Every requirement links to its source',
+        ],
+        sideCard: {
+          title: 'What counts as binding',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'A published FIPS', value: 'binding' },
+            { label: 'An IETF draft', value: 'not yet' },
+            { label: 'A vendor roadmap', value: 'a press release' },
+          ],
+          punchline: '“Quantum-safe” is a marketing term until a document says otherwise.',
+          footnote:
+            "Lifecycle status comes from each standard's own publisher, and drafts are never displayed as final.",
+        },
+        gridTitle: 'Where to look it up',
+        gridSub: 'A sprint order with dates behind it',
+        gridCards: [
+          {
+            title: 'The mandates, in date order',
+            body: 'Government and regulator milestones on one chronology.',
+            href: '/timeline',
+          },
+          {
+            title: 'What the attack actually costs',
+            body: 'Threat economics and the CRQC horizon, with the dissent shown.',
+            href: '/threats',
+          },
+          {
+            title: 'Draft is not the same as done',
+            body: 'A published FIPS binds you. An IETF draft does not, however far along it looks — and a vendor roadmap never did.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 5 hours 25, not 28¼.',
 
@@ -486,7 +958,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'Why agility, not just algorithms',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Algorithms you will migrate to', value: '3' },
             { label: 'Times you will migrate again', value: '≥ 2' },
@@ -500,19 +972,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A policy-driven KMIP control plane',
             body: 'KMIP 3.0 plus a SoftHSM Rust v3 HSM, both in WebAssembly. Load a crypto-agility policy and watch requests get allowed, denied or auto-rekeyed.',
+            href: '/playground/cacp',
           },
           {
             title: 'A transition decision, per asset class',
             body: 'The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC and pure PQC.',
+            href: '/business/tools/hybrid-transition-planner',
           },
           {
             title: 'Agility as a control, not a slogan',
             body: 'The control plane is the workshop this board rests on: the policy line you change is a real one, and the estate rekeys against it.',
+            href: '/assess?mode=comprehensive',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -560,7 +1035,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What the as-is must name',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Layers in the catalogue', value: 'four' },
             { label: 'Agility tracked per', value: 'asset, not per algorithm' },
@@ -576,19 +1051,102 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The as-is, written down',
             body: 'The Crypto Architecture Diagram records apps, libraries, HSMs, protocols, key stores and CAs with their dependencies — the inventory in a form a review board reads.',
+            href: '/business/tools/crypto-architecture-diagram',
           },
           {
             title: 'A chain you built yourself',
             body: 'The PKI workshop walks CSR, root CA, issuance, parsing and CRL by hand, so what you are documenting is something you have actually constructed.',
+            href: '/playground/pki-workshop',
           },
           {
             title: 'Documented, then verified',
             body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
+            href: '/openssl',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
+
+        trackChips: [
+          'PQC 101',
+          'Arch quantum impact',
+          'PQC candidates',
+          'Crypto agility',
+          'Crypto mgmt modernization',
+          'Hybrid crypto',
+          'KMS',
+          'HSM',
+          'PKI workshop',
+        ],
+        capstoneChip: { label: 'Agility-Ready' },
+      },
+    },
+    {
+      id: 'protocols',
+      order: 3,
+      chipLabel: 'Choose the protocols',
+      chipDescription:
+        'Which protocols are ready, which are drafts, and what that means for the design.',
+      phaseId: 'p5',
+      cswp39Zone: 'migration',
+      moduleIds: ['pqc-candidates', 'network-security-pqc'],
+      workshopIds: ['hybrid-certs'],
+      businessToolIds: ['cloud-responsibility-matrix'],
+      board: {
+        heroEyebrow: 'Security Architect · protocol readiness · ready, draft, or absent',
+        heroBadge: {
+          text: 'Global · Technology, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: 'Most of the protocols you depend on are still drafts.',
+        sub: 'TLS 1.3 has hybrid groups today. Your VPN, your enrollment protocol and your messaging layer are at different stages, and a design that treats them as one migration will stall on the slowest.',
+        ctaPrimary: 'Check protocol readiness',
+        ctaPrimaryHref: '/algorithms?tab=support&matrixView=heatmap',
+        ctaSecondary: 'Split responsibility with your cloud',
+        ctaSecondaryHref: '/business/tools/cloud-responsibility-matrix',
+        proofChips: [
+          'Every protocol linked to its own spec',
+          'Draft and RFC are never merged',
+          'Hybrid groups X25519MLKEM768 and friends',
+        ],
+        sideCard: {
+          title: 'Where the design stalls',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'TLS 1.3', value: 'hybrid groups shipping' },
+            { label: 'Enrollment', value: 'drafts, moving' },
+            { label: 'Messaging', value: 'earlier than you think' },
+          ],
+          punchline: 'You migrate at the speed of your slowest protocol.',
+          footnote:
+            'Readiness per protocol is read from the protocol matrix, where every cell cites the document behind it.',
+        },
+        gridTitle: 'Where to check each claim',
+        gridSub: 'A design that names its dependencies',
+        gridCards: [
+          {
+            title: 'The specs under each cell',
+            body: 'The RFCs and drafts themselves, so a review can check the claim.',
+            href: '/library?purpose=reference',
+          },
+          {
+            title: 'What a regulator counts as a standard',
+            body: 'The standards pillar of the compliance landscape, by body and lifecycle.',
+            href: '/compliance?tab=standards',
+          },
+          {
+            title: 'You migrate at the speed of your slowest protocol',
+            body: 'A design that treats TLS, enrollment and messaging as one migration stalls on whichever is furthest behind — so name their stages separately.',
+            href: '/patents',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -608,7 +1166,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'keystores',
-      order: 3,
+      order: 4,
       chipLabel: 'Plan the key infrastructure',
       chipDescription: 'Where keys live, and what changes when they get bigger.',
       phaseId: 'p6',
@@ -636,7 +1194,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What changes in the key store',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             { label: "Sign rate on today's HSM", value: '150 ops/s · ~133× slower than ECDSA' },
@@ -652,19 +1210,179 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Envelope encryption, end to end',
             body: 'ML-KEM plus AES key wrap in the KMS envelope pattern — the shape most key stores will adopt, run before you commit to it.',
+            href: '/playground/envelope-encrypt',
           },
           {
-            title: 'A Phase 6 deliverable',
-            body: 'The Infrastructure Modernization Planner consolidates the PKI modernization plan and the HSM/KMS upgrade schedule into one document.',
+            title: 'The whole site, by topic',
+            body: 'Every section arranged by subject instead of by role — for when the question is what exists, not what to do next.',
+            href: '/explore',
           },
           {
             title: 'Where the keys live',
             body: 'The envelope workshop is what this board rests on: it is the difference between a key policy you wrote and one you have executed.',
+            href: '/leaders',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
+
+        trackChips: [
+          'PQC 101',
+          'Arch quantum impact',
+          'PQC candidates',
+          'Crypto agility',
+          'Crypto mgmt modernization',
+          'Hybrid crypto',
+          'KMS',
+          'HSM',
+          'PKI workshop',
+        ],
+        capstoneChip: { label: 'Agility-Ready' },
+      },
+    },
+    {
+      id: 'sequence',
+      order: 5,
+      chipLabel: 'Sequence the estate',
+      chipDescription: 'What moves first, what waits, and what your vendors decide for you.',
+      phaseId: 'p4',
+      cswp39Zone: 'migration',
+      moduleIds: ['crypto-mgmt-modernization', 'crypto-registry'],
+      workshopIds: [],
+      businessToolIds: ['data-at-rest-strategy'],
+      board: {
+        heroEyebrow: 'Security Architect · order of operations · dependencies first',
+        heroBadge: {
+          text: 'Global · Technology, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: 'The order is the architecture.',
+        sub: 'Certificates before the services that present them, key stores before the certificates, and roots before any of it. Sequence it against real refresh windows rather than against the calendar year.',
+        ctaPrimary: 'Sequence the catalogue',
+        ctaPrimaryHref: '/migrate?tab=plan',
+        ctaSecondary: 'Decide the data-at-rest strategy',
+        ctaSecondaryHref: '/business/tools/data-at-rest-strategy',
+        proofChips: [
+          'Catalogue entries are proof-gated',
+          'Deadlines derived from the published timeline',
+          'Organised around the NIST CSWP.39 zones',
+        ],
+        sideCard: {
+          title: 'What has to move first',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Roots and issuing CAs', value: 'before anything they sign' },
+            { label: 'Key stores', value: 'before the keys grow' },
+            { label: 'Data at rest', value: 'last, and longest' },
+          ],
+          punchline: 'Sequencing errors are the expensive kind — you pay twice.',
+          footnote:
+            'Sequences the catalogued products this site holds evidence for; it does not import an inventory of your own.',
+        },
+        gridTitle: 'Where the sequence is evidenced',
+        gridSub: 'A sequence with dependencies named',
+        gridCards: [
+          {
+            title: 'The same sequencing, played through',
+            body: 'The roadmap phase of a full migration, gate by gate.',
+            href: '/simulation?phase=p4',
+          },
+          {
+            title: 'The artifacts each phase owes',
+            body: "The Command Center's migration zone, and what it expects you to produce.",
+            href: '/business?zone=migration',
+          },
+          {
+            title: 'Sequencing errors are the expensive kind',
+            body: 'Move a certificate before the key store behind it and you pay for the same work twice. The order is not a preference, it is the dependency graph.',
+            href: '/timeline',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
+
+        trackChips: [
+          'PQC 101',
+          'Arch quantum impact',
+          'PQC candidates',
+          'Crypto agility',
+          'Crypto mgmt modernization',
+          'Hybrid crypto',
+          'KMS',
+          'HSM',
+          'PKI workshop',
+        ],
+        capstoneChip: { label: 'Agility-Ready' },
+      },
+    },
+    {
+      id: 'defend',
+      order: 6,
+      chipLabel: 'Defend the design',
+      chipDescription: 'The threat model, the evidence, and the review the design has to survive.',
+      phaseId: 'p3',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['pqc-testing-validation', 'confidential-computing'],
+      workshopIds: ['tpm-playground'],
+      businessToolIds: ['risk-treatment-plan'],
+      board: {
+        heroEyebrow: 'Security Architect · the review, and what survives it',
+        heroBadge: {
+          text: 'Global · Technology, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: 'Your design will be argued with. Bring sources.',
+        sub: '“Why hybrid and not pure ML-KEM?” “Why this parameter set?” “Why is data-at-rest last?” Each of those has a published answer, a dated source, and where one exists, the strongest argument against it.',
+        ctaPrimary: 'Read the threat model',
+        ctaPrimaryHref: '/threats',
+        ctaSecondary: 'Build the treatment plan',
+        ctaSecondaryHref: '/business/tools/risk-treatment-plan',
+        proofChips: [
+          'Counter-claims dataset · CVE snapshots',
+          'Authoritative / High / Moderate / Low source tiers',
+          'TPM 2.0 conformance checks run locally',
+        ],
+        sideCard: {
+          title: 'What a reviewer will push on',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Hybrid vs pure', value: 'a policy call, not a maths one' },
+            { label: 'Parameter set', value: 'a byte budget you chose' },
+            { label: 'Residual risk', value: 'named, or it is hidden' },
+          ],
+          punchline: 'An unnamed risk is an accepted one.',
+          footnote:
+            'Counter-claims are published objections on file with their own sources, not our summary of them.',
+        },
+        gridTitle: 'Where the answers are',
+        gridSub: 'Answers with sources behind them',
+        gridCards: [
+          {
+            title: 'The written position',
+            body: 'A worked example of the generated report, section by section.',
+            href: '/report?example=1',
+          },
+          {
+            title: 'What has been corrected since',
+            body: 'The revision log — every change to every record, dated.',
+            href: '/revisions',
+          },
+          {
+            title: 'An unnamed risk is an accepted one',
+            body: 'Every choice on this board will be questioned. The ones that survive review are the ones whose residual risk was written down before someone else found it.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours 20, not 29¾.',
 
@@ -714,7 +1432,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What changes on renewal day',
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
@@ -733,19 +1451,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Your HSM fleet, sized',
             body: 'Ten enterprise use cases compared classical against PQC, with per-algorithm tuning — storage, bandwidth and CPU per workflow.',
+            href: '/playground/hsm-capacity',
           },
           {
             title: 'Sizing turned into a schedule',
             body: 'Refresh-Cycle Alignment maps PQC migration tasks onto infrastructure refresh cycles you have already funded.',
+            href: '/business?zone=management-tools',
           },
           {
             title: 'Sizing that lands in a plan',
             body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+            href: '/library?purpose=reference',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -764,64 +1485,67 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'cutover',
+      id: 'standing',
       order: 2,
-      chipLabel: 'Rehearse the cutover',
-      chipDescription: 'Hybrid tunnels and certificates on a real renewal window.',
-      phaseId: 'p5',
-      cswp39Zone: 'migration',
-      moduleIds: ['vpn-ssh-pqc', 'tls-basics'],
-      workshopIds: ['vpn-sim'],
-      businessToolIds: ['deployment-playbook'],
+      chipLabel: 'Find out where you stand',
+      chipDescription:
+        'Ten minutes to a scored position and the checklist an auditor will ask for.',
+      phaseId: 'p1',
+      cswp39Zone: 'assets',
+      moduleIds: ['cbom', 'crypto-registry'],
+      workshopIds: [],
+      businessToolIds: ['audit-checklist'],
       board: {
-        heroEyebrow: 'IT Ops · rehearse before the change window',
+        heroEyebrow: 'IT Ops · before anyone asks · about 10 minutes',
         heroBadge: {
           text: 'Americas · Energy & Utilities, Telecommunications',
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
-        headline: 'Rehearse the cutover before renewal day.',
-        sub: 'Hybrid tunnels and hybrid certificates, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
-        ctaPrimary: 'Run an IKEv2 hybrid handshake',
-        ctaPrimaryHref: '/playground/vpn-sim',
-        ctaSecondary: 'Write the playbook',
-        ctaSecondaryHref: '/business/tools/deployment-playbook',
+        headline: 'Get to a number before someone asks you for one.',
+        sub: 'Eight questions about the estate you actually run — certificates, key stores, tunnels, vendors. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
+        ctaPrimary: 'Score your estate',
+        ctaPrimaryHref: '/assess?mode=quick',
+        ctaSecondary: 'Work the audit checklist',
+        ctaSecondaryHref: '/business/tools/audit-checklist',
         proofChips: [
-          'Real TLS 1.3 handshake, in your browser',
-          'Hybrid groups X25519MLKEM768 and friends',
-          'Log exportable',
+          'Your own answers, not a sample estate',
+          'Organised around the NIST CSWP.39 zones',
+          'Regulatory data verified 16 Jul 2026',
         ],
         sideCard: {
-          title: 'What the rehearsal covers',
+          title: 'What the score is built on',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Protocols exercised', value: 'TLS 1.3, IPsec, SSH' },
-            { label: 'What fails first', value: 'MTU and fragmentation' },
-            { label: 'Rollback', value: 'classical suites stay negotiable' },
+            { label: 'Questions you answer', value: '8' },
+            { label: 'Gaps returned', value: 'in priority order' },
+            { label: 'Time', value: 'about ten minutes' },
           ],
-          punchline: 'Find the fragmentation bug in a tab, not in a change window.',
+          punchline: 'A rough number beats no number by a wide margin.',
           footnote:
-            'The handshakes are real; which of them your estate breaks on is not something we can know for you. Treat the failure order as a starting hypothesis.',
+            'Scored from your own answers; nothing is inferred about your estate that you did not enter.',
         },
-        gridTitle: 'What you walk out with',
-        gridSub: 'A rehearsal you can repeat',
+        gridTitle: 'Where to take it next',
+        gridSub: 'A position you can report upward',
         gridCards: [
           {
-            title: 'A full IKEv2 handshake',
-            body: 'The VPN simulator runs IKEv2 in WASM with PKCS#11 crypto routed through SoftHSMv3, and the live C_* calls open for inspection.',
+            title: 'The records behind each requirement',
+            body: 'Product compliance records, per framework and per certification.',
+            href: '/compliance?tab=records',
           },
           {
-            title: 'The rehearsal, written down',
-            body: 'The Deployment Playbook generates the rollout with rollback procedures and validation steps — for the night itself, not the tab.',
+            title: 'Not sure where to start?',
+            body: 'Every part of this site arranged by topic instead of by role — for when the question is what exists, not what to do next.',
+            href: '/explore',
           },
           {
-            title: 'Two protocols, not one',
-            body: 'The cutover rarely fails in the protocol you rehearsed — which is why this board carries both.',
+            title: 'A rough number beats no number',
+            body: 'Ten minutes of your own answers is more defensible than a quarter spent waiting for a perfect inventory that nobody has ever finished.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -869,7 +1593,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What to ask a supplier',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Named algorithms', value: 'not the words quantum-safe' },
             { label: 'A dated commitment', value: 'not on our roadmap' },
@@ -885,19 +1609,259 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Supplier roadmaps as published',
             body: "Vendor PQC roadmaps quoted as issued rather than summarised, each linked to the vendor's own source or not shown at all.",
+            href: '/migrate?tab=roadmaps',
           },
           {
             title: 'Claims made comparable',
             body: 'The Vendor Scorecard Builder turns roadmap claims into a comparable PQC-readiness assessment per supplier.',
+            href: '/business/tools/vendor-scorecard',
           },
           {
             title: 'A date means nothing without enrollment',
             body: 'If a supplier cannot enrol a PQC certificate, their roadmap date is a press release. This board lets you check both.',
+            href: '/patents',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours, not 29½.',
+
+        trackChips: [
+          'PQC 101',
+          'Ops quantum impact',
+          'TLS basics',
+          'VPN/SSH',
+          'PKI workshop',
+          'Crypto agility',
+          'Migration program',
+          'KMS',
+          'HSM',
+        ],
+        capstoneChip: { label: 'Cutover-Ready' },
+      },
+    },
+    {
+      id: 'suites',
+      order: 4,
+      chipLabel: 'Know which suite to turn on',
+      chipDescription:
+        'Named cipher suites and groups, per protocol, against what your stack supports.',
+      phaseId: 'p5',
+      cswp39Zone: 'migration',
+      moduleIds: ['standards-bodies', 'pki-enrollment-protocols'],
+      workshopIds: ['pki-enrollment'],
+      businessToolIds: ['kpi-tracker'],
+      board: {
+        heroEyebrow: 'IT Ops · named suites · not “enable PQC”',
+        heroBadge: {
+          text: 'Americas · Energy & Utilities, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: 'Nobody ships a config line called “enable PQC”.',
+        sub: 'You turn on a named group in a named protocol version, on a build that supports it. Which suites exist, which of your protocols carry them, and how far the rollout has actually got.',
+        ctaPrimary: 'Check protocol support',
+        ctaPrimaryHref: '/algorithms?tab=support',
+        ctaSecondary: 'Track the rollout',
+        ctaSecondaryHref: '/business/tools/kpi-tracker',
+        proofChips: [
+          'Every protocol linked to its own spec',
+          'Hybrid groups X25519MLKEM768 and friends',
+          'Real PKI enrollment flows, in your browser',
+        ],
+        sideCard: {
+          title: 'What you actually configure',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'TLS', value: 'a named group, per version' },
+            { label: 'SSH', value: 'a named KEX algorithm' },
+            { label: 'IPsec', value: 'a proposal, plus fragmentation' },
+          ],
+          punchline: 'The config line is small. Finding which one is the work.',
+          footnote:
+            'Suite and group names are quoted from the protocol specifications, not paraphrased.',
+        },
+        gridTitle: 'Where to look it up',
+        gridSub: 'Config you can put in a change ticket',
+        gridCards: [
+          {
+            title: 'The dates the rollout is measured against',
+            body: 'Government and regulator milestones, in chronological order.',
+            href: '/timeline',
+          },
+          {
+            title: 'Why this is urgent and not routine',
+            body: 'Threat economics, and how long your data has to stay secret.',
+            href: '/threats',
+          },
+          {
+            title: 'Finding the config line is the work',
+            body: 'The change itself is one named group in one protocol version. Knowing which one, on which build, across which fleet, is the part that takes a quarter.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours, not 29½.',
+
+        trackChips: [
+          'PQC 101',
+          'Ops quantum impact',
+          'TLS basics',
+          'VPN/SSH',
+          'PKI workshop',
+          'Crypto agility',
+          'Migration program',
+          'KMS',
+          'HSM',
+        ],
+        capstoneChip: { label: 'Cutover-Ready' },
+      },
+    },
+    {
+      id: 'cutover',
+      order: 5,
+      chipLabel: 'Rehearse the cutover',
+      chipDescription: 'Hybrid tunnels and certificates on a real renewal window.',
+      phaseId: 'p5',
+      cswp39Zone: 'migration',
+      moduleIds: ['vpn-ssh-pqc', 'tls-basics'],
+      workshopIds: ['vpn-sim'],
+      businessToolIds: ['deployment-playbook'],
+      board: {
+        heroEyebrow: 'IT Ops · rehearse before the change window',
+        heroBadge: {
+          text: 'Americas · Energy & Utilities, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: 'Rehearse the cutover before renewal day.',
+        sub: 'Hybrid tunnels and hybrid certificates, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
+        ctaPrimary: 'Run an IKEv2 hybrid handshake',
+        ctaPrimaryHref: '/playground/vpn-sim',
+        ctaSecondary: 'Write the playbook',
+        ctaSecondaryHref: '/business/tools/deployment-playbook',
+        proofChips: [
+          'Real TLS 1.3 handshake, in your browser',
+          'Hybrid groups X25519MLKEM768 and friends',
+          'Log exportable',
+        ],
+        sideCard: {
+          title: 'What the rehearsal covers',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Protocols exercised', value: 'TLS 1.3, IPsec, SSH' },
+            { label: 'What fails first', value: 'MTU and fragmentation' },
+            { label: 'Rollback', value: 'classical suites stay negotiable' },
+          ],
+          punchline: 'Find the fragmentation bug in a tab, not in a change window.',
+          footnote:
+            'The handshakes are real; which of them your estate breaks on is not something we can know for you. Treat the failure order as a starting hypothesis.',
+        },
+        gridTitle: 'What you walk out with',
+        gridSub: 'A rehearsal you can repeat',
+        gridCards: [
+          {
+            title: 'A full IKEv2 handshake',
+            body: 'The VPN simulator runs IKEv2 in WASM with PKCS#11 crypto routed through SoftHSMv3, and the live C_* calls open for inspection.',
+            href: '/playground/vpn-sim',
+          },
+          {
+            title: 'The rehearsal, written down',
+            body: 'The Deployment Playbook generates the rollout with rollback procedures and validation steps — for the night itself, not the tab.',
+            href: '/business/tools/deployment-playbook',
+          },
+          {
+            title: 'Two protocols, not one',
+            body: 'The cutover rarely fails in the protocol you rehearsed — which is why this board carries both.',
+            href: '/revisions',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Then, the background: 6 hours, not 29½.',
+
+        trackChips: [
+          'PQC 101',
+          'Ops quantum impact',
+          'TLS basics',
+          'VPN/SSH',
+          'PKI workshop',
+          'Crypto agility',
+          'Migration program',
+          'KMS',
+          'HSM',
+        ],
+        capstoneChip: { label: 'Cutover-Ready' },
+      },
+    },
+    {
+      id: 'closeout',
+      order: 6,
+      chipLabel: 'Prove the change worked',
+      chipDescription: 'Evidence the cutover actually landed, and the report that says so.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['verification-closure', 'pqc-testing-validation'],
+      workshopIds: ['pqc-ssh-sim'],
+      businessToolIds: ['management-tools-audit'],
+      board: {
+        heroEyebrow: 'IT Ops · after the change window · what you can show',
+        heroBadge: {
+          text: 'Americas · Energy & Utilities, Telecommunications',
+          tone: 'sourced' as 'sourced' | 'illustrative',
+        },
+        headline: '“It looks fine” is not a closure record.',
+        sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a closure report you can attach to the change ticket.',
+        ctaPrimary: 'See a finished closure report',
+        ctaPrimaryHref: '/report?example=1',
+        ctaSecondary: 'Audit your management tooling',
+        ctaSecondaryHref: '/business/tools/management-tools-audit',
+        proofChips: [
+          'Real TLS 1.3 and SSH handshakes, in your browser',
+          'Log exportable',
+          'Every claim links to its own source',
+        ],
+        sideCard: {
+          title: 'What closure has to show',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Negotiated suite', value: 'per endpoint, not per fleet' },
+            { label: 'Downgrade', value: 'alerted, not assumed impossible' },
+            { label: 'Rollback', value: 'tested, not written down' },
+          ],
+          punchline: 'If your monitoring cannot see a downgrade, you did not migrate.',
+          footnote:
+            'The example report is generated from sample answers — your own numbers replace them once you run an assessment.',
+        },
+        gridTitle: 'Where the evidence lives',
+        gridSub: 'Evidence, not an assertion',
+        gridCards: [
+          {
+            title: 'Where closure sits in the programme',
+            body: 'The verification phase in context, with the gates either side of it.',
+            href: '/simulation?phase=verify-close',
+          },
+          {
+            title: 'The commands behind the check',
+            body: 'The same OpenSSL invocations, running in a browser tab.',
+            href: '/openssl',
+          },
+          {
+            title: 'If monitoring cannot see a downgrade, you did not migrate',
+            body: 'A cutover you cannot observe is a cutover you cannot defend. Closure is the evidence, not the change window.',
+            href: '/leaders',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Then, the background: 6 hours, not 29½.',
 
@@ -948,7 +1912,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'Changed in your fields',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [],
           punchline: 'Nothing in the fields you follow was retracted.',
           footnote:
@@ -961,19 +1925,21 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The corpus, unfiltered',
             body: 'Source tier, verification date and the counter-claim where one is on file. Nothing is filtered out for this role — the corpus arrives whole.',
+            href: '/library',
           },
           {
             title: 'The correction history',
             body: 'Every logged correction to the compliance, vendor and migration data, with who reviewed it — the audit trail behind the catalogues.',
+            href: '/revisions',
           },
           {
             title: 'Provenance you can re-check',
             body: 'Both destinations are read-only records: the corpus with its tiers, and the log of every correction made to it. Nothing here asks you to trust a summary.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -992,8 +1958,85 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'reproduce',
+      id: 'standards',
       order: 2,
+      chipLabel: 'Track the standards',
+      chipDescription: 'What is final, what is draft, and what changed since you last looked.',
+      phaseId: 'p1',
+      cswp39Zone: 'assets',
+      moduleIds: ['standards-bodies', 'pqc-candidates'],
+      workshopIds: ['lms-hss'],
+      businessToolIds: ['crypto-vulnerability-watch'],
+      board: {
+        heroEyebrow: 'Researcher · status, provenance, and what moved',
+        heroBadge: {
+          text: 'All regions · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Everything here has a status and a date.',
+        sub: 'FIPS 203, 204 and 205 are published. 206 is not. HQC is selected but unstandardised. Each of those is a different claim with a different citation, and this page never flattens them into “PQC is ready”.',
+        ctaPrimary: 'See algorithm and FIPS status',
+        ctaPrimaryHref: '/algorithms?tab=validation',
+        ctaSecondary: 'Watch the vulnerability feed',
+        ctaSecondaryHref: '/business/tools/crypto-vulnerability-watch',
+        proofChips: [
+          'Every status links to its NIST publication',
+          'Draft and final are labelled, never merged',
+          'Counter-claims dataset · CVE snapshots',
+        ],
+        sideCard: {
+          title: 'Status is not a binary',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Published FIPS', value: '203, 204, 205' },
+            { label: 'Selected, not standardised', value: 'HQC' },
+            { label: 'Draft', value: '206 and the composites' },
+          ],
+          punchline: '“Standardised” is four different states wearing one word.',
+          footnote:
+            'Each status is read from the algorithm registry, which carries the publication or draft that set it.',
+        },
+        gridTitle: 'What the workspace gives you',
+        gridSub: 'Status you can cite precisely',
+        gridCards: [
+          {
+            title: 'When each milestone actually landed',
+            body: 'Government and standards milestones on one dated chronology.',
+            href: '/timeline',
+          },
+          {
+            title: 'The people behind each document',
+            body: 'Named contributors, every entry proof-gated against a published source.',
+            href: '/leaders',
+          },
+          {
+            title: '“Standardised” is four states wearing one word',
+            body: 'Published, selected-but-unstandardised, draft and withdrawn are different claims with different citations. Flattening them is how a roadmap ends up wrong.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Learning path: available, never pushed.',
+
+        trackChips: [
+          'PQC 101',
+          'Research quantum impact',
+          'PQC candidates',
+          'Entropy & randomness',
+          'Hybrid crypto',
+          'Crypto agility',
+          'Standards bodies',
+          'TLS basics',
+          'PKI workshop',
+        ],
+      },
+    },
+    {
+      id: 'reproduce',
+      order: 3,
       chipLabel: 'Reproduce the claims',
       chipDescription: 'ACVP vectors and KATs you run yourself, log exportable.',
       phaseId: 'verify-close',
@@ -1022,7 +2065,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'What you can reproduce here',
           tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Hash-based signatures', value: 'SLH-DSA, XMSS, LMS' },
             { label: 'Randomness', value: 'entropy and DRBG tests' },
@@ -1038,19 +2081,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'All 12 FIPS 205 parameter sets',
             body: 'SLH-DSA sign and verify across every parameter set, pre-hash variants included, executed locally in the browser.',
+            href: '/playground/slh-dsa',
           },
           {
             title: 'Randomness, tested not asserted',
             body: 'The NIST SP 800-90B suite — monobit, frequency and min-entropy — run against live output rather than quoted from a datasheet.',
+            href: '/playground/entropy-test',
           },
           {
             title: 'Nothing here is recorded output',
             body: 'Both workshops run real implementations compiled to WebAssembly, alongside the 25-check TCG V1.85 runner. The log is exportable, so the claim is yours to check.',
+            href: '/assess?mode=comprehensive',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -1070,7 +2116,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
     },
     {
       id: 'threatmodel',
-      order: 3,
+      order: 4,
       chipLabel: 'Interrogate the threat model',
       chipDescription: 'CRQC scenarios and the strongest published counter-claims.',
       phaseId: 'p3',
@@ -1093,13 +2139,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Counter-claims dataset · CVE snapshots',
           'Authoritative / High / Moderate / Low source tiers',
-          '804 sources, trust-tiered',
+          '803 sources, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
           title: 'The CRQC consensus',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Consensus estimate', value: '2033 (2030–2036)' },
             { label: 'Data must stay secret', value: '12 yrs' },
@@ -1115,19 +2161,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Scenarios, not a single date',
             body: 'The CRQC Scenario Planner models cryptographically-relevant-quantum-computer arrival scenarios and what each one implies for your own horizon.',
+            href: '/business/tools/crqc-scenario',
           },
           {
             title: 'The threat data, with its sources',
             body: 'Threat Economics, the CRQC Capability Watch and the Z-estimate, each figure carrying the sources behind it.',
+            href: '/threats',
           },
           {
             title: 'An estimate, not a date',
             body: 'The consensus is a median across tracked sources, each with its own date, tier and link — and the published objections are on file too.',
+            href: '/patents',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Learning path: available, never pushed.',
         trackNote:
@@ -1145,85 +2194,167 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
       },
     },
-  ],
-  curious: [
     {
-      id: 'break',
-      order: 1,
-      chipLabel: 'Watch it break',
-      chipDescription: 'See a real connection fall over, in this tab.',
-      phaseId: '',
-      cswp39Zone: '',
-      moduleIds: ['pqc-101', 'quantum-threats'],
-      workshopIds: ['tls-simulator'],
-      businessToolIds: ['breach-simulator'],
+      id: 'commandline',
+      order: 5,
+      chipLabel: 'Take it to a command line',
+      chipDescription: 'The same primitives, on a real OpenSSL prompt, with the log exportable.',
+      phaseId: 'verify-close',
+      cswp39Zone: 'risk-management',
+      moduleIds: ['pqc-testing-validation', 'entropy-randomness'],
+      workshopIds: ['drbg-demo', 'source-combining'],
+      businessToolIds: [],
       board: {
-        heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
+        heroEyebrow: 'Researcher · a real prompt · keep the log',
         heroBadge: {
-          text: 'Americas · unfiltered',
+          text: 'All regions · unfiltered',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
-        headline: 'What actually breaks, and when.',
-        sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
-        ctaPrimary: 'Watch a real handshake',
-        ctaPrimaryHref: '/playground/tls-simulator',
-        ctaSecondary: 'See what a breach costs',
-        ctaSecondaryHref: '/business/tools/breach-simulator',
+        headline: 'Do not stop at our buttons.',
+        sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — same vectors, same primitives, your own invocation. Nothing to install, and the transcript exports.',
+        ctaPrimary: 'Open OpenSSL Studio',
+        ctaPrimaryHref: '/openssl',
+        ctaSecondary: 'See what a generated report contains',
+        ctaSecondaryHref: '/report?example=1',
         proofChips: [
-          'Real cryptography, running here',
-          'Plain English by default',
-          'Every term explained on hover',
+          'ACVP + KAT run locally, not asserted',
+          'Real liboqs + SoftHSMv3 compiled to WASM',
+          'Log exportable',
+          'Drift guards fail the build on silent data change',
         ],
         sideCard: {
-          title: 'The bit that surprises people',
-          tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          title: 'What you can take elsewhere',
+          tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Encrypted data captured today', value: 'still readable later' },
-            { label: 'If it must stay secret for', value: '12 years' },
-            { label: 'And the machine arrives in', value: '~2032' },
+            { label: 'Vectors', value: 'NIST ACVP, unmodified' },
+            { label: 'Invocation', value: 'yours, not ours' },
+            { label: 'Output', value: 'exportable, diffable' },
           ],
-          punchline: 'The deadline already passed for some data.',
+          punchline: 'If it only reproduces behind a button, it does not reproduce.',
           footnote:
-            'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
+            'OpenSSL Studio runs a real OpenSSL build compiled to WASM in your browser — no server executes your commands.',
         },
-        gridTitle: 'Where you can go next',
-        gridSub: 'Optional, none of it locked',
+        gridTitle: 'What the workspace gives you',
+        gridSub: 'Instruments you can drive yourself',
         gridCards: [
           {
-            title: 'A real connection, in this tab',
-            body: 'The TLS 1.3 simulator runs an actual handshake — the same negotiation your browser does for the padlock — so you can see which part the quantum threat lands on.',
+            title: 'The whole programme, played deep',
+            body: 'A full migration run with every phase expanded.',
+            href: '/simulation?run=climb-deep',
           },
           {
-            title: 'What it would actually cost',
-            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
+            title: 'Everything else on the site, by topic',
+            body: 'Topic-first navigation rather than role-first.',
+            href: '/explore',
           },
           {
-            title: 'Why a handshake, of all things',
-            body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
+            title: 'If it only reproduces behind a button, it does not reproduce',
+            body: 'An in-tab lab is a convenience, not a result. The claim only holds once you have run it with your own invocation and kept the log.',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
-        trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
-        trackNote:
-          'Worth saying plainly: at 205 minutes this is longer than the executive track (200 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
+        trackTitle: 'Learning path: available, never pushed.',
+
         trackChips: [
           'PQC 101',
+          'Research quantum impact',
           'PQC candidates',
-          'Quantum threats',
-          'Risk basics',
-          'Compliance timelines',
+          'Entropy & randomness',
+          'Hybrid crypto',
+          'Crypto agility',
+          'Standards bodies',
           'TLS basics',
+          'PKI workshop',
         ],
-        capstoneChip: { label: 'Quantum-Native' },
       },
     },
     {
+      id: 'field',
+      order: 6,
+      chipLabel: 'Follow it into the field',
+      chipDescription: 'Where the algorithms actually show up: sectors, products, regulations.',
+      phaseId: 'p7',
+      cswp39Zone: 'migration',
+      moduleIds: ['emv-payment-pqc', 'energy-utilities-pqc'],
+      workshopIds: ['suci-flow'],
+      businessToolIds: ['supply-chain-matrix'],
+      board: {
+        heroEyebrow: 'Researcher · from the paper to the payment terminal',
+        heroBadge: {
+          text: 'All regions · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Follow the algorithm into production.',
+        sub: 'ML-KEM in a 5G SUCI construction, ML-DSA in payment rails, SLH-DSA in firmware signing — three sectors, three different stages. Which has adopted what, in which product and under which regulation, with the evidence attached rather than the announcement.',
+        ctaPrimary: 'See what has actually shipped',
+        ctaPrimaryHref: '/migrate?tab=replace',
+        ctaSecondary: 'Map the supply chain',
+        ctaSecondaryHref: '/business/tools/supply-chain-matrix',
+        proofChips: [
+          'Catalogue entries are proof-gated',
+          "Every product claim links to the vendor's own source",
+          'Authoritative / High / Moderate / Low source tiers',
+        ],
+        sideCard: {
+          title: 'Adoption is uneven',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Furthest along', value: 'network and web protocols' },
+            { label: 'Slowest', value: 'firmware and long-lived devices' },
+            { label: 'Hardest to verify', value: 'embedded and OT' },
+          ],
+          punchline: 'The gap between selected and deployed is where the research is.',
+          footnote:
+            "Every catalogued product carries a link to the vendor's own published evidence, or it is not shown.",
+        },
+        gridTitle: 'Where the evidence lives',
+        gridSub: 'Deployment, with its evidence',
+        gridCards: [
+          {
+            title: 'Which sectors use which mechanisms',
+            body: 'The industry landscape — 22 sectors, the crypto each use case actually relies on, and the standards behind them.',
+            href: '/algorithms?tab=landscape',
+          },
+          {
+            title: 'The regulation each sector answers to',
+            body: 'The compliance pillar, by country, industry and enforcement body.',
+            href: '/compliance?tab=compliance',
+          },
+          {
+            title: 'The gap between selected and deployed is the research',
+            body: 'Standardisation is settled. Which sectors have actually shipped it, and which cannot, is the open question worth your time.',
+            href: '/business?zone=migration',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Learning path: available, never pushed.',
+
+        trackChips: [
+          'PQC 101',
+          'Research quantum impact',
+          'PQC candidates',
+          'Entropy & randomness',
+          'Hybrid crypto',
+          'Crypto agility',
+          'Standards bodies',
+          'TLS basics',
+          'PKI workshop',
+        ],
+      },
+    },
+  ],
+  curious: [
+    {
       id: 'short',
-      order: 2,
+      order: 1,
       chipLabel: 'The 30-second version',
       chipDescription: 'The one idea worth leaving with, and nothing else.',
       phaseId: '',
@@ -1251,7 +2382,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'The one idea',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Recorded today', value: 'opened later' },
             { label: 'Nothing you do now', value: 'un-records it' },
@@ -1267,19 +2398,22 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'One guided path',
             body: 'The learning path is a single route through post-quantum cryptography, ordered for whichever role you pick.',
+            href: '/learn',
           },
           {
-            title: 'The cost of waiting',
+            title: 'What waiting actually costs',
             body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them.',
+            href: '/business/tools/cost-of-inaction',
           },
           {
             title: 'Thirty seconds was the point',
             body: 'If you stop here you already have the argument. Everything above is optional detail.',
+            href: '/explore',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Start anywhere. Nothing is locked.',
         trackNote:
@@ -1296,8 +2430,160 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       },
     },
     {
-      id: 'mylife',
+      id: 'break',
+      order: 2,
+      chipLabel: 'Watch it break',
+      chipDescription: 'See a real connection fall over, in this tab.',
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['pqc-101', 'quantum-threats'],
+      workshopIds: ['tls-simulator'],
+      businessToolIds: ['breach-simulator'],
+      board: {
+        heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
+        heroBadge: {
+          text: 'Americas · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'What actually breaks, and when.',
+        sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
+        ctaPrimary: 'Watch a real handshake',
+        ctaPrimaryHref: '/playground/tls-simulator',
+        ctaSecondary: 'See what a breach costs',
+        ctaSecondaryHref: '/business/tools/breach-simulator',
+        proofChips: [
+          'Real cryptography, running here',
+          'Plain English by default',
+          'Every term explained on hover',
+        ],
+        sideCard: {
+          title: 'The bit that surprises people',
+          tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Encrypted data captured today', value: 'still readable later' },
+            { label: 'If it must stay secret for', value: '12 years' },
+            { label: 'And the machine arrives in', value: '~2032' },
+          ],
+          punchline: 'The deadline already passed for some data.',
+          footnote:
+            'Harvest now, decrypt later. That is the whole argument, and it is the one idea worth leaving with even if you read nothing else.',
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Optional, none of it locked',
+        gridCards: [
+          {
+            title: 'A real connection, in this tab',
+            body: 'The TLS 1.3 simulator runs an actual handshake — the same negotiation your browser does for the padlock — so you can see which part the quantum threat lands on.',
+            href: '/playground/tls-simulator',
+          },
+          {
+            title: 'What it would actually cost',
+            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
+            href: '/business/tools/breach-simulator',
+          },
+          {
+            title: 'Why a handshake, of all things',
+            body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
+            href: '/openssl',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Six modules, 205 minutes — and yes, that is still a lot.',
+        trackNote:
+          'Worth saying plainly: at 205 minutes this is longer than the executive track (200 min), which is not what you would expect. Take it in pieces — your progress is saved between visits.',
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'howbad',
       order: 3,
+      chipLabel: 'How bad is it really?',
+      chipDescription: "The honest version: what we know, what we don't, and what replaces it.",
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['quantum-threats', 'pqc-candidates'],
+      workshopIds: ['rng-demo'],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
+        heroBadge: {
+          text: 'Americas · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Nobody knows the year. Here is what they do know.',
+        sub: 'The honest answer to “when” is a range, not a date, and people who study this disagree with each other in public. The replacements, though, are already published — that part is not in doubt.',
+        ctaPrimary: "See what we know and what we don't",
+        ctaPrimaryHref: '/threats',
+        ctaSecondary: 'Meet the replacements',
+        ctaSecondaryHref: '/algorithms?tab=transition&highlight=ML-KEM-768',
+        proofChips: [
+          'Plain English by default',
+          'The estimate carries its dissent',
+          'When we get it wrong, we say so',
+        ],
+        sideCard: {
+          title: 'What is and is not settled',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'The maths breaking', value: 'settled' },
+            { label: 'The year it breaks', value: 'a range, 2030–2036' },
+            { label: 'The replacement', value: 'published and final' },
+          ],
+          punchline: 'Uncertain timing is not the same as uncertain outcome.',
+          footnote:
+            'The range is the published consensus window, shown with its range rather than as a single year.',
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Optional, none of it sequenced',
+        gridCards: [
+          {
+            title: 'Where would you actually stand?',
+            body: 'Eight plain questions and a rough position. About ten minutes.',
+            href: '/assess?mode=quick',
+          },
+          {
+            title: 'Everything we have corrected',
+            body: 'When we get something wrong we log it here rather than quietly fixing it.',
+            href: '/revisions',
+          },
+          {
+            title: 'Uncertain timing, certain outcome',
+            body: 'Nobody can give you the year. That is not the same as nobody knowing what breaks, or what replaces it — both of those are settled.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Start anywhere. Nothing is locked.',
+
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'mylife',
+      order: 4,
       chipLabel: 'Where this touches me',
       chipDescription: 'Your payments, your ID, your medical records.',
       phaseId: '',
@@ -1325,7 +2611,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'Three things it touches',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Payments', value: 'the card in your pocket' },
             { label: 'Identity', value: 'the ID in your phone' },
@@ -1341,23 +2627,177 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The ID in your phone',
             body: 'The full EUDI wallet lifecycle: wallet, PID issuance, attestation, relying-party verification and the QES provider.',
+            href: '/playground/digital-id',
           },
           {
             title: 'The money',
             body: 'A Bitcoin transaction end to end — secp256k1 keypair, SHA-256 and RIPEMD-160, transaction signing. Classical crypto, shown as what is being migrated away from.',
+            href: '/playground/bitcoin-flow',
           },
           {
             title: 'Why these two',
             body: 'Identity and money are the everyday systems whose data outlives the lock protecting it — which is what makes them the clear cases.',
+            href: '/library?purpose=education',
           },
         ] as [
-          { title: string; body: string },
-          { title: string; body: string },
-          { title: string; body: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
         ],
         trackTitle: 'Start anywhere. Nothing is locked.',
         trackNote:
           'Optional, none of it sequenced — pick what looks interesting and stop when you have had enough.',
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'anyone',
+      order: 5,
+      chipLabel: 'Is anyone fixing it?',
+      chipDescription: 'Governments, companies, and the people actually doing the work.',
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['compliance-strategy', 'standards-bodies'],
+      workshopIds: ['qrng-demo'],
+      businessToolIds: [],
+      board: {
+        heroEyebrow: 'No background needed · about 5 minutes · nothing to install',
+        heroBadge: {
+          text: 'Americas · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Somebody is already on this.',
+        sub: 'This is not a warning nobody acted on. Governments have signed dates into law, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.',
+        ctaPrimary: 'See what governments have committed to',
+        ctaPrimaryHref: '/timeline',
+        ctaSecondary: 'Meet the people doing the work',
+        ctaSecondaryHref: '/leaders',
+        proofChips: [
+          'Plain English by default',
+          'Every term explained on hover',
+          'Every claim links to its own source',
+        ],
+        sideCard: {
+          title: 'Where it already stands',
+          tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Replacements', value: 'published, not proposed' },
+            { label: 'Deadlines', value: 'law in several countries' },
+            { label: 'People working on it', value: 'named, with their work' },
+          ],
+          punchline: 'The fix exists. Fitting it everywhere is the slow part.',
+          footnote:
+            'Every person listed is proof-gated against a published source — a talk, a paper, or a standard they authored.',
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Optional, none of it locked',
+        gridCards: [
+          {
+            title: 'The rules countries have written',
+            body: 'What your country and industry have actually committed to.',
+            href: '/compliance?tab=foryou',
+          },
+          {
+            title: 'Who is building it, not just talking',
+            body: 'Patent filings across the field. Research only, not legal advice.',
+            href: '/patents',
+          },
+          {
+            title: 'The fix exists. Fitting it everywhere is the slow part',
+            body: 'This is not a problem waiting on a discovery. It is waiting on millions of systems being changed one at a time.',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Start anywhere. Nothing is locked.',
+
+        trackChips: [
+          'PQC 101',
+          'PQC candidates',
+          'Quantum threats',
+          'Risk basics',
+          'Compliance timelines',
+          'TLS basics',
+        ],
+        capstoneChip: { label: 'Quantum-Native' },
+      },
+    },
+    {
+      id: 'whattake',
+      order: 6,
+      chipLabel: 'What would fixing it take?',
+      chipDescription: 'Watch an organisation actually do it, start to finish.',
+      phaseId: '',
+      cswp39Zone: '',
+      moduleIds: ['migration-program', 'crypto-agility'],
+      workshopIds: [],
+      businessToolIds: ['initial-scoping'],
+      board: {
+        heroEyebrow: 'No background needed · about 11 minutes · nothing to install',
+        heroBadge: {
+          text: 'Americas · unfiltered',
+          tone: 'illustrative' as 'sourced' | 'illustrative',
+        },
+        headline: 'Watch someone actually do it.',
+        sub: 'Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Eleven minutes, and you will know why people say this takes years.',
+        ctaPrimary: 'Watch a migration happen',
+        ctaPrimaryHref: '/simulation?run=climb',
+        ctaSecondary: 'See where you would start',
+        ctaSecondaryHref: '/business/tools/initial-scoping',
+        proofChips: [
+          'Deterministic run — same seed, same outcome',
+          'Plain English by default',
+          'Nothing to install',
+        ],
+        sideCard: {
+          title: 'Why it takes years',
+          tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
+          rows: [
+            { label: 'Finding the crypto', value: 'the longest phase' },
+            { label: 'Changing it', value: 'the easy part' },
+            { label: 'Proving it changed', value: 'the part people skip' },
+          ],
+          punchline: 'The hard problem is inventory, not cryptography.',
+          footnote:
+            "The run follows an illustrative organisation — the phases are the published framework's, the numbers are not yours.",
+        },
+        gridTitle: 'Where you can go next',
+        gridSub: 'Three doors, all optional',
+        gridCards: [
+          {
+            title: 'What would actually get replaced',
+            body: 'The products people run, and how PQC-ready each one is.',
+            href: '/migrate',
+          },
+          {
+            title: 'The tools people use to do it',
+            body: 'The working artifacts a real migration produces.',
+            href: '/business',
+          },
+          {
+            title: 'The hard problem is inventory, not cryptography',
+            body: 'Swapping an algorithm is a day. Finding every place your organisation uses one is the part that takes years.',
+            href: '/report?example=1',
+          },
+        ] as [
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+          { title: string; body: string; href?: string },
+        ],
+        trackTitle: 'Start anywhere. Nothing is locked.',
+
         trackChips: [
           'PQC 101',
           'PQC candidates',
