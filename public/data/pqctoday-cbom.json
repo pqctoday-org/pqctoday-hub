@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:70e4e325-51b5-4c68-b41f-89ed6b273869",
+  "serialNumber": "urn:uuid:834ba846-8381-4cce-8615-276b93505497",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-08T00:00:00.000Z",
+    "timestamp": "2026-08-09T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -23994,58 +23994,6 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "7ed79711f4c6265d",
-      "name": "SOPS (Secrets OPerationS)",
-      "version": "3.13.1",
-      "purl": "pkg:github/getsops/sops",
-      "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
-        }
-      },
-      "description": "SOPS 3.9.x supports PQC encryption via the age-pq backend (hybrid ML-KEM-768 + X25519). Invoke with `age --pq` flag; SOPS wraps age transparently. Key management unchanged. Sandbox test 23 verifies encrypt+decrypt round-trip with PQC age keys. No FIPS 140-3 validation. Suitable for secrets-at-rest in cloud-native pipelines.",
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/getsops/sops"
-        },
-        {
-          "type": "website",
-          "url": "https://github.com/getsops/sops"
-        }
-      ],
-      "properties": [
-        {
-          "name": "pqctoday:product_id",
-          "value": "getsops-sops"
-        },
-        {
-          "name": "pqctoday:category",
-          "value": "Secrets Management"
-        },
-        {
-          "name": "pqctoday:layer",
-          "value": "Security Stack"
-        },
-        {
-          "name": "pqctoday:fips_validated",
-          "value": "No"
-        },
-        {
-          "name": "pqctoday:algorithm_source",
-          "value": "capability_description"
-        },
-        {
-          "name": "pqctoday:confidence_score",
-          "value": "80"
-        }
-      ]
-    },
-    {
-      "type": "cryptographic-asset",
       "bom-ref": "f8d737c71066fcb7",
       "name": "Certicom Code Signing and Key Management Server",
       "manufacturer": {
@@ -27624,6 +27572,61 @@
         {
           "name": "pqctoday:cswp39_tags",
           "value": "iot;tls;mqtt"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "24ba3d89384524f0",
+      "name": "osslsigncode",
+      "version": "2.13",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "osslsigncode is an open-source Authenticode signing tool for PE/MSI/CAB files using OpenSSL. With OpenSSL 3.6+ linked, ML-DSA-65 signatures can be embedded in PE binaries today via custom OID. Sandbox test 17 demonstrates ML-DSA-65 PE signing and verification. Caveat: Windows Authenticode validation chain does not yet accept ML-DSA OIDs — dual-signing (classical + ML-DSA) is the migration path for cross-platform compatibility. No FIPS validation. Suitable for internal pipeline signing where verifier is under your control.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/mtrojnar/osslsigncode"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/mtrojnar/osslsigncode"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "osslsigncode"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Code Signing and Software Integrity"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "CI/CD"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        },
+        {
+          "name": "pqctoday:cswp39_tags",
+          "value": "code-signing;supply-chain;pe;authenticode"
         }
       ]
     },
@@ -31596,9 +31599,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "9216a1b9bc766c9f",
+      "bom-ref": "13a142c8ec71b010",
       "name": "pqctoday-kmip",
-      "version": "not yet released (in development)",
+      "version": "main (verified 2026-08-09)",
       "manufacturer": {
         "name": "pqctoday (self)"
       },
@@ -31609,7 +31612,7 @@
           "primitive": "kem"
         }
       },
-      "description": "pqctoday-org/pqctoday-kmip is a ground-up KMIP 3.x key-management server (in development) built on ThalesGroup/kmip-go. Planned to expose ML-KEM-768 and ML-DSA-65 via KMIP Encapsulate / Decapsulate / Sign / SignatureVerify operations with a softhsmv3 PKCS#11 backend. Replaces the BUSL-1.1 Cosmian KMS that was rejected as a runtime dependency on 2026-06-03; chosen for its MIT license, compatible with the customer-facing platform. Targets the sandbox KMIP/PQC training-KMS scenario.",
+      "description": "pqctoday-kmip is pqctoday's own MIT-licensed KMIP 3.0 server, written in Rust and executing crypto on the softhsmrustv3 PKCS#11 v3.2 engine (NOT on ThalesGroup/kmip-go, which an earlier catalog revision recorded in error). It exposes a three-plane architecture: a crypto-agility policy plane, KMIP 3.0 key management, and PKCS#11 crypto execution. Verified by execution on 2026-08-09: ML-DSA-65 Create+Sign and ML-KEM-768 Create+Encapsulate+Decapsulate all succeeded against a live server, with 6 managed objects and an audit trail reporting 37 policy decisions, 78 KMIP operations and 14 PKCS#11 calls. Data-plane TLS is quantum-safe-profiled: TLS 1.3 only with hybrid ML-KEM groups, classical key exchange refused outright.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -34972,6 +34975,199 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "0dedc865d152eac5",
+      "name": "softhsmrustv3 (pqctoday Rust PKCS#11 engine)",
+      "version": "0.17.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Pure-Rust PKCS#11 v3.2 engine, the second crypto backend in pqctoday-hsm alongside the C++ softhsmv3. It is the production backend for the pqctoday-kmip server and the CACP policy engine, and it compiles to wasm32-unknown-emscripten as a staticlib linked into openssl.wasm for the in-browser playground. Carries its own checked-in PKCS#11 v3.2 conformance evidence (rust/RUST_P11_V32_CONFORMANCE_REPORT.md). Since 2026-08-08 it also emits a runtime-gated PKCS#11 operation-evidence log, so a caller can prove which mechanism executed inside the token rather than asserting it.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "softhsmrustv3"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Hardware Security Module (HSM) Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "66eb9fa386f2e83a",
+      "name": "bench-harness (pqctoday PKCS#11 benchmark)",
+      "version": "in-tree (2026-08-09)",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Rust benchmark harness in pqctoday-hsm that drives a PKCS#11 v3.2 engine directly and reports per-mechanism throughput across a 26-algorithm matrix (16 signature, 10 key agreement). It is what the sandbox hsm-perf-bench scenario measures. Published ops/sec figures must come from a run with the engine's operation log DISABLED — at roughly 62,000 signs/sec an enabled log measures the logger rather than the HSM.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pqctoday-bench-harness"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "DevSecOps"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "a4ef7a9489538ce0",
+      "name": "age-plugin-pqctoday",
+      "version": "in-tree (2026-08-09)",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "pqctoday's age recipient plugin implementing the X-Wing hybrid KEM (X25519 + ML-KEM-768) so age — and therefore SOPS — can wrap secrets to a post-quantum recipient. The post-quantum key material is generated in and held by softhsmv3 over PKCS#11 rather than in a file. This is the component that gives the sandbox's SOPS GitOps scenario its PQC; SOPS itself has none (see the getsops-sops row).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "age-plugin-pqctoday"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Security Stack"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "75"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "f1253bc1eb400ff9",
+      "name": "OpenSSL 3.6",
+      "version": "3.6.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "OpenSSL 3.6.x carries ML-KEM, ML-DSA and SLH-DSA natively — no external provider — plus the hybrid TLS 1.3 groups (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024). This is the branch the pqctoday sandbox builds every scenario against. IMPORTANT: 3.6 is NOT an LTS branch and reaches end of life on 2026-11-01; the LTS branch is 3.5.x, supported to 2030-04-08, which carries the same PQC algorithm set. Anyone adopting 3.6 for PQC should plan the move to an LTS or later branch before that date.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/openssl/openssl"
+        },
+        {
+          "type": "website",
+          "url": "https://openssl-library.org/news/openssl-3.6-notes/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "openssl-3-6"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "90"
         }
       ]
     }

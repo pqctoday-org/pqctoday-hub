@@ -521,9 +521,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/hybrid-encrypt',
           },
           {
-            title: 'A grade on your call sites',
-            body: 'The Crypto API Refactor Audit (CSWP.39 §4.1) grades how agile your current crypto call sites are, and what refactoring this pilot implies for them.',
-            href: '/business/tools/crypto-api-refactor-audit',
+            title: 'Everything else, arranged by topic',
+            body: 'The whole site indexed by subject rather than by role — for when you know the primitive you need but not which page covers it.',
+            href: '/explore',
           },
           {
             title: 'The construction, not the diagram',
@@ -1213,9 +1213,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/envelope-encrypt',
           },
           {
-            title: 'A Phase 6 deliverable',
-            body: 'The Infrastructure Modernization Planner consolidates the PKI modernization plan and the HSM/KMS upgrade schedule into one document.',
-            href: '/business/tools/infra-modernization-planner',
+            title: 'The whole site, by topic',
+            body: 'Every section arranged by subject instead of by role — for when the question is what exists, not what to do next.',
+            href: '/explore',
           },
           {
             title: 'Where the keys live',
