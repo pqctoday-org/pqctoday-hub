@@ -138,8 +138,15 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
   // B+ remediation 1.2 (2026-08-10). "Choosing a role shrinks the navigation,
   // and the shrink is never explained at the moment of choosing — the reward
   // for telling the hub who you are is fewer doors." `previewId` is whichever
-  // tile the pointer or keyboard focus is on; falling back to the active role
-  // means the panel is never empty, so the trade is legible before any click.
+  // tile the pointer or keyboard focus last landed on.
+  //
+  // STICKY, and deliberately so (fixed 2026-08-10 after review: "the role modal
+  // is flickering"). The first version cleared this on mouseleave/blur, so
+  // moving the pointer across the 2×3 grid crossed a gap between every pair of
+  // tiles — each gap reverted the panel to the active role, then the next tile
+  // set it again, several times per second. Keeping the last hovered role until
+  // another replaces it makes the panel change once per tile instead of twice
+  // per gap, which is what a preview should do.
   const [previewId, setPreviewId] = useState<PersonaId | null>(null)
   const shownId = previewId ?? selectedPersona
   const shownAdaptation = shownId ? describePersonaAdaptation(shownId) : null
@@ -164,7 +171,13 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
         aria-modal="true"
         aria-labelledby="persona-switch-title"
         tabIndex={-1}
-        className="fixed inset-0 z-overlay flex items-center justify-center p-4 pointer-events-none outline-none"
+        // Top-anchored, not centred (2026-08-10, flicker fix). The role tiles
+        // sit ABOVE the preview panel, so when the panel grew — curious's copy
+        // is ~95px taller than executive's — a centred modal pushed the whole
+        // grid UPWARD, sliding tiles out from under the pointer and firing
+        // another mouseenter. Anchoring the top means the panel grows downward
+        // into empty space and the tiles never move, whatever the copy length.
+        className="fixed inset-0 z-overlay flex items-start justify-center overflow-y-auto p-4 pt-[8vh] pointer-events-none outline-none"
       >
         <div className="glass-panel rounded-2xl p-6 w-full max-w-lg shadow-2xl pointer-events-auto">
           <div className="flex items-center justify-between mb-5">
@@ -210,9 +223,7 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                   // the active tile via [data-workshop-target^="persona-role-"].
                   data-workshop-target={`persona-role-${id}`}
                   onMouseEnter={() => setPreviewId(id)}
-                  onMouseLeave={() => setPreviewId(null)}
                   onFocus={() => setPreviewId(id)}
-                  onBlur={() => setPreviewId(null)}
                 >
                   <Icon
                     size={16}
@@ -236,8 +247,13 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
               it describes. `aria-live` announces it as the reader moves across
               the tiles with a keyboard. */}
           {shownId && shownAdaptation && (
+            // A fixed min-height, because the second cause of the flicker was
+            // the panel itself: each role's sentence is a different length, so
+            // moving between tiles resized the modal and shifted the grid under
+            // the pointer — which then fired another mouseenter. Reserving the
+            // space breaks that feedback loop.
             <div
-              className="mt-4 rounded-xl border border-border bg-muted/20 p-3"
+              className="mt-4 min-h-[104px] rounded-xl border border-border bg-muted/20 p-3"
               aria-live="polite"
             >
               <p className="text-xs leading-relaxed text-muted-foreground">
