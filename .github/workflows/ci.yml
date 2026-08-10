@@ -193,6 +193,18 @@ jobs:
         # "0 CTAs, 11 registered" and still exiting 0.
         run: npm run audit:role-board-ctas
 
+      - name: Audit persona lens (every surface declares how it treats roles)
+        # B+ remediation (2026-08-10). The review found 179 of 288
+        # (surface x persona) cells below grade and traced much of it to one
+        # structural gap: nothing recorded WHICH surfaces adapt to a role, so a
+        # broken lens and an absent lens looked identical, and correct decisions
+        # to withhold a route lived only in code comments -- i.e. read as bugs
+        # on screen. This gate holds src/data/personaLensRegistry.ts honest:
+        # every route declared, every named config key still exported, every
+        # withheld route backed by an on-screen notice, and no board CTA or
+        # milestone bypassing a rail-hidden route's canonical door.
+        run: npm run audit:persona-lens
+
       - name: Audit role-board coverage (every role reaches every section)
         # The 2026-08-09 expansion to six use cases per role exists so that each
         # role's home page reaches the whole site. Nothing enforced that
