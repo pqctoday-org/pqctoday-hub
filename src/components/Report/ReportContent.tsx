@@ -500,6 +500,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         previousRiskScore={previousRiskScore}
                         lastModifiedAt={lastModifiedAt}
                         defaultOpen={cfg('riskScore').state === 'open'}
+                        industry={industry}
                       />
                     )}
 
