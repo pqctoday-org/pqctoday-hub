@@ -1,0 +1,14 @@
+[
+  {
+    "ref_id": "BIP-39",
+    "reason": "Probable landing page, not the document (283,862 bytes of markup, only 6,427 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "BIP-44",
+    "reason": "Probable landing page, not the document (301,545 bytes of markup, only 7,222 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "SLIP-0010",
+    "reason": "no requirements key; got []"
+  }
+]
