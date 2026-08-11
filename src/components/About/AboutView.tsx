@@ -54,6 +54,18 @@ export function AboutView() {
 
   return (
     <div ref={containerRef} className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+      {/* /about has never had a level-one heading — VisionSection's "About PQC
+          Today" is an <h2>, and this page deliberately omits the standard
+          PageHeader (which is what supplies the h1 elsewhere). axe's
+          `page-has-heading-one` therefore fires here, intermittently enough
+          that the smoke gate had been passing by luck; confirmed present on
+          origin/main too, so it predates the B+ work.
+
+          Visually hidden rather than a new visible title: the page already
+          reads as "About PQC Today" two lines below, and adding a second
+          visible one to satisfy a linter would be the tail wagging the dog.
+          Screen readers and axe both get the landmark they need. */}
+      <h1 className="sr-only">About PQC Today</h1>
       {isExecutive && !isEmbedded && <ExecutiveAboutSummary />}
       <AboutSection slug="vision">
         <VisionSection defaultExpanded={isExecutive} />
