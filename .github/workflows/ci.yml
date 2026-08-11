@@ -417,8 +417,15 @@ jobs:
         # merging still needs an override) while letting the gates that can
         # actually catch a regression do their job.
         #
-        # KNOWN RED since 2026-08-07, deliberately not suppressed (decision
-        # 2026-08-09). Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
+        # WAS KNOWN RED since 2026-08-07 and deliberately not suppressed
+        # (decision 2026-08-09). REVERSED 2026-08-11: the step now runs
+        # `scripts/ci/audit-gate.ts`, which fails on every high/critical
+        # advisory EXCEPT ones listed there with a reason and a recheck date,
+        # and which also fails when an exception expires or goes stale. The
+        # findings below are unchanged and are what the two listed exceptions
+        # cite; what changed is that a permanently red gate stops being read,
+        # and it had begun blocking unrelated work behind admin overrides that
+        # nobody records. Two high advisories in `image-size` — GHSA-w3rx-r6r6-pgpr
         # (ICNS parser infinite loop) and GHSA-5p2g-fcmc-qvqq (JXL/HEIF parser
         # infinite loops) — reach us transitively through `pptxgenjs`, which
         # backs the .pptx export in ExportableArtifact.
@@ -441,7 +448,7 @@ jobs:
         # Re-check `npm view pptxgenjs dependencies` — the day it stops
         # depending on a vulnerable image-size, delete this comment, move the
         # step back wherever you like, and drop the note in CHANGELOG.
-        run: npm audit --audit-level=high --omit=dev
+        run: npm run audit:deps
 
   kat-node24:
     # Cross-impl KATs (mldsa-cross-impl / mlkem-cross-impl): Node's own
