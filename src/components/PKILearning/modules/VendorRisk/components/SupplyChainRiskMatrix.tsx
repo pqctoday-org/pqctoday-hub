@@ -225,6 +225,56 @@ export function toMatrixLevel(fraction: number): number {
   return Math.min(5, Math.max(1, Math.ceil(fraction * 5)))
 }
 
+/**
+ * Severity weight per threat criticality, used to turn a layer's matched
+ * threats into an ABSOLUTE impact score rather than a share of the estate.
+ */
+const THREAT_SEVERITY_WEIGHT: Record<string, number> = {
+  Critical: 4,
+  High: 3,
+  'Medium-High': 2.5,
+  Medium: 2,
+  Low: 1,
+}
+
+/**
+ * Impact bands, calibrated against the real threat corpus rather than chosen
+ * for roundness. Scoring every industry × every layer in
+ * `quantum_threats_hsm_industries_08072026.csv` (218 threats, 25 industries)
+ * with the weights above gives 80 non-zero layer scores distributed:
+ *
+ *   min 2 · p25 3 · p50 4 · p75 7 · p90 15 · max 33
+ *
+ * The bands below are those quartiles, so a level-5 layer is genuinely in the
+ * corpus's top decile rather than merely "the biggest of however many layers
+ * happen to be on screen". Re-derive these if the threat corpus changes shape.
+ */
+const IMPACT_BANDS: readonly number[] = [3, 5, 9, 15]
+
+/**
+ * Absolute impact level (0–5) for a layer, from the severity-weighted total of
+ * the industry threats matching it.
+ *
+ * Impact used to be `threatMatches / totalThreatMatches` — a SHARE of the
+ * displayed estate, which sums to 1 by construction. On the nine canonical
+ * layers that meant every layer scored 1 ("Negligible") whenever threats were
+ * spread at all evenly, capping the whole matrix at "Low" no matter how
+ * exposed the organization was, and a layer needed 80% of every threat match
+ * in the estate to reach 5. It also meant adding a vendor or a layer
+ * mechanically downgraded every other layer. Worse, it made the two axes
+ * different kinds of quantity: likelihood is an absolute within-layer gap
+ * fraction, impact was a relative cross-layer share, and the risk score
+ * multiplied them together. (Audit 2026-08-10, W1-4.)
+ *
+ * Impact still comes from real threat data and never from
+ * `pqcMigrationPriority` — using a curator's priority judgement to justify a
+ * priority score is the circularity the `criticalHigh` field is kept out of.
+ */
+export function threatImpactLevel(weightedThreatScore: number): number {
+  if (weightedThreatScore <= 0) return 0
+  return IMPACT_BANDS.filter((b) => weightedThreatScore >= b).length + 1
+}
+
 export function isCriticalOrHighPriority(priority: string): boolean {
   const p = (priority || '').toLowerCase()
   return p === 'critical' || p === 'high'
@@ -289,15 +339,21 @@ export function computeLayerStats(
   cveSnapshot: CveSnapshot | null
 ): LayerStat[] {
   const layerThreatMatchCounts = new Map<string, number>()
+  // Severity-weighted total per layer — the ABSOLUTE impact input (W1-4).
+  const layerThreatSeverity = new Map<string, number>()
   for (const layer of LAYERS) {
     const regex = layerKeywordRegex(layer)
-    const count = industryThreats.filter(
+    const matched = industryThreats.filter(
       (t) =>
         regex.test(t.description || '') ||
         regex.test(t.cryptoAtRisk || '') ||
         regex.test(t.threatId || '')
-    ).length
-    layerThreatMatchCounts.set(layer.id, count)
+    )
+    layerThreatMatchCounts.set(layer.id, matched.length)
+    layerThreatSeverity.set(
+      layer.id,
+      matched.reduce((sum, t) => sum + (THREAT_SEVERITY_WEIGHT[t.criticality] ?? 0), 0)
+    )
   }
 
   // Ordered layers from LAYERS constant first
@@ -343,16 +399,13 @@ export function computeLayerStats(
     })
   }
 
-  // Total threat matches across the layers actually shown, NOT all of
-  // LAYERS — a layer with zero products shouldn't dilute the denominator
-  // for the layers that are actually on screen.
-  const totalThreatMatches = base.reduce((sum, s) => sum + s.threatMatches, 0)
-
   return base.map((s) => {
     if (!hasIndustryContext) {
       return { ...s, impact: null, riskScore: null }
     }
-    const impact = toMatrixLevel(totalThreatMatches > 0 ? s.threatMatches / totalThreatMatches : 0)
+    // Absolute, severity-weighted — NOT a share of the displayed estate, so a
+    // layer's impact no longer changes when unrelated layers come and go.
+    const impact = threatImpactLevel(layerThreatSeverity.get(s.layerId) ?? 0)
     const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
     return { ...s, impact, riskScore }
   })
