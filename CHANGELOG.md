@@ -29,6 +29,49 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.47.0] - 2026-08-11
+
+Compliance answers "which rules bind me, and why" instead of listing every rule that exists; the business tools stop telling executives that doing nothing is free; every page now says whether it adapts to your role, and the ones that quietly didn't have been fixed or made honest about it.
+
+### Added
+
+- **Compliance opens on the rules that bind you** [view:/compliance] [persona:executive] [persona:architect] [persona:ops]: the page led with an explanation of what compliance is, then a catalogue of every instrument we track, leaving you to work out which ones apply. It now opens on an Obligations register — the rules that reach your organisation, each one saying why it reaches you, and what changed recently. The catalogue is still there for anyone who wants it, one tab over.
+- **A reading room for the requirement itself** [view:/compliance] [persona:architect] [persona:ops]: obligations named a document and left you to go find it. You can now read the specific requirement text a row rests on without leaving the page.
+- **Bring your own crypto inventory into the assessment** [view:/assess] [persona:ops] [persona:architect]: the assessment asked you to describe an estate it had no way to see. It now imports a CBOM, offers reference estates if you have not built one yet, shows what each answer actually moves, and can produce a researcher-profile report.
+- **Which vendors have actually committed, and what they said** [view:/migrate] [persona:executive] [persona:researcher]: an executive lens over the catalogue showing vendor commitments as commitments rather than product rows, and the underlying claims as a corpus researchers can work through.
+- **Two more ways into the same data** [view:/timeline] [view:/threats] [persona:curious] [persona:developer]: a newcomer track through the timeline that does not assume you already know the standards, and a protocol-shaped lens on threats for developers who think in TLS and SSH rather than in sectors.
+- **Deadlines you can put in a calendar, evidence you can sort by strength** [view:/timeline] [view:/library] [persona:ops] [persona:researcher]: ops can export dated obligations to a calendar instead of transcribing them; researchers can order sources by how strong the evidence behind them is.
+- **Business tools show where their numbers come from** [persona:executive] [persona:architect]: each tool's own page now names the standards it implements and links the hub material behind it, rather than presenting a figure with no provenance.
+
+### Changed
+
+- **One quantum model across the whole tool suite** [persona:executive]: the tools disagreed with each other — different assumed arrival years for a cryptographically relevant quantum computer, different underlying models — so two tools could answer the same question differently in the same session. They now share one model and one arrival year.
+- **The financial baselines say which are proven** [persona:executive]: every dollar figure in the business tools rested on three sources cited only in code comments. All three were fetched and cached, and the tools now distinguish a figure with a published source behind it from an assumption.
+- **Every surface declares how it treats your role** [persona:curious]: nothing recorded which pages adapt to a role, so a broken adaptation and a deliberate decision not to adapt looked identical on screen. Both are now declared, which means the page can tell you when it is deliberately showing you everything rather than leaving you guessing.
+
+### Fixed
+
+- **The Cost of Inaction Analyzer said inaction was free** [persona:executive]: at its own defaults, with no binding mandate, it reported that delaying eight years cost less than migrating now — the opposite of the tool's entire premise, presented as a calculation. Two of its scoring axes also could not express the answer they were being asked for.
+- **A tool attributed section titles to a NIST document that does not contain them** [persona:architect]: the headings it cited were invented. They now match the published document.
+- **Five surfaces shipped unreachable** [persona:curious] [persona:ops]: found by opening the app and probing it rather than by reading the code — three in one round and two in another, including the simplified compliance view and the playground notice. Green tests had reported all of them fine.
+- **The left rail is navigation again** [persona:curious]: it had drifted into explaining itself instead of moving you anywhere, and the role picker flickered when opened. The rail now says what it is for and gets out of the way, and the picker states the trade you are making when you choose a role.
+- **A standards citation could not reach the standard** [persona:architect] [persona:researcher]: citations named a document without linking to it. They resolve now.
+- **Unfilled template placeholders could leave the app** [persona:ops]: exported documents could carry raw `{{token}}` placeholders into a deliverable. The app warns before that happens.
+- **The About page had no top-level heading** [persona:developer]: a screen-reader user landing on it had no page title to orient from.
+- **The Learn modules are current again** [view:/learn] [persona:architect] [persona:developer]: every module has now been reviewed against its own cited sources — the backlog that had been stuck since March is cleared. Two modules blocked on unavailable evidence were closed against primary sources, and one long-standing error was corrected: a 17KB figure quoted as a certificate size is a whole certificate chain.
+
+### Data
+
+- **Seventy-nine library records gained a plain-language summary** [view:/library] [persona:researcher]: entries that gave a title and a link and nothing else now say what the document is and why it matters to the transition.
+- **Duplicate Common Criteria certificates collapsed onto stable ids** [view:/migrate] [persona:ops]: the same certificate appeared more than once under different generated ids, so a product could look certified twice.
+- **The authoritative-sources region field is nearly complete** [persona:researcher]: filled from 38% to 97%, so filtering sources by region stops silently hiding most of them.
+- **Proof age is now tracked, not just displayed** [view:/migrate] [persona:ops]: the reader-facing half already showed how old each product's evidence was, but nothing tracked the backlog behind it. It does now — 114 claims whose proof document carries no publication date, and 120 more that are stale.
+
+### Security
+
+- **CI stops running files that are not in the repository** [persona:ops]: three new audit gates were wired into the pipeline and silently dropped by a catch-all ignore rule, so the pipeline was green locally and failed in CI with a missing-module error — the fifth time this exact failure has happened. A check now refuses a pipeline that references a file the repository does not contain.
+- **A data-regression waiver with an expiry date** [persona:ops]: the gate that catches unexpected drops in record counts can now be waived for a known, dated reason instead of being switched off, and each source's identifier scheme is tested on its own.
+
 ## [4.46.0] - 2026-08-10
 
 The About page stops stating eleven wrong version numbers about the app you are looking at; three library records stop citing organisations that were never registered; thirty-six compliance write-ups a tooling bug had quietly deleted are back; and quiz answers finally have somewhere to record which document their fact comes from.

@@ -40,7 +40,6 @@ describe('computeMoscaVerdict', () => {
   })
 })
 
-
 // ── W1-3b regression guard (audit 2026-08-10) ────────────────────────────────
 // costOfWaiting returned NEGATIVE numbers — −$82,718 at 8 years, −$942,987 at
 // 15 — because it slid a fixed-width horizon window forward and differenced the

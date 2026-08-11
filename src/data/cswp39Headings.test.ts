@@ -12,11 +12,7 @@
  * extraction. What this guards is that no OTHER file drifts away from it.
  */
 import { describe, it, expect } from 'vitest'
-import {
-  CSWP39_REAL_HEADINGS,
-  CSWP39_ABSENT_TERMS,
-  isRealCswp39Ref,
-} from './cswp39Headings'
+import { CSWP39_REAL_HEADINGS, CSWP39_ABSENT_TERMS, isRealCswp39Ref } from './cswp39Headings'
 import { CSWP39_SECTIONS, CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from './cswp39ZoneData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'

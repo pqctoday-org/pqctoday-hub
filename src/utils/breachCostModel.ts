@@ -298,10 +298,7 @@ function computeForScenario(
     const gapAtT = inp.decryptionGapYears ?? 0
     const sleAtT =
       classicalSLE *
-      hndlMultiplier(
-        effectiveHndlYears(inp.yearsOfData, shelfLifeYears, gapAtT),
-        inp.hndlFactorPct
-      )
+      hndlMultiplier(effectiveHndlYears(inp.yearsOfData, shelfLifeYears, gapAtT), inp.hndlFactorPct)
     const aleAtT = classicalALE * (1 - pAtT) + sleAtT * prob * pAtT
     pvDelta += (aleAtT - classicalALE) / Math.pow(1 + r, t)
   }

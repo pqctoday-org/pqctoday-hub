@@ -7,11 +7,7 @@
  * scalable FTE plus the fixed-overhead trio — about double its own source.
  */
 import { describe, it, expect } from 'vitest'
-import {
-  sizingSanityCheck,
-  SIZING_SANITY_BANDS,
-  FTE_PER_CRYPTO_INSTANCES,
-} from './roleCrosswalk'
+import { sizingSanityCheck, SIZING_SANITY_BANDS, FTE_PER_CRYPTO_INSTANCES } from './roleCrosswalk'
 
 describe('sizingSanityCheck', () => {
   it('flags the divergence the framework itself creates at 10,000+ instances', () => {

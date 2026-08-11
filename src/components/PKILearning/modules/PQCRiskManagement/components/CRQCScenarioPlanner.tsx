@@ -243,10 +243,9 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
 
   const seedSources: string[] = []
   if (!seedCleared) {
-    seedSources.push(
-      `GRI 2025 consensus median (${Math.round(medianCrqcYear('consensus'))})`
-    )
-    if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} (shown separately)`)
+    seedSources.push(`GRI 2025 consensus median (${Math.round(medianCrqcYear('consensus'))})`)
+    if (migrationDeadlineYear)
+      seedSources.push(`deadline ${migrationDeadlineYear} (shown separately)`)
     if (industry) seedSources.push(`industry (${industry})`)
     if (country) seedSources.push(`country (${country})`)
     if (hndlRiskWindow?.isAtRisk) seedSources.push('open HNDL window from assessment')
@@ -375,11 +374,11 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           arrive. See the cascading impacts on algorithms, compliance, and data exposure.
         </p>
         <p className="text-xs text-muted-foreground mb-4">
-          Default year is the median CRQC arrival from the Global Risk Institute&apos;s 2025
-          Quantum Threat Timeline survey ({Math.round(medianCrqcYear('consensus'))}, consensus of
-          its 26 experts&apos; low and high bounds) &mdash; the same curve the Breach Scenario
-          Simulator and Cost of Inaction Analyzer use. Move the slider to model an earlier or later
-          arrival; the slow and fast bounds are {Math.round(medianCrqcYear('slow'))} and{' '}
+          Default year is the median CRQC arrival from the Global Risk Institute&apos;s 2025 Quantum
+          Threat Timeline survey ({Math.round(medianCrqcYear('consensus'))}, consensus of its 26
+          experts&apos; low and high bounds) &mdash; the same curve the Breach Scenario Simulator
+          and Cost of Inaction Analyzer use. Move the slider to model an earlier or later arrival;
+          the slow and fast bounds are {Math.round(medianCrqcYear('slow'))} and{' '}
           {Math.round(medianCrqcYear('fast'))}.
           {migrationDeadlineYear
             ? ` Your migration deadline (${migrationDeadlineYear}) is a separate quantity — when you must be finished, not when the machine arrives.`

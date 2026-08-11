@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import {
-  computeMaturityScore,
-  TOOLS,
-  type CoverageLevel,
-} from './ManagementToolsAudit'
+import { computeMaturityScore, TOOLS, type CoverageLevel } from './ManagementToolsAudit'
 
 const at = (level: CoverageLevel) =>
   Object.fromEntries(TOOLS.map((t) => [t.id, level])) as Record<string, CoverageLevel>
@@ -23,9 +19,10 @@ describe('computeMaturityScore (W1-5)', () => {
     expect(lowImportance.length).toBe(2)
 
     const coverOnly = (ids: string[]) =>
-      Object.fromEntries(
-        TOOLS.map((t) => [t.id, ids.includes(t.id) ? 3 : 0])
-      ) as Record<string, CoverageLevel>
+      Object.fromEntries(TOOLS.map((t) => [t.id, ids.includes(t.id) ? 3 : 0])) as Record<
+        string,
+        CoverageLevel
+      >
 
     const coveringCritical = computeMaturityScore(coverOnly(highImportance.map((t) => t.id)))
     const coveringNiceToHave = computeMaturityScore(coverOnly(lowImportance.map((t) => t.id)))
@@ -37,9 +34,10 @@ describe('computeMaturityScore (W1-5)', () => {
     const most = [...TOOLS].sort((a, b) => b.importance - a.importance)[0]
     const least = [...TOOLS].sort((a, b) => a.importance - b.importance)[0]
     const without = (id: string) =>
-      Object.fromEntries(
-        TOOLS.map((t) => [t.id, t.id === id ? 0 : 3])
-      ) as Record<string, CoverageLevel>
+      Object.fromEntries(TOOLS.map((t) => [t.id, t.id === id ? 0 : 3])) as Record<
+        string,
+        CoverageLevel
+      >
 
     expect(computeMaturityScore(without(most.id))).toBeLessThan(
       computeMaturityScore(without(least.id))
