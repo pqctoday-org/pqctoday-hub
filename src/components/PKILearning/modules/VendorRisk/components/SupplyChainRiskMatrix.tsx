@@ -603,7 +603,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
     md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n`
   } else {
     md +=
-      '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact derives from the share of this industry\'s supply-chain-relevant threats that name each layer — an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
+      '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact is the severity-weighted count of this industry\'s supply-chain-relevant threats naming each layer (Critical 4, High 3, Medium 2, Low 1), banded 1-5 at the quartiles of the real threat corpus — an absolute measure that does not shift when other layers are added or removed, and an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
     md += '| Layer | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
     for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
       md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
@@ -1133,10 +1133,13 @@ export const SupplyChainRiskMatrix: React.FC<{
         </h3>
         <p className="text-xs text-muted-foreground mb-3">
           Each infrastructure layer plotted by <strong>migration gap</strong> (share of the layer
-          not yet PQC-ready) × <strong>impact</strong> (share of this industry&apos;s
-          supply-chain-relevant threats that name this layer). Both axes are heuristics derived from
-          real catalog/threat data, not a validated risk-probability estimate — click a cell to jump
-          to the layer(s) it represents below.
+          not yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this
+          industry&apos;s supply-chain-relevant threats naming this layer — Critical threats weigh
+          4, High 3, Medium 2, Low 1). Impact is an <em>absolute</em> measure: it does not change
+          when other layers are added or removed, and its 1–5 bands are set at the quartiles of the
+          real threat corpus, so a level-5 layer sits in its top decile. Both axes are heuristics
+          derived from real catalog/threat data, not a validated risk-probability estimate — click
+          a cell to jump to the layer(s) it represents below.
         </p>
         {!hasIndustryContext ? (
           <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">

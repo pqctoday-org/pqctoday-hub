@@ -381,6 +381,20 @@ export const ManagementToolsAudit: React.FC = () => {
           />
         </div>
 
+        {/* The headline is importance-weighted as of 2026-08-10; before that a
+            missing crypto scanner and a missing data-classification tool moved
+            it identically. Say so, rather than leaving a bare percentage. */}
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <strong className="text-foreground/80">How this is scored:</strong> each tool&apos;s
+          coverage level (None 0 → Automated 3) is multiplied by its importance to a PQC migration,
+          summed, and divided by the maximum possible weighted total. It is a weighted average, not
+          a plain one — the four foundational tools (crypto scanners, vulnerability management,
+          asset management, configuration management) each count three times as much as data
+          classification. Systems-coverage percentages are yours to enter; nothing seeds them,
+          because a count of detected products says nothing about how much of your estate they
+          reach.
+        </p>
+
         {/* Coverage level heatmap */}
         <div>
           <div className="text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
