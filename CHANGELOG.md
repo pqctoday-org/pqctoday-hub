@@ -63,7 +63,7 @@ Compliance answers "which rules bind me, and why" instead of listing every rule 
 ### Data
 
 - **Seventy-nine library records gained a plain-language summary** [view:/library] [persona:researcher]: entries that gave a title and a link and nothing else now say what the document is and why it matters to the transition.
-- **Duplicate Common Criteria certificates collapsed onto stable ids** [view:/migrate] [persona:ops]: the same certificate appeared more than once under different generated ids, so a product could look certified twice.
+- **Duplicate Common Criteria certificates collapsed onto stable ids** [view:/migrate] [persona:ops]: the same certificate appeared more than once under different generated ids, so a product could look certified twice. The first attempt at this recomputed each id from fields derived after the fact, and a real scrape then disproved it — not one of the 889 ids it produced matched the 821 the pipeline actually mints, because a certificate showing no assurance level was hashed as the word "None" where the pipeline hashes an empty value. The cross-reference now maps onto the pipeline's own output by identity rather than by recomputed hash.
 - **The authoritative-sources region field is nearly complete** [persona:researcher]: filled from 38% to 97%, so filtering sources by region stops silently hiding most of them.
 - **Proof age is now tracked, not just displayed** [view:/migrate] [persona:ops]: the reader-facing half already showed how old each product's evidence was, but nothing tracked the backlog behind it. It does now — 114 claims whose proof document carries no publication date, and 120 more that are stale.
 
