@@ -311,6 +311,12 @@ scripts/*
 !scripts/audit-changelog-persona-tags.ts
 !scripts/audit-migrate-proof-freshness.ts
 
+# The check that stops occurrence five (2026-08-10). Local-only, wired into
+# .husky/pre-push rather than ci.yml — a CI step that checks whether CI's files
+# are present can only run once they are. Needs its own re-include here for the
+# obvious reason.
+!scripts/audit-ci-workflow-files.ts
+
 # Role-board coverage gate — the SAME gap, third occurrence (found 2026-08-09
 # merging the six-use-cases-per-role work). The 08-09 commit added both the
 # ci.yml step and the package.json script but not the file they invoke, because
