@@ -23,10 +23,15 @@ export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
  * so the table is right for 2025 and one edition behind.
  *
  * Re-sourcing needs the per-sector figures, which are inside the report PDF,
- * not on the landing page. Every figure below plus the citation string in
- * derivedFinancialDocs must move together. Deliberately NOT half-updated:
- * a 2026 global average sitting on top of 2025 sector figures would be worse
- * than a consistent 2025 table.
+ * not on the landing page. Retrieval was ATTEMPTED on 2026-08-10 via the
+ * resilient fetcher (landing page, /thank-you, and the downloads/documents
+ * asset path) and failed — the report is registration-walled and the
+ * post-form page resolves to a soft 404. A third-party summary was
+ * deliberately not substituted: a secondary source is not the report.
+ *
+ * Every figure below plus the citation string in derivedFinancialDocs must
+ * move together. Deliberately NOT half-updated: a 2026 global average sitting
+ * on top of 2025 sector figures would be worse than a consistent 2025 table.
  */
 export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
   asOf: '2026-07-29',

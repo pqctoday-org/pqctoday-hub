@@ -231,6 +231,57 @@ export const FTE_PER_CRYPTO_INSTANCES = 500
 export const FTE_PER_CRYPTO_INSTANCES_PRODUCTION = 1000
 
 /**
+ * The other half of framework-2.1.yaml's `skills_team` block — `sizing_extras`,
+ * which the ratio heuristic above was never reconciled against:
+ *
+ *   "For <1,000 instances, a part-time QRPM with consulting augmentation for
+ *    the Cryptographic Architect role is viable. For >10,000 instances, plan a
+ *    dedicated program office with 8-12 FTEs at peak."
+ *
+ * At 10,000 instances the 1-FTE-per-500 ratio yields 20 scalable FTE plus the
+ * fixed-overhead trio — roughly double the source's own stated peak. The two
+ * fields are both from the same document and they disagree at scale, so the
+ * tool surfaces both rather than silently trusting the arithmetic.
+ * (Audit 2026-08-10, W2-4.)
+ */
+export const SIZING_SANITY_BANDS = {
+  smallEstateInstances: 1000,
+  largeEstateInstances: 10_000,
+  largeEstatePeakFteLow: 8,
+  largeEstatePeakFteHigh: 12,
+  smallEstateNote:
+    'a part-time QRPM with consulting augmentation for the Cryptographic Architect role is viable',
+  largeEstateNote: 'plan a dedicated program office with 8-12 FTEs at peak',
+} as const
+
+/**
+ * Whether the ratio heuristic's result sits outside the framework's own
+ * narrative guidance for this estate size — and the note to show if so.
+ */
+export function sizingSanityCheck(
+  estateInstances: number,
+  heuristicFte: number
+): { diverges: boolean; note: string } | null {
+  if (estateInstances > SIZING_SANITY_BANDS.largeEstateInstances) {
+    const { largeEstatePeakFteLow: lo, largeEstatePeakFteHigh: hi } = SIZING_SANITY_BANDS
+    if (heuristicFte > hi) {
+      return {
+        diverges: true,
+        note: `The ratio gives ${heuristicFte.toFixed(1)} FTE, but the same framework section says a >10,000-instance estate should "${SIZING_SANITY_BANDS.largeEstateNote}". Treat the ratio as an upper bound and staff toward the ${lo}-${hi} FTE band unless you can justify the difference.`,
+      }
+    }
+    return null
+  }
+  if (estateInstances < SIZING_SANITY_BANDS.smallEstateInstances) {
+    return {
+      diverges: false,
+      note: `Below 1,000 instances the framework notes that ${SIZING_SANITY_BANDS.smallEstateNote} — you may not need every role at full time.`,
+    }
+  }
+  return null
+}
+
+/**
  * Roles the framework calls out as dedicated overhead *regardless of estate
  * size* (framework-2.1.yaml `skills_team.sizing_heuristic`: "The QRPM,
  * Cryptographic Architect, and PMO Analyst are dedicated overhead regardless
