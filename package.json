@@ -55,6 +55,7 @@
     "export:learn-snapshot": "tsx scripts/export-learn-manifest-snapshot.ts",
     "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
+    "audit:ci-workflow-files": "tsx scripts/audit-ci-workflow-files.ts",
     "audit:changelog-personas": "tsx scripts/audit-changelog-persona-tags.ts",
     "audit:migrate-proof": "tsx scripts/audit-migrate-proof-freshness.ts",
     "audit:persona-lens": "tsx scripts/audit-persona-lens.ts",
