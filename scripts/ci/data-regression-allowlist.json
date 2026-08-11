@@ -1,7 +1,7 @@
 {
   "complianceRecordDropOk": {
-    "expectedDrop": 1768,
-    "reason": "one-time CC certificate id migration: 1,768 records collapse to 872 certificates (see PR #517)",
+    "expectedDrop": 889,
+    "reason": "real --cc scrape replaces the 889 ids the 2026-08-11 migration computed from derived fields with the 821 the scraper actually mints; xref re-pointed by certificate identity",
     "until": "2026-09-15"
   },
   "vendorAlgoEmptyOk": ["VND-027"]
