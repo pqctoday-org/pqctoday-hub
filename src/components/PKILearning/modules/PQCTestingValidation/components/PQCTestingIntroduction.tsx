@@ -83,8 +83,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             <p className="font-semibold text-status-warning mb-1">Performance Cliffs</p>
             <p className="text-xs">
               IKEv2 SA establishment can jump from 38ms (classical) to 12,626ms with some PQC
-              configurations. Pure PQC certificates reach 17KB — forcing 2 TCP round-trips instead
-              of 1.
+              configurations. A pure PQC certificate CHAIN reaches ~17KB — forcing 2 TCP round-trips
+              instead of 1. (One ML-DSA-65 certificate is ~5-6KB: a 1,952-byte public key plus a
+              3,309-byte signature plus X.509 overhead. It is the chain that breaks the budget.)
             </p>
           </div>
           <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
@@ -257,9 +258,10 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 Identify Certificate Size Impact
               </p>
               <p className="text-xs text-muted-foreground">
-                Pure PQC certificates (17KB for ML-DSA-65) exceed the typical TCP initial congestion
-                window. On high-latency links, this forces extra round-trips. Test specifically
-                against your worst-case latency links.
+                A pure ML-DSA-65 certificate chain (~17KB) exceeds the typical TCP initial
+                congestion window of 10 segments (~14.6KB). On high-latency links, this forces extra
+                round-trips. Measure the whole chain your server actually sends, not one leaf
+                certificate, and test against your worst-case latency links.
               </p>
             </div>
           </div>
