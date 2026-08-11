@@ -760,8 +760,11 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     ],
     cswp39Zone: 'governance',
     cswp39ZoneSubElement: 'Processes',
-    cswp39SectionRef: '§5.5',
-    cswp39SubSection: 'Migration verification & evidence',
+    // §5.5 does not exist — §5 runs 5.1–5.4. Verification/closure is the fifth
+    // "key activities" bullet of §5 ("Implement the strategy and actions based
+    // on the prioritized list of assets"), so the parent section is the honest ref.
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — migration verification & evidence',
     frameworkPhase: 'verify-close',
   },
 ]
