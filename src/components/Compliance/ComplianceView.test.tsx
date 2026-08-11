@@ -169,6 +169,7 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
+    expect(screen.queryByText(/New to PQC compliance\?/i)).not.toBeInTheDocument()
     expect(screen.queryAllByTestId('compliance-about-strip')).toHaveLength(0)
     expect(screen.queryByTestId('deadline-timeline-narrative')).not.toBeInTheDocument()
     expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i })).toHaveLength(
@@ -205,15 +206,6 @@ describe('ComplianceView', () => {
       </MemoryRouter>
     )
     expect(screen.getByTestId('compliance-table')).toHaveTextContent('selected: A7285')
-  }, 15000)
-
-  it('shows the intro card when no industry/region hint resolves', () => {
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(screen.getByText(/New to PQC compliance\?/i)).toBeInTheDocument()
   }, 15000)
 
   it('shows executive in-body CSV export when persona is executive', () => {
