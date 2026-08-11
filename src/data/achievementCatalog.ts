@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { AchievementDefinition, ActivitySnapshot } from '@/types/AchievementTypes'
+import type { PersonaId } from './learningPersonas'
 
 export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   // ═══════════════════════════════════════════════════════════════
@@ -522,3 +523,48 @@ export const ACHIEVEMENT_MAP: Record<string, AchievementDefinition> = Object.fro
 )
 
 export const ACHIEVEMENT_COUNT = ACHIEVEMENT_CATALOG.length
+
+/**
+ * The ladder a role can actually climb — B+ remediation 2.3 (2026-08-10,
+ * rebuild per user decision).
+ *
+ * The previous model was a DENY-LIST (`PERSONA_EXCLUDED_ACHIEVEMENTS`) applied
+ * only to the badge grid's rendering, while the denominator stayed at the full
+ * catalog and the checker awarded from it. So an executive saw "4/51" against a
+ * scoreboard eleven of whose rungs they could never reach, and could be awarded
+ * one of those eleven anyway. That is the "ladder with missing rungs" the
+ * review said demotivates more than no ladder at all.
+ *
+ * This inverts it: `personaLadder` is the list, and it is what both the grid and
+ * the checker read. The exclusion data survives as the SOURCE of the decision —
+ * it encodes real, documented calls (an executive is not being sent to generate
+ * five keys) — but nothing downstream applies it ad hoc any more.
+ *
+ * ONE DELIBERATE ASYMMETRY. Anything a reader has ALREADY unlocked stays
+ * visible and stays counted, even if their current role would not offer it.
+ * Roles are switchable and progress is real; retroactively deleting somebody's
+ * badge because they changed hats would be a worse bug than the one this fixes.
+ * `personaLadderFor` therefore takes the unlocked ids and unions them in.
+ */
+export function personaLadder(
+  personaId: PersonaId | null,
+  excludedIds: readonly string[] = []
+): AchievementDefinition[] {
+  if (!personaId) return ACHIEVEMENT_CATALOG
+  const excluded = new Set(excludedIds)
+  return ACHIEVEMENT_CATALOG.filter((a) => !excluded.has(a.id))
+}
+
+/**
+ * The ladder as displayed: what this role can reach, plus anything already
+ * earned under a previous role. See the asymmetry note above.
+ */
+export function personaLadderFor(
+  personaId: PersonaId | null,
+  excludedIds: readonly string[],
+  unlockedIds: ReadonlySet<string>
+): AchievementDefinition[] {
+  if (!personaId) return ACHIEVEMENT_CATALOG
+  const excluded = new Set(excludedIds)
+  return ACHIEVEMENT_CATALOG.filter((a) => !excluded.has(a.id) || unlockedIds.has(a.id))
+}
