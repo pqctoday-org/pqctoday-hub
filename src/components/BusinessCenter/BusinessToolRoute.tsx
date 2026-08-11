@@ -79,6 +79,23 @@ export const BusinessToolRoute = () => {
         </div>
       </div>
 
+      {/* B+ remediation 4.6 (2026-08-10): what this is for, and what a good
+          answer looks like — before the tool, not after it. "The tools produce
+          real artifacts but explain very little about why an artifact is shaped
+          the way it is"; a generated document the user cannot defend is worse
+          than no document. Both lines come from the registry, so a new tool
+          cannot ship without them. */}
+      <section className="rounded-lg border border-border bg-muted/20 p-3">
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">What this is for:</span>{' '}
+          {tool.description}.
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">What a good answer looks like:</span>{' '}
+          {tool.goodAnswer}
+        </p>
+      </section>
+
       <Suspense
         fallback={
           <div className="space-y-4 p-4">

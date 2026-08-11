@@ -1,7 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { MemoryRouter } from 'react-router'
 import { GuidedTour } from './GuidedTour'
+
+// B+ remediation 4.2 (2026-08-10): GuidedTour now navigates — its final phase
+// is the visiting role's own tour, and each step sends the reader to a real
+// surface. That makes a Router a genuine dependency of the component rather
+// than a test-harness detail, so every render below goes through one.
+const renderTour = () =>
+  render(
+    <MemoryRouter>
+      <GuidedTour />
+    </MemoryRouter>
+  )
 import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 
 // Mock framer-motion so AnimatePresence transitions are synchronous in tests.
@@ -103,7 +115,7 @@ describe('GuidedTour', () => {
 
   it('does not show if already completed', () => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true')
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(3000)
@@ -113,7 +125,7 @@ describe('GuidedTour', () => {
   })
 
   it('shows intro slides automatically if not completed', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -127,7 +139,7 @@ describe('GuidedTour', () => {
     localStorage.setItem(TOUR_STORAGE_KEY, 'true')
     window.location.search = '?tour=1'
 
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -138,7 +150,7 @@ describe('GuidedTour', () => {
   })
 
   it('navigates through intro slides to knowledge gate', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -164,7 +176,7 @@ describe('GuidedTour', () => {
   })
 
   it('shows full feature tour after "I\'m just learning" gate choice', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -177,7 +189,7 @@ describe('GuidedTour', () => {
   })
 
   it('shows shortened tour after "I know the basics" gate choice', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -195,7 +207,7 @@ describe('GuidedTour', () => {
   })
 
   it('dismisses tour when "I\'m an expert" is chosen', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -208,7 +220,7 @@ describe('GuidedTour', () => {
   })
 
   it('can navigate through feature steps using next/prev buttons', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -235,7 +247,7 @@ describe('GuidedTour', () => {
   })
 
   it('dismisses the tour and sets localStorage item', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)
@@ -249,7 +261,7 @@ describe('GuidedTour', () => {
   })
 
   it('finishes the full feature tour on the last step', () => {
-    render(<GuidedTour />)
+    renderTour()
 
     act(() => {
       vi.advanceTimersByTime(2500)

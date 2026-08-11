@@ -9,6 +9,19 @@ set -e
 # Skip in CI — CI runs the same verifier as a dedicated workflow step.
 [ -n "$CI" ] && exit 0
 
+# Every file a workflow step will execute must actually be IN the repository.
+# ADDED 2026-08-10, after this failed for the FOURTH time. `.gitignore` has a
+# blanket `scripts/*`, and `git add` on an ignored path is a silent no-op — so a
+# commit can add a ci.yml step plus a package.json entry with no file behind
+# them, stay green on every local run, and fail in CI with ERR_MODULE_NOT_FOUND
+# naming a file the author can see in their own tree. Prior occurrences:
+# 2026-07-10 (validators), 2026-08-02 (role-board CTAs), 2026-08-09 (role-board
+# coverage), 2026-08-10 (the three B+ remediation gates).
+# Deliberately here and NOT in ci.yml: a CI step that checks whether CI's own
+# files are present can only run once they are. Runs in about a second.
+# Bypass with `git push --no-verify`.
+npm run audit:ci-workflow-files
+
 if [ -f public/data/revisions.jsonl.sig ] || [ -f public/data/rag-corpus.json.sig ]; then
   npx tsx scripts/ci/verify-attestations.ts
 fi

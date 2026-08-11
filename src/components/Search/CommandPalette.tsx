@@ -401,8 +401,18 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                   <p className="text-sm font-medium text-foreground truncate">
                                     {renderHighlighted(item.title, query)}
                                   </p>
-                                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                                    {snippet}
+                                  <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    {/* B+ remediation 4.6 (2026-08-10): what
+                                        this result IS, on the row itself. The
+                                        group header above already says it, but
+                                        a reader arrowing through a long list
+                                        has scrolled past it — and "a page, a
+                                        tool and a generated artifact all look
+                                        alike" was the finding. */}
+                                    <span className="shrink-0 rounded bg-muted px-1 py-px text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                                      {label}
+                                    </span>
+                                    <span className="line-clamp-1">{snippet}</span>
                                   </p>
                                 </div>
                               </Button>

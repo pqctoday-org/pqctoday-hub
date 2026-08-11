@@ -93,6 +93,7 @@ import {
   shareReport,
   exportAlgorithmMigrationsCsv,
 } from './sections/reportContentActions'
+import { findReferenceEstate } from '@/data/assessmentScenarios'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -160,6 +161,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const liveInfrastructure = useAssessmentStore((s) => s.infrastructure)
   const liveInfrastructureSubCategories = useAssessmentStore((s) => s.infrastructureSubCategories)
   const industry = shared ? (profile?.industry ?? '') : liveIndustry
+  // A SHARED report is the sender's; we deliberately do not claim their run was
+  // a scenario just because the recipient happens to have one loaded.
+  const liveScenarioId = useAssessmentStore((s) => s.scenarioEstateId)
+  const scenarioEstate = shared ? undefined : findReferenceEstate(liveScenarioId)
   const country = shared ? (profile?.country ?? '') : liveCountry
   const dataSensitivity = shared
     ? (profile?.sensitivityLevels ?? EMPTY_STRING_ARRAY)
@@ -493,6 +498,26 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         />
                       )}
 
+                    {/* B+ remediation 4.4 (2026-08-10): a report produced from
+                        a REFERENCE ESTATE says so, at the top, before any
+                        number. The report is exportable and an exported PDF has
+                        no memory of how it was made — without this a scenario
+                        run would eventually be quoted as a finding about a real
+                        organisation. Not dismissible, for the same reason. */}
+                    {scenarioEstate && (
+                      <div className="rounded-lg border border-status-warning/40 bg-status-warning/10 p-3">
+                        <p className="text-sm font-semibold text-foreground">
+                          Reference estate: {scenarioEstate.label}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {scenarioEstate.caveat}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground/80">
+                          {scenarioEstate.basis}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Risk Score */}
                     {phaseVisible('riskScore') && (
                       <RiskScoreSection
@@ -500,6 +525,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         previousRiskScore={previousRiskScore}
                         lastModifiedAt={lastModifiedAt}
                         defaultOpen={cfg('riskScore').state === 'open'}
+                        industry={industry}
                       />
                     )}
 

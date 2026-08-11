@@ -41,24 +41,31 @@ describe('CuriousGuide', () => {
   it('renders step 1 by default for the curious persona', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
-    expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument()
+    expect(screen.getByText(/Step 1 of 5/i)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /everything's encrypted/i })).toBeInTheDocument()
   })
 
-  it('advances through steps with Next and reaches Finish on step 4', () => {
+  // B+ remediation 1.5 (2026-08-10): a fifth, closing step points the newcomer
+  // at the editorial-independence policy — the "why should I believe you"
+  // answer, previously reachable only from surfaces a first-time reader never
+  // visits.
+  it('advances through steps with Next and reaches Finish on step 5', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
-    expect(screen.getByText(/Step 2 of 4/i)).toBeInTheDocument()
+    expect(screen.getByText(/Step 2 of 5/i)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
-    expect(screen.getByText(/Step 4 of 4/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
+    expect(screen.getByText(/Step 5 of 5/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /why you can check us/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Finish/i })).toBeInTheDocument()
   })
 
   it('Finish dismisses the guide and sets curiousGuideDismissed', () => {
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderGuide()
+    fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))
     fireEvent.click(screen.getByRole('button', { name: /^Next$/i }))

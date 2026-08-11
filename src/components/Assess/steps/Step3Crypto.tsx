@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import {
   AlertTriangle,
@@ -27,6 +27,7 @@ import { getPersonaStepContent } from '../../../data/personaWizardHints'
 import { PersonaHint } from './PersonaHint'
 
 import type { EmbeddedStepProps } from '../redesign/assessFlowModel'
+import { CbomImportPanel } from '../CbomImportPanel'
 
 interface CryptoCategory {
   id: string
@@ -137,6 +138,14 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
 
   const [algosByCategory, setAlgosByCategory] = useState<Record<string, TransitionChip[]>>({})
 
+  // The vocabulary a CBOM is matched against is this step's OWN option list,
+  // flattened — so the importer can never offer an algorithm the wizard has no
+  // chip for.
+  const cbomOptions = useMemo(
+    () => Object.values(algosByCategory).flatMap((chips) => chips.map((c) => c.storedKey)),
+    [algosByCategory]
+  )
+
   useEffect(() => {
     loadAlgorithmsData().then((transitions) => {
       const grouped: Record<string, TransitionChip[]> = {}
@@ -210,6 +219,29 @@ const Step3Crypto = ({ hideHeading = false, hideHints = false }: EmbeddedStepPro
         <p className="text-xs text-muted-foreground italic">
           Recommended for {industry || 'your industry'}. You can adjust any selection.
         </p>
+      )}
+
+      {/* B+ remediation 4.4 (2026-08-10): a developer can usually produce this
+          answer as a file, and the repo already emits the format. Offered to
+          developers only — every other role is more likely to be describing an
+          estate than exporting one, and an import control they cannot use is
+          the kind of dead offer this programme has been removing. */}
+      {persona === 'developer' && (
+        <CbomImportPanel
+          options={cbomOptions}
+          selected={currentCrypto}
+          onApply={(algorithms) => {
+            // Selecting an algorithm requires its category to be open, or the
+            // chip has nowhere to render — mirror what a click would have done.
+            for (const algo of algorithms) {
+              const cat = CRYPTO_CATEGORIES.find((c) =>
+                (algosByCategory[c.id] ?? []).some((a) => a.storedKey === algo)
+              )
+              if (cat && !currentCryptoCategories.includes(cat.id)) toggleCryptoCategory(cat.id)
+              if (!currentCrypto.includes(algo)) toggleCrypto(algo)
+            }
+          }}
+        />
       )}
 
       {/* Category cards — multi-select */}

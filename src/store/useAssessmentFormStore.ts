@@ -6,6 +6,7 @@ import { usePersonaStore } from './usePersonaStore'
 import { useHistoryStore } from './useHistoryStore'
 import { computeSmartDefaults } from '../components/Assess/smartDefaults'
 import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
+import { findReferenceEstate } from '../data/assessmentScenarios'
 
 export type AssessmentMode = 'quick' | 'comprehensive'
 export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
@@ -13,6 +14,17 @@ export type AssessmentStatus = 'not-started' | 'in-progress' | 'complete'
 export interface AssessmentFormState {
   currentStep: number
   assessmentMode: AssessmentMode | null
+  /**
+   * Set when the answers came from a REFERENCE ESTATE rather than from the
+   * reader's own systems — B+ remediation 4.4 (2026-08-10). Holds the estate id
+   * (`assessmentScenarios.ts`), or null for a normal run.
+   *
+   * The report reads this and labels itself. That labelling is the entire point
+   * of storing it: the report is exportable, and an exported PDF has no memory
+   * of how it was produced, so a scenario run that looked identical to a real
+   * one would eventually be quoted as if it were a finding about a real estate.
+   */
+  scenarioEstateId: string | null
   industry: string
   country: string
   currentCrypto: string[]
@@ -52,6 +64,8 @@ export interface AssessmentFormState {
   // Actions
   setStep: (step: number) => void
   setAssessmentMode: (mode: AssessmentMode | null) => void
+  /** Load a reference estate's answers wholesale, marking the run as a scenario. */
+  loadReferenceEstate: (estateId: string) => void
   setIndustry: (industry: string) => void
   setCountry: (country: string) => void
   toggleCrypto: (algo: string) => void
@@ -95,6 +109,7 @@ export interface AssessmentFormState {
 const INITIAL_STATE = {
   currentStep: 0,
   assessmentMode: null as AssessmentMode | null,
+  scenarioEstateId: null as string | null,
   industry: '',
   country: '',
   currentCrypto: [] as string[],
@@ -183,6 +198,27 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       ...INITIAL_STATE,
 
       setStep: (step) => set({ currentStep: step, lastWizardUpdate: new Date().toISOString() }),
+
+      /**
+       * Load a reference estate wholesale. Starts from INITIAL_STATE rather
+       * than merging: a scenario has to be the estate it says it is, not the
+       * reader's half-finished answers with an estate poured over them —
+       * otherwise the report's own caveat ("produced from a reference estate")
+       * would be false in a way nobody could see.
+       */
+      loadReferenceEstate: (estateId) => {
+        const estate = findReferenceEstate(estateId)
+        if (!estate) return
+        set({
+          ...INITIAL_STATE,
+          ...estate.answers,
+          scenarioEstateId: estate.id,
+          assessmentMode: 'comprehensive' as AssessmentMode,
+          assessmentStatus: 'in-progress' as const,
+          currentStep: 0,
+          lastWizardUpdate: new Date().toISOString(),
+        })
+      },
 
       setAssessmentMode: (mode) => {
         const state = get()

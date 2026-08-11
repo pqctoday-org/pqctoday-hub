@@ -4,6 +4,7 @@ import {
   Search,
   AlertTriangle,
   Info,
+  Network,
   AlertOctagon,
   AlertCircle,
   CheckCircle,
@@ -18,7 +19,7 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router'
-import { threatsData, threatsMetadata } from '../../data/threatsData'
+import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -45,7 +46,12 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { Button } from '../ui/button'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 
-type SortField = 'industry' | 'threatId' | 'criticality'
+// B+ remediation 4.3 (2026-08-10): 'evidence' added. "The researcher corpus
+// sorts by recency rather than evidence strength" — and every field the sort
+// needs was already on the row (confidenceScore on 114/114, peerReviewed on
+// 114/114, a trusted-source id on 107/114, accuracyPct on 93/114). This is a
+// new ORDERING over existing data, not new data.
+type SortField = 'industry' | 'threatId' | 'criticality' | 'evidence'
 type SortDirection = 'asc' | 'desc'
 
 const PERSONA_SHORT_LABELS: Record<PersonaId, string> = {
@@ -74,6 +80,11 @@ import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import {
+  LENS_PROTOCOLS,
+  protocolsForThreat,
+  threatTouchesProtocol,
+} from '../../data/threatProtocolLens'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
@@ -355,6 +366,28 @@ export const ThreatsDashboard: React.FC<{
   // INDUSTRY_TO_THREATS_MAP to threat-industry strings, which then act as
   // a filter on the threats corpus. Researcher + curious have empty default
   // sets → no narrowing.
+  // B+ remediation 4.3 (2026-08-10): the developer protocol lens. Null = off.
+  const [protocolLens, setProtocolLens] = useState<string | null>(null)
+
+  /**
+   * How the active lens's matches were arrived at. Shown as a count rather than
+   * a per-row badge because the mix is what a reader needs in order to judge
+   * the list: "9 of these say TLS themselves, 14 are inferred from RSA" is a
+   * different list from "23 threats to your TLS", and only one of those is true.
+   */
+  const lensBasisSplit = useMemo(() => {
+    if (!protocolLens) return null
+    let stated = 0
+    let inferred = 0
+    for (const t of threatsData) {
+      const hit = protocolsForThreat(t).find((m) => m.protocol === protocolLens)
+      if (!hit) continue
+      if (hit.basis === 'stated') stated += 1
+      else inferred += 1
+    }
+    return { stated, inferred }
+  }, [protocolLens])
+
   const personaDefaults = usePersonaDefaults()
   const personaDefaultThreatIndustries = useMemo<string[]>(() => {
     if (personaDefaults.prefsOff) return []
@@ -378,6 +411,12 @@ export const ThreatsDashboard: React.FC<{
       // Persona-default narrowing — applies only when no explicit industry is
       // picked (above branch) and the user hasn't opted out via ?prefs=off.
       data = data.filter((item) => personaDefaultThreatIndustries.includes(item.industry))
+    }
+
+    // Protocol lens (developer) — applied like any other filter so the count
+    // the page reports stays true.
+    if (protocolLens) {
+      data = data.filter((item) => threatTouchesProtocol(item, protocolLens))
     }
 
     // Filter by Criticality
@@ -438,6 +477,9 @@ export const ThreatsDashboard: React.FC<{
       } else if (sortField === 'criticality') {
         valA = getCriticalityVal(a.criticality)
         valB = getCriticalityVal(b.criticality)
+      } else if (sortField === 'evidence') {
+        valA = evidenceStrength(a)
+        valB = evidenceStrength(b)
       }
 
       if (valA < valB) return sortDirection === 'asc' ? -1 : 1
@@ -469,6 +511,7 @@ export const ThreatsDashboard: React.FC<{
     tierFilter,
     personaDefaultActive,
     personaDefaultThreatIndustries,
+    protocolLens,
   ])
 
   // When a persona is set but no explicit industry filter is active, compute the persona's
@@ -599,6 +642,66 @@ export const ThreatsDashboard: React.FC<{
           <div className="glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
             <Info size={14} className="text-primary flex-shrink-0" />
             <span>{personaSummary}</span>
+          </div>
+        )}
+
+        {/* B+ remediation 4.3 (2026-08-10): the developer protocol lens.
+            Offered to developers, whose complaint it answers — "developers meet
+            threats through protocols and are given sectors".
+
+            The disclosure below the chips is load-bearing, not decoration. The
+            corpus has NO protocol column: some rows name a protocol in their
+            own text, and some name only an algorithm, from which we infer. Both
+            are shown, and which is which is stated — a lens that silently mixed
+            quotation with inference would hand a developer a confident list
+            partly assembled from records that never mentioned their protocol. */}
+        {selectedPersona === 'developer' && (
+          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+              <Network size={14} className="shrink-0 text-primary" aria-hidden="true" />
+              <span className="mr-1 text-xs font-semibold text-foreground">By protocol:</span>
+              {LENS_PROTOCOLS.map((p) => (
+                <Button
+                  key={p}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setProtocolLens(protocolLens === p ? null : p)}
+                  aria-pressed={protocolLens === p}
+                  className={`h-auto rounded-full border px-2 py-0.5 text-[11px] ${
+                    protocolLens === p
+                      ? 'border-primary/40 bg-primary/15 text-primary'
+                      : 'border-border text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {p}
+                </Button>
+              ))}
+              {protocolLens && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setProtocolLens(null)}
+                  className="h-auto px-2 py-0.5 text-[11px] text-muted-foreground"
+                >
+                  clear
+                </Button>
+              )}
+            </div>
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              This corpus records the cryptography at risk, not the protocol. Some records name a
+              protocol themselves — those are marked{' '}
+              <span className="font-semibold text-foreground">stated</span>. The rest name only an
+              algorithm, and we infer the protocols that algorithm commonly secures — marked{' '}
+              <span className="font-semibold text-foreground">inferred</span>. Treat an inferred
+              match as a lead, not a finding.
+            </p>
+            {lensBasisSplit && (
+              <p className="mt-1.5 text-[11px] leading-relaxed text-foreground/90">
+                <span className="font-semibold">{protocolLens}:</span> {lensBasisSplit.stated}{' '}
+                record{lensBasisSplit.stated === 1 ? '' : 's'} name it directly,{' '}
+                {lensBasisSplit.inferred} inferred from the algorithms they list.
+              </p>
+            )}
           </div>
         )}
 
@@ -913,6 +1016,7 @@ export const ThreatsDashboard: React.FC<{
                       items={filteredAndSortedData}
                       sortField={sortField}
                       sortDirection={sortDirection}
+                      showEvidence={selectedPersona === 'researcher'}
                       onSort={handleSort}
                       onItemClick={(item) => {
                         setSelectedThreat(item)

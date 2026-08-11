@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { FAQ_DATA } from './faqData'
+import { FAQ_DATA, PERSONA_FAQ_LEAD, personaLeadItems } from './faqData'
+import type { PersonaId } from '@/data/learningPersonas'
 import { MANIFESTS } from '../PKILearning/manifest/registry'
 import { findLibraryItemByRef } from '@/data/libraryData'
 
@@ -78,5 +79,31 @@ describe('FAQ_DATA deep links', () => {
         `dead /library?ref= link "${item.deepLink}" on question "${item.question}"`
       ).toBeTruthy()
     }
+  })
+})
+
+describe('PERSONA_FAQ_LEAD — B+ remediation 4.1', () => {
+  const allQuestions = new Set(FAQ_DATA.flatMap((c) => c.items).map((i) => i.question))
+
+  it('every lead question resolves to a real FAQ item, verbatim', () => {
+    // This is the constraint that keeps the lead block a REORDERING of the page
+    // rather than a second, divergent FAQ that can promise answers the page
+    // does not contain.
+    for (const [persona, questions] of Object.entries(PERSONA_FAQ_LEAD)) {
+      for (const q of questions) {
+        expect(allQuestions.has(q), `${persona}: "${q}" is not in FAQ_DATA`).toBe(true)
+      }
+    }
+  })
+
+  it('gives every persona exactly three, and resolves all of them', () => {
+    for (const persona of Object.keys(PERSONA_FAQ_LEAD) as PersonaId[]) {
+      expect(PERSONA_FAQ_LEAD[persona]).toHaveLength(3)
+      expect(personaLeadItems(persona)).toHaveLength(3)
+    }
+  })
+
+  it('leads with nothing when no role is chosen', () => {
+    expect(personaLeadItems(null)).toEqual([])
   })
 })
