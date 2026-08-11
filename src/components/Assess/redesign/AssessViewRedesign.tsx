@@ -43,6 +43,7 @@ import { AssessTrackChooser } from './AssessTrackChooser'
 import { AssessWizardScreen } from './AssessWizardScreen'
 import { AssessReview } from './AssessReview'
 import { AssessDone } from './AssessDone'
+import { REFERENCE_ESTATES } from '@/data/assessmentScenarios'
 import {
   keyAtStoreIndex,
   storeIndexOf,
@@ -106,6 +107,7 @@ export const AssessViewRedesign: React.FC<{
     lastWizardUpdate,
     assessmentMode,
     setAssessmentMode,
+    industry,
   } = useAssessmentStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const { myFrameworks, snapshotFrameworks } = useComplianceSelectionStore()
@@ -489,6 +491,45 @@ export const AssessViewRedesign: React.FC<{
               </div>
             </div>
           </motion.div>
+        )}
+
+      {/* B+ remediation 4.4 (2026-08-10), placement corrected by a rendered-UI
+          probe. The reference-estate offer lives on the track chooser — but
+          `personaAutoSkipApplies` skips that chooser for EVERY persona with a
+          recommended mode, which is all six. So the offer was unreachable for
+          exactly the readers it was written for.
+
+          Repeated here, once, at the very start of an untouched wizard: same
+          problem the review named (a reader asked to describe an estate they do
+          not have), and this is where they actually meet it. It disappears the
+          moment they answer anything, so it never sits over work in progress. */}
+      {effectiveAssessmentMode &&
+        screen === 'wizard' &&
+        currentStep === 0 &&
+        assessmentStatus !== 'complete' &&
+        !industry && (
+          <div className="mb-4 rounded-lg border border-border bg-muted/20 p-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">
+                No estate of your own to describe?
+              </span>{' '}
+              Assess a documented example organisation instead — every question pre-answered, and
+              the report says on its face that it came from a reference estate.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {REFERENCE_ESTATES.map((estate) => (
+                <Button
+                  key={estate.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStartScenario(estate.id)}
+                  title={estate.basis}
+                >
+                  {estate.label}
+                </Button>
+              ))}
+            </div>
+          </div>
         )}
 
       {!effectiveAssessmentMode ? (

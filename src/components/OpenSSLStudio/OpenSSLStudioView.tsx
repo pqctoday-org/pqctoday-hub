@@ -197,9 +197,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           />
         )}
 
-        {!embedded && selectedPersona === 'curious' && (
-          <PreviewBanner pageContext="Developer, Architect, Ops" />
-        )}
+        {selectedPersona === 'curious' && <PreviewBanner pageContext="Developer, Architect, Ops" />}
 
         {/* Desktop recommended banner — visible below lg, hidden when embedded */}
         {!embedded && (
@@ -210,7 +208,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
         )}
 
         {/* Executive redirect banner — this is a developer/operator tool, surface higher-level pages */}
-        {!embedded && selectedPersona === 'executive' && (
+        {selectedPersona === 'executive' && (
           <ExecutiveRedirectBanner
             className="mb-4"
             title="OpenSSL Studio is a hands-on engineering tool."
@@ -223,8 +221,15 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           />
         )}
 
-        {/* Developer cheat sheet / Researcher doc links — persona-aware strip */}
-        {!embedded && selectedPersona === 'developer' && (
+        {/* Persona strips. NOT gated on `embedded` (fixed 2026-08-10 by a
+            rendered-UI probe): `embedded` means "the tool route supplies the
+            page header", which is why PageHeader above is gated on it — but
+            these strips are CONTENT. Gating them the same way meant no persona
+            strip had ever rendered at /playground/openssl-studio, which since
+            the 2026-08-01 rail change is the only door to this tool. The
+            developer and researcher strips had been dark since then; the ops
+            strip added today would have shipped dark too. */}
+        {selectedPersona === 'developer' && (
           <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs flex-wrap">
             <Lightbulb size={13} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="text-muted-foreground font-medium shrink-0">Quick jump:</span>
@@ -250,7 +255,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
             </p>
           </div>
         )}
-        {!embedded && selectedPersona === 'ops' && (
+        {selectedPersona === 'ops' && (
           <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2 text-xs">
             <Wrench size={13} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="shrink-0 font-medium text-muted-foreground">
@@ -278,7 +283,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
             </p>
           </div>
         )}
-        {!embedded && selectedPersona === 'researcher' && (
+        {selectedPersona === 'researcher' && (
           <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs flex-wrap">
             <BookOpen size={13} className="shrink-0 text-primary" aria-hidden="true" />
             <span className="text-muted-foreground font-medium shrink-0">Related specs:</span>

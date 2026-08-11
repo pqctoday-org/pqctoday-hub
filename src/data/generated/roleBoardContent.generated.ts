@@ -2402,7 +2402,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What waiting actually costs',
-            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them.',
+            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business/tools/cost-of-inaction',
           },
           {
@@ -2479,7 +2479,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What it would actually cost',
-            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
+            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business/tools/breach-simulator',
           },
           {
