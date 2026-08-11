@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:834ba846-8381-4cce-8615-276b93505497",
+  "serialNumber": "urn:uuid:c0dbc47e-403a-4870-b6a3-1aeb72c34818",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-09T00:00:00.000Z",
+    "timestamp": "2026-08-10T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -7842,12 +7842,12 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "94044dcf6f6ca079",
-      "name": "Azure Dedicated HSM (Marvell LiquidSecurity)",
+      "bom-ref": "1143c239a3c8d014",
+      "name": "Azure Dedicated HSM (Thales Luna 7)",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Azure Dedicated HSM uses Marvell LiquidSecurity HSM hardware (FIPS 140-2 Level 3 validated). Microsoft has announced PQC algorithm support as part of its quantum readiness initiative targeting 2026. Supports PKCS#11, JCA/JCE, and CNG/KSP interfaces. Dedicated single-tenant hardware for highest compliance requirements.",
+      "description": "Azure Dedicated HSM is a single-tenant HSM service running Thales Luna Network HSM 7 model A790 appliances (stated in Microsoft's own Dedicated HSM overview). PQC arrives with Thales Luna firmware v7.9.2+, applied on customer request via Azure Support rather than automatically. Microsoft has announced the service is retiring: no new customer onboardings, full support for existing customers to 31 July 2028.",
       "externalReferences": [
         {
           "type": "website",
