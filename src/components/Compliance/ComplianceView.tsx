@@ -9,6 +9,7 @@ import { type FrameworkSortOption } from './ComplianceLandscape'
 import { useComplianceRefresh } from './services'
 import {
   ShieldCheck,
+  BookOpen,
   CalendarClock,
   GlobeLock,
   Info,
@@ -70,16 +71,25 @@ import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
 import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
 import { ObligationsTab } from './obligations/ObligationsTab'
 import { ProgressTab } from './progress/ProgressTab'
+import { RequirementsTab } from './requirements/RequirementsTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
 // in place via the shared control deck) — it never reorders the bar.
 
-type StableTab = 'obligations' | 'progress' | 'landscape' | 'records' | 'foryou' | 'cswp39'
+type StableTab =
+  | 'obligations'
+  | 'requirements'
+  | 'progress'
+  | 'landscape'
+  | 'records'
+  | 'foryou'
+  | 'cswp39'
 
 const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
   { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
+  { id: 'requirements', label: 'Requirements', icon: BookOpen },
   { id: 'progress', label: 'Progress', icon: CalendarClock },
   { id: 'landscape', label: 'Landscape', icon: Layers },
   { id: 'records', label: 'Product Records', icon: GlobeLock },
@@ -90,6 +100,7 @@ const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
 function stableTabFor(activeTab: MobileSection): StableTab {
   if (isLandscapeTab(activeTab)) return 'landscape'
   if (activeTab === 'obligations') return 'obligations'
+  if (activeTab === 'requirements') return 'requirements'
   if (activeTab === 'progress') return 'progress'
   if (activeTab === 'records') return 'records'
   if (activeTab === 'cswp39') return 'cswp39'
@@ -739,6 +750,18 @@ export const ComplianceView = ({
                 setDrawerFramework(fw)
               }}
             />
+          </div>
+        )}
+
+        {/* ── Requirements — the reading room ── */}
+        {activeStableTab === 'requirements' && !error && !showComplianceSkeleton && (
+          <div className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<BookOpen size={20} className="text-primary" />}
+              title="Requirements"
+              description="What each obligation requires, taken from the documents it cites — with the verbatim quote, where it appears, and which model extracted it. A reading list, not a checklist."
+            />
+            <RequirementsTab profile={forYouProfile} />
           </div>
         )}
 

@@ -236,7 +236,13 @@ pure_errors.json
 FACTCHECK_AI_SECURITY_PQC_QA.md
 
 # Requirements & planning
-requirements/
+# ANCHORED 2026-08-11. This was a bare `requirements/`, which git matches at
+# ANY depth — so it silently swallowed src/components/Compliance/requirements/,
+# a source directory. `git add` skipped three new files without a word and the
+# commit shipped only their import sites; main would not have built. The intent
+# was always the top-level planning folder (now in pqctoday-priv/docs), so the
+# leading slash restores the intent and stops the rule reaching into src/.
+/requirements/
 docs/requirements/
 # IKEv2 / VPN development notes
 ikev2*.md
