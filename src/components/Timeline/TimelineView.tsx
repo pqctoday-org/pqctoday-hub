@@ -17,7 +17,11 @@ import { applyTimelineScope, applyTierFilter } from '@/data/timelineScope'
 import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP, PERSONA_TIMELINE_REGION } from '../../data/personaConfig'
+import {
+  REGION_COUNTRIES_MAP,
+  REGION_COUNTRY_MAP,
+  PERSONA_TIMELINE_REGION,
+} from '../../data/personaConfig'
 import { COUNTRY_ALIASES } from '../../data/countryAliases'
 import { SimpleGanttChart } from './SimpleGanttChart'
 import { TimelineExecutiveDeadline } from './TimelineExecutiveDeadline'
@@ -40,6 +44,7 @@ import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { phasesToIcs, downloadIcs } from '../../utils/timelineIcs'
+import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -297,6 +302,22 @@ export const TimelineView = () => {
 
   const [countryCopied, setCountryCopied] = useState(false)
 
+  /**
+   * The country this reader's own dates come from — B+ remediation 4.3.
+   *
+   * An explicit country filter wins; otherwise the stored region's
+   * representative country (REGION_COUNTRY_MAP, the same map the rest of the
+   * site uses). `null` when neither resolves, and the single-track panel then
+   * renders nothing rather than picking a jurisdiction on the reader's behalf.
+   */
+  const readerCountry = useMemo<string | null>(() => {
+    if (countryFilter && countryFilter !== 'All') return countryFilter
+    const region = storeSelectedRegion
+    if (!region) return null
+    // eslint-disable-next-line security/detect-object-injection -- typed Region union
+    return REGION_COUNTRY_MAP[region] ?? null
+  }, [countryFilter, storeSelectedRegion])
+
   const handleExportCsv = useCallback(
     (dataToExport: GanttCountryData[] = ganttData) => {
       if (dataToExport.length === 0) return
@@ -548,6 +569,15 @@ export const TimelineView = () => {
                 deadline is to schedule around it. Offered where the dates are,
                 and only to the role whose grade named it — every other reader
                 already has the CSV export in the top bar. */}
+            {/* B+ remediation 4.3 (2026-08-10): the newcomer's own track, above
+                the chart. "A first-time reader meets a forty-country Gantt
+                chart, which is the wrong first object entirely." Renders only
+                when we can actually resolve their country — a confident wrong
+                jurisdiction is worse for this reader than the chart. */}
+            {selectedPersona === 'curious' && (
+              <WhenDoesThisReachMe data={mobileGanttData} countryName={readerCountry} />
+            )}
+
             {selectedPersona === 'ops' && mobileGanttData.length > 0 && (
               <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/20 px-3 py-2">
                 <CalendarPlus size={14} className="shrink-0 text-primary" aria-hidden="true" />
