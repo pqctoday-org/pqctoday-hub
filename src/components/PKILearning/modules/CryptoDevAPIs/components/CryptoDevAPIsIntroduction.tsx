@@ -199,7 +199,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <code className="text-primary font-mono text-sm">C_Sign</code>.
           </p>
           <p className="text-muted-foreground">
-            PKCS#11 v3.2 (Committee Specification 01, Nov 2025) adds PQC mechanisms:{' '}
+            PKCS#11 v3.2 (OASIS Standard, 3 June 2026) adds PQC mechanisms:{' '}
             <code className="text-primary font-mono text-sm">CKM_ML_KEM_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_ML_DSA_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_SLH_DSA_*</code>. Hardware tokens

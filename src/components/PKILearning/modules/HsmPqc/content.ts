@@ -45,6 +45,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'PKCS#11 PQC Simulator — 8 operations with classical comparison and on-prem vs cloud notes. Vendor Comparison — Interactive matrix with PQC Maturity Score (0-100). HSM Migration Planner — 4-phase firmware migration wizard. FIPS Validation Tracker — CMVP/CAVP PQC validation status per vendor',
     relatedStandards:
-      'FIPS 140-3 (Cryptographic Module Validation). PKCS#11 v3.2 (OASIS Committee Specification 01, approved 14 Nov 2025 — adds ML-KEM, ML-DSA, SLH-DSA mechanisms; the current published OASIS Standard is v3.1, 2023). FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). CNSA 2.0 (NSA)',
+      'FIPS 140-3 (Cryptographic Module Validation). PKCS#11 v3.2 (ratified OASIS Standard, 3 June 2026 — adds ML-KEM, ML-DSA, SLH-DSA mechanisms; supersedes v3.1 from 2023). FIPS 203/204/205 (ML-KEM, ML-DSA, SLH-DSA). NIST SP 800-208 (Stateful Hash-Based Signatures). CNSA 2.0 (NSA)',
   },
 }

@@ -165,7 +165,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Microsoft',
     product: 'Azure Dedicated HSM',
     type: 'cloud',
-    catalogName: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
+    catalogName: 'Azure Dedicated HSM (Thales Luna 7)',
     fips140Level: 'FIPS 140-3 Level 3 (via Thales Luna 7 cert)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'cloud',

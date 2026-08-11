@@ -226,7 +226,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'C_Initialize(NULL); C_GetSlotList(CK_TRUE, slots, &count); C_OpenSession(slots[0], flags, NULL, NULL, &session); C_Login(session, CKU_USER, pin, pinLen);',
     pqcStatus:
-      'PKCS#11 v3.2 (OASIS Committee Specification 01, Nov 2025; the published OASIS Standard is v3.1) defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
+      'PKCS#11 v3.2 (ratified OASIS Standard, 3 June 2026 — content-identical to the Nov 2025 CS01 draft, so implementations tracking CS01 need no change) defines CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_DSA_*, CKM_SLH_DSA_*, CKM_HASH_ML_DSA_*, C_EncapsulateKey/C_DecapsulateKey. Hardware support depends on HSM vendor firmware.',
     strengths: [
       'Hardware-agnostic — same API works with any HSM/smart card',
       'Keys never leave hardware boundary',
