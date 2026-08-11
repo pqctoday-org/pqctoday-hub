@@ -476,8 +476,8 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
         role="note"
         className="glass-panel p-3 border border-status-warning/30 bg-status-warning/5 text-xs text-status-warning leading-relaxed"
       >
-        <strong>Not legal advice.</strong> These clauses are educational drafting aids. Have
-        counsel review any language before it goes into a vendor agreement.
+        <strong>Not legal advice.</strong> These clauses are educational drafting aids. Have counsel
+        review any language before it goes into a vendor agreement.
       </div>
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Contract scope informed by ${seedSources.join(' + ')}.`} />

@@ -452,7 +452,7 @@ export const CSWP39_SECTIONS: CSWP39Section[] = [
     ref: '§6',
     title: 'Considerations for Future Works',
     summary:
-      'Open considerations for future revisions, plus the crypto agility maturity model in §6.5. That model adapts the NIST Cybersecurity Framework\'s four tiers — Tier 1 Partial, Tier 2 Risk-Informed, Tier 3 Repeatable, Tier 4 Adaptive — which the tier badges in every Command Center zone are computed against.',
+      "Open considerations for future revisions, plus the crypto agility maturity model in §6.5. That model adapts the NIST Cybersecurity Framework's four tiers — Tier 1 Partial, Tier 2 Risk-Informed, Tier 3 Repeatable, Tier 4 Adaptive — which the tier badges in every Command Center zone are computed against.",
     subSections: [
       { ref: '§6.1', title: 'Resource Considerations' },
       { ref: '§6.2', title: 'Agility-Aware Design' },

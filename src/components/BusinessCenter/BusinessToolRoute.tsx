@@ -52,10 +52,7 @@ export const BusinessToolRoute = () => {
             it drives "the small provenance chip on each tool card" — but it was
             only ever rendered on Command Center ARTIFACT cards, so anyone who
             opened a tool directly saw none of it. (Audit 2026-08-10, W3-1.) */}
-        <Cswp39SectionBadge
-          sectionRef={tool.cswp39SectionRef}
-          subSection={tool.cswp39SubSection}
-        />
+        <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />
         <div className="ml-auto flex items-center gap-1">
           <ShareButton
             title={`${tool.name} — PQC Business Tools`}

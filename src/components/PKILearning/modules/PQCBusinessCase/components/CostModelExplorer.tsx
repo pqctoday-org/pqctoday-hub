@@ -395,8 +395,8 @@ export const CostModelExplorer: React.FC = () => {
             slider, not the methods. Say what the horizon now does. (W4-1.) */}
         <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50 leading-relaxed">
           <strong className="text-foreground/80">How the spread is built:</strong> all five lenses
-          estimate the same quantity — the total cost of this programme — so all five respond to
-          the planning horizon. Per-system work does not stretch with the schedule, but standing
+          estimate the same quantity — the total cost of this programme — so all five respond to the
+          planning horizon. Per-system work does not stretch with the schedule, but standing
           programme costs (PMO, governance, discovery) accrue for as long as the programme runs, so
           those scale while the per-system term does not. The parametric lens remains the most
           horizon-sensitive by construction, since it is a share of annual budget spent every year.

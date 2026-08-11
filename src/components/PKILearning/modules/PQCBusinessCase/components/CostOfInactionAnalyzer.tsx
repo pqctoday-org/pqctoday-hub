@@ -425,10 +425,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             <div className="text-xs text-status-warning mt-2 leading-relaxed">
               Negative: at a {inputs.discountRatePct}% discount rate
               {mandate.mandateType !== 'HARD' && ' and with no binding mandate'}, deferring the
-              migration spend is worth more in present-value terms than the added breach exposure
-              it buys. That is a financing result, not a safety verdict — the risk itself still
-              rises every year you wait (see the year-by-year table). Lower the discount rate to
-              see the risk in real terms.
+              migration spend is worth more in present-value terms than the added breach exposure it
+              buys. That is a financing result, not a safety verdict — the risk itself still rises
+              every year you wait (see the year-by-year table). Lower the discount rate to see the
+              risk in real terms.
             </div>
           )}
         </div>
@@ -622,13 +622,13 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             <strong>Breach loss:</strong> the same probability-weighted model as the Breach Scenario
             Simulator — a blend of &quot;no CRQC exists&quot; and &quot;CRQC exists&quot; outcomes.
             Each projected year is weighted by the probability, from the GRI 2025 survey&apos;s
-            arrival curve, that a CRQC <em>exists by then</em> — not merely that one arrives in
-            that particular year, since a machine built in 2032 is still there in 2040. HNDL
-            exposure decays with {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s{' '}
-            {shelfLifeYears}-year shelf life, measured at the moment the data would be decrypted
-            rather than today: that is what migrating early buys you, because a corpus frozen well
-            before a CRQC arrives has aged out of its own shelf life by the time anyone can read
-            it. Applied at your {annualBreachProbPct}% annual breach probability.{' '}
+            arrival curve, that a CRQC <em>exists by then</em> — not merely that one arrives in that
+            particular year, since a machine built in 2032 is still there in 2040. HNDL exposure
+            decays with {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s {shelfLifeYears}-year
+            shelf life, measured at the moment the data would be decrypted rather than today: that
+            is what migrating early buys you, because a corpus frozen well before a CRQC arrives has
+            aged out of its own shelf life by the time anyone can read it. Applied at your{' '}
+            {annualBreachProbPct}% annual breach probability.{' '}
             {chainedFromSimulator
               ? 'Inputs carried over from the Breach Scenario Simulator step.'
               : `Defaults: ${DELAY_MODEL_DEFAULTS.baseYearsOfData} years of harvested data, ${DELAY_MODEL_DEFAULTS.hndlFactorPct}% HNDL exposure.`}

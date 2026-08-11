@@ -172,10 +172,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   // blank template for completion is legitimate — doing it by accident is not.
   // Lives here rather than in each generator so every ArtifactBuilder consumer
   // is covered. (Audit 2026-08-10, W6.)
-  const unresolved = useMemo(
-    () => findUnresolvedPlaceholders(exportMarkdown),
-    [exportMarkdown]
-  )
+  const unresolved = useMemo(() => findUnresolvedPlaceholders(exportMarkdown), [exportMarkdown])
 
   return (
     <div className="space-y-6">

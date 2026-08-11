@@ -1138,8 +1138,8 @@ export const SupplyChainRiskMatrix: React.FC<{
           4, High 3, Medium 2, Low 1). Impact is an <em>absolute</em> measure: it does not change
           when other layers are added or removed, and its 1–5 bands are set at the quartiles of the
           real threat corpus, so a level-5 layer sits in its top decile. Both axes are heuristics
-          derived from real catalog/threat data, not a validated risk-probability estimate — click
-          a cell to jump to the layer(s) it represents below.
+          derived from real catalog/threat data, not a validated risk-probability estimate — click a
+          cell to jump to the layer(s) it represents below.
         </p>
         {!hasIndustryContext ? (
           <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
