@@ -12,6 +12,9 @@ import { FlagButton } from '../ui/FlagButton'
 import { ShareButton } from '../ui/ShareButton'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { logBusinessToolOpen } from '@/utils/analytics'
+import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
+import { RecommendedResourcesPanel } from './widgets/RecommendedResourcesPanel'
+import { primaryStepForZone } from './lib/cswp39Tier'
 
 export const BusinessToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -44,6 +47,15 @@ export const BusinessToolRoute = () => {
         <span className="text-sm text-muted-foreground">
           {tool.category} / {tool.name}
         </span>
+        {/* Standards provenance. The registry has carried a validated
+            cswp39SectionRef for every tool all along, and its own comment says
+            it drives "the small provenance chip on each tool card" — but it was
+            only ever rendered on Command Center ARTIFACT cards, so anyone who
+            opened a tool directly saw none of it. (Audit 2026-08-10, W3-1.) */}
+        <Cswp39SectionBadge
+          sectionRef={tool.cswp39SectionRef}
+          subSection={tool.cswp39SubSection}
+        />
         <div className="ml-auto flex items-center gap-1">
           <ShareButton
             title={`${tool.name} — PQC Business Tools`}
@@ -107,6 +119,15 @@ export const BusinessToolRoute = () => {
       >
         {Comp && <Comp />}
       </Suspense>
+
+      {/* Hub resources. RecommendedResourcesPanel was rendered only inside
+          CSWP39StepSection on the Command Center, so a tool reached by URL,
+          search, or the tools grid was an island — only 2 of 37 tools carry
+          in-app links of their own. Keyed off the tool's zone via the existing
+          ZONE_STEP_CONTRIBUTORS map. (Audit 2026-08-10, W3-2.) */}
+      <div className="glass-panel p-4 border border-border">
+        <RecommendedResourcesPanel stepId={primaryStepForZone(tool.cswp39Zone)} />
+      </div>
     </div>
   )
 }

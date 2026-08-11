@@ -9,6 +9,7 @@ import { CompleteStepAction } from '../CompleteStepAction'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { MarkdownView } from '@/components/ui/MarkdownView'
+import { findUnresolvedPlaceholders } from '@/utils/unresolvedPlaceholders'
 
 export interface ArtifactField {
   id: string
@@ -164,8 +165,33 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     [formData, renderCsv]
   )
 
+  // Unfilled template tokens reaching an exported document. These generators
+  // produce things that get signed (a crypto policy) or that bind a vendor
+  // (contract clauses), and nothing previously stopped "[Organization Name]"
+  // or "[FREQUENCY]" going out in a PDF. A warning, not a block: circulating a
+  // blank template for completion is legitimate — doing it by accident is not.
+  // Lives here rather than in each generator so every ArtifactBuilder consumer
+  // is covered. (Audit 2026-08-10, W6.)
+  const unresolved = useMemo(
+    () => findUnresolvedPlaceholders(exportMarkdown),
+    [exportMarkdown]
+  )
+
   return (
     <div className="space-y-6">
+      {unresolved.length > 0 && (
+        <div
+          role="status"
+          className="glass-panel p-3 border border-status-warning/30 bg-status-warning/5 text-xs text-status-warning leading-relaxed"
+        >
+          <strong>
+            {unresolved.length} unfilled placeholder{unresolved.length !== 1 ? 's' : ''}
+          </strong>{' '}
+          still in this document and will appear in any export:{' '}
+          <span className="font-mono">{unresolved.slice(0, 6).join(', ')}</span>
+          {unresolved.length > 6 && ` +${unresolved.length - 6} more`}.
+        </div>
+      )}
       <div className="flex items-center gap-3 flex-wrap">
         <Button
           variant={mode === 'edit' ? 'secondary' : 'ghost'}

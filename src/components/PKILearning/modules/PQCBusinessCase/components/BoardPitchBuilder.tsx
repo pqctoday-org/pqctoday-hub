@@ -124,14 +124,39 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
       )
   }
 
+  /**
+   * Basis-of-figures footer appended to every persona variant.
+   *
+   * This deck is the most outward-facing artifact the suite produces — it goes
+   * in front of a board — and it carried no source attribution at all: zero
+   * citations, zero URLs, while quoting ROI, breach and cost-of-inaction
+   * figures inherited from three separately-sourced models. A reader could not
+   * tell which numbers rest on published data and which are analyst estimates.
+   * (Audit 2026-08-10, W5.)
+   */
+  const BASIS_OF_FIGURES = [
+    '',
+    '---',
+    '',
+    '## Basis of figures',
+    '',
+    '- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy.',
+    '- **Annual breach probability** — Cyentia Institute, Information Risk Insights Study (IRIS), by organization-size tier.',
+    '- **CRQC arrival probability** — Global Risk Institute, Quantum Threat Timeline Report 2025: a CRQC is "quite possible (28-49%) within the next 10 years, and likely (51-70%) in the next 15", from a survey of 26 experts.',
+    '- **Migration cost, delay premium, and staffing** — analyst estimates for this organization, not cited figures.',
+    '',
+    '*Probability-weighted figures blend a "CRQC exists" and "no CRQC" outcome across the planning horizon; they are structured arguments, not measurements. Confirm every figure against your own finance function before it reaches a board paper.*',
+    '',
+  ].join('\n')
+
   const renderPreviewBound = useCallback(
-    (formData: FormData) => variant.renderPreview(formData, data),
-    [variant, data]
+    (formData: FormData) => variant.renderPreview(formData, data) + BASIS_OF_FIGURES,
+    [variant, data, BASIS_OF_FIGURES]
   )
 
   const handleExport = useCallback(
     (formData: FormData) => {
-      const markdown = variant.renderPreview(formData, data)
+      const markdown = variant.renderPreview(formData, data) + BASIS_OF_FIGURES
       addExecutiveDocument({
         id: `board-pitch-${selectedPersona ?? 'default'}-${Date.now()}`,
         moduleId: MODULE_ID,

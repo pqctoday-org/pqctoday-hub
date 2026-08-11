@@ -153,6 +153,30 @@ export function ComplianceTimelineBuilderStandalone() {
                 <li key={c.framework} className="flex items-center gap-2 flex-wrap">
                   <span className="font-medium text-foreground">{c.framework}</span>
                   {c.deadline && <span>— deadline: {c.deadline}</span>}
+                  {/* A date alone does not say whether it BINDS. The catalog
+                      already records deadline_kind; showing it stops a phased
+                      or ongoing obligation reading like a hard cut-off.
+                      (Audit 2026-08-10, W5.) */}
+                  {(() => {
+                    const kind = complianceFrameworks.find(
+                      (fw) => fw.label === c.framework || fw.id === c.framework
+                    )?.deadlineKind
+                    if (!kind || kind === 'unknown') return null
+                    const label: Record<string, string> = {
+                      fixed: 'fixed date',
+                      phased: 'phased',
+                      ongoing: 'ongoing obligation',
+                      none: 'no set date',
+                    }
+                    return (
+                      <span
+                        className="text-[10px] px-1.5 py-0.5 rounded border border-border text-muted-foreground"
+                        title="How this obligation's date behaves, per the compliance catalog"
+                      >
+                        {label[kind] ?? kind}
+                      </span>
+                    )
+                  })()}
                   {c.notes && <span className="text-muted-foreground/80">· {c.notes}</span>}
                   {fwId && (
                     <Button

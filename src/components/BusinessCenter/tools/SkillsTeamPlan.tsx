@@ -25,6 +25,7 @@ import {
   ROLE_CROSSWALK,
   FTE_PER_CRYPTO_INSTANCES,
   FTE_PER_CRYPTO_INSTANCES_PRODUCTION,
+  sizingSanityCheck,
   FIXED_OVERHEAD_ROLE_IDS,
   INSTANCES_PER_PRODUCT_ESTIMATE,
   type FrameworkRoleId,
@@ -159,6 +160,10 @@ export function buildMarkdown(s: PlanState): string {
       `- Heuristic dedicated FTE: **≈ ${heuristicFte.toFixed(1)}** ` +
         `(${Number.parseInt(s.estateInstances, 10).toLocaleString()} ÷ ${ratio})`
     )
+    const sanity = sizingSanityCheck(Number.parseInt(s.estateInstances, 10), heuristicFte)
+    if (sanity) {
+      lines.push(`- ${sanity.diverges ? '**Diverges from the framework:** ' : ''}${sanity.note}`)
+    }
   } else {
     lines.push('')
     lines.push('- _No estate-size estimate entered; enter one to size dedicated FTE._')
@@ -260,6 +265,11 @@ export const SkillsTeamPlan: React.FC = () => {
     () => computeHeuristicFte(state.estateInstances, state.sizingPhase),
     [state.estateInstances, state.sizingPhase]
   )
+  const sanity = useMemo(() => {
+    const n = Number.parseInt(state.estateInstances, 10)
+    if (!Number.isFinite(n) || heuristicFte === null) return null
+    return sizingSanityCheck(n, heuristicFte)
+  }, [state.estateInstances, heuristicFte])
 
   const exportMarkdown = useMemo(() => buildMarkdown(state), [state])
 
@@ -348,6 +358,32 @@ export const SkillsTeamPlan: React.FC = () => {
             </span>
           )}
         </div>
+        {/* The per-role numbers in the table below are a distribution of this
+            headline, not independent estimates — worth saying, or a reader
+            takes each row as separately sourced. (Audit 2026-08-10, W4-1.) */}
+        <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+          <strong className="text-foreground/80">How this is sized:</strong> the headline is your
+          estate divided by the framework&apos;s ratio for the stage you selected. The per-role
+          figures in the table are that single number split across the scalable roles in proportion
+          to the framework&apos;s own typical-FTE bands — they are one estimate distributed, not
+          seven independent ones. The QRPM, Cryptographic Architect and PMO Analyst are shown at
+          their fixed bands instead, because the framework treats them as dedicated overhead
+          regardless of estate size, and they sit on top of the headline rather than inside it.
+        </p>
+        {/* The ratio and the framework's own narrative guidance disagree at
+            scale — at 10,000 instances the ratio gives ~20 FTE against the
+            same section's stated 8-12 peak. Show both rather than trusting
+            the arithmetic silently. (Audit 2026-08-10, W2-4.) */}
+        {sanity && (
+          <div
+            className={`text-xs mt-2 leading-relaxed ${
+              sanity.diverges ? 'text-status-warning' : 'text-muted-foreground'
+            }`}
+          >
+            {sanity.diverges && <strong>Diverges from the framework: </strong>}
+            {sanity.note}
+          </div>
+        )}
       </section>
 
       <section className="glass-panel border border-border rounded-lg p-4">
