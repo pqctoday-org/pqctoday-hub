@@ -56,6 +56,7 @@
     "audit:jurisdiction-refs": "tsx scripts/audit-jurisdiction-refs.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "audit:changelog-personas": "tsx scripts/audit-changelog-persona-tags.ts",
+    "audit:migrate-proof": "tsx scripts/audit-migrate-proof-freshness.ts",
     "audit:persona-lens": "tsx scripts/audit-persona-lens.ts",
     "audit:role-board-ctas": "tsx scripts/audit-role-board-ctas.ts",
     "audit:role-board-coverage": "tsx scripts/audit-role-board-coverage.ts",
