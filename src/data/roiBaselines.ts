@@ -12,15 +12,52 @@ export const INDUSTRY_BREACH_BASELINES_AS_OF = '2025-07'
 
 /**
  * Freshness stamp for the IBM-derived baselines (aggregated in
- * contentFreshness). IBM refreshes the report annually around end-July —
- * verified still-current 2026-07-29; the 2026 edition lands any week now, and
- * this stamp aging past its window is the reminder to re-source the table
- * (update every figure below + the citation string in derivedFinancialDocs).
+ * contentFreshness). IBM refreshes the report annually around end-July.
+ *
+ * STALE AS OF 2026-08-10 — the 2026 edition is published. Fetched
+ * https://www.ibm.com/reports/data-breach on 2026-08-10 (capture:
+ * pqctoday-priv/local-evidence-cache/library/IBM-Cost-of-a-Data-Breach-2026-landing.html):
+ * the page is titled "Cost of a Data Breach Report 2026" and states a global
+ * average of **USD 4.99M, "a 12% increase over last year and a record high"**.
+ * That +12% is consistent with the 4.44M below being the correct 2025 figure —
+ * so the table is right for 2025 and one edition behind.
+ *
+ * Re-sourcing needs the per-sector figures, which are inside the report PDF,
+ * not on the landing page. Every figure below plus the citation string in
+ * derivedFinancialDocs must move together. Deliberately NOT half-updated:
+ * a 2026 global average sitting on top of 2025 sector figures would be worse
+ * than a consistent 2025 table.
  */
 export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
   asOf: '2026-07-29',
   recheck: 'https://www.ibm.com/reports/data-breach',
 }
+
+/**
+ * Evidence status for the three financial sources behind every dollar figure
+ * in the business tools, checked 2026-08-10 (audit W1-7).
+ *
+ * The GRI 2025 CRQC curve (hndlExposureCurve.json) IS properly proven — its
+ * cached capture states "quite possible (28-49%) within the next 10 years, and
+ * likely (51-70%) in the next 15" from 26 experts, exactly reproducing the
+ * curve's 2035/2040 anchors. These three are not at that standard:
+ *
+ *  - IBM Cost of a Data Breach — landing page cached; carries the global
+ *    average only. Per-sector figures are in the gated report PDF.
+ *  - Cyentia IRIS — landing page cached; contains NO probability figures at
+ *    all. ANNUAL_BREACH_PROBABILITY_PCT below (2 / 9 / 25%) remains
+ *    UNVERIFIED against a retrievable artifact.
+ *  - NetDiligence Cyber Claims Study — landing page cached; contains none of
+ *    the claim figures. ORG_SIZE_BREACH_COST_ANCHORS remains UNVERIFIED.
+ *
+ * A page ABOUT a report is not the report. Treat the two unverified sets as
+ * cited assumptions until the underlying documents are retrieved.
+ */
+export const FINANCIAL_BASELINE_EVIDENCE = {
+  ibmBreachCosts: 'landing-page-only',
+  cyentiaBreachProbability: 'unverified',
+  netDiligenceOrgSize: 'unverified',
+} as const
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   'Finance & Banking': 5_560_000, // IBM Financial
   Healthcare: 7_420_000, // IBM Healthcare

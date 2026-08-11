@@ -393,15 +393,44 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             Accumulated exposure + delay premium
           </div>
         </div>
-        <div className="glass-panel p-4 border bg-status-error/5 border-status-error/20">
+        <div
+          className={`glass-panel p-4 border ${
+            costOfInaction < 0
+              ? 'bg-status-warning/5 border-status-warning/20'
+              : 'bg-status-error/5 border-status-error/20'
+          }`}
+        >
           <div className="flex items-center gap-2 mb-1">
-            <AlertTriangle size={14} className="text-status-error" />
+            <AlertTriangle
+              size={14}
+              className={costOfInaction < 0 ? 'text-status-warning' : 'text-status-error'}
+            />
             <span className="text-xs text-muted-foreground">Cost of Inaction</span>
           </div>
-          <div className="text-2xl font-bold text-status-error">{fmt(costOfInaction)}</div>
+          <div
+            className={`text-2xl font-bold ${
+              costOfInaction < 0 ? 'text-status-warning' : 'text-status-error'
+            }`}
+          >
+            {fmt(costOfInaction)}
+          </div>
           <div className="text-xs text-muted-foreground mt-1">
             Extra cost from delaying {delayYears} year{delayYears !== 1 ? 's' : ''}
           </div>
+          {/* A negative figure is a real result, not an error, and it must be
+              explained rather than left to read as "$0 risk". At a high
+              discount rate with no binding mandate, deferring the migration
+              capex can outweigh the extra breach exposure it buys. */}
+          {costOfInaction < 0 && (
+            <div className="text-xs text-status-warning mt-2 leading-relaxed">
+              Negative: at a {inputs.discountRatePct}% discount rate
+              {mandate.mandateType !== 'HARD' && ' and with no binding mandate'}, deferring the
+              migration spend is worth more in present-value terms than the added breach exposure
+              it buys. That is a financing result, not a safety verdict — the risk itself still
+              rises every year you wait (see the year-by-year table). Lower the discount rate to
+              see the risk in real terms.
+            </div>
+          )}
         </div>
       </div>
 
@@ -571,10 +600,15 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         <div className="mt-3 text-xs text-muted-foreground space-y-2">
           <p>
             <strong>Breach loss:</strong> the same probability-weighted model as the Breach Scenario
-            Simulator — a blend of &quot;no CRQC exists&quot; and &quot;CRQC exists&quot; outcomes
-            weighted by the GRI 2025 survey&apos;s CRQC-arrival curve, with HNDL exposure decayed by{' '}
-            {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s {shelfLifeYears}-year shelf life,
-            at your {annualBreachProbPct}% annual breach probability.{' '}
+            Simulator — a blend of &quot;no CRQC exists&quot; and &quot;CRQC exists&quot; outcomes.
+            Each projected year is weighted by the probability, from the GRI 2025 survey&apos;s
+            arrival curve, that a CRQC <em>exists by then</em> — not merely that one arrives in
+            that particular year, since a machine built in 2032 is still there in 2040. HNDL
+            exposure decays with {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s{' '}
+            {shelfLifeYears}-year shelf life, measured at the moment the data would be decrypted
+            rather than today: that is what migrating early buys you, because a corpus frozen well
+            before a CRQC arrives has aged out of its own shelf life by the time anyone can read
+            it. Applied at your {annualBreachProbPct}% annual breach probability.{' '}
             {chainedFromSimulator
               ? 'Inputs carried over from the Breach Scenario Simulator step.'
               : `Defaults: ${DELAY_MODEL_DEFAULTS.baseYearsOfData} years of harvested data, ${DELAY_MODEL_DEFAULTS.hndlFactorPct}% HNDL exposure.`}
