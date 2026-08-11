@@ -12,14 +12,15 @@
  *   1. A small hand-curated map captures regulators that don't appear in the
  *      compliance CSV but are real (ASIC, RBA, GCHQ, etc.).
  *   2. CSV augmentation walks `complianceFrameworks` at module load and
- *      registers any single-country compliance_framework row's enforcement
- *      body as a domestic regulator for that country × each tagged industry.
+ *      registers any single-country row's enforcement body as a domestic
+ *      regulator for that country × each tagged industry.
  *
  * Five Eyes affinity is a separate signal — it doesn't make a body domestic,
  * but it elevates the framework from generic Recognized to "Five Eyes
  * affinity" with a specific reason string for executives.
  */
 import { complianceFrameworks } from '../data/complianceData'
+import { COUNTRY_CODE_TO_NAME } from '../data/jurisdictionsData'
 
 type RegulatorKey = `${string}::${string}`
 
@@ -96,26 +97,68 @@ const MANUAL_REGULATORS: Record<RegulatorKey, string[]> = {
 // ── CSV-derived augmentation ────────────────────────────────────────────
 
 /**
+ * Body types whose single-country rows name a domestic *authority*.
+ *
+ * `regulatory_body` belongs here alongside `compliance_framework`: a national
+ * financial regulator is modelled as a body, not as a framework, so excluding
+ * it made ACPR and AMF — the French banking and securities regulators — read
+ * as "Foreign authority … recognized in France" for a French profile.
+ *
+ * Deliberately excluded: `standardization_body`, `technical_standard`,
+ * `certification_body` and `industry_alliance`. Those author or validate; they
+ * do not enforce, and admitting them would make any standards body in your
+ * country read as your regulator.
+ */
+const DOMESTIC_AUTHORITY_BODY_TYPES: ReadonlySet<string> = new Set([
+  'compliance_framework',
+  'regulatory_body',
+])
+
+/**
+ * Country tokens are stored inconsistently across the data and the callers:
+ * the compliance CSV migrated to ISO 3166-1 alpha-2 ('FR'), while the
+ * assessment store and persona picker hold full names ('France'). Registering
+ * and looking up under both forms is what makes the derived map reachable —
+ * keyed on the raw token alone it matched nothing for any ISO-coded row.
+ */
+const COUNTRY_NAME_TO_CODE: Record<string, string> = Object.fromEntries(
+  Object.entries(COUNTRY_CODE_TO_NAME).map(([code, name]) => [name, code])
+)
+
+function countryAliases(token: string): string[] {
+  const t = token.trim()
+  if (!t) return []
+  // eslint-disable-next-line security/detect-object-injection -- t is a data token, and both maps are plain string→string records built at module load
+  const asName = COUNTRY_CODE_TO_NAME[t]
+  // eslint-disable-next-line security/detect-object-injection -- same
+  const asCode = COUNTRY_NAME_TO_CODE[t]
+  return Array.from(new Set([t, asName, asCode].filter(Boolean) as string[]))
+}
+
+/**
  * Map of `country::industry` → set of regulators contributed by single-country
- * compliance_framework rows in the compliance CSV. Built once at module load.
- * The classifier merges this with the manual core, with manual entries taking
- * precedence on conflict (no override semantics today, only union).
+ * authority rows in the compliance CSV. Built once at module load, registered
+ * under every alias of the country token. The classifier merges this with the
+ * manual core, with manual entries taking precedence on conflict (no override
+ * semantics today, only union).
  */
 const DERIVED_REGULATORS: Map<string, Set<string>> = (() => {
   const out = new Map<string, Set<string>>()
   for (const fw of complianceFrameworks) {
-    if (fw.bodyType !== 'compliance_framework') continue
+    if (!DOMESTIC_AUTHORITY_BODY_TYPES.has(fw.bodyType)) continue
     if (fw.countries.length !== 1) continue
     const country = fw.countries[0].trim()
     if (!country || country === 'Global') continue
     const eb = fw.enforcementBody?.trim()
     if (!eb) continue
-    // Register for each industry the framework covers.
+    // Register for each industry the framework covers, under every country alias.
     const industries = fw.industries.length > 0 ? fw.industries : ['*']
-    for (const ind of industries) {
-      const key = `${country}::${ind.trim()}`
-      if (!out.has(key)) out.set(key, new Set())
-      out.get(key)!.add(eb)
+    for (const alias of countryAliases(country)) {
+      for (const ind of industries) {
+        const key = `${alias}::${ind.trim()}`
+        if (!out.has(key)) out.set(key, new Set())
+        out.get(key)!.add(eb)
+      }
     }
   }
   return out
@@ -133,20 +176,23 @@ const DERIVED_REGULATORS: Map<string, Set<string>> = (() => {
  */
 export function regulatorsFor(country: string, industry: string | null): Set<string> {
   const out = new Set<string>()
-  const c = country.trim()
   const i = (industry ?? '').trim() || '*'
 
-  // Manual: exact industry match, then wildcard
-  for (const key of [`${c}::${i}` as RegulatorKey, `${c}::*` as RegulatorKey]) {
-    // eslint-disable-next-line security/detect-object-injection
-    const list = MANUAL_REGULATORS[key]
-    if (list) for (const v of list) out.add(v)
-  }
+  // Both stores and both data vocabularies: 'France' and 'FR' must resolve to
+  // the same regulators regardless of which side supplied the token.
+  for (const c of countryAliases(country)) {
+    // Manual: exact industry match, then wildcard
+    for (const key of [`${c}::${i}` as RegulatorKey, `${c}::*` as RegulatorKey]) {
+      // eslint-disable-next-line security/detect-object-injection
+      const list = MANUAL_REGULATORS[key]
+      if (list) for (const v of list) out.add(v)
+    }
 
-  // CSV-derived
-  for (const key of [`${c}::${i}`, `${c}::*`]) {
-    const list = DERIVED_REGULATORS.get(key)
-    if (list) for (const v of list) out.add(v)
+    // CSV-derived
+    for (const key of [`${c}::${i}`, `${c}::*`]) {
+      const list = DERIVED_REGULATORS.get(key)
+      if (list) for (const v of list) out.add(v)
+    }
   }
 
   return out
@@ -197,14 +243,28 @@ export function isFiveEyesAffinity(country: string | null, body: string | null):
 
 // ── EU-level affinity (separate concept from regulatorsFor) ─────────────
 
-/** Bodies that act EU-wide — counted as domestic for any EU member. */
+/**
+ * Bodies that act EU-wide — counted as domestic for any EU member.
+ *
+ * Matching is exact, so compound strings must be listed verbatim as the CSV
+ * writes them. The two added below are EU institutions whose rows previously
+ * fell through to Recognized purely on string shape:
+ *   - 'European Commission/ENISA'                  (EU Cyber Resilience Act)
+ *   - 'European Banking Authority (EBA); national competent authorities' (PSD2)
+ *
+ * NOT added: 'Europol/FS-ISAC' (Europol Quantum Safe Financial Forum). Europol
+ * is an EU agency, but the QSFF is a voluntary call-to-action forum with no
+ * enforcement power — rendering it as "Your regulator" would overstate it.
+ */
 const EU_LEVEL_BODIES = new Set([
   'ENISA',
   'EU/EC',
   'European Commission',
+  'European Commission/ENISA',
   'ECCG/ENISA',
   'EBA/ESMA/EIOPA',
   'ESMA/EBA',
+  'European Banking Authority (EBA); national competent authorities',
   'EU DPAs',
   'ENISA/EU Member States',
   'ETSI/EU Commission',
