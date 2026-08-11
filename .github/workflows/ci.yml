@@ -214,6 +214,16 @@ jobs:
         # the false precision the filter fix just removed.
         run: npm run audit:changelog-personas
 
+      - name: Audit migrate proof freshness
+        # The B+ review said the repo already tracked products with missing or
+        # stale proof. The reader-facing half was true to fix (every row now
+        # shows proof age, or says 'vendor claim'), but the tracking it cited
+        # (reports/products-no-proofurl*.json) did not exist here at all. This
+        # is it. FAILS only on a claim with NO evidence; undated and stale are
+        # reported as backlog, because a gate that failed on staleness would
+        # push someone to re-date documents they had not re-checked.
+        run: npm run audit:migrate-proof
+
       - name: Audit role-board coverage (every role reaches every section)
         # The 2026-08-09 expansion to six use cases per role exists so that each
         # role's home page reaches the whole site. Nothing enforced that
