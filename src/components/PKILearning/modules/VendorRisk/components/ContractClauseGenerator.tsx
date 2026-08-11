@@ -466,6 +466,19 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
 
   return (
     <div className="space-y-6">
+      {/* The generated markdown has always carried "Consult legal counsel
+          before incorporating into vendor agreements" in its footer — but only
+          in the EXPORT, so a user drafting clauses on screen never saw it.
+          Contract language binds a counterparty; the caution belongs where the
+          work happens, not only in the artifact it produces. (Audit
+          2026-08-10, W6.) */}
+      <div
+        role="note"
+        className="glass-panel p-3 border border-status-warning/30 bg-status-warning/5 text-xs text-status-warning leading-relaxed"
+      >
+        <strong>Not legal advice.</strong> These clauses are educational drafting aids. Have
+        counsel review any language before it goes into a vendor agreement.
+      </div>
       {seedSources.length > 0 && (
         <PreFilledBanner summary={`Contract scope informed by ${seedSources.join(' + ')}.`} />
       )}
