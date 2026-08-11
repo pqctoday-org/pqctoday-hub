@@ -53,12 +53,25 @@ export function computeMoscaVerdict(inputs: MoscaInputs, currentYear: number): M
 
 /**
  * The additional present-value loss from delaying migration start by
- * `delayYears` — computed by re-running the breach model as-of a later year
- * (the CRQC clock keeps ticking while the organization waits, so the same
- * planning horizon now covers a riskier window).
+ * `delayYears`.
+ *
+ * Both scenarios are evaluated against the SAME terminal year — only the
+ * protected start differs. Waiting can therefore only ever add exposure.
+ *
+ * The previous form slid a FIXED-WIDTH horizon window forward and differenced
+ * the two, which meant the answer depended on where the window happened to sit
+ * on the arrival curve. Once it slid past the steep part, later scored as
+ * safer, and a function named `costOfWaiting` returned negative numbers:
+ * −$82,718 at 8 years, −$942,987 at 15 (and exactly $0 at 1 and 5 years, where
+ * the piecewise-linear curve's equal slopes cancelled). It fed the Breach
+ * Scenario Simulator's decision layer. (Audit 2026-08-10, W1-3b.)
  */
 export function costOfWaiting(baseInputs: BreachModelInputs, delayYears: number): number {
-  const now = computeBreachCosts(baseInputs)
-  const delayed = computeBreachCosts({ ...baseInputs, asOfYear: baseInputs.asOfYear + delayYears })
-  return delayed.pvQuantumDelta - now.pvQuantumDelta
+  const delay = Math.max(0, delayYears)
+  if (delay === 0) return 0
+  // Quantum-excess exposure accumulated across exactly the years spent waiting,
+  // discounted to today. Each year inside that window carries its own
+  // cumulative CRQC-arrival probability (see computeForScenario), so this grows
+  // with the delay and can never be negative.
+  return computeBreachCosts({ ...baseInputs, planningHorizonYears: delay }).pvQuantumDelta
 }
