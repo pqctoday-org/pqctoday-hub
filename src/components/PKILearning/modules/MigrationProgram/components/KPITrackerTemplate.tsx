@@ -202,6 +202,16 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
   const [touchedIds, setTouchedIds] = useState<Set<string>>(
     () => new Set(savedInputs?.touchedIds ?? [])
   )
+
+  /** KPIs actually contributing to the headline — mirrors the same exclusion
+   *  rule the score itself uses (locked, or not-yet-scored and untouched). */
+  const scoredCount = useMemo(
+    () =>
+      dimensions.filter(
+        (d) => !d.disabled && !(d.notYetScored === true && !touchedIds.has(d.id))
+      ).length,
+    [dimensions, touchedIds]
+  )
   const handleTouchedChange = useCallback((ids: Set<string>) => {
     setTouchedIds(ids)
   }, [])
@@ -383,6 +393,21 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         showExport={false}
         exportFilename={`pqc-kpi-tracker-${activePersona}`}
       />
+
+      {/* The overall score is a weighted average over only the KPIs that are
+          actually scored — locked and not-yet-scored dimensions are excluded
+          from BOTH the numerator and the denominator, which is correct, but it
+          means a score built from two KPIs reads identically to one built from
+          eight. Say which. (Audit 2026-08-10, W4-1.) */}
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        <strong className="text-foreground/80">How this is scored:</strong> each KPI&apos;s 0–100
+        value is multiplied by its weight, summed, and divided by the total weight of the KPIs
+        included — a weighted average. KPIs that are locked (no data available) or not yet scored
+        are left out of both halves of that division rather than counted as zero, so an unscored
+        KPI does not drag the headline down. It also means the score describes only the KPIs you
+        have actually scored: <strong>{scoredCount} of {dimensions.length}</strong> here. Weights
+        are the per-persona defaults unless you have edited them.
+      </p>
 
       <ExportableArtifact
         title="KPI Tracker Export"

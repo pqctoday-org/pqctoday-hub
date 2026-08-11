@@ -358,6 +358,18 @@ export const SkillsTeamPlan: React.FC = () => {
             </span>
           )}
         </div>
+        {/* The per-role numbers in the table below are a distribution of this
+            headline, not independent estimates — worth saying, or a reader
+            takes each row as separately sourced. (Audit 2026-08-10, W4-1.) */}
+        <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+          <strong className="text-foreground/80">How this is sized:</strong> the headline is your
+          estate divided by the framework&apos;s ratio for the stage you selected. The per-role
+          figures in the table are that single number split across the scalable roles in proportion
+          to the framework&apos;s own typical-FTE bands — they are one estimate distributed, not
+          seven independent ones. The QRPM, Cryptographic Architect and PMO Analyst are shown at
+          their fixed bands instead, because the framework treats them as dedicated overhead
+          regardless of estate size, and they sit on top of the headline rather than inside it.
+        </p>
         {/* The ratio and the framework's own narrative guidance disagree at
             scale — at 10,000 instances the ratio gives ~20 FTE against the
             same section's stated 8-12 peak. Show both rather than trusting
