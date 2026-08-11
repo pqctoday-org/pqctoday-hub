@@ -65,11 +65,14 @@ describe('applyRoleOrder', () => {
     )
   })
 
-  it('produces a different lead row for at least two roles', () => {
-    // If every role read the same, deleting the six persona views would buy
-    // nothing — this asserts the lens actually earns that removal.
+  it('gives at least three roles a different lead row', () => {
+    // A browser check on 2026-08-10 showed executive, architect and curious all
+    // leading with the same three rows: their rank functions tied inside a tier
+    // band where every row shares the trait being tested. The old bar here —
+    // "at least two differ" — passed anyway. If this drops back, the lens has
+    // stopped earning the removal of six bespoke persona views.
     const leads = new Set(ALL_ROLES.map((r) => applyRoleOrder(MANDATORY, r)[0].framework.id))
-    expect(leads.size).toBeGreaterThan(1)
+    expect(leads.size).toBeGreaterThanOrEqual(3)
   })
 })
 

@@ -25,7 +25,6 @@ interface RoleReading {
   note: (row: ObligationRow) => string | null
 }
 
-const hasDate = (row: ObligationRow) => row.milestones.length > 0
 const isCertificationScheme = (row: ObligationRow) =>
   row.framework.bodyType === 'certification_body'
 const isTechnicalStandard = (row: ObligationRow) => row.framework.bodyType === 'technical_standard'
@@ -43,9 +42,10 @@ const DEFAULT_READING: RoleReading = {
 const ROLE_READINGS: Record<PersonaId, RoleReading> = {
   executive: {
     framing: 'Dated obligations first — what binds you, and when it starts to bite.',
-    // A dated mandate outranks an open-ended one: it is the thing with a
-    // calendar consequence.
-    rank: (row) => (hasDate(row) ? 0 : 1),
+    // Soonest stated date leads. The coarser "dated before undated" test tied
+    // across a whole tier band — almost everything there is dated — so the
+    // list never actually reordered for this reader.
+    rank: (row) => row.milestones[0]?.year ?? Number.MAX_SAFE_INTEGER,
     note: (row) => {
       const first = row.milestones[0]
       if (first) return `Stated date ${first.year}${first.label ? ` — ${first.label}` : ''}`
@@ -55,7 +55,7 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
 
   architect: {
     framing: 'Technical standards first — what you have to build against.',
-    rank: (row) => (isTechnicalStandard(row) ? 0 : row.requirementCount > 0 ? 1 : 2),
+    rank: (row) => (isTechnicalStandard(row) ? -Number.MAX_SAFE_INTEGER : -row.requirementCount),
     note: (row) =>
       row.requirementCount > 0
         ? `${row.requirementCount} extracted requirements from ${row.requirementSources.length} cited document${row.requirementSources.length === 1 ? '' : 's'}`
@@ -64,7 +64,8 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
 
   developer: {
     framing: 'Certification schemes first — what your product gets validated against.',
-    rank: (row) => (isCertificationScheme(row) ? 0 : expectsPqc(row) ? 1 : 2),
+    rank: (row) =>
+      (isCertificationScheme(row) ? 0 : expectsPqc(row) ? 1000 : 2000) - row.requirementCount,
     note: (row) =>
       isCertificationScheme(row)
         ? 'A scheme products are validated under — check Product Records for certificates'
@@ -91,8 +92,13 @@ const ROLE_READINGS: Record<PersonaId, RoleReading> = {
 
   curious: {
     framing: 'What actually binds an organisation like yours, and who says so.',
-    // Lead with the clearest case: a named regulator with a date.
-    rank: (row) => (row.tier === 'mandatory' ? 0 : 1),
+    // Clearest case first: a named regulator, then whatever is best explained.
+    // A flat mandatory/not test tied inside the mandatory band, which is where
+    // a newcomer spends their attention.
+    rank: (row) =>
+      (row.tier === 'mandatory' ? 0 : 1000) -
+      (row.framework.confidenceScore ?? 0) / 100 -
+      (row.framework.notes ? 0.5 : 0),
     note: (row) =>
       row.tier === 'mandatory'
         ? 'A regulator in your country enforces this one'
