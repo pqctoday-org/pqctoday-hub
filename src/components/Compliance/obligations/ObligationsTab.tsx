@@ -30,6 +30,8 @@ import {
 } from '@/utils/applicabilityEngine'
 import type { PersonaId } from '@/data/learningPersonas'
 import { applyRoleOrder, roleFramingFor, roleNoteFor } from './roleLens'
+import { useRevisions } from '@/hooks/useRevisions'
+import { formatChangeDate, summarizeRecentChanges } from './recentChanges'
 import {
   buildObligations,
   groupObligations,
@@ -109,6 +111,10 @@ export function ObligationsTab({
   )
   const totals = useMemo(() => summarize(rows), [rows])
 
+  // Re-homes the About-strip's revisions feed, scoped to this reader's rows.
+  const { revisions } = useRevisions()
+  const changes = useMemo(() => summarizeRecentChanges(revisions, rows), [revisions, rows])
+
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const isOpen = (tier: ApplicabilityTier) => expanded[tier] ?? !COLLAPSED_BY_DEFAULT.has(tier)
 
@@ -131,6 +137,23 @@ export function ObligationsTab({
   return (
     <div className="space-y-4">
       <ScopeBar {...pickers} totals={totals} framing={roleFramingFor(persona)} />
+
+      {changes.hasHistory && rows.length > 0 && (
+        <p className="px-1 text-[11.5px] text-muted-foreground">
+          Last recorded data change {formatChangeDate(changes.changedAt)} —{' '}
+          {changes.matched.length > 0 ? (
+            <>
+              it touched{' '}
+              <span className="font-semibold text-foreground">
+                {changes.matched.map((m) => m.label).join(', ')}
+              </span>
+              .
+            </>
+          ) : (
+            'none of your obligations were affected.'
+          )}
+        </p>
+      )}
 
       {rows.length === 0 ? (
         // The zero state IS the first screen for anyone who has not taken the

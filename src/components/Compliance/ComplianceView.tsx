@@ -595,7 +595,7 @@ export const ComplianceView = ({
         <PageHeader
           icon={ShieldCheck}
           title="Standardization, Certification & Compliance"
-          description="Who defines the algorithms, who validates the products, who mandates adoption — across standardization bodies, certification schemes, and compliance frameworks."
+          description="Which standards, certification schemes and regulations apply to your context — who defines the algorithms, who validates the products, and who mandates adoption by a date. A reference to find what binds you, not a workspace."
         />
       )}
 
