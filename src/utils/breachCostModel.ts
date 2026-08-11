@@ -31,7 +31,11 @@
  *    ALE = SLE × annual probability. The simulator shows both.
  */
 
-import { crqcProbabilityWithinHorizon, type CrqcScenario } from './crqcProbability'
+import {
+  crqcProbabilityWithinHorizon,
+  crqcCumulativeProbability,
+  type CrqcScenario,
+} from './crqcProbability'
 
 export type { CrqcScenario }
 
@@ -78,30 +82,91 @@ export const DATA_SENSITIVITY_LABELS: Record<DataSensitivityClass, string> = {
 export const HNDL_MULTIPLIER_CAP = 4
 
 /**
- * Raw quantum amplification of a single breach, BEFORE shelf-life decay:
- * once a CRQC exists, a breach exposes not just today's data but accumulated
- * harvested data. Modelled as 1 + min(cap, years × factor).
+ * Raw quantum amplification of a single breach: once a CRQC exists, a breach
+ * exposes not just today's data but accumulated harvested data.
+ *
+ * Modelled as `1 + cap·(1 − e^(−raw/cap))` where `raw = years × factor/100`.
+ * This approaches — but never reaches — the cap, and is strictly increasing
+ * everywhere, with slope 1 at the origin so low-exposure estimates stay close
+ * to the previous linear form.
+ *
+ * It replaces a hard `min(cap, raw)` clamp. That clamp flatlined across whole
+ * realistic input ranges: classified data at a 90% HNDL factor pinned the
+ * multiplier to exactly 5.00 at every corpus size tested (5, 10, 14, 20 years),
+ * so for the most exposed organizations the model reported that migration
+ * timing made literally no difference to breach cost. A ceiling should damp
+ * extreme inputs, not erase the signal below it. (Audit 2026-08-10.)
  */
 export function hndlMultiplier(yearsOfData: number, hndlFactorPct: number): number {
   const raw = (Math.max(0, yearsOfData) * Math.max(0, hndlFactorPct)) / 100
-  return 1 + Math.min(HNDL_MULTIPLIER_CAP, raw)
+  const cap = HNDL_MULTIPLIER_CAP
+  return 1 + cap * (1 - Math.exp(-raw / cap))
 }
 
 /**
- * Fraction (0–1) of the raw HNDL exposure that survives shelf-life decay.
- * Uses the harvested corpus's AVERAGE age TODAY (yearsOfData / 2) against the
- * data class's shelf life — i.e. "is the data already-harvested still fresh
- * enough to matter". Deliberately does NOT also add the planning horizon or
- * time-until-CRQC: that uncertainty is a separate dimension, already carried
- * by the CRQC-arrival probability weighting in computeBreachCosts — adding it
- * here too would double-count the same "how much longer until this is
- * decrypted" question. Simplification: decay is linear to zero at the
- * shelf-life boundary, not an exponential curve.
+ * Freshness-weighted years of harvested data that still matter.
+ *
+ * Integrates the linear shelf-life decay across a corpus aged 0..Y: an item
+ * harvested `a` years ago retains `max(0, 1 - a/S)` of its value, so the
+ * corpus as a whole is worth ∫₀^Y max(0, 1 - a/S) da.
+ *
+ *   Y ≤ S → Y - Y²/(2S)
+ *   Y > S → S/2   (saturates — the stale tail stops contributing, but the
+ *                  fresh top of the corpus never does)
+ *
+ * The `Y ≤ S` branch is algebraically identical to the previous
+ * `Y · (1 - (Y/2)/S)` form, so behaviour inside the shelf life is unchanged.
+ * Past `Y = S` the old form kept falling and hit exactly ZERO at `Y = 2S`,
+ * which said a payment processor holding 6 years of card data (S=3) faced no
+ * quantum uplift at all — quantumSLE == classicalSLE. That was wrong on the
+ * old form's OWN stated terms: it derived a decay factor from the corpus's
+ * average age and then applied it to the whole corpus, which is only valid
+ * while the entire corpus sits inside the shelf life. At Y = 2S the average
+ * item has only just reached end-of-life, so half the corpus is still within
+ * it. (Audit 2026-08-10, W1-2.)
+ *
+ * Simplification: decay is linear in age, not an exponential curve.
+ *
+ * `gapYears` — years between the END of the harvested corpus and the moment it
+ * is actually decrypted. This is what makes migrating EARLY worth anything.
+ *
+ * The original model measured staleness as of TODAY. But harvested ciphertext
+ * is not decrypted today — it is decrypted whenever a CRQC appears. Data
+ * harvested the day before you migrate is fresh today and worthless in 2040;
+ * data harvested the day before a 2038 CRQC is fresh when it is cracked. With
+ * the gap fixed at 0, migrating in 2026 and migrating in 2035 protect almost
+ * the same corpus, and the tool concluded migration timing barely mattered.
+ * With the gap modelled, finishing more than one shelf-life ahead of the CRQC
+ * drives the residual to exactly zero — which is Mosca's inequality falling
+ * out of the cost model instead of being bolted on beside it.
+ * (Audit 2026-08-10, W1-1 follow-up.)
+ */
+export function effectiveHndlYears(
+  yearsOfData: number,
+  shelfLifeYears: number,
+  gapYears: number = 0
+): number {
+  const S = shelfLifeYears
+  if (S <= 0) return 0
+  const Y = Math.max(0, yearsOfData)
+  const a = Math.max(0, gapYears) // age (at decryption) of the YOUNGEST item
+  if (a >= S) return 0 // the whole corpus is stale before anyone can read it
+  const b = Math.min(a + Y, S) // age of the oldest item that still matters
+  // ∫ₐᵇ (1 − u/S) du — freshness integrated across the corpus's age range
+  const F = (u: number) => u - (u * u) / (2 * S)
+  return F(b) - F(a)
+}
+
+/**
+ * Fraction (0–1) of the raw HNDL exposure that survives shelf-life decay —
+ * `effectiveHndlYears / yearsOfData`. Kept as a separate export because the UI
+ * and `BreachCosts.decayFactor` present it as a percentage.
  */
 export function shelfLifeDecayFactor(yearsOfData: number, shelfLifeYears: number): number {
   if (shelfLifeYears <= 0) return 0
-  const avgAgeToday = Math.max(0, yearsOfData) / 2
-  return Math.min(1, Math.max(0, 1 - avgAgeToday / shelfLifeYears))
+  const y = Math.max(0, yearsOfData)
+  if (y === 0) return 1
+  return effectiveHndlYears(y, shelfLifeYears) / y
 }
 
 export interface BreachModelInputs {
@@ -123,6 +188,31 @@ export interface BreachModelInputs {
   planningHorizonYears: number
   /** Annual discount rate applied to future losses, e.g. 0.06. */
   discountRateAnnual: number
+  /**
+   * How pCrqc is read off the arrival curve. Default 'within-horizon'.
+   *
+   *  'within-horizon' — P(a CRQC ARRIVES during [asOfYear, asOfYear + H]).
+   *      Correct when the question is "will the capability appear inside my
+   *      planning window", which is what the Breach Scenario Simulator asks.
+   *
+   *  'cumulative'     — P(a CRQC EXISTS by asOfYear + H).
+   *      Correct when projecting an expected loss for a specific future year,
+   *      because a CRQC that arrived earlier has not gone away. The Cost of
+   *      Inaction Analyzer evaluates one row per year with H=1; under
+   *      'within-horizon' each row asked "does it arrive in THIS year" (~4%,
+   *      flat across the whole horizon), so quantum risk never accumulated and
+   *      the tool reported that delay was free. (Audit 2026-08-10, W1-1.)
+   */
+  crqcProbabilityMode?: 'within-horizon' | 'cumulative'
+  /**
+   * Years between the end of the harvested corpus and the moment it is
+   * decrypted — see `effectiveHndlYears`. Callers that know when migration
+   * completes (the Cost of Inaction Analyzer) pass it explicitly. When
+   * omitted, it defaults per scenario to the time from `asOfYear` to that
+   * scenario's median CRQC arrival, since harvested data is not read until a
+   * CRQC exists.
+   */
+  decryptionGapYears?: number
 }
 
 export interface BreachCostScenario {
@@ -133,6 +223,12 @@ export interface BreachCostScenario {
   quantumALE: number
   /** Present value, over the horizon, of (quantumALE − classicalALE). */
   pvDelta: number
+  /** Cost of one breach if a CRQC exists at this scenario's expected arrival. */
+  quantumSLE: number
+  /** Decay-adjusted HNDL amplification applied for this scenario. */
+  hndlMultiplier: number
+  /** Freshness-weighted years of corpus that still matter at decryption. */
+  effYears: number
 }
 
 export interface BreachCosts {
@@ -162,47 +258,73 @@ export interface BreachCosts {
   }
 }
 
-/** Present-value annuity factor for a level annual amount over N years at rate r. */
-function annuityPvFactor(discountRateAnnual: number, years: number): number {
-  const r = Math.max(0, discountRateAnnual)
-  const n = Math.max(0, years)
-  if (r === 0) return n
-  return (1 - Math.pow(1 + r, -n)) / r
-}
-
 function computeForScenario(
   inp: BreachModelInputs,
+  classicalSLE: number,
   classicalALE: number,
-  quantumSLE: number,
   scenario: CrqcScenario
 ): BreachCostScenario {
-  const pCrqc = crqcProbabilityWithinHorizon(inp.asOfYear, inp.planningHorizonYears, scenario)
-  const quantumALEConditional = quantumSLE * (Math.max(0, inp.annualBreachProbPct) / 100)
-  const quantumALE = classicalALE * (1 - pCrqc) + quantumALEConditional * pCrqc
-  const pvFactor = annuityPvFactor(inp.discountRateAnnual, inp.planningHorizonYears)
-  const pvDelta = (quantumALE - classicalALE) * pvFactor
-  return { scenario, pCrqc, quantumALE, pvDelta }
+  const shelfLifeYears = DATA_SHELF_LIFE_YEARS[inp.dataSensitivityClass]
+  const prob = Math.max(0, inp.annualBreachProbPct) / 100
+  const r = Math.max(0, inp.discountRateAnnual)
+  const horizon = Math.max(0, inp.planningHorizonYears)
+
+  // Headline SLE: what one breach costs if a CRQC exists at this scenario's
+  // expected arrival. The corpus has aged by then, which is the whole point of
+  // migrating early — see effectiveHndlYears.
+  // Default 0: an organization that has NOT migrated keeps harvesting, so the
+  // newest data in the corpus is same-year fresh whenever a CRQC finally reads
+  // it. A positive gap is what MIGRATING buys you — it freezes the corpus and
+  // lets it age out. Callers that know when migration completes pass it.
+  const headlineGap = inp.decryptionGapYears ?? 0
+  const effYears = effectiveHndlYears(inp.yearsOfData, shelfLifeYears, headlineGap)
+  const mult = hndlMultiplier(effYears, inp.hndlFactorPct)
+  const quantumSLE = classicalSLE * mult
+
+  const pCrqc =
+    inp.crqcProbabilityMode === 'cumulative'
+      ? crqcCumulativeProbability(inp.asOfYear + horizon, scenario)
+      : crqcProbabilityWithinHorizon(inp.asOfYear, horizon, scenario)
+  const quantumALE = classicalALE * (1 - pCrqc) + quantumSLE * prob * pCrqc
+
+  // Present value, integrated year by year rather than ALE × annuity factor.
+  // The annuity form applied ONE horizon-wide arrival probability uniformly to
+  // every year, so year 1 was charged the full ten-year probability of a CRQC
+  // existing. Each year now carries its own cumulative arrival probability and
+  // its own corpus age at decryption. (Audit 2026-08-10, W1-3a.)
+  let pvDelta = 0
+  for (let t = 1; t <= horizon; t++) {
+    const pAtT = crqcCumulativeProbability(inp.asOfYear + t, scenario)
+    const gapAtT = inp.decryptionGapYears ?? 0
+    const sleAtT =
+      classicalSLE *
+      hndlMultiplier(
+        effectiveHndlYears(inp.yearsOfData, shelfLifeYears, gapAtT),
+        inp.hndlFactorPct
+      )
+    const aleAtT = classicalALE * (1 - pAtT) + sleAtT * prob * pAtT
+    pvDelta += (aleAtT - classicalALE) / Math.pow(1 + r, t)
+  }
+
+  return { scenario, pCrqc, quantumALE, pvDelta, quantumSLE, hndlMultiplier: mult, effYears }
 }
 
 export function computeBreachCosts(inp: BreachModelInputs): BreachCosts {
   const classicalSLE = inp.baseline * inp.breachScale
   const classicalALE = classicalSLE * (Math.max(0, inp.annualBreachProbPct) / 100)
 
-  const shelfLifeYears = DATA_SHELF_LIFE_YEARS[inp.dataSensitivityClass]
-  const decayFactor = shelfLifeDecayFactor(inp.yearsOfData, shelfLifeYears)
-  const effectiveYearsOfData = inp.yearsOfData * decayFactor
-  const mult = hndlMultiplier(effectiveYearsOfData, inp.hndlFactorPct)
-  const quantumSLE = classicalSLE * mult
+  const low = computeForScenario(inp, classicalSLE, classicalALE, 'slow')
+  const central = computeForScenario(inp, classicalSLE, classicalALE, 'consensus')
+  const high = computeForScenario(inp, classicalSLE, classicalALE, 'fast')
 
-  const low = computeForScenario(inp, classicalALE, quantumSLE, 'slow')
-  const central = computeForScenario(inp, classicalALE, quantumSLE, 'consensus')
-  const high = computeForScenario(inp, classicalALE, quantumSLE, 'fast')
+  // Headline figures follow the consensus scenario, as before.
+  const decayFactor = inp.yearsOfData > 0 ? central.effYears / inp.yearsOfData : 1
 
   return {
     classicalSLE,
-    quantumSLE,
-    delta: quantumSLE - classicalSLE,
-    hndlMultiplier: mult,
+    quantumSLE: central.quantumSLE,
+    delta: central.quantumSLE - classicalSLE,
+    hndlMultiplier: central.hndlMultiplier,
     decayFactor,
     classicalALE,
     quantumALE: central.quantumALE,

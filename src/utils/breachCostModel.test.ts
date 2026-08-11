@@ -4,8 +4,11 @@ import {
   HNDL_MULTIPLIER_CAP,
   hndlMultiplier,
   shelfLifeDecayFactor,
+  effectiveHndlYears,
   computeBreachCosts,
+  DATA_SHELF_LIFE_YEARS,
   type BreachModelInputs,
+  type DataSensitivityClass,
 } from './breachCostModel'
 import { CRQC_CURVE_YEAR_RANGE } from './crqcProbability'
 
@@ -27,13 +30,23 @@ describe('hndlMultiplier', () => {
     expect(hndlMultiplier(5, 0)).toBe(1)
   })
 
-  it('defaults 5yr × 30% to 2.5×', () => {
-    expect(hndlMultiplier(5, 30)).toBeCloseTo(2.5, 6)
+  it('is damped relative to the old linear form at the 5yr × 30% default', () => {
+    // Was exactly 2.5 under `1 + min(cap, raw)`. The soft cap
+    // `1 + cap·(1 − e^(−raw/cap))` has slope 1 at the origin but bends earlier,
+    // so mid-range exposure reads slightly lower. The trade is deliberate: the
+    // hard clamp pinned high-exposure profiles to exactly 5.00 and erased all
+    // differentiation above it. (Audit 2026-08-10.)
+    expect(hndlMultiplier(5, 30)).toBeCloseTo(2.251, 3)
   })
 
-  it('caps the amplification so long retention cannot run away', () => {
-    // 25yr × 100% = 25 → capped at HNDL_MULTIPLIER_CAP
-    expect(hndlMultiplier(25, 100)).toBe(1 + HNDL_MULTIPLIER_CAP)
+  it('approaches but never reaches the cap, and never flatlines', () => {
+    // 25yr × 100% = raw 25, far past the cap — asymptotic, not clamped.
+    expect(hndlMultiplier(25, 100)).toBeLessThan(1 + HNDL_MULTIPLIER_CAP)
+    expect(hndlMultiplier(25, 100)).toBeGreaterThan(1 + HNDL_MULTIPLIER_CAP - 0.05)
+    // Strictly increasing even deep into the saturated region — this is the
+    // property the hard clamp destroyed.
+    expect(hndlMultiplier(40, 100)).toBeGreaterThan(hndlMultiplier(25, 100))
+    expect(hndlMultiplier(25, 100)).toBeGreaterThan(hndlMultiplier(14, 100))
   })
 
   it('never goes below 1 for negative inputs', () => {
@@ -46,22 +59,74 @@ describe('shelfLifeDecayFactor', () => {
     expect(shelfLifeDecayFactor(0, 10)).toBe(1)
   })
 
-  it('decays linearly toward 0 as average age approaches the shelf life', () => {
-    // avg age = 20/2 = 10, shelf life 10 → fully decayed
-    expect(shelfLifeDecayFactor(20, 10)).toBe(0)
+  it('saturates rather than zeroing once the corpus outlives its shelf life', () => {
+    // Y=20, S=10 → effective years saturate at S/2 = 5, so 5/20 = 0.25.
+    // Previously asserted 0, which claimed a 20-year corpus of 10-year-shelf-life
+    // data carried NO quantum exposure — the W1-2 defect.
+    expect(shelfLifeDecayFactor(20, 10)).toBeCloseTo(0.25, 6)
   })
 
   it('is partially decayed part-way through the shelf life', () => {
-    // avg age = 10/2 = 5, shelf life 10 → 1 - 5/10 = 0.5
+    // Y=10, S=10 → 10 - 100/20 = 5 effective years → 5/10 = 0.5 (unchanged)
     expect(shelfLifeDecayFactor(10, 10)).toBeCloseTo(0.5, 6)
   })
 
   it('never goes negative once the corpus is older than the shelf life', () => {
-    expect(shelfLifeDecayFactor(100, 10)).toBe(0)
+    // Y=100, S=10 → effective years still S/2 = 5 → 5/100 = 0.05, never negative
+    expect(shelfLifeDecayFactor(100, 10)).toBeCloseTo(0.05, 6)
+    expect(shelfLifeDecayFactor(100, 10)).toBeGreaterThan(0)
   })
 
   it('is 0 for a zero shelf life', () => {
     expect(shelfLifeDecayFactor(1, 0)).toBe(0)
+  })
+})
+
+describe('effectiveHndlYears — the property that makes W1-2 unrepresentable', () => {
+  it('is monotonically non-decreasing in yearsOfData for every data class', () => {
+    for (const cls of Object.keys(DATA_SHELF_LIFE_YEARS) as DataSensitivityClass[]) {
+      const shelf = DATA_SHELF_LIFE_YEARS[cls]
+      let prev = -1
+      for (let y = 0; y <= 60; y += 0.5) {
+        const eff = effectiveHndlYears(y, shelf)
+        expect(
+          eff,
+          `${cls} (S=${shelf}): effective years dropped from ${prev} to ${eff} at Y=${y} — more harvested data must never mean less quantum exposure`
+        ).toBeGreaterThanOrEqual(prev)
+        prev = eff
+      }
+    }
+  })
+
+  it('never returns zero exposure for a non-empty corpus', () => {
+    for (const cls of Object.keys(DATA_SHELF_LIFE_YEARS) as DataSensitivityClass[]) {
+      const shelf = DATA_SHELF_LIFE_YEARS[cls]
+      for (const y of [shelf, shelf * 2, shelf * 3, 60]) {
+        expect(effectiveHndlYears(y, shelf), `${cls} at Y=${y}`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('reproduces the previous formula exactly inside the shelf life', () => {
+    for (const [y, s] of [
+      [1, 10],
+      [5, 10],
+      [10, 10],
+      [3, 3],
+      [7, 15],
+    ]) {
+      expect(effectiveHndlYears(y, s)).toBeCloseTo(y * (1 - y / 2 / s), 9)
+    }
+  })
+
+  it('the payment-card case the audit found: 6 years of card data still carries uplift', () => {
+    const costs = computeBreachCosts({
+      ...base,
+      yearsOfData: 6,
+      dataSensitivityClass: 'payment-card',
+    })
+    expect(costs.hndlMultiplier).toBeGreaterThan(1)
+    expect(costs.quantumSLE).toBeGreaterThan(costs.classicalSLE)
   })
 })
 
