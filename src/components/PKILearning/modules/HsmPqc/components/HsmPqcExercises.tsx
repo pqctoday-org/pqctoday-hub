@@ -73,7 +73,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'As of mid-2026, no cloud HSM supports native PKCS#11 ML-KEM encapsulation in firmware. AWS CloudHSM offers ML-DSA preview via SDK only. For ML-KEM key exchange, an on-prem HSM (Thales, Entrust, Utimaco, or Crypto4A) is required today. Azure Dedicated HSM uses the same Thales Luna 7 hardware and gains full PQC once firmware is upgraded via Azure Support.',
+        'Cloud HSM PQC support is uneven rather than absent: our own migrate catalogue records ACVP ML-KEM and ML-DSA validations for AWS CloudHSM and Securosys CloudHSM, while Azure Managed HSM and Azure Key Vault record none. Read those as ALGORITHM-level validations — an ACVP certificate does not by itself tell you the ML-KEM encapsulation call is exposed through the provider PKCS#11 interface, which is the thing your integration actually needs, so confirm the API surface with the vendor before designing around it. On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) remain the safer assumption for ML-KEM key exchange today.',
       config: { step: 1 },
     },
     {
@@ -95,7 +95,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'FIPS',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'LMS has the most ACVP validations across vendors (Thales, Entrust, Utimaco, AWS). As of mid-2026, full FIPS 140-3 module-level PQC validation is limited to Thales Luna 7 (check the FIPS Validation Tracker for current status). Entrust nShield 5 has submitted for FIPS 140-3 but is pending. Algorithm-level ACVP validation is a prerequisite for module-level FIPS 140-3.',
+        'LMS has the most ACVP validations across vendors (Thales, Entrust, Utimaco, AWS). Module-level FIPS 140-3 validation covering a PQC algorithm is no longer a single-vendor story: alongside Thales Luna T7, our own CMVP snapshot lists hardware HSMs from other vendors (e.g. ASI-HSM AHX5 kNET, LS2 HSM Family) plus a growing set of software modules (AWS-LC, Microsoft SymCrypt, Apple corecrypto, the Go crypto modules). Use the FIPS Validation Tracker for the current list rather than a memorised vendor name — that is the point of the exercise. Algorithm-level ACVP validation is a prerequisite for module-level FIPS 140-3.',
       config: { step: 3 },
     },
   ]

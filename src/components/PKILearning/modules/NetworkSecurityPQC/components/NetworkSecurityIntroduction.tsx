@@ -430,13 +430,14 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               NIST SP 800-207: Zero Trust Architecture
             </div>
             <p className="text-xs text-muted-foreground">
-              NIST SP 800-207 (Zero Trust Architecture) cross-references{' '}
-              <InlineTooltip term="NIST SP 800-227">NIST SP 800-227</InlineTooltip> for key
-              encapsulation mechanisms used in ZTNA session establishment. Organizations
-              implementing zero trust should plan PQC adoption in their ZTNA architecture aligned
-              with CNSA 2.0 timelines (exclusive CNSA 2.0 use by 2030–2033 by equipment class;
-              NSM-10 targets all NSS quantum-resistant by 2035; NSA prefers pure PQC and does not
-              require hybrid).
+              NIST SP 800-207 (Zero Trust Architecture, 2020) predates PQC guidance and says nothing
+              about it — its full text contains no mention of quantum, key encapsulation, or{' '}
+              <InlineTooltip term="NIST SP 800-227">NIST SP 800-227</InlineTooltip> (2025), which
+              covers KEMs generally rather than ZTNA. Read them together, not as one citing the
+              other. Organizations implementing zero trust should plan PQC adoption in their ZTNA
+              architecture aligned with CNSA 2.0 timelines (exclusive CNSA 2.0 use by 2030–2033 by
+              equipment class; NSM-10 targets all NSS quantum-resistant by 2035; NSA prefers pure
+              PQC and does not require hybrid).
             </p>
           </div>
         </CollapsibleSection>
