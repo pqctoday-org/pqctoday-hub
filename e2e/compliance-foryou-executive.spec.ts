@@ -83,10 +83,22 @@ test('AU exec workshop deep-link renders ExecutiveTimelineView', async ({ page }
   ).toBeVisible()
 })
 
-test('switching persona to architect falls back to generic ApplicabilityPanel', async ({
+test('the architect persona gets the architect For You view, not the exec one', async ({
   page,
 }) => {
-  // Override init: architect persona instead of executive.
+  // REWRITTEN 2026-08-11. This spec used to be titled "...falls back to generic
+  // ApplicabilityPanel" and asserted the panel's "Compliance Frameworks"
+  // heading. The app does not do that: ComplianceView maps each of the six
+  // personas to its own view and uses the generic panel only when NO persona is
+  // set. The old assertion passed by winning a race — it ran before Zustand
+  // rehydrated `selectedPersona`, so it caught the momentary no-persona render.
+  // Removing the onboarding stack above the tab bar made the page reach the
+  // panel sooner, hydration started winning, and the spec went red while the
+  // behaviour it describes had never existed. Its seed data gives it away: it
+  // writes `viewAccess: { allowed: [] }`, a shape the store has not used since
+  // the field became a plain 'preview' | 'gated' | 'unlocked' string.
+  //
+  // It now asserts the real contract, deterministically.
   await page.addInitScript(() => {
     localStorage.setItem(
       'pqc-learning-persona',
@@ -94,10 +106,8 @@ test('switching persona to architect falls back to generic ApplicabilityPanel', 
         state: {
           selectedPersona: 'architect',
           selectedRegion: 'apac',
-          selectedIndustry: 'Government & Defense',
           selectedIndustries: ['Government & Defense'],
           experienceLevel: 'expert',
-          viewAccess: { allowed: [] },
         },
         version: 0,
       })
@@ -108,14 +118,32 @@ test('switching persona to architect falls back to generic ApplicabilityPanel', 
     '/compliance?tab=foryou&country=Australia&ind=' + encodeURIComponent('Government & Defense')
   )
 
-  // Architect view: generic panel — has its own "Compliance Frameworks"
-  // section header in the panel. Look for any visible match.
+  // The architect view's own section, not the generic panel's.
+  await expect(
+    page
+      .getByText(/Jurisdiction map/i)
+      .locator('visible=true')
+      .first()
+  ).toBeVisible({ timeout: 10_000 })
+  // Decision card is exec-only; should NOT be visible to architects.
+  await expect(page.getByText(/Decision this quarter/i).locator('visible=true')).toHaveCount(0)
+})
+
+test('a visitor with no persona gets the generic ApplicabilityPanel', async ({ page }) => {
+  // The genuine fallback the old spec was reaching for, asserted where it is
+  // actually true: no persona selected.
+  await page.addInitScript(() => {
+    localStorage.removeItem('pqc-learning-persona')
+  })
+
+  await page.goto(
+    '/compliance?tab=foryou&country=Australia&ind=' + encodeURIComponent('Government & Defense')
+  )
+
   await expect(
     page
       .getByText(/Compliance Frameworks/i)
       .locator('visible=true')
       .first()
   ).toBeVisible({ timeout: 10_000 })
-  // Decision card is exec-only; should NOT be visible to architects.
-  await expect(page.getByText(/Decision this quarter/i).locator('visible=true')).toHaveCount(0)
 })
