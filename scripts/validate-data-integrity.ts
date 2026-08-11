@@ -49,6 +49,7 @@ import {
   runSelfContainmentChecks,
   runStatusColumnChecks,
   runVocabTagChecks,
+  runDocumentTypeVocabChecks,
   runOrphanCheck,
   runSupersededByChecks,
   runSupersededByCandidateChecks,
@@ -176,6 +177,7 @@ try {
   allResults.push(...runSelfContainmentChecks())
   allResults.push(...runStatusColumnChecks())
   allResults.push(...runVocabTagChecks())
+  allResults.push(...runDocumentTypeVocabChecks())
   // 7f. Trust-path orphan check on restored/deprecated rows (DS20)
   allResults.push(...runOrphanCheck())
   // 7f.5. Revision-chain integrity (DS21 + DS21-CANDIDATES) — added 2026-07-11
