@@ -144,6 +144,27 @@ export const COLLAPSED_BY_DEFAULT: ReadonlySet<ApplicabilityTier> = new Set([
   'cross-border',
 ])
 
+/**
+ * Sector options, derived from the catalogue rather than from a hand-kept list.
+ *
+ * There are two industry vocabularies in the codebase — the assessment's
+ * (`Finance & Banking`, `Government & Defense`) and the compliance catalogue's
+ * (`Finance & Insurance`, `Public Administration`). The engine matches on the
+ * catalogue's, so offering the assessment's here would let a visitor pick a
+ * sector that can never match a row. Deriving from the data makes every option
+ * one that returns something, and keeps the list correct as the CSV grows.
+ */
+export function sectorOptions(frameworks: ComplianceFramework[]): string[] {
+  const seen = new Set<string>()
+  for (const fw of frameworks) {
+    for (const ind of fw.industries) {
+      const v = ind.trim()
+      if (v) seen.add(v)
+    }
+  }
+  return Array.from(seen).sort((a, b) => a.localeCompare(b))
+}
+
 /** Counts for the header summary. Obligations, never percentages. */
 export function summarize(rows: ObligationRow[]): {
   total: number

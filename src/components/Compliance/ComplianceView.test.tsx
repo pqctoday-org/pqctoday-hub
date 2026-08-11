@@ -132,6 +132,50 @@ describe('ComplianceView', () => {
     })
   })
 
+  it('lands on the Obligations register, not the catalogue', () => {
+    // The register answers "which rules bind me, and why" on arrival. Every
+    // other tab asks the visitor to filter 197 rows until relevance falls out,
+    // which is what the default used to do.
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const selected = screen.getAllByRole('tab', { selected: true })
+    expect(selected.length).toBeGreaterThan(0)
+    expect(selected[0]).toHaveTextContent(/Obligations/i)
+  }, 15000)
+
+  it('keeps a ?cert= deep link on Product Records', () => {
+    // Regression: the URL->state sync effect hardcoded a 'standards' default and
+    // runs on mount, so it overwrote the initializer's correct 'records' choice
+    // and `/compliance?cert=` landed on Landscape with the record nowhere on
+    // screen. simTree.p6/p7 depend on these links.
+    render(
+      <MemoryRouter initialEntries={['/compliance?cert=A7285']}>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    const selected = screen.getAllByRole('tab', { selected: true })
+    expect(selected[0]).toHaveTextContent(/Product Records/i)
+  }, 15000)
+
+  it('no longer stacks onboarding chrome above the tab bar', () => {
+    // The About strip, persona hint and deadline dot-plot used to render here.
+    // Their content did not disappear: the glossary is a page-header button and
+    // the deadlines have their own tab. Only the stack is gone.
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.queryAllByTestId('compliance-about-strip')).toHaveLength(0)
+    expect(screen.queryByTestId('deadline-timeline-narrative')).not.toBeInTheDocument()
+    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i })).toHaveLength(
+      0
+    )
+  }, 15000)
+
   it('shows cert records table when Records tab is clicked', () => {
     // 15s timeout: mounting ComplianceView pulls in maturityGovernanceData +
     // complianceData + the RAG-corpus init chain, which routinely exceeds
@@ -161,31 +205,6 @@ describe('ComplianceView', () => {
       </MemoryRouter>
     )
     expect(screen.getByTestId('compliance-table')).toHaveTextContent('selected: A7285')
-  }, 15000)
-
-  it('renders persona-hint CTA for Finance industry and logs analytics on click', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    const ctas = screen.getAllByRole('button', {
-      name: /Go to Certification Schemes → FIPS 140-3/i,
-    })
-    expect(ctas.length).toBeGreaterThan(0)
-    fireEvent.click(ctas[0])
-    expect(logComplianceFilter).toHaveBeenCalledWith('PersonaHint', 'certification')
-  }, 15000)
-
-  it('suppresses the new-to-compliance intro card when a persona hint resolves', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(screen.queryByText(/New to PQC compliance\?/i)).not.toBeInTheDocument()
   }, 15000)
 
   it('shows the intro card when no industry/region hint resolves', () => {
@@ -230,49 +249,6 @@ describe('ComplianceView', () => {
     expect(exportButtons.length).toBeGreaterThan(0)
   }, 15000)
 
-  it('shows curious narrative line instead of full deadline timeline', () => {
-    usePersonaStore.setState({ selectedPersona: 'curious' })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    const narrative = screen.getByTestId('deadline-timeline-narrative')
-    expect(narrative).toBeInTheDocument()
-    expect(narrative.textContent ?? '').toMatch(/PQC mandates land between/i)
-  }, 15000)
-
-  it('collapses deadline timeline behind a disclosure for developer persona', () => {
-    usePersonaStore.setState({ selectedPersona: 'developer' })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    // Disclosure button visible, full timeline title not yet rendered.
-    expect(screen.getByRole('button', { name: /Show deadline timeline/i })).toBeInTheDocument()
-    expect(screen.queryByText(/PQC Compliance Deadlines/)).not.toBeInTheDocument()
-  }, 15000)
-
-  it('announces persona-hint navigation via aria-live region', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    // Both desktop + mobile render a live region — both should be empty at idle.
-    const regions = screen.getAllByTestId('persona-hint-live-region')
-    expect(regions.length).toBeGreaterThan(0)
-    expect(regions[0].textContent).toBe('')
-    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
-    // After click, the region announces the destination. Re-query because
-    // React re-renders the surface, but the DOM node is still by testid.
-    expect(screen.getAllByTestId('persona-hint-live-region')[0].textContent).toMatch(
-      /Navigated to Certification Schemes/i
-    )
-  }, 15000)
-
   // TODO(p1p2-merge): re-enable once we either (a) hoist the heavy mount cost
   // out of ComplianceView's import chain (maturityGovernanceData + complianceData
   // + RAG-corpus init), or (b) port this to a thin localStorage-key derivation
@@ -314,55 +290,5 @@ describe('ComplianceView', () => {
     expect(
       screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length
     ).toBeGreaterThan(0)
-  }, 15000)
-
-  it('persona-hint CTA also logs PersonaHintCtaClick with the industry→section identity', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    fireEvent.click(screen.getAllByRole('button', { name: /Go to Certification Schemes/i })[0])
-    expect(logComplianceFilter).toHaveBeenCalledWith(
-      'PersonaHintCtaClick',
-      'industry:Finance & Banking→certification'
-    )
-  }, 15000)
-
-  it('persona-hint dismiss logs PersonaHintDismiss with industry identity', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
-    expect(logComplianceFilter).toHaveBeenCalledWith(
-      'PersonaHintDismiss',
-      'industry:Finance & Banking'
-    )
-  }, 15000)
-
-  it('about-strip summary carries aria-current="true" when expanded', () => {
-    // First-visit heuristic: neither intro-dismissed nor about-expanded flag
-    // is set, so the strip mounts open. Summary must reflect aria-current.
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    const strips = screen.getAllByTestId('compliance-about-strip')
-    // Both desktop + mobile render the strip; both should be open + aria-current.
-    // <summary> has no standard ARIA role queryable via Testing Library so we
-    // reach into the element by tag — acceptable for a structural assertion.
-    /* eslint-disable testing-library/no-node-access */
-    for (const strip of strips) {
-      const summary = strip.querySelector('summary')
-      expect(summary).not.toBeNull()
-      expect(strip.hasAttribute('open')).toBe(true)
-      expect(summary?.getAttribute('aria-current')).toBe('true')
-    }
-    /* eslint-enable testing-library/no-node-access */
   }, 15000)
 })

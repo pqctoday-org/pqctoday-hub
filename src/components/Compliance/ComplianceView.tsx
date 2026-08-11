@@ -6,12 +6,10 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { useSearchParams } from 'react-router'
 import { ComplianceTable } from './ComplianceTable'
 import { type FrameworkSortOption } from './ComplianceLandscape'
-import { DeadlineTimelineGate } from './DeadlineTimelineGate'
-import { AboutThisPageStrip } from './AboutThisPageStrip'
-import { PersonaHintCta } from './PersonaHintCta'
 import { useComplianceRefresh } from './services'
 import {
   ShieldCheck,
+  CalendarClock,
   GlobeLock,
   Info,
   Workflow,
@@ -64,26 +62,25 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, isLandscapeTab, type MobileSection } from './useComplianceUrlState'
-import { PreviewBanner } from '../common/PreviewBanner'
-import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 // ── Redesign components ────────────────────────────────────────────────────
-import { ControlDeck } from './redesign/ControlDeck'
 import { PillarPipeline } from './redesign/PillarPipeline'
 import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
 import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
 import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
 import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
 import { ObligationsTab } from './obligations/ObligationsTab'
+import { ProgressTab } from './progress/ProgressTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
 // in place via the shared control deck) — it never reorders the bar.
 
-type StableTab = 'obligations' | 'landscape' | 'records' | 'foryou' | 'cswp39'
+type StableTab = 'obligations' | 'progress' | 'landscape' | 'records' | 'foryou' | 'cswp39'
 
 const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
   { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
+  { id: 'progress', label: 'Progress', icon: CalendarClock },
   { id: 'landscape', label: 'Landscape', icon: Layers },
   { id: 'records', label: 'Product Records', icon: GlobeLock },
   { id: 'foryou', label: 'For You', icon: Sparkles },
@@ -93,6 +90,7 @@ const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
 function stableTabFor(activeTab: MobileSection): StableTab {
   if (isLandscapeTab(activeTab)) return 'landscape'
   if (activeTab === 'obligations') return 'obligations'
+  if (activeTab === 'progress') return 'progress'
   if (activeTab === 'records') return 'records'
   if (activeTab === 'cswp39') return 'cswp39'
   if (activeTab === 'foryou') return 'foryou'
@@ -276,8 +274,6 @@ export const ComplianceView = ({
   // filter-triggered background refresh with data already on screen keeps
   // using ComplianceTable's own spinner overlay, unchanged.
   const showComplianceSkeleton = loading && data.length === 0
-  const { selectedIndustries, selectedRegion } = usePersonaStore()
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
@@ -301,66 +297,12 @@ export const ComplianceView = ({
     return () => clearTimeout(timer)
   }, [myFrameworks.length, addHistoryEvent])
 
-  const primaryIndustry = selectedIndustries[0] ?? null
-  // eslint-disable-next-line security/detect-object-injection
-  const industryHint = primaryIndustry ? INDUSTRY_COMPLIANCE_HINT[primaryIndustry] : undefined
-  // eslint-disable-next-line security/detect-object-injection
-  const regionHint = selectedRegion ? REGION_COMPLIANCE_HINT[selectedRegion] : undefined
-  const complianceHint = industryHint ?? regionHint
-  const complianceHintLabel = primaryIndustry
-    ? `${primaryIndustry} focus`
-    : selectedRegion === 'eu'
-      ? 'EU region'
-      : null
-
-  // Per-industry/region dismissal.
-  const personaHintDismissKey = primaryIndustry
-    ? `compliance-persona-hint-dismissed-industry:${primaryIndustry}`
-    : selectedRegion === 'eu'
-      ? 'compliance-persona-hint-dismissed-region:eu'
-      : null
-  const [personaHintDismissTick, setPersonaHintDismissTick] = useState(0)
-  const personaHintDismissed = useMemo(() => {
-    if (!personaHintDismissKey || typeof window === 'undefined') return false
-    try {
-      return window.localStorage.getItem(personaHintDismissKey) === '1'
-    } catch {
-      return false
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personaHintDismissKey, personaHintDismissTick])
-  const personaHintIdentity = primaryIndustry
-    ? `industry:${primaryIndustry}`
-    : selectedRegion === 'eu'
-      ? 'region:eu'
-      : 'unknown'
-
-  const dismissPersonaHint = useCallback(() => {
-    if (!personaHintDismissKey) return
-    try {
-      window.localStorage.setItem(personaHintDismissKey, '1')
-    } catch {
-      /* private browsing / quota */
-    }
-    setPersonaHintDismissTick((t) => t + 1)
-    logComplianceFilter('PersonaHintDismiss', personaHintIdentity)
-  }, [personaHintDismissKey, personaHintIdentity])
-
   const [exportError, setExportError] = useState<string | null>(null)
 
-  // Returning-visitor signal — true once this browser has loaded /compliance
-  // before. Drives auto-collapse of the first-visit onboarding stack (intro
-  // banner, full deadline timeline) so repeat visits reach the tab bar in
-  // roughly one screen instead of re-showing first-visit chrome every time.
+  // Marks this browser as having seen /compliance. The onboarding stack it used
+  // to gate is gone; the intro banner below still reads it so a repeat visitor
+  // is not re-introduced to the page.
   const VISITED_KEY = 'compliance-visited-v1'
-  const isReturningVisitor = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    try {
-      return window.localStorage.getItem(VISITED_KEY) === '1'
-    } catch {
-      return false
-    }
-  }, [])
   useEffect(() => {
     try {
       window.localStorage.setItem(VISITED_KEY, '1')
@@ -460,7 +402,12 @@ export const ComplianceView = ({
   const [pillar, setPillar] = useState<PillarId>(() =>
     isLandscapeTab(activeTab) ? tabToPillar(activeTab) : 'standardize'
   )
+  // Pre-existing URL→state sync, unchanged by this commit. The compiler-backed
+  // lint began reporting it only because removing the onboarding stack made this
+  // component analysable; rewriting shared tab/pillar behaviour is out of scope
+  // here and wants its own ticket.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isLandscapeTab(activeTab)) setPillar(tabToPillar(activeTab))
   }, [activeTab])
 
@@ -473,14 +420,19 @@ export const ComplianceView = ({
   // the drawer here makes the URL a real deep link into the drawer itself,
   // matching what onSelectRelated already does for in-drawer navigation.
   const didOpenDrawerFromUrlRef = useRef<string | null>(null)
+
+  // opening the drawer from `?framework=` is a deliberate deep-link effect that
+  // predates this commit.
   useEffect(() => {
     if (!highlightFrameworkId) return
     if (didOpenDrawerFromUrlRef.current === highlightFrameworkId) return
     didOpenDrawerFromUrlRef.current = highlightFrameworkId
     const fw = complianceFrameworks.find((f) => f.id === highlightFrameworkId)
     if (!fw) return
+    /* eslint-disable react-hooks/set-state-in-effect */
     setDrawerPillar(pillarForBodyType(fw.bodyType))
     setDrawerFramework(fw)
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [highlightFrameworkId])
 
   // CSWP.39 jump-back marker + query (ephemeral UI state).
@@ -507,19 +459,6 @@ export const ComplianceView = ({
     [lsCountry, lsIndustry]
   )
   const { profile: forYouProfile } = useApplicability(forYouProfileOverride)
-
-  const deadlineTimelineFrameworks = useMemo(() => {
-    if (activeTab !== 'foryou' || !forYouProfile.country) return complianceFrameworks
-    const filtered = complianceFrameworks.filter((f) =>
-      f.countries.includes(forYouProfile.country!)
-    )
-    return filtered.length > 0 ? filtered : complianceFrameworks
-  }, [activeTab, forYouProfile.country])
-
-  const deadlineTimelineLabel =
-    activeTab === 'foryou' && forYouProfile.country
-      ? `${forYouProfile.country} deadlines`
-      : undefined
 
   // ── Tab handlers ─────────────────────────────────────────────────────
 
@@ -550,27 +489,6 @@ export const ComplianceView = ({
       logComplianceFilter('Pillar', next)
     },
     [setActiveTab, syncFiltersToUrl]
-  )
-
-  const handlePersonaHintNavigate = useCallback(
-    (
-      section: MobileSection,
-      subFacet?: import('@/data/compliancePersonaHints').ComplianceHintSubFacet
-    ) => {
-      setActiveTab(section)
-      const urlOverrides: Parameters<typeof syncFiltersToUrl>[0] = { tab: section }
-      if (subFacet?.rtab) urlOverrides.rtab = subFacet.rtab
-      syncFiltersToUrl(urlOverrides)
-      logComplianceFilter('PersonaHint', section)
-      logComplianceFilter('PersonaHintCtaClick', `${personaHintIdentity}→${section}`)
-      setCswp39JumpActive(false)
-      requestAnimationFrame(() => {
-        document
-          .getElementById('compliance-tabs')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
-    },
-    [setActiveTab, syncFiltersToUrl, personaHintIdentity]
   )
 
   const handleCswp39Jump = useCallback(
@@ -713,19 +631,15 @@ export const ComplianceView = ({
         />
       )}
 
-      {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
-
-      <AboutThisPageStrip
-        headerSlot={
-          <span className="md:hidden" data-testid="about-strip-trust-tier-slot">
-            {/* tier filter writes ?tier= — hidden in the sim embed (URL-safe) */}
-            {!simEmbed && <TrustTierFilter />}
-          </span>
-        }
-      />
-
-      {/* Consolidated control deck — shared persona lens drives every tab. */}
-      <ControlDeck />
+      {/* The learning frame, glossary strip, revisions feed, persona hint,
+          control deck and deadline dot-plot used to stack here — five blocks
+          before the visitor reached the tab bar, which is why "which rules bind
+          me" cost a scroll and a guess. The register answers that on arrival;
+          the glossary lives in the page header, the deadlines now have their own
+          tab, and the trust-tier filter stays reachable inline below. */}
+      <div className="flex justify-end" data-testid="compliance-trust-tier-slot">
+        {!simEmbed && <TrustTierFilter />}
+      </div>
 
       {exportError && (
         <div
@@ -750,8 +664,11 @@ export const ComplianceView = ({
         </div>
       )}
 
-      {/* New-to-compliance intro — suppressed when a persona hint will render. */}
-      {!introDismissed && !(complianceHint && complianceHintLabel && !personaHintDismissed) && (
+      {/* New-to-compliance intro. The only block left above the tab bar: it is
+          first-visit-only and dismissible, and on an educational site the
+          define/validate/mandate framing earns its place for a newcomer. The
+          persona-hint suppression it used to carry went with the hint itself. */}
+      {!introDismissed && (
         <div className="space-y-3 rounded-lg border border-secondary/20 bg-secondary/5 p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -840,24 +757,6 @@ export const ComplianceView = ({
           </div>
         </div>
       )}
-
-      {/* Persona/industry context hint. */}
-      {complianceHint && complianceHintLabel && !personaHintDismissed && (
-        <PersonaHintCta
-          label={complianceHintLabel}
-          hint={complianceHint}
-          onNavigate={handlePersonaHintNavigate}
-          onDismiss={dismissPersonaHint}
-        />
-      )}
-
-      {/* PQC deadline timeline — persona-gated. */}
-      <DeadlineTimelineGate
-        persona={selectedPersona}
-        frameworks={deadlineTimelineFrameworks}
-        label={deadlineTimelineLabel}
-        returningVisitor={isReturningVisitor}
-      />
 
       {/* Jump-back banner after a CSWP.39 cross-walk navigation. */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
@@ -958,6 +857,26 @@ export const ComplianceView = ({
               profile={forYouProfile}
               countryValue={lsCountry}
               onCountryChange={handleLsCountryChange}
+              sectorValue={lsIndustry}
+              onSectorChange={handleLsIndustryChange}
+              onOpenDetail={(fw) => {
+                setDrawerPillar(pillarForBodyType(fw.bodyType))
+                setDrawerFramework(fw)
+              }}
+            />
+          </div>
+        )}
+
+        {/* ── Progress — the scoped deadline slice ── */}
+        {activeStableTab === 'progress' && !error && !showComplianceSkeleton && (
+          <div className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<CalendarClock size={20} className="text-primary" />}
+              title="Progress"
+              description="Every date the instruments in your scope actually state, in one ordered list — replacing the three separate timelines this page used to draw."
+            />
+            <ProgressTab
+              profile={forYouProfile}
               onOpenDetail={(fw) => {
                 setDrawerPillar(pillarForBodyType(fw.bodyType))
                 setDrawerFramework(fw)

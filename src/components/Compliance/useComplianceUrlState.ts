@@ -19,6 +19,7 @@ import type { ViewMode } from '@/components/Library/ViewToggle'
 // links are already out in the wild.
 export type MobileSection =
   | 'obligations'
+  | 'progress'
   | 'foryou'
   | 'standards'
   | 'technical'
@@ -60,6 +61,7 @@ function parseTabFromHash(hash: string): MobileSection | null {
   const clean = hash.replace(/^#/, '').trim() as MobileSection
   if (
     clean === 'obligations' ||
+    clean === 'progress' ||
     clean === 'foryou' ||
     clean === 'standards' ||
     clean === 'technical' ||

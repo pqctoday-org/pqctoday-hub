@@ -19,8 +19,8 @@ import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { EmptyState } from '@/components/ui/empty-state'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
+import { complianceFrameworks } from '@/data/complianceData'
 import type { ComplianceFramework, PQCRequirement } from '@/data/complianceData'
 import {
   TIER_META,
@@ -32,6 +32,7 @@ import {
   buildObligations,
   groupObligations,
   summarize,
+  sectorOptions,
   COLLAPSED_BY_DEFAULT,
   type ObligationRow,
 } from './obligationsModel'
@@ -78,6 +79,9 @@ interface ObligationsTabProps {
   /** Page-local country override; `All` means "fall back to the profile". */
   countryValue: string
   onCountryChange: (country: string) => void
+  /** Page-local sector override; `All` means "fall back to the profile". */
+  sectorValue: string
+  onSectorChange: (sector: string) => void
   onOpenDetail: (framework: ComplianceFramework) => void
 }
 
@@ -85,6 +89,8 @@ export function ObligationsTab({
   profile,
   countryValue,
   onCountryChange,
+  sectorValue,
+  onSectorChange,
   onOpenDetail,
 }: ObligationsTabProps) {
   const rows = useMemo(() => buildObligations(profile), [profile])
@@ -98,23 +104,50 @@ export function ObligationsTab({
     () => [COUNTRY_ANY, ...ALL_JURISDICTIONS.map((j) => j.name).sort((a, b) => a.localeCompare(b))],
     []
   )
+  const sectorItems = useMemo(() => [COUNTRY_ANY, ...sectorOptions(complianceFrameworks)], [])
+
+  const pickers = {
+    countryValue,
+    onCountryChange,
+    sectorValue,
+    onSectorChange,
+    countryItems,
+    sectorItems,
+    profile,
+  }
 
   return (
     <div className="space-y-4">
-      <ScopeBar
-        profile={profile}
-        countryValue={countryValue}
-        countryItems={countryItems}
-        onCountryChange={onCountryChange}
-        totals={totals}
-      />
+      <ScopeBar {...pickers} totals={totals} />
 
       {rows.length === 0 ? (
-        <EmptyState
-          icon={<ShieldCheck size={28} className="text-muted-foreground" />}
-          title="No scope set"
-          description="Pick a country and a sector and this page lists the instruments that bind you, and why each one applies. Without them the applicability tiers cannot be computed at all."
-        />
+        // The zero state IS the first screen for anyone who has not taken the
+        // assessment, so it carries the controls that fix it rather than
+        // sending the visitor to another page to come back from.
+        <div className="rounded-xl border border-border bg-card p-6 text-center">
+          <ShieldCheck size={26} className="mx-auto text-muted-foreground" />
+          <p className="mt-2 text-sm font-semibold text-foreground">
+            Tell us where you operate and we&apos;ll list what binds you
+          </p>
+          <p className="mx-auto mt-1 max-w-xl text-xs text-muted-foreground">
+            The applicability tiers are computed from a country and a sector — without both, no
+            instrument can be shown as mandatory rather than merely relevant.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <ScopePicker
+              label="Country"
+              value={countryValue}
+              items={countryItems}
+              onChange={onCountryChange}
+            />
+            <ScopePicker
+              label="Sector"
+              value={sectorValue}
+              items={sectorItems}
+              onChange={onSectorChange}
+            />
+          </div>
+        </div>
       ) : (
         groups.map((group) => {
           const open = isOpen(group.tier)
@@ -162,17 +195,52 @@ export function ObligationsTab({
 
 // ── Scope bar ───────────────────────────────────────────────────────────
 
+function ScopePicker({
+  label,
+  value,
+  items,
+  onChange,
+}: {
+  label: string
+  value: string
+  items: string[]
+  onChange: (v: string) => void
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      <FilterDropdown
+        items={items}
+        selectedId={value}
+        onSelect={onChange}
+        size="sm"
+        searchable
+        defaultLabel="Any"
+        label={label}
+      />
+    </div>
+  )
+}
+
 function ScopeBar({
   profile,
   countryValue,
   countryItems,
   onCountryChange,
+  sectorValue,
+  sectorItems,
+  onSectorChange,
   totals,
 }: {
   profile: UserProfile
   countryValue: string
   countryItems: string[]
   onCountryChange: (c: string) => void
+  sectorValue: string
+  sectorItems: string[]
+  onSectorChange: (s: string) => void
   totals: ReturnType<typeof summarize>
 }) {
   // TIER_ORDER, not map-insertion order — the summary must read strongest-first
@@ -186,32 +254,32 @@ function ScopeBar({
   // a control reading "Any" beside a list of French regulators would be a lie.
   const inheritedCountry = countryValue === COUNTRY_ANY && !!profile.country
   const shownCountry = inheritedCountry ? (profile.country as string) : countryValue
+  const inheritedSector = sectorValue === COUNTRY_ANY && !!profile.industry
+  const shownSector = inheritedSector ? (profile.industry as string) : sectorValue
+  const inherited = inheritedCountry || inheritedSector
 
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3">
         <ScopeChip
           label="Region"
           value={profile.region ? (REGION_LABEL[profile.region] ?? profile.region) : 'any'}
         />
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-            Country
-          </span>
-          <FilterDropdown
-            items={countryItems}
-            selectedId={shownCountry}
-            onSelect={onCountryChange}
-            size="sm"
-            searchable
-            defaultLabel="Any"
-            label="Country"
-          />
-          {inheritedCountry && (
-            <span className="text-[10.5px] text-muted-foreground">from your profile</span>
-          )}
-        </div>
-        <ScopeChip label="Sector" value={profile.industry ?? 'any'} />
+        <ScopePicker
+          label="Country"
+          value={shownCountry}
+          items={countryItems}
+          onChange={onCountryChange}
+        />
+        <ScopePicker
+          label="Sector"
+          value={shownSector}
+          items={sectorItems}
+          onChange={onSectorChange}
+        />
+        {inherited && (
+          <span className="text-[10.5px] text-muted-foreground">from your profile</span>
+        )}
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
