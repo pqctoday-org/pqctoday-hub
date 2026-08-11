@@ -95,7 +95,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Capstone',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'The priority matrix ranks Medical Devices and Research/Genomics highest due to critical data sensitivity and HNDL exposure. The compliance timeline shows FDA guidance in 2026 and HIPAA modernization in 2027 \u2014 aligning migration phases with regulatory pressure.',
+        "The priority matrix ranks Medical Devices and Research/Genomics highest due to critical data sensitivity and HNDL exposure. On the regulatory side, the FDA's premarket cybersecurity guidance is already final (September 2023) and the HIPAA Security Rule rewrite is still a proposed rule: the January 2025 NPRM sets no calendar year, only an effective date 60 days after a final rule with compliance following that \u2014 so plan migration phases against your own risk, and treat any specific HIPAA year you see quoted as a guess.",
       config: { step: 4 },
     },
   ]
