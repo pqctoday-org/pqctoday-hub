@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CSWP39_ZONE_ORDER, CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
 import { PHASE_ORDER, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { logBusinessToolsSearch, logBusinessToolsFilter } from '@/utils/analytics'
 
 // Badge shown only for the non-default (technical) audiences, so an executive can
@@ -391,6 +392,14 @@ export const BusinessToolsGrid = () => {
                               {AUDIENCE_BADGE[tool.audience]}
                             </span>
                           )}
+                          {/* Standards provenance — the registry comment's
+                              "small provenance chip on each tool card", which
+                              had never actually been rendered here. Renders
+                              spans only, so it stays a11y-safe inside the Link. */}
+                          <Cswp39SectionBadge
+                            sectionRef={tool.cswp39SectionRef}
+                            subSection={tool.cswp39SubSection}
+                          />
                         </div>
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                           {tool.description}

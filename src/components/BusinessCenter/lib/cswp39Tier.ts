@@ -281,7 +281,7 @@ export function computeStepTiers(metrics: BusinessMetrics): Record<CSWP39StepId,
 
 /** Which legacy step tiers feed into each Fig 3 zone's tier. The zone tier is
  *  the max() across contributing step tiers; reasons are concatenated. */
-const ZONE_STEP_CONTRIBUTORS: Record<ZoneId, CSWP39StepId[]> = {
+export const ZONE_STEP_CONTRIBUTORS: Record<ZoneId, CSWP39StepId[]> = {
   // Governance — policy, standards, supply chain, threats, business reqs
   governance: ['govern'],
   // Assets — CBOM coverage of code/libs/apps/files/protocols/systems
@@ -294,6 +294,16 @@ const ZONE_STEP_CONTRIBUTORS: Record<ZoneId, CSWP39StepId[]> = {
   mitigation: ['implement'],
   // Migration — full algorithm replacement
   migration: ['implement'],
+}
+
+/**
+ * The step whose resources best fit a zone — the first contributor above.
+ * Used to key the Recommended-resources panel on a standalone tool page,
+ * where there is no step section to inherit it from. Reuses the existing
+ * mapping rather than introducing a second, drift-prone one.
+ */
+export function primaryStepForZone(zone: ZoneId): CSWP39StepId {
+  return ZONE_STEP_CONTRIBUTORS[zone][0]
 }
 
 export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepTierResult> {
