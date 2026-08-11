@@ -3,6 +3,8 @@ import { useState, useCallback, useEffect } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import type { PersonaId } from '@/data/learningPersonas'
+import { defaultTabForPersona } from './obligations/roleLens'
 import type { RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import type { FrameworkSortOption } from './ComplianceLandscape'
 import type { SortColumn, SortDirection } from './ComplianceTable'
@@ -48,13 +50,14 @@ export function isLandscapeTab(tab: MobileSection): boolean {
  * `deepLinks.test.ts` only asserts the route resolves, not what it renders,
  * so nothing caught it.
  */
-function defaultTabFor(certParam: string | undefined): MobileSection {
+function defaultTabFor(certParam: string | undefined, persona: PersonaId | null): MobileSection {
   // A cert deep link is a request for one record and outranks any default.
   if (certParam) return 'records'
-  // Otherwise the register: it answers "which rules bind me, and why" directly,
+  // Otherwise the register — it answers "which rules bind me, and why" directly,
   // where every other tab asks the visitor to filter a 197-row catalogue until
-  // relevance falls out.
-  return 'obligations'
+  // relevance falls out. The role lens moves an ops reader to the calendar,
+  // which is the same question asked in date order.
+  return defaultTabForPersona(persona)
 }
 
 function parseTabFromHash(hash: string): MobileSection | null {
@@ -106,7 +109,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries } = usePersonaStore()
+  const { selectedIndustries, selectedPersona } = usePersonaStore()
 
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
@@ -126,7 +129,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     // Supersedes two earlier defaults: the developer persona's jump to Product
     // Records, and the industry/region hint that picked a Landscape pillar.
     // Both were compensating for the register not existing.
-    return defaultTabFor(certParam)
+    return defaultTabFor(certParam, selectedPersona)
   })
 
   const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
@@ -345,7 +348,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // ── URL → state sync (back/forward navigation) ─────────────────────────
 
   useEffect(() => {
-    const tab = (searchParams.get('tab') as MobileSection | null) ?? defaultTabFor(certParam)
+    const tab =
+      (searchParams.get('tab') as MobileSection | null) ?? defaultTabFor(certParam, selectedPersona)
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
@@ -400,7 +404,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     // `certParam` is derived from `searchParams` in the same render, so it can
     // never be stale here — it is listed to keep exhaustive-deps quiet rather
     // than to change when this runs.
-  }, [searchParams, selectedIndustries, certParam])
+  }, [searchParams, selectedIndustries, certParam, selectedPersona])
 
   // ── Debounced search callbacks ─────────────────────────────────────────
 

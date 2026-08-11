@@ -274,6 +274,9 @@ export const ComplianceView = ({
   // filter-triggered background refresh with data already on screen keeps
   // using ComplianceTable's own spinner overlay, unchanged.
   const showComplianceSkeleton = loading && data.length === 0
+  // Role is a reading lens on the register — ordering and annotation only. It
+  // never changes which instruments apply.
+  const personaForLens = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
@@ -730,6 +733,7 @@ export const ComplianceView = ({
               onCountryChange={handleLsCountryChange}
               sectorValue={lsIndustry}
               onSectorChange={handleLsIndustryChange}
+              persona={personaForLens}
               onOpenDetail={(fw) => {
                 setDrawerPillar(pillarForBodyType(fw.bodyType))
                 setDrawerFramework(fw)

@@ -28,6 +28,8 @@ import {
   type ApplicabilityTier,
   type UserProfile,
 } from '@/utils/applicabilityEngine'
+import type { PersonaId } from '@/data/learningPersonas'
+import { applyRoleOrder, roleFramingFor, roleNoteFor } from './roleLens'
 import {
   buildObligations,
   groupObligations,
@@ -83,6 +85,8 @@ interface ObligationsTabProps {
   sectorValue: string
   onSectorChange: (sector: string) => void
   onOpenDetail: (framework: ComplianceFramework) => void
+  /** Reading order and per-row annotation only — never what applies. */
+  persona: PersonaId | null
 }
 
 export function ObligationsTab({
@@ -92,9 +96,17 @@ export function ObligationsTab({
   sectorValue,
   onSectorChange,
   onOpenDetail,
+  persona,
 }: ObligationsTabProps) {
   const rows = useMemo(() => buildObligations(profile), [profile])
-  const groups = useMemo(() => groupObligations(rows), [rows])
+  const groups = useMemo(
+    () =>
+      groupObligations(rows).map((group) => ({
+        ...group,
+        rows: applyRoleOrder(group.rows, persona),
+      })),
+    [rows, persona]
+  )
   const totals = useMemo(() => summarize(rows), [rows])
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -118,7 +130,7 @@ export function ObligationsTab({
 
   return (
     <div className="space-y-4">
-      <ScopeBar {...pickers} totals={totals} />
+      <ScopeBar {...pickers} totals={totals} framing={roleFramingFor(persona)} />
 
       {rows.length === 0 ? (
         // The zero state IS the first screen for anyone who has not taken the
@@ -181,7 +193,12 @@ export function ObligationsTab({
               {open && (
                 <ul className="divide-y divide-border">
                   {group.rows.map((row) => (
-                    <ObligationListRow key={row.framework.id} row={row} onOpen={onOpenDetail} />
+                    <ObligationListRow
+                      key={row.framework.id}
+                      row={row}
+                      onOpen={onOpenDetail}
+                      roleNote={roleNoteFor(row, persona)}
+                    />
                   ))}
                 </ul>
               )}
@@ -233,6 +250,7 @@ function ScopeBar({
   sectorItems,
   onSectorChange,
   totals,
+  framing,
 }: {
   profile: UserProfile
   countryValue: string
@@ -242,6 +260,7 @@ function ScopeBar({
   sectorItems: string[]
   onSectorChange: (s: string) => void
   totals: ReturnType<typeof summarize>
+  framing: string
 }) {
   // TIER_ORDER, not map-insertion order — the summary must read strongest-first
   // for the same reason the bands are stacked that way.
@@ -282,7 +301,9 @@ function ScopeBar({
         )}
       </div>
 
-      <p className="mt-3 text-xs text-muted-foreground">
+      {totals.total > 0 && <p className="mt-3 text-xs italic text-muted-foreground">{framing}</p>}
+
+      <p className="mt-1.5 text-xs text-muted-foreground">
         {totals.total > 0 ? (
           <>
             <span className="font-semibold text-foreground">{totals.total}</span> instruments in
@@ -322,9 +343,11 @@ function ScopeChip({ label, value }: { label: string; value: string }) {
 function ObligationListRow({
   row,
   onOpen,
+  roleNote,
 }: {
   row: ObligationRow
   onOpen: (framework: ComplianceFramework) => void
+  roleNote: string | null
 }) {
   const fw = row.framework
   const shown = row.milestones.slice(0, 2)
@@ -352,6 +375,8 @@ function ObligationListRow({
             <span className="text-muted-foreground"> · {fw.countries.join(', ')}</span>
           )}
         </p>
+
+        {roleNote && <p className="mt-0.5 text-[11px] font-medium text-primary">{roleNote}</p>}
 
         {fw.notes && (
           <p className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">{fw.notes}</p>
