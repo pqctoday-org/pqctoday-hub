@@ -281,9 +281,12 @@ export const FIPSCompatibilityChecker: React.FC = () => {
         <div className="mt-3 p-3 bg-status-info/5 rounded border border-status-info/20">
           <p className="text-xs text-muted-foreground">
             <strong className="text-foreground">Key insight:</strong> Windows Server 2025 (SymCrypt
-            103.4.0) is currently the only major OS platform with ML-KEM in a FIPS 140-3 validated
-            module. All Linux distributions are pending new FIPS certifications that include PQC
-            algorithms.
+            103.4.0) was the first major OS platform to ship ML-KEM inside a FIPS 140-3 validated
+            module, and it is no longer alone — our own CMVP snapshot also lists Apple corecrypto
+            and the Go cryptographic modules that Linux-based platforms build on. Check the
+            validated-module list for your exact platform and version rather than assuming your
+            distribution is covered: a distribution shipping an ML-KEM implementation is not the
+            same as that implementation being inside a validated module boundary.
           </p>
         </div>
       </div>
