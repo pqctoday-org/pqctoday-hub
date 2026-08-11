@@ -14,6 +14,7 @@ import {
   Map,
   Wrench,
   ChevronDown,
+  ChevronRight,
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -77,6 +78,8 @@ import {
   getRowTreatment,
   getMobileVisiblePaths,
   getForYouGroups,
+  getGroupAbsences,
+  FOR_YOU_GROUP_BLURBS,
   RAIL_ICON_MAP,
   type RailRowTreatment,
 } from './railNav'
@@ -251,6 +254,71 @@ function iconFor(path: string): LucideIcon {
   return RAIL_ICON_MAP[path] ?? Info
 }
 
+/**
+ * "Not offered for your role" (B+ remediation 1.3, 2026-08-10; reshaped
+ * 2026-08-10 after review).
+ *
+ * The programme's second grading principle — a deliberate absence must be
+ * visible where it takes effect — but rendered as NAVIGATION, not as prose.
+ *
+ * The first version put the whole reason and its alternative on screen as a
+ * bordered paragraph. In a 168px rail that wrapped to four lines, and two of
+ * them plus three group blurbs turned a nav column into a wall of text: the
+ * exact "too cluttered" problem the 2026-08-01 declutter pass had just fixed.
+ * Correct information, wrong object.
+ *
+ * Now it is a single dimmed row in the same shape and rhythm as `RailRow` —
+ * icon, label, and a muted slash marking it unavailable — so the absence reads
+ * at a glance as "this exists and is not for you" rather than as missing. The
+ * reason and the alternative are one click away, which is where explanation
+ * belongs in a surface whose job is to get you somewhere.
+ */
+const RailAbsenceNotice: React.FC<{
+  path: string
+  label: string
+  reason: string
+  insteadPath: string
+  insteadLabel: string
+}> = ({ path, label, reason, insteadPath, insteadLabel }) => {
+  const [open, setOpen] = React.useState(false)
+
+  return (
+    <div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        title={`${label} — not offered for your role. ${reason}`}
+        className="w-full justify-start gap-2 min-h-[36px] rounded-md pl-2 pr-2 text-[11px] text-muted-foreground/60 hover:text-muted-foreground"
+      >
+        {/* createElement rather than <Icon />, matching RailRow above: a
+            capitalised local binding reads as a component declared during
+            render to react-hooks/static-components. */}
+        {React.createElement(iconFor(path), {
+          size: 16,
+          'aria-hidden': true,
+          className: 'shrink-0 opacity-60',
+        })}
+        <span className="truncate line-through decoration-muted-foreground/40">{label}</span>
+        <Info size={11} aria-hidden="true" className="ml-auto shrink-0 opacity-70" />
+      </Button>
+      {open && (
+        <div className="mb-1 ml-2 mr-2 border-l border-border pl-2">
+          <p className="text-[10px] leading-snug text-muted-foreground">{reason}</p>
+          <NavLink
+            to={insteadPath}
+            className="mt-1 inline-flex items-center gap-0.5 text-[10px] font-medium text-primary hover:underline"
+          >
+            {insteadLabel}
+            <ChevronRight size={10} aria-hidden="true" />
+          </NavLink>
+        </div>
+      )}
+    </div>
+  )
+}
+
 interface RailRowProps {
   path: string
   label: string
@@ -315,6 +383,17 @@ const RailRow: React.FC<RailRowProps> = ({
         className: 'shrink-0',
       })}
       <span className="truncate">{label}</span>
+      {/* Marks the dashed/"marked" treatment ON the row rather than in a
+          detached legend at the foot of the rail. `title` (set by the caller)
+          carries the full sentence. */}
+      {treatment === 'marked' && !isMore && (
+        <span
+          className="ml-auto shrink-0 rounded bg-status-warning/15 px-1 text-[9px] font-bold uppercase leading-4 tracking-wide text-status-warning"
+          aria-hidden="true"
+        >
+          wip
+        </span>
+      )}
     </NavLink>
   )
 }
@@ -785,7 +864,13 @@ export const MainLayout = () => {
                     aria-expanded={groupExpanded}
                     aria-controls={groupContentId}
                     aria-label={`${groupExpanded ? 'Hide' : 'Show'} ${group.label} (${group.paths.length})`}
-                    title={groupExpanded ? `Hide ${group.label}` : `Show ${group.label}`}
+                    // B+ remediation 1.3 (2026-08-10): the group name alone was
+                    // the hub's vocabulary, not the reader's. The blurb now
+                    // leads the tooltip (the collapse/expand hint follows it,
+                    // since the chevron already says that visually) and repeats
+                    // as sub-text below when the group is open, so the rail
+                    // explains itself in place rather than needing decoding.
+                    title={`${FOR_YOU_GROUP_BLURBS[group.id]} — click to ${groupExpanded ? 'hide' : 'show'}`}
                     className="w-full h-auto justify-between gap-1 px-2 pt-2 pb-0.5 rounded-md text-sm font-bold uppercase tracking-wide text-muted-foreground hover:text-foreground hover:bg-transparent"
                   >
                     <span>{group.label}</span>
@@ -796,6 +881,12 @@ export const MainLayout = () => {
                     />
                   </Button>
                 ) : null}
+                {/* The group blurb is deliberately NOT rendered inline. At
+                    168px it wrapped to two or three lines per group, which
+                    together with the absence notices buried the nav rows it was
+                    supposed to be labelling. It rides the header's tooltip
+                    instead (see `title` above) — the explanation is still one
+                    hover away, and the rail stays a rail. */}
                 {groupExpanded && (
                   <div id={groupContentId} className="flex flex-col gap-0.5">
                     {displayPaths.map((path) => {
@@ -818,11 +909,36 @@ export const MainLayout = () => {
                         />
                       )
                     })}
+                    {/* B+ remediation 1.3: routes deliberately not offered to
+                        this role render their reason here, in the group the row
+                        would have occupied — a documented absence made visible
+                        instead of an apparently missing row. */}
+                    {getGroupAbsences(selectedPersona, group.id).map((absence) => (
+                      <RailAbsenceNotice
+                        key={absence.path}
+                        path={absence.path}
+                        label={absence.label}
+                        reason={absence.reason}
+                        insteadPath={absence.insteadPath}
+                        insteadLabel={absence.insteadLabel}
+                      />
+                    ))}
                   </div>
                 )}
               </React.Fragment>
             )
           })}
+          {/* The dashed-row legend that stood here has been REMOVED (2026-08-10,
+              same review pass that compressed the absence notices). It read "A
+              dashed row works, but isn't tailored to your role yet" and sat at
+              the very bottom of the rail — several groups away from the single
+              dashed row it described, in a column that had already been called
+              out as too text-heavy. A legend nobody can connect to its referent
+              is worse than no legend: the first reader of it asked what it
+              meant. The meaning now rides the row itself — a small "wip" marker
+              plus the same sentence in its tooltip — which is where a reader
+              looks when they wonder about a row. */}
+
           {/* CACP is deliberately NOT a direct rail shortcut (2026-08-01
               follow-up: "CACP is fold in playground no direct access") —
               reachable via the Playground grid's own featured card only. */}

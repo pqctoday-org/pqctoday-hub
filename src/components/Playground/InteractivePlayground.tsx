@@ -30,6 +30,7 @@ import { Card } from '../ui/card'
 import { ShareButton } from '../ui/ShareButton'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
 
 export const InteractivePlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -104,6 +105,16 @@ export const InteractivePlayground = () => {
           ]}
         />
       )}
+      {/* B+ remediation 1.6 (2026-08-10): the curious build of this page is
+          deliberately reduced and never said so, so a missing control read as
+          a broken one. Renders only while that reduction is actually in
+          effect — see SimplifiedViewNotice. */}
+      <SimplifiedViewNotice
+        className="mb-4 shrink-0"
+        what="Some advanced controls — hardware-backed keys, ACVP test vectors and raw parameter tuning — are folded away."
+        stillReal="Every operation you run here is genuine ML-KEM and ML-DSA, executing in your browser."
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
         <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">

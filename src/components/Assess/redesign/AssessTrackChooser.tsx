@@ -5,13 +5,16 @@
 // sections each track unlocks". The section lists come from reportContract so
 // they stay in sync with the report's gated sections.
 import React from 'react'
-import { Zap, ClipboardCheck, Check, Lock, Sparkles } from 'lucide-react'
+import { Zap, ClipboardCheck, Check, Lock, Sparkles, FlaskConical } from 'lucide-react'
 import { Button } from '../../ui/button'
 import type { AssessmentMode } from '../../../store/useAssessmentStore'
 import { FAST_REPORT_SECTIONS, FULL_LOCKED_SECTIONS, FAST_LOCKED_COUNT } from './reportContract'
 import { TRACK_INFO } from './assessFlowModel'
+import { REFERENCE_ESTATES } from '@/data/assessmentScenarios'
 
 interface AssessTrackChooserProps {
+  /** Load a reference estate and jump straight to review — B+ remediation 4.4. */
+  onStartScenario: (estateId: string) => void
   onStart: (mode: AssessmentMode) => void
   recommendedMode: AssessmentMode | null
 }
@@ -24,6 +27,7 @@ const RecommendedPill: React.FC = () => (
 
 export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
   onStart,
+  onStartScenario,
   recommendedMode,
 }) => {
   const fast = TRACK_INFO.quick
@@ -109,6 +113,51 @@ export const AssessTrackChooser: React.FC<AssessTrackChooserProps> = ({
         >
           Start full track →
         </Button>
+      </div>
+
+      {/* B+ remediation 4.4 (2026-08-10): a third way in, for anyone who does
+          not have an estate of their own to describe. The review raised it for
+          researcher — "a researcher is asked to describe an organisation and an
+          estate it may not have" — but the same is true of anyone evaluating
+          the tool, so it is offered to everyone rather than gated. It is placed
+          last and styled quieter than the two real tracks, because assessing
+          somebody else's estate is the fallback, not the goal. */}
+      <div className="glass-panel flex flex-col p-5 sm:col-span-2">
+        <div className="mb-2 flex flex-wrap items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
+            <FlaskConical className="text-muted-foreground" size={18} />
+          </div>
+          <div className="text-[17px] font-bold text-foreground">
+            No estate to describe? Use a reference one
+          </div>
+        </div>
+        <p className="mb-3 text-[13px] leading-relaxed text-muted-foreground">
+          Assess a documented example organisation instead of your own. Every question is
+          pre-answered, so you can see what the report does with a complete set of inputs — and the
+          report says on its face that it came from a reference estate, so it can never be mistaken
+          for a finding about a real one.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {REFERENCE_ESTATES.map((estate) => (
+            <div key={estate.id} className="rounded-lg border border-border bg-card/50 p-3">
+              <p className="text-[13px] font-semibold text-foreground">{estate.label}</p>
+              <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+                {estate.summary}
+              </p>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground/80">
+                {estate.basis}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => onStartScenario(estate.id)}
+              >
+                Assess this estate
+              </Button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

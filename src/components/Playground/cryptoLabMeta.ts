@@ -12,6 +12,7 @@ import {
   Network,
   Play,
   Container,
+  Gauge,
 } from 'lucide-react'
 import type React from 'react'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -140,6 +141,20 @@ export const FEATURE_PLAYGROUNDS: readonly FeaturePlayground[] = [
     tag: 'Docker · 5 languages',
     accent: 'warning',
     requiresLocalSandbox: true,
+  },
+  {
+    // B+ remediation 4.6 (2026-08-10): "promote the HSM capacity calculator to
+    // a top-level ops card". It was one tile among ~34 in the tool grid, which
+    // is the wrong prominence for the single surface that turns post-quantum
+    // signature sizes into a purchase decision — the thing an operator is
+    // actually asked for by a change advisory board.
+    to: '/playground/hsm-capacity',
+    icon: Gauge,
+    title: 'HSM Capacity Calculator',
+    description:
+      'Turn ML-DSA signature volume into throughput, storage and how many HSMs you actually need.',
+    tag: 'Sizing · ops',
+    accent: 'secondary',
   },
 ]
 

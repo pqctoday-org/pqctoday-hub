@@ -500,6 +500,26 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         </div>
       </div>
 
+      {/* B+ remediation 4.6 (2026-08-10): end in a sentence, not a number.
+          "A generated document the user cannot defend is worse than no
+          document" — the tool produced correct figures and left the reader to
+          work out what they meant. Every value below is read from the same
+          computation the panels above render, so the sentence cannot disagree
+          with the numbers it is summarising. */}
+      <div className="glass-panel border-l-4 border-l-primary p-4">
+        <h4 className="mb-1 text-sm font-semibold text-foreground">What this is telling you</h4>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Waiting {delayYears} year{delayYears === 1 ? '' : 's'} costs you about{' '}
+          <strong className="text-foreground">{fmt(costOfInaction)}</strong> more over{' '}
+          {inputs.horizonYears} years than starting now — not because migration gets more expensive
+          on its own, but because you carry full exposure for longer and pay a rising premium to
+          compress the work later.{' '}
+          {moscaVerdict.alreadyLate
+            ? 'You are already past the latest safe start date for your own data shelf life, so the question is no longer whether to start but what to protect first.'
+            : `The date that actually binds you is ${Math.round(moscaVerdict.latestSafeStartYear)} — that is when starting later stops being a cost decision and becomes an exposure you cannot undo.`}
+        </p>
+      </div>
+
       {/* Cost breakdown for delayed scenario */}
       <div className="glass-panel p-4 border-l-4 border-l-status-warning space-y-3">
         <h4 className="text-sm font-semibold text-foreground">

@@ -24,6 +24,7 @@ import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { jurisdictionStanceForRegion, type JurisdictionStance } from './cnsa20'
 import { isCertifiedTier } from '../../data/algorithmStatusTier'
+import { transitionConsequence } from '@/data/algorithmConsequence'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -573,6 +574,24 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             <span className="text-status-success font-semibold text-sm truncate">
                               {algo.pqc}
                             </span>
+                            {/* B+ remediation 3.2 (2026-08-10): the consequence
+                                line. Without it this table is a list of names —
+                                an executive learns THAT RSA becomes ML-DSA and
+                                never why it costs anything. Derived from
+                                ALGORITHM_REGISTRY at render time
+                                (algorithmConsequence.ts), so it cannot drift
+                                from the sizes the rest of the page quotes;
+                                renders nothing at all when either side of the
+                                transition is absent from the registry, rather
+                                than guessing. */}
+                            {(() => {
+                              const consequence = transitionConsequence(algo.classical, pqcName)
+                              return consequence ? (
+                                <p className="text-[11px] leading-snug text-muted-foreground whitespace-normal">
+                                  {consequence.sentence}
+                                </p>
+                              ) : null
+                            })()}
                             {pqcDetail && (
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 {pqcDetail.securityLevel !== null && (

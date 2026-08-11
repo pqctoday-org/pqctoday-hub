@@ -30,8 +30,10 @@ import type { PersonaId } from '@/data/learningPersonas'
 import {
   PERSONA_NAV_PATHS,
   PERSONA_MARKED_NAV_PATHS,
+  PERSONA_ABSENT_PATHS,
   RAIL_HIDDEN_PATHS,
   NAV_PATH_LABELS,
+  type PersonaAbsence,
 } from '@/data/personaConfig'
 
 /**
@@ -75,8 +77,10 @@ export interface RailSections {
  *
  * `null` (no persona yet) keeps the flat fallback — unchanged.
  *
- * The union `forYou ∪ more ∪ RAIL_ALWAYS_VISIBLE_PATHS ∪ RAIL_HIDDEN_PATHS`
- * always equals every key in NAV_PATH_LABELS — see railNav.test.ts.
+ * The union `forYou ∪ more ∪ RAIL_ALWAYS_VISIBLE_PATHS ∪ RAIL_HIDDEN_PATHS ∪
+ * PERSONA_ABSENT_PATHS[persona]` always equals every key in NAV_PATH_LABELS —
+ * see railNav.test.ts. The last term is what keeps the coverage invariant true
+ * while still letting a route render no row at all for a given role.
  */
 export function getRailSections(persona: PersonaId | null): RailSections {
   // eslint-disable-next-line security/detect-object-injection
@@ -109,11 +113,21 @@ export function getRailSections(persona: PersonaId | null): RailSections {
   const forYou = (researcherSeesAll ?? allowed ?? []).filter(
     (path) => !RAIL_HIDDEN_PATHS.includes(path)
   )
+  // B+ remediation 1.3 (2026-08-10): a path with a PERSONA_ABSENT_PATHS entry
+  // leaves MORE as well as FOR YOU. That is what distinguishes an absence from
+  // a demotion — a demoted path is still a MORE row one click away and needs no
+  // explanation, whereas an absence renders no row at all and is replaced by
+  // the "not offered for your role — why" notice in its group footer. Without
+  // this filter the notice and a live row for the same path would both render,
+  // which reads as a bug rather than a decision.
+  // eslint-disable-next-line security/detect-object-injection
+  const absent = persona ? PERSONA_ABSENT_PATHS[persona] : undefined
   const more = Object.keys(NAV_PATH_LABELS).filter(
     (path) =>
       !RAIL_ALWAYS_VISIBLE_PATHS.includes(path) &&
       !RAIL_HIDDEN_PATHS.includes(path) &&
-      !forYou.includes(path)
+      !forYou.includes(path) &&
+      !(absent && path in absent)
   )
   return { forYou, more }
 }
@@ -186,6 +200,48 @@ export const FOR_YOU_GROUP_LABELS: Record<ForYouGroupId, string> = {
   workflow: 'Workflow',
   practice: 'Practice',
   reference: 'Reference',
+}
+
+/**
+ * One line saying what each rail group means — B+ remediation 1.3
+ * (2026-08-10). "Workflow, Practice and Reference are the hub's vocabulary,
+ * not the reader's, and nothing on screen says what they mean." Rendered as
+ * the group header's `title` and as sub-text when the group is expanded, so
+ * the rail stops being something to decode.
+ */
+export const FOR_YOU_GROUP_BLURBS: Record<ForYouGroupId | 'other', string> = {
+  workflow: 'The migration work itself — assess, plan, prove.',
+  practice: 'Hands-on surfaces where you run the thing rather than read about it.',
+  reference: 'Standing material to look something up in.',
+  other: 'Everything else your role reaches from here.',
+}
+
+/**
+ * The absences to render in a given group's footer, bucketed by the same fixed
+ * path→group map the rows use — so "Patents is not offered for your role"
+ * appears under Reference, where the row would have been, and not floating at
+ * the bottom of the rail. Absences whose path has no group mapping fall into
+ * the trailing catch-all, mirroring `getForYouGroups`.
+ */
+export function getGroupAbsences(
+  persona: PersonaId | null,
+  groupId: ForYouGroupId | 'other'
+): (PersonaAbsence & { path: string; label: string })[] {
+  if (!persona) return []
+  // eslint-disable-next-line security/detect-object-injection
+  const absences = PERSONA_ABSENT_PATHS[persona] ?? {}
+  return Object.entries(absences)
+    .filter(([path]) => {
+      // eslint-disable-next-line security/detect-object-injection
+      const mapped = FOR_YOU_PATH_GROUP[path]
+      return groupId === 'other' ? mapped === undefined : mapped === groupId
+    })
+    .map(([path, absence]) => ({
+      ...absence,
+      path,
+      // eslint-disable-next-line security/detect-object-injection
+      label: NAV_PATH_LABELS[path] ?? path,
+    }))
 }
 
 /** Fixed path → group assignment. Deliberately a `Partial` — any path absent

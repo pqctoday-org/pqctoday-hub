@@ -7,7 +7,9 @@ import { FAST_REPORT_SECTIONS, FULL_LOCKED_SECTIONS } from './reportContract'
 
 describe('AssessTrackChooser', () => {
   it('renders both tracks framed by outcome (report sections, not just counts)', () => {
-    render(<AssessTrackChooser onStart={vi.fn()} recommendedMode={null} />)
+    render(
+      <AssessTrackChooser onStart={vi.fn()} onStartScenario={vi.fn()} recommendedMode={null} />
+    )
 
     expect(screen.getByText('Fast track')).toBeInTheDocument()
     expect(screen.getByText('Full track')).toBeInTheDocument()
@@ -23,17 +25,25 @@ describe('AssessTrackChooser', () => {
 
   it('shows the "Recommended for you" pill on the persona-recommended track only', () => {
     const { rerender } = render(
-      <AssessTrackChooser onStart={vi.fn()} recommendedMode="comprehensive" />
+      <AssessTrackChooser
+        onStart={vi.fn()}
+        onStartScenario={vi.fn()}
+        recommendedMode="comprehensive"
+      />
     )
     expect(screen.getAllByText('Recommended for you')).toHaveLength(1)
 
-    rerender(<AssessTrackChooser onStart={vi.fn()} recommendedMode={null} />)
+    rerender(
+      <AssessTrackChooser onStart={vi.fn()} onStartScenario={vi.fn()} recommendedMode={null} />
+    )
     expect(screen.queryByText('Recommended for you')).not.toBeInTheDocument()
   })
 
   it('starts the chosen track', async () => {
     const onStart = vi.fn()
-    render(<AssessTrackChooser onStart={onStart} recommendedMode={null} />)
+    render(
+      <AssessTrackChooser onStart={onStart} onStartScenario={vi.fn()} recommendedMode={null} />
+    )
 
     await userEvent.click(screen.getByRole('button', { name: /start fast track/i }))
     expect(onStart).toHaveBeenCalledWith('quick')
