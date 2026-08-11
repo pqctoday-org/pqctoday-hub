@@ -205,6 +205,15 @@ jobs:
         # milestone bypassing a rail-hidden route's canonical door.
         run: npm run audit:persona-lens
 
+      - name: Audit changelog persona tags (current release only)
+        # The /changelog "For me" filter is a keyword GUESS for ~1,125 of ~1,150
+        # entries, because only about 25 carry the documented [persona:id] tag.
+        # The 2026-08-10 fix made the control state that honestly; this makes
+        # the ratio improve. Scoped to the release being written - nobody can
+        # honestly retro-tag a 2025 entry, and forcing a guess would manufacture
+        # the false precision the filter fix just removed.
+        run: npm run audit:changelog-personas
+
       - name: Audit role-board coverage (every role reaches every section)
         # The 2026-08-09 expansion to six use cases per role exists so that each
         # role's home page reaches the whole site. Nothing enforced that
