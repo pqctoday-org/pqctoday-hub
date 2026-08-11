@@ -127,7 +127,8 @@
     "extract-library-stubs:dry": "tsx ../pqctoday-priv/scripts/extract-library-stubs.ts --dry-run",
     "enrich:compliance-gap": "python3 ../pqctoday-priv/scripts/enrich-compliance-gap.py",
     "attest:compliance-gap": "tsx ../pqctoday-priv/attestation/attest-compliance-gap.ts",
-    "apply:compliance-gaps": "tsx ../pqctoday-priv/scripts/apply-compliance-gaps.ts"
+    "apply:compliance-gaps": "tsx ../pqctoday-priv/scripts/apply-compliance-gaps.ts",
+    "audit:deps": "tsx scripts/ci/audit-gate.ts"
   },
   "overrides": {
     "adm-zip": "^0.6.0",
