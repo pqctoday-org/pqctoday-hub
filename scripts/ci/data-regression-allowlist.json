@@ -1,4 +1,8 @@
 {
-  "complianceRecordDropOk": false,
+  "complianceRecordDropOk": {
+    "expectedDrop": 1768,
+    "reason": "one-time CC certificate id migration: 1,768 records collapse to 872 certificates (see PR #517)",
+    "until": "2026-09-15"
+  },
   "vendorAlgoEmptyOk": ["VND-027"]
 }

@@ -63,7 +63,20 @@ function lsBase(dir: string): string[] {
   }
 }
 
-type Allowlist = { complianceRecordDropOk?: boolean; vendorAlgoEmptyOk?: string[] }
+/**
+ * `complianceRecordDropOk` accepts a boolean OR a dated, exact-count waiver.
+ *
+ * The boolean is a kill switch: once true, every future drop passes silently,
+ * including an accidental one. The object form is a waiver for ONE known
+ * change — it passes only when the drop count matches `expectedDrop` exactly
+ * and `until` has not passed, so a different drop of a different size still
+ * fails, and the waiver expires instead of becoming permanent.
+ */
+type DropWaiver = { expectedDrop: number; reason: string; until: string }
+type Allowlist = {
+  complianceRecordDropOk?: boolean | DropWaiver
+  vendorAlgoEmptyOk?: string[]
+}
 const allow: Allowlist = existsSync(join(ROOT, ALLOWLIST))
   ? JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'))
   : {}
@@ -84,14 +97,36 @@ function complianceIds(raw: string): Set<string> {
     const headIds = complianceIds(readFileSync(join(ROOT, COMPLIANCE), 'utf8'))
     const baseIds = complianceIds(baseRaw)
     const dropped = [...baseIds].filter((id) => !headIds.has(id))
-    if (dropped.length > 0 && !allow.complianceRecordDropOk) {
+    const waiver = allow.complianceRecordDropOk
+    let dropAllowed = waiver === true
+    if (waiver && typeof waiver === 'object') {
+      const today = new Date().toISOString().slice(0, 10)
+      if (waiver.until < today) {
+        failures.push(
+          `compliance-data.json drop waiver expired on ${waiver.until} — remove it from ${ALLOWLIST} ` +
+            `now that the change it covered ("${waiver.reason}") has landed`
+        )
+      } else if (dropped.length !== waiver.expectedDrop) {
+        failures.push(
+          `compliance-data.json drops ${dropped.length} record(s), but the waiver in ${ALLOWLIST} ` +
+            `expects exactly ${waiver.expectedDrop} ("${waiver.reason}"). A different drop is not covered.`
+        )
+      } else {
+        dropAllowed = true
+        console.log(
+          `✓ compliance-data.json: ${dropped.length} drops match the waiver ("${waiver.reason}", expires ${waiver.until})`
+        )
+      }
+    }
+    if (dropped.length > 0 && !dropAllowed) {
       failures.push(
         `compliance-data.json drops ${dropped.length} record(s) present on ${baseRef}: ` +
           dropped.slice(0, 15).join(', ') +
           (dropped.length > 15 ? ` … +${dropped.length - 15} more` : '') +
-          `\n     → if intentional, set "complianceRecordDropOk": true in ${ALLOWLIST}`
+          `\n     → if intentional, add a dated waiver to ${ALLOWLIST}:` +
+          `\n       "complianceRecordDropOk": { "expectedDrop": ${dropped.length}, "reason": "...", "until": "YYYY-MM-DD" }`
       )
-    } else {
+    } else if (dropped.length === 0) {
       console.log(
         `✓ compliance-data.json: ${headIds.size} records (base ${baseIds.size}); 0 unexplained drops`
       )
@@ -124,12 +159,48 @@ function schemeStats(raw: string): { withScheme: number; suffixed: number } {
   if (baseRaw !== null && existsSync(join(ROOT, COMPLIANCE))) {
     const head = schemeStats(readFileSync(join(ROOT, COMPLIANCE), 'utf8'))
     const base = schemeStats(baseRaw)
-    if (head.withScheme < base.withScheme) {
+    // A waiver covering a record DROP also covers the fall in scheme-carrying
+    // records, because removing duplicate records removes their scheme copies
+    // too. But it must NOT excuse a certificate losing its scheme.
+    //
+    // The honest test is PER SOURCE, not global: de-duplicating a scheme-rich
+    // source (Common Criteria) lowers the global share by arithmetic alone,
+    // while genuine attribution loss shows up as a source whose own share of
+    // scheme-carrying records fell. CC was 1768/1768 before this migration and
+    // is 889/889 after — 100% either way — so nothing lost its attribution.
+    const shareBySource = (raw: string): Map<string, number> => {
+      const arr = JSON.parse(raw) as Array<{ scheme?: string; source?: string }>
+      const total = new Map<string, number>()
+      const withScheme = new Map<string, number>()
+      for (const r of arr) {
+        const src = r.source ?? 'unknown'
+        total.set(src, (total.get(src) ?? 0) + 1)
+        if ((r.scheme ?? '').trim() !== '') withScheme.set(src, (withScheme.get(src) ?? 0) + 1)
+      }
+      const out = new Map<string, number>()
+      for (const [src, n] of total) out.set(src, (withScheme.get(src) ?? 0) / n)
+      return out
+    }
+    const dropWaived =
+      allow.complianceRecordDropOk === true ||
+      (allow.complianceRecordDropOk &&
+        typeof allow.complianceRecordDropOk === 'object' &&
+        allow.complianceRecordDropOk.until >= new Date().toISOString().slice(0, 10))
+    const headShare = shareBySource(readFileSync(join(ROOT, COMPLIANCE), 'utf8'))
+    const baseShare = shareBySource(baseRaw)
+    const regressed = [...baseShare.entries()]
+      .filter(([src, share]) => (headShare.get(src) ?? 0) + 1e-9 < share)
+      .map(([src, share]) => `${src} ${share.toFixed(3)} → ${(headShare.get(src) ?? 0).toFixed(3)}`)
+
+    if (head.withScheme < base.withScheme && !(dropWaived && regressed.length === 0)) {
       failures.push(
         `compliance-data.json: records with a queryable \`scheme\` dropped ` +
           `${base.withScheme} → ${head.withScheme}. The issuing certification ` +
           `scheme is what makes per-country certification coverage answerable; ` +
-          `losing it is silent because the record count is unaffected.`
+          `losing it is silent because the record count is unaffected.` +
+          (regressed.length > 0
+            ? ` Sources whose OWN share of scheme-carrying records fell: ${regressed.join('; ')}.`
+            : '')
       )
     } else if (head.suffixed > 0) {
       failures.push(
