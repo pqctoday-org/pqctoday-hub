@@ -91,4 +91,55 @@ describe('isEuLevelBody', () => {
     expect(isEuLevelBody('NIST')).toBe(false)
     expect(isEuLevelBody('ASD')).toBe(false)
   })
+
+  it('recognizes the compound EU strings the CSV actually writes', () => {
+    // Matching is exact, so a compound body reads as foreign until listed.
+    expect(isEuLevelBody('European Commission/ENISA')).toBe(true)
+    expect(isEuLevelBody('European Banking Authority (EBA); national competent authorities')).toBe(
+      true
+    )
+  })
+
+  it('does not treat the Europol QSFF forum as an enforcement body', () => {
+    // Europol is an EU agency, but the Quantum Safe Financial Forum is a
+    // voluntary call to action — "Your regulator: Europol" would overstate it.
+    expect(isEuLevelBody('Europol/FS-ISAC')).toBe(false)
+  })
+})
+
+describe('national regulators modelled as regulatory_body rows', () => {
+  it('treats ACPR and AMF as domestic for a French finance profile', () => {
+    // Both are French financial regulators carried as `regulatory_body`, not
+    // `compliance_framework`. While derivation skipped that body type they
+    // rendered as "Foreign authority … recognized in France".
+    expect(isDomesticRegulator('France', 'Finance & Insurance', 'ACPR')).toBe(true)
+    expect(isDomesticRegulator('France', 'Finance & Insurance', 'AMF')).toBe(true)
+  })
+
+  it('still rejects a foreign authority for the same profile', () => {
+    expect(isDomesticRegulator('France', 'Finance & Insurance', 'NIST')).toBe(false)
+  })
+
+  it('does not admit standards or certification bodies as regulators', () => {
+    // ISO and the CCRA author and validate; they do not enforce.
+    const r = regulatorsFor('France', 'Finance & Insurance')
+    expect(r.has('ISO/IEC')).toBe(false)
+    expect(
+      r.has(
+        'Common Criteria Recognition Arrangement (CCRA) members including ASD, CSE, ANSSI, BSI, IPA, NCCSA, GCSB, NSRI, MAP/CCN, FMV, NCSC, NSA/NIST'
+      )
+    ).toBe(false)
+  })
+})
+
+describe('country vocabulary', () => {
+  it('resolves the same regulators from an ISO code as from a full name', () => {
+    // The compliance CSV migrated to ISO 3166-1 alpha-2 while the assessment
+    // store kept full names; derived entries were keyed on the raw token, so
+    // they matched nothing for either caller depending on which side supplied it.
+    const byName = regulatorsFor('France', 'Finance & Insurance')
+    const byCode = regulatorsFor('FR', 'Finance & Insurance')
+    expect(byCode.has('ACPR')).toBe(true)
+    expect(Array.from(byCode).sort()).toEqual(Array.from(byName).sort())
+  })
 })
