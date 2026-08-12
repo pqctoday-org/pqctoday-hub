@@ -984,7 +984,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     version: '1.0.1',
     name: 'API Security & JWT Workshop',
     description:
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem.',
+      // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
+      // version was titled "PQ KEMs for JOSE and COSE"; -06 (6 Jul 2026) was
+      // retitled COSE-only and dropped JOSE entirely — 0 occurrences of "JWE",
+      // and §5.1 "Key Derivation for JOSE" is gone. The implementation is
+      // correct against -05, so the citation names the version rather than
+      // pointing at a document that no longer specifies this.
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem-05 (its successor -06 narrowed to COSE only).',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',
