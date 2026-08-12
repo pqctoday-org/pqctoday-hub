@@ -23,11 +23,7 @@ import { evidenceStrength, threatsData, threatsMetadata } from '../../data/threa
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
-import {
-  TrustTierFilter,
-  useTrustTierFilter,
-  matchesTrustTierFilter,
-} from '../common/TrustTierFilter'
+import { useTrustTierFilter, matchesTrustTierFilter } from '../common/TrustTierFilter'
 import { logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import type { PersonaId } from '../../data/learningPersonas'
@@ -884,8 +880,13 @@ export const ThreatsDashboard: React.FC<{
                   })}
                 </div>
 
-                {/* Tier filter writes ?tier= — hidden in the sim embed. */}
-                {!simEmbed && <TrustTierFilter className="mb-0" />}
+                {/* REMOVED 2026-08-11: the trust-tier control is gone from all
+                    five pages that carried one. It was a filter area competing
+                    with the top-bar scope for the reader's attention, and on
+                    /compliance it was one of three. `?tier=` still filters —
+                    useTrustTierFilter reads the URL below — so shared links and
+                    the E2E tier specs are unaffected; what went is the second
+                    on-screen place to set it. */}
 
                 {myThreats.length > 0 && (
                   <Button

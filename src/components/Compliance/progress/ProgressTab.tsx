@@ -37,7 +37,7 @@ export function ProgressTab({ profile, onOpenDetail, currentYear }: ProgressTabP
         <CalendarClock size={24} className="mx-auto text-muted-foreground" />
         <p className="mt-2 text-sm font-semibold text-foreground">Nothing to show yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Set a country and a sector on Obligations and the dates those instruments state will
+          Set a country and a sector on Rules & Standards and the dates those instruments state will
           appear here.
         </p>
       </div>
