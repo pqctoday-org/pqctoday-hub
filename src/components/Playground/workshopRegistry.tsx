@@ -244,7 +244,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Firmware Signing',
     // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
     // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
@@ -405,7 +405,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Entropy Testing',
     // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
     // min-entropy", which attributed monobit and frequency to SP 800-90B —
@@ -701,7 +701,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.1',
+    version: '1.0.2',
     name: '5G SUCI Construction',
     // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
     // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
@@ -899,7 +899,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -918,7 +918,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-enrollment',
     pt_id: 'PT-029',
-    version: '0.1.0',
+    version: '0.1.1',
     name: 'PKI Enrollment (EST + CMP)',
     description:
       'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
@@ -1009,7 +1009,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'API Security & JWT Workshop',
     description:
       // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
@@ -1060,7 +1060,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'mls-group-messaging',
     pt_id: 'PT-030',
-    version: '0.1.0',
+    version: '0.1.1',
     name: 'MLS Group Messaging',
     description:
       'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
