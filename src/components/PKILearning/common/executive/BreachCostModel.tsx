@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect } from 'react'
+import { Link } from 'react-router'
 import {
   TrendingUp,
   AlertTriangle,
@@ -757,27 +758,32 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </a>{' '}
             — expert-survey CRQC-arrival probability curve.
           </li>
+          {/* Both of these point INTO the library rather than out to the
+              publisher. The library row is the stronger destination: it records
+              which figure each constant was read from, the sha256 of the
+              archived PDF, and the fact that reading it corrected three of the
+              five numbers these tools rely on. The publisher's page carries
+              none of that — it is the page that stood in for the report while
+              the errors went unnoticed. (2026-08-11.) */}
           <li>
-            <a
-              href="https://netdiligence.com/cyber-claims-study-2025-report/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={`/library?ref=${encodeURIComponent('NetDiligence Cyber Claims Study 2025')}`}
               className="text-primary hover:underline"
             >
               NetDiligence Cyber Claims Study 2025
-            </a>{' '}
-            — organization-size cost anchors used elsewhere in this workshop.
+            </Link>{' '}
+            — organization-size cost anchors. Figures 9 and 10, five-year average incident cost:
+            $264K for SMEs under $2B revenue, $10.3M for large companies.
           </li>
           <li>
-            <a
-              href="https://www.cyentia.com/iris/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={`/library?ref=${encodeURIComponent('Cyentia IRIS 2025')}`}
               className="text-primary hover:underline"
             >
               Cyentia Institute — Information Risk Insights Study (IRIS) 2025
-            </a>{' '}
-            — annual breach-probability defaults by organization size.
+            </Link>{' '}
+            — annual breach-probability defaults by organization size. Figure 6 for the typical
+            firm, Figure 7 by revenue tier.
           </li>
           {shelfLifeHasCitation && (
             <li>
