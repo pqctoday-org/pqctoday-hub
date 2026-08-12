@@ -68,13 +68,37 @@ export const IBM_BREACH_BASELINES_FRESHNESS: Freshness = {
  *
  * Retrieval on 2026-08-11 used the resilient fetcher
  * (pqctoday-priv/scripts/fetch_resilient_bridge.py); both PDFs verified as
- * real PDFs (%PDF-1.7, 2.6 MB and 9.5 MB) before any figure was read.
+ * real PDFs (%PDF-1.7, 2.6 MB and 9.5 MB) before any figure was read. Both are
+ * archived so every figure cited here is re-checkable without re-fetching:
+ *
+ *   pqctoday-priv/local-evidence-cache/library/Cyentia-IRIS-2025.pdf
+ *     sha256 00706bbbfefcc7b6cc321dcbcc2347b3082af92572cbd55abd2239a901cf8f1c
+ *   pqctoday-priv/local-evidence-cache/library/NetDiligence-Cyber-Claims-Study-2025.pdf
+ *     sha256 4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb
  */
 export const FINANCIAL_BASELINE_EVIDENCE = {
   ibmBreachCosts: 'landing-page-only',
   cyentiaBreachProbability: 'primary-verified',
   netDiligenceOrgSize: 'primary-verified',
 } as const
+
+/**
+ * User-facing caveat for the IBM-derived figures — the one financial source
+ * still standing on a landing page rather than the report.
+ *
+ * This exists because of what happened when the OTHER two landing-page-only
+ * sources were finally opened: three of their five constants were wrong. That
+ * is the base rate to assume here. An unopened citation is not weak evidence
+ * of a correct number, it is no evidence either way, and it reads on screen
+ * exactly like a checked one. Surfaced wherever the IBM baseline is presented
+ * as a source, including in exports, since those are what reach a CFO.
+ */
+export const IBM_BASELINE_UNVERIFIED_NOTE =
+  'The per-sector IBM figures are cited but unverified: the report is ' +
+  'registration-walled, so only its landing page has been read. When the two ' +
+  'other financial sources behind this suite were opened in full, three of ' +
+  'their five figures turned out to be wrong — treat these as an assumption, ' +
+  'not a sourced baseline.'
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   'Finance & Banking': 5_560_000, // IBM Financial
   Healthcare: 7_420_000, // IBM Healthcare

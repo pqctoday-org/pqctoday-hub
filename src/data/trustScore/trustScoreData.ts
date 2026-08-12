@@ -268,6 +268,7 @@ function computeAllScores(): Map<string, TrustScore> {
       documentType: item.documentType,
       algorithmFamily: item.algorithmFamily,
       lastUpdateDate: item.lastUpdateDate,
+      lastVerifiedDate: item.lastVerified,
     })
   }
 

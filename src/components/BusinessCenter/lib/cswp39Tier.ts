@@ -242,7 +242,12 @@ export function implementTier(metrics: BusinessMetrics): StepTierResult {
   if (decommissionDocumented)
     reasons.push('Decommission plan documented (deployment-playbook §4.6)')
   if (evidenceDocumented)
-    reasons.push('Evidence (CMVP / ACVP / ESV / CVE-scan) documented (audit-checklist §5.5)')
+    // No §-ref: CSWP.39 has no §5.5 (§5 runs 5.1-5.4), and it never mentions
+    // CMVP, ACVP or ESV at all — it says "cryptographic validation program"
+    // once, in §5.3. Rather than swap in a section that only approximately
+    // fits, the false attribution is dropped: this line describes what the
+    // USER has on file, not something the publication says.
+    reasons.push('Evidence (CMVP / ACVP / ESV / CVE-scan) documented (audit-checklist)')
 
   let tier: MaturityTier = 1
   if (migrationStarted || roadmap) tier = 2

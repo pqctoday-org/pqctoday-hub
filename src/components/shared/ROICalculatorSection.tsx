@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { CollapsibleSection } from '../ui/CollapsibleSection'
 import { DefaultsUsedChip } from '../Report/DefaultsUsedChip'
-import { FRAMEWORK_PENALTY_BASELINES } from '@/data/roiBaselines'
+import { FRAMEWORK_PENALTY_BASELINES, IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { Button } from '@/components/ui/button'
 import {
@@ -677,7 +677,8 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
         <span>
           Breach cost baselines from IBM Cost of a Data Breach Report 2025. Compliance penalties
           from published regulatory enforcement data. Figures are illustrative estimates for
-          financial planning purposes only.
+          financial planning purposes only.{' '}
+          <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
         </span>
       </div>
     </CollapsibleSection>

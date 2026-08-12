@@ -132,3 +132,40 @@ export const CSWP39_ABSENT_TERMS: readonly string[] = ['CBOM', 'SBOM', 'bill of 
 export function isRealCswp39Ref(ref: string): boolean {
   return ref in CSWP39_REAL_HEADINGS
 }
+
+/**
+ * Passages quoted verbatim in the tools, transcribed from the PDF on
+ * 2026-08-11 (NIST-CSWP-39.pdf, 47pp, in the private evidence cache).
+ *
+ * The 2026-08-10 audit called these quote constants "the strongest grounding
+ * pattern in the codebase" and scored four tools A-/A largely on their
+ * presence. Nobody had compared them to the document. Checking them found two
+ * that SILENTLY DROPPED WORDS from inside a sentence rendered on screen and in
+ * exports as `> "..."`:
+ *
+ *   §3.1.1 omitted "(i.e., to be supported by all implementations)"
+ *   §4.1   omitted "(e.g., email and web apps)"
+ *
+ * Neither elision changes the meaning, and that is exactly why it survived: a
+ * quotation that reads plausibly is never re-checked. Both are restored.
+ *
+ * A third apparent mismatch, §6.4, was a FALSE ALARM in the checking method,
+ * not a defect — the PDF's text layer injects a running page header
+ * ("...data, applications, and NIST CSWP 39 ... 29 configurations.") mid
+ * sentence, which breaks a naive substring comparison. The shipped quote was
+ * correct.
+ *
+ * Anything quoted as CSWP.39 must appear here character for character.
+ */
+export const CSWP39_VERBATIM_QUOTES: Readonly<Record<string, string>> = {
+  '§3.1.1':
+    'To ensure that interoperation is possible for all implementations, an SDO will often choose at least one set of algorithms with properly selected security strengths based on state-of-the-art cryptanalysis results as mandatory-to-implement (i.e., to be supported by all implementations). Of course, local policy may select an algorithm other than the mandatory-to-implement one.',
+  '§3.2.4':
+    'One use case for hybrid public-key algorithms is to continue using the well-tested, traditional public-key algorithms while study of the new PQC algorithms continues and implementations mature. Choosing a hybrid algorithm may lead to a second transition when the traditional algorithm is disallowed.',
+  '§4.1-a':
+    'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms (e.g., email and web apps) from implementation of the cryptographic algorithms themselves.',
+  '§4.1-b':
+    'To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.',
+  '§6.4':
+    'The main security model used in the cloud is the shared responsibility model, which clearly divides security duties between the cloud provider and the customer. The cloud provider secures the underlying infrastructure, including physical facilities, hardware, networking, and virtualization. The customer manages the security of their data, applications, and configurations.',
+}

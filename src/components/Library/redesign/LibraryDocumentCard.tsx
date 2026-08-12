@@ -149,9 +149,20 @@ export function LibraryDocumentCard({
       <div className="mt-2 flex items-center gap-1.5 text-[12px] text-muted-foreground">
         <Building2 size={13} aria-hidden="true" className="shrink-0" />
         <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
-        {item.lastUpdateDate && (
-          <span className="ml-auto shrink-0 font-mono text-[11px]">
-            {formatLibDate(item.lastUpdateDate)}
+        {/* The document's own publication date is what a reader is looking for;
+            lastUpdateDate records catalog activity and is blank on many rows. */}
+        {(item.initialPublicationDate || item.lastUpdateDate) && (
+          <span
+            className="ml-auto shrink-0 font-mono text-[11px]"
+            title={
+              item.initialPublicationDate
+                ? `Published ${formatLibDate(item.initialPublicationDate)}`
+                : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
+            }
+          >
+            {item.initialPublicationDate
+              ? formatLibDate(item.initialPublicationDate)
+              : formatLibDate(item.lastUpdateDate)}
           </span>
         )}
       </div>

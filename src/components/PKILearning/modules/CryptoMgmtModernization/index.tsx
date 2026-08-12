@@ -96,7 +96,10 @@ const PARTS: WorkshopPart[] = [
     description:
       'CSWP.39 §4.6 decision wizard: answer 5 crypto-agility questions about an asset and receive a Gateway (Mitigate) or Algorithm Replacement (Migrate) recommendation.',
     icon: GitFork,
-    cswp39Step: 'Implement · §5.5 + §4.6 — gateway vs. migration decision',
+    // Was "§5.5 + §4.6". CSWP.39 has no §5.5. The description directly above
+    // already names the real anchor, §4.6 (Using a Crypto Gateway for Legacy
+    // Systems), which is the section this step actually implements.
+    cswp39Step: 'Implement · §4.6 — gateway vs. migration decision',
   },
   {
     id: 'clm-vendor-evaluator',

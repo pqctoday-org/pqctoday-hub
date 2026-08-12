@@ -36,6 +36,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '../../../common/executive'
+import { Link } from 'react-router'
 
 // This tool's own simplified asset-class taxonomy for grouping the catalog's
 // SoftwareItem categories into a CBOM view — NOT a taxonomy CSWP.39 itself
@@ -187,6 +188,20 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
 
 // Lookup map for LAYERS by id
 const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
+
+/**
+ * Above this many products in one layer, an UNSELECTED view shows a count and
+ * a Migrate link instead of a row per product.
+ *
+ * The gate is volume, not merely "has the user selected something". Cost is
+ * driven by how many rows render: a user who has selected 40 products should
+ * still see all 40, and the fixture-sized layers in this component's tests
+ * (1-2 products) should still render rows so they keep exercising ProductRow.
+ * Only the unfiltered whole-catalog case is suppressed. 25 is comfortably
+ * above any realistic per-layer selection and far below the 50-200 per layer
+ * the full catalog produces.
+ */
+const UNSELECTED_LAYER_ROW_CAP = 25
 
 interface SavedSupplyChainInputs {
   pipelineSources?: string
@@ -469,6 +484,20 @@ export function buildDependencyRelations(
     if (!seenProviders.has(p.productId)) seenProviders.set(p.productId, p)
   }
 
+  // Each consumer's search text is built ONCE, not once per provider. The
+  // inner filter previously rebuilt and lower-cased
+  // `pqcCapabilityDescription + productBrief` for every provider it tested,
+  // so the unfiltered catalog view did roughly providers × consumers string
+  // builds — tens of thousands of them — before rendering anything. Same
+  // matching, same results; just hoisted. (Re-audit batch 4a, 2026-08-11.)
+  const haystacks = new Map<string, string>()
+  for (const c of consumers) {
+    haystacks.set(
+      c.productId,
+      `${c.pqcCapabilityDescription || ''} ${c.productBrief || ''}`.toLowerCase()
+    )
+  }
+
   const relations: DependencyRelation[] = []
   for (const provider of seenProviders.values()) {
     const name = (provider.softwareName || '').trim()
@@ -476,8 +505,7 @@ export function buildDependencyRelations(
     const needle = name.toLowerCase()
     const dependents = consumers.filter((c) => {
       if (c.productId === provider.productId) return false
-      const haystack = `${c.pqcCapabilityDescription || ''} ${c.productBrief || ''}`.toLowerCase()
-      return haystack.includes(needle)
+      return (haystacks.get(c.productId) ?? '').includes(needle)
     })
     if (dependents.length > 0) relations.push({ provider, dependents })
   }
@@ -1318,22 +1346,43 @@ export const SupplyChainRiskMatrix: React.FC<{
               </div>
 
               {/* Per-product detail — click a product to expand its full
-                  detail (vendor, certs, roadmap, proof) in place. */}
+                  detail (vendor, certs, roadmap, proof) in place.
+
+                  ONLY when the user has actually selected something. With no
+                  selection `stat.products` is the entire catalog, and rendering
+                  it cost 437,690 of this page's 448,555 characters, 14,637 of
+                  its 15,343 DOM nodes and 1,196 SVG icons — a 19-second render
+                  against 0.8s for the ROI Calculator. The risk matrix this tool
+                  is named for costs 1,471 characters; the catalog dump cost 300
+                  times that, to show 912 undifferentiated products nobody asked
+                  for. The layer summaries above still render, so the matrix,
+                  the dependencies and the CBOM are all unaffected.
+                  (Re-audit batch 4a, 2026-08-11.) */}
               <div className="mt-3 pt-3 border-t border-border/50">
-                {stat.products.map((item) => (
-                  <ProductRow
-                    key={item.productId}
-                    product={item}
-                    compact
-                    extraBadges={
-                      isHybridProduct(item) ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                          <GitMerge size={9} /> Hybrid
-                        </span>
-                      ) : undefined
-                    }
-                  />
-                ))}
+                {selectedItems.length === 0 && stat.products.length > UNSELECTED_LAYER_ROW_CAP ? (
+                  <p className="text-xs text-muted-foreground">
+                    {stat.products.length} catalog products sit in this layer.{' '}
+                    <Link to="/migrate" className="text-primary hover:underline">
+                      Pick your infrastructure on Migrate
+                    </Link>{' '}
+                    to list the ones that are yours.
+                  </p>
+                ) : (
+                  stat.products.map((item) => (
+                    <ProductRow
+                      key={item.productId}
+                      product={item}
+                      compact
+                      extraBadges={
+                        isHybridProduct(item) ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                            <GitMerge size={9} /> Hybrid
+                          </span>
+                        ) : undefined
+                      }
+                    />
+                  ))
+                )}
               </div>
             </div>
           )

@@ -10,6 +10,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { findUnresolvedPlaceholders } from '@/utils/unresolvedPlaceholders'
+import { CitedText } from '@/components/common/CitedText'
 
 export interface ArtifactField {
   id: string
@@ -305,7 +306,15 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                                   }
                                   className="rounded border-input"
                                 />
-                                {opt.label}
+                                {/* Checklist labels are where most of this
+                                    suite's standards citations live — folded
+                                    into an interpolated string, so there was
+                                    nowhere to hang a link. CitedText links the
+                                    ones that resolve and leaves the rest as
+                                    plain text. (Audit 2026-08-10, W3-3.) */}
+                                <span>
+                                  <CitedText>{opt.label}</CitedText>
+                                </span>
                               </label>
                             )
                           })}

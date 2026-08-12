@@ -507,6 +507,13 @@ public/data/rag-index-freshness.json
 !scripts/audit-csv-archival.ts
 !scripts/audit-csv-archival.test.ts
 
+# Publication-date gate: library.initial_publication_date, timeline.SourceDate
+# and vendor-roadmaps.publish_date all mean "the source document's own
+# publication date" — add_row.py used to fill them with the ingest timestamp
+# instead, undetected, until the 2026-08-11 remediation. Blocks a future date
+# and an unexplained same-day cluster (the shape an ingest batch makes).
+!scripts/audit-publication-dates.ts
+
 # Merge-all coverage gate: the sibling failure mode to the above — a loader
 # that MERGES every dated file (not "newest wins") silently loses a document
 # the moment it's archived out of a directory the loader's glob doesn't cover.

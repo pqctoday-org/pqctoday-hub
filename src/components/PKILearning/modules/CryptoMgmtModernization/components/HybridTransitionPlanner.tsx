@@ -271,7 +271,7 @@ export function recommendTransitionPathway(inputs: TransitionInputs): Transition
 // CSWP-39 §3.2.4 verbatim quote (sanitised to ASCII)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_324_QUOTE =
+export const CSWP39_324_QUOTE =
   'One use case for hybrid public-key algorithms is to continue using the well-tested, traditional public-key algorithms while study of the new PQC algorithms continues and implementations mature. Choosing a hybrid algorithm may lead to a second transition when the traditional algorithm is disallowed.'
 
 // ─────────────────────────────────────────────────────────────────────────────

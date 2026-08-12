@@ -120,6 +120,19 @@ export function newestFirstMs(
   return parseDateMs(item.lastUpdateDate) ?? parseDateMs(item.initialPublicationDate) ?? 0
 }
 
+/** The document's OWN publication date — never the catalog's activity date.
+ *
+ * Deliberately has no lastUpdateDate fallback: that field records when the
+ * catalog record was last touched, which for a reader browsing by publication
+ * date is noise. A row with no publication date sorts last (`0`) rather than
+ * borrowing an unrelated date and landing somewhere plausible-looking.
+ *
+ * Values may be partial ISO ("2019-04", "2000") where the publisher only states
+ * a month or an edition year; Date.parse handles both, so ordering is unaffected. */
+export function publishedMs(item: Pick<LibraryItem, 'initialPublicationDate'>): number {
+  return parseDateMs(item.initialPublicationDate) ?? 0
+}
+
 export interface LibraryPipelineInput {
   activePurpose: LibraryPurpose | 'all' // coarse intent door, or 'all'
   activeCategory: string // 'All' or a LIBRARY_CATEGORIES value
@@ -136,6 +149,9 @@ export interface LibraryPipelineInput {
   certRelevantIdSet: Set<string>
   lifecycleBucket: string // 'All' or a DocumentStatusBucket
   sortBy: SortOption
+  /** True when the reader picked the sort themselves (?sort= is present) rather
+   *  than falling back to the persona default. Suppresses the persona re-sort. */
+  sortExplicit: boolean
   selectedPersona: PersonaId | null
   prefsOff: boolean
   /** Set of referenceIds (lowercased) from the semantic-search union, or null. */
@@ -172,6 +188,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
     certRelevantIdSet,
     lifecycleBucket,
     sortBy,
+    sortExplicit,
     selectedPersona,
     prefsOff,
     semanticIdSet,
@@ -332,6 +349,9 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       case 'newest':
         items.sort((a, b) => newestFirstMs(b) - newestFirstMs(a))
         break
+      case 'published':
+        items.sort((a, b) => publishedMs(b) - publishedMs(a))
+        break
       case 'name':
         items.sort((a, b) => a.documentTitle.localeCompare(b.documentTitle))
         break
@@ -355,7 +375,12 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
         })
         break
     }
-    if (preferredCategories.length > 0) {
+    // Persona-preferred categories float to the top only while the reader is on
+    // the persona's DEFAULT ordering. Once they pick a sort themselves, this
+    // second pass would re-order the whole list underneath their choice — the
+    // list still ordered by date within each group, but visibly interleaved, so
+    // the sort control reads as broken. An explicit choice wins outright.
+    if (preferredCategories.length > 0 && !sortExplicit) {
       items.sort((a, b) => {
         const aMatch = a.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
         const bMatch = b.categories?.some((c) => preferredCategories.includes(c)) ? 0 : 1
@@ -363,7 +388,7 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       })
     }
     return items
-  }, [filteredItems, sortBy, preferredCategories])
+  }, [filteredItems, sortBy, sortExplicit, preferredCategories])
 
   return {
     activityItems,

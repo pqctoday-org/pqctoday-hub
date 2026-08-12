@@ -70,8 +70,16 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
     annualBreachProbPct: number
     migrationDurationYears: number
   }>('cost-of-inaction')
+  // `||`, not `??`. When no industry is set, useExecutiveModuleData returns an
+  // EMPTY STRING, which is not nullish — so the 'Finance & Banking' fallback was
+  // unreachable for exactly the users who needed it. The export then titled
+  // itself "PQC Cost of Inaction — " with a dangling em-dash, and, worse, the
+  // model still ran: the profile lookup falls back to DELAY_COST_PROFILES[0],
+  // which IS Finance & Banking, so the document quietly used payment-card
+  // sensitivity and a $4.5M migration cost without naming the industry those
+  // assumptions came from. Found by reading an actual export, 2026-08-12.
   const [selectedIndustry, setSelectedIndustry] = useState<string>(
-    savedInputs?.selectedIndustry ?? data.industry ?? 'Finance & Banking'
+    savedInputs?.selectedIndustry || data.industry || 'Finance & Banking'
   )
   const [delayYears, setDelayYears] = useState<number>(savedInputs?.delayYears ?? 2)
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState<number>(
