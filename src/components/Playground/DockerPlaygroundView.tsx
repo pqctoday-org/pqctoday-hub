@@ -80,12 +80,18 @@ export const DockerPlaygroundView = () => {
             )
           }
           title={
-            availability === 'checking' ? 'Checking sandbox…' : 'pqctoday-sandbox is not reachable'
+            availability === 'checking'
+              ? 'Checking sandbox…'
+              : 'Sandbox scenarios run in a container'
           }
           description={
             availability === 'checking'
-              ? 'Probing the local Docker sandbox on VITE_SANDBOX_BASE_URL…'
-              : 'Start the Docker stack: cd ~/antigravity/pqctoday-sandbox && docker compose up -d. Then reload this page — or request access to a hosted container below.'
+              ? 'Checking whether a sandbox container is reachable…'
+              : // Visitor-facing copy: the sandbox is unreachable by default for
+                // everyone who has not been granted a container, so this string is
+                // what most people read. It previously printed a maintainer-only
+                // shell command against a local checkout path no visitor has.
+                'These scenarios need a Docker container rather than the browser, so they are not available here. Request access below to run them on a hosted container.'
           }
         />
         {availability === 'unavailable' && (

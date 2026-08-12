@@ -328,7 +328,23 @@ export function SshSimulationPanel() {
               <strong className="text-foreground">Modeled in TypeScript.</strong> The real OpenSSH
               binary currently runs only{' '}
               <span className="font-mono">mlkem768x25519-sha256 + ssh-mldsa-65</span> — select those
-              two to drive the genuine handshake. Other parameter sets are simulated for comparison.
+              two to drive the genuine handshake. Other parameter sets are simulated for comparison.{' '}
+              {/* The host-key name is pre-standard: it comes from an Internet-Draft
+                  with a competing proposal, and has no IANA assignment. The VPN
+                  simulator already discloses the equivalent status for its own
+                  ML-DSA draft; this tool presented the name as settled. */}
+              The <span className="font-mono">ssh-mldsa-65</span> host-key name comes from{' '}
+              <a
+                href="https://datatracker.ietf.org/doc/draft-rpe-ssh-mldsa/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                draft-rpe-ssh-mldsa
+              </a>
+              , an Internet-Draft — not a ratified standard. A competing proposal
+              (draft-sfluhrer-ssh-mldsa) covers the same ground, and the name has no IANA assignment
+              yet, so it may still change.
             </>
           )}
         </p>

@@ -954,7 +954,10 @@ block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
 
 Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2). (Derived)`
           } else {
-            // Profile C: ANSI X9.63-KDF with SHA3-256 per 3GPP TR 33.938 — spec-compliant.
+            // Profile C: ANSI X9.63-KDF with SHA3-256, modelled on 3GPP TR 33.938's
+            // direction. NOT a ratified profile — TS 33.501 standardises Profiles A
+            // and B only, and TR 33.938 is a study/inventory document. Keep the
+            // visitor-facing strings below honest about that distinction.
             // Hybrid: Z = SHA256(Z_ecdh || Z_kem) from compute_shared_secret step.
             // Pure PQC: Z = Z_kem directly from sharedSecretHandle.
             const zBytesC =
@@ -1014,7 +1017,9 @@ Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PK
                 ? 'Z = SHA256(Z_ecdh ‖ Z_kem) [hybrid, from compute_shared_secret]'
                 : `Z_kem from handle ${hsmHandlesRef.current.sharedSecretHandle} [pure PQC]`
             hsmResult = `Z source: ${zSource}
-KDF: ANSI X9.63-KDF (SHA3-256) — spec-compliant per 3GPP TR 33.938
+KDF: ANSI X9.63-KDF (SHA3-256) — modelled on the direction of 3GPP TR 33.938.
+     Profile C is NOT a ratified 3GPP profile: TS 33.501 defines Profiles A and B
+     only, and TR 33.938 is a study/inventory document, not a normative profile.
      (C_Digest(CKM_SHA3_256) inside HSM; no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2)
 SharedInfo: ${sharedInfoC.length > 0 ? `raw X25519 ephemeral key (${sharedInfoC.length} bytes, C_GetAttributeValue CKA_EC_POINT)` : 'empty (Pure PQC mode)'}
 block1 = SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1CHex}
@@ -1022,7 +1027,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
 → K_enc handle: ${kEncHandleC} | K_enc (${kEnc.length} bytes, AES-256): ${block1CHex}
 → K_mac handle: ${kMacHandleC} | K_mac (${kMac.length} bytes, HMAC-SHA3-256): ${block2CHex}
 
-(Derived — spec-compliant)`
+(Derived — forward-looking construction, not a ratified 3GPP profile)`
           }
 
           hsmHandlesRef.current.kEncBytes = kEnc

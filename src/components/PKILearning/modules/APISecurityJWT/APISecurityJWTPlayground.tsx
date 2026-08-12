@@ -32,7 +32,7 @@ const SECTIONS = [
     id: 'jwe-encryption',
     title: 'Step 4 — JWE Encryption',
     description:
-      'ML-KEM-768 JWE encryption per draft-ietf-jose-pqc-kem; KMAC256-based CEK derivation (FIPS 203)',
+      'ML-KEM-768 JWE encryption per draft-ietf-jose-pqc-kem-05; KMAC256-based CEK derivation (FIPS 203)',
   },
   {
     id: 'token-size',
