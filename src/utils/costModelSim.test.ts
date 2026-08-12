@@ -14,6 +14,7 @@ import {
   percentile,
   compareCostModels,
   programCostFor,
+  NOMINAL_PROGRAM_YEARS,
 } from './costModelSim'
 
 const scenario: CostModelInputs = {
@@ -221,5 +222,41 @@ describe('spread ratio is a property of the methods, not the horizon slider', ()
     expect(b.analogical).toBeGreaterThan(a.analogical)
     expect(b.scenario.expected).toBeGreaterThan(a.scenario.expected)
     expect(b.monteCarlo.p50).toBeGreaterThan(a.monteCarlo.p50)
+  })
+})
+
+/**
+ * The Cost Model Explorer duplicates monteCarloEstimate's sampling loop, so it
+ * can reveal draws in generation order for its animation — the model returns
+ * them sorted. A duplicate is defensible; a duplicate that drifts is not.
+ *
+ * It drifted. When the standing programme cost became horizon-scaled on
+ * 2026-08-11 (W2-2), monteCarloEstimate moved to programCostFor(horizon) and
+ * the component's copy kept the flat SIM_CONSTANTS.fixedProgramCost. The two
+ * agreed at the nominal 3-year horizon by construction and nowhere else: the
+ * histogram and percentiles disagreed with the Monte-Carlo bar directly above
+ * them by $4.67M at a 10-year horizon and $11.33M at 20.
+ *
+ * This pins the shared term. If the model's programme cost changes again, this
+ * fails and points at the component that has to follow.
+ */
+describe('Monte-Carlo programme cost is shared, not copied', () => {
+  it('scales with the horizon rather than sitting at the nominal figure', () => {
+    // The flat constant is only correct at NOMINAL_PROGRAM_YEARS.
+    expect(programCostFor(NOMINAL_PROGRAM_YEARS)).toBe(SIM_CONSTANTS.fixedProgramCost)
+    expect(programCostFor(10)).toBeGreaterThan(SIM_CONSTANTS.fixedProgramCost)
+    expect(programCostFor(1)).toBeLessThan(SIM_CONSTANTS.fixedProgramCost)
+  })
+
+  it('moves every Monte-Carlo sample by exactly the programme-cost delta', () => {
+    const base = { systems: 100, itBudgetAnnual: 5_000_000, complexity: 1 }
+    const short = monteCarloEstimate({ ...base, horizonYears: 3 }, { seed: 42, draws: 200 })
+    const long = monteCarloEstimate({ ...base, horizonYears: 10 }, { seed: 42, draws: 200 })
+    const delta = programCostFor(10) - programCostFor(3)
+    // Same seed, same per-system draws: the whole distribution shifts by the
+    // programme-cost difference and nothing else.
+    for (let i = 0; i < short.samples.length; i++) {
+      expect(long.samples[i] - short.samples[i]).toBeCloseTo(delta, 6)
+    }
   })
 })
