@@ -29,6 +29,34 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.49.0] - 2026-08-12
+
+The library sorts by when a document was actually published rather than when we last touched its record, and the business tools' dollar figures, quotations and vendor guidance have been checked against the documents they cite — three of five financial constants turned out to be wrong.
+
+### Added
+
+- **The library shows each document's own publication date, and sorts by it** [view:/library] [persona:researcher] [persona:architect] [persona:ops] [persona:developer]: "Newest first" ordered by catalog activity — the day our record last changed — so a decade-old RFC whose entry we tidied last week outranked a standard published this month. Publication dates now come from the document itself, 966 of 1,029 documents carry one, and every role opens on that ordering. "Recently updated" is still there for anyone who wants the old behaviour. Dates print at the precision the publisher actually states: a year for an ISO edition, a month for an RFC, never a manufactured day.
+- **Records say when they were last checked against the source** [view:/library] [persona:researcher] [persona:ops]: 799 documents now carry a "verified" date, shown on the card and in the detail panel and counted in the trust score. It is deliberately absent on records nobody has re-checked, so it never implies a check that did not happen.
+- **Standards citations in the business tools reach the document** [persona:executive] [persona:architect] [persona:developer]: the tools cite their sources inline — "[NIST SP 800-57 Part 3]", "[FIPS 203]" — as plain text you had to go and find. Those citations are now links into the library entry for the document, in the app and in what the tools export.
+
+### Changed
+
+- **The financial baselines were read from the reports, not their landing pages** [persona:executive]: the last release could only mark them "cited but unverified", because the evidence on hand was a landing page for each report. Both non-IBM sources have now been retrieved and read in full, and three of five constants were wrong — the small-firm annual breach probability was 2%, which is where that series _starts_, in 2008; it is 8.7% today. Every figure now cites the figure number it came from. The IBM per-sector figures stay behind a registration wall, and every place they appear now says plainly that they are unverified.
+
+### Fixed
+
+- **A blank reached an exported board deck with no warning** [persona:executive]: the tools warn before you export a document that still has an unfilled blank in it, and the warning did not recognise a lowercase one — the Board Pitch's governance section ships "...systems retiring before [date]", and that string reached slide 9 of a real .pptx. The same warning also cried wolf on the tool with the most citations, reporting "7 unfilled placeholders" and then listing NIST SP 800-57, FIPS 203/204/205 and CISA guidance among them. Citations and headings are no longer counted as blanks; blanks are.
+- **The Monte-Carlo histogram disagreed with the summary above it** [persona:executive]: the Cost Model Explorer's chart kept its own copy of the programme-cost term, which stopped being updated when that cost became horizon-scaled. The histogram and the percentiles under it differed from the summary bar by $4.7M at a ten-year horizon and $11.3M at twenty.
+- **The Cost of Inaction export named no industry, then used one** [persona:executive]: the exported analysis omitted which industry it had been run for while its numbers depended on that choice, so two exports that disagreed looked like the same analysis.
+- **Vendor guidance contradicted this site's own catalogue** [view:/migrate] [persona:architect] [persona:ops]: a tool's hardware-security-module advice named vendors and support states that the product catalogue on this site does not agree with. It now follows the catalogue.
+- **A tool said the French authority accepts a NIST signature algorithm on its own** [persona:architect] [persona:ops]: ANSSI's position is that post-quantum algorithms are acceptable in hybrid with a classical one for the transition period; the tool presented ML-DSA as accepted outright.
+- **Two quotations attributed to the NIST crypto-agility white paper were not verbatim** [persona:architect] [persona:researcher]: both silently dropped words from inside a sentence that the tools render on screen and in exports as a direct quote. Restored from the document, and two live references to a section of it that does not exist were removed.
+- **The Supply Chain Risk Matrix took ~19 seconds to appear** [view:/learn] [persona:architect] [persona:ops]: with nothing selected it listed all 912 catalogue products with an icon each — 15,343 elements. Large layers now show a count and a link to Migrate until you pick your own infrastructure.
+
+### Data
+
+- **Publication dates derived from the cached evidence** for the library, timeline and vendor roadmaps, with the remaining rows accounted for rather than left blank and unexplained. Cyentia and NetDiligence are registered as the trusted sources they were already being used as, 18 superseded CSV revisions that nothing reads are archived, and the search index is rebuilt.
+
 ## [4.48.1] - 2026-08-12
 
 Seven playground tools now show a review that matches the version you are actually using, and the library stops implying a draft still says something it no longer says.
