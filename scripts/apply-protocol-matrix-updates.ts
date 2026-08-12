@@ -114,6 +114,47 @@ export function isCuratedNote(note: string | undefined): boolean {
 }
 
 /**
+ * The exact character span of one `<dim>: { … }` block inside one row, bounded
+ * by brace matching. `undefined` when the row or the dimension is absent.
+ *
+ * SIBLING-NOTE GUARD (2026-08-12). The write path always brace-matched, but the
+ * curated-note READ path took a flat 4,000-character window from the start of
+ * the dimension block and matched the first `stageNote:` inside it. For a cell
+ * that has no note of its own, that window runs straight past its closing brace
+ * into the next dimensions — so the cell is blocked on a note that belongs to a
+ * sibling. Measured on the 2026-08-11 run: fido-2::hybridKem and fido-2::pureSig
+ * were both blocked quoting fido-2::hybridSig's note about JOSE composite
+ * signatures, which has nothing to do with either. Two of ten blocks were wrong,
+ * and hybridKem was a legitimate RFC 10024 upgrade that had to be applied by
+ * hand instead.
+ *
+ * The failure direction matters: this only ever over-blocks, never overwrites,
+ * because the write path was already correct. But an over-block is not free —
+ * it is indistinguishable in the output from a real SME decision, so the cells
+ * it hides get treated as reviewed when nobody reviewed them.
+ */
+export function dimensionSpan(
+  source: string,
+  rowId: string,
+  dim: string
+): { start: number; end: number } | undefined {
+  const rIdx = source.search(new RegExp(`id:\\s*'${rowId}'`))
+  if (rIdx < 0) return undefined
+  const dRel = source.slice(rIdx).search(new RegExp(`${dim}:\\s*\\{`))
+  if (dRel < 0) return undefined
+  const start = rIdx + dRel
+  let depth = 0
+  for (let i = start; i < source.length; i++) {
+    if (source[i] === '{') depth++
+    else if (source[i] === '}') {
+      depth--
+      if (depth === 0) return { start, end: i }
+    }
+  }
+  return undefined
+}
+
+/**
  * Locate the dimension block of a row and patch its `stage:` and `stageNote:`
  * lines. The matrix file follows a strict shape so a small regex over the
  * file body is sufficient; if shape changes, the audit script will flag it.
@@ -172,13 +213,9 @@ export function patchMatrix(
     // CURATED-NOTE GUARD — see isCuratedNote above. Checked AFTER the
     // downgrade guard so a cell that is both reports as the downgrade it is.
     const existingNoteMatch = (() => {
-      const rowAnchorRe = new RegExp(`id:\\s*'${rowId}'`)
-      const rIdx = next.search(rowAnchorRe)
-      if (rIdx < 0) return undefined
-      const dRel = next.slice(rIdx).search(new RegExp(`${dim}:\\s*\\{`))
-      if (dRel < 0) return undefined
-      const slice = next.slice(rIdx + dRel, rIdx + dRel + 4000)
-      const nm = slice.match(/stageNote:\s*'([^']*)'/)
+      const span = dimensionSpan(next, rowId, dim)
+      if (!span) return undefined
+      const nm = next.slice(span.start, span.end + 1).match(/stageNote:\s*'([^']*)'/)
       return nm ? nm[1] : undefined
     })()
     if (isCuratedNote(existingNoteMatch)) {
@@ -192,28 +229,12 @@ export function patchMatrix(
       ? `${newStage.replace(/-/g, ' ')} (datatracker ${ds[0].last_updated})`
       : newStage.replace(/-/g, ' ')
 
-    // Find `id: '<rowId>'` and then the `<dim>: {` block beneath it.
-    const rowAnchor = new RegExp(`id:\\s*'${rowId}'`)
-    const rowIdx = next.search(rowAnchor)
-    if (rowIdx < 0) continue
-    // From rowIdx, find the next `<dim>: {`
-    const dimAnchor = new RegExp(`${dim}:\\s*\\{`)
-    const dimRel = next.slice(rowIdx).search(dimAnchor)
-    if (dimRel < 0) continue
-    const dimStart = rowIdx + dimRel
-    // Find the matching closing brace of this dimension block.
-    let depth = 0
-    let dimEnd = dimStart
-    for (let i = dimStart; i < next.length; i++) {
-      if (next[i] === '{') depth++
-      else if (next[i] === '}') {
-        depth--
-        if (depth === 0) {
-          dimEnd = i
-          break
-        }
-      }
-    }
+    // The same brace-matched span the curated-note read uses above, so the
+    // block this writes into and the block that was checked for a note are by
+    // construction the same characters.
+    const span = dimensionSpan(next, rowId, dim)
+    if (!span) continue
+    const { start: dimStart, end: dimEnd } = span
     const block = next.slice(dimStart, dimEnd + 1)
 
     let nextBlock = block
