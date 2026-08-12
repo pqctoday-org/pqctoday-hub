@@ -55,7 +55,7 @@ The library sorts by when a document was actually published rather than when we 
 
 ### Data
 
-- **Publication dates derived from the cached evidence** for the library, timeline and vendor roadmaps, with the remaining rows accounted for rather than left blank and unexplained. Cyentia and NetDiligence are registered as the trusted sources they were already being used as, 18 superseded CSV revisions that nothing reads are archived, and the search index is rebuilt.
+- **Publication dates derived from the cached evidence** [view:/library] [view:/timeline] [view:/migrate] [persona:researcher] [persona:ops] [persona:architect]: for the library, timeline and vendor roadmaps, with the remaining rows accounted for rather than left blank and unexplained. Cyentia and NetDiligence are registered as the trusted sources they were already being used as, 18 superseded CSV revisions that nothing reads are archived, and the search index is rebuilt.
 
 ## [4.48.1] - 2026-08-12
 
