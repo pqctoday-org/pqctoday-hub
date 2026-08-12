@@ -367,3 +367,71 @@ describe('dimensionSpan', () => {
     expect(dimensionSpan(siblingMatrix, 'fido-2', 'pureKem')).toBeUndefined()
   })
 })
+
+/**
+ * Stageless-cell guard (2026-08-12).
+ *
+ * A cell with no `stage:` has not been placed on the IETF ladder, usually
+ * because its PQC story is not one tracked document. rpki-bgpsec::pureSig
+ * lists RFC 5280 and RFC 6488 — the classical certificate profile and the CMS
+ * signed-object template — and neither says anything about when PQC signing
+ * arrives in RPKI. Both are published, so the feed proposes 'rfc-published'
+ * truthfully and wrongly.
+ *
+ * These two cells were previously blocked by the curated-note check reading a
+ * SIBLING dimension's note. That was accidental protection; fixing the sibling
+ * bug removed it and left the applier ready to write the exact claim
+ * ike-ipsec::hybridKem's note was written to prevent.
+ */
+const statelessMatrix = `
+export const PQC_PROTOCOL_MATRIX = [
+  {
+    id: 'rpki-bgpsec',
+    pureSig: {
+      value: 'none',
+      note: 'No PQC profile for RPKI signed objects yet.',
+    },
+    hybridSig: {
+      value: 'draft',
+      stage: 'individual-draft',
+    },
+  },
+]
+`
+
+const rpkiDelta = (dim: string, encoded: string | null, current: string) =>
+  ({
+    row_id: 'rpki-bgpsec',
+    dimension: dim,
+    encoded_stage: encoded,
+    current_stage: current,
+    last_updated: '2026-05-20',
+  }) as never
+
+describe('patchMatrix stageless-cell guard', () => {
+  it('refuses to invent a stage for a cell that has none', () => {
+    const r = patchMatrix(statelessMatrix, [rpkiDelta('pureSig', null, 'rfc-published')])
+    expect(r.applied).toBe(0)
+    expect(r.statelessCells).toHaveLength(1)
+    expect(r.statelessCells[0]).toContain('rpki-bgpsec::pureSig')
+    expect(r.next).toBe(statelessMatrix)
+    // The specific claim that must not appear: RPKI PQC signing is published.
+    expect(r.next).not.toContain('rfc-published')
+  })
+
+  it('still advances a cell that does carry a stage', () => {
+    const r = patchMatrix(statelessMatrix, [
+      rpkiDelta('hybridSig', 'individual-draft', 'wg-document'),
+    ])
+    expect(r.applied).toBe(1)
+    expect(r.statelessCells).toHaveLength(0)
+    expect(r.next).toContain("stage: 'wg-document'")
+  })
+
+  it('reports a stageless cell rather than silently dropping it', () => {
+    // Silence would read as "nothing to do here", which is the opposite of
+    // true: the feed found something and we declined to act on it.
+    const r = patchMatrix(statelessMatrix, [rpkiDelta('pureSig', null, 'rfc-published')])
+    expect(r.statelessCells[0]).toContain('rfc-published')
+  })
+})
