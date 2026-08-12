@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   BookOpen,
   CalendarClock,
+  PackageSearch,
   GlobeLock,
   Info,
   Workflow,
@@ -72,6 +73,7 @@ import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
 import { ObligationsTab } from './obligations/ObligationsTab'
 import { ProgressTab } from './progress/ProgressTab'
 import { RequirementsTab } from './requirements/RequirementsTab'
+import { ProductsTab } from './products/ProductsTab'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 
 // ── Stable tab model ───────────────────────────────────────────────────────
@@ -82,6 +84,7 @@ type StableTab =
   | 'obligations'
   | 'requirements'
   | 'progress'
+  | 'products'
   | 'landscape'
   | 'records'
   | 'foryou'
@@ -91,6 +94,7 @@ const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
   { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
   { id: 'requirements', label: 'Requirements', icon: BookOpen },
   { id: 'progress', label: 'Progress', icon: CalendarClock },
+  { id: 'products', label: 'Products', icon: PackageSearch },
   { id: 'landscape', label: 'Landscape', icon: Layers },
   { id: 'records', label: 'Product Records', icon: GlobeLock },
   { id: 'foryou', label: 'For You', icon: Sparkles },
@@ -102,6 +106,7 @@ function stableTabFor(activeTab: MobileSection): StableTab {
   if (activeTab === 'obligations') return 'obligations'
   if (activeTab === 'requirements') return 'requirements'
   if (activeTab === 'progress') return 'progress'
+  if (activeTab === 'products') return 'products'
   if (activeTab === 'records') return 'records'
   if (activeTab === 'cswp39') return 'cswp39'
   if (activeTab === 'foryou') return 'foryou'
@@ -780,6 +785,18 @@ export const ComplianceView = ({
                 setDrawerFramework(fw)
               }}
             />
+          </div>
+        )}
+
+        {/* ── Products — inventory to certificate ── */}
+        {activeStableTab === 'products' && !error && !showComplianceSkeleton && (
+          <div className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<PackageSearch size={20} className="text-primary" />}
+              title="Products"
+              description="Which of the things you run hold a certificate, under which scheme, and whether it covers post-quantum algorithms or only classical ones. Inventory comes from the list you keep on Migrate."
+            />
+            <ProductsTab />
           </div>
         )}
 
