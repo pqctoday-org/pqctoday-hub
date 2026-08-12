@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.48.1] - 2026-08-12
+
+Seven playground tools now show a review that matches the version you are actually using, and the library stops implying a draft still says something it no longer says.
+
+### Fixed
+
+- **Seven playground tools showed a review of an older version than the one running** [view:/playground] [persona:researcher] [persona:developer] [persona:architect]: each tool carries a version and a "reviewed" mark, and the two had drifted apart for every tool changed in the last release — the mark referred to a version that was no longer what you were using. All seven re-reviewed and re-recorded against their current version.
+- **The library implied an internet draft still covers JSON web token encryption** [view:/library] [persona:developer] [persona:architect]: the record describes the version we cite and cache, which is correct — but that version was superseded in July by one rewritten for a different format entirely, dropping the token-encryption part completely. The record now says so, and explains that citing the earlier version is deliberate rather than an oversight. Five internal cross-references that quote passages the newer version deleted now carry the same explanation.
+
 ## [4.48.0] - 2026-08-11
 
 Compliance answers "which rules bind me, and why" instead of listing every rule that exists; the business tools stop telling executives that doing nothing is free; every page now says whether it adapts to your role, and the ones that quietly didn't have been fixed or made honest about it.
