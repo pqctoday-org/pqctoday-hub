@@ -16,6 +16,7 @@ import {
   OTHER_GROUP,
   verbsFor,
   subGroupFor,
+  expandSearchQuery,
 } from './cryptoLabTaxonomy'
 
 const ALL_IDS = new Set(WORKSHOP_TOOLS.map((t) => t.id))
@@ -99,5 +100,37 @@ describe('cryptoLabTaxonomy — no dangling ids', () => {
   it('every ENVIRONMENT_TOOL_ID exists in the registry', () => {
     const dangling = [...ENVIRONMENT_TOOL_IDS].filter((id) => !ALL_IDS.has(id))
     expect(dangling, `environment ids not in registry: ${dangling.join(', ')}`).toEqual([])
+  })
+})
+
+describe('expandSearchQuery', () => {
+  it('returns the query unchanged when it has no synonym group', () => {
+    expect(expandSearchQuery('merkle')).toEqual(['merkle'])
+  })
+
+  it('treats "post-quantum" and "pqc" as the same query', () => {
+    expect(expandSearchQuery('post-quantum')).toContain('pqc')
+    expect(expandSearchQuery('pqc')).toContain('post-quantum')
+  })
+
+  it('maps the pre-standardisation names onto the FIPS names', () => {
+    expect(expandSearchQuery('kyber')).toContain('ml-kem')
+    expect(expandSearchQuery('dilithium')).toContain('ml-dsa')
+    expect(expandSearchQuery('sphincs')).toContain('slh-dsa')
+  })
+
+  it('is case- and whitespace-insensitive', () => {
+    expect(expandSearchQuery('  POST-QUANTUM ')).toContain('pqc')
+  })
+
+  it('preserves match-everything behaviour for an empty query', () => {
+    // The caller uses String.includes(), for which '' matches any string.
+    expect(expandSearchQuery('   ')).toEqual([''])
+  })
+
+  it('does not cross-contaminate groups', () => {
+    // 'ml-dsa' must not drag in the post-quantum group, or every query
+    // starts matching every tool.
+    expect(expandSearchQuery('ml-dsa')).not.toContain('pqc')
   })
 })

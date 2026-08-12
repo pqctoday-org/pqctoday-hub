@@ -21,10 +21,27 @@ describe('DockerPlaygroundView (playground.md item 2 — reuses useSandboxAvaila
     render(<DockerPlaygroundView />)
 
     await waitFor(() => {
-      expect(screen.getByText('pqctoday-sandbox is not reachable')).toBeInTheDocument()
+      expect(screen.getByText('Sandbox scenarios run in a container')).toBeInTheDocument()
     })
     expect(document.querySelector('iframe')).toBeNull()
     expect(screen.getByText('Request sandbox access')).toBeInTheDocument()
+  })
+
+  it('does not print maintainer-only shell instructions to visitors', async () => {
+    // Unreachable is the DEFAULT state for every visitor without a container,
+    // so this copy is what most people actually read. It used to tell them to
+    // run `docker compose up -d` in `~/antigravity/pqctoday-sandbox` — a local
+    // checkout path no visitor has.
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('ECONNREFUSED')))
+    render(<DockerPlaygroundView />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Request sandbox access')).toBeInTheDocument()
+    })
+    const text = document.body.textContent ?? ''
+    expect(text).not.toContain('docker compose')
+    expect(text).not.toContain('~/antigravity')
+    expect(text).not.toContain('VITE_SANDBOX_BASE_URL')
   })
 
   it('renders the live iframe once the sandbox health check succeeds', async () => {

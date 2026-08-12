@@ -246,12 +246,27 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     pt_id: 'PT-007',
     version: '1.0.0',
     name: 'Firmware Signing',
-    description: 'ML-DSA-87 UEFI secure boot firmware signing and verification',
+    // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
+    // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
+    // entry advertised ML-DSA-87 alone, which both under-reported the tool to the
+    // algorithm search and named an algorithm the visitor would not be using.
+    description:
+      'UEFI secure boot firmware signing and verification with ML-DSA-44/65/87 or SLH-DSA (defaults to ML-DSA-65)',
     category: 'HSM / PKCS#11',
-    algorithms: ['ML-DSA-87', 'SHA-256'],
+    algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128s', 'SHA-256'],
     icon: Cpu,
     moduleLink: '/learn/secure-boot-pqc',
-    keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
+    keywords: [
+      'firmware',
+      'uefi',
+      'secure boot',
+      'ml-dsa',
+      'slh-dsa',
+      'pqc',
+      'post-quantum',
+      'signing',
+      'verification',
+    ],
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
@@ -660,12 +675,33 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     pt_id: 'PT-018',
     version: '1.0.1',
     name: '5G SUCI Construction',
-    description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
+    // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
+    // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
+    // X25519 or pure). The PQC half was previously absent from `description`,
+    // `algorithms` and `keywords` alike, so a catalogue search for "ML-KEM"
+    // returned 13 tools and never this one.
+    description:
+      'Subscriber identity concealment for 5G: ECDH + ANSI X9.63-KDF + AES (Profiles A/B), plus a post-quantum Profile C using ML-KEM in hybrid and pure modes',
     category: 'Protocol Simulations',
-    algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
+    algorithms: ['ECDH', 'X25519', 'ML-KEM-768', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
     moduleLink: '/learn/5g-security',
-    keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
+    keywords: [
+      '5g',
+      'suci',
+      'supi',
+      'subscriber',
+      'concealment',
+      'ecdh',
+      'hkdf',
+      'aes',
+      'ml-kem',
+      'pqc',
+      'post-quantum',
+      'hybrid',
+      'profile c',
+      'x25519',
+    ],
     difficulty: 'advanced',
     requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
@@ -881,6 +917,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    // Pre-1.0: the WIP banner is the only signal a visitor gets that this tool
+    // is still moving. `workshopRegistry.test.ts` enforces that every 0.x tool
+    // sets this, so a new pre-1.0 tool cannot ship looking finished.
+    wip: true,
     hasOutput: true,
     outputSpec:
       'Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).',
@@ -1008,6 +1048,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    // Pre-1.0 — see the note on PT-029.
+    wip: true,
     opensourceTool: {
       name: 'openmls',
       url: 'https://github.com/openmls/openmls',
