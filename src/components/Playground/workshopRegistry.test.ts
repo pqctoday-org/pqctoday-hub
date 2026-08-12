@@ -51,3 +51,23 @@ describe('workshopRegistry — Sandbox facet wiring', () => {
     }
   })
 })
+
+describe('workshopRegistry — visitor-facing honesty invariants', () => {
+  // A pre-1.0 tool that renders identically to a finished one tells the visitor
+  // nothing about its maturity. PT-029 and PT-030 both shipped at 0.1.0 with no
+  // `wip` flag, so the banner in PlaygroundToolRoute never fired for them.
+  it('flags every pre-1.0 tool as work-in-progress', () => {
+    const unflagged = WORKSHOP_TOOLS.filter((t) => t.version.startsWith('0.') && !t.wip).map(
+      (t) => `${t.pt_id} (${t.id}) v${t.version}`
+    )
+    expect(unflagged, 'pre-1.0 tools must set `wip: true`').toEqual([])
+  })
+
+  // NOTE: an over-claiming guard (does a tool advertise crypto it never runs?)
+  // was attempted here and removed. Comparing `algorithms` against the tool's
+  // own name/keywords only checks metadata against metadata — it flagged
+  // openssl-studio, tls-simulator, hybrid-certs and hsm-capacity, all of which
+  // genuinely implement what they advertise. A real guard has to resolve each
+  // tool's import graph from TOOL_COMPONENTS and inspect the code. Tracked as
+  // WS6 in playground-tools-remediation-plan-08112026.md.
+})

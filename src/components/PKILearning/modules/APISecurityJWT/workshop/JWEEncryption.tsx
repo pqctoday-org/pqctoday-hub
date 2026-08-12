@@ -297,8 +297,12 @@ export const JWEEncryption: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">JWE Encryption with ML-KEM</h3>
         <p className="text-sm text-muted-foreground">
           Walk through the five-step JWE encryption flow using ML-KEM-768 (
+          {/* Link the -05 ARCHIVE, not the datatracker landing page. That page
+              now serves -06, which was retitled "PQ KEMs for COSE" and contains
+              no JWE algorithms at all — so a reader following it to check this
+              lesson would find nothing matching what they just ran. */}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/"
+            href="https://www.ietf.org/archive/id/draft-ietf-jose-pqc-kem-05.txt"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
@@ -306,7 +310,9 @@ export const JWEEncryption: React.FC = () => {
             draft-ietf-jose-pqc-kem-05
           </a>
           ) for key agreement and AES-256-GCM (WebCrypto) for content encryption. All operations run
-          real crypto in your browser.
+          real crypto in your browser. This flow follows revision <strong>-05</strong>, which
+          covered JOSE and COSE; revision -06 (July 2026) narrowed the document to COSE only and no
+          longer registers JWE algorithms.
         </p>
       </div>
 

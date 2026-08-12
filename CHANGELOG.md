@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.47.0] - 2026-08-11
+## [4.48.0] - 2026-08-11
 
 Compliance answers "which rules bind me, and why" instead of listing every rule that exists; the business tools stop telling executives that doing nothing is free; every page now says whether it adapts to your role, and the ones that quietly didn't have been fixed or made honest about it.
 
@@ -77,7 +77,7 @@ Compliance answers "which rules bind me, and why" instead of listing every rule 
 - **CI stops running files that are not in the repository** [persona:ops]: three new audit gates were wired into the pipeline and silently dropped by a catch-all ignore rule, so the pipeline was green locally and failed in CI with a missing-module error — the fifth time this exact failure has happened. A check now refuses a pipeline that references a file the repository does not contain.
 - **A data-regression waiver with an expiry date** [persona:ops]: the gate that catches unexpected drops in record counts can now be waived for a known, dated reason instead of being switched off, and each source's identifier scheme is tested on its own.
 
-## [4.46.0] - 2026-08-10
+## [4.47.0] - 2026-08-10
 
 The About page stops stating eleven wrong version numbers about the app you are looking at; three library records stop citing organisations that were never registered; thirty-six compliance write-ups a tooling bug had quietly deleted are back; and quiz answers finally have somewhere to record which document their fact comes from.
 
@@ -105,6 +105,29 @@ The About page stops stating eleven wrong version numbers about the app you are 
 - **The search index the site answers from is now signed** [persona:ops]: the text corpus was attested but the 46 MB embedding index built from it — the thing that actually decides which passage an answer cites — was not. Both are now signed and verified. The list of what must be signed had been written down twice, once in the signer and once copied by hand into the verifier; both now read one shared file, and a test fails if the verifier grows its own copy again.
 - **The three browser crypto engines were rebuilt from current source** [view:/playground] [persona:developer] [persona:ops]: the KMIP engine gained a classical-baseline TLS profile and was verified by running its own test suite inside the browser build rather than by trusting the build's exit code — including a hybrid post-quantum key exchange completing end to end. The other two rebuilt byte-for-byte identical, which is the expected result and the proof that nothing else moved.
 - **Dependency updates** [persona:ops]: Playwright, the testing-library packages and Vitest coverage; the Tailwind group; the React flow-diagram library; and four GitHub Actions.
+
+## [4.46.0] - 2026-08-12
+
+The entropy tool now runs both of the health tests the NIST standard requires rather than one, and catches a bad sample it used to pass; the 5G tool finally admits it does post-quantum cryptography, so searching for it works; and every tool page gains a proper heading and a genuinely useful "try this next".
+
+### Added
+
+- **The entropy tester now runs both health checks the NIST standard asks for** [view:/playground] [persona:researcher] [persona:developer] [persona:architect]: it ran only the first of the two, which spots a source that gets stuck repeating one value. The second one — now added — spots a source that merely drifts toward a value without repeating it, which the first cannot see at all. This matters: the tool ships a deliberately-bad "Repeating Pattern" sample to demonstrate poor randomness, and that sample was quietly _passing_ the only health check it ran. It now fails, as it should.
+
+### Fixed
+
+- **The 5G tool no longer hides the post-quantum half of what it does** [view:/playground] [persona:developer] [persona:architect] [persona:researcher]: it builds concealed subscriber identities three ways, one of them post-quantum — but its catalogue entry mentioned only the classical algorithms. Searching the lab for ML-KEM returned thirteen tools and never this one, on a site about post-quantum migration. It now appears, and the description says what it actually offers.
+- **Searching for "post-quantum" now finds post-quantum tools** [view:/playground] [persona:curious] [persona:executive] [persona:developer]: typing the subject of the entire site matched two tools out of thirty-four, because most entries were written using the abbreviation instead. Both spellings now find the same things, as do the older names for the algorithms — searching Kyber, Dilithium or SPHINCS+ finds ML-KEM, ML-DSA and SLH-DSA.
+- **The firmware signing tool lists all four algorithms it offers** [view:/playground] [persona:developer] [persona:ops]: it advertised one, and not even the one it starts you on.
+- **Two unfinished tools now say they are unfinished** [view:/playground] [persona:developer] [persona:architect]: the certificate enrollment and group messaging tools are still early, but looked exactly like finished ones. They now carry the same work-in-progress notice other early tools do, and a new check stops any future early tool shipping without it.
+- **The developer sandbox page stopped showing visitors a terminal command** [view:/playground] [persona:developer] [persona:ops]: when the container isn't available — which is the normal case for anyone browsing the site — the page told you to run a Docker command inside a folder that only exists on a maintainer's laptop. It now explains what the sandbox is and points at the access request.
+- **"Try this next" now suggests where you actually are** [view:/playground] [persona:curious] [persona:developer]: every tool in a category recommended the same two tools, so following the suggestion from most tools sent you in a small circle.
+- **Every tool page now has a proper main heading** [view:/playground] [persona:curious]: all but one opened with no top-level heading, which makes a page harder to navigate with a screen reader.
+- **The "reviewed" mark now says what it means** [view:/playground] [view:/learn] [view:/library] [view:/compliance] [view:/migrate] [view:/timeline] [persona:researcher] [persona:executive]: it showed a name and a date but never the word "reviewed", so it did not read as the counterpart to the "Unreviewed" mark beside it. Checks done by an automated pass are now labelled as such, rather than looking the same as a person signing something off.
+
+### Data
+
+- **The JWT tool's encryption reference now names the exact draft it follows** [view:/playground] [view:/learn] [persona:developer] [persona:architect]: the internet draft it cites was rewritten in July and no longer covers this use at all. The lesson is correct against the earlier version, so it now says which version, explains what changed, and links to that version rather than to a page that would show a reader something different from what they just ran.
 
 ## [4.45.0] - 2026-08-09
 

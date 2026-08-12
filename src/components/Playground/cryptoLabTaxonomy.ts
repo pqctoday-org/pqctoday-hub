@@ -261,3 +261,47 @@ export function subGroupFor(tool: WorkshopTool): string | null {
 export function isEnvironmentTool(id: string): boolean {
   return ENVIRONMENT_TOOL_IDS.has(id)
 }
+
+// ---------------------------------------------------------------------------
+// Search synonyms
+// ---------------------------------------------------------------------------
+
+/**
+ * Interchangeable spellings of the same idea, for catalogue search.
+ *
+ * Each entry is one equivalence group: typing any member matches tools written
+ * with any other member. This exists because the registry spells this domain's
+ * central concept inconsistently — measured on 2026-08-11, "pqc" matched 12 of
+ * 34 native tools while "post-quantum" matched 2, so a visitor typing the
+ * subject of the entire site in full saw almost nothing.
+ *
+ * Deliberately NOT a general stemmer or fuzzy matcher: an over-eager expansion
+ * makes every query match everything, which is a worse failure than a miss.
+ * Add a group only for spellings that genuinely denote the same thing.
+ */
+export const SEARCH_SYNONYMS: readonly (readonly string[])[] = [
+  ['post-quantum', 'postquantum', 'post quantum', 'pqc'],
+  ['ml-kem', 'mlkem', 'kyber'],
+  ['ml-dsa', 'mldsa', 'dilithium'],
+  ['slh-dsa', 'slhdsa', 'sphincs'],
+]
+
+/**
+ * Expand a search query into every equivalent spelling.
+ *
+ * Returns the query itself plus any synonym-group members, so a caller can
+ * treat a match on any returned term as a match. An empty or whitespace-only
+ * query returns a single empty string, which `includes()` treats as "matches
+ * everything" — preserving the previous behaviour exactly.
+ */
+export function expandSearchQuery(query: string): string[] {
+  const q = query.trim().toLowerCase()
+  if (!q) return ['']
+  const terms = new Set<string>([q])
+  for (const group of SEARCH_SYNONYMS) {
+    // Expand only on a whole-term match. Substring matching here would make
+    // "ml-dsa" pull in the "post-quantum" group via any incidental overlap.
+    if (group.includes(q)) for (const member of group) terms.add(member)
+  }
+  return [...terms]
+}
