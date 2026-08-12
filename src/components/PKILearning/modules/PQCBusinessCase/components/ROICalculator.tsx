@@ -855,9 +855,12 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
               type="range"
               min={1}
               max={50}
-              step={1}
+              // 0.1 steps and parseFloat: the IRIS tier anchors are fractional
+              // (8.7 / 9.3 / 12.8) and parseInt silently truncated them to
+              // integers the moment the slider was touched.
+              step={0.1}
               value={assumptions.breachProbability}
-              onChange={(e) => updateAssumption('breachProbability', parseInt(e.target.value))}
+              onChange={(e) => updateAssumption('breachProbability', parseFloat(e.target.value))}
               className="w-full accent-primary"
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
@@ -869,7 +872,10 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
             </div>
             <p className="text-[10px] text-muted-foreground mt-1">
               Default reflects the selected organization size — Cyentia IRIS 2025 anchors: SMB
-              ~2%/yr, average org ~9%/yr, Fortune-1000-class ~25%/yr. Drag the slider to override.
+              8.7%/yr, average org 9.3%/yr, Fortune-1000-class 12.8%/yr. The tiers sit close
+              together because IRIS 2025's finding is that they have converged: small-firm risk has
+              more than doubled since 2008 while the largest firms' has fallen. Drag the slider to
+              override.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3">

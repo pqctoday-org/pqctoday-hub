@@ -316,6 +316,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             type="range"
             min={1}
             max={25}
+            // The IRIS tier anchors are fractional (8.7 / 9.3 / 12.8), so an
+            // implicit step of 1 would snap the selected tier to a whole number
+            // as soon as the slider was touched.
+            step={0.1}
             value={annualBreachProbPct}
             onChange={(e) => setAnnualBreachProbPct(Number(e.target.value))}
             className="w-full accent-primary"
