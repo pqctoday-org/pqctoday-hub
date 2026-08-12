@@ -3082,6 +3082,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'experimental',
         stage: 'experimental',
+        stageNote:
+          "RFC 9964 is published, but this cell tracks FIDO adoption rather than the RFC's status: the algorithm IDs are inherited from the COSE row and no FIDO Alliance profile exists. Authenticator-side ML-DSA private keys (~5–7 KB) strain secure-element storage budgets, so 'experimental' is a judgement about deployability, not a stale reading of the datatracker.",
         note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
         refs: [
           {

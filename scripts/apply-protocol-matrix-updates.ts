@@ -106,6 +106,32 @@ function todayIso(): string {
  */
 const GENERATED_NOTE_RE = /^[a-z][a-z ]*(?: \(datatracker \d{4}-\d{2}-\d{2}\))?$/
 
+/**
+ * A `stageNote:` field in either quote style.
+ *
+ * QUOTE-STYLE GUARD (2026-08-12) — and this one is the worst of the set.
+ * Everything above read `/stageNote:\s*'([^']*)'/`, single quotes only. A note
+ * containing an apostrophe cannot be written in single quotes, so prettier
+ * writes it in double. **Ten of the matrix's 76 stageNotes are double-quoted,
+ * and every one of them is a hand-written 2026-08-09 correction** — the exact
+ * notes the curated-note guard exists to protect were the exact notes it could
+ * not see:
+ *
+ *   tls-1-3::pureKem, x509::hybridKem, smime::hybridKem, cose::pureKem,
+ *   cose::hybridKem, est-cmp::hybridKem, kerberos::hybridKem,
+ *   dtls-1-3::pureKem, fido-2::pureKem, macsec::pureKem
+ *
+ * The selection effect is what makes it dangerous: prose careful enough to say
+ * "the datatracker's IESG state" earns an apostrophe, so the more considered
+ * the note, the more certainly it was invisible.
+ *
+ * The write path had the same blind spot with a worse consequence. On a
+ * double-quoted cell `stageNoteRe.test()` was false, so it took the INSERT
+ * branch and added a second `stageNote:` key beside the first — a duplicate
+ * key in an object literal, where the last one silently wins.
+ */
+const STAGE_NOTE_RE = /stageNote:\s*(?:'([^']*)'|"([^"]*)")/
+
 export function isCuratedNote(note: string | undefined): boolean {
   if (note === undefined) return false
   const trimmed = note.trim()
@@ -256,8 +282,8 @@ export function patchMatrix(
     const existingNoteMatch = (() => {
       const span = dimensionSpan(next, rowId, dim)
       if (!span) return undefined
-      const nm = next.slice(span.start, span.end + 1).match(/stageNote:\s*'([^']*)'/)
-      return nm ? nm[1] : undefined
+      const nm = next.slice(span.start, span.end + 1).match(STAGE_NOTE_RE)
+      return nm ? (nm[1] ?? nm[2]) : undefined
     })()
     if (isCuratedNote(existingNoteMatch)) {
       curatedNotes.push(
@@ -286,9 +312,11 @@ export function patchMatrix(
       // insert after the `value:` line
       nextBlock = nextBlock.replace(/(value:\s*'[^']+',)/, `$1\n        stage: '${newStage}',`)
     }
-    const stageNoteRe = /stageNote:\s*'[^']*'/
-    if (stageNoteRe.test(nextBlock)) {
-      nextBlock = nextBlock.replace(stageNoteRe, `stageNote: '${newNote}'`)
+    // Both quote styles — see STAGE_NOTE_RE. Missing the double-quoted case
+    // here did not merely skip the write, it took the insert branch below and
+    // added a SECOND stageNote key beside the existing one.
+    if (STAGE_NOTE_RE.test(nextBlock)) {
+      nextBlock = nextBlock.replace(STAGE_NOTE_RE, `stageNote: '${newNote}'`)
     } else {
       nextBlock = nextBlock.replace(/(stage:\s*'[^']+',)/, `$1\n        stageNote: '${newNote}',`)
     }
