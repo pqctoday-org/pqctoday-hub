@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
   patchMatrix,
@@ -433,5 +435,95 @@ describe('patchMatrix stageless-cell guard', () => {
     // true: the feed found something and we declined to act on it.
     const r = patchMatrix(statelessMatrix, [rpkiDelta('pureSig', null, 'rfc-published')])
     expect(r.statelessCells[0]).toContain('rfc-published')
+  })
+})
+
+/**
+ * Quote-style guard (2026-08-12) — the worst of the set.
+ *
+ * The curated-note check read `/stageNote:\s*'([^']*)'/`, single quotes only. A
+ * note containing an apostrophe cannot be written in single quotes, so prettier
+ * writes it in double. TEN of the matrix's 76 stageNotes are double-quoted and
+ * every one is a hand-written 2026-08-09 correction: the notes the guard exists
+ * to protect were precisely the notes it could not see. The selection effect is
+ * the point — prose careful enough to say "the datatracker's IESG state" earns
+ * an apostrophe, so the more considered the note, the more certainly it was
+ * invisible.
+ *
+ * The write path shared the blind spot with a worse consequence: on a
+ * double-quoted cell it took the INSERT branch and added a second stageNote key
+ * beside the first.
+ */
+const doubleQuotedMatrix = `
+export const PQC_PROTOCOL_MATRIX = [
+  {
+    id: 'kerberos',
+    hybridKem: {
+      value: 'draft',
+      stage: 'individual-draft',
+      stageNote:
+        "Re-derived 2026-08-09 from the datatracker's IESG state. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — never WG-adopted.",
+    },
+    pureKem: {
+      value: 'draft',
+      stage: 'wg-document',
+      stageNote: 'wg document (datatracker 2026-01-01)',
+    },
+  },
+]
+`
+
+const kerbDelta = (dim: string, encoded: string, current: string) =>
+  ({
+    row_id: 'kerberos',
+    dimension: dim,
+    encoded_stage: encoded,
+    current_stage: current,
+    last_updated: '2026-07-27',
+  }) as never
+
+describe('patchMatrix quote-style guard', () => {
+  it('sees a DOUBLE-quoted curated note and blocks on it', () => {
+    // THE BUG: this returned applied=1 and overwrote the note.
+    const r = patchMatrix(doubleQuotedMatrix, [
+      kerbDelta('hybridKem', 'individual-draft', 'ietf-last-call'),
+    ])
+    expect(r.applied).toBe(0)
+    expect(r.curatedNotes).toHaveLength(1)
+    expect(r.curatedNotes[0]).toContain('kerberos::hybridKem')
+    expect(r.next).toBe(doubleQuotedMatrix)
+    expect(r.next).toContain('never WG-adopted')
+  })
+
+  it('never grows a second stageNote key beside a double-quoted one', () => {
+    // The write path's insert branch fired because the test regex missed the
+    // double-quoted field, producing a duplicate key where the last wins.
+    const r = patchMatrix(doubleQuotedMatrix, [
+      kerbDelta('hybridKem', 'individual-draft', 'ietf-last-call'),
+    ])
+    expect(r.next.match(/stageNote:/g)).toHaveLength(2)
+  })
+
+  it('still applies where the single-quoted note is this generator own output', () => {
+    const r = patchMatrix(doubleQuotedMatrix, [
+      kerbDelta('pureKem', 'wg-document', 'rfc-published'),
+    ])
+    expect(r.applied).toBe(1)
+    expect(r.curatedNotes).toHaveLength(0)
+    // the double-quoted sibling is untouched
+    expect(r.next).toContain('never WG-adopted')
+  })
+
+  it('every double-quoted stageNote in the real matrix is seen as curated', () => {
+    // A census, not a sample: the defect was invisible because nothing counted.
+    const real = readFileSync(
+      join(import.meta.dirname ?? __dirname, '..', 'src', 'data', 'pqcProtocolMatrix.ts'),
+      'utf-8'
+    )
+    const doubleQuoted = real.match(/stageNote:\s*\n?\s*"/g) ?? []
+    expect(doubleQuoted.length).toBeGreaterThan(0)
+    for (const m of real.matchAll(/stageNote:\s*\n?\s*"([^"]+)"/g)) {
+      expect(isCuratedNote(m[1])).toBe(true)
+    }
   })
 })
