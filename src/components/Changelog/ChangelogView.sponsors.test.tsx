@@ -11,6 +11,9 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import type { Sponsor } from '@/data/sponsors'
 
+/** findBy* retries for asyncUtilTimeout (1000ms) unless told otherwise. */
+const QUERY = { timeout: 20_000 } as const
+
 describe('ChangelogView sponsor acknowledgment', () => {
   // FIXED 2026-07-14 (second-pass audit, P2-3.6): vi.doUnmock() used to be
   // the last line of each test body, so a failed assertion above it (or any
@@ -41,6 +44,12 @@ describe('ChangelogView sponsor acknowledgment', () => {
   // all under full-suite contention. Queries are kept as cheap as the
   // assertion allows — findByText with a selector instead of findByRole, and
   // a sync query once an await has already proved the panel committed.
+  //
+  // QUERY is not decoration. testing-library's asyncUtilTimeout defaults to
+  // 1000ms and nothing in this repo overrides it, so `findBy*` on its own
+  // gives up after ONE second no matter what the test timeout says. Raising
+  // the test budget to 30s without this would have left the retry window at
+  // 1s — the same cliff, one second later. Caught reviewing this fix.
   it('renders nothing when there are no active sponsors', async () => {
     vi.resetModules()
     vi.doMock('@/data/sponsors', () => ({ SPONSORS: [] as Sponsor[] }))
@@ -54,7 +63,7 @@ describe('ChangelogView sponsor acknowledgment', () => {
     // otherwise "not in the document" is satisfied by an empty document.
     // findByText with a selector, not findByRole: a role query has to compute
     // the accessible name of every node, and this DOM holds 200+ releases.
-    expect(await screen.findByText('Changelog', { selector: 'h1' })).toBeInTheDocument()
+    expect(await screen.findByText('Changelog', { selector: 'h1' }, QUERY)).toBeInTheDocument()
     expect(screen.queryByText(/Thank you to our sponsors/i)).not.toBeInTheDocument()
   }, 30000)
 
@@ -76,7 +85,9 @@ describe('ChangelogView sponsor acknowledgment', () => {
         <ChangelogView />
       </MemoryRouter>
     )
-    expect(await screen.findByText(/Thank you to our sponsors/i)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Thank you to our sponsors/i, undefined, QUERY)
+    ).toBeInTheDocument()
     // Sync is safe here: the await above already proved the panel committed,
     // and a second retrying role query would rescan the whole release history.
     const link = screen.getByRole('link', { name: 'Acme HSM Corp' })

@@ -47,6 +47,21 @@ interface BreachCostModelProps {
   }) => void
 }
 
+/**
+ * Print a percentage at the precision actually used in the maths.
+ *
+ * This line is a "show your working" formula — its only job is to let a reader
+ * reconcile the inputs against the result. It used Math.round, which was
+ * harmless while every organization-size tier was a whole number. Making the
+ * tiers fractional on 2026-08-11 (8.7 / 9.3 / 12.8, read off IRIS 2025 Fig. 7)
+ * silently broke it: the default scenario displayed "9%" and computed 9.3%, so
+ * the arithmetic on screen no longer came out to the number beside it. Caught
+ * reviewing that change, not by any test.
+ */
+function formatPct(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1)
+}
+
 function formatCurrency(amount: number): string {
   const sign = amount < 0 ? '-' : ''
   const a = Math.abs(amount)
@@ -672,7 +687,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
           </p>
           <p className="text-xs font-mono text-muted-foreground">
             Blended ALE: {formatCurrency(costs.classicalALE)} × (1 − {Math.round(costs.pCrqc * 100)}
-            %) + {formatCurrency(costs.quantumSLE)} × {Math.round(annualBreachProbPct)}% ×{' '}
+            %) + {formatCurrency(costs.quantumSLE)} × {formatPct(annualBreachProbPct)}% ×{' '}
             {Math.round(costs.pCrqc * 100)}% ={' '}
             <span className="text-status-error font-bold">{formatCurrency(costs.quantumALE)}</span>
           </p>
