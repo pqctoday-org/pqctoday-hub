@@ -215,8 +215,7 @@ function binomialCutoff(w: number, p: number, alpha: number): number {
     for (let i = 0; i < g.length; i++) a += g[i] / (z + i + 1)
     return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(a)
   }
-  const logChoose = (n: number, k: number) =>
-    lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1)
+  const logChoose = (n: number, k: number) => lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1)
 
   const lp = Math.log(p)
   const lq = Math.log1p(-p)

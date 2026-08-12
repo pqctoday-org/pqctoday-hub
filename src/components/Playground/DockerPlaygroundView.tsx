@@ -80,7 +80,9 @@ export const DockerPlaygroundView = () => {
             )
           }
           title={
-            availability === 'checking' ? 'Checking sandbox…' : 'Sandbox scenarios run in a container'
+            availability === 'checking'
+              ? 'Checking sandbox…'
+              : 'Sandbox scenarios run in a container'
           }
           description={
             availability === 'checking'
