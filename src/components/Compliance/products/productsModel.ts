@@ -103,18 +103,40 @@ export function summarizeProduct(
   }
 }
 
-/** Groups certificates into product rows, newest-evidence-first per product. */
+/**
+ * Groups certificates into product rows.
+ *
+ * `certsByProduct` deliberately stores every certificate under TWO keys — the
+ * productId and the softwareName — so a legacy row lacking a productId is
+ * still findable (see certificationXrefData.ts). Iterating the map therefore
+ * visits each product twice, and a first version of this function duly listed
+ * "Alibaba Cloud Crypto" and "Android 16" twice each on screen. De-duplicate
+ * on a stable product identity, not on the map key.
+ */
 export function buildProductRows(
   certsByProduct: Map<string, CertificationXref[]>,
   ownedKeys?: ReadonlySet<string>
 ): ProductCertification[] {
-  const rows: ProductCertification[] = []
+  const byIdentity = new Map<
+    string,
+    { productId: string; name: string; certs: CertificationXref[] }
+  >()
+
   for (const [key, certs] of certsByProduct) {
     if (certs.length === 0) continue
     if (ownedKeys && !ownedKeys.has(key) && !ownedKeys.has(certs[0].softwareName)) continue
-    rows.push(summarizeProduct(certs[0].productId || key, certs[0].softwareName, certs))
+    const productId = certs[0].productId || key
+    const name = certs[0].softwareName || key
+    // productId when present, name otherwise — the same choice the lookup makes.
+    const identity = productId || name
+    const entry = byIdentity.get(identity)
+    if (entry) entry.certs.push(...certs)
+    else byIdentity.set(identity, { productId, name, certs: [...certs] })
   }
-  return rows.sort((a, b) => a.softwareName.localeCompare(b.softwareName))
+
+  return [...byIdentity.values()]
+    .map((e) => summarizeProduct(e.productId, e.name, e.certs))
+    .sort((a, b) => a.softwareName.localeCompare(b.softwareName))
 }
 
 /** Headline counts. Products, certificates — never a percentage. */

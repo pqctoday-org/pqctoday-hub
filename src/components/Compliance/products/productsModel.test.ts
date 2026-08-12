@@ -113,6 +113,16 @@ describe('buildProductRows against the real catalogue', () => {
     }
   })
 
+  it('lists each product once, though the map stores it under two keys', () => {
+    // certsByProduct keys every certificate by BOTH productId and softwareName
+    // so legacy rows stay findable. Iterating it naively listed "Alibaba Cloud
+    // Crypto" and "Android 16" twice each on screen — caught in a browser, not
+    // by the unit tests, which had only asserted uniqueness WITHIN a row.
+    const rows = buildProductRows(certsByProduct)
+    const names = rows.map((r) => r.softwareName)
+    expect(new Set(names).size).toBe(names.length)
+  })
+
   it('restricts to owned products when an inventory is supplied', () => {
     const all = buildProductRows(certsByProduct)
     const one = all[0]
