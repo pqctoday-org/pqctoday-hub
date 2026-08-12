@@ -400,12 +400,33 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     pt_id: 'PT-011',
     version: '1.0.0',
     name: 'Entropy Testing',
-    description: 'NIST SP 800-90B entropy test suite: monobit, frequency, min-entropy',
+    // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
+    // min-entropy", which attributed monobit and frequency to SP 800-90B —
+    // they belong to the SP 800-22 statistical-test family. The tool runs both
+    // families, and now runs BOTH of SP 800-90B's mandated continuous health
+    // tests (§4.4.1 repetition count and §4.4.2 adaptive proportion); until
+    // 2026-08-12 it shipped only the first while claiming the standard.
+    description:
+      'SP 800-90B health tests (repetition count, adaptive proportion) and MCV min-entropy, alongside monobit, runs and chi-squared statistical checks',
     category: 'Entropy & Random',
-    algorithms: ['SP 800-90B', 'Web Crypto'],
+    algorithms: ['SP 800-90B', 'SP 800-22', 'Web Crypto'],
     icon: Dice5,
+    keywords: [
+      'entropy',
+      'testing',
+      'sp 800-90b',
+      'sp 800-22',
+      'health test',
+      'repetition count',
+      'adaptive proportion',
+      'monobit',
+      'runs',
+      'chi-squared',
+      'frequency',
+      'min-entropy',
+      'nist',
+    ],
     moduleLink: '/learn/entropy-randomness',
-    keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
