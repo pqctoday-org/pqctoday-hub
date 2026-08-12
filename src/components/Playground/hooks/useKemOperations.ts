@@ -6,6 +6,29 @@ import { bytesToHex, hexToBytes } from '../../../utils/dataInputUtils'
 import type { ExecutionMode } from '../PlaygroundContext'
 import { hkdfExtract } from '../../../utils/webCrypto'
 
+/**
+ * Key-pair identity shared by `pk-<base>` and `sk-<base>` (see useKeyGeneration).
+ */
+export const mockPairId = (keyId: string): string => keyId.replace(/^(pk|sk)-/, '')
+
+/**
+ * Deterministic stand-in shared secret for mock mode, derived from the key pair.
+ *
+ * Mock mode is the WebAssembly-load fallback. It used to mint the shared secret
+ * and ciphertext from `Math.random()` and then report decapsulation as a match
+ * unconditionally — so a visitor was told the KEM round-trip had succeeded no
+ * matter which private key they chose, and could never observe the failure that
+ * makes a KEM meaningful. Deriving the secret from the pair, and encoding the
+ * pair into the ciphertext, restores the one property worth teaching: only the
+ * matching private key recovers the secret.
+ *
+ * Not cryptography, and not offered as any — the operation log marks every step
+ * "(Mock)"/"(Simulated)" and the mode is only reachable when real crypto failed
+ * to load.
+ */
+export const mockKemSecret = (keyId: string): string =>
+  bytesToHex(new TextEncoder().encode(mockPairId(keyId).padEnd(16, '·').slice(0, 16))).toUpperCase()
+
 // ML-KEM public key sizes → algorithm name
 const ML_KEM_PUBLIC_KEY_SIZES: Record<number, string> = {
   800: 'ML-KEM-512',
@@ -433,9 +456,11 @@ export const useKemOperations = ({
           const key = keyStore.find((k) => k.id === selectedEncKeyId)
           if (!key) throw new Error('Please select a Public Key')
 
-          const newSharedSecret = Math.random().toString(36).substring(2).toUpperCase()
-          const newCiphertext =
-            Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
+          // Ciphertext encodes which key pair it was encapsulated TO, so
+          // decapsulation can actually fail against a different pair. See
+          // mockKemPair() for why this replaced two Math.random() strings.
+          const newSharedSecret = mockKemSecret(key.id)
+          const newCiphertext = `mockct-${mockPairId(key.id)}-${newSharedSecret.slice(0, 16)}`
           setSharedSecret(newSharedSecret)
           setCiphertext(newCiphertext)
 
@@ -450,18 +475,19 @@ export const useKemOperations = ({
           if (!key) throw new Error('Please select a Private Key')
           if (!ciphertext) throw new Error('No ciphertext available. Run Encapsulate first.')
 
-          // In Mock mode, we just pretend we recovered the shared secret
-          if (sharedSecret) {
-            setDecapsulatedSecret(sharedSecret)
-          } else {
-            setDecapsulatedSecret('MOCK_RECOVERED_SECRET_INVALID')
-          }
-          setKemDecapsulationResult(true)
+          // Decapsulate only succeeds if this private key belongs to the pair the
+          // ciphertext was encapsulated to — the same property real ML-KEM has.
+          const matchesPair = ciphertext.startsWith(`mockct-${mockPairId(key.id)}-`)
+          const recovered = matchesPair ? mockKemSecret(key.id) : ''
+          setDecapsulatedSecret(recovered)
+          setKemDecapsulationResult(matchesPair)
 
           addLog({
             keyLabel: key.name,
             operation: 'Decapsulate (Mock)',
-            result: 'Secret Recovered (Simulated)',
+            result: matchesPair
+              ? '✓ Secret Recovered (Simulated)'
+              : '✗ Wrong key pair — no secret recovered (Simulated)',
             executionTime: end - start,
           })
         }
