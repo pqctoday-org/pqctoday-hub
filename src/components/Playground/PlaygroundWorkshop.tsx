@@ -61,6 +61,7 @@ import {
   VERBS,
   VALID_VERB_IDS,
   verbsFor,
+  expandSearchQuery,
   type VerbId,
 } from './cryptoLabTaxonomy'
 import { CommandPalette } from './CommandPalette'
@@ -973,18 +974,28 @@ export const PlaygroundWorkshop = () => {
     return counts
   }, [visibleTools])
 
-  // Search matches name + description + algorithms + keywords + category.
+  // Search matches name + description + algorithms + keywords + category, after
+  // expanding the query through SEARCH_SYNONYMS.
+  //
+  // Why the expansion exists: the registry writes this domain's central idea
+  // inconsistently — "pqc" matched 12 of 34 native tools while "post-quantum",
+  // spelled out, matched 2. A visitor who types the site's own subject in full
+  // saw almost nothing. Fixing that by pasting both spellings into ~30 keyword
+  // arrays would work once and rot the first time a tool is added, so the
+  // synonym lives here instead, where every tool gets it for free.
   const searchResults = useMemo(() => {
     if (!searchActive) return []
     const q = searchText.trim().toLowerCase()
+    const queries = expandSearchQuery(q)
+    const hit = (hay: string) => queries.some((term) => hay.includes(term))
     return sortTools(
       visibleTools.filter(
         (t) =>
-          t.name.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q) ||
-          t.algorithms.some((a) => a.toLowerCase().includes(q)) ||
-          t.keywords.some((k) => k.includes(q)) ||
-          t.category.toLowerCase().includes(q)
+          hit(t.name.toLowerCase()) ||
+          hit(t.description.toLowerCase()) ||
+          t.algorithms.some((a) => hit(a.toLowerCase())) ||
+          t.keywords.some((k) => hit(k)) ||
+          hit(t.category.toLowerCase())
       )
     )
   }, [searchActive, searchText, visibleTools, sortTools])

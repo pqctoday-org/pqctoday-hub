@@ -244,14 +244,36 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'firmware-signing',
     pt_id: 'PT-007',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Firmware Signing',
-    description: 'ML-DSA-87 UEFI secure boot firmware signing and verification',
+    // The tool offers ML-DSA-44/65/87 and SLH-DSA-SHA2-128s (PQC_ALGO_OPTIONS in
+    // FirmwareSigningMigrator.tsx) and *defaults* to ML-DSA-65 — the previous
+    // entry advertised ML-DSA-87 alone, which both under-reported the tool to the
+    // algorithm search and named an algorithm the visitor would not be using.
+    description:
+      'UEFI secure boot firmware signing and verification with ML-DSA-44/65/87 or SLH-DSA (defaults to ML-DSA-65)',
     category: 'HSM / PKCS#11',
-    algorithms: ['ML-DSA-87', 'SHA-256'],
+    algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128s', 'SHA-256'],
     icon: Cpu,
     moduleLink: '/learn/secure-boot-pqc',
-    keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
+    // NOTE: the SPHINCS+ alias is used here rather than the FIPS 205 short name,
+    // which is also another tool's id. Discovery is unaffected either way — the
+    // algorithms entry above already contains that name as a substring, and
+    // SEARCH_SYNONYMS maps the two spellings onto each other. The alias is
+    // preferred because scripts/ci/check-tool-version-bump.ts treats any tool id
+    // appearing quoted on a changed line of this file as that tool having been
+    // modified, and so demands a version bump for a tool nobody touched.
+    keywords: [
+      'firmware',
+      'uefi',
+      'secure boot',
+      'ml-dsa',
+      'sphincs',
+      'pqc',
+      'post-quantum',
+      'signing',
+      'verification',
+    ],
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
@@ -292,7 +314,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -333,7 +355,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -374,7 +396,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['Web Crypto', 'OpenSSL DRBG'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=0',
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
@@ -383,14 +405,35 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'entropy-test',
     pt_id: 'PT-011',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'Entropy Testing',
-    description: 'NIST SP 800-90B entropy test suite: monobit, frequency, min-entropy',
+    // Previously "NIST SP 800-90B entropy test suite: monobit, frequency,
+    // min-entropy", which attributed monobit and frequency to SP 800-90B —
+    // they belong to the SP 800-22 statistical-test family. The tool runs both
+    // families, and now runs BOTH of SP 800-90B's mandated continuous health
+    // tests (§4.4.1 repetition count and §4.4.2 adaptive proportion); until
+    // 2026-08-12 it shipped only the first while claiming the standard.
+    description:
+      'SP 800-90B health tests (repetition count, adaptive proportion) and MCV min-entropy, alongside monobit, runs and chi-squared statistical checks',
     category: 'Entropy & Random',
-    algorithms: ['SP 800-90B', 'Web Crypto'],
+    algorithms: ['SP 800-90B', 'SP 800-22', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
-    keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
+    keywords: [
+      'entropy',
+      'testing',
+      'sp 800-90b',
+      'sp 800-22',
+      'health test',
+      'repetition count',
+      'adaptive proportion',
+      'monobit',
+      'runs',
+      'chi-squared',
+      'frequency',
+      'min-entropy',
+      'nist',
+    ],
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=1',
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
@@ -405,7 +448,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
@@ -421,7 +464,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=4',
     keywords: [
       'source combining',
       'xor',
@@ -448,6 +491,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['HMAC_DRBG', 'SHA-256'],
     icon: Workflow,
+    // Deliberately the module root, not a workshop step: the Entropy module's
+    // renderWorkshopStep switch has no case for DrbgArchitectureDemo, so there is
+    // no step to deep-link to. The other four Entropy tools now point at their own
+    // step. If a DRBG step is ever added, point this at it.
     moduleLink: '/learn/entropy-randomness',
     keywords: [
       'drbg',
@@ -658,14 +705,35 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.1',
+    version: '1.0.2',
     name: '5G SUCI Construction',
-    description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
+    // Profiles A/B are the ratified 3GPP TS 33.501 §C.3.3 constructions; Profile C
+    // is the post-quantum profile the tool also implements (ML-KEM, hybrid with
+    // X25519 or pure). The PQC half was previously absent from `description`,
+    // `algorithms` and `keywords` alike, so a catalogue search for "ML-KEM"
+    // returned 13 tools and never this one.
+    description:
+      'Subscriber identity concealment for 5G: ECDH + ANSI X9.63-KDF + AES (Profiles A/B), plus a post-quantum Profile C using ML-KEM in hybrid and pure modes',
     category: 'Protocol Simulations',
-    algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
+    algorithms: ['ECDH', 'X25519', 'ML-KEM-768', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
     moduleLink: '/learn/5g-security',
-    keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
+    keywords: [
+      '5g',
+      'suci',
+      'supi',
+      'subscriber',
+      'concealment',
+      'ecdh',
+      'hkdf',
+      'aes',
+      'ml-kem',
+      'pqc',
+      'post-quantum',
+      'hybrid',
+      'profile c',
+      'x25519',
+    ],
     difficulty: 'advanced',
     requires: ['sab'],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
@@ -709,7 +777,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['secp256k1', 'SHA-256', 'RIPEMD160'],
     icon: Bitcoin,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=bitcoin',
     keywords: ['bitcoin', 'secp256k1', 'ecdsa', 'transaction', 'utxo', 'sha256', 'ripemd160'],
     difficulty: 'intermediate',
     requires: [],
@@ -727,7 +795,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['Ed25519'],
     icon: Zap,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=solana',
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
     requires: [],
@@ -745,7 +813,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['BIP39', 'BIP32', 'PBKDF2', 'HMAC-SHA512'],
     icon: Workflow,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=hd-wallet',
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     requires: [],
@@ -835,7 +903,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'tpm-playground',
     pt_id: 'PT-028',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'TPM 2.0 PQC Playground',
     description:
       'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
@@ -854,7 +922,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pki-enrollment',
     pt_id: 'PT-029',
-    version: '0.1.0',
+    version: '0.1.1',
     name: 'PKI Enrollment (EST + CMP)',
     description:
       'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
@@ -881,6 +949,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    // Pre-1.0: the WIP banner is the only signal a visitor gets that this tool
+    // is still moving. `workshopRegistry.test.ts` enforces that every 0.x tool
+    // sets this, so a new pre-1.0 tool cannot ship looking finished.
+    wip: true,
     hasOutput: true,
     outputSpec:
       'Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).',
@@ -941,10 +1013,16 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'api-security-jwt',
     pt_id: 'PT-032',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'API Security & JWT Workshop',
     description:
-      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem.',
+      // The JWE half is pinned to draft-ietf-jose-pqc-kem-05 ON PURPOSE. That
+      // version was titled "PQ KEMs for JOSE and COSE"; -06 (6 Jul 2026) was
+      // retitled COSE-only and dropped JOSE entirely — 0 occurrences of "JWE",
+      // and §5.1 "Key Derivation for JOSE" is gone. The implementation is
+      // correct against -05, so the citation names the version rather than
+      // pointing at a document that no longer specifies this.
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem-05 (its successor -06 narrowed to COSE only).',
     category: 'OpenSSL Studio',
     algorithms: [
       'ML-DSA-44',
@@ -986,7 +1064,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'mls-group-messaging',
     pt_id: 'PT-030',
-    version: '0.1.0',
+    version: '0.1.1',
     name: 'MLS Group Messaging',
     description:
       'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
@@ -1008,6 +1086,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    // Pre-1.0 — see the note on PT-029.
+    wip: true,
     opensourceTool: {
       name: 'openmls',
       url: 'https://github.com/openmls/openmls',
