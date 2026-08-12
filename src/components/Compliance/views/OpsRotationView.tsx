@@ -27,6 +27,7 @@ import {
   Wrench,
   Server,
   Boxes,
+  FileCheck,
 } from 'lucide-react'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
@@ -113,6 +114,51 @@ const TOOLCHAIN_LINKS = [
     desc: 'Software inventory mapped to migration steps',
     to: '/migrate',
     icon: Boxes,
+  },
+]
+
+/**
+ * The artifacts an operator is actually asked to hand over, and the tool that
+ * produces each. Tool ids are checked against BUSINESS_TOOLS by
+ * `OpsRotationView.test.tsx` — a renamed tool must not leave this list pointing
+ * at a 404, which would be worse than not listing the artifact at all.
+ */
+export const OPS_EVIDENCE_ARTIFACTS: { artifact: string; tool: string; whyAsked: string }[] = [
+  {
+    artifact: 'Cryptographic inventory (CBOM)',
+    tool: 'crypto-cbom-builder',
+    whyAsked:
+      'The first question in every audit: what cryptography is actually running. Without it, nothing else you claim can be checked.',
+  },
+  {
+    artifact: 'Audit readiness checklist',
+    tool: 'audit-checklist',
+    whyAsked:
+      'Your own pass over the controls before someone else does it. Each item should point at evidence that exists today, not at an intention.',
+  },
+  {
+    artifact: 'Migration verification & closure record',
+    tool: 'migration-verification',
+    whyAsked:
+      'Proof the old algorithm is GONE, not just that the new one works. Both running is the normal mid-migration state and it is not done.',
+  },
+  {
+    artifact: 'Risk register with owners and dates',
+    tool: 'risk-register',
+    whyAsked:
+      'Accepted risks are fine; unowned ones are not. An auditor reads the owner and the review date before the description.',
+  },
+  {
+    artifact: 'Deployment playbook',
+    tool: 'deployment-playbook',
+    whyAsked:
+      'Shows the rotation is a repeatable procedure rather than one engineer\u2019s knowledge, which is what continuity questions are really about.',
+  },
+  {
+    artifact: 'Progress measures over time',
+    tool: 'kpi-tracker',
+    whyAsked:
+      'A trend, not a snapshot. Regulators asking about a multi-year transition want to see movement, not a single reading.',
   },
 ]
 
@@ -305,6 +351,44 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
             </tbody>
           </table>
         </div>
+      </section>
+
+      {/* B+ remediation 4.6 (2026-08-10): "surface the evidence artifacts ops
+          must produce". A compliance page that stops at deadlines tells an
+          operator when they will be asked, not what they will be asked FOR —
+          and the second is the thing that takes months to assemble.
+
+          Every artifact below names the Command Center tool that produces it,
+          because those tools already exist and already export. Pointing at a
+          real producer is the difference between a checklist and a to-do list
+          somebody has to invent from scratch. */}
+      <section data-section-id="ops-evidence" className="space-y-2 scroll-mt-20">
+        <div className="flex items-center gap-2">
+          <FileCheck size={16} className="shrink-0 text-primary" aria-hidden="true" />
+          <h3 className="text-base font-semibold text-foreground">
+            Evidence you will be asked for
+          </h3>
+        </div>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Auditors ask for artifacts, not assurances. These are the ones a post-quantum migration is
+          normally asked to produce, and where this site can generate each.
+        </p>
+        <ul className="space-y-2">
+          {OPS_EVIDENCE_ARTIFACTS.map((a) => (
+            <li key={a.tool} className="rounded-lg border border-border bg-card/50 p-2.5">
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-sm font-semibold text-foreground">{a.artifact}</span>
+                <Link
+                  to={`/business/tools/${a.tool}`}
+                  className="text-xs text-primary hover:underline"
+                >
+                  produce it →
+                </Link>
+              </div>
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{a.whyAsked}</p>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   )

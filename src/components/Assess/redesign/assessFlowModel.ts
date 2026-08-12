@@ -100,6 +100,21 @@ export interface AssessStepMeta {
   subtitle: string
   /** "Why we ask" disclosure copy (consolidates the legacy PersonaHint/WhyWeAsk). */
   why: string
+  /**
+   * What THIS answer changes in the report — B+ remediation 4.4 (2026-08-10).
+   *
+   * Distinct from `why`, and the distinction is the point. `why` justifies the
+   * question ("your sector sets the baseline threat model"); this names the
+   * consequence the reader will actually see ("moves your industry threat
+   * baseline and the peer comparison in the report").
+   *
+   * The review called this "the cheapest educational move available anywhere on
+   * the site", and it is aimed squarely at the wizard's real failure mode:
+   * people answer "I don't know" to the questions that matter most, because
+   * nothing tells them the answer is load-bearing. Required, so a new step
+   * cannot ship without one.
+   */
+  changesInReport: string
   /** True only for steps whose validator passes with no answer (Skip is shown). */
   freelyOptional: boolean
 }
@@ -113,6 +128,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Quantum risk varies sharply by sector — this calibrates every downstream recommendation.',
     why: 'Your sector sets the baseline threat model: which data is most targeted, which regulators apply, and how aggressive your peers already are.',
+    changesInReport:
+      'Sets your threat baseline and picks the compliance frameworks the report checks you against.',
     freelyOptional: false,
   },
   country: {
@@ -122,6 +139,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'Which jurisdiction applies to your organization?',
     subtitle: "Your country's regulatory timeline aligns your migration deadline recommendations.",
     why: 'Regulators set hard PQC dates (CNSA 2.0, BSI, ANSSI…). The jurisdiction decides which deadline drives your roadmap.',
+    changesInReport: 'Chooses which regulator’s deadline drives your roadmap dates.',
     freelyOptional: false,
   },
   crypto: {
@@ -132,6 +150,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Select all that apply — these map to the quantum-vulnerable algorithms in your estate.',
     why: "Public-key crypto (key exchange & signatures) is broken by Shor's algorithm; symmetric and hashing only need larger parameters. Knowing your mix sizes the migration.",
+    changesInReport:
+      'Determines which of your algorithms are listed as quantum-vulnerable, and what each is replaced by.',
     freelyOptional: false,
   },
   sensitivity: {
@@ -141,6 +161,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'How sensitive is your data?',
     subtitle: 'Select all that apply — your risk is assessed against the highest level present.',
     why: 'Harvest-now-decrypt-later means data captured today is broken once a quantum computer exists. The longer your data must stay secret, the more urgent the migration.',
+    changesInReport:
+      'Drives the harvest-now-decrypt-later window — the single biggest lever on your risk score.',
     freelyOptional: false,
   },
   compliance: {
@@ -151,6 +173,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Select any regulatory or compliance frameworks you must adhere to. Skip if unsure — it won’t change your score much.',
     why: 'Frameworks set the hard dates and mandatory algorithms. We surface PQC obligations and deadlines specific to your selections.',
+    changesInReport:
+      'Adds each framework’s own deadline and requirements to the compliance section.',
     freelyOptional: true,
   },
   'use-cases': {
@@ -161,6 +185,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Select all cryptographic use cases in your organization to prioritize which migrations are most urgent.',
     why: 'Each use case has its own migration path and priority — TLS and VPN move first, niche use cases later. This shapes the ordering in your roadmap.',
+    changesInReport:
+      'Adds each framework’s own deadline and requirements to the compliance section.',
     freelyOptional: true,
   },
   retention: {
@@ -170,6 +196,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'How long must your data stay confidential?',
     subtitle: 'Select all that apply — HNDL risk is assessed against the longest period.',
     why: 'If encrypted data must stay confidential past the first quantum computer (~2030), adversaries may be harvesting it today for later decryption.',
+    changesInReport:
+      'Sets how long your data stays valuable to an attacker, which is what makes the deadline urgent or not.',
     freelyOptional: false,
   },
   'credential-lifetime': {
@@ -179,6 +207,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'How long must your certificates stay trusted?',
     subtitle: 'Select all that apply — HNFL risk is assessed against the longest period.',
     why: 'Root CA certificates issued today with long validity must be trusted past the quantum threat horizon — a primary signature-forgery target.',
+    changesInReport:
+      'Sets how long your data stays valuable to an attacker, which is what makes the deadline urgent or not.',
     freelyOptional: false,
   },
   migration: {
@@ -188,6 +218,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'What is your PQC migration status?',
     subtitle: 'Tells us where to start your plan — discovery, piloting, or scaling.',
     why: 'Your starting point sets the first phase of the roadmap and how much of the plan is foundational vs. execution.',
+    changesInReport:
+      'Shifts the roadmap from "where to start" to "what to finish", and changes every date after it.',
     freelyOptional: false,
   },
   scale: {
@@ -197,6 +229,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'What is your organizational scale?',
     subtitle: 'Migration scope and team capacity directly affect timelines and effort.',
     why: 'The ratio of systems to engineers calibrates how aggressive a timeline is realistic and where to invest in automation.',
+    changesInReport: 'Scales the effort estimate and the team-size guidance in the roadmap.',
     freelyOptional: false,
   },
   agility: {
@@ -207,6 +240,8 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Crypto agility is a major factor in migration complexity. Abstracted implementations migrate far more easily.',
     why: 'Hardcoded algorithms must be found and rewritten everywhere; abstracted ones swap via config. This is the single biggest driver of migration effort.',
+    changesInReport:
+      'Decides whether the roadmap recommends a one-off swap or building the ability to swap again.',
     freelyOptional: false,
   },
   infra: {
@@ -217,6 +252,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     subtitle:
       'Select the layers that handle cryptography. HSMs and on-prem are typically the hardest to migrate.',
     why: 'Each layer has a different migration path and difficulty. HSMs and embedded devices often gate the timeline because they replace slowly.',
+    changesInReport: 'Selects which infrastructure layers the migration catalog is filtered to.',
     freelyOptional: true,
   },
   timeline: {
@@ -226,6 +262,7 @@ export const STEP_META: Record<AssessStepKey, AssessStepMeta> = {
     question: 'Do you have a migration deadline?',
     subtitle: 'Timeline pressure affects how aggressively migration must be prioritized.',
     why: 'A regulatory deadline forces a fixed plan; an internal target gives more latitude. This sets the pace of every roadmap phase.',
+    changesInReport: 'Sets how aggressively the roadmap is sequenced against your own deadline.',
     freelyOptional: false,
   },
 }

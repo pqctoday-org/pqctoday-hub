@@ -16,6 +16,7 @@ import {
   trustInfo,
   formatLibDate,
 } from './libraryPills'
+import { documentWeight } from '@/data/libraryDocumentWeight'
 
 interface LibraryDocumentCardProps {
   item: LibraryItem
@@ -31,6 +32,7 @@ export function LibraryDocumentCard({
   onOpen,
 }: LibraryDocumentCardProps) {
   const trust = trustInfo(item.referenceId)
+  const weight = documentWeight(item.referenceId)
   const cats = (item.categories ?? []).slice(0, 2)
   const showUrgency = item.migrationUrgency === 'Critical' || item.migrationUrgency === 'High'
   // The lifecycle pill reflects the most-advanced edition across this record and
@@ -85,6 +87,27 @@ export function LibraryDocumentCard({
           {item.documentTitle}
         </Button>
       </h3>
+
+      {/* B+ remediation 3.3 (2026-08-10): "what this settles", plus how long it
+          is. The sentence is `short_description`, already authored for ~90% of
+          active rows and previously visible only after opening the detail
+          drawer — the list itself carried no educational content at all. The
+          weight line is DERIVED from the download manifest's recorded size
+          (libraryDocumentWeight.ts); a reader could not previously tell a
+          two-page note from a 2.5 MB standard without opening it.
+
+          The handoff asked for a page count. We do not hold one, and deriving
+          it from PDF bytes is a guess — so this reports the size we actually
+          recorded and what that means for reading time, rather than an
+          invented figure. */}
+      {item.shortDescription?.trim() && (
+        <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-muted-foreground">
+          {item.shortDescription.trim()}
+        </p>
+      )}
+      {weight && (
+        <p className="mt-1 text-[11px] font-mono text-muted-foreground/80">{weight.label}</p>
+      )}
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         <span

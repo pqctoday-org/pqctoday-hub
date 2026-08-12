@@ -51,7 +51,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
       badge: 'Sensor',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'ML-DSA-44 signing takes 0.8ms per frame \u2014 well within budget. FN-DSA-512 signing takes 2.0ms and produces 666-byte signatures (vs 2,420 for ML-DSA-44). FN-DSA-512 produces smaller signatures (666 bytes vs 2,420 for ML-DSA-44), reducing bandwidth on CAN FD. ML-DSA-44 has faster signing (0.8ms vs 2.0ms per frame). LiDAR on Ethernet supports larger signature sizes.',
+        'The size trade is the one you can rely on: FN-DSA-512 signatures are 666 bytes against ML-DSA-44’s 2,420, which is what matters on CAN FD, while LiDAR on Ethernet can carry either. The speed trade runs the other way — ML-DSA-44 signs faster than FN-DSA-512 — but per-frame timings depend entirely on the target silicon and whether it has a hardware accelerator, so measure on YOUR ECU against your frame budget rather than trusting a figure from someone else’s board.',
       config: { step: 1 },
     },
     {

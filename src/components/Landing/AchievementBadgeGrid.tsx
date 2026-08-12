@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import { Info, Lock } from 'lucide-react'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { ACHIEVEMENT_CATALOG, ACHIEVEMENT_COUNT } from '@/data/achievementCatalog'
+import { personaLadderFor } from '@/data/achievementCatalog'
 import { PERSONA_EXCLUDED_ACHIEVEMENTS } from '@/data/personaConfig'
 import { achievementIconMap } from '@/data/achievementIcons'
 import type { AchievementCategory, AchievementRarity } from '@/types/AchievementTypes'
@@ -81,16 +81,27 @@ export function AchievementBadgeGrid() {
   const [tooltip, setTooltip] = useState<string | null>(null)
 
   const unlockedIds = new Set(unlocked.map((u) => u.id))
+  /**
+   * B+ remediation 2.3 rebuild (2026-08-10): the LADDER, not the catalog.
+   *
+   * The denominator was the whole catalog while the rendering applied a
+   * deny-list, so an executive read "4/51" against a board eleven of whose
+   * rungs they could never reach. Both the list and the count now come from
+   * `personaLadderFor`, which also unions in anything already earned under a
+   * previous role — switching hats must never delete somebody's badge.
+   */
   // eslint-disable-next-line security/detect-object-injection
-  const excludedIds = new Set(selectedPersona ? PERSONA_EXCLUDED_ACHIEVEMENTS[selectedPersona] : [])
-  const earnedCount = unlocked.length
+  const excludedIds = selectedPersona ? PERSONA_EXCLUDED_ACHIEVEMENTS[selectedPersona] : []
+  const ladder = personaLadderFor(selectedPersona, excludedIds, unlockedIds)
+  const ladderIds = new Set(ladder.map((a) => a.id))
+  const earnedCount = unlocked.filter((u) => ladderIds.has(u.id)).length
 
   if (earnedCount === 0) return null
 
   const grouped = CATEGORY_ORDER.map((cat) => ({
     category: cat,
     label: CATEGORY_LABELS[cat],
-    achievements: ACHIEVEMENT_CATALOG.filter((a) => a.category === cat),
+    achievements: ladder.filter((a) => a.category === cat),
   }))
 
   return (
@@ -100,7 +111,7 @@ export function AchievementBadgeGrid() {
           Achievements
         </p>
         <p className="text-[10px] text-muted-foreground">
-          {earnedCount}/{ACHIEVEMENT_COUNT}
+          {earnedCount}/{ladder.length}
         </p>
       </div>
 
@@ -119,7 +130,12 @@ export function AchievementBadgeGrid() {
                 {achievements.map((achievement) => {
                   const isEarned = unlockedIds.has(achievement.id)
                   const isSecret = achievement.secret && !isEarned
-                  const isExcluded = excludedIds.has(achievement.id) && !isEarned
+                  // Never true now: `personaLadderFor` only returns rungs this
+                  // role can reach plus ones already earned, so an unreachable
+                  // rung is not in the list at all rather than rendered greyed
+                  // out. Kept as a named constant so the styling below reads
+                  // the same; the dead branch is removed by the bundler.
+                  const isExcluded = false
                   const IconComponent = isSecret ? Lock : achievementIconMap[achievement.icon]
 
                   return (
@@ -171,7 +187,7 @@ export function AchievementBadgeGrid() {
 
       {/* Screen-reader summary */}
       <p className="sr-only">
-        {earnedCount} of {ACHIEVEMENT_COUNT} achievements earned. {tooltip}
+        {earnedCount} of {ladder.length} achievements earned. {tooltip}
       </p>
     </div>
   )

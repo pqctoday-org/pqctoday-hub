@@ -13,6 +13,7 @@ import {
   monteCarloEstimate,
   percentile,
   compareCostModels,
+  programCostFor,
 } from './costModelSim'
 
 const scenario: CostModelInputs = {
@@ -32,9 +33,17 @@ describe('parametricEstimate', () => {
 })
 
 describe('bottomUpEstimate', () => {
-  it('sums per-system cost and the fixed program cost', () => {
-    // 40k × 1.0 × 250 + 2M = 12M
-    expect(bottomUpEstimate(scenario)).toBe(12_000_000)
+  it('sums per-system cost and the standing program cost for the horizon', () => {
+    // 40k × 1.0 × 250 + (2M/3 × 5) = 10M + 3.333M
+    expect(bottomUpEstimate(scenario)).toBeCloseTo(10_000_000 + programCostFor(5), 6)
+  })
+
+  it('scales with the horizon, so it estimates the same quantity as the parametric lens', () => {
+    // W2-2: only the parametric lens used to read horizonYears, so the spread
+    // ratio moved 2.4x -> 26.7x on the slider alone.
+    expect(bottomUpEstimate({ ...scenario, horizonYears: 10 })).toBeGreaterThan(
+      bottomUpEstimate({ ...scenario, horizonYears: 3 })
+    )
   })
 
   it('scales with complexity', () => {
@@ -47,27 +56,56 @@ describe('bottomUpEstimate', () => {
 describe('scenarioEstimate', () => {
   it('brackets the bottom-up expected value with the O/C multipliers', () => {
     const band = scenarioEstimate(scenario)
-    expect(band.expected).toBe(12_000_000)
-    expect(band.optimistic).toBeCloseTo(12_000_000 * SIM_CONSTANTS.optimisticFactor, 6)
-    expect(band.conservative).toBeCloseTo(12_000_000 * SIM_CONSTANTS.conservativeFactor, 6)
+    const expected = bottomUpEstimate(scenario)
+    expect(band.expected).toBeCloseTo(expected, 6)
+    expect(band.optimistic).toBeCloseTo(expected * SIM_CONSTANTS.optimisticFactor, 6)
+    expect(band.conservative).toBeCloseTo(expected * SIM_CONSTANTS.conservativeFactor, 6)
     expect(band.optimistic).toBeLessThan(band.expected)
     expect(band.conservative).toBeGreaterThan(band.expected)
   })
 })
 
 describe('analogicalEstimate', () => {
-  it('prices per system from an illustrative historical rate', () => {
-    // 30k × 1.0 × 250 = 7.5M
-    expect(analogicalEstimate(scenario)).toBe(7_500_000)
+  it('prices per system from an illustrative historical rate, plus the standing program cost', () => {
+    // 30k × 1.0 × 250 + (2M/3 × 5) = 7.5M + 3.333M
+    expect(analogicalEstimate(scenario)).toBeCloseTo(7_500_000 + programCostFor(5), 6)
   })
 })
 
 describe('aleReference', () => {
-  it('is a cost-of-inaction figure independent of the migration scope', () => {
-    // 4.44M × 2.5 × 0.09 (Cyentia IRIS 2025 "average" tier) × 5 = 4.995M
-    expect(aleReference(scenario)).toBeCloseTo(4_995_000, 0)
-    // Does not depend on system count (it is not a migration-cost method).
-    expect(aleReference({ ...scenario, systems: 9999 })).toBeCloseTo(4_995_000, 0)
+  // W2-1: this used to be `baseline × 2.5 × prob × horizon` — a flat quantum
+  // factor assuming a CRQC exists with certainty, which is precisely the
+  // assumption breachCostModel.ts was rebuilt to remove, under a comment
+  // claiming the lens shared the Simulator's source "no drift". It also read
+  // none of the scenario inputs, so a one-system startup and a hundred-system
+  // bank were both quoted $4,995,000.
+
+  it('is probability-weighted, not a flat multiple of the baseline', () => {
+    // Strictly below the certainty case (baseline × cap × prob × horizon),
+    // because a CRQC is not certain to exist within the horizon.
+    const certainty =
+      SIM_CONSTANTS.breachBaseline * 5 * SIM_CONSTANTS.annualBreachProb * scenario.horizonYears
+    expect(aleReference(scenario)).toBeLessThan(certainty)
+    expect(aleReference(scenario)).toBeGreaterThan(0)
+  })
+
+  it('rises with the horizon, as CRQC-arrival probability accumulates', () => {
+    expect(aleReference({ ...scenario, horizonYears: 15 })).toBeGreaterThan(
+      aleReference({ ...scenario, horizonYears: 5 })
+    )
+  })
+
+  it('responds to the size of the estate at risk', () => {
+    const small = aleReference({ ...scenario, systems: 1 })
+    const large = aleReference({ ...scenario, systems: 1000 })
+    expect(large).toBeGreaterThan(small)
+    // Damped, not linear — 1000x the systems is not 1000x the breach.
+    expect(large / small).toBeLessThan(100)
+  })
+
+  it('stays a cost-of-inaction reference, kept out of the migration points', () => {
+    const c = compareCostModels(scenario, { seed: 1 })
+    expect(c.migrationPoints).not.toContain(c.aleReference)
   })
 })
 
@@ -155,5 +193,33 @@ describe('compareCostModels', () => {
   it('keeps the ALE reference separate from the migration points', () => {
     const c = compareCostModels(scenario, { seed: 42 })
     expect(c.migrationPoints).not.toContain(c.aleReference)
+  })
+})
+
+// ── W2-2 regression guard (audit 2026-08-10) ────────────────────────────────
+describe('spread ratio is a property of the methods, not the horizon slider', () => {
+  it('does not blow up as the horizon grows, at any estate size', () => {
+    // Checked across estate sizes on purpose: with only the parametric lens
+    // horizon-aware, the swing from a 1-year to a 20-year horizon was ~7-11x
+    // whatever the estate. It is now 0.14x-3.13x, and which way it leans
+    // depends on the estate rather than on the slider. The parametric lens is
+    // still the most horizon-sensitive by construction (it is a % of annual
+    // budget per year), so this is a bound, not an invariance claim.
+    for (const systems of [10, 50, 100, 250, 1000]) {
+      const at = (horizonYears: number) =>
+        compareCostModels({ ...scenario, systems, horizonYears }, { seed: 1 }).spreadRatio
+      const swing = at(20) / at(1)
+      expect(swing, `systems=${systems}`).toBeLessThan(4)
+    }
+  })
+
+  it('every migration lens responds to the horizon', () => {
+    const a = compareCostModels({ ...scenario, horizonYears: 3 }, { seed: 1 })
+    const b = compareCostModels({ ...scenario, horizonYears: 12 }, { seed: 1 })
+    expect(b.parametric).toBeGreaterThan(a.parametric)
+    expect(b.bottomUp).toBeGreaterThan(a.bottomUp)
+    expect(b.analogical).toBeGreaterThan(a.analogical)
+    expect(b.scenario.expected).toBeGreaterThan(a.scenario.expected)
+    expect(b.monteCarlo.p50).toBeGreaterThan(a.monteCarlo.p50)
   })
 })

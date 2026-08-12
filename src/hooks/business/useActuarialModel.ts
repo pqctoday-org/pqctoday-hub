@@ -53,7 +53,19 @@ function getSensitivityMult(industryId: string): number {
 }
 
 function getPremiumImpactMultiplier(industryId: string, avgMigrationFraction: number): number {
-  // Anchored to NetDiligence quantum-rider data: +15% (fully migrated) to +50% (not migrated)
+  // ILLUSTRATIVE, NOT SOURCED: +15% (fully migrated) to +50% (not migrated).
+  // This previously read "Anchored to NetDiligence quantum-rider data". The
+  // NetDiligence Cyber Claims Study 2025 was retrieved and read in full on
+  // 2026-08-11 (80 pages, see roiBaselines.ts FINANCIAL_BASELINE_EVIDENCE for
+  // the asset path): it contains ZERO occurrences of "quantum", "rider",
+  // "premium" or "pricing". It is a claims-COST study, not a pricing study —
+  // it has no premium figures of any kind to anchor to.
+  //
+  // That grep is trustworthy here, unlike on the IRIS figures: the text layer
+  // covers the document (110 KB across 80 pages, only the cover page below 200
+  // characters), so a zero hit means absent rather than rasterised.
+  //
+  // The range is this model's own assumption and is now labelled as such in the UI.
   // Insurers also weight industry risk tier
   const industryRisk = getSensitivityMult(industryId)
   // Linear interpolation: 0% migrated → max uplift; 100% migrated → min uplift

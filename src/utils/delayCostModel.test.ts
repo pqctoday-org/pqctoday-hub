@@ -10,7 +10,12 @@ import {
 } from './delayCostModel'
 import { computeBreachCosts } from './breachCostModel'
 
-function computeRowAleForTest(inp: DelayScenarioInputs, yearsOfData: number, year: number): number {
+function computeRowAleForTest(
+  inp: DelayScenarioInputs,
+  yearsOfData: number,
+  year: number,
+  decryptionGapYears: number = 0
+): number {
   return computeBreachCosts({
     baseline: inp.breachBaseline,
     breachScale: inp.breachScale,
@@ -20,6 +25,9 @@ function computeRowAleForTest(inp: DelayScenarioInputs, yearsOfData: number, yea
     dataSensitivityClass: inp.dataSensitivityClass,
     asOfYear: year,
     planningHorizonYears: 1,
+    // must mirror rowAnnualLoss in delayCostModel.ts
+    crqcProbabilityMode: 'cumulative',
+    decryptionGapYears,
     discountRateAnnual: Math.max(0, inp.discountRatePct) / 100,
   }).quantumALE
 }
@@ -72,8 +80,14 @@ describe('projectDelayScenario', () => {
       const year = base.currentYear + t
       const vulnerableYearsOfData = base.baseYearsOfData + t
       const frozenYearsOfData = base.baseYearsOfData + delayYears
-      const vulnerableALE = computeRowAleForTest(base, vulnerableYearsOfData, year)
-      const frozenALE = computeRowAleForTest(base, frozenYearsOfData, year)
+      const vulnerableALE = computeRowAleForTest(base, vulnerableYearsOfData, year, 0)
+      // the frozen corpus has been ageing since migration started
+      const frozenALE = computeRowAleForTest(
+        base,
+        frozenYearsOfData,
+        year,
+        Math.max(0, t - delayYears)
+      )
       const lo = Math.min(vulnerableALE, frozenALE) * discount(t)
       const hi = Math.max(vulnerableALE, frozenALE) * discount(t)
       expect(result.rows[t].breach).toBeGreaterThanOrEqual(lo - 1)
@@ -133,6 +147,86 @@ describe('projectDelayScenario', () => {
 describe('costOfInaction', () => {
   it('is positive when a real HARD deadline and delay premium are in play', () => {
     expect(costOfInaction(base, 5)).toBeGreaterThan(0)
+  })
+
+  // ── W1-1 regression guards ────────────────────────────────────────────────
+  // These are the properties whose absence let the "delay is cheaper than
+  // migrating" defect ship green: the only previous costOfInaction assertion
+  // covered a HARD deadline WITH a delay premium — the one configuration in
+  // which the model happened to behave. (Audit 2026-08-10.)
+
+  it('in real terms (undiscounted) waiting always costs more, for every mandate state', () => {
+    // Directional correctness of the RISK model, isolated from the financing
+    // question. Before W1-1 this was flat: total breach cost moved 0.9% across
+    // an 8-year delay, so delaying was free in real terms too.
+    for (const mandateType of ['HARD', 'SOFT', 'NONE'] as const) {
+      const inp = { ...base, mandateType, discountRatePct: 0 }
+      let prev = -Infinity
+      for (let d = 0; d <= inp.horizonYears; d++) {
+        const cost = costOfInaction(inp, d)
+        expect(
+          cost,
+          `mandate=${mandateType}: cost of inaction fell from ${prev} to ${cost} at delay ${d} — in real terms waiting must never cost less`
+        ).toBeGreaterThanOrEqual(prev - 1e-6)
+        prev = cost
+      }
+    }
+  })
+
+  it('charges the migration even when the delay runs past the horizon', () => {
+    // `t === delayYears` never fires when delayYears >= horizonYears, so the
+    // migration was silently free and "delay forever" scored cheapest by
+    // exactly the migration cost (−$4.5M at delay 10 on a 10-year horizon).
+    const atHorizon = projectDelayScenario({ ...base, discountRatePct: 0 }, base.horizonYears)
+    expect(atHorizon.totalMigration).toBeGreaterThan(0)
+    expect(costOfInaction({ ...base, discountRatePct: 0 }, base.horizonYears)).toBeGreaterThan(
+      costOfInaction({ ...base, discountRatePct: 0 }, base.horizonYears - 1) - 1e-6
+    )
+  })
+
+  it('undiscounted, a high-sensitivity organisation with NO mandate still pays to wait', () => {
+    // The case the audit reproduced: state secrets, 90% HNDL exposure, a 25%
+    // annual breach probability, no regulatory deadline, no delay premium.
+    // Before W1-1 the breach term was identical across every delay, so the
+    // answer was exactly $0 in real terms.
+    const exposed: DelayScenarioInputs = {
+      ...base,
+      mandateType: 'NONE',
+      annualFineUSD: 0,
+      cliffLossUSD: 0,
+      delayPremiumPerYear: 0,
+      discountRatePct: 0,
+      dataSensitivityClass: 'state-secret',
+      hndlFactorPct: 90,
+      annualBreachProbPct: 25,
+    }
+    for (const d of [1, 2, 4, 6, 8]) {
+      expect(costOfInaction(exposed, d), `delay ${d}y`).toBeGreaterThan(0)
+    }
+  })
+
+  it('DOCUMENTS a live limitation: discounted, deferring the capex can still beat the added risk', () => {
+    // Not a bug — standard NPV. With no binding mandate, deferring a $4.5M
+    // capex at 10% saves more in present value than the extra breach exposure
+    // adds, so cost of inaction reads NEGATIVE. The risk model is now
+    // directionally right (see the undiscounted tests above); this is a
+    // financing result, and the UI must SAY so rather than show a bare
+    // negative number. Pinned here so the behaviour cannot change silently.
+    const noMandate = { ...base, mandateType: 'NONE' as const, annualFineUSD: 0, cliffLossUSD: 0 }
+    expect(costOfInaction({ ...noMandate, discountRatePct: 0 }, 8)).toBeGreaterThan(0)
+    expect(costOfInaction({ ...noMandate, discountRatePct: 10 }, 8)).toBeLessThan(0)
+  })
+
+  it('grows the undiscounted quantum expected loss year over year in the never-migrate case', () => {
+    // The direct signature of W1-1: under the old marginal weighting this
+    // series was flat-to-declining across a 15-year horizon.
+    const inp = { ...base, discountRatePct: 0, horizonYears: 15 }
+    let prev = -Infinity
+    for (let t = 0; t < inp.horizonYears; t++) {
+      const ale = computeRowAleForTest(inp, inp.baseYearsOfData + t, inp.currentYear + t)
+      expect(ale, `year ${inp.currentYear + t}`).toBeGreaterThan(prev)
+      prev = ale
+    }
   })
 
   it('is zero when the delay is zero', () => {

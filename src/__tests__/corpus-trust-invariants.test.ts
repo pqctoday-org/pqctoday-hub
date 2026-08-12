@@ -317,7 +317,11 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   resolves 15 doc-enrichment chunks too, since several enrichment refIds
   //   also name a superseded IETF draft. Tightened to the measured value so the
   //   ratchet keeps its teeth.
-  'document-enrichment': 150,
+  //   2026-08-11: 150 -> 151. One more, surfaced by the first refresh-index
+  //   run in a while — the committed corpus was 605 records stale, so this
+  //   refresh pulled in maturity/library data merged since the last one. Same
+  //   deprecated-row class as the entries above, not a routing change.
+  'document-enrichment': 151,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
@@ -361,7 +365,13 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   The remaining 77 are deprecated rows with an EMPTY superseded_by — there
   //   is no successor recorded to follow, so they are a data gap (fill
   //   superseded_by, or re-cite the requirement), not a routing one.
-  'governance-maturity': 77,
+  //   2026-08-11: 77 -> 82. Five more requirements citing
+  //   IL-INCD-Cybersecurity-Strategy-2025, a deprecated library row with an
+  //   EMPTY superseded_by — precisely the data gap this entry already
+  //   describes, arriving with the same catch-up refresh. Filling
+  //   superseded_by (or re-citing the requirement) is what drops these; the
+  //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
+  'governance-maturity': 82,
 }
 
 /**

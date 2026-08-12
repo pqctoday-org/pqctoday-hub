@@ -20,6 +20,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { StandardRef } from '@/components/common/StandardRef'
 
 interface RiskEntry {
   id: string
@@ -1095,7 +1096,10 @@ export function EducationalGuide({
                 <>
                   <strong>How the score is calculated:</strong> Score = Likelihood &times; Impact
                   (1&ndash;25). Set both 1&ndash;5 values on each entry above &mdash; the badge
-                  updates live and lands in one of the four bands shown here.
+                  updates live and lands in one of the four bands shown here. The five levels follow
+                  the qualitative scale in <StandardRef cite="NIST SP 800-30" /> (Very Low / Low /
+                  Moderate / High / Very High); the four bands below are this app&apos;s own
+                  grouping of the resulting 1&ndash;25 scores, not part of that standard.
                 </>
               ) : (
                 <>
