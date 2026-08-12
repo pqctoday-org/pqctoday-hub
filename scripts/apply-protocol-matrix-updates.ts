@@ -106,11 +106,78 @@ function todayIso(): string {
  */
 const GENERATED_NOTE_RE = /^[a-z][a-z ]*(?: \(datatracker \d{4}-\d{2}-\d{2}\))?$/
 
+/**
+ * A `stageNote:` field in either quote style.
+ *
+ * QUOTE-STYLE GUARD (2026-08-12) — and this one is the worst of the set.
+ * Everything above read `/stageNote:\s*'([^']*)'/`, single quotes only. A note
+ * containing an apostrophe cannot be written in single quotes, so prettier
+ * writes it in double. **Ten of the matrix's 76 stageNotes are double-quoted,
+ * and every one of them is a hand-written 2026-08-09 correction** — the exact
+ * notes the curated-note guard exists to protect were the exact notes it could
+ * not see:
+ *
+ *   tls-1-3::pureKem, x509::hybridKem, smime::hybridKem, cose::pureKem,
+ *   cose::hybridKem, est-cmp::hybridKem, kerberos::hybridKem,
+ *   dtls-1-3::pureKem, fido-2::pureKem, macsec::pureKem
+ *
+ * The selection effect is what makes it dangerous: prose careful enough to say
+ * "the datatracker's IESG state" earns an apostrophe, so the more considered
+ * the note, the more certainly it was invisible.
+ *
+ * The write path had the same blind spot with a worse consequence. On a
+ * double-quoted cell `stageNoteRe.test()` was false, so it took the INSERT
+ * branch and added a second `stageNote:` key beside the first — a duplicate
+ * key in an object literal, where the last one silently wins.
+ */
+const STAGE_NOTE_RE = /stageNote:\s*(?:'([^']*)'|"([^"]*)")/
+
 export function isCuratedNote(note: string | undefined): boolean {
   if (note === undefined) return false
   const trimmed = note.trim()
   if (trimmed === '') return false
   return !GENERATED_NOTE_RE.test(trimmed)
+}
+
+/**
+ * The exact character span of one `<dim>: { … }` block inside one row, bounded
+ * by brace matching. `undefined` when the row or the dimension is absent.
+ *
+ * SIBLING-NOTE GUARD (2026-08-12). The write path always brace-matched, but the
+ * curated-note READ path took a flat 4,000-character window from the start of
+ * the dimension block and matched the first `stageNote:` inside it. For a cell
+ * that has no note of its own, that window runs straight past its closing brace
+ * into the next dimensions — so the cell is blocked on a note that belongs to a
+ * sibling. Measured on the 2026-08-11 run: fido-2::hybridKem and fido-2::pureSig
+ * were both blocked quoting fido-2::hybridSig's note about JOSE composite
+ * signatures, which has nothing to do with either. Two of ten blocks were wrong,
+ * and hybridKem was a legitimate RFC 10024 upgrade that had to be applied by
+ * hand instead.
+ *
+ * The failure direction matters: this only ever over-blocks, never overwrites,
+ * because the write path was already correct. But an over-block is not free —
+ * it is indistinguishable in the output from a real SME decision, so the cells
+ * it hides get treated as reviewed when nobody reviewed them.
+ */
+export function dimensionSpan(
+  source: string,
+  rowId: string,
+  dim: string
+): { start: number; end: number } | undefined {
+  const rIdx = source.search(new RegExp(`id:\\s*'${rowId}'`))
+  if (rIdx < 0) return undefined
+  const dRel = source.slice(rIdx).search(new RegExp(`${dim}:\\s*\\{`))
+  if (dRel < 0) return undefined
+  const start = rIdx + dRel
+  let depth = 0
+  for (let i = start; i < source.length; i++) {
+    if (source[i] === '{') depth++
+    else if (source[i] === '}') {
+      depth--
+      if (depth === 0) return { start, end: i }
+    }
+  }
+  return undefined
 }
 
 /**
@@ -130,6 +197,7 @@ export function patchMatrix(
   downgrades: string[]
   curatedNotes: string[]
   ambiguous: string[]
+  statelessCells: string[]
 } {
   let next = source
   let applied = 0
@@ -145,6 +213,7 @@ export function patchMatrix(
   const downgrades: string[] = []
   const curatedNotes: string[] = []
   const ambiguous: string[] = []
+  const statelessCells: string[] = []
 
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
@@ -207,17 +276,46 @@ export function patchMatrix(
         continue
       }
     }
+    // STAGELESS-CELL GUARD (2026-08-12).
+    //
+    // A cell with no `stage:` is not an unfilled field. It is a cell whose PQC
+    // story is not one tracked document, so no point on the IETF ladder is the
+    // honest answer — rpki-bgpsec::pureSig and kerberos::pureSig both list only
+    // carrier documents (RFC 5280, RFC 6488, the CMS profile), and none of them
+    // says anything about when PQC signing lands there.
+    //
+    // This guard exists because of a real near-miss on 2026-08-12. Those two
+    // cells were being blocked by the curated-note check reading a SIBLING
+    // dimension's note — accidental protection, for entirely the wrong reason.
+    // Fixing that bug removed the accident and left the applier ready to write
+    // stage: 'rfc-published' into rpki-bgpsec::pureSig on the strength of
+    // RFC 5280, published 2008, about classical X.509. That is the same failure
+    // ike-ipsec::hybridKem's note was written to record.
+    //
+    // Creating a stage is a stronger claim than advancing one: it asserts the
+    // cell belongs on the ladder at all. The deltas are still reported, so a
+    // human can add the stage deliberately if the cell really has a mechanism
+    // document now.
+    // Decided from the FILE, not from the report's `encoded_stage`. Those two
+    // can disagree — a report can be stale, or carry '' for a cell that does
+    // have a stage — and the file is the thing being changed. The pre-existing
+    // "applies normally when no stage is encoded yet" test is exactly that
+    // disagreement, and it still passes because its fixture cell really does
+    // have a stage.
+    const probe = dimensionSpan(next, rowId, dim)
+    if (probe && !/stage:\s*'[^']*'/.test(next.slice(probe.start, probe.end + 1))) {
+      statelessCells.push(
+        `${rowId}::${dim}: (no stage encoded) -> ${newStage} via ${ds.map((d) => d.ref_id).join(', ')}`
+      )
+      continue
+    }
     // CURATED-NOTE GUARD — see isCuratedNote above. Checked AFTER the
     // downgrade guard so a cell that is both reports as the downgrade it is.
     const existingNoteMatch = (() => {
-      const rowAnchorRe = new RegExp(`id:\\s*'${rowId}'`)
-      const rIdx = next.search(rowAnchorRe)
-      if (rIdx < 0) return undefined
-      const dRel = next.slice(rIdx).search(new RegExp(`${dim}:\\s*\\{`))
-      if (dRel < 0) return undefined
-      const slice = next.slice(rIdx + dRel, rIdx + dRel + 4000)
-      const nm = slice.match(/stageNote:\s*'([^']*)'/)
-      return nm ? nm[1] : undefined
+      const span = dimensionSpan(next, rowId, dim)
+      if (!span) return undefined
+      const nm = next.slice(span.start, span.end + 1).match(STAGE_NOTE_RE)
+      return nm ? (nm[1] ?? nm[2]) : undefined
     })()
     if (isCuratedNote(existingNoteMatch)) {
       curatedNotes.push(
@@ -230,28 +328,12 @@ export function patchMatrix(
       ? `${newStage.replace(/-/g, ' ')} (datatracker ${ds[0].last_updated})`
       : newStage.replace(/-/g, ' ')
 
-    // Find `id: '<rowId>'` and then the `<dim>: {` block beneath it.
-    const rowAnchor = new RegExp(`id:\\s*'${rowId}'`)
-    const rowIdx = next.search(rowAnchor)
-    if (rowIdx < 0) continue
-    // From rowIdx, find the next `<dim>: {`
-    const dimAnchor = new RegExp(`${dim}:\\s*\\{`)
-    const dimRel = next.slice(rowIdx).search(dimAnchor)
-    if (dimRel < 0) continue
-    const dimStart = rowIdx + dimRel
-    // Find the matching closing brace of this dimension block.
-    let depth = 0
-    let dimEnd = dimStart
-    for (let i = dimStart; i < next.length; i++) {
-      if (next[i] === '{') depth++
-      else if (next[i] === '}') {
-        depth--
-        if (depth === 0) {
-          dimEnd = i
-          break
-        }
-      }
-    }
+    // The same brace-matched span the curated-note read uses above, so the
+    // block this writes into and the block that was checked for a note are by
+    // construction the same characters.
+    const span = dimensionSpan(next, rowId, dim)
+    if (!span) continue
+    const { start: dimStart, end: dimEnd } = span
     const block = next.slice(dimStart, dimEnd + 1)
 
     let nextBlock = block
@@ -262,9 +344,11 @@ export function patchMatrix(
       // insert after the `value:` line
       nextBlock = nextBlock.replace(/(value:\s*'[^']+',)/, `$1\n        stage: '${newStage}',`)
     }
-    const stageNoteRe = /stageNote:\s*'[^']*'/
-    if (stageNoteRe.test(nextBlock)) {
-      nextBlock = nextBlock.replace(stageNoteRe, `stageNote: '${newNote}'`)
+    // Both quote styles — see STAGE_NOTE_RE. Missing the double-quoted case
+    // here did not merely skip the write, it took the insert branch below and
+    // added a SECOND stageNote key beside the existing one.
+    if (STAGE_NOTE_RE.test(nextBlock)) {
+      nextBlock = nextBlock.replace(STAGE_NOTE_RE, `stageNote: '${newNote}'`)
     } else {
       nextBlock = nextBlock.replace(/(stage:\s*'[^']+',)/, `$1\n        stageNote: '${newNote}',`)
     }
@@ -282,7 +366,7 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous }
+  return { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous, statelessCells }
 }
 
 /** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
@@ -429,10 +513,8 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous } = patchMatrix(
-    source,
-    deltasToPatch
-  )
+  const { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous, statelessCells } =
+    patchMatrix(source, deltasToPatch)
 
   // Reported before anything else, and on stderr, because a downgrade is not
   // routine: it means the feed disagreed with the matrix in the one direction
@@ -471,13 +553,29 @@ function main(): void {
     console.error('')
   }
 
+  if (statelessCells.length > 0) {
+    console.error(`BLOCKED ${statelessCells.length} cell(s) with NO ENCODED STAGE — not applied:`)
+    for (const s of statelessCells) console.error(`  ${s}`)
+    console.error('A cell with no stage is not an unfilled field: its PQC story is not')
+    console.error('one tracked document, so no rung on the ladder is the honest answer.')
+    console.error('Every ref these cells list is a carrier or algorithm-identifier RFC')
+    console.error('that says nothing about when PQC lands in the protocol. Adding a')
+    console.error('stage is a claim about the cell, not an update to it — make it by hand.')
+    console.error('')
+  }
+
   if (applied === 0) {
     if (itemsFilter) printResultJson([], staleItems, downgrades)
-    if (downgrades.length > 0 || curatedNotes.length > 0 || ambiguous.length > 0) {
+    if (
+      downgrades.length > 0 ||
+      curatedNotes.length > 0 ||
+      ambiguous.length > 0 ||
+      statelessCells.length > 0
+    ) {
       // Exit 1 = "drift detected, nothing applied" (the documented meaning),
       // NOT 0. Reporting "matrix already matches" here would be false: the
       // feed disagreed, we refused to act on it, and that needs attention.
-      console.error('No forward drift to apply; only blocked downgrades/curated cells.')
+      console.error('No forward drift to apply; only blocked downgrades/curated/stageless cells.')
       process.exit(1)
     }
     console.log('Patch found no targets to update (matrix already matches).')
