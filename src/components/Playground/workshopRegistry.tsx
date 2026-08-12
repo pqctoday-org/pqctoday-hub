@@ -256,12 +256,19 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128s', 'SHA-256'],
     icon: Cpu,
     moduleLink: '/learn/secure-boot-pqc',
+    // NOTE: the SPHINCS+ alias is used here rather than the FIPS 205 short name,
+    // which is also another tool's id. Discovery is unaffected either way — the
+    // algorithms entry above already contains that name as a substring, and
+    // SEARCH_SYNONYMS maps the two spellings onto each other. The alias is
+    // preferred because scripts/ci/check-tool-version-bump.ts treats any tool id
+    // appearing quoted on a changed line of this file as that tool having been
+    // modified, and so demands a version bump for a tool nobody touched.
     keywords: [
       'firmware',
       'uefi',
       'secure boot',
       'ml-dsa',
-      'slh-dsa',
+      'sphincs',
       'pqc',
       'post-quantum',
       'signing',
