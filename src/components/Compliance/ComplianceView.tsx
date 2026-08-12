@@ -87,7 +87,12 @@ type StableTab =
   | 'cswp39'
 
 const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
-  { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
+  // RENAMED 2026-08-11: 'Obligations' overclaimed. Most rows here are
+  // standards and certification schemes that merely APPLY — the tier system
+  // exists precisely to separate those from the ones that bind — and the page
+  // calls itself a reference, not a workspace. The id stays 'obligations' so
+  // every ?tab= and #hash link already in the wild keeps resolving.
+  { id: 'obligations', label: 'Rules & Standards', icon: ShieldCheck },
   { id: 'requirements', label: 'Requirements', icon: BookOpen },
   { id: 'progress', label: 'Progress', icon: CalendarClock },
   { id: 'landscape', label: 'Landscape', icon: Layers },
@@ -739,7 +744,7 @@ export const ComplianceView = ({
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<ShieldCheck size={20} className="text-primary" />}
-              title="Obligations"
+              title="Rules & Standards"
               description="The instruments that bind your country and sector, why each one applies, and what it says about post-quantum cryptography. Tiers come from the same applicability engine For You uses."
             />
             <ObligationsTab

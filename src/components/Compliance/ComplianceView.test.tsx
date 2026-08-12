@@ -132,7 +132,7 @@ describe('ComplianceView', () => {
     })
   })
 
-  it('lands on the Obligations register, not the catalogue', () => {
+  it('lands on the Rules & Standards register, not the catalogue', () => {
     // The register answers "which rules bind me, and why" on arrival. Every
     // other tab asks the visitor to filter 197 rows until relevance falls out,
     // which is what the default used to do.
@@ -143,7 +143,7 @@ describe('ComplianceView', () => {
     )
     const selected = screen.getAllByRole('tab', { selected: true })
     expect(selected.length).toBeGreaterThan(0)
-    expect(selected[0]).toHaveTextContent(/Obligations/i)
+    expect(selected[0]).toHaveTextContent(/Rules & Standards/i)
   }, 15000)
 
   // ── Scope comes from the top bar ────────────────────────────────────────

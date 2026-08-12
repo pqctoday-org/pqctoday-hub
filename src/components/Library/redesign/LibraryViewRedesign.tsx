@@ -35,7 +35,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { GeoFilter, useGeoFilter, type GeoOption } from '@/components/common/GeoFilter'
 import { SectorFilter, useSectorFilter, industryLabel } from '@/components/common/SectorFilter'
-import { TrustTierFilter, useTrustTierFilter } from '@/components/common/TrustTierFilter'
+import { useTrustTierFilter } from '@/components/common/TrustTierFilter'
 import {
   AlgorithmFamilyFilter,
   useAlgorithmFamilyFilter,
@@ -563,7 +563,8 @@ export function LibraryViewRedesign({
                 <AlgorithmFamilyFilter params={params} setParams={setParams} />
                 <GeoFilter options={geoOptions} params={params} setParams={setParams} />
                 <SectorFilter params={params} setParams={setParams} />
-                <TrustTierFilter params={params} setParams={setParams} />
+                {/* Trust-tier control removed 2026-08-11 (all five pages).
+                    `?tier=` still filters via useTrustTierFilter above. */}
               </>
             }
           />
