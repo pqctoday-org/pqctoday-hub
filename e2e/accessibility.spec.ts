@@ -76,6 +76,39 @@ for (const { path, name } of ROUTES) {
     // MainLayout.tsx comment for the full chain).
     await page.waitForLoadState('networkidle').catch(() => {})
 
+    // THE actual cause of this spec's CI-only failures (measured 2026-08-12).
+    // axe computes colour contrast from COMPUTED colours, so an element still
+    // inside an opacity fade reports a washed-out foreground that does not
+    // exist at rest. Measured on the production build, same page, seconds
+    // apart: /migrate reported 85 serious/critical nodes immediately after
+    // networkidle and 0 once its animations had finished.
+    //
+    // Waiting for animations is NOT sufficient, which is what the first
+    // attempt at this got wrong. Running axe itself scrolls elements into
+    // view, which STARTS the scroll-triggered fades — so a wait placed before
+    // the scan is already stale by the time the scan reaches the lower half of
+    // the page. That is how the two axe passes below managed to disagree in
+    // both directions on a single run: /algorithms logged 33 violations then
+    // passed, /timeline logged none then failed. Different frames of different
+    // fades, not different pages.
+    //
+    // So the presentation is frozen instead of waited on. Contrast is judged
+    // on the resting colours, which is the thing a contrast audit is actually
+    // about — a fade's intermediate frames are not a state any reader sits in.
+    // Nothing is excluded and no rule is relaxed: every element is still
+    // scanned, and a genuinely low-contrast colour still fails.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.addStyleTag({
+      content: `*, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+      }`,
+    })
+    // One frame for the zeroed durations to land before anything is measured.
+    await page.waitForTimeout(250)
+
     await injectAxe(page)
 
     // Diagnostic logging before the assertion (2026-08-02). The default
