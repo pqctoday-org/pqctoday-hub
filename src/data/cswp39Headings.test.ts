@@ -19,6 +19,14 @@ import { CSWP39_SECTIONS, CSWP39_STEPS } from '@/components/Compliance/cswp39Dat
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from './cswp39ZoneData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 
+/**
+ * Document names that claim the §-reference following them. Matched against
+ * the 40 characters immediately before a §, so only that reference is
+ * exempted rather than everything else on the line.
+ */
+const OTHER_DOCUMENT =
+  /(ISO|IEC\b|SP\s?800|FIPS|RFC|NIS2|DORA|PHASE-OVERLAY|CSWP[\s._]?3[68]A?\b|CSWP[\s._]?4)/i
+
 /** Pull every "§N.N.N" token out of a string. */
 function refsIn(text: string): string[] {
   return text.match(/§\d(?:\.\d){0,2}/g) ?? []
@@ -123,10 +131,15 @@ describe('CSWP.39 §-reference provenance', () => {
           // documentation, not attribution.
           const code = line.trim()
           if (code.startsWith('//') || code.startsWith('*') || code.startsWith('/*')) continue
-          // Skip refs qualified by a different document.
-          if (/(ISO|IEC|SP\s?800|FIPS|RFC|NIS2|DORA|PHASE-OVERLAY)/i.test(line)) continue
-
-          for (const ref of refsIn(line)) {
+          // Judge each reference by what immediately PRECEDES it, not by the
+          // whole line. A line-wide skip was the first attempt and it was
+          // wrong in a way that mattered: "See CSWP.39 §5.5 and NIST SP 800-88"
+          // contains "SP 800", so the fabricated §5.5 next to CSWP.39 would
+          // have been waved through. Caught reviewing this gate, not by it.
+          for (const m of line.matchAll(/§\s?\d(?:\.\d){0,2}/g)) {
+            const before = line.slice(Math.max(0, (m.index ?? 0) - 40), m.index ?? 0)
+            if (OTHER_DOCUMENT.test(before)) continue
+            const ref = m[0].replace(/\s/g, '')
             if (!isRealCswp39Ref(ref)) {
               offenders.push(`${file.split('/src/')[1]}: ${ref} — ${code.slice(0, 90)}`)
             }
