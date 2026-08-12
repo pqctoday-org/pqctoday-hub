@@ -89,3 +89,44 @@ describe('standards citations are not placeholders', () => {
     expect(findUnresolvedPlaceholders(line)).toEqual(['YEAR'])
   })
 })
+
+/**
+ * Regression: a lowercase blank reached an exported board deck.
+ *
+ * The Board Pitch's governance section defaults to "...systems retiring before
+ * [date], etc." The rule required a capital letter, so nothing warned, and the
+ * string was found on slide 9 of a real exported .pptx on 2026-08-12 — a
+ * document going in front of a board with a blank still in it.
+ */
+describe('lowercase field placeholders', () => {
+  const REAL_SLIDE_9 =
+    '2. Scope: named systems, subsidiaries, and geographies covered - plus explicit exclusions for this phase (systems retiring before [date], etc.).'
+
+  it('catches the blank that shipped to slide 9', () => {
+    expect(findUnresolvedPlaceholders(REAL_SLIDE_9)).toEqual(['date'])
+  })
+
+  it('leaves deliberate lowercase asides alone', () => {
+    expect(findUnresolvedPlaceholders('See the table [see above] for detail.')).toEqual([])
+    expect(findUnresolvedPlaceholders('The clause [continued overleaf] applies.')).toEqual([])
+  })
+
+  it('ignores the bracketed priority labels a pitch uses as headings', () => {
+    // The Board Pitch writes "1. [IMMEDIATE] Complete a cryptographic
+    // inventory". Reporting these made the warning read "4 unfilled
+    // placeholders: date, IMMEDIATE, SHORT-TERM, LONG-TERM" when one was real.
+    const pitch = [
+      '1. [IMMEDIATE] Complete a cryptographic inventory (CBOM).',
+      '2. [SHORT-TERM] Stand up the QRPM governance board.',
+      '3. [LONG-TERM] Retire classical trust anchors.',
+      '- [OPTIONAL] Brief the audit committee.',
+    ].join('\n')
+    expect(findUnresolvedPlaceholders(pitch)).toEqual([])
+  })
+
+  it('still reports a blank sharing a line with a leading label', () => {
+    expect(findUnresolvedPlaceholders('1. [IMMEDIATE] Complete the inventory by [YEAR].')).toEqual([
+      'YEAR',
+    ])
+  })
+})

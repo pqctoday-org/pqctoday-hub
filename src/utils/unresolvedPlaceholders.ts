@@ -63,6 +63,27 @@ function isCitation(token: string): boolean {
   return /\d/.test(token) && /[-/§.]/.test(token)
 }
 
+/**
+ * A bracketed token that OPENS a line — optionally after a list marker — is a
+ * label, not a blank.
+ *
+ * The Board Pitch writes its recommendations as "1. [IMMEDIATE] Complete a
+ * cryptographic inventory". Those are priority headings the author put there on
+ * purpose, and reporting them made the warning read "4 unfilled placeholders:
+ * date, IMMEDIATE, SHORT-TERM, LONG-TERM" when exactly one was real.
+ *
+ * Decided by POSITION rather than by a list of known label words, because such
+ * a list would have to guess: "TBD" is a blank, "DRAFT" is a label, and the
+ * next tool will invent another. A blank appears where a value belongs —
+ * mid-sentence, after a colon. A label appears where a heading belongs.
+ */
+function isLeadingLabel(text: string, matchStart: number): boolean {
+  const lineStart = text.lastIndexOf('\n', matchStart - 1) + 1
+  const before = text.slice(lineStart, matchStart)
+  // Nothing but whitespace, a bullet, or an ordered-list marker in front of it.
+  return /^\s*(?:[-*•]\s*|\d+[.)]\s*)?$/.test(before)
+}
+
 /** Unique unresolved placeholder tokens found in `text`, in first-seen order. */
 export function findUnresolvedPlaceholders(text: string): string[] {
   const seen = new Set<string>()
@@ -72,11 +93,23 @@ export function findUnresolvedPlaceholders(text: string): string[] {
     if (IGNORED.has(token.toLowerCase())) continue
     if (isMarkdownLink(text, (m.index ?? 0) + m[0].length)) continue
     if (isCitation(token)) continue
-    // Require either ALL-CAPS or Title Case — ordinary lowercase prose in
-    // brackets ("[see above]") is an aside, not a fill-in.
+    if (isLeadingLabel(text, m.index ?? 0)) continue
+    // ALL-CAPS ("[YEAR]"), Title Case ("[Effective Date]"), or a SINGLE
+    // lowercase word ("[date]").
+    //
+    // That last case was missing, and it shipped: the Board Pitch's governance
+    // section defaults to "...systems retiring before [date], etc." and that
+    // string reached slide 9 of an exported .pptx — a board deck with an
+    // unfilled blank in it, and no warning, because the rule demanded a
+    // capital letter. Found by unzipping the actual .pptx, 2026-08-12.
+    //
+    // Multi-word lowercase stays excluded: "[see above]" and "[continued]" are
+    // asides an author wrote deliberately, not blanks awaiting a value. One
+    // word is a field name; a phrase is prose.
     const isAllCaps = token === token.toUpperCase()
     const isTitleCase = /^[A-Z]/.test(token)
-    if (!isAllCaps && !isTitleCase) continue
+    const isLowercaseField = /^[a-z][a-z0-9_-]*$/.test(token)
+    if (!isAllCaps && !isTitleCase && !isLowercaseField) continue
     if (seen.has(token)) continue
     seen.add(token)
     out.push(token)
