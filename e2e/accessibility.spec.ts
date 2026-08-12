@@ -58,6 +58,22 @@ const ROUTES = [
 
 for (const { path, name } of ROUTES) {
   test(`${name} (${path}) — no serious/critical a11y violations`, async ({ page }) => {
+    // 45s is the smoke suite's budget for an ACTION. This test's work is two
+    // full-page axe passes, and on /library — every catalogue document on one
+    // page — colour-contrast alone computes against enough text nodes that the
+    // pair does not fit: CI run 31623163250 timed out three times inside the
+    // second scan, reporting no violations at all, while the first scan had
+    // completed. The freeze above did not cause that; it just added the last
+    // fraction of a second.
+    //
+    // Both scans are kept. They are not redundant: axe scrolls elements into
+    // view as it works, so the first pass leaves the page settled for the
+    // second, and it is the second one that decides. Collapsing them to a
+    // single scan was tried and made /algorithms fail on 288 contrast nodes
+    // that the settled page does not have — the "wasteful" first pass is doing
+    // real work.
+    test.setTimeout(120_000)
+
     await page.goto(path)
 
     // Wait for the page's primary content to stabilise before running axe.
