@@ -25,19 +25,39 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
 
+/**
+ * One entry per value in the agreed `document_type` vocabulary (2026-08-10).
+ *
+ * These keys and `scripts/validators/document-type-checks.ts`'s allowed set are
+ * the same ten strings, and a test asserts they stay that way — a described
+ * type the data cannot hold, or a stored type with no description, are the two
+ * ways this drifts.
+ *
+ * It drifted before: the previous map described `Framework`, `Recommendation`
+ * and `Request for Comments`, none of which any row used, while the catalogue
+ * carried 92 other values. 138 of 804 active rows (17%) matched a described
+ * type; the rest fell through to the bare `Document type: X` fallback.
+ */
 const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
   Standard:
-    'Normative requirements published by a standards body (e.g. NIST, ISO, IETF). Compliance is often mandatory or contractually required.',
-  Specification:
-    'Precise technical definition of an algorithm, protocol, or format. Implementors follow this to achieve interoperability.',
-  Framework:
-    'High-level guidance that organises principles, controls, and processes. Compliance is typically self-assessed rather than certified.',
-  Guidance:
-    'Informational recommendations and best-practice advice; not normative. Useful for planning and education.',
-  Recommendation:
-    'Formal advice from a standards body or government agency. Carries weight but is not always legally binding.',
-  'Request for Comments':
-    'RFC — IETF process document defining internet protocols and standards. Status ranges from Informational to Internet Standard.',
+    'Normative requirements published and ratified by a standards body — NIST, ISO, ETSI, OASIS, TCG, IEEE. Compliance is often mandatory or contractually required.',
+  RFC: 'An IETF Request for Comments. Published and stable, whatever its track — check the status field for Standards Track, Informational or Experimental, because an RFC number alone does not mean "standard".',
+  'Internet-Draft':
+    'IETF work in progress, not yet an RFC. Content can change or be abandoned outright; cite it for direction of travel, not as a stable requirement.',
+  Regulation:
+    'Binding law or regulation. Non-compliance carries legal consequence, and the deadline is set by the instrument, not by your programme.',
+  'Government Guidance':
+    'Non-binding advice from a government body or regulator. Carries real weight with auditors and is often the precursor to a rule, but is not itself enforceable.',
+  'Compliance Framework':
+    'A scheme, certification programme or control set organisations are assessed against — the thing an auditor holds you to, as distinct from the standard it draws on.',
+  'Research Paper':
+    'Peer-reviewed or preprint academic work. Authoritative on its own findings; a result here is not the same as a deployable recommendation.',
+  'Industry Report':
+    'Analyst, vendor or consortium reporting and surveys. Useful for market state and adoption evidence; the author usually has a position.',
+  Article:
+    'News, blog or commentary. Fast-moving and short-lived — good for what changed this month, weak as a durable citation.',
+  Reference:
+    'A tool, dataset, registry or documentation site rather than a document. Cite it for what it contains today, not as a fixed text.',
 }
 
 /** Strip parenthetical annotations and honorific prefixes, then lowercase. */

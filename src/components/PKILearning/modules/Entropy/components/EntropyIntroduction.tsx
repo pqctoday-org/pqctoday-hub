@@ -421,10 +421,12 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <code className="text-primary font-mono">K</code> seeds.
             </li>
             <li>
-              <span className="font-medium text-foreground">Strength Match:</span> Per SP 800-131A
-              Rev 3, to achieve PQC Security Category 5 (equivalent to AES-256), your RBG must
-              operate at a 256-bit security strength. Do not feed a 128-bit DRBG into an ML-KEM-1024
-              keypair generation.
+              <span className="font-medium text-foreground">Strength Match:</span> An RBG feeding
+              key generation has to supply at least the security strength you are targeting — do not
+              feed a 128-bit DRBG into an ML-KEM-1024 keypair generation, or the keypair inherits
+              the DRBG&apos;s strength, not the parameter set&apos;s. This is the general
+              seed-strength rule from the SP 800-90 series and SP 800-57; SP 800-131A Rev 3 is an
+              initial public draft and does not state it in terms of PQC security categories.
             </li>
           </ul>
         </div>

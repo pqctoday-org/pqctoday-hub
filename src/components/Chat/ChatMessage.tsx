@@ -7,6 +7,7 @@ import {
   Bot,
   User,
   Copy,
+  Quote,
   Check,
   FileText,
   ChevronDown,
@@ -58,6 +59,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   const navigate = useNavigate()
   const closePanel = useRightPanelStore((s) => s.close)
   const [copied, setCopied] = useState(false)
+  const [cited, setCited] = useState(false)
   const [showSources, setShowSources] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(content)
@@ -66,6 +68,43 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     await navigator.clipboard.writeText(content)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  /**
+   * "Cite this" — B+ remediation 4.6 (2026-08-10).
+   *
+   * Plain Copy takes the answer and leaves the sources behind, so a quote
+   * pasted into a document arrives with no provenance and cannot survive
+   * review. This copies the answer WITH each source and its trust tier, which
+   * is the thing that makes the assistant quotable at all — the tier is the
+   * hub's own statement about how far the claim can be pushed, and stripping it
+   * turns a sourced answer into an anonymous assertion.
+   *
+   * Markdown rather than plain text: it pastes usefully into the documents
+   * people actually write, and degrades to readable text everywhere else.
+   */
+  const handleCite = async () => {
+    const when = new Date().toISOString().slice(0, 10)
+    const lines = [content.trim(), '', `— PQC Today assistant, ${when}`]
+    if (sourceRefs && sourceRefs.length > 0) {
+      lines.push('', 'Sources:')
+      for (const ref of sourceRefs) {
+        const tier = ref.trustTier ? ` [${ref.trustTier}]` : ''
+        const where = ref.deepLink
+          ? ref.deepLink.startsWith('http')
+            ? ` — ${ref.deepLink}`
+            : ` — https://www.pqctoday.com${ref.deepLink}`
+          : ''
+        lines.push(`- ${ref.title ?? ref.deepLink ?? 'source'}${tier}${where}`)
+      }
+      lines.push(
+        '',
+        'Trust tiers are PQC Today’s own assessment of each source, not the source’s claim about itself.'
+      )
+    }
+    await navigator.clipboard.writeText(lines.join('\n'))
+    setCited(true)
+    setTimeout(() => setCited(false), 2000)
   }
 
   return (
@@ -223,6 +262,24 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
             >
               {copied ? <Check size={12} className="text-status-success" /> : <Copy size={12} />}
             </Button>
+            {/* Offered only when there ARE sources — "cite this" on an
+                unsourced answer would promise provenance that does not exist. */}
+            {sourceRefs && sourceRefs.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCite}
+                className="p-1 h-auto min-h-0 text-muted-foreground hover:text-foreground"
+                aria-label="Copy with sources and trust tiers"
+                title={
+                  cited
+                    ? 'Copied with sources!'
+                    : 'Cite this — copies the answer with its sources and their trust tiers'
+                }
+              >
+                {cited ? <Check size={12} className="text-status-success" /> : <Quote size={12} />}
+              </Button>
+            )}
             {onFeedback && (
               <>
                 <Button

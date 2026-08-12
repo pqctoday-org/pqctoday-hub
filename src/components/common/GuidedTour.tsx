@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X,
@@ -27,10 +28,17 @@ import { Button } from '../ui/button'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
+import { PERSONA_TOURS } from '../../data/personaTours'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
 
-type Phase = 'intro' | 'gate' | 'features'
+// B+ remediation 4.2 (2026-08-10): a fourth phase. Onboarding carried one role
+// out of six properly — executive has EXEC_TOUR_STAGES, curious has
+// CuriousGuide, and developer/architect/researcher/ops got this generic feature
+// deck and nothing else. 'role' runs that persona's own four-step tour from
+// PERSONA_TOURS after the generic deck, reusing this modal's card, keyboard
+// handling and completion storage rather than building a second tour system.
+type Phase = 'intro' | 'gate' | 'features' | 'role'
 
 interface Slide {
   icon: React.FC<{ size?: number; className?: string }>
@@ -308,10 +316,15 @@ export const GuidedTour: React.FC = () => {
   const [introStep, setIntroStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
   const [essentialOnly, setEssentialOnly] = useState(false)
+  const [roleStep, setRoleStep] = useState(0)
+  const navigate = useNavigate()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isDisclaimerDone = useDisclaimerStore(
     (s) => s.acknowledgedMajorVersion !== null && s.acknowledgedMajorVersion >= getAppMajorVersion()
   )
+
+  // eslint-disable-next-line security/detect-object-injection -- typed PersonaId union
+  const roleTour = selectedPersona ? PERSONA_TOURS[selectedPersona] : undefined
 
   // Filter feature slides to match what's accessible for this persona
   const visibleFeatures = useMemo(() => {
@@ -394,6 +407,10 @@ export const GuidedTour: React.FC = () => {
   const next = () => {
     if (currentStep < visibleFeatures.length - 1) {
       setCurrentStep((s) => s + 1)
+    } else if (roleTour) {
+      // Hand off to this role's own tour rather than ending on a generic deck.
+      setRoleStep(0)
+      setPhase('role')
     } else {
       dismiss()
     }
@@ -401,6 +418,19 @@ export const GuidedTour: React.FC = () => {
 
   const prev = () => {
     if (currentStep > 0) setCurrentStep((s) => s - 1)
+  }
+
+  const roleNext = () => {
+    if (roleTour && roleStep < roleTour.steps.length - 1) {
+      setRoleStep((s) => s + 1)
+    } else {
+      dismiss()
+    }
+  }
+
+  const roleGo = (route: string) => {
+    dismiss()
+    navigate(route)
   }
 
   if (!isActive) return null
@@ -500,6 +530,52 @@ export const GuidedTour: React.FC = () => {
                   <span className="text-xs text-muted-foreground">{sub}</span>
                 </Button>
               ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    )
+  }
+
+  // ── Phase: role tour ───────────────────────────────────────────────────────
+
+  if (phase === 'role' && roleTour) {
+    // eslint-disable-next-line security/detect-object-injection -- roleStep is clamped by roleNext
+    const step = roleTour.steps[roleStep]
+    if (!step) {
+      dismiss()
+      return null
+    }
+    return (
+      <div className="print:hidden">
+        {overlay}
+        {wrapCard(
+          <motion.div
+            key={`role-${roleStep}`}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="glass-panel pointer-events-auto w-full max-w-md border-primary/30 p-6 shadow-2xl"
+          >
+            <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              Step {roleStep + 1} of {roleTour.steps.length} · your role
+            </p>
+            <h3 className="mb-1 text-base font-bold text-foreground">{step.title}</h3>
+            <p className="mb-2 text-xs leading-relaxed text-muted-foreground">{step.description}</p>
+            <p className="mb-4 text-[11px] italic leading-relaxed text-muted-foreground/80">
+              {roleTour.promise}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="gradient" size="sm" onClick={() => roleGo(step.route)}>
+                {step.cta}
+              </Button>
+              <Button variant="outline" size="sm" onClick={roleNext}>
+                {roleStep === roleTour.steps.length - 1 ? 'Finish' : 'Next step'}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={dismiss} className="ml-auto text-xs">
+                Skip
+              </Button>
             </div>
           </motion.div>
         )}

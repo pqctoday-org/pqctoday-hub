@@ -383,3 +383,66 @@ export function runSupersededByCandidateChecks(): CheckResult[] {
     ),
   ]
 }
+
+/**
+ * DS22-DOCTYPE — library `document_type` against its agreed vocabulary.
+ *
+ * ADDED 2026-08-10. The column had grown to 92 distinct values across 804
+ * active rows, 38 of them used exactly once, with `Specification` and
+ * `specification` both present and Internet-Draft spelled three ways. That
+ * happens one row at a time: someone adds an entry, types a plausible label,
+ * and nothing objects. This objects.
+ *
+ * Scoped to ACTIVE rows on purpose — deprecated rows are carried forward
+ * verbatim for self-containment, and five of them predate the column being
+ * curated at all. Making them pass would mean inventing a type for a row
+ * nobody reviewed.
+ *
+ * The same ten strings are the keys of `DOCUMENT_TYPE_DESCRIPTIONS` in
+ * `src/components/Library/LibraryDetailPopover.tsx`; `documentTypeVocab.test.ts`
+ * asserts the two lists stay identical, so a value can never be storable but
+ * unexplained, or explained but unstorable.
+ */
+export const DOCUMENT_TYPE_VOCAB = [
+  'Standard',
+  'RFC',
+  'Internet-Draft',
+  'Regulation',
+  'Government Guidance',
+  'Compliance Framework',
+  'Research Paper',
+  'Industry Report',
+  'Article',
+  'Reference',
+] as const
+
+export function runDocumentTypeVocabChecks(): CheckResult[] {
+  const allowed = new Set<string>(DOCUMENT_TYPE_VOCAB)
+  const findings: Finding[] = []
+  const [latest] = latestGenerations('library_', 1)
+  if (latest && latest.rows.length > 0) {
+    latest.rows.forEach((r, i) => {
+      const status = (r.status ?? 'active').trim().toLowerCase()
+      if (status === 'deprecated') return
+      const v = (r.document_type ?? '').trim()
+      if (!allowed.has(v)) {
+        findings.push({
+          csv: latest.file,
+          row: i + 2,
+          field: 'document_type',
+          value: v,
+          message: `document_type must be one of ${DOCUMENT_TYPE_VOCAB.join(' | ')} (got '${v}')`,
+        })
+      }
+    })
+  }
+  return [
+    check(
+      'DS22-DOCTYPE',
+      'Controlled vocabulary: library document_type',
+      'src/data/library_*.csv',
+      'ERROR',
+      findings
+    ),
+  ]
+}

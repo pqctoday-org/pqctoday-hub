@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { ShieldCheck, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Link } from 'react-router'
 
 const DIMENSIONS = [
   {
@@ -107,6 +108,18 @@ export function TrustScoreMethodologySection() {
                 Every resource on PQC Today receives a composite trust score (0&ndash;100) derived
                 from 8 weighted dimensions. The score is displayed as a tier badge on cards and
                 tables. Hover over any badge to see the full breakdown.
+              </p>
+              {/* B+ remediation 1.5 (2026-08-10): a trust-tier explainer that
+                  never says who pays for the site is answering half the
+                  question. Linked from here, where the reader is already
+                  weighing whether to believe the score. */}
+              <p className="text-muted-foreground text-sm">
+                A score measures the evidence, not our motives. Who funds this site, and what that
+                funding explicitly cannot buy, is set out in the{' '}
+                <Link to="/editorial-independence" className="text-primary hover:underline">
+                  editorial-independence policy
+                </Link>
+                .
               </p>
 
               {/* Dimensions — stacked cards on mobile, table on md+ */}

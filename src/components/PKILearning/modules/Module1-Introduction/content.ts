@@ -13,7 +13,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.1',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-10',
 
   standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
 

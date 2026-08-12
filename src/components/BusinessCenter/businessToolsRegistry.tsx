@@ -69,12 +69,25 @@ export interface BusinessTool {
   /** Applied Quantum migration phase this tool produces an artifact for. Must
    *  stay consistent with `FRAMEWORK_PHASES[phase].produce` (drift-guarded). */
   frameworkPhase: PhaseId
+  /**
+   * What a GOOD answer out of this tool looks like — B+ remediation 4.6
+   * (2026-08-10). `description` already says what the tool is for; nothing said
+   * how to tell whether what you produced was any good. "A generated document
+   * the user cannot defend is worse than no document" — this is the line that
+   * makes the difference between an export and an understanding.
+   *
+   * Required, so a new tool cannot ship without one. Rendered above the tool
+   * itself by BusinessToolRoute.
+   */
+  goodAnswer: string
 }
 
 export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Risk & Strategy ────────────────────────────────────────────────────────
   {
     id: 'roi-calculator',
+    goodAnswer:
+      'A payback period you would defend under questioning — which means the breach-avoidance input is a number you can source, not the one that makes the case work.',
     name: 'ROI Calculator',
     description:
       'Calculate migration ROI with breach avoidance, compliance savings, and payback period',
@@ -89,6 +102,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'board-pitch',
+    goodAnswer:
+      'One ask, one date, one consequence of missing it. If the deck needs a second slide to explain the ask, the ask is not clear enough yet.',
     name: 'Board Pitch Builder',
     description: 'Build board-ready investment proposals with executive summary and budget request',
     category: 'Risk & Strategy',
@@ -102,6 +117,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'breach-simulator',
+    goodAnswer:
+      'A scenario your own incident team recognises. If nobody in the room says "that is roughly what would happen", the inputs are wrong, not the model.',
     name: 'Breach Scenario Simulator',
     description:
       'Compare classical vs quantum-enabled breach cost (per-event and annual expected loss) with HNDL exposure',
@@ -116,6 +133,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'cost-of-inaction',
+    goodAnswer:
+      'A figure that changes a decision. If waiting and acting come out within rounding of each other, say so plainly rather than tuning the inputs until they diverge.',
     name: 'Cost of Inaction Analyzer',
     description:
       'Model the discounted cost of delaying PQC migration — breach exposure, HNDL residual, and regulatory penalties',
@@ -130,6 +149,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'cost-model-explorer',
+    goodAnswer:
+      'A range, not a point. The honest output of this tool is the spread between your best and worst assumptions, and which assumption drives it.',
     name: 'Cost Model Explorer',
     description:
       'Compare the six PQC costing-model families on one scenario, with a live Monte Carlo run',
@@ -144,6 +165,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'crqc-scenario',
+    goodAnswer:
+      'A plan that survives the machine arriving early. If your roadmap only works at the median estimate, it is a forecast, not a plan.',
     name: 'CRQC Scenario Planner',
     description: 'Plan for cryptographically relevant quantum computer threat scenarios',
     category: 'Risk & Strategy',
@@ -157,6 +180,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'risk-register',
+    goodAnswer:
+      'Every entry has a named owner and a review date. An unowned risk is a note, and notes do not get treated.',
     name: 'Risk Register Builder',
     description: 'Build a PQC risk register with impact, likelihood, owners, and mitigations',
     category: 'Risk & Strategy',
@@ -170,6 +195,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'risk-treatment-plan',
+    goodAnswer:
+      'Each high risk maps to a treatment someone has actually agreed to fund. Accepting a risk is a valid answer — leaving it blank is not.',
     name: 'Risk Heatmap & Treatment Plan',
     description: 'Visualise residual risk and draft treatment strategies per risk category',
     category: 'Risk & Strategy',
@@ -185,6 +212,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Compliance & Audit ─────────────────────────────────────────────────────
   {
     id: 'compliance-checklist',
+    goodAnswer:
+      'Every "yes" points at evidence that exists today. A checklist of intentions passes no audit.',
     name: 'Compliance Checklist',
     description:
       'Per-framework PQC compliance checklist seeded from your starred frameworks and assessment',
@@ -199,6 +228,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'audit-checklist',
+    goodAnswer:
+      'You could hand this to an auditor tomorrow. If an item needs a conversation to explain, write the explanation into the item.',
     name: 'Audit Readiness Checklist',
     description:
       'Multi-section audit checklist covering inventory, policy, controls, and documentation',
@@ -213,6 +244,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'compliance-timeline',
+    goodAnswer:
+      'Dates you did not choose, next to dates you did. The gap between the two is the plan.',
     name: 'Compliance Timeline Builder',
     description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
     category: 'Compliance & Audit',
@@ -228,6 +261,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Governance & Policy ────────────────────────────────────────────────────
   {
     id: 'raci-builder',
+    goodAnswer:
+      'Exactly one Accountable per row. Two means nobody, and that is the failure this tool exists to prevent.',
     name: 'RACI Builder',
     description: 'Build RACI matrices for 10 PQC activities across 6 organizational roles',
     category: 'Governance & Policy',
@@ -241,6 +276,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'policy-generator',
+    goodAnswer:
+      'A policy someone can be non-compliant with. If no realistic action would breach it, it is a statement of values, not a policy.',
     name: 'Policy Template Generator',
     description: 'Generate cryptographic algorithm, key management, vendor, and migration policies',
     category: 'Governance & Policy',
@@ -254,6 +291,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'kpi-dashboard',
+    goodAnswer:
+      'Three to five measures that would move if the programme stalled. Anything that stays flat either way is reporting, not measurement.',
     name: 'KPI Dashboard Builder',
     description: 'Build KPI dashboards for tracking PQC migration metrics and progress',
     category: 'Governance & Policy',
@@ -269,6 +308,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Vendor & Supply Chain ──────────────────────────────────────────────────
   {
     id: 'vendor-scorecard',
+    goodAnswer:
+      'Scores backed by something the vendor published, not by what they said on a call. The migrate catalog carries the proof and its date.',
     name: 'Vendor Scorecard Builder',
     description: 'Create vendor assessment scorecards for PQC readiness evaluation',
     category: 'Vendor & Supply Chain',
@@ -282,6 +323,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'contract-clause',
+    goodAnswer:
+      'Language your procurement team will actually accept. A clause nobody will sign protects nothing.',
     name: 'Contract Clause Generator',
     description: 'Generate PQC-ready contract clauses for vendor agreements',
     category: 'Vendor & Supply Chain',
@@ -295,6 +338,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'supply-chain-matrix',
+    goodAnswer:
+      'The suppliers you cannot replace inside your own deadline are visible at a glance. Those are the programme, the rest are logistics.',
     name: 'Supply Chain Risk Matrix',
     description: 'Assess supply chain risks with dependency mapping and impact analysis',
     category: 'Vendor & Supply Chain',
@@ -310,6 +355,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Migration Planning ─────────────────────────────────────────────────────
   {
     id: 'roadmap-builder',
+    goodAnswer:
+      'Each phase has an exit test, not just an end date. "Done" has to be checkable by someone who was not in the room.',
     name: 'Roadmap Builder',
     description:
       'Build a two-track migration roadmap (key-exchange/HNDL ∥ signatures-PKI/TNFL) on the 8-phase spine, with gates G0–G6 (+ G8 at closure) and milestone dependencies',
@@ -340,6 +387,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'stakeholder-comms',
+    goodAnswer:
+      'Each audience gets the one thing they need to decide. If two audiences get the same message, one of them is being ignored.',
     name: 'Stakeholder Comms Planner',
     description: 'Plan stakeholder communication strategies for PQC migration programs',
     category: 'Migration Planning',
@@ -353,6 +402,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'kpi-tracker',
+    goodAnswer:
+      'A trend, not a snapshot. Two data points is a line; the value starts at the third.',
     name: 'KPI Tracker Template',
     description: 'Track migration KPIs with configurable metrics and reporting templates',
     category: 'Migration Planning',
@@ -366,6 +417,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'deployment-playbook',
+    goodAnswer:
+      'A colleague could run it at 3am without calling you. That is the only real test of a playbook.',
     name: 'Deployment Playbook',
     description: 'Generate deployment playbooks with rollback procedures and validation steps',
     category: 'Migration Planning',
@@ -379,6 +432,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'hybrid-transition-planner',
+    goodAnswer:
+      'A stated exit from hybrid, with a trigger. Hybrid without an end date is permanent, and permanent hybrid is twice the maintenance forever.',
     name: 'Hybrid Transition Planner',
     audience: 'architect',
     description:
@@ -404,6 +459,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'mti-negotiator',
+    goodAnswer:
+      'A mandatory-to-implement set both ends can actually negotiate today, checked against the protocol matrix rather than assumed.',
     name: 'MTI Negotiator',
     audience: 'architect',
     description:
@@ -431,6 +488,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'crypto-api-refactor-audit',
+    goodAnswer:
+      'A list of call sites, not a list of libraries. The refactor happens where the API is called, and that is where the estimate has to come from.',
     name: 'Crypto API Refactor Audit',
     audience: 'developer',
     description:
@@ -459,6 +518,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'cloud-responsibility-matrix',
+    goodAnswer:
+      'No cell reads "shared" without saying who acts first. Shared responsibility is where migrations stall.',
     name: 'Cloud Responsibility Matrix',
     audience: 'architect',
     description:
@@ -491,6 +552,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
   {
     id: 'crypto-architecture-diagram',
+    goodAnswer:
+      'Every trust boundary shows which algorithm crosses it. A diagram without algorithms on the arrows cannot tell you what breaks.',
     name: 'Crypto Architecture Diagram',
     description:
       'Document apps, libraries, HSMs, protocols, key stores, and CAs with their dependencies; renders as a Mermaid diagram',
@@ -516,6 +579,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Management Tools (CSWP.39 Fig 3 — discovery / assessment / config / enforcement) ──
   {
     id: 'management-tools-audit',
+    goodAnswer:
+      'You know which of your own tools would have to change before a single production key does.',
     name: 'Management Tools Audit',
     description:
       'Audit your discovery, assessment, configuration, and enforcement tooling stack — feeds the Information Repository per CSWP.39 §5',
@@ -540,6 +605,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'crypto-cbom-builder',
+    goodAnswer:
+      'A CBOM you can regenerate. A hand-built one is accurate for a week; a generated one is accurate for as long as you keep generating it.',
     name: 'Crypto BOM (CBOM) Builder',
     description:
       'Build a CBOM slice from an SBOM, library posture, or HSM inventory; feeds the Assets pipeline',
@@ -554,6 +621,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'crypto-vulnerability-watch',
+    goodAnswer:
+      'A short list you will actually read. A watch that surfaces everything gets ignored like everything else.',
     name: 'Crypto Vulnerability Watch',
     description:
       'NIST NVD CVE digest for the products on your /migrate selection, joined via CPE — the top CVEs per product by severity from the current snapshot',
@@ -570,6 +639,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   // ── Program Establishment (Applied Quantum Phase 0 / Foundations) ───────────
   {
     id: 'program-charter',
+    goodAnswer:
+      'A named sponsor and a stated scope boundary. The boundary matters more — a charter without one absorbs every adjacent problem.',
     name: 'Program Charter',
     description:
       'Phase 0 mandate artifact — sponsor sign-off, Steering Committee, QRPM appointment, governance cadence, and the multi-year budget commitment',
@@ -594,6 +665,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'initial-scoping',
+    goodAnswer:
+      'An honest inventory gap. "We do not know what is in this estate" is a finding, and often the most valuable one.',
     name: 'Initial Scoping Assessment',
     description:
       'Phase 0 first-cut scope — top-20 in-scope systems, an estate-size estimate, and the top-10 vendor dependencies; seedable from your /migrate selection',
@@ -617,6 +690,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'skills-team-plan',
+    goodAnswer:
+      'A plan that works with the people you have. Hiring is a dependency, not a mitigation.',
     name: 'Skills & Team Plan',
     description:
       'Foundations staffing plan — core roles + FTE from the framework role model, the 1-FTE-per-500-instances sizing heuristic, and build / borrow / buy per role',
@@ -642,6 +717,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'infra-modernization-planner',
+    goodAnswer:
+      'PQC work rides existing refresh cycles wherever it can. Hardware you were replacing anyway is the cheapest migration you will ever do.',
     name: 'Infrastructure Modernization Planner',
     description:
       'Phase 6 deliverable — consolidates the PKI modernization plan, HSM/KMS upgrade schedule, network/middlebox compatibility report, and PQC capacity plan into one infrastructure-readiness artifact',
@@ -671,6 +748,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'refresh-cycle-alignment',
+    goodAnswer:
+      'The assets whose refresh lands AFTER your deadline are named. Those need a decision now, not later.',
     name: 'Refresh-Cycle Alignment',
     description:
       'Phase 4 Activity 4.3 — maps PQC migration tasks onto already-funded infrastructure refresh programs (data center, SD-WAN, cloud, PKI, HSM, vendor renewals) so PQC work rides existing budgets',
@@ -694,6 +773,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'accelerated-execution-profile',
+    goodAnswer:
+      'The specific things you would drop to go faster, listed before you need them. Deciding under pressure is how scope gets cut badly.',
     name: 'Accelerated Execution Profile',
     description:
       'Phase 4 Activity 4.7 — a pre-drafted contingency package (trigger conditions, compressed sequence, pre-approved risk acceptances, emergency resource request, activation authority) activated if the quantum timeline accelerates',
@@ -716,6 +797,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'data-at-rest-strategy',
+    goodAnswer:
+      'Retention drives the order. Data that stays secret for ten years is the harvest-now target; data that expires next quarter is not.',
     name: 'Data-at-Rest Strategy',
     description:
       'Phase 5 Activity 5.6 — per-store data-at-rest decision (re-encrypt under PQC keys, PQC key-wrap, crypto-shred, delete, or accept & monitor), recorded back into the CBOM',
@@ -742,6 +825,8 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
   },
   {
     id: 'migration-verification',
+    goodAnswer:
+      'Evidence that the old algorithm is gone, not just that the new one works. Both running is the normal state, and it is not done.',
     name: 'Migration Verification & Closure',
     description:
       "Prove migration with the framework's 5-point evidence standard, log classical-key decommissioning (SP 800-88), and record program closure & BAU handover",
@@ -760,8 +845,11 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     ],
     cswp39Zone: 'governance',
     cswp39ZoneSubElement: 'Processes',
-    cswp39SectionRef: '§5.5',
-    cswp39SubSection: 'Migration verification & evidence',
+    // §5.5 does not exist — §5 runs 5.1–5.4. Verification/closure is the fifth
+    // "key activities" bullet of §5 ("Implement the strategy and actions based
+    // on the prioritized list of assets"), so the parent section is the honest ref.
+    cswp39SectionRef: '§5',
+    cswp39SubSection: 'Strategic plan — migration verification & evidence',
     frameworkPhase: 'verify-close',
   },
 ]

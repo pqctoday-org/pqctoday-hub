@@ -27,6 +27,8 @@ import {
   logPatentSort,
   logPatentView,
 } from '@/utils/analytics'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { relevantAlgorithmFamilies, patentTouchesPersonaAlgorithms } from './PatentsRoleLens'
 
 export type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
 export type SortDir = 'asc' | 'desc'
@@ -398,6 +400,14 @@ export function PatentsTable({
   chrome = true,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
+  // Read once per render rather than per row: this is the same set the
+  // PatentsRoleLens summary counts against, so the badge and the headline
+  // figure can never disagree.
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const personaFamilies = useMemo(
+    () => relevantAlgorithmFamilies(selectedPersona),
+    [selectedPersona]
+  )
   const [isDetailExpanded, setIsDetailExpanded] = useState(false)
 
   const search = searchParams.get('search') ?? ''
@@ -681,7 +691,28 @@ export function PatentsTable({
                       )}
                       {show('title') && (
                         <td className="px-3 py-2.5 max-w-0">
-                          <div className="font-medium text-foreground truncate">{p.title}</div>
+                          <div className="flex items-center gap-1.5">
+                            {/* B+ remediation 4.1 (2026-08-10): "flag only
+                                patents touching algorithms the reader's own
+                                path teaches". The summary panel above counts
+                                them; without a per-row mark the reader still
+                                has to hold that set in their head while
+                                scanning. Families come from
+                                ALGORITHM_PERSONA_DEFAULTS, the same config
+                                /algorithms pre-highlights from, so the two
+                                pages agree by construction. */}
+                            {patentTouchesPersonaAlgorithms(p, personaFamilies) && (
+                              <span
+                                className="shrink-0 rounded bg-primary/15 px-1 text-[9px] font-bold uppercase leading-4 tracking-wide text-primary"
+                                title={`Touches ${personaFamilies.join(', ')} — the algorithms your own path uses`}
+                              >
+                                yours
+                              </span>
+                            )}
+                            <div className="min-w-0 flex-1 truncate font-medium text-foreground">
+                              {p.title}
+                            </div>
+                          </div>
                           <div className="text-xs text-muted-foreground font-mono">
                             {p.patentNumber}
                           </div>

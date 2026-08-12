@@ -92,7 +92,7 @@ export const AUTOMOTIVE_FUNCTIONS: AutomotiveFunctionProfile[] = [
       'LKA disengages and alerts driver. Vehicle continues on last-known trajectory momentarily.',
     quantumRisk: 'Forged camera frames or manipulated HD map data could cause lane departure.',
     pqcConstraint:
-      'Camera at 30 Hz = 33ms per frame. ML-DSA-44 signing (0.8ms) + verification (0.3ms) fits easily.',
+      'Camera at 30 Hz = 33 ms per frame — a generous budget for ML-DSA-44 sign+verify on typical automotive silicon, but measure it on your own ECU: PQC timings swing by an order of magnitude between a hardware-accelerated SoC and a software-only MCU.',
     pqcDesignPattern:
       'ML-DSA-44 frame attestation at camera source. HD map chunks verified with ML-DSA-65 on download.',
   },

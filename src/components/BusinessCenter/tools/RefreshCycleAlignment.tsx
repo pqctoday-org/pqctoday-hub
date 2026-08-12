@@ -219,6 +219,26 @@ export const RefreshCycleAlignment: React.FC = () => {
             . Map PQC migration tasks onto your already-funded infrastructure refresh programs so
             the work rides existing budgets.
           </p>
+          {/* The strategy had no citation at all, though the standard states it
+              directly. Cycle LENGTHS are deliberately not asserted anywhere in
+              this tool — every refresh year below is user-entered, because we
+              have no citable source for typical cycle lengths and inventing
+              plausible ones would be worse than asking. (Audit 2026-08-10, W5.) */}
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+            NIST CSWP 39-upd1 §5 names this directly, listing among a crypto-agility strategic
+            plan&apos;s key activities the &ldquo;time, cost, and ease to migrate and mitigate in
+            accordance with technology refresh cycles.&rdquo;{' '}
+            <a
+              href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Read §5
+            </a>
+            . Refresh intervals themselves are yours to enter — they vary too much by asset class
+            and vendor for this tool to assert a norm.
+          </p>
         </div>
       </header>
 

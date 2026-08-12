@@ -435,6 +435,23 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    // Budgets, raised from the 5s/10s defaults on 2026-08-11 after measuring
+    // rather than guessing. Several suites build a genuinely expensive fixture:
+    //   • 5 test files each load public/data/rag-corpus.json and build a
+    //     MiniSearch index over it — read 41ms, JSON.parse 53ms, INDEX 1,926ms.
+    //     The file I/O is nothing; the index build is the cost, and it is paid
+    //     once per file that needs it.
+    //   • LibraryViewRedesign renders the full 1,026-row library grid:
+    //     1.4-2.2s per test measured in isolation.
+    // Against the old 5s/10s that left barely a 2-3x margin, and `npm run test`
+    // runs 561 files in parallel with no concurrency cap — so on a loaded
+    // machine those suites intermittently timed out while passing every time
+    // in isolation. The failing SET moved between runs, which is the tell.
+    // These are timeouts, never assertions: nothing is being masked, the same
+    // things are still asserted. If a suite ever needs more than this, that is
+    // a real signal worth chasing rather than raising again.
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
     // `*.local.test.*` are local-gate-only suites (directive 2026-07-01: new
     // test suites run locally, not in CI) — excluded here, run via `test:local`.
     exclude: [...configDefaults.exclude, 'e2e/**', '.claude/**', '**/*.local.test.{ts,tsx}'],

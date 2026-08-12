@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_08092026.csv
+ * Source: src/data/role_board_content_08102026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -34,7 +34,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Verified in your browser against NIST ACVP vectors',
-          '803 sources, trust-tiered',
+          '805 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'How we verify',
         ],
@@ -187,7 +187,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '803 sources, trust-tiered',
+          '805 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
@@ -341,7 +341,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '803 sources, trust-tiered',
+          '805 sources, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / High / Moderate / Low source tiers',
         ],
@@ -452,7 +452,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Nobody has to take our word for it',
             body: 'Every number on this board is either a published figure or a run you can repeat yourself. That is the point of the walkthrough, not the polish.',
-            href: '/openssl',
+            href: '/playground/openssl-studio',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1061,7 +1061,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Documented, then verified',
             body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
-            href: '/openssl',
+            href: '/playground/openssl-studio',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1851,7 +1851,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The commands behind the check',
             body: 'The same OpenSSL invocations, running in a browser tab.',
-            href: '/openssl',
+            href: '/playground/openssl-studio',
           },
           {
             title: 'If monitoring cannot see a downgrade, you did not migrate',
@@ -2139,7 +2139,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Counter-claims dataset · CVE snapshots',
           'Authoritative / High / Moderate / Low source tiers',
-          '803 sources, trust-tiered',
+          '805 sources, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -2213,7 +2213,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Do not stop at our buttons.',
         sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — same vectors, same primitives, your own invocation. Nothing to install, and the transcript exports.',
         ctaPrimary: 'Open OpenSSL Studio',
-        ctaPrimaryHref: '/openssl',
+        ctaPrimaryHref: '/playground/openssl-studio',
         ctaSecondary: 'See what a generated report contains',
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
@@ -2402,7 +2402,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What waiting actually costs',
-            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them.',
+            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business/tools/cost-of-inaction',
           },
           {
@@ -2479,13 +2479,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What it would actually cost',
-            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss.',
+            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business/tools/breach-simulator',
           },
           {
             title: 'Why a handshake, of all things',
             body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
-            href: '/openssl',
+            href: '/playground/openssl-studio',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2783,7 +2783,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The tools people use to do it',
-            body: 'The working artifacts a real migration produces.',
+            body: 'The working artifacts a real migration produces. The console itself opens after your first assessment — it works from your own answers.',
             href: '/business',
           },
           {

@@ -178,6 +178,15 @@ export const AcceleratedExecutionProfile: React.FC = () => {
             each one removes a decision that would otherwise wait on a committee cycle when the
             timeline compresses.
           </p>
+          {/* The framework names three trigger conditions; two of the five
+              offered here are this app's additions. A reader would otherwise
+              take all five as framework-sourced. (Audit 2026-08-10, W5.) */}
+          <p className="text-xs text-muted-foreground mt-1">
+            Activity 4.7 names three trigger conditions — a credible reassessment of CRQC timelines,
+            regulatory deadline compression, and a cryptanalytic event against a deployed algorithm.
+            &ldquo;Active HNDL campaign detected&rdquo; and &ldquo;Vendor critical-path slip&rdquo;
+            are this tool&apos;s additions, not the framework&apos;s.
+          </p>
         </div>
       </header>
 

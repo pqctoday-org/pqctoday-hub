@@ -386,7 +386,8 @@ export const ROADMAP_EVENTS: RoadmapEvent[] = [
   {
     apiId: 'pkcs11',
     date: '2025-Q4',
-    event: 'PKCS#11 v3.2 Committee Specification 01 approved (Nov 2025) with PQC mechanisms',
+    event:
+      'PKCS#11 v3.2 ratified as an OASIS Standard (3 June 2026) with PQC mechanisms; CS01 was approved Nov 2025',
     algorithms: ['ml-kem', 'ml-dsa', 'slh-dsa'],
   },
   {
