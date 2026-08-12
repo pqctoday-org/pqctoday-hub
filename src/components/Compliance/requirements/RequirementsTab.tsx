@@ -45,8 +45,8 @@ export function RequirementsTab({ profile }: RequirementsTabProps) {
         <BookOpen size={24} className="mx-auto text-muted-foreground" />
         <p className="mt-2 text-sm font-semibold text-foreground">Nothing in scope yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Set a country and a sector on Obligations, and the requirements behind each instrument
-          appear here.
+          Set a country and a sector on Rules & Standards, and the requirements behind each
+          instrument appear here.
         </p>
       </div>
     )
@@ -57,7 +57,7 @@ export function RequirementsTab({ profile }: RequirementsTabProps) {
       {/* Obligation picker */}
       <nav
         className="overflow-hidden rounded-xl border border-border bg-card"
-        aria-label="Obligations"
+        aria-label="Rules & Standards"
       >
         <ul className="divide-y divide-border">
           {rows.map((row) => {

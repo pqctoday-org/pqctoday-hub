@@ -34,7 +34,7 @@ import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { TrustTierFilter, useTrustTierFilter } from '../common/TrustTierFilter'
+import { useTrustTierFilter } from '../common/TrustTierFilter'
 import { CategoryFilter, useCategoryFilter } from './CategoryFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -660,9 +660,8 @@ export const TimelineView = () => {
                 className="mb-0 w-full"
               />
             </div>
-            <div className="flex-1 min-w-0">
-              <TrustTierFilter className="mb-0 w-full" />
-            </div>
+            {/* Trust-tier control removed 2026-08-11 (all five pages).
+                `?tier=` still filters via useTrustTierFilter above. */}
             {countryFilter !== 'All' && (
               <Button
                 variant="ghost"
