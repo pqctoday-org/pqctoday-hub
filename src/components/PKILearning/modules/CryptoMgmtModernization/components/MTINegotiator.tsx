@@ -328,8 +328,8 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
 // CSWP-39 §3.1.1 verbatim quote (sanitised to ASCII)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_311_QUOTE =
-  'To ensure that interoperation is possible for all implementations, an SDO will often choose at least one set of algorithms with properly selected security strengths based on state-of-the-art cryptanalysis results as mandatory-to-implement. Of course, local policy may select an algorithm other than the mandatory-to-implement one.'
+export const CSWP39_311_QUOTE =
+  'To ensure that interoperation is possible for all implementations, an SDO will often choose at least one set of algorithms with properly selected security strengths based on state-of-the-art cryptanalysis results as mandatory-to-implement (i.e., to be supported by all implementations). Of course, local policy may select an algorithm other than the mandatory-to-implement one.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wizard section definitions

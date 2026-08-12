@@ -370,8 +370,8 @@ export function auditCryptoApi(inputs: CryptoApiInputs): CryptoApiRecommendation
 // subsection heading, so it is cited as Section 4, not 4.1.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_41_QUOTE =
-  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms from implementation of the cryptographic algorithms themselves. [...] To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
+export const CSWP39_41_QUOTE =
+  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms (e.g., email and web apps) from implementation of the cryptographic algorithms themselves. [...] To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wizard section definitions

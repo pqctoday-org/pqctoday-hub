@@ -653,7 +653,7 @@ export function buildCloudResponsibilityMatrix(
 // CSWP-39 §6.4 verbatim quote (sanitised to ASCII)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_64_QUOTE =
+export const CSWP39_64_QUOTE =
   'The main security model used in the cloud is the shared responsibility model, which clearly divides security duties between the cloud provider and the customer. The cloud provider secures the underlying infrastructure, including physical facilities, hardware, networking, and virtualization. The customer manages the security of their data, applications, and configurations.'
 
 // ─────────────────────────────────────────────────────────────────────────────
