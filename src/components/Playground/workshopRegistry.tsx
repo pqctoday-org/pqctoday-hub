@@ -314,7 +314,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -355,7 +355,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.1',
+    version: '1.0.2',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
@@ -396,7 +396,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['Web Crypto', 'OpenSSL DRBG'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=0',
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
@@ -433,7 +433,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
       'min-entropy',
       'nist',
     ],
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=1',
     difficulty: 'intermediate',
     requires: [],
     recommendedPersonas: ['researcher', 'architect', 'developer'],
@@ -448,7 +448,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['TRNG', 'Web Crypto'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=3',
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     requires: [],
@@ -464,7 +464,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
-    moduleLink: '/learn/entropy-randomness',
+    moduleLink: '/learn/entropy-randomness?tab=workshop&step=4',
     keywords: [
       'source combining',
       'xor',
@@ -491,6 +491,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Entropy & Random',
     algorithms: ['HMAC_DRBG', 'SHA-256'],
     icon: Workflow,
+    // Deliberately the module root, not a workshop step: the Entropy module's
+    // renderWorkshopStep switch has no case for DrbgArchitectureDemo, so there is
+    // no step to deep-link to. The other four Entropy tools now point at their own
+    // step. If a DRBG step is ever added, point this at it.
     moduleLink: '/learn/entropy-randomness',
     keywords: [
       'drbg',
@@ -773,7 +777,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['secp256k1', 'SHA-256', 'RIPEMD160'],
     icon: Bitcoin,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=bitcoin',
     keywords: ['bitcoin', 'secp256k1', 'ecdsa', 'transaction', 'utxo', 'sha256', 'ripemd160'],
     difficulty: 'intermediate',
     requires: [],
@@ -791,7 +795,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['Ed25519'],
     icon: Zap,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=solana',
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
     requires: [],
@@ -809,7 +813,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Blockchain & Digital Assets',
     algorithms: ['BIP39', 'BIP32', 'PBKDF2', 'HMAC-SHA512'],
     icon: Workflow,
-    moduleLink: '/learn/digital-assets',
+    moduleLink: '/learn/digital-assets?flow=hd-wallet',
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     requires: [],

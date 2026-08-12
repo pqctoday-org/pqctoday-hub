@@ -510,7 +510,10 @@ export const OPENSSL_LESSONS: OpenSslLesson[] = [
     tone: 'ok',
     title: 'Key derivation, chosen correctly',
     blurb:
-      'openssl kdf (new in OpenSSL 3.6) exposes HKDF, PBKDF2, SCRYPT and more behind one command. Each expects different -kdfopt keys — mixing them up is the most common way to get a useless key silently.',
+      // "new in OpenSSL 3.6" was wrong: openssl-kdf(1)'s HISTORY reads "Added in
+      // OpenSSL 3.0". (The neighbouring configutl lesson's 3.6 claim IS correct —
+      // that command really was added in 3.6, so only this one needed fixing.)
+      'openssl kdf (added in OpenSSL 3.0) exposes HKDF, PBKDF2, SCRYPT and more behind one command. Each expects different -kdfopt keys — mixing them up is the most common way to get a useless key silently.',
     setup:
       'HKDF/SSKDF expect an existing high-entropy secret (-kdfopt key:) plus optional context (-kdfopt info:). PBKDF2/SCRYPT expect a low-entropy PASSWORD (-kdfopt pass:) plus deliberate work factor. Using pass: with HKDF, or key: with PBKDF2, is accepted syntactically but derives the wrong kind of key for the job.',
     steps: [
