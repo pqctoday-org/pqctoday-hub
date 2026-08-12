@@ -398,6 +398,29 @@ def state_to_stage(doc: dict[str, Any]) -> tuple[str | None, str | None]:
             continue
         stage, _ = DATATRACKER_TO_STAGE.get(slug, (None, 0))
         if stage:
+            # NAME-VS-STATE CONTRADICTION GUARD (2026-08-11). The fall-through
+            # this loop relies on is deliberate, but its floor is the generic
+            # 'draft' type's "active" -> individual-draft, and that is provably
+            # wrong for a document already named `draft-ietf-*`: a draft cannot
+            # carry that prefix without having been ADOPTED by a working group.
+            # So "individual-draft" for such a name is not a reading of the
+            # document's state, it is the absence of one.
+            #
+            # This is the second sighting of the same failure mode. The
+            # 2026-07-27 audit above fixed the `wglc`/`wg-lc` typo that caused
+            # it and named mls and eap-radius as affected; both are STILL
+            # reporting individual-draft today, via a different route to the
+            # same floor. Six of the twelve stage "downgrades" the applier
+            # blocked on 2026-08-11 are this, and they were burying the five
+            # that are real.
+            #
+            # Reported as unresolved rather than floored to a guessed stage:
+            # inventing wg-document here would be the same class of mistake in
+            # the other direction, and an unresolved ref emits no delta, so
+            # nothing can be applied off it.
+            name = str(doc.get("name") or "")
+            if stage == "individual-draft" and name.startswith("draft-ietf-"):
+                return None, f"{slug}:contradicts-adopted-name"
             return stage, slug
     return None, None
 

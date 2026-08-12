@@ -102,6 +102,80 @@ describe('patchMatrix downgrade guard', () => {
  * written anyway. This narrows the report down to exactly the reviewer-
  * approved (rowId, dimension) pairs, with a stale-draft guard for each.
  */
+/**
+ * Ambiguous-ref guard (2026-08-11).
+ *
+ * A cell may encode several refs, and they do not all DEFINE its mechanism.
+ * kerberos.pureKem cites both the unadopted individual draft that adds the
+ * mechanism AND RFC 9935, whose ML-KEM X.509 OIDs that draft borrows. The
+ * datatracker answers for both; the applier took whichever the report listed
+ * first, and on 2026-08-09 that wrote `rfc-published` onto Kerberos from an
+ * OID registry. Three of nineteen cells in the live report are in this state,
+ * each currently decided by list order.
+ */
+const refDelta = (dim: string, refId: string, encoded: string, current: string) =>
+  ({
+    row_id: 'tls-1-3',
+    dimension: dim,
+    ref_id: refId,
+    encoded_stage: encoded,
+    current_stage: current,
+    last_updated: '2026-08-11',
+  }) as never
+
+describe('patchMatrix ambiguous-ref guard', () => {
+  it('blocks a cell whose refs report different stages, and writes nothing', () => {
+    const r = patchMatrix(matrix, [
+      refDelta('hybridKem', 'draft-defines-the-mechanism', 'wg-document', 'iesg-submitted'),
+      refDelta('hybridKem', 'RFC-9935-borrowed-oids', 'wg-document', 'rfc-published'),
+    ])
+    expect(r.applied).toBe(0)
+    expect(r.next).toBe(matrix)
+    expect(r.ambiguous).toHaveLength(1)
+    // The report must name every ref and its stage — a reviewer's whole job
+    // here is deciding which one defines the mechanism.
+    expect(r.ambiguous[0]).toContain('draft-defines-the-mechanism -> iesg-submitted')
+    expect(r.ambiguous[0]).toContain('RFC-9935-borrowed-oids -> rfc-published')
+  })
+
+  it('is not fooled by ref ORDER — the same disagreement blocks either way', () => {
+    const forward = patchMatrix(matrix, [
+      refDelta('hybridKem', 'a', 'wg-document', 'rfc-published'),
+      refDelta('hybridKem', 'b', 'wg-document', 'experimental'),
+    ])
+    const reversed = patchMatrix(matrix, [
+      refDelta('hybridKem', 'b', 'wg-document', 'experimental'),
+      refDelta('hybridKem', 'a', 'wg-document', 'rfc-published'),
+    ])
+    expect(forward.applied).toBe(0)
+    expect(reversed.applied).toBe(0)
+    expect(forward.next).toBe(matrix)
+    expect(reversed.next).toBe(matrix)
+  })
+
+  it('applies when several refs AGREE — agreement is not ambiguity', () => {
+    const r = patchMatrix(matrix, [
+      refDelta('hybridKem', 'a', 'wg-document', 'iesg-submitted'),
+      refDelta('hybridKem', 'b', 'wg-document', 'iesg-submitted'),
+    ])
+    expect(r.applied).toBe(1)
+    expect(r.ambiguous).toHaveLength(0)
+    expect(r.next).toContain("stage: 'iesg-submitted'")
+  })
+
+  it('blocks BEFORE the downgrade guard — a contradiction is not a downgrade', () => {
+    // One ref would be a downgrade, the other an advance. Neither verdict
+    // means anything while they disagree, so it must report as ambiguous.
+    const r = patchMatrix(matrix, [
+      refDelta('pureKem', 'a', 'rfc-published', 'wg-document'),
+      refDelta('pureKem', 'b', 'rfc-published', 'rfc-published'),
+    ])
+    expect(r.applied).toBe(0)
+    expect(r.ambiguous).toHaveLength(1)
+    expect(r.downgrades).toHaveLength(0)
+  })
+})
+
 describe('narrowToApprovedItems', () => {
   const reportDeltas = [
     delta('pureKem', 'wg-document', 'rfc-published'),
