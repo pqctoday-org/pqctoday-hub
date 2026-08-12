@@ -97,7 +97,10 @@ describe('crqcProbabilityWithinHorizon', () => {
     for (const s of SCENARIOS) {
       for (let from = 2020; from <= 2050; from += 2) {
         for (const h of [0, 1, 5, 10, 30]) {
-          expect(crqcProbabilityWithinHorizon(from, h, s), `${s} ${from}+${h}`).toBeGreaterThanOrEqual(0)
+          expect(
+            crqcProbabilityWithinHorizon(from, h, s),
+            `${s} ${from}+${h}`
+          ).toBeGreaterThanOrEqual(0)
         }
       }
     }
