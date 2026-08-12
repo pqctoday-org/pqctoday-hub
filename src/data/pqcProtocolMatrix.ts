@@ -463,11 +463,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-11',
       },
       {
-        id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
+        id: 'draft-miller-sshm-composite-sigs',
         title:
-          'draft-miller-sshm-mldsa44-ed25519-composite-sigs — Composite ML-DSA-44+Ed25519 for SSH (replaces the ML-DSA-65 draft)',
-        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
-        date: '2026-06-02',
+          'draft-miller-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft, which replaced the ML-DSA-65 one)',
+        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
+        date: '2026-07-24',
       },
       {
         id: 'draft-becker-cnsa2-ssh-profile-03',
@@ -545,10 +545,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         refs: [
           {
             kind: 'draft',
-            id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
-            title: 'Composite ML-DSA-44+Ed25519 Signatures for SSH',
-            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
-            publishedOn: '2026-06-02',
+            id: 'draft-miller-sshm-composite-sigs',
+            title:
+              'Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft)',
+            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
+            publishedOn: '2026-07-24',
           },
         ],
       },
@@ -1330,12 +1331,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-04-07',
       },
       {
-        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        id: 'draft-ietf-jose-hpke-pq-pqt-01',
         title:
-          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
-        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-        date: '2026-02-16',
-        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+        date: '2026-07-06',
       },
     ],
     dimensions: {
@@ -1354,10 +1354,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -1377,10 +1378,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -1487,12 +1489,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-06-15',
       },
       {
-        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        id: 'draft-ietf-jose-hpke-pq-pqt-01',
         title:
-          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
-        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-        date: '2026-02-16',
-        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+        date: '2026-07-06',
       },
     ],
     dimensions: {
@@ -1527,10 +1528,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
