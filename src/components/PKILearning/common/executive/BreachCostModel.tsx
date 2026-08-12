@@ -16,6 +16,7 @@ import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
   US_VS_GLOBAL_BREACH_COST_MULTIPLIER,
   ANNUAL_BREACH_PROBABILITY_PCT,
+  IBM_BASELINE_UNVERIFIED_NOTE,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -742,7 +743,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             >
               IBM Cost of a Data Breach Report 2025
             </a>{' '}
-            — industry breach-cost baselines and per-record costs by data type.
+            — industry breach-cost baselines and per-record costs by data type.{' '}
+            <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
           </li>
           <li>
             <a

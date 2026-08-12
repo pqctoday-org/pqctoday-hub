@@ -15,6 +15,7 @@ import {
   HNDL_MULTIPLIER_CAP,
   type DataSensitivityClass,
 } from '@/utils/breachCostModel'
+import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -124,6 +125,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       md += `\n`
     }
     md += `*Illustrative — IBM Cost of a Data Breach 2025 and Global Risk Institute Quantum Threat Timeline 2025 baselines.*\n`
+    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     return md
   }, [breachCosts, selectedIndustry, findings])
 
