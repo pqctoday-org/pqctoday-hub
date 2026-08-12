@@ -183,6 +183,7 @@ export function LibraryViewRedesign({
   const quickView = (params.get('qv') as LibraryQuickView | null) ?? 'all'
   const prefsOff = params.get('prefs') === 'off'
   const view = (params.get('view') as ViewMode | null) ?? 'cards'
+  const sortExplicit = params.get('sort') !== null
   const sortBy: SortOption =
     (params.get('sort') as SortOption | null) ?? libraryDefaultSortForPersona(selectedPersona)
   const detailRef = params.get('ref')
@@ -254,6 +255,7 @@ export function LibraryViewRedesign({
     certRelevantIdSet,
     lifecycleBucket,
     sortBy,
+    sortExplicit,
     selectedPersona,
     prefsOff,
     semanticIdSet,
