@@ -4,6 +4,7 @@ import {
   patchMatrix,
   narrowToApprovedItems,
   isCuratedNote,
+  dimensionSpan,
   type ApprovedItem,
 } from './apply-protocol-matrix-updates'
 
@@ -264,5 +265,105 @@ describe('patchMatrix curated-note guard', () => {
     expect(r.downgrades).toHaveLength(1)
     expect(r.curatedNotes).toHaveLength(0)
     expect(r.applied).toBe(0)
+  })
+})
+
+/**
+ * Sibling-note guard (2026-08-12).
+ *
+ * The curated-note read used a flat 4,000-character window instead of the
+ * brace-matched block the write path used. A cell with no stageNote of its own
+ * therefore inherited the first note found in whatever followed it. On the
+ * 2026-08-11 run that blocked fido-2::hybridKem — a legitimate RFC 10024
+ * upgrade — on fido-2::hybridSig's note about JOSE composite signatures.
+ *
+ * The fixture is that row's real shape: hybridKem and pureSig carry no
+ * stageNote, hybridSig does.
+ */
+const siblingMatrix = `
+export const PQC_PROTOCOL_MATRIX = [
+  {
+    id: 'fido-2',
+    hybridKem: {
+      value: 'draft',
+      stage: 'rfc-editor-queue',
+      note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
+    },
+    pureSig: {
+      value: 'experimental',
+      stage: 'experimental',
+      note: 'Algorithm IDs sourced from the COSE row.',
+    },
+    hybridSig: {
+      value: 'draft',
+      stage: 'wg-document',
+      stageNote: 'Inherited JOSE composite path is now a WG document (draft-ietf-jose-pq-composite-sigs, datatracker 2026-07-20)',
+    },
+  },
+]
+`
+
+const fidoDelta = (dim: string, encoded: string, current: string) =>
+  ({
+    row_id: 'fido-2',
+    dimension: dim,
+    encoded_stage: encoded,
+    current_stage: current,
+    last_updated: '2026-08-10',
+  }) as never
+
+describe('patchMatrix sibling-note guard', () => {
+  it('does not block a cell on a note that belongs to a later dimension', () => {
+    // THE BUG: this returned applied=0 with a curatedNotes entry quoting
+    // hybridSig's JOSE note, and RFC 10024 had to be applied by hand.
+    const r = patchMatrix(siblingMatrix, [
+      fidoDelta('hybridKem', 'rfc-editor-queue', 'rfc-published'),
+    ])
+    expect(r.curatedNotes).toHaveLength(0)
+    expect(r.applied).toBe(1)
+    expect(r.next).toContain("stage: 'rfc-published'")
+  })
+
+  it('leaves the sibling that owns the note completely untouched', () => {
+    const r = patchMatrix(siblingMatrix, [
+      fidoDelta('hybridKem', 'rfc-editor-queue', 'rfc-published'),
+    ])
+    expect(r.next).toContain('Inherited JOSE composite path is now a WG document')
+    expect(r.next).toContain("stage: 'wg-document'")
+  })
+
+  it('still blocks the dimension that genuinely owns a curated note', () => {
+    const r = patchMatrix(siblingMatrix, [fidoDelta('hybridSig', 'wg-document', 'ietf-last-call')])
+    expect(r.applied).toBe(0)
+    expect(r.curatedNotes).toHaveLength(1)
+    expect(r.curatedNotes[0]).toContain('fido-2::hybridSig')
+    expect(r.next).toBe(siblingMatrix)
+  })
+
+  it('writes the generated note into the cell that had none, and only there', () => {
+    const r = patchMatrix(siblingMatrix, [
+      fidoDelta('hybridKem', 'rfc-editor-queue', 'rfc-published'),
+    ])
+    expect(r.next.match(/stageNote:/g)).toHaveLength(2)
+    const hybridKemBlock = r.next.slice(
+      r.next.indexOf('hybridKem: {'),
+      r.next.indexOf('pureSig: {')
+    )
+    expect(hybridKemBlock).toContain('rfc published (datatracker 2026-08-10)')
+  })
+})
+
+describe('dimensionSpan', () => {
+  it('ends at the cell own closing brace, not somewhere downstream', () => {
+    const span = dimensionSpan(siblingMatrix, 'fido-2', 'hybridKem')!
+    const block = siblingMatrix.slice(span.start, span.end + 1)
+    expect(block).toContain('X25519MLKEM768')
+    expect(block).not.toContain('pureSig')
+    expect(block).not.toContain('stageNote')
+  })
+
+  it('is undefined for a row or dimension that is not there', () => {
+    expect(dimensionSpan(siblingMatrix, 'no-such-row', 'hybridKem')).toBeUndefined()
+    expect(dimensionSpan(siblingMatrix, 'fido-2', 'pureKem')).toBeUndefined()
   })
 })
