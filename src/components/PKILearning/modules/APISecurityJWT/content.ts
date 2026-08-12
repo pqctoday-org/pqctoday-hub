@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'api-security-jwt',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-12',
 
   standards: [
     getStandard('FIPS 203'),
@@ -44,7 +44,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'JWT Inspector: Decode and inspect JWT structure with algorithm vulnerability analysis; paste any JWT to see header, payload, and signature breakdown. PQC JWT Signing: Sign and verify JWTs with ML-DSA algorithms interactively; compare output sizes across security levels. Hybrid JWT: Create backwards-compatible JWTs with dual classical + PQC signatures for migration scenarios. JWE Encryption: Encrypt JWT payloads using ML-KEM key agreement with AES-GCM content encryption.',
     relatedStandards:
-      'RFC 7519 (JWT), RFC 7515 (JWS), RFC 7516 (JWE), RFC 7518 (JWA). RFC 9964 (ML-DSA for JOSE and COSE, May 2026), draft-ietf-jose-pqc-kem (ML-KEM for JOSE/JWE), draft-ietf-jose-pq-composite-sigs (PQ/T composite signatures). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA). OAuth 2.0 (RFC 6749), OpenID Connect Core 1.0. RFC 9449 (DPoP - Demonstrating Proof of Possession)',
+      'RFC 7519 (JWT), RFC 7515 (JWS), RFC 7516 (JWE), RFC 7518 (JWA). RFC 9964 (ML-DSA for JOSE and COSE, May 2026), draft-ietf-jose-pqc-kem-05 (ML-KEM for JOSE/JWE — its successor -06 was retitled for COSE only and no longer covers JOSE), draft-ietf-jose-pq-composite-sigs (PQ/T composite signatures). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA). OAuth 2.0 (RFC 6749), OpenID Connect Core 1.0. RFC 9449 (DPoP - Demonstrating Proof of Possession)',
   },
 }
 

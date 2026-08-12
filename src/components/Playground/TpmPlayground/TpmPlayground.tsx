@@ -59,7 +59,11 @@ export default function TpmPlayground() {
         <div className="glass-panel p-8">
           <div className="flex items-start justify-between gap-8">
             <div className="flex-1 space-y-4">
-              <h1 className="text-3xl font-bold tracking-tight">TPM 2.0 PQC Playground</h1>
+              {/* h2, not h1: PlaygroundToolRoute now supplies the page's single
+                  <h1> (the tool name) for every tool. This was the one tool that
+                  shipped its own h1, so leaving it would give this page two.
+                  Visual styling is unchanged. */}
+              <h2 className="text-3xl font-bold tracking-tight">TPM 2.0 PQC Playground</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Execute raw TPM 2.0 commands directly within the browser using the
                 WebAssembly-compiled
