@@ -137,3 +137,36 @@ describe('summarize', () => {
     expect(s.pqcMandated).toBe(0)
   })
 })
+
+describe('a sector with no country', () => {
+  // "Country: Any" used to return an EMPTY register, which reads as "nothing
+  // applies to you" when it means "you have not narrowed to one country yet".
+  //
+  // Root cause was in expandIndustriesForMatching: the compliance CSV stores
+  // the long NAICS label ('Finance & Insurance', 106 rows) while the reader
+  // picks the persona label ('Finance & Banking', 5 rows). Both sit in the
+  // same alias group, but the group was only consulted for NUMERIC entries, so
+  // the two never joined. A country match masked it — the industry-universal
+  // rule carried those rows in on the country instead — so this only showed up
+  // once the country was cleared.
+  const SECTOR_ONLY = { industry: 'Finance & Banking', country: null }
+
+  it('lists the sector’s instruments instead of nothing', () => {
+    expect(buildObligations(SECTOR_ONLY).length).toBeGreaterThan(0)
+  })
+
+  it('claims nothing binding without a country', () => {
+    // Tiers above advisory are country-relative: "your regulator" is not a
+    // sentence this profile can support. Listing is fine; tiering is not.
+    const tiers = new Set(buildObligations(SECTOR_ONLY).map((r) => r.tier))
+    expect(tiers.has('mandatory')).toBe(false)
+    expect(tiers.has('recognized')).toBe(false)
+  })
+
+  it('still returns nothing when there is no scope at all', () => {
+    // The empty state has to stay reachable — an empty profile is genuinely
+    // unanswerable, and filling it with 197 rows would be the catalogue-browser
+    // behaviour the register replaced.
+    expect(buildObligations({ industry: null, country: null }).length).toBe(0)
+  })
+})

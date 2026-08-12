@@ -19,11 +19,10 @@ import {
   X,
   Layers,
 } from 'lucide-react'
-import {
-  TrustTierFilter,
-  useTrustTierFilter,
-  matchesTrustTierFilter,
-} from '../common/TrustTierFilter'
+// TrustTierFilter (the control) is no longer rendered here — see the note at
+// its old render site. The hook and matcher stay: `?tier=` deep links still
+// filter the page, they just have no second on-screen control.
+import { useTrustTierFilter, matchesTrustTierFilter } from '../common/TrustTierFilter'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
@@ -615,10 +614,15 @@ export const ComplianceView = ({
           before the visitor reached the tab bar, which is why "which rules bind
           me" cost a scroll and a guess. The register answers that on arrival;
           the glossary lives in the page header, the deadlines now have their own
-          tab, and the trust-tier filter stays reachable inline below. */}
-      <div className="flex justify-end" data-testid="compliance-trust-tier-slot">
-        {!simEmbed && <TrustTierFilter />}
-      </div>
+          tab, and the trust-tier filter used to sit inline below.
+
+          REMOVED 2026-08-11: the trust-tier control was the third filter area on
+          this page, floating on its own above the tabs with no visual relation
+          to the scope it sat beside. Scope now comes from one place — the top
+          bar, plus the single Country picker the tier engine needs and the top
+          bar cannot supply. `?tier=` deep links still resolve, because
+          useTrustTierFilter reads the URL; what is gone is the second on-screen
+          place to change it. The other four pages that use it are untouched. */}
 
       {exportError && (
         <div
@@ -743,7 +747,6 @@ export const ComplianceView = ({
               countryValue={lsCountry}
               onCountryChange={handleLsCountryChange}
               sectorValue={lsIndustry}
-              onSectorChange={handleLsIndustryChange}
               persona={personaForLens}
               onOpenDetail={(fw) => {
                 setDrawerPillar(pillarForBodyType(fw.bodyType))

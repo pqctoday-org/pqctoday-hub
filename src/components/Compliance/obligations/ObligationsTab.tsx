@@ -20,7 +20,6 @@ import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'luci
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
-import { complianceFrameworks } from '@/data/complianceData'
 import type { ComplianceFramework, PQCRequirement } from '@/data/complianceData'
 import {
   TIER_META,
@@ -36,7 +35,6 @@ import {
   buildObligations,
   groupObligations,
   summarize,
-  sectorOptions,
   COLLAPSED_BY_DEFAULT,
   type ObligationRow,
 } from './obligationsModel'
@@ -83,9 +81,11 @@ interface ObligationsTabProps {
   /** Page-local country override; `All` means "fall back to the profile". */
   countryValue: string
   onCountryChange: (country: string) => void
-  /** Page-local sector override; `All` means "fall back to the profile". */
+  /**
+   * Sector, shown read-only. It is the top bar's Industry — this tab no longer
+   * offers its own picker for it (2026-08-11), so there is no `onSectorChange`.
+   */
   sectorValue: string
-  onSectorChange: (sector: string) => void
   onOpenDetail: (framework: ComplianceFramework) => void
   /** Reading order and per-row annotation only — never what applies. */
   persona: PersonaId | null
@@ -96,7 +96,6 @@ export function ObligationsTab({
   countryValue,
   onCountryChange,
   sectorValue,
-  onSectorChange,
   onOpenDetail,
   persona,
 }: ObligationsTabProps) {
@@ -122,15 +121,11 @@ export function ObligationsTab({
     () => [COUNTRY_ANY, ...ALL_JURISDICTIONS.map((j) => j.name).sort((a, b) => a.localeCompare(b))],
     []
   )
-  const sectorItems = useMemo(() => [COUNTRY_ANY, ...sectorOptions(complianceFrameworks)], [])
-
   const pickers = {
     countryValue,
     onCountryChange,
     sectorValue,
-    onSectorChange,
     countryItems,
-    sectorItems,
     profile,
   }
 
@@ -168,20 +163,15 @@ export function ObligationsTab({
             The applicability tiers are computed from a country and a sector — without both, no
             instrument can be shown as mandatory rather than merely relevant.
           </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <ScopePicker
-              label="Country"
-              value={countryValue}
-              items={countryItems}
-              onChange={onCountryChange}
-            />
-            <ScopePicker
-              label="Sector"
-              value={sectorValue}
-              items={sectorItems}
-              onChange={onSectorChange}
-            />
-          </div>
+          {/* CHANGED 2026-08-11: this card used to repeat the Country and Sector
+              pickers that the scope bar above already shows, so a reader with no
+              scope set saw the same two controls twice on one screen. It now says
+              where the controls are instead of being a second copy of them. */}
+          <p className="mx-auto mt-3 max-w-xl text-xs text-muted-foreground">
+            Set your <span className="font-medium text-foreground">sector</span> in the scope
+            selector at the top right, and your{' '}
+            <span className="font-medium text-foreground">country</span> just above.
+          </p>
         </div>
       ) : (
         groups.map((group) => {
@@ -270,8 +260,6 @@ function ScopeBar({
   countryItems,
   onCountryChange,
   sectorValue,
-  sectorItems,
-  onSectorChange,
   totals,
   framing,
 }: {
@@ -279,9 +267,8 @@ function ScopeBar({
   countryValue: string
   countryItems: string[]
   onCountryChange: (c: string) => void
+  /** Read-only here — the sector comes from the top bar. */
   sectorValue: string
-  sectorItems: string[]
-  onSectorChange: (s: string) => void
   totals: ReturnType<typeof summarize>
   framing: string
 }) {
@@ -307,21 +294,24 @@ function ScopeBar({
           label="Region"
           value={profile.region ? (REGION_LABEL[profile.region] ?? profile.region) : 'any'}
         />
+        {/* CHANGED 2026-08-11: Sector is a read-only chip now. It is the top
+            bar's Industry — the page had its own picker offering a different,
+            uncurated vocabulary read straight off the CSV (29 values including
+            raw NAICS codes '22', '48', '52' and duplicate synonyms such as
+            'Finance & Banking' beside 'Finance & Insurance'). Two controls for
+            one concept, and the in-page one was the worse list.
+
+            Country stays a picker here on purpose: the top bar carries a region
+            BLOC (americas/eu/…) and has no country, and the tier engine needs
+            one. This is the only scope control left on the page. */}
+        <ScopeChip label="Sector" value={shownSector === COUNTRY_ANY ? 'any' : shownSector} />
         <ScopePicker
           label="Country"
           value={shownCountry}
           items={countryItems}
           onChange={onCountryChange}
         />
-        <ScopePicker
-          label="Sector"
-          value={shownSector}
-          items={sectorItems}
-          onChange={onSectorChange}
-        />
-        {inherited && (
-          <span className="text-[10.5px] text-muted-foreground">from your profile</span>
-        )}
+        {inherited && <span className="text-[10.5px] text-muted-foreground">from your scope</span>}
       </div>
 
       {totals.total > 0 && <p className="mt-3 text-xs italic text-muted-foreground">{framing}</p>}
