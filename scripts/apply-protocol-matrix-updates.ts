@@ -123,7 +123,14 @@ export function isCuratedNote(note: string | undefined): boolean {
 export function patchMatrix(
   source: string,
   deltas: StageDelta[]
-): { next: string; applied: number; appliedKeys: string[]; downgrades: string[] } {
+): {
+  next: string
+  applied: number
+  appliedKeys: string[]
+  downgrades: string[]
+  curatedNotes: string[]
+  ambiguous: string[]
+} {
   let next = source
   let applied = 0
   const appliedKeys: string[] = []
@@ -137,9 +144,40 @@ export function patchMatrix(
 
   const downgrades: string[] = []
   const curatedNotes: string[] = []
+  const ambiguous: string[] = []
 
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
+
+    // AMBIGUOUS-REF GUARD (2026-08-11). Checked FIRST, ahead of the downgrade
+    // and curated-note guards, because neither of their verdicts means
+    // anything while the inputs contradict each other.
+    //
+    // A cell may encode several refs, and they do not all DEFINE the
+    // mechanism — some are cited as supporting documents. kerberos.pureKem
+    // encodes both `draft-bokovoy-kitten-pkinit-pqc` (the actual, unadopted
+    // individual draft) and `RFC 9935`, which it cites only because the draft
+    // borrows that RFC's ML-KEM X.509 OIDs. The datatracker answers for both,
+    // and this loop took `ds[0]` — whichever the enrichment report happened to
+    // list first. On 2026-08-09 that wrote `rfc-published` onto Kerberos from
+    // an X.509 OID registry, claiming a published PQC KEM mechanism where
+    // there is an individual draft nobody has adopted.
+    //
+    // The fix is not to guess better. Which reference DEFINES a mechanism is
+    // exactly the judgement a person has to make, so a cell whose refs
+    // disagree is blocked and reported with every ref and its stage. Three of
+    // nineteen cells in the report at the time of writing are in this state
+    // (cose::pureKem, cose::hybridKem, jose::hybridKem), each one currently
+    // decided by list order.
+    const stages = [...new Set(ds.map((d) => d.current_stage))]
+    if (stages.length > 1) {
+      ambiguous.push(
+        `${rowId}::${dim}: refs disagree — ` +
+          ds.map((d) => `${d.ref_id} -> ${d.current_stage}`).join(' | ')
+      )
+      continue
+    }
+
     const newStage = ds[0].current_stage!
     const oldStage = ds[0].encoded_stage
 
@@ -244,7 +282,7 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, appliedKeys, downgrades, curatedNotes }
+  return { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous }
 }
 
 /** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
@@ -391,7 +429,7 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, appliedKeys, downgrades, curatedNotes } = patchMatrix(
+  const { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous } = patchMatrix(
     source,
     deltasToPatch
   )
@@ -410,6 +448,17 @@ function main(): void {
     console.error('')
   }
 
+  if (ambiguous.length > 0) {
+    console.error(`BLOCKED ${ambiguous.length} cell(s) whose OWN REFS DISAGREE — not applied:`)
+    for (const a of ambiguous) console.error(`  ${a}`)
+    console.error('A cell can cite both the document that DEFINES its mechanism and one it')
+    console.error('merely borrows from. When those resolve to different stages there is no')
+    console.error('safe automatic answer — picking one is how Kerberos was marked')
+    console.error('rfc-published on 2026-08-09 off an X.509 OID registry. Decide which ref')
+    console.error('defines the mechanism, then set the cell by hand.')
+    console.error('')
+  }
+
   if (curatedNotes.length > 0) {
     console.error(
       `BLOCKED ${curatedNotes.length} cell(s) with a HUMAN-CURATED stageNote — not applied:`
@@ -424,7 +473,7 @@ function main(): void {
 
   if (applied === 0) {
     if (itemsFilter) printResultJson([], staleItems, downgrades)
-    if (downgrades.length > 0 || curatedNotes.length > 0) {
+    if (downgrades.length > 0 || curatedNotes.length > 0 || ambiguous.length > 0) {
       // Exit 1 = "drift detected, nothing applied" (the documented meaning),
       // NOT 0. Reporting "matrix already matches" here would be false: the
       // feed disagreed, we refused to act on it, and that needs attention.
