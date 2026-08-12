@@ -74,6 +74,16 @@ export const EmbedLayout = () => {
       setPersona(embedConfig.persona as PersonaId)
     } else if (embedConfig.allowedPersonas?.[0]) {
       setPersona(embedConfig.allowedPersonas[0] as PersonaId)
+    } else {
+      // B+ remediation 4.6 (2026-08-10): "default embedded newcomers to curious
+      // explicitly". An embed is a realistic FIRST CONTACT with the product —
+      // a vendor drops it on their own page and sends people who have never
+      // heard of us. With no persona at all those readers previously got the
+      // un-narrowed no-persona shell, which is the shape built for someone who
+      // has already declared themselves. Curious is the honest default for
+      // "we know nothing about this reader", and choosing it explicitly is
+      // better than inheriting whatever a shared browser last had set.
+      setPersona('curious')
     }
     // Region: validate slug is a known Region before seeding
     if (embedConfig.allowedRegions?.[0]) {

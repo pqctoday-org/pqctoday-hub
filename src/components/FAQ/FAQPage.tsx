@@ -2,7 +2,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router'
 import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink, Sparkles } from 'lucide-react'
-import { FAQ_DATA, type FAQCategory, type FAQItem } from './faqData'
+import { FAQ_DATA, personaLeadItems, type FAQCategory, type FAQItem } from './faqData'
+import { PERSONAS } from '@/data/learningPersonas'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
@@ -104,6 +105,12 @@ function buildFAQPageSchema(data: FAQCategory[]) {
 export function FAQPage() {
   const [search, setSearch] = useState('')
   const { selectedPersona } = usePersonaStore()
+  // Hidden while searching: a lead block pinned above filtered results would
+  // show three questions that do not match the query, which reads as a bug.
+  const leadItems = useMemo(
+    () => (search.trim() ? [] : personaLeadItems(selectedPersona)),
+    [selectedPersona, search]
+  )
 
   useEffect(() => {
     if (!search.trim()) return
@@ -155,6 +162,28 @@ export function FAQPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+
+      {/* B+ remediation 4.1 (2026-08-10): lead with this role's own three
+          questions. Below this block the page is unchanged — the same twelve
+          categories, in the same order, still floating persona-matched items
+          within each. This is a reordering of what exists, not a second FAQ:
+          every question here is resolved out of FAQ_DATA by exact match, and a
+          test fails the build if one stops resolving. */}
+      {leadItems.length > 0 && selectedPersona && (
+        <section className="glass-panel p-6" aria-labelledby="faq-lead-heading">
+          <h2 id="faq-lead-heading" className="mb-1 text-lg font-semibold text-foreground">
+            Start here as {PERSONAS[selectedPersona].label}
+          </h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            The three questions this role asks first. Everything below is the full list.
+          </p>
+          <div className="space-y-2">
+            {leadItems.map((item, i) => (
+              <FAQAccordionItem key={`lead-${i}`} item={item} recommended />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Category quick links */}
       <nav className="flex flex-wrap gap-2" aria-label="FAQ categories">

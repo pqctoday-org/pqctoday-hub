@@ -101,8 +101,33 @@ export interface DelayScenarioResult {
   totalCliff: number
 }
 
-/** This row's probability-weighted expected annual loss — the marginal chance CRQC arrives in `year` specifically. */
-function rowAnnualLoss(inp: DelayScenarioInputs, yearsOfData: number, year: number): number {
+/**
+ * This row's probability-weighted expected annual loss, weighted by the
+ * CUMULATIVE probability a CRQC exists by `year` — not the marginal chance one
+ * arrives in `year` specifically.
+ *
+ * The marginal reading (the original) asked each row "does a CRQC arrive in
+ * this one year?", which the GRI curve answers with ~3–4.5% in every year of
+ * the horizon. Expected annual loss therefore came out flat — $417,582 in 2026
+ * against $403,017 in 2040 — so quantum risk never accumulated, and the only
+ * thing left driving the model was a fixed capex sliding down the discount
+ * curve. At the default 10% rate with no hard mandate the tool concluded that
+ * delaying eight years was CHEAPER than migrating now. A CRQC that arrives in
+ * 2032 still exists in 2040; the right weight for year t is P(exists by t).
+ * (Audit 2026-08-10, W1-1.)
+ */
+function rowAnnualLoss(
+  inp: DelayScenarioInputs,
+  yearsOfData: number,
+  year: number,
+  /**
+   * Years between the end of this corpus and this row's decryption year. Zero
+   * while still harvesting; once migration has stopped the corpus growing, it
+   * is the time since it stopped — so a corpus frozen long before a CRQC
+   * arrives has aged out of its shelf life and stops costing anything.
+   */
+  decryptionGapYears: number
+): number {
   return computeBreachCosts({
     baseline: inp.breachBaseline,
     breachScale: inp.breachScale,
@@ -112,6 +137,8 @@ function rowAnnualLoss(inp: DelayScenarioInputs, yearsOfData: number, year: numb
     dataSensitivityClass: inp.dataSensitivityClass,
     asOfYear: year,
     planningHorizonYears: 1,
+    crqcProbabilityMode: 'cumulative',
+    decryptionGapYears,
     discountRateAnnual: Math.max(0, inp.discountRatePct) / 100,
   }).quantumALE
 }
@@ -150,9 +177,12 @@ export function projectDelayScenario(
     // No new harvesting once migration has started, not once it finishes.
     const frozenYearsOfData = inp.baseYearsOfData + Math.min(t, delayYears)
 
+    // Still harvesting → the newest data is same-year fresh, gap 0. Once
+    // migration has frozen the corpus, the gap is the time since it froze.
+    const frozenGapYears = Math.max(0, t - delayYears)
     const breachALE =
-      (1 - progress) * rowAnnualLoss(inp, vulnerableYearsOfData, year) +
-      progress * rowAnnualLoss(inp, frozenYearsOfData, year)
+      (1 - progress) * rowAnnualLoss(inp, vulnerableYearsOfData, year, 0) +
+      progress * rowAnnualLoss(inp, frozenYearsOfData, year, frozenGapYears)
     const breach = breachALE * discount
 
     const migration =
@@ -175,6 +205,19 @@ export function projectDelayScenario(
     totalCliff += cliff
     cum += migration + breach + penalty
     rows.push({ year, migration, breach, penalty, cumulativeTotal: cum })
+  }
+
+  // A delay at or beyond the horizon means `t === delayYears` never fires
+  // inside the loop, so the migration was silently never paid for — making
+  // "delay past the horizon" the cheapest option on the board by exactly the
+  // migration cost (a 10-year delay on a 10-year horizon scored −$4.5M).
+  // The organization still has to migrate eventually, so charge it, discounted
+  // from the year it would actually happen. (Audit 2026-08-10, W1-1.)
+  if (delayYears >= inp.horizonYears) {
+    const deferred =
+      (inp.migrationCostUSD + inp.delayPremiumPerYear * delayYears) / Math.pow(1 + r, delayYears)
+    totalMigration += deferred
+    cum += deferred
   }
 
   return {

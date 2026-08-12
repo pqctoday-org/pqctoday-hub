@@ -13,6 +13,7 @@ import {
   mulberry32,
   sampleTriangular,
   percentile,
+  programCostFor,
 } from '@/utils/costModelSim'
 
 function formatCurrency(amount: number): string {
@@ -77,14 +78,14 @@ export const CostModelExplorer: React.FC = () => {
       {
         key: 'parametric',
         label: 'Parametric (budget-anchored)',
-        why: `${SIM_CONSTANTS.budgetSharePct}% of IT budget × ${inputs.horizonYears}yr — ignores system count entirely.`,
+        why: `${SIM_CONSTANTS.budgetSharePct}% of IT budget × ${inputs.horizonYears}yr — ignores system count entirely, and is the lens most sensitive to programme duration.`,
         point: comparison.parametric,
         color: 'hsl(var(--primary))',
       },
       {
         key: 'bottomup',
         label: 'Bottom-up (activity-based)',
-        why: `${formatCurrency(SIM_CONSTANTS.perSystemBase)}/system × complexity × ${inputs.systems} + ${formatCurrency(SIM_CONSTANTS.fixedProgramCost)} program.`,
+        why: `${formatCurrency(SIM_CONSTANTS.perSystemBase)}/system × complexity × ${inputs.systems} + ${formatCurrency(programCostFor(inputs.horizonYears))} standing program cost over ${inputs.horizonYears}yr.`,
         point: comparison.bottomUp,
         color: 'hsl(var(--secondary))',
       },
@@ -113,7 +114,7 @@ export const CostModelExplorer: React.FC = () => {
       {
         key: 'analogical',
         label: 'Analogical (historical)',
-        why: `${formatCurrency(SIM_CONSTANTS.histPerSystem)}/system from past crypto migrations × ${inputs.systems} (illustrative).`,
+        why: `${formatCurrency(SIM_CONSTANTS.histPerSystem)}/system from past crypto migrations × ${inputs.systems} + ${formatCurrency(programCostFor(inputs.horizonYears))} standing program cost (illustrative).`,
         point: comparison.analogical,
         color: 'hsl(var(--primary))',
       },
@@ -388,6 +389,19 @@ export const CostModelExplorer: React.FC = () => {
           <strong>{comparison.spreadRatio.toFixed(1)}× spread</strong> on identical inputs. No
           single number is &ldquo;the&rdquo; cost; that is exactly why you estimate more than one
           way and reconcile.
+        </p>
+        {/* Until 2026-08-10 only the parametric lens read the horizon, so this
+            spread swung 2.4x -> 26.7x on the slider alone — it measured the
+            slider, not the methods. Say what the horizon now does. (W4-1.) */}
+        <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border/50 leading-relaxed">
+          <strong className="text-foreground/80">How the spread is built:</strong> all five lenses
+          estimate the same quantity — the total cost of this programme — so all five respond to the
+          planning horizon. Per-system work does not stretch with the schedule, but standing
+          programme costs (PMO, governance, discovery) accrue for as long as the programme runs, so
+          those scale while the per-system term does not. The parametric lens remains the most
+          horizon-sensitive by construction, since it is a share of annual budget spent every year.
+          The cost-of-inaction marker is a different quantity and is deliberately kept off the
+          migration-cost comparison.
         </p>
       </div>
 

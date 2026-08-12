@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
+import { medianCrqcYear } from '@/utils/crqcProbability'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -212,9 +213,17 @@ export function buildCrqcScenarioMarkdown({
 
 export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqcYearChange }) => {
   const { migrationDeadlineYear, industry, country, hndlRiskWindow } = useExecutiveModuleData()
-  // Derive a default CRQC year from the user's nearest framework deadline
-  // (deadline + 3-year buffer) — falls back to 2035 if no data.
-  const defaultCrqcYear = migrationDeadlineYear ? migrationDeadlineYear + 3 : 2035
+  // Default to the GRI 2025 survey's median CRQC arrival — the same curve the
+  // Breach Scenario Simulator and Cost of Inaction Analyzer use.
+  //
+  // It used to be `migrationDeadlineYear + 3` (falling back to 2035), which
+  // derived a claim about quantum-computing capability from a regulatory
+  // compliance date. Those are independent quantities: a mandate says when you
+  // must be done, not when the machine arrives. It also left this tool
+  // answering "when does a CRQC arrive" differently from the two tools beside
+  // it in the same Command Center. The deadline is still shown — as its own
+  // overlay below, not as the capability estimate. (Audit 2026-08-10, W2-3.)
+  const defaultCrqcYear = Math.round(medianCrqcYear('consensus'))
   // Restore the user's last-saved slider position (if any) ahead of the
   // computed default — the read-back half of persisting `inputs` on export.
   const savedInputs = useSavedArtifactInputs<{ crqcYear?: number }>('crqc-scenario')
@@ -234,8 +243,9 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
 
   const seedSources: string[] = []
   if (!seedCleared) {
+    seedSources.push(`GRI 2025 consensus median (${Math.round(medianCrqcYear('consensus'))})`)
     if (migrationDeadlineYear)
-      seedSources.push(`deadline ${migrationDeadlineYear} (CRQC default = +3y)`)
+      seedSources.push(`deadline ${migrationDeadlineYear} (shown separately)`)
     if (industry) seedSources.push(`industry (${industry})`)
     if (country) seedSources.push(`country (${country})`)
     if (hndlRiskWindow?.isAtRisk) seedSources.push('open HNDL window from assessment')
@@ -318,7 +328,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
         <PreFilledBanner
           summary={`Scenario seeded from ${seedSources.join(' + ')}.`}
           onClear={() => {
-            setCrqcYear(2035)
+            setCrqcYear(Math.round(medianCrqcYear('consensus')))
             setSeedCleared(true)
           }}
         />
@@ -364,12 +374,16 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
           arrive. See the cascading impacts on algorithms, compliance, and data exposure.
         </p>
         <p className="text-xs text-muted-foreground mb-4">
-          Default year is your migration deadline
+          Default year is the median CRQC arrival from the Global Risk Institute&apos;s 2025 Quantum
+          Threat Timeline survey ({Math.round(medianCrqcYear('consensus'))}, consensus of its 26
+          experts&apos; low and high bounds) &mdash; the same curve the Breach Scenario Simulator
+          and Cost of Inaction Analyzer use. Move the slider to model an earlier or later arrival;
+          the slow and fast bounds are {Math.round(medianCrqcYear('slow'))} and{' '}
+          {Math.round(medianCrqcYear('fast'))}.
           {migrationDeadlineYear
-            ? ` (${migrationDeadlineYear})`
-            : ' (no deadline on record: 2035)'}{' '}
-          plus a 3-year buffer &mdash; a planning heuristic, not a probabilistic forecast; move the
-          slider to model an earlier or later arrival. Aligned to{' '}
+            ? ` Your migration deadline (${migrationDeadlineYear}) is a separate quantity — when you must be finished, not when the machine arrives.`
+            : ''}{' '}
+          Aligned to{' '}
           <a
             href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
             target="_blank"

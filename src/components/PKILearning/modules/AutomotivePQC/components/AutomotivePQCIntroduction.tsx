@@ -283,8 +283,8 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                     <span className="text-status-warning font-medium">Marginal</span>
                   </td>
                   <td className="py-2 px-3 text-muted-foreground">
-                    <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip> adds ~0.8 ms per scan;
-                    within budget
+                    <InlineTooltip term="ML-DSA">ML-DSA-44</InlineTooltip> adds sub-millisecond
+                    signing on accelerated silicon (measure your own); within budget
                   </td>
                 </tr>
                 <tr className="border-b border-border/50">

@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-10',
 
   standards: [getStandard('FIPS 204'), getStandard('RFC 9882'), getStandard('RFC 9814')],
 

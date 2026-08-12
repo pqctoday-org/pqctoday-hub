@@ -1,0 +1,56 @@
+{
+  "$comment": [
+    "Single source of truth for the set of trust-relevant artifacts the maintainer",
+    "ML-DSA-65 key signs. Read by BOTH sides: the private signer",
+    "(pqctoday-priv/attestation/artifacts.ts, mirrored at scripts/attestation/) and",
+    "the public CI verifier (scripts/ci/verify-attestations.ts).",
+    "",
+    "It is JSON rather than a TS module because the signer lives in the private repo",
+    "and the verifier must stay in the public one — they cannot import each other, and",
+    "the hand-mirrored copies drifted exactly as you would expect: the verifier's own",
+    "header carried a '(Future cleanup: extract to a single shared module.)' note.",
+    "",
+    "required: true  — sign-all/verify-all/CI error when the artifact or its .sig is missing",
+    "required: false — skipped silently when absent (an artifact not built on every run)",
+    "",
+    "Adding an artifact: append one entry here, then re-run `npm run trust-engine:sign`",
+    "and commit the new .sig alongside it."
+  ],
+  "artifacts": [
+    { "path": "public/data/revisions.jsonl", "required": true, "label": "revisions log" },
+    { "path": "public/data/rag-corpus.json", "required": true, "label": "rag corpus" },
+    { "path": "public/data/pqctoday-oscal.json", "required": true, "label": "OSCAL combined" },
+    {
+      "path": "public/data/pqctoday-oscal-governance.json",
+      "required": true,
+      "label": "OSCAL governance subset"
+    },
+    {
+      "path": "public/data/pqctoday-oscal-full.json",
+      "required": true,
+      "label": "OSCAL full inventory"
+    },
+    {
+      "path": "public/data/pqctoday-oscal-assessment-plan.json",
+      "required": true,
+      "label": "OSCAL assessment plan"
+    },
+    { "path": "public/data/pqctoday-cbom.json", "required": true, "label": "CBOM" },
+    {
+      "path": "public/data/community-signals.json",
+      "required": false,
+      "label": "community signals"
+    },
+    {
+      "$why": "ADDED 2026-08-10 (remediation plan item 3.1). The RAG corpus was signed while the vector index built FROM it was not — so the text an answer cites was attested and the 46 MB of embeddings that decide WHICH text gets cited was not. Both files are tracked, and no build step regenerates them (only the private `npm run refresh-index` lane does), so a stale signature here means the index changed without a re-sign, which is exactly the thing worth catching.",
+      "path": "public/data/embeddings.bin",
+      "required": true,
+      "label": "embedding index (vectors)"
+    },
+    {
+      "path": "public/data/embeddings-meta.json",
+      "required": true,
+      "label": "embedding index (metadata)"
+    }
+  ]
+}

@@ -2,7 +2,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { SupplyChainRiskMatrix } from './SupplyChainRiskMatrix'
+import { SupplyChainRiskMatrix, computeLayerStats, matrixRiskLevel } from './SupplyChainRiskMatrix'
+import { LAYERS } from '@/data/infrastructureLayers'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { ThreatData } from '@/data/threatsData'
@@ -402,5 +403,85 @@ describe('SupplyChainRiskMatrix', () => {
       })
       expect(within(dbCard).getByText('None')).toBeInTheDocument()
     })
+  })
+})
+
+// ── W1-4 regression guards (audit 2026-08-10) ────────────────────────────────
+// Impact used to be `threatMatches / totalThreatMatches` — a share of the
+// displayed estate. On the nine canonical layers that pinned every layer to
+// impact 1 and the whole matrix to "Low", and adding a layer silently
+// downgraded every other one.
+describe('computeLayerStats — absolute impact (W1-4)', () => {
+  const gapProduct = (id: string) =>
+    makeProduct({ productId: id, softwareName: id, pqcSupport: 'No' })
+
+  const criticalThreats = (n: number, term: string) =>
+    Array.from({ length: n }, (_, i) =>
+      makeThreat({
+        threatId: `T-${term}-${i}`,
+        description: `${term} compromise scenario ${i}`,
+        criticality: 'Critical',
+      })
+    )
+
+  it('an estate where EVERY layer is heavily threatened reads Critical, not Low', () => {
+    // This is the shape that broke: threats spread across all nine layers gave
+    // each a 1/9 share, so every layer scored impact 1 and the whole matrix
+    // capped at "Low" — the more thoroughly exposed the estate, the safer it
+    // looked. A single-hot-layer fixture would NOT catch it (share 1.0 -> 5).
+    const vendorsByLayer = new Map<string, SoftwareItem[]>(
+      LAYERS.map((l) => [l.id, [gapProduct(`${l.id}-a`)]])
+    )
+    const threats = LAYERS.flatMap((l) => criticalThreats(6, l.label))
+    const stats = computeLayerStats(vendorsByLayer, threats, true, null)
+
+    expect(stats.length).toBe(LAYERS.length)
+    for (const s of stats) {
+      expect(s.likelihood, `${s.layerId} likelihood`).toBe(5) // every product has a gap
+      expect(s.impact, `${s.layerId} impact`).toBe(5)
+      expect(matrixRiskLevel(s.riskScore ?? 0), `${s.layerId} verdict`).toBe('Critical')
+    }
+  })
+
+  it("a layer's impact does not change when unrelated layers are added or removed", () => {
+    const threats = criticalThreats(6, 'Database')
+    const small = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
+    const large = new Map<string, SoftwareItem[]>(
+      LAYERS.map((l) => [l.id, [gapProduct(`${l.id}-a`)]])
+    )
+    const dbSmall = computeLayerStats(small, threats, true, null).find(
+      (s) => s.layerId === 'Database'
+    )
+    const dbLarge = computeLayerStats(large, threats, true, null).find(
+      (s) => s.layerId === 'Database'
+    )
+    expect(dbLarge!.impact).toBe(dbSmall!.impact)
+    expect(dbLarge!.riskScore).toBe(dbSmall!.riskScore)
+  })
+
+  it('weights impact by threat severity, not raw match count', () => {
+    const vendorsByLayer = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
+    const critical = computeLayerStats(vendorsByLayer, criticalThreats(3, 'Database'), true, null)
+    const low = computeLayerStats(
+      vendorsByLayer,
+      Array.from({ length: 3 }, (_, i) =>
+        makeThreat({
+          threatId: `T-low-${i}`,
+          description: `Database issue ${i}`,
+          criticality: 'Low',
+        })
+      ),
+      true,
+      null
+    )
+    expect(critical[0].threatMatches).toBe(low[0].threatMatches) // same count
+    expect(critical[0].impact!).toBeGreaterThan(low[0].impact!) // different severity
+  })
+
+  it('still refuses to score impact with no industry context', () => {
+    const vendorsByLayer = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
+    const stats = computeLayerStats(vendorsByLayer, criticalThreats(6, 'Database'), false, null)
+    expect(stats[0].impact).toBeNull()
+    expect(stats[0].riskScore).toBeNull()
   })
 })

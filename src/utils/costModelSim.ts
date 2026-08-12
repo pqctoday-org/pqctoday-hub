@@ -12,6 +12,7 @@
  */
 
 import { INDUSTRY_BREACH_BASELINES, ANNUAL_BREACH_PROBABILITY_PCT } from '@/data/roiBaselines'
+import { computeBreachCosts } from './breachCostModel'
 
 export interface CostModelInputs {
   /** Number of systems / applications in scope. */
@@ -48,7 +49,11 @@ export const SIM_CONSTANTS = {
   /** Cyentia IRIS 2025 "average" org-size tier — same default as the Breach
    *  Scenario Simulator and Cost of Inaction Analyzer (no flat unsourced default). */
   annualBreachProb: ANNUAL_BREACH_PROBABILITY_PCT.average / 100,
-  quantumFactor: 2.5,
+  /** Shared-model inputs replacing the old flat `quantumFactor: 2.5`. Same
+   *  defaults as the Breach Scenario Simulator and Cost of Inaction Analyzer. */
+  aleYearsOfData: 5,
+  aleHndlFactorPct: 30,
+  aleAsOfYear: 2026,
 } as const
 
 /** Parametric / budget-anchored: a share of the multi-year IT budget. */
@@ -56,9 +61,34 @@ export function parametricEstimate(inp: CostModelInputs): number {
   return (SIM_CONSTANTS.budgetSharePct / 100) * inp.itBudgetAnnual * inp.horizonYears
 }
 
-/** Bottom-up / activity-based: per-system cost × systems + fixed program cost. */
+/**
+ * Duration scaling applied to the activity-based lenses.
+ *
+ * All five lenses are supposed to estimate the SAME quantity — the total cost
+ * of this migration programme — but only the parametric lens read
+ * `horizonYears`, so the "how much do the methods disagree" headline swung
+ * from 2.4x at a 1-year horizon to 26.7x at 20 years on identical inputs.
+ * The spread was measuring the slider, not the methods.
+ *
+ * Per-system work is largely fixed regardless of schedule, so it does not
+ * scale; the standing programme costs (PMO, governance, discovery, vendor
+ * management) accrue for as long as the programme runs. Modelled as the fixed
+ * programme cost being an ANNUAL carry over a nominal 3-year baseline rather
+ * than a one-off. (Audit 2026-08-10, W2-2.)
+ */
+export const NOMINAL_PROGRAM_YEARS = 3
+
+/** Standing programme cost for a programme of `horizonYears`. */
+export function programCostFor(horizonYears: number): number {
+  const years = Math.max(0, horizonYears)
+  return (SIM_CONSTANTS.fixedProgramCost / NOMINAL_PROGRAM_YEARS) * years
+}
+
+/** Bottom-up / activity-based: per-system cost × systems + standing program cost. */
 export function bottomUpEstimate(inp: CostModelInputs): number {
-  return SIM_CONSTANTS.perSystemBase * inp.complexity * inp.systems + SIM_CONSTANTS.fixedProgramCost
+  return (
+    SIM_CONSTANTS.perSystemBase * inp.complexity * inp.systems + programCostFor(inp.horizonYears)
+  )
 }
 
 export interface ScenarioBand {
@@ -79,7 +109,9 @@ export function scenarioEstimate(inp: CostModelInputs): ScenarioBand {
 
 /** Analogical / historical: illustrative per-system cost from past migrations. */
 export function analogicalEstimate(inp: CostModelInputs): number {
-  return SIM_CONSTANTS.histPerSystem * inp.complexity * inp.systems
+  return (
+    SIM_CONSTANTS.histPerSystem * inp.complexity * inp.systems + programCostFor(inp.horizonYears)
+  )
 }
 
 /**
@@ -87,13 +119,37 @@ export function analogicalEstimate(inp: CostModelInputs): number {
  * separately from the migration-cost lenses (different quantity).
  */
 export function aleReference(inp: CostModelInputs): number {
-  return (
-    SIM_CONSTANTS.breachBaseline *
-    SIM_CONSTANTS.quantumFactor *
-    SIM_CONSTANTS.annualBreachProb *
-    inp.horizonYears
-  )
+  // Delegates to the shared breach model rather than applying a flat 2.5x
+  // "quantum factor". That constant assumed a CRQC exists with CERTAINTY —
+  // exactly the v1 assumption breachCostModel.ts was rebuilt to remove
+  // ("silently answered the wrong question") — while a comment two lines up
+  // claimed this lens shared the Simulator's source with "no drift". The
+  // baseline was shared; the quantum assumption was not.
+  //
+  // The estate also now moves the number. Before, a one-system startup and a
+  // hundred-system bank were both told their cost of inaction was $4,995,000
+  // at a five-year horizon, because this read none of `systems`, `complexity`
+  // or `itBudgetAnnual`. Breach severity scales with the estate via
+  // `breachScale`, damped (sub-linear) — ten times the systems is not ten
+  // times the breach. (Audit 2026-08-10, W2-1.)
+  const breachScale = Math.max(0.5, Math.sqrt(Math.max(1, inp.systems) / 100) * inp.complexity)
+  const costs = computeBreachCosts({
+    baseline: SIM_CONSTANTS.breachBaseline,
+    breachScale,
+    yearsOfData: SIM_CONSTANTS.aleYearsOfData,
+    hndlFactorPct: SIM_CONSTANTS.aleHndlFactorPct,
+    annualBreachProbPct: SIM_CONSTANTS.annualBreachProb * 100,
+    dataSensitivityClass: 'general-pii',
+    asOfYear: SIM_CONSTANTS.aleAsOfYear,
+    planningHorizonYears: Math.max(1, inp.horizonYears),
+    discountRateAnnual: 0,
+  })
+  return costs.quantumALE * Math.max(1, inp.horizonYears)
 }
+
+/** Every migration-cost lens now reads horizonYears, so the spread ratio
+ *  reflects methodological disagreement rather than the horizon slider. */
+export const MIGRATION_LENSES_SCALE_WITH_HORIZON = true
 
 // ── Seeded PRNG + triangular sampling (deterministic → testable) ────────────
 
@@ -149,7 +205,7 @@ export function monteCarloEstimate(
   const samples: number[] = []
   for (let i = 0; i < draws; i++) {
     const perSystem = sampleTriangular(rng, min, base, max)
-    samples.push(perSystem * inp.systems + SIM_CONSTANTS.fixedProgramCost)
+    samples.push(perSystem * inp.systems + programCostFor(inp.horizonYears))
   }
   samples.sort((a, b) => a - b)
   const mean = samples.reduce((sum, v) => sum + v, 0) / (samples.length || 1)

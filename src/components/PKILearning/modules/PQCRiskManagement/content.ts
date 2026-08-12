@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-10',
 
   standards: [getStandard('NIST IR 8547'), getStandard('NSA CNSA 2.0')],
 

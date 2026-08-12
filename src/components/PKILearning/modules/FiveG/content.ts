@@ -9,12 +9,16 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: '5g-security',
   version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-10',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
-    getStandard('3GPP TS 33.501'),
+    // Repointed 2026-08-10: '3GPP TS 33.501' was deprecated on 2026-07-30
+    // because its cached evidence was the 3GPP landing page, not the spec.
+    // The Rel-19 row carries the real ETSI PDF — and that PDF's Annex C.3.4.1
+    // is what confirms this module's Profile A description.
+    getStandard('3GPP TS 33.501 Rel-19'),
     getStandard('3GPP-PQC-Study-2025'),
     getStandard('NIST-CSWP-36A'),
   ],

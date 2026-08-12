@@ -40,7 +40,6 @@ import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { ShareButton } from '@/components/ui/ShareButton'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { ExecutiveRedirectBanner } from '@/components/common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
 import {
@@ -61,6 +60,7 @@ import { Inspector } from './Inspector'
 import { PolicyView } from './PolicyView'
 import { Kmip3View } from './Kmip3View'
 import { MigrationView } from './migration/MigrationView'
+import { AgilityStoryPanel } from './AgilityStoryPanel'
 import {
   useLessonsTour,
   LessonsHub,
@@ -797,18 +797,16 @@ export function KmipPlaygroundView() {
 
   return (
     <div className="h-full overflow-auto animate-fade-in p-1">
-      {role === 'executive' && (
-        <ExecutiveRedirectBanner
-          className="mb-4"
-          title="KMIP Control Plane is a hands-on engineering workbench."
-          subtitle="Crypto-agility — being able to swap algorithms on demand — is a board-level cost and risk decision, not just an implementation detail. You can explore freely below, but for executive-level PQC context you may prefer:"
-          ctas={[
-            { label: 'Command Center →', to: '/business' },
-            { label: 'Compliance landscape →', to: '/compliance' },
-            { label: 'Migration framework →', to: '/migrate' },
-          ]}
-        />
-      )}
+      {/* B+ remediation 4.5 (2026-08-10). This was an ExecutiveRedirectBanner
+          — "this is a hands-on engineering workbench", plus three links away.
+          The site's clearest demonstration of crypto agility answered its most
+          important audience by pointing at the door, which is why the CACP
+          executive cells graded C/C+/C/A-. Replaced with the three-step story
+          the console can actually deliver, sharing its wording with the
+          sandbox's agility console via agilityNarration.ts. The three links
+          survive inside the panel as an exit AFTER the story rather than as an
+          alternative to it. */}
+      {role === 'executive' && <AgilityStoryPanel className="mb-4" />}
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
