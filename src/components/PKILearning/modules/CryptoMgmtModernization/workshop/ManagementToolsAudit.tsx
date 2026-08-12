@@ -9,7 +9,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
-type CoverageLevel = 0 | 1 | 2 | 3
+export type CoverageLevel = 0 | 1 | 2 | 3
 
 const LEVEL_LABELS: Record<CoverageLevel, string> = {
   0: 'None',
@@ -25,7 +25,7 @@ const LEVEL_COLORS: Record<CoverageLevel, string> = {
   3: 'bg-status-success/15 text-status-success border-status-success/30',
 }
 
-interface ToolDef {
+export interface ToolDef {
   id: string
   name: string
   description: string
@@ -35,7 +35,7 @@ interface ToolDef {
   recommendations: Record<CoverageLevel, string>
 }
 
-const TOOLS: ToolDef[] = [
+export const TOOLS: ToolDef[] = [
   {
     id: 'crypto-scanner',
     name: 'Crypto Scanners',
@@ -141,6 +141,24 @@ const TOOLS: ToolDef[] = [
   },
 ]
 
+/**
+ * Maturity score (0–100), weighted by each tool's declared `importance`.
+ *
+ * Was a flat unweighted mean — `sum(levels) / (3 × TOOLS.length)` — so a
+ * missing crypto scanner (importance 3) and a missing data-classification
+ * tool (importance 1) moved the headline number identically, even though
+ * `importance` was already trusted to order the gap list. Exported so the
+ * weighting is testable without rendering. (Audit 2026-08-10, W1-5.)
+ */
+export function computeMaturityScore(
+  levels: Record<string, CoverageLevel>,
+  tools: ToolDef[] = TOOLS
+): number {
+  const weighted = tools.reduce((acc, t) => acc + (levels[t.id] ?? 0) * t.importance, 0)
+  const maxWeighted = tools.reduce((acc, t) => acc + 3 * t.importance, 0)
+  return maxWeighted > 0 ? Math.round((weighted / maxWeighted) * 100) : 0
+}
+
 export const ManagementToolsAudit: React.FC = () => {
   const { myProducts, industry } = useExecutiveModuleData()
   // Count /migrate products that sit in a management-tool layer (scanner, SIEM,
@@ -162,12 +180,15 @@ export const ManagementToolsAudit: React.FC = () => {
   }
   // Seed systems-coverage % from the same signal. No detected products → 0
   // (honestly unseeded), not a fabricated 25% floor.
-  const initPct = () => {
-    const base: Record<string, number> = {}
-    const seed = productMgmt > 0 ? Math.min(75, 25 + productMgmt * 10) : 0
-    for (const t of TOOLS) base[t.id] = seed
-    return base
-  }
+  // Systems-coverage % is NEVER seeded. It used to be `min(75, 25 + n*10)`,
+  // so detecting one management product in /migrate asserted that 35% of the
+  // estate's systems were covered by it, and three products asserted 55%.
+  // There is no relationship between a product count and a coverage
+  // percentage — the number was invented and then displayed as if measured.
+  // Detecting a product tells us the tool EXISTS (which still seeds `levels`);
+  // how much of the estate it reaches is something only the user knows.
+  // (Audit 2026-08-10, W1-5.)
+  const initPct = () => Object.fromEntries(TOOLS.map((t) => [t.id, 0]))
 
   // Restore the last-saved audit so it round-trips instead of resetting to
   // the /migrate-derived seed on every visit.
@@ -188,10 +209,12 @@ export const ManagementToolsAudit: React.FC = () => {
   const setLevel = (id: string, lvl: CoverageLevel) => setLevels((prev) => ({ ...prev, [id]: lvl }))
   const setPct = (id: string, val: number) => setSysPct((prev) => ({ ...prev, [id]: val }))
 
-  const completeness = useMemo(() => {
-    const sum = TOOLS.reduce((acc, t) => acc + levels[t.id], 0)
-    return Math.round((sum / (3 * TOOLS.length)) * 100)
-  }, [levels])
+  // Weighted by each tool's declared `importance`. It was a flat unweighted
+  // mean, so a missing crypto scanner (importance 3) and a missing
+  // data-classification tool (importance 1) moved the headline identically —
+  // even though `importance` was already trusted enough to order the gap list
+  // directly below. (Audit 2026-08-10, W1-5.)
+  const completeness = useMemo(() => computeMaturityScore(levels), [levels])
 
   const gaps = useMemo(
     () => TOOLS.filter((t) => levels[t.id] < 2).sort((a, b) => b.importance - a.importance),
@@ -357,6 +380,20 @@ export const ManagementToolsAudit: React.FC = () => {
             style={{ width: `${completeness}%` }}
           />
         </div>
+
+        {/* The headline is importance-weighted as of 2026-08-10; before that a
+            missing crypto scanner and a missing data-classification tool moved
+            it identically. Say so, rather than leaving a bare percentage. */}
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <strong className="text-foreground/80">How this is scored:</strong> each tool&apos;s
+          coverage level (None 0 → Automated 3) is multiplied by its importance to a PQC migration,
+          summed, and divided by the maximum possible weighted total. It is a weighted average, not
+          a plain one — the four foundational tools (crypto scanners, vulnerability management,
+          asset management, configuration management) each count three times as much as data
+          classification. Systems-coverage percentages are yours to enter; nothing seeds them,
+          because a count of detected products says nothing about how much of your estate they
+          reach.
+        </p>
 
         {/* Coverage level heatmap */}
         <div>

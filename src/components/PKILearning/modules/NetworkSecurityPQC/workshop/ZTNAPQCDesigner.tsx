@@ -342,7 +342,8 @@ export const ZTNAPQCDesigner: React.FC = () => {
               <p>
                 <strong className="text-foreground">Hybrid mode:</strong> The safest migration path
                 — provides quantum resistance while maintaining backwards compatibility. Recommended
-                by NIST SP 800-227 (draft) and BSI for the 2025-2030 transition period.
+                by BSI for the 2025-2030 transition period; NIST SP 800-227 (final, September 2025)
+                specifies approved key combiners for PQ/T hybrid KEMs rather than mandating hybrid.
               </p>
             </div>
           </div>

@@ -11,6 +11,9 @@ import { useSimulationStore } from '@/store/useSimulationStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
 import { MODULE_TRACKS, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import type { ActivitySnapshot } from '@/types/AchievementTypes'
+import { personaLadder } from '@/data/achievementCatalog'
+import { PERSONA_EXCLUDED_ACHIEVEMENTS } from '@/data/personaConfig'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 /**
  * Evaluates achievement conditions against current app state.
@@ -34,6 +37,11 @@ export function useAchievementChecker() {
   const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
   const endorsementRecords = useEndorsementStore((s) => s.records)
   const unlocked = useAchievementStore((s) => s.unlocked)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+
+  const ladder = selectedPersona
+    ? personaLadder(selectedPersona, PERSONA_EXCLUDED_ACHIEVEMENTS[selectedPersona])
+    : ACHIEVEMENT_CATALOG
   const unlock = useAchievementStore((s) => s.unlock)
 
   const simRunsCompleted = useSimulationStore((s) => s.simRunsCompleted)
@@ -169,7 +177,12 @@ export function useAchievementChecker() {
 
     const unlockedIds = new Set(unlocked.map((u) => u.id))
 
-    for (const achievement of ACHIEVEMENT_CATALOG) {
+    // B+ remediation 2.3 rebuild (2026-08-10): award from the ROLE'S LADDER,
+    // not the whole catalog. Previously the grid hid rungs a role could not
+    // reach while this loop happily awarded them, so an executive could be
+    // granted a badge the board in front of them said did not exist. A ladder
+    // is only honest if the same list decides what is shown and what is given.
+    for (const achievement of ladder) {
       if (unlockedIds.has(achievement.id)) continue
 
       try {

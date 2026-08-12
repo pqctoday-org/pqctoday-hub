@@ -9,7 +9,12 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ForgeryRiskPanel } from './ForgeryRiskPanel'
 import type { BreachOutput } from '../types'
-import type { DataSensitivityClass } from '@/utils/breachCostModel'
+import {
+  DATA_SENSITIVITY_LABELS,
+  DATA_SHELF_LIFE_YEARS,
+  HNDL_MULTIPLIER_CAP,
+  type DataSensitivityClass,
+} from '@/utils/breachCostModel'
 
 function fmtCurrency(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`
@@ -276,6 +281,63 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
             Risk Artifacts.
           </p>
         </ExportableArtifact>
+      )}
+
+      {/* How the number is built. Eight interacting parameters produced a
+          headline figure with no on-page account of how — and the chain
+          changed materially in the 2026-08-10 remediation, so the explanation
+          has to describe the model that actually runs. (W4-1.) */}
+      {breachCosts && (
+        <details className="glass-panel p-4">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground">
+            How this number is built
+          </summary>
+          <div className="mt-3 space-y-2 text-xs text-muted-foreground leading-relaxed">
+            <p>
+              <strong className="text-foreground/80">1. Cost of one breach today (SLE).</strong> The
+              industry-average total breach cost from IBM&apos;s Cost of a Data Breach report,
+              multiplied by your severity setting. IBM&apos;s figure already includes detection,
+              notification, lost business and reputational damage, so no separate reputational term
+              is added on top — that would double-count.
+            </p>
+            <p>
+              <strong className="text-foreground/80">
+                2. How much of the harvested corpus still matters.
+              </strong>{' '}
+              Freshness is integrated across data aged 0 to {breachCosts.yearsOfData} years against
+              the {DATA_SENSITIVITY_LABELS[breachCosts.dataSensitivityClass].toLowerCase()} shelf
+              life of {DATA_SHELF_LIFE_YEARS[breachCosts.dataSensitivityClass]} years. Old data
+              contributes less; a corpus older than its shelf life saturates rather than dropping to
+              zero, because its freshest layer always still counts.
+            </p>
+            <p>
+              <strong className="text-foreground/80">3. Quantum amplification.</strong> Those
+              freshness-weighted years times your HNDL exposure setting, damped so it approaches but
+              never reaches {1 + HNDL_MULTIPLIER_CAP}× the classical breach. The damping is smooth,
+              not a hard ceiling — a hard one erased all difference between high-exposure profiles.
+            </p>
+            <p>
+              <strong className="text-foreground/80">
+                4. Weighting by whether a CRQC exists at all.
+              </strong>{' '}
+              Steps 1–3 give the cost <em>if</em> a machine capable of breaking today&apos;s keys
+              exists. The expected annual loss blends that against the no-CRQC case using the GRI
+              2025 survey&apos;s arrival curve — currently a {Math.round(breachCosts.pCrqc * 100)}%
+              chance within your planning horizon.
+            </p>
+            <p>
+              <strong className="text-foreground/80">5. Present value.</strong> Summed year by year,
+              each year carrying its own cumulative arrival probability, then discounted. Not one
+              horizon-wide probability applied flatly to every year — that charges year one for a
+              risk it does not yet carry.
+            </p>
+            <p className="pt-1 border-t border-border/50">
+              Shelf-life figures are labelled assumptions rather than cited standards for four of
+              the five data classes. The arrival curve is one expert survey, not a forecast. Treat
+              the output as a structured argument, not a measurement.
+            </p>
+          </div>
+        </details>
       )}
     </div>
   )

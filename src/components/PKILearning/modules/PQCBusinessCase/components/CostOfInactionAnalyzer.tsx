@@ -316,6 +316,10 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             type="range"
             min={1}
             max={25}
+            // The IRIS tier anchors are fractional (8.7 / 9.3 / 12.8), so an
+            // implicit step of 1 would snap the selected tier to a whole number
+            // as soon as the slider was touched.
+            step={0.1}
             value={annualBreachProbPct}
             onChange={(e) => setAnnualBreachProbPct(Number(e.target.value))}
             className="w-full accent-primary"
@@ -393,15 +397,44 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
             Accumulated exposure + delay premium
           </div>
         </div>
-        <div className="glass-panel p-4 border bg-status-error/5 border-status-error/20">
+        <div
+          className={`glass-panel p-4 border ${
+            costOfInaction < 0
+              ? 'bg-status-warning/5 border-status-warning/20'
+              : 'bg-status-error/5 border-status-error/20'
+          }`}
+        >
           <div className="flex items-center gap-2 mb-1">
-            <AlertTriangle size={14} className="text-status-error" />
+            <AlertTriangle
+              size={14}
+              className={costOfInaction < 0 ? 'text-status-warning' : 'text-status-error'}
+            />
             <span className="text-xs text-muted-foreground">Cost of Inaction</span>
           </div>
-          <div className="text-2xl font-bold text-status-error">{fmt(costOfInaction)}</div>
+          <div
+            className={`text-2xl font-bold ${
+              costOfInaction < 0 ? 'text-status-warning' : 'text-status-error'
+            }`}
+          >
+            {fmt(costOfInaction)}
+          </div>
           <div className="text-xs text-muted-foreground mt-1">
             Extra cost from delaying {delayYears} year{delayYears !== 1 ? 's' : ''}
           </div>
+          {/* A negative figure is a real result, not an error, and it must be
+              explained rather than left to read as "$0 risk". At a high
+              discount rate with no binding mandate, deferring the migration
+              capex can outweigh the extra breach exposure it buys. */}
+          {costOfInaction < 0 && (
+            <div className="text-xs text-status-warning mt-2 leading-relaxed">
+              Negative: at a {inputs.discountRatePct}% discount rate
+              {mandate.mandateType !== 'HARD' && ' and with no binding mandate'}, deferring the
+              migration spend is worth more in present-value terms than the added breach exposure it
+              buys. That is a financing result, not a safety verdict — the risk itself still rises
+              every year you wait (see the year-by-year table). Lower the discount rate to see the
+              risk in real terms.
+            </div>
+          )}
         </div>
       </div>
 
@@ -500,6 +533,26 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         </div>
       </div>
 
+      {/* B+ remediation 4.6 (2026-08-10): end in a sentence, not a number.
+          "A generated document the user cannot defend is worse than no
+          document" — the tool produced correct figures and left the reader to
+          work out what they meant. Every value below is read from the same
+          computation the panels above render, so the sentence cannot disagree
+          with the numbers it is summarising. */}
+      <div className="glass-panel border-l-4 border-l-primary p-4">
+        <h4 className="mb-1 text-sm font-semibold text-foreground">What this is telling you</h4>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Waiting {delayYears} year{delayYears === 1 ? '' : 's'} costs you about{' '}
+          <strong className="text-foreground">{fmt(costOfInaction)}</strong> more over{' '}
+          {inputs.horizonYears} years than starting now — not because migration gets more expensive
+          on its own, but because you carry full exposure for longer and pay a rising premium to
+          compress the work later.{' '}
+          {moscaVerdict.alreadyLate
+            ? 'You are already past the latest safe start date for your own data shelf life, so the question is no longer whether to start but what to protect first.'
+            : `The date that actually binds you is ${Math.round(moscaVerdict.latestSafeStartYear)} — that is when starting later stops being a cost decision and becomes an exposure you cannot undo.`}
+        </p>
+      </div>
+
       {/* Cost breakdown for delayed scenario */}
       <div className="glass-panel p-4 border-l-4 border-l-status-warning space-y-3">
         <h4 className="text-sm font-semibold text-foreground">
@@ -571,10 +624,15 @@ export const CostOfInactionAnalyzer: React.FC<CostOfInactionAnalyzerProps> = ({
         <div className="mt-3 text-xs text-muted-foreground space-y-2">
           <p>
             <strong>Breach loss:</strong> the same probability-weighted model as the Breach Scenario
-            Simulator — a blend of &quot;no CRQC exists&quot; and &quot;CRQC exists&quot; outcomes
-            weighted by the GRI 2025 survey&apos;s CRQC-arrival curve, with HNDL exposure decayed by{' '}
-            {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s {shelfLifeYears}-year shelf life,
-            at your {annualBreachProbPct}% annual breach probability.{' '}
+            Simulator — a blend of &quot;no CRQC exists&quot; and &quot;CRQC exists&quot; outcomes.
+            Each projected year is weighted by the probability, from the GRI 2025 survey&apos;s
+            arrival curve, that a CRQC <em>exists by then</em> — not merely that one arrives in that
+            particular year, since a machine built in 2032 is still there in 2040. HNDL exposure
+            decays with {DATA_SENSITIVITY_LABELS[dataSensitivityClass]}&apos;s {shelfLifeYears}-year
+            shelf life, measured at the moment the data would be decrypted rather than today: that
+            is what migrating early buys you, because a corpus frozen well before a CRQC arrives has
+            aged out of its own shelf life by the time anyone can read it. Applied at your{' '}
+            {annualBreachProbPct}% annual breach probability.{' '}
             {chainedFromSimulator
               ? 'Inputs carried over from the Breach Scenario Simulator step.'
               : `Defaults: ${DELAY_MODEL_DEFAULTS.baseYearsOfData} years of harvested data, ${DELAY_MODEL_DEFAULTS.hndlFactorPct}% HNDL exposure.`}

@@ -27,6 +27,11 @@ interface RawQuizRow {
   learn_more_path: string
   personas: string
   industries: string
+  /** Provenance columns, added 2026-08-10 — see QuizQuestion.source. Optional
+   *  in the raw shape because CSVs written before that date do not carry them
+   *  and the loader must keep reading them unchanged. */
+  source?: string
+  source_url?: string
 }
 
 // ─── Transform function ───
@@ -71,6 +76,8 @@ function transformQuizRow(row: RawQuizRow): QuizQuestion | null {
     industries: splitPipe(row.industries),
   }
   if (row.learn_more_path) q.learnMorePath = row.learn_more_path
+  if (row.source) q.source = row.source
+  if (row.source_url) q.sourceUrl = row.source_url
   return q
 }
 

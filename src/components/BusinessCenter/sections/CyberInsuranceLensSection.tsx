@@ -290,16 +290,13 @@ export function CyberInsuranceLensSection() {
                 </p>
               </div>
               <p className="text-[10px] text-muted-foreground mt-3 leading-relaxed">
-                Anchored to quantum-rider uplift range +15–50% from{' '}
-                <a
-                  href="https://netdiligence.com/cyber-claims-study-2025-report/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  NetDiligence 2025
-                </a>
-                . Higher migration lowers uplift.
+                <span className="font-semibold text-status-warning">Illustrative assumption</span> —
+                the +15–50% uplift range is this model's own, not a published figure. It was
+                previously attributed to a &ldquo;quantum rider&rdquo; in the NetDiligence Cyber
+                Claims Study; the 2025 study was read in full on 2026-08-11 and contains no quantum
+                content and no rider pricing, so the attribution was removed rather than restated.
+                Treat the direction (more migration, lower uplift) as the teaching point and the
+                magnitude as unsourced.
               </p>
             </div>
 

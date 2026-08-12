@@ -41,6 +41,7 @@ import { PatentsFilterBar } from './PatentsFilterBar'
 import { PatentsDrillBanner } from './PatentsDrillBanner'
 import { PatentDetailDrawer } from './PatentDetailDrawer'
 import { PatentsRecentlyAdded } from './PatentsRecentlyAdded'
+import { PatentsRoleLens } from '../PatentsRoleLens'
 
 const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
 const SORT_LS_KEY = 'pqc-patents-sort'
@@ -415,6 +416,12 @@ export function PatentsViewRedesign() {
       {selectedPersona === 'curious' && (
         <PreviewBanner pageContext="Researcher, Architect, Developer" variant="suggestion" />
       )}
+
+      {/* B+ remediation 4.1 (2026-08-10): the page was raw IP data with no
+          framing for anybody. This says how much of it touches the algorithms
+          the reader's own path uses, who holds that, and — explicitly — what
+          the catalog cannot tell them about enforceability. */}
+      <PatentsRoleLens patents={displayPatents} persona={selectedPersona} />
 
       <PatentsRecentlyAdded items={recentlyAdded} onOpen={handleSelect} />
 

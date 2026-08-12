@@ -61,7 +61,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     id: 'govern',
     number: 1,
     title: 'Govern',
-    sectionRef: '§5.1–5.4',
+    sectionRef: '§5 (key activities, bullet 1)',
     explainer:
       'Embed crypto policy into standards, mandates, supply chains, threats, business requirements, partner ecosystem, stakeholders, crypto policies, and crypto architecture.',
     requirements: [
@@ -77,7 +77,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     id: 'inventory',
     number: 2,
     title: 'Inventory',
-    sectionRef: '§5.2',
+    sectionRef: '§5 (key activities, bullet 2)',
     explainer:
       'Build an asset-centric Cryptographic Bill of Materials (CBOM) across all six CSWP.39 asset classes — not just certificates.',
     requirements: [
@@ -93,7 +93,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     id: 'identify-gaps',
     number: 3,
     title: 'Identify Gaps',
-    sectionRef: '§5.3',
+    sectionRef: '§5 (key activities, bullet 3)',
     explainer:
       'Audit the Management Tools layer that sits between Assets and the Risk Management engine. Without this layer the Information Repository is populated manually and the Risk Analysis Engine has stale, incomplete data.',
     requirements: [
@@ -110,7 +110,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     id: 'prioritise',
     number: 4,
     title: 'Prioritise',
-    sectionRef: '§5.4',
+    sectionRef: '§5 (key activities, bullet 4)',
     explainer:
       'Run a Risk Analysis Prioritisation Engine informed by crypto policy to produce a ranked asset list and KPIs the organisation can act on.',
     requirements: [
@@ -126,7 +126,7 @@ export const CSWP39_STEPS: CSWP39Step[] = [
     id: 'implement',
     number: 5,
     title: 'Implement — Mitigate or Migrate',
-    sectionRef: '§4.6 / §5.5',
+    sectionRef: '§5 (key activities, bullet 5); mitigation via §4.6',
     explainer:
       'For each prioritised asset choose Migration (algorithm swap, preferred when agility allows) or Mitigation (crypto gateway / bump-in-the-wire, when direct modification is infeasible).',
     requirements: [
@@ -404,9 +404,13 @@ export const CSWP39_SECTIONS: CSWP39Section[] = [
     summary:
       'How protocols (TLS, IPsec, SSH, S/MIME, code-signing) negotiate algorithms and how new algorithms — including post-quantum primitives — are introduced without breaking backwards compatibility.',
     subSections: [
-      { ref: '§3.1', title: 'Negotiation and parameter selection' },
-      { ref: '§3.2', title: 'Algorithm transitions in deployed protocols' },
-      { ref: '§3.3', title: 'Hybrid and composite schemes' },
+      { ref: '§3.1', title: 'Algorithm Identification' },
+      { ref: '§3.1.1', title: 'Mandatory-to-Implement Algorithms' },
+      { ref: '§3.2', title: 'Algorithm Transitions' },
+      { ref: '§3.2.1', title: 'Preserving Protocol Interoperability' },
+      { ref: '§3.2.4', title: 'Hybrid Cryptographic Algorithms' },
+      { ref: '§3.3', title: 'Cryptographic Key Establishment' },
+      { ref: '§3.4', title: 'Balancing Security Strength and Protocol Complexity' },
     ],
     relatedStepIds: ['inventory', 'implement'],
     relatedZoneIds: ['assets', 'migration'],
@@ -418,10 +422,12 @@ export const CSWP39_SECTIONS: CSWP39Section[] = [
     summary:
       'Building crypto-agile systems: modular API boundaries, key-store abstractions, certificate lifecycle automation, and crypto gateways for legacy assets that cannot be modified directly.',
     subSections: [
-      { ref: '§4.1', title: 'Modular cryptographic APIs' },
-      { ref: '§4.2', title: 'Key store and certificate management' },
-      { ref: '§4.3', title: 'Library and HSM upgrade paths' },
-      { ref: '§4.6', title: 'Crypto Gateways (mitigation, with mandatory sunset)' },
+      { ref: '§4.1', title: 'Using an API in a Crypto Library Application' },
+      { ref: '§4.2', title: 'Using APIs in the Operating System Kernel' },
+      { ref: '§4.3', title: 'Using Service Mesh in Cloud-Native Environments' },
+      { ref: '§4.4', title: 'Embedded Systems' },
+      { ref: '§4.5', title: 'Hardware' },
+      { ref: '§4.6', title: 'Using a Crypto Gateway for Legacy Systems' },
     ],
     relatedStepIds: ['identify-gaps', 'implement'],
     relatedZoneIds: ['management-tools', 'mitigation', 'migration'],
@@ -429,15 +435,14 @@ export const CSWP39_SECTIONS: CSWP39Section[] = [
   {
     id: 'section-5',
     ref: '§5',
-    title: 'Strategic Plan for Managing Crypto Risks',
+    title: "Crypto Agility Strategic Plan for Managing Organizations' Crypto Risks",
     summary:
-      'The five-step operational playbook the Command Center is built around: Govern, Inventory, Identify Gaps, Prioritise, Implement. Includes the Information Repository concept that aggregates inventory across systems.',
+      'The strategic plan an organization builds to manage its cryptographic risk. Its "key activities" bullet list — integrate governance, inventory cryptography, identify gaps in enterprise management tools, develop a prioritized asset list, implement the strategy — is the five-step playbook the Command Center is built around. Those five steps are that bullet list, not numbered sub-sections: §5.1–§5.4 are four separate topics, listed below.',
     subSections: [
-      { ref: '§5.1', title: 'Govern — policy, RACI, standards-watch' },
-      { ref: '§5.2', title: 'Inventory — CBOM and Information Repository' },
-      { ref: '§5.3', title: 'Identify Gaps — vulnerability + standard delta' },
-      { ref: '§5.4', title: 'Prioritise — risk + deadline-driven scoring' },
-      { ref: '§5.5', title: 'Implement — migration / mitigation execution' },
+      { ref: '§5.1', title: 'Cryptographic Standards, Regulations, and Mandates' },
+      { ref: '§5.2', title: 'Crypto Security Policy Enforcement' },
+      { ref: '§5.3', title: 'Technology Supply Chains' },
+      { ref: '§5.4', title: 'Cryptographic Architecture' },
     ],
     relatedStepIds: ['govern', 'inventory', 'identify-gaps', 'prioritise', 'implement'],
     relatedZoneIds: ['governance', 'assets', 'management-tools', 'risk-management', 'migration'],
@@ -445,12 +450,16 @@ export const CSWP39_SECTIONS: CSWP39Section[] = [
   {
     id: 'section-6',
     ref: '§6',
-    title: 'Future Works & Maturity Assessment',
+    title: 'Considerations for Future Works',
     summary:
-      'Open questions for next revisions, plus the four-tier maturity model (§6.5: Partial → Risk-Informed → Repeatable → Adaptive) the tier badges in every Command Center zone are computed against.',
+      "Open considerations for future revisions, plus the crypto agility maturity model in §6.5. That model adapts the NIST Cybersecurity Framework's four tiers — Tier 1 Partial, Tier 2 Risk-Informed, Tier 3 Repeatable, Tier 4 Adaptive — which the tier badges in every Command Center zone are computed against.",
     subSections: [
-      { ref: '§6.1', title: 'Open research questions' },
-      { ref: '§6.5', title: 'Maturity Assessment (4-tier model)' },
+      { ref: '§6.1', title: 'Resource Considerations' },
+      { ref: '§6.2', title: 'Agility-Aware Design' },
+      { ref: '§6.3', title: 'Complexity and Security' },
+      { ref: '§6.4', title: 'Crypto Agility in the Cloud' },
+      { ref: '§6.5', title: 'Maturity Assessment for Crypto Agility' },
+      { ref: '§6.6', title: 'Common Crypto API' },
     ],
     relatedStepIds: ['govern', 'identify-gaps'],
     relatedZoneIds: ['governance', 'risk-management'],

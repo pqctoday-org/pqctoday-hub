@@ -2,7 +2,17 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, Lock, Cpu, Clock, Compass, ArrowRight } from 'lucide-react'
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Lock,
+  Cpu,
+  Clock,
+  Compass,
+  Scale,
+  ArrowRight,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -43,6 +53,19 @@ const STEPS: CuriousStep[] = [
     body: "You don't need a cryptography background. Pick a starting tile on the Explore page and follow the trail — at any depth that fits.",
     ctaLabel: 'Open the Explorer',
     ctaPath: '/explore',
+  },
+  // B+ remediation 1.5 (2026-08-10). "Why should I believe you" is the first
+  // question a newcomer forms and the last one this guide answered — the
+  // editorial-independence page is the site's strongest artifact and was
+  // reachable only from the global footer, Sponsor and Revisions, none of
+  // which a first-time reader visits. Added as the closing step, where the
+  // suspicion actually forms.
+  {
+    icon: Scale,
+    title: 'Why you can check us',
+    body: 'Every claim here names its source, and we publish who funds the site and what that funding cannot buy. If something looks wrong, the page tells you where it came from so you can go and check.',
+    ctaLabel: 'Read our independence policy',
+    ctaPath: '/editorial-independence',
   },
 ]
 

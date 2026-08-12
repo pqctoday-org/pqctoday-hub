@@ -7,12 +7,15 @@
 // selectedIndustries/selectedRegion, it never writes usePersonaStore.
 
 import { Lightbulb } from 'lucide-react'
-import { TrustTierFilter } from '@/components/common/TrustTierFilter'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { industryLabel } from '@/components/common/SectorFilter'
 
 interface ControlDeckProps {
-  /** Hide the URL-writing trust-tier filter in the sim embed. */
+  /**
+   * Kept so existing call sites still typecheck. It used to hide the
+   * URL-writing trust-tier filter in the sim embed; that control is gone from
+   * every page as of 2026-08-11, so the deck no longer reads this.
+   */
   simEmbed?: boolean
   /** "Showing N of M" — the active tab's result count, if available. */
   count?: { shown: number; total: number }
@@ -26,7 +29,7 @@ const REGION_LABEL: Record<string, string> = {
   global: 'Global',
 }
 
-export function ControlDeck({ simEmbed = false, count }: ControlDeckProps) {
+export function ControlDeck({ count }: ControlDeckProps) {
   const industries = usePersonaStore((s) => s.selectedIndustries)
   const region = usePersonaStore((s) => s.selectedRegion)
 
@@ -43,7 +46,8 @@ export function ControlDeck({ simEmbed = false, count }: ControlDeckProps) {
             {count.total}
           </span>
         )}
-        {!simEmbed && <TrustTierFilter />}
+        {/* Trust-tier control removed 2026-08-11 (all five pages). `?tier=`
+            still filters; only the on-screen control went. */}
       </div>
 
       <div className="flex items-start gap-2 rounded-lg border border-primary/15 bg-primary/[0.04] px-3 py-2">

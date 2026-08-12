@@ -12,6 +12,7 @@ import { riskConfig, RiskGauge } from '../../shared/widgets/RiskGauge'
 import { GlossaryAutoWrap } from '../../PKILearning/common/GlossaryAutoWrap'
 import { ReportTimelineStrip } from '../ReportTimelineStrip'
 import { CollapsibleSection } from './reportContentShared'
+import { RiskScoreWorking } from '../RiskScoreWorking'
 
 export const CountryTimelineSection = ({
   country,
@@ -43,11 +44,15 @@ export const RiskScoreSection = ({
   previousRiskScore,
   lastModifiedAt,
   defaultOpen,
+  industry,
 }: {
   result: AssessmentResult
   previousRiskScore: number | null
   lastModifiedAt: string | null
   defaultOpen: boolean
+  /** Drives which composite weighting the "how this was calculated" table
+   *  reports — B+ remediation 3.6. */
+  industry: string
 }) => {
   const config = riskConfig[result.riskLevel]
   return (
@@ -112,6 +117,11 @@ export const RiskScoreSection = ({
           </ul>
         </div>
       )}
+      {/* B+ remediation 3.6 (2026-08-10): the boosts block above already showed
+          the LAST step of the calculation. This shows the steps before it —
+          which weights this industry uses and what each category contributed —
+          so the number stops arriving as an oracle. */}
+      <RiskScoreWorking result={result} industry={industry} />
     </CollapsibleSection>
   )
 }

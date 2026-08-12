@@ -20,11 +20,10 @@ import {
   X,
   Layers,
 } from 'lucide-react'
-import {
-  TrustTierFilter,
-  useTrustTierFilter,
-  matchesTrustTierFilter,
-} from '../common/TrustTierFilter'
+// TrustTierFilter (the control) is no longer rendered here — see the note at
+// its old render site. The hook and matcher stay: `?tier=` deep links still
+// filter the page, they just have no second on-screen control.
+import { useTrustTierFilter, matchesTrustTierFilter } from '../common/TrustTierFilter'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
@@ -91,7 +90,12 @@ type StableTab =
   | 'cswp39'
 
 const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
-  { id: 'obligations', label: 'Obligations', icon: ShieldCheck },
+  // RENAMED 2026-08-11: 'Obligations' overclaimed. Most rows here are
+  // standards and certification schemes that merely APPLY — the tier system
+  // exists precisely to separate those from the ones that bind — and the page
+  // calls itself a reference, not a workspace. The id stays 'obligations' so
+  // every ?tab= and #hash link already in the wild keeps resolving.
+  { id: 'obligations', label: 'Rules & Standards', icon: ShieldCheck },
   { id: 'requirements', label: 'Requirements', icon: BookOpen },
   { id: 'progress', label: 'Progress', icon: CalendarClock },
   { id: 'products', label: 'Products', icon: PackageSearch },
@@ -620,10 +624,15 @@ export const ComplianceView = ({
           before the visitor reached the tab bar, which is why "which rules bind
           me" cost a scroll and a guess. The register answers that on arrival;
           the glossary lives in the page header, the deadlines now have their own
-          tab, and the trust-tier filter stays reachable inline below. */}
-      <div className="flex justify-end" data-testid="compliance-trust-tier-slot">
-        {!simEmbed && <TrustTierFilter />}
-      </div>
+          tab, and the trust-tier filter used to sit inline below.
+
+          REMOVED 2026-08-11: the trust-tier control was the third filter area on
+          this page, floating on its own above the tabs with no visual relation
+          to the scope it sat beside. Scope now comes from one place — the top
+          bar, plus the single Country picker the tier engine needs and the top
+          bar cannot supply. `?tier=` deep links still resolve, because
+          useTrustTierFilter reads the URL; what is gone is the second on-screen
+          place to change it. The other four pages that use it are untouched. */}
 
       {exportError && (
         <div
@@ -740,7 +749,7 @@ export const ComplianceView = ({
           <div className="mt-0 space-y-4">
             <SectionHeader
               icon={<ShieldCheck size={20} className="text-primary" />}
-              title="Obligations"
+              title="Rules & Standards"
               description="The instruments that bind your country and sector, why each one applies, and what it says about post-quantum cryptography. Tiers come from the same applicability engine For You uses."
             />
             <ObligationsTab
@@ -748,7 +757,6 @@ export const ComplianceView = ({
               countryValue={lsCountry}
               onCountryChange={handleLsCountryChange}
               sectorValue={lsIndustry}
-              onSectorChange={handleLsIndustryChange}
               persona={personaForLens}
               onOpenDetail={(fw) => {
                 setDrawerPillar(pillarForBodyType(fw.bodyType))

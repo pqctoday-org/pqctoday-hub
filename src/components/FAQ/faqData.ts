@@ -851,3 +851,66 @@ export const FAQ_DATA: FAQCategory[] = [
     ],
   },
 ]
+
+/**
+ * "Your three questions" — B+ remediation 4.1 (2026-08-10).
+ *
+ * The page already floats a persona's own Q&A to the top of its category
+ * ("float, don't filter"), but a reader still meets twelve category headings
+ * before the first thing they came for: "a researcher's first question is about
+ * method, an executive's is about deadlines, a newcomer's is whether any of
+ * this reaches them — and the page leads with none of the three."
+ *
+ * These are QUESTION STRINGS, not new content. Each one must match a question
+ * already in `FAQ_DATA` verbatim; `faqData.test.ts` fails the build otherwise,
+ * so this list can never drift into promising an answer the page does not have.
+ * That constraint is deliberate — it makes the lead block a reordering of the
+ * existing page rather than a second, divergent FAQ.
+ */
+export const PERSONA_FAQ_LEAD: Record<PersonaId, string[]> = {
+  executive: [
+    'What should executives know about quantum risk?',
+    'When does NIST plan to deprecate classical algorithms?',
+    'How do I build a PQC business case for the board?',
+  ],
+  developer: [
+    'What PQC libraries should developers use?',
+    'How does ML-KEM change the TLS 1.3 handshake?',
+    'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
+  ],
+  architect: [
+    'How should architects design for PQC?',
+    'What is a hybrid cryptographic approach?',
+    'How does Zero Trust architecture change with PQC?',
+  ],
+  researcher: [
+    // Method first — the researcher's actual first question, and the one the
+    // page previously answered twelfth if at all.
+    'What PQC research areas are active?',
+    'What are the four FIPS standards for PQC?',
+    'Is PQC Today open source?',
+  ],
+  ops: [
+    'What PQC operations tasks should IT teams plan?',
+    'What HSMs support ML-KEM and ML-DSA?',
+    'How do you configure PQC TLS on Linux?',
+  ],
+  curious: [
+    "Where should I start if I'm new to PQC?",
+    'What is post-quantum cryptography (PQC)?',
+    'What is a "Harvest Now, Decrypt Later" (HNDL) attack?',
+  ],
+}
+
+/** The lead questions for a persona, resolved to their real FAQ items. Returns
+ *  an empty array for no persona — a visitor we know nothing about gets the
+ *  page in its natural order, which is the honest default. */
+export function personaLeadItems(persona: PersonaId | null): FAQItem[] {
+  if (!persona) return []
+  // eslint-disable-next-line security/detect-object-injection -- typed PersonaId union
+  const wanted = PERSONA_FAQ_LEAD[persona]
+  const all = FAQ_DATA.flatMap((c) => c.items)
+  return wanted
+    .map((q) => all.find((item) => item.question === q))
+    .filter((item): item is FAQItem => item !== undefined)
+}

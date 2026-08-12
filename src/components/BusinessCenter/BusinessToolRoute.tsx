@@ -12,6 +12,9 @@ import { FlagButton } from '../ui/FlagButton'
 import { ShareButton } from '../ui/ShareButton'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { logBusinessToolOpen } from '@/utils/analytics'
+import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
+import { RecommendedResourcesPanel } from './widgets/RecommendedResourcesPanel'
+import { primaryStepForZone } from './lib/cswp39Tier'
 
 export const BusinessToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -44,6 +47,12 @@ export const BusinessToolRoute = () => {
         <span className="text-sm text-muted-foreground">
           {tool.category} / {tool.name}
         </span>
+        {/* Standards provenance. The registry has carried a validated
+            cswp39SectionRef for every tool all along, and its own comment says
+            it drives "the small provenance chip on each tool card" — but it was
+            only ever rendered on Command Center ARTIFACT cards, so anyone who
+            opened a tool directly saw none of it. (Audit 2026-08-10, W3-1.) */}
+        <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />
         <div className="ml-auto flex items-center gap-1">
           <ShareButton
             title={`${tool.name} — PQC Business Tools`}
@@ -79,6 +88,23 @@ export const BusinessToolRoute = () => {
         </div>
       </div>
 
+      {/* B+ remediation 4.6 (2026-08-10): what this is for, and what a good
+          answer looks like — before the tool, not after it. "The tools produce
+          real artifacts but explain very little about why an artifact is shaped
+          the way it is"; a generated document the user cannot defend is worse
+          than no document. Both lines come from the registry, so a new tool
+          cannot ship without them. */}
+      <section className="rounded-lg border border-border bg-muted/20 p-3">
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">What this is for:</span>{' '}
+          {tool.description}.
+        </p>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">What a good answer looks like:</span>{' '}
+          {tool.goodAnswer}
+        </p>
+      </section>
+
       <Suspense
         fallback={
           <div className="space-y-4 p-4">
@@ -90,6 +116,15 @@ export const BusinessToolRoute = () => {
       >
         {Comp && <Comp />}
       </Suspense>
+
+      {/* Hub resources. RecommendedResourcesPanel was rendered only inside
+          CSWP39StepSection on the Command Center, so a tool reached by URL,
+          search, or the tools grid was an island — only 2 of 37 tools carry
+          in-app links of their own. Keyed off the tool's zone via the existing
+          ZONE_STEP_CONTRIBUTORS map. (Audit 2026-08-10, W3-2.) */}
+      <div className="glass-panel p-4 border border-border">
+        <RecommendedResourcesPanel stepId={primaryStepForZone(tool.cswp39Zone)} />
+      </div>
     </div>
   )
 }
