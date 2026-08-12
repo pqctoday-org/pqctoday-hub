@@ -164,7 +164,14 @@ export function dimensionSpan(
 export function patchMatrix(
   source: string,
   deltas: StageDelta[]
-): { next: string; applied: number; appliedKeys: string[]; downgrades: string[] } {
+): {
+  next: string
+  applied: number
+  appliedKeys: string[]
+  downgrades: string[]
+  curatedNotes: string[]
+  statelessCells: string[]
+} {
   let next = source
   let applied = 0
   const appliedKeys: string[] = []
@@ -178,6 +185,7 @@ export function patchMatrix(
 
   const downgrades: string[] = []
   const curatedNotes: string[] = []
+  const statelessCells: string[] = []
 
   for (const [key, ds] of grouped) {
     const [rowId, dim] = key.split('::')
@@ -209,6 +217,39 @@ export function patchMatrix(
         )
         continue
       }
+    }
+    // STAGELESS-CELL GUARD (2026-08-12).
+    //
+    // A cell with no `stage:` is not an unfilled field. It is a cell whose PQC
+    // story is not one tracked document, so no point on the IETF ladder is the
+    // honest answer — rpki-bgpsec::pureSig and kerberos::pureSig both list only
+    // carrier documents (RFC 5280, RFC 6488, the CMS profile), and none of them
+    // says anything about when PQC signing lands there.
+    //
+    // This guard exists because of a real near-miss on 2026-08-12. Those two
+    // cells were being blocked by the curated-note check reading a SIBLING
+    // dimension's note — accidental protection, for entirely the wrong reason.
+    // Fixing that bug removed the accident and left the applier ready to write
+    // stage: 'rfc-published' into rpki-bgpsec::pureSig on the strength of
+    // RFC 5280, published 2008, about classical X.509. That is the same failure
+    // ike-ipsec::hybridKem's note was written to record.
+    //
+    // Creating a stage is a stronger claim than advancing one: it asserts the
+    // cell belongs on the ladder at all. The deltas are still reported, so a
+    // human can add the stage deliberately if the cell really has a mechanism
+    // document now.
+    // Decided from the FILE, not from the report's `encoded_stage`. Those two
+    // can disagree — a report can be stale, or carry '' for a cell that does
+    // have a stage — and the file is the thing being changed. The pre-existing
+    // "applies normally when no stage is encoded yet" test is exactly that
+    // disagreement, and it still passes because its fixture cell really does
+    // have a stage.
+    const probe = dimensionSpan(next, rowId, dim)
+    if (probe && !/stage:\s*'[^']*'/.test(next.slice(probe.start, probe.end + 1))) {
+      statelessCells.push(
+        `${rowId}::${dim}: (no stage encoded) -> ${newStage} via ${ds.map((d) => d.ref_id).join(', ')}`
+      )
+      continue
     }
     // CURATED-NOTE GUARD — see isCuratedNote above. Checked AFTER the
     // downgrade guard so a cell that is both reports as the downgrade it is.
@@ -265,7 +306,7 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, appliedKeys, downgrades, curatedNotes }
+  return { next, applied, appliedKeys, downgrades, curatedNotes, statelessCells }
 }
 
 /** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
@@ -412,7 +453,7 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, appliedKeys, downgrades, curatedNotes } = patchMatrix(
+  const { next, applied, appliedKeys, downgrades, curatedNotes, statelessCells } = patchMatrix(
     source,
     deltasToPatch
   )
@@ -443,13 +484,24 @@ function main(): void {
     console.error('')
   }
 
+  if (statelessCells.length > 0) {
+    console.error(`BLOCKED ${statelessCells.length} cell(s) with NO ENCODED STAGE — not applied:`)
+    for (const s of statelessCells) console.error(`  ${s}`)
+    console.error('A cell with no stage is not an unfilled field: its PQC story is not')
+    console.error('one tracked document, so no rung on the ladder is the honest answer.')
+    console.error('Every ref these cells list is a carrier or algorithm-identifier RFC')
+    console.error('that says nothing about when PQC lands in the protocol. Adding a')
+    console.error('stage is a claim about the cell, not an update to it — make it by hand.')
+    console.error('')
+  }
+
   if (applied === 0) {
     if (itemsFilter) printResultJson([], staleItems, downgrades)
-    if (downgrades.length > 0 || curatedNotes.length > 0) {
+    if (downgrades.length > 0 || curatedNotes.length > 0 || statelessCells.length > 0) {
       // Exit 1 = "drift detected, nothing applied" (the documented meaning),
       // NOT 0. Reporting "matrix already matches" here would be false: the
       // feed disagreed, we refused to act on it, and that needs attention.
-      console.error('No forward drift to apply; only blocked downgrades/curated cells.')
+      console.error('No forward drift to apply; only blocked downgrades/curated/stageless cells.')
       process.exit(1)
     }
     console.log('Patch found no targets to update (matrix already matches).')
