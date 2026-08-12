@@ -12,10 +12,20 @@
  * extraction. What this guards is that no OTHER file drifts away from it.
  */
 import { describe, it, expect } from 'vitest'
+import { readFileSync, readdirSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { CSWP39_REAL_HEADINGS, CSWP39_ABSENT_TERMS, isRealCswp39Ref } from './cswp39Headings'
 import { CSWP39_SECTIONS, CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_ORDER } from './cswp39ZoneData'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
+
+/**
+ * Document names that claim the §-reference following them. Matched against
+ * the 40 characters immediately before a §, so only that reference is
+ * exempted rather than everything else on the line.
+ */
+const OTHER_DOCUMENT =
+  /(ISO|IEC\b|SP\s?800|FIPS|RFC|NIS2|DORA|PHASE-OVERLAY|CSWP[\s._]?3[68]A?\b|CSWP[\s._]?4)/i
 
 /** Pull every "§N.N.N" token out of a string. */
 function refsIn(text: string): string[] {
@@ -83,4 +93,72 @@ describe('CSWP.39 §-reference provenance', () => {
     expect(isRealCswp39Ref('§5.5')).toBe(false)
     expect(isRealCswp39Ref('§5.4')).toBe(true)
   })
+
+  /**
+   * The checks above read DATA STRUCTURES — CSWP39_SECTIONS, CSWP39_STEPS,
+   * BUSINESS_TOOLS. On 2026-08-11 a re-audit found two live §5.5 references
+   * that none of them could see, because they were written straight into
+   * component source:
+   *
+   *   cswp39Tier.ts                  'Evidence (...) documented (audit-checklist §5.5)'
+   *   CryptoMgmtModernization/index  'Implement · §5.5 + §4.6 — gateway vs. migration'
+   *
+   * Both rendered to users. `isRealCswp39Ref('§5.5')` was already asserted
+   * false directly above, and had been for weeks — the gate knew §5.5 was
+   * fictional and simply was not pointed at the files that used it.
+   *
+   * This sweeps the component tree itself. It deliberately reads source text
+   * rather than exports: a §-ref inside a template literal is invisible to
+   * every other kind of check, which is exactly how these two survived.
+   */
+  it('no component attributes a §-reference to CSWP.39 that does not exist', () => {
+    const roots = [
+      resolve(__dirname, '../components/BusinessCenter'),
+      resolve(__dirname, '../components/PKILearning/modules'),
+      resolve(__dirname, '../components/Compliance'),
+    ]
+
+    const offenders: string[] = []
+    for (const root of roots) {
+      for (const file of walk(root)) {
+        const text = readFileSync(file, 'utf8')
+        // Only files that actually talk about CSWP.39 — otherwise a "§7.5" in
+        // an ISO 27001 citation would be judged against the wrong document.
+        if (!/CSWP[\s._]?39/i.test(text)) continue
+
+        for (const line of text.split('\n')) {
+          // Skip comments: a line explaining that §5.5 does NOT exist is
+          // documentation, not attribution.
+          const code = line.trim()
+          if (code.startsWith('//') || code.startsWith('*') || code.startsWith('/*')) continue
+          // Judge each reference by what immediately PRECEDES it, not by the
+          // whole line. A line-wide skip was the first attempt and it was
+          // wrong in a way that mattered: "See CSWP.39 §5.5 and NIST SP 800-88"
+          // contains "SP 800", so the fabricated §5.5 next to CSWP.39 would
+          // have been waved through. Caught reviewing this gate, not by it.
+          for (const m of line.matchAll(/§\s?\d(?:\.\d){0,2}/g)) {
+            const before = line.slice(Math.max(0, (m.index ?? 0) - 40), m.index ?? 0)
+            if (OTHER_DOCUMENT.test(before)) continue
+            const ref = m[0].replace(/\s/g, '')
+            if (!isRealCswp39Ref(ref)) {
+              offenders.push(`${file.split('/src/')[1]}: ${ref} — ${code.slice(0, 90)}`)
+            }
+          }
+        }
+      }
+    }
+
+    expect(offenders, `fabricated CSWP.39 section refs:\n${offenders.join('\n')}`).toEqual([])
+  })
 })
+
+/** Every .ts/.tsx under `dir`, excluding tests. */
+function walk(dir: string): string[] {
+  const out: string[] = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = `${dir}/${entry.name}`
+    if (entry.isDirectory()) out.push(...walk(full))
+    else if (/\.tsx?$/.test(entry.name) && !entry.name.includes('.test.')) out.push(full)
+  }
+  return out
+}

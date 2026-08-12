@@ -734,6 +734,7 @@ function processLibrary(): RAGChunk[] {
   const chunks: RAGChunk[] = []
   const csvFile = path.basename(file)
   const lastUpdated = csvFileDate(file)
+  const header = rows[0] ?? []
 
   // Load merged enrichment fields once for all library documents
   const enrichLookup = loadEnrichmentFields('library')
@@ -754,32 +755,29 @@ function processLibrary(): RAGChunk[] {
     const row = rows[i]
     if (row.length < 17) continue
 
-    const [
-      refId,
-      title,
-      url,
-      pubDate,
-      updateDate,
-      docStatus,
-      description,
-      docType,
-      industries,
-      authors, // col 10: dependencies
-      ,
-      regionScope,
-      algorithmFamily,
-      securityLevels, // col 14: ProtocolOrToolImpact
-      ,
-      ,
-      // col 15: ToolchainSupport
-      migrationUrgency, // col 17: change_status
-      ,
-      ,
-      ,
-      // col 18: manual_category
-      // col 19: downloadable
-      localFile, // col 20: local_file
-    ] = row
+    // Read by header NAME, not position. This block used to destructure the row
+    // positionally, and on 2026-08-12 a `last_verified` column was inserted at
+    // index 5 — every field after it shifted by one and the shift was silent:
+    // the corpus took `document_status` as the description, `downloadable`
+    // ("yes") as the source document path, and the trusted-source id from a
+    // neighbouring column. Only one invariant noticed (C4, source_doc with no
+    // source_passages), and only because "yes" is not a passage key.
+    const col = (name: string) => sanitize(row[header.indexOf(name)] ?? '')
+    const refId = col('reference_id')
+    const title = col('document_title')
+    const url = col('download_url')
+    const pubDate = col('initial_publication_date')
+    const updateDate = col('last_update_date')
+    const docStatus = col('document_status')
+    const description = col('short_description')
+    const docType = col('document_type')
+    const industries = col('applicable_industries')
+    const authors = col('authors_or_organization')
+    const regionScope = col('region_scope')
+    const algorithmFamily = col('AlgorithmFamily')
+    const securityLevels = col('SecurityLevels')
+    const migrationUrgency = col('MigrationUrgency')
+    const localFile = col('local_file')
 
     const contentLines = [
       `Reference: ${sanitize(refId)}`,
@@ -822,10 +820,10 @@ function processLibrary(): RAGChunk[] {
       }
     }
 
-    // Cross-reference fields (col 11: dependencies, col 22: module_ids, col 24: trusted_source_id)
-    const dependencies = sanitize(row[10] ?? '')
-    const moduleIds = sanitize(row[21] ?? '')
-    const trustedSourceId = sanitize(row[23] ?? '')
+    // Cross-reference fields, by name for the same reason as above.
+    const dependencies = col('dependencies')
+    const moduleIds = col('module_ids')
+    const trustedSourceId = col('trusted_source_id')
 
     chunks.push({
       id: `library-${sanitize(refId) || i}`,

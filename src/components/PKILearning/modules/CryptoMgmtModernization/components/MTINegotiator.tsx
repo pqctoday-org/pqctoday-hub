@@ -88,7 +88,7 @@ function recommendSig(inputs: MTIInputs): { mti: string; alternates: string[]; r
       mti: 'ML-DSA-65 (FIPS 204, NIST Cat 3)',
       alternates: ['SLH-DSA-SHA2-128s'],
       rationale:
-        'ANSSI/BSI guidance accepts ML-DSA at Cat 3; SLH-DSA is the size-tolerant defence-in-depth alternate.',
+        'BSI TR-02102-1 recommends ML-DSA-65 (NIST Category 3) standalone, in the "hedged" variant. ANSSI differs and it matters here: PG-083 v3 states that ML-DSA used WITHOUT hybridisation fails RegleSecuAsym at any parameter set, so in France pair it with a classical signature. Cat 3 is acceptable to both as the PQC component; Cat 5 is ANSSI\'s preference. SLH-DSA is the size-tolerant defence-in-depth alternate.',
     }
   }
 
@@ -328,8 +328,39 @@ export function recommendMTI(inputs: MTIInputs): MTIRecommendation {
 // CSWP-39 §3.1.1 verbatim quote (sanitised to ASCII)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_311_QUOTE =
-  'To ensure that interoperation is possible for all implementations, an SDO will often choose at least one set of algorithms with properly selected security strengths based on state-of-the-art cryptanalysis results as mandatory-to-implement. Of course, local policy may select an algorithm other than the mandatory-to-implement one.'
+/**
+ * National-guidance positions cited by the recommendations above, read from the
+ * primary documents on 2026-08-12 (both already in this app's library and
+ * cached under pqctoday-priv/local-evidence-cache/library/).
+ *
+ * This tool previously said only "ANSSI/BSI guidance accepts ML-DSA at Cat 3",
+ * with no document, section or URL behind it — and a 2026-08-10 audit counted
+ * the three occurrences of the letters "BSI"/"ANSSI" in this file (two of them
+ * dropdown labels) toward a perfect grounding score. Reading the sources showed
+ * the claim was half right in the half that matters:
+ *
+ *  - BSI TR-02102-1, Table 5.3 and section 5.7: ML-DSA is a recommended
+ *    signature algorithm, and the recommended parameter sets are ML-DSA-65 and
+ *    ML-DSA-87 — "NIST Security Strength Categories 3 and 5" — in the "hedged"
+ *    variant. Standalone. So the BSI half was correct.
+ *  - ANSSI PG-083 v3 (2026): "Utilise sans hybridation et quel que soit le jeu
+ *    de parametres utilise, le mecanisme de signature numerique ML-DSA ne
+ *    respecte pas la regle RegleSecuAsym." ML-DSA alone fails ANSSI's rule at
+ *    ANY parameter set; hybridisation with a classical mechanism is required.
+ *    The old wording dropped the single most distinctive thing about the French
+ *    position, in a tool whose whole job is choosing a mandatory-to-implement
+ *    algorithm.
+ *  - ANSSI PQC position paper: prefer NIST level 5, "ou le niveau 3" — Category
+ *    3 is acceptable, Category 5 preferred.
+ */
+export const NATIONAL_GUIDANCE_SOURCES = {
+  bsi: 'BSI TR-02102-1, Table 5.3 and section 5.7 (ML-DSA-65 / ML-DSA-87, hedged)',
+  anssiRule: 'ANSSI PG-083 v3 (2026), RegleSecuAsym — ML-DSA requires hybridisation',
+  anssiLevel: 'ANSSI PQC position paper — prefer NIST level 5, level 3 acceptable',
+} as const
+
+export const CSWP39_311_QUOTE =
+  'To ensure that interoperation is possible for all implementations, an SDO will often choose at least one set of algorithms with properly selected security strengths based on state-of-the-art cryptanalysis results as mandatory-to-implement (i.e., to be supported by all implementations). Of course, local policy may select an algorithm other than the mandatory-to-implement one.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wizard section definitions

@@ -8,6 +8,7 @@ import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { ThreatData } from '@/data/threatsData'
 import type { CveSnapshot } from '@/types/CveTypes'
+import { MemoryRouter } from 'react-router'
 
 const mockCpeMap = vi.hoisted(
   () =>
@@ -483,5 +484,55 @@ describe('computeLayerStats — absolute impact (W1-4)', () => {
     const stats = computeLayerStats(vendorsByLayer, criticalThreats(6, 'Database'), false, null)
     expect(stats[0].impact).toBeNull()
     expect(stats[0].riskScore).toBeNull()
+  })
+})
+
+/**
+ * Render-budget guard for the unselected state.
+ *
+ * The 2026-08-11 re-audit found this tool rendering 448,555 characters and
+ * 15,343 DOM nodes — a ~19-second first paint against 0.8s for the ROI
+ * Calculator — because with nothing selected it listed all 912 catalog
+ * products, each with icons. Every existing test missed it, and would still
+ * miss it, because they all mount fixture-sized layers of 1-2 products. The
+ * defect only exists at catalog scale.
+ *
+ * This pins the rule directly: past UNSELECTED_LAYER_ROW_CAP products in a
+ * layer, an unselected view shows a count and a Migrate link instead of a row
+ * each. Small layers keep rendering rows, which is what the tests above rely
+ * on and what a user with a real selection should see.
+ */
+describe('SupplyChainRiskMatrix render budget', () => {
+  beforeEach(() => {
+    const many = Array.from({ length: 60 }, (_, i) =>
+      makeProduct({ productId: `bulk-${i}`, softwareName: `BulkProduct${i}`, pqcSupport: 'No' })
+    )
+    mockData = baseData({
+      vendorsByLayer: new Map([['Database', many]]),
+      totalProducts: many.length,
+    })
+  })
+
+  it('does not list every product of a large layer when nothing is selected', () => {
+    // MemoryRouter: this is the only path in the file that renders a <Link>,
+    // which is why the 13 tests above never needed one.
+    render(
+      <MemoryRouter>
+        <SupplyChainRiskMatrix variant="flat" />
+      </MemoryRouter>
+    )
+    // The 60th product must not be on screen...
+    expect(screen.queryByText('BulkProduct59')).not.toBeInTheDocument()
+    // ...and the user must be told why, with a way forward.
+    expect(screen.getByText(/Pick your infrastructure on Migrate/i)).toBeInTheDocument()
+  })
+
+  it('still names the layer and its product count', () => {
+    render(
+      <MemoryRouter>
+        <SupplyChainRiskMatrix variant="flat" />
+      </MemoryRouter>
+    )
+    expect(screen.getByText(/60 catalog products sit in this layer/i)).toBeInTheDocument()
   })
 })

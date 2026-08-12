@@ -22,18 +22,25 @@ export const LIBRARY_PERSONAS: { id: PersonaId; label: string }[] = [
 
 /** Persona-aware default sort. Explicit `?sort=` always wins; this only seeds
  *  the initial value when the URL is silent. Mirrors the live LibraryView map. */
+/** Every persona now opens on the document's own publication date.
+ *
+ * The per-persona defaults below are kept as the documented previous behavior,
+ * but are no longer consulted: a reader asking "what is newest here" means the
+ * document's publication date, not the catalog's activity date or a reference-ID
+ * ordering. Readers can still choose any ordering from the sort control, and
+ * that choice (?sort=) always wins. */
 export const LIBRARY_DEFAULT_SORT_BY_PERSONA: Record<PersonaId, SortOption> = {
-  executive: 'newest',
-  developer: 'referenceId',
-  architect: 'urgency',
-  researcher: 'mostCited',
-  ops: 'urgency',
-  curious: 'newest',
+  executive: 'published',
+  developer: 'published',
+  architect: 'published',
+  researcher: 'published',
+  ops: 'published',
+  curious: 'published',
 }
 
 export function libraryDefaultSortForPersona(persona: PersonaId | null | undefined): SortOption {
-  if (!persona) return 'newest'
-  return LIBRARY_DEFAULT_SORT_BY_PERSONA[persona] ?? 'newest' // eslint-disable-line security/detect-object-injection
+  if (!persona) return 'published'
+  return LIBRARY_DEFAULT_SORT_BY_PERSONA[persona] ?? 'published' // eslint-disable-line security/detect-object-injection
 }
 
 /** One-line "what this means for you" sentence shown under the Role Lens. */

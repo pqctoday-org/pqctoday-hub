@@ -30,7 +30,11 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { Button } from '@/components/ui/button'
-import { ANNUAL_BREACH_PROBABILITY_PCT, type OrgSizeTier } from '@/data/roiBaselines'
+import {
+  ANNUAL_BREACH_PROBABILITY_PCT,
+  IBM_BASELINE_UNVERIFIED_NOTE,
+  type OrgSizeTier,
+} from '@/data/roiBaselines'
 import {
   DEFAULT_COMPLIANCE_INCIDENT_RATE,
   MIGRATION_COST_FLOOR,
@@ -397,6 +401,7 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({ onOutput }) => {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
     md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2025. Compliance penalties: published regulatory enforcement data.*\n`
+    md += `\n*${IBM_BASELINE_UNVERIFIED_NOTE}*\n`
     md += '\n---\n\n'
     md +=
       '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39-upd1*\n'

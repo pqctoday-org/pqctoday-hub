@@ -54,9 +54,30 @@ export function trustInfo(referenceId: string): TrustInfo {
   return { score, pillClass, source }
 }
 
+/** Render a catalog date at the precision the evidence actually supports.
+ *
+ * Publication dates are stored as partial ISO where the publisher states no more
+ * than that — an RFC is published in a month ("2019-04"), an ISO standard's
+ * edition is a year ("2000"). Formatting those through a full date would print
+ * "Apr 1, 2019", re-inventing the exact day this data was cleaned up to remove.
+ * Parsed as UTC and formatted with a UTC timeZone so a date-only string can't
+ * slip a day backwards for readers west of Greenwich. */
 export function formatLibDate(raw: string): string {
-  if (!raw) return ''
-  const d = new Date(raw)
-  if (Number.isNaN(d.getTime())) return raw
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  const value = raw?.trim()
+  if (!value) return ''
+  const opts: Intl.DateTimeFormatOptions = { timeZone: 'UTC', year: 'numeric' }
+  if (/^\d{4}$/.test(value)) return value
+  if (/^\d{4}-\d{2}$/.test(value)) {
+    opts.month = 'short'
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    opts.month = 'short'
+    opts.day = 'numeric'
+  } else {
+    opts.month = 'short'
+    opts.day = 'numeric'
+    delete opts.timeZone
+  }
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return value
+  return d.toLocaleDateString(undefined, opts)
 }

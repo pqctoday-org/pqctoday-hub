@@ -518,8 +518,21 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               751. This ratchet is the honest measure it was always meant to
  *               be, and 12 is the real backlog — rows whose cached document
  *               genuinely yields no extractable passage. Enrich to drive down.)
+ *
+ *               2026-08-12: 12 → 4. The backlog was worked, not waived. A
+ *               corpus rebuild put this at 22 because ~10 rows added since the
+ *               last extraction run had a cached document and no passages;
+ *               re-running extract-source-passages.py over the library covered
+ *               937 of 944 records and left 4. Those 4 are the genuine residue
+ *               — 7 records the extractor skips ("no quality passages" on a
+ *               .docx, an inventory workbook, a spec and two Chinese-language
+ *               pages; "no extractable text" on two papers), of which 4 carry a
+ *               local_file and so reach this check. Ratcheting to the measured
+ *               number is
+ *               the point of the ratchet: a new row with a document and no
+ *               passage now fails here instead of hiding under an allowance.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 12
+const MAX_DOC_WITHOUT_PASSAGES = 4
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

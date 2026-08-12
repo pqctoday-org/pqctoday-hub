@@ -153,6 +153,16 @@ jobs:
         # drops are opt-in via scripts/ci/data-regression-allowlist.json.
         run: npm run audit:data-regressions
 
+      - name: Audit publication dates (document's date, not our ingest date)
+        # library.initial_publication_date, timeline.SourceDate and
+        # vendor-roadmaps.publish_date all mean "the date the SOURCE DOCUMENT was
+        # published". add_row.py used to fill them with datetime.now() and no
+        # enrichment ever revisited the value, so a 2000 ISO standard claimed to
+        # be published on its intake day and scored as the freshest thing in the
+        # catalog. Blocks a future date, and blocks an unexplained cluster of
+        # rows sharing one exact day (the shape an ingest batch makes).
+        run: npm run audit:publication-dates
+
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
 
