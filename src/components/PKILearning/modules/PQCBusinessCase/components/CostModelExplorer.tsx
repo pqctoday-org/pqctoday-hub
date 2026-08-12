@@ -143,14 +143,23 @@ export const CostModelExplorer: React.FC = () => {
     const base = SIM_CONSTANTS.perSystemBase * inputs.complexity
     const min = base * SIM_CONSTANTS.mcMinFactor
     const max = base * SIM_CONSTANTS.mcMaxFactor
+    // programCostFor(horizon), NOT the flat fixedProgramCost. This loop
+    // duplicates monteCarloEstimate() so the animation can reveal draws in the
+    // order they were generated (the model returns them sorted). When the
+    // standing programme cost became horizon-scaled on 2026-08-11, the model
+    // moved and this copy did not — so the histogram and its percentiles
+    // silently disagreed with the Monte-Carlo bar in the comparison chart
+    // above, on the same screen: identical at the nominal 3-year horizon by
+    // construction, out by $4.67M at 10 years and $11.33M at 20.
+    // `horizonYears` was missing from the dependency list too, which is what
+    // an unused input looks like.
+    const programCost = programCostFor(inputs.horizonYears)
     const arr: number[] = []
     for (let i = 0; i < DRAWS; i++) {
-      arr.push(
-        sampleTriangular(rng, min, base, max) * inputs.systems + SIM_CONSTANTS.fixedProgramCost
-      )
+      arr.push(sampleTriangular(rng, min, base, max) * inputs.systems + programCost)
     }
     return arr
-  }, [inputs.complexity, inputs.systems])
+  }, [inputs.complexity, inputs.systems, inputs.horizonYears])
 
   const [revealed, setRevealed] = useState(0)
   const [running, setRunning] = useState(false)
