@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-09'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-11'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -191,9 +191,9 @@ export interface DimensionRef {
 
 /**
  * Deployment posture is independent of the standardization status. A dimension
- * can sit in `draft` but already be in production (e.g. X25519MLKEM768 in TLS
- * 1.3 at Cloudflare/Google/AWS while draft-ietf-tls-ecdhe-mlkem is still in
- * RFC Editor queue). Marks where deployment outpaces the spec.
+ * can sit in `draft` but already be in production — X25519MLKEM768 ran at
+ * Cloudflare/Google/AWS from 2024, roughly two years before the spec became
+ * RFC 10024 in August 2026. Marks where deployment outpaces the spec.
  */
 export type DeploymentPosture = 'production' | 'pilot' | 'experimental'
 
@@ -694,9 +694,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: 'draft-ietf-tls-ecdhe-mlkem-05',
-        title: 'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-        date: '2026-05-26',
+        title:
+          'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768 (published 2026-08-10 as RFC 10024)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+        date: '2026-08-10',
         localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
       },
       {
@@ -746,20 +747,21 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'Approved — RFC Editor queue (draft-ietf-tls-ecdhe-mlkem-05)',
-        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production while spec is in the RFC Editor queue.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote:
+          'Published as RFC 10024 on 2026-08-10 — draft-ietf-tls-ecdhe-mlkem-05 is the revision that became the RFC, so the earlier "RFC Editor queue" note is superseded rather than contradicted. Verified against the datatracker: the draft carries state slug `rfc` and IESG state `pub`, and relateddocument records `became_rfc -> rfc10024`.',
+        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — deployed in production since 2024, and standards-track as of 2026-08-10.',
         deploymentPosture: 'production',
         deploymentNote:
-          'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment exceeds spec status.',
+          'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment preceded publication by roughly two years.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 / SecP256r1MLKEM768 for TLS 1.3',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
@@ -2961,19 +2963,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'pilot',
         deploymentNote:
           'DTLS 1.3 ML-KEM hybrid follows TLS 1.3 implementations; production rollout lags TLS by ~6–12 mo.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited from TLS 1.3)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited from TLS 1.3)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
@@ -3059,19 +3061,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'production',
         deploymentNote:
           'WebAuthn / passkey traffic over Chromium + Cloudflare edge benefits from TLS 1.3 hybrid KEM in production.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited from TLS 1.3)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited from TLS 1.3)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
@@ -3143,18 +3145,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — X25519MLKEM768 hybrid.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — X25519MLKEM768 hybrid, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'pilot',
         deploymentNote: 'Cisco / Juniper MACsec stacks pilot PQ EAP-TLS bootstrap in 2025–2026.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
