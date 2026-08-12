@@ -14,6 +14,10 @@
  * not exist (§5 runs 5.1–5.4). Full-text search of the publication returns zero
  * occurrences of "repository", "CBOM", "SBOM" or "bill of materials".
  *
+ * NOTE ON METHOD: Fig. 3's box labels are a raster image and are NOT in the
+ * extracted text. Searching the text alone will report them as absent when
+ * they are present — see CSWP39_FIG3_LABELS below.
+ *
  * Source: https://doi.org/10.6028/NIST.CSWP.39-upd1
  * Local evidence: pqctoday-priv/local-evidence-cache/library/NIST_CSWP_39.pdf
  * Extracted: 2026-08-10
@@ -63,17 +67,66 @@ export const CSWP39_REAL_HEADINGS: Readonly<Record<string, string>> = {
 }
 
 /**
- * Terms that do NOT appear anywhere in CSWP 39-upd1, however plausible they
- * sound in a crypto-agility context. Guarded by test so they cannot be
- * reintroduced as attributed content.
+ * Box labels in Fig. 3 ("Crypto agility strategic plan for managing an
+ * organization's cryptographic risks", p.22/27). These are REAL CSWP.39
+ * content and are safe to attribute to it.
+ *
+ * They are listed explicitly because they are invisible to text extraction —
+ * Fig. 3 is a raster image, so `pdftotext`-style searching returns zero hits
+ * for every one of them. A 2026-08-10 audit concluded from exactly that that
+ * "Information Repository" was fabricated, which was wrong: it is a labelled
+ * box in the Data-Centric Risk Management zone. Checking a claim against the
+ * extracted text ALONE is not sufficient for this document — open the figure.
  */
-export const CSWP39_ABSENT_TERMS: readonly string[] = [
+export const CSWP39_FIG3_LABELS: readonly string[] = [
+  // Governance zone
+  'Standards',
+  'Regulations Mandates',
+  'Technology Supply Chains',
+  'Threats',
+  'Processes',
+  'Business Requirements',
+  'Partner Ecosystem',
+  'Stakeholders',
+  'Crypto Policies',
+  'Crypto Architecture',
+  // Assets zone
+  'Code',
+  'Libraries',
+  'Applications',
+  'Files',
+  'Protocols',
+  'Systems',
+  // Management Tools zone (Discovery, Assessment, Configuration, Enforcement)
+  'Data',
+  'Crypto',
+  'Vulnerability',
+  'Assets',
+  'Log',
+  'Zero-Trust',
+  // Data-Centric Risk Management zone
   'Information Repository',
-  'CBOM',
-  'SBOM',
-  'bill of materials',
-  '§5.5',
+  'Risk Analysis Prioritization Engine',
+  'Monitoring',
+  'Dashboards',
+  'Reports',
+  'Measurements/Metrics (KPI)',
+  // Outcomes
+  'Mitigation',
+  'Migration',
 ]
+
+/**
+ * Terms that genuinely do not appear anywhere in CSWP 39-upd1 — not in the
+ * body text, and not as a Fig. 3 box label (the figure was read directly, see
+ * CSWP39_FIG3_LABELS). Guarded by test so they cannot be reintroduced as
+ * attributed content.
+ *
+ * `CBOM` / `SBOM` / `bill of materials`: the document never uses any of them;
+ * it says "inventory the use of cryptography" and "inventory of assets".
+ * `§5.5`: §5 runs 5.1-5.4.
+ */
+export const CSWP39_ABSENT_TERMS: readonly string[] = ['CBOM', 'SBOM', 'bill of materials', '§5.5']
 
 /** True when `ref` (e.g. "§5.2") is a real numbered heading in CSWP 39-upd1. */
 export function isRealCswp39Ref(ref: string): boolean {
