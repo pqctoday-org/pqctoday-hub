@@ -5,17 +5,35 @@ import { test, expect } from '@playwright/test'
  * Persona-overwhelm audit acceptance — the headline goal of the 2026-05-22
  * audit (`pqctoday-priv/docs/platform/ux/page-audits/2026-05-22-persona-overwhelm/compliance.md`):
  *
- *   1. Returning Finance executive sees ≤ 5 top-level rows above the tab bar.
- *   2. The persona-hint CTA is a one-click navigation primitive — clicking
- *      "Go to Certification Schemes → FIPS 140-3" sets ?tab=certification
- *      and (P2-1) ?rtab=fips on the URL.
+ *   Returning Finance executive sees ≤ 5 top-level rows above the tab bar.
  *
  * Unit tests in `src/components/Compliance/ComplianceView.test.tsx` cover the
  * equivalent jsdom logic. This spec asserts the same claim against a real
  * browser viewport — important because the row-count assertion depends on
  * CSS-resolved DOM structure (`md:hidden`/`hidden md:block`) that jsdom
  * cannot evaluate.
+ *
+ * RETIRED 2026-08-12 — the second acceptance criterion, "the persona-hint CTA
+ * navigates to ?tab=certification with ?rtab=fips", tested a surface the
+ * compliance redesign deliberately removed: the persona jump-links retired
+ * along with the onboarding stack, and the landing tab is now chosen by
+ * `defaultTabForPersona` rather than by a Finance→certification hint.
+ * `PersonaHintCta.tsx` went with it.
+ *
+ * The test outlived the feature by one release. It merged red because the full
+ * e2e suite runs nightly rather than per-PR, so nothing failed at the gate —
+ * worth remembering when retiring any other surface that has a spec pinned to
+ * it. The row-budget test below still earns its keep: it is the assertion that
+ * the page stays reduced, which the redesign was for.
  */
+/**
+ * Measured against the production build on 2026-08-12, not assumed: exactly one
+ * visible band now sits above the tab bar, down from the four the original
+ * budget of 5 was written for. Raising this number is a product decision (a
+ * block came back above the tab bar), never a test fix.
+ */
+const EXPECTED_ROWS_ABOVE_TABS = 1
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     // Suppress disclaimer + WhatsNew overlays that intercept clicks.
@@ -89,29 +107,12 @@ test('returning Finance executive sees ≤ 5 rows above the tab bar', async ({ p
     return count
   })
 
-  // Returning Finance executive: PageHeader · AboutThisPageStrip (collapsed)
-  // · PersonaHintCta · DeadlineTimelineGate · (PreviewBanner only when
-  // persona=curious, not in this scenario). Expected = 4. Budget = 5.
+  // The original budget of 5 was set when the stack above the tab bar was
+  // PageHeader · AboutThisPageStrip · PersonaHintCta · DeadlineTimelineGate.
+  // The redesign removed the middle three, so the budget is now slack rather
+  // than a constraint — a ≤5 assertion would still pass if two of the blocks
+  // came back. Pinned to the measured count so a re-added block fails here,
+  // which is the regression this test exists to catch.
   expect(aboveTabRowCount).toBeGreaterThan(0)
-  expect(aboveTabRowCount).toBeLessThanOrEqual(5)
-})
-
-test('persona-hint CTA click navigates to ?tab=certification with sub-facet', async ({ page }) => {
-  await page.goto('/compliance?tab=foryou')
-
-  // CTA is rendered both in the page chrome (visible at desktop width) and
-  // inside the mobile shell (hidden via md:hidden). Filter to the visible
-  // instance to avoid clicking a hidden duplicate.
-  const cta = page
-    .getByRole('button', { name: /Go to Certification Schemes → FIPS 140-3/i })
-    .filter({ visible: true })
-    .first()
-  await expect(cta).toBeVisible({ timeout: 15000 })
-
-  await cta.click()
-
-  // P0-1 acceptance: URL must reflect the section jump.
-  await expect(page).toHaveURL(/[?&]tab=certification(&|$)/, { timeout: 5000 })
-  // P2-1 acceptance: Finance industry hint carries subFacet.rtab='fips'.
-  await expect(page).toHaveURL(/[?&]rtab=fips(&|$)/)
+  expect(aboveTabRowCount).toBeLessThanOrEqual(EXPECTED_ROWS_ABOVE_TABS)
 })

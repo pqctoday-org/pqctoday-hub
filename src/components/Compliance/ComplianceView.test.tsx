@@ -283,9 +283,10 @@ describe('ComplianceView', () => {
       country: 'United States',
       industry: 'Finance & Banking',
     })
-    // Force ?tab=foryou — default landing tab is computed from the persona
-    // hint (Finance hint → certification), so without this the executive
-    // view never mounts and the in-body button can't render.
+    // Force ?tab=foryou — the default landing tab is computed by
+    // `defaultTabForPersona`, so without this the executive view never mounts
+    // and the in-body button can't render. (It used to be computed from the
+    // Finance→certification persona hint, which retired with the jump-links.)
     render(
       <MemoryRouter initialEntries={['/compliance?tab=foryou']}>
         <ComplianceView />
@@ -297,46 +298,12 @@ describe('ComplianceView', () => {
     expect(exportButtons.length).toBeGreaterThan(0)
   }, 15000)
 
-  // TODO(p1p2-merge): re-enable once we either (a) hoist the heavy mount cost
-  // out of ComplianceView's import chain (maturityGovernanceData + complianceData
-  // + RAG-corpus init), or (b) port this to a thin localStorage-key derivation
-  // unit test. The 3-mount variant routinely times out at 15s on GitHub-hosted
-  // 2-CPU runners. Behaviour is exercised by hand and (CTA path) by
-  // e2e/compliance-persona-overwhelm.spec.ts; dismissal-persistence has no
-  // automated coverage while this is skipped.
-  it.skip('persona-hint dismissal persists per industry and re-prompts on industry change', () => {
-    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
-    const { unmount: unmount1 } = render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    // Hint visible for Finance — click dismiss.
-    expect(
-      screen.getAllByRole('button', { name: /Go to Certification Schemes/i }).length
-    ).toBeGreaterThan(0)
-    fireEvent.click(screen.getAllByRole('button', { name: /Dismiss persona hint/i })[0])
-    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
-    unmount1()
-
-    // Re-mount with same industry — flag persisted, hint stays dismissed.
-    const { unmount: unmount2 } = render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length).toBe(0)
-    unmount2()
-
-    // Switch industry — new key, hint re-appears.
-    usePersonaStore.setState({ selectedIndustries: ['Healthcare'] })
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(
-      screen.queryAllByRole('button', { name: /Go to Certification Schemes/i }).length
-    ).toBeGreaterThan(0)
-  }, 15000)
+  // DELETED 2026-08-12 — 'persona-hint dismissal persists per industry and
+  // re-prompts on industry change'. It was skipped pending a cheaper mount, and
+  // its TODO named e2e/compliance-persona-overwhelm.spec.ts as the interim
+  // coverage for the CTA path. Both the hint and that e2e assertion are now
+  // gone: the compliance redesign retired the persona jump-links along with the
+  // onboarding stack, and PersonaHintCta.tsx is deleted. Re-enabling it would
+  // mean rebuilding the feature first, so it is removed rather than left as a
+  // skipped test that reads like debt someone should pay down.
 })
