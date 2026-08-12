@@ -111,7 +111,7 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
           return next.toString() === prev.toString() ? prev : next
         })
     : realSetSearchParams
-  const { selectedIndustries, selectedPersona } = usePersonaStore()
+  const { selectedIndustries, selectedPersona, selectedRegion } = usePersonaStore()
 
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
@@ -154,15 +154,37 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
   // against the `industries` column, where the 12 rows carrying that literal
   // label did not have it. The raw value is now kept and resolved — to a set,
   // matching ANY — inside the filter itself.
-  const [lsIndustry, setLsIndustry] = useState(
-    () =>
-      searchParams.get('industry') ??
-      searchParams.get('ind') ??
-      (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+  //
+  // CHANGED 2026-08-11: sector and region now FOLLOW the top bar.
+  //
+  // Both were `useState` initializers reading the store once at mount, so the
+  // page snapshotted the scope on first render and never heard about it again:
+  // switching persona in the top bar changed the chip and nothing else. Region
+  // was worse — it never read the store at all, so the page printed "Global"
+  // beside a top bar reading "Americas".
+  //
+  // They are derived values now, not state. Precedence, in one place:
+  //
+  //     explicit URL param  >  in-session override  >  top bar  >  'All'
+  //
+  // The override slots hold `null` until the reader changes something on this
+  // page, which is what lets the top bar keep driving until it shouldn't.
+  const [lsIndustryOverride, setLsIndustryOverride] = useState<string | null>(
+    () => searchParams.get('industry') ?? searchParams.get('ind')
   )
-  const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
-    () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
+  const [lsRegionOverride, setLsRegionOverride] = useState<RegionBloc | 'All' | null>(
+    () => searchParams.get('region') as RegionBloc | null
   )
+  // Store holds 0 or 1 entries (PersonaSwitchModal writes `[id]` or `[]`); the
+  // multi-value label in the top-bar chip is a persona DEFAULT for display, not
+  // an assertion the reader made, so it must not become a sector here.
+  const scopeIndustry = selectedIndustries[0] ?? 'All'
+  const scopeRegion: RegionBloc | 'All' =
+    selectedRegion && selectedRegion !== 'global' ? (selectedRegion as RegionBloc) : 'All'
+  const lsIndustry = lsIndustryOverride ?? scopeIndustry
+  const lsRegion = lsRegionOverride ?? scopeRegion
+  const setLsIndustry = setLsIndustryOverride
+  const setLsRegion = setLsRegionOverride as (r: RegionBloc | 'All') => void
   const [lsCountry, setLsCountry] = useState<string>(() => searchParams.get('country') ?? 'All')
   const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
     () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
@@ -357,9 +379,13 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     if (isLandscapeTab(tab) || tab === 'foryou') {
       const nextOrg = searchParams.get('org') ?? 'All'
       // See the note on lsIndustry above — raw value, resolved in the filter.
-      const nextInd =
-        searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
-      const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
+      // On back/forward these set the OVERRIDE, and a URL that no longer
+      // carries the param clears it back to null so the top bar resumes
+      // control. Defaulting to 'All' here would pin the page to "no sector"
+      // the first time the reader navigated back, which is the same
+      // stuck-scope bug in a different costume.
+      const nextInd = searchParams.get('industry') ?? searchParams.get('ind')
+      const nextRegion = searchParams.get('region') as RegionBloc | null
       const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
       const nextQ = searchParams.get('q') ?? ''
@@ -367,8 +393,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
       const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'
 
       setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
-      setLsIndustry((prev) => (prev !== nextInd ? nextInd : prev))
-      setLsRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
+      setLsIndustryOverride((prev) => (prev !== nextInd ? nextInd : prev))
+      setLsRegionOverride((prev) => (prev !== nextRegion ? nextRegion : prev))
       setLsCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
       setLsDeadline((prev) => (prev !== nextPhase ? nextPhase : prev))
       setLsSearch((prev) => (prev !== nextQ ? nextQ : prev))

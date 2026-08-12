@@ -215,6 +215,33 @@ export function expandIndustriesForMatching(industries: string[]): string[] {
     if (/^\d{2,6}$/.test(i)) {
       const aliases = NAICS_2DIGIT_TO_FREEFORM[i.slice(0, 2)] ?? []
       for (const a of aliases) out.add(a)
+      continue
+    }
+    // FIXED 2026-08-11: freeform labels were never expanded, only numeric codes.
+    //
+    // The compliance CSV almost never stores the code — it stores the long
+    // NAICS label: 'Finance & Insurance' on 106 rows, 'Public Administration'
+    // on 133, 'Information Technology' on 61. The persona vocabulary the reader
+    // actually picks from says 'Finance & Banking', 'Government & Defense',
+    // 'Technology'. Those are the SAME sector and sat in the same alias group
+    // here, but the group was only ever consulted for a numeric entry, so a
+    // Finance & Banking reader matched the 5 rows literally tagged that and
+    // missed the 106 tagged 'Finance & Insurance'.
+    //
+    // With a country set this stayed hidden: the industry-universal rule
+    // (3+ industries) carried those rows in on the country match instead, so
+    // the register looked right. With no country there is nothing to carry
+    // them, which is why "Country: Any" returned an empty page rather than
+    // "every instrument for this sector".
+    //
+    // First matching group wins — deterministic, and enough to join the label
+    // to its own siblings without letting one row drift across sectors.
+    for (const [code, aliases] of Object.entries(NAICS_2DIGIT_TO_FREEFORM)) {
+      if (aliases.some((a) => i.toLowerCase().includes(a.toLowerCase()))) {
+        out.add(code)
+        for (const a of aliases) out.add(a)
+        break
+      }
     }
   }
   return Array.from(out)

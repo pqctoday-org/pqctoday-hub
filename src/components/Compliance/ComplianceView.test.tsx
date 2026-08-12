@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ComplianceView } from './ComplianceView'
 import '@testing-library/jest-dom'
@@ -144,6 +144,62 @@ describe('ComplianceView', () => {
     const selected = screen.getAllByRole('tab', { selected: true })
     expect(selected.length).toBeGreaterThan(0)
     expect(selected[0]).toHaveTextContent(/Obligations/i)
+  }, 15000)
+
+  // ── Scope comes from the top bar ────────────────────────────────────────
+  //
+  // These pin the 2026-08-11 fix. The whole defect class here is "renders, but
+  // wired to nothing", which every existing test passed straight through: the
+  // page read the persona store in a `useState` INITIALIZER, so it snapshotted
+  // the scope at mount and never heard about it again. A reader could switch
+  // persona in the top bar, watch the chip change, and see the page keep
+  // saying "Global / any" with an empty register underneath.
+
+  it('takes its sector from the top bar rather than asking again', () => {
+    usePersonaStore.setState({ selectedIndustries: ['Finance & Banking'] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    // The sector is shown, not offered — the page used to render its own picker
+    // over an uncurated vocabulary read straight off the CSV (raw NAICS codes
+    // '22'/'48'/'52' beside duplicate synonyms), competing with the top bar's
+    // curated list for the same concept.
+    expect(screen.getByText(/Finance & Banking/i)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Sector:/i })).not.toBeInTheDocument()
+  }, 15000)
+
+  it('follows the top bar AFTER mount, not just on it', () => {
+    // THE regression. Setting scope before render passes even with the old
+    // initializer, so a test that only did that proves nothing — the store has
+    // to change while the page is already up.
+    usePersonaStore.setState({ selectedIndustries: [] })
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.queryByText(/Healthcare/i)).not.toBeInTheDocument()
+
+    act(() => {
+      usePersonaStore.setState({ selectedIndustries: ['Healthcare'] })
+    })
+    expect(screen.getByText(/Healthcare/i)).toBeInTheDocument()
+  }, 15000)
+
+  it('offers exactly one scope control on the page — Country', () => {
+    // Country stays here because the top bar carries a region BLOC and has no
+    // country, and the tier engine needs one. Everything else that used to
+    // filter on this page is gone: the duplicate Country/Sector pair inside the
+    // empty-state card, and the free-floating trust-tier box above the tabs.
+    render(
+      <MemoryRouter>
+        <ComplianceView />
+      </MemoryRouter>
+    )
+    expect(screen.getAllByRole('button', { name: /^Country:/i })).toHaveLength(1)
+    expect(screen.queryByText(/Trust tier/i)).not.toBeInTheDocument()
   }, 15000)
 
   it('keeps a ?cert= deep link on Product Records', () => {
