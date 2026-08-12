@@ -193,6 +193,128 @@ export function repetitionCountTest(data: Uint8Array): TestResult {
 }
 
 /**
+ * Smallest C such that Pr[Binomial(w, p) >= C] <= alpha.
+ *
+ * SP 800-90B §4.4.2 defines the APT cutoff as CRITBINOM(W, 2^-H, 1 - alpha).
+ * Computed here by summing the binomial PMF in log space: at W = 1024 the
+ * direct factorial form overflows a double long before the tail gets small,
+ * so the terms are built with log-gamma and exponentiated one at a time.
+ */
+function binomialCutoff(w: number, p: number, alpha: number): number {
+  // lgamma via Lanczos — accurate to ~15 significant digits over this range,
+  // which is far more than a cutoff rounded to an integer needs.
+  const lgamma = (x: number): number => {
+    const g = [
+      676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059,
+      12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+    ]
+    if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lgamma(1 - x)
+    const z = x - 1
+    let a = 0.99999999999980993
+    const t = z + 7.5
+    for (let i = 0; i < g.length; i++) a += g[i] / (z + i + 1)
+    return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(a)
+  }
+  const logChoose = (n: number, k: number) => lgamma(n + 1) - lgamma(k + 1) - lgamma(n - k + 1)
+
+  const lp = Math.log(p)
+  const lq = Math.log1p(-p)
+  // Walk down from the top so the accumulated tail is monotonically increasing
+  // and we can stop at the first C whose tail exceeds alpha.
+  let tail = 0
+  for (let k = w; k >= 0; k--) {
+    tail += Math.exp(logChoose(w, k) + k * lp + (w - k) * lq)
+    if (tail > alpha) return Math.min(w, k + 1)
+  }
+  return 1
+}
+
+/**
+ * Adaptive Proportion Test — SP 800-90B §4.4.2.
+ *
+ * The SECOND of the two continuous health tests SP 800-90B requires (the other
+ * is the Repetition Count Test above). It was missing entirely until the
+ * 2026-08-11 playground audit: the tool shipped one of the two mandated tests
+ * while describing itself as an "SP 800-90B entropy test suite".
+ *
+ * Where Repetition Count catches a source that gets *stuck* on one value, this
+ * catches one that merely becomes *biased* toward a value without repeating it
+ * consecutively — a failure the first test cannot see at all. It counts, within
+ * a window, how often the window's first sample recurs, and fails if that count
+ * reaches a cutoff drawn from the binomial distribution of an ideal source at
+ * the assumed min-entropy.
+ *
+ * W = 1024 for non-binary (byte) data per §4.4.2; alpha = 2^-20 matches the
+ * false-positive rate used by the Repetition Count cutoff above.
+ *
+ * Educational implementation, consistent with the rest of this file: a real
+ * validation runs continuously over the live noise source, not once over a
+ * captured buffer, and uses the min-entropy from a full assessment rather than
+ * an assumed H.
+ */
+export function adaptiveProportionTest(data: Uint8Array, assumedMinEntropy = 8): TestResult {
+  const W = 1024
+  const ALPHA = 2 ** -20
+  const n = data.length
+  const H = Math.max(0.1, Math.min(8, assumedMinEntropy))
+  const window = Math.min(W, n)
+
+  if (n < 2) {
+    return {
+      name: 'Adaptive Proportion',
+      value: 0,
+      passed: false,
+      threshold: 0,
+      description: 'Need at least 2 bytes',
+      detail: 'Insufficient data',
+    }
+  }
+
+  const cutoff = binomialCutoff(window, 2 ** -H, ALPHA)
+
+  // Non-overlapping windows, each re-anchored on its own first sample (§4.4.2).
+  let worstCount = 0
+  let worstValue = data[0]
+  let windows = 0
+  for (let start = 0; start + window <= n; start += window) {
+    const a = data[start]
+    let count = 0
+    for (let i = start; i < start + window; i++) if (data[i] === a) count++
+    windows++
+    if (count > worstCount) {
+      worstCount = count
+      worstValue = a
+    }
+  }
+  if (windows === 0) {
+    // Shorter than one full window — score the partial window rather than
+    // silently reporting a pass on data we never examined.
+    const a = data[0]
+    let count = 0
+    for (let i = 0; i < n; i++) if (data[i] === a) count++
+    worstCount = count
+    worstValue = a
+    windows = 1
+  }
+
+  const shortSample = n < W ? ` (partial window — ${n} of ${W} bytes)` : ''
+  return {
+    name: 'Adaptive Proportion',
+    value: worstCount,
+    passed: worstCount < cutoff,
+    threshold: cutoff,
+    description:
+      `SP 800-90B §4.4.2 health test: within a ${window}-sample window, the first ` +
+      `sample must recur fewer than C times, C = CRITBINOM(W, 2^-H, 1-alpha) ` +
+      `(H=${H} bits, alpha=2^-20).`,
+    detail:
+      `Worst window: byte 0x${worstValue.toString(16).padStart(2, '0')} seen ` +
+      `${worstCount}/${window} times across ${windows} window${windows === 1 ? '' : 's'}. ` +
+      `C threshold: ${cutoff}${shortSample}`,
+  }
+}
+
+/**
  * Min-Entropy Estimate
  * Estimates a lower bound on min-entropy using the Most Common Value (MCV) estimator
  * from SP 800-90B Section 6.3.1, with the required upper confidence bound on p_max.
@@ -248,13 +370,22 @@ export function minEntropyEstimate(data: Uint8Array): TestResult {
   }
 }
 
-/** Run all tests on a data sample */
+/**
+ * Run all tests on a data sample.
+ *
+ * Two of these are SP 800-90B's mandated continuous health tests (Repetition
+ * Count §4.4.1 and Adaptive Proportion §4.4.2) and one is its MCV min-entropy
+ * estimator (§6.3.1). Frequency/Monobit, Runs and Chi-squared come from the
+ * SP 800-22 statistical-test family, NOT from SP 800-90B — a distinction the
+ * tool's own description used to blur.
+ */
 export function runAllTests(data: Uint8Array): TestResult[] {
   return [
     frequencyTest(data),
     runsTest(data),
     chiSquaredTest(data),
     repetitionCountTest(data),
+    adaptiveProportionTest(data),
     minEntropyEstimate(data),
   ]
 }

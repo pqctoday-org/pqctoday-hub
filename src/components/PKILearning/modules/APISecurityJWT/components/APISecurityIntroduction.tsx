@@ -187,10 +187,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             <code className="text-foreground/70">kty="AKP"</code> (Algorithm Key Pair) key type that
             carries a 32-byte FIPS 204 seed as the private key. ML-DSA replaces ECDSA and RSA for
             JWT signing; ML-KEM JWE (
-            <code className="text-foreground/70">draft-ietf-jose-pqc-kem</code>) and PQ/T composite
-            signatures (
+            <code className="text-foreground/70">draft-ietf-jose-pqc-kem-05</code>) and PQ/T
+            composite signatures (
             <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs</code>) round out
-            the JOSE PQC stack.
+            the JOSE PQC stack. Note that the KEM draft moved on: revision{' '}
+            <code className="text-foreground/70">-06</code> (July 2026) was retitled for COSE alone
+            and no longer registers any JWE algorithms, so the JWE construction shown here is the
+            one specified by <code className="text-foreground/70">-05</code>.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
