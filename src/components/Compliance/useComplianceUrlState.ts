@@ -23,6 +23,7 @@ export type MobileSection =
   | 'obligations'
   | 'requirements'
   | 'progress'
+  | 'products'
   | 'foryou'
   | 'standards'
   | 'technical'
@@ -67,6 +68,7 @@ function parseTabFromHash(hash: string): MobileSection | null {
     clean === 'obligations' ||
     clean === 'requirements' ||
     clean === 'progress' ||
+    clean === 'products' ||
     clean === 'foryou' ||
     clean === 'standards' ||
     clean === 'technical' ||
