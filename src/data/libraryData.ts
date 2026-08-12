@@ -30,6 +30,16 @@ export interface LibraryItem {
   downloadUrl: string
   initialPublicationDate: string
   lastUpdateDate: string
+  /** CSV `last_verified` — the date a human or agent last confirmed this row's
+   *  facts against the actual document (not merely re-scraped a page). Sparse
+   *  by design: most rows have never been re-checked since intake. Distinct
+   *  from initialPublicationDate (the DOCUMENT's own date) and lastUpdateDate
+   *  (when the CATALOG record last changed) — this is "when did we last look".
+   *  Same convention as timeline's last_verified (added 2026-07-16); added
+   *  here 2026-08-11 so a living page with no publication date (a vendor docs
+   *  portal, the OpenSSL manual) still has an honest freshness signal instead
+   *  of either a blank or an invented publication date. */
+  lastVerified?: string
   documentStatus: string
   documentStatusBucket: DocumentStatusBucket
   shortDescription: string
@@ -268,6 +278,7 @@ interface RawLibraryRow {
   download_url: string
   initial_publication_date: string
   last_update_date: string
+  last_verified?: string
   document_status: string
   short_description: string
   document_type: string
@@ -386,6 +397,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem | null {
     downloadUrl: row.download_url,
     initialPublicationDate: row.initial_publication_date,
     lastUpdateDate: row.last_update_date,
+    lastVerified: row.last_verified || undefined,
     documentStatus: row.document_status,
     documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
     shortDescription: row.short_description,

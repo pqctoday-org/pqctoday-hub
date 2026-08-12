@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect } from 'react'
+import { Link } from 'react-router'
 import {
   TrendingUp,
   AlertTriangle,
@@ -16,6 +17,7 @@ import { resolveIndustryBreachBaseline } from '@/utils/roiMath'
 import {
   US_VS_GLOBAL_BREACH_COST_MULTIPLIER,
   ANNUAL_BREACH_PROBABILITY_PCT,
+  IBM_BASELINE_UNVERIFIED_NOTE,
   type OrgSizeTier,
 } from '@/data/roiBaselines'
 import {
@@ -43,6 +45,21 @@ interface BreachCostModelProps {
     hndlFactorPct: number
     annualBreachProbPct: number
   }) => void
+}
+
+/**
+ * Print a percentage at the precision actually used in the maths.
+ *
+ * This line is a "show your working" formula — its only job is to let a reader
+ * reconcile the inputs against the result. It used Math.round, which was
+ * harmless while every organization-size tier was a whole number. Making the
+ * tiers fractional on 2026-08-11 (8.7 / 9.3 / 12.8, read off IRIS 2025 Fig. 7)
+ * silently broke it: the default scenario displayed "9%" and computed 9.3%, so
+ * the arithmetic on screen no longer came out to the number beside it. Caught
+ * reviewing that change, not by any test.
+ */
+function formatPct(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1)
 }
 
 function formatCurrency(amount: number): string {
@@ -670,7 +687,7 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
           </p>
           <p className="text-xs font-mono text-muted-foreground">
             Blended ALE: {formatCurrency(costs.classicalALE)} × (1 − {Math.round(costs.pCrqc * 100)}
-            %) + {formatCurrency(costs.quantumSLE)} × {Math.round(annualBreachProbPct)}% ×{' '}
+            %) + {formatCurrency(costs.quantumSLE)} × {formatPct(annualBreachProbPct)}% ×{' '}
             {Math.round(costs.pCrqc * 100)}% ={' '}
             <span className="text-status-error font-bold">{formatCurrency(costs.quantumALE)}</span>
           </p>
@@ -742,7 +759,8 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             >
               IBM Cost of a Data Breach Report 2025
             </a>{' '}
-            — industry breach-cost baselines and per-record costs by data type.
+            — industry breach-cost baselines and per-record costs by data type.{' '}
+            <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
           </li>
           <li>
             <a
@@ -755,27 +773,32 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
             </a>{' '}
             — expert-survey CRQC-arrival probability curve.
           </li>
+          {/* Both of these point INTO the library rather than out to the
+              publisher. The library row is the stronger destination: it records
+              which figure each constant was read from, the sha256 of the
+              archived PDF, and the fact that reading it corrected three of the
+              five numbers these tools rely on. The publisher's page carries
+              none of that — it is the page that stood in for the report while
+              the errors went unnoticed. (2026-08-11.) */}
           <li>
-            <a
-              href="https://netdiligence.com/cyber-claims-study-2025-report/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={`/library?ref=${encodeURIComponent('NetDiligence Cyber Claims Study 2025')}`}
               className="text-primary hover:underline"
             >
               NetDiligence Cyber Claims Study 2025
-            </a>{' '}
-            — organization-size cost anchors used elsewhere in this workshop.
+            </Link>{' '}
+            — organization-size cost anchors. Figures 9 and 10, five-year average incident cost:
+            $264K for SMEs under $2B revenue, $10.3M for large companies.
           </li>
           <li>
-            <a
-              href="https://www.cyentia.com/iris/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to={`/library?ref=${encodeURIComponent('Cyentia IRIS 2025')}`}
               className="text-primary hover:underline"
             >
               Cyentia Institute — Information Risk Insights Study (IRIS) 2025
-            </a>{' '}
-            — annual breach-probability defaults by organization size.
+            </Link>{' '}
+            — annual breach-probability defaults by organization size. Figure 6 for the typical
+            firm, Figure 7 by revenue tier.
           </li>
           {shelfLifeHasCitation && (
             <li>

@@ -50,7 +50,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-09'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-11'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -191,9 +191,9 @@ export interface DimensionRef {
 
 /**
  * Deployment posture is independent of the standardization status. A dimension
- * can sit in `draft` but already be in production (e.g. X25519MLKEM768 in TLS
- * 1.3 at Cloudflare/Google/AWS while draft-ietf-tls-ecdhe-mlkem is still in
- * RFC Editor queue). Marks where deployment outpaces the spec.
+ * can sit in `draft` but already be in production — X25519MLKEM768 ran at
+ * Cloudflare/Google/AWS from 2024, roughly two years before the spec became
+ * RFC 10024 in August 2026. Marks where deployment outpaces the spec.
  */
 export type DeploymentPosture = 'production' | 'pilot' | 'experimental'
 
@@ -463,11 +463,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-11',
       },
       {
-        id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
+        id: 'draft-miller-sshm-composite-sigs',
         title:
-          'draft-miller-sshm-mldsa44-ed25519-composite-sigs — Composite ML-DSA-44+Ed25519 for SSH (replaces the ML-DSA-65 draft)',
-        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
-        date: '2026-06-02',
+          'draft-miller-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft, which replaced the ML-DSA-65 one)',
+        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
+        date: '2026-07-24',
       },
       {
         id: 'draft-becker-cnsa2-ssh-profile-03',
@@ -545,10 +545,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         refs: [
           {
             kind: 'draft',
-            id: 'draft-miller-sshm-mldsa44-ed25519-composite-sigs',
-            title: 'Composite ML-DSA-44+Ed25519 Signatures for SSH',
-            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/',
-            publishedOn: '2026-06-02',
+            id: 'draft-miller-sshm-composite-sigs',
+            title:
+              'Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft)',
+            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
+            publishedOn: '2026-07-24',
           },
         ],
       },
@@ -694,9 +695,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     latestDraft: [
       {
         id: 'draft-ietf-tls-ecdhe-mlkem-05',
-        title: 'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-        date: '2026-05-26',
+        title:
+          'draft-ietf-tls-ecdhe-mlkem-05 — Hybrid X25519MLKEM768 / SecP256r1MLKEM768 (published 2026-08-10 as RFC 10024)',
+        url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+        date: '2026-08-10',
         localFile: '/library/draft-ietf-tls-ecdhe-mlkem-05.html',
       },
       {
@@ -746,20 +748,21 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'Approved — RFC Editor queue (draft-ietf-tls-ecdhe-mlkem-05)',
-        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production while spec is in the RFC Editor queue.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote:
+          'Published as RFC 10024 on 2026-08-10 — draft-ietf-tls-ecdhe-mlkem-05 is the revision that became the RFC, so the earlier "RFC Editor queue" note is superseded rather than contradicted. Verified against the datatracker: the draft carries state slug `rfc` and IESG state `pub`, and relateddocument records `became_rfc -> rfc10024`.',
+        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — deployed in production since 2024, and standards-track as of 2026-08-10.',
         deploymentPosture: 'production',
         deploymentNote:
-          'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment exceeds spec status.',
+          'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment preceded publication by roughly two years.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 / SecP256r1MLKEM768 for TLS 1.3',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for TLS 1.3',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
@@ -1328,12 +1331,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-04-07',
       },
       {
-        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        id: 'draft-ietf-jose-hpke-pq-pqt-01',
         title:
-          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
-        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-        date: '2026-02-16',
-        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+        date: '2026-07-06',
       },
     ],
     dimensions: {
@@ -1352,10 +1354,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -1375,10 +1378,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -1485,12 +1489,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-06-15',
       },
       {
-        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        id: 'draft-ietf-jose-hpke-pq-pqt-01',
         title:
-          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
-        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-        date: '2026-02-16',
-        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+          'draft-ietf-jose-hpke-pq-pqt-01 — JOSE HPKE PQ & PQ/T Algorithm Registrations (adopted from draft-reddy-cose-jose-pqc-hybrid-hpke-11)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+        date: '2026-07-06',
       },
     ],
     dimensions: {
@@ -1525,10 +1528,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           },
           {
             kind: 'draft',
-            id: 'draft-reddy-cose-jose-pqc-hybrid-hpke',
-            title: 'PQ/T Hybrid KEMs for HPKE with JOSE/COSE (individual)',
-            url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
-            publishedOn: '2026-02-16',
+            id: 'draft-ietf-jose-hpke-pq-pqt',
+            title:
+              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
+            publishedOn: '2026-07-06',
           },
         ],
       },
@@ -2961,19 +2965,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'pilot',
         deploymentNote:
           'DTLS 1.3 ML-KEM hybrid follows TLS 1.3 implementations; production rollout lags TLS by ~6–12 mo.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited from TLS 1.3)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited from TLS 1.3)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
@@ -3059,25 +3063,27 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 — X25519MLKEM768 hybrid group, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'production',
         deploymentNote:
           'WebAuthn / passkey traffic over Chromium + Cloudflare edge benefits from TLS 1.3 hybrid KEM in production.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited from TLS 1.3)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited from TLS 1.3)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },
       pureSig: {
         value: 'experimental',
         stage: 'experimental',
+        stageNote:
+          "RFC 9964 is published, but this cell tracks FIDO adoption rather than the RFC's status: the algorithm IDs are inherited from the COSE row and no FIDO Alliance profile exists. Authenticator-side ML-DSA private keys (~5–7 KB) strain secure-element storage budgets, so 'experimental' is a judgement about deployability, not a stale reading of the datatracker.",
         note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
         refs: [
           {
@@ -3143,18 +3149,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       hybridKem: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — X25519MLKEM768 hybrid.',
+        value: 'rfc',
+        stage: 'rfc-published',
+        note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — X25519MLKEM768 hybrid, published as RFC 10024 on 2026-08-10.',
         deploymentPosture: 'pilot',
         deploymentNote: 'Cisco / Juniper MACsec stacks pilot PQ EAP-TLS bootstrap in 2025–2026.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-tls-ecdhe-mlkem',
-            title: 'Hybrid X25519MLKEM768 (inherited)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/',
-            publishedOn: '2026-02-08',
+            kind: 'rfc',
+            id: 'RFC 10024',
+            title: 'PQ/T Hybrid Key Agreement Mechanisms for TLS 1.3 (inherited)',
+            url: 'https://www.rfc-editor.org/rfc/rfc10024.html',
+            publishedOn: '2026-08-10',
           },
         ],
       },

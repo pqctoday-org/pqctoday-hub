@@ -155,6 +155,7 @@ class MatrixRef:
     ref_id: str  # 'RFC 9935' or 'draft-ietf-tls-mlkem'
     encoded_stage: str | None  # value of `stage` field, if set
     encoded_stage_note: str | None
+    ref_title: str | None = None  # the ref's own one-line description
 
 
 @dataclass
@@ -180,6 +181,64 @@ DIM_BLOCK_RE = re.compile(
 STAGE_RE = re.compile(r"stage:\s*'([a-z-]+)'")
 STAGE_NOTE_RE = re.compile(r"stageNote:\s*'([^']+)'")
 REF_ID_RE = re.compile(r"id:\s*'((?:RFC\s\d+|draft-[a-z0-9-]+|TCG [^']+|3GPP T[RS] [^']+|UEFI [^']+|IEEE [^']+))'")
+# `title:` may be on its own line with the string wrapped underneath, because
+# prettier breaks long ref titles. Both shapes are handled in parse_matrix.
+#
+# Double quotes matter: a title containing an apostrophe is written with them
+# ("Kerberos' PA-PK-AS-REQ/REP payloads…"). A single-quote-only pattern silently
+# returned no title for exactly one ref of 96 — RFC 9882 — and a ref with no
+# title is invisible to the supporting-ref guard, so the one document whose
+# description explains that it is a CMS carrier was the one the guard could not
+# see. Silent, and only findable by counting titles against refs.
+REF_TITLE_RE = re.compile(r"""title:\s*(?:'([^']+)'|"([^"]+)")""")
+BARE_STRING_RE = re.compile(r"""^(?:'([^']+)'|"([^"]+)"),?$""")
+
+# SUPPORTING-REF GUARD (2026-08-12).
+#
+# `deterministic_refresh` weighs every ref in a cell equally: whichever one
+# resolves highest becomes the proposed stage. The matrix does not treat them
+# equally, and says so in each ref's own title — RFC 9370 is "Multiple Key
+# Exchanges in IKEv2 (enabler framework)", RFC 9881 is "…for ML-DSA
+# (generically reusable, not RPKI-specific)", RFC 9935 is "…for ML-KEM
+# (dependency for KDCKEMInfo)". These are the scaffolding a mechanism would be
+# built on, not the mechanism.
+#
+# All of them are published RFCs, so the resolver truthfully reports
+# 'rfc-published' and truthfully proposes an upgrade — and the answer is still
+# wrong. RFC 5280 says nothing about post-quantum RPKI signing. The cost is on
+# record: ike-ipsec::hybridKem's note is itself the write-up of a hand-verified
+# apply that set rfc-published "on the strength of RFC 9370 alone" and had to be
+# reverted on 2026-07-27. Six of the twelve deltas in the 2026-08-11 run were
+# this same shape, and each one survives only because a human keeps re-blocking
+# it by hand.
+#
+# 'inherited' is deliberately absent from this list. dtls-1-3, macsec and fido-2
+# all describe their hybridKem ref as "inherited from TLS 1.3", and there the
+# upgrade is exactly right — that is a cell tracking another row's mechanism,
+# not a cell citing a dependency. Suppressing those would have hidden RFC 10024.
+SUPPORTING_REF_MARKERS: tuple[str, ...] = (
+    "enabler",
+    "dependency",
+    "generically reusable",
+    "not rpki-specific",
+    "usable via",
+)
+
+
+def supporting_ref_reason(title: str | None) -> str | None:
+    """The marker in a ref's own title that says it is scaffolding, or None.
+
+    Matching is on the title the matrix author wrote, so a ref only gets
+    demoted when the data already describes it as supporting. A ref with no
+    title is never demoted — absence of a description is not a claim.
+    """
+    if not title:
+        return None
+    low = title.lower()
+    for marker in SUPPORTING_REF_MARKERS:
+        if marker in low:
+            return marker
+    return None
 
 
 def parse_matrix(path: Path) -> list[MatrixRef]:
@@ -195,6 +254,7 @@ def parse_matrix(path: Path) -> list[MatrixRef]:
     current_stage: str | None = None
     current_stage_note: str | None = None
     in_refs = False
+    awaiting_title = False
     text = path.read_text()
     for raw in text.splitlines():
         indent = len(raw) - len(raw.lstrip(" "))
@@ -248,8 +308,25 @@ def parse_matrix(path: Path) -> list[MatrixRef]:
                             encoded_stage_note=current_stage_note,
                         )
                     )
+                    awaiting_title = False
+                # `title:` follows `id:` inside the same ref object, so the ref
+                # it describes is always the one just appended.
+                elif rows and rows[-1].ref_title is None:
+                    if awaiting_title:
+                        bm = BARE_STRING_RE.match(line)
+                        if bm:
+                            rows[-1].ref_title = bm.group(1) or bm.group(2)
+                        awaiting_title = False
+                    elif line.startswith("title:"):
+                        tm = REF_TITLE_RE.search(line)
+                        if tm:
+                            rows[-1].ref_title = tm.group(1) or tm.group(2)
+                        else:
+                            # prettier wrapped the string onto the next line
+                            awaiting_title = True
                 if line.startswith("],"):
                     in_refs = False
+                    awaiting_title = False
     return rows
 
 
@@ -398,6 +475,29 @@ def state_to_stage(doc: dict[str, Any]) -> tuple[str | None, str | None]:
             continue
         stage, _ = DATATRACKER_TO_STAGE.get(slug, (None, 0))
         if stage:
+            # NAME-VS-STATE CONTRADICTION GUARD (2026-08-11). The fall-through
+            # this loop relies on is deliberate, but its floor is the generic
+            # 'draft' type's "active" -> individual-draft, and that is provably
+            # wrong for a document already named `draft-ietf-*`: a draft cannot
+            # carry that prefix without having been ADOPTED by a working group.
+            # So "individual-draft" for such a name is not a reading of the
+            # document's state, it is the absence of one.
+            #
+            # This is the second sighting of the same failure mode. The
+            # 2026-07-27 audit above fixed the `wglc`/`wg-lc` typo that caused
+            # it and named mls and eap-radius as affected; both are STILL
+            # reporting individual-draft today, via a different route to the
+            # same floor. Six of the twelve stage "downgrades" the applier
+            # blocked on 2026-08-11 are this, and they were burying the five
+            # that are real.
+            #
+            # Reported as unresolved rather than floored to a guessed stage:
+            # inventing wg-document here would be the same class of mistake in
+            # the other direction, and an unresolved ref emits no delta, so
+            # nothing can be applied off it.
+            name = str(doc.get("name") or "")
+            if stage == "individual-draft" and name.startswith("draft-ietf-"):
+                return None, f"{slug}:contradicts-adopted-name"
             return stage, slug
     return None, None
 
@@ -448,8 +548,20 @@ def _suppress_covered_downgrades(
     for d in deltas:
         enc_level = STAGE_LEVEL.get(d.encoded_stage or "")
         cur_level = STAGE_LEVEL.get(d.current_stage or "")
-        is_downgrade = enc_level is not None and cur_level is not None and cur_level < enc_level
-        if is_downgrade:
+        # WIDENED 2026-08-12 from `<` to `<=`. The strict test missed the
+        # LATERAL case, and the applier deliberately allows laterals ("blocking
+        # equal ranks would freeze every IETF transition"), so nothing else
+        # caught it either. cose::pureKem and cose::hybridKem propose
+        # wg-last-call -> wg-document off draft-reddy-cose-jose-pqc-hybrid-hpke,
+        # a REPLACED individual draft — same level 4, so not a downgrade — while
+        # their sibling draft-ietf-cose-hpke sits at iesg-submitted, level 6.
+        # Applying it would trade a precise stage for a vaguer one on the word
+        # of the weaker ref. Nothing that fails to improve on a stage a stronger
+        # sibling already covers is worth writing.
+        is_no_improvement = (
+            enc_level is not None and cur_level is not None and cur_level <= enc_level
+        )
+        if is_no_improvement:
             covered_by = None
             for (row_id, dim, ref_id), stage in resolved.items():
                 if row_id != d.row_id or dim != d.dimension or ref_id == d.ref_id:
@@ -459,8 +571,9 @@ def _suppress_covered_downgrades(
                     covered_by = (ref_id, stage)
                     break
             if covered_by:
+                kind = "downgrade" if cur_level < enc_level else "lateral move"
                 print(
-                    f"  note: {d.row_id}:{d.dimension} downgrade via {d.ref_id} "
+                    f"  note: {d.row_id}:{d.dimension} {kind} via {d.ref_id} "
                     f"({d.encoded_stage!r} -> {d.current_stage!r}) SUPPRESSED — sibling ref "
                     f"{covered_by[0]} already resolves to {covered_by[1]!r}, which covers the "
                     f"encoded value. Not a real regression."
@@ -479,6 +592,19 @@ def deterministic_refresh(refs: list[MatrixRef]) -> list[StageDelta]:
     resolved_stage_by_ref: dict[tuple[str, str, str], str] = {}
     seen: dict[str, dict[str, Any] | None] = {}
     for r in refs:
+        # SUPPORTING-REF GUARD — see SUPPORTING_REF_MARKERS. Skipped before the
+        # fetch: there is no stage question to ask about a ref the cell already
+        # describes as scaffolding, and its resolved stage is deliberately kept
+        # out of resolved_stage_by_ref too, so it can neither propose a stage
+        # nor vouch for one.
+        supporting = supporting_ref_reason(r.ref_title)
+        if supporting:
+            print(
+                f"  note: {r.row_id}:{r.dimension} ref {r.ref_id} SKIPPED — the matrix "
+                f"describes it as supporting ({supporting!r}: {r.ref_title!r}), so it "
+                f"cannot decide this cell's stage."
+            )
+            continue
         dt_name = datatracker_name(r.ref_id)
         if not dt_name:
             continue

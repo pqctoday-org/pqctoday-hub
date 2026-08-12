@@ -5,10 +5,14 @@ import clsx from 'clsx'
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 
-export type SortOption = 'newest' | 'name' | 'referenceId' | 'urgency' | 'mostCited'
+export type SortOption = 'newest' | 'published' | 'name' | 'referenceId' | 'urgency' | 'mostCited'
 
 export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
-  { id: 'newest', label: 'Newest first' },
+  // 'newest' orders by catalog activity (when we last touched the record);
+  // 'published' orders by the document's own publication date, which is what a
+  // reader means by "newest" — see newestFirstMs vs publishedMs.
+  { id: 'published', label: 'Publication date' },
+  { id: 'newest', label: 'Recently updated' },
   { id: 'name', label: 'Name A-Z' },
   { id: 'referenceId', label: 'Reference ID' },
   { id: 'urgency', label: 'Urgency' },

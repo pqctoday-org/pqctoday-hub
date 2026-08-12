@@ -158,9 +158,31 @@ function DrawerPanel({
             <div className="mt-1 flex items-center gap-1.5 text-[12px] text-muted-foreground">
               <Building2 size={13} aria-hidden="true" />
               <span className="truncate">{item.authorsOrOrganization || 'Unknown'}</span>
-              {item.lastUpdateDate && (
-                <span className="font-mono text-[11px]">
-                  · {formatLibDate(item.lastUpdateDate)}
+              {/* The document's own publication date is the primary signal here;
+                  lastUpdateDate (catalog activity) is the fallback, matching the card. */}
+              {(item.initialPublicationDate || item.lastUpdateDate) && (
+                <span
+                  className="font-mono text-[11px]"
+                  title={
+                    item.initialPublicationDate
+                      ? `Published ${formatLibDate(item.initialPublicationDate)}`
+                      : `Catalog record updated ${formatLibDate(item.lastUpdateDate)}`
+                  }
+                >
+                  ·{' '}
+                  {item.initialPublicationDate
+                    ? formatLibDate(item.initialPublicationDate)
+                    : formatLibDate(item.lastUpdateDate)}
+                </span>
+              )}
+              {/* Sparse by design (most rows have never been re-checked) — shown
+                  only when present, so it never implies false precision. */}
+              {item.lastVerified && (
+                <span
+                  className="font-mono text-[11px] text-muted-foreground/70"
+                  title={`Last verified against the source document ${formatLibDate(item.lastVerified)}`}
+                >
+                  · verified {formatLibDate(item.lastVerified)}
                 </span>
               )}
             </div>

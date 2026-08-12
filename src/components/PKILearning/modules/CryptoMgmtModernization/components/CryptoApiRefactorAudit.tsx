@@ -224,7 +224,16 @@ function pickFacadePattern(language: string): string {
 const PROVIDER_NOTES: Record<string, string> = {
   software:
     'Software providers: OpenSSL 3.5+ LTS ships native FIPS 203 / 204 (ML-KEM, ML-DSA) support today via its FIPS provider (SLH-DSA / FIPS 205 still pending); older OpenSSL 3.x needs the oqs-provider. BouncyCastle PQC `org.bouncycastle.pqc.crypto.*`; .NET 10+ adds native `MLDsa` / `MLKem` types.',
-  hsm: 'HSM providers: Thales Luna FIPS 203 / 204 firmware on roadmap (vendor advisory); Entrust nCipher Connect+ generally available; AWS CloudHSM ML-DSA key generation/signing is in preview (not GA) - native PKCS#11 PQC mechanisms are not yet in CloudHSM firmware, so ML-KEM-768 / ML-DSA-65 access today goes through the AWS Crypto Tools SDK. Check each vendor for PKCS#11 v3.2 mechanism IDs.',
+  // Re-stated 2026-08-12 against the proof-gated migrate catalog rather than
+  // from vendor advisories. The previous text was stale in the direction that
+  // costs a reader most — it steered them AWAY from the vendors that ship:
+  // Thales Luna was described as "on roadmap" when the catalog records native
+  // ML-KEM/ML-DSA in firmware v7.9+, and Entrust was named by a legacy product
+  // ("nCipher Connect+") rather than nShield, whose catalog entry lists all 12
+  // SLH-DSA parameter sets natively via PKCS#11 — directly contradicting the
+  // old closing line that "SLH-DSA support is thinner". The AWS CloudHSM
+  // PKCS#11 caveat DID match the catalog and is kept.
+  hsm: 'HSM providers: Thales Luna ships native ML-KEM (FIPS 203) and ML-DSA (FIPS 204) in firmware v7.9+, plus LMS/HSS (SP 800-208). Entrust nShield ships the full suite in firmware v13.8.0+ — ML-KEM 512/768/1024, ML-DSA 44/65/87 and SLH-DSA (all 12 parameter sets) natively via PKCS#11. AWS CloudHSM does NOT yet expose native PKCS#11 PQC mechanisms in firmware, so ML-KEM-768 / ML-DSA-65 access there goes through the AWS Crypto Tools SDK. Check each vendor for PKCS#11 v3.2 mechanism IDs, and check the /migrate catalog rather than a vendor advisory — this guidance is only as fresh as that data.',
   tpm: 'TPM providers: TCG PQC profiles draft as of 2025; PC Client Spec v1.85 adds ML-DSA, SLH-DSA, and LMS algorithms; full vendor firmware support 2026 onwards.',
   kms: 'KMS-backed providers: AWS KMS, GCP KMS, and Azure Key Vault are rolling out ML-DSA-65 + ML-KEM-768 through 2025-2026; verify region availability and pricing before pinning.',
   accelerator:
@@ -370,8 +379,8 @@ export function auditCryptoApi(inputs: CryptoApiInputs): CryptoApiRecommendation
 // subsection heading, so it is cited as Section 4, not 4.1.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CSWP39_41_QUOTE =
-  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms from implementation of the cryptographic algorithms themselves. [...] To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
+export const CSWP39_41_QUOTE =
+  'A cryptographic application programming interface (crypto API) separates the implementation of applications that use cryptographic algorithms (e.g., email and web apps) from implementation of the cryptographic algorithms themselves. [...] To achieve crypto agility, system designers must introduce mechanisms that simplify the replacement of cryptographic algorithms in software, libraries, hardware, firmware, and infrastructures.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Wizard section definitions

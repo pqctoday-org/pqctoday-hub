@@ -12,6 +12,7 @@ import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSaved
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
 import type { ROIOutput, BreachOutput, InactionOutput } from '../types'
+import { IBM_BASELINE_UNVERIFIED_NOTE } from '@/data/roiBaselines'
 
 const MODULE_ID = 'pqc-business-case'
 
@@ -140,8 +141,8 @@ export const BoardPitchBuilder: React.FC<BoardPitchBuilderProps> = ({
     '',
     '## Basis of figures',
     '',
-    '- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy.',
-    '- **Annual breach probability** — Cyentia Institute, Information Risk Insights Study (IRIS), by organization-size tier.',
+    `- **Breach cost baselines** — IBM Cost of a Data Breach, per-sector averages. Sectors without a dedicated IBM figure use a labelled proxy. ${IBM_BASELINE_UNVERIFIED_NOTE}`,
+    '- **Annual breach probability** — Cyentia Institute, *Information Risk Insights Study (IRIS) 2025*, Figures 6 and 7, read from the report itself: 8.7% (firms under $10M revenue), 9.3% (typical firm), 12.8% ($10B-$100B). The tiers sit close together because IRIS 2025 finds they have converged.',
     '- **CRQC arrival probability** — Global Risk Institute, Quantum Threat Timeline Report 2025: a CRQC is "quite possible (28-49%) within the next 10 years, and likely (51-70%) in the next 15", from a survey of 26 experts.',
     '- **Migration cost, delay premium, and staffing** — analyst estimates for this organization, not cited figures.',
     '',
