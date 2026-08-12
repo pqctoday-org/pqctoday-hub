@@ -59,9 +59,19 @@ export const PlaygroundToolRoute = () => {
           <ArrowLeft className="w-4 h-4 mr-1" />
           All Tools
         </Button>
-        <span className="text-sm text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:truncate">
-          {tool.category} / {tool.name}
-        </span>
+        {/*
+          The tool name is this page's <h1>. 33 of the 34 tool pages previously
+          had no h1 at all (only tpm-playground shipped one), so every tool page
+          opened with a heading hierarchy starting at h2 or lower. Styling is
+          unchanged — this is the same breadcrumb line, now carrying the
+          document's top-level heading instead of a bare span.
+        */}
+        <h1 className="text-sm font-normal text-muted-foreground max-sm:min-w-0 max-sm:flex-1 max-sm:truncate">
+          <span className="sr-only">{tool.name} — </span>
+          <span aria-hidden="true">
+            {tool.category} / {tool.name}
+          </span>
+        </h1>
         <div className="ml-auto flex items-center gap-1 max-sm:w-full max-sm:justify-end">
           <ShareButton
             title={`${tool.name} — PQC Playground`}
@@ -159,11 +169,28 @@ function NextToolSuggestion({
   currentToolId: string
   currentCategory: string
 }) {
-  const sameCat = WORKSHOP_TOOLS.filter(
-    (t) => t.category === currentCategory && t.id !== currentToolId && !t.wip
-  )
-  // Pick up to 2: prefer the tool immediately after in category order, then one more
-  const suggestions = sameCat.slice(0, 2)
+  // Tools in this category, in registry order, INCLUDING the current one — its
+  // position is what makes the suggestion contextual.
+  const sameCat = WORKSHOP_TOOLS.filter((t) => t.category === currentCategory && !t.wip)
+
+  // Rotate the list so it starts just after the current tool, then take the
+  // next 2. `slice(0, 2)` on a list with the current tool filtered out gave
+  // every tool in a category the SAME two suggestions — on HSM / PKCS#11 that
+  // meant tee-channel, kdf-derivation and envelope-encrypt all pointed at
+  // "SLH-DSA Sign & Verify" and "Stateful Hash Signatures", verified in a
+  // browser on 2026-08-11. The comment claimed it preferred "the tool
+  // immediately after in category order"; now it does.
+  //
+  // Rotation is anchored on the tool's IDENTITY, not a stored index: a cursor
+  // held as a position silently points at a different tool the moment the
+  // registry is reordered.
+  const at = sameCat.findIndex((t) => t.id === currentToolId)
+  const ordered =
+    at === -1
+      ? sameCat // current tool is WIP (filtered out) — fall back to category order
+      : [...sameCat.slice(at + 1), ...sameCat.slice(0, at)]
+
+  const suggestions = ordered.slice(0, 2)
   if (suggestions.length === 0) return null
 
   return (

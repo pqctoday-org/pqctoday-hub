@@ -55,7 +55,13 @@ export function ReviewedBadge({
     latest.approval_method === 'offline' && latest.approved_via
       ? ` · via ${latest.approved_via}`
       : ''
-  const llmPrefix = latest.authored_by_llm ? 'LLM · ' : ''
+  // "Reviewed" has to appear in the VISIBLE text, not just the tooltip.
+  // Previously this state rendered as "LLM · eramusa · May 2026 · via registry
+  // review" — a check icon, a name and a date, with the word carrying the whole
+  // meaning hidden in `title`. Next to the other state, which says "Unreviewed"
+  // outright, the two did not read as the same axis, and a screen-reader user
+  // got a bare name with no indication of what it asserted.
+  const reviewedLabel = latest.authored_by_llm ? 'Reviewed (LLM)' : 'Reviewed'
   const title = `Reviewed by ${latest.reviewer_display} via ${latest.approval_method}${offlineSuffix}`
 
   // The reviewer string is free text and can be long — "claude-agent
@@ -67,8 +73,7 @@ export function ReviewedBadge({
     <>
       <CheckCircle className="w-3 h-3 shrink-0" aria-hidden="true" />
       <span className="min-w-0 break-words">
-        {llmPrefix}
-        {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
+        {reviewedLabel} · {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
         {offlineSuffix}
       </span>
     </>
