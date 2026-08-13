@@ -1007,6 +1007,20 @@ export const freeTemplate = (
 
 // ── High-level PKCS#11 helpers ───────────────────────────────────────────────
 
+/**
+ * CKR_CRYPTOKI_ALREADY_INITIALIZED — tolerated everywhere C_Initialize is called.
+ * The underlying WASM engine (esp. the Rust wasm-bindgen module) is a page-lifetime
+ * singleton: every independent HSM consumer on a page (Playground, KAT view, algorithm
+ * benchmarks, ...) shares the same already-running instance, so whichever one calls
+ * C_Initialize second would otherwise throw here forever until a hard reload.
+ */
+const CKR_CRYPTOKI_ALREADY_INITIALIZED = 0x00000191
+
+const checkInitRV = (rv: number, fn: string): void => {
+  const u = rv >>> 0
+  if (u !== 0 && u !== CKR_CRYPTOKI_ALREADY_INITIALIZED) checkRV(u, fn)
+}
+
 /** C_Initialize */
 export const hsm_initialize = (M: SoftHSMModule, testSeed?: Uint8Array): void => {
   if (testSeed) {
@@ -1022,14 +1036,14 @@ export const hsm_initialize = (M: SoftHSMModule, testSeed?: Uint8Array): void =>
     M.setValue(initArgsPtr + 20, acvpPtr, 'i32')
 
     try {
-      checkRV(M._C_Initialize(initArgsPtr), 'C_Initialize(ACVP_MODE)')
+      checkInitRV(M._C_Initialize(initArgsPtr), 'C_Initialize(ACVP_MODE)')
     } finally {
       M._free(initArgsPtr)
       M._free(acvpPtr)
       M._free(seedPtr)
     }
   } else {
-    checkRV(M._C_Initialize(0), 'C_Initialize')
+    checkInitRV(M._C_Initialize(0), 'C_Initialize')
   }
 }
 
