@@ -574,9 +574,48 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HMAC-SHA3-512 with truncated output length',
     family: 'hash',
   },
+  // Full 0x390–0x39c digest-KDF block: the C++ engine's advertised list is
+  // environment-dependent (OpenSSL probing) — the browser build advertises
+  // CKM_SHAKE_256_KEY_DERIVATION where the Node build does not, so cover the
+  // whole standard block rather than only the IDs one environment showed.
+  0x00000390: {
+    name: 'CKM_MD5_KEY_DERIVATION',
+    description: 'Key derivation via MD5 digest (historical)',
+    family: 'kdf',
+  },
+  0x00000391: {
+    name: 'CKM_MD2_KEY_DERIVATION',
+    description: 'Key derivation via MD2 digest (historical)',
+    family: 'kdf',
+  },
+  0x00000392: {
+    name: 'CKM_SHA1_KEY_DERIVATION',
+    description: 'Key derivation via SHA-1 digest (PKCS#11 §2.42)',
+    family: 'kdf',
+  },
   0x00000393: {
     name: 'CKM_SHA256_KEY_DERIVATION',
     description: 'Key derivation via SHA-256 digest (PKCS#11 §2.42)',
+    family: 'kdf',
+  },
+  0x00000396: {
+    name: 'CKM_SHA224_KEY_DERIVATION',
+    description: 'Key derivation via SHA-224 digest (PKCS#11 §2.42)',
+    family: 'kdf',
+  },
+  0x00000398: {
+    name: 'CKM_SHA3_224_KEY_DERIVATION',
+    description: 'Key derivation via SHA3-224 digest (PKCS#11 §2.42)',
+    family: 'kdf',
+  },
+  0x0000039b: {
+    name: 'CKM_SHAKE_128_KEY_DERIVATION',
+    description: 'Key derivation via SHAKE-128 XOF (PKCS#11 v3.2 §2.42)',
+    family: 'kdf',
+  },
+  0x0000039c: {
+    name: 'CKM_SHAKE_256_KEY_DERIVATION',
+    description: 'Key derivation via SHAKE-256 XOF (PKCS#11 v3.2 §2.42)',
     family: 'kdf',
   },
   0x00000394: {
