@@ -151,7 +151,7 @@ export const HsmAcvpTesting = () => {
     addHsmLog,
     addHsmKey,
     clearHsmKeys,
-    clearHsmLog,
+    addHsmStepLog,
   } = useHsmContext()
 
   const addLog = (msg: string) =>
@@ -203,7 +203,12 @@ export const HsmAcvpTesting = () => {
     setLogs([])
     setProgress({ done: 0, current: 'Starting…' })
     clearHsmKeys()
-    clearHsmLog()
+    // Deliberately NOT clearHsmLog(): the Logs tab is the playground's
+    // cross-tab inspection surface, and wiping it at run start silently
+    // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
+    // A step-header marker delimits this run's output in the shared log
+    // instead; the pane's own results live in local `logs` state anyway.
+    addHsmStepLog('ACVP Validation Run')
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
