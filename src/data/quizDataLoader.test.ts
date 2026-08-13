@@ -513,4 +513,30 @@ describe('quizQuestions (loaded CSV)', () => {
       expect(typeof cat.questionCount).toBe('number')
     }
   })
+
+  // 2026-08-12 regression: hpqc-003 and hpqc-012 shipped industries as
+  // "healthcare,pharma" — splitPipe yielded one bogus token, so both rows
+  // were unreachable by EVERY industry filter (same failure class as the
+  // 08-09 personas delimiter fix, which only covered personas). Census the
+  // whole corpus, don't sample: a comma in any pipe-delimited token means
+  // the row silently vanishes from filters.
+  it('no personas/industries token contains a comma (pipe is the delimiter)', () => {
+    for (const q of quizQuestions) {
+      for (const token of [...q.personas, ...(q.industries ?? [])]) {
+        expect(
+          token.includes(','),
+          `comma-delimited token ${JSON.stringify(token)} on ${q.id}`
+        ).toBe(false)
+      }
+    }
+  })
+
+  it('hpqc-003 and hpqc-012 are reachable via both healthcare and pharma', () => {
+    for (const id of ['hpqc-003', 'hpqc-012']) {
+      const q = quizQuestions.find((x) => x.id === id)
+      expect(q, id).toBeDefined()
+      expect(q?.industries).toContain('healthcare')
+      expect(q?.industries).toContain('pharma')
+    }
+  })
 })
