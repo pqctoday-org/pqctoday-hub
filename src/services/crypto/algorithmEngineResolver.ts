@@ -84,24 +84,48 @@ export function getEngineLabel(engine: CryptoEngine): string {
 
 // ── Lazy engine loaders ──
 
-let hsmSession: { M: unknown; hSession: number } | null = null
+let hsmSessionPromise: Promise<{ M: unknown; hSession: number }> | null = null
 
+// The underlying WASM engine is a page-lifetime singleton shared with every other
+// HSM consumer on the page (KAT view, Playground, ...). Cache the in-flight promise
+// (not just the resolved value) so concurrent Run clicks share one init sequence
+// instead of racing C_InitToken/C_OpenSession against each other, and reset it on
+// failure so the next click gets a clean retry.
 async function getHsmSession() {
-  if (hsmSession) return hsmSession
-  const {
-    getSoftHSMRustModule,
-    hsm_initialize,
-    hsm_getFirstSlot,
-    hsm_initToken,
-    hsm_openUserSession,
-  } = await import('../../wasm/softhsm')
-  const M = await getSoftHSMRustModule()
-  hsm_initialize(M)
-  const slot = hsm_getFirstSlot(M)
-  hsm_initToken(M, slot, 'bench-so-pin', 'BenchToken')
-  const hSession = hsm_openUserSession(M, slot, 'bench-so-pin', 'bench-user-pin')
-  hsmSession = { M, hSession }
-  return hsmSession
+  if (!hsmSessionPromise) {
+    hsmSessionPromise = (async () => {
+      const {
+        getSoftHSMRustModule,
+        hsm_initialize,
+        hsm_getFirstFreeSlot,
+        hsm_getFirstInitializedSlot,
+        hsm_initToken,
+        hsm_openUserSession,
+      } = await import('../../wasm/softhsm')
+      const M = await getSoftHSMRustModule()
+      hsm_initialize(M)
+
+      // Prefer a free slot; if every slot is already initialized by another HSM
+      // consumer sharing this engine, reuse the existing one instead of attempting
+      // C_InitToken with a different PIN (see useHSM.ts's initialize() for the
+      // same pattern).
+      let slot: number
+      try {
+        slot = hsm_getFirstFreeSlot(M)
+        slot = hsm_initToken(M, slot, 'bench-so-pin', 'BenchToken')
+      } catch (e) {
+        if (!(e instanceof Error) || !e.message.includes('no free slot')) throw e
+        slot = hsm_getFirstInitializedSlot(M)
+      }
+
+      const hSession = hsm_openUserSession(M, slot, 'bench-so-pin', 'bench-user-pin')
+      return { M, hSession }
+    })().catch((e) => {
+      hsmSessionPromise = null
+      throw e
+    })
+  }
+  return hsmSessionPromise
 }
 
 // ── Benchmark runners per engine ──
