@@ -28,6 +28,19 @@ export interface IndustryUseCase {
    *  'healthcare-pqc' — empty when no Industries-track module exists yet
    *  (validated non-empty values only; empty is a real, reportable gap). */
   learnModuleId: string
+  /**
+   * Playground tool ids (`WorkshopTool.id`, incl. generated `sbx-*` sandbox
+   * scenarios) a reader can run to practise THIS use case. Hand-curated —
+   * this source is `enrich: none` by design, and the three derivable signals
+   * all under-deliver (module manifests declare a tool for 17 of 65 modules;
+   * `PROTOCOL_MATRIX.playgrounds[]` is empty on 13 of 35 rows and its toolIds
+   * are not all registry ids; algorithm-string matching is fuzzy both ways).
+   *
+   * Empty is legitimate — a use case with no honest match gets no tools rather
+   * than a padded one. The driftguard pins that every id resolves; it cannot
+   * pin that a mapping is the BEST one, so completeness is reported, not gated.
+   */
+  playgroundTools: string[]
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -83,6 +96,7 @@ interface RawLandscapeRow {
   summary: string
   related_standards: string
   learn_module_id: string
+  playground_tools: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -168,6 +182,7 @@ function loadLandscape(): IndustryUseCase[] {
             summary: r.summary,
             relatedStandards: splitSemicolon(r.related_standards),
             learnModuleId: r.learn_module_id || '',
+            playgroundTools: splitSemicolon(r.playground_tools),
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,

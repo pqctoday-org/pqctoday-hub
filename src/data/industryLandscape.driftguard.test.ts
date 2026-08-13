@@ -6,6 +6,8 @@
 //   - protocols ⊆ pqcProtocolMatrix row ids (Protocol Support deep links)
 //   - mechanisms ⊆ cryptoMechanisms families, whose members ⊆ ALGORITHM_REGISTRY
 //   - standards library_ref resolves to a live Library catalog row (Library links)
+//   - playground_tools ⊆ WORKSHOP_TOOLS ids (Crypto Lab deep links)
+//   - every industry resolves to a sector code (Library/Compliance deep links)
 //   - icons ⊆ the landscapeIcons allowlist
 // A failure here means a CSV refresh or vocabulary change broke a seam, not a bug
 // in this file.
@@ -19,6 +21,8 @@ import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
+import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
+import { resolveToNaicsSet } from './sectorVocabularyData'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 
@@ -210,6 +214,54 @@ describe('industry-landscape driftguards', () => {
         ids.size,
         `industry "${industry}" has inconsistent learn_module_id values: ${[...ids]}`
       ).toBe(1)
+    }
+  })
+
+  it('every playground_tools id resolves to a real Crypto Lab tool', () => {
+    // Hard FK, same shape as the learn_module_id guard above: the tile renders
+    // `/playground/<id>`, so an id the registry doesn't know is a dead link.
+    // WORKSHOP_TOOLS includes the generated `sbx-*` sandbox scenarios, so a
+    // renamed or retired scenario fails here rather than 404ing in the UI.
+    const ids = new Set(WORKSHOP_TOOLS.map((t) => t.id))
+    for (const uc of useCases) {
+      for (const id of uc.playgroundTools) {
+        expect(ids, `${uc.useCaseId}: unknown playground tool "${id}"`).toContain(id)
+      }
+      expect(
+        new Set(uc.playgroundTools).size,
+        `${uc.useCaseId}: duplicate playground tool ids`
+      ).toBe(uc.playgroundTools.length)
+    }
+  })
+
+  it('at least one use case per industry offers a playground tool', () => {
+    // Deliberately per-INDUSTRY, not per-use-case. An individual use case with
+    // no honest tool match is a legitimate empty cell (energy-nuclear today);
+    // a whole industry with none means the tile's "Try it" row never renders,
+    // which is a content gap worth failing on.
+    const byIndustry = new Map<string, number>()
+    for (const uc of useCases) {
+      byIndustry.set(uc.industry, (byIndustry.get(uc.industry) ?? 0) + uc.playgroundTools.length)
+    }
+    for (const [industry, n] of byIndustry) {
+      expect(n, `industry "${industry}" has no playground tools on any use case`).toBeGreaterThan(0)
+    }
+  })
+
+  it('every industry resolves to a sector code for the Library/Compliance links', () => {
+    // The detail view links unsupported industries at /library?sector=<naics>
+    // and the regulatory count at /compliance?ind=<label>; both resolve through
+    // sector_vocabulary_*.csv. resolveToNaicsSet is EXACT-match on the
+    // lowercased alias and falls back to echoing the input, so a missing alias
+    // is silent — it returns the industry name as if it were a NAICS code and
+    // the filter matches nothing.
+    for (const ind of getLandscapeIndustries()) {
+      // 'Cross-Industry' is the absence of a sector, not a sector — the tile
+      // renders no sector link for it (see industryCrossRefs.sectorCodesFor).
+      if (ind === 'Cross-Industry') continue
+      const codes = resolveToNaicsSet(ind)
+      expect(codes, `industry "${ind}" has no sector_vocabulary alias`).not.toEqual([ind])
+      expect(codes.length, `industry "${ind}" resolved to no sector code`).toBeGreaterThan(0)
     }
   })
 

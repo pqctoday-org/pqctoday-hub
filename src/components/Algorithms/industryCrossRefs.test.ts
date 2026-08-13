@@ -1,0 +1,210 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// Unit tests for the Industry Landscape cross-reference resolvers. These run
+// against the REAL loaded data, not fixtures, wherever the assertion is about a
+// seam (sector codes, tool ids) — a fixture would pass while the shipped tile
+// rendered a dead link.
+
+import { describe, expect, it } from 'vitest'
+import {
+  learnModulesForIndustry,
+  librarySectorHref,
+  regulatoryFor,
+  sectorCodesFor,
+  standardsForIndustry,
+  toolsForIndustry,
+  toolsForUseCase,
+} from './industryCrossRefs'
+import { getLandscapeIndustries, loadIndustryLandscape } from '@/data/industryLandscapeData'
+import type { ComplianceFramework } from '@/data/complianceData'
+
+const { useCases, standards } = loadIndustryLandscape()
+
+function makeFramework(o: Partial<ComplianceFramework> = {}): ComplianceFramework {
+  return {
+    id: 'TEST',
+    label: 'Test',
+    description: '',
+    industries: [],
+    countries: [],
+    requiresPQC: true,
+    pqcRequirement: 'yes',
+    deadline: 'Ongoing',
+    deadlinePhase: 'ongoing',
+    notes: '',
+    enforcementBody: 'Test',
+    libraryRefs: [],
+    timelineRefs: [],
+    bodyType: 'compliance_framework',
+    ...o,
+  }
+}
+
+describe('sectorCodesFor', () => {
+  it('resolves every landscape industry except Cross-Industry', () => {
+    for (const ind of getLandscapeIndustries()) {
+      const codes = sectorCodesFor(ind)
+      if (ind === 'Cross-Industry') expect(codes).toEqual([])
+      else expect(codes.length, `${ind} resolved to no sector code`).toBeGreaterThan(0)
+    }
+  })
+
+  it('returns [] rather than echoing an unresolved label', () => {
+    // resolveToNaicsSet echoes its input on a miss; echoing it into
+    // `/library?sector=` would build a filter that matches nothing.
+    expect(sectorCodesFor('Not A Real Sector')).toEqual([])
+  })
+
+  it('builds a repeatable sector query for multi-code industries', () => {
+    // Rail / Transit resolves to both halves of the NAICS 48-49 split.
+    expect(sectorCodesFor('Rail / Transit')).toEqual(['48', '49'])
+    expect(librarySectorHref('Rail / Transit')).toBe('/library?sector=48&sector=49')
+  })
+
+  it('has no library link for Cross-Industry', () => {
+    expect(librarySectorHref('Cross-Industry')).toBeNull()
+  })
+})
+
+describe('learnModulesForIndustry', () => {
+  it('resolves a module for the 20 industries that declare one', () => {
+    const withModule = getLandscapeIndustries().filter(
+      (i) => learnModulesForIndustry(i, useCases).length > 0
+    )
+    expect(withModule).toHaveLength(20)
+  })
+
+  it('returns nothing for the two industries with no module', () => {
+    expect(learnModulesForIndustry('Cross-Industry', useCases)).toEqual([])
+    expect(learnModulesForIndustry('Media / Entertainment / DRM', useCases)).toEqual([])
+  })
+
+  it('de-duplicates the industry-level module across its use-case rows', () => {
+    // Healthcare has 4 use-case rows all carrying 'healthcare-pqc'.
+    const mods = learnModulesForIndustry('Healthcare / Pharmaceutical', useCases)
+    expect(mods).toHaveLength(1)
+    expect(mods[0].manifest.id).toBe('healthcare-pqc')
+    expect(mods[0].href).toContain('/learn/healthcare-pqc')
+  })
+
+  it('routes multi-industry modules at the industry’s own learn path', () => {
+    // emv-payment-pqc serves cards, banking and retail; each deep-links at its
+    // own path rather than the top of a 110-minute module.
+    const banking = learnModulesForIndustry('Financial Services / Banking', useCases)
+    expect(banking[0].href).toContain('path=banking')
+  })
+})
+
+describe('standardsForIndustry', () => {
+  it('groups by standards body, alphabetically', () => {
+    const groups = standardsForIndustry('Cross-Industry', standards)
+    expect(groups.length).toBeGreaterThan(1)
+    expect(groups.map((g) => g.body)).toEqual([...groups.map((g) => g.body)].sort())
+  })
+
+  it('does NOT inherit Cross-Industry rows into an uncovered industry', () => {
+    // Decision 2026-08-13: the gap stays visible. Payment Card Industry has no
+    // rows of its own and must render empty, not the 12 cross-industry rows.
+    expect(standardsForIndustry('Payment Card Industry', standards)).toEqual([])
+  })
+})
+
+describe('toolsForUseCase / toolsForIndustry', () => {
+  it('resolves every curated id and sorts sandbox scenarios last', () => {
+    for (const uc of useCases) {
+      const tools = toolsForUseCase(uc)
+      expect(tools, `${uc.useCaseId}: an id failed to resolve`).toHaveLength(
+        uc.playgroundTools.length
+      )
+      const firstSandbox = tools.findIndex((t) => t.sandbox)
+      if (firstSandbox >= 0) {
+        expect(
+          tools.slice(firstSandbox).every((t) => t.sandbox),
+          `${uc.useCaseId}: a browser tool sorts after a sandbox one`
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('returns no tools for the one use case with no honest match', () => {
+    const nuclear = useCases.find((u) => u.useCaseId === 'energy-nuclear')!
+    expect(toolsForUseCase(nuclear)).toEqual([])
+  })
+
+  it('de-duplicates across an industry and records which use cases named a tool', () => {
+    const tools = toolsForIndustry('Cross-Industry', useCases)
+    const ids = tools.map((t) => t.tool.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    // sbx-tls is named by cross-web-tls only; vpn-sim by cross-vpn only.
+    const tls = tools.find((t) => t.tool.id === 'sbx-tls')!
+    expect(tls.useCases.map((u) => u.useCaseId)).toEqual(['cross-web-tls'])
+  })
+
+  it('every industry surfaces at least one tool', () => {
+    for (const ind of getLandscapeIndustries()) {
+      expect(toolsForIndustry(ind, useCases).length, `${ind} has no tools`).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('regulatoryFor', () => {
+  // Healthcare / Pharmaceutical → NAICS 62.
+  const hc = (o: Partial<ComplianceFramework>) => makeFramework({ naicsCodes: ['62'], ...o })
+
+  it('counts only PQC-relevant frameworks', () => {
+    const frameworks = [
+      hc({ id: 'YES', pqcRequirement: 'yes' }),
+      hc({ id: 'EXPECTED', pqcRequirement: 'expected' }),
+      hc({ id: 'PARTIAL', pqcRequirement: 'partial' }),
+      // guidance and no are real obligations but not post-quantum ones — this
+      // count sits beside a crypto mechanism list, so they are out of scope.
+      hc({ id: 'GUIDANCE', pqcRequirement: 'guidance' }),
+      hc({ id: 'NO', pqcRequirement: 'no' }),
+    ]
+    expect(regulatoryFor('Healthcare / Pharmaceutical', frameworks).count).toBe(3)
+  })
+
+  it('matches on naicsCodes — the same predicate the destination filters with', () => {
+    // REGRESSION (2026-08-13): the count first used the applicability engine,
+    // whose tier rules need a country signal. With none saved it returned 0 for
+    // Healthcare while the register the link opened listed several — a browser
+    // probe caught it. Count and destination must share one predicate.
+    const frameworks = [
+      hc({ id: 'HEALTH' }),
+      makeFramework({ id: 'ENERGY', naicsCodes: ['22'] }),
+      makeFramework({ id: 'UNTAGGED' }), // no naicsCodes at all
+    ]
+    expect(regulatoryFor('Healthcare / Pharmaceutical', frameworks).count).toBe(1)
+  })
+
+  it('counts a multi-code industry across all of its codes', () => {
+    // Rail / Transit → 48 and 49; a row tagged either one is reachable.
+    const frameworks = [
+      makeFramework({ id: 'T48', naicsCodes: ['48'] }),
+      makeFramework({ id: 'T49', naicsCodes: ['49'] }),
+      makeFramework({ id: 'FIN', naicsCodes: ['52'] }),
+    ]
+    expect(regulatoryFor('Rail / Transit', frameworks).count).toBe(2)
+  })
+
+  it('is zero for an industry with no sector identity', () => {
+    // Cross-Industry resolves to no NAICS code, so there is nothing to filter
+    // the register by — counting the whole corpus would be a lie.
+    expect(regulatoryFor('Cross-Industry', [hc({ id: 'ANY' })]).count).toBe(0)
+  })
+
+  it('carries the same industry and filter into the deep link', () => {
+    const { href } = regulatoryFor('Healthcare / Pharmaceutical', [])
+    expect(href).toContain('tab=standards')
+    expect(href).toContain('ind=Healthcare+%2F+Pharmaceutical')
+    // The link must express the same narrowing as the count, or the tile
+    // promises 3 and the register shows 197.
+    expect(href).toContain('req=yes%2Cexpected%2Cpartial')
+  })
+
+  it('agrees with the real corpus, not just fixtures', () => {
+    // The number a reader actually sees, against the shipped CSV.
+    const { count } = regulatoryFor('Financial Services / Banking')
+    expect(count).toBeGreaterThan(0)
+  })
+})

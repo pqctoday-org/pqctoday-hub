@@ -10,6 +10,13 @@
 // Standard chips deep-link to the in-app Library entry via libraryRef.ts —
 // the same resolver Protocol Support uses. Protocol chips deep-link into the
 // Protocol Support tab.
+//
+// Picking an industry also opens a cross-reference rollup (2026-08-13): its
+// Learn modules, its technical standards grouped by body, the Crypto Lab tools
+// curated for its use cases, and a count + deep link into the regulatory
+// register. Every lookup lives in industryCrossRefs.ts so this file stays a
+// renderer. There is deliberately NO deadlines row — see that file's header for
+// the measurement that killed it.
 
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
@@ -21,6 +28,10 @@ import {
   GraduationCap as GraduationCapIcon,
   Lock,
   Globe,
+  FlaskConical,
+  Scale,
+  Container,
+  ArrowRight,
 } from 'lucide-react'
 import {
   loadIndustryLandscape,
@@ -39,7 +50,15 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
-import { learnHref } from './learnHref'
+import {
+  learnModulesForIndustry,
+  librarySectorHref,
+  regulatoryFor,
+  standardsForIndustry,
+  toolsForIndustry,
+  toolsForUseCase,
+} from './industryCrossRefs'
+import type { WorkshopTool } from '../Playground/workshopRegistry'
 
 // ── Formatting helpers ───────────────────────────────────────────────────────
 
@@ -153,6 +172,54 @@ function StandardChip({ std }: { std: IndustryStandard }) {
   )
 }
 
+/** Crypto Lab tool chip. Sandbox scenarios are badged: they need the
+ *  access-gated Docker runtime and will not run in the browser. */
+function ToolChip({ tool, title }: { tool: WorkshopTool; title?: string }) {
+  return (
+    <Link
+      to={`/playground/${tool.id}`}
+      title={title ?? `${tool.name} — ${tool.description}`}
+      className="inline-flex items-center gap-1 rounded border border-border bg-card px-2 py-0.5 text-xs text-foreground hover:border-primary/60 hover:text-primary"
+    >
+      <FlaskConical size={11} className="opacity-60" />
+      {tool.name}
+      {tool.sandbox && (
+        <span
+          className="inline-flex items-center gap-0.5 rounded bg-muted px-1 text-[10px] font-semibold text-muted-foreground"
+          title="Runs in the access-gated Docker sandbox, not in your browser"
+        >
+          <Container size={9} />
+          sandbox
+        </span>
+      )}
+    </Link>
+  )
+}
+
+/** One labelled row of the industry rollup. */
+function RollupRow({
+  icon: Icon,
+  label,
+  count,
+  children,
+}: {
+  icon: typeof BookMarked
+  label: string
+  count?: number
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 border-t border-border py-2 first:border-t-0 max-md:min-w-0">
+      <span className="flex w-24 shrink-0 items-center gap-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Icon size={12} className="opacity-70" />
+        {label}
+        {count !== undefined && count > 0 && <span className="opacity-60">({count})</span>}
+      </span>
+      {children}
+    </div>
+  )
+}
+
 function UseCaseCard({
   uc,
   standards,
@@ -165,6 +232,7 @@ function UseCaseCard({
   showIndustry?: boolean
 }) {
   const Icon = USE_CASE_ICONS[uc.useCaseIcon] ?? Lock
+  const tools = toolsForUseCase(uc)
   const relevantStandards = standards.filter(
     (s) =>
       s.industry === uc.industry &&
@@ -232,6 +300,15 @@ function UseCaseCard({
         </div>
       )}
 
+      {tools.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Try it</span>
+          {tools.map((t) => (
+            <ToolChip key={t.id} tool={t} />
+          ))}
+        </div>
+      )}
+
       <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground max-md:min-w-0">
         <a
           href={uc.sourceUrl}
@@ -245,6 +322,121 @@ function UseCaseCard({
         </a>
         <span title="Last verified">{uc.lastVerified}</span>
       </div>
+    </div>
+  )
+}
+
+/**
+ * The cross-reference rollup under an industry header: Learn, Standards, Crypto
+ * Lab tools, and a pointer at the regulatory register.
+ *
+ * The regulatory row is a COUNT AND A LINK, never a list. Rendering the
+ * register here would be a second, degraded copy of /compliance, which already
+ * does it with country filters, tiers, trust paths and a detail drawer. The
+ * count answers "is there anything here for me"; the link hands off the rest,
+ * carrying the same industry and the same `requires_pqc` narrowing so the
+ * destination agrees with the number shown.
+ */
+function IndustryCrossRefs({
+  industry,
+  cases,
+  standards,
+}: {
+  industry: string
+  cases: IndustryUseCase[]
+  standards: IndustryStandard[]
+}) {
+  const modules = useMemo(() => learnModulesForIndustry(industry, cases), [industry, cases])
+  const stdGroups = useMemo(() => standardsForIndustry(industry, standards), [industry, standards])
+  const tools = useMemo(() => toolsForIndustry(industry, cases), [industry, cases])
+  // Sector-only, no country: the link doesn't carry one, so folding the
+  // reader's country into the number would make the tile and its destination
+  // disagree — and make a shared URL show different counts to different people.
+  const regulatory = useMemo(() => regulatoryFor(industry), [industry])
+  const sectorHref = librarySectorHref(industry)
+
+  return (
+    <div className="mb-4 rounded-lg border border-border bg-card px-4 py-1">
+      <RollupRow icon={GraduationCapIcon} label="Learn">
+        {modules.length > 0 ? (
+          modules.map(({ manifest, href }) => (
+            <Link
+              key={manifest.id}
+              to={href}
+              className="inline-flex items-center gap-1 rounded border border-border bg-muted/40 px-2 py-0.5 text-xs text-foreground hover:border-primary/60 hover:text-primary"
+              title={manifest.description}
+            >
+              {manifest.title}
+              <span className="opacity-60">
+                {manifest.duration}
+                {manifest.difficulty ? ` · ${manifest.difficulty}` : ''}
+              </span>
+            </Link>
+          ))
+        ) : (
+          // Real, reportable content gap — Cross-Industry and Media/DRM have no
+          // Industries-track module. Say so rather than rendering nothing.
+          <span className="text-xs text-muted-foreground">No Industries-track module yet</span>
+        )}
+      </RollupRow>
+
+      <RollupRow
+        icon={BookMarked}
+        label="Standards"
+        count={stdGroups.reduce((n, g) => n + g.standards.length, 0)}
+      >
+        {stdGroups.length > 0 ? (
+          stdGroups.map((g) => (
+            <span key={g.body} className="inline-flex flex-wrap items-center gap-1">
+              <span className="text-[11px] text-muted-foreground">{g.body}</span>
+              {g.standards.map((s) => (
+                <StandardChip key={s.standardId} std={s} />
+              ))}
+            </span>
+          ))
+        ) : (
+          // 10 of 22 industries have no rows. Decision 2026-08-13: do NOT
+          // inherit the cross-industry set — an empty block is the honest
+          // signal, and the Library link keeps the reader moving.
+          <span className="text-xs text-muted-foreground">
+            No sector-specific technical standards on record yet.{' '}
+            {sectorHref && (
+              <Link to={sectorHref} className="underline hover:text-primary">
+                Browse the Library for this sector →
+              </Link>
+            )}
+          </span>
+        )}
+      </RollupRow>
+
+      <RollupRow icon={FlaskConical} label="Try it" count={tools.length}>
+        {tools.map(({ tool, useCases }) => (
+          <ToolChip
+            key={tool.id}
+            tool={tool}
+            title={`${tool.name} — ${tool.description}. Used by: ${useCases
+              .map((u) => u.useCaseLabel)
+              .join(', ')}`}
+          />
+        ))}
+      </RollupRow>
+
+      <RollupRow icon={Scale} label="Regulatory">
+        {regulatory.count > 0 ? (
+          <Link
+            to={regulatory.href}
+            className="inline-flex items-center gap-1 text-xs text-foreground hover:text-primary"
+          >
+            <span className="font-medium">{regulatory.count}</span> PQC-relevant mandate
+            {regulatory.count === 1 ? '' : 's'} for this sector
+            <ArrowRight size={11} className="opacity-60" />
+          </Link>
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            No PQC-specific mandates on record for this sector.
+          </span>
+        )}
+      </RollupRow>
     </div>
   )
 }
@@ -499,7 +691,6 @@ export function IndustryLandscapeView() {
             const IndIcon = INDUSTRY_ICONS[selectedIndustry] ?? Globe
             const market = marketByIndustry.get(selectedIndustry)
             const cases = useCasesByIndustry.get(selectedIndustry) ?? []
-            const industryStandards = standards.filter((s) => s.industry === selectedIndustry)
             if (cases.length === 0) {
               return (
                 <p className="text-sm text-muted-foreground">
@@ -530,34 +721,19 @@ export function IndustryLandscapeView() {
                       No official market-size figure
                     </span>
                   )}
-                  <div className="ml-auto flex items-center gap-3">
-                    {cases[0]?.learnModuleId && (
-                      <Link
-                        to={learnHref(cases[0].learnModuleId, selectedIndustry)}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
-                      >
-                        <GraduationCapIcon size={12} /> Learn: {selectedIndustry}
-                      </Link>
-                    )}
-                    <Link
-                      to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
-                    >
-                      <LandmarkIcon size={12} /> Quantum threats for this industry
-                    </Link>
-                  </div>
+                  <Link
+                    to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
+                    className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                  >
+                    <LandmarkIcon size={12} /> Quantum threats for this industry
+                  </Link>
                 </div>
 
-                {industryStandards.length > 0 && (
-                  <div className="mb-4 flex flex-wrap items-center gap-1.5">
-                    <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                      Applicable standards
-                    </span>
-                    {industryStandards.map((s) => (
-                      <StandardChip key={s.standardId} std={s} />
-                    ))}
-                  </div>
-                )}
+                <IndustryCrossRefs
+                  industry={selectedIndustry}
+                  cases={cases}
+                  standards={standards}
+                />
 
                 <div className="grid gap-3 md:grid-cols-2">
                   {cases.map((uc) => (
