@@ -158,4 +158,26 @@ describe('conceptXwalkData', () => {
       0.95
     )
   })
+
+  // 2026-08-12 regression: concept_xwalks_08122026.csv shipped xw-e1b7b78a
+  // with confidence '"high\n"' (an embedded newline inside the quoted cell).
+  // transformRow lower-cased without trimming, LABEL_TO_SCORE missed, and the
+  // row silently scored 30 (low) instead of 85 (high). Loader now trims; the
+  // r2 data file fixes the cell; these pin both.
+  it('xw-e1b7b78a scores high (85), not the silent low fallback', () => {
+    const edge = conceptXwalkData.find((e) => e.xwalkId === 'xw-e1b7b78a')
+    expect(edge).toBeDefined()
+    expect(edge?.confidence).toBe('high')
+    expect(edge?.confidenceScore).toBe(85)
+  })
+
+  it('every confidence label is an exact vocabulary token (no stray whitespace)', () => {
+    const valid = new Set(['high', 'medium', 'low'])
+    for (const edge of conceptXwalkData) {
+      expect(
+        valid.has(edge.confidence),
+        `bad confidence ${JSON.stringify(edge.confidence)} on ${edge.xwalkId}`
+      ).toBe(true)
+    }
+  })
 })
