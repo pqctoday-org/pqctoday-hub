@@ -626,14 +626,14 @@ export function IndustryLandscapeView() {
                       type="button"
                       variant="ghost"
                       onClick={() => pickIndustry(ind)}
-                      className="mb-2 flex h-auto items-center gap-2 p-0 text-left hover:bg-transparent"
+                      className="mb-2 flex h-auto min-w-0 flex-wrap items-center gap-2 whitespace-normal p-0 text-left hover:bg-transparent"
                       title={`Open ${ind} in industry view`}
                     >
                       <IndIcon size={18} className="text-primary" />
                       <span className="font-medium text-foreground hover:text-primary">{ind}</span>
                       {market && <MarketSizeBadge m={market} />}
                     </Button>
-                    <div className="grid gap-3 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                       {hits.map((uc) => (
                         <UseCaseCard
                           key={uc.useCaseId}
@@ -735,7 +735,7 @@ export function IndustryLandscapeView() {
                   standards={standards}
                 />
 
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {cases.map((uc) => (
                     <UseCaseCard
                       key={uc.useCaseId}
