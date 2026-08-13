@@ -160,3 +160,56 @@ describe('OASIS corpus replay (real wasm engine)', () => {
     expect(passCount).toBe(42)
   })
 })
+
+// The corpus and the wasm bundle are staged by the same script run
+// (scripts/build-kmip-wasm.sh in pqctoday-hsm), so they should always describe
+// the same engine commit. Nothing enforced that before 2026-08-12: the manifest
+// carried no provenance at all, so a corpus left behind by a partial re-stage
+// was indistinguishable from one in sync — and the replay above would keep
+// passing against fixtures older than the engine replaying them.
+describe('corpus manifest provenance', () => {
+  const manifest = JSON.parse(readFileSync(join(CORPUS_ROOT, 'manifest.json'), 'utf8')) as {
+    hsmCommit?: string
+    builtAt?: string
+    specBaseline?: string
+    tierCounts?: Record<string, number>
+    count?: number
+    tests?: unknown[]
+  }
+
+  it('records which engine commit, date and spec baseline it was staged from', () => {
+    expect(manifest.hsmCommit, 'manifest.json has no hsmCommit').toMatch(/^[0-9a-f]{7,40}$/)
+    expect(manifest.builtAt, 'manifest.json has no builtAt').toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(manifest.specBaseline).toContain('CSD02')
+  })
+
+  it('agrees with the wasm bundle it is replayed by', () => {
+    const provenance = JSON.parse(
+      readFileSync(join(__dirname, '../../../../public/wasm/wasm-provenance.json'), 'utf8')
+    ) as { bundles: { name: string; hsmCommit?: string }[] }
+    const bundle = provenance.bundles.find((b) => b.name === 'cacp-kmip')
+    expect(bundle, 'no cacp-kmip bundle in wasm-provenance.json').toBeDefined()
+    // Both are written from the same build; a mismatch means one was re-staged
+    // without the other. Compare on the shorter of the two — the provenance file
+    // abbreviates some commits.
+    const n = Math.min(manifest.hsmCommit!.length, bundle!.hsmCommit!.length)
+    expect(
+      manifest.hsmCommit!.slice(0, n),
+      `corpus staged from ${manifest.hsmCommit}, bundle built from ${bundle!.hsmCommit} — ` +
+        're-run scripts/build-kmip-wasm.sh so both come from one build'
+    ).toBe(bundle!.hsmCommit!.slice(0, n))
+  })
+
+  it('tier counts match the fixtures actually on disk', () => {
+    const onDisk = {
+      mandatory: readdirSync(join(CORPUS_ROOT, 'oasis/mandatory')).filter((f) => f.endsWith('.xml'))
+        .length,
+      optional: readdirSync(join(CORPUS_ROOT, 'oasis/optional')).filter((f) => f.endsWith('.xml'))
+        .length,
+      pqc: readdirSync(join(CORPUS_ROOT, 'pqc')).filter((f) => f.endsWith('.xml')).length,
+    }
+    expect(manifest.tierCounts).toEqual(onDisk)
+    expect(manifest.count).toBe(onDisk.mandatory + onDisk.optional + onDisk.pqc)
+    expect(manifest.tests).toHaveLength(manifest.count!)
+  })
+})

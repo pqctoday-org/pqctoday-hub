@@ -1,5 +1,17 @@
 {
   "generated_by": "scripts/build-kmip-wasm.sh (corpus staging step)",
+  "hsmCommit": "1cab5352d8738d85737c8a0e4ed3992c05dae208",
+  "builtAt": "2026-08-09",
+  "specBaseline": "KMIP 3.0 CSD02 (2026-05-07); Profiles 3.0 CSD02 (2026-05-21)",
+  "corpusSource": {
+    "oasis": "kmip-profiles-v3.0-csd02.zip test-cases/kmip-v3.0/{mandatory,optional}",
+    "pqc": "vendored subset of OASIS kmip-3-0-pqc-tests-03.zip"
+  },
+  "tierCounts": {
+    "mandatory": 95,
+    "optional": 7,
+    "pqc": 42
+  },
   "count": 144,
   "tests": [
     {
