@@ -601,3 +601,36 @@ describe('patchMatrix quote-style guard', () => {
     }
   })
 })
+
+// ── UPGRADE GUARD (Tier 2.12, 2026-08-13) ──────────────────────────────────
+// The second half of the 2026-08-09 lesson: the ambiguous-ref guard blocks a
+// cell whose refs disagree, but a cell with ONE wrong enabler/OID ref that
+// advanced to RFC still claimed a published mechanism for a protocol it never
+// defined. Standalone (unattended) runs now gate rank increases behind
+// --allow-upgrade; the per-item admin path and programmatic callers are
+// human-approved contexts and keep applying (library default).
+describe('upgrade guard (standalone mode)', () => {
+  it('blocks a rank increase when allowUpgrades is explicitly false', () => {
+    const r = patchMatrix(matrix, [delta('hybridKem', 'wg-document', 'rfc-published')], {
+      allowUpgrades: false,
+    })
+    expect(r.applied).toBe(0)
+    expect(r.upgrades).toHaveLength(1)
+    expect(r.upgrades[0]).toContain('wg-document -> rfc-published')
+    expect(r.next).toBe(matrix)
+  })
+
+  it('applies the same increase when allowed (default / per-item path)', () => {
+    const r = patchMatrix(matrix, [delta('hybridKem', 'wg-document', 'rfc-published')])
+    expect(r.applied).toBe(1)
+    expect(r.upgrades).toHaveLength(0)
+  })
+
+  it('never gates downgrades (the downgrade guard owns those)', () => {
+    const r = patchMatrix(matrix, [delta('pureKem', 'rfc-published', 'wg-document')], {
+      allowUpgrades: false,
+    })
+    expect(r.upgrades).toHaveLength(0)
+    expect(r.downgrades).toHaveLength(1)
+  })
+})
