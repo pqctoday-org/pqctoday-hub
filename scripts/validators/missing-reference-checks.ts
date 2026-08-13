@@ -17,6 +17,7 @@
  * shape; default on for local maintainer runs (--with-candidates).
  */
 import fs from 'node:fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'node:path'
 import { glob } from 'glob'
 import Papa from 'papaparse'
@@ -107,7 +108,7 @@ const DATED_CSV_RE = /^[a-z_]+_\d{8}(?:_r\d+)?\.csv$/i
 function findLatest(pattern: string): string | null {
   const all = glob.sync(pattern, { cwd: REPO_ROOT })
   const matches = all.filter((p) => DATED_CSV_RE.test(path.basename(p)))
-  matches.sort()
+  matches.sort(datedCsvCompare)
   return matches.at(-1) ?? null
 }
 

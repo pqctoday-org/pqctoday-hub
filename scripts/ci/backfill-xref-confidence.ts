@@ -13,6 +13,7 @@
  * Usage: npx tsx scripts/ci/backfill-xref-confidence.ts [--dry-run]
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import Papa from 'papaparse'
 import { glob } from 'glob'
@@ -29,7 +30,7 @@ function computeScore(row: Record<string, string>): number {
 
 async function main() {
   const files = await glob('algo_product_xref_*.csv', { cwd: DATA_DIR })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest) {
     console.error('No algo_product_xref CSV found')

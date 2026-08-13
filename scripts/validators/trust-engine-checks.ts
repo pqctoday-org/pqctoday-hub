@@ -9,6 +9,7 @@
  */
 
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import { execSync } from 'child_process'
 import { glob } from 'glob'
@@ -237,7 +238,7 @@ function runQaS(): CheckResult {
   const allFiles = fs
     .readdirSync(qaGlob)
     .filter((f) => f.startsWith('module_qa_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
     .reverse()
 
   // Keep latest per module prefix
@@ -302,7 +303,7 @@ function runQaCswp(): CheckResult {
   const latestFile = fs
     .readdirSync(qaDir)
     .filter((f) => f.startsWith('module_qa_crypto-agility_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
     .reverse()[0]
 
   if (!latestFile) {
@@ -355,7 +356,7 @@ const VALID_RELATIONSHIP_TYPES = new Set([
 
 async function runCm1(): Promise<CheckResult> {
   const files = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/concept_xwalks_*.csv'
   if (!latest) return pass('CM-1', 'Xwalk relationship_type validation', sourceDesc)
@@ -399,7 +400,7 @@ const VALID_RATIONALE_TYPES = new Set([
 
 async function runCm2(): Promise<CheckResult> {
   const files = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/concept_xwalks_*.csv'
   if (!latest) return pass('CM-2', 'Xwalk rationale_type validation', sourceDesc)
@@ -429,7 +430,7 @@ async function runCm2(): Promise<CheckResult> {
 
 async function runCm3(): Promise<CheckResult> {
   const files = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/concept_xwalks_*.csv'
   if (!latest) return pass('CM-3', 'Xwalk evidence non-empty', sourceDesc)
@@ -467,7 +468,7 @@ async function runCm3(): Promise<CheckResult> {
 
 async function runCmE(): Promise<CheckResult> {
   const files = await glob('src/data/compliance_[0-9]*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/compliance_*.csv'
   if (!latest) return pass('CM-E', 'Compliance countries ISO 3166 check (grace period)', sourceDesc)
@@ -525,7 +526,7 @@ const VALID_CSWP39_TAGS = new Set([
 
 async function runCmCswp(): Promise<CheckResult> {
   const files = await glob('src/data/compliance_[0-9]*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/compliance_*.csv'
   if (!latest) return pass('CM-CSWP', 'cswp39_tags closed set validation', sourceDesc)
@@ -565,7 +566,7 @@ const PQC_OVERLAY_RE = /^PQC-[A-Z][A-Z0-9-]+$/
 
 async function runCmG(): Promise<CheckResult> {
   const files = await glob('src/data/quantum_threats_hsm_industries_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   const sourceDesc = 'src/data/quantum_threats_hsm_industries_*.csv'
   if (!latest)
@@ -634,7 +635,7 @@ async function loadKnownSourceIds(): Promise<Set<string>> {
   const known = new Set<string>()
 
   const trustedFiles = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
-  trustedFiles.sort()
+  trustedFiles.sort(datedCsvCompare)
   const latestTrusted = trustedFiles.at(-1)
   if (latestTrusted) {
     const raw = fs.readFileSync(path.join(REPO_ROOT, latestTrusted), 'utf-8')
@@ -651,7 +652,7 @@ async function loadKnownSourceIds(): Promise<Set<string>> {
   const authFiles = await glob('src/data/pqc_authoritative_sources_reference_*.csv', {
     cwd: REPO_ROOT,
   })
-  authFiles.sort()
+  authFiles.sort(datedCsvCompare)
   const latestAuth = authFiles.at(-1)
   if (latestAuth) {
     const raw = fs.readFileSync(path.join(REPO_ROOT, latestAuth), 'utf-8')
@@ -671,7 +672,7 @@ async function loadKnownSourceIds(): Promise<Set<string>> {
 
 async function runCmT(): Promise<CheckResult[]> {
   const timelineFiles = await glob('src/data/timeline_*.csv', { cwd: REPO_ROOT })
-  timelineFiles.sort()
+  timelineFiles.sort(datedCsvCompare)
   const latestTimeline = timelineFiles.at(-1)
   if (!latestTimeline)
     return [
@@ -806,7 +807,7 @@ async function runCmT(): Promise<CheckResult[]> {
 
 async function runCmCompliance04(): Promise<CheckResult> {
   const complianceFiles = await glob('src/data/compliance_*.csv', { cwd: REPO_ROOT })
-  complianceFiles.sort()
+  complianceFiles.sort(datedCsvCompare)
   const latestCompliance = complianceFiles.at(-1)
   if (!latestCompliance)
     return pass(
@@ -859,7 +860,7 @@ const ALLOWED_TIERS = new Set(['1_Authoritative', '2_Core', '3_Supporting', '4_C
 
 async function runCmTs(): Promise<CheckResult> {
   const files = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest)
     return pass(
@@ -913,7 +914,7 @@ const ALGO_XREF_FAMILIES = new Set(['KEM', 'DSA', 'HBS'])
 async function runCmAlgoXref(): Promise<CheckResult[]> {
   const sourceDesc = 'src/data/standard_implements_algo_xref_*.csv'
   const files = await glob('src/data/standard_implements_algo_xref_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest) {
     return [pass('CM-ALGO-XREF', 'standard_implements_algo_xref referential integrity', sourceDesc)]
@@ -927,7 +928,7 @@ async function runCmAlgoXref(): Promise<CheckResult[]> {
 
   // Build the set of known library standard identifiers (reference_id + document_title)
   const libGlob = await glob('src/data/library_*.csv', { cwd: REPO_ROOT })
-  libGlob.sort()
+  libGlob.sort(datedCsvCompare)
   const libLatest = libGlob.at(-1)
   const known = new Set<string>()
   if (libLatest) {
@@ -1046,7 +1047,7 @@ const VALID_REGISTRY_TYPES = new Set([
 async function runCmRegistry(): Promise<CheckResult[]> {
   const sourceDesc = 'src/data/concept_registry_*.csv'
   const files = await glob('src/data/concept_registry_*.csv', { cwd: REPO_ROOT })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest) {
     return [pass('CM-REGISTRY', 'concept_registry referential integrity', sourceDesc)]
@@ -1061,7 +1062,7 @@ async function runCmRegistry(): Promise<CheckResult[]> {
   // Build the resolution targets for each source_table.
   async function loadIds(globPattern: string, idCols: string[]): Promise<Set<string>> {
     const matches = await glob(globPattern, { cwd: REPO_ROOT })
-    matches.sort()
+    matches.sort(datedCsvCompare)
     const latestMatch = matches.at(-1)
     const ids = new Set<string>()
     if (!latestMatch) return ids
@@ -1189,7 +1190,7 @@ async function runCmRegistry(): Promise<CheckResult[]> {
 
 async function runCmConcept(): Promise<CheckResult[]> {
   const xwalkGlob = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
-  xwalkGlob.sort()
+  xwalkGlob.sort(datedCsvCompare)
   const xwalkLatest = xwalkGlob.at(-1)
   const sourceDesc = 'src/data/concept_xwalks_*.csv'
   if (!xwalkLatest) {
@@ -1199,7 +1200,7 @@ async function runCmConcept(): Promise<CheckResult[]> {
 
   // Load registry concept_ids
   const regGlob = await glob('src/data/concept_registry_*.csv', { cwd: REPO_ROOT })
-  regGlob.sort()
+  regGlob.sort(datedCsvCompare)
   const regLatest = regGlob.at(-1)
   const knownIds = new Set<string>()
   if (regLatest) {
@@ -1326,7 +1327,7 @@ async function runCmAt(): Promise<CheckResult[]> {
 
   for (const t of CM_AT_TARGETS) {
     const matches = await glob(t.csvGlob, { cwd: REPO_ROOT })
-    matches.sort()
+    matches.sort(datedCsvCompare)
     const latest = matches.at(-1)
     if (!latest) {
       results.push(pass(`CM-AT-${t.domain}`, `Attribution coverage — ${t.domain}`, t.csvGlob))
@@ -1467,7 +1468,7 @@ async function runCmF(): Promise<CheckResult[]> {
 
   for (const t of CM_F_TARGETS) {
     const matches = await glob(t.csvGlob, { cwd: REPO_ROOT })
-    matches.sort()
+    matches.sort(datedCsvCompare)
     const latest = matches.at(-1)
     if (!latest) {
       results.push(pass(t.id, `Per-row freshness — ${t.id}`, t.csvGlob))
@@ -1658,7 +1659,7 @@ async function buildKnownConceptIds(): Promise<Set<string>> {
     const all = await glob(pattern, { cwd: REPO_ROOT })
     const matches = all.filter((p) => DATED_CSV_RE.test(path.basename(p)))
     if (matches.length === 0) continue
-    matches.sort()
+    matches.sort(datedCsvCompare)
     const latest = matches[matches.length - 1]
     const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
     const { data } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
@@ -1691,7 +1692,7 @@ async function runCmXwalk(): Promise<CheckResult[]> {
   if (matches.length === 0) {
     return [pass('CM-Xwalk', 'No production xwalk CSV found', 'src/data/concept_xwalks_*.csv')]
   }
-  matches.sort()
+  matches.sort(datedCsvCompare)
   const latest = matches[matches.length - 1]
   const relPath = latest
   const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
