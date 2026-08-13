@@ -102,7 +102,10 @@ function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
   if (!VALID_RELATIONSHIP_TYPES.has(row.relationship_type)) return null
   if (!VALID_RATIONALE_TYPES.has(row.rationale_type)) return null
 
-  const confidenceLabel = (row.confidence?.toLowerCase() ?? 'low') as XwalkConfidenceLabel
+  // trim() is load-bearing: a quoted CSV cell can carry a trailing newline
+  // ("high\n" shipped live in concept_xwalks_08122026.csv and silently scored
+  // 30 instead of 85 — 2026-08-12), and LABEL_TO_SCORE lookup misses then.
+  const confidenceLabel = (row.confidence?.trim().toLowerCase() ?? 'low') as XwalkConfidenceLabel
   const confidenceScore = LABEL_TO_SCORE[confidenceLabel] ?? 30
 
   return {
