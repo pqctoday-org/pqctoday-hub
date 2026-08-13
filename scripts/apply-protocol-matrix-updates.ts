@@ -24,6 +24,7 @@
  *   npx tsx scripts/apply-protocol-matrix-updates.ts           # dry-run
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty
+ *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-upgrade
  *   npx tsx scripts/apply-protocol-matrix-updates.ts --apply --items-file=<path>
  *
  * `--items-file=<path>` (WP-1.11, 2026-07-25): names a JSON file holding an
@@ -189,12 +190,14 @@ export function dimensionSpan(
  */
 export function patchMatrix(
   source: string,
-  deltas: StageDelta[]
+  deltas: StageDelta[],
+  opts: { allowUpgrades?: boolean } = {}
 ): {
   next: string
   applied: number
   appliedKeys: string[]
   downgrades: string[]
+  upgrades: string[]
   curatedNotes: string[]
   ambiguous: string[]
   statelessCells: string[]
@@ -211,6 +214,7 @@ export function patchMatrix(
   }
 
   const downgrades: string[] = []
+  const upgrades: string[] = []
   const curatedNotes: string[] = []
   const ambiguous: string[] = []
   const statelessCells: string[] = []
@@ -273,6 +277,30 @@ export function patchMatrix(
         downgrades.push(
           `${rowId}::${dim}: ${oldStage} (level ${oldLevel}) -> ${newStage} (level ${newLevel})`
         )
+        continue
+      }
+      // UPGRADE GUARD (2026-08-13, Tier 2.12 — the second half of the
+      // 2026-08-09 lesson). The ambiguous-ref guard above blocks a cell whose
+      // refs DISAGREE, but a cell with ONE wrong ref still sails: a single
+      // enabler/OID document that advanced to RFC would still claim a
+      // published mechanism for a protocol it never defined. An upgrade is
+      // the normal, desired direction — so it is not refused, it is GATED:
+      // standalone runs must pass --allow-upgrade after verifying each ref
+      // actually defines this protocol's mechanism; the admin per-item apply
+      // path (--items-file) is already a human approving the specific cell,
+      // so it passes allowUpgrades and is unaffected.
+      // Library default is allowUpgrades (existing programmatic callers and the
+      // per-item admin path are human-approved contexts); ONLY the standalone
+      // CLI passes false, so the gate sits exactly at the unattended entrance.
+      if (
+        opts.allowUpgrades === false &&
+        oldStage &&
+        newStage &&
+        DRAFT_STAGE_LEVEL[oldStage as DraftStage] !== undefined &&
+        DRAFT_STAGE_LEVEL[newStage as DraftStage] !== undefined &&
+        DRAFT_STAGE_LEVEL[newStage as DraftStage] > DRAFT_STAGE_LEVEL[oldStage as DraftStage]
+      ) {
+        upgrades.push(`${rowId}::${dim}: ${oldStage} -> ${newStage} (ref: ${ds[0].ref_id})`)
         continue
       }
     }
@@ -366,7 +394,16 @@ export function patchMatrix(
     )
   }
 
-  return { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous, statelessCells }
+  return {
+    next,
+    applied,
+    appliedKeys,
+    downgrades,
+    upgrades,
+    curatedNotes,
+    ambiguous,
+    statelessCells,
+  }
 }
 
 /** One reviewer-approved item, as the admin apply flow writes it (WP-1.11,
@@ -513,8 +550,17 @@ function main(): void {
   }
 
   const source = readFileSync(MATRIX_FILE, 'utf-8')
-  const { next, applied, appliedKeys, downgrades, curatedNotes, ambiguous, statelessCells } =
-    patchMatrix(source, deltasToPatch)
+  const allowUpgrades = itemsFilter !== null || args.has('--allow-upgrade')
+  const {
+    next,
+    applied,
+    appliedKeys,
+    downgrades,
+    upgrades,
+    curatedNotes,
+    ambiguous,
+    statelessCells,
+  } = patchMatrix(source, deltasToPatch, { allowUpgrades })
 
   // Reported before anything else, and on stderr, because a downgrade is not
   // routine: it means the feed disagreed with the matrix in the one direction
@@ -527,6 +573,17 @@ function main(): void {
     console.error('A lower stage than the one encoded usually means the datatracker')
     console.error('query resolved to the wrong document, not that work regressed.')
     console.error('Verify against the datatracker by hand before changing anything.')
+    console.error('')
+  }
+
+  if (upgrades.length > 0) {
+    console.error(`BLOCKED ${upgrades.length} stage UPGRADE(s) — not applied (standalone mode):`)
+    for (const u of upgrades) console.error(`  ${u}`)
+    console.error('An upgrade is the normal direction, which is exactly why it needs the')
+    console.error('one check a script cannot make: does this ref DEFINE the mechanism, or')
+    console.error('merely enable it (the 2026-08-09 Kerberos/X.509-OID incident)? Verify')
+    console.error('each ref, then re-run with --allow-upgrade — or approve the specific')
+    console.error('cells through the admin apply path, which is per-item by construction.')
     console.error('')
   }
 
