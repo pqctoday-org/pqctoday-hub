@@ -28,6 +28,7 @@
  *   --file <name> Process only CSVs matching this name prefix (e.g. 'compliance')
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import Papa from 'papaparse'
 import { glob } from 'glob'
@@ -334,7 +335,7 @@ async function main() {
   if (shouldProcess('compliance')) {
     const files = await glob(`${DATA_DIR}/compliance_*.csv`)
     files
-      .sort()
+      .sort(datedCsvCompare)
       .slice(-1)
       .forEach((f) => allStats.push(processComplianceCsv(f)))
   }
@@ -342,7 +343,7 @@ async function main() {
   if (shouldProcess('library')) {
     const files = await glob(`${DATA_DIR}/library_*.csv`)
     files
-      .sort()
+      .sort(datedCsvCompare)
       .slice(-1)
       .forEach((f) => allStats.push(processLibraryCsv(f)))
   }
@@ -350,7 +351,7 @@ async function main() {
   if (shouldProcess('threats')) {
     const files = await glob(`${DATA_DIR}/threats_*.csv`)
     files
-      .sort()
+      .sort(datedCsvCompare)
       .slice(-1)
       .forEach((f) => allStats.push(processThreatsCsv(f)))
   }

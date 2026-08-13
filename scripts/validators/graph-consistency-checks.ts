@@ -46,6 +46,7 @@
  * PRIVATE TOOL — not included in public repo.
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
 import { loadCSV, readCSV, splitSemicolon, getDataDir } from './data-loader.js'
@@ -257,7 +258,7 @@ function loadModuleQaCombined(): { rows: Record<string, string>[]; file: string 
   const files = fs
     .readdirSync(qaDir)
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
     .reverse()
 
   if (files.length === 0) return { rows: [], file: '' }

@@ -7,6 +7,7 @@
  * data (library, timeline, product extractions, glossary).
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import Papa from 'papaparse'
 import type { CheckResult, Finding, CsvRow } from './types.js'
@@ -98,7 +99,7 @@ function runN20Checks(
   const qaFiles = fs
     .readdirSync(qaDir)
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
   if (qaFiles.length === 0) return results
 
   const latestQA = qaFiles[qaFiles.length - 1]

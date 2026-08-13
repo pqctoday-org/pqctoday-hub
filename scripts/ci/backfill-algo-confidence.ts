@@ -14,6 +14,7 @@
  * Usage: npx tsx scripts/ci/backfill-algo-confidence.ts [--dry-run]
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import Papa from 'papaparse'
 import { glob } from 'glob'
@@ -34,7 +35,7 @@ function computeScore(row: Record<string, string>): number {
 
 async function main() {
   const files = await glob('pqc_complete_algorithm_reference_*.csv', { cwd: DATA_DIR })
-  files.sort()
+  files.sort(datedCsvCompare)
   const latest = files.at(-1)
   if (!latest) {
     console.error('No algorithm CSV found')

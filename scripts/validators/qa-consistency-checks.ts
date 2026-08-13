@@ -8,6 +8,7 @@
  * Checks: QA-C1..QA-C10, QA-D1..QA-D2
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
 import { loadCSV, splitSemicolon, getDataDir, ROOT } from './data-loader.js'
@@ -206,7 +207,7 @@ function findLatestQACSV(): { path: string; file: string } | null {
   const files = fs
     .readdirSync(qaDir())
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
     .reverse()
 
   if (files.length === 0) return null

@@ -59,3 +59,26 @@ export const ROLE_BOARD_CTAS_RE = /^role_board_ctas_(\d{2})(\d{2})(\d{4})\.csv$/
 
 /** Matches `role_board_variants_MMDDYYYY.csv`. */
 export const ROLE_BOARD_VARIANTS_RE = /^role_board_variants_(\d{2})(\d{2})(\d{4})\.csv$/
+
+/**
+ * Ascending chronological comparator for dated-CSV path lists — drop-in for
+ * the bare `.sort()` + `.at(-1)` "latest file" idiom (Tier 2.8, 2026-08-12):
+ * lexical order over MMDDYYYY names is NOT chronological (`01012027` sorts
+ * below `08022026`), and it already mis-orders `_r10`+ against `_r9`.
+ * 32 call sites across scripts/validators and scripts/ci carried the bare
+ * idiom; `no-lexical-latest.test.ts` now forbids reintroducing it.
+ *
+ * Undated names sort before all dated ones (a "latest dated" pick must never
+ * prefer an undated stray), ties fall back to localeCompare for stability.
+ */
+export function datedCsvCompare(a: string, b: string): number {
+  const key = (p: string): number => {
+    const base = p.split('/').pop() ?? p
+    // extension-agnostic: dated .md enrichment files share the exact bug class
+    const m = /_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.[a-z]+$/.exec(base)
+    if (!m) return 0
+    const [, mm, dd, yyyy, r] = m
+    return Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd)) + Number(r ?? 0)
+  }
+  return key(a) - key(b) || a.localeCompare(b)
+}

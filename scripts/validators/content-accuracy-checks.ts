@@ -16,6 +16,7 @@
  * QA-F6: Non-PQC standard claims                  (ERROR)
  */
 import fs from 'fs'
+import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
 
@@ -106,7 +107,7 @@ function loadQARows(): { rows: QARow[]; file: string } | null {
   const files = fs
     .readdirSync(qaDir())
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
-    .sort()
+    .sort(datedCsvCompare)
     .reverse()
   if (files.length === 0) return null
 
@@ -445,7 +446,7 @@ function checkEnrichmentHealth(): CheckResult {
   const allLibraryFiles = fs
     .readdirSync(enrichmentDir())
     .filter((f) => f.endsWith('.md') && f.startsWith('library_doc_enrichments_'))
-    .sort()
+    .sort(datedCsvCompare)
   const enrichFiles =
     allLibraryFiles.length > 0 ? [allLibraryFiles[allLibraryFiles.length - 1]] : []
 
