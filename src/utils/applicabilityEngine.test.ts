@@ -269,6 +269,59 @@ describe('applicableThreats', () => {
   })
 })
 
+// ── Sector-vocabulary industry matching (regression, 2026-08-13) ─────────
+
+describe('industry matching via the shared sector vocabulary', () => {
+  // CHARACTERIZATION, not a regression. An earlier analysis claimed a
+  // Telecommunications profile could not reach the GSMA/3GPP rows (all tagged
+  // 'Information Technology') because expandIndustriesForMatching breaks on the
+  // first matching NAICS_2DIGIT_TO_FREEFORM group and 'Information Technology'
+  // contains 'Technology' (group '54'). That was wrong: the analysis was
+  // simulated in a language that preserves insertion order, but JS iterates
+  // integer-like object keys in ASCENDING NUMERIC order — so '51', which holds
+  // 'Telecommunications', is reached before '54'. This test pins the behaviour
+  // so the claim cannot be re-made without evidence.
+  it('a Telecommunications profile reaches Information-Technology-tagged rows', () => {
+    const gsma = makeFramework({
+      id: 'gsma-pq-03',
+      label: 'GSMA PQ.03: Post Quantum Cryptography Guidelines',
+      industries: ['Information Technology'],
+    })
+    const results = applicableFrameworks({ industry: 'Telecommunications', country: null }, [gsma])
+    expect(results.map((r) => r.item.id)).toEqual(['gsma-pq-03'])
+  })
+
+  // REAL defect, verified by sabotage: Automotive, Aerospace and
+  // Retail & E-Commerce appear in no NAICS_2DIGIT_TO_FREEFORM group at all, so
+  // 'Retail Trade' rows were unreachable from a Retail & E-Commerce profile.
+  it('reaches sector rows for industries that had no NAICS alias group', () => {
+    const retail = makeFramework({ id: 'RETAIL', industries: ['Retail Trade'] })
+    const results = applicableFrameworks({ industry: 'Retail & E-Commerce', country: null }, [
+      retail,
+    ])
+    expect(results.map((r) => r.item.id)).toEqual(['RETAIL'])
+  })
+
+  // The Industry Landscape tile passes its own label straight through rather
+  // than maintaining a 23rd private vocabulary.
+  it('accepts an industry-landscape label directly', () => {
+    const hipaa = makeFramework({ id: 'HIPAA', industries: ['Healthcare & Life Sciences'] })
+    const results = applicableFrameworks(
+      { industry: 'Healthcare / Pharmaceutical', country: null },
+      [hipaa]
+    )
+    expect(results.map((r) => r.item.id)).toEqual(['HIPAA'])
+  })
+
+  // The widening must not make unrelated sectors match each other.
+  it('does not match across unrelated sectors', () => {
+    const energy = makeFramework({ id: 'ENERGY', industries: ['Energy & Utilities'] })
+    expect(
+      applicableFrameworks({ industry: 'Healthcare / Pharmaceutical', country: null }, [energy])
+    ).toEqual([])
+  })
+})
+
 // ── groupByTier ──────────────────────────────────────────────────────────
 
 describe('groupByTier', () => {

@@ -41,6 +41,7 @@ import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import { EU_MEMBER_COUNTRIES } from './euCountries'
 import { REGION_COUNTRIES_MAP, INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
 import { canonicalizeLibraryIndustry } from './industryNormalization'
+import { resolveToNaicsSet } from '../data/sectorVocabularyData'
 import { isDomesticRegulator, isFiveEyesAffinity, isEuLevelBody } from './regulatorMap'
 import pqcVocabOverlay from '../data/pqc-vocab-overlay.json'
 
@@ -247,6 +248,43 @@ export function expandIndustriesForMatching(industries: string[]): string[] {
   return Array.from(out)
 }
 
+/**
+ * Do a CSV row's industry tags and the profile's industry land on the same
+ * NAICS sector, per the shared `sector_vocabulary_*.csv`?
+ *
+ * ADDED 2026-08-13. `expandIndustriesForMatching` above walks
+ * `NAICS_2DIGIT_TO_FREEFORM` and **breaks on the first matching group**, which
+ * is wrong whenever a label belongs to two groups. The live case:
+ * `'Information Technology'` contains the substring `'Technology'`, which is in
+ * group `'54'`, iterated before `'51'` — the group that holds
+ * `'Telecommunications'`. So a Telecommunications reader matched **zero**
+ * telecom frameworks, and GSMA PQ.01/02/03 and every 3GPP row (all tagged
+ * `Information Technology`) were unreachable. Four canonical industries —
+ * Automotive, Aerospace, Retail & E-Commerce, Cross-cutting & Other — had no
+ * group at all, so `Retail Trade` rows were unreachable from
+ * `Retail & E-Commerce`.
+ *
+ * Rather than reorder that map (a fix that would need redoing at the next
+ * two-group label), this consults the vocabulary the Library facet and the
+ * compliance industry filter already resolve through, where a label may hold
+ * several codes at once and no ordering is implied.
+ *
+ * Deliberately ADDITIVE — it only widens `directIndustryMatch`, never narrows
+ * it, so nothing that matched before this change stops matching. That is what
+ * keeps the blast radius (/compliance, /assess, the report) to "more rows
+ * correctly included".
+ *
+ * `resolveToNaicsSet` echoes its input when nothing matches, so an unresolved
+ * label yields `['<label>']` and can only self-match — which the identity
+ * check on the line above already covers.
+ */
+function sectorCodesOverlap(csvIndustries: string[], profileIndustry: string): boolean {
+  const mine = resolveToNaicsSet(profileIndustry)
+  if (mine.length === 0 || (mine.length === 1 && mine[0] === profileIndustry)) return false
+  const mineSet = new Set(mine)
+  return csvIndustries.some((i) => resolveToNaicsSet(i).some((c) => mineSet.has(c)))
+}
+
 // ── Tier classifier ──────────────────────────────────────────────────────
 
 interface ClassifyResult {
@@ -279,7 +317,8 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
   // Industry signals — direct match only counts when the item has at least one
   // explicit industry tag; empty industry lists are NOT treated as a match for
   // industry-specific tiers (only as universal qualifiers when country matches).
-  const directIndustryMatch = hasIndustry && industries.includes(industry!)
+  const directIndustryMatch =
+    hasIndustry && (industries.includes(industry!) || sectorCodesOverlap(industries, industry!))
   const industryApplies = directIndustryMatch || industryUniversal
 
   // Authority signals — drive Mandatory-vs-Recognized when country matches.
