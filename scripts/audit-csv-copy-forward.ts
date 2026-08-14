@@ -1,0 +1,559 @@
+#!/usr/bin/env tsx
+// SPDX-License-Identifier: GPL-3.0-only
+/**
+ * scripts/audit-csv-copy-forward.ts
+ *
+ * Catches SILENT ROW LOSS between two generations of a dated CSV.
+ *
+ * THE FAILURE MODE THIS EXISTS FOR (near-miss, 2026-08-14):
+ *   This repo versions data as dated generations — library_08122026_r2.csv,
+ *   library_08132026.csv, library_08142026.csv — and every loader picks the
+ *   NEWEST by (date, revision) and ignores the rest (src/data/csvUtils.ts
+ *   sortCSVFiles(), lines 112-143). Two sessions each produced a new
+ *   generation: one added two rows to library_08132026.csv, the other wrote
+ *   library_08142026.csv from an older base without them. Because the two
+ *   generations are DIFFERENT FILENAMES, git merges both cleanly with no
+ *   conflict; the app then reads only the newest, and the two rows are gone.
+ *   No conflict, no error, no test failure, no signal of any kind. It was
+ *   caught by a human asking the right question.
+ *
+ * THE RULE ENFORCED:
+ *   For every dated-CSV family, every ACTIVE row in the previous generation
+ *   must still be present in the newest generation — matched by the family's
+ *   own primary key. An active row may legitimately CHANGE, and it may
+ *   legitimately be DEPRECATED (status=deprecated, which keeps the row), but
+ *   it may not simply VANISH. Deletion is not how this repo retires records:
+ *   deprecation is (see the status/deprecated_at/deprecated_reason column
+ *   triple carried by most families). A row that is already deprecated in the
+ *   previous generation is exempt — pruning retired rows is normal.
+ *
+ *   A genuinely intended removal is expressed by adding an entry to
+ *   RECORDED_REMOVALS below, which forces a human to write down a reason.
+ *   That is the escape hatch; disabling the gate is not.
+ *
+ * WHAT IS DERIVED, NOT ASSUMED:
+ *   · Families        — by stripping the dated suffix, using the SAME
+ *                       csvPrefix() the archival gate already uses.
+ *   · Precedence      — (date DESC, revision DESC), the app's own ordering.
+ *   · Primary keys    — derived per family from the data (a column, or the
+ *                       shortest leading run of columns, that is complete and
+ *                       unique in BOTH generations). Key names differ wildly
+ *                       across sources, so nothing is hard-coded.
+ *   · Active          — from the row's own lifecycle column when it has one.
+ *
+ * SCOPE:
+ *   Families with at least one generation in src/data/ — i.e. the ones a
+ *   loader can actually serve. The PREVIOUS generation may live in
+ *   src/data/archive/ (the archival gate keeps only 2 live copies), so both
+ *   directories are read. Families that exist only in archive/ are retired
+ *   and are not checked.
+ *
+ * Usage:
+ *   npx tsx scripts/audit-csv-copy-forward.ts             # human report
+ *   npx tsx scripts/audit-csv-copy-forward.ts --verbose   # + per-family detail
+ *   npx tsx scripts/audit-csv-copy-forward.ts --json      # machine-readable
+ *
+ * Exit codes:
+ *   0 — every active row in each previous generation survived into the newest
+ *   1 — one or more active rows disappeared without a recorded reason,
+ *       or a family could not be keyed (that is a real blind spot, not a pass)
+ */
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'node:url'
+import Papa from 'papaparse'
+import { csvPrefix } from './audit-csv-archival'
+import { sortCSVFiles } from '../src/data/csvUtils'
+
+// ---------------------------------------------------------------------------
+// RECORDED REMOVALS — the ONLY way an active row may legitimately disappear.
+//
+// Add an entry here after human confirmation, with a real reason. Empty by
+// design: an unexplained absence is the failing case, and it should stay hard
+// to explain one away. `key` is the exact key string the report prints.
+// Format: { family: 'library_', key: 'REF-123', reason: '...', recorded: 'YYYY-MM-DD' }
+// ---------------------------------------------------------------------------
+export interface RecordedRemoval {
+  family: string
+  key: string
+  reason: string
+  recorded: string
+}
+
+export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  // (none yet — see the header comment before adding one)
+]
+
+// ---------------------------------------------------------------------------
+// Lifecycle vocabulary
+// ---------------------------------------------------------------------------
+
+/** Values of a lifecycle column that mean "this row is retired". Anything
+ *  else — including an empty cell, and including domain statuses such as
+ *  timeline's "Completed" — counts as ACTIVE. Defaulting to active is the
+ *  safe direction: it checks more rows, never fewer. */
+const RETIRED_STATUSES = new Set([
+  'deprecated',
+  'obsolete',
+  'retired',
+  'superseded',
+  'removed',
+  'withdrawn',
+])
+
+/** The documented lifecycle triple is `status` / `deprecated_at` /
+ *  `deprecated_reason` (pqctoday-priv/docs/platform/data/csv-status-schema.md
+ *  — "ensures `status` is one of active / deprecated / obsolete"), so those
+ *  are the only columns consulted. Other `*_status` columns are deliberately
+ *  ignored: they carry domain state, not lifecycle. migrate_purl_xref_ is the
+ *  cautionary case — it has BOTH a lifecycle `deprecated_at` AND a `status`
+ *  column whose values are match results (`not_found`), so reading any
+ *  `*status*` column as lifecycle would misclassify rows. */
+const STATUS_COLUMN = 'status'
+const DEPRECATED_AT_COLUMN = 'deprecated_at'
+
+/** How many leading columns a composite key may span before a family is
+ *  declared unkeyable. Beyond this the "key" would be most of the row, and a
+ *  single edited field would masquerade as a deleted row. */
+const MAX_COMPOSITE_KEY_COLUMNS = 4
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export interface Generation {
+  /** Filename only, e.g. 'library_08132026_r6.csv' */
+  file: string
+  /** Absolute path on disk */
+  fullPath: string
+  /** true when the file lives under src/data/archive/ */
+  archived: boolean
+}
+
+export interface FamilyResult {
+  family: string
+  newest: string
+  previous: string
+  /** Columns forming the derived primary key, in order */
+  keyColumns: string[]
+  /** true when no unique key exists and rows are matched by multiset count */
+  weakKey?: boolean
+  /** Active rows in the previous generation that were compared */
+  activeRowsCompared: number
+  /** Rows in the previous generation skipped because already retired */
+  retiredRowsSkipped: number
+  /** Keys active in `previous` and absent from `newest`, minus recorded ones */
+  missingKeys: string[]
+  /** Keys absent but explained by a RECORDED_REMOVALS entry */
+  excusedKeys: string[]
+  /** Set when the family could not be checked; the family then FAILS */
+  error?: string
+}
+
+export interface AuditReport {
+  familiesChecked: number
+  familiesSkippedSingleGeneration: string[]
+  rowPairsCompared: number
+  results: FamilyResult[]
+  failures: FamilyResult[]
+}
+
+// ---------------------------------------------------------------------------
+// File discovery + precedence
+// ---------------------------------------------------------------------------
+
+/**
+ * The dated-generation suffix, with MM/DD/YYYY and the optional `_rN` revision
+ * as capture groups 1-4 — the exact shape `sortCSVFiles` expects. Unanchored,
+ * so it matches at the end of a full path as well as a bare filename.
+ *
+ * This is the SAME suffix grammar `csvPrefix()` strips, so "what makes a
+ * family" and "what orders a family" can never drift apart.
+ */
+const DATED_CSV = /(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
+/**
+ * Group every dated CSV in `dataDir` (and `archiveDir`, if present) by family,
+ * each family's generations newest-first.
+ *
+ * Ordering is delegated to the APP'S OWN `sortCSVFiles` (src/data/csvUtils.ts)
+ * — date descending, then revision descending — for the same reason
+ * scripts/lib/latestDatedCsv.ts delegates to it: the whole point of this gate
+ * is "which generation does the app actually serve", so a second
+ * implementation of that answer would be a bug waiting to happen. It is also
+ * what makes `library_08132026_r6.csv` correctly outrank
+ * `library_08132026.csv` rather than losing to a plain lexicographic sort.
+ * `sortCSVFiles` only reads the KEYS of the record it is handed, so paths are
+ * passed with empty content and the winning files are read off disk after.
+ *
+ * Families with no live generation in `dataDir` are omitted: they are retired,
+ * not served by any loader.
+ */
+export function collectFamilies(dataDir: string, archiveDir: string): Map<string, Generation[]> {
+  const read = (dir: string, archived: boolean): Generation[] => {
+    if (!fs.existsSync(dir)) return []
+    return fs
+      .readdirSync(dir)
+      .filter((f) => DATED_CSV.test(f))
+      .map((f) => ({ file: f, fullPath: path.join(dir, f), archived }))
+  }
+
+  const live = read(dataDir, false)
+  const liveFamilies = new Set(live.map((g) => csvPrefix(g.file)))
+
+  const byFamily = new Map<string, Generation[]>()
+  for (const gen of [...live, ...read(archiveDir, true)]) {
+    const family = csvPrefix(gen.file)
+    if (!liveFamilies.has(family)) continue
+    const group = byFamily.get(family) ?? []
+    group.push(gen)
+    byFamily.set(family, group)
+  }
+
+  for (const [family, group] of byFamily) {
+    const byPath = new Map(group.map((g) => [g.fullPath, g]))
+    const modules: Record<string, unknown> = {}
+    for (const g of group) modules[g.fullPath] = ''
+    byFamily.set(
+      family,
+      sortCSVFiles(modules, DATED_CSV).map((entry) => byPath.get(entry.path)!)
+    )
+  }
+
+  return byFamily
+}
+
+// ---------------------------------------------------------------------------
+// Parsing + key derivation
+// ---------------------------------------------------------------------------
+
+export interface ParsedCsv {
+  headers: string[]
+  rows: Record<string, string>[]
+}
+
+export function parseCsvFile(fullPath: string): ParsedCsv {
+  const content = fs.readFileSync(fullPath, 'utf8').trim()
+  const { data, meta } = Papa.parse<Record<string, string>>(content, {
+    header: true,
+    skipEmptyLines: true,
+  })
+  return {
+    headers: (meta.fields ?? []).filter((f) => f.trim()),
+    rows: data,
+  }
+}
+
+const cell = (row: Record<string, string>, col: string): string => (row[col] ?? '').trim()
+
+const composite = (row: Record<string, string>, cols: string[]): string =>
+  cols.map((c) => cell(row, c)).join(' | ')
+
+/** No two rows in `file` share the same value for `cols`.
+ *
+ *  Only ever asked of the PREVIOUS generation, because that is the set being
+ *  iterated and looked up: a key that identifies each old row uniquely is
+ *  enough to ask "did this row survive". Demanding uniqueness in the newest
+ *  generation too would reject perfectly good keys — algorithms_transitions_
+ *  is unique on its leading 3 columns in every generation it is checked
+ *  against, but a LATER generation added rows that repeat a tuple. */
+function isUnique(cols: string[], file: ParsedCsv): boolean {
+  if (file.rows.length === 0) return false
+  const seen = new Set<string>()
+  for (const row of file.rows) {
+    const k = composite(row, cols)
+    if (seen.has(k)) return false
+    seen.add(k)
+  }
+  return true
+}
+
+/** Every row in `file` has a non-empty value for every column in `cols`.
+ *
+ *  Required of single identifier columns (an empty id identifies nothing) but
+ *  NOT of composite keys: role_board_content_ is exactly unique on
+ *  role_id+variant_id+slot+slot_index, where slot_index is legitimately empty
+ *  on 624 of 1,308 rows — "no index" is a real, stable part of that row's
+ *  identity, and rejecting it would leave the family unprotected for no gain. */
+function isComplete(cols: string[], file: ParsedCsv): boolean {
+  return file.rows.every((row) => cols.every((c) => cell(row, c) !== ''))
+}
+
+/** Rank a single-column key candidate: identifier-looking names first, then
+ *  left-to-right header order. Only ever used to choose BETWEEN columns that
+ *  are already proven complete-and-unique, so this is a readability
+ *  preference, not a correctness one. */
+function singleColumnRank(col: string): number {
+  const c = col.toLowerCase()
+  if (/(^|_)id$/.test(c)) return 0
+  if (/(^|_)(key|slug|number|code|uri|url)$/.test(c)) return 1
+  return 2
+}
+
+/**
+ * Derive a family's primary key FROM ITS DATA — never from an assumed column
+ * name, because these sources genuinely disagree (reference_id, product_id,
+ * source_id, concept_id, patent_number, code, Name, sector_key, ...), and
+ * several have no single-column key at all (industry_standards_ is keyed by
+ * industry+standard_id, role_board_content_ by role_id+variant_id+slot+...).
+ *
+ * 1. A single identifier-looking column (`*_id`, `*_key`, `*_number`, ...)
+ *    that is complete and unique in the previous generation.
+ * 2. Otherwise the SHORTEST leading run of columns that is unique — leading,
+ *    because these CSVs put identifying columns first, and shortest, so the
+ *    key stays as small as the data allows and depends on as few volatile
+ *    fields as possible.
+ * 3. Otherwise the longest allowed leading run, flagged `weak`. Two families
+ *    genuinely have no unique key (migrate_certification_xref_ and
+ *    pqc_maturity_governance_requirements_ both carry duplicate tuples), so
+ *    the choice there is between a weak key and no protection at all. Because
+ *    rows are compared as a MULTISET, a weak key still detects loss: if a key
+ *    occurs 7 times in the previous generation and 6 in the newest, a row went
+ *    missing. It only loses the ability to name WHICH one.
+ *
+ * Only columns present in BOTH generations are eligible: a column added in the
+ * newest generation cannot identify a row in the previous one.
+ */
+export function deriveKeyColumns(
+  newest: ParsedCsv,
+  previous: ParsedCsv
+): { columns: string[]; weak: boolean } | null {
+  const shared = newest.headers.filter((h) => previous.headers.includes(h))
+  if (shared.length === 0) return null
+
+  const identifierSingles = shared
+    .filter(
+      (c) => singleColumnRank(c) < 2 && isComplete([c], previous) && isUnique([c], previous)
+    )
+    .sort(
+      (a, b) => singleColumnRank(a) - singleColumnRank(b) || shared.indexOf(a) - shared.indexOf(b)
+    )
+  if (identifierSingles.length > 0) return { columns: [identifierSingles[0]], weak: false }
+
+  const maxLen = Math.min(MAX_COMPOSITE_KEY_COLUMNS, shared.length)
+  for (let n = 1; n <= maxLen; n++) {
+    const cols = shared.slice(0, n)
+    if (isUnique(cols, previous)) return { columns: cols, weak: false }
+  }
+
+  return { columns: shared.slice(0, maxLen), weak: true }
+}
+
+export interface LifecycleColumns {
+  status: string | null
+  deprecatedAt: string | null
+}
+
+/** The row's lifecycle columns, if the family carries them. */
+export function findLifecycleColumns(headers: string[]): LifecycleColumns {
+  const find = (want: string) => headers.find((h) => h.trim().toLowerCase() === want) ?? null
+  return { status: find(STATUS_COLUMN), deprecatedAt: find(DEPRECATED_AT_COLUMN) }
+}
+
+/**
+ * A row is ACTIVE unless it says otherwise. Defaulting to active is the safe
+ * direction — it checks more rows, never fewer — and it is why families with
+ * no lifecycle columns at all are still fully protected.
+ *
+ * Retired means either a retired `status` value, or a populated
+ * `deprecated_at` (the schema requires that column be set whenever status is
+ * non-active, so it is the more robust of the two signals).
+ */
+export function isActive(row: Record<string, string>, lifecycle: LifecycleColumns): boolean {
+  if (lifecycle.deprecatedAt && cell(row, lifecycle.deprecatedAt) !== '') return false
+  if (lifecycle.status && RETIRED_STATUSES.has(cell(row, lifecycle.status).toLowerCase())) {
+    return false
+  }
+  return true
+}
+
+// ---------------------------------------------------------------------------
+// The check
+// ---------------------------------------------------------------------------
+
+export function checkFamily(
+  family: string,
+  newestGen: Generation,
+  previousGen: Generation,
+  recorded: RecordedRemoval[] = RECORDED_REMOVALS
+): FamilyResult {
+  const base: FamilyResult = {
+    family,
+    newest: newestGen.file,
+    previous: previousGen.file + (previousGen.archived ? ' (archive/)' : ''),
+    keyColumns: [],
+    activeRowsCompared: 0,
+    retiredRowsSkipped: 0,
+    missingKeys: [],
+    excusedKeys: [],
+  }
+
+  const newest = parseCsvFile(newestGen.fullPath)
+  const previous = parseCsvFile(previousGen.fullPath)
+
+  const derived = deriveKeyColumns(newest, previous)
+  if (!derived) {
+    return {
+      ...base,
+      error:
+        `the two generations share no columns at all, so no row in one can be matched to a ` +
+        `row in the other. This family is UNPROTECTED against silent row loss.`,
+    }
+  }
+  const { columns: keyColumns, weak } = derived
+
+  // Multiset, not set: a key may repeat when a family has no unique key, and
+  // losing one of N identical-keyed rows is still losing a row.
+  const newestCounts = new Map<string, number>()
+  for (const row of newest.rows) {
+    const k = composite(row, keyColumns)
+    newestCounts.set(k, (newestCounts.get(k) ?? 0) + 1)
+  }
+  // Deprecated rows in the NEWEST generation still count as present: marking a
+  // row deprecated is the legitimate way to retire it, and the row survives.
+
+  const lifecycle = findLifecycleColumns(previous.headers)
+  const excused = new Set(recorded.filter((r) => r.family === family).map((r) => r.key))
+
+  const previousActiveCounts = new Map<string, number>()
+  let activeRowsCompared = 0
+  let retiredRowsSkipped = 0
+  for (const row of previous.rows) {
+    if (!isActive(row, lifecycle)) {
+      retiredRowsSkipped++
+      continue
+    }
+    activeRowsCompared++
+    const k = composite(row, keyColumns)
+    previousActiveCounts.set(k, (previousActiveCounts.get(k) ?? 0) + 1)
+  }
+
+  const missingKeys: string[] = []
+  const excusedKeys: string[] = []
+  for (const [key, wanted] of previousActiveCounts) {
+    const shortfall = wanted - (newestCounts.get(key) ?? 0)
+    if (shortfall <= 0) continue
+    const label = wanted > 1 ? `${key}  (${shortfall} of ${wanted} occurrences)` : key
+    if (excused.has(key)) excusedKeys.push(label)
+    else missingKeys.push(label)
+  }
+
+  return {
+    ...base,
+    keyColumns,
+    weakKey: weak,
+    activeRowsCompared,
+    retiredRowsSkipped,
+    missingKeys,
+    excusedKeys,
+  }
+}
+
+export function runAudit(dataDir: string, archiveDir: string): AuditReport {
+  const families = collectFamilies(dataDir, archiveDir)
+  const results: FamilyResult[] = []
+  const singleGeneration: string[] = []
+
+  for (const [family, generations] of [...families].sort((a, b) => a[0].localeCompare(b[0]))) {
+    if (generations.length < 2) {
+      singleGeneration.push(family)
+      continue
+    }
+    results.push(checkFamily(family, generations[0], generations[1]))
+  }
+
+  return {
+    familiesChecked: results.length,
+    familiesSkippedSingleGeneration: singleGeneration,
+    rowPairsCompared: results.reduce((n, r) => n + r.activeRowsCompared, 0),
+    results,
+    failures: results.filter((r) => r.error || r.missingKeys.length > 0),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// CLI entry point
+// ---------------------------------------------------------------------------
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url))
+const DATA_DIR = path.join(SCRIPT_DIR, '..', 'src', 'data')
+const ARCHIVE_DIR = path.join(DATA_DIR, 'archive')
+
+const MAX_KEYS_SHOWN = 25
+
+function main(): void {
+  const wantJson = process.argv.includes('--json')
+  const verbose = process.argv.includes('--verbose')
+  const report = runAudit(DATA_DIR, ARCHIVE_DIR)
+
+  if (wantJson) {
+    process.stdout.write(JSON.stringify(report, null, 2) + '\n')
+    process.exit(report.failures.length > 0 ? 1 : 0)
+  }
+
+  // Proof of work: a guard that found nothing to compare must not look green.
+  console.log(
+    `Copy-forward check — ${report.familiesChecked} dated-CSV famil${
+      report.familiesChecked === 1 ? 'y' : 'ies'
+    }, ${report.rowPairsCompared} active row(s) compared against the previous generation.`
+  )
+  if (report.familiesSkippedSingleGeneration.length > 0) {
+    console.log(
+      `  (${report.familiesSkippedSingleGeneration.length} famil` +
+        `${report.familiesSkippedSingleGeneration.length === 1 ? 'y has' : 'ies have'} only one ` +
+        `generation on disk — nothing to compare: ` +
+        `${report.familiesSkippedSingleGeneration.join(', ')})`
+    )
+  }
+
+  if (verbose) {
+    console.log('')
+    for (const r of report.results) {
+      const key = r.keyColumns.length ? r.keyColumns.join(' + ') : '(none)'
+      console.log(
+        `  ${r.family}*  key=[${key}]  ${r.previous} -> ${r.newest}  ` +
+          `${r.activeRowsCompared} active, ${r.retiredRowsSkipped} retired-skipped` +
+          `${r.excusedKeys.length ? `, ${r.excusedKeys.length} recorded-removal` : ''}`
+      )
+    }
+  }
+
+  if (report.failures.length === 0) {
+    console.log(`\nPASS every active row survived into the newest generation.`)
+    process.exit(0)
+  }
+
+  console.log(
+    `\nFAIL ${report.failures.length} dated-CSV famil` +
+      `${report.failures.length === 1 ? 'y' : 'ies'} lost rows between generations:\n`
+  )
+  for (const f of report.failures) {
+    console.log(`  ${f.family}*`)
+    console.log(`    previous : ${f.previous}`)
+    console.log(`    newest   : ${f.newest}`)
+    if (f.error) {
+      console.log(`    ERROR    : ${f.error}`)
+      continue
+    }
+    console.log(`    key      : ${f.keyColumns.join(' + ')}`)
+    console.log(
+      `    missing  : ${f.missingKeys.length} active row(s) present in the previous ` +
+        `generation and absent from the newest`
+    )
+    for (const k of f.missingKeys.slice(0, MAX_KEYS_SHOWN)) console.log(`               - ${k}`)
+    if (f.missingKeys.length > MAX_KEYS_SHOWN) {
+      console.log(`               ... and ${f.missingKeys.length - MAX_KEYS_SHOWN} more`)
+    }
+    console.log('')
+  }
+  console.log(
+    `Rows are retired by setting status=deprecated (keeping the row), not by deleting them.\n` +
+      `If a removal really is intended, record it in RECORDED_REMOVALS in\n` +
+      `scripts/audit-csv-copy-forward.ts with a reason — do not disable this check.`
+  )
+  process.exit(1)
+}
+
+if (process.argv[1] && process.argv[1] === fileURLToPath(import.meta.url)) {
+  main()
+}

@@ -69,6 +69,7 @@
     "audit:trusted-source-freshness": "tsx ../pqctoday-priv/scripts/audit-trusted-source-freshness.ts",
     "audit:trusted-source-freshness:baseline": "tsx ../pqctoday-priv/scripts/audit-trusted-source-freshness.ts --baseline",
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
+    "audit:csv-copy-forward": "tsx scripts/audit-csv-copy-forward.ts",
     "audit:unused-csv-revisions": "tsx scripts/audit-unused-csv-revisions.ts",
     "audit:publication-dates": "tsx scripts/audit-publication-dates.ts",
     "audit:merge-all-coverage": "tsx scripts/audit-merge-all-coverage.ts",
