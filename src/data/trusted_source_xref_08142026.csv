@@ -1370,6 +1370,7 @@ leaders,Shuichi Katsumata,pqshield,mapped
 leaders,Prof. Birgitta Whaley,uc-berkeley-bqic,mapped
 leaders,Jérôme Plût,anssi,mapped
 leaders,David Koh,csa-singapore,mapped
+leaders,Ofra Frenkel,israel-national-digital-agency,mapped
 leaders,Prof. Dr. Peter Schwabe,mpi-sp,exact
 leaders,Prof. Dr. Peter Schwabe,radboud-university,mapped
 leaders,Prof. Dr. Damien Stehlé,inria-crypto,mapped
@@ -1412,6 +1413,7 @@ leaders,Jean-Christophe Deneuville,insa-toulouse,mapped
 leaders,G. S. Mamatha,r-v-college-of-engineering,mapped
 leaders,Dustin Moody,nist-csrc,mapped
 leaders,Emilia Käsper,google,mapped
+leaders,Eric Lombrozo,ciphrex,mapped
 leaders,Philippe Gaborit,university-of-limoges,mapped
 leaders,Shay Gueron,university-of-haifa,mapped
 leaders,Tim Güneysu,rub-crypto,mapped
@@ -1466,6 +1468,7 @@ leaders,Sharon Boeyen,entrust,mapped
 leaders,Scott Bradner,harvard-university,mapped
 leaders,Sergey Bravyi,ibm-research,mapped
 leaders,Stephen Farrell,trinity-college-dublin,mapped
+leaders,Stefan Santesson,3xa-security,mapped
 leaders,Sam Wilson,eth-foundation,mapped
 leaders,Sandy Carielli,forrester,exact
 leaders,Sanjeev Sharma,nist-csrc,mapped
@@ -1652,6 +1655,29 @@ compliance,NCSC-FI-PQC,ncsc-fi,direct
 compliance,CHILE-ANCI,anci-chile,direct
 compliance,MEXICO-CNBV-CUB,cnbv-mexico,direct
 compliance,BRAZIL-BACEN-4893,bacen-brazil,direct
+compliance,ID-PDP,indonesia-pdp-authority-komdigi,mapped
+compliance,ID-PDP,badan-siber-dan-sandi-negara-bssn,mapped
+compliance,TH-PDPA,national-cyber-security-agency-thailand,mapped
+compliance,TH-PDPA,electronic-transactions-development-agency-etda,mapped
+compliance,VN-CYBER,vietnam-ministry-of-information-and-communications,mapped
+compliance,VN-CYBER,vietnam-ministry-of-public-security-a05,mapped
+compliance,PH-DPA,national-privacy-commission-philippines,mapped
+compliance,AT-NIS2,austrian-federal-ministry-of-the-interior-bmi,mapped
+compliance,AT-NIS2,a-sit-secure-information-technology-center-austria,mapped
+compliance,PL-NCSC,ministry-of-digital-affairs-poland,mapped
+compliance,PL-NCSC,nask-national-research-institute,mapped
+compliance,CO-LEY1581,superintendencia-de-industria-y-comercio-colombia,mapped
+compliance,CO-LEY1581,ministerio-tic-colombia,mapped
+compliance,CO-LEY1581,colcert-colombia,mapped
+compliance,PE-LDP,autoridad-nacional-de-protecci-n-de-datos-personales-peru,mapped
+compliance,PE-LDP,secretar-a-de-gobierno-y-transformaci-n-digital-peru,mapped
+compliance,UY-LPDP,unidad-reguladora-y-de-control-de-datos-personales-uruguay,mapped
+compliance,UY-LPDP,agesic-uy,mapped
+compliance,RU-TC26,federal-security-service-of-the-russian-federation-fsb,mapped
+compliance,RU-TC26,tc26-russia,mapped
+compliance,TR-KVKK,ki-isel-verileri-koruma-kurumu-kvkk,mapped
+compliance,TR-KVKK,information-and-communication-technologies-authority-btk,mapped
+compliance,TR-KVKK,t-bi-tak-bi-lgem,mapped
 compliance,faa-ac-119-1-ansp,faa-us,mapped
 compliance,cisa-pqc-initiative,cisa,direct
 compliance,oscca-cryptographic-regulations-cn,state-cryptography-administration,mapped
