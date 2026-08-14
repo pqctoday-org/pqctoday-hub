@@ -2,7 +2,15 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * CC-17 — CuriousGuide 4-step floating tour.
+ * CC-17 — CuriousGuide floating tour.
+ *
+ * Step COUNT is deliberately not hard-coded below. This test asserted "4"
+ * until B+ remediation 1.5 (2026-08-10) added a fifth step ("Why you can check
+ * us"), at which point it failed nightly for days — and it failed on the step
+ * counter, a number that carries no product meaning, rather than on anything
+ * the tour is for. The content assertions are the ones worth pinning: that the
+ * tour advances, that the last step offers Finish rather than Next, and that
+ * finishing persists.
  *
  * Renders only when:
  *   - selectedPersona === 'curious'
@@ -45,31 +53,45 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('renders the 4-step tour and the Finish flow persists dismissal', async ({ page }) => {
+test('renders the tour and the Finish flow persists dismissal', async ({ page }) => {
   await page.goto('/')
 
   const guide = page.getByTestId('curious-guide')
   // Landing is lazy-loaded; allow 15s for the chunk to compile cold.
   await expect(guide).toBeVisible({ timeout: 15000 })
 
+  // The counter is read for its TOTAL, not asserted against a literal — see the
+  // note at the top of this file.
+  // innerText applies the panel's `uppercase` text-transform, so this reads
+  // "STEP 1 OF 5" — match case-insensitively rather than against the source casing.
+  const counter = await guide.getByText(/Step \d+ of \d+/).innerText()
+  const total = Number(counter.match(/of (\d+)/i)?.[1])
+  expect(total).toBeGreaterThanOrEqual(4)
+
   // Step 1
   await expect(guide.getByText(/Everything's encrypted/)).toBeVisible()
-  await expect(guide.getByText(/Step 1 of 4/)).toBeVisible()
+  await expect(guide.getByText(new RegExp(`Step 1 of ${total}`))).toBeVisible()
 
   // Advance to step 2
   await guide.getByRole('button', { name: /^Next/ }).click()
   await expect(guide.getByText(/Quantum changes the math/)).toBeVisible()
-  await expect(guide.getByText(/Step 2 of 4/)).toBeVisible()
+  await expect(guide.getByText(new RegExp(`Step 2 of ${total}`))).toBeVisible()
 
   // Step 3
   await guide.getByRole('button', { name: /^Next/ }).click()
   await expect(guide.getByText(/clock is already ticking/)).toBeVisible()
 
-  // Step 4 — last step shows Finish, not Next
-  await guide.getByRole('button', { name: /^Next/ }).click()
-  await expect(guide.getByText(/Find your starting point/)).toBeVisible()
+  // Walk to the last step, whatever its index. Finish must replace Next there
+  // and nowhere earlier — a tour that offers Finish mid-way loses the reader
+  // before the point it was written to make.
+  for (let step = 3; step < total; step += 1) {
+    await expect(guide.getByRole('button', { name: /^Finish/ })).toHaveCount(0)
+    await guide.getByRole('button', { name: /^Next/ }).click()
+    await expect(guide.getByText(new RegExp(`Step ${step + 1} of ${total}`))).toBeVisible()
+  }
   const finishBtn = guide.getByRole('button', { name: /^Finish/ })
   await expect(finishBtn).toBeVisible()
+  await expect(guide.getByRole('button', { name: /^Next/ })).toHaveCount(0)
 
   // Finish dismisses the tour
   await finishBtn.click()
