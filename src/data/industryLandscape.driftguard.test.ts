@@ -265,10 +265,17 @@ describe('industry-landscape driftguards', () => {
   })
 
   it('a row claiming mechanisms carries at least one proof ref, or is a known gap', () => {
-    // Ratchet, not a coverage mandate. 2026-08-14 baseline: 59 of 76 rows have
-    // a ref. The number may only go UP — this fails if a refresh drops proof
-    // links, which is the regression that matters. Raise the floor as the
-    // remaining gaps close; do not lower it.
+    // Ratchet, not a coverage mandate. 2026-08-14 baseline: 73 of the 74 rows
+    // that claim a mechanism carry a ref. The number may only go UP — this
+    // fails if a refresh drops proof links, which is the regression that
+    // matters. Raise the floor as the remaining gaps close; do not lower it.
+    //
+    // The one holdout is aero-atc-datalink (RSA). ACARS message security is
+    // specified in ARINC 823, and both it and ARINC 811 are sold through SAE —
+    // paywalled, so unusable as a citation a reader could follow. The one
+    // open-access alternative found, "Economy Class Crypto" (Smith et al.,
+    // FC 2018), is about weak SYMMETRIC ciphers in ACARS traffic and contains
+    // no RSA, ECDSA or ECDH at all, so it proves nothing about this claim.
     const withClaims = useCases.filter(
       (u) => u.classicalMechanisms.length + u.pqcMechanisms.length > 0
     )
@@ -276,7 +283,7 @@ describe('industry-landscape driftguards', () => {
     expect(
       withRefs.length,
       'mechanism_refs coverage regressed below its baseline'
-    ).toBeGreaterThanOrEqual(59)
+    ).toBeGreaterThanOrEqual(73)
     // Every row that claims nothing must also cite nothing.
     for (const uc of useCases) {
       if (uc.classicalMechanisms.length + uc.pqcMechanisms.length === 0) {
