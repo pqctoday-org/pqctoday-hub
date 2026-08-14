@@ -318,16 +318,36 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('evidence_type is a known value, and only non-standards are marked', () => {
+    // A research paper admitted to the standards table must SAY so — the chip
+    // badge is driven entirely by this field, so a mislabelled row renders a
+    // preprint as though it were a specification.
+    const RESEARCHY = new Set(['Research Paper', 'Industry Report', 'Reference'])
+    const docTypeOf = new Map(libraryData.map((d) => [d.referenceId, d.documentType]))
+    for (const s of standards) {
+      expect(
+        ['standard', 'research', 'industry-report', 'courseware'],
+        `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
+      ).toContain(s.evidenceType)
+      if (s.evidenceType !== 'standard') {
+        expect(
+          RESEARCHY,
+          `standard "${s.standardId}" is marked ${s.evidenceType} but its library row is a ${docTypeOf.get(s.libraryRef)}`
+        ).toContain(docTypeOf.get(s.libraryRef) ?? '')
+      }
+    }
+  })
+
   it('standards coverage of use cases does not regress', () => {
-    // Ratchet, like mechanism_refs above. 2026-08-13: 70 of 76 use cases have
-    // at least one standards row. The six without are honest: aero-atc-datalink,
-    // energy-nuclear, hlth-implants and pci-emv are proven by research papers
-    // and industry reports, which must NOT become rows in a standards table;
-    // gov-procurement and ins-cyber-underwriting claim no mechanism at all.
+    // Ratchet, like mechanism_refs above. 2026-08-13: 74 of 76 use cases have
+    // at least one standards row. The two without are gov-procurement and
+    // ins-cyber-underwriting, governance use cases that claim no mechanism at
+    // all — nothing to cite. The four proven only by research, industry
+    // reports or courseware ARE listed, carrying an evidence_type badge.
     const covered = new Set<string>()
     for (const s of standards) for (const uc of s.useCaseIds) covered.add(uc)
     for (const u of useCases) if (u.relatedStandards.length > 0) covered.add(u.useCaseId)
-    expect(covered.size, 'industry_standards coverage regressed').toBeGreaterThanOrEqual(70)
+    expect(covered.size, 'industry_standards coverage regressed').toBeGreaterThanOrEqual(74)
   })
 
   it('every industry resolves to a sector code for the Library/Compliance links', () => {

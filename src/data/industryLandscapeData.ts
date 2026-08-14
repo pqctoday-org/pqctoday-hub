@@ -76,6 +76,18 @@ export interface IndustryStandard {
   libraryRef: string
   /** cryptoMechanisms family labels the standard references. */
   mechanismsReferenced: string[]
+  /**
+   * What KIND of document this row is (2026-08-13).
+   *
+   * Four use cases are proven only by a research paper, an industry position
+   * statement or university courseware. Those documents genuinely establish
+   * which algorithms the use case relies on, so excluding them left real
+   * industries rendering nothing — but a preprint is not a specification, and
+   * a table of "standards" must never let a reader mistake one for the other.
+   * They are admitted and marked instead: anything other than `standard`
+   * renders with an explicit badge.
+   */
+  evidenceType: 'standard' | 'research' | 'industry-report' | 'courseware'
   pqcReadiness: 'none' | 'in-progress' | 'published'
   useCaseIds: string[]
   mainSource: string
@@ -131,6 +143,7 @@ interface RawStandardRow {
   standards_body: string
   library_ref: string
   mechanisms_referenced: string
+  evidence_type: string
   pqc_readiness: string
   use_case_ids: string
   main_source: string
@@ -229,6 +242,9 @@ function loadStandards(): IndustryStandard[] {
             standardsBody: r.standards_body,
             libraryRef: r.library_ref,
             mechanismsReferenced: splitSemicolon(r.mechanisms_referenced),
+            // Default to 'standard' so a row predating the column is not
+            // silently badged as research.
+            evidenceType: (r.evidence_type || 'standard') as IndustryStandard['evidenceType'],
             pqcReadiness: r.pqc_readiness as IndustryStandard['pqcReadiness'],
             useCaseIds: splitSemicolon(r.use_case_ids),
             mainSource: r.main_source,

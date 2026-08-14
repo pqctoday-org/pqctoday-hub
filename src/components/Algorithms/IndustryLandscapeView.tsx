@@ -146,18 +146,36 @@ function MechanismChip({
   )
 }
 
+/** How a non-standard evidence row is labelled. A research paper can prove
+ *  which algorithms a use case relies on, but it is not a specification —
+ *  the badge keeps that distinction visible wherever the chip renders. */
+const EVIDENCE_LABEL: Record<IndustryStandard['evidenceType'], string | null> = {
+  standard: null,
+  research: 'Research',
+  'industry-report': 'Industry report',
+  courseware: 'Courseware',
+}
+
 /** Standard chip: mechanisms it references + direct link to the Library page. */
 function StandardChip({ std }: { std: IndustryStandard }) {
+  const evidence = EVIDENCE_LABEL[std.evidenceType]
   return (
     <Link
       to={libraryHref(std.libraryRef)}
-      title={`${std.standardLabel} (${std.standardsBody}) — references: ${
+      title={`${std.standardLabel} (${std.standardsBody})${
+        evidence ? ` — ${evidence.toLowerCase()}, not a standard` : ''
+      } — references: ${
         std.mechanismsReferenced.join(', ') || 'no specific mechanisms'
       }. Opens the Library entry.`}
       className="inline-flex items-center gap-1 rounded border border-border bg-card px-2 py-0.5 text-xs text-foreground hover:border-primary/60 hover:text-primary"
     >
       <BookMarked size={11} className="opacity-60" />
       {std.standardLabel}
+      {evidence && (
+        <span className="rounded bg-muted px-1 text-[10px] font-semibold text-muted-foreground">
+          {evidence}
+        </span>
+      )}
       {std.pqcReadiness === 'published' && (
         <span className="rounded bg-status-success/15 px-1 text-[10px] font-semibold text-status-success">
           PQC
