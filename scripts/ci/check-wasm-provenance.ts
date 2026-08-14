@@ -122,6 +122,17 @@ const resolveBaseline = (): { ref: string; sha: string } => {
   return { ref: 'HEAD', sha: git('rev-parse', 'HEAD') }
 }
 
+/**
+ * Paths whose contents cannot affect a compiled wasm artifact.
+ *
+ * Deliberately narrow — markdown and licence files only. Anything that could
+ * plausibly feed a build (source, manifests, build scripts, test vectors) must
+ * still count as drift, because the cost of a false "current" is shipping a
+ * bundle that does not match its source, which is far worse than the cost of a
+ * needless rebuild.
+ */
+const DOC_ONLY_EXCLUDES = [':(exclude)**/*.md', ':(exclude)**/LICENSE', ':(exclude)**/LICENSE.*']
+
 const baseline = resolveBaseline()
 console.log(
   `wasm provenance vs pqctoday-hsm ${baseline.ref} @ ${baseline.sha.slice(0, 9)} (${hsmPath})\n`
@@ -142,7 +153,21 @@ for (const b of manifest.bundles) {
   }
   let behind = '0'
   try {
-    behind = git('rev-list', '--count', `${b.hsmCommit}..${baseline.sha}`, '--', ...b.sourceDirs)
+    behind = git(
+      'rev-list',
+      '--count',
+      `${b.hsmCommit}..${baseline.sha}`,
+      '--',
+      ...b.sourceDirs,
+      // Documentation cannot change a compiled artifact, so counting it as
+      // drift only produces false stalls. It has: a one-line fix to
+      // `rust/README.md` (hsm 318cf11) marked BOTH rust-derived bundles stale,
+      // which blocks every hub push until someone rebuilds two multi-megabyte
+      // wasm binaries whose inputs did not move. A guard that cries wolf gets
+      // worked around, and the workaround is editing the provenance record by
+      // hand — which is exactly the thing this file exists to make trustworthy.
+      ...DOC_ONLY_EXCLUDES
+    )
   } catch {
     console.log(
       `  ⚠️  ${b.name}: recorded commit ${b.hsmCommit.slice(0, 9)} not in hsm history — rebuild`
