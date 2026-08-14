@@ -360,7 +360,7 @@ export const RECORDED_REMOVALS: RecordedRemoval[] = [
     family: 'trusted_source_xref_',
     key: 'threats | CI-003 | nist-csrc',
     reason:
-      "this threat's main_source is \"TSA Pipeline Security Guidelines (March 2018, rev. April 2021)\", " +
+      'this threat\'s main_source is "TSA Pipeline Security Guidelines (March 2018, rev. April 2021)", ' +
       'published by the Transportation Security Administration, not by NIST. The nist-csrc edge was wrong.',
     recorded: '2026-08-14',
   },
@@ -386,7 +386,7 @@ export const RECORDED_REMOVALS: RecordedRemoval[] = [
     family: 'trusted_source_xref_',
     key: 'leaders | Pieter Wuille | bitcoin-core',
     reason:
-      "this leader's Organization is \"Chaincode Labs;Blockstream (co-founder, former)\", which does not " +
+      'this leader\'s Organization is "Chaincode Labs;Blockstream (co-founder, former)", which does not ' +
       'name Bitcoin Core at all. The affiliation data changed; the xref followed it. (The trailing-qualifier ' +
       'fallback added to the generator on 2026-08-14 restores the other four leaders lost the same day — ' +
       'Mozilla/Oracle/Zoom/IBM Research were annotated "(former)" and stopped matching. It cannot restore ' +
@@ -638,9 +638,7 @@ export function deriveKeyColumns(
   if (shared.length === 0) return null
 
   const identifierSingles = shared
-    .filter(
-      (c) => singleColumnRank(c) < 2 && isComplete([c], previous) && isUnique([c], previous)
-    )
+    .filter((c) => singleColumnRank(c) < 2 && isComplete([c], previous) && isUnique([c], previous))
     .sort(
       (a, b) => singleColumnRank(a) - singleColumnRank(b) || shared.indexOf(a) - shared.indexOf(b)
     )

@@ -9,6 +9,16 @@ set -e
 # Skip in CI — CI runs the same verifier as a dedicated workflow step.
 [ -n "$CI" ] && exit 0
 
+# Formatting, the way CI checks it: the WHOLE tree, not just staged files.
+# ADDED 2026-08-14, after `format:check` failed in CI twice in one session
+# while every local gate was green. lint-staged only formats files that are
+# STAGED, so anything reaching the tree another way — a merge, a generated
+# artifact copied in by a build script, a file written by a tool — is never
+# formatted locally and is only caught after a push. On this repo a CI round
+# trip is 20+ minutes; this check takes about forty seconds.
+# Bypass with `git push --no-verify`.
+npm run format:check
+
 # Every file a workflow step will execute must actually be IN the repository.
 # ADDED 2026-08-10, after this failed for the FOURTH time. `.gitignore` has a
 # blanket `scripts/*`, and `git add` on an ignored path is a silent no-op — so a
