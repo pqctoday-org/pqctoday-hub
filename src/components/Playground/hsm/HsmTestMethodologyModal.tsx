@@ -57,10 +57,9 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
             before being exposed in the UI. The PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA,
             CKM_SLH_DSA) are defined in{' '}
             <span className="font-semibold text-foreground">
-              OASIS PKCS#11 v3.2 Committee Specification 01 (November 2025)
+              OASIS PKCS#11 v3.2, an OASIS Standard since 3 June 2026
             </span>
-            ; v3.1 is the current ratified OASIS Standard (23 July 2023) and does not yet include
-            these PQC mechanisms.
+            ; the preceding v3.1 (23 July 2023) does not include these PQC mechanisms.
           </p>
 
           {/* Layer 1: ACVP KAT */}

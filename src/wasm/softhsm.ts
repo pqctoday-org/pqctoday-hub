@@ -16,6 +16,7 @@
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { MECH_TABLE, type MechanismFamily } from './softhsm/mechanismTable'
 export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
@@ -2347,7 +2348,7 @@ export const CKM_ECDSA_SHA3_256 = 0x1048
 export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
-export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofactor ECDH
+export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §6.3.18 — cofactor ECDH
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 export const CKM_EDDSA_PH = 0x80001057
@@ -2363,8 +2364,8 @@ export const CKP_PKCS5_PBKD2_HMAC_SHA512 = 0x06
 // Symmetric / HMAC / digest mechanisms
 export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
-export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §2.14.1 — MILENAGE f1–f5
-export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §2.14.3 — SUCI MSIN encryption (TS 33.501)
+export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §6.10.4 — MILENAGE f1–f5
+export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §6.11 — SUCI MSIN encryption (TS 33.501)
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -2500,16 +2501,16 @@ export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
 export const CKD_SHA3_256_KDF = 0x0000000b // ANSI X9.63 KDF with SHA3-256 (PKCS#11 v3.2 §5.2.12)
 export const CKD_SHA3_512_KDF = 0x0000000d // ANSI X9.63 KDF with SHA3-512 (PKCS#11 v3.2 §5.2.12)
 
-// HKDF derive (PKCS#11 v3.0+ §2.43)
-export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §2.43
+// HKDF derive (PKCS#11 v3.2 §6.62)
+export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
-// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §2.44)
+// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §6.42)
 export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
 export const CKM_SP800_108_FEEDBACK_KDF = 0x000003ad // Feedback mode KBKDF
 export const CKM_SP800_108_DOUBLE_PIPELINE_KDF = 0x000003ae // Double-pipeline KBKDF
-// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §2.44)
+// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §6.42)
 export const CK_SP800_108_ITERATION_VARIABLE = 0x00000001 // Counter/IV position marker
 export const CK_SP800_108_BYTE_ARRAY = 0x00000004 // Arbitrary byte data (label/context)
 
@@ -3036,7 +3037,7 @@ export const hsm_ecdsaVerify = (
 }
 
 /**
- * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
+ * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §6.3.17).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
  * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
  * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI).
@@ -3107,7 +3108,7 @@ export const hsm_ecdhDerive = (
 }
 
 /**
- * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §2.3.2).
+ * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §6.3.18).
  * Same parameters as hsm_ecdhDerive() but uses cofactor multiplication.
  * For NIST P-curves (cofactor = 1) the result is identical to standard ECDH.
  */
@@ -3238,7 +3239,7 @@ export const hsm_pbkdf2 = (
 // ── HKDF helpers ──────────────────────────────────────────────────────────────
 
 /**
- * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §2.43).
+ * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §6.62).
  *
  * @param baseKeyHandle  Key handle providing IKM (input key material).
  * @param prf            Hash mechanism for HMAC PRF: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
@@ -3319,7 +3320,7 @@ export const hsm_hkdf = (
 }
 
 /**
- * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §2.44).
+ * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §6.42).
  *
  * Builds a minimal CK_SP800_108_KDF_PARAMS with:
  *   - prfType: hash mechanism (CKM_SHA256 | CKM_SHA384 | CKM_SHA512) or CKM_AES_CMAC.
@@ -3409,7 +3410,7 @@ export const hsm_kbkdf = (
 }
 
 /**
- * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §2.44.2).
+ * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §6.42).
  * prfType: hash mechanism — CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_AES_CMAC.
  * NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
  * fixedInput: optional label/context bytes (CK_SP800_108_BYTE_ARRAY data params).
@@ -5075,7 +5076,7 @@ export const hsm_getKeyAttributes = (
 
 // ── Mechanism Discovery ───────────────────────────────────────────────────────
 
-export type MechanismFamily = 'pqc' | 'asymmetric' | 'symmetric' | 'hash' | 'kdf' | 'other'
+export type { MechanismFamily } from './softhsm/mechanismTable'
 
 export interface MechanismInfo {
   /** Numeric CKM_ type value returned by C_GetMechanismList */
@@ -5113,490 +5114,6 @@ const CKF_FLAG_NAMES: Array<[number, string]> = [
   [0x10000000, 'ENCAPSULATE'],
   [0x20000000, 'DECAPSULATE'],
 ]
-
-interface MechEntry {
-  name: string
-  description: string
-  family: MechanismFamily
-}
-
-/** Comprehensive mechanism name / description / family table (PKCS#11 v3.2) */
-const MECH_TABLE: Record<number, MechEntry> = {
-  // ── RSA ──────────────────────────────────────────────────────────────────
-  0x00000000: {
-    name: 'CKM_RSA_PKCS_KEY_PAIR_GEN',
-    description: 'RSA key pair generation (PKCS #1)',
-    family: 'asymmetric',
-  },
-  0x00000001: {
-    name: 'CKM_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 sign & encrypt',
-    family: 'asymmetric',
-  },
-  0x00000003: {
-    name: 'CKM_RSA_X_509',
-    description: 'Raw RSA operation (X.509)',
-    family: 'asymmetric',
-  },
-  0x00000006: {
-    name: 'CKM_SHA1_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA-1',
-    family: 'asymmetric',
-  },
-  0x00000009: {
-    name: 'CKM_RSA_PKCS_OAEP',
-    description: 'RSA-OAEP encryption (PKCS #1 §7.1)',
-    family: 'asymmetric',
-  },
-  0x0000000e: {
-    name: 'CKM_SHA1_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA-1 (PKCS #1 §8.1)',
-    family: 'asymmetric',
-  },
-  0x00000040: {
-    name: 'CKM_SHA256_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA-256',
-    family: 'asymmetric',
-  },
-  0x00000041: {
-    name: 'CKM_SHA384_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA-384',
-    family: 'asymmetric',
-  },
-  0x00000042: {
-    name: 'CKM_SHA512_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA-512',
-    family: 'asymmetric',
-  },
-  0x00000043: {
-    name: 'CKM_SHA256_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA-256 (PKCS #1 §8.1)',
-    family: 'asymmetric',
-  },
-  0x00000044: {
-    name: 'CKM_SHA384_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA-384',
-    family: 'asymmetric',
-  },
-  0x00000045: {
-    name: 'CKM_SHA512_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA-512',
-    family: 'asymmetric',
-  },
-  0x00000046: {
-    name: 'CKM_SHA224_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA-224',
-    family: 'asymmetric',
-  },
-  0x00000047: {
-    name: 'CKM_SHA224_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA-224',
-    family: 'asymmetric',
-  },
-  0x00000060: {
-    name: 'CKM_SHA3_256_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA3-256',
-    family: 'asymmetric',
-  },
-  0x00000062: {
-    name: 'CKM_SHA3_512_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA3-512',
-    family: 'asymmetric',
-  },
-  0x00000063: {
-    name: 'CKM_SHA3_256_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA3-256',
-    family: 'asymmetric',
-  },
-  0x00000065: {
-    name: 'CKM_SHA3_512_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA3-512',
-    family: 'asymmetric',
-  },
-  0x00000066: {
-    name: 'CKM_SHA3_224_RSA_PKCS',
-    description: 'RSA PKCS#1 v1.5 with SHA3-224',
-    family: 'asymmetric',
-  },
-  0x00000067: {
-    name: 'CKM_SHA3_224_RSA_PKCS_PSS',
-    description: 'RSA-PSS with SHA3-224',
-    family: 'asymmetric',
-  },
-  0x00001054: {
-    name: 'CKM_RSA_AES_KEY_WRAP',
-    description: 'RSA-OAEP + AES key wrapping (PKCS#11 v3.2)',
-    family: 'asymmetric',
-  },
-  // ── ML-KEM (PKCS#11 v3.2 — FIPS 203) ────────────────────────────────────
-  0x0000000f: {
-    name: 'CKM_ML_KEM_KEY_PAIR_GEN',
-    description: 'ML-KEM key pair generation (FIPS 203 §7)',
-    family: 'pqc',
-  },
-  0x00000017: {
-    name: 'CKM_ML_KEM',
-    description: 'ML-KEM encapsulation / decapsulation (FIPS 203 §6)',
-    family: 'pqc',
-  },
-  // ── ML-DSA (PKCS#11 v3.2 — FIPS 204) ────────────────────────────────────
-  0x0000001c: {
-    name: 'CKM_ML_DSA_KEY_PAIR_GEN',
-    description: 'ML-DSA key pair generation (FIPS 204 §6)',
-    family: 'pqc',
-  },
-  0x0000001d: {
-    name: 'CKM_ML_DSA',
-    description: 'ML-DSA pure signing / verification (FIPS 204 §5.2/5.3)',
-    family: 'pqc',
-  },
-  0x0000001f: {
-    name: 'CKM_HASH_ML_DSA',
-    description: 'HashML-DSA generic pre-hash (FIPS 204 §5.4/5.5)',
-    family: 'pqc',
-  },
-  0x00000023: {
-    name: 'CKM_HASH_ML_DSA_SHA224',
-    description: 'HashML-DSA with SHA-224 pre-hash',
-    family: 'pqc',
-  },
-  0x00000024: {
-    name: 'CKM_HASH_ML_DSA_SHA256',
-    description: 'HashML-DSA with SHA-256 pre-hash',
-    family: 'pqc',
-  },
-  0x00000025: {
-    name: 'CKM_HASH_ML_DSA_SHA384',
-    description: 'HashML-DSA with SHA-384 pre-hash',
-    family: 'pqc',
-  },
-  0x00000026: {
-    name: 'CKM_HASH_ML_DSA_SHA512',
-    description: 'HashML-DSA with SHA-512 pre-hash',
-    family: 'pqc',
-  },
-  0x00000027: {
-    name: 'CKM_HASH_ML_DSA_SHA3_224',
-    description: 'HashML-DSA with SHA3-224 pre-hash',
-    family: 'pqc',
-  },
-  0x00000028: {
-    name: 'CKM_HASH_ML_DSA_SHA3_256',
-    description: 'HashML-DSA with SHA3-256 pre-hash',
-    family: 'pqc',
-  },
-  0x00000029: {
-    name: 'CKM_HASH_ML_DSA_SHA3_384',
-    description: 'HashML-DSA with SHA3-384 pre-hash',
-    family: 'pqc',
-  },
-  0x0000002a: {
-    name: 'CKM_HASH_ML_DSA_SHA3_512',
-    description: 'HashML-DSA with SHA3-512 pre-hash',
-    family: 'pqc',
-  },
-  0x0000002b: {
-    name: 'CKM_HASH_ML_DSA_SHAKE128',
-    description: 'HashML-DSA with SHAKE128 pre-hash',
-    family: 'pqc',
-  },
-  0x0000002c: {
-    name: 'CKM_HASH_ML_DSA_SHAKE256',
-    description: 'HashML-DSA with SHAKE256 pre-hash',
-    family: 'pqc',
-  },
-  // ── SLH-DSA (PKCS#11 v3.2 — FIPS 205) ───────────────────────────────────
-  0x0000002d: {
-    name: 'CKM_SLH_DSA_KEY_PAIR_GEN',
-    description: 'SLH-DSA key pair generation (FIPS 205 §10)',
-    family: 'pqc',
-  },
-  0x0000002e: {
-    name: 'CKM_SLH_DSA',
-    description: 'SLH-DSA pure signing / verification (FIPS 205 §9.2/9.3)',
-    family: 'pqc',
-  },
-  0x00000034: {
-    name: 'CKM_HASH_SLH_DSA',
-    description: 'HashSLH-DSA generic pre-hash (FIPS 205 §9.4/9.5)',
-    family: 'pqc',
-  },
-  0x00000036: {
-    name: 'CKM_HASH_SLH_DSA_SHA224',
-    description: 'HashSLH-DSA with SHA-224 pre-hash',
-    family: 'pqc',
-  },
-  0x00000037: {
-    name: 'CKM_HASH_SLH_DSA_SHA256',
-    description: 'HashSLH-DSA with SHA-256 pre-hash',
-    family: 'pqc',
-  },
-  0x00000038: {
-    name: 'CKM_HASH_SLH_DSA_SHA384',
-    description: 'HashSLH-DSA with SHA-384 pre-hash',
-    family: 'pqc',
-  },
-  0x00000039: {
-    name: 'CKM_HASH_SLH_DSA_SHA512',
-    description: 'HashSLH-DSA with SHA-512 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003a: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_224',
-    description: 'HashSLH-DSA with SHA3-224 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003b: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_256',
-    description: 'HashSLH-DSA with SHA3-256 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003c: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_384',
-    description: 'HashSLH-DSA with SHA3-384 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003d: {
-    name: 'CKM_HASH_SLH_DSA_SHA3_512',
-    description: 'HashSLH-DSA with SHA3-512 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003e: {
-    name: 'CKM_HASH_SLH_DSA_SHAKE128',
-    description: 'HashSLH-DSA with SHAKE128 pre-hash',
-    family: 'pqc',
-  },
-  0x0000003f: {
-    name: 'CKM_HASH_SLH_DSA_SHAKE256',
-    description: 'HashSLH-DSA with SHAKE256 pre-hash',
-    family: 'pqc',
-  },
-  // ── SHA hash & HMAC ──────────────────────────────────────────────────────
-  0x00000220: { name: 'CKM_SHA_1', description: 'SHA-1 digest (FIPS 180-4)', family: 'hash' },
-  0x00000221: { name: 'CKM_SHA_1_HMAC', description: 'HMAC-SHA-1 (RFC 2104)', family: 'hash' },
-  0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest (FIPS 180-4)', family: 'hash' },
-  0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256 (RFC 2104)', family: 'hash' },
-  0x00000255: { name: 'CKM_SHA224', description: 'SHA-224 digest (FIPS 180-4)', family: 'hash' },
-  0x00000256: { name: 'CKM_SHA224_HMAC', description: 'HMAC-SHA-224 (RFC 2104)', family: 'hash' },
-  0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest (FIPS 180-4)', family: 'hash' },
-  0x00000261: { name: 'CKM_SHA384_HMAC', description: 'HMAC-SHA-384 (RFC 2104)', family: 'hash' },
-  0x00000270: { name: 'CKM_SHA512', description: 'SHA-512 digest (FIPS 180-4)', family: 'hash' },
-  0x00000271: { name: 'CKM_SHA512_HMAC', description: 'HMAC-SHA-512 (RFC 2104)', family: 'hash' },
-  0x000002b0: { name: 'CKM_SHA3_256', description: 'SHA3-256 digest (FIPS 202)', family: 'hash' },
-  0x000002b1: {
-    name: 'CKM_SHA3_256_HMAC',
-    description: 'HMAC-SHA3-256 (RFC 2104 + FIPS 202)',
-    family: 'hash',
-  },
-  0x000002b5: { name: 'CKM_SHA3_224', description: 'SHA3-224 digest (FIPS 202)', family: 'hash' },
-  0x000002b6: {
-    name: 'CKM_SHA3_224_HMAC',
-    description: 'HMAC-SHA3-224 (RFC 2104 + FIPS 202)',
-    family: 'hash',
-  },
-  0x000002c0: { name: 'CKM_SHA3_384', description: 'SHA3-384 digest (FIPS 202)', family: 'hash' },
-  0x000002c1: {
-    name: 'CKM_SHA3_384_HMAC',
-    description: 'HMAC-SHA3-384 (RFC 2104 + FIPS 202)',
-    family: 'hash',
-  },
-  0x000002d0: { name: 'CKM_SHA3_512', description: 'SHA3-512 digest (FIPS 202)', family: 'hash' },
-  0x000002d1: {
-    name: 'CKM_SHA3_512_HMAC',
-    description: 'HMAC-SHA3-512 (RFC 2104 + FIPS 202)',
-    family: 'hash',
-  },
-  // ── Symmetric ─────────────────────────────────────────────────────────────
-  0x00000350: {
-    name: 'CKM_GENERIC_SECRET_KEY_GEN',
-    description: 'Generic secret key generation',
-    family: 'symmetric',
-  },
-  0x00001080: { name: 'CKM_AES_KEY_GEN', description: 'AES key generation', family: 'symmetric' },
-  0x00001081: {
-    name: 'CKM_AES_ECB',
-    description: 'AES-ECB encryption / decryption (FIPS 197)',
-    family: 'symmetric',
-  },
-  0x00001082: {
-    name: 'CKM_AES_CBC',
-    description: 'AES-CBC encryption / decryption (FIPS 197)',
-    family: 'symmetric',
-  },
-  0x00001085: {
-    name: 'CKM_AES_CBC_PAD',
-    description: 'AES-CBC with PKCS#7 padding',
-    family: 'symmetric',
-  },
-  0x00001086: {
-    name: 'CKM_AES_CTR',
-    description: 'AES-CTR stream cipher (NIST SP 800-38A)',
-    family: 'symmetric',
-  },
-  0x00001087: {
-    name: 'CKM_AES_GCM',
-    description: 'AES-GCM authenticated encryption (NIST SP 800-38D)',
-    family: 'symmetric',
-  },
-  0x0000108a: {
-    name: 'CKM_AES_CMAC',
-    description: 'AES-CMAC message authentication (NIST SP 800-38B)',
-    family: 'symmetric',
-  },
-  0x00002109: {
-    name: 'CKM_AES_KEY_WRAP',
-    description: 'AES key wrapping (RFC 3394 / NIST SP 800-38F)',
-    family: 'symmetric',
-  },
-  0x0000210a: {
-    name: 'CKM_AES_KEY_WRAP_PAD',
-    description: 'AES key wrapping with padding (NIST SP 800-38F §6.3)',
-    family: 'symmetric',
-  },
-  0x00001104: {
-    name: 'CKM_AES_ECB_ENCRYPT_DATA',
-    description: 'AES-ECB encrypt-data key derivation',
-    family: 'symmetric',
-  },
-  0x00001105: {
-    name: 'CKM_AES_CBC_ENCRYPT_DATA',
-    description: 'AES-CBC encrypt-data key derivation',
-    family: 'symmetric',
-  },
-  // ── KDF / Key Agreement ───────────────────────────────────────────────────
-  0x00001050: {
-    name: 'CKM_ECDH1_DERIVE',
-    description: 'ECDH key agreement (PKCS#11 §2.3.1)',
-    family: 'kdf',
-  },
-  0x00001051: {
-    name: 'CKM_ECDH1_COFACTOR_DERIVE',
-    description: 'ECDH cofactor key agreement (PKCS#11 v3.2 §2.3.2)',
-    family: 'kdf',
-  },
-  0x00000360: {
-    name: 'CKM_CONCATENATE_BASE_AND_KEY',
-    description: 'Key derivation: base key || key (PKCS#11 §2.38.1)',
-    family: 'kdf',
-  },
-  0x00000362: {
-    name: 'CKM_CONCATENATE_BASE_AND_DATA',
-    description: 'Key derivation: base key || data (PKCS#11 §2.38.2)',
-    family: 'kdf',
-  },
-  0x00000363: {
-    name: 'CKM_CONCATENATE_DATA_AND_BASE',
-    description: 'Key derivation: data || base key (PKCS#11 §2.38.3)',
-    family: 'kdf',
-  },
-  0x000003ac: {
-    name: 'CKM_SP800_108_COUNTER_KDF',
-    description: 'NIST SP 800-108 counter-mode KBKDF',
-    family: 'kdf',
-  },
-  0x000003ad: {
-    name: 'CKM_SP800_108_FEEDBACK_KDF',
-    description: 'NIST SP 800-108 feedback-mode KBKDF',
-    family: 'kdf',
-  },
-  0x000003ae: {
-    name: 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
-    description: 'NIST SP 800-108 double-pipeline KBKDF',
-    family: 'kdf',
-  },
-  0x000003b0: {
-    name: 'CKM_PKCS5_PBKD2',
-    description: 'PBKDF2 password-based key derivation (RFC 8018 §5.2)',
-    family: 'kdf',
-  },
-  0x0000402a: {
-    name: 'CKM_HKDF_DERIVE',
-    description: 'HKDF key derivation (RFC 5869)',
-    family: 'kdf',
-  },
-  // ── EC / ECDSA / EdDSA ────────────────────────────────────────────────────
-  0x00001040: {
-    name: 'CKM_EC_KEY_PAIR_GEN',
-    description: 'EC key pair generation (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001041: {
-    name: 'CKM_ECDSA',
-    description: 'ECDSA raw signing / verification (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001042: {
-    name: 'CKM_ECDSA_SHA1',
-    description: 'ECDSA with SHA-1 (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001043: {
-    name: 'CKM_ECDSA_SHA224',
-    description: 'ECDSA with SHA-224 (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001044: {
-    name: 'CKM_ECDSA_SHA256',
-    description: 'ECDSA with SHA-256 (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001045: {
-    name: 'CKM_ECDSA_SHA384',
-    description: 'ECDSA with SHA-384 (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001046: {
-    name: 'CKM_ECDSA_SHA512',
-    description: 'ECDSA with SHA-512 (FIPS 186-5)',
-    family: 'asymmetric',
-  },
-  0x00001047: {
-    name: 'CKM_ECDSA_SHA3_224',
-    description: 'ECDSA with SHA3-224 (PKCS#11 v3.2 §6.3)',
-    family: 'asymmetric',
-  },
-  0x00001048: {
-    name: 'CKM_ECDSA_SHA3_256',
-    description: 'ECDSA with SHA3-256 (PKCS#11 v3.2 §6.3)',
-    family: 'asymmetric',
-  },
-  0x00001049: {
-    name: 'CKM_ECDSA_SHA3_384',
-    description: 'ECDSA with SHA3-384 (PKCS#11 v3.2 §6.3)',
-    family: 'asymmetric',
-  },
-  0x0000104a: {
-    name: 'CKM_ECDSA_SHA3_512',
-    description: 'ECDSA with SHA3-512 (PKCS#11 v3.2 §6.3)',
-    family: 'asymmetric',
-  },
-  0x00001055: {
-    name: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
-    description: 'Ed25519 / Ed448 key pair generation (RFC 8032)',
-    family: 'asymmetric',
-  },
-  0x00001056: {
-    name: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN',
-    description: 'X25519 / X448 key pair generation (RFC 7748)',
-    family: 'asymmetric',
-  },
-  0x00001057: {
-    name: 'CKM_EDDSA',
-    description: 'EdDSA signing / verification (RFC 8032)',
-    family: 'asymmetric',
-  },
-  // ── Vendor-defined (softhsmv3 extensions) ────────────────────────────────
-  0x80000100: {
-    name: 'CKM_KMAC_128',
-    description: 'KMAC-128 message authentication (NIST SP 800-185)',
-    family: 'symmetric',
-  },
-  0x80000101: {
-    name: 'CKM_KMAC_256',
-    description: 'KMAC-256 message authentication (NIST SP 800-185)',
-    family: 'symmetric',
-  },
-}
 
 /** Decode a CKF_ flags bitmask into an array of short flag names. */
 const decodeMechFlags = (flags: number): string[] =>
@@ -6288,173 +5805,30 @@ export const hsm_importStatefulPublicKey = (
 }
 
 /**
- * Single-part verify using C_VerifyInit + C_Verify (not the message API).
- * Used for HSS and XMSS which use the traditional single-part verify path.
- * Returns the raw CKR return value (0 = CKR_OK = valid signature).
+ * Stateful hash-based signatures (HSS/LMS, XMSS, XMSS-MT).
+ *
+ * This module used to carry its own XMSS/LMS keygen and stateful sign/verify,
+ * a second copy lived in `./softhsm/pqc.ts` and a third in
+ * `./softhsm/stateful.ts`. The copy here happened to be the correct one on the
+ * parameter-set question and the other two were not, which is exactly the kind
+ * of split a single implementation prevents. `./softhsm/stateful.ts` is now
+ * that implementation; these re-exports keep every existing importer of
+ * `@/wasm/softhsm` compiling against the same names.
+ *
+ * hsm_generateXMSSKeyPair and hsm_generateLMSKeyPair lost their `extractable`
+ * argument in the move. It could not be honoured any more: both engines now
+ * mandate CKA_SENSITIVE=TRUE / CKA_EXTRACTABLE=FALSE on an HBS private key and
+ * the C++ engine refuses a template that says otherwise, so the parameter could
+ * only ever have caused a CKR_ATTRIBUTE_VALUE_INVALID that looked like an
+ * engine fault.
  */
-export const hsm_statefulVerifyBytes = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  pubHandle: number,
-  msgBytes: Uint8Array,
-  sigBytes: Uint8Array
-): number => {
-  const mech = buildMech(M, mechType)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigPtr = writeBytes(M, sigBytes)
-  try {
-    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(stateful)')
-    return M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-  } finally {
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigPtr)
-  }
-}
-
-/**
- * Generate an XMSS Key Pair.
- * Requires hsm_setKatSeed to be called first if testing against NIST vectors in Rust.
- */
-export const hsm_generateXMSSKeyPair = (
-  M: SoftHSMModule,
-  hSession: number,
-  paramSet: number,
-  extractable = false
-): { pubHandle: number; privHandle: number } => {
-  const mech = buildMech(M, CKM_XMSS_KEY_PAIR_GEN)
-  const pubAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
-  ]
-  const prvAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: !extractable },
-    { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
-  ]
-  const pubTpl = buildTemplate(M, pubAttrs)
-  const prvTpl = buildTemplate(M, prvAttrs)
-
-  const pubHPtr = allocUlong(M)
-  const prvHPtr = allocUlong(M)
-  try {
-    checkRV(
-      M._C_GenerateKeyPair(
-        hSession,
-        mech,
-        pubTpl.ptr,
-        pubAttrs.length,
-        prvTpl.ptr,
-        prvAttrs.length,
-        pubHPtr,
-        prvHPtr
-      ),
-      'C_GenerateKeyPair(XMSS)'
-    )
-    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
-  } finally {
-    M._free(mech)
-    freeTemplate(M, pubTpl, pubAttrs.length)
-    freeTemplate(M, prvTpl, prvAttrs.length)
-    M._free(pubHPtr)
-    M._free(prvHPtr)
-  }
-}
-
-/**
- * Generate an LMS/HSS Key Pair.
- * Requires LMS_TYPE and LMOTS_TYPE for parameter derivation.
- */
-export const hsm_generateLMSKeyPair = (
-  M: SoftHSMModule,
-  hSession: number,
-  extractable = false
-): { pubHandle: number; privHandle: number } => {
-  // CKM_HSS_KEY_PAIR_GEN with NULL params — both engines default to a single-level
-  // LMS hierarchy. CKA_HSS_LMS_TYPE/LMOTS_TYPE are mechanism-contributed OUTPUT
-  // attributes (not keygen inputs), so they are NOT placed in the template.
-  const mech = buildMech(M, CKM_HSS_KEY_PAIR_GEN)
-  const pubAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-  ]
-  const prvAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: !extractable },
-    { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
-  ]
-  const pubTpl = buildTemplate(M, pubAttrs)
-  const prvTpl = buildTemplate(M, prvAttrs)
-
-  const pubHPtr = allocUlong(M)
-  const prvHPtr = allocUlong(M)
-  try {
-    checkRV(
-      M._C_GenerateKeyPair(
-        hSession,
-        mech,
-        pubTpl.ptr,
-        pubAttrs.length,
-        prvTpl.ptr,
-        prvAttrs.length,
-        pubHPtr,
-        prvHPtr
-      ),
-      'C_GenerateKeyPair(HSS)'
-    )
-    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
-  } finally {
-    M._free(mech)
-    freeTemplate(M, pubTpl, pubAttrs.length)
-    freeTemplate(M, prvTpl, prvAttrs.length)
-    M._free(pubHPtr)
-    M._free(prvHPtr)
-  }
-}
-
-/**
- * Single-part sign using C_SignInit + C_Sign (not the message API).
- * Used for HSS and XMSS which use the traditional single-part sign path.
- * Returns the signature bytes.
- */
-export const hsm_statefulSignBytes = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  privHandle: number,
-  msgBytes: Uint8Array
-): Uint8Array => {
-  const mech = buildMech(M, mechType)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigLenPtr = allocUlong(M)
-  let sigPtr = 0
-  try {
-    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(stateful)')
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(stateful,len)')
-    const sigLen = readUlong(M, sigLenPtr)
-    sigPtr = M._malloc(sigLen)
-    writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(stateful)')
-    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
-  } finally {
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigLenPtr)
-    if (sigPtr) M._free(sigPtr)
-  }
-}
+export {
+  hsm_generateStatefulKeyPair,
+  hsm_generateHSSKeyPair,
+  hsm_generateLMSKeyPair,
+  hsm_generateXMSSKeyPair,
+  hsm_generateXMSSMTKeyPair,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
+  hsm_getKeysRemaining,
+} from './softhsm/stateful'

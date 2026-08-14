@@ -328,10 +328,18 @@ export const buildBIP32ChildDeriveParams = (
   index: number,
   hardened: boolean
 ): { ptr: number; len: number; allocPtrs: number[] } => {
+  // CK_BIP32_CHILD_DERIVE_PARAMS declares `CK_VOID_PTR pNext` FIRST, then
+  // flags, then index (pkcs11t.h). This builder used to omit pNext, and the
+  // Rust engine used to read the struct the same wrong way — so the two agreed
+  // with each other while disagreeing with the header the C++ engine already
+  // implements. The engine now reads what the header declares, so the field
+  // must be written: without it, flags and index land one slot early and
+  // derivation returns CKR_ARGUMENTS_BAD.
   const allocPtrs: number[] = []
-  const ptr = M._malloc(8)
+  const ptr = M._malloc(12)
   allocPtrs.push(ptr)
-  M.setValue(ptr, hardened ? 1 : 0, 'i32') // flags
-  M.setValue(ptr + 4, index, 'i32') // index
-  return { ptr, len: 8, allocPtrs }
+  M.setValue(ptr, 0, 'i32') // pNext — NULL
+  M.setValue(ptr + 4, hardened ? 1 : 0, 'i32') // flags
+  M.setValue(ptr + 8, index, 'i32') // index
+  return { ptr, len: 12, allocPtrs }
 }
