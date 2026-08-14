@@ -126,7 +126,7 @@ const CKA_TABLE: Record<number, ConstEntry> = {
 
 // CKM_ mechanism types
 const CKM_TABLE: Record<number, ConstEntry> = {
-  // RSA (§2.1)
+  // RSA (PKCS#11 §6.1)
   0x00000000: { name: 'CKM_RSA_PKCS_KEY_PAIR_GEN', description: 'RSA key pair generation' },
   0x00000009: {
     name: 'CKM_RSA_PKCS_OAEP',
@@ -226,7 +226,7 @@ const CKM_TABLE: Record<number, ConstEntry> = {
   0x0000003d: { name: 'CKM_HASH_SLH_DSA_SHA3_512', description: 'HashSLH-DSA with SHA3-512' },
   0x0000003e: { name: 'CKM_HASH_SLH_DSA_SHAKE128', description: 'HashSLH-DSA with SHAKE128' },
   0x0000003f: { name: 'CKM_HASH_SLH_DSA_SHAKE256', description: 'HashSLH-DSA with SHAKE256' },
-  // Hash / Digest (§2.17)
+  // Hash / Digest (PKCS#11 v3.2 §6.20–6.27)
   0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest' },
   0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256' },
   0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest' },
@@ -241,15 +241,15 @@ const CKM_TABLE: Record<number, ConstEntry> = {
   0x00000350: { name: 'CKM_GENERIC_SECRET_KEY_GEN', description: 'Generic secret key generation' },
   0x000003ac: {
     name: 'CKM_SP800_108_COUNTER_KDF',
-    description: 'NIST SP 800-108 Counter mode KBKDF (§2.44)',
+    description: 'NIST SP 800-108 Counter mode KBKDF (PKCS#11 §6.42)',
   },
   0x000003ad: {
     name: 'CKM_SP800_108_FEEDBACK_KDF',
-    description: 'NIST SP 800-108 Feedback mode KBKDF (§2.44)',
+    description: 'NIST SP 800-108 Feedback mode KBKDF (PKCS#11 §6.42)',
   },
   0x000003ae: {
     name: 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
-    description: 'NIST SP 800-108 Double-Pipeline KBKDF (§2.44)',
+    description: 'NIST SP 800-108 Double-Pipeline KBKDF (PKCS#11 §6.42)',
   },
   0x000003b0: { name: 'CKM_PKCS5_PBKD2', description: 'PBKDF2 key derivation (RFC 8018)' },
   // EC (§2.3)
@@ -294,7 +294,7 @@ const CKM_TABLE: Record<number, ConstEntry> = {
     name: 'CKM_AES_KEY_WRAP_KWP',
     description: 'AES Key Wrap with Padding (NIST SP 800-38F §6.3)',
   },
-  // HKDF (§2.43)
+  // HKDF (PKCS#11 §6.62)
   0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
   // KMAC (§2.x) — PKCS#11 v3.2 / vendor codes
   0x80000100: { name: 'CKM_KMAC_128', description: 'KMAC128 (NIST SP 800-185) [VENDOR]' },

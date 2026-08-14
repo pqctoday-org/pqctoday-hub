@@ -185,7 +185,7 @@ export const HsmKeyAgreementPanel = ({
           <h3 className="font-semibold text-foreground">ECDH Key Agreement</h3>
           <div className="ml-auto flex items-center gap-1">
             <ShareButton title="HSM Key Agreement" variant="icon" />
-            <span className="text-xs text-muted-foreground">PKCS#11 v3.2 §2.3</span>
+            <span className="text-xs text-muted-foreground">PKCS#11 v3.2 §6.3.17</span>
           </div>
         </div>
 
@@ -370,7 +370,7 @@ export const HsmKeyAgreementPanel = ({
 
         {/* Educational note */}
         <p className="text-xs text-muted-foreground">
-          PKCS#11 v3.2 §2.3: Both parties run{' '}
+          PKCS#11 v3.2 §6.3.17: Both parties run{' '}
           <span className="font-mono text-primary">C_DeriveKey({mechName})</span> with their own
           private key and the peer's DER-encoded EC point (CKA_EC_POINT). For NIST P-curves
           (cofactor=1) standard and cofactor modes produce identical shared secrets. X25519 and X448

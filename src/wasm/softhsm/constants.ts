@@ -123,7 +123,7 @@ export const CKM_ECDSA_SHA3_256 = 0x1048
 export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
-export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofactor ECDH
+export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §6.3.18 — cofactor ECDH
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 
@@ -149,8 +149,8 @@ export const CKP_PKCS5_PBKD2_HMAC_SHA512 = 0x06
 // Symmetric / HMAC / digest mechanisms
 export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
-export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §2.14.1 — MILENAGE f1–f5
-export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §2.14.3 — SUCI MSIN encryption (TS 33.501)
+export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §6.10.4 — MILENAGE f1–f5
+export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §6.11 — SUCI MSIN encryption (TS 33.501)
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -387,16 +387,16 @@ export const CKD_SHA256_KDF = 0x00000006 // ANSI X9.63 KDF with SHA-256 (SUCI Pr
 export const CKD_SHA384_KDF = 0x00000007 // ANSI X9.63 KDF with SHA-384
 export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
 
-// HKDF derive (PKCS#11 v3.2 §2.43)
-export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §2.43
+// HKDF derive (PKCS#11 v3.2 §6.62)
+export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
-// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §2.44)
+// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §6.42)
 export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
 export const CKM_SP800_108_FEEDBACK_KDF = 0x000003ad // Feedback mode KBKDF
 export const CKM_SP800_108_DOUBLE_PIPELINE_KDF = 0x000003ae // Double-pipeline KBKDF
-// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §2.44)
+// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §6.42)
 export const CK_SP800_108_ITERATION_VARIABLE = 0x00000001 // Counter/IV position marker
 export const CK_SP800_108_BYTE_ARRAY = 0x00000004 // Arbitrary byte data (label/context)
 

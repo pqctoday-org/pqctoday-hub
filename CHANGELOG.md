@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.50.0] - 2026-08-14
+
+The PKCS#11 playground now runs the audited v3.2 engines rather than older builds, names every mechanism it advertises instead of showing raw hex, and cites the current standard — plus five correctness fixes found by auditing the two engines against each other.
+
+### Fixed
+
+- **The playground runs the engines the conformance work actually fixed** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: the browser HSM was still running older builds, so months of PKCS#11 v3.2 conformance work was described on the page but not present in what you clicked. Every engine bundle the site ships — both HSM engines and the four protocol wrappers — is rebuilt from the released engines and pinned, and a check now blocks any release where the page and the engine have drifted apart again.
+- **The mechanism list reads as mechanism names, not hex codes** [view:/playground] [persona:developer]: browsing what the emulated HSM supports showed "CKM_UNKNOWN" and a raw number for roughly 37 entries on one engine and 21 on the other — including standard v3.2 mechanisms and the post-quantum ones the key-encapsulation panel advertises by name elsewhere on the same page. All of them are named now, and a test checks the table against what the engines really advertise, so a future engine release cannot quietly reintroduce the gap.
+- **Panes no longer wipe each other's operation log** [view:/playground] [persona:developer]: switching panes cleared the shared PKCS#11 call log, discarding the record of what you had just run.
+- **The key-encapsulation workbench waits for the engine to be ready** [view:/playground] [persona:developer]: it could be operated before the HSM had finished starting, which failed in a way that looked like the feature was broken.
+- **Hierarchical-deterministic wallet derivation keeps working** [view:/learn] [persona:developer] [persona:architect]: the HD-wallet lesson in the digital-assets module derives child keys through the emulated HSM. The page and the engine had each been passing that request in the same non-standard shape — agreeing with each other while disagreeing with the standard — so correcting the engine would have broken the lesson outright. Both now follow the specification, and the derived keys are checked against the published BIP32 test vectors.
+- **Standards citations point at sections that exist** [view:/playground] [persona:researcher] [persona:developer]: the playground cited section numbers from PKCS#11 v2.40 while describing v3.2 behaviour, so following a citation led to the wrong part of the standard, or to nothing. Roughly 35 user-facing references were corrected against the current text.
+- **Two cryptographic reading errors, found by running the engines against each other** [view:/playground] [persona:developer]: a test-vector reader was cutting two bytes off a curve point given in its bare form, and a signature option controlling whether a message is pre-hashed was read at the wrong width — accepted silently rather than rejected. Both are now covered by tests.
+
+### Changed
+
+- **One implementation of stateful hash-based signatures instead of three** [persona:developer]: three near-duplicate copies had drifted apart; they are now a single implementation, so a fix lands everywhere at once.
+
 ## [4.49.0] - 2026-08-12
 
 The library sorts by when a document was actually published rather than when we last touched its record, and the business tools' dollar figures, quotations and vendor guidance have been checked against the documents they cite — three of five financial constants turned out to be wrong.

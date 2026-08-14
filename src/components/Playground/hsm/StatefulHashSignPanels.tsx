@@ -56,7 +56,7 @@ export const XmssPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // Hardcoded paramSet for XMSS-SHA2_10_256 (0x00000001)
-      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1, false)
+      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1)
       addHsmKey({
         handle: pubHandle,
         family: 'xmss',
@@ -208,7 +208,7 @@ export const LmsPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // Hardcoded types for LMS_SHA256_M32_H5 (0x05) and LMOTS_SHA256_N32_W1 (0x01)
-      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, false)
+      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession)
       addHsmKey({
         handle: pubHandle,
         family: 'lms',
