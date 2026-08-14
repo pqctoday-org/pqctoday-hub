@@ -506,7 +506,7 @@ export function buildKdfInput(
 //   NOTE: for Profile B, TS 33.501 Annex C specifies the 33-byte COMPRESSED ephemeral public
 //   key as SharedInfo; this demo currently passes the 65-byte uncompressed point below.
 //   Profile C hybrid: SharedInfo = raw X25519 ephemeral key (same offset as Profile A)
-//   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key per 3GPP TR 33.938)
+//   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key to bind in)
 function extractRawPubKeyBytes(spkiHex: string, profile: 'A' | 'B' | 'C'): Uint8Array {
   const spki = (spkiHex.match(/.{1,2}/g) ?? []).map((b) => parseInt(b, 16))
   if (profile === 'A' && spki.length === 44) return new Uint8Array(spki.slice(12)) // X25519: 32 bytes
