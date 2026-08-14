@@ -9354,6 +9354,46 @@
       "sizeBytes": 302335,
       "contentType": "application/pdf",
       "sha256": "813fb20250e3756afee85df36680d62573bf0335262f0cf2de9084a5de43438f"
+    },
+    {
+      "refId": "EMV-Break-Fix-Verify-2021",
+      "title": "The EMV Standard: Break, Fix, Verify",
+      "url": "https://arxiv.org/pdf/2006.08249",
+      "status": "downloaded",
+      "filename": "EMV-Break-Fix-Verify-2021.pdf",
+      "sizeBytes": 1621201,
+      "contentType": "application/pdf",
+      "sha256": "dcca2c769c7a305672e029656ae6dbb87faa4a55f47b531cea4095f154dacdcf"
+    },
+    {
+      "refId": "RU-Nijmegen-EMV-Course-Notes",
+      "title": "EMV \u2014 Radboud University Digital Security course notes (Erik Poll)",
+      "url": "https://www.cs.ru.nl/~erikpoll/spp/EMV_lecture.pdf",
+      "status": "downloaded",
+      "filename": "RU-Nijmegen-EMV-Course-Notes.pdf",
+      "sizeBytes": 1918473,
+      "contentType": "application/pdf",
+      "sha256": "8ef03cce9ed41d0783a33cd00670af1e9d8175b557d81f515e626af75de5b476"
+    },
+    {
+      "refId": "BLE-Key-Negotiation-Downgrade-2020",
+      "title": "Key Negotiation Downgrade Attacks on Bluetooth and Bluetooth Low Energy",
+      "url": "https://www.cs.ox.ac.uk/files/12712/3394497.pdf",
+      "status": "downloaded",
+      "filename": "BLE-Key-Negotiation-Downgrade-2020.pdf",
+      "sizeBytes": 2395279,
+      "contentType": "application/pdf",
+      "sha256": "99cd94fba766052b9fe79e984c12dcf2b5ee046bcd205740f9e612d4fbb1e92f"
+    },
+    {
+      "refId": "BLE-Low-Entropy-Key-Negotiation-2019",
+      "title": "Low Entropy Key Negotiation Attacks on Bluetooth and Bluetooth Low Energy",
+      "url": "https://eprint.iacr.org/2019/933.pdf",
+      "status": "downloaded",
+      "filename": "BLE-Low-Entropy-Key-Negotiation-2019.pdf",
+      "sizeBytes": 816887,
+      "contentType": "application/pdf",
+      "sha256": "260063a07eeccd7f4b1ab23cc93a2530dfed6957b9421f1cbd6dfec47eacec3e"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
