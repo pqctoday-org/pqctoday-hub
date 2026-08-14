@@ -507,6 +507,18 @@ public/data/rag-index-freshness.json
 !scripts/audit-csv-archival.ts
 !scripts/audit-csv-archival.test.ts
 
+# CSV copy-forward gate: dated generations are different FILENAMES, so two
+# sessions each writing one merge cleanly with no conflict while the loader
+# serves only the newest — rows present in one and absent from the other just
+# disappear, with no conflict, error or failing test. Runs in the local gate
+# (npm run audit:csv-copy-forward, wired into .husky/pre-push).
+# The .test.ts line is not decoration: `scripts/*` above made `git add` a
+# silent no-op for it, so the tests were written, passed, and were left out of
+# the commit that added them. Same failure this file already records for the
+# validators (2026-07-10) and the role-board gates.
+!scripts/audit-csv-copy-forward.ts
+!scripts/audit-csv-copy-forward.test.ts
+
 # Publication-date gate: library.initial_publication_date, timeline.SourceDate
 # and vendor-roadmaps.publish_date all mean "the source document's own
 # publication date" — add_row.py used to fill them with the ingest timestamp
