@@ -647,13 +647,13 @@ export function _C_GetInterfaceList(p_interfaces_list, pul_count) {
 }
 
 /**
- * @param {number} _slot_id
+ * @param {number} slot_id
  * @param {number} mech_type
  * @param {number} p_info
  * @returns {number}
  */
-export function _C_GetMechanismInfo(_slot_id, mech_type, p_info) {
-    const ret = wasm._C_GetMechanismInfo(_slot_id, mech_type, p_info);
+export function _C_GetMechanismInfo(slot_id, mech_type, p_info) {
+    const ret = wasm._C_GetMechanismInfo(slot_id, mech_type, p_info);
     return ret >>> 0;
 }
 
@@ -721,12 +721,12 @@ export function _C_GetSessionValidationFlags(h_session, type_, p_flags) {
 }
 
 /**
- * @param {number} _slot_id
+ * @param {number} slot_id
  * @param {number} p_info
  * @returns {number}
  */
-export function _C_GetSlotInfo(_slot_id, p_info) {
-    const ret = wasm._C_GetSlotInfo(_slot_id, p_info);
+export function _C_GetSlotInfo(slot_id, p_info) {
+    const ret = wasm._C_GetSlotInfo(slot_id, p_info);
     return ret >>> 0;
 }
 
