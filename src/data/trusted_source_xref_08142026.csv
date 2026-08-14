@@ -1255,6 +1255,7 @@ leaders,Dr. Ludovic Perret,cryptonext,mapped
 leaders,Skip Sanzeri,qusecure,mapped
 leaders,Duncan Jones,quantinuum,mapped
 leaders,Prof. Florian Mendel,infineon,mapped
+leaders,Dr. Joppe Bos,nxp-semiconductors-nv,mapped
 leaders,Dr. Gregor Seiler,ibm-research,mapped
 leaders,Dr. Carlos Aguilar Melchor,sandboxaq,mapped
 leaders,Mark Hughes,ibm-research,mapped
@@ -1269,6 +1270,7 @@ leaders,Sophie Schmieg,google,mapped
 leaders,Bas Westerbaan,cloudflare,mapped
 leaders,Ehren Kret,signal,exact
 leaders,Rolfe Schmidt,signal,exact
+leaders,Luke Ibbetson,vodafone-group-plc,mapped
 leaders,Sofia Celi,brave-software,mapped
 leaders,Tim Hollebeek,digicert,mapped
 leaders,Mike Ounsworth,entrust,mapped
@@ -1288,8 +1290,10 @@ leaders,Dr. Scott Totzke,isara-corporation,mapped
 leaders,Kevin Bocek,venafi,exact
 leaders,Thomas Coratger,eth-foundation,mapped
 leaders,Mike Osborne,ibm-research,mapped
+leaders,Bruno Couillard,crypto4a-technologies-inc,mapped
 leaders,Dr. Colin Soutar,deloitte,mapped
 leaders,Denis Mandich,qrypt,mapped
+leaders,Dr. Krysta Svore,nvidia-corporation,mapped
 leaders,Philip Intallura,boe,mapped
 leaders,Tomofumi Okubo,digicert,mapped
 leaders,Dr. Marco Piani,evolutionq-inc,mapped
@@ -1299,6 +1303,7 @@ leaders,David Benjamin,google,mapped
 leaders,Jake Massimo,amazon-aws,mapped
 leaders,Anthony Towns,bitcoin-core,mapped
 leaders,Gavin Wood,eth-foundation,mapped
+leaders,Brian Campbell,ping-identity-holdings-corp,mapped
 leaders,Kristina Yasuda,microsoft,mapped
 leaders,Mark D. Baushke,juniper-networks,mapped
 leaders,Paul Bastian,bundesdruckerei,mapped
@@ -1307,16 +1312,22 @@ leaders,Chris M. Lonvick,cisco-systems,mapped
 leaders,Tatu Ylonen,ssh-communications-security,mapped
 leaders,Ben Laurie,google,mapped
 leaders,Charlie Kaufman,microsoft,mapped
+leaders,Paul Wouters,red-hat,mapped
 leaders,Rob Stradling,sectigo,mapped
 leaders,John Gilmore,eff,mapped
+leaders,Brendan Moran,arm-holdings-plc,mapped
 leaders,Stephen Davidson,digicert,mapped
 leaders,Martijn Katerbarg,sectigo,mapped
 leaders,Clint Wilson,apple,exact
+leaders,Ashish Dhiman,globalsign-ltd,mapped
+leaders,Robert Relyea,red-hat,mapped
 leaders,Valerie Fenwick,oracle,mapped
 leaders,Luke Valenta,cloudflare,mapped
 leaders,Christopher Patton,cloudflare,mapped
 leaders,Vânia Gonçalves,cloudflare,mapped
 leaders,Craig Gidney,google-quantum-ai,mapped
+leaders,Marco Lucamarini,toshiba-research-europe-ltd,mapped
+leaders,Bruno Huttner,id-quantique-sa,mapped
 leaders,Roy C. DeCicco,jpmorganchase,mapped
 leaders,Shuichi Katsumata,pqshield,mapped
 leaders,Prof. Birgitta Whaley,uc-berkeley-bqic,mapped
@@ -1326,6 +1337,7 @@ leaders,Prof. Dr. Peter Schwabe,mpi-sp,exact
 leaders,Prof. Dr. Peter Schwabe,radboud-university,mapped
 leaders,Prof. Dr. Damien Stehlé,inria-crypto,mapped
 leaders,Prof. Dr. Tanja Lange,tue-coding,mapped
+leaders,Andersen Cheng,post-quantum-ltd,mapped
 leaders,Michael Adams,zoom,mapped
 leaders,Stavros Kousidis,bsi,mapped
 leaders,Adam Langley,google,mapped
@@ -1334,10 +1346,12 @@ leaders,Dr. Jan Camenisch,ibm-research,mapped
 leaders,Adam Zalcman,google-quantum-ai,mapped
 leaders,Andrew Regenscheid,nist-csrc,mapped
 leaders,Ansgar Dietrichs,eth-foundation,mapped
+leaders,Loïc Bidoux,technology-innovation-institute-tii,mapped
 leaders,Charles Teague,mitre,exact
 leaders,Conor Deegan,project-eleven,mapped
 leaders,David Cooper,nist-csrc,mapped
 leaders,Devon O'Brien,google,mapped
+leaders,Daniel Huigens,proton-ag,mapped
 leaders,David Mahdi,entrust,mapped
 leaders,Deirdre Connolly,sandboxaq,mapped
 leaders,Dustin Moody,nist-csrc,mapped
@@ -1358,6 +1372,7 @@ leaders,M. Pohl,radboud-university,mapped
 leaders,Marek Palatinus,satoshilabs,mapped
 leaders,Marin Ivezic,applied-quantum,mapped
 leaders,Martin Albrecht,ncsc-uk,mapped
+leaders,Masato Wakayama,ntt-corporation,mapped
 leaders,John Preuß Mattsson,ericsson,mapped
 leaders,Maxime Roméas,anssi,mapped
 leaders,Michael Bartock,nist-csrc,mapped
@@ -1395,12 +1410,17 @@ leaders,Moreno Ambrosin,google,mapped
 leaders,Robert Griesemer,google,mapped
 leaders,Rob Pike,google,mapped
 leaders,Michael Rosenberg,cloudflare,mapped
+leaders,Daiki Ueno,red-hat,mapped
 leaders,Jeffrey Stedfast,microsoft,mapped
 leaders,Thomas Holenstein,google,mapped
 leaders,Jürg Wullschleger,google,mapped
 leaders,Russ Cox,google,mapped
 leaders,Hanno Becker,amazon-aws,mapped
+leaders,Joost Roland Renes,nxp-semiconductors-nv,mapped
 leaders,Santosh Ghosh,intel,mapped
+leaders,Tobias Schneider,nxp-semiconductors-nv,mapped
+leaders,Eun Kyung Kim,samsung-sds-co-ltd,mapped
+leaders,Keunyoung Park,samsung-electronics-co,mapped
 leaders,Jonathan William Edwards,ibm-research,mapped
 leaders,Xiaoyun Wang,tsinghua-ql,mapped
 leaders,Kevin Yeo,google,mapped
@@ -1526,6 +1546,7 @@ compliance,NCSC-FI-PQC,ncsc-fi,direct
 compliance,CHILE-ANCI,anci-chile,direct
 compliance,MEXICO-CNBV-CUB,cnbv-mexico,direct
 compliance,BRAZIL-BACEN-4893,bacen-brazil,direct
+compliance,faa-ac-119-1-ansp,faa-us,mapped
 compliance,cisa-pqc-initiative,cisa,direct
 compliance,bsi-cc-certification,bsi,direct
 compliance,etsi-ts-104-015-qsc-hybrid-key-exchange,etsi,direct
