@@ -20,11 +20,12 @@
 //     SUBSTANTIVE outcome for (not just "didn't crash") — e.g. `deriveKey`'s
 //     default `method: 'NIST800-108-C'` matches that file's `dk-derive` case
 //     exactly, not a guess at "the obvious KDF".
-//   - The 4 permanently-unsupported ops (Notify/Put — server-to-client by
-//     definition; Delegated Login/Re-Provision — no handler) need no payload
-//     at all — the dispatcher rejects them before payload semantics matter
-//     (KMIP 3.0 §9.2 `OperationNotSupported`), so an empty payload is the
-//     correct, real request, not a stand-in.
+//   - The 4 ops this playground cannot service (Notify/Put — server-to-client,
+//     and a browser tab has no connection for the server to push down; Delegated
+//     Login/Re-Provision — no handler) need no payload at all — the dispatcher
+//     rejects them before payload semantics matter (KMIP 3.0 §9.2
+//     `OperationNotSupported`), so an empty payload is the correct, real
+//     request, not a stand-in.
 //
 // `build(values)` — every op's field editor (the Commands/Reference tab)
 // supplies a `values` object keyed by each of its `params[]`' `key`, always
@@ -74,11 +75,11 @@ export interface OpTemplate {
   category: OpCategory
   /** One-line KMIP 3.0 spec citation, e.g. "§6.1.19 Derive Key". */
   spec: string
-  /** `false` for the 4 permanently-unsupported ops (Notify/Put —
-   * server-to-client by definition; Delegated Login/Re-Provision — no
-   * handler) — the Run button still fires a REAL request and shows the real
-   * `OperationNotSupported` response; this only flags the Commands tab to
-   * label the card. */
+  /** `false` for the 4 ops this playground cannot service (Notify/Put —
+   * server-to-client, which needs a connection a browser tab does not have;
+   * Delegated Login/Re-Provision — no handler) — the Run button still fires a
+   * REAL request and shows the real `OperationNotSupported` response; this only
+   * flags the Commands tab to label the card. */
   supported: boolean
   /** One-line plain-English description shown in the op row. */
   blurb: string
@@ -874,11 +875,21 @@ export const queryAsynchronousRequests = (
   return payload
 }
 
-// ── 8. Not implemented (out of scope) ────────────────────────────────────────
-// The last 4 truly-unimplemented ops. Since engine 0.12.0's honest-Query
-// audit these are NOT advertised either — `Query` lists only real
-// capabilities. Notify/Put are server-to-client push (a deliberate,
-// documented scope boundary — the spec leaves that transport unspecified);
+// ── 8. Not serviceable in the browser ───────────────────────────────────────
+// The last 4 ops this wasm build cannot answer. Since engine 0.12.0's
+// honest-Query audit these are NOT advertised either — `Query` lists only real
+// capabilities.
+//
+// Notify/Put are server-to-client. Corrected 2026-08-13: the reason is NOT that
+// the spec leaves the transport unspecified — §6.1.61 defines one precisely,
+// the roles swap "over the current client-to-server communication channel …
+// [which] remains as established" — and the native server implements all five
+// of Baseline §5.1.2 item 10's server-to-client operations as of that date.
+// The reason is local and permanent to THIS build: a browser tab holds no
+// long-lived connection for a server to reverse direction on, and the wasm
+// entry point is a request/response dispatch call, not a listener. The push
+// machinery lives in `server/listener.rs`, which is `native`-only.
+//
 // DelegatedLogin/Re-Provision simply have no handler. The dispatcher rejects
 // all four with a real `OperationNotSupported (0x05)`, so an empty payload
 // is the correct, real request.
@@ -2030,20 +2041,20 @@ export const OP_TEMPLATES: OpTemplate[] = [
   {
     op: 'Notify',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.2.2 Notify (server-to-client; out of scope)',
+    spec: '§6.2.2 Notify (server-to-client; not serviceable in a browser)',
     supported: false,
     blurb:
-      'Server-to-client push notification of an object change. A deliberate, documented scope boundary — the spec leaves the server-initiated transport unspecified — and since the honest-Query audit the server no longer advertises it.',
+      'Server-to-client push notification of an object change. The native server does implement this, over the channel §6.1.61 defines — but a browser tab holds no long-lived connection for the server to push down, so this build cannot service it and does not advertise it.',
     params: [],
     build: () => notify(),
   },
   {
     op: 'Put',
     category: 'Not Implemented (out of scope)',
-    spec: '§6.2.3 Put (server-to-client; out of scope)',
+    spec: '§6.2.3 Put (server-to-client; not serviceable in a browser)',
     supported: false,
     blurb:
-      'Server-to-client push of a full object — the inverse direction of Get. Same deliberate scope boundary as Notify; not advertised.',
+      'Server-to-client push of a full object — the inverse direction of Get. Encoded and gated in the native server; unavailable here for the same reason as Notify.',
     params: [],
     build: () => put(),
   },
