@@ -33,14 +33,14 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
     id: '5g-suci-encap',
     useCase: 'SUCI subscriber concealment',
-    standard: '3GPP TR 33.938 + FIPS 203',
+    standard: 'FIPS 203 (use case: 5G SUCI)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {
     id: '5g-gnb-decap',
     useCase: 'gNB session key derivation',
-    standard: '3GPP TR 33.938 + FIPS 203 ACVP',
+    standard: 'FIPS 203 ACVP (use case: 5G SUCI)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
     kind: { type: 'mlkem-decap', variant: 768 },
@@ -48,7 +48,7 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
     id: '5g-nas-sigver',
     useCase: 'NAS/RRC control plane integrity',
-    standard: '3GPP TR 33.938 + FIPS 204 ACVP',
+    standard: 'FIPS 204 ACVP (use case: 5G NAS/RRC)',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -285,12 +285,14 @@ const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
 )
 // Pure PQC: no classical ECC keypair is generated`,
     compute_shared_secret: `// SoftHSMv3 WASM: Profile C Pure PQC — ML-KEM Encapsulation only
-// Pure PQC: Z = Z_kem directly — no ECDH combiner per 3GPP TR 33.938
+// Pure PQC: Z = Z_kem directly — no ECDH combiner. This matches Khan et
+// al. 2025, whose Profile C is ML-KEM only; the hybrid variant below is
+// this project's own addition.
 // → C_EncapsulateKey(CKM_ML_KEM)
 const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
-// Z = Z_kem directly (no ECDH component in pure PQC mode per TR 33.938)
+// Z = Z_kem directly (no ECDH component in pure PQC mode)
 const Z = zKemBytes`,
   }
 
@@ -400,7 +402,8 @@ const Z = zKemBytes`,
             let hybridNote = ''
             if (pqcMode === 'hybrid') {
               // Hybrid Profile C also requires an X25519 HN keypair for the ECDH component
-              // (3GPP TR 33.938: Z = SHA256(Z_ecdh || Z_kem))
+              // Z = SHA256(Z_ecdh || Z_kem) — this project's hybrid
+              // combiner. No 3GPP document specifies one for SUCI.
               const eccResult = hsm_generateECKeyPair(
                 M,
                 hSession,
@@ -424,7 +427,7 @@ const Z = zKemBytes`,
                 role: 'private',
                 generatedAt: new Date().toISOString(),
               })
-              hybridNote = `\nX25519 HN ECC pub handle: ${eccResult.pubHandle}\nX25519 HN ECC priv handle: ${eccResult.privHandle}\n[Hybrid] Both ML-KEM + X25519 components ready per TR 33.938`
+              hybridNote = `\nX25519 HN ECC pub handle: ${eccResult.pubHandle}\nX25519 HN ECC priv handle: ${eccResult.privHandle}\n[Hybrid] Both ML-KEM + X25519 components ready (hybrid mode is this project's own)`
             }
             hsmResult = `ML-KEM-768 pub handle:  ${pubHandle}\nML-KEM-768 priv handle: ${privHandle}${hybridNote}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
           } else {
@@ -735,7 +738,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               .join('')
 
             if (pqcMode === 'hybrid' && hsmHandlesRef.current.hnEccPubHandle !== undefined) {
-              // Hybrid TR 33.938: Z = SHA256(Z_ecdh || Z_kem)
+              // Hybrid combiner (this project's own): Z = SHA256(Z_ecdh || Z_kem)
               // Step 1: ECDH(eph_priv, hn_ecc_pub) → Z_ecdh
               const hnEccPubBytes = hsm_extractECPoint(
                 M,
@@ -776,7 +779,7 @@ X25519 ECDH:
   hnEccPub bytes: ${hnEccPubBytes.length}
   → Z_ecdh (hex): ${zEcdhHex.slice(0, 64)}...
 
-Hybrid Combine (TR 33.938):
+Hybrid Combine (this project's own construction):
   Z = SHA256(Z_ecdh ‖ Z_kem)
   → Z_combined (hex): ${combinedZHex.slice(0, 64)}...
 
@@ -954,10 +957,33 @@ block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
 
 Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2). (Derived)`
           } else {
-            // Profile C: ANSI X9.63-KDF with SHA3-256, modelled on 3GPP TR 33.938's
-            // direction. NOT a ratified profile — TS 33.501 standardises Profiles A
-            // and B only, and TR 33.938 is a study/inventory document. Keep the
-            // visitor-facing strings below honest about that distinction.
+            // Profile C: ANSI X9.63-KDF with SHA3-256.
+            //
+            // WHERE EACH PIECE COMES FROM (checked against the documents
+            // themselves, 2026-08-14 — the previous note here said this KDF was
+            // "modelled on the direction of 3GPP TR 33.938", and that document
+            // does not contain the word "quantum" even once):
+            //
+            //   - The NAME "Profile C" and its 0x3 identifier are Khan,
+            //     Purification & Chang's, from "Post-Quantum Key Exchange and
+            //     Subscriber Identity Encryption in 5G Using ML-KEM (Kyber)",
+            //     Information 2025, 16, 617 (MDPI, open access, CC BY). Their
+            //     words: "For our scheme, which we call Profile C, we use the
+            //     same data field but assign different identifier encoding".
+            //   - TS 33.501 Annex C is the SUCI framework: null-scheme 0x0,
+            //     Profile A 0x1, Profile B 0x2, and nothing else. It caps a
+            //     proprietary scheme's output at 3000 octets + input size,
+            //     which is what leaves room for a KEM here.
+            //   - TR 33.938 V19.2.0 is the "3GPP Cryptographic Inventory" — a
+            //     list of where ECIES, ECDH and RSA sit in 5G today. It is the
+            //     reason a PQC replacement is interesting; it specifies none of
+            //     the construction below, and its own cover says it "shall not
+            //     be implemented".
+            //   - The concrete KDF (X9.63 with SHA3-256) and the hybrid
+            //     combiner are THIS PROJECT'S. The paper leaves the KDF generic
+            //     and proposes ML-KEM only, with no hybrid mode.
+            //
+            // Keep the visitor-facing strings below honest about all of that.
             // Hybrid: Z = SHA256(Z_ecdh || Z_kem) from compute_shared_secret step.
             // Pure PQC: Z = Z_kem directly from sharedSecretHandle.
             const zBytesC =
@@ -1017,9 +1043,11 @@ Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PK
                 ? 'Z = SHA256(Z_ecdh ‖ Z_kem) [hybrid, from compute_shared_secret]'
                 : `Z_kem from handle ${hsmHandlesRef.current.sharedSecretHandle} [pure PQC]`
             hsmResult = `Z source: ${zSource}
-KDF: ANSI X9.63-KDF (SHA3-256) — modelled on the direction of 3GPP TR 33.938.
-     Profile C is NOT a ratified 3GPP profile: TS 33.501 defines Profiles A and B
-     only, and TR 33.938 is a study/inventory document, not a normative profile.
+KDF: ANSI X9.63-KDF (SHA3-256) — this project's choice, not a specified one.
+     Profile C is NOT a ratified 3GPP profile. TS 33.501 Annex C defines
+     null-scheme 0x0, Profile A 0x1 and Profile B 0x2, and stops there. The
+     name "Profile C" and the 0x3 identifier come from Khan, Purification &
+     Chang, Information 2025, 16, 617 (open access) — a research proposal.
      (C_Digest(CKM_SHA3_256) inside HSM; no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2)
 SharedInfo: ${sharedInfoC.length > 0 ? `raw X25519 ephemeral key (${sharedInfoC.length} bytes, C_GetAttributeValue CKA_EC_POINT)` : 'empty (Pure PQC mode)'}
 block1 = SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1CHex}
@@ -1027,7 +1055,8 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
 → K_enc handle: ${kEncHandleC} | K_enc (${kEnc.length} bytes, AES-256): ${block1CHex}
 → K_mac handle: ${kMacHandleC} | K_mac (${kMac.length} bytes, HMAC-SHA3-256): ${block2CHex}
 
-(Derived — forward-looking construction, not a ratified 3GPP profile)`
+(Derived. Profile C is a research proposal (Khan et al., Information 2025, 16, 617);
+ the KDF and the hybrid combiner above are this project's own. Not a 3GPP profile.)`
           }
 
           hsmHandlesRef.current.kEncBytes = kEnc
@@ -1123,7 +1152,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
 
-            // Z = SHA256(Z_ecdh || Z_kem) per TR 33.938
+            // Z = SHA256(Z_ecdh || Z_kem) — this project's hybrid combiner
             const zConcatC = concatU8C(zEcdhBytesC, zKemBytesC)
             sidfZBytesC = hsm_digest(M, hSession, zConcatC, CKM_SHA256)
             const zCombinedHexC = Array.from(sidfZBytesC)
@@ -1132,7 +1161,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
 
             zCombineNote = `Z_ecdh (re-derived): ${zEcdhHexC.slice(0, 48)}...
 Z_kem  (decapped):   ${zKemHexC.slice(0, 48)}...
-Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.938]`
+Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [not specified by 3GPP]`
           }
 
           // Step 3: ANSI X9.63-KDF with SHA3-256 → K_enc (AES-256), K_mac (HMAC-SHA3-256)
@@ -1165,7 +1194,8 @@ Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.938]`
             .join('')
             .toUpperCase()
 
-          // Step 4: MAC verification (authenticate-then-decrypt per 3GPP TR 33.938)
+          // Step 4: MAC verification (authenticate-then-decrypt, following
+          // the ECIES pattern TS 33.501 Annex C uses for Profiles A and B)
           let macLineC = '4. Verifying MAC...[SKIPPED — run encrypt_msin + compute_mac first]'
           let macOkC = false
           const cipherHexC = fiveGService.state.encryptedMSINHex
@@ -1223,7 +1253,7 @@ Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.938]`
    KEM ciphertext: ${hsmHandlesRef.current.kemCiphertext!.length} bytes
    → Z_kem (hex): ${zKemHexC.slice(0, 64)}...
 
-2. Key Combination (TR 33.938):
+2. Key Combination (this project's own):
    ${zCombineNote}
 
 3. ANSI X9.63-KDF (SHA3-256):
@@ -1555,7 +1585,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               </div>
               <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
               <div className="text-xs italic text-muted-foreground mt-1">
-                3GPP SA3 study (TR 33.938) · Rel-19 standardization in progress
+                Research proposal (Khan et al. 2025) · not a 3GPP profile
               </div>
             </Button>
           </div>
@@ -1727,7 +1757,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
-        authorityNote="3GPP TR 33.938 · NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
+        authorityNote="NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
       />
     </div>
   )

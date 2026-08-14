@@ -26,6 +26,11 @@ import {
   ANNUAL_BREACH_PROBABILITY_PCT,
   ORG_SIZE_BREACH_COST_ANCHORS,
   FINANCIAL_BASELINE_EVIDENCE,
+  INDUSTRY_BREACH_BASELINES,
+  INDUSTRY_CLAIM_COST_BASELINES,
+  INDUSTRY_CLAIM_COST_SAMPLE_SIZE,
+  CLAIM_COST_THIN_SAMPLE_THRESHOLD,
+  BREACH_COST_BASIS_NOTE,
 } from './roiBaselines'
 
 describe('financial baseline provenance', () => {
@@ -94,6 +99,47 @@ describe('financial baseline provenance', () => {
       // The IBM per-sector table is behind a registration wall with no public
       // asset path. Downgrading this claim honestly is the point of the field.
       expect(FINANCIAL_BASELINE_EVIDENCE.ibmBreachCosts).toBe('landing-page-only')
+    })
+  })
+
+  describe('NetDiligence 2025 — per-sector claim costs (2026-08-14)', () => {
+    it('covers exactly the industries the IBM table covers', () => {
+      // Two columns shown side by side must not disagree about which rows
+      // exist, or the UI silently drops a sector from one of them.
+      expect(Object.keys(INDUSTRY_CLAIM_COST_BASELINES).sort()).toEqual(
+        Object.keys(INDUSTRY_BREACH_BASELINES).sort()
+      )
+    })
+
+    it('carries a claim count for every figure', () => {
+      for (const sector of Object.keys(INDUSTRY_CLAIM_COST_BASELINES)) {
+        expect(INDUSTRY_CLAIM_COST_SAMPLE_SIZE[sector]).toBeGreaterThan(0)
+      }
+    })
+
+    it('reads below the IBM figure in every sector, as a claims basis must', () => {
+      // Claims exclude uninsured loss and are capped by policy limits, so a
+      // claim cost ABOVE a total-cost estimate means one of the two columns
+      // has been mistyped or mislabelled.
+      for (const [sector, claim] of Object.entries(INDUSTRY_CLAIM_COST_BASELINES)) {
+        expect(claim).toBeLessThan(INDUSTRY_BREACH_BASELINES[sector])
+      }
+    })
+
+    it('flags the thin-sample sectors instead of presenting them as solid', () => {
+      const thin = Object.entries(INDUSTRY_CLAIM_COST_SAMPLE_SIZE)
+        .filter(([, n]) => n < CLAIM_COST_THIN_SAMPLE_THRESHOLD)
+        .map(([s]) => s)
+      // Telecommunications rests on 21 claims. If this list ever empties, the
+      // threshold or the data moved and the UI caveat needs re-checking.
+      expect(thin).toContain('Telecommunications')
+    })
+
+    it('says what each column measures, so neither reads as the other', () => {
+      expect(BREACH_COST_BASIS_NOTE.ibm).toMatch(/TOTAL cost/)
+      expect(BREACH_COST_BASIS_NOTE.ibm).toMatch(/unverified/)
+      expect(BREACH_COST_BASIS_NOTE.netDiligence).toMatch(/PAID OUT/)
+      expect(FINANCIAL_BASELINE_EVIDENCE.netDiligenceIndustryClaimCosts).toBe('primary-verified')
     })
   })
 })
