@@ -4,7 +4,7 @@ import { Lock, Loader2, ArrowRight } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { useHsmContext } from './HsmContext'
-import { HsmResultRow, toHex, hexSnippet } from './shared'
+import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
 import { MiniPkcsLog } from '../components/MiniPkcsLog'
 import {
   hsm_generateMLKEMKeyPair,
@@ -28,7 +28,7 @@ import { useEffect } from 'react'
 type KemFamily = 'ml-kem' | 'frodo-kem' | 'classic-mceliece'
 
 export const HsmKemPanel = () => {
-  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmKey, engineMode, isReady } = useHsmContext()
   const [family, setFamily] = useState<KemFamily>('ml-kem')
   const [variant, setVariant] = useState<512 | 768 | 1024>(768)
   const [pubHandle, setPubHandle] = useState<number | null>(null)
@@ -178,160 +178,166 @@ export const HsmKemPanel = () => {
   }, [moduleRef, hSessionRef])
 
   return (
-    <div className="space-y-4">
-      {/* KEM family */}
-      <div className="glass-panel p-4 space-y-3">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          KEM Algorithm
-        </p>
-        <div className="flex flex-wrap gap-2 items-center">
-          {(
-            [
-              { id: 'ml-kem' as const, label: 'ML-KEM' },
-              { id: 'frodo-kem' as const, label: 'FrodoKEM-1344' },
-              { id: 'classic-mceliece' as const, label: 'Classic-McEliece-6688128' },
-            ] as const
-          ).map((f) => (
-            <Button
-              key={f.id}
-              variant="ghost"
-              size="sm"
-              disabled={checkLoading}
-              onClick={() => {
-                setFamily(f.id)
-                resetResults()
-              }}
-              title={f.id !== 'ml-kem' ? 'BSI TR-02102-1 — Rust engine only' : undefined}
-              className={
-                family === f.id
-                  ? 'bg-primary/20 text-primary text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
-                  : 'text-muted-foreground text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
-              }
-            >
-              {f.label}
-              {f.id !== 'ml-kem' && (
-                <span className="ml-1.5 text-[9px] font-semibold uppercase tracking-wide text-status-warning">
-                  rust only
-                </span>
-              )}
-            </Button>
-          ))}
-        </div>
-        {vendorKemUnavailable && (
-          <p className="text-xs text-status-warning">
-            {familyLabel} isn't implemented in the C++ engine (BSI TR-02102-1 §2.4 — Rust engine
-            only). Switch Engine Mode to Rust above to try it.
-          </p>
-        )}
-      </div>
-
-      {/* Parameter Set (ML-KEM variants only) */}
-      {family === 'ml-kem' && (
+    // Same engine-readiness gate every sibling workbench panel uses
+    // (symmetric / key_wrap / hashing / sign_verify / key_agree / key_derive):
+    // without it, "Generate Key Pair" is clickable before the WASM engine
+    // exists and crashes with a raw null-deref on moduleRef.current.
+    <HsmReadyGuard isReady={isReady}>
+      <div className="space-y-4">
+        {/* KEM family */}
         <div className="glass-panel p-4 space-y-3">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            ML-KEM Parameters
+            KEM Algorithm
           </p>
           <div className="flex flex-wrap gap-2 items-center">
-            {([512, 768, 1024] as const).map((v) => (
+            {(
+              [
+                { id: 'ml-kem' as const, label: 'ML-KEM' },
+                { id: 'frodo-kem' as const, label: 'FrodoKEM-1344' },
+                { id: 'classic-mceliece' as const, label: 'Classic-McEliece-6688128' },
+              ] as const
+            ).map((f) => (
               <Button
-                key={v}
+                key={f.id}
                 variant="ghost"
                 size="sm"
                 disabled={checkLoading}
                 onClick={() => {
-                  setVariant(v)
+                  setFamily(f.id)
                   resetResults()
                 }}
+                title={f.id !== 'ml-kem' ? 'BSI TR-02102-1 — Rust engine only' : undefined}
                 className={
-                  variant === v
+                  family === f.id
                     ? 'bg-primary/20 text-primary text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
                     : 'text-muted-foreground text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
                 }
               >
-                ML-KEM-{v}
+                {f.label}
+                {f.id !== 'ml-kem' && (
+                  <span className="ml-1.5 text-[9px] font-semibold uppercase tracking-wide text-status-warning">
+                    rust only
+                  </span>
+                )}
               </Button>
             ))}
           </div>
+          {vendorKemUnavailable && (
+            <p className="text-xs text-status-warning">
+              {familyLabel} isn't implemented in the C++ engine (BSI TR-02102-1 §2.4 — Rust engine
+              only). Switch Engine Mode to Rust above to try it.
+            </p>
+          )}
         </div>
-      )}
 
-      <div className="glass-panel p-4 space-y-3">
-        <div className="flex flex-wrap gap-2 items-center">
+        {/* Parameter Set (ML-KEM variants only) */}
+        {family === 'ml-kem' && (
+          <div className="glass-panel p-4 space-y-3">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+              ML-KEM Parameters
+            </p>
+            <div className="flex flex-wrap gap-2 items-center">
+              {([512, 768, 1024] as const).map((v) => (
+                <Button
+                  key={v}
+                  variant="ghost"
+                  size="sm"
+                  disabled={checkLoading}
+                  onClick={() => {
+                    setVariant(v)
+                    resetResults()
+                  }}
+                  className={
+                    variant === v
+                      ? 'bg-primary/20 text-primary text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
+                      : 'text-muted-foreground text-xs min-h-[44px] md:min-h-0 md:h-7 px-3'
+                  }
+                >
+                  ML-KEM-{v}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex flex-wrap gap-2 items-center">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={checkLoading || vendorKemUnavailable}
+              onClick={doGenKey}
+              className="h-7 text-xs"
+            >
+              {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+              {pubHandle !== null ? `✓ pub=${pubHandle}, prv=${privHandle}` : 'Generate Key Pair'}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground font-mono">
+            {`C_GenerateKeyPair(${familyLabel}) → { pub: ${pubHandle ?? '?'}, prv: ${privHandle ?? '?'} }`}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            onClick={doEncap}
+            disabled={pubHandle === null || checkLoading || vendorKemUnavailable}
+            className="flex-1"
+          >
+            {loadingOp === 'encap' && <Loader2 size={14} className="mr-2 animate-spin" />}
+            <ArrowRight size={14} className="mr-2" /> Encapsulate
+          </Button>
           <Button
             variant="outline"
-            size="sm"
-            disabled={checkLoading || vendorKemUnavailable}
-            onClick={doGenKey}
-            className="h-7 text-xs"
+            onClick={doDecap}
+            disabled={
+              ciphertext === null || privHandle === null || checkLoading || vendorKemUnavailable
+            }
+            className="flex-1"
           >
-            {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
-            {pubHandle !== null ? `✓ pub=${pubHandle}, prv=${privHandle}` : 'Generate Key Pair'}
+            {loadingOp === 'decap' && <Loader2 size={14} className="mr-2 animate-spin" />}
+            <Lock size={14} className="mr-2" /> Decapsulate
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground font-mono">
-          {`C_GenerateKeyPair(${familyLabel}) → { pub: ${pubHandle ?? '?'}, prv: ${privHandle ?? '?'} }`}
-        </p>
+
+        {error && <ErrorAlert message={error} />}
+
+        {(encapSecret || decapSecret) && (
+          <div className="glass-panel p-4 space-y-3 mt-4">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+              Result
+            </p>
+            {encapSecret && (
+              <>
+                <HsmResultRow label="Original Secret" value={toHex(encapSecret)} />
+                <HsmResultRow
+                  label="Ciphertext snippet"
+                  value={`${hexSnippet(ciphertext!, 24)} (${ciphertext!.length} bytes)`}
+                />
+              </>
+            )}
+
+            {decapSecret && (
+              <>
+                <HsmResultRow label="Recovered Secret" value={toHex(decapSecret)} />
+                <div
+                  className={`text-xs font-mono px-3 py-2 rounded flex items-center gap-2 ${
+                    isMatch
+                      ? 'bg-status-success/20 text-status-success'
+                      : 'bg-status-error/20 text-status-error'
+                  }`}
+                >
+                  {isMatch ? '✓ Secret Match' : '✗ Secret Mismatch'}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        <MiniPkcsLog />
       </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-2">
-        <Button
-          variant="ghost"
-          onClick={doEncap}
-          disabled={pubHandle === null || checkLoading || vendorKemUnavailable}
-          className="flex-1"
-        >
-          {loadingOp === 'encap' && <Loader2 size={14} className="mr-2 animate-spin" />}
-          <ArrowRight size={14} className="mr-2" /> Encapsulate
-        </Button>
-        <Button
-          variant="outline"
-          onClick={doDecap}
-          disabled={
-            ciphertext === null || privHandle === null || checkLoading || vendorKemUnavailable
-          }
-          className="flex-1"
-        >
-          {loadingOp === 'decap' && <Loader2 size={14} className="mr-2 animate-spin" />}
-          <Lock size={14} className="mr-2" /> Decapsulate
-        </Button>
-      </div>
-
-      {error && <ErrorAlert message={error} />}
-
-      {(encapSecret || decapSecret) && (
-        <div className="glass-panel p-4 space-y-3 mt-4">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            Result
-          </p>
-          {encapSecret && (
-            <>
-              <HsmResultRow label="Original Secret" value={toHex(encapSecret)} />
-              <HsmResultRow
-                label="Ciphertext snippet"
-                value={`${hexSnippet(ciphertext!, 24)} (${ciphertext!.length} bytes)`}
-              />
-            </>
-          )}
-
-          {decapSecret && (
-            <>
-              <HsmResultRow label="Recovered Secret" value={toHex(decapSecret)} />
-              <div
-                className={`text-xs font-mono px-3 py-2 rounded flex items-center gap-2 ${
-                  isMatch
-                    ? 'bg-status-success/20 text-status-success'
-                    : 'bg-status-error/20 text-status-error'
-                }`}
-              >
-                {isMatch ? '✓ Secret Match' : '✗ Secret Mismatch'}
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      <MiniPkcsLog />
-    </div>
+    </HsmReadyGuard>
   )
 }

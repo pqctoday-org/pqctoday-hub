@@ -39,7 +39,7 @@ const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   {
     id: 'aes-ctr',
     label: 'AES-CTR',
-    desc: 'Counter mode stream cipher (CKM_AES_CTR, PKCS#11 v3.2 §2.14.3)',
+    desc: 'Counter mode stream cipher (CKM_AES_CTR, PKCS#11 v3.2 §6.11)',
   },
   {
     id: 'aes-cmac',

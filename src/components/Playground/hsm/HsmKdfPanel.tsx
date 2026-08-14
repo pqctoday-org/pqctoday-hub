@@ -44,7 +44,7 @@ const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pq
     {
       id: 'hkdf',
       label: 'HKDF',
-      spec: 'PKCS#11 v3.2 §2.43 / CKM_HKDF_DERIVE',
+      spec: 'PKCS#11 v3.2 §6.62 / CKM_HKDF_DERIVE',
       useCase: 'KEM shared-secret expansion · TLS 1.3 key schedule (RFC 8446)',
       pqcNote:
         'SP 800-56C Rev2 §6.1 mandates HKDF to expand ML-KEM shared secrets in hybrid schemes',
@@ -52,7 +52,7 @@ const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pq
     {
       id: 'kbkdf-counter',
       label: 'KBKDF Counter',
-      spec: 'SP 800-108 Rev1 (Aug 2022) §4.1 / PKCS#11 v3.2 §2.44 / CKM_SP800_108_COUNTER_KDF',
+      spec: 'SP 800-108 Rev1 (Aug 2022) §4.1 / PKCS#11 v3.2 §6.42 / CKM_SP800_108_COUNTER_KDF',
       useCase: 'PSK derivation · segmented key material · IKEv2 / QKD post-processing',
       pqcNote:
         'SP 800-56C Rev2 §6.2 recommends counter-mode KBKDF to expand ML-KEM secrets into session keys',
@@ -60,7 +60,7 @@ const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pq
     {
       id: 'kbkdf-feedback',
       label: 'KBKDF Feedback',
-      spec: 'SP 800-108 Rev1 (Aug 2022) §4.2 / PKCS#11 v3.2 §2.44.2 / CKM_SP800_108_FEEDBACK_KDF',
+      spec: 'SP 800-108 Rev1 (Aug 2022) §4.2 / PKCS#11 v3.2 §6.42 / CKM_SP800_108_FEEDBACK_KDF',
       useCase: 'Chained derivation where each output feeds the next MAC input',
       pqcNote: 'Suitable for deriving a chain of sub-keys from a single ML-KEM or QKD session key',
     },
@@ -599,7 +599,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           <HsmResultRow label={`OKM (${derived.length}B)`} value={toHex(derived)} />
           <div className="bg-muted rounded-lg p-3 text-xs font-mono text-muted-foreground space-y-0.5">
             <div className="text-foreground font-semibold mb-1">
-              CK_HKDF_PARAMS (PKCS#11 v3.2 §2.43)
+              CK_HKDF_PARAMS (PKCS#11 v3.2 §6.62)
             </div>
             <div> bExtract = {bExtract ? 'CK_TRUE' : 'CK_FALSE'}</div>
             <div> bExpand = {bExpand ? 'CK_TRUE' : 'CK_FALSE'}</div>
