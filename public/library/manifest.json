@@ -9394,6 +9394,26 @@
       "sizeBytes": 816887,
       "contentType": "application/pdf",
       "sha256": "260063a07eeccd7f4b1ab23cc93a2530dfed6957b9421f1cbd6dfec47eacec3e"
+    },
+    {
+      "refId": "PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O",
+      "title": "PKCS #11 Cryptographic Token Interface Profiles Version 3.2 (OASIS Standard)",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-profiles/v3.2/os/pkcs11-profiles-v3.2-os.pdf",
+      "status": "downloaded",
+      "filename": "PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O.pdf",
+      "sizeBytes": 530083,
+      "contentType": "application/pdf",
+      "sha256": "4f1e15e3f727c9d07ec81f8bb1f4aa2db8e03b2e16385c8217fbf525f1864375"
+    },
+    {
+      "refId": "PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3",
+      "title": "PKCS #11 Cryptographic Token Interface Usage Guide Version 3.2",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-ug/v3.2/pkcs11-ug-v3.2.pdf",
+      "status": "downloaded",
+      "filename": "PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3.pdf",
+      "sizeBytes": 468117,
+      "contentType": "application/pdf",
+      "sha256": "e72c3bd902b34006d68aa83aed82074000d3af1a3af8fc19ab82f1d0fe66ed90"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
