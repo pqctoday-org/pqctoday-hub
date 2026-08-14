@@ -135,7 +135,7 @@ export function _C_GetInterface(p_interface_name: number, p_version: number, pp_
  */
 export function _C_GetInterfaceList(p_interfaces_list: number, pul_count: number): number;
 
-export function _C_GetMechanismInfo(_slot_id: number, mech_type: number, p_info: number): number;
+export function _C_GetMechanismInfo(slot_id: number, mech_type: number, p_info: number): number;
 
 /**
  * PKCS#11 v3.2 §5.5 — C_GetMechanismList. Gated on library initialization
@@ -160,7 +160,7 @@ export function _C_GetSessionInfo(h_session: number, p_info: number): number;
 
 export function _C_GetSessionValidationFlags(h_session: number, type_: number, p_flags: number): number;
 
-export function _C_GetSlotInfo(_slot_id: number, p_info: number): number;
+export function _C_GetSlotInfo(slot_id: number, p_info: number): number;
 
 export function _C_GetSlotList(token_present: number, p_slot_list: number, pul_count: number): number;
 

@@ -56,11 +56,11 @@ export function _C_CreateObject(
 ): number
 
 export function _C_DecapsulateKey(
-  _h_session: number,
+  h_session: number,
   p_mechanism: number,
   h_private_key: number,
-  _p_template: number,
-  _ul_attribute_count: number,
+  p_template: number,
+  ul_attribute_count: number,
   p_ciphertext: number,
   ul_ciphertext_len: number,
   ph_key: number
@@ -173,11 +173,11 @@ export function _C_DigestKey(_h_session: number, _h_key: number): number
 export function _C_DigestUpdate(h_session: number, p_part: number, ul_part_len: number): number
 
 export function _C_EncapsulateKey(
-  _h_session: number,
+  h_session: number,
   p_mechanism: number,
   h_key: number,
-  _p_template: number,
-  _ul_attribute_count: number,
+  p_template: number,
+  ul_attribute_count: number,
   p_ciphertext: number,
   pul_ciphertext_len: number,
   ph_key: number
@@ -260,7 +260,7 @@ export function _C_GenerateKey(
 ): number
 
 export function _C_GenerateKeyPair(
-  _h_session: number,
+  h_session: number,
   p_mechanism: number,
   p_public_key_template: number,
   ul_public_key_attribute_count: number,
@@ -321,7 +321,7 @@ export function _C_GetInterface(
  */
 export function _C_GetInterfaceList(p_interfaces_list: number, pul_count: number): number
 
-export function _C_GetMechanismInfo(_slot_id: number, mech_type: number, p_info: number): number
+export function _C_GetMechanismInfo(slot_id: number, mech_type: number, p_info: number): number
 
 /**
  * PKCS#11 v3.2 §5.5 — C_GetMechanismList. Gated on library initialization
@@ -358,7 +358,7 @@ export function _C_GetSessionValidationFlags(
   p_flags: number
 ): number
 
-export function _C_GetSlotInfo(_slot_id: number, p_info: number): number
+export function _C_GetSlotInfo(slot_id: number, p_info: number): number
 
 export function _C_GetSlotList(
   token_present: number,
