@@ -2334,7 +2334,7 @@ export const CKM_ECDSA_SHA3_256 = 0x1048
 export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
-export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofactor ECDH
+export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §6.3.18 — cofactor ECDH
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 export const CKM_EDDSA_PH = 0x80001057
@@ -2350,8 +2350,8 @@ export const CKP_PKCS5_PBKD2_HMAC_SHA512 = 0x06
 // Symmetric / HMAC / digest mechanisms
 export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
-export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §2.14.1 — MILENAGE f1–f5
-export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §2.14.3 — SUCI MSIN encryption (TS 33.501)
+export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §6.10.4 — MILENAGE f1–f5
+export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §6.11 — SUCI MSIN encryption (TS 33.501)
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -2487,16 +2487,16 @@ export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
 export const CKD_SHA3_256_KDF = 0x0000000b // ANSI X9.63 KDF with SHA3-256 (PKCS#11 v3.2 §5.2.12)
 export const CKD_SHA3_512_KDF = 0x0000000d // ANSI X9.63 KDF with SHA3-512 (PKCS#11 v3.2 §5.2.12)
 
-// HKDF derive (PKCS#11 v3.0+ §2.43)
-export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §2.43
+// HKDF derive (PKCS#11 v3.2 §6.62)
+export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
-// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §2.44)
+// NIST SP 800-108 KBKDF (PKCS#11 v3.2 §6.42)
 export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
 export const CKM_SP800_108_FEEDBACK_KDF = 0x000003ad // Feedback mode KBKDF
 export const CKM_SP800_108_DOUBLE_PIPELINE_KDF = 0x000003ae // Double-pipeline KBKDF
-// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §2.44)
+// CK_PRF_DATA_TYPE constants (CK_SP800_108_* in PKCS#11 v3.2 §6.42)
 export const CK_SP800_108_ITERATION_VARIABLE = 0x00000001 // Counter/IV position marker
 export const CK_SP800_108_BYTE_ARRAY = 0x00000004 // Arbitrary byte data (label/context)
 
@@ -3023,7 +3023,7 @@ export const hsm_ecdsaVerify = (
 }
 
 /**
- * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
+ * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §6.3.17).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
  * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
  * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI).
@@ -3094,7 +3094,7 @@ export const hsm_ecdhDerive = (
 }
 
 /**
- * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §2.3.2).
+ * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §6.3.18).
  * Same parameters as hsm_ecdhDerive() but uses cofactor multiplication.
  * For NIST P-curves (cofactor = 1) the result is identical to standard ECDH.
  */
@@ -3225,7 +3225,7 @@ export const hsm_pbkdf2 = (
 // ── HKDF helpers ──────────────────────────────────────────────────────────────
 
 /**
- * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §2.43).
+ * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §6.62).
  *
  * @param baseKeyHandle  Key handle providing IKM (input key material).
  * @param prf            Hash mechanism for HMAC PRF: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
@@ -3306,7 +3306,7 @@ export const hsm_hkdf = (
 }
 
 /**
- * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §2.44).
+ * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §6.42).
  *
  * Builds a minimal CK_SP800_108_KDF_PARAMS with:
  *   - prfType: hash mechanism (CKM_SHA256 | CKM_SHA384 | CKM_SHA512) or CKM_AES_CMAC.
@@ -3396,7 +3396,7 @@ export const hsm_kbkdf = (
 }
 
 /**
- * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §2.44.2).
+ * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §6.42).
  * prfType: hash mechanism — CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_AES_CMAC.
  * NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
  * fixedInput: optional label/context bytes (CK_SP800_108_BYTE_ARRAY data params).

@@ -44,9 +44,9 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 type ClassicMode = 'rsa' | 'ecdsa' | 'eddsa' | 'xmss' | 'lms'
 
 const CLASSIC_MODES: { id: ClassicMode; label: string; spec: string }[] = [
-  { id: 'rsa', label: 'RSA', spec: 'PKCS#11 v3.2 §2.1 — CKM_RSA_PKCS / PSS / OAEP' },
-  { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §2.3.1 — CKM_ECDSA_SHA*' },
-  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §2.3.6 — CKM_EDDSA / CKM_EDDSA_PH' },
+  { id: 'rsa', label: 'RSA', spec: 'PKCS#11 v3.2 §6.1 — CKM_RSA_PKCS / PSS / OAEP' },
+  { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §6.3.13 — CKM_ECDSA_SHA*' },
+  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §6.3.10 — CKM_EDDSA / CKM_EDDSA_PH' },
   { id: 'xmss', label: 'XMSS', spec: 'PKCS#11 v3.2 — CKM_XMSS / CKK_XMSS' },
   {
     id: 'lms',

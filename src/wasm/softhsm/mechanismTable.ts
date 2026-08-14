@@ -378,7 +378,7 @@ export const MECH_TABLE: Record<number, MechEntry> = {
   },
   0x00001051: {
     name: 'CKM_ECDH1_COFACTOR_DERIVE',
-    description: 'ECDH cofactor key agreement (PKCS#11 v3.2 §2.3.2)',
+    description: 'ECDH cofactor key agreement (PKCS#11 v3.2 §6.3.18)',
     family: 'kdf',
   },
   0x00000360: {
@@ -610,12 +610,12 @@ export const MECH_TABLE: Record<number, MechEntry> = {
   },
   0x0000039b: {
     name: 'CKM_SHAKE_128_KEY_DERIVATION',
-    description: 'Key derivation via SHAKE-128 XOF (PKCS#11 v3.2 §2.42)',
+    description: 'Key derivation via SHAKE-128 XOF (PKCS#11 v3.2 §6.42)',
     family: 'kdf',
   },
   0x0000039c: {
     name: 'CKM_SHAKE_256_KEY_DERIVATION',
-    description: 'Key derivation via SHAKE-256 XOF (PKCS#11 v3.2 §2.42)',
+    description: 'Key derivation via SHAKE-256 XOF (PKCS#11 v3.2 §6.42)',
     family: 'kdf',
   },
   0x00000394: {
