@@ -4,15 +4,9 @@
   "bundles": [
     {
       "name": "cacp-kmip",
-      "files": [
-        "public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm",
-        "src/wasm/kmip/"
-      ],
+      "files": ["public/wasm/rust-kmip/pqctoday_kmip_wasm_bg.wasm", "src/wasm/kmip/"],
       "buildScript": "scripts/build-kmip-wasm.sh",
-      "sourceDirs": [
-        "kmip",
-        "wasm"
-      ],
+      "sourceDirs": ["kmip", "wasm"],
       "track": "tip",
       "status": "built",
       "hsmCommit": "fd2c9024fd4465ce8dd48b74b7541ffad17abc28",
@@ -29,9 +23,7 @@
         "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm"
       ],
       "buildScript": "rust/build-wasm-bundle.sh",
-      "sourceDirs": [
-        "rust"
-      ],
+      "sourceDirs": ["rust"],
       "track": "tip",
       "status": "built",
       "hsmCommit": "fd2c9024fd4465ce8dd48b74b7541ffad17abc28",
@@ -49,9 +41,7 @@
         "src/vendor/softhsm-wasm/wasm/softhsm.wasm"
       ],
       "buildScript": "scripts/build-wasm.sh",
-      "sourceDirs": [
-        "src/lib"
-      ],
+      "sourceDirs": ["src/lib"],
       "track": "tip",
       "status": "built",
       "hsmCommit": "9a5794eda4df3979116c9d11303e9f7a67631f5b",
@@ -64,14 +54,9 @@
     },
     {
       "name": "openssh-pkcs11",
-      "files": [
-        "public/wasm/openssh-server.js",
-        "public/wasm/openssh-server.wasm"
-      ],
+      "files": ["public/wasm/openssh-server.js", "public/wasm/openssh-server.wasm"],
       "buildScript": "openssh-pkcs11/scripts/build-wasm.sh",
-      "sourceDirs": [
-        "openssh-pkcs11"
-      ],
+      "sourceDirs": ["openssh-pkcs11"],
       "track": "tip",
       "status": "built",
       "hsmCommit": "3480bec2dcfb8ce091a3ce463f4f2547a36d7056",
@@ -80,15 +65,9 @@
     },
     {
       "name": "strongswan",
-      "files": [
-        "public/wasm/strongswan.wasm",
-        "public/wasm/strongswan-v2.wasm"
-      ],
+      "files": ["public/wasm/strongswan.wasm", "public/wasm/strongswan-v2.wasm"],
       "buildScript": "scripts/build-strongswan-wasm.sh",
-      "sourceDirs": [
-        "strongswan-wasm-shims",
-        "strongswan-wasm-v2-shims"
-      ],
+      "sourceDirs": ["strongswan-wasm-shims", "strongswan-wasm-v2-shims"],
       "track": "tip",
       "status": "built",
       "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
@@ -97,25 +76,18 @@
     },
     {
       "name": "openssl-pkcs11",
-      "files": [
-        "public/wasm/openssl.js",
-        "public/wasm/openssl.wasm"
-      ],
+      "files": ["public/wasm/openssl.js", "public/wasm/openssl.wasm"],
       "buildScript": "pqctoday-priv/build-wasm.sh",
-      "sourceDirs": [
-        "rust",
-        "src/vendor/pkcs11-provider",
-        "scripts/build-openssl-wasm.sh"
-      ],
+      "sourceDirs": ["rust", "src/vendor/pkcs11-provider", "scripts/build-openssl-wasm.sh"],
       "track": "tip",
       "status": "built",
-      "hsmCommit": "d9b3f425b35e8e7df8c9c15b89721fb032e6b503",
-      "builtAt": "2026-08-13",
+      "hsmCommit": "fd2c9024fd4465ce8dd48b74b7541ffad17abc28",
+      "builtAt": "2026-08-14",
       "_rebuild20260813": "Rebuilt 2026-08-13 from hsm main @ d9b3f42, and the reason matters more than the rebuild. The 2026-08-09 entry below reasoned that rust/ had 'no real input change — only rust/bench-harness moved', and so relinked openssl.wasm without rebuilding libsofthsmrustv3.a. That reasoning was wrong: hsm d07dfa9 (2026-08-09 17:28) had changed rust/src/ffi.rs to expose CKA_MODULUS and CKA_PUBLIC_EXPONENT on RSA private keys, without which pkcs11-provider's fetch_rsa_key() fails its required fetch, never populates the optional CKA_ID, and reports the misleading 'No CKA_ID in source object'. The bundle was linked at 21:42 that evening — four hours after the fix — from an archive built Aug 8 23:42, the day before it. Both recorded commits (1cab535, dc9c0a838) genuinely contain the fix, so provenance read 'current' the entire time while the shipped bytes did not have it, and e2e/cms-workshop-crypto.spec.ts:392 (LAMPS composite id-MLDSA44-RSA2048-PSS-SHA256) failed nightly from 2026-08-09 to 2026-08-13. Only the RSA profile failed; the ECDSA profiles passed, because an EC or ML-DSA public key is derivable from its private key and the provider never needs to resolve a sibling object. This rebuild deletes both input archives first so a skipped rebuild cannot hide, then rebuilds libsofthsmrustv3.a (cargo rustc --release --target wasm32-unknown-emscripten, confirmed by a 'Compiling softhsmrustv3' line and a changed size) and libpkcs11-provider.a before relinking. build-wasm.sh now also writes public/wasm/openssl-link-inputs.json recording the SHA-256 of every archive it links, because a commit comparison cannot see a stale intermediate and this one went unseen for four days.",
       "_rebuild20260807": "Rebuilt 2026-08-07 from hsm main @ 67f739f (merge of PR #153, feat/rust-pkcs11-emscripten-staticlib), closing a 3-commit drift — the same feature branch this bundle's _priorBuild/_buildNote below already describe now landed on main via a clean merge (hsm main's rust/ tree after the merge is identical to 859774b's, confirmed via `git log --stat`). NOTE: the hsmCommit given in the original task request (67f739fc3916b08fe59445120d93f26dfd79d639) does not exist in the hsm repo — corrected here to the actual merge-commit HEAD (67f739fc331cfdb1406197583cf6432f52833080), verified via `git rev-parse HEAD` in pqctoday-hsm. Rebuilt fresh end-to-end per the established process: scripts/build-pkcs11-provider-wasm.sh prerequisite (idempotent — archive already current), a fresh wasm32-unknown-emscripten Rust staticlib build with --features acvp (superseding the stale 2026-07-24 archive), OpenSSL 3.6.3 source re-verified against the pinned sha256 (243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1) before extracting, then pqctoday-priv/build-wasm.sh with HUB_ROOT/HSM_ROOT/OPENSSL_SRC set explicitly. Since the underlying rust/ tree is unchanged from the last build, the resulting binary is FUNCTIONALLY IDENTICAL to the previous one — this rebuild is provenance/timestamp hygiene, not a behavior change. VERIFIED: `openssl version` reports 3.6.3; all custom exports present (_pqctoday_cms_init, _pqctoday_composite_mkcert, _execute_cmp_simulation, PKCS#11 C_* symbols); 17/17 real ML-DSA/SLH-DSA/ML-KEM cross-implementation KATs (Node 24 crypto vs this WASM binary) pass; 72/72 in the rest of the OpenSSL Studio + anchor-KAT suites (89 total, 0 failed); `npx tsc -b` clean.",
       "_rebuild20260802": "Rebuilt 2026-08-02 from hsm main @ 8386717 (v0.20.2), closing a 6-commit drift AND moving the bundled OpenSSL from 3.6.2 to 3.6.3 (deliberate, user-approved — hsm's deps/openssl-wasm had already moved to 3.6.3 in v0.19.0, so the bundle was behind on both axes). Source: openssl-3.6.3.tar.gz from the official GitHub release, sha256 verified against the published checksum (243a86649cf6f23eeb6a2ff2456e09e5d77dd9018a54d3d96b0c6bdd6ba6c7f1) before extracting. Build needs a prerequisite the main script does not build itself: scripts/build-pkcs11-provider-wasm.sh must run first to produce build-wasm/lib/libpkcs11-provider.a, otherwise build-wasm.sh exits immediately with 'missing pkcs11-provider archive'. Invoked as: HUB_ROOT=<hub checkout> HSM_ROOT=<hsm> OPENSSL_SRC=<openssl-3.6.3 tree> bash pqctoday-priv/build-wasm.sh (HUB_ROOT must be set explicitly — the script's location-derived default is wrong since it moved into pqctoday-priv). The 'apps/openssl link failed (undefined symbol: pqctoday_cms_init)' line in the log is EXPECTED and handled — the script continues to its own custom emcc link; do not read it as a build failure. VERIFIED: `openssl version` now reports 3.6.3 (via the real driver harness, not assumed); OpenSSL Studio suites 57/57 main + 32/32 local incl. the ML-DSA/ML-KEM cross-implementation and anchor KATs, all of which re-confirm real crypto outputs against this new binary; and — closing the prior entry's explicit 'NOT YET VERIFIED: a full pass in an actual browser' gap — e2e/cms-hsm-sign.spec.ts 5/5 in real chromium, including T3 routing an ML-DSA-65 CMS signature through pkcs11-provider into softhsmv3 with 'HSM (pkcs11:)' / 'resident in softhsmv3' evidence. Version references across the Studio's UI copy, lessons, glossary and KAT comments were updated 3.6.2 -> 3.6.3; the only 3.6.2 mentions left are dated historical records of when content was first captured. STILL UNCONFIRMED (carried over): whether the 'HRR detection' patch referenced by the build script's banner is present in this tree.",
       "_priorBuild": "859774b5273869c256f604a73eafcc8ccc8ee80c / 2026-07-24",
-      "_buildNote": "Rebuilt 2026-08-09 from hsm main @ 1cab535 via pqctoday-priv/build-wasm.sh (OpenSSL 3.6.3 + Emscripten 6.0.4, softhsmv3 + pkcs11-provider statically linked). Like softhsmrustv3-engine this had no real input change — its sourceDirs are ['rust', 'src/vendor/pkcs11-provider', 'scripts/build-openssl-wasm.sh'] and only rust/bench-harness moved — but it was rebuilt rather than re-anchored, and the artifact did change (6,915,010 → 6,914,847 bytes), so this pin describes a genuinely new binary. Verified by artifact rather than exit code: _pqctoday_cms_init IS present in both openssl.wasm and openssl.js (its absence is what breaks the S/MIME workshop's HSM toggle), and the pkcs11 and softhsm provider symbols are linked in. The 'apps/openssl link failed — undefined symbol: pqctoday_cms_init' line in the build log is the script's documented expected path: the OpenSSL Makefile link is allowed to fail and the custom emcc link that follows is the one that ships. RE-ANCHORED to dc9c0a838 (same day, minutes later): committing the rebuilt artifact back to hsm is ITSELF a commit under rust/, so the gate immediately reported 1 commit of fresh drift against a bundle that had just been proven current — the tail-chase the 2026-08-08 note on this file already described. dc9c0a838 changes exactly one file, rust/pkg_bundler/softhsmrustv3_bg.wasm, which is the tracked build OUTPUT the hub vendors, not a source input. Verified rather than asserted: the wasm shipped here and the blob inside dc9c0a838 have the same sha256 (310d3a91…), so this pin names the commit that literally CONTAINS the bytes being shipped. This will recur every time an artifact is committed back to hsm while these bundles keep 'rust' in sourceDirs.",
+      "_buildNote": "Rebuilt 2026-08-14 from hsm main @ fd2c9024f (v0.23.0). Both inputs rebuilt first, in order, because this bundle links PREBUILT archives whose staleness the drift check cannot see: libsofthsmrustv3.a (wasm32-unknown-emscripten staticlib, carries the 844ed27/7f66aae CK_ULONG-width fixes) and libpkcs11-provider.a (FORCE=1 required — the build script silently SKIPS with exit 0 when the archive already exists, which is how a stale archive shipped before). The script's own 'archive built BEFORE HEAD' warning was present on the first attempt and absent on this one; that warning, not the exit code, is the signal. openssl.wasm 6915017 -> 6948793 bytes.",
       "hsmBranch": "feat/rust-pkcs11-emscripten-staticlib (NOT merged to hsm main as of this build)"
     }
   ]
