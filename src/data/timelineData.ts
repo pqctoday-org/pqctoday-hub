@@ -112,6 +112,16 @@ interface RawTimelineRow {
   deprecated_at?: string
   deprecated_reason?: string
   related_standards?: string
+  // Strict foreign key into library's `reference_id`, ";"-delimited (added
+  // 2026-08-14). Distinct from `related_standards` above, which is a LABEL
+  // list — free text like 'CNSA 2.0' or 'FedRAMP' that names a standard
+  // without pointing at a row. A `library_refs` token always resolves to a
+  // library document, because it is only ever written where the timeline
+  // row's SourceUrl and that document's download_url are the SAME URL
+  // (link_timeline_library_refs.py in priv; the FK is gated by
+  // validate_timeline). The two coexist: the label list stays useful for
+  // display, the key is what cross-page navigation and scoring can trust.
+  library_refs?: string
   entity_type?: string
   // Tags the ONE row per country that is its canonical PQC migration deadline for
   // the sim. Consumed by scripts/gen-timeline-facts.mjs (the single-source codegen).
