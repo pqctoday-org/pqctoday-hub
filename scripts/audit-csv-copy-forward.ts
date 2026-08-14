@@ -34,12 +34,18 @@
  * WHAT IS DERIVED, NOT ASSUMED:
  *   · Families        — by stripping the dated suffix, using the SAME
  *                       csvPrefix() the archival gate already uses.
- *   · Precedence      — (date DESC, revision DESC), the app's own ordering.
- *   · Primary keys    — derived per family from the data (a column, or the
- *                       shortest leading run of columns, that is complete and
- *                       unique in BOTH generations). Key names differ wildly
- *                       across sources, so nothing is hard-coded.
- *   · Active          — from the row's own lifecycle column when it has one.
+ *   · Precedence      — delegated to the app's own sortCSVFiles(): date
+ *                       DESC, then revision DESC, so library_08132026_r6.csv
+ *                       outranks library_08132026.csv and _r24 outranks _r9.
+ *   · Primary keys    — derived per family from the data: an identifier-
+ *                       looking column, else the shortest leading run of
+ *                       columns, that is unique in the previous generation.
+ *                       Key names differ wildly across these sources
+ *                       (reference_id, product_id, code, Name, href,
+ *                       sector_key, and several composites), so nothing is
+ *                       hard-coded.
+ *   · Active          — from the row's own status/deprecated_at columns when
+ *                       the family carries them; active by default otherwise.
  *
  * SCOPE:
  *   Families with at least one generation in src/data/ — i.e. the ones a
@@ -55,8 +61,7 @@
  *
  * Exit codes:
  *   0 — every active row in each previous generation survived into the newest
- *   1 — one or more active rows disappeared without a recorded reason,
- *       or a family could not be keyed (that is a real blind spot, not a pass)
+ *   1 — one or more active rows disappeared without a recorded reason
  */
 import fs from 'fs'
 import path from 'path'
@@ -170,6 +175,7 @@ export interface AuditReport {
  * This is the SAME suffix grammar `csvPrefix()` strips, so "what makes a
  * family" and "what orders a family" can never drift apart.
  */
+// eslint-disable-next-line security/detect-unsafe-regex -- fixed-width \d{2}\d{2}\d{4} followed by one optional bounded group; no nested quantifier can backtrack. Same shape as audit-csv-archival.ts's sortKey() and csvUtils.ts's loader regexes.
 const DATED_CSV = /(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
 
 /**
@@ -244,7 +250,9 @@ export function parseCsvFile(fullPath: string): ParsedCsv {
   }
 }
 
-const cell = (row: Record<string, string>, col: string): string => (row[col] ?? '').trim()
+const cell = (row: Record<string, string>, col: string): string =>
+  // eslint-disable-next-line security/detect-object-injection -- `col` is always a CSV header string produced by PapaParse from a file this repo owns, never user input
+  (row[col] ?? '').trim()
 
 const composite = (row: Record<string, string>, cols: string[]): string =>
   cols.map((c) => cell(row, c)).join(' | ')
