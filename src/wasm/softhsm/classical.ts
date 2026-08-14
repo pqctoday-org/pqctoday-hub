@@ -362,7 +362,7 @@ export const hsm_ecdsaVerify = (
 }
 
 /**
- * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
+ * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §6.3.17).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
  * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
  * sharedData: optional SharedInfo for X9.63 KDF.
@@ -400,7 +400,7 @@ export const hsm_ecdhDerive = (
 }
 
 /**
- * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §2.3.2).
+ * ECDH1 cofactor key derivation via C_DeriveKey(CKM_ECDH1_COFACTOR_DERIVE) (PKCS#11 v3.2 §6.3.18).
  * Same parameters as hsm_ecdhDerive() but uses cofactor multiplication.
  * For NIST P-curves (cofactor = 1) the result is identical to standard ECDH.
  */

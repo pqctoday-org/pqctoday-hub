@@ -29,7 +29,7 @@ import { FilterDropdown } from '../../common/FilterDropdown'
 import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
 import { XmssPanel, LmsPanel } from '../hsm/StatefulHashSignPanels'
 import { HsmReadyGuard } from '../hsm/shared'
-import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
+import { MiniPkcsLog } from '../components/MiniPkcsLog'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { SLH_DSA_PARAM_SET_OPTIONS, SLH_DSA_INTERNAL_PARAMS } from './softhsm/SoftHsmUI'
 
@@ -520,8 +520,6 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     addHsmKey,
     engineMode,
     addHsmLog,
-    hsmLog,
-    clearHsmLog,
     keysForFamily,
     removeHsmKey,
     isReady,
@@ -1086,14 +1084,8 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
 
       {error && <ErrorAlert message={error} />}
 
-      {/* ── Inline PKCS#11 log ──────────────────────────────────────── */}
-      {isReady && (
-        <Pkcs11LogPanel
-          log={hsmLog}
-          onClear={clearHsmLog}
-          title="PKCS#11 Call Log — SLH-DSA Sign & Verify"
-        />
-      )}
+      {/* ── Inline PKCS#11 log (scoped clear — never wipes the shared Logs tab) ── */}
+      {isReady && <MiniPkcsLog title="PKCS#11 Call Log — SLH-DSA Sign & Verify" />}
 
       {/* ── HSM Key Inspector (SLH-DSA keys) ───────────────────────── */}
       {isReady && slhKeys.length > 0 && (
