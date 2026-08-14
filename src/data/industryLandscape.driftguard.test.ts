@@ -283,13 +283,51 @@ describe('industry-landscape driftguards', () => {
     expect(
       withRefs.length,
       'mechanism_refs coverage regressed below its baseline'
-    ).toBeGreaterThanOrEqual(73)
+    ).toBeGreaterThanOrEqual(74)
     // Every row that claims nothing must also cite nothing.
     for (const uc of useCases) {
       if (uc.classicalMechanisms.length + uc.pqcMechanisms.length === 0) {
         expect(uc.mechanismRefs, `${uc.useCaseId}: refs on a row with no mechanisms`).toEqual([])
       }
     }
+  })
+
+  it('every standards row points at a use case that exists', () => {
+    // use_case_ids is how a use case acquires its standards; a typo here
+    // silently leaves the use case looking unstandardised rather than failing.
+    const ids = new Set(useCases.map((u) => u.useCaseId))
+    for (const s of standards) {
+      for (const uc of s.useCaseIds) {
+        expect(ids, `standard "${s.standardId}" lists unknown use case "${uc}"`).toContain(uc)
+      }
+    }
+  })
+
+  it('a standards row is scoped to the industry of the use cases it serves', () => {
+    // The tab groups standards under an industry heading, so a row whose
+    // use_case_ids belong to a different industry renders under the wrong one.
+    const industryOf = new Map(useCases.map((u) => [u.useCaseId, u.industry]))
+    for (const s of standards) {
+      for (const uc of s.useCaseIds) {
+        const owner = industryOf.get(uc)
+        if (!owner || s.industry === 'Cross-Industry') continue
+        expect(owner, `standard "${s.standardId}" (${s.industry}) serves ${uc} (${owner})`).toBe(
+          s.industry
+        )
+      }
+    }
+  })
+
+  it('standards coverage of use cases does not regress', () => {
+    // Ratchet, like mechanism_refs above. 2026-08-13: 70 of 76 use cases have
+    // at least one standards row. The six without are honest: aero-atc-datalink,
+    // energy-nuclear, hlth-implants and pci-emv are proven by research papers
+    // and industry reports, which must NOT become rows in a standards table;
+    // gov-procurement and ins-cyber-underwriting claim no mechanism at all.
+    const covered = new Set<string>()
+    for (const s of standards) for (const uc of s.useCaseIds) covered.add(uc)
+    for (const u of useCases) if (u.relatedStandards.length > 0) covered.add(u.useCaseId)
+    expect(covered.size, 'industry_standards coverage regressed').toBeGreaterThanOrEqual(70)
   })
 
   it('every industry resolves to a sector code for the Library/Compliance links', () => {

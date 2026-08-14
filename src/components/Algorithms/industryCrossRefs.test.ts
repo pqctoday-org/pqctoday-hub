@@ -102,10 +102,28 @@ describe('standardsForIndustry', () => {
     expect(groups.map((g) => g.body)).toEqual([...groups.map((g) => g.body)].sort())
   })
 
-  it('does NOT inherit Cross-Industry rows into an uncovered industry', () => {
-    // Decision 2026-08-13: the gap stays visible. Payment Card Industry has no
-    // rows of its own and must render empty, not the 12 cross-industry rows.
-    expect(standardsForIndustry('Payment Card Industry', standards)).toEqual([])
+  it('does NOT inherit Cross-Industry rows into another industry', () => {
+    // Decision 2026-08-13: the gap stays visible — an industry renders its own
+    // standards or none, never the Cross-Industry set.
+    //
+    // This used to assert that Payment Card Industry returned []. That held only
+    // because PCI had no rows of its own; the 2026-08-13 standards sweep gave it
+    // some, and the test failed while the behaviour it guards was still correct.
+    // Assert the rule instead of a row count, so filling a gap cannot break it.
+    const crossOnly = standards
+      .filter((s) => s.industry === 'Cross-Industry')
+      .map((s) => s.standardId)
+    for (const industry of new Set(standards.map((s) => s.industry))) {
+      if (industry === 'Cross-Industry') continue
+      const ids = standardsForIndustry(industry, standards).flatMap((g) =>
+        g.standards.map((r) => r.standardId)
+      )
+      for (const id of ids) {
+        expect(crossOnly, `${industry} inherited cross-industry standard ${id}`).not.toContain(id)
+      }
+    }
+    // And an industry with no rows of its own still renders empty.
+    expect(standardsForIndustry('No Such Industry', standards)).toEqual([])
   })
 })
 
