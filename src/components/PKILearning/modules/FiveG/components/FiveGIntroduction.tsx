@@ -71,7 +71,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
                 Profile C: <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> (Kyber) concealment
               </li>
               <li>Quantum-resistant subscriber privacy</li>
-              <li>Under 3GPP SA3 study (TR 33.938)</li>
+              <li>Research proposal — not a 3GPP profile</li>
             </ul>
           </div>
         </div>
@@ -163,8 +163,9 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </div>
         </div>
         <p className="text-xs text-muted-foreground mt-3">
-          Profile C is under active 3GPP SA3 study (TR 33.938) and not yet standardized. It supports
-          both hybrid (X25519 + ML-KEM) and pure PQC modes.
+          Profile C is not a 3GPP profile: TS 33.501 Annex C defines Profiles A and B and stops
+          there. The name comes from a research proposal (Khan, Purification & Chang, Information
+          2025, 16, 617). It supports both hybrid (X25519 + ML-KEM) and pure PQC modes.
         </p>
       </section>
 
