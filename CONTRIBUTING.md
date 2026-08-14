@@ -89,6 +89,31 @@ npm run test         # unit tests
 npm run test:e2e     # end-to-end tests
 ```
 
+#### The CACP / KMIP playground gate
+
+`npm run gate:cacp` is the pre-push gate for `/playground/cacp` and the KMIP wasm
+bundle. It runs three legs, all scoped to KMIP so a failure means a KMIP problem:
+
+1. `npm run test -- src/components/Playground/kmip src/wasm/kmip` — CI-visible suites
+2. `npm run test:local:cacp` — the local-only suites for those same two directories,
+   including the corpus replay against the real wasm engine and the CSD02
+   citation-drift guard
+3. `npm run sync:wasm:check:cacp-kmip` — the bundle matches its `pqctoday-hsm` commit
+
+Leg 2 is deliberately **scoped**, not the repo-wide `npm run test:local`. The gate
+previously ran every `*.local.test.ts` in the repo, so unrelated failures elsewhere
+turned the CACP gate red and it stopped carrying information.
+
+**The browser leg is manual** — it needs a dev server and is not part of `gate:cacp`:
+
+```bash
+npm run test:e2e:cacp-local   # 6 specs: policy scenarios, sim fidelity, engine
+                              # trace, migration, scenario picker, visual editor
+```
+
+Run it after any change to the playground, the policy engine, or the wasm bundle.
+Green unit tests are not evidence the panes still work.
+
 ### Pull Requests
 
 1. **Fork the repository** and create your branch from `main`
