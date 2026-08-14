@@ -80,6 +80,11 @@ export const FINANCIAL_BASELINE_EVIDENCE = {
   ibmBreachCosts: 'landing-page-only',
   cyentiaBreachProbability: 'primary-verified',
   netDiligenceOrgSize: 'primary-verified',
+  // ADDED 2026-08-14: the per-sector claim costs, from the same NetDiligence
+  // PDF already opened for the org-size anchors. The report had carried a
+  // cost-by-sector table the whole time; nothing had read it, so the only
+  // per-industry figures on the site were the unverified IBM ones.
+  netDiligenceIndustryClaimCosts: 'primary-verified',
 } as const
 
 /**
@@ -118,6 +123,83 @@ export const INDUSTRY_BASELINE_IS_PROXY: Record<string, boolean> = {
   Aerospace: true,
   Automotive: true,
 }
+
+/**
+ * The same industries, from a source we have actually opened (2026-08-14).
+ *
+ * WHY BOTH. The IBM table above is cited but unread — its per-sector figures
+ * sit behind a registration wall (see IBM_BASELINE_UNVERIFIED_NOTE). The
+ * NetDiligence Cyber Claims Study 2025 is already downloaded, hash-verified
+ * and open access, and it carries its own cost-by-sector table that nobody had
+ * looked at. Rather than swap one number for another, present them side by
+ * side: a reader can then see which figure was checked and which was not,
+ * which is the distinction that actually matters here.
+ *
+ * THESE TWO COLUMNS DO NOT MEASURE THE SAME THING, and the gap is not error.
+ * IBM estimates the TOTAL cost of a breach to the organisation. NetDiligence
+ * reports what CYBER-INSURANCE CLAIMS actually paid out. Claims exclude
+ * uninsured loss, are capped by policy limits, and only count incidents that
+ * were claimed at all — so they run far below IBM's totals by construction.
+ * Neither is wrong; showing one alone as "the" breach cost would be.
+ *
+ * Figures are the SME table (under $2B revenue, N=8,936 claims, 2020–2024),
+ * Figure "Incident Cost by Sector—SMEs". The large-company table exists but is
+ * NOT used here: several of its sectors rest on one or two claims (Hospitality
+ * N=1 → $268M, Telecommunications N=1 → $503.5M), which is an anecdote wearing
+ * an average's clothing.
+ *
+ * Source, re-checkable without re-fetching:
+ *   pqctoday-priv/local-evidence-cache/library/NetDiligence-Cyber-Claims-Study-2025.pdf
+ *   sha256 4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb
+ */
+export const INDUSTRY_CLAIM_COST_BASELINES: Record<string, number> = {
+  'Finance & Banking': 329_000, // NetDiligence Financial Services (N=579)
+  Healthcare: 566_000, // NetDiligence Healthcare (N=599)
+  'Government & Defense': 180_000, // NetDiligence Public Entity (N=300)
+  Technology: 876_000, // NetDiligence Technology (N=450)
+  Telecommunications: 1_600_000, // NetDiligence Telecommunications (N=21 — thin)
+  'Energy & Utilities': 431_000, // NetDiligence Energy (N=62)
+  'Retail & E-Commerce': 219_000, // NetDiligence Retail (N=623)
+  Aerospace: 395_000, // proxy — NetDiligence Manufacturing (N=773)
+  Automotive: 395_000, // proxy — NetDiligence Manufacturing (N=773)
+  Education: 172_000, // NetDiligence Education (N=277)
+  Other: 62_000, // NetDiligence "Other" (N=2,828)
+}
+
+/**
+ * Claim counts behind each figure above. A sector resting on a handful of
+ * claims is not a baseline, and the UI should say so rather than render it at
+ * the same weight as one built from hundreds.
+ */
+export const INDUSTRY_CLAIM_COST_SAMPLE_SIZE: Record<string, number> = {
+  'Finance & Banking': 579,
+  Healthcare: 599,
+  'Government & Defense': 300,
+  Technology: 450,
+  Telecommunications: 21,
+  'Energy & Utilities': 62,
+  'Retail & E-Commerce': 623,
+  Aerospace: 773,
+  Automotive: 773,
+  Education: 277,
+  Other: 2828,
+}
+
+/** Below this, treat the sector figure as indicative only. */
+export const CLAIM_COST_THIN_SAMPLE_THRESHOLD = 50
+
+/** What each column means, for wherever the two are shown together. */
+export const BREACH_COST_BASIS_NOTE = {
+  ibm:
+    'IBM Cost of a Data Breach: estimated TOTAL cost of a breach to the ' +
+    'organisation, including detection, response, lost business and fines. ' +
+    'Cited but unverified — the per-sector figures are behind a registration wall.',
+  netDiligence:
+    'NetDiligence Cyber Claims Study 2025: what cyber-insurance claims actually ' +
+    'PAID OUT, from 8,936 SME claims over 2020–2024. Lower than a total-cost ' +
+    'figure by construction — claims exclude uninsured loss and are capped by ' +
+    'policy limits. Read from the report itself.',
+} as const
 
 /**
  * US breach costs run far above the global average (IBM 2025: $10.22M vs
