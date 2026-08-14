@@ -52,7 +52,9 @@
  *   loader can actually serve. The PREVIOUS generation may live in
  *   src/data/archive/ (the archival gate keeps only 2 live copies), so both
  *   directories are read. Families that exist only in archive/ are retired
- *   and are not checked.
+ *   and are not checked. Families whose loader MERGES every generation are
+ *   out of scope entirely — see MERGE_ALL_FAMILIES below for why the rule
+ *   cannot apply to them.
  *
  * Usage:
  *   npx tsx scripts/audit-csv-copy-forward.ts             # human report
@@ -68,7 +70,39 @@ import path from 'path'
 import { fileURLToPath } from 'node:url'
 import Papa from 'papaparse'
 import { csvPrefix } from './audit-csv-archival'
+import { MERGE_ALL_SOURCES } from './audit-merge-all-coverage'
 import { sortCSVFiles } from '../src/data/csvUtils'
+
+// ---------------------------------------------------------------------------
+// MERGE-ALL FAMILIES — where the copy-forward rule does not apply at all.
+//
+// This gate's whole premise is "the app serves only the newest generation", so
+// a row absent from it is a row nobody can see. A handful of sources
+// deliberately break that premise: their loader globs EVERY dated file (and
+// src/data/archive/ too) and merges them, because each run appends a file
+// covering DIFFERENT subjects rather than restating the previous one. For
+// those, an older generation is not superseded — it is still being served, in
+// full, right now. Judging them by copy-forward reports every subject the
+// newest run happened not to cover as lost, which is the exact opposite of the
+// truth. That false positive was live: on 2026-08-14 this gate reported 166
+// active CSWP.39 governance requirements across 26 frameworks (CISA, OMB
+// M-26-15, ENISA, CMMC, ...) as lost between the 08-08 and 08-09 generations.
+// They were never lost: maturityGovernanceData.ts merges both files, and
+// complianceData.test.ts asserts a corpus floor (>100 ref_ids) that the 08-09
+// file alone (48) cannot possibly satisfy.
+//
+// The list is NOT restated here. It is imported from audit-merge-all-coverage's
+// own registry — the single place this repo already records "which loaders
+// merge every generation", and the gate that fails if one of them stops
+// globbing a directory. One truth, two consumers; a new merge-all source
+// registered there is picked up here with no second edit.
+//
+// These families are reported as SKIPPED, never silently dropped: a guard that
+// quietly stops checking something is how the loss it guards against returns.
+// ---------------------------------------------------------------------------
+const MERGE_ALL_FAMILIES = new Set(
+  MERGE_ALL_SOURCES.filter((s) => s.ext === '.csv').map((s) => s.prefix)
+)
 
 // ---------------------------------------------------------------------------
 // RECORDED REMOVALS — the ONLY way an active row may legitimately disappear.
@@ -158,6 +192,8 @@ export interface FamilyResult {
 export interface AuditReport {
   familiesChecked: number
   familiesSkippedSingleGeneration: string[]
+  /** Families whose loader merges every generation — copy-forward cannot apply */
+  familiesSkippedMergeAll: string[]
   rowPairsCompared: number
   results: FamilyResult[]
   failures: FamilyResult[]
@@ -461,8 +497,13 @@ export function runAudit(dataDir: string, archiveDir: string): AuditReport {
   const families = collectFamilies(dataDir, archiveDir)
   const results: FamilyResult[] = []
   const singleGeneration: string[] = []
+  const mergeAll: string[] = []
 
   for (const [family, generations] of [...families].sort((a, b) => a[0].localeCompare(b[0]))) {
+    if (MERGE_ALL_FAMILIES.has(family)) {
+      mergeAll.push(family)
+      continue
+    }
     if (generations.length < 2) {
       singleGeneration.push(family)
       continue
@@ -473,6 +514,7 @@ export function runAudit(dataDir: string, archiveDir: string): AuditReport {
   return {
     familiesChecked: results.length,
     familiesSkippedSingleGeneration: singleGeneration,
+    familiesSkippedMergeAll: mergeAll,
     rowPairsCompared: results.reduce((n, r) => n + r.activeRowsCompared, 0),
     results,
     failures: results.filter((r) => r.error || r.missingKeys.length > 0),
@@ -505,6 +547,14 @@ function main(): void {
       report.familiesChecked === 1 ? 'y' : 'ies'
     }, ${report.rowPairsCompared} active row(s) compared against the previous generation.`
   )
+  if (report.familiesSkippedMergeAll.length > 0) {
+    console.log(
+      `  (${report.familiesSkippedMergeAll.length} merge-all famil` +
+        `${report.familiesSkippedMergeAll.length === 1 ? 'y is' : 'ies are'} out of scope — ` +
+        `the loader serves EVERY generation, so an older one is not superseded: ` +
+        `${report.familiesSkippedMergeAll.join(', ')})`
+    )
+  }
   if (report.familiesSkippedSingleGeneration.length > 0) {
     console.log(
       `  (${report.familiesSkippedSingleGeneration.length} famil` +
