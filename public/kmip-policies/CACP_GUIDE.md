@@ -1,9 +1,10 @@
 # CACP Guide — the policy language, and how to test it in the Agility Workbench
 
-*Crypto-Agility Control Plane (CACP) · 2026-07-04 · covers the post-gap-audit
-policy library (engine `ops:`-scoped governance rules), the hub workbench at
-`/playground/cacp`, and the verified KMIP 3.0 status for hybrid KEMs and
-hybrid signatures.*
+*Crypto-Agility Control Plane (CACP) · updated 2026-08-12 (spec-status review;
+§4 facts verified 2026-07-24, re-confirmed current 2026-08-12) · covers the
+post-gap-audit policy library (engine `ops:`-scoped governance rules), the hub
+workbench at `/playground/cacp`, and the verified KMIP 3.0 status for hybrid
+KEMs and hybrid signatures.*
 
 ---
 
@@ -248,11 +249,15 @@ engine and the visual simulator. Every policy change needs matching
 positive/negative scenarios — the 2026-07-04 audit block at the end of the
 file encodes each fixed gap as a regression test.
 
-## 4. KMIP 3.0 status — hybrid KEMs and hybrid signatures (verified 2026-07-24)
+## 4. KMIP 3.0 status — hybrid KEMs and hybrid signatures (verified 2026-07-24, status re-checked 2026-08-12)
 
 **Status.** The newest published OASIS *Standard* is **KMIP 2.1** (Dec 2020).
 KMIP 3.0 is in committee: CSD01 (Aug 2024) → **CSD02 (7 May 2026)**, the
 current draft vendored in `kmip/spec/oasis-kmip-3.0/` and implemented here.
+CSD02 completed a 30-day **OASIS public review on 13 Aug 2026** (opened 14
+Jul) — the step before Committee Specification. It remains a committee draft;
+when the next revision lands, work the re-vendor checklist in
+`../spec/README.md` § "Spec watch" before changing any claim here.
 CSD02 supersedes both CSD01 and the never-independently-published WD19
 draft this codebase previously tracked by hand — CSD02 turned out to be
 WD19 promoted to a real published stage, so the engine's behavior didn't

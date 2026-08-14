@@ -754,7 +754,7 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Commands',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Commands'),
-          body: '62 of the 66 KMIP 3.0 operations genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
+          body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
         },
         {
           title: 'Prove it against the OASIS suite',
@@ -831,6 +831,29 @@ export function KmipPlaygroundView() {
             <span className="font-medium text-foreground">at rest</span>{' '}
             <ShieldCheck size={11} className="inline text-status-success" /> ·{' '}
             <span className="italic">TLS handshake &amp; persistence → full Docker sandbox</span>
+          </p>
+          {/* Spec-status disclosure. "Real KMIP 3.0" is true of the engine but
+              says nothing about the standard's maturity, and KMIP 3.0 is NOT a
+              ratified OASIS Standard — it is committee draft CSD02 (7 May 2026),
+              whose public review closed 13 Aug 2026. Without this line a visitor
+              who never opens the guide reasonably reads "KMIP 3.0" as ratified.
+              These three strings are the complete set to update on ratification:
+              here, the Commands op-count claim, and CorpusReplayView's heading. */}
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
+              Spec status
+            </span>
+            KMIP 3.0 is an{' '}
+            <span className="font-medium text-foreground">OASIS committee draft</span> (CSD02, May
+            2026), not yet a ratified Standard —{' '}
+            <Button
+              variant="link"
+              onClick={openGuide}
+              data-testid="cacp-spec-status-link"
+              className="h-auto p-0 align-baseline text-[11px] font-normal text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            >
+              what that means
+            </Button>
           </p>
         </div>
         {/* VIEW · Guided / Expert progressive-disclosure toggle */}

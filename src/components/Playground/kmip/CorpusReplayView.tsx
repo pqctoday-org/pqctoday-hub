@@ -221,6 +221,10 @@ export function CorpusReplayView() {
               <FlaskConical size={16} className="text-primary" /> OASIS KMIP 3.0 conformance corpus
             </h3>
             <p className="mt-1 max-w-xl text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">
+                Transcripts from KMIP Profiles 3.0 CSD02 — an OASIS committee draft, not yet a
+                ratified Standard.
+              </span>{' '}
               {tierCounts.oasis || '…'} real OASIS test transcripts (mandatory + optional) plus{' '}
               {tierCounts.pqc || '…'} vendored PQC interop tests — the same suite behind{' '}
               <code className="text-foreground">conformance/REPLAY_REPORT.md</code>, replayed live
