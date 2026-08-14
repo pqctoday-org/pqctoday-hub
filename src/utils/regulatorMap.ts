@@ -21,6 +21,7 @@
  */
 import { complianceFrameworks } from '../data/complianceData'
 import { COUNTRY_CODE_TO_NAME } from '../data/jurisdictionsData'
+import { resolveToNaicsSet, SECTOR_ALIASES_BY_KEY } from '../data/sectorVocabularyData'
 
 type RegulatorKey = `${string}::${string}`
 
@@ -164,6 +165,36 @@ const DERIVED_REGULATORS: Map<string, Set<string>> = (() => {
   return out
 })()
 
+/**
+ * Regulator-lookup keys to try for one (country, industry), strongest first.
+ *
+ * ADDED 2026-08-13. Both key tables are written in the canonical assessment
+ * vocabulary — `'United States::Healthcare'` → HHS OCR / FDA / NIST. Callers
+ * that hold a different vocabulary for the same sector missed every
+ * industry-specific entry and fell through to the `::*` wildcard, which
+ * silently downgrades a framework from Mandatory ("your regulator: HHS OCR")
+ * to Recognized. The Industry Landscape tab is the first caller to hit this —
+ * it holds `'Healthcare / Pharmaceutical'` — but the failure is generic: any
+ * caller not using the exact assessment label was already losing the tier.
+ *
+ * Fix is additive and vocabulary-driven: expand the industry to its sibling
+ * aliases in `sector_vocabulary_*.csv` (the same source the Library facet and
+ * the compliance industry filter resolve through) and try each. Only ADDS
+ * candidate keys, so no lookup that resolved before can stop resolving.
+ */
+function industryKeys(country: string, industry: string): RegulatorKey[] {
+  const keys = [`${country}::${industry}`]
+  for (const code of resolveToNaicsSet(industry)) {
+    // eslint-disable-next-line security/detect-object-injection
+    for (const alias of SECTOR_ALIASES_BY_KEY[code] ?? []) {
+      const key = `${country}::${alias}`
+      if (!keys.includes(key)) keys.push(key)
+    }
+  }
+  keys.push(`${country}::*`)
+  return keys as RegulatorKey[]
+}
+
 // ── Public API ──────────────────────────────────────────────────────────
 
 /**
@@ -181,15 +212,16 @@ export function regulatorsFor(country: string, industry: string | null): Set<str
   // Both stores and both data vocabularies: 'France' and 'FR' must resolve to
   // the same regulators regardless of which side supplied the token.
   for (const c of countryAliases(country)) {
-    // Manual: exact industry match, then wildcard
-    for (const key of [`${c}::${i}` as RegulatorKey, `${c}::*` as RegulatorKey]) {
+    // Manual: exact industry match, every sibling alias of the same sector,
+    // then wildcard.
+    for (const key of industryKeys(c, i)) {
       // eslint-disable-next-line security/detect-object-injection
       const list = MANUAL_REGULATORS[key]
       if (list) for (const v of list) out.add(v)
     }
 
-    // CSV-derived
-    for (const key of [`${c}::${i}`, `${c}::*`]) {
+    // CSV-derived — same key expansion, same reason.
+    for (const key of industryKeys(c, i)) {
       const list = DERIVED_REGULATORS.get(key)
       if (list) for (const v of list) out.add(v)
     }
