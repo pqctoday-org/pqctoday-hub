@@ -41,6 +41,21 @@ export interface IndustryUseCase {
    * pin that a mapping is the BEST one, so completeness is reported, not gated.
    */
   playgroundTools: string[]
+  /**
+   * Library `reference_id`s proving this row's mechanism claims (2026-08-14).
+   *
+   * The mechanism columns were never sourced from the document each row cites:
+   * landscape rows reuse threats-corpus citations by design, and a threats
+   * document describes a sector's quantum exposure, not which algorithms a
+   * protocol uses. Measured 2026-08-13 — 172 of 257 claims (67%) appeared
+   * nowhere in their own row's cached evidence. The proof lives in protocol and
+   * standard specifications the library already holds; this column records
+   * which one.
+   *
+   * Empty is a reportable gap, not a failure — same treatment as
+   * `learn_module_id`. Hard FK: every id must resolve to an ACTIVE library row.
+   */
+  mechanismRefs: string[]
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -97,6 +112,7 @@ interface RawLandscapeRow {
   related_standards: string
   learn_module_id: string
   playground_tools: string
+  mechanism_refs: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -183,6 +199,7 @@ function loadLandscape(): IndustryUseCase[] {
             relatedStandards: splitSemicolon(r.related_standards),
             learnModuleId: r.learn_module_id || '',
             playgroundTools: splitSemicolon(r.playground_tools),
+            mechanismRefs: splitSemicolon(r.mechanism_refs),
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,

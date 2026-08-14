@@ -248,6 +248,43 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('every mechanism_refs id resolves to an ACTIVE library row', () => {
+    // Hard FK, same rule as the standards CSV's library_ref: the column exists
+    // to prove a row's mechanism claims, so a ref pointing at a missing or
+    // deprecated document proves nothing. Empty is legitimate and reported
+    // separately (see the coverage test below), never failed here.
+    const active = new Set(libraryData.map((d) => d.referenceId))
+    for (const uc of useCases) {
+      for (const ref of uc.mechanismRefs) {
+        expect(
+          active,
+          `${uc.useCaseId}: mechanism_ref "${ref}" is not an active library row`
+        ).toContain(ref)
+      }
+    }
+  })
+
+  it('a row claiming mechanisms carries at least one proof ref, or is a known gap', () => {
+    // Ratchet, not a coverage mandate. 2026-08-14 baseline: 59 of 76 rows have
+    // a ref. The number may only go UP — this fails if a refresh drops proof
+    // links, which is the regression that matters. Raise the floor as the
+    // remaining gaps close; do not lower it.
+    const withClaims = useCases.filter(
+      (u) => u.classicalMechanisms.length + u.pqcMechanisms.length > 0
+    )
+    const withRefs = withClaims.filter((u) => u.mechanismRefs.length > 0)
+    expect(
+      withRefs.length,
+      'mechanism_refs coverage regressed below its baseline'
+    ).toBeGreaterThanOrEqual(59)
+    // Every row that claims nothing must also cite nothing.
+    for (const uc of useCases) {
+      if (uc.classicalMechanisms.length + uc.pqcMechanisms.length === 0) {
+        expect(uc.mechanismRefs, `${uc.useCaseId}: refs on a row with no mechanisms`).toEqual([])
+      }
+    }
+  })
+
   it('every industry resolves to a sector code for the Library/Compliance links', () => {
     // The detail view links unsupported industries at /library?sector=<naics>
     // and the regulatory count at /compliance?ind=<label>; both resolve through
