@@ -119,8 +119,185 @@ export interface RecordedRemoval {
   recorded: string
 }
 
+// The three reasons below are shared by several keys each; naming them keeps
+// every entry readable without weakening the rule that each key is recorded
+// deliberately, one at a time.
+
+/** migrate_certification_xref_: PR #520 (3c4197f40) re-pointed the cross-
+ *  reference onto the ids the CC scraper actually mints. PR #517 had
+ *  recomputed each id by hashing the stored JSON's DERIVED fields, which
+ *  cannot reproduce the scraper's source string -- zero of its 889 ids
+ *  appeared among the 821 a real scrape produced. #520 remapped by IDENTITY
+ *  (product name, vendor, scheme, date) onto the live scrape. Verified per
+ *  key below: the row's (software_name, cert_type, cert_vendor, cert_product,
+ *  cert_date) tuple is still present in _08112026_r2.csv, under a corrected
+ *  cert_id. The certificate did not go anywhere; only its id did. */
+const CERT_ID_REPOINTED_BY_PR520 =
+  'cert_id re-pointed onto the id the CC scraper mints (PR #520, 3c4197f40); ' +
+  'same certificate, verified present in _08112026_r2.csv by identity ' +
+  '(software_name + cert_type + cert_vendor + cert_product + cert_date).'
+
+/** migrate_certification_xref_: this product is Azure Dedicated HSM built on
+ *  THALES LUNA 7 -- pqc_product_catalog_08132026.csv carries product_id
+ *  azure-dedicated-hsm-marvell-liquidsecurity under the name "Azure Dedicated
+ *  HSM (Thales Luna 7)" -- so Marvell LiquidSecurity's own FIPS/CC/ACVP
+ *  certificates were never this product's to claim. The certificates
+ *  themselves are untouched: they survive on "Marvell LiquidSecurity 2", the
+ *  product that actually holds them. #520's identity remap dropped all 7 of
+ *  this product's rows (3 active, recorded here; 4 already deprecated). Worth
+ *  noting because the commit message claims "1,391 rows, none removed" and
+ *  the file it wrote has 1,384 -- the removal was right, the accounting of it
+ *  was not. */
+const AZURE_MARVELL_CERT_MISMATCH =
+  'mismatched certificate removed as a correction (PR #520, 3c4197f40): this ' +
+  'product_id is Azure Dedicated HSM on Thales Luna 7, not Marvell hardware. ' +
+  'The certificate survives on "Marvell LiquidSecurity 2", which holds it.'
+
+/** migrate_purl_xref_: 6897eaaa9 corrected the catalog row to its real
+ *  product name -- "sealsq-quantum-shield renamed to its real product name
+ *  (Quantum Shield QS7001), propagated into the CPE/PURL xref CSVs" -- and
+ *  this family is keyed by software_name, so a rename reads as a deletion.
+ *  Verified: _07162026.csv carries "SEALSQ Quantum Shield QS7001", both
+ *  generations hold exactly 800 rows, and the row's payload was a
+ *  status=not_found placeholder with an empty purl either way. */
+const SEALSQ_RENAMED_TO_QS7001 =
+  'product renamed, not removed (6897eaaa9): the catalog row became "SEALSQ ' +
+  'Quantum Shield QS7001" and the rename was propagated into this xref, ' +
+  'which is keyed by software_name. Both generations hold 800 rows.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
-  // (none yet — see the header comment before adding one)
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Azure Dedicated HSM (Marvell LiquidSecurity) | azure-dedicated-hsm-marvell-liquidsecurity | Common Criteria | cc-marvell-ls2-hsm-hardware-version--cn9310410-03-c-firmware-version--marvell-ls2-fw-10-24-0780-bootloader-version--marvell-ls2-uboot-10-24-0702-r01-sb-or-marvell-ls2-uboot-10-24-0702-r02-sb-21e2cbbe',
+    reason: AZURE_MARVELL_CERT_MISMATCH,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Azure Dedicated HSM (Marvell LiquidSecurity) | azure-dedicated-hsm-marvell-liquidsecurity | FIPS 140-3 | 4700',
+    reason: AZURE_MARVELL_CERT_MISMATCH,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Azure Dedicated HSM (Marvell LiquidSecurity) | azure-dedicated-hsm-marvell-liquidsecurity | FIPS 140-3 | 4703',
+    reason: AZURE_MARVELL_CERT_MISMATCH,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NESLIB 6.11.3 on ST31R480 A01 (version 6.11.3)(ANSSI-CC-2025/26) | Cryptographic-library-NESLIB-6-11-3-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5a-and-st33k1m5m-b04---b01--eucc-3090-2026-67--e7b02d10',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NESLIB 6.11.3 on ST31R480 A01 (version 6.11.3)(ANSSI-CC-2025/26) | Cryptographic-library-NESLIB-6-11-3-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5c-and-st33k1m5t-c03---a01--eucc-3090-2026-66--da5ca2af',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NESLIB 6.11.3 on ST31R480 B01 (version 6.11.3) (ANSSI-CC-2025/27) | Cryptographic-library-NESLIB-6-11-3-on-S-2 | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5a-and-st33k1m5m-b04---b01--eucc-3090-2026-67--e7b02d10',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NESLIB 6.11.3 on ST31R480 B01 (version 6.11.3) (ANSSI-CC-2025/27) | Cryptographic-library-NESLIB-6-11-3-on-S-2 | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5c-and-st33k1m5t-c03---a01--eucc-3090-2026-66--da5ca2af',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.0 on ST31R480 A01 référence NesLib version 6.11 | Cryptographic-library-NesLib-6-11-0-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5a-and-st33k1m5m-b04---b01--eucc-3090-2026-67--e7b02d10',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.0 on ST31R480 A01 référence NesLib version 6.11 | Cryptographic-library-NesLib-6-11-0-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5c-and-st33k1m5t-c03---a01--eucc-3090-2026-66--da5ca2af',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.6 on ST33K1M5A and ST33K1M5M B04 Version : 6.11.6 / B04 (EUCC-3090-2026-17) | Cryptographic-library-NesLib-6-11-6-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5a-and-st33k1m5m-b04---b01--eucc-3090-2026-67--e7b02d10',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.6 on ST33K1M5A and ST33K1M5M B04 Version : 6.11.6 / B04 (EUCC-3090-2026-17) | Cryptographic-library-NesLib-6-11-6-on-S | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5c-and-st33k1m5t-c03---a01--eucc-3090-2026-66--da5ca2af',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.6 on ST33K1M5C and ST33K1M5T C03 Version : 6.11.6 / C03 (EUCC-3090-2026-16) | Cryptographic-library-NesLib-6-11-6-on-S-2 | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5a-and-st33k1m5m-b04---b01--eucc-3090-2026-67--e7b02d10',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Cryptographic library NesLib 6.11.6 on ST33K1M5C and ST33K1M5T C03 Version : 6.11.6 / C03 (EUCC-3090-2026-16) | Cryptographic-library-NesLib-6-11-6-on-S-2 | Common Criteria | cc-cryptographic-library-neslib-pqml-2-1-on-st33k1m5c-and-st33k1m5t-c03---a01--eucc-3090-2026-66--da5ca2af',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'I4P Trident HSM | i4p-trident-hsm | Common Criteria | cc-trident-version-3-2-3-1f56eba4',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Infineon IFX_CCI_00007Ah/8Fh Crypto Suite | Infineon-IFX-CCI-00007Ah-8Fh-Crypto-Suit | Common Criteria | cc-ifx-cci-00007ah-8fh-a11--r11--m11-with-optional-crypto-suite-e1f2ea32',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'ST33KTPM2X (STSAFE-TPM) | st33ktpm2x-stsafe-tpm | Common Criteria | cc-stsafe-v100-tpm---st33ktpm2i--tpm-firmware-10-512---anssi-cc-2024-38--ee83fa73',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'STSAFE-V100-TPM | stsafe-v100-tpm | Common Criteria | cc-stsafe-v100-tpm---st33ktpm2i--tpm-firmware-10-512---anssi-cc-2024-38--ee83fa73',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Samsung S3SSE2A eSE | samsung-s3sse2a-ese | Common Criteria | cc-s3sse2a--s3sse2a-20250522--anssi-cc-2024-26-r01--fa2062b6',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Securosys Primus HSM | securosys-primus-hsm | Common Criteria | cc-primus-hsm-fw-3-1-0-series-e--series-e2--series-x--series-x2-6c95040a',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Thales MultiApp 5.2 Premium PQC | thales-multiapp-5-2-premium-pqc | Common Criteria | cc-quantum-ias-v1-0-0-a-and-moc-server-v3-1-1-on-multiapp-v5-2-premium-pqcversions-1-0-0-a--q-ias--et-3-1-1--moc-server---anssi-cc-2026-03--241fc0d1',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_certification_xref_',
+    key: 'Tutus Farist IEG | tutus-farist-ieg | Common Criteria | cc-tutus-f-rist-ieg-v4-5-0-35b63e28',
+    reason: CERT_ID_REPOINTED_BY_PR520,
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'migrate_purl_xref_',
+    key: 'SEALSQ Quantum Shield',
+    reason: SEALSQ_RENAMED_TO_QS7001,
+    recorded: '2026-08-14',
+  },
 ]
 
 // ---------------------------------------------------------------------------
