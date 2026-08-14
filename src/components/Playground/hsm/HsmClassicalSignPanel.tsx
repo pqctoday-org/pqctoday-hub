@@ -913,7 +913,7 @@ const XmssPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // Hardcoded paramSet for XMSS-SHA2_10_256 (0x00000001)
-      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1, false)
+      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1)
       addHsmKey({
         handle: pubHandle,
         family: 'xmss',
@@ -1065,7 +1065,7 @@ const LmsPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // CKM_HSS_KEY_PAIR_GEN with NULL params → single-level LMS (engine default).
-      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, false)
+      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession)
       addHsmKey({
         handle: pubHandle,
         family: 'lms',

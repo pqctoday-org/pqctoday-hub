@@ -5791,173 +5791,30 @@ export const hsm_importStatefulPublicKey = (
 }
 
 /**
- * Single-part verify using C_VerifyInit + C_Verify (not the message API).
- * Used for HSS and XMSS which use the traditional single-part verify path.
- * Returns the raw CKR return value (0 = CKR_OK = valid signature).
+ * Stateful hash-based signatures (HSS/LMS, XMSS, XMSS-MT).
+ *
+ * This module used to carry its own XMSS/LMS keygen and stateful sign/verify,
+ * a second copy lived in `./softhsm/pqc.ts` and a third in
+ * `./softhsm/stateful.ts`. The copy here happened to be the correct one on the
+ * parameter-set question and the other two were not, which is exactly the kind
+ * of split a single implementation prevents. `./softhsm/stateful.ts` is now
+ * that implementation; these re-exports keep every existing importer of
+ * `@/wasm/softhsm` compiling against the same names.
+ *
+ * hsm_generateXMSSKeyPair and hsm_generateLMSKeyPair lost their `extractable`
+ * argument in the move. It could not be honoured any more: both engines now
+ * mandate CKA_SENSITIVE=TRUE / CKA_EXTRACTABLE=FALSE on an HBS private key and
+ * the C++ engine refuses a template that says otherwise, so the parameter could
+ * only ever have caused a CKR_ATTRIBUTE_VALUE_INVALID that looked like an
+ * engine fault.
  */
-export const hsm_statefulVerifyBytes = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  pubHandle: number,
-  msgBytes: Uint8Array,
-  sigBytes: Uint8Array
-): number => {
-  const mech = buildMech(M, mechType)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigPtr = writeBytes(M, sigBytes)
-  try {
-    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(stateful)')
-    return M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
-  } finally {
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigPtr)
-  }
-}
-
-/**
- * Generate an XMSS Key Pair.
- * Requires hsm_setKatSeed to be called first if testing against NIST vectors in Rust.
- */
-export const hsm_generateXMSSKeyPair = (
-  M: SoftHSMModule,
-  hSession: number,
-  paramSet: number,
-  extractable = false
-): { pubHandle: number; privHandle: number } => {
-  const mech = buildMech(M, CKM_XMSS_KEY_PAIR_GEN)
-  const pubAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
-  ]
-  const prvAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: !extractable },
-    { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
-  ]
-  const pubTpl = buildTemplate(M, pubAttrs)
-  const prvTpl = buildTemplate(M, prvAttrs)
-
-  const pubHPtr = allocUlong(M)
-  const prvHPtr = allocUlong(M)
-  try {
-    checkRV(
-      M._C_GenerateKeyPair(
-        hSession,
-        mech,
-        pubTpl.ptr,
-        pubAttrs.length,
-        prvTpl.ptr,
-        prvAttrs.length,
-        pubHPtr,
-        prvHPtr
-      ),
-      'C_GenerateKeyPair(XMSS)'
-    )
-    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
-  } finally {
-    M._free(mech)
-    freeTemplate(M, pubTpl, pubAttrs.length)
-    freeTemplate(M, prvTpl, prvAttrs.length)
-    M._free(pubHPtr)
-    M._free(prvHPtr)
-  }
-}
-
-/**
- * Generate an LMS/HSS Key Pair.
- * Requires LMS_TYPE and LMOTS_TYPE for parameter derivation.
- */
-export const hsm_generateLMSKeyPair = (
-  M: SoftHSMModule,
-  hSession: number,
-  extractable = false
-): { pubHandle: number; privHandle: number } => {
-  // CKM_HSS_KEY_PAIR_GEN with NULL params — both engines default to a single-level
-  // LMS hierarchy. CKA_HSS_LMS_TYPE/LMOTS_TYPE are mechanism-contributed OUTPUT
-  // attributes (not keygen inputs), so they are NOT placed in the template.
-  const mech = buildMech(M, CKM_HSS_KEY_PAIR_GEN)
-  const pubAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-  ]
-  const prvAttrs: AttrDef[] = [
-    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: !extractable },
-    { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
-  ]
-  const pubTpl = buildTemplate(M, pubAttrs)
-  const prvTpl = buildTemplate(M, prvAttrs)
-
-  const pubHPtr = allocUlong(M)
-  const prvHPtr = allocUlong(M)
-  try {
-    checkRV(
-      M._C_GenerateKeyPair(
-        hSession,
-        mech,
-        pubTpl.ptr,
-        pubAttrs.length,
-        prvTpl.ptr,
-        prvAttrs.length,
-        pubHPtr,
-        prvHPtr
-      ),
-      'C_GenerateKeyPair(HSS)'
-    )
-    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
-  } finally {
-    M._free(mech)
-    freeTemplate(M, pubTpl, pubAttrs.length)
-    freeTemplate(M, prvTpl, prvAttrs.length)
-    M._free(pubHPtr)
-    M._free(prvHPtr)
-  }
-}
-
-/**
- * Single-part sign using C_SignInit + C_Sign (not the message API).
- * Used for HSS and XMSS which use the traditional single-part sign path.
- * Returns the signature bytes.
- */
-export const hsm_statefulSignBytes = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  privHandle: number,
-  msgBytes: Uint8Array
-): Uint8Array => {
-  const mech = buildMech(M, mechType)
-  const msgPtr = writeBytes(M, msgBytes)
-  const sigLenPtr = allocUlong(M)
-  let sigPtr = 0
-  try {
-    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(stateful)')
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(stateful,len)')
-    const sigLen = readUlong(M, sigLenPtr)
-    sigPtr = M._malloc(sigLen)
-    writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(stateful)')
-    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
-  } finally {
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigLenPtr)
-    if (sigPtr) M._free(sigPtr)
-  }
-}
+export {
+  hsm_generateStatefulKeyPair,
+  hsm_generateHSSKeyPair,
+  hsm_generateLMSKeyPair,
+  hsm_generateXMSSKeyPair,
+  hsm_generateXMSSMTKeyPair,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
+  hsm_getKeysRemaining,
+} from './softhsm/stateful'

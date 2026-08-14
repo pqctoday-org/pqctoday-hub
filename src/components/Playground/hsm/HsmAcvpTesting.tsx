@@ -2469,7 +2469,7 @@ export const HsmAcvpTesting = () => {
           const id30 = `xmss-sig-${eName}`
           addLog(`[${eName}] Testing XMSS Stateful Sign+Verify...`)
           try {
-            const xmssPair = hsm_generateXMSSKeyPair(M, hSession, 1, false) // 0x00000001
+            const xmssPair = hsm_generateXMSSKeyPair(M, hSession, 1) // CKP_XMSS_SHA2_10_256
             const msgBytes = new TextEncoder().encode('ACVP XMSS Test')
             const sig = hsm_statefulSignBytes(M, hSession, CKM_XMSS, xmssPair.privHandle, msgBytes)
             const valid =
@@ -2512,7 +2512,7 @@ export const HsmAcvpTesting = () => {
           const id31 = `hss-sig-${eName}`
           addLog(`[${eName}] Testing HSS/LMS Stateful Sign+Verify...`)
           try {
-            const lmsPair = hsm_generateLMSKeyPair(M, hSession, false)
+            const lmsPair = hsm_generateLMSKeyPair(M, hSession)
             const msgBytes = new TextEncoder().encode('ACVP HSS/LMS Test')
             const sig = hsm_statefulSignBytes(M, hSession, CKM_HSS, lmsPair.privHandle, msgBytes)
             const valid =
