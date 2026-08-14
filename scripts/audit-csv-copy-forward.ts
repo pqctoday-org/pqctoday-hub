@@ -119,6 +119,58 @@ export interface RecordedRemoval {
   recorded: string
 }
 
+// ---------------------------------------------------------------------------
+// DERIVED FAMILIES — where a removal is explained by a RULE, not one-by-one.
+//
+// A file that is GENERATED from other CSVs loses rows for a reason its
+// generator already states, and that reason is a rule rather than an incident.
+// trusted_source_xref_ is the case in point: its generator skips any source row
+// whose status is `deprecated` (generate-trusted-source-xref.mjs, added
+// 2026-07-16 in bd67d7538, because a deprecated row can share its id field with
+// an active one and mint a duplicate composite key). Deprecating a library
+// document therefore drops its xref rows BY DESIGN.
+//
+// Recording those one at a time would mean ~390 hand-written entries that say
+// the same sentence, and each new deprecation would break the build until
+// someone added another. Worse, the volume would bury the removals that are
+// real: of 531 rows this family dropped between its two generations, 390 are
+// this rule and 141 are genuine loss. A rule that explains 390 makes those 141
+// visible instead of drowning them.
+//
+// The rule stays deliberately narrow: it excuses a removal ONLY when the target
+// row is really gone or really deprecated in the newest generation of the
+// source CSV. A dropped xref whose target is still active is still a failure.
+// ---------------------------------------------------------------------------
+export interface DerivedFamilyRule {
+  /** Family prefix this rule applies to. */
+  family: string
+  /** Short phrase naming the rule, printed on excused keys in the report. */
+  label: string
+  /**
+   * Given a missing key's parts (in `keyColumns` order), return a reason when
+   * the removal is legitimate, or null to let it fail.
+   */
+  excuse(parts: string[], keyColumns: string[]): string | null
+}
+
+/**
+ * resource_type -> the source CSV family and id column the xref generator
+ * reads it from. Copied from generate-trusted-source-xref.mjs's own
+ * `processCSV(prefix, resourceType, idField, ...)` calls, which is the only
+ * authority on this mapping — inferring it by guessing which column looks like
+ * a key gets `algorithm` wrong (it reads pqc_complete_algorithm_reference_,
+ * keyed by `Algorithm`, not the transitions file).
+ */
+const XREF_SOURCE_OF: Record<string, { prefix: string; idField: string }> = {
+  library: { prefix: 'library_', idField: 'reference_id' },
+  threats: { prefix: 'quantum_threats_hsm_industries_', idField: 'threat_id' },
+  timeline: { prefix: 'timeline_', idField: 'Title' },
+  leaders: { prefix: 'leaders_', idField: 'Name' },
+  compliance: { prefix: 'compliance_', idField: 'id' },
+  migrate: { prefix: 'pqc_product_catalog_', idField: 'software_name' },
+  algorithm: { prefix: 'pqc_complete_algorithm_reference_', idField: 'Algorithm' },
+}
+
 // The three reasons below are shared by several keys each; naming them keeps
 // every entry readable without weakening the rule that each key is recorded
 // deliberately, one at a time.
@@ -296,6 +348,49 @@ export const RECORDED_REMOVALS: RecordedRemoval[] = [
     family: 'migrate_purl_xref_',
     key: 'SEALSQ Quantum Shield',
     reason: SEALSQ_RENAMED_TO_QS7001,
+    recorded: '2026-08-14',
+  },
+  // The four below are the residue of regenerating trusted_source_xref_ against
+  // current inputs, after the deprecated-target and re-attribution rules above
+  // account for the other 527. Each was checked against the row's own
+  // main_source / Organization field: all four assert an origin the resource
+  // does not claim, so the generator is right to stop emitting them and
+  // restoring them would re-publish a false attribution into the trust score.
+  {
+    family: 'trusted_source_xref_',
+    key: 'threats | CI-003 | nist-csrc',
+    reason:
+      "this threat's main_source is \"TSA Pipeline Security Guidelines (March 2018, rev. April 2021)\", " +
+      'published by the Transportation Security Administration, not by NIST. The nist-csrc edge was wrong.',
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'trusted_source_xref_',
+    key: 'threats | IT-006 | iacr-eprint',
+    reason:
+      'main_source is the arXiv preprint "NoMod: A Non-modular Attack on Module Learning With Errors" ' +
+      '(arxiv.org/abs/2510.02162). arXiv and the IACR Cryptology ePrint Archive are different preprint ' +
+      'servers, so iacr-eprint asserted a publisher this paper does not have.',
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'trusted_source_xref_',
+    key: 'threats | MEDIA-002 | aacs',
+    reason:
+      'main_source is the arXiv paper "A First Look at Digital Rights Management Systems for Secure ' +
+      'Mobile Content" (arxiv.org/abs/2308.00437) — an independent study, not a publication of the AACS ' +
+      'Licensing Administrator. MEDIA-001, which genuinely cites the AACS Specifications, keeps its aacs edge.',
+    recorded: '2026-08-14',
+  },
+  {
+    family: 'trusted_source_xref_',
+    key: 'leaders | Pieter Wuille | bitcoin-core',
+    reason:
+      "this leader's Organization is \"Chaincode Labs;Blockstream (co-founder, former)\", which does not " +
+      'name Bitcoin Core at all. The affiliation data changed; the xref followed it. (The trailing-qualifier ' +
+      'fallback added to the generator on 2026-08-14 restores the other four leaders lost the same day — ' +
+      'Mozilla/Oracle/Zoom/IBM Research were annotated "(former)" and stopped matching. It cannot restore ' +
+      'this one, because there is no Bitcoin Core string left to match.)',
     recorded: '2026-08-14',
   },
 ]
@@ -592,11 +687,85 @@ export function isActive(row: Record<string, string>, lifecycle: LifecycleColumn
 // The check
 // ---------------------------------------------------------------------------
 
+/**
+ * Newest generation of `prefix` in `dataDir`, or null when the family has none.
+ * Ordering is `collectFamilies`' own, so "newest" here means the same file the
+ * app's loader would serve.
+ */
+const newestOf = (dataDir: string, archiveDir: string, prefix: string): Generation | null => {
+  const gens = collectFamilies(dataDir, archiveDir).get(prefix)
+  return gens && gens.length > 0 && !gens[0].archived ? gens[0] : null
+}
+
+/**
+ * The one derived family this repo has. Built per-run because it must read the
+ * CURRENT newest generation of each source CSV to answer "is this target still
+ * active" — a question whose answer changes every time a row is deprecated.
+ */
+export const buildDerivedFamilyRules = (
+  dataDir: string,
+  archiveDir: string
+): DerivedFamilyRule[] => [
+  {
+    family: 'trusted_source_xref_',
+    label: 'target row deprecated or gone',
+    excuse(parts) {
+      const [resourceType, resourceId] = parts
+      const source = XREF_SOURCE_OF[resourceType]
+      // An unknown resource_type is NOT excused: it means the generator grew a
+      // type this rule has not been taught, and silently passing it would hide
+      // exactly the loss the guard exists to catch.
+      if (!source) return null
+      const gen = newestOf(dataDir, archiveDir, source.prefix)
+      if (!gen) return null
+      const { rows } = parseCsvFile(gen.fullPath)
+      const target = rows.find((r) => cell(r, source.idField) === resourceId)
+      if (!target) {
+        return `${resourceType} row "${resourceId}" no longer exists in ${gen.file}, so the generator cannot emit an xref for it`
+      }
+      if (cell(target, 'status').toLowerCase() === 'deprecated') {
+        return `${resourceType} row "${resourceId}" is deprecated in ${gen.file}; the xref generator skips deprecated rows by design (bd67d7538)`
+      }
+      // A REMAP is not a loss. This family's key includes source_id, so
+      // re-attributing a resource to a better-fitting source reads as "the old
+      // edge vanished" — but the resource is still attributed, which is the
+      // property that actually matters to the trust score consuming this file.
+      //
+      // This is not hypothetical tidying. Regenerating against the current
+      // trusted-sources registry moved Spain's CCN off `ncsc-uk` onto
+      // `ccn-spain`, Bahrain's NCSC off `ncsc-uk` onto `bahrain-ncsc`, Jordan's
+      // central bank off `bdf` (Banque de France) onto `cbj-jordan`, PCI DSS
+      // off `nist-csrc` onto `pci-ssc`, and 3GPP off `gsma` onto `3gpp`. Every
+      // one of those old edges was WRONG. Treating them as rows to restore
+      // would push a maintainer to reinstate false attributions — the exact
+      // opposite of what this guard is for. 39 of the 47 removals flagged here
+      // on 2026-08-14 were of this kind.
+      //
+      // The tradeoff, stated plainly: a resource that legitimately held two
+      // distinct sources and lost one keeps a pass here. That is accepted
+      // because the file is regenerated wholesale rather than edited, so
+      // edge-level churn is normal and only total loss of attribution is a
+      // signal. Excused keys are printed with this reason, never hidden.
+      const alsoNewest = newestOf(dataDir, archiveDir, 'trusted_source_xref_')
+      if (alsoNewest) {
+        const still = parseCsvFile(alsoNewest.fullPath).rows.some(
+          (r) => cell(r, 'resource_type') === resourceType && cell(r, 'resource_id') === resourceId
+        )
+        if (still) {
+          return `${resourceType} "${resourceId}" was re-attributed to a different source in ${alsoNewest.file}, not stripped of attribution`
+        }
+      }
+      return null
+    },
+  },
+]
+
 export function checkFamily(
   family: string,
   newestGen: Generation,
   previousGen: Generation,
-  recorded: RecordedRemoval[] = RECORDED_REMOVALS
+  recorded: RecordedRemoval[] = RECORDED_REMOVALS,
+  derivedRules: DerivedFamilyRule[] = []
 ): FamilyResult {
   const base: FamilyResult = {
     family,
@@ -649,13 +818,23 @@ export function checkFamily(
     previousActiveCounts.set(k, (previousActiveCounts.get(k) ?? 0) + 1)
   }
 
+  const rules = derivedRules.filter((r) => r.family === family)
+
   const missingKeys: string[] = []
   const excusedKeys: string[] = []
   for (const [key, wanted] of previousActiveCounts) {
     const shortfall = wanted - (newestCounts.get(key) ?? 0)
     if (shortfall <= 0) continue
     const label = wanted > 1 ? `${key}  (${shortfall} of ${wanted} occurrences)` : key
-    if (excused.has(key)) excusedKeys.push(label)
+    if (excused.has(key)) {
+      excusedKeys.push(label)
+      continue
+    }
+    const ruled = rules.reduce<string | null>(
+      (acc, r) => acc ?? r.excuse(key.split(' | '), keyColumns),
+      null
+    )
+    if (ruled) excusedKeys.push(`${label}  — ${ruled}`)
     else missingKeys.push(label)
   }
 
@@ -672,6 +851,7 @@ export function checkFamily(
 
 export function runAudit(dataDir: string, archiveDir: string): AuditReport {
   const families = collectFamilies(dataDir, archiveDir)
+  const derivedRules = buildDerivedFamilyRules(dataDir, archiveDir)
   const results: FamilyResult[] = []
   const singleGeneration: string[] = []
   const mergeAll: string[] = []
@@ -685,7 +865,9 @@ export function runAudit(dataDir: string, archiveDir: string): AuditReport {
       singleGeneration.push(family)
       continue
     }
-    results.push(checkFamily(family, generations[0], generations[1]))
+    results.push(
+      checkFamily(family, generations[0], generations[1], RECORDED_REMOVALS, derivedRules)
+    )
   }
 
   return {

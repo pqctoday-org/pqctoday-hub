@@ -54,3 +54,19 @@ npm run validate:data -- --exclude-checks TP-1,MP-2
 # exactly where a rebuild would be performed.
 # Bypass with `git push --no-verify`.
 npm run sync:wasm:check
+
+# Silent row loss between two generations of a dated CSV.
+# ADDED 2026-08-14, after a near-miss that NOTHING else could have caught. Two
+# sessions each wrote a new generation of library_*.csv; because dated
+# generations are different FILENAMES, git merged both with no conflict, and
+# the loader serves only the newest — so two rows present in one and absent
+# from the other simply disappeared. No conflict, no error, no failing test.
+# A human noticed.
+# Local-only, matching the two gates above: it reads src/data/ and
+# src/data/archive/ (the archival gate keeps only 2 live copies, so the
+# previous generation is often archived) and needs no network.
+# A removal that is genuinely intended is recorded in RECORDED_REMOVALS inside
+# the script, with a written reason — that is the escape hatch, not disabling
+# this line.
+# Bypass with `git push --no-verify`.
+npm run audit:csv-copy-forward
