@@ -64,7 +64,7 @@ const DATA_DIR = path.join(ROOT, 'src', 'data')
  * (see timelineEnrichmentData.ts for the reference pattern) and add it here
  * — don't add it here first and then fix the loader to satisfy the gate.
  */
-const MERGE_ALL_SOURCES: {
+export const MERGE_ALL_SOURCES: {
   name: string
   prefix: string
   ext: '.csv' | '.md'
