@@ -318,22 +318,39 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
-  it('evidence_type is a known value, and only non-standards are marked', () => {
+  it('evidence_type is a known value, and honest in BOTH directions', () => {
     // A research paper admitted to the standards table must SAY so — the chip
     // badge is driven entirely by this field, so a mislabelled row renders a
     // preprint as though it were a specification.
-    const RESEARCHY = new Set(['Research Paper', 'Industry Report', 'Reference'])
+    //
+    // The first version of this test only checked one direction: that a row
+    // marked non-standard points at a researchy document. It never checked
+    // that a row marked `standard` is not secretly a report — and two were
+    // (GSMA PQ.01 and the ENISA hybridisation study, both Industry Reports),
+    // because the sweep set evidence_type='standard' on every pre-existing row
+    // without looking. A one-way guard on a two-way claim is barely a guard.
+    const NOT_A_SPEC = new Set(['Research Paper', 'Industry Report', 'Government Guidance'])
     const docTypeOf = new Map(libraryData.map((d) => [d.referenceId, d.documentType]))
     for (const s of standards) {
       expect(
-        ['standard', 'research', 'industry-report', 'courseware'],
+        ['standard', 'research', 'industry-report', 'courseware', 'guidance'],
         `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
       ).toContain(s.evidenceType)
-      if (s.evidenceType !== 'standard') {
+      const docType = docTypeOf.get(s.libraryRef) ?? ''
+      if (s.evidenceType === 'standard') {
+        // Reverse direction. NOTE the library's `Reference` type is NOT listed
+        // in NOT_A_SPEC: it holds FIPS 203/204/205, SP 800-208 and the TCG TPM
+        // library, which are specifications despite the label. Only the three
+        // types that are never normative are rejected here.
         expect(
-          RESEARCHY,
-          `standard "${s.standardId}" is marked ${s.evidenceType} but its library row is a ${docTypeOf.get(s.libraryRef)}`
-        ).toContain(docTypeOf.get(s.libraryRef) ?? '')
+          NOT_A_SPEC,
+          `standard "${s.standardId}" is marked as a standard but the library calls it a ${docType}`
+        ).not.toContain(docType)
+      } else {
+        expect(
+          new Set([...NOT_A_SPEC, 'Reference']),
+          `standard "${s.standardId}" is marked ${s.evidenceType} but its library row is a ${docType}`
+        ).toContain(docType)
       }
     }
   })
