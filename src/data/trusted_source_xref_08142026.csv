@@ -859,6 +859,7 @@ threats,LEG-001,ec,direct
 threats,LEG-002,ec,direct
 threats,LEG-003,etsi-cyber,direct
 threats,MEDIA-001,aacs,direct
+threats,MEDIA-002,arxiv-crypto,inferred
 threats,MEDIA-003,dvb-project,direct
 threats,PCI-002,pci-ssc,direct
 threats,PCI-003,pci-ssc,direct
@@ -889,6 +890,7 @@ threats,WATER-005,ferc,direct
 threats,WATER-003,epa-us,direct
 threats,WATER-004,nist-csrc,direct
 threats,CI-001,cisa,direct
+threats,CI-003,tsa,inferred
 threats,CROSS-014,nist-csrc,direct
 threats,CROSS-015,nist-csrc,direct
 threats,CROSS-016,nist-csrc,direct
@@ -897,6 +899,7 @@ threats,CROSS-018,nist-csrc,direct
 threats,HSM-001,nist-csrc,direct
 threats,IOT-005,nist-csrc,direct
 threats,AUS-TEL-001,acsc,direct
+threats,IT-006,arxiv-crypto,inferred
 threats,HSM-002,oasis,direct
 threats,FINA-001,hkma,direct
 threats,CROS-001,imo,direct
@@ -1252,6 +1255,7 @@ leaders,Dr. Ludovic Perret,cryptonext,mapped
 leaders,Skip Sanzeri,qusecure,mapped
 leaders,Duncan Jones,quantinuum,mapped
 leaders,Prof. Florian Mendel,infineon,mapped
+leaders,Dr. Joppe Bos,nxp-semiconductors-nv,mapped
 leaders,Dr. Gregor Seiler,ibm-research,mapped
 leaders,Dr. Carlos Aguilar Melchor,sandboxaq,mapped
 leaders,Mark Hughes,ibm-research,mapped
@@ -1266,6 +1270,7 @@ leaders,Sophie Schmieg,google,mapped
 leaders,Bas Westerbaan,cloudflare,mapped
 leaders,Ehren Kret,signal,exact
 leaders,Rolfe Schmidt,signal,exact
+leaders,Luke Ibbetson,vodafone-group-plc,mapped
 leaders,Sofia Celi,brave-software,mapped
 leaders,Tim Hollebeek,digicert,mapped
 leaders,Mike Ounsworth,entrust,mapped
@@ -1285,8 +1290,10 @@ leaders,Dr. Scott Totzke,isara-corporation,mapped
 leaders,Kevin Bocek,venafi,exact
 leaders,Thomas Coratger,eth-foundation,mapped
 leaders,Mike Osborne,ibm-research,mapped
+leaders,Bruno Couillard,crypto4a-technologies-inc,mapped
 leaders,Dr. Colin Soutar,deloitte,mapped
 leaders,Denis Mandich,qrypt,mapped
+leaders,Dr. Krysta Svore,nvidia-corporation,mapped
 leaders,Philip Intallura,boe,mapped
 leaders,Tomofumi Okubo,digicert,mapped
 leaders,Dr. Marco Piani,evolutionq-inc,mapped
@@ -1296,6 +1303,7 @@ leaders,David Benjamin,google,mapped
 leaders,Jake Massimo,amazon-aws,mapped
 leaders,Anthony Towns,bitcoin-core,mapped
 leaders,Gavin Wood,eth-foundation,mapped
+leaders,Brian Campbell,ping-identity-holdings-corp,mapped
 leaders,Kristina Yasuda,microsoft,mapped
 leaders,Mark D. Baushke,juniper-networks,mapped
 leaders,Paul Bastian,bundesdruckerei,mapped
@@ -1304,16 +1312,22 @@ leaders,Chris M. Lonvick,cisco-systems,mapped
 leaders,Tatu Ylonen,ssh-communications-security,mapped
 leaders,Ben Laurie,google,mapped
 leaders,Charlie Kaufman,microsoft,mapped
+leaders,Paul Wouters,red-hat,mapped
 leaders,Rob Stradling,sectigo,mapped
 leaders,John Gilmore,eff,mapped
+leaders,Brendan Moran,arm-holdings-plc,mapped
 leaders,Stephen Davidson,digicert,mapped
 leaders,Martijn Katerbarg,sectigo,mapped
 leaders,Clint Wilson,apple,exact
+leaders,Ashish Dhiman,globalsign-ltd,mapped
+leaders,Robert Relyea,red-hat,mapped
 leaders,Valerie Fenwick,oracle,mapped
 leaders,Luke Valenta,cloudflare,mapped
 leaders,Christopher Patton,cloudflare,mapped
 leaders,Vânia Gonçalves,cloudflare,mapped
 leaders,Craig Gidney,google-quantum-ai,mapped
+leaders,Marco Lucamarini,toshiba-research-europe-ltd,mapped
+leaders,Bruno Huttner,id-quantique-sa,mapped
 leaders,Roy C. DeCicco,jpmorganchase,mapped
 leaders,Shuichi Katsumata,pqshield,mapped
 leaders,Prof. Birgitta Whaley,uc-berkeley-bqic,mapped
@@ -1323,6 +1337,7 @@ leaders,Prof. Dr. Peter Schwabe,mpi-sp,exact
 leaders,Prof. Dr. Peter Schwabe,radboud-university,mapped
 leaders,Prof. Dr. Damien Stehlé,inria-crypto,mapped
 leaders,Prof. Dr. Tanja Lange,tue-coding,mapped
+leaders,Andersen Cheng,post-quantum-ltd,mapped
 leaders,Michael Adams,zoom,mapped
 leaders,Stavros Kousidis,bsi,mapped
 leaders,Adam Langley,google,mapped
@@ -1331,10 +1346,12 @@ leaders,Dr. Jan Camenisch,ibm-research,mapped
 leaders,Adam Zalcman,google-quantum-ai,mapped
 leaders,Andrew Regenscheid,nist-csrc,mapped
 leaders,Ansgar Dietrichs,eth-foundation,mapped
+leaders,Loïc Bidoux,technology-innovation-institute-tii,mapped
 leaders,Charles Teague,mitre,exact
 leaders,Conor Deegan,project-eleven,mapped
 leaders,David Cooper,nist-csrc,mapped
 leaders,Devon O'Brien,google,mapped
+leaders,Daniel Huigens,proton-ag,mapped
 leaders,David Mahdi,entrust,mapped
 leaders,Deirdre Connolly,sandboxaq,mapped
 leaders,Dustin Moody,nist-csrc,mapped
@@ -1355,6 +1372,7 @@ leaders,M. Pohl,radboud-university,mapped
 leaders,Marek Palatinus,satoshilabs,mapped
 leaders,Marin Ivezic,applied-quantum,mapped
 leaders,Martin Albrecht,ncsc-uk,mapped
+leaders,Masato Wakayama,ntt-corporation,mapped
 leaders,John Preuß Mattsson,ericsson,mapped
 leaders,Maxime Roméas,anssi,mapped
 leaders,Michael Bartock,nist-csrc,mapped
@@ -1392,12 +1410,17 @@ leaders,Moreno Ambrosin,google,mapped
 leaders,Robert Griesemer,google,mapped
 leaders,Rob Pike,google,mapped
 leaders,Michael Rosenberg,cloudflare,mapped
+leaders,Daiki Ueno,red-hat,mapped
 leaders,Jeffrey Stedfast,microsoft,mapped
 leaders,Thomas Holenstein,google,mapped
 leaders,Jürg Wullschleger,google,mapped
 leaders,Russ Cox,google,mapped
 leaders,Hanno Becker,amazon-aws,mapped
+leaders,Joost Roland Renes,nxp-semiconductors-nv,mapped
 leaders,Santosh Ghosh,intel,mapped
+leaders,Tobias Schneider,nxp-semiconductors-nv,mapped
+leaders,Eun Kyung Kim,samsung-sds-co-ltd,mapped
+leaders,Keunyoung Park,samsung-electronics-co,mapped
 leaders,Jonathan William Edwards,ibm-research,mapped
 leaders,Xiaoyun Wang,tsinghua-ql,mapped
 leaders,Kevin Yeo,google,mapped
@@ -1523,6 +1546,7 @@ compliance,NCSC-FI-PQC,ncsc-fi,direct
 compliance,CHILE-ANCI,anci-chile,direct
 compliance,MEXICO-CNBV-CUB,cnbv-mexico,direct
 compliance,BRAZIL-BACEN-4893,bacen-brazil,direct
+compliance,faa-ac-119-1-ansp,faa-us,mapped
 compliance,cisa-pqc-initiative,cisa,direct
 compliance,bsi-cc-certification,bsi,direct
 compliance,etsi-ts-104-015-qsc-hybrid-key-exchange,etsi,direct
@@ -2474,3 +2498,115 @@ migrate,softhsmrustv3 (pqctoday Rust PKCS#11 engine),angelatek-ltd,direct
 migrate,bench-harness (pqctoday PKCS#11 benchmark),angelatek-ltd,direct
 migrate,age-plugin-pqctoday,ietf,direct
 migrate,OpenSSL 3.6,openssl-project,direct
+algorithm,ML-KEM-512,nist-csrc,direct
+algorithm,ML-KEM-768,nist-csrc,direct
+algorithm,ML-KEM-1024,nist-csrc,direct
+algorithm,FrodoKEM-640,ietf,direct
+algorithm,FrodoKEM-976,ietf,direct
+algorithm,FrodoKEM-1344,ietf,direct
+algorithm,HQC-128,nist-csrc,direct
+algorithm,HQC-192,nist-csrc,direct
+algorithm,HQC-256,nist-csrc,direct
+algorithm,Classic-McEliece-348864,nist-csrc,direct
+algorithm,Classic-McEliece-460896,nist-csrc,direct
+algorithm,Classic-McEliece-8192128,nist-csrc,direct
+algorithm,BIKE-1,nist-csrc,direct
+algorithm,BIKE-3,nist-csrc,direct
+algorithm,BIKE-5,nist-csrc,direct
+algorithm,ML-DSA-44,nist-csrc,direct
+algorithm,ML-DSA-65,nist-csrc,direct
+algorithm,ML-DSA-87,nist-csrc,direct
+algorithm,FN-DSA-512,nist-csrc,direct
+algorithm,FN-DSA-1024,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-128s,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-128s,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-128f,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-128f,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-192s,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-192s,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-192f,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-192f,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-256s,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-256s,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-256f,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-256f,nist-csrc,direct
+algorithm,LMS-SHA256 (H20/W8),nist-csrc,direct
+algorithm,XMSS-SHA2_20,nist-csrc,direct
+algorithm,RSA-2048,nist-csrc,direct
+algorithm,RSA-3072,nist-csrc,direct
+algorithm,RSA-4096,nist-csrc,direct
+algorithm,ECDH P-256,nist-csrc,direct
+algorithm,ECDH P-384,nist-csrc,direct
+algorithm,ECDH P-521,nist-csrc,direct
+algorithm,X25519,ietf,direct
+algorithm,X448,ietf,direct
+algorithm,ECDSA P-256,nist-csrc,direct
+algorithm,ECDSA P-384,nist-csrc,direct
+algorithm,ECDSA P-521,nist-csrc,direct
+algorithm,Ed25519,ietf,direct
+algorithm,Ed448,ietf,direct
+algorithm,DH (Diffie-Hellman),ietf,direct
+algorithm,secp256k1,secg,direct
+algorithm,X25519MLKEM768,ietf,direct
+algorithm,SecP256r1MLKEM768,ietf,direct
+algorithm,SecP384r1MLKEM1024,ietf,direct
+algorithm,SMAUG-T-128,kisa,direct
+algorithm,SMAUG-T-192,kisa,direct
+algorithm,SMAUG-T-256,kisa,direct
+algorithm,NTRU+-768,kisa,direct
+algorithm,NTRU+-1152,kisa,direct
+algorithm,NTRU+-1277,kisa,direct
+algorithm,HAETAE-2,kisa,direct
+algorithm,HAETAE-3,kisa,direct
+algorithm,HAETAE-5,kisa,direct
+algorithm,AIMer-128f,kisa,direct
+algorithm,AIMer-192f,kisa,direct
+algorithm,AIMer-256f,kisa,direct
+algorithm,Aigis-enc-L1,cacr-china,direct
+algorithm,Aigis-enc-L5,cacr-china,direct
+algorithm,Aigis-sig-L1,cacr-china,direct
+algorithm,Aigis-sig-L5,cacr-china,direct
+algorithm,MAYO-1,iacr-eprint,direct
+algorithm,MAYO-2,iacr-eprint,direct
+algorithm,MAYO-3,iacr-eprint,direct
+algorithm,MAYO-5,iacr-eprint,direct
+algorithm,HAWK-512,iacr-eprint,direct
+algorithm,HAWK-1024,iacr-eprint,direct
+algorithm,SLH-DSA-SHA2-128-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-128-24,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-192-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-192-24,nist-csrc,direct
+algorithm,SLH-DSA-SHA2-256-24,nist-csrc,direct
+algorithm,SLH-DSA-SHAKE-256-24,nist-csrc,direct
+algorithm,UOV,nist-csrc,direct
+algorithm,SQIsign,nist-csrc,direct
+algorithm,CROSS,nist-csrc,direct
+algorithm,LESS,nist-csrc,direct
+algorithm,FAEST,nist-csrc,direct
+algorithm,SNOVA,nist-csrc,direct
+algorithm,id-MLDSA44-ECDSA-P256-SHA256,ietf,direct
+algorithm,id-MLDSA44-Ed25519-SHA512,ietf,direct
+algorithm,id-MLDSA44-RSA2048-PSS-SHA256,ietf,direct
+algorithm,ML-KEM-768-ECDH-P256,ietf,direct
+algorithm,ML-KEM-768-RSA-OAEP-2048,ietf,direct
+algorithm,Classic-McEliece-6688128,bsi,direct
+algorithm,Covercrypt,etsi,direct
+algorithm,HPKE-PQ,ietf,direct
+algorithm,Classic-McEliece-6960119,bsi,direct
+algorithm,X-Wing,ietf,direct
+algorithm,sntrup761x25519-sha512,ietf,direct
+algorithm,mlkem768x25519-sha256,ietf,direct
+algorithm,mlkem768nistp256-sha256,ietf,direct
+algorithm,mlkem1024nistp384-sha384,ietf,direct
+algorithm,id-MLKEM768-ECDH-P256-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-ECDH-P384-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-ECDH-brainpoolP256r1-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-X25519-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-RSA2048-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-RSA3072-SHA3-256,ietf,direct
+algorithm,id-MLKEM768-RSA4096-SHA3-256,ietf,direct
+algorithm,id-MLKEM1024-ECDH-P384-SHA3-256,ietf,direct
+algorithm,id-MLKEM1024-ECDH-P521-SHA3-256,ietf,direct
+algorithm,id-MLKEM1024-ECDH-brainpoolP384r1-SHA3-256,ietf,direct
+algorithm,id-MLKEM1024-X448-SHA3-256,ietf,direct
+algorithm,id-MLKEM1024-RSA3072-SHA3-256,ietf,direct
