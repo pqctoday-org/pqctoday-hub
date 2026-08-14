@@ -18,6 +18,15 @@ src/wasm/softhsmrustv3.d.ts
 src/wasm/softhsmrustv3_bg.wasm.d.ts
 src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.js
 src/vendor/softhsm-wasm/wasm/softhsmrustv3.js
+# The same wasm-pack output also lands in these four paths, which the list
+# above missed — so `format:check` failed in CI on every engine rebuild while
+# passing locally (lint-staged only sees staged files, and a rebuild that
+# touches no .ts stages none of these). Reformatting generated glue would
+# just be undone by the next `wasm-pack build`, so ignore it where it lives.
+src/vendor/softhsm-wasm/wasm/softhsmrustv3.d.ts
+src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm.d.ts
+public/wasm/rust/softhsmrustv3_bg.js
+public/wasm/rust/softhsmrustv3_bg.wasm.d.ts
 public/wasm/rust/softhsmrustv3.js
 public/wasm/rust/softhsmrustv3.d.ts
 

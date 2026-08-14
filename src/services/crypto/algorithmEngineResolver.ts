@@ -384,10 +384,17 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     // H20 keygen (~30s) is impractical in-browser; H5/W1 is the confirmed-working playground config
     let lmsResult: ReturnType<typeof softhsm.hsm_generateLMSKeyPair>
     keyGenMs = timeMs(() => {
-      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession, true)
+      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession)
     })
     publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.pubHandle).length
-    privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.privHandle).length
+    // Not measurable, and deliberately so. An HBS private key holds the
+    // one-time-signature state; both engines now force CKA_SENSITIVE=TRUE /
+    // CKA_EXTRACTABLE=FALSE on it and the C++ engine refuses a template asking
+    // otherwise, so this used to request extractable=true and then read the
+    // private CKA_VALUE — two operations that can no longer both succeed.
+    // Left at 0 rather than filled with a spec figure: nothing renders this
+    // field, and a hardcoded number here would read as a measurement.
+    privateKeyBytes = 0
     const lmsMsg = new Uint8Array(32)
     crypto.getRandomValues(lmsMsg)
     let lmsSig: Uint8Array
@@ -415,10 +422,12 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     // paramSet=1 (XMSS-SHA2_10_256, H=10) — H=20 keygen (~30s) is impractical in-browser
     let xmssResult: ReturnType<typeof softhsm.hsm_generateXMSSKeyPair>
     keyGenMs = timeMs(() => {
-      xmssResult = softhsm.hsm_generateXMSSKeyPair(mod, hSession, 1, true)
+      xmssResult = softhsm.hsm_generateXMSSKeyPair(mod, hSession, 1)
     })
     publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, xmssResult!.pubHandle).length
-    privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, xmssResult!.privHandle).length
+    // See the LMS branch above — an HBS private key is non-extractable by
+    // mandate on both engines now, so its size cannot be measured here.
+    privateKeyBytes = 0
     const xmssMsg = new Uint8Array(32)
     crypto.getRandomValues(xmssMsg)
     let xmssSig: Uint8Array

@@ -9,6 +9,16 @@ set -e
 # Skip in CI — CI runs the same verifier as a dedicated workflow step.
 [ -n "$CI" ] && exit 0
 
+# Formatting, the way CI checks it: the WHOLE tree, not just staged files.
+# ADDED 2026-08-14, after `format:check` failed in CI twice in one session
+# while every local gate was green. lint-staged only formats files that are
+# STAGED, so anything reaching the tree another way — a merge, a generated
+# artifact copied in by a build script, a file written by a tool — is never
+# formatted locally and is only caught after a push. On this repo a CI round
+# trip is 20+ minutes; this check takes about forty seconds.
+# Bypass with `git push --no-verify`.
+npm run format:check
+
 # Every file a workflow step will execute must actually be IN the repository.
 # ADDED 2026-08-10, after this failed for the FOURTH time. `.gitignore` has a
 # blanket `scripts/*`, and `git add` on an ignored path is a silent no-op — so a
@@ -54,3 +64,19 @@ npm run validate:data -- --exclude-checks TP-1,MP-2
 # exactly where a rebuild would be performed.
 # Bypass with `git push --no-verify`.
 npm run sync:wasm:check
+
+# Silent row loss between two generations of a dated CSV.
+# ADDED 2026-08-14, after a near-miss that NOTHING else could have caught. Two
+# sessions each wrote a new generation of library_*.csv; because dated
+# generations are different FILENAMES, git merged both with no conflict, and
+# the loader serves only the newest — so two rows present in one and absent
+# from the other simply disappeared. No conflict, no error, no failing test.
+# A human noticed.
+# Local-only, matching the two gates above: it reads src/data/ and
+# src/data/archive/ (the archival gate keeps only 2 live copies, so the
+# previous generation is often archived) and needs no network.
+# A removal that is genuinely intended is recorded in RECORDED_REMOVALS inside
+# the script, with a written reason — that is the escape hatch, not disabling
+# this line.
+# Bypass with `git push --no-verify`.
+npm run audit:csv-copy-forward

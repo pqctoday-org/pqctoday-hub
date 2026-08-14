@@ -16,7 +16,11 @@
     },
     {
       "name": "softhsmrustv3-engine",
-      "files": ["public/wasm/rust/softhsmrustv3_bg.wasm", "src/wasm/softhsmrustv3_bg.wasm"],
+      "files": [
+        "public/wasm/rust/softhsmrustv3_bg.wasm",
+        "src/wasm/softhsmrustv3_bg.wasm",
+        "src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.wasm"
+      ],
       "buildScript": "rust/build-wasm-bundle.sh",
       "sourceDirs": ["rust"],
       "track": "tip",
@@ -30,7 +34,11 @@
     },
     {
       "name": "softhsm-cpp-engine",
-      "files": ["public/wasm/softhsm.wasm", "public/wasm/libsofthsmv3.wasm"],
+      "files": [
+        "public/wasm/softhsm.wasm",
+        "public/wasm/libsofthsmv3.wasm",
+        "src/vendor/softhsm-wasm/wasm/softhsm.wasm"
+      ],
       "buildScript": "scripts/build-wasm.sh",
       "sourceDirs": ["src/lib"],
       "track": "tip",
@@ -50,7 +58,7 @@
       "status": "built",
       "hsmCommit": "3480bec2dcfb8ce091a3ce463f4f2547a36d7056",
       "builtAt": "2026-08-08",
-      "_buildNote": "Rebuilt 2026-08-08 from hsm main @ 3480bec (v0.21.0) via openssh-pkcs11/scripts/build-wasm.sh with emsdk 6.0.4, closing a 2-commit drift. Those two commits are the apply_mldsa_patches.py anchor fix and its --dry-run preflight; the build still pins OPENSSH_VERSION=V_10_3_P1, and on 10.3 there are no upstream-inserted key types for the widened anchor to preserve, so the patched source is unchanged. openssh-server.js came out byte-identical; only openssh-server.wasm moved, because it statically links the freshly rebuilt libsofthsmv3-static.a. Built from a PRISTINE re-fetched tree: SKIP_OPENSSH_FETCH=1 fails on an already-patched tree ('marker not found in Makefile.in'), which is the patcher refusing to double-apply. Only the SHIPPED pair is staged -- copy-to-hub.sh also copies openssh-client.{js,wasm}, which the hub has never tracked, so those were removed again to keep the diff faithful to what actually ships. Prior entry: Genuinely rebuilt 2026-08-02 from hsm main @ 8386717 (v0.20.2) via openssh-pkcs11/scripts/build-wasm.sh with emsdk 6.0.4, closing a 5-commit drift. Pulls in v0.20.0 (13bca12, SLH-DSA-SHA2-128s SSH auth runtime-verified end-to-end), the SLH-DSA backport (dcdbed8), and the v0.19.0 emsdk 6.0.4 / OpenSSL 3.6.3 toolchain fixes (e85b26d). Only the SHIPPED pair is staged \u2014 public/wasm/openssh-server.{js,"
+      "_buildNote": "Rebuilt 2026-08-08 from hsm main @ 3480bec (v0.21.0) via openssh-pkcs11/scripts/build-wasm.sh with emsdk 6.0.4, closing a 2-commit drift. Those two commits are the apply_mldsa_patches.py anchor fix and its --dry-run preflight; the build still pins OPENSSH_VERSION=V_10_3_P1, and on 10.3 there are no upstream-inserted key types for the widened anchor to preserve, so the patched source is unchanged. openssh-server.js came out byte-identical; only openssh-server.wasm moved, because it statically links the freshly rebuilt libsofthsmv3-static.a. Built from a PRISTINE re-fetched tree: SKIP_OPENSSH_FETCH=1 fails on an already-patched tree ('marker not found in Makefile.in'), which is the patcher refusing to double-apply. Only the SHIPPED pair is staged -- copy-to-hub.sh also copies openssh-client.{js,wasm}, which the hub has never tracked, so those were removed again to keep the diff faithful to what actually ships. Prior entry: Genuinely rebuilt 2026-08-02 from hsm main @ 8386717 (v0.20.2) via openssh-pkcs11/scripts/build-wasm.sh with emsdk 6.0.4, closing a 5-commit drift. Pulls in v0.20.0 (13bca12, SLH-DSA-SHA2-128s SSH auth runtime-verified end-to-end), the SLH-DSA backport (dcdbed8), and the v0.19.0 emsdk 6.0.4 / OpenSSL 3.6.3 toolchain fixes (e85b26d). Only the SHIPPED pair is staged — public/wasm/openssh-server.{js,"
     },
     {
       "name": "strongswan",
@@ -61,7 +69,7 @@
       "status": "built",
       "hsmCommit": "1c637d3a3916b08fe59445120d93f26dfd79d639",
       "builtAt": "2026-07-10",
-      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed \u2014 the existing binary is bit-for-bit what v0.14.0's source would produce."
+      "_buildNote": "Re-stamped, not rebuilt: verified `git log 8e436210c..1c637d3 -- strongswan-wasm-shims/ strongswan-wasm-v2-shims/` touches only STATUS.md and README.md (1 doc-only commit, zero source/behavior change). No emsdk/Emscripten toolchain is installed on this machine, so an actual rebuild wasn't attempted or needed — the existing binary is bit-for-bit what v0.14.0's source would produce."
     },
     {
       "name": "openssl-pkcs11",

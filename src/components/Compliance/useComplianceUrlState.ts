@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import debounce from 'lodash/debounce'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -135,6 +135,38 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     // Both were compensating for the register not existing.
     return defaultTabFor(certParam, selectedPersona)
   })
+
+  /**
+   * `?req=yes,expected,partial` — narrow the register to instruments that
+   * actually say something about post-quantum (ADDED 2026-08-13).
+   *
+   * The Industry Landscape tile shows a PQC-relevant COUNT and links here.
+   * Without this param the tile promised "12 PQC-relevant mandates" and the
+   * register opened on all 197 — the number and its destination disagreed.
+   *
+   * `?pqc=` could NOT be reused: despite the name it is an ALGORITHM
+   * multi-select on the Product Records tab (`recPqc` → ComplianceTable's
+   * `pqcFilters`, compared against algorithm names), not a `requires_pqc`
+   * filter on the framework register.
+   *
+   * Read-only and mount-scoped by design: no on-page control sets it, so it
+   * never needs writing back, and leaving it out of `syncFiltersToUrl` means a
+   * reader who then filters by hand keeps the incoming narrowing.
+   */
+  // Keyed on the raw string, not the searchParams object: the router hands back
+  // a new instance on every navigation, which would rebuild this array — and
+  // every memo downstream of it — on unrelated param changes.
+  const rawReq = searchParams.get('req')
+  const reqFilter = useMemo(
+    () =>
+      rawReq
+        ? rawReq
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
+    [rawReq]
+  )
 
   const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
     () => searchParams.get('framework') ?? null
@@ -620,6 +652,8 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
     activeTab,
     setActiveTab,
     highlightFrameworkId,
+    /** `?req=` — requires_pqc values to keep, or [] for "no narrowing". */
+    reqFilter,
     // Landscape filter state
     lsOrg,
     lsIndustry,

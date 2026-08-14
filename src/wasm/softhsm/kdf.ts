@@ -95,7 +95,7 @@ export const hsm_pbkdf2 = (
 // ── HKDF helpers ──────────────────────────────────────────────────────────────
 
 /**
- * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §2.43).
+ * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §6.62).
  *
  * @param baseKeyHandle  Key handle providing IKM (input key material).
  * @param prf            Hash mechanism for HMAC PRF: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
@@ -176,7 +176,7 @@ export const hsm_hkdf = (
 }
 
 /**
- * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §2.44).
+ * NIST SP 800-108 Counter KDF via C_DeriveKey(CKM_SP800_108_COUNTER_KDF) (PKCS#11 v3.2 §6.42).
  *
  * Builds a minimal CK_SP800_108_KDF_PARAMS with:
  *   - prfType: hash mechanism (CKM_SHA256 | CKM_SHA384 | CKM_SHA512) or CKM_AES_CMAC.
@@ -266,7 +266,7 @@ export const hsm_kbkdf = (
 }
 
 /**
- * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §2.44.2).
+ * NIST SP 800-108 Feedback KDF via C_DeriveKey(CKM_SP800_108_FEEDBACK_KDF) (PKCS#11 v3.2 §6.42).
  * prfType: hash mechanism — CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_AES_CMAC.
  * NOTE: SoftHSM3 ckmToDigestName() maps hash IDs only — do NOT pass CKM_SHA256_HMAC etc.
  * fixedInput: optional label/context bytes (CK_SP800_108_BYTE_ARRAY data params).

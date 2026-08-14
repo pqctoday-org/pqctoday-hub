@@ -151,7 +151,7 @@ export const HsmAcvpTesting = () => {
     addHsmLog,
     addHsmKey,
     clearHsmKeys,
-    clearHsmLog,
+    addHsmStepLog,
   } = useHsmContext()
 
   const addLog = (msg: string) =>
@@ -203,7 +203,12 @@ export const HsmAcvpTesting = () => {
     setLogs([])
     setProgress({ done: 0, current: 'Starting…' })
     clearHsmKeys()
-    clearHsmLog()
+    // Deliberately NOT clearHsmLog(): the Logs tab is the playground's
+    // cross-tab inspection surface, and wiping it at run start silently
+    // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
+    // A step-header marker delimits this run's output in the shared log
+    // instead; the pane's own results live in local `logs` state anyway.
+    addHsmStepLog('ACVP Validation Run')
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
@@ -1850,14 +1855,31 @@ export const HsmAcvpTesting = () => {
         }
 
         // Helper: extract raw bytes from a Montgomery public key.
-        // Rust stores raw bytes in CKA_VALUE; C++ stores DER-wrapped (04 len raw) in CKA_EC_POINT.
+        //
+        // Both the attribute AND the encoding vary, so neither can be assumed:
+        //   - CKA_VALUE holds the raw point on older bundles and on keys the hub
+        //     imported itself; the conformance pass removed it from generated
+        //     Montgomery/Edwards public keys, where the point now lives only in
+        //     CKA_EC_POINT.
+        //   - CKA_EC_POINT is DER "04 <len> <raw>" on the C++ engine and BARE
+        //     raw bytes on the Rust engine (PKCS#11 v3.2 §6.7 — Montgomery
+        //     points are not DER ECPoints).
+        //
+        // This used to strip two bytes unconditionally in the fallback. Against
+        // a bare 32-byte X25519 point that yields 30 bytes, which C_DeriveKey
+        // rejects with CKR_KEY_TYPE_INCONSISTENT — the failure the ACVP X25519,
+        // X448 and X9.63-KDF rows were showing. Strip only when the DER header
+        // is genuinely there and its length byte agrees.
         const extractMontgomeryPubKey = (handle: number): Uint8Array => {
           try {
-            return new Uint8Array(hsm_extractKeyValue(M, hSession, handle))
+            const v = new Uint8Array(hsm_extractKeyValue(M, hSession, handle))
+            if (v.length > 0) return v
           } catch {
-            // C++ engine: CKA_EC_POINT = "04 <1-byte-len> <raw>", strip 2-byte DER prefix
-            return hsm_extractECPoint(M, hSession, handle).slice(2)
+            // fall through to CKA_EC_POINT
           }
+          const pt = hsm_extractECPoint(M, hSession, handle)
+          const derWrapped = pt.length > 2 && pt[0] === 0x04 && pt[1] === pt.length - 2
+          return derWrapped ? pt.slice(2) : pt
         }
 
         // ── 23. X25519 ECDH Round-Trip (RFC 7748) ─────────────────────────
@@ -2464,7 +2486,7 @@ export const HsmAcvpTesting = () => {
           const id30 = `xmss-sig-${eName}`
           addLog(`[${eName}] Testing XMSS Stateful Sign+Verify...`)
           try {
-            const xmssPair = hsm_generateXMSSKeyPair(M, hSession, 1, false) // 0x00000001
+            const xmssPair = hsm_generateXMSSKeyPair(M, hSession, 1) // CKP_XMSS_SHA2_10_256
             const msgBytes = new TextEncoder().encode('ACVP XMSS Test')
             const sig = hsm_statefulSignBytes(M, hSession, CKM_XMSS, xmssPair.privHandle, msgBytes)
             const valid =
@@ -2507,7 +2529,7 @@ export const HsmAcvpTesting = () => {
           const id31 = `hss-sig-${eName}`
           addLog(`[${eName}] Testing HSS/LMS Stateful Sign+Verify...`)
           try {
-            const lmsPair = hsm_generateLMSKeyPair(M, hSession, false)
+            const lmsPair = hsm_generateLMSKeyPair(M, hSession)
             const msgBytes = new TextEncoder().encode('ACVP HSS/LMS Test')
             const sig = hsm_statefulSignBytes(M, hSession, CKM_HSS, lmsPair.privHandle, msgBytes)
             const valid =
