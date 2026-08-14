@@ -129,7 +129,21 @@ test('executive persona deep-linked directly to /playground/cacp sees orientatio
   await page.addInitScript(seedPersona, 'executive')
   await page.goto('/playground/cacp')
 
-  await expect(
-    page.getByText('KMIP Control Plane is a hands-on engineering workbench.')
-  ).toBeVisible({ timeout: 20000 })
+  // This asserted the old ExecutiveRedirectBanner — "KMIP Control Plane is a
+  // hands-on engineering workbench." — which B+ remediation 4.5 (2026-08-10)
+  // deliberately removed. That banner answered the site's most important
+  // audience, on its clearest demonstration of crypto agility, by pointing at
+  // the door. The replacement tells the three-step story the console can
+  // actually deliver, so the orientation an executive gets here is the story
+  // panel, and that is what this test now pins.
+  const story = page.getByRole('region', { name: /Crypto agility in three steps/i })
+  await expect(story).toBeVisible({ timeout: 20000 })
+
+  // The links out survive INSIDE the panel, as an exit after the story rather
+  // than an alternative to it — the distinction the remediation turned on.
+  await expect(story.getByRole('link').first()).toBeVisible()
+
+  // And the console itself is present: the panel narrates a real engine, it
+  // does not stand in for one.
+  await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible()
 })
