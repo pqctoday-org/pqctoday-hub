@@ -3065,7 +3065,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     name: 'FIDO',
     description:
       'FIDO authenticators (U2F) — channel security inherits TLS 1.2; no separate PQC track.',
-    latestRelease: [],
+    historical: true,
+    latestRelease: [
+      {
+        id: 'CTAP-2.1',
+        title:
+          'FIDO Client to Authenticator Protocol (CTAP) v2.1 — supersedes the U2F specifications',
+        url: 'https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html',
+        date: '2021-06',
+      },
+    ],
     latestDraft: [],
     dimensions: {
       pureKem: { value: 'na', note: 'Inherits TLS 1.2 — no PQC.' },
