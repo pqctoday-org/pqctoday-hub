@@ -186,6 +186,26 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('source_library_ref, when set, resolves to an ACTIVE library row (WS8a)', () => {
+    // Hard FK, same class as standards' library_ref and mechanism_refs. The
+    // tile renders /library?ref=<id> when this is set and falls back to
+    // /threats?industry= when it is empty, so a ref pointing at a missing or
+    // deprecated row is a dead link where the fallback would have worked.
+    //
+    // Empty is legitimate and NOT a failure — it is the documented fallback
+    // state, and the value is hand-set only (fuzzy title matching resolved
+    // "IEC 62351-3/-5/-9" to IEC 62443 and "PCI DSS v4.0.1" to the PCI-DSS
+    // quick-reference guide, i.e. a DIFFERENT standard).
+    const active = new Set(libraryData.map((d) => d.referenceId))
+    for (const uc of useCases) {
+      if (!uc.sourceLibraryRef) continue
+      expect(
+        active,
+        `${uc.useCaseId}: source_library_ref "${uc.sourceLibraryRef}" is not an active library row`
+      ).toContain(uc.sourceLibraryRef)
+    }
+  })
+
   it('every mechanism resolves through the cryptoMechanisms vocabulary', () => {
     for (const uc of useCases) {
       for (const m of [...uc.classicalMechanisms, ...uc.pqcMechanisms]) {
