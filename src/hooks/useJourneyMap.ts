@@ -7,20 +7,29 @@ import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { PERSONAS } from '@/data/learningPersonas'
-import { PERSONA_MILESTONES } from '@/data/personaConfig'
+import { NAV_PATH_LABELS, PERSONA_MILESTONES } from '@/data/personaConfig'
 import { quizQuestions } from '@/data/quizDataLoader'
 import {
   MODULE_CATALOG,
   MODULE_STEP_COUNTS,
   MODULE_TO_TRACK,
 } from '@/components/PKILearning/moduleData'
+import { SECTION_TO_ROUTE } from '@/components/AchievementSectionTracker'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 
 // Pre-compute question ID → category mapping for checkpoint completion tracking
 const questionCategoryMap = new Map<string, string>()
 for (const q of quizQuestions) {
   questionCategoryMap.set(q.id, q.category)
 }
+
+const workshopToolNames = new Map(WORKSHOP_TOOLS.map((t) => [t.id, t.name]))
+
+// Off-path sections/tools are capped so an exploratory user doesn't flood a
+// panel section that's otherwise a handful of lines.
+const MAX_OFF_PATH_EXTRAS = 6
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -135,6 +144,8 @@ export function useJourneyMap(): JourneyMapResult {
   const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
   const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
   const opensslFileCount = useOpenSSLStore((s) => s.files.length)
+  const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
+  const playgroundToolsUsed = useAchievementStore((s) => s.playgroundToolsUsed)
 
   return useMemo(() => {
     if (!selectedPersona) {
@@ -316,6 +327,43 @@ export function useJourneyMap(): JourneyMapResult {
       })
     }
 
+    // ── Outside-path sections and playground tools ──────────────────────────
+    // sectionsVisited/playgroundToolsUsed already exist for the achievement
+    // system — this is a second reader of the same data, not new tracking.
+    // Skip sections a milestone already surfaces (visiting /assess when
+    // "Run Risk Assessment" is already a milestone row would be redundant)
+    // and 'learn' (the module loop above already covers it in full detail).
+    const milestoneRoutes = new Set(milestones.map((m) => m.route))
+    const extras: JourneyItem[] = []
+    for (const section of sectionsVisited) {
+      if (extras.length >= MAX_OFF_PATH_EXTRAS) break
+      if (section === 'learn') continue
+      const route = SECTION_TO_ROUTE[section]
+      if (!route || milestoneRoutes.has(route)) continue
+      extras.push({
+        id: `section:${section}`,
+        label: NAV_PATH_LABELS[route] ?? route,
+        type: 'page-action',
+        status: 'completed',
+        route,
+      })
+    }
+    for (const toolId of playgroundToolsUsed) {
+      if (extras.length >= MAX_OFF_PATH_EXTRAS) break
+      const route = `/playground/${toolId}`
+      if (milestoneRoutes.has(route)) continue
+      const name = workshopToolNames.get(toolId)
+      if (!name) continue
+      extras.push({
+        id: `tool:${toolId}`,
+        label: name,
+        type: 'page-action',
+        status: 'completed',
+        route,
+      })
+    }
+    outsidePath.push(...extras)
+
     return {
       phases,
       currentPhaseIndex: currentPhaseIdx,
@@ -332,5 +380,7 @@ export function useJourneyMap(): JourneyMapResult {
     myFrameworkCount,
     migrationStarted,
     opensslFileCount,
+    sectionsVisited,
+    playgroundToolsUsed,
   ])
 }
