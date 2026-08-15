@@ -76,6 +76,7 @@ function getMilestoneStatus(
       return migrationStarted ? 'completed' : 'available'
     case '/playground':
     case '/openssl':
+    case '/playground/openssl-studio':
       return artifactCount > 0 ? 'completed' : 'available'
     case '/algorithms':
       return 'available' // no completion signal for browsing
