@@ -40,6 +40,15 @@ const SECTION_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['/business/', 'business'],
 ]
 
+/** Reverse of SECTION_MAP: section key → a representative route for it.
+ *  Derived, not a fourth hand-maintained list — for the sections that map
+ *  many routes to one key (learn, business via SECTION_PREFIXES) this only
+ *  recovers the one exact-match route, which is enough for a single
+ *  "you visited X" link. Used by useJourneyMap's off-path section. */
+export const SECTION_TO_ROUTE: Record<string, string> = Object.fromEntries(
+  Object.entries(SECTION_MAP).map(([route, section]) => [section, route])
+)
+
 function resolveSection(pathname: string): string | null {
   // eslint-disable-next-line security/detect-object-injection
   const exact = SECTION_MAP[pathname]

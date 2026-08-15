@@ -11,6 +11,7 @@ import { QuizWizard } from './QuizWizard'
 import type { QuizCompletionData } from './QuizWizard'
 import { QuizResults } from './QuizResults'
 import type { QuizCategory, QuizMode, QuizQuestion } from './types'
+import { logQuizSession } from '@/utils/analytics'
 
 const MODULE_ID = 'quiz'
 const SECONDS_PER_QUESTION = 45
@@ -231,6 +232,8 @@ export const QuizModule: React.FC = () => {
         .filter(([, isCorrect]) => isCorrect)
         .map(([questionId]) => questionId)
       if (correctIds.length > 0) mergeCorrectQuestionIds(correctIds)
+
+      logQuizSession(correctIds.length, Object.keys(data.results).length)
     },
     [updateModuleProgress, markStepComplete, mergeCorrectQuestionIds, previousScores]
   )
