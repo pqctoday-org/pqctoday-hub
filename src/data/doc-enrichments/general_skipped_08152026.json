@@ -14,21 +14,5 @@
   {
     "ref_id": "GRI-Quantum-Threat-Timeline-2024",
     "reason": "local_file missing"
-  },
-  {
-    "ref_id": "GRI-Quantum-Threat-Timeline-2025",
-    "reason": "Probable landing page, not the document (255,756 bytes of markup, only 1,653 chars of text). Re-fetch the linked document before treating this as covered."
-  },
-  {
-    "ref_id": "ASC-X9-Financial-PKI",
-    "reason": "Probable landing page, not the document (200,133 bytes of markup, only 2,760 chars of text). Re-fetch the linked document before treating this as covered."
-  },
-  {
-    "ref_id": "CIRCL-Cloudflare",
-    "reason": "Probable landing page, not the document (405,974 bytes of markup, only 6,962 chars of text). Re-fetch the linked document before treating this as covered."
-  },
-  {
-    "ref_id": "Lattice-Estimator",
-    "reason": "Probable landing page, not the document (375,672 bytes of markup, only 7,939 chars of text). Re-fetch the linked document before treating this as covered."
   }
 ]

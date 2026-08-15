@@ -30,5 +30,9 @@
   {
     "ref_id": "UK-DSIT-CNI-PQC-Perspectives-2025",
     "reason": "Probable landing page, not the document (73,284 bytes of markup, only 3,676 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "SG-MAS-QKD-Sandbox-Report-2025",
+    "reason": "Probable landing page, not the document (253,950 bytes of markup, only 4,167 chars of text). Re-fetch the linked document before treating this as covered."
   }
 ]
