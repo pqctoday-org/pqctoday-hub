@@ -1,0 +1,216 @@
+---
+generated: 2026-08-15
+category: Technical Standards
+document_count: 7
+requirement_count: 157
+---
+
+## CISA-OT-Asset-Inventory-Guidance
+- **Source**: Foundations for OT Cybersecurity: Asset Inventory Guidance for Owners and Operators
+- **URL**: https://www.cisa.gov/resources-tools/resources/foundations-ot-cybersecurity-asset-inventory-guidance-owners-and-operators
+- **Requirement count**: 26
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Periodically review and update the asset taxonomy and inventory to reflect changes in technology and operations.
+    - _T2 Risk-Informed · all_: Validate inventory accuracy and completeness by cross-checking collected data and creating visual diagrams of asset categories.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Define governance over asset management, identifying the authority requiring the inventory and the offices responsible for establishing and maintaining it.
+    - _T2 Risk-Informed · all_: Assign specific roles and responsibilities for data collection and validation within the asset inventory process.
+    - _T2 Risk-Informed · all_: Document the roles and responsibilities of personnel interacting with assets, including operators, technicians, vendors, and integrators.
+    - _T2 Risk-Informed · all_: Identify asset inventory owners to oversee updates and validate asset classifications to ensure ongoing accuracy, maintenance, and reporting of the OT asset inventory.
+    - _T2 Risk-Informed · all_: Develop reporting mechanisms to track asset performance, maintenance activities, and compliance with policies.
+    - _T2 Risk-Informed · all_: Conduct regular reviews of the inventory and audits of the asset management program to ensure it remains effective and aligned with organizational goals.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Create an organized, regularly updated list of OT systems, hardware, and software to identify assets requiring security and protection.
+    - _T2 Risk-Informed · all_: Develop an OT taxonomy to categorize and prioritize assets based on function and criticality to aid risk identification and vulnerability management.
+    - _T2 Risk-Informed · all_: Define scope and objectives, identify assets, collect attributes, and create a taxonomy as part of a systematic inventory process.
+    - _T2 Risk-Informed · all_: Conduct physical inspections and logical surveys to compile a comprehensive list of OT assets and network infrastructure dependencies.
+    - _T2 Risk-Informed · all_: Collect high-priority asset attributes including criticality, role, hostname, IP/MAC addresses, OS, location, and supported protocols.
+    - _T2 Risk-Informed · all_: Create an OT taxonomy to classify and categorize assets based on criticality, function, zones, and conduits to streamline inventory management.
+    - _T2 Risk-Informed · all_: Establish a centralized database or asset management system to store and manage asset data, implementing security controls for protection.
+    - _T2 Risk-Informed · all_: Capture high-priority asset inventory fields including Asset Criticality, Asset Role/Type, Hostname, IP Address, Manufacturer, Model, and Operating System to enable vulnerability determination and risk management.
+    - _T2 Risk-Informed · all_: Capture medium-priority asset inventory fields including Department/Owner, Firmware/Software Version, OS Version, and Physical or Virtual status to provide context and vulnerability data.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Implement asset life cycle management to maintain an accurate and up-to-date record of OT assets.
+    - _T2 Risk-Informed · all_: Define asset life cycle stages including acquisition, deployment, commissioning, maintenance, and decommissioning.
+    - _T2 Risk-Informed · all_: Develop policies for managing assets throughout their life cycle, including maintenance schedules, replacement plans, and backup strategies.
+    - _T2 Risk-Informed · all_: Require asset inventory updates for the introduction or removal of devices in all cases, including under emergency change authority.
+    - _T2 Risk-Informed · all_: Use change management processes to accurately track OT asset modifications, additions, and decommissioning.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Use the asset inventory for performance monitoring and reporting to enhance security posture and ensure reliability.
+    - _T2 Risk-Informed · all_: Implement real-time monitoring to detect emerging threats and vulnerabilities associated with OT assets.
+    - _T2 Risk-Informed · all_: Cross-reference asset inventories with vulnerability databases like CISA KEV and MITRE CVE to identify known vulnerabilities and patches.
+    - _T2 Risk-Informed · all_: Continuously monitor asset performance and status, prioritizing process variable monitoring and network/system diagnostics to detect performance issues, maintenance needs, and communication health.
+
+## CMMC-L2-Assessment-Guide
+- **Source**: CMMC Level 2 Assessment Guide
+- **URL**: https://dodcio.defense.gov/Portals/0/Documents/CMMC/AssessmentGuideL2v2.pdf
+- **Requirement count**: 6
+- **Assurance / FIPS**:
+    - _T3 Repeatable · libraries_: Implement cryptographic mechanisms for remote access sessions using modules separately validated under FIPS 140.
+    - _T3 Repeatable · libraries_: Use FIPS-validated cryptographic modules to encrypt wireless access, ensuring the implementation module is separately validated under FIPS 140.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish guidelines and acceptable requirements for proper configuration, use, and management of mobile devices.
+    - _T2 Risk-Informed · all_: Organizations establish terms and conditions for the use of external systems in accordance with organizational security policies and procedures.
+    - _T2 Risk-Informed · all_: Define limits on the use of portable storage devices containing CUI on external systems.
+    - _T3 Repeatable · all_: Prevent non-privileged users from executing privileged functions, including cryptographic key management activities, and capture execution in audit logs.
+
+## CMMC-L2-Scoping-Guide
+- **Source**: CMMC Level 2 Scoping Guidance
+- **URL**: https://dodcio.defense.gov/Portals/0/Documents/CMMC/ScopingGuideL2v2.pdf
+- **Requirement count**: 9
+- **Governance**:
+    - _T2 Risk-Informed · all_: Document all in-scope assets in an asset inventory and provide a network diagram of the CMMC Assessment Scope.
+    - _T2 Risk-Informed · all_: Document the treatment of CUI, Security Protection, CRMAs, and Specialized Assets in the System Security Plan (SSP).
+    - _T2 Risk-Informed · all_: Manage Contractor Risk Managed Assets using the organization's risk-based information security policy, procedures, and practices.
+    - _T2 Risk-Informed · all_: Justify the inability of Out-of-Scope Assets to store, process, or transmit CUI.
+    - _T2 Risk-Informed · all_: Document specialized assets in the SSP and detail how they are managed using the OSA's risk-based information security policy, procedures, and practices.
+    - _T2 Risk-Informed · all_: Document each specialized asset in the asset inventory and in the SSP to show management via risk-based security policies.
+    - _T2 Risk-Informed · all_: Provide documentation that specifies the CMMC Assessment Scope to the assessor.
+    - _T2 Risk-Informed · all_: Document the use of an External Service Provider, its relationship to the OSA, and services provided in the SSP and CRM.
+    - _T2 Risk-Informed · all_: Document or refer to security requirements from the Customer Responsibility Matrix in the OSA's SSP for assessment.
+
+## DFARS-252.204-7012
+- **Source**: DFARS 252.204-7012: Safeguarding Covered Defense Information and Cyber Incident Reporting
+- **URL**: https://www.acquisition.gov/dfars/252.204-7012-safeguarding-covered-defense-information-and-cyber-incident-reporting.
+- **Requirement count**: 4
+- **Governance**:
+    - _T2 Risk-Informed · all_: Implement NIST SP 800-171 security requirements for covered contractor information systems, or obtain DoD CIO approval for alternatives.
+    - _T2 Risk-Informed · all_: Submit written requests to the Contracting Officer to vary from NIST SP 800-171 requirements for consideration by the DoD CIO.
+    - _T2 Risk-Informed · all_: Ensure external cloud service providers meet FedRAMP Moderate baseline security requirements for covered defense information.
+    - _T2 Risk-Informed · certificates_: Acquire a DoD-approved medium assurance certificate to report cyber incidents via the designated portal.
+
+## DoD-OT-Control-Systems-SRG
+- **Source**: DoD Control Systems / OT Security Requirements Guide V2
+- **URL**: https://dl.dod.cyber.mil/wp-content/uploads/external/pdf/U_Control%20Systems_OT_V2_SRG.pdf
+- **Requirement count**: 33
+- **Governance**:
+    - _T2 Risk-Informed · all_: Mission Owners must comply with all applicable SRGs and STIGs for control systems/OT.
+    - _T2 Risk-Informed · all_: Initiate risk management procedures related to control system/OT engineering lifecycle and change management.
+    - _T2 Risk-Informed · all_: Engage in business continuity planning and specify recovery objectives (RTOs/RPOs) for systems.
+    - _T2 Risk-Informed · all_: Incorporate outcomes of cybersecurity risk assessments into operations.
+    - _T2 Risk-Informed · all_: Establish organizational structure assigning cybersecurity roles and responsibilities for control systems/OT.
+    - _T2 Risk-Informed · all_: Identify individuals responsible and accountable for administering control systems/OT.
+    - _T2 Risk-Informed · all_: Mission Owners must review RMF artifacts to understand risks inherited from selected control systems/OT.
+    - _T2 Risk-Informed · all_: Implement compensating controls for unacceptable risks prior to obtaining ATO and reflect in documentation.
+    - _T2 Risk-Informed · all_: Mission Owners are responsible for implementing and maintaining security posture in accordance with SRGs/STIGs.
+    - _T2 Risk-Informed · all_: Establish organizational information security policy approved by senior officials with accountability for control system/OT risk.
+    - _T2 Risk-Informed · all_: Coordinate and align information security roles and responsibilities with internal roles and external partners.
+    - _T2 Risk-Informed · all_: Understand and manage legal and regulatory requirements regarding cybersecurity, including privacy and civil liberties obligations.
+    - _T2 Risk-Informed · all_: Ensure governance and risk management processes address cybersecurity risks.
+    - _T2 Risk-Informed · all_: Develop, document, and maintain security policies addressing purpose, scope, roles, responsibilities, and management commitment for control systems/OT.
+    - _T2 Risk-Informed · all_: Define and enforce policy and regulations regarding emergency, safety, fire protection, and environmental controls for control system/OT environments.
+    - _T2 Risk-Informed · all_: Develop and maintain a personnel security program for control system/OT environments.
+    - _T2 Risk-Informed · all_: Establish a process to continuously review vulnerabilities and define mitigation strategies.
+    - _T2 Risk-Informed · all_: Develop configuration management plans including processes, roles, lifecycle definition, and control methods.
+    - _T2 Risk-Informed · all_: Establish organizational information security policy and integrated enterprise-wide decision structure for cybersecurity risk management.
+    - _T2 Risk-Informed · all_: Implement governance and risk management processes that address cybersecurity risks to avoid ad-hoc or disparate policies.
+    - _T2 Risk-Informed · all_: Establish, manage, and agree upon risk management processes with organizational stakeholders.
+    - _T2 Risk-Informed · all_: Determine and clearly express organizational risk tolerance.
+    - _T2 Risk-Informed · all_: Inform risk tolerance determination by the organization's role in critical infrastructure and sector-specific risk analysis.
+    - _T2 Risk-Informed · all_: Identify and prioritize risk responses considering risk tolerance and alternatives such as acceptance, avoidance, mitigation, sharing, or transfer.
+    - _T2 Risk-Informed · all_: Identify potential business impacts of cybersecurity events, preferably in financial terms, to assess risk.
+    - _T2 Risk-Informed · all_: Determine risk by considering threats, vulnerabilities, likelihoods, and impacts on operations, assets, individuals, and the Nation.
+    - _T2 Risk-Informed · all_: Ensure senior executives understand their roles and responsibilities regarding control system/OT security.
+    - _T2 Risk-Informed · all_: Ensure third-party stakeholders understand their roles and responsibilities.
+    - _T2 Risk-Informed · all_: Ensure privileged users understand their roles and responsibilities.
+    - _T2 Risk-Informed · all_: Ensure physical and information security personnel understand their roles and responsibilities.
+    - _T2 Risk-Informed · all_: Inform and train all users on dangers, risks, and responsibilities associated with their roles.
+    - _T2 Risk-Informed · all_: Meet policy and regulations regarding the physical operating environment for organizational assets.
+    - _T2 Risk-Informed · all_: Destroy data according to policy.
+
+## NIST SP 800-30
+- **Source**: Guide for Conducting Risk Assessments (Rev. 1)
+- **URL**: https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-30r1.pdf
+- **Requirement count**: 5
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Verify that planned risk responses are implemented and that information security requirements derived from missions and regulations are satisfied.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish a risk management strategy that delineates boundaries for risk-based decisions and defines how risk is assessed, responded to, and monitored.
+    - _T2 Risk-Informed · all_: Define organizational risk tolerance to inform consistent risk responses and decision-making across the organization.
+    - _T2 Risk-Informed · all_: Assign responsibilities for risk assessment and monitoring to specific roles such as risk assessors, security control assessors, and auditors.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Monitor risk over time to determine the ongoing effectiveness of risk responses and identify risk-impacting changes to systems and environments.
+
+## NIST-SP-800-171Ar3
+- **Source**: NIST SP 800-171Ar3: Assessing Security Requirements for CUI
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171Ar3.pdf
+- **Requirement count**: 74
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Test the effectiveness of the incident response capability at defined frequencies.
+    - _T2 Risk-Informed · all_: Check media with diagnostic and test programs for malicious code before use.
+    - _T2 Risk-Informed · all_: Enforce defined security requirements to protect against supply chain risks and limit consequences of supply chain-related events.
+    - _T2 Risk-Informed · libraries_: Maintain a list of FIPS-validated cryptographic modules and associated validation certificates as evidence of compliance.
+    - _T2 Risk-Informed · software_: Implement cryptographic mechanisms to prevent unauthorized disclosure of CUI at backup storage locations.
+    - _T3 Repeatable · all_: Protect audit information and logging tools from unauthorized access, modification, and deletion to ensure integrity.
+    - _T3 Repeatable · all_: Restrict access to the management of audit logging functionality to only a subset of authorized privileged users or roles.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Define and document the frequency for reviewing and updating event types selected for cryptographic and security logging.
+    - _T2 Risk-Informed · all_: Define and document the time period for alerting personnel regarding audit logging process failures to ensure accountability.
+    - _T2 Risk-Informed · all_: Define and document the frequency for reviewing and analyzing system audit records to detect policy drift or unusual activity.
+    - _T2 Risk-Informed · all_: Define and document the granularity of time measurement for audit record timestamps to ensure precise forensic capability.
+    - _T2 Risk-Informed · all_: Develop and maintain a current baseline configuration of the system under configuration control, defining the frequency for review and updates.
+    - _T2 Risk-Informed · all_: Establish and document configuration settings that reflect the most restrictive mode consistent with operational requirements for cryptographic systems.
+    - _T2 Risk-Informed · all_: Identify, document, and approve any deviations from established configuration settings for cryptographic systems.
+    - _T2 Risk-Informed · all_: Define types of changes that are configuration-controlled and review proposed changes with explicit consideration for security impacts.
+    - _T2 Risk-Informed · all_: Analyze changes to the system to determine potential security impacts prior to implementation and ensure security requirements continue to be satisfied.
+    - _T2 Risk-Informed · all_: Define, document, approve, and enforce physical and logical access restrictions associated with changes to the system.
+    - _T2 Risk-Informed · all_: Define functions, ports, protocols, connections, and services to be prohibited or restricted, and define the frequency for reviewing the system to identify unnecessary or nonsecure items.
+    - _T2 Risk-Informed · all_: Define organizational parameters for authenticator refresh frequency and triggering events.
+    - _T2 Risk-Informed · all_: Establish administrative procedures for initial distribution, loss/compromise, and revocation of authenticators.
+    - _T2 Risk-Informed · all_: Develop an incident response plan defining structure, responsibilities, and reportable incidents.
+    - _T2 Risk-Informed · all_: Define time periods and authorities for reporting suspected security incidents.
+    - _T2 Risk-Informed · all_: Define frequencies for testing incident response capabilities and providing/updating training.
+    - _T2 Risk-Informed · all_: Establish policies approving, controlling, and monitoring the use of system maintenance tools.
+    - _T2 Risk-Informed · all_: Establish policies approving and monitoring nonlocal maintenance and diagnostic activities.
+    - _T2 Risk-Informed · all_: Establish and maintain a list of authorized maintenance organizations or personnel to ensure accountability for system access.
+    - _T2 Risk-Informed · all_: Define conditions that require the rescreening of individuals to maintain personnel security posture.
+    - _T2 Risk-Informed · all_: Define the time period within which to disable system access upon personnel termination to enforce access control policies.
+    - _T2 Risk-Informed · all_: Define the frequency at which to review the access list detailing authorized facility access to ensure ongoing authorization.
+    - _T2 Risk-Informed · all_: Develop and maintain a Plan of Action and Milestones (POAM) to document remediation actions for weaknesses found during assessments.
+    - _T2 Risk-Informed · all_: Define and document the specific types of cryptography used to protect the confidentiality of CUI.
+    - _T2 Risk-Informed · all_: Develop and document policies needed to satisfy security requirements for the protection of CUI.
+    - _T2 Risk-Informed · all_: Define the frequency for reviewing and updating security policies and procedures.
+    - _T2 Risk-Informed · all_: Develop, document, and disseminate security policies and procedures for protecting CUI, including defined review and update frequencies.
+    - _T2 Risk-Informed · all_: Develop a system security plan defining components, information types, threats, operational environment, safeguards, and roles/responsibilities.
+    - _T2 Risk-Informed · all_: Establish rules of behavior for system usage and CUI protection, obtain documented acknowledgement from users, and define review/update frequencies.
+    - _T2 Risk-Informed · all_: Define security requirements for external service providers processing CUI and document user roles/responsibilities regarding shared responsibilities.
+    - _T2 Risk-Informed · all_: Develop a Supply Chain Risk Management (SCRM) plan addressing risks across the system lifecycle (R&D, design, manufacturing, acquisition, delivery, integration, operation, maintenance, disposal).
+    - _T2 Risk-Informed · all_: Develop and implement acquisition strategies, contract tools, and procurement methods to identify, protect against, and mitigate supply chain risks.
+    - _T2 Risk-Informed · all_: Define security requirements to protect against supply chain risks to systems, components, or services and limit harm from supply chain-related events.
+    - _T2 Risk-Informed · all_: Establish a process for identifying weaknesses or deficiencies in supply chain elements and processes.
+    - _T2 Risk-Informed · all_: Establish a process for addressing weaknesses or deficiencies in supply chain elements and processes.
+    - _T2 Risk-Informed · keys_: Define and document requirements for cryptographic key generation, distribution, storage, access, and destruction.
+    - _T2 Risk-Informed · keys_: Manage cryptographic keys in accordance with defined organizational requirements for establishment and management.
+    - _T2 Risk-Informed · libraries_: Define the specific types of cryptography to be implemented for protecting the confidentiality of CUI.
+    - _T2 Risk-Informed · software_: Identify software programs authorized to execute on the system and implement a deny-all, allow-by-exception policy to control cryptographic library usage.
+    - _T2 Risk-Informed · software_: Define a frequency for reviewing and updating the list of authorized software programs to ensure only approved cryptographic modules are permitted.
+    - _T2 Risk-Informed · software_: Define and document configurations for systems issued to individuals traveling to high-risk locations and security requirements upon return.
+    - _T2 Risk-Informed · software_: Maintain and regularly update a list of commonly used, expected, or compromised passwords to enforce password policy.
+    - _T2 Risk-Informed · software_: Define and enforce password composition and complexity rules as part of the identification and authentication policy.
+    - _T2 Risk-Informed · software_: Define and document acceptable mobile code and technologies, and authorize their use.
+    - _T2 Risk-Informed · software_: Define and apply systems security engineering principles to the development or modification of the system and its components.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Maintain documentation of systems and critical system components inventory to support supply chain risk management.
+    - _T2 Risk-Informed · software_: Develop and document an inventory of system components, including cryptographic software, and define a frequency for review and updates.
+    - _T2 Risk-Informed · software_: Update the system component inventory upon installation, removal, or update of components to maintain accurate records of cryptographic assets.
+    - _T2 Risk-Informed · software_: Update the system component inventory upon component installations, removals, and system updates to maintain accuracy.
+    - _T2 Risk-Informed · software_: Identify and document the specific system components on which Controlled Unclassified Information (CUI) is processed and stored.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Implement procedures for distributing, replacing, and revoking authenticators.
+    - _T2 Risk-Informed · all_: Change or refresh authenticators based on defined frequency or triggering events.
+    - _T2 Risk-Informed · all_: Update the incident response plan to address system changes or problems encountered.
+    - _T2 Risk-Informed · all_: Review and update incident response training content periodically and after specific events.
+    - _T2 Risk-Informed · keys_: Terminate or revoke authenticators and credentials associated with an individual upon termination of employment.
+    - _T2 Risk-Informed · keys_: Modify access authorization to correspond with changes in operational need upon individual reassignment or transfer.
+    - _T2 Risk-Informed · software_: Replace system components when vendor support ends; provide risk mitigation options or alternative support sources for components that cannot be replaced.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Track and document system security incidents.
+    - _T2 Risk-Informed · all_: Report suspected incidents to the organizational incident response capability within defined time.
+    - _T2 Risk-Informed · all_: Monitor the use of system maintenance tools.
+    - _T2 Risk-Informed · all_: Monitor nonlocal maintenance and diagnostic activities.
+    - _T2 Risk-Informed · all_: Implement processes, methods, and techniques to monitor security requirement compliance by external service providers on an ongoing basis.
+    - _T2 Risk-Informed · software_: Monitor and control the use of authorized mobile code within the system.
+    - _T3 Repeatable · all_: Implement mechanisms to alert organizational personnel within a defined time period upon detection of audit logging process failures.
+    - _T3 Repeatable · all_: Review and analyze system audit records at a defined frequency to detect indications of inappropriate or unusual activity.
+    - _T3 Repeatable · all_: Analyze and correlate audit records across different repositories to gain organization-wide situational awareness.
+    - _T3 Repeatable · all_: Develop and implement a system-level continuous monitoring strategy that includes ongoing monitoring and security assessments.
