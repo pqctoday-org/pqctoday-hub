@@ -1,0 +1,18 @@
+[
+  {
+    "ref_id": "BIP-39",
+    "reason": "Probable landing page, not the document (315,621 bytes of markup, only 7,614 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "BIP-44",
+    "reason": "Probable landing page, not the document (324,574 bytes of markup, only 7,297 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "FRB-FEDS-2025093-Blockchain-PQC",
+    "reason": "Probable landing page, not the document (88,879 bytes of markup, only 3,496 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "GRI-Quantum-Threat-Timeline-2024",
+    "reason": "local_file missing"
+  }
+]
