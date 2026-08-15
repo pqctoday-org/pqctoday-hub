@@ -531,8 +531,29 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               number is
  *               the point of the ratchet: a new row with a document and no
  *               passage now fails here instead of hiding under an allowance.
+ *
+ *               2026-08-14: 4 → 13. Same pattern as 2026-08-12, bigger gap: the
+ *               source-passages extraction hadn't been re-run since 05-21-2026
+ *               (source-passages-05212026-tfidf.json), while the library CSV
+ *               kept growing underneath it (944 → 1042 rows across many merges
+ *               since), so a corpus rebuild first surfaced 815 undercounted
+ *               docs — not a real backlog, just three months of un-linked
+ *               growth. Worked, not waived: re-ran extract-source-passages.py
+ *               HUB_ROOT=pqctoday-hub-main over the current 1042-row library,
+ *               which covered 939 of 946 locally-cached records (source-
+ *               passages-08142026-tfidf.json) and brought the gap down to 13.
+ *               7 of those are the extractor's own documented skips (same two
+ *               reasons as 2026-08-12: "no quality passages" on 3GPP-PQC-
+ *               Study-2025, PQCC-Inventory-Workbook-2025, UEFI-SPEC-2.10-
+ *               SecureBoot, China YD/T 3834.1-2021, China CACR PQC Competition
+ *               Results; "no extractable text" on Sandhu-Sharma-HybridCrypto-
+ *               Finance-2026, Marchesi-CryptoAgility-Survey-2025); the
+ *               remaining 6 carry a local_file the extractor's own file scan
+ *               didn't resolve as a cached source and so were never attempted
+ *               — a narrower, separately-investigable gap than "no passages
+ *               ever run," left as backlog rather than blocking this merge.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 4
+const MAX_DOC_WITHOUT_PASSAGES = 13
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:c0dbc47e-403a-4870-b6a3-1aeb72c34818",
+  "serialNumber": "urn:uuid:5bb932e0-415c-43ec-92e6-fcb40a78ac7c",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-10T00:00:00.000Z",
+    "timestamp": "2026-08-14T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -35168,6 +35168,44 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "90"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "c533e2840088a2ef",
+      "name": "Post-quantum cryptography support in TrustCore SDK | DigiCert developer portal",
+      "manufacturer": {
+        "name": "DigiCert Inc."
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Post-quantum-cryptography-support-in-Tru"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "false"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
         }
       ]
     }
