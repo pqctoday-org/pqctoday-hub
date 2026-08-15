@@ -1,384 +1,48 @@
 ---
 generated: 2026-08-15
 collection: library
-documents_processed: 11
+documents_processed: 3
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## PQ-SUCI-MLKEM-Profile-C-2025
+## NIST SP 800-30
 
-- **Reference ID**: PQ-SUCI-MLKEM-Profile-C-2025
-- **Title**: Post-Quantum Key Exchange and Subscriber Identity Encryption in 5G Using ML-KEM (Kyber)
-- **Authors**: Information (MDPI), vol. 16 no. 7, art. 617
-- **Publication Date**: 2025-07-18
-- **Last Updated**: 2025-07-18
+- **Reference ID**: NIST SP 800-30
+- **Title**: Guide for Conducting Risk Assessments (Rev. 1)
+- **Authors**: NIST
+- **Publication Date**: 2012-09
+- **Last Updated**: 2012-09-01
 - **Document Status**: Published
-- **Main Topic**: Proposal and performance analysis of a post-quantum SUCI protection scheme (Profile C) using ML-KEM (Kyber-512) for 5G subscriber identity encryption.
-- **PQC Algorithms Covered**: ML-KEM, CRYSTALS-Kyber, Kyber-512, Kyber-768, Kyber-1024, CRYSTALS-Dilithium, FALCON, SPHINCS+, SABER, NTRU
-- **Quantum Threats Addressed**: Shor's algorithm, quantum attacks on discrete-logarithm-based elliptic curve algorithms
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Bodies: NIST, 3GPP
-- **Leaders Contributions Mentioned**: Qaiser Khan (author, validation, formal analysis, investigation, resources, data curation, writing, visualization); Sourav Purification (author, validation, investigation, resources, data curation, writing); Sang-Yoon Chang (author, validation, formal analysis, investigation, resources, writing, supervision, project administration)
-- **PQC Products Mentioned**: srsRAN, Open5GS, wolfSSL
-- **Protocols Covered**: 5G-AKA, SUCI, TLS, SSH, IPsec
-- **Infrastructure Layers**: Key Management, Core Network, User Equipment
-- **Standardization Bodies**: NIST, 3GPP
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: ECDH, secp256r1, X25519, AES, RSA, ECIES
-- **Key Takeaways**: Kyber-512 offers better performance (faster computation and lower energy) than ECDH for 5G SUCI encryption; Profile C using ML-KEM-512 is proposed as a post-quantum alternative to 3GPP Profiles A and B; Side-channel attacks (power, timing) remain a risk for lattice-based PQC implementations on hardware; Mobile devices are resource-constrained, making efficiency critical for PQC adoption in 5G
-- **Security Levels & Parameters**: Kyber-512, Kyber-768, Kyber-1024, 128-bit security, 192-bit security, 256-bit security
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Yes
-- **Pure PQC KEM Evidence**: "Profile C using Kyber-512" (§5.2)
-- **Hybrid PQC KEM Support**: No
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: Kyber-512 has faster computations and lower energy consumption than ECDH; shortest key/parameter lengths used for comparison
-- **Target Audience**: Researcher, Security Architect, Developer
-- **Implementation Prerequisites**: Raspberry Pi or Mini-PC for simulation; srsRAN and Open5GS software for validation; wolfSSL library for embedded TLS
-- **Relevant PQC Today Features**: 5g-security, Algorithms, Threats, Assess
-- **Implementation Attack Surface**: Side-channel attacks (timing, power, electromagnet, cold boot, correlation power analysis)
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Performance analysis (time, CPU, energy, power); simulation on Raspberry Pi and Mini-PC; side-channel attack analysis
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Resource-limited and battery-operating mobile devices; embedded software; RTOS environments; small size and high speed requirements
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Source Document**: PQ-SUCI-MLKEM-Profile-C-2025.pdf (447,418 bytes, 19,066 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## EMVCo-Quantum-Position-Statement
-
-- **Reference ID**: EMVCo-Quantum-Position-Statement
-- **Title**: EMVCo Position Statement: Quantum Computing and EMV Chip Cryptography
-- **Authors**: EMVCo Security Working Group
-- **Publication Date**: 2024-01-01
-- **Last Updated**: 2024-01-01
-- **Document Status**: Published
-- **Main Topic**: EMVCo's position on the quantum threat to EMV chip cryptography, concluding that AES-128 remains secure and migration to PQC is not urgent before 2040.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm
-- **Migration Timeline Info**: Quantum threat unlikely prior to 2040; implementation timeline commensurate with threat realization, certainly ten years distant
-- **Applicable Regions / Bodies**: Bodies: EMVCo, NIST, UK NCSC, German BSI
-- **Leaders Contributions Mentioned**: Sam Jaques (Waterloo University, published chart on performance gap); C. Zalka (foundational analysis on Grover's algorithm); V. Gheorghiu, M. Mosca (Global Risk Institute, resource estimation framework); S. Jaques, M. Naehrig, M. Roetteler, F. Virdia (Implementing Grover oracles); E. Parker, M. Vermeer (RAND, energy requirements)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: EMV; C-8 contactless
-- **Infrastructure Layers**: HSM; EMV chip specifications; Payment System or Issuer key infrastructure
-- **Standardization Bodies**: EMVCo; NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECC; AES; AES-128; AES-256; SHA-256; 2-key Triple DES
-- **Key Takeaways**: AES-128 is considered immune to quantum attack and supported as the entry level symmetric algorithm; No need to recommend AES-256 for quantum resistance, though allowed for contingency; Quantum threat to asymmetric cryptography is unlikely prior to 2040; Offline data authentication is the primary concern for asymmetric key breaking in EMV
-- **Security Levels & Parameters**: RSA-2048; AES-128; AES-256; SHA-256; 1,000 entangled physical qubits
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: 5 to 7 orders of magnitude improvement required for RSA-2048 attack; AES-128 key size
-- **Target Audience**: Security Architect; CISO; Policy Maker
-- **Implementation Prerequisites**: HSMs used for EMV payments should support AES-128 and be capable of supporting AES-256
-- **Relevant PQC Today Features**: Timeline; Threats; Assess; Algorithms; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Resource efficient suitability for current and future use; EMV chip constraints
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Migration timeline commensurate with quantum threat realization; unlikely prior to 2040
-- **Financial & Business Impact**: Breaking individual card key would be uneconomic for a fraudster
-- **Organizational Readiness**: SWG will monitor and support standards development; monitor milestones for fault-tolerant logical qubits
-- **Math Family**: Symmetric
-- **PQC Round**: Not Applicable
-- **Source Document**: EMVCo-Quantum-Position-Statement.pdf (302,335 bytes, 10,035 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:47
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## EMV-Break-Fix-Verify-2021
-
-- **Reference ID**: EMV-Break-Fix-Verify-2021
-- **Title**: The EMV Standard: Break, Fix, Verify
-- **Authors**: D. Basin, R. Sasse, J. Toro-Pozo (ETH Zurich)
-- **Publication Date**: 2020-06-15
-- **Last Updated**: 2021-05-01
-- **Document Status**: Published
-- **Main Topic**: Formal analysis of the EMV smartcard payment protocol using Tamarin to identify and fix critical security flaws in offline data authentication and cardholder verification.
+- **Main Topic**: NIST Special Publication 800-30 Revision 1 provides a methodology for conducting risk assessments, including qualitative scales for likelihood and impact.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: France; Belgium; Bodies: Visa; Mastercard; Europay; EMVCo
-- **Leaders Contributions Mentioned**: David Basin; Ralf Sasse; Jorge Toro-Pozo (authors of the formal analysis); Murdoch et al. (reported MITM attack); De Ruiter and Poll (ProVerif model); Galloway and Yunusov (PIN bypass attack)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: EMV contact protocol; EMV contactless protocol
-- **Infrastructure Layers**: PKI (Card, Bank, CA certificates); Key Management
-- **Standardization Bodies**: EMVCo
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECDSA; MAC (Message Authentication Code); SHA (implied by hash function h)
-- **Key Takeaways**: Formal verification with Tamarin can uncover logical flaws in complex standards like EMV that are hard to spot manually; Critical attacks exist that allow PIN bypass on contactless cards and fraudulent offline transactions; Proposed improvements to terminal logic can prevent these attacks without requiring card replacements; Visa's proprietary cryptograms may fail to protect against message modification compared to generic EMV cryptograms
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: EMV specification runs over 2,000 pages; Tamarin model took over six months of full-time work
-- **Target Audience**: Security Architect; Researcher; Developer
-- **Implementation Prerequisites**: Tamarin protocol verifier; Android application for proof-of-concept; Raspberry Pi boards for attack prototype
-- **Relevant PQC Today Features**: Assess; Algorithms; Threats; crypto-agility
-- **Implementation Attack Surface**: Man-in-the-middle attacks; Card cloning; Downgrade attacks; Relay attacks; Card skimming; PIN bypass; Offline transaction fraud
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Formal verification; Symbolic model analysis; Proof-of-concept demonstration; Tamarin protocol verifier
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Smartcard constraints; Contactless payment terminals
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Improvements can be easily implemented in terminals; Do not affect cards in circulation
-- **Financial & Business Impact**: Liability shift relieves banks from payment disputes; Fraudulent transactions cause financial loss to cardholders and merchants
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: EMV-Break-Fix-Verify-2021.pdf (1,621,201 bytes, 16,180 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## RU-Nijmegen-EMV-Course-Notes
-
-- **Reference ID**: RU-Nijmegen-EMV-Course-Notes
-- **Title**: EMV — Radboud University Digital Security course notes (Erik Poll)
-- **Authors**: Erik Poll, Radboud University Nijmegen
-- **Publication Date**: 2019-01-01
-- **Last Updated**: 2019-01-01
-- **Document Status**: Published
-- **Main Topic**: University course notes on EMV card authentication mechanisms, security flaws, and formal verification using F# and ProVerif.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Netherlands; Bodies: Dutch Payment Association, Nederlandse Vereniging van Banken (NVB)
-- **Leaders Contributions Mentioned**: Erik Poll (author); Anton Jongsma, Robert Kleinpenning, Peter Maandag (flaw discovery); Jordi van den Breekel (flaw discovery); Arjan Blom (security flaw discovery)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: EMV, EMV-CAP, ISO/IEC 14443
-- **Infrastructure Layers**: PKI (issuer/card certificates), Key Management (symmetric keys, private keys)
-- **Standardization Bodies**: EMVCo (implied by EuroPay, MasterCard, Visa, JCB, American Express ownership), ISO/IEC
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA, ECDSA, HMAC
-- **Key Takeaways**: EMV protocol suite is overly complex with many configurable options that can lead to security misconfigurations; Formal verification using F# and ProVerif can automatically discover known security flaws in EMV implementations; Backwards compatibility in early contactless cards introduced vulnerabilities such as unencrypted magstripe data transmission and low-entropy dynamic codes; EMV-CAP for internet banking does not protect against Man-in-the-Browser, phishing, or social engineering attacks; Hardware security devices like USB-connected readers can be compromised by malware if they allow remote button presses or display manipulation.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Researcher; Security Architect; Developer
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Assess; Algorithms; crypto-agility; tls-basics; pki-workshop
-- **Implementation Attack Surface**: Side-channel (thermal residue, hand movement inference); Fault injection (extended length APDU crash); Malware (Man-in-the-Browser, USB display manipulation, remote button press)
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Formal verification (ProVerif, F#); Reverse-engineering; Proof-of-Concept attacks
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Smartcard constraints (EMV chip, contactless interface)
-- **Supply Chain & Vendor Risk**: Vendor liability shifts; Terminal certification gaps; Hardware vendor flaws (Gemalto/ABN AMRO)
-- **Deployment & Migration Complexity**: Backwards compatibility issues; Liability shifts for magstripe usage
-- **Financial & Business Impact**: Payment fraud trends in Netherlands and UK; Liability shifts for vendors using magstripe
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: RU-Nijmegen-EMV-Course-Notes.pdf (1,918,473 bytes, 11,654 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:48
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## BLE-Key-Negotiation-Downgrade-2020
-
-- **Reference ID**: BLE-Key-Negotiation-Downgrade-2020
-- **Title**: Key Negotiation Downgrade Attacks on Bluetooth and Bluetooth Low Energy
-- **Authors**: D. Antonioli, N. O. Tippenhauer, K. Rasmussen
-- **Publication Date**: 2020-06-01
-- **Last Updated**: 2020-06-01
-- **Document Status**: Published
-- **Main Topic**: Analysis of standard-compliant entropy downgrade attacks on Bluetooth and BLE key negotiation protocols that allow brute-forcing of session and long-term keys.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Daniele Antonioli; Nils Ole Tippenhauer; Kasper Rasmussen
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: Bluetooth; Bluetooth Low Energy
-- **Infrastructure Layers**: Link Layer Security; Key Management
-- **Standardization Bodies**: Bluetooth Special Interest Group (SIG)
-- **Compliance Frameworks Referenced**: FIPS
-- **Classical Algorithms Referenced**: ECDH; NIST P-256; AES CCM; HMAC-SHA256; SHA-256; SAFER+; SAFER+'
-- **Key Takeaways**: Bluetooth and BLE key negotiation protocols are vulnerable to standard-compliant entropy downgrade attacks; Attackers can downgrade Bluetooth session key entropy to 1 byte and BLE long-term/session key entropy to 7 bytes; Low entropy enables brute-forcing of keys, breaking confidentiality and integrity guarantees; Countermeasures include setting minimum entropy in firmware or having the host OS verify negotiated entropy and abort if insufficient
-- **Security Levels & Parameters**: 1 byte entropy for Bluetooth session keys; 7 bytes entropy for BLE long-term and session keys; 16 bytes maximum entropy
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: 1 byte entropy for Bluetooth session keys; 7 bytes entropy for BLE keys; 256 candidates for brute-force
-- **Target Audience**: Security Architect; Researcher; Developer
-- **Implementation Prerequisites**: Python script for brute-force; BitVector Python module; Python cryptography module
-- **Relevant PQC Today Features**: entropy-randomness; iot-ot-pqc; crypto-agility
-- **Implementation Attack Surface**: Entropy downgrade; Brute-force attack; Man-in-the-Middle
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Brute-force decryption testing; Device vulnerability testing
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: Entropy negotiation; Entropy downgrade
-- **Constrained Device & IoT Suitability**: Wearables; IoT sensors; Industrial devices; Medical devices
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Firmware modification required for legacy compliant countermeasures; Host OS modification required for entropy checking
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Symmetric
-- **PQC Round**: Not Applicable
-- **Source Document**: BLE-Key-Negotiation-Downgrade-2020.pdf (2,395,279 bytes, 18,308 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:49
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## BLE-Low-Entropy-Key-Negotiation-2019
-
-- **Reference ID**: BLE-Low-Entropy-Key-Negotiation-2019
-- **Title**: Low Entropy Key Negotiation Attacks on Bluetooth and Bluetooth Low Energy
-- **Authors**: D. Antonioli, N. O. Tippenhauer, K. Rasmussen
-- **Publication Date**: 2019-08-01
-- **Last Updated**: 2019-08-01
-- **Document Status**: Published
-- **Main Topic**: Analysis of the KNOB attack, which exploits low entropy key negotiation vulnerabilities in Bluetooth and Bluetooth Low Energy specifications to reduce encryption key strength.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Daniele Antonioli; Nils Ole Tippenhauer; Kasper Rasmussen
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: Bluetooth; Bluetooth Low Energy
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: Bluetooth Special Interest Group (SIG); IETF
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: ECDH; P-256; ECDSA; AES-CCM; E0; SAFER+; Counter mode with CBC-MAC
-- **Key Takeaways**: The KNOB attack allows attackers to downgrade Bluetooth encryption key entropy to 1 byte and BLE to 7 bytes; All tested standard-compliant Bluetooth and BLE devices are vulnerable to this architectural flaw; Attackers can brute force the low-entropy keys to decrypt traffic and inject messages in real-time; Countermeasures include legacy and non-legacy compliant methods to neutralize the attack; The vulnerability exists in the specification itself, not just specific implementations.
-- **Security Levels & Parameters**: 16 bytes entropy (standard); 1 byte entropy (Bluetooth KNOB); 7 bytes entropy (BLE KNOB)
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: Entropy reduced from 16 to 1 Byte for Bluetooth; Entropy reduced from 16 to 7 Bytes for BLE
-- **Target Audience**: Security Architect; Researcher; Developer
-- **Implementation Prerequisites**: InternalBlue v0.1; Nexus 5 device; Bluetooth firmware patching capability
-- **Relevant PQC Today Features**: entropy-randomness; iot-ot-pqc; crypto-agility
-- **Implementation Attack Surface**: Low entropy key negotiation; Man-in-the-middle manipulation of LMP/SMP messages; Brute force of weak encryption keys
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Implementation of KNOB attack on 17 Bluetooth chips and 15 BLE devices; Brute force script evaluation
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Vulnerable devices include smartwatches, fitness bands, smart locks, thermostats, and biomedical applications
-- **Supply Chain & Vendor Risk**: Vulnerabilities affect chips from Intel, Broadcom, Apple, and Qualcomm; Devices from Lenovo, Garmin, Samsung, Xiaomi, and Fitbit
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Symmetric
-- **PQC Round**: Not Applicable
-- **Source Document**: BLE-Low-Entropy-Key-Negotiation-2019.pdf (816,887 bytes, 15,108 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:29:50
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## Sigstore-Algorithm-Registry
-
-- **Reference ID**: Sigstore-Algorithm-Registry
-- **Title**: Sigstore Algorithm Registry (architecture-docs)
-- **Authors**: Sigstore project (OpenSSF)
-- **Publication Date**: 2024-05-01
-- **Last Updated**: 2026-08-13
-- **Document Status**: Published
-- **Main Topic**: Normative registry of signing algorithms for Sigstore clients and services, including ECDSA, RSA, Ed25519, and ML-DSA variants.
-- **PQC Algorithms Covered**: ML-DSA-44, ML-DSA-65, ML-DSA-87
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology, U.S. Department of Commerce, Office of Management and Budget
 - **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: Sigstore
+- **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: ECDSA, RSA-PKCS1, RSA-PSS, Ed25519, SHA-256
-- **Key Takeaways**: Sigstore clients and services must support the algorithms listed in the registry; ECDSA is currently used for software supply-chain signing in Sigstore; ML-DSA is integrated as the post-quantum replacement for ECDSA; The registry includes specific variants for ECDSA, RSA, and Ed25519
-- **Security Levels & Parameters**: ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Security Management Act, OMB Circular A-130, FIPS 200
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should use a five-level qualitative scale (Very Low to Very High) for assessing likelihood and impact; Risk assessments must identify threat sources, vulnerabilities, and predisposing conditions; Continuous monitoring processes should evaluate the effectiveness of security controls and compliance; Risk management strategies should be updated based on assessment results and lessons learned;
+- **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
 - **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "ML-DSA-44/65/87 pure variants being integrated"
-- **Hybrid PQC Signature Support**: No
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; code-signing; crypto-agility
+- **Relevant PQC Today Features**: pqc-risk-management; pqc-governance; Assess; Compliance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -389,36 +53,35 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Math Family**: Lattice
-- **PQC Round**: Standardised
-- **Extraction Note**: No source text available
-- **Source Document**: Sigstore-Algorithm-Registry.md (4,623 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-08-15T07:29:50
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: NIST_SP_800-30.pdf (826,897 bytes, 20,944 extracted chars)
+- **Extraction Timestamp**: 2026-08-15T07:56:38
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
-## AUTOSAR-CP-SWS-CryptoDriver-R23-11
+## Cyentia IRIS 2025
 
-- **Reference ID**: AUTOSAR-CP-SWS-CryptoDriver-R23-11
-- **Title**: AUTOSAR Classic Platform R23-11 — Specification of Crypto Driver
-- **Authors**: AUTOSAR Release Management
-- **Publication Date**: 2023-11-23
-- **Last Updated**: 2023-11-23
+- **Reference ID**: Cyentia IRIS 2025
+- **Title**: Information Risk Insights Study (IRIS) 2025 - It's About Time
+- **Authors**: Cyentia Institute
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-01
 - **Document Status**: Published
-- **Main Topic**: Specification of the AUTOSAR Classic Platform Crypto Driver software module for in-vehicle ECU cryptographic abstraction.
+- **Main Topic**: Longitudinal analysis of cyber-incident frequency, likelihood, and financial loss trends from 2008 to 2024.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Bodies: Cybersecurity and Infrastructure Security Agency (CISA)
+- **Leaders Contributions Mentioned**: Jack Freund (Executive Fellow | The Cyentia Institute)
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: HSM; Key Management
-- **Standardization Bodies**: AUTOSAR
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; ECDSA; ECDH; ED25519; BRAINPOOL; AES; 3DES; BLAKE; CHACHA; DH; HKDF
-- **Key Takeaways**: The Crypto Driver abstracts hardware cryptographic features for in-vehicle ECUs; It supports classical algorithm families including ECDSA, ECDH, RSA, and AES; Key material is securely stored in NVM or CSM with consistency checks; The specification defines APIs for job processing and key element management; No post-quantum cryptographic algorithms are specified in this release.
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Payment Card Industry (PCI)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The probability of a significant security incident has almost quadrupled over the last 15 years; Using Valid Accounts and Phishing remain the dominant initial access techniques; Incident rates relative to population size are significantly higher for large corporations than smaller businesses; Security strategies must recalibrate with changing risk trends rather than relying on past assumptions.
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -433,161 +96,49 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Developer; Security Architect
-- **Implementation Prerequisites**: AUTOSAR Classic Platform R23-11; Crypto Hardware Abstraction Layer; Crypto Service Manager
-- **Relevant PQC Today Features**: iot-ot-pqc; hsm-pqc; crypto-agility
+- **Target Audience**: CISO; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-risk-management; pqc-business-case; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: Random Number Generator; DRBG
-- **Constrained Device & IoT Suitability**: Embedded viability; RTOS compatibility; Microcontroller Abstraction Layer
-- **Supply Chain & Vendor Risk**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: 99% of Global 2000 companies are connected to vendors that have had recent breaches
 - **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
+- **Financial & Business Impact**: 3,000 significant security incidents reported or discovered each quarter; 650% increase in incidents over the last 15 years
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: AUTOSAR-CP-SWS-CryptoDriver-R23-11.pdf (846,226 bytes, 17,535 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:30:32
+- **Source Document**: Cyentia_IRIS_2025.pdf (2,580,218 bytes, 16,308 extracted chars)
+- **Extraction Timestamp**: 2026-08-15T07:56:39
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
-## arXiv-2602-21524-Quantum-Attacks-Nuclear
+## NetDiligence Cyber Claims Study 2025
 
-- **Reference ID**: arXiv-2602-21524-Quantum-Attacks-Nuclear
-- **Title**: Quantum Attacks Targeting Nuclear Power Plants: Threat Analysis, Defense and Mitigation Strategies
-- **Authors**: Yaser Baseri, Edward Waller (arXiv:2602.21524)
-- **Publication Date**: 2026-07-30
-- **Last Updated**: 2026-07-30
+- **Reference ID**: NetDiligence Cyber Claims Study 2025
+- **Title**: NetDiligence Cyber Claims Study - 2025 Report
+- **Authors**: NetDiligence
+- **Publication Date**: 2025-09
+- **Last Updated**: 2025-09-01
 - **Document Status**: Published
-- **Main Topic**: Analysis of quantum threats to nuclear power plant I&C systems and a defense-in-depth PQC migration framework.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HQC, FN-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest-Now Decrypt-Later, Shor's Algorithm, Grover's Algorithm
-- **Migration Timeline Info**: CRQC expected within 10-15 years; nuclear asset lifecycles 60-80 years
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Yaser Baseri, Edward Waller
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, OPC-UA, VPN, DNP3-SA, NTP, PTP
-- **Infrastructure Layers**: PKI, Code-signing, Firmware signing, Time synchronization
-- **Standardization Bodies**: NIST, ISA/IEC, IEC, IAEA
-- **Compliance Frameworks Referenced**: ISA/IEC 62443, MITRE ATT&CK for ICS
-- **Classical Algorithms Referenced**: RSA, ECC, AES-256, SHA-384, SHA-512, RSA-2048, ECC-256, ECC-384
-- **Key Takeaways**: Nuclear plants face HNDL risks due to 60-80 year lifecycles exceeding CRQC arrival; Hybrid KEM and pure PQC signatures are recommended for migration; Forensic integrity must be treated as operationally essential, not just evidentiary; Residual attack feasibility drops to 1-8% at Security Level 4 with PQC migration
-- **Security Levels & Parameters**: Security Level 4, ML-KEM-768, ML-DSA-65, SLH-DSA-128s, HQC-256, AES-256, SHA-384, SHA-512
-- **Hybrid & Transition Approaches**: Hybrid key exchange, hybrid certificate support, defense-in-depth migration
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "hybrid KEM pinned on L3.5 conduits" (Table XIX)
-- **Pure PQC Signature Support**: Yes
-- **Pure PQC Signature Evidence**: "PQC for application-level artefacts (firmware/logs) via ML-DSA" (Table XIX)
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: TLS-1.3
-- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Gateways record TLS 1.3 handshake parameters" (Section VII-D)
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: ML-KEM-768 fits standard Ethernet frames; HQC-256 excluded on constrained links; t_hs,95% <= 50 ms; Delta_t_SOE <= 100 ms
-- **Target Audience**: Security Architect, Compliance Officer, Researcher
-- **Implementation Prerequisites**: Cryptographic inventory; side-channel-resistant implementations; anti-rollback enforcement; authenticated time synchronization
-- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; iot-ot-pqc; code-signing; pqc-risk-management
-- **Implementation Attack Surface**: Side-channel (power analysis, timing, EM leakage), fault injection, cold-boot attacks
-- **Cryptographic Discovery & Inventory**: Crypto-agility scanning; certificate inventory; algorithm enumeration
-- **Testing & Validation Methods**: Conformance testing; side-channel hardening criteria; TVLA first-order analysis; constant-time analysis
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: HQC-256 excluded on constrained links; L0-L2 control loops require t_hs = 0
-- **Supply Chain & Vendor Risk**: Vendor remote access; heterogeneous OPC-UA deployments spanning multiple vendors
-- **Deployment & Migration Complexity**: Phased rollout; hybrid transition period; backward compatibility for classical TLS handshake signatures
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Governance prerequisites; early engagement with certification bodies; multi-decade planning horizon
-- **Math Family**: Lattice; Hash-based; Code-based
-- **PQC Round**: Standardised
-- **Source Document**: arXiv-2602-21524-Quantum-Attacks-Nuclear.pdf (1,274,778 bytes, 22,153 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:30:33
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## IACR-2024-046-Aviation-Quantum-Secure
-
-- **Reference ID**: IACR-2024-046-Aviation-Quantum-Secure
-- **Title**: Quantum-Secure Hybrid Communication for Aviation Infrastructure
-- **Authors**: Benjamin Dowling, Bhagya Wimalasiri (University of Sheffield)
-- **Publication Date**: 2024-01-11
-- **Last Updated**: 2024-01-11
-- **Document Status**: Published
-- **Main Topic**: Proposal of quantum-secure hybrid key exchange and signature protocols (PQAG-KEM and PQAG-SIG) for securing Controller-Pilot Data Link Communications in aviation infrastructure.
-- **PQC Algorithms Covered**: Kyber; Dilithium; McEliece; CSIDH
-- **Quantum Threats Addressed**: Harvest Now Decrypt Later; future quantum adversaries
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Europe; United States; Bodies: EUROCONTROL; Federal Aviation Administration
-- **Leaders Contributions Mentioned**: Benjamin Dowling; Bhagya Wimalasiri
-- **PQC Products Mentioned**: sibc library; PyNaCl; cryptography
-- **Protocols Covered**: CPDLC; TLS 1.3; KEMTLS
-- **Infrastructure Layers**: Key Management; Avionics
-- **Standardization Bodies**: NIST; ARINC
-- **Compliance Frameworks Referenced**: ARINC 823P1; ARINC 811
-- **Classical Algorithms Referenced**: ECDSA; ECDH; P-384; EdDSA; HMAC-SHA-256; HKDF-SHA-256
-- **Key Takeaways**: Hybrid protocols combining classical and post-quantum KEMs provide security against both classical and quantum adversaries; Resource-constrained aviation environments require custom protocols due to bandwidth and computation limits; PQAG-SIG-Ky-Di variant uses Kyber and Dilithium for 128-bit post-quantum security; Implementation on Raspberry Pi demonstrates practicality on constrained devices; Formal analysis provided in a strong hybrid key exchange framework.
-- **Security Levels & Parameters**: 128-bit post-quantum security; NIST level 2; 256-bit derived shared keys; McEliece 348864f; Kyber-512; P-384
-- **Hybrid & Transition Approaches**: Hybrid key exchange; hybrid security
-- **Pure PQC KEM Support**: No
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Yes
-- **Hybrid PQC KEM Evidence**: "PQAG-KEM leverages post-quantum and classical Key Encapsulation Mechanisms"
-- **Pure PQC Signature Support**: No
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Draft
-- **Performance & Size Considerations**: LDACS throughput 303.33 kbps; performance benchmarked on Raspberry Pi and desktop; Table 3 provides operation times in seconds
-- **Target Audience**: Security Architect; Researcher; Developer
-- **Implementation Prerequisites**: Python; Raspberry Pi; standard desktop system
-- **Relevant PQC Today Features**: hybrid-crypto; iot-ot-pqc; algorithms; threats
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: Formal analysis; benchmarking; performance evaluation
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Resource-constrained environments; Raspberry Pi implementation; bandwidth and computation restraints
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: Aviation industry averse to frequent upgrades; high safety and cost considerations
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Math Family**: Lattice; Code-based; Isogeny
-- **PQC Round**: Standardised
-- **Source Document**: IACR-2024-046-Aviation-Quantum-Secure.pdf (817,409 bytes, 12,672 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:30:34
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## CI-Plus-Spec-v1.3.2
-
-- **Reference ID**: CI-Plus-Spec-v1.3.2
-- **Title**: CI Plus Specification v1.3.2 — Content Security Extensions to the Common Interface
-- **Authors**: CI Plus LLP
-- **Publication Date**: 2015-03-01
-- **Last Updated**: 2015-03-01
-- **Document Status**: Published
-- **Main Topic**: Technical specification for CI Plus v1.3.2 governing mutual authentication and link encryption between CICAM and Host in DVB conditional access systems.
+- **Main Topic**: Analysis of 10,402 cyber-insurance claims from 2020-2024, detailing incident costs, causes of loss, and trends in ransomware and third-party breaches.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Colorado attorney general
+- **Leaders Contributions Mentioned**: Sean B. Hoar (Partner & Chair, Constangy Cyber Team); George Kohlhofer (Principal, Cybersecurity and Privacy Risk, RSM US LLP); Billy Gouveia (CEO, Surefire Cyber)
 - **PQC Products Mentioned**: None detected
-- **Protocols Covered**: X.509
-- **Infrastructure Layers**: PKI
-- **Standardization Bodies**: CI Plus LLP
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: RSA; DES; AES; SHA-256; DH
-- **Key Takeaways**: The specification mandates RSA signatures for Service Operator CRLs and device certificates; Key exchange relies on classical Diffie-Hellman with 2048-bit parameters; Content encryption uses DES-56 or AES-128; No post-quantum cryptographic algorithms are specified or supported.
-- **Security Levels & Parameters**: 2048-bit DH; AES-128; DES-56
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Colorado AI Act
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Ransomware, BEC, and hacking are the top causes of cyber insurance claims; Third-party and supply chain breaches account for 32% of breaches and are among the most expensive to remediate; AI-powered attacks, including deepfakes and voice cloning, are increasing in frequency and sophistication; Small businesses suffer disproportionate financial and operational losses from ransomware attacks; Staff mistakes are often the ignition point for breaches, even if not the final coded cause of loss.
+- **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
@@ -597,27 +148,27 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Pure PQC Signature Evidence**: None detected
 - **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: X.509
-- **PQC Heatmap Protocols Evidence**: X.509: "X.509 certificate of the Host" (§6.3)
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
-- **Performance & Size Considerations**: DHSK 2048 bits; HOST_ID 64 bits; CICAM_ID 64 bits
-- **Target Audience**: Security Architect; Developer
-- **Implementation Prerequisites**: Common Interface slots; CICAM; Host device with tuner/demodulator/demux
-- **Relevant PQC Today Features**: crypto-agility; pki-workshop; tls-basics
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-business-case; vendor-risk; pqc-risk-management
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: Smartcard constraints; CICAM resource limits
-- **Supply Chain & Vendor Risk**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party and supply chain breaches are no longer isolated events; 32% of breaches were tied to third- or fourth-party exposures; third-party vulnerabilities are among the most expensive to remediate.
 - **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
+- **Financial & Business Impact**: Average incident cost for SMEs is $264K; Average incident cost for large companies is $10.3M; U.S. data breaches cost an average of $10.22 million; Ransomware attacks increased over 125% this year.
+- **Organizational Readiness**: Organizations need education, governance, and a coordinated strategy; breach readiness requires more than tools; companies must be agile and proactive to stay ahead of threats.
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: CI-Plus-Spec-v1.3.2.pdf (7,477,037 bytes, 22,362 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:30:35
+- **Source Document**: NetDiligence_Cyber_Claims_Study_2025.pdf (9,509,998 bytes, 18,735 extracted chars)
+- **Extraction Timestamp**: 2026-08-15T07:56:40
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
@@ -2890,6 +2441,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## AUTOSAR-CP-SWS-CryptoDriver-R23-11
+
+- **Reference ID**: AUTOSAR-CP-SWS-CryptoDriver-R23-11
+- **Title**: AUTOSAR Classic Platform R23-11 — Specification of Crypto Driver
+- **Authors**: AUTOSAR Release Management
+- **Publication Date**: 2023-11-23
+- **Last Updated**: 2023-11-23
+- **Document Status**: Published
+- **Main Topic**: Specification of the AUTOSAR Classic Platform Crypto Driver software module for in-vehicle ECU cryptographic abstraction.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: AUTOSAR
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECDSA; ECDH; ED25519; BRAINPOOL; AES; 3DES; BLAKE; CHACHA; DH; HKDF
+- **Key Takeaways**: The Crypto Driver abstracts hardware cryptographic features for in-vehicle ECUs; It supports classical algorithm families including ECDSA, ECDH, RSA, and AES; Key material is securely stored in NVM or CSM with consistency checks; The specification defines APIs for job processing and key element management; No post-quantum cryptographic algorithms are specified in this release.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: AUTOSAR Classic Platform R23-11; Crypto Hardware Abstraction Layer; Crypto Service Manager
+- **Relevant PQC Today Features**: iot-ot-pqc; hsm-pqc; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Random Number Generator; DRBG
+- **Constrained Device & IoT Suitability**: Embedded viability; RTOS compatibility; Microcontroller Abstraction Layer
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## Algorand-PQC-Technical-Brief
 
 - **Reference ID**: Algorand-PQC-Technical-Brief
@@ -4181,6 +3786,114 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Broad awareness, coordinated planning
 - **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## BLE-Key-Negotiation-Downgrade-2020
+
+- **Reference ID**: BLE-Key-Negotiation-Downgrade-2020
+- **Title**: Key Negotiation Downgrade Attacks on Bluetooth and Bluetooth Low Energy
+- **Authors**: D. Antonioli, N. O. Tippenhauer, K. Rasmussen
+- **Publication Date**: 2020-06-01
+- **Last Updated**: 2020-06-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of standard-compliant entropy downgrade attacks on Bluetooth and BLE key negotiation protocols that allow brute-forcing of session and long-term keys.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Daniele Antonioli; Nils Ole Tippenhauer; Kasper Rasmussen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Bluetooth; Bluetooth Low Energy
+- **Infrastructure Layers**: Link Layer Security; Key Management
+- **Standardization Bodies**: Bluetooth Special Interest Group (SIG)
+- **Compliance Frameworks Referenced**: FIPS
+- **Classical Algorithms Referenced**: ECDH; NIST P-256; AES CCM; HMAC-SHA256; SHA-256; SAFER+; SAFER+'
+- **Key Takeaways**: Bluetooth and BLE key negotiation protocols are vulnerable to standard-compliant entropy downgrade attacks; Attackers can downgrade Bluetooth session key entropy to 1 byte and BLE long-term/session key entropy to 7 bytes; Low entropy enables brute-forcing of keys, breaking confidentiality and integrity guarantees; Countermeasures include setting minimum entropy in firmware or having the host OS verify negotiated entropy and abort if insufficient
+- **Security Levels & Parameters**: 1 byte entropy for Bluetooth session keys; 7 bytes entropy for BLE long-term and session keys; 16 bytes maximum entropy
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 1 byte entropy for Bluetooth session keys; 7 bytes entropy for BLE keys; 256 candidates for brute-force
+- **Target Audience**: Security Architect; Researcher; Developer
+- **Implementation Prerequisites**: Python script for brute-force; BitVector Python module; Python cryptography module
+- **Relevant PQC Today Features**: entropy-randomness; iot-ot-pqc; crypto-agility
+- **Implementation Attack Surface**: Entropy downgrade; Brute-force attack; Man-in-the-Middle
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Brute-force decryption testing; Device vulnerability testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Entropy negotiation; Entropy downgrade
+- **Constrained Device & IoT Suitability**: Wearables; IoT sensors; Industrial devices; Medical devices
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Firmware modification required for legacy compliant countermeasures; Host OS modification required for entropy checking
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Symmetric
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## BLE-Low-Entropy-Key-Negotiation-2019
+
+- **Reference ID**: BLE-Low-Entropy-Key-Negotiation-2019
+- **Title**: Low Entropy Key Negotiation Attacks on Bluetooth and Bluetooth Low Energy
+- **Authors**: D. Antonioli, N. O. Tippenhauer, K. Rasmussen
+- **Publication Date**: 2019-08-01
+- **Last Updated**: 2019-08-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of the KNOB attack, which exploits low entropy key negotiation vulnerabilities in Bluetooth and Bluetooth Low Energy specifications to reduce encryption key strength.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Daniele Antonioli; Nils Ole Tippenhauer; Kasper Rasmussen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Bluetooth; Bluetooth Low Energy
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Bluetooth Special Interest Group (SIG); IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDH; P-256; ECDSA; AES-CCM; E0; SAFER+; Counter mode with CBC-MAC
+- **Key Takeaways**: The KNOB attack allows attackers to downgrade Bluetooth encryption key entropy to 1 byte and BLE to 7 bytes; All tested standard-compliant Bluetooth and BLE devices are vulnerable to this architectural flaw; Attackers can brute force the low-entropy keys to decrypt traffic and inject messages in real-time; Countermeasures include legacy and non-legacy compliant methods to neutralize the attack; The vulnerability exists in the specification itself, not just specific implementations.
+- **Security Levels & Parameters**: 16 bytes entropy (standard); 1 byte entropy (Bluetooth KNOB); 7 bytes entropy (BLE KNOB)
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Entropy reduced from 16 to 1 Byte for Bluetooth; Entropy reduced from 16 to 7 Bytes for BLE
+- **Target Audience**: Security Architect; Researcher; Developer
+- **Implementation Prerequisites**: InternalBlue v0.1; Nexus 5 device; Bluetooth firmware patching capability
+- **Relevant PQC Today Features**: entropy-randomness; iot-ot-pqc; crypto-agility
+- **Implementation Attack Surface**: Low entropy key negotiation; Man-in-the-middle manipulation of LMP/SMP messages; Brute force of weak encryption keys
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Implementation of KNOB attack on 17 Bluetooth chips and 15 BLE devices; Brute force script evaluation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Vulnerable devices include smartwatches, fitness bands, smart locks, thermostats, and biomedical applications
+- **Supply Chain & Vendor Risk**: Vulnerabilities affect chips from Intel, Broadcom, Apple, and Qualcomm; Devices from Lenovo, Garmin, Samsung, Xiaomi, and Fitbit
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -5796,6 +5509,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## CI-Plus-Spec-v1.3.2
+
+- **Reference ID**: CI-Plus-Spec-v1.3.2
+- **Title**: CI Plus Specification v1.3.2 — Content Security Extensions to the Common Interface
+- **Authors**: CI Plus LLP
+- **Publication Date**: 2015-03-01
+- **Last Updated**: 2015-03-01
+- **Document Status**: Published
+- **Main Topic**: Technical specification for CI Plus v1.3.2 governing mutual authentication and link encryption between CICAM and Host in DVB conditional access systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: CI Plus LLP
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; DES; AES; SHA-256; DH
+- **Key Takeaways**: The specification mandates RSA signatures for Service Operator CRLs and device certificates; Key exchange relies on classical Diffie-Hellman with 2048-bit parameters; Content encryption uses DES-56 or AES-128; No post-quantum cryptographic algorithms are specified or supported.
+- **Security Levels & Parameters**: 2048-bit DH; AES-128; DES-56
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: "X.509 certificate of the Host" (§6.3)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: DHSK 2048 bits; HOST_ID 64 bits; CICAM_ID 64 bits
+- **Target Audience**: Security Architect; Developer
+- **Implementation Prerequisites**: Common Interface slots; CICAM; Host device with tuner/demodulator/demux
+- **Relevant PQC Today Features**: crypto-agility; pki-workshop; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Smartcard constraints; CICAM resource limits
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
@@ -10229,6 +9996,114 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Continuous visibility; Automated policy enforcement; Governance of cryptographic assets
 - **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## EMV-Break-Fix-Verify-2021
+
+- **Reference ID**: EMV-Break-Fix-Verify-2021
+- **Title**: The EMV Standard: Break, Fix, Verify
+- **Authors**: D. Basin, R. Sasse, J. Toro-Pozo (ETH Zurich)
+- **Publication Date**: 2020-06-15
+- **Last Updated**: 2021-05-01
+- **Document Status**: Published
+- **Main Topic**: Formal analysis of the EMV smartcard payment protocol using Tamarin to identify and fix critical security flaws in offline data authentication and cardholder verification.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: France; Belgium; Bodies: Visa; Mastercard; Europay; EMVCo
+- **Leaders Contributions Mentioned**: David Basin; Ralf Sasse; Jorge Toro-Pozo (authors of the formal analysis); Murdoch et al. (reported MITM attack); De Ruiter and Poll (ProVerif model); Galloway and Yunusov (PIN bypass attack)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: EMV contact protocol; EMV contactless protocol
+- **Infrastructure Layers**: PKI (Card, Bank, CA certificates); Key Management
+- **Standardization Bodies**: EMVCo
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECDSA; MAC (Message Authentication Code); SHA (implied by hash function h)
+- **Key Takeaways**: Formal verification with Tamarin can uncover logical flaws in complex standards like EMV that are hard to spot manually; Critical attacks exist that allow PIN bypass on contactless cards and fraudulent offline transactions; Proposed improvements to terminal logic can prevent these attacks without requiring card replacements; Visa's proprietary cryptograms may fail to protect against message modification compared to generic EMV cryptograms
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: EMV specification runs over 2,000 pages; Tamarin model took over six months of full-time work
+- **Target Audience**: Security Architect; Researcher; Developer
+- **Implementation Prerequisites**: Tamarin protocol verifier; Android application for proof-of-concept; Raspberry Pi boards for attack prototype
+- **Relevant PQC Today Features**: Assess; Algorithms; Threats; crypto-agility
+- **Implementation Attack Surface**: Man-in-the-middle attacks; Card cloning; Downgrade attacks; Relay attacks; Card skimming; PIN bypass; Offline transaction fraud
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal verification; Symbolic model analysis; Proof-of-concept demonstration; Tamarin protocol verifier
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Smartcard constraints; Contactless payment terminals
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Improvements can be easily implemented in terminals; Do not affect cards in circulation
+- **Financial & Business Impact**: Liability shift relieves banks from payment disputes; Fraudulent transactions cause financial loss to cardholders and merchants
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## EMVCo-Quantum-Position-Statement
+
+- **Reference ID**: EMVCo-Quantum-Position-Statement
+- **Title**: EMVCo Position Statement: Quantum Computing and EMV Chip Cryptography
+- **Authors**: EMVCo Security Working Group
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2024-01-01
+- **Document Status**: Published
+- **Main Topic**: EMVCo's position on the quantum threat to EMV chip cryptography, concluding that AES-128 remains secure and migration to PQC is not urgent before 2040.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm
+- **Migration Timeline Info**: Quantum threat unlikely prior to 2040; implementation timeline commensurate with threat realization, certainly ten years distant
+- **Applicable Regions / Bodies**: Bodies: EMVCo, NIST, UK NCSC, German BSI
+- **Leaders Contributions Mentioned**: Sam Jaques (Waterloo University, published chart on performance gap); C. Zalka (foundational analysis on Grover's algorithm); V. Gheorghiu, M. Mosca (Global Risk Institute, resource estimation framework); S. Jaques, M. Naehrig, M. Roetteler, F. Virdia (Implementing Grover oracles); E. Parker, M. Vermeer (RAND, energy requirements)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: EMV; C-8 contactless
+- **Infrastructure Layers**: HSM; EMV chip specifications; Payment System or Issuer key infrastructure
+- **Standardization Bodies**: EMVCo; NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC; AES; AES-128; AES-256; SHA-256; 2-key Triple DES
+- **Key Takeaways**: AES-128 is considered immune to quantum attack and supported as the entry level symmetric algorithm; No need to recommend AES-256 for quantum resistance, though allowed for contingency; Quantum threat to asymmetric cryptography is unlikely prior to 2040; Offline data authentication is the primary concern for asymmetric key breaking in EMV
+- **Security Levels & Parameters**: RSA-2048; AES-128; AES-256; SHA-256; 1,000 entangled physical qubits
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 5 to 7 orders of magnitude improvement required for RSA-2048 attack; AES-128 key size
+- **Target Audience**: Security Architect; CISO; Policy Maker
+- **Implementation Prerequisites**: HSMs used for EMV payments should support AES-128 and be capable of supporting AES-256
+- **Relevant PQC Today Features**: Timeline; Threats; Assess; Algorithms; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Resource efficient suitability for current and future use; EMV chip constraints
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Migration timeline commensurate with quantum threat realization; unlikely prior to 2040
+- **Financial & Business Impact**: Breaking individual card key would be uneconomic for a fraudster
+- **Organizational Readiness**: SWG will monitor and support standards development; monitor milestones for fault-tolerant logical qubits
+- **Math Family**: Symmetric
 - **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -18330,6 +18205,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
 - **PQC Round**: Round 3
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## IACR-2024-046-Aviation-Quantum-Secure
+
+- **Reference ID**: IACR-2024-046-Aviation-Quantum-Secure
+- **Title**: Quantum-Secure Hybrid Communication for Aviation Infrastructure
+- **Authors**: Benjamin Dowling, Bhagya Wimalasiri (University of Sheffield)
+- **Publication Date**: 2024-01-11
+- **Last Updated**: 2024-01-11
+- **Document Status**: Published
+- **Main Topic**: Proposal of quantum-secure hybrid key exchange and signature protocols (PQAG-KEM and PQAG-SIG) for securing Controller-Pilot Data Link Communications in aviation infrastructure.
+- **PQC Algorithms Covered**: Kyber; Dilithium; McEliece; CSIDH
+- **Quantum Threats Addressed**: Harvest Now Decrypt Later; future quantum adversaries
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Europe; United States; Bodies: EUROCONTROL; Federal Aviation Administration
+- **Leaders Contributions Mentioned**: Benjamin Dowling; Bhagya Wimalasiri
+- **PQC Products Mentioned**: sibc library; PyNaCl; cryptography
+- **Protocols Covered**: CPDLC; TLS 1.3; KEMTLS
+- **Infrastructure Layers**: Key Management; Avionics
+- **Standardization Bodies**: NIST; ARINC
+- **Compliance Frameworks Referenced**: ARINC 823P1; ARINC 811
+- **Classical Algorithms Referenced**: ECDSA; ECDH; P-384; EdDSA; HMAC-SHA-256; HKDF-SHA-256
+- **Key Takeaways**: Hybrid protocols combining classical and post-quantum KEMs provide security against both classical and quantum adversaries; Resource-constrained aviation environments require custom protocols due to bandwidth and computation limits; PQAG-SIG-Ky-Di variant uses Kyber and Dilithium for 128-bit post-quantum security; Implementation on Raspberry Pi demonstrates practicality on constrained devices; Formal analysis provided in a strong hybrid key exchange framework.
+- **Security Levels & Parameters**: 128-bit post-quantum security; NIST level 2; 256-bit derived shared keys; McEliece 348864f; Kyber-512; P-384
+- **Hybrid & Transition Approaches**: Hybrid key exchange; hybrid security
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "PQAG-KEM leverages post-quantum and classical Key Encapsulation Mechanisms"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: LDACS throughput 303.33 kbps; performance benchmarked on Raspberry Pi and desktop; Table 3 provides operation times in seconds
+- **Target Audience**: Security Architect; Researcher; Developer
+- **Implementation Prerequisites**: Python; Raspberry Pi; standard desktop system
+- **Relevant PQC Today Features**: hybrid-crypto; iot-ot-pqc; algorithms; threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal analysis; benchmarking; performance evaluation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Resource-constrained environments; Raspberry Pi implementation; bandwidth and computation restraints
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Aviation industry averse to frequent upgrades; high safety and cost considerations
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Code-based; Isogeny
+- **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
@@ -30916,6 +30845,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## PQ-SUCI-MLKEM-Profile-C-2025
+
+- **Reference ID**: PQ-SUCI-MLKEM-Profile-C-2025
+- **Title**: Post-Quantum Key Exchange and Subscriber Identity Encryption in 5G Using ML-KEM (Kyber)
+- **Authors**: Information (MDPI), vol. 16 no. 7, art. 617
+- **Publication Date**: 2025-07-18
+- **Last Updated**: 2025-07-18
+- **Document Status**: Published
+- **Main Topic**: Proposal and performance analysis of a post-quantum SUCI protection scheme (Profile C) using ML-KEM (Kyber-512) for 5G subscriber identity encryption.
+- **PQC Algorithms Covered**: ML-KEM, CRYSTALS-Kyber, Kyber-512, Kyber-768, Kyber-1024, CRYSTALS-Dilithium, FALCON, SPHINCS+, SABER, NTRU
+- **Quantum Threats Addressed**: Shor's algorithm, quantum attacks on discrete-logarithm-based elliptic curve algorithms
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: NIST, 3GPP
+- **Leaders Contributions Mentioned**: Qaiser Khan (author, validation, formal analysis, investigation, resources, data curation, writing, visualization); Sourav Purification (author, validation, investigation, resources, data curation, writing); Sang-Yoon Chang (author, validation, formal analysis, investigation, resources, writing, supervision, project administration)
+- **PQC Products Mentioned**: srsRAN, Open5GS, wolfSSL
+- **Protocols Covered**: 5G-AKA, SUCI, TLS, SSH, IPsec
+- **Infrastructure Layers**: Key Management, Core Network, User Equipment
+- **Standardization Bodies**: NIST, 3GPP
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDH, secp256r1, X25519, AES, RSA, ECIES
+- **Key Takeaways**: Kyber-512 offers better performance (faster computation and lower energy) than ECDH for 5G SUCI encryption; Profile C using ML-KEM-512 is proposed as a post-quantum alternative to 3GPP Profiles A and B; Side-channel attacks (power, timing) remain a risk for lattice-based PQC implementations on hardware; Mobile devices are resource-constrained, making efficiency critical for PQC adoption in 5G
+- **Security Levels & Parameters**: Kyber-512, Kyber-768, Kyber-1024, 128-bit security, 192-bit security, 256-bit security
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "Profile C using Kyber-512" (§5.2)
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: Kyber-512 has faster computations and lower energy consumption than ECDH; shortest key/parameter lengths used for comparison
+- **Target Audience**: Researcher, Security Architect, Developer
+- **Implementation Prerequisites**: Raspberry Pi or Mini-PC for simulation; srsRAN and Open5GS software for validation; wolfSSL library for embedded TLS
+- **Relevant PQC Today Features**: 5g-security, Algorithms, Threats, Assess
+- **Implementation Attack Surface**: Side-channel attacks (timing, power, electromagnet, cold boot, correlation power analysis)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Performance analysis (time, CPU, energy, power); simulation on Raspberry Pi and Mini-PC; side-channel attack analysis
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Resource-limited and battery-operating mobile devices; embedded software; RTOS environments; small size and high speed requirements
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## PQCC-Inventory-Workbook-2025
 
 - **Reference ID**: PQCC-Inventory-Workbook-2025
@@ -42148,6 +42131,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## RU-Nijmegen-EMV-Course-Notes
+
+- **Reference ID**: RU-Nijmegen-EMV-Course-Notes
+- **Title**: EMV — Radboud University Digital Security course notes (Erik Poll)
+- **Authors**: Erik Poll, Radboud University Nijmegen
+- **Publication Date**: 2019-01-01
+- **Last Updated**: 2019-01-01
+- **Document Status**: Published
+- **Main Topic**: University course notes on EMV card authentication mechanisms, security flaws, and formal verification using F# and ProVerif.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Netherlands; Bodies: Dutch Payment Association, Nederlandse Vereniging van Banken (NVB)
+- **Leaders Contributions Mentioned**: Erik Poll (author); Anton Jongsma, Robert Kleinpenning, Peter Maandag (flaw discovery); Jordi van den Breekel (flaw discovery); Arjan Blom (security flaw discovery)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: EMV, EMV-CAP, ISO/IEC 14443
+- **Infrastructure Layers**: PKI (issuer/card certificates), Key Management (symmetric keys, private keys)
+- **Standardization Bodies**: EMVCo (implied by EuroPay, MasterCard, Visa, JCB, American Express ownership), ISO/IEC
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, ECDSA, HMAC
+- **Key Takeaways**: EMV protocol suite is overly complex with many configurable options that can lead to security misconfigurations; Formal verification using F# and ProVerif can automatically discover known security flaws in EMV implementations; Backwards compatibility in early contactless cards introduced vulnerabilities such as unencrypted magstripe data transmission and low-entropy dynamic codes; EMV-CAP for internet banking does not protect against Man-in-the-Browser, phishing, or social engineering attacks; Hardware security devices like USB-connected readers can be compromised by malware if they allow remote button presses or display manipulation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Researcher; Security Architect; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Assess; Algorithms; crypto-agility; tls-basics; pki-workshop
+- **Implementation Attack Surface**: Side-channel (thermal residue, hand movement inference); Fault injection (extended length APDU crash); Malware (Man-in-the-Browser, USB display manipulation, remote button press)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal verification (ProVerif, F#); Reverse-engineering; Proof-of-Concept attacks
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Smartcard constraints (EMV chip, contactless interface)
+- **Supply Chain & Vendor Risk**: Vendor liability shifts; Terminal certification gaps; Hardware vendor flaws (Gemalto/ABN AMRO)
+- **Deployment & Migration Complexity**: Backwards compatibility issues; Liability shifts for magstripe usage
+- **Financial & Business Impact**: Payment fraud trends in Netherlands and UK; Liability shifts for vendors using magstripe
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## Radboud-MTC-Thesis-2025
 
 - **Reference ID**: Radboud-MTC-Thesis-2025
@@ -43925,6 +43962,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice; Symmetric; Hybrid
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Sigstore-Algorithm-Registry
+
+- **Reference ID**: Sigstore-Algorithm-Registry
+- **Title**: Sigstore Algorithm Registry (architecture-docs)
+- **Authors**: Sigstore project (OpenSSF)
+- **Publication Date**: 2024-05-01
+- **Last Updated**: 2026-08-13
+- **Document Status**: Published
+- **Main Topic**: Normative registry of signing algorithms for Sigstore clients and services, including ECDSA, RSA, Ed25519, and ML-DSA variants.
+- **PQC Algorithms Covered**: ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Sigstore
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA, RSA-PKCS1, RSA-PSS, Ed25519, SHA-256
+- **Key Takeaways**: Sigstore clients and services must support the algorithms listed in the registry; ECDSA is currently used for software supply-chain signing in Sigstore; ML-DSA is integrated as the post-quantum replacement for ECDSA; The registry includes specific variants for ECDSA, RSA, and Ed25519
+- **Security Levels & Parameters**: ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "ML-DSA-44/65/87 pure variants being integrated"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; code-signing; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
@@ -47111,6 +47202,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Financial & Business Impact**: Substantial security and economic consequences from prolonged vulnerability
 - **Organizational Readiness**: None detected
 - **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## arXiv-2602-21524-Quantum-Attacks-Nuclear
+
+- **Reference ID**: arXiv-2602-21524-Quantum-Attacks-Nuclear
+- **Title**: Quantum Attacks Targeting Nuclear Power Plants: Threat Analysis, Defense and Mitigation Strategies
+- **Authors**: Yaser Baseri, Edward Waller (arXiv:2602.21524)
+- **Publication Date**: 2026-07-30
+- **Last Updated**: 2026-07-30
+- **Document Status**: Published
+- **Main Topic**: Analysis of quantum threats to nuclear power plant I&C systems and a defense-in-depth PQC migration framework.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HQC, FN-DSA
+- **Quantum Threats Addressed**: CRQC, Harvest-Now Decrypt-Later, Shor's Algorithm, Grover's Algorithm
+- **Migration Timeline Info**: CRQC expected within 10-15 years; nuclear asset lifecycles 60-80 years
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Yaser Baseri, Edward Waller
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, OPC-UA, VPN, DNP3-SA, NTP, PTP
+- **Infrastructure Layers**: PKI, Code-signing, Firmware signing, Time synchronization
+- **Standardization Bodies**: NIST, ISA/IEC, IEC, IAEA
+- **Compliance Frameworks Referenced**: ISA/IEC 62443, MITRE ATT&CK for ICS
+- **Classical Algorithms Referenced**: RSA, ECC, AES-256, SHA-384, SHA-512, RSA-2048, ECC-256, ECC-384
+- **Key Takeaways**: Nuclear plants face HNDL risks due to 60-80 year lifecycles exceeding CRQC arrival; Hybrid KEM and pure PQC signatures are recommended for migration; Forensic integrity must be treated as operationally essential, not just evidentiary; Residual attack feasibility drops to 1-8% at Security Level 4 with PQC migration
+- **Security Levels & Parameters**: Security Level 4, ML-KEM-768, ML-DSA-65, SLH-DSA-128s, HQC-256, AES-256, SHA-384, SHA-512
+- **Hybrid & Transition Approaches**: Hybrid key exchange, hybrid certificate support, defense-in-depth migration
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "hybrid KEM pinned on L3.5 conduits" (Table XIX)
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "PQC for application-level artefacts (firmware/logs) via ML-DSA" (Table XIX)
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "Gateways record TLS 1.3 handshake parameters" (Section VII-D)
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-KEM-768 fits standard Ethernet frames; HQC-256 excluded on constrained links; t_hs,95% <= 50 ms; Delta_t_SOE <= 100 ms
+- **Target Audience**: Security Architect, Compliance Officer, Researcher
+- **Implementation Prerequisites**: Cryptographic inventory; side-channel-resistant implementations; anti-rollback enforcement; authenticated time synchronization
+- **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; iot-ot-pqc; code-signing; pqc-risk-management
+- **Implementation Attack Surface**: Side-channel (power analysis, timing, EM leakage), fault injection, cold-boot attacks
+- **Cryptographic Discovery & Inventory**: Crypto-agility scanning; certificate inventory; algorithm enumeration
+- **Testing & Validation Methods**: Conformance testing; side-channel hardening criteria; TVLA first-order analysis; constant-time analysis
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: HQC-256 excluded on constrained links; L0-L2 control loops require t_hs = 0
+- **Supply Chain & Vendor Risk**: Vendor remote access; heterogeneous OPC-UA deployments spanning multiple vendors
+- **Deployment & Migration Complexity**: Phased rollout; hybrid transition period; backward compatibility for classical TLS handshake signatures
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; early engagement with certification bodies; multi-decade planning horizon
+- **Math Family**: Lattice; Hash-based; Code-based
 - **PQC Round**: Standardised
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
