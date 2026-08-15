@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-15
 category: Compliance Frameworks
-document_count: 21
-requirement_count: 113
+document_count: 22
+requirement_count: 119
 ---
 
 ## COPPA-16-CFR-312
@@ -19,6 +19,20 @@ requirement_count: 113
     - _T3 Repeatable · all_: Delete parent or child online contact information if verifiable parental consent is not provided within a reasonable time.
     - _T3 Repeatable · all_: Delete audio files containing a child's voice immediately after responding to the request for which they were collected.
     - _T3 Repeatable · all_: Delete children's personal information promptly upon parental request or when consent is not obtained within a reasonable time.
+
+## Canada CSE PQC Guidance
+- **Source**: Roadmap for the migration to post-quantum cryptography for the Government of Canada (ITSM.40.001)
+- **URL**: https://www.cyber.gc.ca/sites/default/files/itsm.40.001-migration-post-quantum-cryptography-government-canada-e.pdf
+- **Requirement count**: 6
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish a departmental PQC migration plan with defined roles, including a PQC Migration Executive Lead (DOCS) and Technical Lead, to ensure accountability and oversight.
+    - _T2 Risk-Informed · all_: Include financial planning, education strategy, and procurement policies in the departmental PQC migration plan to support execution and resource allocation.
+    - _T2 Risk-Informed · all_: Develop procurement policies requiring new systems to support PQC and include contract clauses ensuring vendor support for PQC to avoid vendor lock-in.
+    - _T2 Risk-Informed · all_: Report on PQC migration progress annually starting April 2026, as required by TBS policy instruments for responsible officials.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Analyze IT infrastructure, hardware, software, and data across the enterprise to identify vulnerable systems and build an inventory for transition.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Align PQC migration with existing IT equipment lifecycles and system modernization plans to reduce costs and leverage existing budgets.
 
 ## DORA-REG-2022-2554
 - **Source**: Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554
