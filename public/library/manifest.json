@@ -9434,6 +9434,26 @@
       "sizeBytes": 124245,
       "contentType": "application/pdf",
       "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28"
+    },
+    {
+      "refId": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio",
+      "title": "10 CFR 73.54 \u2014 Protection of Digital Computer and Communication Systems and Networks",
+      "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
+      "status": "downloaded",
+      "filename": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio.html",
+      "sizeBytes": 81505,
+      "contentType": "text/html",
+      "sha256": "f712396d7b19c000956d045c1b16171da50bff715d73adc7ef6e2cd078155f20"
+    },
+    {
+      "refId": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025",
+      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025",
+      "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
+      "status": "downloaded",
+      "filename": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025.html",
+      "sizeBytes": 134601,
+      "contentType": "text/html",
+      "sha256": "98c2d9e5aeccd929f100355f30c834a1ccb7bde3e81ec4f5baff10c74a2fb75b"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
