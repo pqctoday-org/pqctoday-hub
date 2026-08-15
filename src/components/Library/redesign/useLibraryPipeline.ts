@@ -133,6 +133,14 @@ export function publishedMs(item: Pick<LibraryItem, 'initialPublicationDate'>): 
   return parseDateMs(item.initialPublicationDate) ?? 0
 }
 
+/** Strip spaces, hyphens, and `#` so "PKCS #11", "PKCS-11", "PKCS#11", and
+ *  "PKCS11" all normalize to the same string — a separator-insensitive
+ *  fallback for the exact-substring search match above. Lowercase input
+ *  expected (callers already lowercase before calling this). */
+export function normalizeSearchText(text: string): string {
+  return text.replace(/[\s\-#]/g, '')
+}
+
 export interface LibraryPipelineInput {
   activePurpose: LibraryPurpose | 'all' // coarse intent door, or 'all'
   activeCategory: string // 'All' or a LIBRARY_CATEGORIES value
@@ -290,6 +298,23 @@ export function useLibraryPipeline(input: LibraryPipelineInput): LibraryPipeline
       item.shortDescription?.toLowerCase().includes(searchLower) ||
       item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
     if (lexicalMatch) return true
+    // Separator-insensitive fallback: "PKCS #11" (title), "PKCS-11" (reference_id),
+    // and "PKCS#11" (prose) never contain the literal substring "pkcs11", so a
+    // one-word query for a standard's number silently missed every one of those
+    // three real spellings — the exact match above only ever passed by accident,
+    // when a document's own text happened to also quote a no-separator form (an
+    // "as PKCS11-UG" citation). Stripping spaces/hyphens/# from both sides before
+    // comparing makes all four spellings equivalent, without touching the exact
+    // match above (still tried first, so it never changes behavior it already had).
+    const normalizedQuery = normalizeSearchText(searchLower)
+    if (normalizedQuery) {
+      const normalizedMatch =
+        normalizeSearchText(item.documentTitle.toLowerCase()).includes(normalizedQuery) ||
+        normalizeSearchText(item.referenceId.toLowerCase()).includes(normalizedQuery) ||
+        (item.shortDescription &&
+          normalizeSearchText(item.shortDescription.toLowerCase()).includes(normalizedQuery))
+      if (normalizedMatch) return true
+    }
     if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) return true
     return false
   }
