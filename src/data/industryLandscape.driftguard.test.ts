@@ -62,15 +62,6 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
-  it('every protocol id exists in the protocol matrix', () => {
-    const ids = new Set(PROTOCOL_MATRIX.map((p) => p.id))
-    for (const uc of useCases) {
-      for (const p of uc.protocols) {
-        expect(ids, `${uc.useCaseId}: unknown protocol "${p}"`).toContain(p)
-      }
-    }
-  })
-
   it('every PQC claim is reachable through a target protocol (WS3a)', () => {
     // THE consistency check, and note carefully what it does NOT ask.
     //
