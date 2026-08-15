@@ -67,6 +67,32 @@ export interface IndustryUseCase {
   status: string
 }
 
+/**
+ * The evidence_type vocabulary — the SINGLE list the loader, the renderer's
+ * badge map and the driftguard all derive from (2026-08-15).
+ *
+ * It exists because they diverged: `guidance` was added to the Python validator
+ * and to the driftguard's allowed set, but not to this union and not to
+ * `EVIDENCE_LABEL`, so three guidance documents (GSMA PQ.03, NIST CSWP 36A,
+ * ATIS 5G Quantum) rendered with no badge — indistinguishable from a real
+ * specification, which is the exact failure the badge exists to prevent.
+ * `tsc` could not catch it: the loader cast a raw string, and the `Record` was
+ * complete against the incomplete union.
+ */
+export const EVIDENCE_TYPES = [
+  'standard',
+  'research',
+  'industry-report',
+  'courseware',
+  'guidance',
+] as const
+
+export type EvidenceType = (typeof EVIDENCE_TYPES)[number]
+
+export function isEvidenceType(v: string): v is EvidenceType {
+  return (EVIDENCE_TYPES as readonly string[]).includes(v)
+}
+
 export interface IndustryStandard {
   industry: string
   standardId: string
@@ -87,7 +113,7 @@ export interface IndustryStandard {
    * They are admitted and marked instead: anything other than `standard`
    * renders with an explicit badge.
    */
-  evidenceType: 'standard' | 'research' | 'industry-report' | 'courseware'
+  evidenceType: EvidenceType
   pqcReadiness: 'none' | 'in-progress' | 'published'
   useCaseIds: string[]
   mainSource: string
@@ -242,9 +268,19 @@ function loadStandards(): IndustryStandard[] {
             standardsBody: r.standards_body,
             libraryRef: r.library_ref,
             mechanismsReferenced: splitSemicolon(r.mechanisms_referenced),
-            // Default to 'standard' so a row predating the column is not
-            // silently badged as research.
-            evidenceType: (r.evidence_type || 'standard') as IndustryStandard['evidenceType'],
+            // Empty defaults to 'standard' so a row predating the column is not
+            // silently badged as research. A non-empty value that is NOT in the
+            // vocabulary is deliberately passed through unchanged rather than
+            // coerced: coercing it to 'standard' would render an unknown
+            // document as a specification (the D7 failure), and the renderer's
+            // badge lookup is total, so an unknown value surfaces honestly
+            // instead of silently. The Python validator and the driftguard both
+            // reject unknown values, so this path should never carry real data.
+            evidenceType: (r.evidence_type
+              ? isEvidenceType(r.evidence_type)
+                ? r.evidence_type
+                : (r.evidence_type as EvidenceType)
+              : 'standard') as EvidenceType,
             pqcReadiness: r.pqc_readiness as IndustryStandard['pqcReadiness'],
             useCaseIds: splitSemicolon(r.use_case_ids),
             mainSource: r.main_source,

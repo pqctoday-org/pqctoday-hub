@@ -19,6 +19,7 @@ import { PROTOCOL_MATRIX_FRESHNESS } from './pqcProtocolMatrix'
 import { SIM_MOVES } from './simMoves'
 import { NARRATION_TIME_ANCHOR_FRESHNESS } from './narrationFacts'
 import { IBM_BREACH_BASELINES_FRESHNESS } from './roiBaselines'
+import { CYCLONEDX_MAPPING_FRESHNESS } from './cryptoMechanisms'
 
 /** A structured, re-verifiable timestamp attached to a time-sensitive claim. */
 export interface Freshness {
@@ -94,6 +95,13 @@ export const FRESHNESS_CLAIMS: FreshnessClaim[] = [
     claim: 'PQC protocol-support matrix snapshot (RFC/draft stages, GA dates)',
     source: 'src/data/pqcProtocolMatrix.ts',
     ...PROTOCOL_MATRIX_FRESHNESS,
+  },
+  {
+    id: 'cyclonedx-crypto-registry-mapping',
+    claim:
+      'Crypto-mechanism → CycloneDX 1.7 algorithmFamily mapping, incl. the four PQC families the registry has no entry for (FN-DSA, HQC, FrodoKEM, Classic McEliece)',
+    source: 'src/data/cryptoMechanisms.ts',
+    ...CYCLONEDX_MAPPING_FRESHNESS,
   },
   {
     id: 'narration-time-anchors',

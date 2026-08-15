@@ -40,6 +40,7 @@ import {
   type IndustryStandard,
   type IndustryMarketSize,
 } from '../../data/industryLandscapeData'
+import { evidenceLabelFor } from './evidenceLabels'
 import {
   CLASSICAL_MECHANISM_FAMILIES,
   PQC_MECHANISM_FAMILIES,
@@ -149,16 +150,13 @@ function MechanismChip({
 /** How a non-standard evidence row is labelled. A research paper can prove
  *  which algorithms a use case relies on, but it is not a specification —
  *  the badge keeps that distinction visible wherever the chip renders. */
-const EVIDENCE_LABEL: Record<IndustryStandard['evidenceType'], string | null> = {
-  standard: null,
-  research: 'Research',
-  'industry-report': 'Industry report',
-  courseware: 'Courseware',
-}
+// EVIDENCE_LABEL / evidenceLabelFor moved to ./evidenceLabels (2026-08-15) so
+// the driftguard can pin vocabulary↔renderer agreement without importing this
+// component into a data test. See that module for why the guard exists.
 
 /** Standard chip: mechanisms it references + direct link to the Library page. */
 function StandardChip({ std }: { std: IndustryStandard }) {
-  const evidence = EVIDENCE_LABEL[std.evidenceType]
+  const evidence = evidenceLabelFor(std.evidenceType)
   return (
     <Link
       to={libraryHref(std.libraryRef)}

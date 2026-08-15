@@ -13,8 +13,14 @@
 // in this file.
 
 import { describe, expect, it } from 'vitest'
-import { loadIndustryLandscape, getLandscapeIndustries } from './industryLandscapeData'
-import { CRYPTO_MECHANISMS, isKnownMechanism } from './cryptoMechanisms'
+import {
+  loadIndustryLandscape,
+  getLandscapeIndustries,
+  EVIDENCE_TYPES,
+} from './industryLandscapeData'
+import { evidenceLabelFor, unlabelledEvidenceTypes } from '../components/Algorithms/evidenceLabels'
+import { CRYPTO_MECHANISMS, isKnownMechanism, CYCLONEDX_REGISTRY } from './cryptoMechanisms'
+import { ALGORITHM_FAMILIES, REGISTRY_LAST_UPDATED } from './cyclonedxCryptoRegistry'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { PROTOCOL_MATRIX } from './pqcProtocolMatrix'
 import { threatsData } from './threatsData'
@@ -332,8 +338,12 @@ describe('industry-landscape driftguards', () => {
     const NOT_A_SPEC = new Set(['Research Paper', 'Industry Report', 'Government Guidance'])
     const docTypeOf = new Map(libraryData.map((d) => [d.referenceId, d.documentType]))
     for (const s of standards) {
+      // Derived from the exported vocabulary, not a second hardcoded list —
+      // a hardcoded copy here is exactly how `guidance` came to be accepted by
+      // this test while the renderer had never heard of it (see the
+      // vocabulary/renderer test below).
       expect(
-        ['standard', 'research', 'industry-report', 'courseware', 'guidance'],
+        EVIDENCE_TYPES as readonly string[],
         `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
       ).toContain(s.evidenceType)
       const docType = docTypeOf.get(s.libraryRef) ?? ''
@@ -353,6 +363,88 @@ describe('industry-landscape driftguards', () => {
         ).toContain(docType)
       }
     }
+  })
+
+  it('CycloneDX projection: every mapped family exists in the vendored registry', () => {
+    // WS5 (2026-08-15). cryptoMechanisms.ts's provenance block CLAIMED it was
+    // "checked by the maintenance flow so a registry update surfaces as a
+    // freshness finding". Nothing read it — not the validators, not a script,
+    // not the freshness manifest — so the mapping was correct by inspection
+    // rather than by test, and a typo would have shipped silently.
+    //
+    // The vocabulary is NOT adopted as the primary key, deliberately: 4 PQC
+    // families (FN-DSA, HQC, FrodoKEM, Classic McEliece) have no registry entry
+    // at all, RSA splits into 4 padding-specific families the sector evidence
+    // never specifies, and X25519 collapses into ECDH. It is a projection for
+    // CBOM export, and this pins the projection.
+    const known = new Set(ALGORITHM_FAMILIES.map((f) => f.family))
+    for (const fam of CRYPTO_MECHANISMS) {
+      for (const cdx of fam.cycloneDxFamilies) {
+        expect(
+          known,
+          `${fam.family}: cycloneDxFamilies value "${cdx}" is not in the vendored CycloneDX registry`
+        ).toContain(cdx)
+      }
+    }
+  })
+
+  it('CycloneDX projection: the deliberately-absent PQC families are still absent', () => {
+    // The other half of the guard, and the one that earns its keep. These four
+    // map to [] because the registry has no entry for them (verified absent
+    // 2026-07-29). When CycloneDX adds HQC, this test fails and tells you to
+    // map it — which is the only way anyone would find out.
+    const known = new Set(ALGORITHM_FAMILIES.map((f) => f.family))
+    for (const fam of ['FN-DSA', 'HQC', 'FrodoKEM', 'Classic-McEliece']) {
+      const entry = CRYPTO_MECHANISMS.find((f) => f.family === fam)
+      expect(entry, `${fam} missing from CRYPTO_MECHANISMS`).toBeDefined()
+      expect(
+        entry!.cycloneDxFamilies,
+        `${fam} is mapped, so the registry now has an entry — update the mapping`
+      ).toEqual([])
+      // Belt and braces: assert the registry really still lacks it, so the
+      // empty mapping above stays honest rather than merely unchanged.
+      expect(
+        known.has(fam),
+        `CycloneDX registry now defines "${fam}" — map it in cryptoMechanisms.ts`
+      ).toBe(false)
+    }
+  })
+
+  it('CycloneDX pin matches the vendored registry it claims to describe', () => {
+    // CYCLONEDX_REGISTRY.verifiedAgainst is rendered to READERS on the tile
+    // ("registry data 2026-02-24"). If it drifts from the vendored copy's own
+    // lastUpdated, the page states a provenance date that is not the data's.
+    expect(REGISTRY_LAST_UPDATED.slice(0, 10)).toBe(CYCLONEDX_REGISTRY.verifiedAgainst)
+  })
+
+  it('every evidence_type the vocabulary allows has a renderer badge', () => {
+    // WS3c (2026-08-15). THE guard for the D7 class: a value the data layer
+    // accepts but the renderer has never heard of. `guidance` was added to the
+    // Python validator and to this file's allowed list, but not to the TS union
+    // and not to the badge map — so three guidance documents rendered as
+    // specifications. Nothing checked that the two lists agreed, because there
+    // was no single list. Now there is one, and this asserts the renderer
+    // covers all of it.
+    expect(
+      unlabelledEvidenceTypes(),
+      'evidence_type values with no badge label — they would render as specifications'
+    ).toEqual([])
+
+    // `standard` is the ONLY value entitled to render with no badge.
+    for (const t of EVIDENCE_TYPES) {
+      if (t === 'standard') {
+        expect(evidenceLabelFor(t), 'standard must render without a badge').toBeNull()
+      } else {
+        expect(
+          evidenceLabelFor(t),
+          `evidence_type "${t}" must carry a visible badge, not render as a standard`
+        ).toBeTruthy()
+      }
+    }
+
+    // Defensive: a value that is not in the vocabulary at all must still not
+    // fall through to the no-badge state.
+    expect(evidenceLabelFor('not-a-real-type' as never)).toBe('Unverified type')
   })
 
   it('standards coverage of use cases does not regress', () => {
