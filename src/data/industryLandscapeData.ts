@@ -15,8 +15,65 @@ export interface IndustryUseCase {
   useCaseId: string
   useCaseLabel: string
   useCaseIcon: string
-  /** pqcProtocolMatrix row ids (FK; may be empty for non-protocol use cases). */
+  /**
+   * DEPRECATED (2026-08-15, WS11) — kept for one release as the union of
+   * `protocolsCurrent`. Read `protocolsCurrent` / `protocolsTarget` instead.
+   */
   protocols: string[]
+  /**
+   * The protocols this sector runs TODAY — pqcProtocolMatrix row ids.
+   *
+   * WS11 (2026-08-15). The mechanisms columns have always split classical from
+   * PQC; the protocols column did not, so a row could name only TLS 1.2 — which
+   * the matrix documents as having no PQC track at all — while claiming ML-KEM.
+   * Two rows did exactly that (cloud-backup, fin-archives): a PQC claim with no
+   * protocol that could carry it.
+   */
+  protocolsCurrent: string[]
+  /**
+   * Where the PQC migration lands. Derived by default from the matrix's own
+   * `supersededByProtocolId` edges (TLS 1.2 → TLS 1.3, DTLS 1.2 → DTLS 1.3,
+   * FIDO → FIDO 2) and confirmed per row; a protocol that gained PQC in place
+   * (X.509, SSH) is its own target.
+   *
+   * PQC mechanism claims are checked against THIS, not against the current
+   * protocol — see the reachability driftguard.
+   */
+  protocolsTarget: string[]
+  /**
+   * What a PQC claim on this row actually rests on (WS10, 2026-08-15).
+   *
+   *  - `adopted`      published standard AND the sector is running it
+   *  - `standardised` published standard exists, the sector has not moved
+   *  - `in-progress`  active draft on a standards track
+   *  - `proposed`     research paper or vendor proposal, no standards track
+   *  - `none`         no PQC path claimed
+   *
+   * The matrix stage of `protocolsTarget` bounds this — a row may not claim
+   * more than its target protocol supports. Whether the SECTOR adopted it is
+   * hand-authored: that is adoption, not standards progress, and conflating
+   * the two is what made an earlier version of the consistency check produce
+   * 16 false positives out of 76 rows.
+   */
+  pqcClaimBasis: PqcClaimBasis
+  /**
+   * Why this row names no protocol. Required when `protocolsCurrent` is empty,
+   * so "no standardised protocol exists for this use case" (ADS-B, blockchain
+   * consensus, EMV card authentication) is distinguishable from "nobody filled
+   * it in" — the two were identical before 2026-08-15.
+   */
+  noProtocolReason: string
+  /**
+   * Library `reference_id` for the document this row CITES as its source, so
+   * the tile can link at `/library?ref=` instead of an external URL.
+   *
+   * Hand-set only. Fuzzy title matching was tried and rejected on 2026-08-15:
+   * it resolved "IEC 62351-3/-5/-9" to `IEC 62443` and "PCI DSS v4.0.1" to the
+   * PCI-DSS quick-reference guide — pointing readers at a DIFFERENT standard,
+   * which is worse than no link. Empty is legitimate; the tile falls back to
+   * the sector's threats evidence.
+   */
+  sourceLibraryRef: string
   /** cryptoMechanisms family labels. */
   classicalMechanisms: string[]
   pqcMechanisms: string[]
@@ -89,6 +146,24 @@ export const EVIDENCE_TYPES = [
 
 export type EvidenceType = (typeof EVIDENCE_TYPES)[number]
 
+/**
+ * What a use-case row's PQC claim rests on (WS10, 2026-08-15). Ordered weakest
+ * to strongest so a ceiling comparison is a simple index lookup.
+ */
+export const PQC_CLAIM_BASES = [
+  'none',
+  'proposed',
+  'in-progress',
+  'standardised',
+  'adopted',
+] as const
+
+export type PqcClaimBasis = (typeof PQC_CLAIM_BASES)[number]
+
+export function isPqcClaimBasis(v: string): v is PqcClaimBasis {
+  return (PQC_CLAIM_BASES as readonly string[]).includes(v)
+}
+
 export function isEvidenceType(v: string): v is EvidenceType {
   return (EVIDENCE_TYPES as readonly string[]).includes(v)
 }
@@ -143,6 +218,11 @@ interface RawLandscapeRow {
   use_case_label: string
   use_case_icon: string
   protocols: string
+  protocols_current: string
+  protocols_target: string
+  pqc_claim_basis: string
+  no_protocol_reason: string
+  source_library_ref: string
   classical_mechanisms: string
   pqc_mechanisms: string
   migration_status: string
@@ -231,6 +311,11 @@ function loadLandscape(): IndustryUseCase[] {
             useCaseLabel: r.use_case_label,
             useCaseIcon: r.use_case_icon,
             protocols: splitSemicolon(r.protocols),
+            protocolsCurrent: splitSemicolon(r.protocols_current || r.protocols),
+            protocolsTarget: splitSemicolon(r.protocols_target || r.protocols),
+            pqcClaimBasis: (r.pqc_claim_basis || 'none') as PqcClaimBasis,
+            noProtocolReason: r.no_protocol_reason || '',
+            sourceLibraryRef: r.source_library_ref || '',
             classicalMechanisms: splitSemicolon(r.classical_mechanisms),
             pqcMechanisms: splitSemicolon(r.pqc_mechanisms),
             migrationStatus: r.migration_status as IndustryUseCase['migrationStatus'],
