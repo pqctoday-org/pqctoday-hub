@@ -2,8 +2,6 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_CLASS,
   CKA_DECAPSULATE,
-  CKA_HSS_KEYS_REMAINING,
-  CKA_XMSS_KEYS_REMAINING,
   CKA_DECRYPT,
   CKA_DERIVE,
   CKA_EC_POINT,
@@ -51,7 +49,6 @@ import {
   CKM_HASH_SLH_DSA_SHA512,
   CKM_HASH_SLH_DSA_SHAKE128,
   CKM_HASH_SLH_DSA_SHAKE256,
-  CKM_HSS_KEY_PAIR_GEN,
   CKM_ML_DSA,
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM,
@@ -587,25 +584,6 @@ export const hsm_extractECPoint = (
     freeTemplate(M, valTpl, 1)
     M._free(valPtr)
   }
-}
-
-/** C_GetAttributeValue(CKA_HSS_KEYS_REMAINING or CKA_XMSS_KEYS_REMAINING) → number */
-export const hsm_getKeysRemaining = (
-  M: SoftHSMModule,
-  hSession: number,
-  keyHandle: number
-): number | null => {
-  // Try HSS first, then fall back to XMSS vendor attribute (0x80000106)
-  for (const attrType of [CKA_HSS_KEYS_REMAINING, CKA_XMSS_KEYS_REMAINING]) {
-    const valTpl = buildTemplate(M, [{ type: attrType, ulongVal: 0 }])
-    try {
-      const rv = M._C_GetAttributeValue(hSession, keyHandle, valTpl.ptr, 1)
-      if (rv === 0) return Math.abs(M.getValue(valTpl.ptr + 8, 'i32'))
-    } finally {
-      freeTemplate(M, valTpl, 1)
-    }
-  }
-  return null
 }
 
 /** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}.
@@ -1308,115 +1286,21 @@ export const hsm_slhdsaVerify = (
 }
 
 /**
- * Generate a Stateful Hash-Based Signature Key Pair (LMS, HSS, XMSS).
+ * Stateful hash-based signatures (HSS/LMS, XMSS, XMSS-MT).
+ *
+ * These used to be implemented here as well as in `./stateful` and in
+ * `../softhsm.ts` — three forks of one feature, which is how the copy here came
+ * to pass the XMSS parameter set through pMechanism->pParameter (where §6.66.6
+ * says nothing travels) and to set CKA_SENSITIVE=false / CKA_EXTRACTABLE=true
+ * on a key whose whole point is that its one-time state must not leave the
+ * token. Both are hard errors on the conformant engines.
+ *
+ * `./stateful` is now the single implementation. This re-export exists so the
+ * StatefulSignatures workshops keep importing from the path they always have.
  */
-export const hsm_generateStatefulKeyPair = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  keyType: number,
-  paramSet: number,
-  lmotsParamSet: number = 0x03, // CKP_LMOTS_SHA256_N32_W4 default
-  lmsParamsAll?: number[], // per-level lms type IDs (length = levels); overrides paramSet when provided
-  lmotsParamsAll?: number[] // per-level lmots type IDs (length = levels); overrides lmotsParamSet when provided
-): { pubHandle: number; privHandle: number } => {
-  const mech = M._malloc(12)
-  M.setValue(mech, mechType, 'i32')
-
-  let pParamPtr = 0
-  if (mechType === CKM_HSS_KEY_PAIR_GEN) {
-    // CK_HSS_KEY_PAIR_GEN_PARAMS: levels(4) + lms_types[8](32) + lmots_types[8](32) = 68 bytes
-    const lmsAll = lmsParamsAll ?? [paramSet]
-    const lmotsAll = lmotsParamsAll ?? [lmotsParamSet]
-    const levels = Math.min(lmsAll.length, 8)
-    pParamPtr = M._malloc(68)
-    M.setValue(pParamPtr, levels, 'i32')
-    for (let i = 0; i < 8; i++) {
-      M.setValue(pParamPtr + 4 + i * 4, lmsAll[i] ?? 0, 'i32')
-      M.setValue(pParamPtr + 36 + i * 4, lmotsAll[i] ?? 0, 'i32')
-    }
-    M.setValue(mech + 4, pParamPtr, 'i32')
-    M.setValue(mech + 8, 68, 'i32')
-  } else if (
-    mechType === 0x00004034 /* CKM_XMSS_KEY_PAIR_GEN */ ||
-    mechType === 0x00004035 /* CKM_XMSSMT_KEY_PAIR_GEN */
-  ) {
-    pParamPtr = M._malloc(4)
-    M.setValue(pParamPtr, paramSet, 'i32')
-    M.setValue(mech + 4, pParamPtr, 'i32')
-    M.setValue(mech + 8, 4, 'i32')
-  } else {
-    M.setValue(mech + 4, 0, 'i32')
-    M.setValue(mech + 8, 0, 'i32')
-  }
-
-  const pubTpl = buildTemplate(M, [
-    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: keyType },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-  ])
-
-  const prvTpl = buildTemplate(M, [
-    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: keyType },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_SIGN, boolVal: true },
-  ])
-
-  const pubHPtr = allocUlong(M)
-  const prvHPtr = allocUlong(M)
-
-  try {
-    checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 4, prvTpl.ptr, 7, pubHPtr, prvHPtr),
-      'C_GenerateKeyPair(Stateful)'
-    )
-    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
-  } finally {
-    if (pParamPtr) M._free(pParamPtr)
-    M._free(mech)
-    freeTemplate(M, pubTpl, 4)
-    freeTemplate(M, prvTpl, 7)
-    M._free(pubHPtr)
-    M._free(prvHPtr)
-  }
-}
-
-/**
- * Sign data using a Stateful Hash-Based Signature scheme (LMS, HSS, XMSS).
- */
-export const hsm_statefulSignBytes = (
-  M: SoftHSMModule,
-  hSession: number,
-  mechType: number,
-  privHandle: number,
-  data: Uint8Array
-): Uint8Array => {
-  const mech = M._malloc(12)
-  M.setValue(mech, mechType, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
-
-  const msgPtr = writeBytes(M, data)
-  const sigLenPtr = allocUlong(M)
-  let sigPtr = 0
-
-  checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(Stateful)')
-  try {
-    checkRV(M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr), 'C_Sign(Stateful,len)')
-    const sigLen = readUlong(M, sigLenPtr)
-    sigPtr = M._malloc(sigLen)
-    writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr), 'C_Sign(Stateful,bytes)')
-    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
-  } finally {
-    M._free(mech)
-    M._free(msgPtr)
-    M._free(sigLenPtr)
-    if (sigPtr) M._free(sigPtr)
-  }
-}
+export {
+  hsm_generateStatefulKeyPair,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
+  hsm_getKeysRemaining,
+} from './stateful'

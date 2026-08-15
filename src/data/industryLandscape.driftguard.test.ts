@@ -6,6 +6,8 @@
 //   - protocols ⊆ pqcProtocolMatrix row ids (Protocol Support deep links)
 //   - mechanisms ⊆ cryptoMechanisms families, whose members ⊆ ALGORITHM_REGISTRY
 //   - standards library_ref resolves to a live Library catalog row (Library links)
+//   - playground_tools ⊆ WORKSHOP_TOOLS ids (Crypto Lab deep links)
+//   - every industry resolves to a sector code (Library/Compliance deep links)
 //   - icons ⊆ the landscapeIcons allowlist
 // A failure here means a CSV refresh or vocabulary change broke a seam, not a bug
 // in this file.
@@ -19,6 +21,8 @@ import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
+import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
+import { resolveToNaicsSet } from './sectorVocabularyData'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 
@@ -210,6 +214,173 @@ describe('industry-landscape driftguards', () => {
         ids.size,
         `industry "${industry}" has inconsistent learn_module_id values: ${[...ids]}`
       ).toBe(1)
+    }
+  })
+
+  it('every playground_tools id resolves to a real Crypto Lab tool', () => {
+    // Hard FK, same shape as the learn_module_id guard above: the tile renders
+    // `/playground/<id>`, so an id the registry doesn't know is a dead link.
+    // WORKSHOP_TOOLS includes the generated `sbx-*` sandbox scenarios, so a
+    // renamed or retired scenario fails here rather than 404ing in the UI.
+    const ids = new Set(WORKSHOP_TOOLS.map((t) => t.id))
+    for (const uc of useCases) {
+      for (const id of uc.playgroundTools) {
+        expect(ids, `${uc.useCaseId}: unknown playground tool "${id}"`).toContain(id)
+      }
+      expect(
+        new Set(uc.playgroundTools).size,
+        `${uc.useCaseId}: duplicate playground tool ids`
+      ).toBe(uc.playgroundTools.length)
+    }
+  })
+
+  it('at least one use case per industry offers a playground tool', () => {
+    // Deliberately per-INDUSTRY, not per-use-case. An individual use case with
+    // no honest tool match is a legitimate empty cell (energy-nuclear today);
+    // a whole industry with none means the tile's "Try it" row never renders,
+    // which is a content gap worth failing on.
+    const byIndustry = new Map<string, number>()
+    for (const uc of useCases) {
+      byIndustry.set(uc.industry, (byIndustry.get(uc.industry) ?? 0) + uc.playgroundTools.length)
+    }
+    for (const [industry, n] of byIndustry) {
+      expect(n, `industry "${industry}" has no playground tools on any use case`).toBeGreaterThan(0)
+    }
+  })
+
+  it('every mechanism_refs id resolves to an ACTIVE library row', () => {
+    // Hard FK, same rule as the standards CSV's library_ref: the column exists
+    // to prove a row's mechanism claims, so a ref pointing at a missing or
+    // deprecated document proves nothing. Empty is legitimate and reported
+    // separately (see the coverage test below), never failed here.
+    const active = new Set(libraryData.map((d) => d.referenceId))
+    for (const uc of useCases) {
+      for (const ref of uc.mechanismRefs) {
+        expect(
+          active,
+          `${uc.useCaseId}: mechanism_ref "${ref}" is not an active library row`
+        ).toContain(ref)
+      }
+    }
+  })
+
+  it('a row claiming mechanisms carries at least one proof ref, or is a known gap', () => {
+    // Ratchet, not a coverage mandate. 2026-08-14 baseline: 73 of the 74 rows
+    // that claim a mechanism carry a ref. The number may only go UP — this
+    // fails if a refresh drops proof links, which is the regression that
+    // matters. Raise the floor as the remaining gaps close; do not lower it.
+    //
+    // The one holdout is aero-atc-datalink (RSA). ACARS message security is
+    // specified in ARINC 823, and both it and ARINC 811 are sold through SAE —
+    // paywalled, so unusable as a citation a reader could follow. The one
+    // open-access alternative found, "Economy Class Crypto" (Smith et al.,
+    // FC 2018), is about weak SYMMETRIC ciphers in ACARS traffic and contains
+    // no RSA, ECDSA or ECDH at all, so it proves nothing about this claim.
+    const withClaims = useCases.filter(
+      (u) => u.classicalMechanisms.length + u.pqcMechanisms.length > 0
+    )
+    const withRefs = withClaims.filter((u) => u.mechanismRefs.length > 0)
+    expect(
+      withRefs.length,
+      'mechanism_refs coverage regressed below its baseline'
+    ).toBeGreaterThanOrEqual(74)
+    // Every row that claims nothing must also cite nothing.
+    for (const uc of useCases) {
+      if (uc.classicalMechanisms.length + uc.pqcMechanisms.length === 0) {
+        expect(uc.mechanismRefs, `${uc.useCaseId}: refs on a row with no mechanisms`).toEqual([])
+      }
+    }
+  })
+
+  it('every standards row points at a use case that exists', () => {
+    // use_case_ids is how a use case acquires its standards; a typo here
+    // silently leaves the use case looking unstandardised rather than failing.
+    const ids = new Set(useCases.map((u) => u.useCaseId))
+    for (const s of standards) {
+      for (const uc of s.useCaseIds) {
+        expect(ids, `standard "${s.standardId}" lists unknown use case "${uc}"`).toContain(uc)
+      }
+    }
+  })
+
+  it('a standards row is scoped to the industry of the use cases it serves', () => {
+    // The tab groups standards under an industry heading, so a row whose
+    // use_case_ids belong to a different industry renders under the wrong one.
+    const industryOf = new Map(useCases.map((u) => [u.useCaseId, u.industry]))
+    for (const s of standards) {
+      for (const uc of s.useCaseIds) {
+        const owner = industryOf.get(uc)
+        if (!owner || s.industry === 'Cross-Industry') continue
+        expect(owner, `standard "${s.standardId}" (${s.industry}) serves ${uc} (${owner})`).toBe(
+          s.industry
+        )
+      }
+    }
+  })
+
+  it('evidence_type is a known value, and honest in BOTH directions', () => {
+    // A research paper admitted to the standards table must SAY so — the chip
+    // badge is driven entirely by this field, so a mislabelled row renders a
+    // preprint as though it were a specification.
+    //
+    // The first version of this test only checked one direction: that a row
+    // marked non-standard points at a researchy document. It never checked
+    // that a row marked `standard` is not secretly a report — and two were
+    // (GSMA PQ.01 and the ENISA hybridisation study, both Industry Reports),
+    // because the sweep set evidence_type='standard' on every pre-existing row
+    // without looking. A one-way guard on a two-way claim is barely a guard.
+    const NOT_A_SPEC = new Set(['Research Paper', 'Industry Report', 'Government Guidance'])
+    const docTypeOf = new Map(libraryData.map((d) => [d.referenceId, d.documentType]))
+    for (const s of standards) {
+      expect(
+        ['standard', 'research', 'industry-report', 'courseware', 'guidance'],
+        `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
+      ).toContain(s.evidenceType)
+      const docType = docTypeOf.get(s.libraryRef) ?? ''
+      if (s.evidenceType === 'standard') {
+        // Reverse direction. NOTE the library's `Reference` type is NOT listed
+        // in NOT_A_SPEC: it holds FIPS 203/204/205, SP 800-208 and the TCG TPM
+        // library, which are specifications despite the label. Only the three
+        // types that are never normative are rejected here.
+        expect(
+          NOT_A_SPEC,
+          `standard "${s.standardId}" is marked as a standard but the library calls it a ${docType}`
+        ).not.toContain(docType)
+      } else {
+        expect(
+          new Set([...NOT_A_SPEC, 'Reference']),
+          `standard "${s.standardId}" is marked ${s.evidenceType} but its library row is a ${docType}`
+        ).toContain(docType)
+      }
+    }
+  })
+
+  it('standards coverage of use cases does not regress', () => {
+    // Ratchet, like mechanism_refs above. 2026-08-13: 74 of 76 use cases have
+    // at least one standards row. The two without are gov-procurement and
+    // ins-cyber-underwriting, governance use cases that claim no mechanism at
+    // all — nothing to cite. The four proven only by research, industry
+    // reports or courseware ARE listed, carrying an evidence_type badge.
+    const covered = new Set<string>()
+    for (const s of standards) for (const uc of s.useCaseIds) covered.add(uc)
+    for (const u of useCases) if (u.relatedStandards.length > 0) covered.add(u.useCaseId)
+    expect(covered.size, 'industry_standards coverage regressed').toBeGreaterThanOrEqual(74)
+  })
+
+  it('every industry resolves to a sector code for the Library/Compliance links', () => {
+    // The detail view links unsupported industries at /library?sector=<naics>
+    // and the regulatory count at /compliance?ind=<label>; both resolve through
+    // sector_vocabulary_*.csv. resolveToNaicsSet is EXACT-match on the
+    // lowercased alias and falls back to echoing the input, so a missing alias
+    // is silent — it returns the industry name as if it were a NAICS code and
+    // the filter matches nothing.
+    for (const ind of getLandscapeIndustries()) {
+      // 'Cross-Industry' is the absence of a sector, not a sector — the tile
+      // renders no sector link for it (see industryCrossRefs.sectorCodesFor).
+      if (ind === 'Cross-Industry') continue
+      const codes = resolveToNaicsSet(ind)
+      expect(codes, `industry "${ind}" has no sector_vocabulary alias`).not.toEqual([ind])
+      expect(codes.length, `industry "${ind}" resolved to no sector code`).toBeGreaterThan(0)
     }
   })
 

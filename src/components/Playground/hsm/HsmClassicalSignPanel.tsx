@@ -44,9 +44,9 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 type ClassicMode = 'rsa' | 'ecdsa' | 'eddsa' | 'xmss' | 'lms'
 
 const CLASSIC_MODES: { id: ClassicMode; label: string; spec: string }[] = [
-  { id: 'rsa', label: 'RSA', spec: 'PKCS#11 v3.2 §2.1 — CKM_RSA_PKCS / PSS / OAEP' },
-  { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §2.3.1 — CKM_ECDSA_SHA*' },
-  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §2.3.6 — CKM_EDDSA / CKM_EDDSA_PH' },
+  { id: 'rsa', label: 'RSA', spec: 'PKCS#11 v3.2 §6.1 — CKM_RSA_PKCS / PSS / OAEP' },
+  { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §6.3.13 — CKM_ECDSA_SHA*' },
+  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §6.3.10 — CKM_EDDSA / CKM_EDDSA_PH' },
   { id: 'xmss', label: 'XMSS', spec: 'PKCS#11 v3.2 — CKM_XMSS / CKK_XMSS' },
   {
     id: 'lms',
@@ -913,7 +913,7 @@ const XmssPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // Hardcoded paramSet for XMSS-SHA2_10_256 (0x00000001)
-      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1, false)
+      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1)
       addHsmKey({
         handle: pubHandle,
         family: 'xmss',
@@ -1065,7 +1065,7 @@ const LmsPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       // CKM_HSS_KEY_PAIR_GEN with NULL params → single-level LMS (engine default).
-      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, false)
+      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession)
       addHsmKey({
         handle: pubHandle,
         family: 'lms',

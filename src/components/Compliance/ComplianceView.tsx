@@ -343,6 +343,7 @@ export const ComplianceView = ({
     activeTab,
     setActiveTab,
     highlightFrameworkId,
+    reqFilter,
     lsOrg,
     lsIndustry,
     lsRegion,
@@ -428,15 +429,14 @@ export const ComplianceView = ({
   const [cswp39JumpQuery, setCswp39JumpQuery] = useState('')
 
   // Tier-filtered framework universe for the pillar pipeline.
-  const tierFilteredFrameworks = useMemo(
-    () =>
+  const tierFilteredFrameworks = useMemo(() => {
+    const tiered =
       tierFilter.length === 0
         ? complianceFrameworks
-        : complianceFrameworks.filter((f) =>
-            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
-          ),
-    [tierFilter]
-  )
+        : complianceFrameworks.filter((f) => matchesTrustTierFilter(tierFilter, 'compliance', f.id))
+    if (reqFilter.length === 0) return tiered
+    return tiered.filter((f) => reqFilter.includes(f.pqcRequirement))
+  }, [tierFilter, reqFilter])
 
   // For-You DeadlineTimeline.
   const forYouProfileOverride = useMemo(
