@@ -29,6 +29,15 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.50.1] - 2026-08-15
+
+Search results now cite roughly 800 more library documents whose citation links had quietly stopped resolving, and 13 compliance records that weren't being scored for trust are now scored.
+
+### Fixed
+
+- **Search results cite the source passage again for ~800 library documents** [view:/library] [persona:researcher] [persona:developer]: the citation-linking step behind search hadn't been re-run since a prior data snapshot, so as the library grew, roughly 800 documents accumulated with a working search entry but no link back to the actual passage in the source document — a citation you couldn't follow. Re-run against the current library; a small, named residue of 13 documents genuinely can't be linked (a handful of file formats the extractor can't read text from) and is tracked openly rather than hidden behind a passing check.
+- **13 compliance records are now scored for trust** [view:/compliance] [persona:researcher] [persona:ops]: these records existed on the Compliance page but weren't being factored into the trust-tier scoring that backs the page's confidence indicators, because the search index they're checked against was out of date.
+
 ## [4.50.0] - 2026-08-14
 
 The PKCS#11 playground now runs the audited v3.2 engines rather than older builds, names every mechanism it advertises instead of showing raw hex, and cites the current standard — plus five correctness fixes found by auditing the two engines against each other.
