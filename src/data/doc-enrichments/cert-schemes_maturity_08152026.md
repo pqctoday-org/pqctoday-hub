@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-15
 category: Certification Schemes
-document_count: 5
-requirement_count: 30
+document_count: 6
+requirement_count: 38
 ---
 
 ## BSI TR-02102-1
@@ -76,3 +76,19 @@ requirement_count: 30
     - _T3 Repeatable · all_: For re-evaluations or recertifications, assess Impact Analysis Reports (IAR) to determine the scope of required testing and effort.
 - **Observability**:
     - _T3 Repeatable · all_: Implement an Extended Follow-Up Evaluation process to assess change requirements, estimate effort, and verify updates to the TOE and documentation.
+
+## NIST-SP-800-90A-R1
+- **Source**: SP 800-90A Rev. 1: Recommendation for Random Number Generation Using Deterministic Random Bit Generators
+- **URL**: https://csrc.nist.gov/pubs/sp/800/90/a/r1/final
+- **Requirement count**: 8
+- **Assurance / FIPS**:
+    - _T3 Repeatable · libraries_: Validate DRBG implementations against NIST SP 800-90A specifications to ensure conformance with deterministic random bit generation standards.
+    - _T3 Repeatable · libraries_: Perform implementation validation testing to verify that the DRBG mechanism functions correctly according to the specified algorithm.
+    - _T3 Repeatable · libraries_: Ensure entropy input meets minimum entropy requirements for seed construction to guarantee cryptographic security strength.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · libraries_: Enforce reseed operations at the end of the seedlife to maintain the security strength of the DRBG instantiation.
+    - _T3 Repeatable · libraries_: Remove DRBG instantiations securely when no longer needed to prevent state compromise.
+- **Observability**:
+    - _T3 Repeatable · libraries_: Implement health tests for Instantiate, Generate, Reseed, and Uninstantiate functions to detect failures in random number generation.
+    - _T3 Repeatable · libraries_: Conduct known answer testing as part of health testing to ensure the DRBG produces expected outputs for specific inputs.
+    - _T3 Repeatable · libraries_: Handle errors encountered during health testing by ceeding operation and alerting administrators to potential RNG failure.

@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-15
 category: Compliance Frameworks
-document_count: 18
-requirement_count: 95
+document_count: 20
+requirement_count: 104
 ---
 
 ## ANSSI PQC Follow-up Paper
@@ -20,6 +20,14 @@ requirement_count: 95
     - _T2 Risk-Informed · libraries_: Avoid modifying parameters of standardized post-quantum algorithm instances (e.g., CRYSTALS-Kyber, Dilithium, Falcon, XMSS, LMS, SPHINCS+).
     - _T2 Risk-Informed · libraries_: Use the highest possible NIST security level for post-quantum algorithms, preferably level-5 or level-3.
     - _T2 Risk-Informed · libraries_: Use the actively secure version (IND-CCA) of post-quantum KEMs as standardized by NIST.
+
+## ANSSI PQC Position Paper
+- **Source**: Avis de l'ANSSI sur la Migration Vers la Cryptographie
+- **URL**: https://cyber.gouv.fr/sites/default/files/2022/04/anssi-avis-migration-vers-la-cryptographie-post-quantique.pdf
+- **Requirement count**: 2
+- **Governance**:
+    - _T2 Risk-Informed · all_: Include the quantum threat in risk analysis and consider including quantum protection measures in affected cryptographic products.
+    - _T2 Risk-Informed · all_: Define a progressive transition strategy towards quantum-resistant cryptography for affected cryptographic products.
 
 ## ANSSI-PQC-FAQ-2025
 - **Source**: ANSSI Post-Quantum Cryptography FAQ
@@ -181,6 +189,23 @@ requirement_count: 95
     - _T2 Risk-Informed · all_: Assess existing system infrastructures for crypto-agility support and consider upgrades to address limitations hindering the transition to quantum security.
 - **Observability**:
     - _T2 Risk-Informed · all_: Monitor ongoing quantum computing developments for cybersecurity threats and risks impacting financial services and their mitigation.
+
+## Singapore-CSA-Quantum-Safe-Handbook
+- **Source**: Quantum-Safe Handbook and Quantum Readiness Index
+- **URL**: https://isomer-user-content.by.gov.sg/36/11227d39-4350-4ded-9046-d62f99f561ab/Draft%20for%20Public%20Consultation%20-%20Quantum-Safe%20Handbook%20(Oct%202025).pdf
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · all_: Use the Quantum Readiness Index (QRI) to self-assess quantum-safe readiness, identify capability gaps, and track progress over time.
+- **Governance**:
+    - _T2 Risk-Informed · all_: Define RACI roles and responsibilities for quantum-safe migration to ensure clear ownership and accountability across the organization.
+    - _T2 Risk-Informed · all_: Establish a documented quantum-safe migration strategy and policy, treating migration as a present risk management issue rather than a future problem.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Conduct a comprehensive inventory of cryptographic assets, including software libraries, hardware modules, and protocols, to identify vulnerable dependencies.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Implement best practices to identify, assess, and rotate cryptographic primitives in a controlled and timely manner to manage finite lifespans.
+    - _T2 Risk-Informed · all_: Prioritize the replacement of public-key cryptography relying on integer factoring or discrete logarithms (e.g., RSA, ECDH) due to vulnerability to Shor's algorithm.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Monitor developments in quantum-safe technology and standards to adapt migration strategies as the field evolves.
 
 ## US-CISA-ACDI-Strategy-2024
 - **Source**: CISA Strategy for Migrating to Automated PQC Discovery and Inventory Tools

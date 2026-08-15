@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.50.3] - 2026-08-15
+
+The two new PKCS#11 v3.2 library entries (Profiles and Usage Guide) now show full details instead of blank fields.
+
+### Data
+
+- **PKCS#11 v3.2 Profiles and Usage Guide have full detail pages** [view:/library] [persona:researcher] [persona:developer]: these two documents were added to the catalog with citation and metadata but no extracted content — their detail pages showed mostly blank fields. Both are now fully enriched: authors/editors, mechanisms covered, and key conformance takeaways.
+
 ## [4.50.2] - 2026-08-15
 
 Library search now finds documents by their standard number no matter how it's written — "PKCS11", "PKCS-11", and "PKCS #11" all now find the same results.

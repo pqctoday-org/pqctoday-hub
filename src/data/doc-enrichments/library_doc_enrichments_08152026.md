@@ -1,31 +1,31 @@
 ---
 generated: 2026-08-15
 collection: library
-documents_processed: 3
+documents_processed: 2
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 ---
 
-## NIST SP 800-30
+## PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O
 
-- **Reference ID**: NIST SP 800-30
-- **Title**: Guide for Conducting Risk Assessments (Rev. 1)
-- **Authors**: NIST
-- **Publication Date**: 2012-09
-- **Last Updated**: 2012-09-01
-- **Document Status**: Published
-- **Main Topic**: NIST Special Publication 800-30 Revision 1 provides a methodology for conducting risk assessments, including qualitative scales for likelihood and impact.
+- **Reference ID**: PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O
+- **Title**: PKCS #11 Cryptographic Token Interface Profiles Version 3.2 (OASIS Standard)
+- **Authors**: OASIS PKCS11 Technical Committee
+- **Publication Date**: 2026-06-03
+- **Last Updated**: 2026-06-03
+- **Document Status**: OASIS Standard
+- **Main Topic**: Defines conformance profiles for the PKCS #11 Cryptographic Token Interface Version 3.2, specifying requirements for providers and consumers.
 - **PQC Algorithms Covered**: None detected
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology, U.S. Department of Commerce, Office of Management and Budget
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Valerie Fenwick (Chair); Robert Relyea (Chair); Tim Hudson (Editor)
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: National Institute of Standards and Technology
-- **Compliance Frameworks Referenced**: Federal Information Security Management Act, OMB Circular A-130, FIPS 200
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Organizations should use a five-level qualitative scale (Very Low to Very High) for assessing likelihood and impact; Risk assessments must identify threat sources, vulnerabilities, and predisposing conditions; Continuous monitoring processes should evaluate the effectiveness of security controls and compliance; Risk management strategies should be updated based on assessment results and lessons learned;
+- **Infrastructure Layers**: HSM
+- **Standardization Bodies**: OASIS
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: HKDF
+- **Key Takeaways**: PKCS #11 v3.2 conformance requires meeting specific provider or consumer profiles; Baseline Provider profile mandates only basic capability information functions; HKDF TLS Token profile specifies support for CKM_HKDF_DATA with specific TLS info strings; Profiles define mandatory and optional test cases for conformance verification; Vendor extensions are allowed if they do not contradict PKCS #11 requirements
 - **Security Levels & Parameters**: None detected
 - **Hybrid & Transition Approaches**: None detected
 - **Pure PQC KEM Support**: Not Applicable
@@ -40,9 +40,65 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-risk-management; pqc-governance; Assess; Compliance
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: PKCS #11 Specification Version 3.2
+- **Relevant PQC Today Features**: hsm-pqc; compliance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: conformance testing; mandatory test cases; optional test cases
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O.pdf (530,083 bytes, 13,699 extracted chars)
+- **Extraction Timestamp**: 2026-08-15T13:57:41
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
+
+---
+
+## PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3
+
+- **Reference ID**: PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3
+- **Title**: PKCS #11 Cryptographic Token Interface Usage Guide Version 3.2
+- **Authors**: OASIS PKCS11 Technical Committee
+- **Publication Date**: 2025-04-15
+- **Last Updated**: 2025-04-15
+- **Document Status**: OASIS Committee Note 01
+- **Main Topic**: Guidance on using PKCS #11 Version 3.2, including session-state, user/login models, and object-access matrices.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Valerie Fenwick (Chair); Robert Relyea (Chair); Dieter Bong (Editor); Dina Kurktchi-Nimeh (Substantial contributions)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Cryptographic Token Interface
+- **Standardization Bodies**: OASIS
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA
+- **Key Takeaways**: PKCS #11 v3.2 moved session-state, user/login, and object-access models to this Usage Guide; Auditing against the base specification alone will find no governing text for these models; Cryptoki provides a logical view of slots and tokens hiding device driver details; Access to private objects requires a PIN and keys can be marked sensitive or unextractable; The document is a Non-Standards Track Work Product replacing Version 2.40
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: PKCS #11 Specification Version 3.2; PKCS #11 Profiles Version 3.2
+- **Relevant PQC Today Features**: hsm-pqc; crypto-agility; pki-workshop
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -55,120 +111,8 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: NIST_SP_800-30.pdf (826,897 bytes, 20,944 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:56:38
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## Cyentia IRIS 2025
-
-- **Reference ID**: Cyentia IRIS 2025
-- **Title**: Information Risk Insights Study (IRIS) 2025 - It's About Time
-- **Authors**: Cyentia Institute
-- **Publication Date**: 2025
-- **Last Updated**: 2026-03-01
-- **Document Status**: Published
-- **Main Topic**: Longitudinal analysis of cyber-incident frequency, likelihood, and financial loss trends from 2008 to 2024.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Bodies: Cybersecurity and Infrastructure Security Agency (CISA)
-- **Leaders Contributions Mentioned**: Jack Freund (Executive Fellow | The Cyentia Institute)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Payment Card Industry (PCI)
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: The probability of a significant security incident has almost quadrupled over the last 15 years; Using Valid Accounts and Phishing remain the dominant initial access techniques; Incident rates relative to population size are significantly higher for large corporations than smaller businesses; Security strategies must recalibrate with changing risk trends rather than relying on past assumptions.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Security Architect; Policy Maker
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-risk-management; pqc-business-case; vendor-risk
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: 99% of Global 2000 companies are connected to vendors that have had recent breaches
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: 3,000 significant security incidents reported or discovered each quarter; 650% increase in incidents over the last 15 years
-- **Organizational Readiness**: None detected
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: Cyentia_IRIS_2025.pdf (2,580,218 bytes, 16,308 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:56:39
-- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
-
----
-
-## NetDiligence Cyber Claims Study 2025
-
-- **Reference ID**: NetDiligence Cyber Claims Study 2025
-- **Title**: NetDiligence Cyber Claims Study - 2025 Report
-- **Authors**: NetDiligence
-- **Publication Date**: 2025-09
-- **Last Updated**: 2025-09-01
-- **Document Status**: Published
-- **Main Topic**: Analysis of 10,402 cyber-insurance claims from 2020-2024, detailing incident costs, causes of loss, and trends in ransomware and third-party breaches.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: Colorado attorney general
-- **Leaders Contributions Mentioned**: Sean B. Hoar (Partner & Chair, Constangy Cyber Team); George Kohlhofer (Principal, Cybersecurity and Privacy Risk, RSM US LLP); Billy Gouveia (CEO, Surefire Cyber)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: Colorado AI Act
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Ransomware, BEC, and hacking are the top causes of cyber insurance claims; Third-party and supply chain breaches account for 32% of breaches and are among the most expensive to remediate; AI-powered attacks, including deepfakes and voice cloning, are increasing in frequency and sophistication; Small businesses suffer disproportionate financial and operational losses from ransomware attacks; Staff mistakes are often the ignition point for breaches, even if not the final coded cause of loss.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Pure PQC KEM Support**: Not Applicable
-- **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: Not Applicable
-- **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: Not Applicable
-- **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: Not Applicable
-- **Hybrid PQC Signature Evidence**: None detected
-- **PQC Heatmap Protocols Covered**: None applicable
-- **PQC Heatmap Protocols Evidence**: None detected
-- **Lifecycle State**: Released
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: CISO; Compliance Officer; Security Architect
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-business-case; vendor-risk; pqc-risk-management
-- **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Third-party and supply chain breaches are no longer isolated events; 32% of breaches were tied to third- or fourth-party exposures; third-party vulnerabilities are among the most expensive to remediate.
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: Average incident cost for SMEs is $264K; Average incident cost for large companies is $10.3M; U.S. data breaches cost an average of $10.22 million; Ransomware attacks increased over 125% this year.
-- **Organizational Readiness**: Organizations need education, governance, and a coordinated strategy; breach readiness requires more than tools; companies must be agile and proactive to stay ahead of threats.
-- **Math Family**: None detected
-- **PQC Round**: Not Applicable
-- **Source Document**: NetDiligence_Cyber_Claims_Study_2025.pdf (9,509,998 bytes, 18,735 extracted chars)
-- **Extraction Timestamp**: 2026-08-15T07:56:40
+- **Source Document**: PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3.pdf (468,117 bytes, 15,099 extracted chars)
+- **Extraction Timestamp**: 2026-08-15T13:57:42
 - **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
@@ -8266,6 +8210,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Supply Chain & Vendor Risk**: SBOM; SaaSBOM; HBOM; ML-BOM; CBOM; dependency chains; third-party components; vendor risk
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Cyentia IRIS 2025
+
+- **Reference ID**: Cyentia IRIS 2025
+- **Title**: Information Risk Insights Study (IRIS) 2025 - It's About Time
+- **Authors**: Cyentia Institute
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-01
+- **Document Status**: Published
+- **Main Topic**: Longitudinal analysis of cyber-incident frequency, likelihood, and financial loss trends from 2008 to 2024.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: Cybersecurity and Infrastructure Security Agency (CISA)
+- **Leaders Contributions Mentioned**: Jack Freund (Executive Fellow | The Cyentia Institute)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Payment Card Industry (PCI)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The probability of a significant security incident has almost quadrupled over the last 15 years; Using Valid Accounts and Phishing remain the dominant initial access techniques; Incident rates relative to population size are significantly higher for large corporations than smaller businesses; Security strategies must recalibrate with changing risk trends rather than relying on past assumptions.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-risk-management; pqc-business-case; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: 99% of Global 2000 companies are connected to vendors that have had recent breaches
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: 3,000 significant security incidents reported or discovered each quarter; 650% increase in incidents over the last 15 years
 - **Organizational Readiness**: None detected
 - **Math Family**: None detected
 - **PQC Round**: Not Applicable
@@ -25985,6 +25983,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
+## NIST SP 800-30
+
+- **Reference ID**: NIST SP 800-30
+- **Title**: Guide for Conducting Risk Assessments (Rev. 1)
+- **Authors**: NIST
+- **Publication Date**: 2012-09
+- **Last Updated**: 2012-09-01
+- **Document Status**: Published
+- **Main Topic**: NIST Special Publication 800-30 Revision 1 provides a methodology for conducting risk assessments, including qualitative scales for likelihood and impact.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology, U.S. Department of Commerce, Office of Management and Budget
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Security Management Act, OMB Circular A-130, FIPS 200
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should use a five-level qualitative scale (Very Low to Very High) for assessing likelihood and impact; Risk assessments must identify threat sources, vulnerabilities, and predisposing conditions; Continuous monitoring processes should evaluate the effectiveness of security controls and compliance; Risk management strategies should be updated based on assessment results and lessons learned;
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-risk-management; pqc-governance; Assess; Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## NIST SP 800-37
 
 - **Reference ID**: NIST SP 800-37
@@ -29545,6 +29597,60 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Organizational Readiness**: awareness of latest developments in post-quantum cryptography; assessment and determination of residual risk; note quantum vulnerable systems in agency risk assessments
 - **Math Family**: None detected
 - **PQC Round**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## NetDiligence Cyber Claims Study 2025
+
+- **Reference ID**: NetDiligence Cyber Claims Study 2025
+- **Title**: NetDiligence Cyber Claims Study - 2025 Report
+- **Authors**: NetDiligence
+- **Publication Date**: 2025-09
+- **Last Updated**: 2025-09-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of 10,402 cyber-insurance claims from 2020-2024, detailing incident costs, causes of loss, and trends in ransomware and third-party breaches.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Colorado attorney general
+- **Leaders Contributions Mentioned**: Sean B. Hoar (Partner & Chair, Constangy Cyber Team); George Kohlhofer (Principal, Cybersecurity and Privacy Risk, RSM US LLP); Billy Gouveia (CEO, Surefire Cyber)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Colorado AI Act
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Ransomware, BEC, and hacking are the top causes of cyber insurance claims; Third-party and supply chain breaches account for 32% of breaches and are among the most expensive to remediate; AI-powered attacks, including deepfakes and voice cloning, are increasing in frequency and sophistication; Small businesses suffer disproportionate financial and operational losses from ransomware attacks; Staff mistakes are often the ignition point for breaches, even if not the final coded cause of loss.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-business-case; vendor-risk; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party and supply chain breaches are no longer isolated events; 32% of breaches were tied to third- or fourth-party exposures; third-party vulnerabilities are among the most expensive to remediate.
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Average incident cost for SMEs is $264K; Average incident cost for large companies is $10.3M; U.S. data breaches cost an average of $10.22 million; Ransomware attacks increased over 125% this year.
+- **Organizational Readiness**: Organizations need education, governance, and a coordinated strategy; breach readiness requires more than tools; companies must be agile and proactive to stay ahead of threats.
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
