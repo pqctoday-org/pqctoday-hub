@@ -17,12 +17,13 @@ import {
   loadIndustryLandscape,
   getLandscapeIndustries,
   EVIDENCE_TYPES,
+  PQC_CLAIM_BASES,
 } from './industryLandscapeData'
 import { evidenceLabelFor, unlabelledEvidenceTypes } from '../components/Algorithms/evidenceLabels'
 import { CRYPTO_MECHANISMS, isKnownMechanism, CYCLONEDX_REGISTRY } from './cryptoMechanisms'
 import { ALGORITHM_FAMILIES, REGISTRY_LAST_UPDATED } from './cyclonedxCryptoRegistry'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
-import { PROTOCOL_MATRIX } from './pqcProtocolMatrix'
+import { PROTOCOL_MATRIX, DRAFT_STAGE_LEVEL } from './pqcProtocolMatrix'
 import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
@@ -31,6 +32,7 @@ import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
 import { resolveToNaicsSet } from './sectorVocabularyData'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
+const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
 
 /** Industries with no official-statistics market figure, by design:
  *  Cross-Industry (not an industry), Hardware Security Modules (product
@@ -65,6 +67,130 @@ describe('industry-landscape driftguards', () => {
     for (const uc of useCases) {
       for (const p of uc.protocols) {
         expect(ids, `${uc.useCaseId}: unknown protocol "${p}"`).toContain(p)
+      }
+    }
+  })
+
+  it('every PQC claim is reachable through a target protocol (WS3a)', () => {
+    // THE consistency check, and note carefully what it does NOT ask.
+    //
+    // The first design asked "is migration_status=none while a linked protocol
+    // is RFC-published?" — run against real data it flagged 16 of 76 rows and
+    // every one was correct as written: x509 HAS published PQC RFCs, and
+    // avionics genuinely has not adopted them. That rule conflated STANDARDS
+    // PROGRESS with SECTOR ADOPTION, which are different facts.
+    //
+    // This asks a question that is objectively true or false instead: does the
+    // claimed algorithm have ANY path through the protocols this row migrates
+    // to? A KEM claim needs a target with a KEM dimension; a signature claim
+    // needs one with a signature dimension. It found 2 real defects
+    // (cloud-backup, fin-archives — ML-KEM claimed while naming only TLS 1.2,
+    // which the matrix documents as having no PQC track at all) and 0 false
+    // positives.
+    const KEM_FAMILIES = new Set(['ML-KEM', 'HQC', 'FrodoKEM', 'Classic-McEliece'])
+    const SIG_FAMILIES = new Set(['ML-DSA', 'SLH-DSA', 'FN-DSA', 'LMS', 'XMSS'])
+    const rowById = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
+    const applies = (v: string) => v !== 'na'
+
+    for (const uc of useCases) {
+      if (uc.pqcMechanisms.length === 0) continue
+      const targets = uc.protocolsTarget.map((id) => rowById.get(id)).filter(Boolean)
+      // A row with no protocol at all is covered by the no_protocol_reason
+      // guard below, not here — there is nothing to be reachable through.
+      if (targets.length === 0) continue
+
+      const anyKem = targets.some(
+        (t) => applies(t!.dimensions.pureKem.value) || applies(t!.dimensions.hybridKem.value)
+      )
+      const anySig = targets.some(
+        (t) => applies(t!.dimensions.pureSig.value) || applies(t!.dimensions.hybridSig.value)
+      )
+      for (const m of uc.pqcMechanisms) {
+        if (KEM_FAMILIES.has(m)) {
+          expect(
+            anyKem,
+            `${uc.useCaseId}: claims KEM "${m}" but no target protocol (${uc.protocolsTarget.join(', ')}) has a KEM dimension`
+          ).toBe(true)
+        }
+        if (SIG_FAMILIES.has(m)) {
+          expect(
+            anySig,
+            `${uc.useCaseId}: claims signature "${m}" but no target protocol (${uc.protocolsTarget.join(', ')}) has a signature dimension`
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('protocols_current / protocols_target resolve, and empty is explained (WS11)', () => {
+    const ids = new Set(PROTOCOL_MATRIX.map((p) => p.id))
+    for (const uc of useCases) {
+      for (const p of [...uc.protocolsCurrent, ...uc.protocolsTarget]) {
+        expect(ids, `${uc.useCaseId}: unknown protocol "${p}"`).toContain(p)
+      }
+      // A target must never be a dead end — that is the whole point of the
+      // split. If the matrix says a protocol is superseded, the target column
+      // must already name its successor.
+      for (const p of uc.protocolsTarget) {
+        expect(
+          rowByIdForTargets.get(p)?.supersededByProtocolId,
+          `${uc.useCaseId}: target "${p}" is itself superseded — migrate the row to its successor`
+        ).toBeUndefined()
+      }
+      // "No standardised protocol exists" must be distinguishable from
+      // "nobody filled it in".
+      if (uc.protocolsCurrent.length === 0) {
+        expect(
+          uc.noProtocolReason.trim().length,
+          `${uc.useCaseId}: no protocols and no no_protocol_reason`
+        ).toBeGreaterThan(0)
+      } else {
+        expect(
+          uc.protocolsTarget.length,
+          `${uc.useCaseId}: has current protocols but no target`
+        ).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('pqc_claim_basis is a known value and within its matrix-derived ceiling (WS10)', () => {
+    const rowById = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
+    for (const uc of useCases) {
+      expect(
+        PQC_CLAIM_BASES as readonly string[],
+        `${uc.useCaseId}: unknown pqc_claim_basis "${uc.pqcClaimBasis}"`
+      ).toContain(uc.pqcClaimBasis)
+
+      // A row claiming no PQC mechanism must not claim a basis for one.
+      if (uc.pqcMechanisms.length === 0) {
+        expect(uc.pqcClaimBasis, `${uc.useCaseId}: basis set but no PQC mechanism`).toBe('none')
+        continue
+      }
+      expect(uc.pqcClaimBasis, `${uc.useCaseId}: claims PQC but basis is 'none'`).not.toBe('none')
+
+      // The CEILING is checkable; adoption is not. A row may claim less than
+      // its target protocol supports (the sector is behind — normal), but never
+      // more (that would be asserting a standard that does not exist).
+      const targets = uc.protocolsTarget.map((id) => rowById.get(id)).filter(Boolean)
+      if (targets.length === 0) continue
+      const bestStage = Math.max(
+        ...targets.flatMap((t) =>
+          Object.values(t!.dimensions).map((d) =>
+            d.stage
+              ? DRAFT_STAGE_LEVEL[d.stage]
+              : d.value === 'rfc'
+                ? 7
+                : d.value === 'draft'
+                  ? 4
+                  : 0
+          )
+        )
+      )
+      if (bestStage < 7) {
+        expect(
+          ['adopted', 'standardised'].includes(uc.pqcClaimBasis),
+          `${uc.useCaseId}: basis "${uc.pqcClaimBasis}" exceeds its ceiling — no target protocol has a published standard`
+        ).toBe(false)
       }
     }
   })
