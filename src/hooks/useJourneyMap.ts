@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { PERSONAS } from '@/data/learningPersonas'
 import { PERSONA_MILESTONES } from '@/data/personaConfig'
 import { quizQuestions } from '@/data/quizDataLoader'
@@ -56,13 +57,30 @@ export interface JourneyMapResult {
 
 // ── Milestone status helpers ─────────────────────────────────────────────────
 
-function getMilestoneStatus(
-  route: string,
-  assessmentStatus: string,
-  myFrameworkCount: number,
-  migrationStarted: boolean,
+export interface MilestoneStatusInputs {
+  assessmentStatus: string
+  myFrameworkCount: number
+  migrationStarted: boolean
   artifactCount: number
+  execDocCount: number
+  opensslFileCount: number
+}
+
+// An options object, not more positional args — this switch already juggled
+// five, and a sixth/seventh positional is exactly how the wrong value ends up
+// passed to the wrong parameter (2026-08-15 journey-tracking remediation).
+export function getMilestoneStatus(
+  route: string,
+  inputs: MilestoneStatusInputs
 ): JourneyItemStatus {
+  const {
+    assessmentStatus,
+    myFrameworkCount,
+    migrationStarted,
+    artifactCount,
+    execDocCount,
+    opensslFileCount,
+  } = inputs
   switch (route) {
     case '/assess':
       return assessmentStatus === 'complete'
@@ -76,8 +94,18 @@ function getMilestoneStatus(
       return migrationStarted ? 'completed' : 'available'
     case '/playground':
     case '/openssl':
-    case '/playground/openssl-studio':
       return artifactCount > 0 ? 'completed' : 'available'
+    case '/playground/openssl-studio':
+      // Sharper than the combined artifactCount above — a key generated
+      // anywhere in the hub would have satisfied that one.
+      return opensslFileCount > 0 ? 'completed' : 'available'
+    case '/business':
+      // Every Business Center tool that produces a document already calls
+      // addExecutiveDocument — most of them are the literal same component
+      // mounted under /learn/..., not a route-specific writer, so this is a
+      // real signal with nothing new to wire (verified 2026-08-15: 41
+      // call sites across the tool set).
+      return execDocCount > 0 ? 'completed' : 'available'
     case '/algorithms':
       return 'available' // no completion signal for browsing
     default:
@@ -106,6 +134,7 @@ export function useJourneyMap(): JourneyMapResult {
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
   const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
+  const opensslFileCount = useOpenSSLStore((s) => s.files.length)
 
   return useMemo(() => {
     if (!selectedPersona) {
@@ -131,11 +160,9 @@ export function useJourneyMap(): JourneyMapResult {
       milestonesByPhase.set(m.afterPhase, existing)
     }
 
+    const execDocCount = artifacts.executiveDocuments?.length ?? 0
     const artifactCount =
-      artifacts.keys.length +
-      artifacts.certificates.length +
-      artifacts.csrs.length +
-      (artifacts.executiveDocuments?.length ?? 0)
+      artifacts.keys.length + artifacts.certificates.length + artifacts.csrs.length + execDocCount
 
     // Build set of quiz categories the user has answered correctly
     const correctIds = quizMastery?.correctQuestionIds ?? []
@@ -205,13 +232,14 @@ export function useJourneyMap(): JourneyMapResult {
         const milestonesAfter = milestonesByPhase.get(item.id)
         if (milestonesAfter) {
           for (const ms of milestonesAfter) {
-            const msStatus = getMilestoneStatus(
-              ms.route,
+            const msStatus = getMilestoneStatus(ms.route, {
               assessmentStatus,
               myFrameworkCount,
               migrationStarted,
-              artifactCount
-            )
+              artifactCount,
+              execDocCount,
+              opensslFileCount,
+            })
             const msId = `milestone-${ms.route}-${ms.label.toLowerCase().replace(/\s+/g, '-')}`
             phases.push({
               id: msId,
@@ -303,5 +331,6 @@ export function useJourneyMap(): JourneyMapResult {
     assessmentStatus,
     myFrameworkCount,
     migrationStarted,
+    opensslFileCount,
   ])
 }
