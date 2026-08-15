@@ -9454,6 +9454,36 @@
       "sizeBytes": 134601,
       "contentType": "text/html",
       "sha256": "98c2d9e5aeccd929f100355f30c834a1ccb7bde3e81ec4f5baff10c74a2fb75b"
+    },
+    {
+      "refId": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C",
+      "title": "HHS HIPAA Security Rule \u2014 45 CFR Part 164 Subpart C",
+      "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
+      "status": "downloaded",
+      "filename": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C.html",
+      "sizeBytes": 145863,
+      "contentType": "text/html",
+      "sha256": "c95a2e7e86daf50bf0e75347795e077b643ef73f598fe6c45ad6112e79434351"
+    },
+    {
+      "refId": "Federal-PKI-Policy-Authority",
+      "title": "Federal PKI Policy Authority",
+      "url": "https://www.idmanagement.gov/fpki/",
+      "status": "downloaded",
+      "filename": "Federal-PKI-Policy-Authority.html",
+      "sizeBytes": 157903,
+      "contentType": "text/html",
+      "sha256": "2ab3b8a0a194dc4336b78f5ce8d8957a77b7050a3bb51955b8f0c06193f87bcd"
+    },
+    {
+      "refId": "Internet2-InCommon-Federation",
+      "title": "Internet2 InCommon Federation",
+      "url": "https://incommon.org/about",
+      "status": "downloaded",
+      "filename": "Internet2-InCommon-Federation.html",
+      "sizeBytes": 110628,
+      "contentType": "text/html",
+      "sha256": "ddeba98c8aa1130a0e1efc47eda444df5b0bf9ba8b377eb5e124ba4ac873b2ae"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
