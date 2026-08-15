@@ -1,0 +1,50 @@
+[
+  {
+    "ref_id": "draft-ietf-uta-pqc-app-01",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-kwiatkowski-pquip-pqc-migration-00",
+    "reason": "Probable landing page, not the document (40,082 bytes of markup, only 1,699 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "EU PQC Recommendation",
+    "reason": "Probable landing page, not the document (67,554 bytes of markup, only 1,868 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "OpenSSL-3x-Docs",
+    "reason": "Probable landing page, not the document (21,365 bytes of markup, only 884 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Cloudflare-PQ-Internet-2025",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "IETF-SD-JWT-Draft",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CSC-API-v2-Spec",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "RFC 9019",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "PKI-Consortium-PQC-2025",
+    "reason": "Probable landing page, not the document (79,601 bytes of markup, only 6,223 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF RFC 4556",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-ietf-tls-merkle-tree-certs",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-ietf-plants-merkle-tree-certs-00",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  }
+]
