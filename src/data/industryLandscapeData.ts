@@ -16,11 +16,6 @@ export interface IndustryUseCase {
   useCaseLabel: string
   useCaseIcon: string
   /**
-   * DEPRECATED (2026-08-15, WS11) — kept for one release as the union of
-   * `protocolsCurrent`. Read `protocolsCurrent` / `protocolsTarget` instead.
-   */
-  protocols: string[]
-  /**
    * The protocols this sector runs TODAY — pqcProtocolMatrix row ids.
    *
    * WS11 (2026-08-15). The mechanisms columns have always split classical from
@@ -217,7 +212,6 @@ interface RawLandscapeRow {
   use_case_id: string
   use_case_label: string
   use_case_icon: string
-  protocols: string
   protocols_current: string
   protocols_target: string
   pqc_claim_basis: string
@@ -310,9 +304,8 @@ function loadLandscape(): IndustryUseCase[] {
             useCaseId: r.use_case_id,
             useCaseLabel: r.use_case_label,
             useCaseIcon: r.use_case_icon,
-            protocols: splitSemicolon(r.protocols),
-            protocolsCurrent: splitSemicolon(r.protocols_current || r.protocols),
-            protocolsTarget: splitSemicolon(r.protocols_target || r.protocols),
+            protocolsCurrent: splitSemicolon(r.protocols_current),
+            protocolsTarget: splitSemicolon(r.protocols_target),
             pqcClaimBasis: (r.pqc_claim_basis || 'none') as PqcClaimBasis,
             noProtocolReason: r.no_protocol_reason || '',
             sourceLibraryRef: r.source_library_ref || '',
