@@ -9394,6 +9394,36 @@
       "sizeBytes": 816887,
       "contentType": "application/pdf",
       "sha256": "260063a07eeccd7f4b1ab23cc93a2530dfed6957b9421f1cbd6dfec47eacec3e"
+    },
+    {
+      "refId": "NIST SP 800-30",
+      "title": "NIST SP 800-30",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-30r1.pdf",
+      "status": "downloaded",
+      "filename": "NIST_SP_800-30.pdf",
+      "sizeBytes": 826897,
+      "contentType": "application/pdf",
+      "sha256": "f214087f0bdb35932a28c16eb93932a33c67a6edfb5e6f1638866bd201c98e04"
+    },
+    {
+      "refId": "Cyentia IRIS 2025",
+      "title": "Cyentia IRIS 2025",
+      "url": "https://www.cyentia.com/wp-content/uploads/2026/03/IRIS-2025.pdf",
+      "status": "downloaded",
+      "filename": "Cyentia_IRIS_2025.pdf",
+      "sizeBytes": 2580218,
+      "contentType": "application/pdf",
+      "sha256": "00706bbbfefcc7b6cc321dcbcc2347b3082af92572cbd55abd2239a901cf8f1c"
+    },
+    {
+      "refId": "NetDiligence Cyber Claims Study 2025",
+      "title": "NetDiligence Cyber Claims Study 2025",
+      "url": "https://netdiligence.com/wp-content/uploads/2025/09/NetDiligence-Cyber-Claims-Study-2025-Report-.pdf",
+      "status": "downloaded",
+      "filename": "NetDiligence_Cyber_Claims_Study_2025.pdf",
+      "sizeBytes": 9509998,
+      "contentType": "application/pdf",
+      "sha256": "4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
