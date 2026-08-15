@@ -29,6 +29,14 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.50.2] - 2026-08-15
+
+Library search now finds documents by their standard number no matter how it's written — "PKCS11", "PKCS-11", and "PKCS #11" all now find the same results.
+
+### Fixed
+
+- **Search matches standard numbers regardless of spacing or punctuation** [view:/library] [persona:researcher] [persona:developer]: searching a standard's number the way people actually type it — "pkcs11" as one word — silently missed almost every document about it, because titles and catalog IDs are written with a space or a hyphen ("PKCS #11", "PKCS-11"). Search now treats those forms as equivalent, so a one-word search finds every real document.
+
 ## [4.50.1] - 2026-08-15
 
 Search results now cite roughly 800 more library documents whose citation links had quietly stopped resolving, and 13 compliance records that weren't being scored for trust are now scored.
