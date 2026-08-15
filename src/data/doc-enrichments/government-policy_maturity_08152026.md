@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-15
 category: Compliance Frameworks
-document_count: 17
-requirement_count: 87
+document_count: 18
+requirement_count: 95
 ---
 
 ## ANSSI PQC Follow-up Paper
@@ -164,6 +164,23 @@ requirement_count: 87
     - _T2 Risk-Informed · all_: Submit annual funding assessments for migrating inventoried systems to post-quantum cryptography.
 - **Observability**:
     - _T1 Partial · all_: Participate in the development of automated tooling strategies for assessing PQC adoption progress.
+
+## SG-MAS-Quantum-Advisory-2024
+- **Source**: MAS Advisory on Addressing Cybersecurity Risks Associated with Quantum Computing
+- **URL**: https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf
+- **Requirement count**: 8
+- **Governance**:
+    - _T2 Risk-Informed · all_: Review internal policies, standards, and procedures to ensure relevance during the transition to quantum security solutions.
+    - _T2 Risk-Informed · all_: Ensure senior management and third-party vendors understand quantum threats and support the transition to quantum security solutions.
+    - _T2 Risk-Informed · all_: Work with third-party IT vendors to assess supply chain risks from quantum threats and request quantum-resistant solutions when available.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Identify and maintain an inventory of cryptographic solutions, including algorithm, key length, ownership, and system location, to determine vulnerability to quantum threats.
+    - _T2 Risk-Informed · all_: Classify IT and data assets dependent on vulnerable cryptographic solutions based on sensitivity, criticality, and risk exposure to prioritize migration efforts.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Develop risk mitigation strategies for assets that cannot be migrated to PQC and plan for contingency scenarios where quantum risks materialize early.
+    - _T2 Risk-Informed · all_: Assess existing system infrastructures for crypto-agility support and consider upgrades to address limitations hindering the transition to quantum security.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Monitor ongoing quantum computing developments for cybersecurity threats and risks impacting financial services and their mitigation.
 
 ## US-CISA-ACDI-Strategy-2024
 - **Source**: CISA Strategy for Migrating to Automated PQC Discovery and Inventory Tools

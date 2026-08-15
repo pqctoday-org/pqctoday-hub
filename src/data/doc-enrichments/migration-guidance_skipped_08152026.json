@@ -26,25 +26,5 @@
   {
     "ref_id": "CSC-API-v2-Spec",
     "reason": "local_file missing"
-  },
-  {
-    "ref_id": "RFC 9019",
-    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
-  },
-  {
-    "ref_id": "PKI-Consortium-PQC-2025",
-    "reason": "Probable landing page, not the document (79,601 bytes of markup, only 6,223 chars of text). Re-fetch the linked document before treating this as covered."
-  },
-  {
-    "ref_id": "IETF RFC 4556",
-    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
-  },
-  {
-    "ref_id": "draft-ietf-tls-merkle-tree-certs",
-    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
-  },
-  {
-    "ref_id": "draft-ietf-plants-merkle-tree-certs-00",
-    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
   }
 ]
