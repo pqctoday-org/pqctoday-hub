@@ -68,8 +68,21 @@ export const CYCLONEDX_REGISTRY = {
   specVersion: '1.7',
   landingPage: 'https://cyclonedx.org/registry/cryptography/',
   dataUrl: 'https://cyclonedx.org/schema/cryptography-defs.json',
-  /** `lastUpdated` of the registry data file this mapping was verified against. */
+  /** `lastUpdated` of the registry data file this mapping was verified against.
+   *  This is the DATA's date, shown to readers as the mapping's provenance. */
   verifiedAgainst: '2026-02-24',
+  /**
+   * When a human last re-checked this mapping against the LIVE registry — a
+   * different fact from `verifiedAgainst`, and the one the 90-day freshness
+   * window applies to. An unchanged upstream still needs periodic confirmation
+   * that it is unchanged; conflating the two made the manifest read the data's
+   * age as our diligence.
+   *
+   * 2026-08-15: fetched https://cyclonedx.org/schema/cryptography-defs.json —
+   * upstream `lastUpdated` still 2026-02-24, still 96 families, and FN-DSA,
+   * HQC, FrodoKEM and Classic McEliece all still absent.
+   */
+  verifiedOn: '2026-08-15',
 } as const
 
 /**
@@ -77,7 +90,10 @@ export const CYCLONEDX_REGISTRY = {
  * with the live registry to re-verify it against.
  */
 export const CYCLONEDX_MAPPING_FRESHNESS: Freshness = {
-  asOf: CYCLONEDX_REGISTRY.verifiedAgainst,
+  // `verifiedOn`, NOT `verifiedAgainst` — the window measures when we last
+  // looked, not how old the upstream data happens to be. A registry that has
+  // not moved in six months is not a stale claim; an unchecked one is.
+  asOf: CYCLONEDX_REGISTRY.verifiedOn,
   recheck: CYCLONEDX_REGISTRY.dataUrl,
 }
 
