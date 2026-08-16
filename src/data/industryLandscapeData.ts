@@ -69,6 +69,30 @@ export interface IndustryUseCase {
    * the sector's threats evidence.
    */
   sourceLibraryRef: string
+  /**
+   * Whether `sourceLibraryRef`'s own document names any of THIS row's claimed
+   * mechanisms (2026-08-15, user instruction: "if there is no specific crypto
+   * requirements — then we should mention it").
+   *
+   * Measured the day this was added: 43 of the 74 rows with a source link
+   * (58%) cite a governance/institutional document — HIPAA, FERPA, PCI DSS,
+   * NRC, ICAO, eIDAS, IMO — that names NONE of the row's own mechanisms; the
+   * claim is proven separately, by a different document in `mechanismRefs`.
+   * Until this field existed, the tile rendered that citation identically to
+   * one where the source IS the technical spec (an RFC, a FIPS pub) — the
+   * exact ambiguity `evidenceType` already prevents on the standards table,
+   * just missing here.
+   *
+   *  - `technical` — the source itself names >=1 claimed mechanism
+   *  - `driver`    — it names none; proof is elsewhere in `mechanismRefs`
+   *  - `''`        — `sourceLibraryRef` is empty, or the row claims nothing
+   *
+   * COMPUTED, never hand-typed: `scripts/compute-source-citation-type.py`
+   * derives it with the SAME matcher `verify-mechanism-proofs.py` uses for
+   * the grounding gate, so a stale value is drift a re-run corrects, not an
+   * editorial judgment call that can silently go wrong.
+   */
+  sourceCitationType: 'technical' | 'driver' | ''
   /** cryptoMechanisms family labels. */
   classicalMechanisms: string[]
   pqcMechanisms: string[]
@@ -217,6 +241,7 @@ interface RawLandscapeRow {
   pqc_claim_basis: string
   no_protocol_reason: string
   source_library_ref: string
+  source_citation_type: string
   classical_mechanisms: string
   pqc_mechanisms: string
   migration_status: string
@@ -309,6 +334,8 @@ function loadLandscape(): IndustryUseCase[] {
             pqcClaimBasis: (r.pqc_claim_basis || 'none') as PqcClaimBasis,
             noProtocolReason: r.no_protocol_reason || '',
             sourceLibraryRef: r.source_library_ref || '',
+            sourceCitationType: (r.source_citation_type ||
+              '') as IndustryUseCase['sourceCitationType'],
             classicalMechanisms: splitSemicolon(r.classical_mechanisms),
             pqcMechanisms: splitSemicolon(r.pqc_mechanisms),
             migrationStatus: r.migration_status as IndustryUseCase['migrationStatus'],
