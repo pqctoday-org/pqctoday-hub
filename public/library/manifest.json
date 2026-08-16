@@ -9654,6 +9654,46 @@
       "sizeBytes": 585024,
       "contentType": "text/html",
       "sha256": "bbab78a0b0f214730bc98f50234fcd1a81572a2f0c52e3dc60dcbef66c789add"
+    },
+    {
+      "refId": "CIP-3-Wallet-key-generation-BIP32-Ed25519",
+      "title": "CIP-3 \u2014 Wallet key generation (BIP32-Ed25519)",
+      "url": "https://cips.cardano.org/cip/CIP-3",
+      "status": "downloaded",
+      "filename": "CIP-3-Wallet-key-generation-BIP32-Ed25519.html",
+      "sizeBytes": 277763,
+      "contentType": "text/html",
+      "sha256": "d344e19c508d7ed8b8d34738de4b53a807abe0c0f362201a6e118bc90354f74b"
+    },
+    {
+      "refId": "Ouroboros-Praos-An-Adaptively-Secure-Semi-synchronous-Proof",
+      "title": "Ouroboros Praos: An Adaptively-Secure, Semi-synchronous Proof-of-Stake Protocol",
+      "url": "https://eprint.iacr.org/2017/573.pdf",
+      "status": "downloaded",
+      "filename": "Ouroboros-Praos-An-Adaptively-Secure-Semi-synchronous-Proof.pdf",
+      "sizeBytes": 777331,
+      "contentType": "application/pdf",
+      "sha256": "3bba0f5ad713da319604c6c4db5609981d5e0dbfd73f327e63b7ed8981418f1f"
+    },
+    {
+      "refId": "Cardano-cardano-crypto-praos-VRF-suite-ECVRF-ED25519-SHA512",
+      "title": "Cardano cardano-crypto-praos \u2014 VRF suite (ECVRF-ED25519-SHA512-ELL2)",
+      "url": "https://github.com/IntersectMBO/cardano-base/blob/master/cardano-crypto-praos/cbits/crypto_vrf.h",
+      "status": "downloaded",
+      "filename": "Cardano-cardano-crypto-praos-VRF-suite-ECVRF-ED25519-SHA512.html",
+      "sizeBytes": 287873,
+      "contentType": "text/html",
+      "sha256": "79152c1308350c383d73a420ccf67aacd41b9f6bc5d4847eb73c6983d0a42e9c"
+    },
+    {
+      "refId": "input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes",
+      "title": "input-output-hk/kes \u2014 Cardano Key Evolving Signatures (Sum6Kes, Ed25519 depth-zero)",
+      "url": "https://github.com/input-output-hk/kes",
+      "status": "downloaded",
+      "filename": "input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes.html",
+      "sizeBytes": 282047,
+      "contentType": "text/html",
+      "sha256": "0d8e715668e7ce2411852398097bff8bea023679bf0907bce85369f93ef560cb"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
