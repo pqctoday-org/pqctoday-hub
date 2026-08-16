@@ -98,6 +98,7 @@ const SECTIONS: { header: string; names: string[] }[] = [
       'ECDSA P-521',
       'Ed25519',
       'BLS12-381',
+      'sr25519',
       'X25519',
       'ECDH P-256',
       'ECDH P-384',
@@ -137,6 +138,10 @@ const FIPS_STANDARD_NORMALIZATION: Record<string, string | null> = {
   // Internet-Draft, not an RFC — verified directly against the datatracker,
   // not assumed from memory. No FIPS/NIST standard exists for BLS at all.
   'draft-irtf-cfrg-bls-signature': null,
+  // sr25519 (2026-08-16): Schnorrkel is a Web3 Foundation implementation, not
+  // an IETF/NIST standards-track document — verified against w3f/schnorrkel's
+  // own source (SIGNATURE_LENGTH/PUBLIC_KEY_LENGTH constants), not assumed.
+  'W3F Schnorrkel implementation; NOT an IETF/NIST standard': null,
 }
 
 /**

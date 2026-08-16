@@ -9724,6 +9724,66 @@
       "sizeBytes": 172423,
       "contentType": "text/html",
       "sha256": "ed3604a3365612d702560520d6c2a07b0efe373c5a8735c3069265341050a79b"
+    },
+    {
+      "refId": "Polkadot-Wiki-Cryptography-sr25519-BABE",
+      "title": "Polkadot Wiki \u2014 Cryptography (sr25519, BABE)",
+      "url": "https://wiki.polkadot.com/learn/learn-cryptography/",
+      "status": "downloaded",
+      "filename": "Polkadot-Wiki-Cryptography-sr25519-BABE.html",
+      "sizeBytes": 128708,
+      "contentType": "text/html",
+      "sha256": "fd489c0ac978e5674c2462b73a69a34353fdb5cafc4ba8019ce28c701021ad59"
+    },
+    {
+      "refId": "CometBFT-Docs-Validators-Ed25519-consensus-signing",
+      "title": "CometBFT Docs \u2014 Validators (Ed25519 consensus signing)",
+      "url": "https://docs.cosmos.network/cometbft/v0.38/docs/core/Validators",
+      "status": "downloaded",
+      "filename": "CometBFT-Docs-Validators-Ed25519-consensus-signing.html",
+      "sizeBytes": 414342,
+      "contentType": "text/html",
+      "sha256": "83f7c8d37ad7d6185852af5a3373accac4a72ac63a38b63e5907d3f6be56e165"
+    },
+    {
+      "refId": "cosmos-sdk-CHANGELOG-ML-DSA-65-FIPS-204-validator-account-ke",
+      "title": "cosmos-sdk CHANGELOG \u2014 ML-DSA-65 (FIPS 204) validator/account key support",
+      "url": "https://raw.githubusercontent.com/cosmos/cosmos-sdk/main/CHANGELOG.md",
+      "status": "downloaded",
+      "filename": "cosmos-sdk-CHANGELOG-ML-DSA-65-FIPS-204-validator-account-ke.html",
+      "sizeBytes": 108535,
+      "contentType": "text/html",
+      "sha256": "8e3d927cb38abc8992cb7886010f66298c7cf72fa51a59d84f687a78fa01aff3"
+    },
+    {
+      "refId": "Avalanche-Docs-Cryptographic-Primitives",
+      "title": "Avalanche Docs \u2014 Cryptographic Primitives",
+      "url": "https://build.avax.network/docs/api-reference/standards/cryptographic-primitives",
+      "status": "downloaded",
+      "filename": "Avalanche-Docs-Cryptographic-Primitives.html",
+      "sizeBytes": 675125,
+      "contentType": "text/html",
+      "sha256": "59a1724ae1119204416518e86dadd914fa67004ed8f147fa5c8ec9ea10fe427b"
+    },
+    {
+      "refId": "Avalanche-Docs-What-is-ICM-Warp-Messaging-BLS",
+      "title": "Avalanche Docs \u2014 What is ICM? (Warp Messaging BLS)",
+      "url": "https://build.avax.network/docs/cross-chain/avalanche-warp-messaging/overview",
+      "status": "downloaded",
+      "filename": "Avalanche-Docs-What-is-ICM-Warp-Messaging-BLS.html",
+      "sizeBytes": 603186,
+      "contentType": "text/html",
+      "sha256": "00bf3ff7c218099b56d6e53f65b7b66a5f9aa391aba226937857d80bb62f9d9a"
+    },
+    {
+      "refId": "Arbitrum-Docs-Inside-AnyTrust-DAC-BLS-signing",
+      "title": "Arbitrum Docs \u2014 Inside AnyTrust (DAC BLS signing)",
+      "url": "https://docs.arbitrum.io/inside-anytrust",
+      "status": "downloaded",
+      "filename": "Arbitrum-Docs-Inside-AnyTrust-DAC-BLS-signing.html",
+      "sizeBytes": 31239,
+      "contentType": "text/html",
+      "sha256": "4a03038092aa7604a1962cfe0e5dc35c69673e397e8a6ef845e1c50aa323a02d"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
