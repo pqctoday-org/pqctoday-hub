@@ -208,6 +208,10 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
   'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
   'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
+  // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
+  // IRTF CFRG Internet-Draft, verified against the datatracker directly —
+  // not yet an RFC.
+  'Active Internet-Draft|||draft-irtf-cfrg-bls-signature': 'ietf-draft',
   // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
   // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
   // algorithm, but the tier describes the standards status of the mechanism

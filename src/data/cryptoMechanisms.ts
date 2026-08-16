@@ -135,6 +135,38 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: [],
   },
   {
+    // Added 2026-08-16 — the actual signing scheme Solana, Cardano, and most
+    // Ed25519-based chains use for account/transaction signatures. Absent
+    // until now: any chain row citing "EdDSA" or "Ed25519" as its signing
+    // mechanism could not be recorded, even though the algorithm itself has
+    // been in ALGORITHM_REGISTRY (the Detailed Comparison vocabulary) since
+    // before this family existed — a real, silent gap this closes.
+    family: 'Ed25519',
+    classical: true,
+    kinds: ['signature'],
+    registryMembers: ['Ed25519'],
+    cycloneDxFamilies: ['EdDSA'],
+    // RFC 8410 §3, verified against the RFC text directly, not recalled.
+    oids: ['1.3.101.112'],
+  },
+  {
+    // Added 2026-08-16 — Ethereum's consensus-layer validator signature
+    // scheme (BLS12-381, min-pubkey-size variant) and the aggregation
+    // primitive several other chains and DeFi threshold-signature schemes
+    // build on. Not yet an ALGORITHM_REGISTRY member before this change —
+    // added alongside (scripts/generate-algorithm-properties.ts,
+    // pqc_complete_algorithm_reference_08162026.csv).
+    family: 'BLS',
+    classical: true,
+    kinds: ['signature'],
+    registryMembers: ['BLS12-381'],
+    cycloneDxFamilies: ['BLS'],
+    // No established OID for BLS12-381 signatures — pairing-based schemes
+    // are not registered the way NIST/RFC curves are. Left empty rather than
+    // invented; the CycloneDX family value carries the identity instead.
+    oids: [],
+  },
+  {
     family: 'ML-KEM',
     classical: false,
     kinds: ['kem'],

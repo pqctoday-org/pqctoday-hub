@@ -9,7 +9,7 @@
  * AUTO-GENERATED — do not edit by hand.
  *
  * Data sourced from:
- *   - src/data/pqc_complete_algorithm_reference_07092026.csv (latest reference snapshot)
+ *   - src/data/pqc_complete_algorithm_reference_08162026.csv (latest reference snapshot)
  *   - HAND_CURATED blocks in scripts/generate-algorithm-properties.ts
  *     (algorithm selection, fips_standard normalization, per-algorithm overrides)
  *
@@ -413,6 +413,15 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     publicKeyBytes: 32,
     privateKeyBytes: 64,
     signatureOrCiphertextBytes: 64,
+    securityLevel: null,
+    fipsStandard: null,
+  },
+  'BLS12-381': {
+    name: 'BLS12-381',
+    family: 'Classical Sig',
+    publicKeyBytes: 48,
+    privateKeyBytes: 32,
+    signatureOrCiphertextBytes: 96,
     securityLevel: null,
     fipsStandard: null,
   },

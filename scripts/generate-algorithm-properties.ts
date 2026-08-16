@@ -97,6 +97,7 @@ const SECTIONS: { header: string; names: string[] }[] = [
       'ECDSA P-384',
       'ECDSA P-521',
       'Ed25519',
+      'BLS12-381',
       'X25519',
       'ECDH P-256',
       'ECDH P-384',
@@ -132,6 +133,10 @@ const FIPS_STANDARD_NORMALIZATION: Record<string, string | null> = {
   // hand-authored registry — revisit if consumers want RFC citations).
   'RFC 8032': null,
   'RFC 7748': null,
+  // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an ACTIVE
+  // Internet-Draft, not an RFC — verified directly against the datatracker,
+  // not assumed from memory. No FIPS/NIST standard exists for BLS at all.
+  'draft-irtf-cfrg-bls-signature': null,
 }
 
 /**
