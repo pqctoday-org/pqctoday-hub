@@ -9694,6 +9694,36 @@
       "sizeBytes": 282047,
       "contentType": "text/html",
       "sha256": "0d8e715668e7ce2411852398097bff8bea023679bf0907bce85369f93ef560cb"
+    },
+    {
+      "refId": "Chainlink-Off-chain-Reporting-Protocol-3-0-OCR3",
+      "title": "Chainlink Off-chain Reporting Protocol 3.0 (OCR3)",
+      "url": "https://research.chain.link/ocr3.pdf",
+      "status": "downloaded",
+      "filename": "Chainlink-Off-chain-Reporting-Protocol-3-0-OCR3.pdf",
+      "sizeBytes": 1115308,
+      "contentType": "application/pdf",
+      "sha256": "26ae3e5ebd1f4df5f5603f287304b684e5db6bc934c23f2f760feada56a1b414"
+    },
+    {
+      "refId": "Safe-Wallet-Safe-sol-multisig-signature-verification",
+      "title": "Safe{Wallet} \u2014 Safe.sol (multisig signature verification)",
+      "url": "https://raw.githubusercontent.com/safe-global/safe-smart-account/main/contracts/Safe.sol",
+      "status": "downloaded",
+      "filename": "Safe-Wallet-Safe-sol-multisig-signature-verification.html",
+      "sizeBytes": 30014,
+      "contentType": "text/html",
+      "sha256": "9f91d9250e18bb0710b7b1f10dcbe2417e9ef8d22eeee98dba2ef48661a060fa"
+    },
+    {
+      "refId": "Wormhole-Docs-VAAs-Guardian-signature-scheme",
+      "title": "Wormhole Docs \u2014 VAAs (Guardian signature scheme)",
+      "url": "https://wormhole.com/docs/protocol/infrastructure/vaas/",
+      "status": "downloaded",
+      "filename": "Wormhole-Docs-VAAs-Guardian-signature-scheme.html",
+      "sizeBytes": 172423,
+      "contentType": "text/html",
+      "sha256": "ed3604a3365612d702560520d6c2a07b0efe373c5a8735c3069265341050a79b"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
