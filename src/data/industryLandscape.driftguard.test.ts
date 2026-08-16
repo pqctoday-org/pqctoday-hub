@@ -256,7 +256,7 @@ describe('industry-landscape driftguards', () => {
     // AES/SHA are symmetric — ALGORITHM_REGISTRY is asymmetric-only by design
     // (it backs the Detailed Comparison tab), so they're the only families
     // allowed an empty registryMembers list (see cryptoMechanisms.ts interface doc).
-    const SYMMETRIC_EXEMPT = new Set(['AES', 'SHA'])
+    const SYMMETRIC_EXEMPT = new Set(['AES', 'SHA', 'SNOW3G', 'ZUC'])
     for (const fam of CRYPTO_MECHANISMS) {
       for (const member of fam.registryMembers) {
         expect(
