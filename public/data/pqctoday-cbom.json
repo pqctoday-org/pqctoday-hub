@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:5bb932e0-415c-43ec-92e6-fcb40a78ac7c",
+  "serialNumber": "urn:uuid:ab58da51-f7b3-4473-be9d-23bfc21bffd0",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-14T00:00:00.000Z",
+    "timestamp": "2026-08-16T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -35206,6 +35206,60 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "1e1043f501c6c683",
+      "name": "Cosmos SDK",
+      "version": "v0.55.0",
+      "manufacturer": {
+        "name": "Interchain Foundation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "Cosmos SDK v0.55.0 (2026-07-27) added ML-DSA-65 (FIPS 204) as an opt-in validator consensus key type and user account key type: SDK key wrappers, Amino + interface-registry registration, multisig support, mnemonic-based keyring creation/recovery (--algo ml_dsa_65), transaction signing/verification, an ante-handler gas cost, PoA-module support, and genesis import/export for validator key rotation. Existing chains still default to ed25519-only consensus keys in genesis; ML-DSA-65 is available but not yet the production default for any chain the SDK powers.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/cosmos/cosmos-sdk"
+        },
+        {
+          "type": "website",
+          "url": "https://cosmos.network"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cosmos-SDK"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "80"
         }
       ]
     }

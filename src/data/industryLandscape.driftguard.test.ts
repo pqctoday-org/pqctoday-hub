@@ -26,6 +26,7 @@ import { ALGORITHM_REGISTRY } from './algorithmProperties'
 import { PROTOCOL_MATRIX, DRAFT_STAGE_LEVEL } from './pqcProtocolMatrix'
 import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
+import { softwareData } from './migrateData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
@@ -434,6 +435,21 @@ describe('industry-landscape driftguards', () => {
         expect(
           active,
           `${uc.useCaseId}: mechanism_ref "${ref}" is not an active library row`
+        ).toContain(ref)
+      }
+    }
+  })
+
+  it('every migrate_product_refs id resolves to an ACTIVE migrate-catalog row', () => {
+    // Same hard-FK rule as mechanism_refs above, added 2026-08-16 alongside
+    // the tile's new "Implementation" link — a ref pointing at a missing or
+    // deprecated catalog row would deep-link to nothing.
+    const active = new Set(softwareData.map((p) => p.productId))
+    for (const uc of useCases) {
+      for (const ref of uc.migrateProductRefs) {
+        expect(
+          active,
+          `${uc.useCaseId}: migrate_product_ref "${ref}" is not an active migrate-catalog row`
         ).toContain(ref)
       }
     }

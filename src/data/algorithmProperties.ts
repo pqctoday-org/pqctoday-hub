@@ -425,6 +425,15 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     securityLevel: null,
     fipsStandard: null,
   },
+  sr25519: {
+    name: 'sr25519',
+    family: 'Classical Sig',
+    publicKeyBytes: 32,
+    privateKeyBytes: 64,
+    signatureOrCiphertextBytes: 64,
+    securityLevel: null,
+    fipsStandard: null,
+  },
   X25519: {
     name: 'X25519',
     family: 'Classical KEM',

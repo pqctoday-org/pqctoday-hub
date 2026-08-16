@@ -31,6 +31,7 @@ import {
   Scale,
   Container,
   ArrowRight,
+  Code,
 } from 'lucide-react'
 import {
   loadIndustryLandscape,
@@ -51,6 +52,7 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
+import { softwareData } from '../../data/migrateData'
 import {
   learnModulesForIndustry,
   librarySectorHref,
@@ -465,6 +467,18 @@ function UseCaseCard({
             </span>
           )}
         </span>
+        {uc.migrateProductRefs.length > 0 && (
+          <Link
+            to={`/migrate?productIds=${uc.migrateProductRefs.map(encodeURIComponent).join(',')}`}
+            className="inline-flex shrink-0 items-center gap-1 hover:text-primary"
+            title={`Open in the migrate catalog: ${uc.migrateProductRefs
+              .map((id) => softwareData.find((p) => p.productId === id)?.softwareName ?? id)
+              .join(', ')}`}
+          >
+            <Code size={10} className="shrink-0 opacity-60" />
+            Implementation
+          </Link>
+        )}
         <span title="Last verified">{uc.lastVerified}</span>
       </div>
     </div>

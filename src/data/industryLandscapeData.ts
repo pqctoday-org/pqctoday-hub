@@ -132,6 +132,21 @@ export interface IndustryUseCase {
    * `learn_module_id`. Hard FK: every id must resolve to an ACTIVE library row.
    */
   mechanismRefs: string[]
+  /**
+   * `product_id`s in the migrate catalog (`pqc_product_catalog_*.csv`) that
+   * implement the mechanism this row describes (2026-08-16). Deliberately a
+   * DIFFERENT relationship from `mechanismRefs`/`sourceLibraryRef`: those cite
+   * DOCUMENTS that prove a claim; this cites SOFTWARE a reader can actually go
+   * look at or migrate onto. Populated only for rows citing a genuine
+   * open-source implementation, not a documentation page or academic paper —
+   * e.g. Cardano's cardano-crypto-praos/kes source is an implementation,
+   * Solana's developer docs page is not.
+   *
+   * Empty is legitimate — most rows cite documentation, not code. Hard FK:
+   * every id must resolve to an ACTIVE pqc_product_catalog row, checked by
+   * the driftguard.
+   */
+  migrateProductRefs: string[]
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -250,6 +265,7 @@ interface RawLandscapeRow {
   learn_module_id: string
   playground_tools: string
   mechanism_refs: string
+  migrate_product_refs: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -344,6 +360,7 @@ function loadLandscape(): IndustryUseCase[] {
             learnModuleId: r.learn_module_id || '',
             playgroundTools: splitSemicolon(r.playground_tools),
             mechanismRefs: splitSemicolon(r.mechanism_refs),
+            migrateProductRefs: splitSemicolon(r.migrate_product_refs),
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,

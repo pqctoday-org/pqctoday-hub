@@ -217,6 +217,11 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // algorithm, but the tier describes the standards status of the mechanism
   // named by the row, and this one is standards-track and published.
   'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
+  // sr25519 (2026-08-16): a Web3 Foundation (Schnorrkel) implementation, not
+  // an IETF/NIST/regional standards-track document at all — 'non-standardized'
+  // (not 'unverified', whose tooltip claims the status wasn't fact-checked;
+  // this one was, against w3f/schnorrkel's own source constants).
+  'Active|||W3F Schnorrkel implementation; NOT an IETF/NIST standard': 'non-standardized',
 }
 
 /** Throws on any (status, fips_standard) pair not in the lookup table above —

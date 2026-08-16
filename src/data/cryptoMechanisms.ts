@@ -175,6 +175,32 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: [],
   },
   {
+    // Added 2026-08-16 — Polkadot/Substrate's default account-signing scheme
+    // (sr25519 / Schnorrkel: Schnorr signatures over Ristretto-compressed
+    // Curve25519), also used for BABE consensus. A genuinely distinct
+    // mechanism from EdDSA and ECDSA — not just another curve choice for an
+    // existing family — confirmed by checking Polkadot's own wiki, which
+    // lists sr25519, Ed25519, and ECDSA as three SEPARATE account options.
+    // The same family also covers Bitcoin's BIP-340 Taproot signatures and
+    // FROST (RFC 9591) threshold signatures used in DeFi MPC custody — found
+    // both while researching this addition but scoped out of this session's
+    // rows; flagged for the vocabulary-gaps audit instead of built now.
+    family: 'Schnorr',
+    classical: true,
+    kinds: ['signature'],
+    // sr25519 added to ALGORITHM_REGISTRY alongside this change
+    // (scripts/generate-algorithm-properties.ts,
+    // pqc_complete_algorithm_reference_08162026.csv) — byte sizes verified
+    // against w3f/schnorrkel's own PUBLIC_KEY_LENGTH/SIGNATURE_LENGTH
+    // constants, not assumed.
+    registryMembers: ['sr25519'],
+    // No 'Schnorr' entry in the CycloneDX 1.7 cryptography registry.
+    cycloneDxFamilies: [],
+    // No established OID — Schnorrkel is a Web3 Foundation implementation,
+    // not an IETF/NIST curve registration.
+    oids: [],
+  },
+  {
     family: 'ML-KEM',
     classical: false,
     kinds: ['kem'],
