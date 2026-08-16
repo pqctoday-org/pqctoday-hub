@@ -206,6 +206,38 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('source_citation_type is well-formed and internally consistent (2026-08-15)', () => {
+    // "If there is no specific crypto requirements, mention it" — this is the
+    // structural half of that guard (see compute-source-citation-type.py for
+    // the content half, which opens the cached document; too slow for hub CI).
+    const SOURCE_CITATION_TYPES = new Set(['', 'technical', 'driver'])
+    for (const uc of useCases) {
+      expect(
+        SOURCE_CITATION_TYPES,
+        `${uc.useCaseId}: unknown source_citation_type "${uc.sourceCitationType}"`
+      ).toContain(uc.sourceCitationType)
+
+      // The classification only means something when there is a link to
+      // classify. A value with no sourceLibraryRef is orphaned metadata.
+      if (uc.sourceCitationType && !uc.sourceLibraryRef) {
+        expect.fail(
+          `${uc.useCaseId}: source_citation_type "${uc.sourceCitationType}" set with no source_library_ref`
+        )
+      }
+
+      // A 'driver' verdict means the cited document does NOT prove the claim
+      // — so something else must. If mechanismRefs is also empty, the row's
+      // mechanism claim has NO proof anywhere, which is exactly the silent
+      // gap this whole column exists to surface, not hide behind a link.
+      if (uc.sourceCitationType === 'driver') {
+        expect(
+          uc.mechanismRefs.length,
+          `${uc.useCaseId}: 'driver' citation with empty mechanism_refs — the claim has no proof at all`
+        ).toBeGreaterThan(0)
+      }
+    }
+  })
+
   it('every mechanism resolves through the cryptoMechanisms vocabulary', () => {
     for (const uc of useCases) {
       for (const m of [...uc.classicalMechanisms, ...uc.pqcMechanisms]) {

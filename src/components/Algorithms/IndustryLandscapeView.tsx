@@ -434,22 +434,37 @@ function UseCaseCard({
         {/* WS8a: hub-only routing. The cited document when the Library holds
             it, otherwise the sector's threats evidence — these citations ARE
             threats-corpus rows. Never an outbound link. */}
-        <Link
-          to={
-            uc.sourceLibraryRef
-              ? libraryHref(uc.sourceLibraryRef)
-              : `/threats?industry=${encodeURIComponent(uc.industry)}`
-          }
-          className="inline-flex max-w-[75%] items-center gap-1 truncate hover:text-primary max-md:min-w-0"
-          title={
-            uc.sourceLibraryRef
-              ? `${uc.mainSource} — open the Library entry`
-              : `${uc.mainSource} — not yet a Library entry; opens this sector's threat evidence`
-          }
-        >
-          <BookMarked size={10} className="shrink-0 opacity-60" />
-          <span className="truncate">{uc.mainSource}</span>
-        </Link>
+        <span className="inline-flex max-w-[75%] min-w-0 items-center gap-1">
+          <Link
+            to={
+              uc.sourceLibraryRef
+                ? libraryHref(uc.sourceLibraryRef)
+                : `/threats?industry=${encodeURIComponent(uc.industry)}`
+            }
+            className="inline-flex min-w-0 items-center gap-1 truncate hover:text-primary"
+            title={
+              uc.sourceLibraryRef
+                ? `${uc.mainSource} — open the Library entry`
+                : `${uc.mainSource} — not yet a Library entry; opens this sector's threat evidence`
+            }
+          >
+            <BookMarked size={10} className="shrink-0 opacity-60" />
+            <span className="truncate">{uc.mainSource}</span>
+          </Link>
+          {/* 2026-08-15: "if there is no specific crypto requirements, mention
+              it" — this document does not itself name the row's mechanisms;
+              the proof is a different document in mechanismRefs. Same role as
+              the standards table's evidence badge: never let a governance
+              citation read as if it were the technical spec. */}
+          {uc.sourceCitationType === 'driver' && (
+            <span
+              className="shrink-0 rounded bg-muted px-1 text-[10px] font-semibold text-muted-foreground"
+              title="This document does not itself specify a cryptographic mechanism — it is cited as the regulatory/institutional driver. The mechanism claim above is proven by a different document."
+            >
+              driver, not spec
+            </span>
+          )}
+        </span>
         <span title="Last verified">{uc.lastVerified}</span>
       </div>
     </div>
