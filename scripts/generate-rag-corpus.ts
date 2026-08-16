@@ -486,7 +486,25 @@ export function algoSlug(name: string): string {
     .replace(/^-|-$/g, '')
 }
 
-/** Map module directory names to route IDs */
+/**
+ * Module directory name → route ID.
+ *
+ * DERIVED FROM THE MANIFESTS, not hand-maintained — see `loadModuleManifests()`,
+ * which populates this on first call. The literal below is retained only as the
+ * fallback for the (currently empty) case where a module directory has no
+ * `manifest.ts`; a manifest always wins.
+ *
+ * WHY THIS CHANGED (2026-08-16). This used to be a hand-edited literal that had
+ * to be updated whenever a module shipped. It drifted to 55 entries against 65
+ * module manifests, and the nine learn modules missing from it silently produced
+ * `metadata.moduleId: ''` on their rag-summary chunk — so `generate-notebooklm.ts`
+ * keyed them all to the empty string, found no summary, and skipped them. Nine
+ * modules had no NotebookLM extract at all, `cbom` and `sbom` among them, and
+ * nothing failed: a missing key just yields `undefined`.
+ *
+ * The 55 literal entries were verified on 2026-08-16 to agree with their
+ * manifests exactly, so deriving introduces no id change.
+ */
 const MODULE_DIR_TO_ID: Record<string, string> = {
   'Module1-Introduction': 'pqc-101',
   QuantumThreats: 'quantum-threats',
@@ -1242,14 +1260,33 @@ let _manifestCache: ModuleManifest[] | null = null
 async function loadModuleManifests(): Promise<ModuleManifest[]> {
   if (_manifestCache) return _manifestCache
   const dir = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
-  const files = fs
+  const entries = fs
     .readdirSync(dir)
-    .map((d) => path.join(dir, d, 'manifest.ts'))
-    .filter((f) => fs.existsSync(f))
-  const mods = await Promise.all(files.map((f) => import(pathToFileURL(f).href)))
-  _manifestCache = mods.map((m) => m.default as ModuleManifest).filter(Boolean)
+    .map((d) => ({ dirName: d, file: path.join(dir, d, 'manifest.ts') }))
+    .filter((e) => fs.existsSync(e.file))
+  const mods = await Promise.all(entries.map((e) => import(pathToFileURL(e.file).href)))
+
+  const manifests: ModuleManifest[] = []
+  mods.forEach((m, i) => {
+    const manifest = m.default as ModuleManifest | undefined
+    if (!manifest) return
+    manifests.push(manifest)
+    // Single source of truth for dir → id and dir → title. Every consumer below
+    // reads these maps, so a module that ships with a manifest is reachable by
+    // the corpus the same day, without anyone remembering to edit a literal.
+    MODULE_DIR_TO_ID[entries[i].dirName] = manifest.id
+    if (manifest.title) MANIFEST_TITLE_BY_DIR[entries[i].dirName] = manifest.title
+  })
+  _manifestCache = manifests
   return _manifestCache
 }
+
+/**
+ * Module directory name → manifest `title`, populated by `loadModuleManifests()`.
+ * Used as the fallback display name when `MODULE_NAME_MAP` has no override, so a
+ * newly-shipped module reads as its real title rather than its directory name.
+ */
+const MANIFEST_TITLE_BY_DIR: Record<string, string> = {}
 
 async function processModules(): Promise<RAGChunk[]> {
   // Build the catalog from the single-source manifests (A1 cut-over). This used
@@ -1976,7 +2013,7 @@ function processModuleRAGSummaries(): RAGChunk[] {
     if (!content) continue
 
     const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
-    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
+    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? MANIFEST_TITLE_BY_DIR[moduleDir.name] ?? moduleDir.name
 
     // Extract title from first heading or use module name
     const titleMatch = content.match(/^#\s+(.+)/m)
@@ -2059,7 +2096,7 @@ function processModuleCuriousSummaries(): RAGChunk[] {
     if (!content) continue
 
     const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
-    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
+    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? MANIFEST_TITLE_BY_DIR[moduleDir.name] ?? moduleDir.name
 
     // Extract title from first heading or use module name
     const titleMatch = content.match(/^#\s+(.+)/m)
@@ -2096,7 +2133,7 @@ function processModuleContent(): RAGChunk[] {
 
   for (const moduleDir of moduleDirs) {
     const modulePath = path.join(MODULES_DIR, moduleDir.name)
-    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
+    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? MANIFEST_TITLE_BY_DIR[moduleDir.name] ?? moduleDir.name
 
     // Build component→step mapping from module index.tsx for step-level deep links
     const stepMap = new Map<string, number>()
@@ -5019,6 +5056,12 @@ function processFrameworkFines(): RAGChunk[] {
 
 async function main() {
   console.log('🔍 Generating RAG corpus...\n')
+
+  // Hydrate MODULE_DIR_TO_ID / MANIFEST_TITLE_BY_DIR before any processor runs.
+  // The synchronous module processors read these maps directly, so populating
+  // them here rather than relying on processor ordering keeps a reordering of
+  // the array below from silently un-mapping every module again.
+  await loadModuleManifests()
 
   const processors: Array<{ name: string; fn: () => RAGChunk[] | Promise<RAGChunk[]> }> = [
     { name: 'Glossary', fn: processGlossary },
