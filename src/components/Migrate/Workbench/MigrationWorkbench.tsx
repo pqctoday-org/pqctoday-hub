@@ -20,7 +20,12 @@ import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { Button } from '../../ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { softwareMetadata, softwareData } from '@/data/migrateData'
-import { useMigrateSelectionStore, type MigrateTab } from '@/store/useMigrateSelectionStore'
+import {
+  useMigrateSelectionStore,
+  selectedProductIds,
+  type MigrateTab,
+} from '@/store/useMigrateSelectionStore'
+import { useHistoryStore } from '@/store/useHistoryStore'
 import { encodeMigrateShareToken, decodeMigrateShareToken } from '@/utils/migrateShareToken'
 import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
@@ -54,8 +59,33 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
   const setTabStore = useMigrateSelectionStore((s) => s.setTab)
   const plan = useMigrateSelectionStore((s) => s.plan)
   const choice = useMigrateSelectionStore((s) => s.choice)
+  const myProducts = useMigrateSelectionStore((s) => s.myProducts)
+  const nameToProductId = useMigrateSelectionStore((s) => s.nameToProductId)
   const applySharedSelection = useMigrateSelectionStore((s) => s.applySharedSelection)
   const [searchParams, setSearchParams] = useSearchParams()
+  const addHistoryEvent = useHistoryStore((s) => s.addEvent)
+
+  // Fire history event on selection change (debounced 1.5s) — mirrors
+  // ComplianceView's compliance_framework_selection pattern. selectedProductIds
+  // is the store's own documented "single join" of myProducts ∪ choice, so this
+  // counts a pick made through either selection path, not just one of them.
+  const selectedCount = selectedProductIds(myProducts, choice, nameToProductId).length
+  const prevSelectedCountRef = useRef(selectedCount)
+  useEffect(() => {
+    if (selectedCount === prevSelectedCountRef.current) return
+    prevSelectedCountRef.current = selectedCount
+    if (selectedCount === 0) return
+    const timer = setTimeout(() => {
+      addHistoryEvent({
+        type: 'migrate_product_selection',
+        timestamp: Date.now(),
+        title: 'Updated migration plan',
+        detail: `${selectedCount} product${selectedCount === 1 ? '' : 's'} selected`,
+        route: '/migrate',
+      })
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [selectedCount, addHistoryEvent])
 
   // ── Shared-selection deep link (?share=<token>) ───────────────────────────
   // A /migrate link can carry the user's product selection so a colleague sees

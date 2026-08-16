@@ -322,6 +322,19 @@ export const logBusinessToolExport = (toolId: string, format: string) => {
   logEvent('Business', 'Tool Export', `${toolId}:${format}`)
 }
 
+// --- Streak tracking ---
+
+/** Fired when a daily-visit streak lands exactly on one of the achievement
+ *  catalog's thresholds (streak-3/7/14/30 in achievementCatalog.ts) — the
+ *  streak only advances once per calendar day, so this fires at most once
+ *  per threshold per user. */
+export const logStreakMilestone = (days: number) => {
+  logEvent('Consistency', 'Streak Milestone', String(days))
+  addHistoryEvent('streak_milestone', `${days}-day learning streak`, {
+    detail: `${days} days`,
+  })
+}
+
 // --- Embed mode tracking ---
 
 export const logEmbedSession = (
@@ -438,6 +451,14 @@ export const logEndorsementGiven = (
 
 export const logQuizAnswer = (questionId: string, correct: boolean) => {
   logEvent('Quiz', correct ? 'Correct' : 'Incorrect', personaLabel(questionId))
+}
+
+export const logQuizSession = (correctCount: number, totalCount: number) => {
+  logEvent('Quiz', 'Session Complete', personaLabel(`${correctCount}/${totalCount}`))
+  addHistoryEvent('quiz_session', `Completed quiz: ${correctCount}/${totalCount} correct`, {
+    detail: `${correctCount}/${totalCount} correct`,
+    route: '/learn/quiz',
+  })
 }
 
 /**
