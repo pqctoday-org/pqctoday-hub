@@ -9784,6 +9784,46 @@
       "sizeBytes": 31239,
       "contentType": "text/html",
       "sha256": "4a03038092aa7604a1962cfe0e5dc35c69673e397e8a6ef845e1c50aa323a02d"
+    },
+    {
+      "refId": "3GPP-TS-35-216-SNOW-3G-Specification",
+      "title": "3GPP TS 35.216 \u2014 SNOW 3G Specification",
+      "url": "https://www.etsi.org/deliver/etsi_ts/135200_135299/135216/17.00.00_60/ts_135216v170000p.pdf",
+      "status": "downloaded",
+      "filename": "3GPP-TS-35-216-SNOW-3G-Specification.pdf",
+      "sizeBytes": 80561,
+      "contentType": "application/pdf",
+      "sha256": "e73610d833c23c3397ce5e548a6c200d388fabf752e351617e933effd47d26d9"
+    },
+    {
+      "refId": "3GPP-TS-35-222-ZUC-Specification",
+      "title": "3GPP TS 35.222 \u2014 ZUC Specification",
+      "url": "https://www.etsi.org/deliver/etsi_ts/135200_135299/135222/17.00.00_60/ts_135222v170000p.pdf",
+      "status": "downloaded",
+      "filename": "3GPP-TS-35-222-ZUC-Specification.pdf",
+      "sizeBytes": 79331,
+      "contentType": "application/pdf",
+      "sha256": "5dafb4586b0b1337af9c67dfbc6f31a1956879e791934164b786a83aa296390c"
+    },
+    {
+      "refId": "RFC-8998-ShangMi-SM-Cipher-Suites-for-TLS-1-3",
+      "title": "RFC 8998 \u2014 ShangMi (SM) Cipher Suites for TLS 1.3",
+      "url": "https://www.rfc-editor.org/rfc/rfc8998.txt",
+      "status": "downloaded",
+      "filename": "RFC-8998-ShangMi-SM-Cipher-Suites-for-TLS-1-3.html",
+      "sizeBytes": 26362,
+      "contentType": "text/html",
+      "sha256": "de2b7d694de1981464dacb6c3e5aaf45583a26e702fe523f25be4fd28eb85d78"
+    },
+    {
+      "refId": "RFC-9563-SM2-Digital-Signature-Algorithm-for-DNSSEC",
+      "title": "RFC 9563 \u2014 SM2 Digital Signature Algorithm for DNSSEC",
+      "url": "https://www.rfc-editor.org/rfc/rfc9563.txt",
+      "status": "downloaded",
+      "filename": "RFC-9563-SM2-Digital-Signature-Algorithm-for-DNSSEC.html",
+      "sizeBytes": 16364,
+      "contentType": "text/html",
+      "sha256": "e6fda116e061f61bedf61b8fe5f6e73e57ca58c8181753d2b75c1fe4a025914f"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"

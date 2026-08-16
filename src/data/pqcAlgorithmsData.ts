@@ -222,6 +222,10 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // (not 'unverified', whose tooltip claims the status wasn't fact-checked;
   // this one was, against w3f/schnorrkel's own source constants).
   'Active|||W3F Schnorrkel implementation; NOT an IETF/NIST standard': 'non-standardized',
+  // SM2 (2026-08-16): a real published standard (GB/T 32918, ISO/IEC
+  // 14888-3:2018) — 'regional' (final within its own jurisdiction, not a
+  // NIST FIPS), same tier China/KpqC national winners already use.
+  'Published|||GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': 'regional',
 }
 
 /** Throws on any (status, fips_standard) pair not in the lookup table above —

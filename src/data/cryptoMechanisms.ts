@@ -201,6 +201,54 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: [],
   },
   {
+    // Added 2026-08-16 — confirmed real via the industry-landscape gap
+    // audit's telecom vocabulary-gap lead, then verified against the actual
+    // ETSI spec text (not just a search summary): ETSI TS 135 216 V17.0.0,
+    // "Specification of the 3GPP Confidentiality and Integrity Algorithms
+    // UEA2 & UIA2; Document 2: SNOW 3G specification". A stream cipher, not
+    // a signature/KEM family — symmetric, like AES/SHA (no
+    // ALGORITHM_REGISTRY member; see SYMMETRIC_EXEMPT in the driftguard).
+    family: 'SNOW3G',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['SNOW3G'],
+    oids: [],
+  },
+  {
+    // Added 2026-08-16 — same audit lead as SNOW3G, the 5G-carried sibling
+    // algorithm. Verified against ETSI TS 135 222 V17.0.0, "Specification
+    // of the 3GPP Confidentiality and Integrity Algorithms EEA3 & EIA3;
+    // Document 2: ZUC specification" (fetched and read, not assumed).
+    family: 'ZUC',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['ZUC'],
+    oids: [],
+  },
+  {
+    // Added 2026-08-16 — confirmed real via the industry-landscape gap
+    // audit's payments vocabulary-gap lead. China's national ('ShangMi')
+    // signature algorithm; verified against RFC 8998 (SM2 §3.2.1, TLS 1.3
+    // profile) and RFC 9563 (SM2 for DNSSEC — source of the byte sizes
+    // below), both fetched and read directly, not assumed from a search
+    // summary.
+    family: 'SM2',
+    classical: true,
+    kinds: ['signature'],
+    // Added to ALGORITHM_REGISTRY alongside this change
+    // (scripts/generate-algorithm-properties.ts,
+    // pqc_complete_algorithm_reference_08162026.csv) — 64-byte uncompressed
+    // public key (x||y), 32-byte private key, 64-byte signature (r||s),
+    // verified against RFC 9563 §4.1/§4.2 directly.
+    registryMembers: ['SM2'],
+    cycloneDxFamilies: ['SM2'],
+    // GM/T 0006-2012 (China); confirmed present in the CycloneDX 1.7
+    // registry's own OID field for SM2.
+    oids: ['1.2.156.10197.1.301'],
+  },
+  {
     family: 'ML-KEM',
     classical: false,
     kinds: ['kem'],

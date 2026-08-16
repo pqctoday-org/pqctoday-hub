@@ -99,6 +99,7 @@ const SECTIONS: { header: string; names: string[] }[] = [
       'Ed25519',
       'BLS12-381',
       'sr25519',
+      'SM2',
       'X25519',
       'ECDH P-256',
       'ECDH P-384',
@@ -142,6 +143,10 @@ const FIPS_STANDARD_NORMALIZATION: Record<string, string | null> = {
   // an IETF/NIST standards-track document — verified against w3f/schnorrkel's
   // own source (SIGNATURE_LENGTH/PUBLIC_KEY_LENGTH constants), not assumed.
   'W3F Schnorrkel implementation; NOT an IETF/NIST standard': null,
+  // SM2 (2026-08-16): China's national standard, internationally recognized
+  // via ISO/IEC 14888-3:2018 — not a FIPS/NIST document. Byte sizes verified
+  // against RFC 9563 (SM2 for DNSSEC), not assumed.
+  'GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': null,
 }
 
 /**
