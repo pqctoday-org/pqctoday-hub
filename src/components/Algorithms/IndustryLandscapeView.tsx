@@ -21,7 +21,6 @@
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import {
-  ExternalLink,
   ArrowLeft,
   BookMarked,
   Landmark as LandmarkIcon,
@@ -39,7 +38,9 @@ import {
   type IndustryUseCase,
   type IndustryStandard,
   type IndustryMarketSize,
+  type PqcClaimBasis,
 } from '../../data/industryLandscapeData'
+import { evidenceLabelFor } from './evidenceLabels'
 import {
   CLASSICAL_MECHANISM_FAMILIES,
   PQC_MECHANISM_FAMILIES,
@@ -99,20 +100,19 @@ const protocolNames = new Map(PROTOCOL_MATRIX.map((p) => [p.id, p.name]))
 function MarketSizeBadge({ m }: { m: IndustryMarketSize }) {
   const metric = METRIC_LABEL[m.metricType] ?? m.metricType
   return (
-    <a
-      href={m.sourceUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      title={`${m.figureAsStated} — ${m.mainSource}`}
-      className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/20"
-      onClick={(e) => e.stopPropagation()}
+    // WS8b: official statistics (BEA, Census, IMF, WHO) are cited as TEXT.
+    // None of the 19 market-size sources is a library document and forcing
+    // statistical tables into a PQC document library would distort what the
+    // library is for — so attribution stays visible without an outbound link.
+    <span
+      title={`${m.figureAsStated} — ${m.mainSource} (${m.regionScope} ${metric}, ${m.marketSizeYear})`}
+      className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
     >
       {formatMarketSize(m.marketSizeUsd)}
       <span className="opacity-70">
-        {m.regionScope} {metric} ({m.marketSizeYear})
+        {m.regionScope} {metric} ({m.marketSizeYear}) · {m.mainSource}
       </span>
-      <ExternalLink size={10} className="opacity-60" />
-    </a>
+    </span>
   )
 }
 
@@ -149,16 +149,78 @@ function MechanismChip({
 /** How a non-standard evidence row is labelled. A research paper can prove
  *  which algorithms a use case relies on, but it is not a specification —
  *  the badge keeps that distinction visible wherever the chip renders. */
-const EVIDENCE_LABEL: Record<IndustryStandard['evidenceType'], string | null> = {
-  standard: null,
-  research: 'Research',
-  'industry-report': 'Industry report',
-  courseware: 'Courseware',
+// EVIDENCE_LABEL / evidenceLabelFor moved to ./evidenceLabels (2026-08-15) so
+// the driftguard can pin vocabulary↔renderer agreement without importing this
+// component into a data test. See that module for why the guard exists.
+
+/** Protocol chip. `target` marks the PQC migration destination (WS11). */
+function ProtocolChip({ id, target }: { id: string; target?: boolean }) {
+  const name = protocolNames.get(id) ?? id
+  return (
+    <Link
+      to={`/algorithms?tab=support&protocol=${encodeURIComponent(id)}`}
+      className={
+        target
+          ? 'rounded border border-status-success/40 bg-status-success/10 px-2 py-0.5 text-xs font-medium text-status-success hover:border-status-success'
+          : 'rounded border border-border bg-muted/40 px-2 py-0.5 text-xs text-foreground hover:border-primary/60 hover:text-primary'
+      }
+      title={
+        target
+          ? `${name} is where this use case's PQC migration lands. Open it in Protocol Support.`
+          : `${name} is what this use case runs today. Open it in Protocol Support.`
+      }
+    >
+      {name}
+    </Link>
+  )
+}
+
+/**
+ * What a PQC claim rests on (WS10). Deliberately the same visual grammar as the
+ * standards chips' evidence badge — a reader must never mistake a research
+ * proposal for a deployed standard, and one badge language is easier to learn
+ * than two.
+ */
+const CLAIM_BASIS_LABEL: Record<PqcClaimBasis, { label: string; tone: string; help: string }> = {
+  adopted: {
+    label: 'Adopted',
+    tone: 'border-status-success/40 bg-status-success/10 text-status-success',
+    help: 'Published standard, and this sector is running it in production.',
+  },
+  standardised: {
+    label: 'Standardised',
+    tone: 'border-primary/40 bg-primary/10 text-primary',
+    help: 'A published standard exists, but this sector has not migrated yet.',
+  },
+  'in-progress': {
+    label: 'In progress',
+    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    help: 'An active draft is on the standards track — not yet final.',
+  },
+  proposed: {
+    label: 'Proposed',
+    tone: 'border-status-error/40 bg-status-error/10 text-status-error',
+    help: 'A research paper or vendor proposal. No standards-track work — not a specification.',
+  },
+  none: { label: '', tone: '', help: '' },
+}
+
+function ClaimBasisBadge({ basis }: { basis: PqcClaimBasis }) {
+  const d = CLAIM_BASIS_LABEL[basis]
+  if (!d || !d.label) return null
+  return (
+    <span
+      className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${d.tone}`}
+      title={d.help}
+    >
+      {d.label}
+    </span>
+  )
 }
 
 /** Standard chip: mechanisms it references + direct link to the Library page. */
 function StandardChip({ std }: { std: IndustryStandard }) {
-  const evidence = EVIDENCE_LABEL[std.evidenceType]
+  const evidence = evidenceLabelFor(std.evidenceType)
   return (
     <Link
       to={libraryHref(std.libraryRef)}
@@ -251,6 +313,12 @@ function UseCaseCard({
 }) {
   const Icon = USE_CASE_ICONS[uc.useCaseIcon] ?? Lock
   const tools = toolsForUseCase(uc)
+  const workshopTools = tools.filter((t) => !t.sandbox)
+  const sandboxTools = tools.filter((t) => t.sandbox)
+  // Show the arrow only when the migration actually moves protocols —
+  // x509 and ssh gained PQC in place, so target === current there.
+  const migrates =
+    uc.protocolsTarget.length > 0 && uc.protocolsTarget.join(';') !== uc.protocolsCurrent.join(';')
   const relevantStandards = standards.filter(
     (s) =>
       s.industry === uc.industry &&
@@ -285,25 +353,42 @@ function UseCaseCard({
             {uc.pqcMechanisms.map((m) => (
               <MechanismChip key={m} family={m} onSelect={onPickMechanism} />
             ))}
+            {/* WS10: says whether the PQC claim above is deployed, merely
+                standardised, still a draft, or only a proposal. */}
+            <ClaimBasisBadge basis={uc.pqcClaimBasis} />
           </>
         )}
       </div>
 
-      {uc.protocols.length > 0 && (
+      {/* WS11: the protocol migration path. Current and target are shown
+          separately — a row naming only TLS 1.2 has no PQC path at all, and
+          merging the two columns hid exactly that on two rows. */}
+      {uc.protocolsCurrent.length > 0 && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            Protocols
+            Runs today
           </span>
-          {uc.protocols.map((p) => (
-            <Link
-              key={p}
-              to={`/algorithms?tab=support&protocol=${encodeURIComponent(p)}`}
-              className="rounded border border-border bg-muted/40 px-2 py-0.5 text-xs text-foreground hover:border-primary/60 hover:text-primary"
-              title={`Open ${protocolNames.get(p) ?? p} in Protocol Support`}
-            >
-              {protocolNames.get(p) ?? p}
-            </Link>
+          {uc.protocolsCurrent.map((p) => (
+            <ProtocolChip key={p} id={p} />
           ))}
+          {migrates && (
+            <>
+              <ArrowRight size={12} className="text-muted-foreground" aria-hidden />
+              <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                Migrates to
+              </span>
+              {uc.protocolsTarget.map((p) => (
+                <ProtocolChip key={p} id={p} target />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
+      {uc.protocolsCurrent.length === 0 && uc.noProtocolReason && (
+        <div className="mt-2 text-[11px] leading-snug text-muted-foreground">
+          <span className="uppercase tracking-wide">No standardised protocol</span> —{' '}
+          {uc.noProtocolReason}
         </div>
       )}
 
@@ -318,26 +403,68 @@ function UseCaseCard({
         </div>
       )}
 
-      {tools.length > 0 && (
+      {/* T4/WS8d: workshop tools and sandbox scenarios are separate groups.
+          They share the /playground/<id> route, but one runs in the browser and
+          the other runs real binaries in an access-gated container — a
+          different expectation, so a different label rather than one
+          undifferentiated "Try it" row. */}
+      {workshopTools.length > 0 && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Try it</span>
-          {tools.map((t) => (
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Workshop tools
+          </span>
+          {workshopTools.map((t) => (
+            <ToolChip key={t.id} tool={t} />
+          ))}
+        </div>
+      )}
+
+      {sandboxTools.length > 0 && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            Sandbox scenarios
+          </span>
+          {sandboxTools.map((t) => (
             <ToolChip key={t.id} tool={t} />
           ))}
         </div>
       )}
 
       <div className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground max-md:min-w-0">
-        <a
-          href={uc.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex max-w-[75%] items-center gap-1 truncate hover:text-primary max-md:min-w-0"
-          title={uc.mainSource}
-        >
-          <ExternalLink size={10} className="shrink-0 opacity-60" />
-          <span className="truncate">{uc.mainSource}</span>
-        </a>
+        {/* WS8a: hub-only routing. The cited document when the Library holds
+            it, otherwise the sector's threats evidence — these citations ARE
+            threats-corpus rows. Never an outbound link. */}
+        <span className="inline-flex max-w-[75%] min-w-0 items-center gap-1">
+          <Link
+            to={
+              uc.sourceLibraryRef
+                ? libraryHref(uc.sourceLibraryRef)
+                : `/threats?industry=${encodeURIComponent(uc.industry)}`
+            }
+            className="inline-flex min-w-0 items-center gap-1 truncate hover:text-primary"
+            title={
+              uc.sourceLibraryRef
+                ? `${uc.mainSource} — open the Library entry`
+                : `${uc.mainSource} — not yet a Library entry; opens this sector's threat evidence`
+            }
+          >
+            <BookMarked size={10} className="shrink-0 opacity-60" />
+            <span className="truncate">{uc.mainSource}</span>
+          </Link>
+          {/* 2026-08-15: "if there is no specific crypto requirements, mention
+              it" — this document does not itself name the row's mechanisms;
+              the proof is a different document in mechanismRefs. Same role as
+              the standards table's evidence badge: never let a governance
+              citation read as if it were the technical spec. */}
+          {uc.sourceCitationType === 'driver' && (
+            <span
+              className="shrink-0 rounded bg-muted px-1 text-[10px] font-semibold text-muted-foreground"
+              title="This document does not itself specify a cryptographic mechanism — it is cited as the regulatory/institutional driver. The mechanism claim above is proven by a different document."
+            >
+              driver, not spec
+            </span>
+          )}
+        </span>
         <span title="Last verified">{uc.lastVerified}</span>
       </div>
     </div>
@@ -592,16 +719,12 @@ export function IndustryLandscapeView() {
                   set{mechanismDef.registryMembers.length === 1 ? '' : 's'}
                 </span>
                 {mechanismDef.cycloneDxFamilies.length > 0 ? (
-                  <a
-                    href={CYCLONEDX_REGISTRY.landingPage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary hover:bg-primary/20"
+                  <span
+                    className="inline-flex items-center gap-1 rounded bg-primary/10 px-2 py-0.5 text-xs text-primary"
                     title={`CycloneDX ${CYCLONEDX_REGISTRY.specVersion} cryptography registry algorithmFamily (registry data ${CYCLONEDX_REGISTRY.verifiedAgainst})`}
                   >
                     CycloneDX: {mechanismDef.cycloneDxFamilies.join(', ')}
-                    <ExternalLink size={10} />
-                  </a>
+                  </span>
                 ) : (
                   <span
                     className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground"

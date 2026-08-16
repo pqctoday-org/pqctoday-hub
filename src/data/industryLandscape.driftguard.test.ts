@@ -13,10 +13,17 @@
 // in this file.
 
 import { describe, expect, it } from 'vitest'
-import { loadIndustryLandscape, getLandscapeIndustries } from './industryLandscapeData'
-import { CRYPTO_MECHANISMS, isKnownMechanism } from './cryptoMechanisms'
+import {
+  loadIndustryLandscape,
+  getLandscapeIndustries,
+  EVIDENCE_TYPES,
+  PQC_CLAIM_BASES,
+} from './industryLandscapeData'
+import { evidenceLabelFor, unlabelledEvidenceTypes } from '../components/Algorithms/evidenceLabels'
+import { CRYPTO_MECHANISMS, isKnownMechanism, CYCLONEDX_REGISTRY } from './cryptoMechanisms'
+import { ALGORITHM_FAMILIES, REGISTRY_LAST_UPDATED } from './cyclonedxCryptoRegistry'
 import { ALGORITHM_REGISTRY } from './algorithmProperties'
-import { PROTOCOL_MATRIX } from './pqcProtocolMatrix'
+import { PROTOCOL_MATRIX, DRAFT_STAGE_LEVEL } from './pqcProtocolMatrix'
 import { threatsData } from './threatsData'
 import { libraryData } from './libraryData'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landscapeIcons'
@@ -25,6 +32,7 @@ import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
 import { resolveToNaicsSet } from './sectorVocabularyData'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
+const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
 
 /** Industries with no official-statistics market figure, by design:
  *  Cross-Industry (not an industry), Hardware Security Modules (product
@@ -54,11 +62,178 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
-  it('every protocol id exists in the protocol matrix', () => {
+  it('every PQC claim is reachable through a target protocol (WS3a)', () => {
+    // THE consistency check, and note carefully what it does NOT ask.
+    //
+    // The first design asked "is migration_status=none while a linked protocol
+    // is RFC-published?" — run against real data it flagged 16 of 76 rows and
+    // every one was correct as written: x509 HAS published PQC RFCs, and
+    // avionics genuinely has not adopted them. That rule conflated STANDARDS
+    // PROGRESS with SECTOR ADOPTION, which are different facts.
+    //
+    // This asks a question that is objectively true or false instead: does the
+    // claimed algorithm have ANY path through the protocols this row migrates
+    // to? A KEM claim needs a target with a KEM dimension; a signature claim
+    // needs one with a signature dimension. It found 2 real defects
+    // (cloud-backup, fin-archives — ML-KEM claimed while naming only TLS 1.2,
+    // which the matrix documents as having no PQC track at all) and 0 false
+    // positives.
+    const KEM_FAMILIES = new Set(['ML-KEM', 'HQC', 'FrodoKEM', 'Classic-McEliece'])
+    const SIG_FAMILIES = new Set(['ML-DSA', 'SLH-DSA', 'FN-DSA', 'LMS', 'XMSS'])
+    const rowById = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
+    const applies = (v: string) => v !== 'na'
+
+    for (const uc of useCases) {
+      if (uc.pqcMechanisms.length === 0) continue
+      const targets = uc.protocolsTarget.map((id) => rowById.get(id)).filter(Boolean)
+      // A row with no protocol at all is covered by the no_protocol_reason
+      // guard below, not here — there is nothing to be reachable through.
+      if (targets.length === 0) continue
+
+      const anyKem = targets.some(
+        (t) => applies(t!.dimensions.pureKem.value) || applies(t!.dimensions.hybridKem.value)
+      )
+      const anySig = targets.some(
+        (t) => applies(t!.dimensions.pureSig.value) || applies(t!.dimensions.hybridSig.value)
+      )
+      for (const m of uc.pqcMechanisms) {
+        if (KEM_FAMILIES.has(m)) {
+          expect(
+            anyKem,
+            `${uc.useCaseId}: claims KEM "${m}" but no target protocol (${uc.protocolsTarget.join(', ')}) has a KEM dimension`
+          ).toBe(true)
+        }
+        if (SIG_FAMILIES.has(m)) {
+          expect(
+            anySig,
+            `${uc.useCaseId}: claims signature "${m}" but no target protocol (${uc.protocolsTarget.join(', ')}) has a signature dimension`
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('protocols_current / protocols_target resolve, and empty is explained (WS11)', () => {
     const ids = new Set(PROTOCOL_MATRIX.map((p) => p.id))
     for (const uc of useCases) {
-      for (const p of uc.protocols) {
+      for (const p of [...uc.protocolsCurrent, ...uc.protocolsTarget]) {
         expect(ids, `${uc.useCaseId}: unknown protocol "${p}"`).toContain(p)
+      }
+      // A target must never be a dead end — that is the whole point of the
+      // split. If the matrix says a protocol is superseded, the target column
+      // must already name its successor.
+      for (const p of uc.protocolsTarget) {
+        expect(
+          rowByIdForTargets.get(p)?.supersededByProtocolId,
+          `${uc.useCaseId}: target "${p}" is itself superseded — migrate the row to its successor`
+        ).toBeUndefined()
+      }
+      // "No standardised protocol exists" must be distinguishable from
+      // "nobody filled it in".
+      if (uc.protocolsCurrent.length === 0) {
+        expect(
+          uc.noProtocolReason.trim().length,
+          `${uc.useCaseId}: no protocols and no no_protocol_reason`
+        ).toBeGreaterThan(0)
+      } else {
+        expect(
+          uc.protocolsTarget.length,
+          `${uc.useCaseId}: has current protocols but no target`
+        ).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('pqc_claim_basis is a known value and within its matrix-derived ceiling (WS10)', () => {
+    const rowById = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
+    for (const uc of useCases) {
+      expect(
+        PQC_CLAIM_BASES as readonly string[],
+        `${uc.useCaseId}: unknown pqc_claim_basis "${uc.pqcClaimBasis}"`
+      ).toContain(uc.pqcClaimBasis)
+
+      // A row claiming no PQC mechanism must not claim a basis for one.
+      if (uc.pqcMechanisms.length === 0) {
+        expect(uc.pqcClaimBasis, `${uc.useCaseId}: basis set but no PQC mechanism`).toBe('none')
+        continue
+      }
+      expect(uc.pqcClaimBasis, `${uc.useCaseId}: claims PQC but basis is 'none'`).not.toBe('none')
+
+      // The CEILING is checkable; adoption is not. A row may claim less than
+      // its target protocol supports (the sector is behind — normal), but never
+      // more (that would be asserting a standard that does not exist).
+      const targets = uc.protocolsTarget.map((id) => rowById.get(id)).filter(Boolean)
+      if (targets.length === 0) continue
+      const bestStage = Math.max(
+        ...targets.flatMap((t) =>
+          Object.values(t!.dimensions).map((d) =>
+            d.stage
+              ? DRAFT_STAGE_LEVEL[d.stage]
+              : d.value === 'rfc'
+                ? 7
+                : d.value === 'draft'
+                  ? 4
+                  : 0
+          )
+        )
+      )
+      if (bestStage < 7) {
+        expect(
+          ['adopted', 'standardised'].includes(uc.pqcClaimBasis),
+          `${uc.useCaseId}: basis "${uc.pqcClaimBasis}" exceeds its ceiling — no target protocol has a published standard`
+        ).toBe(false)
+      }
+    }
+  })
+
+  it('source_library_ref, when set, resolves to an ACTIVE library row (WS8a)', () => {
+    // Hard FK, same class as standards' library_ref and mechanism_refs. The
+    // tile renders /library?ref=<id> when this is set and falls back to
+    // /threats?industry= when it is empty, so a ref pointing at a missing or
+    // deprecated row is a dead link where the fallback would have worked.
+    //
+    // Empty is legitimate and NOT a failure — it is the documented fallback
+    // state, and the value is hand-set only (fuzzy title matching resolved
+    // "IEC 62351-3/-5/-9" to IEC 62443 and "PCI DSS v4.0.1" to the PCI-DSS
+    // quick-reference guide, i.e. a DIFFERENT standard).
+    const active = new Set(libraryData.map((d) => d.referenceId))
+    for (const uc of useCases) {
+      if (!uc.sourceLibraryRef) continue
+      expect(
+        active,
+        `${uc.useCaseId}: source_library_ref "${uc.sourceLibraryRef}" is not an active library row`
+      ).toContain(uc.sourceLibraryRef)
+    }
+  })
+
+  it('source_citation_type is well-formed and internally consistent (2026-08-15)', () => {
+    // "If there is no specific crypto requirements, mention it" — this is the
+    // structural half of that guard (see compute-source-citation-type.py for
+    // the content half, which opens the cached document; too slow for hub CI).
+    const SOURCE_CITATION_TYPES = new Set(['', 'technical', 'driver'])
+    for (const uc of useCases) {
+      expect(
+        SOURCE_CITATION_TYPES,
+        `${uc.useCaseId}: unknown source_citation_type "${uc.sourceCitationType}"`
+      ).toContain(uc.sourceCitationType)
+
+      // The classification only means something when there is a link to
+      // classify. A value with no sourceLibraryRef is orphaned metadata.
+      if (uc.sourceCitationType && !uc.sourceLibraryRef) {
+        expect.fail(
+          `${uc.useCaseId}: source_citation_type "${uc.sourceCitationType}" set with no source_library_ref`
+        )
+      }
+
+      // A 'driver' verdict means the cited document does NOT prove the claim
+      // — so something else must. If mechanismRefs is also empty, the row's
+      // mechanism claim has NO proof anywhere, which is exactly the silent
+      // gap this whole column exists to surface, not hide behind a link.
+      if (uc.sourceCitationType === 'driver') {
+        expect(
+          uc.mechanismRefs.length,
+          `${uc.useCaseId}: 'driver' citation with empty mechanism_refs — the claim has no proof at all`
+        ).toBeGreaterThan(0)
       }
     }
   })
@@ -332,8 +507,12 @@ describe('industry-landscape driftguards', () => {
     const NOT_A_SPEC = new Set(['Research Paper', 'Industry Report', 'Government Guidance'])
     const docTypeOf = new Map(libraryData.map((d) => [d.referenceId, d.documentType]))
     for (const s of standards) {
+      // Derived from the exported vocabulary, not a second hardcoded list —
+      // a hardcoded copy here is exactly how `guidance` came to be accepted by
+      // this test while the renderer had never heard of it (see the
+      // vocabulary/renderer test below).
       expect(
-        ['standard', 'research', 'industry-report', 'courseware', 'guidance'],
+        EVIDENCE_TYPES as readonly string[],
         `standard "${s.standardId}" has unknown evidence_type "${s.evidenceType}"`
       ).toContain(s.evidenceType)
       const docType = docTypeOf.get(s.libraryRef) ?? ''
@@ -353,6 +532,88 @@ describe('industry-landscape driftguards', () => {
         ).toContain(docType)
       }
     }
+  })
+
+  it('CycloneDX projection: every mapped family exists in the vendored registry', () => {
+    // WS5 (2026-08-15). cryptoMechanisms.ts's provenance block CLAIMED it was
+    // "checked by the maintenance flow so a registry update surfaces as a
+    // freshness finding". Nothing read it — not the validators, not a script,
+    // not the freshness manifest — so the mapping was correct by inspection
+    // rather than by test, and a typo would have shipped silently.
+    //
+    // The vocabulary is NOT adopted as the primary key, deliberately: 4 PQC
+    // families (FN-DSA, HQC, FrodoKEM, Classic McEliece) have no registry entry
+    // at all, RSA splits into 4 padding-specific families the sector evidence
+    // never specifies, and X25519 collapses into ECDH. It is a projection for
+    // CBOM export, and this pins the projection.
+    const known = new Set(ALGORITHM_FAMILIES.map((f) => f.family))
+    for (const fam of CRYPTO_MECHANISMS) {
+      for (const cdx of fam.cycloneDxFamilies) {
+        expect(
+          known,
+          `${fam.family}: cycloneDxFamilies value "${cdx}" is not in the vendored CycloneDX registry`
+        ).toContain(cdx)
+      }
+    }
+  })
+
+  it('CycloneDX projection: the deliberately-absent PQC families are still absent', () => {
+    // The other half of the guard, and the one that earns its keep. These four
+    // map to [] because the registry has no entry for them (verified absent
+    // 2026-07-29). When CycloneDX adds HQC, this test fails and tells you to
+    // map it — which is the only way anyone would find out.
+    const known = new Set(ALGORITHM_FAMILIES.map((f) => f.family))
+    for (const fam of ['FN-DSA', 'HQC', 'FrodoKEM', 'Classic-McEliece']) {
+      const entry = CRYPTO_MECHANISMS.find((f) => f.family === fam)
+      expect(entry, `${fam} missing from CRYPTO_MECHANISMS`).toBeDefined()
+      expect(
+        entry!.cycloneDxFamilies,
+        `${fam} is mapped, so the registry now has an entry — update the mapping`
+      ).toEqual([])
+      // Belt and braces: assert the registry really still lacks it, so the
+      // empty mapping above stays honest rather than merely unchanged.
+      expect(
+        known.has(fam),
+        `CycloneDX registry now defines "${fam}" — map it in cryptoMechanisms.ts`
+      ).toBe(false)
+    }
+  })
+
+  it('CycloneDX pin matches the vendored registry it claims to describe', () => {
+    // CYCLONEDX_REGISTRY.verifiedAgainst is rendered to READERS on the tile
+    // ("registry data 2026-02-24"). If it drifts from the vendored copy's own
+    // lastUpdated, the page states a provenance date that is not the data's.
+    expect(REGISTRY_LAST_UPDATED.slice(0, 10)).toBe(CYCLONEDX_REGISTRY.verifiedAgainst)
+  })
+
+  it('every evidence_type the vocabulary allows has a renderer badge', () => {
+    // WS3c (2026-08-15). THE guard for the D7 class: a value the data layer
+    // accepts but the renderer has never heard of. `guidance` was added to the
+    // Python validator and to this file's allowed list, but not to the TS union
+    // and not to the badge map — so three guidance documents rendered as
+    // specifications. Nothing checked that the two lists agreed, because there
+    // was no single list. Now there is one, and this asserts the renderer
+    // covers all of it.
+    expect(
+      unlabelledEvidenceTypes(),
+      'evidence_type values with no badge label — they would render as specifications'
+    ).toEqual([])
+
+    // `standard` is the ONLY value entitled to render with no badge.
+    for (const t of EVIDENCE_TYPES) {
+      if (t === 'standard') {
+        expect(evidenceLabelFor(t), 'standard must render without a badge').toBeNull()
+      } else {
+        expect(
+          evidenceLabelFor(t),
+          `evidence_type "${t}" must carry a visible badge, not render as a standard`
+        ).toBeTruthy()
+      }
+    }
+
+    // Defensive: a value that is not in the vocabulary at all must still not
+    // fall through to the no-badge state.
+    expect(evidenceLabelFor('not-a-real-type' as never)).toBe('Unverified type')
   })
 
   it('standards coverage of use cases does not regress', () => {

@@ -346,6 +346,46 @@ export interface ProtocolMatrixRow {
    */
   inheritsFromProtocolId?: string
   /**
+   * This protocol has NO post-quantum path of its own — every dimension is
+   * `na`/`none` — and `supersededByProtocolId` names the row the migration goes
+   * to instead (WS12, 2026-08-15).
+   *
+   * WHY THIS EXISTS: a row of four `na` cells was unreadable. `na` is also the
+   * value for dimensions that are genuinely not applicable, so "TLS 1.2 has no
+   * PQC track at all, move to TLS 1.3" rendered identically to "this question
+   * doesn't apply here" — the single most important state in a migration matrix
+   * was its least legible one.
+   *
+   * Distinct from `inheritsFromProtocolId`, which means "same PQC posture by
+   * specification reuse". This means the opposite: a dead end and its way out.
+   * The two compose — `dtls-1-2` inherits from `tls-1-2` AND is superseded by
+   * `dtls-1-3`.
+   *
+   * INVARIANT (pinned by audit-matrix-refs.ts and the driftguard): a row
+   * carrying this must have every dimension `na`/`none`, and its target must
+   * have at least one dimension that is not. Authoring the edge backwards is
+   * therefore impossible rather than merely discouraged.
+   */
+  supersededByProtocolId?: string
+  /**
+   * Reverse of `supersededByProtocolId` — the deprecated protocols this row
+   * replaces. Ids, NOT display names: `inheritedBy` stores names ('DTLS 1.2')
+   * and therefore cannot be FK-checked, a weakness deliberately not copied here.
+   */
+  supersedes?: string[]
+  /**
+   * Deprecated protocol retained only as a migration SOURCE — it will never
+   * gain a PQC dimension, and its refs are frozen by definition.
+   *
+   * Consequences, all enforced elsewhere: hidden by default behind the "show
+   * deprecated protocols" toggle so it cannot swamp the readiness heatmap;
+   * excluded from the completeness metric (counting frozen rows would inflate
+   * "N/N cells have an explicit value" while meaning less); excluded from the
+   * IETF datatracker poll in enrich-protocol-matrix.py, where re-resolving a
+   * frozen ref is pure churn; never `recommended`.
+   */
+  historical?: boolean
+  /**
    * Editorial flag: this protocol is ready for production PQC deployment today.
    * Criteria: at least one dimension at RFC or RFC-editor-queue stage with known
    * production deployments. Drives the star chip in heatmap view, the
@@ -677,6 +717,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     noDeploymentReason:
       'By design — the IETF TLS WG scoped all PQC work to TLS 1.3 only (TLS 1.2 BCP recommends migrating off TLS 1.2). Operators must migrate to TLS 1.3 to obtain any PQ posture; no path exists to retrofit PQ key exchange or signatures into TLS 1.2 transport.',
     inheritedBy: ['DTLS 1.2', 'FIDO'],
+    supersededByProtocolId: 'tls-1-3',
   },
   {
     id: 'tls-1-3',
@@ -920,6 +961,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec', 'QUIC'],
+    supersedes: ['tls-1-2', 'tls-1-0-1-1', 'ssl-3-0'],
     recommended: true,
     recommendedReason:
       'X25519MLKEM768 hybrid group already in production at Cloudflare, Google, and AWS; spec is in the RFC Editor queue (EDIT) — the de-facto standard for TLS PQC migration today.',
@@ -2313,6 +2355,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         url: 'https://datatracker.ietf.org/wg/ipsecme/documents/',
       },
     ],
+    supersedes: ['ikev1'],
   },
   {
     id: 'wireguard',
@@ -2932,6 +2975,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     noDeploymentReason:
       'Inherits TLS 1.2 — same scope decision. No PQC migration path for DTLS 1.2; users should move to DTLS 1.3 / TLS 1.3.',
     inheritsFromProtocolId: 'tls-1-2',
+    supersededByProtocolId: 'dtls-1-3',
   },
   {
     id: 'dtls-1-3',
@@ -3014,13 +3058,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     commercialLibraries: [],
     playgrounds: [],
     inheritsFromProtocolId: 'tls-1-3',
+    supersedes: ['dtls-1-2', 'dtls-1-0'],
   },
   {
     id: 'fido',
     name: 'FIDO',
     description:
       'FIDO authenticators (U2F) — channel security inherits TLS 1.2; no separate PQC track.',
-    latestRelease: [],
+    historical: true,
+    latestRelease: [
+      {
+        id: 'CTAP-2.1',
+        title:
+          'FIDO Client to Authenticator Protocol (CTAP) v2.1 — supersedes the U2F specifications',
+        url: 'https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html',
+        date: '2021-06',
+      },
+    ],
     latestDraft: [],
     dimensions: {
       pureKem: { value: 'na', note: 'Inherits TLS 1.2 — no PQC.' },
@@ -3037,6 +3091,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     noDeploymentReason:
       'FIDO U2F has no PQC migration profile from the FIDO Alliance. Authenticators using the legacy U2F protocol will be replaced by FIDO 2 / passkeys + TLS 1.3 hybrid KEX rather than getting a PQ upgrade in place.',
     inheritsFromProtocolId: 'tls-1-2',
+    supersededByProtocolId: 'fido-2',
   },
   {
     id: 'fido-2',
@@ -3116,6 +3171,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     commercialLibraries: [],
     playgrounds: [],
     inheritsFromProtocolId: 'tls-1-3',
+    supersedes: ['fido'],
   },
   {
     id: 'macsec',
@@ -3955,5 +4011,228 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     recommended: true,
     recommendedReason:
       'FC-SP-3 has published CNSA 2.0 (ML-KEM + ML-DSA) algorithm support and a shipping production deployment (Broadcom Emulex SecureHBA, 120,000+ units) with no measured performance cost.',
+  },
+  {
+    id: 'tls-1-0-1-1',
+    name: 'TLS 1.0 / 1.1',
+    description:
+      'Deprecated TLS versions. RFC 8996 (BCP 195) deprecates both; no PQC work targets them and none ever will. Migration target is TLS 1.3.',
+    historical: true,
+    latestRelease: [
+      {
+        id: 'RFC-8996',
+        title: 'RFC 8996 — Deprecating TLS 1.0 and TLS 1.1',
+        url: 'https://datatracker.ietf.org/doc/html/rfc8996',
+        date: '2021-03',
+      },
+      {
+        id: 'RFC-2246',
+        title: 'RFC 2246 — TLS 1.0 (deprecated)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc2246',
+        date: '1999-01',
+      },
+      {
+        id: 'RFC-4346',
+        title: 'RFC 4346 — TLS 1.1 (deprecated)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc4346',
+        date: '2006-04',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. All IETF PQC work is scoped to TLS 1.3.',
+      },
+      hybridKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. All IETF PQC work is scoped to TLS 1.3.',
+      },
+      pureSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. All IETF PQC work is scoped to TLS 1.3.',
+      },
+      hybridSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. All IETF PQC work is scoped to TLS 1.3.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    noDeploymentReason:
+      'Formally deprecated. Retained in this matrix only as a migration SOURCE — it shows where PQC work is NOT happening and where to go instead.',
+    supersededByProtocolId: 'tls-1-3',
+  },
+  {
+    id: 'ssl-3-0',
+    name: 'SSL 3.0',
+    description:
+      'Prohibited by RFC 7568. Predates TLS entirely; retained only to show that deployments still running it have no PQC path short of moving to TLS 1.3.',
+    historical: true,
+    latestRelease: [
+      {
+        id: 'RFC-7568',
+        title: 'RFC 7568 — Deprecating Secure Sockets Layer Version 3.0',
+        url: 'https://datatracker.ietf.org/doc/html/rfc7568',
+        date: '2015-06',
+      },
+      {
+        id: 'RFC-6101',
+        title: 'RFC 6101 — The SSL Protocol Version 3.0 (Historic)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc6101',
+        date: '2011-08',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Prohibited by RFC 7568. No PQC path.',
+      },
+      hybridKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Prohibited by RFC 7568. No PQC path.',
+      },
+      pureSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Prohibited by RFC 7568. No PQC path.',
+      },
+      hybridSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Prohibited by RFC 7568. No PQC path.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    noDeploymentReason:
+      'Formally deprecated. Retained in this matrix only as a migration SOURCE — it shows where PQC work is NOT happening and where to go instead.',
+    supersededByProtocolId: 'tls-1-3',
+  },
+  {
+    id: 'dtls-1-0',
+    name: 'DTLS 1.0',
+    description:
+      'Deprecated alongside TLS 1.0/1.1 by RFC 8996. Migration target is DTLS 1.3, which inherits TLS 1.3 PQC posture.',
+    historical: true,
+    latestRelease: [
+      {
+        id: 'RFC-8996',
+        title: 'RFC 8996 — Deprecating TLS 1.0 and TLS 1.1 (also deprecates DTLS 1.0)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc8996',
+        date: '2021-03',
+      },
+      {
+        id: 'RFC-4347',
+        title: 'RFC 4347 — Datagram Transport Layer Security (DTLS 1.0, deprecated)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc4347',
+        date: '2006-04',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. There is no DTLS 1.1; the path is DTLS 1.2 then DTLS 1.3.',
+      },
+      hybridKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. There is no DTLS 1.1; the path is DTLS 1.2 then DTLS 1.3.',
+      },
+      pureSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. There is no DTLS 1.1; the path is DTLS 1.2 then DTLS 1.3.',
+      },
+      hybridSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 8996. There is no DTLS 1.1; the path is DTLS 1.2 then DTLS 1.3.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    noDeploymentReason:
+      'Formally deprecated. Retained in this matrix only as a migration SOURCE — it shows where PQC work is NOT happening and where to go instead.',
+    supersededByProtocolId: 'dtls-1-3',
+  },
+  {
+    id: 'ikev1',
+    name: 'IKEv1',
+    description:
+      'Deprecated by RFC 9395. IKEv2 (see IKE / IPsec) carries all PQC work — RFC 8784 PPKs and the ML-KEM/ML-DSA drafts.',
+    historical: true,
+    latestRelease: [
+      {
+        id: 'RFC-9395',
+        title:
+          'RFC 9395 — Deprecation of the Internet Key Exchange Version 1 (IKEv1) Protocol and Obsoleted Algorithms',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9395',
+        date: '2023-05',
+      },
+      {
+        id: 'RFC-2409',
+        title: 'RFC 2409 — The Internet Key Exchange (IKEv1, deprecated)',
+        url: 'https://datatracker.ietf.org/doc/html/rfc2409',
+        date: '1998-11',
+      },
+    ],
+    latestDraft: [],
+    dimensions: {
+      pureKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 9395. All IPsec PQC work targets IKEv2.',
+      },
+      hybridKem: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 9395. All IPsec PQC work targets IKEv2.',
+      },
+      pureSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 9395. All IPsec PQC work targets IKEv2.',
+      },
+      hybridSig: {
+        value: 'na',
+        stage: 'none',
+        stageNote: 'Deprecated protocol — no PQC work exists or will exist.',
+        note: 'Deprecated by RFC 9395. All IPsec PQC work targets IKEv2.',
+      },
+    },
+    ossLibraries: [],
+    commercialLibraries: [],
+    playgrounds: [],
+    noDeploymentReason:
+      'Formally deprecated. Retained in this matrix only as a migration SOURCE — it shows where PQC work is NOT happening and where to go instead.',
+    supersededByProtocolId: 'ike-ipsec',
   },
 ]
