@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router'
 
-import { logPageView } from './utils/analytics'
-import { useEffect } from 'react'
+import { logPageView, logStreakMilestone } from './utils/analytics'
+import { useEffect, useRef } from 'react'
 import { Suspense } from 'react'
 import { MainLayout } from './components/Layout/MainLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -207,11 +207,29 @@ function AchievementChecker() {
   return null
 }
 
+// Matches achievementCatalog.ts's streak-3/7/14/30 badges.
+const STREAK_MILESTONES = new Set([3, 7, 14, 30])
+
 function DailyVisitTracker() {
   const trackDailyVisit = useModuleStore((s) => s.trackDailyVisit)
+  const currentStreak = useModuleStore((s) => s.sessionTracking?.currentStreak ?? 0)
+  // Guards against re-firing on every reload when the streak already sat on
+  // a milestone from a previous day — only a real change during this session
+  // should log an event, the same change-detection ComplianceView already
+  // uses for compliance_framework_selection.
+  const prevStreakRef = useRef(currentStreak)
+
   useEffect(() => {
     trackDailyVisit()
   }, [trackDailyVisit])
+
+  useEffect(() => {
+    if (currentStreak !== prevStreakRef.current && STREAK_MILESTONES.has(currentStreak)) {
+      logStreakMilestone(currentStreak)
+    }
+    prevStreakRef.current = currentStreak
+  }, [currentStreak])
+
   return null
 }
 

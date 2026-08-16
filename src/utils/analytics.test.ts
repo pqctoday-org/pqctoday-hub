@@ -20,8 +20,11 @@ import {
   logReportViewed,
   logReportShareLinkOpened,
   logReportCta,
+  logQuizSession,
+  logStreakMilestone,
 } from './analytics'
 import ReactGA from 'react-ga4'
+import { useHistoryStore } from '@/store/useHistoryStore'
 
 // Mock ReactGA
 vi.mock('react-ga4', () => ({
@@ -498,6 +501,35 @@ describe('analytics', () => {
       logReportShareLinkOpened()
       logReportCta('start-assessment')
       expect(ReactGA.event).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('History event helpers', () => {
+    beforeEach(() => {
+      useHistoryStore.setState({ events: [] })
+    })
+
+    it('logQuizSession records a quiz_session history event', () => {
+      logQuizSession(8, 10)
+      const event = useHistoryStore.getState().events[0]
+      expect(event?.type).toBe('quiz_session')
+      expect(event?.detail).toBe('8/10 correct')
+      expect(event?.route).toBe('/learn/quiz')
+    })
+
+    it('logStreakMilestone records a streak_milestone history event', () => {
+      logStreakMilestone(7)
+      const event = useHistoryStore.getState().events[0]
+      expect(event?.type).toBe('streak_milestone')
+      expect(event?.detail).toBe('7 days')
+    })
+
+    it('History event helpers fire even on localhost (unlike GA4 logEvent)', () => {
+      Object.defineProperty(window, 'location', {
+        value: { ...window.location, hostname: 'localhost' },
+      })
+      logQuizSession(1, 1)
+      expect(useHistoryStore.getState().events).toHaveLength(1)
     })
   })
 })
