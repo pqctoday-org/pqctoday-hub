@@ -141,7 +141,15 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     // mechanism could not be recorded, even though the algorithm itself has
     // been in ALGORITHM_REGISTRY (the Detailed Comparison vocabulary) since
     // before this family existed — a real, silent gap this closes.
-    family: 'Ed25519',
+    //
+    // NAMED 'EdDSA', not 'Ed25519' — caught by testing before writing any
+    // content against it. verify-mechanism-proofs.py's MECHANISM_PATTERNS
+    // (the grounding gate's own matcher) keys this family "EdDSA" and every
+    // other family here already equals its matcher key by convention
+    // (ML-KEM↔ML-KEM, X25519↔X25519). Naming it 'Ed25519' would have made
+    // every real, correctly-cited Ed25519 claim compute as UNSUPPORTED — a
+    // silent false negative on genuinely proven data, not a content error.
+    family: 'EdDSA',
     classical: true,
     kinds: ['signature'],
     registryMembers: ['Ed25519'],
