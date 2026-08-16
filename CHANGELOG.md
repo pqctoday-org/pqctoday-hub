@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.51.0] - 2026-08-16
+
+Industry Landscape rows now show whether their cited evidence names the crypto directly or is a governance driver proven elsewhere, and the Journey panel stops missing milestones in Command Center and OpenSSL Studio.
+
+### Added
+
+- **Industry Landscape rows now show what kind of evidence backs them** [view:/algorithms] [persona:researcher] [persona:developer] [persona:architect]: a new citation-type badge distinguishes rows whose linked document names the claimed cryptography directly from rows where the citation is a governance/institutional driver (HIPAA, PCI DSS, NRC, and similar) and the actual proof lives in a separate reference. 43 of 74 sourced rows were in the second category and previously looked identical to the first.
+- **75 of 80 Industry Landscape use cases now link to their Library evidence entry** [view:/algorithms] [persona:researcher] [persona:developer]: up from 45 — each use case now points at the actual standard or document backing its claim, not just a citation string.
+- **Protocol Matrix flags FIDO as historical, with the standard that superseded it** [view:/algorithms] [persona:developer] [persona:architect]: previously listed without context.
+
+### Changed
+
+- **The Journey panel no longer misses milestones from Command Center or OpenSSL Studio** [view:/business] [view:/playground/openssl] [persona:curious] [persona:developer] [persona:ops]: actions taken in those two tools weren't wired into milestone tracking, so progress there went unrecorded. Off-path exploration is now also surfaced instead of silently dropped.
+
 ## [4.50.3] - 2026-08-15
 
 The two new PKCS#11 v3.2 library entries (Profiles and Usage Guide) now show full details instead of blank fields.
