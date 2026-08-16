@@ -9824,6 +9824,106 @@
       "sizeBytes": 16364,
       "contentType": "text/html",
       "sha256": "e6fda116e061f61bedf61b8fe5f6e73e57ca58c8181753d2b75c1fe4a025914f"
+    },
+    {
+      "refId": "Internet2-PQC-Demo-on-the-National-Backbone",
+      "title": "Internet2 \u2014 PQC Demo on the National Backbone",
+      "url": "https://internet2.edu/demo-achieves-post-quantum-cryptography-on-the-internet2-national-backbone/",
+      "status": "downloaded",
+      "filename": "Internet2-PQC-Demo-on-the-National-Backbone.html",
+      "sizeBytes": 144731,
+      "contentType": "text/html",
+      "sha256": "3ef8058bbf245d864596151a918b623e5a51e71c40aafc1522f9da0c6b9388dc"
+    },
+    {
+      "refId": "IETF-LAMPS-Composite-ML-DSA-Signatures-draft-19-RFC-Ed-Queue",
+      "title": "IETF LAMPS \u2014 Composite ML-DSA Signatures (draft-19, RFC Ed Queue)",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-sigs-19.html",
+      "status": "downloaded",
+      "filename": "IETF-LAMPS-Composite-ML-DSA-Signatures-draft-19-RFC-Ed-Queue.html",
+      "sizeBytes": 798522,
+      "contentType": "text/html",
+      "sha256": "4323fe2a33923688948a00a6641d6eb7403e5058e4cfdc9e6475d2ac4f0bdd07"
+    },
+    {
+      "refId": "GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem",
+      "title": "GSMA PQ.04 \u2014 Post-Quantum Cryptography in the IoT Ecosystem",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2025/02/PQ.04-Post-Quantum-Cryptography-in-IoT-Ecosystem-v1.0.pdf",
+      "status": "downloaded",
+      "filename": "GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem.pdf",
+      "sizeBytes": 646713,
+      "contentType": "application/pdf",
+      "sha256": "1f1de2d4ab20572682e9045a559dc5c8e14fc0cd19f8e52e2d1e911f97a9782c"
+    },
+    {
+      "refId": "BFO-Post-Quantum-Cryptography-Is-Coming-to-PDF",
+      "title": "BFO \u2014 Post-Quantum Cryptography Is Coming to PDF",
+      "url": "https://bfo.com/blog/2025/09/30/post_quantum_cryptography_is_coming_to_pdf/",
+      "status": "downloaded",
+      "filename": "BFO-Post-Quantum-Cryptography-Is-Coming-to-PDF.html",
+      "sizeBytes": 29312,
+      "contentType": "text/html",
+      "sha256": "95d7f776e403c22f5b35a2a87e4a2d8ff229bedffee9e254352c76c62ea50e4d"
+    },
+    {
+      "refId": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management",
+      "title": "PCI SSC \u2014 Key Blocks 101/104 (AES/TDES key management)",
+      "url": "https://blog.pcisecuritystandards.org/key-blocks-104",
+      "status": "downloaded",
+      "filename": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management.html",
+      "sizeBytes": 83441,
+      "contentType": "text/html",
+      "sha256": "0f806492c78dba73e881fc27cf0fc2f2b04534ed5989e93d3d70bc79957886bc"
+    },
+    {
+      "refId": "Apple-Pay-Guide-Process-Payment-ECDH-SHA",
+      "title": "Apple Pay Guide \u2014 Process Payment (ECDH, SHA)",
+      "url": "https://developer.apple.com/library/archive/ApplePay_Guide/ProcessPayment.html",
+      "status": "downloaded",
+      "filename": "Apple-Pay-Guide-Process-Payment-ECDH-SHA.html",
+      "sizeBytes": 14212,
+      "contentType": "text/html",
+      "sha256": "2949ac81226040d447d061c390ad1b1fe73f88d21e74d81eedc2e31b6c1935ea"
+    },
+    {
+      "refId": "W3C-Secure-Payment-Confirmation",
+      "title": "W3C \u2014 Secure Payment Confirmation",
+      "url": "https://www.w3.org/TR/secure-payment-confirmation/",
+      "status": "downloaded",
+      "filename": "W3C-Secure-Payment-Confirmation.html",
+      "sizeBytes": 611530,
+      "contentType": "text/html",
+      "sha256": "75f8fcf9c62ad3a3111eb8bbb37a7304fb18572d2fbd99b9227183bc2ac06c21"
+    },
+    {
+      "refId": "AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets",
+      "title": "AWS Security Blog \u2014 ML-KEM Post-Quantum TLS in KMS/ACM/Secrets Manager",
+      "url": "https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager",
+      "status": "downloaded",
+      "filename": "AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets.html",
+      "sizeBytes": 1083083,
+      "contentType": "text/html",
+      "sha256": "fb9a2e20b37efff9a38853ba50a5aead667bb153ba479e354a30250b0a5967af"
+    },
+    {
+      "refId": "Google-Cloud-Blog-Quantum-Safe-Digital-Signatures-in-Cloud-K",
+      "title": "Google Cloud Blog \u2014 Quantum-Safe Digital Signatures in Cloud KMS",
+      "url": "https://cloud.google.com/blog/products/identity-security/future-proofing-data-integrity-quantum-safe-digital-signatures-in-cloud-kms",
+      "status": "downloaded",
+      "filename": "Google-Cloud-Blog-Quantum-Safe-Digital-Signatures-in-Cloud-K.html",
+      "sizeBytes": 282027,
+      "contentType": "text/html",
+      "sha256": "74d58a83f586b38774f91288eabde6be6ef1c0008608c3b07aecd7d9562c0c95"
+    },
+    {
+      "refId": "Securosys-Primus-HSM-CyberVault-PQC-ready",
+      "title": "Securosys \u2014 Primus HSM CyberVault (PQC-ready)",
+      "url": "https://www.securosys.com/en/news/securosys-launches-next-generation-hsm-pqc-ready",
+      "status": "downloaded",
+      "filename": "Securosys-Primus-HSM-CyberVault-PQC-ready.html",
+      "sizeBytes": 243556,
+      "contentType": "text/html",
+      "sha256": "f511f905b6e1f613c77639bc1b7864684097f427ecc20be76ab0750ade163d39"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
