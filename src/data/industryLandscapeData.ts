@@ -15,8 +15,84 @@ export interface IndustryUseCase {
   useCaseId: string
   useCaseLabel: string
   useCaseIcon: string
-  /** pqcProtocolMatrix row ids (FK; may be empty for non-protocol use cases). */
-  protocols: string[]
+  /**
+   * The protocols this sector runs TODAY — pqcProtocolMatrix row ids.
+   *
+   * WS11 (2026-08-15). The mechanisms columns have always split classical from
+   * PQC; the protocols column did not, so a row could name only TLS 1.2 — which
+   * the matrix documents as having no PQC track at all — while claiming ML-KEM.
+   * Two rows did exactly that (cloud-backup, fin-archives): a PQC claim with no
+   * protocol that could carry it.
+   */
+  protocolsCurrent: string[]
+  /**
+   * Where the PQC migration lands. Derived by default from the matrix's own
+   * `supersededByProtocolId` edges (TLS 1.2 → TLS 1.3, DTLS 1.2 → DTLS 1.3,
+   * FIDO → FIDO 2) and confirmed per row; a protocol that gained PQC in place
+   * (X.509, SSH) is its own target.
+   *
+   * PQC mechanism claims are checked against THIS, not against the current
+   * protocol — see the reachability driftguard.
+   */
+  protocolsTarget: string[]
+  /**
+   * What a PQC claim on this row actually rests on (WS10, 2026-08-15).
+   *
+   *  - `adopted`      published standard AND the sector is running it
+   *  - `standardised` published standard exists, the sector has not moved
+   *  - `in-progress`  active draft on a standards track
+   *  - `proposed`     research paper or vendor proposal, no standards track
+   *  - `none`         no PQC path claimed
+   *
+   * The matrix stage of `protocolsTarget` bounds this — a row may not claim
+   * more than its target protocol supports. Whether the SECTOR adopted it is
+   * hand-authored: that is adoption, not standards progress, and conflating
+   * the two is what made an earlier version of the consistency check produce
+   * 16 false positives out of 76 rows.
+   */
+  pqcClaimBasis: PqcClaimBasis
+  /**
+   * Why this row names no protocol. Required when `protocolsCurrent` is empty,
+   * so "no standardised protocol exists for this use case" (ADS-B, blockchain
+   * consensus, EMV card authentication) is distinguishable from "nobody filled
+   * it in" — the two were identical before 2026-08-15.
+   */
+  noProtocolReason: string
+  /**
+   * Library `reference_id` for the document this row CITES as its source, so
+   * the tile can link at `/library?ref=` instead of an external URL.
+   *
+   * Hand-set only. Fuzzy title matching was tried and rejected on 2026-08-15:
+   * it resolved "IEC 62351-3/-5/-9" to `IEC 62443` and "PCI DSS v4.0.1" to the
+   * PCI-DSS quick-reference guide — pointing readers at a DIFFERENT standard,
+   * which is worse than no link. Empty is legitimate; the tile falls back to
+   * the sector's threats evidence.
+   */
+  sourceLibraryRef: string
+  /**
+   * Whether `sourceLibraryRef`'s own document names any of THIS row's claimed
+   * mechanisms (2026-08-15, user instruction: "if there is no specific crypto
+   * requirements — then we should mention it").
+   *
+   * Measured the day this was added: 43 of the 74 rows with a source link
+   * (58%) cite a governance/institutional document — HIPAA, FERPA, PCI DSS,
+   * NRC, ICAO, eIDAS, IMO — that names NONE of the row's own mechanisms; the
+   * claim is proven separately, by a different document in `mechanismRefs`.
+   * Until this field existed, the tile rendered that citation identically to
+   * one where the source IS the technical spec (an RFC, a FIPS pub) — the
+   * exact ambiguity `evidenceType` already prevents on the standards table,
+   * just missing here.
+   *
+   *  - `technical` — the source itself names >=1 claimed mechanism
+   *  - `driver`    — it names none; proof is elsewhere in `mechanismRefs`
+   *  - `''`        — `sourceLibraryRef` is empty, or the row claims nothing
+   *
+   * COMPUTED, never hand-typed: `scripts/compute-source-citation-type.py`
+   * derives it with the SAME matcher `verify-mechanism-proofs.py` uses for
+   * the grounding gate, so a stale value is drift a re-run corrects, not an
+   * editorial judgment call that can silently go wrong.
+   */
+  sourceCitationType: 'technical' | 'driver' | ''
   /** cryptoMechanisms family labels. */
   classicalMechanisms: string[]
   pqcMechanisms: string[]
@@ -67,6 +143,50 @@ export interface IndustryUseCase {
   status: string
 }
 
+/**
+ * The evidence_type vocabulary — the SINGLE list the loader, the renderer's
+ * badge map and the driftguard all derive from (2026-08-15).
+ *
+ * It exists because they diverged: `guidance` was added to the Python validator
+ * and to the driftguard's allowed set, but not to this union and not to
+ * `EVIDENCE_LABEL`, so three guidance documents (GSMA PQ.03, NIST CSWP 36A,
+ * ATIS 5G Quantum) rendered with no badge — indistinguishable from a real
+ * specification, which is the exact failure the badge exists to prevent.
+ * `tsc` could not catch it: the loader cast a raw string, and the `Record` was
+ * complete against the incomplete union.
+ */
+export const EVIDENCE_TYPES = [
+  'standard',
+  'research',
+  'industry-report',
+  'courseware',
+  'guidance',
+] as const
+
+export type EvidenceType = (typeof EVIDENCE_TYPES)[number]
+
+/**
+ * What a use-case row's PQC claim rests on (WS10, 2026-08-15). Ordered weakest
+ * to strongest so a ceiling comparison is a simple index lookup.
+ */
+export const PQC_CLAIM_BASES = [
+  'none',
+  'proposed',
+  'in-progress',
+  'standardised',
+  'adopted',
+] as const
+
+export type PqcClaimBasis = (typeof PQC_CLAIM_BASES)[number]
+
+export function isPqcClaimBasis(v: string): v is PqcClaimBasis {
+  return (PQC_CLAIM_BASES as readonly string[]).includes(v)
+}
+
+export function isEvidenceType(v: string): v is EvidenceType {
+  return (EVIDENCE_TYPES as readonly string[]).includes(v)
+}
+
 export interface IndustryStandard {
   industry: string
   standardId: string
@@ -87,7 +207,7 @@ export interface IndustryStandard {
    * They are admitted and marked instead: anything other than `standard`
    * renders with an explicit badge.
    */
-  evidenceType: 'standard' | 'research' | 'industry-report' | 'courseware'
+  evidenceType: EvidenceType
   pqcReadiness: 'none' | 'in-progress' | 'published'
   useCaseIds: string[]
   mainSource: string
@@ -116,7 +236,12 @@ interface RawLandscapeRow {
   use_case_id: string
   use_case_label: string
   use_case_icon: string
-  protocols: string
+  protocols_current: string
+  protocols_target: string
+  pqc_claim_basis: string
+  no_protocol_reason: string
+  source_library_ref: string
+  source_citation_type: string
   classical_mechanisms: string
   pqc_mechanisms: string
   migration_status: string
@@ -204,7 +329,13 @@ function loadLandscape(): IndustryUseCase[] {
             useCaseId: r.use_case_id,
             useCaseLabel: r.use_case_label,
             useCaseIcon: r.use_case_icon,
-            protocols: splitSemicolon(r.protocols),
+            protocolsCurrent: splitSemicolon(r.protocols_current),
+            protocolsTarget: splitSemicolon(r.protocols_target),
+            pqcClaimBasis: (r.pqc_claim_basis || 'none') as PqcClaimBasis,
+            noProtocolReason: r.no_protocol_reason || '',
+            sourceLibraryRef: r.source_library_ref || '',
+            sourceCitationType: (r.source_citation_type ||
+              '') as IndustryUseCase['sourceCitationType'],
             classicalMechanisms: splitSemicolon(r.classical_mechanisms),
             pqcMechanisms: splitSemicolon(r.pqc_mechanisms),
             migrationStatus: r.migration_status as IndustryUseCase['migrationStatus'],
@@ -242,9 +373,19 @@ function loadStandards(): IndustryStandard[] {
             standardsBody: r.standards_body,
             libraryRef: r.library_ref,
             mechanismsReferenced: splitSemicolon(r.mechanisms_referenced),
-            // Default to 'standard' so a row predating the column is not
-            // silently badged as research.
-            evidenceType: (r.evidence_type || 'standard') as IndustryStandard['evidenceType'],
+            // Empty defaults to 'standard' so a row predating the column is not
+            // silently badged as research. A non-empty value that is NOT in the
+            // vocabulary is deliberately passed through unchanged rather than
+            // coerced: coercing it to 'standard' would render an unknown
+            // document as a specification (the D7 failure), and the renderer's
+            // badge lookup is total, so an unknown value surfaces honestly
+            // instead of silently. The Python validator and the driftguard both
+            // reject unknown values, so this path should never carry real data.
+            evidenceType: (r.evidence_type
+              ? isEvidenceType(r.evidence_type)
+                ? r.evidence_type
+                : (r.evidence_type as EvidenceType)
+              : 'standard') as EvidenceType,
             pqcReadiness: r.pqc_readiness as IndustryStandard['pqcReadiness'],
             useCaseIds: splitSemicolon(r.use_case_ids),
             mainSource: r.main_source,

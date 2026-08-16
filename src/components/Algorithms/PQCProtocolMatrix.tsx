@@ -40,6 +40,8 @@ import {
   Globe2,
   Star,
   ChevronRight,
+  ArrowRight,
+  History,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -751,6 +753,8 @@ function ProtocolCard({
 }
 
 const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
+/** Deprecated migration-source rows (WS12) — hidden unless explicitly shown. */
+const HISTORICAL_COUNT = PROTOCOL_MATRIX.filter((r) => r.historical).length
 
 const VALID_STATUS_VALUES: DimensionStatusValue[] = ['rfc', 'draft', 'experimental', 'none', 'na']
 const VALID_AVAILABILITY_FILTERS: AvailabilityFilter[] = [
@@ -836,6 +840,9 @@ export function PQCProtocolMatrix() {
   const firstRecommendedRef = useRef<HTMLTableRowElement | null>(null)
   // Single-open accordion for the detailed-mode protocol cards.
   const [expandedProtocolId, setExpandedProtocolId] = useState<string | null>(null)
+  // WS12: deprecated migration-source rows, off by default. Not a URL param —
+  // it is a view preference, not a shareable filter state.
+  const [showHistorical, setShowHistorical] = useState(false)
   const isHeatmap = viewMode === 'heatmap'
 
   // Mirrors view/filter/sort changes to the URL in place (replace, not push —
@@ -956,6 +963,11 @@ export function PQCProtocolMatrix() {
   const filteredRows = useMemo(() => {
     const search = searchText.trim().toLowerCase()
     const filtered = PROTOCOL_MATRIX.filter((row) => {
+      // Historical rows (WS12) are migration SOURCES — deprecated protocols
+      // that will never gain a PQC dimension. Hidden by default: they are all
+      // `na`, so leaving them in would turn a fifth of the readiness heatmap
+      // grey and bury the rows that actually have a posture to compare.
+      if (row.historical && !showHistorical) return false
       if (
         search &&
         !row.name.toLowerCase().includes(search) &&
@@ -999,7 +1011,7 @@ export function PQCProtocolMatrix() {
           return 0
       }
     })
-  }, [searchText, statusFilter, availabilityFilter, sortKey, sortDirection])
+  }, [searchText, statusFilter, availabilityFilter, sortKey, sortDirection, showHistorical])
 
   const hasActiveFilters =
     searchText.length > 0 ||
@@ -1337,10 +1349,32 @@ export function PQCProtocolMatrix() {
           </Button>
         )}
 
+        {/* WS12: deprecated migration sources, off by default. They have no PQC
+            dimension by definition, so showing them unasked would grey out a
+            fifth of the readiness heatmap. */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowHistorical((v) => !v)}
+          className={`h-9 gap-1 ${showHistorical ? 'border-primary/40 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          aria-pressed={showHistorical}
+          title={
+            showHistorical
+              ? 'Hide deprecated protocols (TLS 1.0/1.1, SSL 3.0, DTLS 1.0, IKEv1)'
+              : `Show the ${HISTORICAL_COUNT} deprecated protocols kept as migration sources — each links to the PQC-capable protocol that replaces it`
+          }
+        >
+          <History size={12} />
+          {showHistorical ? 'Hide' : 'Show'} deprecated ({HISTORICAL_COUNT})
+        </Button>
+
         <span className="ml-auto whitespace-nowrap text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">{filteredRows.length}</span>
           <span className="mx-1">/</span>
-          <span className="font-semibold text-foreground">{PROTOCOL_MATRIX.length}</span> rows
+          <span className="font-semibold text-foreground">
+            {showHistorical ? PROTOCOL_MATRIX.length : PROTOCOL_MATRIX.length - HISTORICAL_COUNT}
+          </span>{' '}
+          rows
         </span>
       </div>
 
@@ -1401,6 +1435,9 @@ export function PQCProtocolMatrix() {
                   ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
                   : undefined
                 const isInheritance = Boolean(parent)
+                const successor = p.supersededByProtocolId
+                  ? PROTOCOL_MATRIX.find((r) => r.id === p.supersededByProtocolId)
+                  : undefined
                 const rowBlockerNames = isHeatmap ? getRowBlockerNames(p.id) : []
                 const isRecommended = Boolean(p.recommended)
                 const isFirstRecommended =
@@ -1458,6 +1495,34 @@ export function PQCProtocolMatrix() {
                           >
                             <GitBranch size={9} />
                             inherits: {p.inheritedBy.join(', ')}
+                          </span>
+                        )}
+                        {/* WS12: the dead end and its way out. Without this a row
+                            of four `na` cells reads as "not applicable" rather
+                            than "no PQC path exists — go here instead". */}
+                        {successor && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedProtocol(successor)}
+                            className="inline-flex h-auto w-fit items-center gap-1 rounded-md border border-status-warning/40 bg-status-warning/10 px-1.5 py-0 text-[10px] font-medium text-status-warning hover:bg-status-warning/20 hover:text-status-warning"
+                            title={`${p.name} has no post-quantum path of its own. ${successor.name} is where the migration goes — open it.`}
+                          >
+                            <ArrowRight size={9} />
+                            no PQC path → {successor.name}
+                          </Button>
+                        )}
+                        {p.supersedes && p.supersedes.length > 0 && (
+                          <span
+                            className="w-fit text-[10px] leading-tight text-muted-foreground"
+                            title={`This protocol is the post-quantum migration target for: ${p.supersedes
+                              .map((id) => PROTOCOL_MATRIX.find((r) => r.id === id)?.name ?? id)
+                              .join(', ')}`}
+                          >
+                            replaces{' '}
+                            {p.supersedes
+                              .map((id) => PROTOCOL_MATRIX.find((r) => r.id === id)?.name ?? id)
+                              .join(', ')}
                           </span>
                         )}
                         {!isHeatmap && (

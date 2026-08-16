@@ -9424,6 +9424,216 @@
       "sizeBytes": 9509998,
       "contentType": "application/pdf",
       "sha256": "4014f4e7a52c55125e3287b2c61ca788f9ae133a8e49408d7e34ec35ba7166cb"
+    },
+    {
+      "refId": "ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity",
+      "title": "ICAO Assembly Resolution A41-19 \u2014 Aviation Cybersecurity",
+      "url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
+      "status": "downloaded",
+      "filename": "ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity.pdf",
+      "sizeBytes": 124245,
+      "contentType": "application/pdf",
+      "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28"
+    },
+    {
+      "refId": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio",
+      "title": "10 CFR 73.54 \u2014 Protection of Digital Computer and Communication Systems and Networks",
+      "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
+      "status": "downloaded",
+      "filename": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio.html",
+      "sizeBytes": 81505,
+      "contentType": "text/html",
+      "sha256": "f712396d7b19c000956d045c1b16171da50bff715d73adc7ef6e2cd078155f20"
+    },
+    {
+      "refId": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025",
+      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025",
+      "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
+      "status": "downloaded",
+      "filename": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025.html",
+      "sizeBytes": 134601,
+      "contentType": "text/html",
+      "sha256": "98c2d9e5aeccd929f100355f30c834a1ccb7bde3e81ec4f5baff10c74a2fb75b"
+    },
+    {
+      "refId": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C",
+      "title": "HHS HIPAA Security Rule \u2014 45 CFR Part 164 Subpart C",
+      "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
+      "status": "downloaded",
+      "filename": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C.html",
+      "sizeBytes": 145863,
+      "contentType": "text/html",
+      "sha256": "c95a2e7e86daf50bf0e75347795e077b643ef73f598fe6c45ad6112e79434351"
+    },
+    {
+      "refId": "Federal-PKI-Policy-Authority",
+      "title": "Federal PKI Policy Authority",
+      "url": "https://www.idmanagement.gov/fpki/",
+      "status": "downloaded",
+      "filename": "Federal-PKI-Policy-Authority.html",
+      "sizeBytes": 157903,
+      "contentType": "text/html",
+      "sha256": "2ab3b8a0a194dc4336b78f5ce8d8957a77b7050a3bb51955b8f0c06193f87bcd"
+    },
+    {
+      "refId": "Internet2-InCommon-Federation",
+      "title": "Internet2 InCommon Federation",
+      "url": "https://incommon.org/about",
+      "status": "downloaded",
+      "filename": "Internet2-InCommon-Federation.html",
+      "sizeBytes": 110628,
+      "contentType": "text/html",
+      "sha256": "ddeba98c8aa1130a0e1efc47eda444df5b0bf9ba8b377eb5e124ba4ac873b2ae"
+    },
+    {
+      "refId": "eIDAS-Regulation-EU-No-910-2014",
+      "title": "eIDAS Regulation (EU) No 910/2014",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32014R0910",
+      "status": "downloaded",
+      "filename": "eIDAS-Regulation-EU-No-910-2014.html",
+      "sizeBytes": 613905,
+      "contentType": "text/html",
+      "sha256": "895e075b9797194e529ce56f8d49403a9e3920430b4e79d94e4c3455d426a10f"
+    },
+    {
+      "refId": "FDA-DSCSA-Standards-for-the-Interoperable-Exchange-of-Inform",
+      "title": "FDA \u2014 DSCSA Standards for the Interoperable Exchange of Information",
+      "url": "https://www.fda.gov/media/171796/download",
+      "status": "downloaded",
+      "filename": "FDA-DSCSA-Standards-for-the-Interoperable-Exchange-of-Inform.pdf",
+      "sizeBytes": 242831,
+      "contentType": "application/pdf",
+      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5"
+    },
+    {
+      "refId": "FDA-Drug-Supply-Chain-Security-Act-DSCSA",
+      "title": "FDA Drug Supply Chain Security Act (DSCSA)",
+      "url": "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa",
+      "status": "downloaded",
+      "filename": "FDA-Drug-Supply-Chain-Security-Act-DSCSA.html",
+      "sizeBytes": 47142,
+      "contentType": "text/html",
+      "sha256": "e600337adb753e75f4baad5a2a78141f1e5ce3e60a8517a67ff603e619a58119"
+    },
+    {
+      "refId": "PCI-PIN-Security-Requirements-v3-1",
+      "title": "PCI PIN Security Requirements v3.1",
+      "url": "https://www.pcisecuritystandards.org/documents/PCI_PIN_Security_Requirements_v3-1.pdf",
+      "status": "downloaded",
+      "filename": "PCI-PIN-Security-Requirements-v3-1.html",
+      "sizeBytes": 660505,
+      "contentType": "text/html",
+      "sha256": "46eb81b04d90bb23cf494c6ca15bfe10a983e07f77a0fa8dd69960c85dbcc33f"
+    },
+    {
+      "refId": "49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems",
+      "title": "49 CFR Part 236 Subpart I \u2014 Positive Train Control Systems",
+      "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
+      "status": "downloaded",
+      "filename": "49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems.html",
+      "sizeBytes": 353605,
+      "contentType": "text/html",
+      "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f"
+    },
+    {
+      "refId": "IMO-Maritime-Cyber-Risk-Management-Guidelines",
+      "title": "IMO Maritime Cyber Risk Management Guidelines",
+      "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
+      "status": "downloaded",
+      "filename": "IMO-Maritime-Cyber-Risk-Management-Guidelines.html",
+      "sizeBytes": 57115,
+      "contentType": "text/html",
+      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977"
+    },
+    {
+      "refId": "EPA-America-s-Water-Infrastructure-Act-AWIA-Section-2013",
+      "title": "EPA America's Water Infrastructure Act (AWIA) Section 2013",
+      "url": "https://www.epa.gov/waterresilience/awia-section-2013",
+      "status": "downloaded",
+      "filename": "EPA-America-s-Water-Infrastructure-Act-AWIA-Section-2013.html",
+      "sizeBytes": 75363,
+      "contentType": "text/html",
+      "sha256": "bdd8375286f419de0514bff94488ac3ab9c190016f54bc00683107d47797b511"
+    },
+    {
+      "refId": "A-First-Look-at-Digital-Rights-Management-Systems-for-Secure",
+      "title": "A First Look at Digital Rights Management Systems for Secure Mobile Content Delivery",
+      "url": "https://arxiv.org/abs/2308.00437",
+      "status": "downloaded",
+      "filename": "A-First-Look-at-Digital-Rights-Management-Systems-for-Secure.html",
+      "sizeBytes": 41479,
+      "contentType": "text/html",
+      "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800"
+    },
+    {
+      "refId": "RFC-9019-A-Firmware-Update-Architecture-for-Internet-of-Thin",
+      "title": "RFC 9019 \u2014 A Firmware Update Architecture for Internet of Things (SUIT)",
+      "url": "https://www.rfc-editor.org/rfc/rfc9019.txt",
+      "status": "downloaded",
+      "filename": "RFC-9019-A-Firmware-Update-Architecture-for-Internet-of-Thin.html",
+      "sizeBytes": 66356,
+      "contentType": "text/html",
+      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6"
+    },
+    {
+      "refId": "Ethereum-Foundation-Roadmap-Account-Abstraction",
+      "title": "Ethereum Foundation Roadmap \u2014 Account Abstraction",
+      "url": "https://ethereum.org/roadmap/account-abstraction/",
+      "status": "downloaded",
+      "filename": "Ethereum-Foundation-Roadmap-Account-Abstraction.html",
+      "sizeBytes": 305178,
+      "contentType": "text/html",
+      "sha256": "ec8604f8c2d0d19ccd5a1c50dbfcffae94adf67c57eaa1c68423432c2e46b6f1"
+    },
+    {
+      "refId": "Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape",
+      "title": "Mastercard \u2014 Migration to Post-Quantum Cryptography White Paper 2025",
+      "url": "https://www.mastercard.com/content/dam/mccom/shared/news-and-trends/stories/2025/quantum-explainer-and-white-paper/Migration-to-post-quantum-cryptography-WhitePaper_2025.pdf",
+      "status": "downloaded",
+      "filename": "Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape.pdf",
+      "sizeBytes": 2384992,
+      "contentType": "application/pdf",
+      "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2"
+    },
+    {
+      "refId": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
+      "title": "PCI DSS v4.0.1 \u2014 Requirements and Testing Procedures",
+      "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
+      "status": "downloaded",
+      "filename": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.pdf",
+      "sizeBytes": 4458346,
+      "contentType": "application/pdf",
+      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
+    },
+    {
+      "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
+      "title": "FDA \u2014 Cybersecurity in Medical Devices: Premarket Guidance 2023",
+      "url": "https://www.federalregister.gov/documents/2023/09/27/2023-20915/cybersecurity-in-medical-devices-quality-system-considerations-and-content-of-premarket",
+      "status": "downloaded",
+      "filename": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023.html",
+      "sizeBytes": 58473,
+      "contentType": "text/html",
+      "sha256": "98f4a38ea139577653e3b545c55ebc29b58cfe7def8669dbe1a4f0a2f69c46e8"
+    },
+    {
+      "refId": "EPA-Cybersecurity-for-the-Water-Sector",
+      "title": "EPA Cybersecurity for the Water Sector",
+      "url": "https://www.epa.gov/waterresilience/epa-cybersecurity-water-sector",
+      "status": "downloaded",
+      "filename": "EPA-Cybersecurity-for-the-Water-Sector.html",
+      "sizeBytes": 58728,
+      "contentType": "text/html",
+      "sha256": "94f7669707345896b8629d288716b4d56675ca9c33ce22ff81e21c59b8ba6946"
+    },
+    {
+      "refId": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow",
+      "title": "University of Toronto \u2014 Researcher Leads Effort to Protect Power Grids from Quantum Computer Hacks",
+      "url": "https://web.archive.org/web/2026/https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-grids-quantum-computer-hacks",
+      "status": "downloaded",
+      "filename": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow.html",
+      "sizeBytes": 146057,
+      "contentType": "text/html",
+      "sha256": "bae7c561cff3e6bcee7766040218be1588fea73fc4e1355848c77e42805a6994"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
