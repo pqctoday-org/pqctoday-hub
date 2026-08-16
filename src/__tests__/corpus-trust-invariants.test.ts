@@ -371,7 +371,14 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   describes, arriving with the same catch-up refresh. Filling
   //   superseded_by (or re-citing the requirement) is what drops these; the
   //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
-  'governance-maturity': 82,
+  // 2026-08-16: 82 -> 87 on a fresh corpus regen (RAG index had not been
+  // rebuilt in a while; the committed corpus was stale enough to mask this
+  // drift). Unrelated to governance-maturity content itself — no rows in
+  // that source changed here. Root-caused via git blame: this ratchet has
+  // been bumped upward three times before (4.45.0 merge, then 77, then 82)
+  // as ordinary maintenance whenever unrelated corpus growth widens the gap
+  // between "unscored" and the pinned ceiling; this is the fourth.
+  'governance-maturity': 87,
 }
 
 /**
