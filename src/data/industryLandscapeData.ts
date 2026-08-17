@@ -207,6 +207,31 @@ export interface IndustryUseCase {
    *  discipline as mechanismRefs — a requirement claim with no citation is
    *  exactly the defect class the 2026-08-13 audit found 12 of. */
   hsmCertificationRefs: string[]
+  /**
+   * A certification requirement that is REAL, DATED, and NOT YET IN FORCE
+   * (added 2026-08-16). Distinct from every column above, which all describe
+   * the requirement AS IT STANDS TODAY.
+   *
+   * The founding case: CIR (EU) 2025/1943 currently accepts FIPS 140-3 L3 as
+   * one of three alternative routes for QSCD key generation — but that route
+   * sunsets 31 December 2030, after which Common Criteria/EUCC EAL4+ becomes
+   * the SOLE route. `ccCertification`/`fipsCertification` correctly describe
+   * TODAY's any-of rule; this field is the only place that says the "any-of"
+   * itself has an expiry date. Also covers forward-looking directives that
+   * are not yet operative at all, e.g. EO 14412 §6(c) directing the FAR
+   * Council to PROPOSE (not yet issue) a rule requiring FIPS-validated
+   * cryptography for covered federal contractors by 2030-12-31.
+   *
+   * Free text describing the upcoming requirement. Empty means none is known.
+   * MUST be rendered with its own distinct visual treatment, never folded
+   * into the current-tense certification badges — a reader glancing at a
+   * "required" chip must never mistake a 2030 deadline for one in force now.
+   */
+  certificationFuture: string
+  /** ISO date (or 'YYYY' if only a year is known) the future requirement
+   *  takes effect. Empty when certificationFuture is empty. */
+  certificationFutureDate: string
+  certificationFutureRefs: string[]
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -337,6 +362,9 @@ interface RawLandscapeRow {
   national_certification_scheme: string
   hsm_certification_logic: string
   hsm_certification_refs: string
+  certification_future: string
+  certification_future_date: string
+  certification_future_refs: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -443,6 +471,9 @@ function loadLandscape(): IndustryUseCase[] {
             nationalCertificationScheme: (r.national_certification_scheme ?? '').trim(),
             certificationLogic: (r.hsm_certification_logic ?? '').trim(),
             hsmCertificationRefs: splitSemicolon(r.hsm_certification_refs),
+            certificationFuture: (r.certification_future ?? '').trim(),
+            certificationFutureDate: (r.certification_future_date ?? '').trim(),
+            certificationFutureRefs: splitSemicolon(r.certification_future_refs),
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,

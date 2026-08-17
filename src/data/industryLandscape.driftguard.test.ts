@@ -576,6 +576,40 @@ describe('industry-landscape driftguards', () => {
     }
   })
 
+  it('certification_future is dated, cited, and cites into the future', () => {
+    // A "future" requirement with no date is unfalsifiable (future relative
+    // to WHEN?); with no citation it is unfalsifiable at all. Both defeat
+    // the point of the column — it exists to let a reader check the claim.
+    const DATE_RE = /^\d{4}(-\d{2}-\d{2})?$/
+    for (const uc of useCases) {
+      if (!uc.certificationFuture) {
+        expect(
+          uc.certificationFutureDate,
+          `${uc.useCaseId}: certification_future_date set without certification_future`
+        ).toBe('')
+        expect(
+          uc.certificationFutureRefs,
+          `${uc.useCaseId}: certification_future_refs set without certification_future`
+        ).toEqual([])
+        continue
+      }
+      expect(
+        uc.certificationFutureDate,
+        `${uc.useCaseId}: certification_future needs certification_future_date (YYYY or YYYY-MM-DD)`
+      ).toMatch(DATE_RE)
+      expect(
+        uc.certificationFutureRefs.length,
+        `${uc.useCaseId}: certification_future asserts a coming change but cites no evidence`
+      ).toBeGreaterThan(0)
+      for (const ref of uc.certificationFutureRefs) {
+        expect(
+          libraryData.map((r) => r.referenceId),
+          `${uc.useCaseId}: certification_future_ref "${ref}" is not a library row`
+        ).toContain(ref)
+      }
+    }
+  })
+
   it('a row claiming mechanisms carries at least one proof ref, or is a known gap', () => {
     // Ratchet, not a coverage mandate. 2026-08-14 baseline: 73 of the 74 rows
     // that claim a mechanism carry a ref. The number may only go UP — this

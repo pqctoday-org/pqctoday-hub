@@ -32,6 +32,7 @@ import {
   Container,
   ArrowRight,
   Code,
+  Clock,
 } from 'lucide-react'
 import {
   loadIndustryLandscape,
@@ -329,6 +330,31 @@ function CertificationRow({ uc }: { uc: IndustryUseCase }) {
   )
 }
 
+/**
+ * A dated, real, NOT-YET-BINDING certification change (added 2026-08-16).
+ *
+ * Deliberately styled nothing like CertificationRow's badges — dashed border,
+ * a clock icon, and the word "Future" spelled out rather than implied. The
+ * failure mode this guards against is a reader skimming the tile, seeing a
+ * certification chip, and assuming it applies today. A 2030 deadline
+ * rendered with the same solid amber badge as a binding-now requirement
+ * would create exactly that false impression.
+ */
+function FutureCertificationNote({ uc }: { uc: IndustryUseCase }) {
+  if (!uc.certificationFuture) return null
+  return (
+    <div className="mt-2 flex items-start gap-1.5 rounded border border-dashed border-border px-2 py-1.5 text-[11px] text-muted-foreground">
+      <Clock size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+      <span>
+        <span className="font-semibold uppercase tracking-wide text-muted-foreground">
+          Future{uc.certificationFutureDate ? ` (${uc.certificationFutureDate})` : ''}:
+        </span>{' '}
+        {uc.certificationFuture}
+      </span>
+    </div>
+  )
+}
+
 /** Standard chip: mechanisms it references + direct link to the Library page. */
 function StandardChip({ std }: { std: IndustryStandard }) {
   const evidence = evidenceLabelFor(std.evidenceType)
@@ -515,6 +541,7 @@ function UseCaseCard({
       )}
 
       <CertificationRow uc={uc} />
+      <FutureCertificationNote uc={uc} />
 
       {/* T4/WS8d: workshop tools and sandbox scenarios are separate groups.
           They share the /playground/<id> route, but one runs in the browser and
