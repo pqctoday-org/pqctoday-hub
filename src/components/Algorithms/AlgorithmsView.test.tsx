@@ -371,19 +371,6 @@ describe('AlgorithmsView', () => {
       expect(screen.getByText('Protocol Support')).toBeInTheDocument()
     })
 
-    it('shows a persistent ACVP trust badge that opens Validation on click (2026-08-02)', async () => {
-      render(
-        <MemoryRouter initialEntries={['/algorithms']}>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
-      const badge = await screen.findByRole('button', { name: /ACVP Verified/i })
-      expect(badge).toBeInTheDocument()
-      fireEvent.click(badge)
-      expect(await screen.findByText('Implementation Attacks')).toBeInTheDocument()
-      expect(screen.getByText('KAT Validation')).toBeInTheDocument()
-    })
-
     it('shows the Implementation Attacks + KAT sections when the Validation tab is opened', async () => {
       render(
         <MemoryRouter initialEntries={['/algorithms']}>

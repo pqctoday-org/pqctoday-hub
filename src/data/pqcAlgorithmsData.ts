@@ -208,11 +208,24 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
   'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
   'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
+  // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
+  // IRTF CFRG Internet-Draft, verified against the datatracker directly —
+  // not yet an RFC.
+  'Active Internet-Draft|||draft-irtf-cfrg-bls-signature': 'ietf-draft',
   // RFC 9941 is a published RFC, so `final` — matching how RFC 7919 is treated.
   // The sntrup761 COMPONENT is a NIST round-3 alternate rather than a FIPS
   // algorithm, but the tier describes the standards status of the mechanism
   // named by the row, and this one is standards-track and published.
   'RFC 9941|||RFC 9941': 'final', // sntrup761x25519-sha512
+  // sr25519 (2026-08-16): a Web3 Foundation (Schnorrkel) implementation, not
+  // an IETF/NIST/regional standards-track document at all — 'non-standardized'
+  // (not 'unverified', whose tooltip claims the status wasn't fact-checked;
+  // this one was, against w3f/schnorrkel's own source constants).
+  'Active|||W3F Schnorrkel implementation; NOT an IETF/NIST standard': 'non-standardized',
+  // SM2 (2026-08-16): a real published standard (GB/T 32918, ISO/IEC
+  // 14888-3:2018) — 'regional' (final within its own jurisdiction, not a
+  // NIST FIPS), same tier China/KpqC national winners already use.
+  'Published|||GB/T 32918 (China); ISO/IEC 14888-3:2018; NOT in NIST FIPS': 'regional',
 }
 
 /** Throws on any (status, fips_standard) pair not in the lookup table above —

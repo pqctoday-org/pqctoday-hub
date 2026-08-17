@@ -11,16 +11,7 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import {
-  ArrowRight,
-  BarChart3,
-  Shield,
-  ShieldCheck,
-  Network,
-  Info,
-  FlaskConical,
-  Factory,
-} from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Network, Info, FlaskConical, Factory } from 'lucide-react'
 import { Skeleton } from '../ui/skeleton'
 import { PageHeader } from '../common/PageHeader'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
@@ -229,25 +220,6 @@ export function AlgorithmsView() {
         icon={Shield}
         title="Post-Quantum Algorithms & Protocols"
         description="Compare post-quantum algorithms and track their support across IETF protocols"
-        actions={
-          // 2026-08-02 (design_handoff_2026_pages/IMPLEMENTATION-PLAN-
-          // ALGORITHMS-2026-08-01.md §3.3): "verified against NIST ACVP
-          // vectors in your browser" was real but two clicks deep (Validation
-          // tab -> KAT accordion). Promoted to a persistent chrome badge —
-          // the claim is promoted, the actual KAT-running UI stays where it
-          // was, one click away via this same badge.
-          <Button
-            key="acvp-badge"
-            variant="ghost"
-            size="sm"
-            onClick={() => handleTabChange('validation')}
-            title="Runs real NIST ACVP known-answer test vectors in your browser — click to open Validation."
-            className="gap-1.5 text-[11px] font-semibold text-status-success hover:text-status-success"
-          >
-            <ShieldCheck size={14} aria-hidden="true" />
-            <span className="hidden sm:inline">ACVP Verified</span>
-          </Button>
-        }
       />
 
       <AlgorithmEntryStrip

@@ -29,6 +29,14 @@ export type AlgorithmStatusTier =
   // Treating it as e.g. round2-candidate would assert a standards claim
   // the data doesn't actually support.
   | 'unverified'
+  // Added 2026-08-16 (sr25519/Schnorrkel): genuinely outside any standards
+  // pipeline, not a draft OF one. Distinct from 'unverified' — the status
+  // IS fact-checked (against w3f/schnorrkel's own PUBLIC_KEY_LENGTH/
+  // SIGNATURE_LENGTH source constants), it just has no FIPS/IETF/regional
+  // track to be a candidate/draft/regional-winner within. Using 'unverified'
+  // would render its tooltip's literal "not yet fact-checked against an
+  // authoritative source" — false for a row that was.
+  | 'non-standardized'
 
 /** Default "Certified" filter whitelist — everything else, including
  *  'placeholder', is excluded from the default view. */
