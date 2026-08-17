@@ -48,6 +48,24 @@ const MARKET_SIZE_EXEMPT = new Set([
   'Internet of Things (IoT)',
 ])
 
+/** Industries deprecated by the 2026-08-17 freshness pass under the user's
+ *  hard rule that no market-size row may cite a pre-2024 figure: a genuine
+ *  official statistic exists for each (World Bank/UNESCO Education Finance
+ *  Watch, WHO Global Health Expenditure, US Census Census of Governments),
+ *  but exhaustive re-checks (World Bank/UNESCO/OECD/NCES for Education; WHO/
+ *  OECD for Healthcare; Census annual survey + EPA CWNS/DWINSA for Water —
+ *  EPA's surveys measure capital *needs*, not *revenue*, so they can't
+ *  substitute) found no ≥2024 vintage anywhere. Unlike MARKET_SIZE_EXEMPT
+ *  this is NOT "no concept exists" — it's "stale, pending a fresher official
+ *  edition." update-market-sizes should re-attempt these every pass; move an
+ *  industry back to an active row (not into MARKET_SIZE_EXEMPT) the moment a
+ *  qualifying figure appears. */
+const MARKET_SIZE_STALE_PENDING_REFRESH = new Set([
+  'Education / Research',
+  'Healthcare / Pharmaceutical',
+  'Water / Wastewater',
+])
+
 describe('industry-landscape driftguards', () => {
   it('loads all three CSV families', () => {
     expect(useCases.length).toBeGreaterThan(50)
@@ -348,7 +366,7 @@ describe('industry-landscape driftguards', () => {
   it('market sizes cover every non-exempt industry, with sane values', () => {
     const byIndustry = new Map(marketSizes.map((m) => [m.industry, m]))
     for (const ind of getLandscapeIndustries()) {
-      if (MARKET_SIZE_EXEMPT.has(ind)) continue
+      if (MARKET_SIZE_EXEMPT.has(ind) || MARKET_SIZE_STALE_PENDING_REFRESH.has(ind)) continue
       const m = byIndustry.get(ind)
       expect(m, `industry "${ind}" has no market-size row`).toBeDefined()
       expect(m!.marketSizeUsd).toBeGreaterThan(1e9)
