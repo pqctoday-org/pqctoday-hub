@@ -10094,6 +10094,306 @@
       "sizeBytes": 15365,
       "contentType": "text/plain",
       "sha256": "0ae4bac22a8e17ebe3db18bc1b41a0cface83434a12d5cd49e8924f1e4c65289"
+    },
+    {
+      "refId": "CABF-TLS-BR-v2-2-9",
+      "title": "CABF-TLS-BR-v2-2-9",
+      "url": "https://raw.githubusercontent.com/cabforum/servercert/main/docs/BR.md",
+      "status": "downloaded",
+      "filename": "CABF-TLS-BR-v2-2-9.md",
+      "sizeBytes": 353070,
+      "contentType": "text/markdown",
+      "sha256": "057b4aad56cbb0f2ebd32b30b68781f4d42617fb65ca2bed9068c71a99be2976"
+    },
+    {
+      "refId": "CABF-SMIME-BR-v1-0-15",
+      "title": "CABF-SMIME-BR-v1-0-15",
+      "url": "https://raw.githubusercontent.com/cabforum/smime/main/SBR.md",
+      "status": "downloaded",
+      "filename": "CABF-SMIME-BR-v1-0-15.md",
+      "sizeBytes": 218626,
+      "contentType": "text/markdown",
+      "sha256": "f8943e4af05f9e4032ec816a53406f17fbc379cc5e03f6e66f0d8eb9058541a6"
+    },
+    {
+      "refId": "CABF-Code-Signing-BR-v3-11",
+      "title": "CABF-Code-Signing-BR-v3-11",
+      "url": "https://raw.githubusercontent.com/cabforum/code-signing/main/docs/CSBR.md",
+      "status": "downloaded",
+      "filename": "CABF-Code-Signing-BR-v3-11.md",
+      "sizeBytes": 296528,
+      "contentType": "text/markdown",
+      "sha256": "92b7860709c9b92719e4ed73d43f3230d5b437b78ab382423b84e6b0f6d74ac7"
+    },
+    {
+      "refId": "ICANN-Root-Zone-KSK-DPS-8th-Edition",
+      "title": "ICANN-Root-Zone-KSK-DPS-8th-Edition",
+      "url": "https://www.iana.org/dnssec/procedures/ksk-operator/ksk-dps-20250414.html",
+      "status": "downloaded",
+      "filename": "ICANN-Root-Zone-KSK-DPS-8th-Edition.html",
+      "sizeBytes": 259690,
+      "contentType": "text/html",
+      "sha256": "283d09e59710922f2040538d3499deca4e8f60b3a1e07d0d9638d71e0ba4fecf"
+    },
+    {
+      "refId": "NIST-SP-800-63B-4",
+      "title": "NIST-SP-800-63B-4",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b-4.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-63B-4.pdf",
+      "sizeBytes": 993734,
+      "contentType": "application/pdf",
+      "sha256": "d9ab89576b5ae2cfb3ba37781110788dea27a85a5079496dbfc1a79834670afd"
+    },
+    {
+      "refId": "Chrome-Root-Program-Policy-v1-8",
+      "title": "Chrome-Root-Program-Policy-v1-8",
+      "url": "https://googlechrome.github.io/chromerootprogram/crp/policy",
+      "status": "downloaded",
+      "filename": "Chrome-Root-Program-Policy-v1-8.txt",
+      "sizeBytes": 64503,
+      "contentType": "text/plain",
+      "sha256": "8e9f73221eb557b99d40641d3f514532adbb7ee27e995f2e582bd42b1e8405a7"
+    },
+    {
+      "refId": "C-ITS-Certificate-Policy-Release-3.0",
+      "title": "C-ITS-Certificate-Policy-Release-3.0",
+      "url": "https://cpoc.jrc.ec.europa.eu/data/documents/E01941_C-ITS_Certificate_Policy_Release_3_0_FINAL.pdf",
+      "status": "downloaded",
+      "filename": "C-ITS-Certificate-Policy-Release-3.0.pdf",
+      "sizeBytes": 1835240,
+      "contentType": "application/pdf",
+      "sha256": "f0d9891ef9a5a09d3ca8cddf5adac52eae9bb4a98f26aded31a79f210c6d0fbf"
+    },
+    {
+      "refId": "BSI-CC-PP-0114-V2X-HSM",
+      "title": "BSI-CC-PP-0114-V2X-HSM",
+      "url": "https://www.commoncriteriaportal.org/files/ppfiles/pp0114a_pdf.pdf",
+      "status": "downloaded",
+      "filename": "BSI-CC-PP-0114-V2X-HSM.pdf",
+      "sizeBytes": 432577,
+      "contentType": "application/pdf",
+      "sha256": "277fb087fc41984bc1a30945107023ab7d824257b0d6143b7a5f6ca289f23c77"
+    },
+    {
+      "refId": "SCMS-Manager-EE-Requirements-v1-00",
+      "title": "SCMS-Manager-EE-Requirements-v1-00",
+      "url": "https://www.scmsmanager.org/wp-content/uploads/2022/03/SCMS-Manager-End-Entity-Requiments-Design-Guidance-and-Validation-Approach-v1.00.pdf",
+      "status": "downloaded",
+      "filename": "SCMS-Manager-EE-Requirements-v1-00.pdf",
+      "sizeBytes": 1033034,
+      "contentType": "application/pdf",
+      "sha256": "1806ed9e5deca47c460072c90da45ccffb358d8d6ac0219a1712af2729dc99b9"
+    },
+    {
+      "refId": "UNECE-R156",
+      "title": "UNECE-R156",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:42021X0388",
+      "status": "downloaded",
+      "filename": "UNECE-R156.pdf",
+      "sizeBytes": 623249,
+      "contentType": "application/pdf",
+      "sha256": "1ee81699cf0af825e0551269dc73b08f79655c0058495807301d3c0ee9f69e68"
+    },
+    {
+      "refId": "EU-2016-799-Smart-Tachograph",
+      "title": "EU-2016-799-Smart-Tachograph",
+      "url": "https://dtc.jrc.ec.europa.eu/iot_doc/EU%202016-799-EN.pdf",
+      "status": "downloaded",
+      "filename": "EU-2016-799-Smart-Tachograph.pdf",
+      "sizeBytes": 18890956,
+      "contentType": "application/pdf",
+      "sha256": "7bc8a9f42bbac789e8aa5bcebec028d017d477a7d212db82e0b83170bc732f05"
+    },
+    {
+      "refId": "EU-2023-203-Part-IS",
+      "title": "EU-2023-203-Part-IS",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32023R0203",
+      "status": "downloaded",
+      "filename": "EU-2023-203-Part-IS.pdf",
+      "sizeBytes": 748363,
+      "contentType": "application/pdf",
+      "sha256": "0edc2f44787feba14ea8b59a2f588d83df28957f0bbbf104e1726757f51fe8c0"
+    },
+    {
+      "refId": "UNISIG-SUBSET-114",
+      "title": "UNISIG-SUBSET-114",
+      "url": "https://www.era.europa.eu/system/files/2023-01/sos3_index079_-_subset-114_v110.pdf",
+      "status": "downloaded",
+      "filename": "UNISIG-SUBSET-114.pdf",
+      "sizeBytes": 1211235,
+      "contentType": "application/pdf",
+      "sha256": "63c373bf7963326800805ac17727d651b4f9dcbfd177a4ee5ed9c7751590e457"
+    },
+    {
+      "refId": "NIST-SP-800-213",
+      "title": "NIST-SP-800-213",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-213.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-213.pdf",
+      "sizeBytes": 2386815,
+      "contentType": "application/pdf",
+      "sha256": "8f90d1fc02a3436444dca859b2f66e97942f443c07109798aeaee1315a6c60ae"
+    },
+    {
+      "refId": "NIST-IR-8259A",
+      "title": "NIST-IR-8259A",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2020/NIST.IR.8259A.pdf",
+      "status": "downloaded",
+      "filename": "NIST-IR-8259A.pdf",
+      "sizeBytes": 977531,
+      "contentType": "application/pdf",
+      "sha256": "b3b54b00b5ac3f3582a3e3fd17d3f25b18f848a51f113000b6489adbcce374b4"
+    },
+    {
+      "refId": "GSMA-SGP24-v2-4-4",
+      "title": "GSMA-SGP24-v2-4-4",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/esim/wp-content/uploads/2022/07/SGP.24-v2.4.4-1.pdf",
+      "status": "downloaded",
+      "filename": "GSMA-SGP24-v2-4-4.pdf",
+      "sizeBytes": 446553,
+      "contentType": "application/pdf",
+      "sha256": "eb60a3d45c7001fb0b75a58299cae47a699db3dc30536f2d3e78e960548120ee"
+    },
+    {
+      "refId": "BSI-CC-PP-0100-V2-2025-eUICC",
+      "title": "BSI-CC-PP-0100-V2-2025-eUICC",
+      "url": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/ppfiles/pp0100V2a_pdf.pdf",
+      "status": "downloaded",
+      "filename": "BSI-CC-PP-0100-V2-2025-eUICC.pdf",
+      "sizeBytes": 330352,
+      "contentType": "application/pdf",
+      "sha256": "a1058193a0247d7ae7f6e01bb4f2db23e0c614487d2981c5fef4da6741bf426a"
+    },
+    {
+      "refId": "ENISA-eUICC-EUCC",
+      "title": "ENISA-eUICC-EUCC",
+      "url": "https://certification.enisa.europa.eu/document/download/23686749-bb1a-46d1-bd7d-bee64f3e69ea_en",
+      "status": "downloaded",
+      "filename": "ENISA-eUICC-EUCC.pdf",
+      "sizeBytes": 1492398,
+      "contentType": "application/pdf",
+      "sha256": "d433f5203edd5131162165295f3a1cafea3567bf71163360b426ea2ea77e0bc0"
+    },
+    {
+      "refId": "DORA-RTS-2024-1774",
+      "title": "DORA-RTS-2024-1774",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401774",
+      "status": "downloaded",
+      "filename": "DORA-RTS-2024-1774.pdf",
+      "sizeBytes": 1127516,
+      "contentType": "application/pdf",
+      "sha256": "0643fbe55849bea1800066ce0da2996339eca57d0d183f52269b536f9ce3ffff"
+    },
+    {
+      "refId": "MovieLabs-ECP-v1-4",
+      "title": "MovieLabs-ECP-v1-4",
+      "url": "https://movielabs.com/ngvideo/MovieLabs_ECP_Spec_v1.4.pdf",
+      "status": "downloaded",
+      "filename": "MovieLabs-ECP-v1-4.pdf",
+      "sizeBytes": 303475,
+      "contentType": "application/pdf",
+      "sha256": "ec2825cb1d257743ae459f2e499e62bbade602e2058b06481a530bb3d737dabf"
+    },
+    {
+      "refId": "SFC-VATP-Guidelines",
+      "title": "SFC-VATP-Guidelines",
+      "url": "https://www.sfc.hk/-/media/EN/assets/components/codes/files-current/web/guidelines/guidelines-for-virtual-asset-trading-platform-operators/guidelines-for-virtual-asset-trading-platform-operators.pdf",
+      "status": "downloaded",
+      "filename": "SFC-VATP-Guidelines.pdf",
+      "sizeBytes": 665748,
+      "contentType": "application/pdf",
+      "sha256": "6c1fdcd3bba71412e3fe963891d5d83e0a599c0caee920831202bd86912bd7ec"
+    },
+    {
+      "refId": "VARA-Custody-Rulebook",
+      "title": "VARA-Custody-Rulebook",
+      "url": "https://rulebooks.vara.ae/sites/default/files/en_net_file_store/VARA_EN_243_VER20250519.pdf",
+      "status": "downloaded",
+      "filename": "VARA-Custody-Rulebook.pdf",
+      "sizeBytes": 367235,
+      "contentType": "application/pdf",
+      "sha256": "6625d06c5dfa8ca448fb23e7617727c5ff145d89be5653e6b0380a877639e150"
+    },
+    {
+      "refId": "VARA-Technology-Information-Rulebook",
+      "title": "VARA-Technology-Information-Rulebook",
+      "url": "https://rulebooks.vara.ae/sites/default/files/en_net_file_store/VARA_EN_169_VER20250519.pdf",
+      "status": "downloaded",
+      "filename": "VARA-Technology-Information-Rulebook.pdf",
+      "sizeBytes": 378911,
+      "contentType": "application/pdf",
+      "sha256": "ec65a1d1b105065d966721498be0c81ac3bff4e93c555968eb74fd14fc987dea"
+    },
+    {
+      "refId": "NERC-CIP-005-7",
+      "title": "NERC-CIP-005-7",
+      "url": "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-005-7.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP-005-7.pdf",
+      "sizeBytes": 325620,
+      "contentType": "application/pdf",
+      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425"
+    },
+    {
+      "refId": "NERC-CIP-007-6",
+      "title": "NERC-CIP-007-6",
+      "url": "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-007-6.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP-007-6.pdf",
+      "sizeBytes": 637644,
+      "contentType": "application/pdf",
+      "sha256": "5b7820e758467bbdd401ef806def3b91dfd7e5d98145146c36bf8c45a566a8bd"
+    },
+    {
+      "refId": "NERC-CIP-011-3",
+      "title": "NERC-CIP-011-3",
+      "url": "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-011-3.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP-011-3.pdf",
+      "sizeBytes": 267964,
+      "contentType": "application/pdf",
+      "sha256": "7eb7264737015d7330d145346ab13351331b03811fbc34829a0f6ad9fda92f8c"
+    },
+    {
+      "refId": "NERC-CIP-012-1",
+      "title": "NERC-CIP-012-1",
+      "url": "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-012-1.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP-012-1.pdf",
+      "sizeBytes": 233051,
+      "contentType": "application/pdf",
+      "sha256": "0302d85d86d16ad1d92a3f0ea8245b2bf50ac1cd307f9fd03ce4af49baaab76a"
+    },
+    {
+      "refId": "IETF-RFC-6484",
+      "title": "IETF-RFC-6484",
+      "url": "https://www.rfc-editor.org/rfc/rfc6484.txt",
+      "status": "downloaded",
+      "filename": "IETF-RFC-6484.html",
+      "sizeBytes": 77855,
+      "contentType": "text/html",
+      "sha256": "151c490b4825e1c73de0b040f7f676d643053ce53e02e46af243f1f6406bba59"
+    },
+    {
+      "refId": "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0",
+      "title": "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0",
+      "url": "https://blog.pcisecuritystandards.org/pci-ssc-publishes-pci-pts-hsm-v5.0",
+      "status": "downloaded",
+      "filename": "PCI-SSC-Blog-Publishes-PTS-HSM-v5-0.html",
+      "sizeBytes": 82174,
+      "contentType": "text/html",
+      "sha256": "3972c2650d91004fd1e0b1ab4ecf3d64abcb6910e4d46ad5d7eb497daf390324"
+    },
+    {
+      "refId": "PCI-SSC-Bulletin-PTS-HSM-v4-Extension",
+      "title": "PCI-SSC-Bulletin-PTS-HSM-v4-Extension",
+      "url": "https://www.pcisecuritystandards.org/wp-content/uploads/2026/03/UPDATED2-Extension-of-Expiration-of-the-PCI-PTS-HSM-v4v3.pdf",
+      "status": "downloaded",
+      "filename": "PCI-SSC-Bulletin-PTS-HSM-v4-Extension.pdf",
+      "sizeBytes": 109515,
+      "contentType": "application/pdf",
+      "sha256": "89005d6ce0f68744a8d5a263814ee195d684114d753425430372d3e8244b67c3"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
