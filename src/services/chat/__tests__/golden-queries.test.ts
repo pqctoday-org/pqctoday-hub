@@ -305,13 +305,15 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     // intent's real 10-result cap too (assess-guide-sensitivity rank ~9 -> 11,
     // verified with an explicit limit:50 override). Content and its "PQC
     // Assessment Wizard" phrasing are unchanged — this is corpus-growth
-    // ranking dilution, not a missing or broken document. expectedSources
-    // re-verified empty after this merge (see below); restore if the merged
-    // corpus's ranking puts assessment-sourced content back in-window. Real
-    // fix would be ranking work (e.g. entity-index weight for "assessment
-    // wizard"), out of scope for a prose-extraction fix.
+    // ranking dilution, not a missing or broken document. mustInclude stays
+    // relaxed (assess-guide-sensitivity itself still ranks outside the
+    // 'definition' cap), but expectedSources verified passing again after
+    // merging with origin/main — the merged corpus's ranking puts other
+    // assessment-sourced content back in the top 10. Real fix would be
+    // ranking work (e.g. entity-index weight for "assessment wizard"), out
+    // of scope for a prose-extraction fix.
     mustInclude: [],
-    expectedSources: [],
+    expectedSources: ['assessment'],
     minTop5Hits: 0,
   },
 
