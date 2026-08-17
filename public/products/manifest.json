@@ -3552,6 +3552,2944 @@
       "filename": "zscaler-zte-1da2f075.html",
       "url": "",
       "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic-library-NesLib-6-11-6-on-S-2",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-2-brief-8274d071.pdf",
+      "url": "https://messervices.cyber.gouv.fr/visas/EUCC-3090-2026-16-cible.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NESLIB-6-11-3-on-S",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-brief-032c4a50.pdf",
+      "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2025-26-cible.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NesLib-6-11-6-on-S-2",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-2-brief-8143410e.pdf",
+      "url": "https://www.st.com/resource/en/data_brief/st33k1m5c.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NesLib-6-11-6-on-S",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-brief-d86bff50.pdf",
+      "url": "https://www.st.com/resource/en/data_brief/st33k1m5a.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Post-quantum-cryptography-support-in-Tru",
+      "filename": "Post-quantum-cryptography-support-in-Tru-brief-b944decc.html",
+      "url": "https://dev.digicert.com/trustcore-sdk/compliance-and-regulations/post-quantum-cryptography-support-in-trustcore-sdk.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NESLIB-6-11-3-on-S-2",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-2-brief-7c109c99.html",
+      "url": "https://www.st.com/en/secure-mcus/st31r480.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Post-quantum-cryptography-support-in-Tru",
+      "filename": "Post-quantum-cryptography-support-in-Tru-manual-eb9c5ae0.html",
+      "url": "https://dev.digicert.com/trustcore-sdk/crypto-interface/post-quantum-cryptographic-algorithms.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Cryptographic-library-NESLIB-6-11-3-on-S",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-brief-7c109c99.html",
+      "url": "https://www.st.com/en/secure-mcus/st31r480.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NESLIB-6-11-3-on-S",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-brief-824b3360.pdf",
+      "url": "https://www.st.com/resource/en/data_brief/st31r480.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Cryptographic-library-NESLIB-6-11-3-on-S-2",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-2-brief-824b3360.pdf",
+      "url": "https://www.st.com/resource/en/data_brief/st31r480.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-luna-hsm",
+      "filename": "thales-luna-hsm-brief-50024892.pdf",
+      "url": "https://cpl.thalesgroup.com/sites/default/files/content/product_briefs/field_document/2024-06/luna-network-hsm-7-pb.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-luna-hsm",
+      "filename": "thales-luna-hsm-manual-ad1e810c.pdf",
+      "url": "https://thalesdocs.com/gphsm/luna/7/docs/network/Content/PDF_Network/HSM%20Administration%20Guide.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "rustls",
+      "filename": "rustls-brief-7e7eb269.html",
+      "url": "https://raw.githubusercontent.com/rustls/rustls/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rustls",
+      "filename": "rustls-manual-96696b10.html",
+      "url": "https://docs.rs/rustls/latest/rustls/manual/_04_features/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "pqcrypto-python-library",
+      "filename": "pqcrypto-python-library-brief-c571b545.html",
+      "url": "https://pypi.org/project/pqcrypto/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rustls",
+      "filename": "rustls-manual-2e075e10.html",
+      "url": "https://docs.rs/rustls/latest/rustls/manual/_05_defaults/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sectigo-certificate-manager",
+      "filename": "sectigo-certificate-manager-brief-886c3b74.pdf",
+      "url": "https://www.sectigo.com/uploads/resources/Sectigo-Certificate-Manager-SCM-product-brief.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqcrypto-python-library",
+      "filename": "pqcrypto-python-library-brief-483a58ee.html",
+      "url": "https://github.com/backbone-hq/pqcrypto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sectigo-certificate-manager",
+      "filename": "sectigo-certificate-manager-brief-e9e374a9.html",
+      "url": "https://www.sectigo.com/enterprise-solutions/certificate-manager/private-pqc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sectigo-certificate-manager",
+      "filename": "sectigo-certificate-manager-brief-89bb3be2.html",
+      "url": "https://www.sectigo.com/resource-library/private-pqc-in-sectigo-certificate-manager",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sectigo-certificate-manager",
+      "filename": "sectigo-certificate-manager-manual-fcd5b394.html",
+      "url": "https://docs.sectigo.com/scm/scm-enterprise-release-notes/whats-new",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "nxp-i-mx-94-pqc-processor",
+      "filename": "nxp-i-mx-94-pqc-processor-brief-06ef737d.pdf",
+      "url": "https://www.nxp.com/docs/en/fact-sheet/iMX94FAMFS.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "nxp-i-mx-94-pqc-processor",
+      "filename": "nxp-i-mx-94-pqc-processor-brief-142dccb2.html",
+      "url": "https://www.nxp.com/products/i.MX94",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "nxp-i-mx-94-pqc-processor",
+      "filename": "nxp-i-mx-94-pqc-processor-manual-be0de8b9.pdf",
+      "url": "https://www.nxp.com/docs/en/reference-manual/RM00284.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sectigo-certificate-manager",
+      "filename": "sectigo-certificate-manager-manual-ff0a42bd.html",
+      "url": "https://docs.sectigo.com/scm/scm-administrator/what-is-scm-enterprise",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "thales-multiapp-5-2-premium-pqc",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-9b3167ea.html",
+      "url": "https://cpl.thalesgroup.com/blog/data-security/quantum-safe-doesnt-mean-secure-pqc-adoption-risks",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-multiapp-5-2-premium-pqc",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-cdd79262.pdf",
+      "url": "https://www.thalesgroup.com/sites/default/files/2026-03/Thales%20CDI%20-%20Building%20Digital%20Trust%20For%20The%20Post-Quantum%20Era.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-multiapp-5-2-premium-pqc",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-e1ff8879.pdf",
+      "url": "https://assets.mobileworldlive.com/wp-content/uploads/2026/01/29155018/MCS-Enterprise-approach-in-PQC.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-multiapp-5-2-premium-pqc",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-c2de81e5.html",
+      "url": "https://emag.directindustry.com/2025/10/08/thales-europe-smartcard-quantum-digital-identity-attacks/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-brief-6416cde0.html",
+      "url": "https://blogs.oracle.com/mysql/post-quantum-cryptography-support-in-mysql",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-brief-33400690.html",
+      "url": "https://blogs.oracle.com/mysql/upgrade-to-openssl-3-5",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fortinet-fortigate-rugged",
+      "filename": "fortinet-fortigate-rugged-brief-bea55ff1.pdf",
+      "url": "https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiGate_Rugged_Series.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fortinet-fortigate-rugged",
+      "filename": "fortinet-fortigate-rugged-manual-0989f57a.html",
+      "url": "https://docs.fortinet.com/document/fortigate/7.6.6/administration-guide/229631/post-quantum-cryptography-for-ipsec-key-exchange",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-brief-3107cf8d.html",
+      "url": "https://www.microchip.com/en-us/about/media-center/blog/2026/post-quantum-cryptography-on-microchip-fpgas",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-brief-9010bc26.html",
+      "url": "https://www.microchip.com/en-us/about/media-center/blog/2026/hardware-based-hybrid-cryptography-and-implementation",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-edge",
+      "filename": "akamai-edge-manual-ea4c93a1.html",
+      "url": "https://techdocs.akamai.com/property-mgr/docs/pqc-client-to-edge",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-manual-c524aba8.html",
+      "url": "https://www.keysight.com/us/en/support/DS2210A/inspector-sc2-pre-silicon-side-channel-analysis.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-db8d74a5.html",
+      "url": "https://pqshield.com/post-quantum-algorithm-testing-with-keysight-inspector/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-brief-4df83647.pdf",
+      "url": "https://www.mouser.com/datasheet/2/268/Microsemi_Microchip_PolarFire_SoC_FPGA_Product_Ove-1879322.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-edge",
+      "filename": "akamai-edge-manual-c2a05165.html",
+      "url": "https://techdocs.akamai.com/property-mgr/docs/pqc-origin",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-manual-42d332ea.html",
+      "url": "https://dev.mysql.com/doc/relnotes/mysql/26.7/en/news-26-7-0.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-manual-af8bc722.pdf",
+      "url": "https://www.microchip.com/content/dam/mchp/documents/FPGA/ProductDocuments/UserGuides/Microchip_PolarFire_FPGA_and_PolarFire_SoC_FPGA_Security_User_Guide_VA%20(2).pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-edge",
+      "filename": "akamai-edge-brief-dea8eeee.html",
+      "url": "https://www.akamai.com/blog/security/akamai-enables-post-quantum-cryptography-edge",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-brief-268a736c.html",
+      "url": "https://blogs.oracle.com/mysql/mysql-july-2026-ga-releases-now-available",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-brief-67627e1c.pdf",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/00003292B.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-manual-7a6dab76.html",
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/encrypted-connections.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microchip-polarfire",
+      "filename": "microchip-polarfire-brief-22769234.pdf",
+      "url": "https://www.mouser.com/datasheet/2/268/polarfire_fpga_product_overview_60001657h-2950971.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-677c83b5.html",
+      "url": "https://www.keysight.com/us/en/product/DS2210A/inspector-sc2-pre-silicon-side-channel-analysis.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-80b073c2.html",
+      "url": "https://www.keysight.com/us/en/about/newsroom/news-releases/2024/3004-PR24-062-Keysight-Introduces-New-Testing-Capabilities-to-Strengthen-Post-Quantum-Cryptography.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mysql-community-server",
+      "filename": "mysql-community-server-manual-8d5de5f1.html",
+      "url": "https://dev.mysql.com/doc/relnotes/mysql/8.4/en/news-8-4-11.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-0117c1fe.html",
+      "url": "https://www.keysight.com/us/en/cmp/2025/pqc-security.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-edge",
+      "filename": "akamai-edge-brief-1bfac38e.html",
+      "url": "https://techdocs.akamai.com/property-mgr/changelog/aug-27-2025-introducing-the-post-quantum-cryptography-client-to-edge-behavior",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-841b2340.html",
+      "url": "https://www.keysight.com/us/en/about/newsroom/featured/2025/1117-keysight-enables-pqshields-industry-readiness-for-post-quantum-cryptography.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-636a0f23.html",
+      "url": "https://www.keysight.com/us/en/about/newsroom/featured/2025/0722-keysight-supports-post-quantum-cryptography-evaluation.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-manual-925b1d7a.html",
+      "url": "https://www.keysight.com/us/en/support/DS1050A/next-generation-embedded-security-testbench.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-a492732f.html",
+      "url": "https://www.edn.com/pxi-testbench-strengthens-chip-security-testing/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-049a37b4.html",
+      "url": "https://www.keysight.com/us/en/cmp/2025/semiconductor-security.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keysight-inspector",
+      "filename": "keysight-inspector-brief-7a199e68.html",
+      "url": "https://www.endosec.com/keysight",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-brief-4743ea3a.html",
+      "url": "https://www.latticesemi.com/en/About/Newsroom/PressReleases/2025/Lattice-Launches-Industry-First-PQC-Ready-FPGA-Family-MachXO5-NX-TDQ",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-brief-20566149.html",
+      "url": "https://www.latticesemi.com/Products/FPGAandCPLD/MachXO5-NX",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "zoom-compliance-2026",
+      "filename": "zoom-compliance-2026-brief-08405e35.html",
+      "url": "https://news.zoom.com/post-quantum-e2ee/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-connected-cloud",
+      "filename": "akamai-connected-cloud-manual-c2a05165.html",
+      "url": "https://techdocs.akamai.com/property-mgr/docs/pqc-origin",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-manual-4d252b4d.pdf",
+      "url": "https://www.mouser.com/datasheet/3/248/1/FPGA_DS_02102_2_1_MachXO5_NX_Family.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-connected-cloud",
+      "filename": "akamai-connected-cloud-brief-378842ec.html",
+      "url": "https://techdocs.akamai.com/property-mgr/changelog/jun-30-2025-the-post-quantum-cryptography-to-origin-behavior-in-limited-availability",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "zoom-compliance-2026",
+      "filename": "zoom-compliance-2026-brief-d8fe2d25.html",
+      "url": "https://www.zoom.com/en/blog/guide-to-post-quantum-end-to-end-encryption/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "zoom-compliance-2026",
+      "filename": "zoom-compliance-2026-manual-441c12ec.html",
+      "url": "https://support.zoom.us/hc/en-us/articles/360048660871-End-to-end-E2EE-encryption-for-meetings",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-connected-cloud",
+      "filename": "akamai-connected-cloud-manual-8b5aa282.html",
+      "url": "https://techdocs.akamai.com/property-mgr/reference/ga-pqc-origin",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-b713e992.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000229395/dell-bsafe-crypto-module-quantum-resistant-plugin-3-0-release-advisory",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-e8ace64a.html",
+      "url": "https://www.dell.com/support/product-details/en-us/product/bsafe-crypto-module-c/overview",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-connected-cloud",
+      "filename": "akamai-connected-cloud-brief-50579f59.html",
+      "url": "https://techdocs.akamai.com/property-mgr/changelog/april-8-catalog-updates",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-81f9e65b.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000287248/dell-bsafe-crypto-module-3-0-1-completes-fips-140-3-validation",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-e372949b.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000199443/fips-140-status-of-bsafe-cryptographic-modules",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-brief-4efb0b84.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000350987/dell-bsafe-crypto-j-7-1-release-advisory",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-brief-15e8d567.html",
+      "url": "https://www.dell.com/support/product-details/en-us/product/bsafe-crypto-j/overview",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-c0edfa90.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000253327/dell-bsafe-crypto-module-quantum-resistant-plugin-3-0-1-release-advisory",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-manual-9882f3d5.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000229383/dell-bsafe-crypto-module-for-c-3-0-release-advisory",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-brief-e372949b.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000199443/fips-140-status-of-bsafe-cryptographic-modules",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-manual-4f9d3da7.html",
+      "url": "https://www.dell.com/support/product-details/en-us/product/bsafe-crypto-j/docs",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-manual-19916638.html",
+      "url": "https://www.latticesemi.com/view_document?document_id=54939",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-manual-362babb5.html",
+      "url": "https://www.latticesemi.com/view_document?document_id=54333",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "lattice-machxo5-nx",
+      "filename": "lattice-machxo5-nx-brief-a7968b53.html",
+      "url": "https://www.latticesemi.com/view_document?document_id=54910",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-manual-e026a2d0.html",
+      "url": "https://www.dell.com/support/product-details/en-us/product/bsafe-crypto-j/resources/manuals",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-connected-cloud",
+      "filename": "akamai-connected-cloud-brief-ddad687e.html",
+      "url": "https://www.akamai.com/blog/security/post-quantum-cryptography-whats-next-edge-security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-module-for-c",
+      "filename": "dell-bsafe-crypto-module-for-c-manual-3b38f0e4.html",
+      "url": "https://www.dell.com/support/product-details/en-us/product/bsafe-crypto-module-c/docs",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-brief-6a3131cb.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000190141/comparison-of-bsafe-cryptographic-library-implementations",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "dell-bsafe-crypto-j",
+      "filename": "dell-bsafe-crypto-j-brief-85f3085d.html",
+      "url": "https://www.dell.com/support/kbdoc/en-us/000181945/dell-bsafe-product-version-life-cycle",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rustcrypto-ml-dsa",
+      "filename": "rustcrypto-ml-dsa-manual-d9573830.html",
+      "url": "https://docs.rs/ml-dsa/latest/ml_dsa/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "liboqs-rust-oqs-crate",
+      "filename": "liboqs-rust-oqs-crate-manual-0f80a739.html",
+      "url": "https://docs.rs/oqs/latest/oqs/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mlkem-native",
+      "filename": "mlkem-native-manual-1b040b44.html",
+      "url": "https://github.com/pq-code-package/mlkem-native/tree/main/docs",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mlkem-native",
+      "filename": "mlkem-native-manual-3a38f807.html",
+      "url": "https://github.com/pq-code-package/mlkem-native/blob/main/REFERENCE.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "leancrypto",
+      "filename": "leancrypto-manual-8f4ed7e7.html",
+      "url": "https://leancrypto.org/leancrypto/documentation/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "rustcrypto-ml-dsa",
+      "filename": "rustcrypto-ml-dsa-brief-e9fbc588.html",
+      "url": "https://raw.githubusercontent.com/RustCrypto/signatures/master/ml-dsa/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqcrypto",
+      "filename": "pqcrypto-manual-cdc621eb.html",
+      "url": "https://github.com/rustpq/pqcrypto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "liboqs-rust-oqs-crate-readme-check",
+      "filename": "liboqs-rust-oqs-crate-readme-check-brief-27684acc.html",
+      "url": "https://raw.githubusercontent.com/open-quantum-safe/liboqs-rust/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cosmian-covercrypt",
+      "filename": "cosmian-covercrypt-brief-7537e15d.html",
+      "url": "https://github.com/Cosmian/cover_crypt",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqm4",
+      "filename": "pqm4-brief-ca7cb26c.html",
+      "url": "https://github.com/mupq/pqm4",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cosmian-covercrypt",
+      "filename": "cosmian-covercrypt-manual-6fad5314.html",
+      "url": "https://github.com/Cosmian/cover_crypt/releases",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microsoft-symcrypt",
+      "filename": "microsoft-symcrypt-brief-85e5a4b4.html",
+      "url": "https://github.com/microsoft/SymCrypt",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cosmian-covercrypt",
+      "filename": "cosmian-covercrypt-brief-6f0c49ac.html",
+      "url": "https://cosmian.com/data-protection-suite/cosmian-covercrypt/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microsoft-symcrypt",
+      "filename": "microsoft-symcrypt-brief-15bbb190.html",
+      "url": "https://raw.githubusercontent.com/microsoft/SymCrypt/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hqc-algorithm",
+      "filename": "hqc-algorithm-brief-ae31dd21.html",
+      "url": "https://pqc-hqc.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hqc-algorithm",
+      "filename": "hqc-algorithm-manual-22cf61da.pdf",
+      "url": "https://pqc-hqc.org/doc/hqc_specifications_2025_08_22.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hqc-algorithm",
+      "filename": "hqc-algorithm-manual-286ee3ae.html",
+      "url": "https://gitlab.com/pqc-hqc/hqc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microsoft-symcrypt",
+      "filename": "microsoft-symcrypt-brief-8465c242.html",
+      "url": "https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microsoft-symcrypt",
+      "filename": "microsoft-symcrypt-brief-c68ed767.html",
+      "url": "https://techcommunity.microsoft.com/blog/microsoft-security-blog/microsofts-quantum-resistant-cryptography-is-here/4238780",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqm4",
+      "filename": "pqm4-manual-ca7cb26c.html",
+      "url": "https://github.com/mupq/pqm4",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microsoft-symcrypt",
+      "filename": "microsoft-symcrypt-manual-15bbb190.html",
+      "url": "https://raw.githubusercontent.com/microsoft/SymCrypt/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "citadel-pqcrypto",
+      "filename": "citadel-pqcrypto-brief-4e30ec2a.html",
+      "url": "https://github.com/Avarok-Cybersecurity/Citadel-Protocol/blob/master/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "citadel-pqcrypto",
+      "filename": "citadel-pqcrypto-manual-4caf7650.html",
+      "url": "https://docs.rs/citadel_pqcrypto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "citadel-pqcrypto",
+      "filename": "citadel-pqcrypto-manual-14ba5057.html",
+      "url": "https://docs.rs/citadel_pqcrypto/0.13.0/citadel_pqcrypto/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-lc",
+      "filename": "aws-lc-brief-8eaeb37a.html",
+      "url": "https://github.com/aws/aws-lc/blob/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "nvidia-cupqc",
+      "filename": "nvidia-cupqc-brief-b9c7dca7.html",
+      "url": "https://developer.nvidia.com/cupqc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "nvidia-cupqc",
+      "filename": "nvidia-cupqc-manual-9d2251d4.html",
+      "url": "https://docs.nvidia.com/cuda/cupqc/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-lc",
+      "filename": "aws-lc-manual-441d2557.html",
+      "url": "https://github.com/aws/aws-lc/blob/main/crypto/fipsmodule/PQREADME.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-alts",
+      "filename": "google-alts-manual-9cd2bc1b.html",
+      "url": "https://cloud.google.com/docs/security/encryption-in-transit/application-layer-transport-security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "apple-pq3-corecrypto",
+      "filename": "apple-pq3-corecrypto-brief-5a21b7dd.html",
+      "url": "https://security.apple.com/blog/imessage-pq3/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cisco-ios-xe-pqc",
+      "filename": "cisco-ios-xe-pqc-manual-f5c7bbcc.html",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/ios-xe/security-vpn/security-vpn/m-pqc-ikev2.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cisco-ios-xe-pqc",
+      "filename": "cisco-ios-xe-pqc-manual-62e7ea23.html",
+      "url": "https://www.cisco.com/c/en/us/td/docs/routers/ios-xe/security-vpn/security-vpn/pqc-for-ssh.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cisco-ios-xe-pqc",
+      "filename": "cisco-ios-xe-pqc-brief-4826152d.html",
+      "url": "https://www.cisco.com/c/en/us/td/docs/solutions/CVD/Campus/Quantum-Ready-Migration-Guide.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "google-alts",
+      "filename": "google-alts-brief-e882e1aa.html",
+      "url": "https://cloud.google.com/blog/products/identity-security/why-google-now-uses-post-quantum-cryptography-for-internal-comms",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "apple-pq3-corecrypto",
+      "filename": "apple-pq3-corecrypto-manual-f872082e.html",
+      "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-alts",
+      "filename": "google-alts-brief-0d554a85.html",
+      "url": "https://cloud.google.com/blog/products/identity-security/pqc-in-plaintext-google-clouds-post-quantum-cryptography-roadmap",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "c-dot-quantum-cem-encryptor",
+      "filename": "c-dot-quantum-cem-encryptor-brief-fa18f8ef.html",
+      "url": "https://www.cdot.in/cdotweb/web/product_page.php?lang=en&catId=10&pId=51",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "infineon-aurix-tc49-pqc",
+      "filename": "infineon-aurix-tc49-pqc-brief-faf4bc12.pdf",
+      "url": "https://www.mouser.com/pdfDocs/Infineon-AURIX_TC4x-ProductBrochure-v01_00-EN.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "c-dot-quantum-cem-encryptor",
+      "filename": "c-dot-quantum-cem-encryptor-manual-860be31b.pdf",
+      "url": "https://www.cdot.in/cdotweb/assets/docs/products/pqc/cem.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "infineon-aurix-tc49-pqc",
+      "filename": "infineon-aurix-tc49-pqc-brief-f834a207.html",
+      "url": "https://www.infineon.com/products/microcontroller/32-bit-tricore/aurix-tc4x/tc49x",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "infineon-aurix-tc49-pqc",
+      "filename": "infineon-aurix-tc49-pqc-manual-cac688c5.pdf",
+      "url": "https://www.infineon.com/assets/row/public/documents/10/156/infineon-tc4x-overview-productpresentation-en.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-brief-0751d804.html",
+      "url": "https://www.qusecure.com/quprotect/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-brief-e38d2f16.html",
+      "url": "https://www.qusecure.com/resources/quprotect-capabilities/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-manual-41b092c9.html",
+      "url": "https://www.qusecure.com/understanding-your-implementation-checklist-a-guide-to-successful-deployment-of-quprotect/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "forward-edge-ai-isidore-quantum",
+      "filename": "forward-edge-ai-isidore-quantum-brief-8c26cc63.html",
+      "url": "https://forwardedge.ai/isidore/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-pqc-edge",
+      "filename": "akamai-pqc-edge-manual-ea4c93a1.html",
+      "url": "https://techdocs.akamai.com/property-mgr/docs/pqc-client-to-edge",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "forward-edge-ai-isidore-quantum",
+      "filename": "forward-edge-ai-isidore-quantum-manual-dcfc4366.html",
+      "url": "https://support.forwardedge.ai/en/articles/12400769-isidore-quantum-user-manual",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "infineon-aurix-tc49-pqc",
+      "filename": "infineon-aurix-tc49-pqc-manual-9d952bb6.html",
+      "url": "https://documentation.infineon.com/aurixtc4xx/docs/ffx1718002469287",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-pqc-edge",
+      "filename": "akamai-pqc-edge-brief-1bfac38e.html",
+      "url": "https://techdocs.akamai.com/property-mgr/changelog/aug-27-2025-introducing-the-post-quantum-cryptography-client-to-edge-behavior",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "forward-edge-ai-isidore-quantum",
+      "filename": "forward-edge-ai-isidore-quantum-brief-52bf6e0b.html",
+      "url": "https://support.forwardedge.ai/en/articles/11782093-isidore-quantum-primer",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-brief-4f577e3f.html",
+      "url": "https://www.qusecure.com/qusecures-quprotect-platform-supports-post-quantum-cryptography-algorithms-selected-by-nist-today-for-standardization/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "infineon-aurix-tc49-pqc",
+      "filename": "infineon-aurix-tc49-pqc-manual-9d4cc0a2.html",
+      "url": "https://documentation.infineon.com/aurixtc4xx/docs/ukk1718002103459",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "forward-edge-ai-isidore-quantum",
+      "filename": "forward-edge-ai-isidore-quantum-brief-dad1d345.html",
+      "url": "https://forwardedge.ai/isidore-quantum-one-way-data-diode/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "forward-edge-ai-isidore-quantum",
+      "filename": "forward-edge-ai-isidore-quantum-manual-b1d64053.html",
+      "url": "https://support.forwardedge.ai/en/articles/8770627-isidore-quantum-high-throughput-space-encryptor-brochure",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "akamai-pqc-edge",
+      "filename": "akamai-pqc-edge-brief-dea8eeee.html",
+      "url": "https://www.akamai.com/blog/security/akamai-enables-post-quantum-cryptography-edge",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "akamai-pqc-edge",
+      "filename": "akamai-pqc-edge-brief-ddad687e.html",
+      "url": "https://www.akamai.com/blog/security/post-quantum-cryptography-whats-next-edge-security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-manual-62002f80.html",
+      "url": "https://www.qusecure.com/cryptographic-agility-for-control-over-hybrid-post-quantum-tls/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-brief-40da3f20.html",
+      "url": "https://www.qusecure.com/qusecure-launches-quprotect-r3/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "qusecure-quprotect-r3",
+      "filename": "qusecure-quprotect-r3-brief-3580fcca.html",
+      "url": "https://www.qusecure.com/post-quantum-cryptography/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sandboxaq-aqtive-guard",
+      "filename": "sandboxaq-aqtive-guard-brief-e0b36bab.pdf",
+      "url": "https://go.sandboxaq.com/rs/175-UKR-711/images/SBAQ_Security-Suite_DataSheet.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sandboxaq-aqtive-guard",
+      "filename": "sandboxaq-aqtive-guard-brief-35597a93.html",
+      "url": "https://www.sandboxaq.com/solutions/aqtive-guard",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sandboxaq-aqtive-guard",
+      "filename": "sandboxaq-aqtive-guard-manual-be714b3c.html",
+      "url": "https://aqtiveguard.sandboxaq.com/docs/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-aqtive-guard",
+      "filename": "sandboxaq-aqtive-guard-manual-731e28f2.html",
+      "url": "https://aqtiveguard.sandboxaq.com/docs/fundamentals/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "01-quantum-ironcap",
+      "filename": "01-quantum-ironcap-brief-50825be4.pdf",
+      "url": "https://www.01com.com/pdf/ironcap-white-paper.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-brief-adfbafe3.html",
+      "url": "https://github.com/tink-crypto/tink",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-manual-ab885bb8.html",
+      "url": "https://developers.google.com/tink",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-manual-2b464f03.html",
+      "url": "https://developers.google.com/tink/digital-signature",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-manual-f311520f.html",
+      "url": "https://developers.google.com/tink/primitives-by-language",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-manual-5b75dc95.html",
+      "url": "https://developers.google.com/tink/hybrid",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "openssl",
+      "filename": "openssl-brief-39746ba7.html",
+      "url": "https://openssl-library.org/news/openssl-3.5-notes/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openssl",
+      "filename": "openssl-manual-2c447425.html",
+      "url": "https://docs.openssl.org/3.5/man7/EVP_PKEY-ML-KEM/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-tink",
+      "filename": "google-tink-manual-1e800454.html",
+      "url": "https://developers.google.com/tink/roadmap",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "01-quantum-ironcap",
+      "filename": "01-quantum-ironcap-manual-b073bb95.html",
+      "url": "https://www.ironcap.ca/support/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bouncy-castle-java",
+      "filename": "bouncy-castle-java-brief-3da6db3c.html",
+      "url": "https://www.bouncycastle.org/resources/new-release-bouncy-castle-java-1-85/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "01-quantum-ironcap",
+      "filename": "01-quantum-ironcap-manual-219a9338.html",
+      "url": "https://www.01com.com/01com/ironcap-x/webhelp/index.htm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bouncy-castle-java",
+      "filename": "bouncy-castle-java-manual-81b7a9d3.html",
+      "url": "https://www.bouncycastle.org/documentation/documentation-java/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-manual-79a826af.html",
+      "url": "https://www.bouncycastle.org/documentation/documentation-c/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bouncy-castle-java-lts",
+      "filename": "bouncy-castle-java-lts-manual-b69e5968.html",
+      "url": "https://www.bouncycastle.org/download/bouncy-castle-java-lts/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "01-quantum-ironcap",
+      "filename": "01-quantum-ironcap-brief-3347676e.pdf",
+      "url": "https://www.01com.com/pdf/IronCAP-Marketing-White-Paper.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-brief-0eb8f520.html",
+      "url": "https://www.bouncycastle.org/resources/new-release-bouncy-castle-c-net-2-7-0/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-brief-b058e5c8.html",
+      "url": "https://www.bouncycastle.org/resources/c-net-release-2-7-0-is-now-available-for-download/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-brief-8f372aff.html",
+      "url": "https://www.bouncycastle.org/resources/nist-pqc-support-and-more-bouncy-castle-c-net-2-5-0/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-manual-25b763f2.html",
+      "url": "https://www.bouncycastle.org/news/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bouncy-castle-c-net",
+      "filename": "bouncy-castle-c-net-brief-ec9ec81a.html",
+      "url": "https://www.bouncycastle.org/resources/new-release-bouncy-castle-c-2-7-0/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-java",
+      "filename": "bouncy-castle-java-brief-42ba8ca6.html",
+      "url": "https://www.bouncycastle.org/documentation/specification_interoperability/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "go-stdlib-crypto-mlkem",
+      "filename": "go-stdlib-crypto-mlkem-brief-49a6e900.html",
+      "url": "https://pkg.go.dev/crypto/mlkem",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "safelogic-cryptocomply",
+      "filename": "safelogic-cryptocomply-brief-b95bd705.html",
+      "url": "https://www.safelogic.com/products/cryptocomply-cryptography-software",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "go-stdlib-crypto-mlkem",
+      "filename": "go-stdlib-crypto-mlkem-manual-49a6e900.html",
+      "url": "https://pkg.go.dev/crypto/mlkem",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "botan",
+      "filename": "botan-brief-5315445d.html",
+      "url": "https://github.com/randombit/botan",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sap-cryptographic-library",
+      "filename": "sap-cryptographic-library-brief-35d52de1.html",
+      "url": "https://community.sap.com/t5/technology-blog-posts-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "safelogic-cryptocomply",
+      "filename": "safelogic-cryptocomply-manual-77c7134d.html",
+      "url": "https://www.safelogic.com/products/post-quantum-cryptography-software",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "botan",
+      "filename": "botan-manual-72487f32.html",
+      "url": "https://botan.randombit.net/handbook/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "pqshield-pqsdk",
+      "filename": "pqshield-pqsdk-brief-3d03fd14.pdf",
+      "url": "https://pqshield.com/wp-content/uploads/2024/06/PQSDK.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "botan",
+      "filename": "botan-manual-c1a4c86f.html",
+      "url": "https://botan.randombit.net/handbook/api_ref/pubkey.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sap-cryptographic-library",
+      "filename": "sap-cryptographic-library-manual-914a6977.html",
+      "url": "https://help.sap.com/doc/saphelp_em900/9.0/en-US/48/a324e7ccfc062de10000000a42189d/content.htm?no_cache=true",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "go-stdlib-crypto-mlkem",
+      "filename": "go-stdlib-crypto-mlkem-brief-35a7bff2.html",
+      "url": "https://go.dev/doc/go1.24",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "safelogic-cryptocomply",
+      "filename": "safelogic-cryptocomply-manual-e7a1fedb.html",
+      "url": "https://www.safelogic.com/premium-content",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "safelogic-cryptocomply",
+      "filename": "safelogic-cryptocomply-manual-b06f9b2b.html",
+      "url": "https://www.safelogic.com/products/cryptocomply-cryptography-software/customer-portal",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sap-cryptographic-library",
+      "filename": "sap-cryptographic-library-manual-8080ad26.html",
+      "url": "https://help.sap.com/docs/ABAP_PLATFORM_NEW/cf1026f0534f408e849ee7feed288a66/6c5b0b37233f7c6fe10000009b38f936.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "pqshield-pqsdk",
+      "filename": "pqshield-pqsdk-manual-943ae9f9.html",
+      "url": "https://nshielddocs.entrust.com/pqsdk-docs/v1.1.0/intro.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sap-cryptographic-library",
+      "filename": "sap-cryptographic-library-brief-e8a645ac.html",
+      "url": "https://community.sap.com/t5/technology-blogs-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rustcrypto-ml-kem",
+      "filename": "rustcrypto-ml-kem-brief-0f23a042.html",
+      "url": "https://raw.githubusercontent.com/RustCrypto/KEMs/master/ml-kem/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rustcrypto-ml-kem",
+      "filename": "rustcrypto-ml-kem-manual-50695d0e.html",
+      "url": "https://docs.rs/ml-kem/latest/ml_kem/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "utimaco-eskm",
+      "filename": "utimaco-eskm-brief-380d870a.html",
+      "url": "https://utimaco.com/key-management/enterprise-secure-key-manager",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keyfactor-ejbca",
+      "filename": "keyfactor-ejbca-manual-1c70c1a1.html",
+      "url": "https://docs.keyfactor.com/ejbca/latest/ejbca-release-notes-summary",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "entrust-nshield",
+      "filename": "entrust-nshield-brief-42d04706.pdf",
+      "url": "https://www.entrust.com/sites/default/files/documentation/solution-briefs/post-quantum-crypto-solutions-sb.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "entrust-nshield",
+      "filename": "entrust-nshield-manual-11b03df9.html",
+      "url": "https://nshielddocs.entrust.com/pqcop-docs/intro.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "venafi-trust-protection-platform",
+      "filename": "venafi-trust-protection-platform-manual-57461bd8.html",
+      "url": "https://docs.venafi.com/Docs/25.1/TopNav/Content/Release-Documents/What_s_New_in_Venafi_Platform.php",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keyfactor-ejbca",
+      "filename": "keyfactor-ejbca-manual-ace5b7eb.html",
+      "url": "https://docs.keyfactor.com/ejbca/latest/post-quantum-cryptography-keys-and-signatures",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keyfactor-ejbca",
+      "filename": "keyfactor-ejbca-brief-5f3a969c.html",
+      "url": "https://www.keyfactor.com/resources/content/ejbca-enterprise-datasheet",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "entrust-nshield",
+      "filename": "entrust-nshield-manual-78766134.pdf",
+      "url": "https://nshielddocs.entrust.com/interops-docs/pdfs/PQCOP_v1.4.1-nShield_v13.9.3_(PUBLIC)_ig.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keyfactor-ejbca",
+      "filename": "keyfactor-ejbca-brief-4729f064.html",
+      "url": "https://www.keyfactor.com/products/ejbca-enterprise/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "venafi-trust-protection-platform",
+      "filename": "venafi-trust-protection-platform-manual-9d70c9f4.html",
+      "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "utimaco-eskm",
+      "filename": "utimaco-eskm-manual-e843719a.html",
+      "url": "https://utimaco.com/data-sheets/eskm-migration-guide",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "utimaco-eskm",
+      "filename": "utimaco-eskm-manual-76087a85.pdf",
+      "url": "https://integration-guides.utimaco.com/__attachments/a_4aad08fe87b7f8c7243d6749fc7689be08dd6b78e2ea30e90681e2a87cb8a10c/NetApp_ONTAP_IntegrationGuide_ESKM_Docv1.0.0_2025-07-08.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "venafi-trust-protection-platform",
+      "filename": "venafi-trust-protection-platform-brief-92dae7e8.pdf",
+      "url": "https://docs.venafi.com/Docs/25.1PDF/Product_Overview_Guide.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolfssl",
+      "filename": "wolfssl-brief-8bac3371.html",
+      "url": "https://www.wolfssl.com/products/wolfcrypt-post-quantum/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolfssl",
+      "filename": "wolfssl-manual-92279b0c.pdf",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolfssl/wolfSSL-Manual.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "signserver",
+      "filename": "signserver-manual-94d00f03.html",
+      "url": "https://docs.keyfactor.com/signserver/latest/signserver-7-3-release-notes",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-s2n-tls",
+      "filename": "aws-s2n-tls-brief-bb8a1352.html",
+      "url": "https://github.com/aws/s2n-tls/blob/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openssh",
+      "filename": "openssh-brief-b3a5f02c.html",
+      "url": "https://www.openssh.org/releasenotes.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-s2n-tls",
+      "filename": "aws-s2n-tls-manual-1d7ee449.html",
+      "url": "https://github.com/aws/s2n-tls/tree/main/docs/usage-guide",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-s2n-tls",
+      "filename": "aws-s2n-tls-manual-d596cd8f.html",
+      "url": "https://aws.github.io/s2n-tls/usage-guide/ch06-security-policies.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "signserver",
+      "filename": "signserver-brief-5fcc9945.html",
+      "url": "https://www.keyfactor.com/resources/product-signserver/keyfactor-signserver-enterprise-datasheet",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "signserver",
+      "filename": "signserver-manual-b6280874.html",
+      "url": "https://docs.keyfactor.com/signserver/latest/signserver-release-notes-summary",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "signal",
+      "filename": "signal-brief-d3b0d1ce.html",
+      "url": "https://signal.org/blog/pqxdh/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "signal",
+      "filename": "signal-manual-2b70affc.html",
+      "url": "https://signal.org/docs/specifications/pqxdh/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-s2n-tls",
+      "filename": "aws-s2n-tls-manual-f6cd164c.html",
+      "url": "https://aws.github.io/s2n-tls/usage-guide/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "signserver",
+      "filename": "signserver-manual-b1e4839c.html",
+      "url": "https://docs.keyfactor.com/signserver/latest/signserver-introduction",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "openssh",
+      "filename": "openssh-manual-a4345a0d.html",
+      "url": "https://man.openbsd.org/ssh_config",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfssh",
+      "filename": "wolfssh-brief-95ed95ac.html",
+      "url": "https://github.com/wolfSSL/wolfssh/releases",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "liboqs",
+      "filename": "liboqs-brief-6f475e50.html",
+      "url": "https://github.com/open-quantum-safe/liboqs",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "liboqs",
+      "filename": "liboqs-manual-2774571c.html",
+      "url": "https://openquantumsafe.org/liboqs/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "oqs-provider",
+      "filename": "oqs-provider-brief-0827a9e1.html",
+      "url": "https://github.com/open-quantum-safe/oqs-provider",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolfssh",
+      "filename": "wolfssh-manual-b2387ee3.html",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolfssh/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "oqs-provider",
+      "filename": "oqs-provider-manual-d1427ff0.html",
+      "url": "https://github.com/open-quantum-safe/oqs-provider/blob/main/USAGE.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfssh",
+      "filename": "wolfssh-brief-48ab0172.html",
+      "url": "https://www.wolfssl.com/products/wolfssh/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolfssh",
+      "filename": "wolfssh-manual-bb41d1a8.pdf",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolfssh/wolfSSH-Manual.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "testssl-sh",
+      "filename": "testssl-sh-brief-42258aaa.html",
+      "url": "https://github.com/testssl/testssl.sh",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "liboqs",
+      "filename": "liboqs-brief-bba34c74.html",
+      "url": "https://github.com/open-quantum-safe/liboqs/releases",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "liboqs",
+      "filename": "liboqs-brief-5e149b14.html",
+      "url": "https://github.com/open-quantum-safe/liboqs/releases/tag/0.16.0",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cryptosense-analyzer",
+      "filename": "cryptosense-analyzer-manual-c1896e85.html",
+      "url": "https://docs.aqtiveguard.com/getting-started/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "oqs-provider",
+      "filename": "oqs-provider-brief-6c4625ce.html",
+      "url": "https://github.com/open-quantum-safe/oqs-provider/releases/latest",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cryptosense-analyzer",
+      "filename": "cryptosense-analyzer-brief-9aabee62.pdf",
+      "url": "https://global-uploads.webflow.com/5fb79f97eb305e5f85f6dff6/614365f44302f20193bb30a5_Cryptosense%20Analyzer.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "testssl-sh",
+      "filename": "testssl-sh-manual-dcd91445.html",
+      "url": "https://testssl.sh/doc/testssl.1.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "testssl-sh",
+      "filename": "testssl-sh-brief-9b0b98f5.html",
+      "url": "https://raw.githubusercontent.com/testssl/testssl.sh/3.2/CHANGELOG.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cryptosense-analyzer",
+      "filename": "cryptosense-analyzer-manual-085605d7.html",
+      "url": "https://docs.cryptosense.com/cap/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "testssl-sh",
+      "filename": "testssl-sh-manual-fbc60677.html",
+      "url": "https://raw.githubusercontent.com/testssl/testssl.sh/3.2/doc/testssl.1.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfboot",
+      "filename": "wolfboot-brief-ca1f18b2.html",
+      "url": "https://www.wolfssl.com/products/wolfboot/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "isara-radiate",
+      "filename": "isara-radiate-brief-2eaa322c.html",
+      "url": "https://www.isara.com/products/isara-radiate-quantum-safe-toolkit.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolfboot",
+      "filename": "wolfboot-manual-d0f76452.html",
+      "url": "https://github.com/wolfSSL/wolfBoot/blob/master/docs/Signing.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfboot",
+      "filename": "wolfboot-manual-347b9adc.html",
+      "url": "https://github.com/wolfSSL/wolfBoot/blob/master/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "isara-radiate",
+      "filename": "isara-radiate-manual-07fad7c5.html",
+      "url": "https://www.isara.com/toolkit/3/doc/guide/guide.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "ios-26-macos-26",
+      "filename": "ios-26-macos-26-brief-f872082e.html",
+      "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-brief-33774847.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/release-notes/25.4/junos-release-notes-25.4r1/topics/new-features/feature-descriptions/Post-Quantum-Cryptography-5.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "windows-server-2025",
+      "filename": "windows-server-2025-brief-8465c242.html",
+      "url": "https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ios-26-macos-26",
+      "filename": "ios-26-macos-26-manual-f872082e.html",
+      "url": "https://support.apple.com/guide/security/quantum-secure-cryptography-apple-devices-secc7c82e533/web",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfboot",
+      "filename": "wolfboot-manual-5df22a8e.html",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolfboot/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "windows-server-2025",
+      "filename": "windows-server-2025-manual-bbd1b3f9.html",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/seccng/cng-mlkem-examples",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wolfboot",
+      "filename": "wolfboot-manual-4d705761.html",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolfboot/appendix08.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-manual-09d9724f.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/vpn-ipsec/topics/topic-map/quantum-safe-ipsec-vpn.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-brief-acc547cd.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/pki/topics/concept/pqc-overview.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-manual-f7927210.pdf",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/pki/pki.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-brief-ae6d2567.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/pki/topics/concept/get-started-with-pqc.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-manual-19db2bf2.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/statement/system-edit-ssh-key-exchange.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "juniper-junos-os",
+      "filename": "juniper-junos-os-brief-4561e307.html",
+      "url": "https://www.juniper.net/documentation/us/en/software/junos/pki/topics/concept/quantum-buffer-pqc.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "check-point-quantum",
+      "filename": "check-point-quantum-brief-2ad6f5ac.html",
+      "url": "https://blog.checkpoint.com/security/check-points-quantum-leap-integrating-nist-pqc-standards/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-brief-4e4e3e0f.html",
+      "url": "https://github.com/sandbox-quantum/sandwich",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cloudflare-circl",
+      "filename": "cloudflare-circl-brief-3495068d.html",
+      "url": "https://github.com/cloudflare/circl",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cloudflare-circl",
+      "filename": "cloudflare-circl-manual-257a1362.html",
+      "url": "https://pkg.go.dev/github.com/cloudflare/circl",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-brief-eb27f1ca.html",
+      "url": "https://raw.githubusercontent.com/sandbox-quantum/sandwich/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fortinet-fortios",
+      "filename": "fortinet-fortios-brief-9d6c2ef1.pdf",
+      "url": "https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/FortiOS.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fortinet-fortios",
+      "filename": "fortinet-fortios-manual-3fd981bc.html",
+      "url": "https://docs.fortinet.com/document/fortigate/latest/administration-guide/229631/post-quantum-cryptography-for-ipsec-key-exchange-new",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "check-point-quantum",
+      "filename": "check-point-quantum-manual-70cc9e06.pdf",
+      "url": "https://sc1.checkpoint.com/documents/R82/WebAdminGuides/EN/CP_R82_SitetoSiteVPN_AdminGuide/CP_R82_SitetoSiteVPN_AdminGuide.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "check-point-quantum",
+      "filename": "check-point-quantum-manual-41d626bc.pdf",
+      "url": "https://sc1.checkpoint.com/documents/R82/WebAdminGuides/EN/CP_R82_SecurityGateway_Guide/CP_R82_Quantum_SecurityGateway_AdminGuide.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-brief-8442d706.html",
+      "url": "https://www.paloaltonetworks.com/resources/techbriefs/quantum-safe-security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-manual-29d55944.html",
+      "url": "https://sandbox-quantum.github.io/sandwich/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-manual-4fab63c8.html",
+      "url": "https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/support-for-quantum-features",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-manual-756d0c22.html",
+      "url": "https://api.github.com/repos/sandbox-quantum/sandwich/git/trees/main?recursive=1",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-manual-01c4ae70.html",
+      "url": "https://docs.paloaltonetworks.com/network-security/quantum-security/administration/configure-quantum-resistant-ikev2-vpns/configure-post-quantum-ikev2-vpns-with-rfc-9242-and-rfc-9370-hybrid-keys",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-manual-494f8a21.html",
+      "url": "https://raw.githubusercontent.com/sandbox-quantum/sandwich/main/proto/api/v1/tls.proto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-manual-4cdb11fb.html",
+      "url": "https://raw.githubusercontent.com/sandbox-quantum/sandwich/main/proto/api/v1/configuration.proto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sandboxaq-sandwich",
+      "filename": "sandboxaq-sandwich-manual-52e415e4.html",
+      "url": "https://raw.githubusercontent.com/sandbox-quantum/sandwich/main/proto/api/v1/compliance.proto",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-brief-9ea28deb.html",
+      "url": "https://www.paloaltonetworks.com/blog/2025/08/paves-way-for-quantum-ready-security/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-brief-ed550ae0.html",
+      "url": "https://docs.paloaltonetworks.com/content/techdocs/en_US/whats-new/november-2023/post-quantum-ike-vpn-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "palo-alto-pan-os",
+      "filename": "palo-alto-pan-os-brief-1ffe95d6.html",
+      "url": "https://www.paloaltonetworks.com/network-security/pan-os",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-brief-099e2850.html",
+      "url": "https://www.expressvpn.com/blog/ml-kem-lightway-upgrade/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "tuta-mail",
+      "filename": "tuta-mail-brief-66fffe84.html",
+      "url": "https://tuta.com/blog/post-quantum-cryptography",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "tuta-mail",
+      "filename": "tuta-mail-manual-95ac70c1.html",
+      "url": "https://tuta.com/encryption",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mullvad-vpn-app",
+      "filename": "mullvad-vpn-app-brief-45e4d680.html",
+      "url": "https://mullvad.net/en/blog/introducing-post-quantum-vpn-mullvads-strategy-future-problem",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-manual-b7a906a1.html",
+      "url": "https://github.com/expressvpn/lightway-core/blob/main/README.adoc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "arqit-encryption-intelligence",
+      "filename": "arqit-encryption-intelligence-brief-0dae4ddb.html",
+      "url": "https://arqitgroup.com/products/encryption-intelligence",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mullvad-vpn-app",
+      "filename": "mullvad-vpn-app-brief-7f5260e0.html",
+      "url": "https://mullvad.net/en/blog/stable-quantum-resistant-tunnels-in-the-app",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mullvad-vpn-app",
+      "filename": "mullvad-vpn-app-manual-f2821322.html",
+      "url": "https://mullvad.net/en/help/quantum-resistant-tunnels-with-wireguard",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keyfactor-agilesec-analytics",
+      "filename": "keyfactor-agilesec-analytics-brief-c90484ed.html",
+      "url": "https://www.keyfactor.com/products/cryptographic-discovery-inventory/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-manual-5b4dce42.html",
+      "url": "https://raw.githubusercontent.com/expressvpn/lightway-core/main/README.adoc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "arqit-encryption-intelligence",
+      "filename": "arqit-encryption-intelligence-brief-b2c03704.html",
+      "url": "https://arqitgroup.com/resources/encryption-intelligence-data-sheet",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-manual-70dd2fe7.html",
+      "url": "https://raw.githubusercontent.com/expressvpn/lightway/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "arqit-encryption-intelligence",
+      "filename": "arqit-encryption-intelligence-brief-5cbbf01b.pdf",
+      "url": "https://arqitgroup.com/hubfs/Website/Resource%20Library/Encryption%20Intelligence%20Data%20Sheet.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keyfactor-agilesec-analytics",
+      "filename": "keyfactor-agilesec-analytics-manual-42586dc9.html",
+      "url": "https://docs.keyfactor.com/agilesec/latest",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "tuta-mail",
+      "filename": "tuta-mail-brief-4b191d7b.html",
+      "url": "https://tuta.com/blog/celebrating-one-year-pq-launch",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "mullvad-vpn-app",
+      "filename": "mullvad-vpn-app-brief-d1bbd92e.html",
+      "url": "https://mullvad.net/en/blog/quantum-resistant-tunnels-are-now-the-default-on-desktop",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-manual-3e108d10.html",
+      "url": "https://raw.githubusercontent.com/expressvpn/lightway/main/docs/design_overview.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "expressvpn-lightway",
+      "filename": "expressvpn-lightway-manual-54f8d685.html",
+      "url": "https://github.com/expressvpn/lightway",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mullvad-vpn-app",
+      "filename": "mullvad-vpn-app-brief-37c43336.html",
+      "url": "https://mullvad.net/en/blog/quantum-resistant-tunnels-now-available-on-ios",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cryptomathic-ckms",
+      "filename": "cryptomathic-ckms-brief-857ee6da.pdf",
+      "url": "https://www.cryptomathic.com/hubfs/Documents/Product_Sheets/Cryptomathic_CKMS_-_Product_Sheet.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "samsung-s3sse2a-ese",
+      "filename": "samsung-s3sse2a-ese-brief-7c20e8f9.html",
+      "url": "https://semiconductor.samsung.com/security-solution/mobile-iot-se/part-number/s3sse2a-2/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "securosys-primus-hsm",
+      "filename": "securosys-primus-hsm-brief-8594b923.html",
+      "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqclean",
+      "filename": "pqclean-brief-2893bc6c.html",
+      "url": "https://github.com/PQClean/PQClean",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microsoft-ad-cs",
+      "filename": "microsoft-ad-cs-brief-606d3aa8.html",
+      "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/post-quantum-cryptography-overview",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microsoft-ad-cs",
+      "filename": "microsoft-ad-cs-manual-39f45934.html",
+      "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/configure-ml-dsa-certification-authority",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "securosys-primus-hsm",
+      "filename": "securosys-primus-hsm-manual-976ec3ba.pdf",
+      "url": "https://dlarea.securosys.com/document/PrimusHSM_UserGuide-v3.0_UG-E16.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "samsung-s3sse2a-ese",
+      "filename": "samsung-s3sse2a-ese-manual-a8d1d426.html",
+      "url": "https://semiconductor.samsung.com/news-events/tech-blog/s3sse2a-hardware-pqc-locks-in-security-for-the-quantum-era/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "pqclean",
+      "filename": "pqclean-manual-4efd3948.html",
+      "url": "https://github.com/PQClean/PQClean/tree/master/doc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "securosys-primus-hsm",
+      "filename": "securosys-primus-hsm-manual-75ca8f69.pdf",
+      "url": "https://www.securosys.com/hubfs/Securosys_PrimusHSM_Algos_and_Functions-v2.8.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "securosys-primus-hsm",
+      "filename": "securosys-primus-hsm-manual-713d5f72.html",
+      "url": "https://docs.securosys.com/primus-hsm/overview/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "crystals-reference-implementations",
+      "filename": "crystals-reference-implementations-brief-a2e25723.html",
+      "url": "https://pq-crystals.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "crystals-reference-implementations",
+      "filename": "crystals-reference-implementations-manual-0e6e17d9.html",
+      "url": "https://github.com/pq-crystals/kyber",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "proton-mail",
+      "filename": "proton-mail-brief-1f9f2cb4.html",
+      "url": "https://proton.me/blog/introducing-post-quantum-encryption",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "filevault-macos",
+      "filename": "filevault-macos-brief-981ba3ef.html",
+      "url": "https://support.apple.com/guide/security/volume-encryption-with-filevault-sec4c6dc1b6e/web",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "filevault-macos",
+      "filename": "filevault-macos-manual-6239aae7.html",
+      "url": "https://support.apple.com/guide/deployment/intro-to-filevault-dep82064ec40/web",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "gnupg",
+      "filename": "gnupg-brief-36acf0f0.html",
+      "url": "https://lists.gnu.org/archive/html/info-gnu/2026-05/msg00005.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "crystals-reference-implementations",
+      "filename": "crystals-reference-implementations-manual-1ccc452c.html",
+      "url": "https://github.com/pq-crystals/dilithium",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "proton-mail",
+      "filename": "proton-mail-manual-da35859f.html",
+      "url": "https://proton.me/support/mail-post-quantum-protection",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bitlocker-windows",
+      "filename": "bitlocker-windows-brief-9012fbcd.html",
+      "url": "https://techcommunity.microsoft.com/blog/microsoft-security-blog/new-windows-features-to-secure-today%E2%80%99s-data-in-a-post-quantum-world/4523370",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "proton-mail",
+      "filename": "proton-mail-brief-805f95a2.html",
+      "url": "https://proton.me/blog/post-quantum-encryption",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bitlocker-windows",
+      "filename": "bitlocker-windows-manual-5c407cb0.html",
+      "url": "https://techcommunity.microsoft.com/blog/windows-itpro-blog/announcing-hardware-accelerated-bitlocker/4474609",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bitlocker-windows",
+      "filename": "bitlocker-windows-manual-dd70d6fc.html",
+      "url": "https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "bitlocker-windows",
+      "filename": "bitlocker-windows-brief-ffc6f5d7.html",
+      "url": "https://support.microsoft.com/windows/44c0c61c-989d-4a69-8822-b95cd49b1bbf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "gnupg",
+      "filename": "gnupg-manual-0335fc28.html",
+      "url": "https://www.gnupg.org/documentation/manuals/gnupg/Compliance-Options.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "node-js",
+      "filename": "node-js-brief-431eaf93.html",
+      "url": "https://nodejs.org/en/blog/release/v24.7.0",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "digicert-software-trust-manager",
+      "filename": "digicert-software-trust-manager-manual-d86747fc.html",
+      "url": "https://docs.digicert.com/en/whats-new/release-notes/software-trust-manager-release-notes.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-kms-cloud-gateway",
+      "filename": "aws-kms-cloud-gateway-brief-415dc9ad.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/pqtls.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "node-js",
+      "filename": "node-js-manual-ad89fdac.html",
+      "url": "https://nodejs.org/api/crypto.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-kms-cloud-gateway",
+      "filename": "aws-kms-cloud-gateway-manual-a7e5eaf4.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/pqtls-how-to.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "digicert-software-trust-manager",
+      "filename": "digicert-software-trust-manager-brief-37fbc24d.pdf",
+      "url": "https://www.digicert.com/content/dam/digicert/pdfs/datasheet/digicert-software-trust-manager-datasheet-en.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fortanix-data-security-manager",
+      "filename": "fortanix-data-security-manager-brief-354af9c9.html",
+      "url": "https://www.fortanix.com/solutions/use-case/post-quantum-readiness",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "digicert-software-trust-manager",
+      "filename": "digicert-software-trust-manager-manual-9b6833ed.html",
+      "url": "https://docs.digicert.com/en/trust-lifecycle-manager/enroll-and-manage-certificates/post-quantum-cryptography-pqc/issue-pqc-mldsa-dilithium-certificates.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "fortanix-data-security-manager",
+      "filename": "fortanix-data-security-manager-manual-12812b1c.html",
+      "url": "https://support.fortanix.com/docs/getting-started-with-fortanix-dsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "digicert-software-trust-manager",
+      "filename": "digicert-software-trust-manager-manual-cfd6a23a.html",
+      "url": "https://docs.digicert.com/en/software-trust-manager/get-started/overview/post-quantum-cryptography.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "fortanix-data-security-manager",
+      "filename": "fortanix-data-security-manager-manual-db8775ec.html",
+      "url": "https://support.fortanix.com/docs/dsm-algorithm-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "fortanix-data-security-manager",
+      "filename": "fortanix-data-security-manager-brief-53fcc682.html",
+      "url": "https://www.fortanix.com/platform/data-security-manager",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "digicert-software-trust-manager",
+      "filename": "digicert-software-trust-manager-manual-7f01375b.html",
+      "url": "https://docs.digicert.com/en/platform-overview/digicert-solutions-for-post-quantum-computing.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "digicert-signinghub",
+      "filename": "digicert-signinghub-brief-f48741ac.html",
+      "url": "https://docs.digicert.com/en/content-trust-manager/integration-guides/signinghub.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "digicert-signinghub",
+      "filename": "digicert-signinghub-manual-a90d7c12.html",
+      "url": "https://docs.digicert.com/en/content-trust-manager/integration-guides/signinghub/request-esignatures-in-signinghub.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "f5-big-ip",
+      "filename": "f5-big-ip-brief-67c18ffc.html",
+      "url": "https://www.f5.com/company/blog/f5-big-ip-v21-1-is-now-generally-available-bringing-pqc-and-ai-security-enhancements",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-application-load-balancer-alb",
+      "filename": "aws-application-load-balancer-alb-brief-b7027ef4.html",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keyfactor-command",
+      "filename": "keyfactor-command-brief-a59cc079.html",
+      "url": "https://www.keyfactor.com/blog/whats-new-in-keyfactor-command-25-3-flexibility-control-and-clarity/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cloudflare-edge-network",
+      "filename": "cloudflare-edge-network-brief-149dd282.html",
+      "url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "f5-big-ip",
+      "filename": "f5-big-ip-manual-2ef5679c.html",
+      "url": "https://techdocs.f5.com/en-us/bigip-21-1-0/big-ip-release-notes/big-ip-new-features.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-application-load-balancer-alb",
+      "filename": "aws-application-load-balancer-alb-manual-b7027ef4.html",
+      "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "f5-big-ip",
+      "filename": "f5-big-ip-brief-3a78e86e.html",
+      "url": "https://www.f5.com/company/blog/f5-extends-nist-compliant-pqc-cipher-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "haproxy",
+      "filename": "haproxy-brief-72d0390a.html",
+      "url": "https://www.haproxy.com/blog/how-to-enable-post-quantum-cryptography-and-tls-termination-with-haproxy",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cloudflare-edge-network",
+      "filename": "cloudflare-edge-network-brief-504d211d.html",
+      "url": "https://blog.cloudflare.com/post-quantum-cryptography-ga/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "keyfactor-command",
+      "filename": "keyfactor-command-brief-f9bce7ac.html",
+      "url": "https://www.keyfactor.com/resources/topic/col/37f44f85-81bd-491d-9c22-fbab636c23f8/command-solution-brief",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "haproxy",
+      "filename": "haproxy-manual-e8e4a3e3.html",
+      "url": "https://www.haproxy.org/download/3.2/doc/configuration.txt",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-kms",
+      "filename": "aws-kms-brief-4f7a2e0a.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/mldsa.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-kms",
+      "filename": "aws-kms-manual-a61352e7.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/create-asymmetric-mldsa.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "google-cloud-kms",
+      "filename": "google-cloud-kms-brief-60d0789e.html",
+      "url": "https://cloud.google.com/blog/products/identity-security/announcing-quantum-safe-key-encapsulation-mechanisms-in-cloud-kms",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-ciphertrust-data-security-platform",
+      "filename": "thales-ciphertrust-data-security-platform-brief-a856442a.html",
+      "url": "https://cpl.thalesgroup.com/resources/encryption/ciphertrust-manager-product-brief",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "google-cloud-kms",
+      "filename": "google-cloud-kms-manual-67dbc02b.html",
+      "url": "https://docs.cloud.google.com/kms/docs/algorithms",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "thales-ciphertrust-data-security-platform",
+      "filename": "thales-ciphertrust-data-security-platform-brief-fbb0df90.html",
+      "url": "https://cpl.thalesgroup.com/resources/data-security/thales-data-security-platforms-brochure",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thales-ciphertrust-data-security-platform",
+      "filename": "thales-ciphertrust-data-security-platform-manual-22f11099.html",
+      "url": "https://docs-cybersec.thalesgroup.com/bundle/latest-cdsp-tdp/page/get_started/deployment/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "thales-ciphertrust-data-security-platform",
+      "filename": "thales-ciphertrust-data-security-platform-brief-7dde013a.pdf",
+      "url": "https://cpl.thalesgroup.com/sites/default/files/content/product_briefs/ciphertrust-manager-pb.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-kms",
+      "filename": "aws-kms-manual-2d81ac72.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/offline-operations.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "thales-ciphertrust-data-security-platform",
+      "filename": "thales-ciphertrust-data-security-platform-brief-e648fd29.pdf",
+      "url": "https://cpl.thalesgroup.com/sites/default/files/content/brochures/thales-data-security-platforms-br.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-kms",
+      "filename": "aws-kms-manual-6335efb4.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/symm-asymm-choose-key-spec.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "appviewx-cert",
+      "filename": "appviewx-cert-brief-158ceeab.html",
+      "url": "https://www.appviewx.com/solutions/certificate-lifecycle-management/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "venafi-tls-protect",
+      "filename": "venafi-tls-protect-brief-92dae7e8.pdf",
+      "url": "https://docs.venafi.com/Docs/25.1PDF/Product_Overview_Guide.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "venafi-tls-protect",
+      "filename": "venafi-tls-protect-manual-9d70c9f4.html",
+      "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "broadcom-emulex-securehba",
+      "filename": "broadcom-emulex-securehba-brief-f4e4c850.html",
+      "url": "https://www.broadcom.com/products/storage/fibre-channel-host-bus-adapters/lpe37102",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "broadcom-emulex-securehba",
+      "filename": "broadcom-emulex-securehba-brief-f011ccd8.html",
+      "url": "https://docs.broadcom.com/docs/Emulex-SecureHBA-Fibre-Channel-Adapters-PB",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "utimaco-quantum-protect-suite",
+      "filename": "utimaco-quantum-protect-suite-brief-59a76c3f.html",
+      "url": "https://utimaco.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "utimaco-quantum-protect-suite",
+      "filename": "utimaco-quantum-protect-suite-brief-a11df1f3.html",
+      "url": "https://utimaco.com/data-protection/gp-hsm/application-package/quantum-protect",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "infineon-psoc-control-c3-pqc",
+      "filename": "infineon-psoc-control-c3-pqc-brief-395e1bec.html",
+      "url": "https://www.infineon.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "github-ssh-pqc",
+      "filename": "github-ssh-pqc-brief-6f9c5349.html",
+      "url": "https://github.blog/engineering/platform-security/post-quantum-security-for-ssh-access-on-github/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rambus-qse-ip",
+      "filename": "rambus-qse-ip-brief-2bfc7899.html",
+      "url": "https://www.rambus.com/security/quantum-safe-cryptography/qse-ip-86/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "veritas-netbackup-11-pqc",
+      "filename": "veritas-netbackup-11-pqc-manual-fe8a848a.html",
+      "url": "https://www.veritas.com/support/en_US/doc/103228346-168289021-0/v168660144-168289021",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "veritas-netbackup-11-pqc",
+      "filename": "veritas-netbackup-11-pqc-manual-a78acfd8.html",
+      "url": "https://www.veritas.com/support/en_US/doc/103228346-168289021-1",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "veritas-netbackup-11-pqc",
+      "filename": "veritas-netbackup-11-pqc-manual-bb574e02.html",
+      "url": "https://www.veritas.com/support/en_US/doc/21733320-167894921-0/v168535750-167894921",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "veritas-netbackup-11-pqc",
+      "filename": "veritas-netbackup-11-pqc-brief-295f197d.pdf",
+      "url": "https://www.veritas.com/content/dam/www/en_us/documents/data-sheet/DS_netbackup_V0891.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
-  ]
+  ],
+  "total": 958,
+  "downloaded": 958
 }
