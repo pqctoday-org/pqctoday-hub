@@ -82,6 +82,8 @@ export interface SoftwareItem {
   authoritativeSource: string
   repositoryUrl: string
   productBrief: string
+  productBriefUrl?: string
+  userManualUrl?: string
   sourceType: string
   verificationStatus: string
   lastVerifiedDate: string
