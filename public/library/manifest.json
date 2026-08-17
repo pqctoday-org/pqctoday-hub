@@ -9924,6 +9924,16 @@
       "sizeBytes": 243556,
       "contentType": "text/html",
       "sha256": "f511f905b6e1f613c77639bc1b7864684097f427ecc20be76ab0750ade163d39"
+    },
+    {
+      "refId": "ACS-ACOSJ-P-PBOC-3.0-DC-EC-Card",
+      "title": "ACS ACOSJ-P PBOC 3.0 DC/EC Card \u2014 Product Specification",
+      "url": "https://www.acs.com.hk/en/products/476/acosj-p-pboc-3.0-dc-ec-card/",
+      "status": "downloaded",
+      "filename": "ACS-ACOSJ-P-PBOC-3.0-DC-EC-Card.html",
+      "sizeBytes": 93440,
+      "contentType": "text/html",
+      "sha256": "1b06e8300af12b1ac45deaa7b22a8729996dd3a07251788fc245f432f75640e3"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
