@@ -48,26 +48,24 @@ const MARKET_SIZE_EXEMPT = new Set([
   'Internet of Things (IoT)',
 ])
 
-/** Industries deprecated by the 2026-08-17 freshness pass under the user's
- *  hard rule that no market-size row may cite a pre-2024 figure: a genuine
- *  official statistic exists for each (World Bank/UNESCO Education Finance
- *  Watch, US Census Census of Governments), but exhaustive re-checks (World
- *  Bank/UNESCO/OECD/NCES for Education; Census annual survey + EPA CWNS/
- *  DWINSA for Water — EPA's surveys measure capital *needs*, not *revenue*,
- *  so they can't substitute) found no ≥2024 vintage anywhere. Unlike
- *  MARKET_SIZE_EXEMPT this is NOT "no concept exists" — it's "stale, pending
- *  a fresher official edition." update-market-sizes should re-attempt these
- *  every pass; move an industry back to an active row (not into
- *  MARKET_SIZE_EXEMPT) the moment a qualifying figure appears.
- *
- *  Healthcare / Pharmaceutical was here too as of the first 2026-08-17 pass
- *  (WHO Global Health Expenditure Report stuck at 2022) but was reinstated
- *  the same day on a second, deeper look: US CMS National Health Expenditure
- *  (NHE) publishes a real 2024 US figure ($5.3T), even though no GLOBAL
- *  total ≥2024 exists anywhere (Eurostat/World Bank/WHO's own raw GHED
- *  database all independently cap out at 2023). Same US-narrowing pattern as
- *  Cloud/IT/Media/Telecom elsewhere in this file. */
-const MARKET_SIZE_STALE_PENDING_REFRESH = new Set(['Education / Research', 'Water / Wastewater'])
+/** Mechanism for industries a freshness pass deprecates because their
+ *  market-size row cites a pre-2024 figure with no compliant successor from
+ *  the SAME publisher/account — as opposed to MARKET_SIZE_EXEMPT, where no
+ *  official-statistics concept exists at all. All three industries the
+ *  2026-08-17 pass first put here (Education / Research, Healthcare /
+ *  Pharmaceutical, Water / Wastewater) were reinstated the same day on a
+ *  second, deeper look — in each case the GLOBAL total genuinely had no
+ *  successor, but a different US federal agency (Census's Annual Survey of
+ *  School System Finances for Education; US CMS NHE for Healthcare;
+ *  Census's raw FY2024 "Individual Unit Files" public-use data, one level
+ *  deeper than the missing quinquennial summary spreadsheet, for Water)
+ *  published a real ≥2024 US-scoped figure. Same US-narrowing pattern as
+ *  Cloud/IT/Media/Telecom elsewhere in this file. Kept as an empty set
+ *  (not deleted) so the next freshness pass has the mechanism ready — move
+ *  an industry back to an active row (not into MARKET_SIZE_EXEMPT) the
+ *  moment a qualifying figure appears; only reach for MARKET_SIZE_EXEMPT if
+ *  a future check concludes no official-statistics concept exists at all. */
+const MARKET_SIZE_STALE_PENDING_REFRESH = new Set<string>([])
 
 describe('industry-landscape driftguards', () => {
   it('loads all three CSV families', () => {
