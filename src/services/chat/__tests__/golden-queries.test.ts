@@ -297,14 +297,21 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
   {
     query: 'What is the PQC Assessment wizard?',
     expectedIntent: 'definition',
-    // Was mustInclude: ['assess-guide-'] with minTop5Hits: 0 — corpus growth
-    // already pushed it out of top 5 once (2,772 chunks); by 16,234 chunks
-    // (2026-08-16) it fell out of top 15 too. assess-guide-* chunks are still
-    // in the corpus and retrievable by more specific queries — this is a
-    // ranking-drift regression from unrelated corpus growth, not a missing
-    // or broken document, so recall@15 is relaxed the same way sibling
-    // queries in this file already tolerate corpus growth (see mustInclude: []
-    // elsewhere) rather than guessing at a new hard threshold.
+    // 2026-08-16/17: relaxed independently on two branches merging the same
+    // day. Was mustInclude: ['assess-guide-'], expectedSources: ['assessment']
+    // — corpus growth already pushed it out of top 5 once (2,772 chunks); by
+    // 16,234 chunks (inline-JSX prose-rejoining added 614, mostly recovered
+    // TSX prose e.g. mc-dataassetsensitivity-*) it fell out of the 'definition'
+    // intent's real 10-result cap too (assess-guide-sensitivity rank ~9 -> 11,
+    // verified with an explicit limit:50 override). Content and its "PQC
+    // Assessment Wizard" phrasing are unchanged — this is corpus-growth
+    // ranking dilution, not a missing or broken document. mustInclude stays
+    // relaxed (assess-guide-sensitivity itself still ranks outside the
+    // 'definition' cap), but expectedSources verified passing again after
+    // merging with origin/main — the merged corpus's ranking puts other
+    // assessment-sourced content back in the top 10. Real fix would be
+    // ranking work (e.g. entity-index weight for "assessment wizard"), out
+    // of scope for a prose-extraction fix.
     mustInclude: [],
     expectedSources: ['assessment'],
     minTop5Hits: 0,
@@ -625,7 +632,17 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
   {
     query: 'How do I retire and verify closure of old crypto?',
     expectedIntent: 'recommendation',
-    mustInclude: ['module-summary-verificationclosure'],
+    // 2026-08-17: id gained a hyphen. MODULE_DIR_TO_ID used to be a
+    // hand-maintained 55-entry literal; VerificationClosure wasn't in it, so
+    // this chunk's id fell back to moduleDir.name.toLowerCase() (no hyphen).
+    // generate-rag-corpus.ts's feat(learn) fix (same commit that added the
+    // 2 missing module summaries) now hydrates the map from each module's
+    // own manifest before processors run, so this id resolves to the
+    // module's real declared id, 'verification-closure' — matching
+    // module-topic-verification-closure and module-curious-verification-
+    // closure, which already used the hyphenated form. Not a routing
+    // regression; the old no-hyphen id was the bug.
+    mustInclude: ['module-summary-verification-closure'],
     expectedSources: ['module-summaries', 'module-topic-summaries'],
     minTop5Hits: 0,
   },
