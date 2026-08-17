@@ -335,11 +335,14 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   changes in that pass (same chunkToResource routing gap documented
   //   throughout this file since 2026-06-19; verified the spotcheck batches
   //   touched only migrate CSV rows, never threats/enrichment data). Both are
-  //   the same deprecated-row class as every entry above. Pin set to the
-  //   value measured on the actual merged corpus, not summed from the two
-  //   branches, since the two causes may overlap. Drive down via the same
-  //   trustScoreData.ts extension named above.
-  'document-enrichment': 161,
+  //   the same deprecated-row class as every entry above. Pin set to 164 —
+  //   the value measured directly against this branch after merging
+  //   origin/main (161 + 154 would double-count: corpus content is
+  //   merge=ours so the chunk set didn't change, but trust-score resolution
+  //   reads the live merged library CSV, which now carries both causes'
+  //   deprecations). Drive down via the same trustScoreData.ts extension
+  //   named above.
+  'document-enrichment': 164,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
