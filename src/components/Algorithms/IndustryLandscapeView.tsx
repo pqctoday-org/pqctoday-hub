@@ -31,6 +31,8 @@ import {
   Scale,
   Container,
   ArrowRight,
+  Code,
+  Clock,
 } from 'lucide-react'
 import {
   loadIndustryLandscape,
@@ -51,6 +53,7 @@ import { PROTOCOL_MATRIX } from '../../data/pqcProtocolMatrix'
 import { INDUSTRY_ICONS, USE_CASE_ICONS } from './landscapeIcons'
 import { Button } from '../ui/button'
 import { libraryHref } from './libraryRef'
+import { softwareData } from '../../data/migrateData'
 import {
   learnModulesForIndustry,
   librarySectorHref,
@@ -215,6 +218,140 @@ function ClaimBasisBadge({ basis }: { basis: PqcClaimBasis }) {
     >
       {d.label}
     </span>
+  )
+}
+
+/**
+ * HSM / cryptographic-module certification requirements (added 2026-08-16).
+ *
+ * Renders nothing when the row has not been assessed — an empty verdict is NOT
+ * the same as 'none', and showing "no certification required" for a use case
+ * nobody has researched would be a fabricated negative.
+ *
+ * The `any-of` separator is the important part of this component. Every PCI
+ * standard that imposes an HSM requirement joins FIPS validation and PCI
+ * approval with "or", and the eIDAS implementing acts do the same across
+ * CC / EUCC / FIPS. Two 'Required' chips side by side would read as "you need
+ * both"; the explicit "or" between them is what keeps the tile honest.
+ */
+function CertBadge({
+  scheme,
+  verdict,
+  detail,
+}: {
+  scheme: string
+  verdict: string
+  detail?: string
+}) {
+  if (!verdict || verdict === 'none') return null
+  const mandated = verdict === 'mandated'
+  return (
+    <span
+      className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+        mandated
+          ? 'border-status-warning/40 bg-status-warning/10 text-status-warning'
+          : 'border-border bg-muted text-muted-foreground'
+      }`}
+      title={`${scheme}${detail ? ` — ${detail}` : ''}${
+        mandated
+          ? ' (required by the cited standard)'
+          : ' (common industry practice; no mandating text found)'
+      }`}
+    >
+      {scheme}
+      {!mandated && ' (de facto)'}
+    </span>
+  )
+}
+
+function CertificationRow({ uc }: { uc: IndustryUseCase }) {
+  const badges = [
+    {
+      key: 'fips',
+      scheme: uc.fipsCertificationLevel
+        ? `FIPS ${uc.fipsCertificationLevel}`
+        : 'FIPS 140-3 validated',
+      verdict: uc.fipsCertification,
+      detail:
+        uc.fipsCertificationLevel === 'not-specified'
+          ? 'the mandate requires FIPS validation but names no security level'
+          : undefined,
+    },
+    {
+      key: 'cc',
+      scheme: uc.ccScheme ? `Common Criteria (${uc.ccScheme})` : 'Common Criteria',
+      verdict: uc.ccCertification,
+      detail: uc.ccProtectionProfile || undefined,
+    },
+    {
+      key: 'pci',
+      scheme: uc.pciCertificationProgram || 'PCI',
+      verdict: uc.pciCertification,
+      detail: undefined,
+    },
+    {
+      key: 'national',
+      scheme: uc.nationalCertificationScheme || 'National scheme',
+      verdict: uc.nationalCertification,
+      detail: undefined,
+    },
+  ].filter((b) => b.verdict && b.verdict !== 'none')
+
+  if (badges.length === 0) return null
+  const anyOf = uc.certificationLogic === 'any-of' && badges.length > 1
+
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      <span
+        className="text-[11px] uppercase tracking-wide text-muted-foreground"
+        title="Certification the hardware protecting these keys must hold, per the cited standard."
+      >
+        HSM certification
+      </span>
+      {badges.map((b, i) => (
+        <span key={b.key} className="flex items-center gap-1.5">
+          {i > 0 && (
+            <span className="text-[10px] font-semibold uppercase text-muted-foreground">
+              {anyOf ? 'or' : 'and'}
+            </span>
+          )}
+          <CertBadge scheme={b.scheme} verdict={b.verdict} detail={b.detail} />
+        </span>
+      ))}
+      {anyOf && (
+        <span
+          className="text-[10px] text-muted-foreground"
+          title="The cited standard accepts any one of these certifications — they are alternative routes, not cumulative requirements."
+        >
+          (any one satisfies)
+        </span>
+      )}
+    </div>
+  )
+}
+
+/**
+ * A dated, real, NOT-YET-BINDING certification change (added 2026-08-16).
+ *
+ * Deliberately styled nothing like CertificationRow's badges — dashed border,
+ * a clock icon, and the word "Future" spelled out rather than implied. The
+ * failure mode this guards against is a reader skimming the tile, seeing a
+ * certification chip, and assuming it applies today. A 2030 deadline
+ * rendered with the same solid amber badge as a binding-now requirement
+ * would create exactly that false impression.
+ */
+function FutureCertificationNote({ uc }: { uc: IndustryUseCase }) {
+  if (!uc.certificationFuture) return null
+  return (
+    <div className="mt-2 flex items-start gap-1.5 rounded border border-dashed border-border px-2 py-1.5 text-[11px] text-muted-foreground">
+      <Clock size={13} className="mt-0.5 shrink-0" aria-hidden="true" />
+      <span>
+        <span className="font-semibold uppercase tracking-wide text-muted-foreground">
+          Future{uc.certificationFutureDate ? ` (${uc.certificationFutureDate})` : ''}:
+        </span>{' '}
+        {uc.certificationFuture}
+      </span>
+    </div>
   )
 }
 
@@ -403,6 +540,9 @@ function UseCaseCard({
         </div>
       )}
 
+      <CertificationRow uc={uc} />
+      <FutureCertificationNote uc={uc} />
+
       {/* T4/WS8d: workshop tools and sandbox scenarios are separate groups.
           They share the /playground/<id> route, but one runs in the browser and
           the other runs real binaries in an access-gated container — a
@@ -465,6 +605,18 @@ function UseCaseCard({
             </span>
           )}
         </span>
+        {uc.migrateProductRefs.length > 0 && (
+          <Link
+            to={`/migrate?productIds=${uc.migrateProductRefs.map(encodeURIComponent).join(',')}`}
+            className="inline-flex shrink-0 items-center gap-1 hover:text-primary"
+            title={`Open in the migrate catalog: ${uc.migrateProductRefs
+              .map((id) => softwareData.find((p) => p.productId === id)?.softwareName ?? id)
+              .join(', ')}`}
+          >
+            <Code size={10} className="shrink-0 opacity-60" />
+            Implementation
+          </Link>
+        )}
         <span title="Last verified">{uc.lastVerified}</span>
       </div>
     </div>
