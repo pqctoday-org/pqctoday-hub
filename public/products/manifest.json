@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-13T23:13:14.000Z",
+  "generated": "2026-08-17T11:41:36.000Z",
   "source": "/Users/pqctoday/Antigravity/pqctoday-priv/local-evidence-cache/products",
   "summary": {
-    "downloaded": 591,
+    "downloaded": 980,
     "skipped": 0,
     "failed": 0
   },
@@ -14,8 +14,92 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "01 Quantum Ironcap Brief",
+      "filename": "01-quantum-ironcap-brief-3347676e.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "01 Quantum Ironcap Brief",
+      "filename": "01-quantum-ironcap-brief-50825be4.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "01 Quantum Ironcap Manual",
+      "filename": "01-quantum-ironcap-manual-219a9338.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "01 Quantum Ironcap Manual",
+      "filename": "01-quantum-ironcap-manual-b073bb95.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "1password",
       "filename": "1password-2f6b0601.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 3 ON S 2 Brief",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-2-brief-7c109c99.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 3 ON S 2 Brief",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-2-brief-824b3360.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 3 ON S Brief",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-brief-032c4a50.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 3 ON S Brief",
+      "filename": "Cryptographic-library-NESLIB-6-11-3-on-S-brief-7c109c99.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 6 ON S 2 Brief",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-2-brief-8143410e.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 6 ON S 2 Brief",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-2-brief-8274d071.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 6 ON S Brief",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-brief-b34c1093.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptographic Library Neslib 6 11 6 ON S Brief",
+      "filename": "Cryptographic-library-NesLib-6-11-6-on-S-brief-d86bff50.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Post Quantum Cryptography Support IN TRU Brief",
+      "filename": "Post-quantum-cryptography-support-in-Tru-brief-b944decc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Post Quantum Cryptography Support IN TRU Manual",
+      "filename": "Post-quantum-cryptography-support-in-Tru-manual-eb9c5ae0.html",
       "url": "",
       "status": "downloaded"
     },
@@ -64,6 +148,84 @@
     {
       "softwareName": "Aimer Reference Implementation",
       "filename": "aimer-reference-implementation-b7871935.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Connected Cloud Brief",
+      "filename": "akamai-connected-cloud-brief-378842ec.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Connected Cloud Brief",
+      "filename": "akamai-connected-cloud-brief-50579f59.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Connected Cloud Brief",
+      "filename": "akamai-connected-cloud-brief-ddad687e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Connected Cloud Manual",
+      "filename": "akamai-connected-cloud-manual-8b5aa282.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Connected Cloud Manual",
+      "filename": "akamai-connected-cloud-manual-c2a05165.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Edge Brief",
+      "filename": "akamai-edge-brief-1bfac38e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Edge Brief",
+      "filename": "akamai-edge-brief-dea8eeee.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Edge Manual",
+      "filename": "akamai-edge-manual-c2a05165.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai Edge Manual",
+      "filename": "akamai-edge-manual-ea4c93a1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai PQC Edge Brief",
+      "filename": "akamai-pqc-edge-brief-1bfac38e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai PQC Edge Brief",
+      "filename": "akamai-pqc-edge-brief-ddad687e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai PQC Edge Brief",
+      "filename": "akamai-pqc-edge-brief-dea8eeee.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Akamai PQC Edge Manual",
+      "filename": "akamai-pqc-edge-manual-ea4c93a1.html",
       "url": "",
       "status": "downloaded"
     },
@@ -182,6 +344,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Apple Pq3 Corecrypto Brief",
+      "filename": "apple-pq3-corecrypto-brief-5a21b7dd.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Apple Pq3 Corecrypto Manual",
+      "filename": "apple-pq3-corecrypto-manual-f872082e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Apple Safari",
       "filename": "apple-safari-de0c4970.html",
       "url": "",
@@ -196,6 +370,12 @@
     {
       "softwareName": "Appviewx Cert",
       "filename": "appviewx-cert-2f32124f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Appviewx Cert Brief",
+      "filename": "appviewx-cert-brief-158ceeab.html",
       "url": "",
       "status": "downloaded"
     },
@@ -232,6 +412,24 @@
     {
       "softwareName": "Arqit Encryption Intelligence",
       "filename": "arqit-encryption-intelligence-54b3dd25.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Arqit Encryption Intelligence Brief",
+      "filename": "arqit-encryption-intelligence-brief-0dae4ddb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Arqit Encryption Intelligence Brief",
+      "filename": "arqit-encryption-intelligence-brief-5cbbf01b.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Arqit Encryption Intelligence Brief",
+      "filename": "arqit-encryption-intelligence-brief-b2c03704.html",
       "url": "",
       "status": "downloaded"
     },
@@ -296,6 +494,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "AWS Application Load Balancer ALB Brief",
+      "filename": "aws-application-load-balancer-alb-brief-b7027ef4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS Application Load Balancer ALB Manual",
+      "filename": "aws-application-load-balancer-alb-manual-b7027ef4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "AWS Certificate Manager",
       "filename": "aws-certificate-manager-858228f9.html",
       "url": "",
@@ -320,14 +530,62 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "AWS KMS Brief",
+      "filename": "aws-kms-brief-4f7a2e0a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "AWS KMS Cloud Gateway",
       "filename": "aws-kms-cloud-gateway-0b9aa78b.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "AWS KMS Cloud Gateway Brief",
+      "filename": "aws-kms-cloud-gateway-brief-415dc9ad.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS KMS Cloud Gateway Manual",
+      "filename": "aws-kms-cloud-gateway-manual-a7e5eaf4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS KMS Manual",
+      "filename": "aws-kms-manual-2d81ac72.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS KMS Manual",
+      "filename": "aws-kms-manual-6335efb4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS KMS Manual",
+      "filename": "aws-kms-manual-a61352e7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS LC Brief",
+      "filename": "aws-lc-brief-8eaeb37a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "AWS LC",
       "filename": "aws-lc-d325aa1b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS LC Manual",
+      "filename": "aws-lc-manual-441d2557.html",
       "url": "",
       "status": "downloaded"
     },
@@ -344,14 +602,44 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "AWS S2n TLS Brief",
+      "filename": "aws-s2n-tls-brief-bb8a1352.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "AWS S2n TLS",
       "filename": "aws-s2n-tls-f88926d9.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "AWS S2n TLS Manual",
+      "filename": "aws-s2n-tls-manual-1d7ee449.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS S2n TLS Manual",
+      "filename": "aws-s2n-tls-manual-d596cd8f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "AWS S2n TLS Manual",
+      "filename": "aws-s2n-tls-manual-f6cd164c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "AWS Transfer Family",
       "filename": "aws-transfer-family-be32bcaf.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Azure Dedicated HSM Overview",
+      "filename": "azure-dedicated-hsm-overview.html",
       "url": "",
       "status": "downloaded"
     },
@@ -398,6 +686,30 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Bitlocker Windows Brief",
+      "filename": "bitlocker-windows-brief-9012fbcd.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bitlocker Windows Brief",
+      "filename": "bitlocker-windows-brief-ffc6f5d7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bitlocker Windows Manual",
+      "filename": "bitlocker-windows-manual-5c407cb0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bitlocker Windows Manual",
+      "filename": "bitlocker-windows-manual-dd70d6fc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Bitvise SSH Server",
       "filename": "bitvise-ssh-server-a330b103.html",
       "url": "",
@@ -422,6 +734,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Botan Brief",
+      "filename": "botan-brief-5315445d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Botan Manual",
+      "filename": "botan-manual-72487f32.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Botan Manual",
+      "filename": "botan-manual-c1a4c86f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Bouncy Castle",
       "filename": "bouncy-castle-23c7ba50.html",
       "url": "",
@@ -440,14 +770,74 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Bouncy Castle C NET Brief",
+      "filename": "bouncy-castle-c-net-brief-0eb8f520.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle C NET Brief",
+      "filename": "bouncy-castle-c-net-brief-8f372aff.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle C NET Brief",
+      "filename": "bouncy-castle-c-net-brief-b058e5c8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle C NET Brief",
+      "filename": "bouncy-castle-c-net-brief-ec9ec81a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle C NET Manual",
+      "filename": "bouncy-castle-c-net-manual-25b763f2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle C NET Manual",
+      "filename": "bouncy-castle-c-net-manual-79a826af.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Bouncy Castle Java",
       "filename": "bouncy-castle-java-89852ced.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Bouncy Castle Java Brief",
+      "filename": "bouncy-castle-java-brief-3da6db3c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle Java Brief",
+      "filename": "bouncy-castle-java-brief-42ba8ca6.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Bouncy Castle Java LTS",
       "filename": "bouncy-castle-java-lts-23c7ba50.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle Java LTS Manual",
+      "filename": "bouncy-castle-java-lts-manual-b69e5968.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Bouncy Castle Java Manual",
+      "filename": "bouncy-castle-java-manual-81b7a9d3.html",
       "url": "",
       "status": "downloaded"
     },
@@ -470,8 +860,26 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Broadcom AVI NSX ALB Brief",
+      "filename": "broadcom-avi-nsx-alb-brief-5754a63b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Broadcom Emulex Securehba",
       "filename": "broadcom-emulex-securehba-ab7fc282.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Broadcom Emulex Securehba Brief",
+      "filename": "broadcom-emulex-securehba-brief-f011ccd8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Broadcom Emulex Securehba Brief",
+      "filename": "broadcom-emulex-securehba-brief-f4e4c850.html",
       "url": "",
       "status": "downloaded"
     },
@@ -502,6 +910,18 @@
     {
       "softwareName": "BTQ Bitcoin Quantum Testnet",
       "filename": "btq-bitcoin-quantum-testnet-46a6efc1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "C DOT Quantum CEM Encryptor Brief",
+      "filename": "c-dot-quantum-cem-encryptor-brief-fa18f8ef.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "C DOT Quantum CEM Encryptor Manual",
+      "filename": "c-dot-quantum-cem-encryptor-manual-860be31b.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -544,6 +964,24 @@
     {
       "softwareName": "Check Point Quantum",
       "filename": "check-point-quantum-2ad6f5ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Check Point Quantum Brief",
+      "filename": "check-point-quantum-brief-2ad6f5ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Check Point Quantum Manual",
+      "filename": "check-point-quantum-manual-41d626bc.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Check Point Quantum Manual",
+      "filename": "check-point-quantum-manual-70cc9e06.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -626,6 +1064,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Cisco IOS XE PQC Brief",
+      "filename": "cisco-ios-xe-pqc-brief-4826152d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cisco IOS XE PQC Manual",
+      "filename": "cisco-ios-xe-pqc-manual-62e7ea23.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cisco IOS XE PQC Manual",
+      "filename": "cisco-ios-xe-pqc-manual-f5c7bbcc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cisco IOS XR",
       "filename": "cisco-ios-xr-395a0fb3.html",
       "url": "",
@@ -640,6 +1096,24 @@
     {
       "softwareName": "Citadel Pqcrypto",
       "filename": "citadel-pqcrypto-4caf7650.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Citadel Pqcrypto Brief",
+      "filename": "citadel-pqcrypto-brief-4e30ec2a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Citadel Pqcrypto Manual",
+      "filename": "citadel-pqcrypto-manual-14ba5057.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Citadel Pqcrypto Manual",
+      "filename": "citadel-pqcrypto-manual-4caf7650.html",
       "url": "",
       "status": "downloaded"
     },
@@ -668,14 +1142,38 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Cloudflare Circl Brief",
+      "filename": "cloudflare-circl-brief-3495068d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cloudflare Circl",
       "filename": "cloudflare-circl-e8f6ca84.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Cloudflare Circl Manual",
+      "filename": "cloudflare-circl-manual-257a1362.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cloudflare Edge Network",
       "filename": "cloudflare-edge-network-149dd282.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cloudflare Edge Network Brief",
+      "filename": "cloudflare-edge-network-brief-149dd282.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cloudflare Edge Network Brief",
+      "filename": "cloudflare-edge-network-brief-504d211d.html",
       "url": "",
       "status": "downloaded"
     },
@@ -740,6 +1238,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Cosmian Covercrypt Brief",
+      "filename": "cosmian-covercrypt-brief-6f0c49ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cosmian Covercrypt Brief",
+      "filename": "cosmian-covercrypt-brief-7537e15d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cosmian Covercrypt Manual",
+      "filename": "cosmian-covercrypt-manual-6fad5314.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cosmian KMS",
       "filename": "cosmian-kms-bdfb8728.html",
       "url": "",
@@ -788,6 +1304,12 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Cryptomathic Ckms Brief",
+      "filename": "cryptomathic-ckms-brief-857ee6da.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cryptomathic Crystalkey 360",
       "filename": "cryptomathic-crystalkey-360-44bd87f0.html",
       "url": "",
@@ -812,8 +1334,26 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Cryptosense Analyzer Brief",
+      "filename": "cryptosense-analyzer-brief-9aabee62.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Cryptosense Analyzer",
       "filename": "cryptosense-analyzer-d9bcc46e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptosense Analyzer Manual",
+      "filename": "cryptosense-analyzer-manual-085605d7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Cryptosense Analyzer Manual",
+      "filename": "cryptosense-analyzer-manual-c1896e85.html",
       "url": "",
       "status": "downloaded"
     },
@@ -832,6 +1372,24 @@
     {
       "softwareName": "Crystals Reference Implementations",
       "filename": "crystals-reference-implementations-a2e25723.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Crystals Reference Implementations Brief",
+      "filename": "crystals-reference-implementations-brief-a2e25723.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Crystals Reference Implementations Manual",
+      "filename": "crystals-reference-implementations-manual-0e6e17d9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Crystals Reference Implementations Manual",
+      "filename": "crystals-reference-implementations-manual-1ccc452c.html",
       "url": "",
       "status": "downloaded"
     },
@@ -884,6 +1442,90 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Dell Bsafe Crypto J Brief",
+      "filename": "dell-bsafe-crypto-j-brief-15e8d567.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Brief",
+      "filename": "dell-bsafe-crypto-j-brief-4efb0b84.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Brief",
+      "filename": "dell-bsafe-crypto-j-brief-6a3131cb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Brief",
+      "filename": "dell-bsafe-crypto-j-brief-85f3085d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Brief",
+      "filename": "dell-bsafe-crypto-j-brief-e372949b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Manual",
+      "filename": "dell-bsafe-crypto-j-manual-4f9d3da7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto J Manual",
+      "filename": "dell-bsafe-crypto-j-manual-e026a2d0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Brief",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-81f9e65b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Brief",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-b713e992.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Brief",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-c0edfa90.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Brief",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-e372949b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Brief",
+      "filename": "dell-bsafe-crypto-module-for-c-brief-e8ace64a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Manual",
+      "filename": "dell-bsafe-crypto-module-for-c-manual-3b38f0e4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Dell Bsafe Crypto Module FOR C Manual",
+      "filename": "dell-bsafe-crypto-module-for-c-manual-9882f3d5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Dfns",
       "filename": "dfns-d6adcabb.html",
       "url": "",
@@ -902,8 +1544,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Digicert Signinghub Brief",
+      "filename": "digicert-signinghub-brief-f48741ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Signinghub Manual",
+      "filename": "digicert-signinghub-manual-a90d7c12.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Software Trust Manager Brief",
+      "filename": "digicert-software-trust-manager-brief-37fbc24d.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Digicert Software Trust Manager",
       "filename": "digicert-software-trust-manager-d86747fc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Software Trust Manager Manual",
+      "filename": "digicert-software-trust-manager-manual-7f01375b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Software Trust Manager Manual",
+      "filename": "digicert-software-trust-manager-manual-9b6833ed.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Software Trust Manager Manual",
+      "filename": "digicert-software-trust-manager-manual-cfd6a23a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Software Trust Manager Manual",
+      "filename": "digicert-software-trust-manager-manual-d86747fc.html",
       "url": "",
       "status": "downloaded"
     },
@@ -914,8 +1598,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Digicert Trustcore SDK Brief",
+      "filename": "digicert-trustcore-sdk-brief-662f549d.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Brief",
+      "filename": "digicert-trustcore-sdk-brief-c2df33b0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Brief",
+      "filename": "digicert-trustcore-sdk-brief-fe39e442.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Digicert Trustcore SDK",
       "filename": "digicert-trustcore-sdk-c2df33b0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Manual",
+      "filename": "digicert-trustcore-sdk-manual-ae5f390e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Manual",
+      "filename": "digicert-trustcore-sdk-manual-beafa3ef.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Manual",
+      "filename": "digicert-trustcore-sdk-manual-d2a84758.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Digicert Trustcore SDK Manual",
+      "filename": "digicert-trustcore-sdk-manual-fdbb04a0.html",
       "url": "",
       "status": "downloaded"
     },
@@ -998,6 +1724,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Entrust Nshield Brief",
+      "filename": "entrust-nshield-brief-42d04706.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Entrust Nshield Manual",
+      "filename": "entrust-nshield-manual-11b03df9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Entrust Nshield Manual",
+      "filename": "entrust-nshield-manual-78766134.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Envoy Proxy",
       "filename": "envoy-proxy-789d0785.html",
       "url": "",
@@ -1058,6 +1802,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Eviden Trustway Proteccio Nethsm Brief",
+      "filename": "eviden-trustway-proteccio-nethsm-brief-89572659.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Eviden Trustway Proteccio Nethsm Brief",
+      "filename": "eviden-trustway-proteccio-nethsm-brief-933ce58b.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Eviden Trustway Proteccio Nethsm Brief",
+      "filename": "eviden-trustway-proteccio-nethsm-brief-fdfa132e.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Evolutionq Basejumpqdn",
       "filename": "evolutionq-basejumpqdn-825ba863.html",
       "url": "",
@@ -1082,6 +1844,42 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Expressvpn Lightway Brief",
+      "filename": "expressvpn-lightway-brief-099e2850.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Expressvpn Lightway Manual",
+      "filename": "expressvpn-lightway-manual-3e108d10.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Expressvpn Lightway Manual",
+      "filename": "expressvpn-lightway-manual-54f8d685.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Expressvpn Lightway Manual",
+      "filename": "expressvpn-lightway-manual-5b4dce42.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Expressvpn Lightway Manual",
+      "filename": "expressvpn-lightway-manual-70dd2fe7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Expressvpn Lightway Manual",
+      "filename": "expressvpn-lightway-manual-b7a906a1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "F5 Adsp PQC",
       "filename": "f5-adsp-pqc-67c18ffc.html",
       "url": "",
@@ -1090,6 +1888,24 @@
     {
       "softwareName": "F5 BIG IP",
       "filename": "f5-big-ip-67c18ffc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "F5 BIG IP Brief",
+      "filename": "f5-big-ip-brief-3a78e86e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "F5 BIG IP Brief",
+      "filename": "f5-big-ip-brief-67c18ffc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "F5 BIG IP Manual",
+      "filename": "f5-big-ip-manual-2ef5679c.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1130,8 +1946,20 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Filevault Macos Brief",
+      "filename": "filevault-macos-brief-981ba3ef.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Filevault Macos",
       "filename": "filevault-macos-f872082e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Filevault Macos Manual",
+      "filename": "filevault-macos-manual-6239aae7.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1144,6 +1972,30 @@
     {
       "softwareName": "Fortanix Data Security Manager",
       "filename": "fortanix-data-security-manager-7ad2561f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortanix Data Security Manager Brief",
+      "filename": "fortanix-data-security-manager-brief-354af9c9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortanix Data Security Manager Brief",
+      "filename": "fortanix-data-security-manager-brief-53fcc682.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortanix Data Security Manager Manual",
+      "filename": "fortanix-data-security-manager-manual-12812b1c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortanix Data Security Manager Manual",
+      "filename": "fortanix-data-security-manager-manual-db8775ec.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1166,6 +2018,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Fortinet Fortigate Rugged Brief",
+      "filename": "fortinet-fortigate-rugged-brief-bea55ff1.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortinet Fortigate Rugged Manual",
+      "filename": "fortinet-fortigate-rugged-manual-0989f57a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Fortinet Fortimanager",
       "filename": "fortinet-fortimanager-4eaf380b.html",
       "url": "",
@@ -1174,6 +2038,18 @@
     {
       "softwareName": "Fortinet Fortios",
       "filename": "fortinet-fortios-0989f57a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortinet Fortios Brief",
+      "filename": "fortinet-fortios-brief-9d6c2ef1.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Fortinet Fortios Manual",
+      "filename": "fortinet-fortios-manual-3fd981bc.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1190,8 +2066,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Forward Edge AI Isidore Quantum Brief",
+      "filename": "forward-edge-ai-isidore-quantum-brief-52bf6e0b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Isidore Quantum Brief",
+      "filename": "forward-edge-ai-isidore-quantum-brief-8c26cc63.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Isidore Quantum Brief",
+      "filename": "forward-edge-ai-isidore-quantum-brief-dad1d345.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Isidore Quantum Manual",
+      "filename": "forward-edge-ai-isidore-quantum-manual-b1d64053.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Isidore Quantum Manual",
+      "filename": "forward-edge-ai-isidore-quantum-manual-dcfc4366.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Forward Edge AI Space Router",
       "filename": "forward-edge-ai-space-router-5806a6ff.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Space Router Brief",
+      "filename": "forward-edge-ai-space-router-brief-4285d2d0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Forward Edge AI Space Router Brief",
+      "filename": "forward-edge-ai-space-router-brief-a2822004.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1262,6 +2180,12 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Github SSH PQC Brief",
+      "filename": "github-ssh-pqc-brief-6f9c5349.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Globalsign Digital Signing Service",
       "filename": "globalsign-digital-signing-service-0909c292.html",
       "url": "",
@@ -1276,6 +2200,18 @@
     {
       "softwareName": "Gnupg",
       "filename": "gnupg-36acf0f0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Gnupg Brief",
+      "filename": "gnupg-brief-36acf0f0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Gnupg Manual",
+      "filename": "gnupg-manual-0335fc28.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1298,8 +2234,44 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "GO Stdlib Crypto Mlkem Brief",
+      "filename": "go-stdlib-crypto-mlkem-brief-35a7bff2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "GO Stdlib Crypto Mlkem Brief",
+      "filename": "go-stdlib-crypto-mlkem-brief-49a6e900.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "GO Stdlib Crypto Mlkem Manual",
+      "filename": "go-stdlib-crypto-mlkem-manual-49a6e900.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Google Alts",
       "filename": "google-alts-b06bc2ff.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Alts Brief",
+      "filename": "google-alts-brief-0d554a85.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Alts Brief",
+      "filename": "google-alts-brief-e882e1aa.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Alts Manual",
+      "filename": "google-alts-manual-9cd2bc1b.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1328,8 +2300,20 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Google Cloud KMS Brief",
+      "filename": "google-cloud-kms-brief-60d0789e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Google Cloud KMS Cloud Gateway",
       "filename": "google-cloud-kms-cloud-gateway-60d0789e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Cloud KMS Manual",
+      "filename": "google-cloud-kms-manual-67dbc02b.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1358,6 +2342,42 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Google Tink Brief",
+      "filename": "google-tink-brief-adfbafe3.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Tink Manual",
+      "filename": "google-tink-manual-1e800454.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Tink Manual",
+      "filename": "google-tink-manual-2b464f03.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Tink Manual",
+      "filename": "google-tink-manual-5b75dc95.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Tink Manual",
+      "filename": "google-tink-manual-ab885bb8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Google Tink Manual",
+      "filename": "google-tink-manual-f311520f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "GPG Code Signing",
       "filename": "gpg-code-signing-3a7b3c5c.html",
       "url": "",
@@ -1370,8 +2390,20 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Haproxy Brief",
+      "filename": "haproxy-brief-72d0390a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Haproxy",
       "filename": "haproxy-e621c492.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Haproxy Manual",
+      "filename": "haproxy-manual-e8e4a3e3.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1432,6 +2464,24 @@
     {
       "softwareName": "HQC Algorithm",
       "filename": "hqc-algorithm-64e9a3c7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "HQC Algorithm Brief",
+      "filename": "hqc-algorithm-brief-ae31dd21.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "HQC Algorithm Manual",
+      "filename": "hqc-algorithm-manual-22cf61da.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "HQC Algorithm Manual",
+      "filename": "hqc-algorithm-manual-286ee3ae.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1556,6 +2606,36 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Infineon Aurix Tc49 PQC Brief",
+      "filename": "infineon-aurix-tc49-pqc-brief-f834a207.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Infineon Aurix Tc49 PQC Brief",
+      "filename": "infineon-aurix-tc49-pqc-brief-faf4bc12.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Infineon Aurix Tc49 PQC Manual",
+      "filename": "infineon-aurix-tc49-pqc-manual-9d4cc0a2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Infineon Aurix Tc49 PQC Manual",
+      "filename": "infineon-aurix-tc49-pqc-manual-9d952bb6.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Infineon Aurix Tc49 PQC Manual",
+      "filename": "infineon-aurix-tc49-pqc-manual-cac688c5.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Infineon Optiga TPM SLB 9672",
       "filename": "infineon-optiga-tpm-slb-9672-e23e4412.html",
       "url": "",
@@ -1564,6 +2644,12 @@
     {
       "softwareName": "Infineon Psoc Control C3 PQC",
       "filename": "infineon-psoc-control-c3-pqc-a37663d3.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Infineon Psoc Control C3 PQC Brief",
+      "filename": "infineon-psoc-control-c3-pqc-brief-395e1bec.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1598,8 +2684,20 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "IOS 26 Macos 26 Brief",
+      "filename": "ios-26-macos-26-brief-f872082e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "IOS 26 Macos 26",
       "filename": "ios-26-macos-26-f872082e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "IOS 26 Macos 26 Manual",
+      "filename": "ios-26-macos-26-manual-f872082e.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1624,6 +2722,18 @@
     {
       "softwareName": "Isara Radiate",
       "filename": "isara-radiate-2eaa322c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Isara Radiate Brief",
+      "filename": "isara-radiate-brief-2eaa322c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Isara Radiate Manual",
+      "filename": "isara-radiate-manual-07fad7c5.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1688,6 +2798,48 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Juniper Junos OS Brief",
+      "filename": "juniper-junos-os-brief-33774847.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Brief",
+      "filename": "juniper-junos-os-brief-4561e307.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Brief",
+      "filename": "juniper-junos-os-brief-acc547cd.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Brief",
+      "filename": "juniper-junos-os-brief-ae6d2567.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Manual",
+      "filename": "juniper-junos-os-manual-09d9724f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Manual",
+      "filename": "juniper-junos-os-manual-19db2bf2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Juniper Junos OS Manual",
+      "filename": "juniper-junos-os-manual-f7927210.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Juniper SRX Series Firewalls",
       "filename": "juniper-srx-series-firewalls-33774847.html",
       "url": "",
@@ -1718,14 +2870,128 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Keyfactor Agilesec Analytics Brief",
+      "filename": "keyfactor-agilesec-analytics-brief-c90484ed.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Agilesec Analytics Manual",
+      "filename": "keyfactor-agilesec-analytics-manual-42586dc9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Keyfactor Command",
       "filename": "keyfactor-command-a59cc079.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Keyfactor Command Brief",
+      "filename": "keyfactor-command-brief-a59cc079.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Command Brief",
+      "filename": "keyfactor-command-brief-f9bce7ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Keyfactor Ejbca",
       "filename": "keyfactor-ejbca-1c70c1a1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Ejbca Brief",
+      "filename": "keyfactor-ejbca-brief-4729f064.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Ejbca Brief",
+      "filename": "keyfactor-ejbca-brief-5f3a969c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Ejbca Manual",
+      "filename": "keyfactor-ejbca-manual-1c70c1a1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keyfactor Ejbca Manual",
+      "filename": "keyfactor-ejbca-manual-ace5b7eb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-0117c1fe.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-049a37b4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-636a0f23.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-677c83b5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-7a199e68.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-80b073c2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-841b2340.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-a492732f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Brief",
+      "filename": "keysight-inspector-brief-db8d74a5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Manual",
+      "filename": "keysight-inspector-manual-925b1d7a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Keysight Inspector Manual",
+      "filename": "keysight-inspector-manual-c524aba8.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1778,8 +3044,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Lattice Machxo5 NX Brief",
+      "filename": "lattice-machxo5-nx-brief-20566149.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Lattice Machxo5 NX Brief",
+      "filename": "lattice-machxo5-nx-brief-4743ea3a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Lattice Machxo5 NX Brief",
+      "filename": "lattice-machxo5-nx-brief-a7968b53.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Lattice Machxo5 NX Manual",
+      "filename": "lattice-machxo5-nx-manual-19916638.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Lattice Machxo5 NX Manual",
+      "filename": "lattice-machxo5-nx-manual-362babb5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Lattice Machxo5 NX Manual",
+      "filename": "lattice-machxo5-nx-manual-4d252b4d.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Leancrypto",
       "filename": "leancrypto-21a799ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Leancrypto Manual",
+      "filename": "leancrypto-manual-8f4ed7e7.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1796,14 +3104,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Liboqs Brief",
+      "filename": "liboqs-brief-5e149b14.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Liboqs Brief",
+      "filename": "liboqs-brief-6f475e50.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Liboqs Brief",
+      "filename": "liboqs-brief-bba34c74.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Liboqs",
       "filename": "liboqs-c7b92c0c.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Liboqs Manual",
+      "filename": "liboqs-manual-2774571c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Liboqs Rust OQS Crate",
       "filename": "liboqs-rust-oqs-crate-8864816c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Liboqs Rust OQS Crate Manual",
+      "filename": "liboqs-rust-oqs-crate-manual-0f80a739.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Liboqs Rust OQS Crate Readme Check Brief",
+      "filename": "liboqs-rust-oqs-crate-readme-check-brief-27684acc.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1916,8 +3260,56 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Microchip Polarfire Brief",
+      "filename": "microchip-polarfire-brief-22769234.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microchip Polarfire Brief",
+      "filename": "microchip-polarfire-brief-3107cf8d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microchip Polarfire Brief",
+      "filename": "microchip-polarfire-brief-4df83647.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microchip Polarfire Brief",
+      "filename": "microchip-polarfire-brief-67627e1c.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microchip Polarfire Brief",
+      "filename": "microchip-polarfire-brief-9010bc26.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microchip Polarfire Manual",
+      "filename": "microchip-polarfire-manual-af8bc722.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Microsoft AD CS",
       "filename": "microsoft-ad-cs-bd384d19.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft AD CS Brief",
+      "filename": "microsoft-ad-cs-brief-606d3aa8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft AD CS Manual",
+      "filename": "microsoft-ad-cs-manual-39f45934.html",
       "url": "",
       "status": "downloaded"
     },
@@ -1976,6 +3368,36 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Microsoft Symcrypt Brief",
+      "filename": "microsoft-symcrypt-brief-15bbb190.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft Symcrypt Brief",
+      "filename": "microsoft-symcrypt-brief-8465c242.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft Symcrypt Brief",
+      "filename": "microsoft-symcrypt-brief-85e5a4b4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft Symcrypt Brief",
+      "filename": "microsoft-symcrypt-brief-c68ed767.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Microsoft Symcrypt Manual",
+      "filename": "microsoft-symcrypt-manual-15bbb190.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Mikrotik Routeros",
       "filename": "mikrotik-routeros-940357ef.html",
       "url": "",
@@ -1990,6 +3412,18 @@
     {
       "softwareName": "Mlkem Native",
       "filename": "mlkem-native-d52d4c08.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mlkem Native Manual",
+      "filename": "mlkem-native-manual-1b040b44.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mlkem Native Manual",
+      "filename": "mlkem-native-manual-3a38f807.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2018,6 +3452,42 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "MTG AG Cara Brief",
+      "filename": "mtg-ag-cara-brief-7dd9cfe0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "MTG AG Cara Brief",
+      "filename": "mtg-ag-cara-brief-86e04c01.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "MTG AG Cara Brief",
+      "filename": "mtg-ag-cara-brief-abc9c4d2.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "MTG AG Cara Manual",
+      "filename": "mtg-ag-cara-manual-04bb87e7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "MTG AG Cara Manual",
+      "filename": "mtg-ag-cara-manual-4c58d29e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "MTG AG Cara Manual",
+      "filename": "mtg-ag-cara-manual-f46910db.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "MTG AG CLM",
       "filename": "mtg-ag-clm-04bb87e7.html",
       "url": "",
@@ -2032,6 +3502,72 @@
     {
       "softwareName": "Mullvad VPN APP",
       "filename": "mullvad-vpn-app-6027c5dc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mullvad VPN APP Brief",
+      "filename": "mullvad-vpn-app-brief-37c43336.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mullvad VPN APP Brief",
+      "filename": "mullvad-vpn-app-brief-45e4d680.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mullvad VPN APP Brief",
+      "filename": "mullvad-vpn-app-brief-7f5260e0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mullvad VPN APP Brief",
+      "filename": "mullvad-vpn-app-brief-d1bbd92e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mullvad VPN APP Manual",
+      "filename": "mullvad-vpn-app-manual-f2821322.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Brief",
+      "filename": "mysql-community-server-brief-268a736c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Brief",
+      "filename": "mysql-community-server-brief-33400690.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Brief",
+      "filename": "mysql-community-server-brief-6416cde0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Manual",
+      "filename": "mysql-community-server-manual-42d332ea.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Manual",
+      "filename": "mysql-community-server-manual-7a6dab76.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Mysql Community Server Manual",
+      "filename": "mysql-community-server-manual-8d5de5f1.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2144,6 +3680,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Node JS Brief",
+      "filename": "node-js-brief-431eaf93.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Node JS Manual",
+      "filename": "node-js-manual-ad89fdac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Nokia Quantum Safe Networks",
       "filename": "nokia-quantum-safe-networks-8a0fe020.html",
       "url": "",
@@ -2198,8 +3746,38 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Nvidia Cupqc Brief",
+      "filename": "nvidia-cupqc-brief-b9c7dca7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Nvidia Cupqc Manual",
+      "filename": "nvidia-cupqc-manual-9d2251d4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Nvidia Cupqc SDK",
       "filename": "nvidia-cupqc-sdk-b9c7dca7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "NXP I MX 94 PQC Processor Brief",
+      "filename": "nxp-i-mx-94-pqc-processor-brief-06ef737d.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "NXP I MX 94 PQC Processor Brief",
+      "filename": "nxp-i-mx-94-pqc-processor-brief-142dccb2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "NXP I MX 94 PQC Processor Manual",
+      "filename": "nxp-i-mx-94-pqc-processor-manual-be0de8b9.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -2246,6 +3824,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Openssh Brief",
+      "filename": "openssh-brief-b3a5f02c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Openssh Manual",
+      "filename": "openssh-manual-a4345a0d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Openssl 3 5 0",
       "filename": "openssl-3-5-0-39746ba7.html",
       "url": "",
@@ -2254,6 +3844,18 @@
     {
       "softwareName": "Openssl",
       "filename": "openssl-a81bef34.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Openssl Brief",
+      "filename": "openssl-brief-39746ba7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Openssl Manual",
+      "filename": "openssl-manual-2c447425.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2296,6 +3898,24 @@
     {
       "softwareName": "OQS Provider",
       "filename": "oqs-provider-1bb6572d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "OQS Provider Brief",
+      "filename": "oqs-provider-brief-0827a9e1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "OQS Provider Brief",
+      "filename": "oqs-provider-brief-6c4625ce.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "OQS Provider Manual",
+      "filename": "oqs-provider-manual-d1427ff0.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2344,6 +3964,42 @@
     {
       "softwareName": "Palo Alto PAN OS",
       "filename": "palo-alto-pan-os-9ea28deb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Brief",
+      "filename": "palo-alto-pan-os-brief-1ffe95d6.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Brief",
+      "filename": "palo-alto-pan-os-brief-8442d706.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Brief",
+      "filename": "palo-alto-pan-os-brief-9ea28deb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Brief",
+      "filename": "palo-alto-pan-os-brief-ed550ae0.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Manual",
+      "filename": "palo-alto-pan-os-manual-01c4ae70.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Palo Alto PAN OS Manual",
+      "filename": "palo-alto-pan-os-manual-4fab63c8.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2450,14 +4106,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Pqclean Brief",
+      "filename": "pqclean-brief-2893bc6c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqclean Manual",
+      "filename": "pqclean-manual-4efd3948.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Pqcrypto",
       "filename": "pqcrypto-c51dfbf0.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Pqcrypto Manual",
+      "filename": "pqcrypto-manual-cdc621eb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqcrypto Python Library Brief",
+      "filename": "pqcrypto-python-library-brief-483a58ee.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqcrypto Python Library Brief",
+      "filename": "pqcrypto-python-library-brief-c571b545.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Pqcryptolib Core",
       "filename": "pqcryptolib-core-bbfc4b11.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqcryptolib Core Brief",
+      "filename": "pqcryptolib-core-brief-35d66142.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2474,8 +4166,20 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Pqm4 Brief",
+      "filename": "pqm4-brief-ca7cb26c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Pqm4",
       "filename": "pqm4-ca7cb26c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqm4 Manual",
+      "filename": "pqm4-manual-ca7cb26c.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2510,6 +4214,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Pqshield Pqsdk Brief",
+      "filename": "pqshield-pqsdk-brief-3d03fd14.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Pqshield Pqsdk Manual",
+      "filename": "pqshield-pqsdk-manual-943ae9f9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Procivis ONE",
       "filename": "procivis-one-31f2e50d.html",
       "url": "",
@@ -2524,6 +4240,24 @@
     {
       "softwareName": "Proton Mail",
       "filename": "proton-mail-1f9f2cb4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Proton Mail Brief",
+      "filename": "proton-mail-brief-1f9f2cb4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Proton Mail Brief",
+      "filename": "proton-mail-brief-805f95a2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Proton Mail Manual",
+      "filename": "proton-mail-manual-da35859f.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2666,6 +4400,48 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Qusecure Quprotect R3 Brief",
+      "filename": "qusecure-quprotect-r3-brief-0751d804.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Brief",
+      "filename": "qusecure-quprotect-r3-brief-3580fcca.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Brief",
+      "filename": "qusecure-quprotect-r3-brief-40da3f20.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Brief",
+      "filename": "qusecure-quprotect-r3-brief-4f577e3f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Brief",
+      "filename": "qusecure-quprotect-r3-brief-e38d2f16.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Manual",
+      "filename": "qusecure-quprotect-r3-manual-41b092c9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Qusecure Quprotect R3 Manual",
+      "filename": "qusecure-quprotect-r3-manual-62002f80.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Qusecure Quprotect Tactical",
       "filename": "qusecure-quprotect-tactical-64d4993d.html",
       "url": "",
@@ -2690,6 +4466,12 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Rambus QSE IP Brief",
+      "filename": "rambus-qse-ip-brief-2bfc7899.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "RED HAT Ansible Automation Platform PQC",
       "filename": "red-hat-ansible-automation-platform-pqc-9fcfc866.html",
       "url": "",
@@ -2710,6 +4492,12 @@
     {
       "softwareName": "RED HAT Enterprise Linux 10 PQC",
       "filename": "red-hat-enterprise-linux-10-pqc-5f776633.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "RED HAT Enterprise Linux 10 PQC Brief",
+      "filename": "red-hat-enterprise-linux-10-pqc-brief-6bad9237.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2774,8 +4562,32 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Rustcrypto ML DSA Brief",
+      "filename": "rustcrypto-ml-dsa-brief-e9fbc588.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Rustcrypto ML DSA Manual",
+      "filename": "rustcrypto-ml-dsa-manual-d9573830.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Rustcrypto ML KEM Brief",
+      "filename": "rustcrypto-ml-kem-brief-0f23a042.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Rustcrypto ML KEM",
       "filename": "rustcrypto-ml-kem-f9ca9ff4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Rustcrypto ML KEM Manual",
+      "filename": "rustcrypto-ml-kem-manual-50695d0e.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2792,8 +4604,50 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Rustls Brief",
+      "filename": "rustls-brief-7e7eb269.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Rustls Manual",
+      "filename": "rustls-manual-2e075e10.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Rustls Manual",
+      "filename": "rustls-manual-96696b10.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Safelogic Cryptocomply",
       "filename": "safelogic-cryptocomply-46f8811b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Safelogic Cryptocomply Brief",
+      "filename": "safelogic-cryptocomply-brief-b95bd705.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Safelogic Cryptocomply Manual",
+      "filename": "safelogic-cryptocomply-manual-77c7134d.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Safelogic Cryptocomply Manual",
+      "filename": "safelogic-cryptocomply-manual-b06f9b2b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Safelogic Cryptocomply Manual",
+      "filename": "safelogic-cryptocomply-manual-e7a1fedb.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2804,8 +4658,26 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Samsung Knox Quantum Safe Brief",
+      "filename": "samsung-knox-quantum-safe-brief-a13daac8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Samsung S3sse2a ESE",
       "filename": "samsung-s3sse2a-ese-a71365ef.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Samsung S3sse2a ESE Brief",
+      "filename": "samsung-s3sse2a-ese-brief-7c20e8f9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Samsung S3sse2a ESE Manual",
+      "filename": "samsung-s3sse2a-ese-manual-a8d1d426.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2816,14 +4688,104 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Sandboxaq Aqtive Guard Brief",
+      "filename": "sandboxaq-aqtive-guard-brief-35597a93.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Aqtive Guard Brief",
+      "filename": "sandboxaq-aqtive-guard-brief-e0b36bab.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Sandboxaq Aqtive Guard",
       "filename": "sandboxaq-aqtive-guard-d6daea2e.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Sandboxaq Aqtive Guard Manual",
+      "filename": "sandboxaq-aqtive-guard-manual-731e28f2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Aqtive Guard Manual",
+      "filename": "sandboxaq-aqtive-guard-manual-be714b3c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Sandboxaq Sandwich",
       "filename": "sandboxaq-sandwich-3c295dea.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Brief",
+      "filename": "sandboxaq-sandwich-brief-4e4e3e0f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Brief",
+      "filename": "sandboxaq-sandwich-brief-eb27f1ca.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Manual",
+      "filename": "sandboxaq-sandwich-manual-29d55944.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Manual",
+      "filename": "sandboxaq-sandwich-manual-494f8a21.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Manual",
+      "filename": "sandboxaq-sandwich-manual-4cdb11fb.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Manual",
+      "filename": "sandboxaq-sandwich-manual-52e415e4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sandboxaq Sandwich Manual",
+      "filename": "sandboxaq-sandwich-manual-756d0c22.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "SAP Cryptographic Library Brief",
+      "filename": "sap-cryptographic-library-brief-35d52de1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "SAP Cryptographic Library Brief",
+      "filename": "sap-cryptographic-library-brief-e8a645ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "SAP Cryptographic Library Manual",
+      "filename": "sap-cryptographic-library-manual-8080ad26.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "SAP Cryptographic Library Manual",
+      "filename": "sap-cryptographic-library-manual-914a6977.html",
       "url": "",
       "status": "downloaded"
     },
@@ -2864,6 +4826,36 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Sectigo Certificate Manager Brief",
+      "filename": "sectigo-certificate-manager-brief-886c3b74.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sectigo Certificate Manager Brief",
+      "filename": "sectigo-certificate-manager-brief-89bb3be2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sectigo Certificate Manager Brief",
+      "filename": "sectigo-certificate-manager-brief-e9e374a9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sectigo Certificate Manager Manual",
+      "filename": "sectigo-certificate-manager-manual-fcd5b394.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Sectigo Certificate Manager Manual",
+      "filename": "sectigo-certificate-manager-manual-ff0a42bd.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Sectigo Certificate Manager SCM",
       "filename": "sectigo-certificate-manager-scm-a45e7be2.html",
       "url": "",
@@ -2896,6 +4888,30 @@
     {
       "softwareName": "Securosys Primus HSM",
       "filename": "securosys-primus-hsm-8594b923.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Securosys Primus HSM Brief",
+      "filename": "securosys-primus-hsm-brief-8594b923.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Securosys Primus HSM Manual",
+      "filename": "securosys-primus-hsm-manual-713d5f72.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Securosys Primus HSM Manual",
+      "filename": "securosys-primus-hsm-manual-75ca8f69.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Securosys Primus HSM Manual",
+      "filename": "securosys-primus-hsm-manual-976ec3ba.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -2936,6 +4952,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Signal Brief",
+      "filename": "signal-brief-d3b0d1ce.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Signal Manual",
+      "filename": "signal-manual-2b70affc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Signquantum PQC E Signature",
       "filename": "signquantum-pqc-e-signature-1f570557.html",
       "url": "",
@@ -2944,6 +4972,30 @@
     {
       "softwareName": "Signserver",
       "filename": "signserver-94d00f03.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Signserver Brief",
+      "filename": "signserver-brief-5fcc9945.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Signserver Manual",
+      "filename": "signserver-manual-94d00f03.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Signserver Manual",
+      "filename": "signserver-manual-b1e4839c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Signserver Manual",
+      "filename": "signserver-manual-b6280874.html",
       "url": "",
       "status": "downloaded"
     },
@@ -3140,6 +5192,30 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Testssl SH Brief",
+      "filename": "testssl-sh-brief-42258aaa.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Testssl SH Brief",
+      "filename": "testssl-sh-brief-9b0b98f5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Testssl SH Manual",
+      "filename": "testssl-sh-manual-dcd91445.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Testssl SH Manual",
+      "filename": "testssl-sh-manual-fbc60677.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Thales 5g Quantum Safe SIM",
       "filename": "thales-5g-quantum-safe-sim-1a25d571.html",
       "url": "",
@@ -3154,6 +5230,36 @@
     {
       "softwareName": "Thales Ciphertrust Data Security Platform",
       "filename": "thales-ciphertrust-data-security-platform-729f4d34.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Ciphertrust Data Security Platform Brief",
+      "filename": "thales-ciphertrust-data-security-platform-brief-7dde013a.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Ciphertrust Data Security Platform Brief",
+      "filename": "thales-ciphertrust-data-security-platform-brief-a856442a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Ciphertrust Data Security Platform Brief",
+      "filename": "thales-ciphertrust-data-security-platform-brief-e648fd29.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Ciphertrust Data Security Platform Brief",
+      "filename": "thales-ciphertrust-data-security-platform-brief-fbb0df90.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Ciphertrust Data Security Platform Manual",
+      "filename": "thales-ciphertrust-data-security-platform-manual-22f11099.html",
       "url": "",
       "status": "downloaded"
     },
@@ -3182,6 +5288,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Thales Luna HSM Brief",
+      "filename": "thales-luna-hsm-brief-50024892.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Luna HSM Manual",
+      "filename": "thales-luna-hsm-manual-ad1e810c.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Thales Luna T Series HSM",
       "filename": "thales-luna-t-series-hsm-3c6c6690.html",
       "url": "",
@@ -3190,6 +5308,30 @@
     {
       "softwareName": "Thales Mistral Encryptor",
       "filename": "thales-mistral-encryptor-5c461990.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Multiapp 5 2 Premium PQC Brief",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-9b3167ea.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Multiapp 5 2 Premium PQC Brief",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-c2de81e5.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Multiapp 5 2 Premium PQC Brief",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-cdd79262.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Thales Multiapp 5 2 Premium PQC Brief",
+      "filename": "thales-multiapp-5-2-premium-pqc-brief-e1ff8879.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -3242,6 +5384,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Toshiba Integrated PQC QKD Platform Brief",
+      "filename": "toshiba-integrated-pqc-qkd-platform-brief-42c7700c.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Toshiba Integrated PQC QKD Platform Brief",
+      "filename": "toshiba-integrated-pqc-qkd-platform-brief-55dd45b6.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Toshiba Integrated PQC QKD Platform Brief",
+      "filename": "toshiba-integrated-pqc-qkd-platform-brief-a7608468.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Toshiba QKD System",
       "filename": "toshiba-qkd-system-9c1cc945.html",
       "url": "",
@@ -3284,6 +5444,24 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Tuta Mail Brief",
+      "filename": "tuta-mail-brief-4b191d7b.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Tuta Mail Brief",
+      "filename": "tuta-mail-brief-66fffe84.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Tuta Mail Manual",
+      "filename": "tuta-mail-manual-95ac70c1.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "U Boot",
       "filename": "u-boot-e814e65d.html",
       "url": "",
@@ -3298,6 +5476,36 @@
     {
       "softwareName": "Utimaco Eskm",
       "filename": "utimaco-eskm-0a084bc7.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Utimaco Eskm Brief",
+      "filename": "utimaco-eskm-brief-380d870a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Utimaco Eskm Manual",
+      "filename": "utimaco-eskm-manual-76087a85.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Utimaco Eskm Manual",
+      "filename": "utimaco-eskm-manual-e843719a.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Utimaco Quantum Protect Suite Brief",
+      "filename": "utimaco-quantum-protect-suite-brief-59a76c3f.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Utimaco Quantum Protect Suite Brief",
+      "filename": "utimaco-quantum-protect-suite-brief-a11df1f3.html",
       "url": "",
       "status": "downloaded"
     },
@@ -3344,14 +5552,44 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Venafi TLS Protect Brief",
+      "filename": "venafi-tls-protect-brief-92dae7e8.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Venafi TLS Protect",
       "filename": "venafi-tls-protect-ccf9dffb.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Venafi TLS Protect Manual",
+      "filename": "venafi-tls-protect-manual-9d70c9f4.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Venafi Trust Protection Platform",
       "filename": "venafi-trust-protection-platform-57461bd8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Venafi Trust Protection Platform Brief",
+      "filename": "venafi-trust-protection-platform-brief-92dae7e8.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Venafi Trust Protection Platform Manual",
+      "filename": "venafi-trust-protection-platform-manual-57461bd8.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Venafi Trust Protection Platform Manual",
+      "filename": "venafi-trust-protection-platform-manual-9d70c9f4.html",
       "url": "",
       "status": "downloaded"
     },
@@ -3440,6 +5678,18 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Windows Server 2025 Brief",
+      "filename": "windows-server-2025-brief-8465c242.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Windows Server 2025 Manual",
+      "filename": "windows-server-2025-manual-bbd1b3f9.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Windscribe",
       "filename": "windscribe-85b6dd79.html",
       "url": "",
@@ -3476,14 +5726,80 @@
       "status": "downloaded"
     },
     {
+      "softwareName": "Wolfboot Brief",
+      "filename": "wolfboot-brief-ca1f18b2.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfboot Manual",
+      "filename": "wolfboot-manual-347b9adc.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfboot Manual",
+      "filename": "wolfboot-manual-4d705761.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfboot Manual",
+      "filename": "wolfboot-manual-5df22a8e.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfboot Manual",
+      "filename": "wolfboot-manual-d0f76452.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Wolfssh",
       "filename": "wolfssh-95ed95ac.html",
       "url": "",
       "status": "downloaded"
     },
     {
+      "softwareName": "Wolfssh Brief",
+      "filename": "wolfssh-brief-48ab0172.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfssh Brief",
+      "filename": "wolfssh-brief-95ed95ac.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfssh Manual",
+      "filename": "wolfssh-manual-b2387ee3.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfssh Manual",
+      "filename": "wolfssh-manual-bb41d1a8.pdf",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
       "softwareName": "Wolfssl",
       "filename": "wolfssl-0eb7f532.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfssl Brief",
+      "filename": "wolfssl-brief-8bac3371.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Wolfssl Manual",
+      "filename": "wolfssl-manual-92279b0c.pdf",
       "url": "",
       "status": "downloaded"
     },
@@ -3538,6 +5854,24 @@
     {
       "softwareName": "Zerotier Quantum",
       "filename": "zerotier-quantum-a135c998.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Zoom Compliance 2026 Brief",
+      "filename": "zoom-compliance-2026-brief-08405e35.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Zoom Compliance 2026 Brief",
+      "filename": "zoom-compliance-2026-brief-d8fe2d25.html",
+      "url": "",
+      "status": "downloaded"
+    },
+    {
+      "softwareName": "Zoom Compliance 2026 Manual",
+      "filename": "zoom-compliance-2026-manual-441c12ec.html",
       "url": "",
       "status": "downloaded"
     },
