@@ -57,12 +57,12 @@
     },
     {
       "refId": "CNSA-2",
-      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "filename": "CNSA-2.html",
-      "sizeBytes": 96585,
-      "contentType": "text/html",
-      "sha256": "96c808b36fce5dec8a3a667e0943d05592a529e9c9a1706dcd75424a33f6e1de"
+      "filename": "CNSA-2.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
     },
     {
       "refId": "EIDAS",
@@ -264,12 +264,12 @@
     },
     {
       "refId": "CCCS-ITSM",
-      "url": "https://www.cyber.gc.ca/en/guidance/preparing-your-organization-quantum-threat-cryptography-itsap00017",
+      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
       "status": "downloaded",
       "filename": "CCCS-ITSM.html",
-      "sizeBytes": 72584,
+      "sizeBytes": 145788,
       "contentType": "text/html",
-      "sha256": "6c5cfe4a529697add44c00beb8005a8bd67cd36bbce806211b6e1117e8969ea0"
+      "sha256": "82eef746d6bfad1e28914baa90631f0656b774ffd8a36661015f524be73b13c8"
     },
     {
       "refId": "EU-REC-2024-1101",
@@ -300,30 +300,30 @@
     },
     {
       "refId": "CRYPTREC",
-      "url": "https://www.cryptrec.go.jp/en/",
+      "url": "https://www.cryptrec.go.jp/report/cryptrec-gl-2007-2024.pdf",
       "status": "downloaded",
-      "filename": "CRYPTREC.html",
-      "sizeBytes": 7857,
-      "contentType": "text/html",
-      "sha256": "4d6c01d1a97f0a260c8fe46a3acac15d90d4cf6bf2c62002e511ca8301c963a6"
+      "filename": "CRYPTREC.pdf",
+      "sizeBytes": 1312893,
+      "contentType": "application/pdf",
+      "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d"
     },
     {
       "refId": "KPQC-STD",
-      "url": "https://kpqc.or.kr",
+      "url": "https://kpqc.or.kr/contents/03_exhibit/sub_03.html",
       "status": "downloaded",
       "filename": "KPQC-STD.html",
-      "sizeBytes": 15839,
+      "sizeBytes": 11388,
       "contentType": "text/html",
-      "sha256": "97ac6ffbadd6efeeb58acde1d98a703136702d02277d4af4b83bbbd6c7ab543d"
+      "sha256": "63631f85f21a8255e688935e1697989b07b5ef97eb19942d14c3e8c186b44144"
     },
     {
       "refId": "OSCCA-NGCC",
-      "url": "https://www.sca.gov.cn",
+      "url": "https://www.niccs.org.cn/niccs/Notice/pc/content/content_1937428197396713472.html",
       "status": "downloaded",
       "filename": "OSCCA-NGCC.html",
-      "sizeBytes": 41773,
+      "sizeBytes": 14790,
       "contentType": "text/html",
-      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+      "sha256": "09d6f3cba5c7554d26620881dce329e269d1e9ff6f40b2aef1976a9c814aa476"
     },
     {
       "refId": "NCSC-CH",
@@ -345,12 +345,12 @@
     },
     {
       "refId": "CRYPTREC-BODY",
-      "url": "https://www.cryptrec.go.jp/en/",
+      "url": "https://www.cryptrec.go.jp/about.html",
       "status": "downloaded",
       "filename": "CRYPTREC-BODY.html",
-      "sizeBytes": 7857,
+      "sizeBytes": 11428,
       "contentType": "text/html",
-      "sha256": "4d6c01d1a97f0a260c8fe46a3acac15d90d4cf6bf2c62002e511ca8301c963a6"
+      "sha256": "a06a4e0744dd132de975cb862c2152e9540c8244871e07e453a831a4c24f93ad"
     },
     {
       "refId": "KISA-BODY",
@@ -363,12 +363,12 @@
     },
     {
       "refId": "OSCCA-BODY",
-      "url": "https://www.sca.gov.cn",
+      "url": "https://www.sca.gov.cn/sca/jggk/index.shtml",
       "status": "downloaded",
       "filename": "OSCCA-BODY.html",
-      "sizeBytes": 41773,
+      "sizeBytes": 31771,
       "contentType": "text/html",
-      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+      "sha256": "77636d8bb49241707363c4b86bfc9053189f90497e50060d61d255bcca5e24b1"
     },
     {
       "refId": "ETSI",
@@ -381,12 +381,12 @@
     },
     {
       "refId": "NSA",
-      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "filename": "NSA.html",
-      "sizeBytes": 96585,
-      "contentType": "text/html",
-      "sha256": "21604479b8f0b8fa7f6bf422c3e1c3fe099bb657e58060fd433af6a59055bf44"
+      "filename": "NSA.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
     },
     {
       "refId": "CMMC",
@@ -975,12 +975,12 @@
     },
     {
       "refId": "CO-LEY1581",
-      "url": "https://www.sic.gov.co",
+      "url": "https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981",
       "status": "downloaded",
       "filename": "CO-LEY1581.html",
-      "sizeBytes": 144704,
+      "sizeBytes": 72931,
       "contentType": "text/html",
-      "sha256": "011e560a33fc888bbba92923447d70ad17413228b94d1a9b74d300f41f26ce3f"
+      "sha256": "926ae19c2b949ae37850331a7e6055863b7032e2881496992d19d38950fafbb9"
     },
     {
       "refId": "PE-LDP",
@@ -1454,21 +1454,21 @@
     },
     {
       "refId": "MEXICO-CNBV-CUB",
-      "url": "https://www.cnbv.gob.mx/",
+      "url": "https://www.cnbv.gob.mx/Normatividad/Disposiciones%20de%20car%C3%A1cter%20general%20aplicables%20a%20las%20instituciones%20de%20cr%C3%A9dito.pdf",
       "status": "downloaded",
-      "filename": "MEXICO-CNBV-CUB.html",
-      "sizeBytes": 67440,
-      "contentType": "text/html",
-      "sha256": "9baadc26bc1f25c29524a7515167b5436d01513a04068eefb7d7054aeb2f5f7c"
+      "filename": "MEXICO-CNBV-CUB.pdf",
+      "sizeBytes": 6144432,
+      "contentType": "application/pdf",
+      "sha256": "c41084b31061b6601af9f41cd6f08db5a8a98a8f44ecbdbd2bd601746f7def48"
     },
     {
       "refId": "ID-PDP",
-      "url": "https://www.bssn.go.id",
+      "url": "https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf",
       "status": "downloaded",
-      "filename": "ID-PDP.html",
-      "sizeBytes": 2849,
-      "contentType": "text/html",
-      "sha256": "4260d64d714ed889c1ecffc33279ad41484edc506315356b8f3dee3822ffc630"
+      "filename": "ID-PDP.pdf",
+      "sizeBytes": 2977828,
+      "contentType": "application/pdf",
+      "sha256": "ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6"
     },
     {
       "refId": "AISEP-AUSTRALIAN-INFORMATION-S",

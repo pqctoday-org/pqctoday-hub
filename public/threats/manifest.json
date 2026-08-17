@@ -726,14 +726,14 @@
     {
       "threatId": "MEDIA-002",
       "refId": "MEDIA-002",
-      "title": "AACS / Content Protection Standards",
-      "url": "https://aacsla.com/aacs-specifications/",
+      "title": "A First Look at Digital Rights Management Systems for Secure Mobile Content Delivery",
+      "url": "https://arxiv.org/abs/2308.00437",
       "status": "downloaded",
-      "file": "public/threats/MEDIA-002.html",
+      "file": "threats/MEDIA-002.html",
       "filename": "MEDIA-002.html",
-      "sizeBytes": 33944,
+      "sizeBytes": 41479,
       "contentType": "text/html",
-      "sha256": "c01f19eea5c39ae157ac25f2c02dec876bb54b7628e176c2086bc542620d863b"
+      "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800"
     },
     {
       "threatId": "MEDIA-003",
@@ -762,26 +762,26 @@
     {
       "threatId": "PCI-002",
       "refId": "PCI-002",
-      "title": "PCI Security Standards Council DSS 4.0.1",
-      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "title": "PCI DSS v4.0.1 -- Requirements and Testing Procedures",
+      "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
-      "file": "public/threats/PCI-002.html",
-      "filename": "PCI-002.html",
-      "sizeBytes": 666809,
-      "contentType": "text/html",
-      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
+      "file": "threats/PCI-002.pdf",
+      "filename": "PCI-002.pdf",
+      "sizeBytes": 4458346,
+      "contentType": "application/pdf",
+      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
     },
     {
       "threatId": "PCI-003",
       "refId": "PCI-003",
-      "title": "PCI PIN Security Requirements",
-      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "title": "PCI PIN Security Requirements v3.1 -- ROC Reporting Template",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
       "status": "downloaded",
-      "file": "public/threats/PCI-003.html",
-      "filename": "PCI-003.html",
-      "sizeBytes": 666809,
-      "contentType": "text/html",
-      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
+      "file": "threats/PCI-003.pdf",
+      "filename": "PCI-003.pdf",
+      "sizeBytes": 2986027,
+      "contentType": "application/pdf",
+      "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6"
     },
     {
       "threatId": "RAIL-001",
@@ -810,14 +810,14 @@
     {
       "threatId": "RETAIL-001",
       "refId": "RETAIL-001",
-      "title": "PCI Security Standards Council",
-      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "title": "PCI DSS v4.0.1 -- Requirements and Testing Procedures",
+      "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
-      "file": "public/threats/RETAIL-001.html",
-      "filename": "RETAIL-001.html",
-      "sizeBytes": 666809,
-      "contentType": "text/html",
-      "sha256": "8df68c86f85355eb2ba462f1cf4720d989ece927b4161560dc001269e4bc9715"
+      "file": "threats/RETAIL-001.pdf",
+      "filename": "RETAIL-001.pdf",
+      "sizeBytes": 4458346,
+      "contentType": "application/pdf",
+      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
     },
     {
       "threatId": "RETAIL-002",
@@ -882,14 +882,14 @@
     {
       "threatId": "TELCO-001",
       "refId": "TELCO-001",
-      "title": "GSMA Security Guidelines",
-      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series/security",
+      "title": "GSMA PQ.03 -- Post Quantum Cryptography Guidelines for Telecom Use Cases v1.0",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
       "status": "downloaded",
-      "file": "public/threats/TELCO-001.html",
-      "filename": "TELCO-001.html",
-      "sizeBytes": 202353,
-      "contentType": "text/html",
-      "sha256": "e8d3a53dbbefb721f389262b9432b453bb3f79dbc4ce1f30595a1fc487eec7b0"
+      "file": "threats/TELCO-001.pdf",
+      "filename": "TELCO-001.pdf",
+      "sizeBytes": 1756788,
+      "contentType": "application/pdf",
+      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a"
     },
     {
       "threatId": "TELCO-002",
@@ -1084,25 +1084,27 @@
     {
       "threatId": "RAIL-003",
       "refId": "RAIL-003",
-      "title": "ETSI TS 103 719 + 3GPP TS 22.289 / TS 23.289",
-      "url": "https://www.globalrailwayreview.com/news/233331/frmcs-migration-rail-cyber-security/",
+      "title": "ETSI TS 103 764 -- FRMCS System Architecture",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.01_60/ts_103764v010101p.pdf",
       "status": "downloaded",
-      "file": "public/threats/RAIL-003.html",
-      "filename": "RAIL-003.html",
-      "sizeBytes": 169459,
-      "contentType": "text/html",
-      "sha256": "4743f46ca46c845a11f5fec52237e3fca078834f9fcfb92e6e5d82e5f576dd3b"
+      "file": "threats/RAIL-003.pdf",
+      "filename": "RAIL-003.pdf",
+      "sizeBytes": 765307,
+      "contentType": "application/pdf",
+      "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85"
     },
     {
       "threatId": "RAIL-004",
       "refId": "RAIL-004",
-      "title": "FRA Positive Train Control Regulations (49 CFR 236)",
-      "url": "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations",
-      "status": "missing",
-      "file": "public/threats/evidence/RAIL-004.html",
+      "title": "49 CFR Part 236 Subpart I -- Positive Train Control Systems (eCFR)",
+      "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
+      "status": "downloaded",
+      "file": "threats/RAIL-004.html",
       "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "ecd38cd07194808df25d96a1967c890666bb4d7e669442bc28d8b83dfa96969a",
-      "sizeBytes": 94619
+      "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
+      "sizeBytes": 353605,
+      "filename": "RAIL-004.html",
+      "contentType": "text/html"
     },
     {
       "threatId": "RAIL-005",
@@ -1286,14 +1288,14 @@
     {
       "threatId": "IT-006",
       "refId": "IT-006",
-      "title": "IACR ePrint / NIST PQC Security Analysis",
-      "url": "https://eprint.iacr.org/",
+      "title": "NoMod: A Non-modular Attack on Module Learning With Errors",
+      "url": "https://arxiv.org/abs/2510.02162",
       "status": "downloaded",
-      "file": "public/threats/IT-006.html",
+      "file": "threats/IT-006.html",
       "filename": "IT-006.html",
-      "sizeBytes": 14147,
+      "sizeBytes": 40713,
       "contentType": "text/html",
-      "sha256": "f42b1681de124b26779bcc3987f5db0ae54aa40095e76d28963a4a4637f2bae8"
+      "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b"
     },
     {
       "threatId": "HSM-002",
