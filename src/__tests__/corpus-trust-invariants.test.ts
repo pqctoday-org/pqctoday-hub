@@ -321,15 +321,24 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   run in a while — the committed corpus was 605 records stale, so this
   //   refresh pulled in maturity/library data merged since the last one. Same
   //   deprecated-row class as the entries above, not a routing change.
-  //   2026-08-17: 151 -> 161. Surfaced by the migrate-catalog spotcheck run's
-  //   refresh-index (batches 39-64 + product_brief_url/user_manual_url UI
-  //   wiring) — the committed corpus was stale since 2026-08-11, so this
-  //   refresh caught up on AERO-* sector-threat enrichment chunks unrelated to
-  //   the migrate/product-catalog changes in this pass (same chunkToResource
-  //   routing gap documented throughout this file since 2026-06-19). Verified:
-  //   the migrate spotcheck batches touched only migrate CSV rows, never
-  //   threats/enrichment data. Drive down via the same trustScoreData.ts
-  //   extension named above.
+  //   2026-08-16/17: two independent causes landed the same day, merged here.
+  //   (a) 151 -> 154 — a library-wide capture-integrity audit found
+  //   ENISA-EUDI-Wallet-Security, Gartner-CryptoCOE-Mahdi and
+  //   YahooFinance-Quantum-Ready-2030-2026 were each citing a WRONG document
+  //   (a homepage/index page, not the claimed one) with no correct
+  //   replacement obtainable — deprecated per the standing proof-gate rule
+  //   rather than left mis-cited. (b) surfaced by the migrate-catalog
+  //   spotcheck run's refresh-index (batches 39-64 + product_brief_url/
+  //   user_manual_url UI wiring) — the committed corpus was stale since
+  //   2026-08-11, so this refresh separately caught up on AERO-* sector-
+  //   threat enrichment chunks unrelated to the migrate/product-catalog
+  //   changes in that pass (same chunkToResource routing gap documented
+  //   throughout this file since 2026-06-19; verified the spotcheck batches
+  //   touched only migrate CSV rows, never threats/enrichment data). Both are
+  //   the same deprecated-row class as every entry above. Pin set to the
+  //   value measured on the actual merged corpus, not summed from the two
+  //   branches, since the two causes may overlap. Drive down via the same
+  //   trustScoreData.ts extension named above.
   'document-enrichment': 161,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
@@ -380,13 +389,20 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   describes, arriving with the same catch-up refresh. Filling
   //   superseded_by (or re-citing the requirement) is what drops these; the
   //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
-  //   2026-08-17: 82 -> 87. Surfaced by the migrate-catalog spotcheck run's
-  //   refresh-index (batches 39-64), unrelated to those changes. Verified
-  //   directly: the failing ids cite library ref_id "IETF RFC 9763", which
-  //   `library_08152026_r21.csv` shows status=deprecated, superseded_by=
-  //   "RFC-9763" (revision consolidation, 2026-06-06) — same deprecated-row-
-  //   with-successor class as the 2026-08-09 entry above, just not yet
-  //   covered by that aliasing pass for this specific ref_id. Resolve by
+  //   2026-08-16/17: 82 -> 87, hit independently on three branches merging
+  //   the same day (RAG index had not been rebuilt in a while, so the
+  //   committed corpus was stale enough to mask this drift on all of them).
+  //   Git blame shows this ratchet bumped upward three times before (4.45.0
+  //   merge, then 77, then 82) as ordinary maintenance whenever unrelated
+  //   corpus growth widens the gap between "unscored" and the pinned
+  //   ceiling; this is the fourth. Verified directly: the failing ids cite
+  //   library ref_id "IETF RFC 9763", which shows status=deprecated,
+  //   superseded_by="RFC-9763" (revision consolidation, 2026-06-06) — same
+  //   deprecated-row-with-successor class as the 2026-08-09 entry above,
+  //   just not yet covered by that aliasing pass for this specific ref_id.
+  //   Confirmed NOT caused by the migrate-catalog spotcheck batches (39-64)
+  //   or the inline-JSX prose-rejoining change in the other two branches —
+  //   no governance-maturity rows changed in any of them. Resolve by
   //   extending the same trustScoreData.ts supersession alias, or by
   //   re-citing the governance-maturity rows against "RFC-9763" directly.
   'governance-maturity': 87,
