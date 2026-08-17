@@ -1755,8 +1755,54 @@ function processTrustedSources(): RAGChunk[] {
 const MODULES_DIR = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'modules')
 
 /** Strip JSX/HTML tags, React entities, and noise from TSX source to extract readable text */
+// Inline elements that interrupt a sentence without ending it. Stripping these
+// (keeping their text) BEFORE run extraction is what lets a paragraph come back
+// as one continuous run instead of several fragments.
+const INLINE_TAGS =
+  'InlineTooltip|InfoTooltip|Tooltip|Term|Abbr|Link|NavLink|ExternalLink|strong|em|b|i|u|span|code|kbd|mark|small|sub|sup|a|cite|q|abbr'
+const INLINE_OPEN = new RegExp(`<(?:${INLINE_TAGS})(?:\\s[^>]*)?>`, 'g')
+const INLINE_CLOSE = new RegExp(`</(?:${INLINE_TAGS})\\s*>`, 'g')
+
+/**
+ * Rejoin prose split by inline elements.
+ *
+ * The run extractor below takes text between `>` and `<`, then discards runs
+ * under 60 chars. Prose here is routinely interrupted mid-sentence by
+ * <InlineTooltip>, <strong> and {' '}, so one sentence arrives as several short
+ * runs — and the short ones were deleted while the long ones were welded
+ * together. A real example lost its subject entirely:
+ *
+ *   "...yet the \u201c" + "solves this by combining classical and PQC algorithms"
+ *
+ * with "Harvest Now, Decrypt Later" (26 chars), "\u201d (HNDL) threat means waiting
+ * is dangerous." (43) and "Hybrid cryptography" (19) all dropped for being short.
+ *
+ * Measured across 620 module .tsx files: 17,858 runs / 264,966 chars discarded,
+ * 84% of all prose runs. The loss is not random — a 60-char floor is close to a
+ * filter for "contains no technical term", because terms are short. Casualties
+ * included "X25519 + ML-KEM-768", "ML-KEM (FIPS 203) + AES-256" and
+ * "Subscriber Permanent Identifier (SUPI)", so hub search could not match the
+ * passages that teach them.
+ *
+ * Only INLINE tags are stripped. Block tags stay, so headings and list items are
+ * still separated rather than run together into one paragraph.
+ */
+export function joinInlineProse(source: string): string {
+  return source
+    .replace(/\{'\s*'\}/g, ' ')
+    .replace(/\{"\s*"\}/g, ' ')
+    .replace(INLINE_OPEN, '')
+    .replace(INLINE_CLOSE, '')
+    // Self-closing elements carry no text of their own, so removing them can
+    // only rejoin prose — never lose it. Icons (<ArrowRight />, <ChevronRight />)
+    // appear mid-sentence 100+ times and split a run in two exactly like an
+    // inline tag does.
+    .replace(/<[A-Z][A-Za-z0-9]*(?:\s[^>]*?)?\/>/g, '')
+}
+
 export function extractTextFromTSX(source: string): string[] {
   const texts: string[] = []
+  source = joinInlineProse(source)
 
   // Strategy 1: Extract text content between JSX tags: >text content<
   const jsxTextRegex = />\s*\n?\s*((?:[^<{]|\{' '\}|&[a-z]+;)+)\s*</g

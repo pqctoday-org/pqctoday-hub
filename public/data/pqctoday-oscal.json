@@ -1051,7 +1051,7 @@
           },
           {
             "uuid": "25a59845-619d-4831-e91a-6763e3a4900c",
-            "title": "Taiwan Five-Year PQC Plan",
+            "title": "Taiwan PQC Migration Guidelines",
             "target": {
               "type": "objective-id",
               "target-id": "TAIWAN-MODA-PQC",
@@ -2994,7 +2994,7 @@
             "description": "French national cybersecurity agency regulation",
             "relevant-evidence": [
               {
-                "href": "https://www.ssi.gouv.fr",
+                "href": "https://www.ssi.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3021,7 +3021,7 @@
             "description": "NSA mandate for national security systems",
             "relevant-evidence": [
               {
-                "href": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+                "href": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3102,7 +3102,7 @@
             "description": "US health data privacy and security rule",
             "relevant-evidence": [
               {
-                "href": "https://www.hhs.gov/hipaa",
+                "href": "https://www.hhs.gov/hipaa/for-professionals/index.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3129,7 +3129,7 @@
             "description": "GSMA PQC guidelines for mobile network operators",
             "relevant-evidence": [
               {
-                "href": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-cryptography-documents/",
+                "href": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3372,7 +3372,7 @@
             "description": "Defense Information Systems Agency Security Technical Implementation Guides",
             "relevant-evidence": [
               {
-                "href": "https://public.cyber.mil/stigs/",
+                "href": "https://public.cyber.mil/stigs/downloads/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3858,7 +3858,7 @@
             "description": "Korea Post-Quantum Cryptography standardization program with national PQC transition roadmap",
             "relevant-evidence": [
               {
-                "href": "https://kpqc.or.kr",
+                "href": "https://kpqc.or.kr/contents/01_company/sub01.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -3993,7 +3993,7 @@
             "description": "China Next-Generation Commercial Cryptographic algorithms standardization program",
             "relevant-evidence": [
               {
-                "href": "https://www.sca.gov.cn",
+                "href": "https://www.niccs.org.cn/niccs/Notice/pc/content/content_1937428197396713472.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4020,7 +4020,7 @@
             "description": "Swiss National Cyber Security Centre post-quantum cryptography migration recommendations",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.admin.ch",
+                "href": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/einschaetzung_bacs_pqc-en.pdf.download.pdf/einschaetzung_bacs_pqc-en.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4047,7 +4047,7 @@
             "description": "Dutch National Cyber Security Centre post-quantum cryptography migration guide",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.nl/en",
+                "href": "https://www.ncsc.nl/api/media/sites/default/files/Make_your_organization_quantum_secure.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4128,7 +4128,7 @@
             "description": "Cryptography Research and Evaluation Committees — Japan's government body evaluating cryptographic techniques for public and government use",
             "relevant-evidence": [
               {
-                "href": "https://www.cryptrec.go.jp/en/",
+                "href": "https://www.cryptrec.go.jp/about.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4155,7 +4155,7 @@
             "description": "Korea Internet & Security Agency and National Intelligence Service — South Korea's cybersecurity and cryptography standardization authorities",
             "relevant-evidence": [
               {
-                "href": "https://www.kisa.or.kr/EN",
+                "href": "https://www.kisa.or.kr/EN/402",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4182,7 +4182,7 @@
             "description": "Office of State Commercial Cryptography Administration (国家密码管理局) — China's regulatory authority for commercial cryptography",
             "relevant-evidence": [
               {
-                "href": "https://www.sca.gov.cn",
+                "href": "https://www.sca.gov.cn/sca/jggk/index.shtml",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4263,7 +4263,7 @@
             "description": "US National Security Agency — mandates PQC for all national security systems via CNSA 2.0 with the most aggressive government timeline",
             "relevant-evidence": [
               {
-                "href": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+                "href": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4290,7 +4290,7 @@
             "description": "Cybersecurity Maturity Model Certification — US DoD supply chain cybersecurity certification requirement",
             "relevant-evidence": [
               {
-                "href": "https://dodcio.defense.gov/CMMC/",
+                "href": "https://dodcio.defense.gov/CMMC/About/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -4557,7 +4557,7 @@
           },
           {
             "uuid": "488323ef-e9c6-47c0-f5c5-fab7727635d7",
-            "description": "Taiwan Ministry of Digital Affairs five-year PQC implementation plan",
+            "description": "Taiwan Ministry of Digital Affairs (MODA) Post-Quantum Cryptography Migration Guidelines, jointly released with the PQC Cybersecurity Industry Alliance (16 Apr 2025)",
             "relevant-evidence": [
               {
                 "href": "https://moda.gov.tw/ADI/news/latest-news/16090",
@@ -4641,7 +4641,7 @@
             "description": "Bank for International Settlements quantum-readiness roadmap for global financial systems",
             "relevant-evidence": [
               {
-                "href": "https://www.bis.org/publ/bppdf/bispap158.htm",
+                "href": "https://www.bis.org/publ/bppdf/bispap158.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5127,7 +5127,7 @@
             "description": "NIST recommendation for stateful hash-based signature schemes (LMS and XMSS)",
             "relevant-evidence": [
               {
-                "href": "https://csrc.nist.gov/pubs/sp/800/208/final",
+                "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5235,7 +5235,7 @@
             "description": "Brazilian data protection authority ANPD guidance on cryptographic requirements under LGPD with PQC implications",
             "relevant-evidence": [
               {
-                "href": "https://www.gov.br/anpd/pt-br",
+                "href": "https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-vf.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5397,7 +5397,7 @@
             "description": "Privacy Act 1988 (Cth) with Australian Privacy Principles (APPs) — enforced by the Office of the Australian Information Commissioner (OAIC). APP 11 requires organisations to take reasonable steps to protect personal information, including cryptographic security controls. Post-quantum transition affects long-term data confidentiality.",
             "relevant-evidence": [
               {
-                "href": "https://www.oaic.gov.au/privacy/australian-privacy-principles",
+                "href": "https://www.oaic.gov.au/privacy/australian-privacy-principles/read-the-australian-privacy-principles",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5505,7 +5505,7 @@
             "description": "UK Department for Science, Innovation and Technology perspectives on PQC transition planning from Critical National Infrastructure sectors. Sets expectations for CNI operators (energy, water, transport, finance) to engage with NCSC migration timelines and report readiness.",
             "relevant-evidence": [
               {
-                "href": "https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology",
+                "href": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5640,7 +5640,7 @@
             "description": "Nigeria Data Protection Regulation + Nigeria Data Protection Act 2023 — jointly enforced by the Nigeria Data Protection Commission (NDPC), with explicit encryption obligations for personal data",
             "relevant-evidence": [
               {
-                "href": "https://ndpc.gov.ng/download/nigeria-data-protection-act-2023",
+                "href": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5721,7 +5721,7 @@
             "description": "African Union Convention on Cyber Security and Personal Data Protection — pan-continental instrument harmonising cybersecurity and data-protection regimes across AU member states",
             "relevant-evidence": [
               {
-                "href": "https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
+                "href": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5802,7 +5802,7 @@
             "description": "UK PRA supervisory statement on operational resilience, scoped to Tier 1/2 banks, insurers, and major investment firms. The most specific UK supervisory channel on quantum-risk timelines for financial firms.",
             "relevant-evidence": [
               {
-                "href": "https://www.bankofengland.co.uk/prudential-regulation",
+                "href": "https://www.bankofengland.co.uk/-/media/boe/files/prudential-regulation/supervisory-statement/2021/ss121-march-22.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5856,7 +5856,7 @@
             "description": "Norwegian National Security Authority's foundational ICT-security principles — closest Nordic analogue to NIST CSF. NSM publishes explicit PQC positioning and is the unambiguous primary Nordic crypto-guidance authority.",
             "relevant-evidence": [
               {
-                "href": "https://nsm.no/regelverk-og-hjelp/rad-og-anbefalinger/grunnprinsipper-for-ikt-sikkerhet/",
+                "href": "https://nsm.no/getfile.php/1313975-1717589722/NSM/Filer/Dokumenter/Veiledere/NSMs%20Grunnprinsipper%20for%20IKT-sikkerhet%20v2.1.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -5883,7 +5883,7 @@
             "description": "Swedish Civil Contingencies Agency cyber-resilience guidance. MSB is the civil-contingency umbrella; for algorithm-level guidance, cross-reference MSB Metodstöd documents and NCSC-SE bulletins (which sit across SÄPO/MSB depending on topic).",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.se/sv/aktuellt/kvantsaker-kryptografi/",
+                "href": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6045,7 +6045,7 @@
             "description": "Indonesia Law No. 27 of 2022 on Personal Data Protection — establishes a national data-protection regime with explicit obligations on technical and organisational security measures including encryption.",
             "relevant-evidence": [
               {
-                "href": "https://peraturan.bpk.go.id/Details/229798/uu-no-27-tahun-2022",
+                "href": "https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6261,7 +6261,7 @@
             "description": "Polish National Cybersecurity System Act (2018, NIS2 amendment 2024) — enforced by Ministry of Digital Affairs with NASK as the national CERT/research body; tracks NIST PQC for public-sector adoption.",
             "relevant-evidence": [
               {
-                "href": "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20180001560",
+                "href": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20180001560/O/D20181560.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6315,7 +6315,7 @@
             "description": "Peru Law No. 29733 on Personal Data Protection (2011) + Supreme Decree 003-2013-JUS — enforced by ANPD; requires technical security measures including encryption for sensitive personal data.",
             "relevant-evidence": [
               {
-                "href": "https://www.gob.pe/anpd",
+                "href": "https://cdn.www.gob.pe/uploads/document/file/2011398/Ley%20N%C2%BA%2029733%20-%20Ley%20de%20protecci%C3%B3n%20de%20datos%20personales.pdf.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6342,7 +6342,7 @@
             "description": "Uruguay Law 18.331 on Protection of Personal Data + URCDP guidance — enforced by the Personal Data Regulation and Control Unit (URCDP) within AGESIC; Uruguay holds an EU adequacy decision since 2012.",
             "relevant-evidence": [
               {
-                "href": "https://www.gub.uy/unidad-reguladora-control-datos-personales",
+                "href": "https://www.impo.com.uy/bases/leyes/18331-2008",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6369,7 +6369,7 @@
             "description": "Russian national cryptographic standards maintained by Technical Committee 26 (TC 26) of Rosstandart under FSB oversight — GOST R 34.10-2012 (signatures), GOST R 34.11-2012 (Streebog), GOST R 34.12-2015 (Kuznyechik/Magma).",
             "relevant-evidence": [
               {
-                "href": "https://tc26.ru/standarts/",
+                "href": "https://tc26.ru/standarts/natsionalnye-standarty/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -6693,7 +6693,7 @@
             "description": "Primary GSMA operational guidance document for quantum-safe migration in telecom networks. Version 2.0 (Oct 2024) focuses on migration planning, covering both common aspects and use-case-specific guidance for 5G AKA, TLS, IPSec/IKEv2, SIM/USIM provisioning, and network interconnect. Builds on PQ.01 impact assessment and PQ.02 risk framework.",
             "relevant-evidence": [
               {
-                "href": "https://www.gsma.com/newsroom/gsma_resources/pq-03-post-quantum-cryptography-guidelines-for-telecom-use-cases/",
+                "href": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -8689,7 +8689,7 @@
           },
           {
             "uuid": "25a59845-619d-4831-e91a-6763e3a4900c",
-            "title": "Taiwan Five-Year PQC Plan",
+            "title": "Taiwan PQC Migration Guidelines",
             "target": {
               "type": "objective-id",
               "target-id": "TAIWAN-MODA-PQC",
@@ -11240,7 +11240,7 @@
             "description": "French national cybersecurity agency regulation",
             "relevant-evidence": [
               {
-                "href": "https://www.ssi.gouv.fr",
+                "href": "https://www.ssi.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -11267,7 +11267,7 @@
             "description": "NSA mandate for national security systems",
             "relevant-evidence": [
               {
-                "href": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+                "href": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -11348,7 +11348,7 @@
             "description": "US health data privacy and security rule",
             "relevant-evidence": [
               {
-                "href": "https://www.hhs.gov/hipaa",
+                "href": "https://www.hhs.gov/hipaa/for-professionals/index.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -11375,7 +11375,7 @@
             "description": "GSMA PQC guidelines for mobile network operators",
             "relevant-evidence": [
               {
-                "href": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-cryptography-documents/",
+                "href": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -11645,7 +11645,7 @@
             "description": "Defense Information Systems Agency Security Technical Implementation Guides",
             "relevant-evidence": [
               {
-                "href": "https://public.cyber.mil/stigs/",
+                "href": "https://public.cyber.mil/stigs/downloads/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12239,7 +12239,7 @@
             "description": "Korea Post-Quantum Cryptography standardization program with national PQC transition roadmap",
             "relevant-evidence": [
               {
-                "href": "https://kpqc.or.kr",
+                "href": "https://kpqc.or.kr/contents/01_company/sub01.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12374,7 +12374,7 @@
             "description": "China Next-Generation Commercial Cryptographic algorithms standardization program",
             "relevant-evidence": [
               {
-                "href": "https://www.sca.gov.cn",
+                "href": "https://www.niccs.org.cn/niccs/Notice/pc/content/content_1937428197396713472.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12401,7 +12401,7 @@
             "description": "Swiss National Cyber Security Centre post-quantum cryptography migration recommendations",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.admin.ch",
+                "href": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/einschaetzung_bacs_pqc-en.pdf.download.pdf/einschaetzung_bacs_pqc-en.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12428,7 +12428,7 @@
             "description": "Dutch National Cyber Security Centre post-quantum cryptography migration guide",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.nl/en",
+                "href": "https://www.ncsc.nl/api/media/sites/default/files/Make_your_organization_quantum_secure.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12509,7 +12509,7 @@
             "description": "Cryptography Research and Evaluation Committees — Japan's government body evaluating cryptographic techniques for public and government use",
             "relevant-evidence": [
               {
-                "href": "https://www.cryptrec.go.jp/en/",
+                "href": "https://www.cryptrec.go.jp/about.html",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12536,7 +12536,7 @@
             "description": "Korea Internet & Security Agency and National Intelligence Service — South Korea's cybersecurity and cryptography standardization authorities",
             "relevant-evidence": [
               {
-                "href": "https://www.kisa.or.kr/EN",
+                "href": "https://www.kisa.or.kr/EN/402",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12563,7 +12563,7 @@
             "description": "Office of State Commercial Cryptography Administration (国家密码管理局) — China's regulatory authority for commercial cryptography",
             "relevant-evidence": [
               {
-                "href": "https://www.sca.gov.cn",
+                "href": "https://www.sca.gov.cn/sca/jggk/index.shtml",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12644,7 +12644,7 @@
             "description": "US National Security Agency — mandates PQC for all national security systems via CNSA 2.0 with the most aggressive government timeline",
             "relevant-evidence": [
               {
-                "href": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+                "href": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12671,7 +12671,7 @@
             "description": "Cybersecurity Maturity Model Certification — US DoD supply chain cybersecurity certification requirement",
             "relevant-evidence": [
               {
-                "href": "https://dodcio.defense.gov/CMMC/",
+                "href": "https://dodcio.defense.gov/CMMC/About/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -12965,7 +12965,7 @@
           },
           {
             "uuid": "488323ef-e9c6-47c0-f5c5-fab7727635d7",
-            "description": "Taiwan Ministry of Digital Affairs five-year PQC implementation plan",
+            "description": "Taiwan Ministry of Digital Affairs (MODA) Post-Quantum Cryptography Migration Guidelines, jointly released with the PQC Cybersecurity Industry Alliance (16 Apr 2025)",
             "relevant-evidence": [
               {
                 "href": "https://moda.gov.tw/ADI/news/latest-news/16090",
@@ -13049,7 +13049,7 @@
             "description": "Bank for International Settlements quantum-readiness roadmap for global financial systems",
             "relevant-evidence": [
               {
-                "href": "https://www.bis.org/publ/bppdf/bispap158.htm",
+                "href": "https://www.bis.org/publ/bppdf/bispap158.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -13346,7 +13346,7 @@
             "description": "Europol QSFF call to action for financial sector PQC migration",
             "relevant-evidence": [
               {
-                "href": "https://www.europol.europa.eu/publications-events/publications/prioritising-post-quantum-cryptography-migration-activities-in-financial-services",
+                "href": "https://www.europol.europa.eu/cms/sites/default/files/documents/Post-quantum-cryptography-report.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -13616,7 +13616,7 @@
             "description": "NIST recommendation for stateful hash-based signature schemes (LMS and XMSS)",
             "relevant-evidence": [
               {
-                "href": "https://csrc.nist.gov/pubs/sp/800/208/final",
+                "href": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -13778,7 +13778,7 @@
             "description": "Brazilian data protection authority ANPD guidance on cryptographic requirements under LGPD with PQC implications",
             "relevant-evidence": [
               {
-                "href": "https://www.gov.br/anpd/pt-br",
+                "href": "https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-vf.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14021,7 +14021,7 @@
             "description": "Privacy Act 1988 (Cth) with Australian Privacy Principles (APPs) — enforced by the Office of the Australian Information Commissioner (OAIC). APP 11 requires organisations to take reasonable steps to protect personal information, including cryptographic security controls. Post-quantum transition affects long-term data confidentiality.",
             "relevant-evidence": [
               {
-                "href": "https://www.oaic.gov.au/privacy/australian-privacy-principles",
+                "href": "https://www.oaic.gov.au/privacy/australian-privacy-principles/read-the-australian-privacy-principles",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14129,7 +14129,7 @@
             "description": "UK Department for Science, Innovation and Technology perspectives on PQC transition planning from Critical National Infrastructure sectors. Sets expectations for CNI operators (energy, water, transport, finance) to engage with NCSC migration timelines and report readiness.",
             "relevant-evidence": [
               {
-                "href": "https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology",
+                "href": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14264,7 +14264,7 @@
             "description": "Nigeria Data Protection Regulation + Nigeria Data Protection Act 2023 — jointly enforced by the Nigeria Data Protection Commission (NDPC), with explicit encryption obligations for personal data",
             "relevant-evidence": [
               {
-                "href": "https://ndpc.gov.ng/download/nigeria-data-protection-act-2023",
+                "href": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14345,7 +14345,7 @@
             "description": "African Union Convention on Cyber Security and Personal Data Protection — pan-continental instrument harmonising cybersecurity and data-protection regimes across AU member states",
             "relevant-evidence": [
               {
-                "href": "https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
+                "href": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14426,7 +14426,7 @@
             "description": "UK PRA supervisory statement on operational resilience, scoped to Tier 1/2 banks, insurers, and major investment firms. The most specific UK supervisory channel on quantum-risk timelines for financial firms.",
             "relevant-evidence": [
               {
-                "href": "https://www.bankofengland.co.uk/prudential-regulation",
+                "href": "https://www.bankofengland.co.uk/-/media/boe/files/prudential-regulation/supervisory-statement/2021/ss121-march-22.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14480,7 +14480,7 @@
             "description": "Norwegian National Security Authority's foundational ICT-security principles — closest Nordic analogue to NIST CSF. NSM publishes explicit PQC positioning and is the unambiguous primary Nordic crypto-guidance authority.",
             "relevant-evidence": [
               {
-                "href": "https://nsm.no/regelverk-og-hjelp/rad-og-anbefalinger/grunnprinsipper-for-ikt-sikkerhet/",
+                "href": "https://nsm.no/getfile.php/1313975-1717589722/NSM/Filer/Dokumenter/Veiledere/NSMs%20Grunnprinsipper%20for%20IKT-sikkerhet%20v2.1.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14507,7 +14507,7 @@
             "description": "Swedish Civil Contingencies Agency cyber-resilience guidance. MSB is the civil-contingency umbrella; for algorithm-level guidance, cross-reference MSB Metodstöd documents and NCSC-SE bulletins (which sit across SÄPO/MSB depending on topic).",
             "relevant-evidence": [
               {
-                "href": "https://www.ncsc.se/sv/aktuellt/kvantsaker-kryptografi/",
+                "href": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14669,7 +14669,7 @@
             "description": "Indonesia Law No. 27 of 2022 on Personal Data Protection — establishes a national data-protection regime with explicit obligations on technical and organisational security measures including encryption.",
             "relevant-evidence": [
               {
-                "href": "https://peraturan.bpk.go.id/Details/229798/uu-no-27-tahun-2022",
+                "href": "https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14885,7 +14885,7 @@
             "description": "Polish National Cybersecurity System Act (2018, NIS2 amendment 2024) — enforced by Ministry of Digital Affairs with NASK as the national CERT/research body; tracks NIST PQC for public-sector adoption.",
             "relevant-evidence": [
               {
-                "href": "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20180001560",
+                "href": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20180001560/O/D20181560.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14939,7 +14939,7 @@
             "description": "Peru Law No. 29733 on Personal Data Protection (2011) + Supreme Decree 003-2013-JUS — enforced by ANPD; requires technical security measures including encryption for sensitive personal data.",
             "relevant-evidence": [
               {
-                "href": "https://www.gob.pe/anpd",
+                "href": "https://cdn.www.gob.pe/uploads/document/file/2011398/Ley%20N%C2%BA%2029733%20-%20Ley%20de%20protecci%C3%B3n%20de%20datos%20personales.pdf.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14966,7 +14966,7 @@
             "description": "Uruguay Law 18.331 on Protection of Personal Data + URCDP guidance — enforced by the Personal Data Regulation and Control Unit (URCDP) within AGESIC; Uruguay holds an EU adequacy decision since 2012.",
             "relevant-evidence": [
               {
-                "href": "https://www.gub.uy/unidad-reguladora-control-datos-personales",
+                "href": "https://www.impo.com.uy/bases/leyes/18331-2008",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -14993,7 +14993,7 @@
             "description": "Russian national cryptographic standards maintained by Technical Committee 26 (TC 26) of Rosstandart under FSB oversight — GOST R 34.10-2012 (signatures), GOST R 34.11-2012 (Streebog), GOST R 34.12-2015 (Kuznyechik/Magma).",
             "relevant-evidence": [
               {
-                "href": "https://tc26.ru/standarts/",
+                "href": "https://tc26.ru/standarts/natsionalnye-standarty/",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -15668,7 +15668,7 @@
             "description": "Primary GSMA operational guidance document for quantum-safe migration in telecom networks. Version 2.0 (Oct 2024) focuses on migration planning, covering both common aspects and use-case-specific guidance for 5G AKA, TLS, IPSec/IKEv2, SIM/USIM provisioning, and network interconnect. Builds on PQ.01 impact assessment and PQ.02 risk framework.",
             "relevant-evidence": [
               {
-                "href": "https://www.gsma.com/newsroom/gsma_resources/pq-03-post-quantum-cryptography-guidelines-for-telecom-use-cases/",
+                "href": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -15695,7 +15695,7 @@
             "description": "SA3 study completed in 3GPP Release 19 (frozen Dec 2025) inventorying all existing 5G/4G security protocols that are relevant for a future quantum-safe cryptography transition. Identifies cryptographic dependencies across AKA, TLS, IPSec, and inter-network protocols and maps migration priority.",
             "relevant-evidence": [
               {
-                "href": "https://www.3gpp.org/specifications-technologies/releases/release-19",
+                "href": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
@@ -16046,7 +16046,7 @@
             "description": "Found while drafting related_standards for DFS-NYCRR-500 (2026-07-17) -- financial-sector cybersecurity risk framework, aligned to NIST CSF v2",
             "relevant-evidence": [
               {
-                "href": "https://cyberriskinstitute.org/the-profile/",
+                "href": "https://cyberriskinstitute.org/wp-content/uploads/2024/02/Final-CRI-Profile-v2.0-Guidebook-Public.-Date-2024.02.29-1.pdf",
                 "description": "Authoritative source"
               }
             ],
@@ -16937,7 +16937,7 @@
             "description": "Superintendencia Financiera de Colombia Circular Externa 007 of 2018 -- minimum cybersecurity risk-management requirements for supervised financial entities.",
             "relevant-evidence": [
               {
-                "href": "https://www.fundacionmicrofinanzasbbva.org/revistaprogreso/wp-content/uploads/2018/05/Col-CE-007-ciberseguridad.pdf",
+                "href": "https://normativa.colpensiones.gov.co/colpensiones/docs/circular_superfinanciera_0007_2018.htm",
                 "description": "Authoritative source (url authoritative)"
               }
             ],
