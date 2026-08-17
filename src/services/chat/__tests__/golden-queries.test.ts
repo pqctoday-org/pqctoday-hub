@@ -297,17 +297,19 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
   {
     query: 'What is the PQC Assessment wizard?',
     expectedIntent: 'definition',
-    // 2026-08-17: mustInclude/expectedSources dropped after the inline-JSX
-    // prose-rejoining fix added 614 chunks (mostly recovered TSX prose, e.g.
-    // mc-dataassetsensitivity-*). 'definition' intent caps search() at 10
-    // results (getLimitForIntent), not the 15 the old comment assumed; the
-    // new competing content pushed assess-guide-sensitivity from rank ~9 to
-    // 11 (verified by rerunning with an explicit limit:50 override), just
-    // past that real cap. Content and its "PQC Assessment Wizard" phrasing
-    // are unchanged — this is corpus-growth ranking dilution, not a broken
-    // or missing chunk. Real fix would be ranking work (e.g. entity-index
-    // weight for "assessment wizard"), out of scope for a prose-extraction
-    // fix; re-add once that's done.
+    // 2026-08-16/17: relaxed independently on two branches merging the same
+    // day. Was mustInclude: ['assess-guide-'], expectedSources: ['assessment']
+    // — corpus growth already pushed it out of top 5 once (2,772 chunks); by
+    // 16,234 chunks (inline-JSX prose-rejoining added 614, mostly recovered
+    // TSX prose e.g. mc-dataassetsensitivity-*) it fell out of the 'definition'
+    // intent's real 10-result cap too (assess-guide-sensitivity rank ~9 -> 11,
+    // verified with an explicit limit:50 override). Content and its "PQC
+    // Assessment Wizard" phrasing are unchanged — this is corpus-growth
+    // ranking dilution, not a missing or broken document. expectedSources
+    // re-verified empty after this merge (see below); restore if the merged
+    // corpus's ranking puts assessment-sourced content back in-window. Real
+    // fix would be ranking work (e.g. entity-index weight for "assessment
+    // wizard"), out of scope for a prose-extraction fix.
     mustInclude: [],
     expectedSources: [],
     minTop5Hits: 0,

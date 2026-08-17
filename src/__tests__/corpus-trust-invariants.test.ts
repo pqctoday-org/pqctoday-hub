@@ -321,7 +321,13 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   run in a while — the committed corpus was 605 records stale, so this
   //   refresh pulled in maturity/library data merged since the last one. Same
   //   deprecated-row class as the entries above, not a routing change.
-  'document-enrichment': 151,
+  //   2026-08-16: 151 -> 154. A library-wide capture-integrity audit found
+  //   ENISA-EUDI-Wallet-Security, Gartner-CryptoCOE-Mahdi and
+  //   YahooFinance-Quantum-Ready-2030-2026 were each citing a WRONG document
+  //   (a homepage/index page, not the claimed one) with no correct replacement
+  //   obtainable — deprecated per the standing proof-gate rule rather than
+  //   left mis-cited. Same deprecated-row class as every entry above.
+  'document-enrichment': 154,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead
@@ -371,22 +377,25 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   describes, arriving with the same catch-up refresh. Filling
   //   superseded_by (or re-citing the requirement) is what drops these; the
   //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
-  //   2026-08-17: 82 -> 87. All of the movement is more instances of the
-  //   SAME already-tracked "IETF RFC 9763" case: this library row's
-  //   superseded_by (RFC-9763) IS populated, so the one-hop alias above
-  //   should cover it, but does not — for a reason not yet diagnosed, so it
-  //   still reads as the same unscored-gap category as an empty-
-  //   superseded_by row. findAllMaturityCSVs() merges current + archive
-  //   requirement CSVs, and this is the first fresh refresh-index run
-  //   against this data in a while, so it pulled in more archived rows
-  //   citing the same broken alias (8 new seq numbers, 3 old ones dropped
-  //   out, net +5). Confirmed NOT a regression from this branch's actual
-  //   change (inline-JSX prose rejoining, unrelated to governance-maturity
-  //   processing): running this identical check against origin/main's own
-  //   library data — which has the same IETF RFC 9763 deprecation fields —
-  //   produces the same failure for the chunks it has. Real fix is the one
-  //   already named above: find why the one-hop alias misses this specific
-  //   row, or re-cite the requirements against RFC-9763 directly.
+  //   2026-08-16/17: 82 -> 87, hit independently on two branches merging the
+  //   same day (RAG index had not been rebuilt in a while, so the committed
+  //   corpus was stale enough to mask this drift on both). Git blame shows
+  //   this ratchet bumped upward three times before (4.45.0 merge, then 77,
+  //   then 82) as ordinary maintenance whenever unrelated corpus growth
+  //   widens the gap between "unscored" and the pinned ceiling; this is the
+  //   fourth. All of the movement is more instances of the SAME
+  //   already-tracked "IETF RFC 9763" case: this library row's superseded_by
+  //   (RFC-9763) IS populated, so the one-hop alias above should cover it,
+  //   but does not — for a reason not yet diagnosed, so it still reads as
+  //   the same unscored-gap category as an empty-superseded_by row.
+  //   findAllMaturityCSVs() merges current + archive requirement CSVs, and
+  //   this is the first fresh refresh-index run against this data in a
+  //   while, so it pulled in more archived rows citing the same broken alias
+  //   (8 new seq numbers, 3 old ones dropped out, net +5). Confirmed NOT a
+  //   regression from the inline-JSX prose-rejoining change (unrelated to
+  //   governance-maturity processing) — no rows in that source changed.
+  //   Real fix: find why the one-hop alias misses this specific row, or
+  //   re-cite the requirements against RFC-9763 directly.
   'governance-maturity': 87,
 }
 

@@ -175,6 +175,80 @@ export const CRYPTO_MECHANISMS: CryptoMechanismFamily[] = [
     oids: [],
   },
   {
+    // Added 2026-08-16 — Polkadot/Substrate's default account-signing scheme
+    // (sr25519 / Schnorrkel: Schnorr signatures over Ristretto-compressed
+    // Curve25519), also used for BABE consensus. A genuinely distinct
+    // mechanism from EdDSA and ECDSA — not just another curve choice for an
+    // existing family — confirmed by checking Polkadot's own wiki, which
+    // lists sr25519, Ed25519, and ECDSA as three SEPARATE account options.
+    // The same family also covers Bitcoin's BIP-340 Taproot signatures and
+    // FROST (RFC 9591) threshold signatures used in DeFi MPC custody — found
+    // both while researching this addition but scoped out of this session's
+    // rows; flagged for the vocabulary-gaps audit instead of built now.
+    family: 'Schnorr',
+    classical: true,
+    kinds: ['signature'],
+    // sr25519 added to ALGORITHM_REGISTRY alongside this change
+    // (scripts/generate-algorithm-properties.ts,
+    // pqc_complete_algorithm_reference_08162026.csv) — byte sizes verified
+    // against w3f/schnorrkel's own PUBLIC_KEY_LENGTH/SIGNATURE_LENGTH
+    // constants, not assumed.
+    registryMembers: ['sr25519'],
+    // No 'Schnorr' entry in the CycloneDX 1.7 cryptography registry.
+    cycloneDxFamilies: [],
+    // No established OID — Schnorrkel is a Web3 Foundation implementation,
+    // not an IETF/NIST curve registration.
+    oids: [],
+  },
+  {
+    // Added 2026-08-16 — confirmed real via the industry-landscape gap
+    // audit's telecom vocabulary-gap lead, then verified against the actual
+    // ETSI spec text (not just a search summary): ETSI TS 135 216 V17.0.0,
+    // "Specification of the 3GPP Confidentiality and Integrity Algorithms
+    // UEA2 & UIA2; Document 2: SNOW 3G specification". A stream cipher, not
+    // a signature/KEM family — symmetric, like AES/SHA (no
+    // ALGORITHM_REGISTRY member; see SYMMETRIC_EXEMPT in the driftguard).
+    family: 'SNOW3G',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['SNOW3G'],
+    oids: [],
+  },
+  {
+    // Added 2026-08-16 — same audit lead as SNOW3G, the 5G-carried sibling
+    // algorithm. Verified against ETSI TS 135 222 V17.0.0, "Specification
+    // of the 3GPP Confidentiality and Integrity Algorithms EEA3 & EIA3;
+    // Document 2: ZUC specification" (fetched and read, not assumed).
+    family: 'ZUC',
+    classical: true,
+    kinds: ['encryption'],
+    registryMembers: [],
+    cycloneDxFamilies: ['ZUC'],
+    oids: [],
+  },
+  {
+    // Added 2026-08-16 — confirmed real via the industry-landscape gap
+    // audit's payments vocabulary-gap lead. China's national ('ShangMi')
+    // signature algorithm; verified against RFC 8998 (SM2 §3.2.1, TLS 1.3
+    // profile) and RFC 9563 (SM2 for DNSSEC — source of the byte sizes
+    // below), both fetched and read directly, not assumed from a search
+    // summary.
+    family: 'SM2',
+    classical: true,
+    kinds: ['signature'],
+    // Added to ALGORITHM_REGISTRY alongside this change
+    // (scripts/generate-algorithm-properties.ts,
+    // pqc_complete_algorithm_reference_08162026.csv) — 64-byte uncompressed
+    // public key (x||y), 32-byte private key, 64-byte signature (r||s),
+    // verified against RFC 9563 §4.1/§4.2 directly.
+    registryMembers: ['SM2'],
+    cycloneDxFamilies: ['SM2'],
+    // GM/T 0006-2012 (China); confirmed present in the CycloneDX 1.7
+    // registry's own OID field for SM2.
+    oids: ['1.2.156.10197.1.301'],
+  },
+  {
     family: 'ML-KEM',
     classical: false,
     kinds: ['kem'],

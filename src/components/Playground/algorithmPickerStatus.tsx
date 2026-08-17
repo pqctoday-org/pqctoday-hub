@@ -138,6 +138,8 @@ const TIER_ROLE_NOTE: Partial<Record<AlgorithmStatusTier, string>> = {
   regional:
     'A national/regional standard (e.g. BSI, KpqC) — final within that jurisdiction, but not a NIST FIPS.',
   unverified: 'Status not yet fact-checked against an authoritative source.',
+  'non-standardized':
+    'Not on any FIPS/IETF/regional standards track — an actively-maintained implementation, not a certified or draft standard.',
 }
 
 /**
