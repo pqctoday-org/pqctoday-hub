@@ -147,6 +147,66 @@ export interface IndustryUseCase {
    * the driftguard.
    */
   migrateProductRefs: string[]
+  /**
+   * HSM / cryptographic-module CERTIFICATION requirements for this use case
+   * (added 2026-08-16). Distinct from the mechanism columns: those say which
+   * algorithms a use case runs, these say whether the hardware running them
+   * must hold a third-party certification, and under which scheme.
+   *
+   * THREE VALUES, and the difference between them is load-bearing:
+   *   'mandated'  — a regulator/standards body's own text REQUIRES it ("shall")
+   *   'de-facto'  — universal practice with no mandating text found
+   *   'none'      — searched, and no requirement exists
+   *   ''  (empty) — NOT YET ASSESSED. Deliberately distinct from 'none': an
+   *                 unresearched row must never render as a verified negative.
+   *
+   * `certificationLogic` is what stops the single worst misreading here. Every
+   * PCI standard that imposes an HSM requirement (PIN 1-3, Card Production
+   * 7.14.c, 3DS P2-6.1.2, P2PE 4A-1.1) joins FIPS validation and PCI approval
+   * with "or", and the eIDAS implementing acts join CC / EUCC / FIPS the same
+   * way. Rendering fipsCertification='mandated' beside pciCertification=
+   * 'mandated' without 'any-of' would tell a reader they need BOTH
+   * certifications when any one of them satisfies the requirement.
+   */
+  fipsCertification: string
+  /**
+   * Normalised to the CURRENT standard generation. FIPS 140-2 is deprecated —
+   * CMVP moves 140-2 certificates to the Historical List on 2026-09-21, and
+   * NIST states the Historical list "should not be used for procurement
+   * decisions" — so a source that says "FIPS 140-2 Level 3" is stored here as
+   * '140-3 L3'. The level semantics carry over unchanged; only the generation
+   * label moved. The source's literal wording stays visible in the document
+   * linked from `hsmCertificationRefs`, so the normalisation is auditable
+   * rather than hidden.
+   *
+   * 'not-specified' is a real and common value, not a gap: SP 800-53 SC-13
+   * and FedRAMP require FIPS-validated modules while naming NO level at all.
+   * Recording those as L3 would invent a requirement neither document states.
+   */
+  fipsCertificationLevel: string
+  ccCertification: string
+  /** Protection Profile(s), with assurance level where the source states one. */
+  ccProtectionProfile: string
+  /** Certifying scheme: EUCC, NIAP, SOG-IS, BSI, ANSSI … */
+  ccScheme: string
+  pciCertification: string
+  /** Which PCI program, and which version — 'not specified' where the mandate
+   *  is deliberately version-agnostic ("one of the versions of the PCI PTS
+   *  standard"). A row may need more than one program; semicolon-separated. */
+  pciCertificationProgram: string
+  /** National/regional schemes that are neither FIPS, CC, nor PCI — e.g.
+   *  China's OSCCA 商用密码产品认证. Without this, a row governed entirely by a
+   *  non-Western regime would render as three 'none's, implying no
+   *  certification requirement exists when one demonstrably does. */
+  nationalCertification: string
+  nationalCertificationScheme: string
+  /** 'any-of' = the schemes above are ALTERNATIVE routes; 'all-of' = each
+   *  stated requirement applies independently. See the block comment above. */
+  certificationLogic: string
+  /** Library reference_ids proving the certification claims. Same grounding
+   *  discipline as mechanismRefs — a requirement claim with no citation is
+   *  exactly the defect class the 2026-08-13 audit found 12 of. */
+  hsmCertificationRefs: string[]
   mainSource: string
   sourceUrl: string
   trustedSourceId: string
@@ -266,6 +326,17 @@ interface RawLandscapeRow {
   playground_tools: string
   mechanism_refs: string
   migrate_product_refs: string
+  fips_140: string
+  fips_140_level: string
+  common_criteria: string
+  common_criteria_profile: string
+  common_criteria_scheme: string
+  pci_certification: string
+  pci_certification_program: string
+  national_certification: string
+  national_certification_scheme: string
+  hsm_certification_logic: string
+  hsm_certification_refs: string
   main_source: string
   source_url: string
   trusted_source_id: string
@@ -361,6 +432,17 @@ function loadLandscape(): IndustryUseCase[] {
             playgroundTools: splitSemicolon(r.playground_tools),
             mechanismRefs: splitSemicolon(r.mechanism_refs),
             migrateProductRefs: splitSemicolon(r.migrate_product_refs),
+            fipsCertification: (r.fips_140 ?? '').trim(),
+            fipsCertificationLevel: (r.fips_140_level ?? '').trim(),
+            ccCertification: (r.common_criteria ?? '').trim(),
+            ccProtectionProfile: (r.common_criteria_profile ?? '').trim(),
+            ccScheme: (r.common_criteria_scheme ?? '').trim(),
+            pciCertification: (r.pci_certification ?? '').trim(),
+            pciCertificationProgram: (r.pci_certification_program ?? '').trim(),
+            nationalCertification: (r.national_certification ?? '').trim(),
+            nationalCertificationScheme: (r.national_certification_scheme ?? '').trim(),
+            certificationLogic: (r.hsm_certification_logic ?? '').trim(),
+            hsmCertificationRefs: splitSemicolon(r.hsm_certification_refs),
             mainSource: r.main_source,
             sourceUrl: r.source_url,
             trustedSourceId: r.trusted_source_id,
@@ -469,4 +551,72 @@ export function getLandscapeMetadata() {
 /** Distinct industries present in the landscape CSV, alphabetical. */
 export function getLandscapeIndustries(): string[] {
   return Array.from(new Set(loadIndustryLandscape().useCases.map((u) => u.industry))).sort()
+}
+
+/** Strongest-wins ordering for rolling a verdict up to industry level. */
+const CERT_RANK: Record<string, number> = { mandated: 3, 'de-facto': 2, none: 1, '': 0 }
+
+export interface IndustryCertificationSummary {
+  fips: string
+  /** Highest level any row in the industry requires, '' when none do. */
+  fipsLevel: string
+  cc: string
+  pci: string
+  national: string
+  /** Rows carrying at least one assessed certification verdict. */
+  assessed: number
+  total: number
+}
+
+/**
+ * Industry-level certification posture, DERIVED from the industry's use-case
+ * rows rather than stored separately (added 2026-08-16).
+ *
+ * Deriving it is the point. A hand-maintained industry-level column could drift
+ * out of agreement with its own rows — claiming an industry is 'mandated' while
+ * every row under it says 'none' — and nothing would catch it. A rollup cannot
+ * disagree with its inputs.
+ *
+ * Strongest-wins: an industry counts as 'mandated' if ANY of its use cases is,
+ * because the honest headline for a sector where one use case carries a legal
+ * requirement is that the requirement exists — the per-row values then say
+ * exactly where. Rows not yet assessed ('') never contribute, so an unresearched
+ * industry reports '' rather than a misleading 'none'.
+ */
+export function getIndustryCertificationSummary(industry: string): IndustryCertificationSummary {
+  const rows = loadIndustryLandscape().useCases.filter((u) => u.industry === industry)
+  const strongest = (pick: (u: IndustryUseCase) => string) =>
+    rows.reduce((best, u) => {
+      const v = pick(u)
+      return (CERT_RANK[v] ?? 0) > (CERT_RANK[best] ?? 0) ? v : best
+    }, '')
+
+  // Levels are ordered by physical-protection strength, not numerically —
+  // 'not-specified' is deliberately WEAKEST. A mandate that names no level
+  // must never out-rank one that explicitly demands L3.
+  const LEVEL_RANK: Record<string, number> = {
+    '140-3 L4': 5,
+    '140-3 L3': 4,
+    '140-3 L2': 3,
+    '140-3 L1': 2,
+    'not-specified': 1,
+    '': 0,
+  }
+  const fipsLevel = rows.reduce((best, u) => {
+    const v = u.fipsCertificationLevel
+    return (LEVEL_RANK[v] ?? 0) > (LEVEL_RANK[best] ?? 0) ? v : best
+  }, '')
+
+  return {
+    fips: strongest((u) => u.fipsCertification),
+    fipsLevel,
+    cc: strongest((u) => u.ccCertification),
+    pci: strongest((u) => u.pciCertification),
+    national: strongest((u) => u.nationalCertification),
+    assessed: rows.filter(
+      (u) =>
+        u.fipsCertification || u.ccCertification || u.pciCertification || u.nationalCertification
+    ).length,
+    total: rows.length,
+  }
 }

@@ -9934,6 +9934,166 @@
       "sizeBytes": 93440,
       "contentType": "text/html",
       "sha256": "1b06e8300af12b1ac45deaa7b22a8729996dd3a07251788fc245f432f75640e3"
+    },
+    {
+      "refId": "PCI-PIN-v3-1-ROC-Reporting-Template",
+      "title": "PCI PIN Security Requirements v3.1 \u2014 ROC Reporting Template",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
+      "status": "downloaded",
+      "filename": "PCI-PIN-v3-1-ROC-Reporting-Template.pdf",
+      "sizeBytes": 2986027,
+      "contentType": "application/pdf",
+      "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6"
+    },
+    {
+      "refId": "PCI-PTS-HSM-Modular-Security-Requirements-v4-0",
+      "title": "PCI PTS Hardware Security Module (HSM) Modular Security Requirements v4.0",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI_HSM_Security_Requirements_v4.pdf",
+      "status": "downloaded",
+      "filename": "PCI-PTS-HSM-Modular-Security-Requirements-v4-0.pdf",
+      "sizeBytes": 819329,
+      "contentType": "application/pdf",
+      "sha256": "3801c0cd645c5d4f6134ddfa505a72f2fdc4213a56e0ce8f678c880155d03913"
+    },
+    {
+      "refId": "PCI-Card-Production-Logical-Security-v3-0-1",
+      "title": "PCI Card Production and Provisioning \u2014 Logical Security Requirements v3.0.1",
+      "url": "https://www.cardtechcorp.com/wp-content/uploads/2023/07/PCI_CP_Logical_SR_TPs_v3.0.1-EN.pdf",
+      "status": "downloaded",
+      "filename": "PCI-Card-Production-Logical-Security-v3-0-1.pdf",
+      "sizeBytes": 1892938,
+      "contentType": "application/pdf",
+      "sha256": "b911ea2d8451eb4e36b45bfe4f234ebdb105492ed0706c9c74ca88c9ab10d456"
+    },
+    {
+      "refId": "PCI-3DS-Core-v1-0-ROC-Reporting-Template",
+      "title": "PCI 3DS Core Security Standard v1.0 \u2014 ROC Reporting Template",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI-3DS-Core-v1-ROC-Reporting-Template.pdf",
+      "status": "downloaded",
+      "filename": "PCI-3DS-Core-v1-0-ROC-Reporting-Template.pdf",
+      "sizeBytes": 1450150,
+      "contentType": "application/pdf",
+      "sha256": "60da6ba6750bab92b3490c6fa684da2484e0c52faa526b499689304fa5d43e56"
+    },
+    {
+      "refId": "PCI-P2PE-Security-Requirements-v3-1",
+      "title": "PCI Point-to-Point Encryption Security Requirements and Testing Procedures v3.1",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI-P2PE-v3_1-Standard.pdf",
+      "status": "downloaded",
+      "filename": "PCI-P2PE-Security-Requirements-v3-1.pdf",
+      "sizeBytes": 2000479,
+      "contentType": "application/pdf",
+      "sha256": "8ca9ee948b53c395a638bb1205b11470687fc0427d04389b6ea999b5f91a57bf"
+    },
+    {
+      "refId": "SWIFT-CSCF-v2026",
+      "title": "Swift Customer Security Controls Framework (CSCF) v2026",
+      "url": "https://www2.swift.com/knowledgecentre/rest/v1/publications/cscf_dd/70.0/CSCF_v2026_202507015.pdf",
+      "status": "downloaded",
+      "filename": "SWIFT-CSCF-v2026.pdf",
+      "sizeBytes": 4576203,
+      "contentType": "application/pdf",
+      "sha256": "1a04c3a03b71559ad9e6eb89356320dc45083b265b222c844093b6325ae5c55c"
+    },
+    {
+      "refId": "SWIFT-Qualified-Certificates-Certificate-Policy",
+      "title": "SWIFT Qualified Certificates \u2014 Certificate Policy",
+      "url": "https://www.swift.com/sites/default/files/documents/swift_qualified_certificates_certificate_policy_may_2013.pdf",
+      "status": "downloaded",
+      "filename": "SWIFT-Qualified-Certificates-Certificate-Policy.pdf",
+      "sizeBytes": 232223,
+      "contentType": "application/pdf",
+      "sha256": "c5859b9a1c6b98174274b0d0d26610217d8a6a3f8ca389abfe6d695319f96404"
+    },
+    {
+      "refId": "CNSSP-11-IA-Product-Acquisition-Policy",
+      "title": "CNSS Policy No. 11 \u2014 National Policy Governing the Acquisition of IA and IA-Enabled IT Products",
+      "url": "https://www.cnss.gov/CNSS/issuances/Policies.cfm",
+      "status": "downloaded",
+      "filename": "CNSSP-11-IA-Product-Acquisition-Policy.pdf",
+      "sizeBytes": 451415,
+      "contentType": "application/pdf",
+      "sha256": "ff0ae01bdba7c07299e5e2c62ea8d7b831b33848dd015b1f4b4b99aac5d5e7e9"
+    },
+    {
+      "refId": "DoD-Cloud-Service-Provider-SRG-V1R7",
+      "title": "DoD Cloud Service Provider (CSP) Security Requirements Guide V1R7",
+      "url": "https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Cloud_Computing_Y26M06_SRG.zip",
+      "status": "downloaded",
+      "filename": "DoD-Cloud-Service-Provider-SRG-V1R7.pdf",
+      "sizeBytes": 2658771,
+      "contentType": "application/pdf",
+      "sha256": "fcb472f563283f293e224fcf72987584deb6019482a264a6536c2d5c1a5df51f"
+    },
+    {
+      "refId": "UnionPay-UPCA-GZ-12-01-Terminal-Security-Certification-Rules-v4-2",
+      "title": "China UnionPay Payment Terminal Device Security Certification Implementation Rules (UPCA-GZ-12-01 V4.2)",
+      "url": "https://img.mpaypass.com.cn/202504/files/20250416150509706299.pdf",
+      "status": "downloaded",
+      "filename": "UnionPay-UPCA-GZ-12-01-Terminal-Security-Certification-Rules-v4-2.pdf",
+      "sizeBytes": 253257,
+      "contentType": "application/pdf",
+      "sha256": "40d844f37fc0a691048cc3881d256f919e37310dc559dadf33c4b5cf86ad811f"
+    },
+    {
+      "refId": "CIR-EU-2025-1943-Qualified-Certificates-Reference-Standards",
+      "title": "Commission Implementing Regulation (EU) 2025/1943 \u2014 reference standards for qualified certificates",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2025/1943/oj",
+      "status": "downloaded",
+      "filename": "CIR-EU-2025-1943-Qualified-Certificates-Reference-Standards.txt",
+      "sizeBytes": 39703,
+      "contentType": "text/plain",
+      "sha256": "bf330ef335df9db4ba8491297a509ad96c53889c48f98852a9e04b899c72489f"
+    },
+    {
+      "refId": "CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps",
+      "title": "Commission Implementing Regulation (EU) 2025/1929 \u2014 qualified electronic time stamps",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2025/1929/oj",
+      "status": "downloaded",
+      "filename": "CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps.txt",
+      "sizeBytes": 25062,
+      "contentType": "text/plain",
+      "sha256": "1d2ed1ba895e6a1fa3b60c910356a2efb871eabfd57b3cb7de909d65773ce2c8"
+    },
+    {
+      "refId": "CIR-EU-2024-2981-EU-Digital-Identity-Wallet-Certification",
+      "title": "Commission Implementing Regulation (EU) 2024/2981 \u2014 certification of European Digital Identity Wallets",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2024/2981/oj",
+      "status": "downloaded",
+      "filename": "CIR-EU-2024-2981-EU-Digital-Identity-Wallet-Certification.txt",
+      "sizeBytes": 135322,
+      "contentType": "text/plain",
+      "sha256": "6b7d8853a06cb308f4105b14aa9eae2247b96c46d908ff3e7e7ae66b8ab08647"
+    },
+    {
+      "refId": "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme",
+      "title": "Commission Implementing Regulation (EU) 2024/482 \u2014 the EUCC cybersecurity certification scheme",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R0482",
+      "status": "downloaded",
+      "filename": "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme.txt",
+      "sizeBytes": 125404,
+      "contentType": "text/plain",
+      "sha256": "d489c287a499870bf318e20072b06f75f06ac26975ba6dbd6dcbd186f836c879"
+    },
+    {
+      "refId": "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
+      "title": "NIST CMVP \u2014 FIPS 140-2 to FIPS 140-3 transition timeline",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
+      "status": "downloaded",
+      "filename": "NIST-CMVP-140-2-to-140-3-Transition-Timeline.html",
+      "sizeBytes": 66051,
+      "contentType": "text/html",
+      "sha256": "a3fc6d769b48e4955217a7ded079c58232d6a59631c1c263a4fde5c677d79e79"
+    },
+    {
+      "refId": "China-Cryptography-Law-2019-NPC",
+      "title": "Cryptography Law of the People\u2019s Republic of China (\u4e2d\u534e\u4eba\u6c11\u5171\u548c\u56fd\u5bc6\u7801\u6cd5)",
+      "url": "http://www.npc.gov.cn/npc/c1773/c1848/c21114/c36794/c36798/201910/t20191028_301735.html",
+      "status": "downloaded",
+      "filename": "China-Cryptography-Law-2019-NPC.txt",
+      "sizeBytes": 15365,
+      "contentType": "text/plain",
+      "sha256": "0ae4bac22a8e17ebe3db18bc1b41a0cface83434a12d5cd49e8924f1e4c65289"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"

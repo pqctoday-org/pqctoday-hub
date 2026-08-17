@@ -16,6 +16,7 @@ import { describe, expect, it } from 'vitest'
 import {
   loadIndustryLandscape,
   getLandscapeIndustries,
+  getIndustryCertificationSummary,
   EVIDENCE_TYPES,
   PQC_CLAIM_BASES,
 } from './industryLandscapeData'
@@ -451,6 +452,126 @@ describe('industry-landscape driftguards', () => {
           active,
           `${uc.useCaseId}: migrate_product_ref "${ref}" is not an active migrate-catalog row`
         ).toContain(ref)
+      }
+    }
+  })
+
+  it('HSM certification verdicts use the closed vocabulary', () => {
+    // '' is VALID and means "not yet assessed" — deliberately distinct from
+    // 'none' ("assessed, no requirement exists"). Collapsing the two would let
+    // an unresearched row render as a verified negative, which is the exact
+    // overclaim shape this whole column set exists to avoid.
+    const VERDICTS = new Set(['mandated', 'de-facto', 'none', ''])
+    for (const uc of useCases) {
+      for (const [field, v] of [
+        ['fips_140', uc.fipsCertification],
+        ['common_criteria', uc.ccCertification],
+        ['pci_certification', uc.pciCertification],
+        ['national_certification', uc.nationalCertification],
+      ] as const) {
+        expect(VERDICTS, `${uc.useCaseId}: ${field} = "${v}"`).toContain(v)
+      }
+    }
+  })
+
+  it('fips_140_level uses the closed vocabulary and is 140-3 only', () => {
+    // FIPS 140-2 is deprecated — CMVP moves 140-2 certificates to the
+    // Historical List on 2026-09-21 and NIST says that list "should not be
+    // used for procurement decisions". Sources that still say "140-2 Level 3"
+    // (PCI PIN v3.1, SWIFT CP, DoD CSP SRG) are normalised to the current
+    // generation here; their literal wording stays in the cited document.
+    // A stray '140-2 ...' value would mean that normalisation was skipped.
+    const LEVELS = new Set(['140-3 L1', '140-3 L2', '140-3 L3', '140-3 L4', 'not-specified', ''])
+    for (const uc of useCases) {
+      expect(
+        LEVELS,
+        `${uc.useCaseId}: fips_140_level = "${uc.fipsCertificationLevel}" — store the ` +
+          `current-generation equivalent (140-3 Lx) or 'not-specified', never a 140-2 value`
+      ).toContain(uc.fipsCertificationLevel)
+    }
+  })
+
+  it('a FIPS level is present exactly when FIPS is required, and absent when it is not', () => {
+    for (const uc of useCases) {
+      const claimed = uc.fipsCertification === 'mandated' || uc.fipsCertification === 'de-facto'
+      if (claimed) {
+        expect(
+          uc.fipsCertificationLevel,
+          `${uc.useCaseId} claims FIPS "${uc.fipsCertification}" but names no level — use ` +
+            `'not-specified' when the mandate genuinely names none (e.g. SP 800-53 SC-13)`
+        ).not.toBe('')
+      } else {
+        expect(
+          uc.fipsCertificationLevel,
+          `${uc.useCaseId}: fips_140 is "${uc.fipsCertification}" so no level may be recorded`
+        ).toBe('')
+      }
+    }
+  })
+
+  it('any-of logic is only claimed where there is more than one route to satisfy', () => {
+    // 'any-of' renders as "or" between the badges. Claiming it with a single
+    // required scheme would render an alternation with nothing to alternate.
+    for (const uc of useCases) {
+      if (uc.certificationLogic !== 'any-of') continue
+      const required = [
+        uc.fipsCertification,
+        uc.ccCertification,
+        uc.pciCertification,
+        uc.nationalCertification,
+      ].filter((v) => v === 'mandated' || v === 'de-facto')
+      expect(
+        required.length,
+        `${uc.useCaseId}: hsm_certification_logic='any-of' needs >= 2 required schemes`
+      ).toBeGreaterThanOrEqual(2)
+    }
+    const LOGIC = new Set(['any-of', 'all-of', ''])
+    for (const uc of useCases) {
+      expect(LOGIC, `${uc.useCaseId}: hsm_certification_logic`).toContain(uc.certificationLogic)
+    }
+  })
+
+  it('every row asserting a certification requirement cites proof for it', () => {
+    // Same grounding discipline as mechanism_refs. A regulatory-requirement
+    // claim with no citation is unfalsifiable by a reader, which is precisely
+    // the defect class the 2026-08-13 audit found 12 instances of.
+    const known = new Set(libraryData.map((r) => r.referenceId))
+    for (const uc of useCases) {
+      const asserts = [
+        uc.fipsCertification,
+        uc.ccCertification,
+        uc.pciCertification,
+        uc.nationalCertification,
+      ].some((v) => v === 'mandated' || v === 'de-facto')
+      if (!asserts) continue
+      expect(
+        uc.hsmCertificationRefs.length,
+        `${uc.useCaseId} asserts a certification requirement but cites no evidence`
+      ).toBeGreaterThan(0)
+      for (const ref of uc.hsmCertificationRefs) {
+        expect(
+          known,
+          `${uc.useCaseId}: hsm_certification_ref "${ref}" is not a library row`
+        ).toContain(ref)
+      }
+    }
+  })
+
+  it('the industry rollup never contradicts the rows it is derived from', () => {
+    const RANK: Record<string, number> = { mandated: 3, 'de-facto': 2, none: 1, '': 0 }
+    for (const industry of new Set(useCases.map((u) => u.industry))) {
+      const summary = getIndustryCertificationSummary(industry)
+      const rows = useCases.filter((u) => u.industry === industry)
+      for (const [label, roll, pick] of [
+        ['fips', summary.fips, (u: (typeof rows)[number]) => u.fipsCertification],
+        ['cc', summary.cc, (u: (typeof rows)[number]) => u.ccCertification],
+        ['pci', summary.pci, (u: (typeof rows)[number]) => u.pciCertification],
+        ['national', summary.national, (u: (typeof rows)[number]) => u.nationalCertification],
+      ] as const) {
+        const best = rows.reduce((m, u) => Math.max(m, RANK[pick(u)] ?? 0), 0)
+        expect(RANK[roll] ?? 0, `${industry}: ${label} rollup "${roll}" != strongest row`).toBe(
+          best
+        )
       }
     }
   })
