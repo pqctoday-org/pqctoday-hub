@@ -321,7 +321,13 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   run in a while — the committed corpus was 605 records stale, so this
   //   refresh pulled in maturity/library data merged since the last one. Same
   //   deprecated-row class as the entries above, not a routing change.
-  'document-enrichment': 151,
+  //   2026-08-16: 151 -> 154. A library-wide capture-integrity audit found
+  //   ENISA-EUDI-Wallet-Security, Gartner-CryptoCOE-Mahdi and
+  //   YahooFinance-Quantum-Ready-2030-2026 were each citing a WRONG document
+  //   (a homepage/index page, not the claimed one) with no correct replacement
+  //   obtainable — deprecated per the standing proof-gate rule rather than
+  //   left mis-cited. Same deprecated-row class as every entry above.
+  'document-enrichment': 154,
   // 2026-07-16: threats accuracy audit (THREATS-PROCESS-AUDIT-07162026.md)
   // deprecated 38 of 113 active rows whose cached evidence document was
   // UNSUPPORTED (wrong/generic document) or UNREADABLE (CAPTCHA page, dead

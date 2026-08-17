@@ -3,12 +3,12 @@
     {
       "refId": "KpqC-Competition-Results",
       "title": "Korean Post-Quantum Cryptography Competition Final Results",
-      "url": "https://www.kpqc.or.kr/competition.html",
+      "url": "https://kpqc.or.kr/contents/03_exhibit/board.html?board_id=board_competition&mode=view&no=9&cate=",
       "status": "downloaded",
       "filename": "KpqC-Competition-Results.html",
-      "sizeBytes": 24069,
+      "sizeBytes": 13177,
       "contentType": "text/html",
-      "sha256": "ece477352c6a22a33f343e5b79b6095ef2f9745db76858c43aa7a7fee1171216"
+      "sha256": "eccf16e385bfc07258d116cce12744fd6001ea30dc6ef3aeed20c21f445dde6e"
     },
     {
       "refId": "NIST-FIPS140-3-IG-PQC",
@@ -2713,12 +2713,12 @@
     {
       "refId": "IETF RFC 9700",
       "title": "Updates to the Extensible Authentication Protocol for PQC",
-      "url": "https://www.rfc-editor.org/rfc/rfc9700",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-emu-pqc-eap-tls-00.txt",
       "status": "downloaded",
-      "filename": "IETF_RFC_9700.html",
-      "sizeBytes": 1042761,
-      "contentType": "text/html",
-      "sha256": "c8c34ddfb82c249ef9cacde956ef019839eed222a8f79798fa49883f1a85b27c"
+      "filename": "IETF_RFC_9700.txt",
+      "sizeBytes": 24761,
+      "contentType": "text/plain",
+      "sha256": "43f20d90e93ec38aa1451b49d2ba34a8576ed923cd7d84ac1d9ca0f5a06fc6d8"
     },
     {
       "refId": "draft-sfluhrer-ipsecme-ikev2-mldsa",
@@ -4463,12 +4463,12 @@
     {
       "refId": "US-TREASURY-FSRMP-2025",
       "title": "US Treasury Financial Services Sector Risk Management Plan (January 2025)",
-      "url": "https://home.treasury.gov/",
+      "url": "https://home.treasury.gov/system/files/216/Financial-Services-Sector-Risk-Management-Plan.pdf",
       "status": "downloaded",
-      "filename": "US-TREASURY-FSRMP-2025.html",
-      "sizeBytes": 185556,
-      "contentType": "text/html",
-      "sha256": "714e00078de3ef0c832e7b542da04a6e365749c2f7e2cfe9cad49b2f0638a4e2"
+      "filename": "US-TREASURY-FSRMP-2025.pdf",
+      "sizeBytes": 3088964,
+      "contentType": "application/pdf",
+      "sha256": "844a3f790d6de7286244bb78ca8e0be638e7e0dce92b7f40c369ee7494449a4d"
     },
     {
       "refId": "CMMC-2.0-MODEL",
@@ -4726,9 +4726,9 @@
       "url": "https://blogs.cisco.com/security/from-strategy-to-architecture-building-a-quantum-safe-future",
       "status": "downloaded",
       "filename": "Cisco-Quantum-Safe-Architecture-2026.html",
-      "sizeBytes": 81443,
+      "sizeBytes": 80382,
       "contentType": "text/html",
-      "sha256": "b13b4e3cdcc128ccd4dfadd5b1b50908221246e7add32b679abb2a0741cc4ce4"
+      "sha256": "38a413bba62701a809b5b083c6b3ac616cb6a90de95964a7f7d242b53981137b"
     },
     {
       "refId": "PQShield-4-Quantum-Threats-Enterprises-2026",
@@ -5213,12 +5213,12 @@
     {
       "refId": "IEEE 1363",
       "title": "IEEE 1363-2000 \u2014 Standard Specifications for Public-Key Cryptography",
-      "url": "https://standards.ieee.org/ieee/1363/1024/",
+      "url": "https://standards.ieee.org/ieee/1363/2049/",
       "status": "downloaded",
       "filename": "IEEE_1363.html",
-      "sizeBytes": 356785,
+      "sizeBytes": 110529,
       "contentType": "text/html",
-      "sha256": "4b25dae179b17ca61119923837bba03b1f7d41af03b31768742b5f5fe8f075b7"
+      "sha256": "c524aaa78948189c9aa57be6c65c213f88bf8489522d31441de5bf0bda38bb55"
     },
     {
       "refId": "IEEE 1363a",
@@ -6333,12 +6333,12 @@
     {
       "refId": "China CACR PQC Competition Results",
       "title": "Chinese Post-Quantum Cryptography Competition Winners",
-      "url": "https://www.cacrnet.org.cn/",
+      "url": "https://www.cacrnet.org.cn/site/content/854.html",
       "status": "downloaded",
       "filename": "China-CACR-PQC-Competition-Results.html",
-      "sizeBytes": 68842,
+      "sizeBytes": 29918,
       "contentType": "text/html",
-      "sha256": "a899a479d1d07f194780f9139f208c71b4717742f7ee9ae9e61488afa34ec81a"
+      "sha256": "b0c51d864a73d0a7886d86a8635d0832b829aafbcc0c6173fa0e48c023ba1948"
     },
     {
       "refId": "ISO-IEC-23837-1",
@@ -6803,12 +6803,12 @@
     {
       "refId": "WebPKI PQC Timeline",
       "title": "Web PKI Post-Quantum Cryptography Adoption Timeline",
-      "url": "https://github.com/WICG/webpackage",
+      "url": "https://security.googleblog.com/2026/02/cultivating-robust-and-efficient.html",
       "status": "downloaded",
       "filename": "WebPKI_PQC_Timeline.html",
-      "sizeBytes": 348555,
+      "sizeBytes": 258525,
       "contentType": "text/html",
-      "sha256": "57335c54f001b38cfe5117cc124facb47f9d18db897122e3fb1c8e757876caf1"
+      "sha256": "186fa0769db2c5660ea54ac583e8699d967aefabeb21317bf257bcb263c84211"
     },
     {
       "refId": "ITU-T X.1819",
@@ -7253,12 +7253,12 @@
     {
       "refId": "RFC 9581",
       "title": "Persistent Symmetric Keys in OpenPGP",
-      "url": "https://datatracker.ietf.org/doc/html/rfc9581",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-openpgp-persistent-symmetric-keys-03.txt",
       "status": "downloaded",
-      "filename": "RFC_9581.html",
-      "sizeBytes": 169948,
-      "contentType": "text/html",
-      "sha256": "556fa4453d1a3ea992aa74492cc626b0d381bad5d57c1436212e5c31cf19c911"
+      "filename": "RFC_9581.txt",
+      "sizeBytes": 23139,
+      "contentType": "text/plain",
+      "sha256": "51f87b6939f209f804ca1c61d1067f64c4f768958b9bdc7d071ee89a6db69c28"
     },
     {
       "refId": "draft-ietf-openpgp-nist-bp-comp-03",
@@ -7533,12 +7533,12 @@
     {
       "refId": "Citi-GPS-Quantum-Threat-2026",
       "title": "Quantum Threat: The Trillion-Dollar Security Race Is On",
-      "url": "https://www.citigroup.com/global/insights/citigps",
+      "url": "https://www.citigroup.com/rcs/citigpa/storage/public/Citi_Institute_Quantum_Threat.pdf",
       "status": "downloaded",
-      "filename": "Citi-GPS-Quantum-Threat-2026.html",
-      "sizeBytes": 1027949,
-      "contentType": "text/html",
-      "sha256": "595965d4dd47e96881d79dc867458413ee934738b60e6006a8f2d78dfcaef88c"
+      "filename": "Citi-GPS-Quantum-Threat-2026.pdf",
+      "sizeBytes": 1104852,
+      "contentType": "application/pdf",
+      "sha256": "0176a7b58b46afb20f99518ff70087d734254a642ffba7c35be108f13d7bfdc2"
     },
     {
       "refId": "CISA-Quantum-Readiness-Roadmap",
@@ -9608,12 +9608,12 @@
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
       "title": "FDA \u2014 Cybersecurity in Medical Devices: Premarket Guidance 2023",
-      "url": "https://www.federalregister.gov/documents/2023/09/27/2023-20915/cybersecurity-in-medical-devices-quality-system-considerations-and-content-of-premarket",
+      "url": "https://www.fda.gov/media/119933/download",
       "status": "downloaded",
-      "filename": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023.html",
-      "sizeBytes": 58473,
-      "contentType": "text/html",
-      "sha256": "98f4a38ea139577653e3b545c55ebc29b58cfe7def8669dbe1a4f0a2f69c46e8"
+      "filename": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023.pdf",
+      "sizeBytes": 1195625,
+      "contentType": "application/pdf",
+      "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54"
     },
     {
       "refId": "EPA-Cybersecurity-for-the-Water-Sector",
@@ -9628,12 +9628,12 @@
     {
       "refId": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow",
       "title": "University of Toronto \u2014 Researcher Leads Effort to Protect Power Grids from Quantum Computer Hacks",
-      "url": "https://web.archive.org/web/2026/https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-grids-quantum-computer-hacks",
+      "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
       "status": "downloaded",
       "filename": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow.html",
-      "sizeBytes": 146057,
+      "sizeBytes": 141572,
       "contentType": "text/html",
-      "sha256": "bae7c561cff3e6bcee7766040218be1588fea73fc4e1355848c77e42805a6994"
+      "sha256": "ae9c23f401e22dc434943af47aad571e53d35e677e7cb7f853f066af433c160c"
     },
     {
       "refId": "Solana-Docs-Transactions",
