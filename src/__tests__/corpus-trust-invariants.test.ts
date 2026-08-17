@@ -371,7 +371,23 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   describes, arriving with the same catch-up refresh. Filling
   //   superseded_by (or re-citing the requirement) is what drops these; the
   //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
-  'governance-maturity': 82,
+  //   2026-08-17: 82 -> 87. All of the movement is more instances of the
+  //   SAME already-tracked "IETF RFC 9763" case: this library row's
+  //   superseded_by (RFC-9763) IS populated, so the one-hop alias above
+  //   should cover it, but does not — for a reason not yet diagnosed, so it
+  //   still reads as the same unscored-gap category as an empty-
+  //   superseded_by row. findAllMaturityCSVs() merges current + archive
+  //   requirement CSVs, and this is the first fresh refresh-index run
+  //   against this data in a while, so it pulled in more archived rows
+  //   citing the same broken alias (8 new seq numbers, 3 old ones dropped
+  //   out, net +5). Confirmed NOT a regression from this branch's actual
+  //   change (inline-JSX prose rejoining, unrelated to governance-maturity
+  //   processing): running this identical check against origin/main's own
+  //   library data — which has the same IETF RFC 9763 deprecation fields —
+  //   produces the same failure for the chunks it has. Real fix is the one
+  //   already named above: find why the one-hop alias misses this specific
+  //   row, or re-cite the requirements against RFC-9763 directly.
+  'governance-maturity': 87,
 }
 
 /**
