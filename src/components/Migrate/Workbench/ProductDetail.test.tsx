@@ -61,6 +61,39 @@ describe('ProductDetail', () => {
     expect(proof).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
+  describe('Product Brief / User Manual links', () => {
+    it('renders both links when both URLs are present', () => {
+      render(
+        <ProductDetail
+          product={makeItem({
+            productBriefUrl: 'https://example.com/brief.pdf',
+            userManualUrl: 'https://example.com/manual.pdf',
+          })}
+        />
+      )
+      const brief = screen.getByRole('link', { name: /Product Brief/i })
+      expect(brief).toHaveAttribute('href', 'https://example.com/brief.pdf')
+      expect(brief).toHaveAttribute('rel', 'noopener noreferrer')
+      const manual = screen.getByRole('link', { name: /User Manual/i })
+      expect(manual).toHaveAttribute('href', 'https://example.com/manual.pdf')
+      expect(manual).toHaveAttribute('rel', 'noopener noreferrer')
+    })
+
+    it('renders only the brief link when no user manual URL exists', () => {
+      render(
+        <ProductDetail product={makeItem({ productBriefUrl: 'https://example.com/brief.pdf' })} />
+      )
+      expect(screen.getByRole('link', { name: /Product Brief/i })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /User Manual/i })).not.toBeInTheDocument()
+    })
+
+    it('renders neither link when both URLs are absent', () => {
+      render(<ProductDetail product={makeItem({})} />)
+      expect(screen.queryByRole('link', { name: /Product Brief/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /User Manual/i })).not.toBeInTheDocument()
+    })
+  })
+
   it('renders the vendor PQC roadmap when the vendor has one', () => {
     // pick a real vendor id that has roadmap data
     const [vendorId, roadmap] = roadmapByVendorId.entries().next().value as [

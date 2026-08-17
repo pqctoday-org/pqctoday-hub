@@ -7,7 +7,7 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { ExternalLink, FileText, BookOpen } from 'lucide-react'
+import { ExternalLink, FileText, BookOpen, Newspaper, BookText } from 'lucide-react'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { getCertsForProduct } from '@/data/certificationXrefData'
 import { cpeByProduct } from '@/data/cpeXrefData'
@@ -219,6 +219,26 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
           >
             <FileText size={12} aria-hidden /> Validation proof
             {product.proofPublicationDate ? ` (${product.proofPublicationDate})` : ''}
+          </a>
+        )}
+        {product.productBriefUrl && (
+          <a
+            href={product.productBriefUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-primary hover:underline"
+          >
+            <Newspaper size={12} aria-hidden /> Product Brief
+          </a>
+        )}
+        {product.userManualUrl && (
+          <a
+            href={product.userManualUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-primary hover:underline"
+          >
+            <BookText size={12} aria-hidden /> User Manual
           </a>
         )}
       </div>

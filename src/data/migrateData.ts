@@ -32,6 +32,8 @@ interface RawSoftwareItem {
   authoritative_source: string
   repository_url: string
   product_brief: string
+  product_brief_url?: string
+  user_manual_url?: string
   source_type: string
   verification_status: string
   last_verified_date: string
@@ -169,6 +171,8 @@ const {
       authoritativeSource: row.authoritative_source,
       repositoryUrl: row.repository_url,
       productBrief: row.product_brief,
+      productBriefUrl: row.product_brief_url?.trim() || undefined,
+      userManualUrl: row.user_manual_url?.trim() || undefined,
       sourceType: row.source_type,
       verificationStatus: deriveVerificationStatus(
         row.verification_status,
