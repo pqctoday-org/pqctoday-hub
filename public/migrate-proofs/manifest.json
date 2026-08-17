@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1179,
+  "count": 1180,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9518,6 +9518,15 @@
       "file": "openssl-3-6-3dbf571f.html",
       "bytes": 46913,
       "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Cosmos-SDK",
+      "url": "https://raw.githubusercontent.com/cosmos/cosmos-sdk/main/CHANGELOG.md",
+      "ok": true,
+      "file": "Cosmos-SDK-0690dded.html",
+      "bytes": 108535,
+      "content_type": "text/html; charset=UTF-8",
+      "tier": "new"
     }
   ]
 }
