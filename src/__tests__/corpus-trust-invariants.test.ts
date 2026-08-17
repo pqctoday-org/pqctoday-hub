@@ -392,22 +392,26 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   describes, arriving with the same catch-up refresh. Filling
   //   superseded_by (or re-citing the requirement) is what drops these; the
   //   pin moves to the measured value meanwhile so the ratchet keeps its teeth.
-  //   2026-08-16/17: 82 -> 87, hit independently on three branches merging
-  //   the same day (RAG index had not been rebuilt in a while, so the
-  //   committed corpus was stale enough to mask this drift on all of them).
-  //   Git blame shows this ratchet bumped upward three times before (4.45.0
+  //   2026-08-16/17: 82 -> 87, hit independently on all three data branches
+  //   merging that day (RAG index had not been rebuilt in a while, so each
+  //   branch's committed corpus was stale enough to mask this drift). Git
+  //   blame shows this ratchet bumped upward three times before (4.45.0
   //   merge, then 77, then 82) as ordinary maintenance whenever unrelated
   //   corpus growth widens the gap between "unscored" and the pinned
-  //   ceiling; this is the fourth. Verified directly: the failing ids cite
-  //   library ref_id "IETF RFC 9763", which shows status=deprecated,
-  //   superseded_by="RFC-9763" (revision consolidation, 2026-06-06) — same
-  //   deprecated-row-with-successor class as the 2026-08-09 entry above,
-  //   just not yet covered by that aliasing pass for this specific ref_id.
-  //   Confirmed NOT caused by the migrate-catalog spotcheck batches (39-64)
-  //   or the inline-JSX prose-rejoining change in the other two branches —
-  //   no governance-maturity rows changed in any of them. Resolve by
-  //   extending the same trustScoreData.ts supersession alias, or by
-  //   re-citing the governance-maturity rows against "RFC-9763" directly.
+  //   ceiling; this is the fourth. All of the movement is more instances of
+  //   the SAME already-tracked "IETF RFC 9763" case: this library row's
+  //   superseded_by (RFC-9763) IS populated, so the one-hop alias above
+  //   should cover it, but does not — for a reason not yet diagnosed, so it
+  //   still reads as the same unscored-gap category as an empty-
+  //   superseded_by row. findAllMaturityCSVs() merges current + archive
+  //   requirement CSVs, and this is the first fresh refresh-index run
+  //   against this data in a while, so it pulled in more archived rows
+  //   citing the same broken alias. Confirmed NOT caused by any of the
+  //   three branches' own changes (crypto-blockchain content, inline-JSX
+  //   prose rejoining, migrate-catalog spotcheck batches) — no
+  //   governance-maturity rows changed in any of them. Real fix: find why
+  //   the one-hop alias misses this specific row, or re-cite the
+  //   requirements against RFC-9763 directly.
   'governance-maturity': 87,
 }
 
