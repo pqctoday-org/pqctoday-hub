@@ -399,6 +399,24 @@ describe('op-template pipeline (real wasm engine)', () => {
     certifyByUidAndAssertStructure('ML-DSA-65', 'ML-DSA-65', ML_DSA_65_OID_STR, ML_DSA_65_OID_STR)
   })
 
+  /**
+   * Trim/pad a random magnitude to a canonical DER INTEGER content per
+   * X.690 §8.3.2 (fewest octets; a leading 0x00 only when the top bit of
+   * the first content byte would otherwise read the value as negative).
+   * Local to this test deliberately — mirrors, but does not import,
+   * certBuilder.ts's own `canonicalPositiveInteger()` (see this file's
+   * header: WP6-c avoids depending on certBuilder.ts's builders so the
+   * two implementations stay genuinely independent).
+   */
+  function canonicalPositiveInteger(bytes: Uint8Array): Uint8Array {
+    let i = 0
+    while (i < bytes.length - 1 && bytes[i] === 0) i++
+    const needsPad = (bytes[i] & 0x80) !== 0
+    const out = new Uint8Array((needsPad ? 1 : 0) + (bytes.length - i))
+    out.set(bytes.subarray(i), needsPad ? 1 : 0)
+    return out
+  }
+
   it('WP6-c: an independently-built, externally-signed cert Validates — cross-engine, no shared code with this Rust engine', async () => {
     // The strongest check in the cert-ops plan: two independent crypto
     // stacks agreeing, not just one agreeing with itself. Signed by
@@ -458,7 +476,8 @@ describe('op-template pipeline (real wasm engine)', () => {
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     const tbs = new TBSCertificate({
       version: Version.v3,
-      serialNumber: new Uint8Array(crypto.randomBytes(8)).buffer as ArrayBuffer,
+      serialNumber: canonicalPositiveInteger(new Uint8Array(crypto.randomBytes(8)))
+        .buffer as ArrayBuffer,
       signature: sigAlgId,
       issuer: name,
       validity: new Validity({ notBefore, notAfter }),
