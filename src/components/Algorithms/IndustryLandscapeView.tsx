@@ -739,35 +739,128 @@ function IndustryCrossRefs({
 }
 
 /**
- * Tile order (2026-08-17): estimated cybersecurity-opportunity ranking from
+ * Estimated cybersecurity-opportunity $ range, from
  * pqctoday-priv/maintenance/INDUSTRY-CYBER-OPPORTUNITY-RANKING-REPORT-08172026.md
  * — baseline market size x a compound cyber-spend-%-of-revenue ratio (mostly
- * ENISA NIS Investments 2025 sector data; Retail from RH-ISAC/IANS; Education
- * from CoSN + MS-ISAC, the least rigorous row in the report, flagged there as
- * such). Deliberately NOT shown to the reader as a labeled "opportunity"
- * sort — the report mixes official and lower-rigor sources and is a private
- * research artifact, not a data source held to this app's official-only bar,
- * so this is presentation ordering only, not a claim rendered anywhere in
- * the UI. The 7 industries with no ranking (4 "insufficient signal" in the
- * report, 3 fully exempt from market-size entirely — Cross-Industry, HSM,
- * IoT) sort alphabetically after the ranked 15, never interspersed.
+ * ENISA NIS Investments 2025 sector data; see basis/confidence per row).
+ * NOT an official-statistics figure like MarketSizeBadge's number — mixes
+ * official (ENISA) and lower-rigor semi-official sources (CoSN, MS-ISAC),
+ * self-computed compounds, and is a private research artifact never held to
+ * this app's official-only sourcing bar. Shown here, clearly labeled as an
+ * estimate with its confidence tier, rather than presented as equivalent to
+ * the market-size figure it sits next to. The 4 industries the report
+ * flagged "insufficient signal" (Crypto, Media, Payment Card, Insurance) and
+ * the 3 fully exempt from market-size (Cross-Industry, HSM, IoT) have no
+ * entry — omit the badge for those rather than guess a number.
  */
-const CYBER_OPPORTUNITY_RANK: Record<string, number> = {
-  'Healthcare / Pharmaceutical': 1,
-  'Financial Services / Banking': 2,
-  'Government / Defense': 3,
-  'Retail / E-Commerce': 4,
-  'Cloud Computing / Data Centers': 5,
-  'IT Industry / Software': 6,
-  'Critical Infrastructure / Energy': 7,
-  Telecommunications: 8,
-  'Education / Research': 9,
-  'Legal / Notary / eSignature': 10,
-  'Supply Chain / Logistics': 11,
-  'Water / Wastewater': 12,
-  'Automotive / Connected Vehicles': 13,
-  'Aerospace / Aviation': 14,
-  'Rail / Transit': 15,
+const CYBER_OPPORTUNITY: Record<
+  string,
+  { lo: number; hi: number; confidence: 'High' | 'Moderate' | 'Low'; basis: string }
+> = {
+  'Healthcare / Pharmaceutical': {
+    lo: 23.85e9,
+    hi: 27.01e9,
+    confidence: 'Moderate',
+    basis: 'ENISA Health sector (parent-level) x US CMS NHE baseline',
+  },
+  'Financial Services / Banking': {
+    lo: 14.0e9,
+    hi: 14.46e9,
+    confidence: 'High',
+    basis: 'ENISA Banking sector',
+  },
+  'Government / Defense': {
+    lo: 10.56e9,
+    hi: 11.43e9,
+    confidence: 'Moderate',
+    basis: 'ENISA Public Administration sector',
+  },
+  'Retail / E-Commerce': {
+    lo: 7.03e9,
+    hi: 9.25e9,
+    confidence: 'Moderate',
+    basis: 'RH-ISAC/IANS CISO Benchmark 2026, direct %-of-revenue',
+  },
+  'Cloud Computing / Data Centers': {
+    lo: 6.27e9,
+    hi: 6.97e9,
+    confidence: 'High',
+    basis: 'ENISA Digital Infrastructure (Cloud + Datacentre services, averaged)',
+  },
+  'IT Industry / Software': {
+    lo: 6.26e9,
+    hi: 6.56e9,
+    confidence: 'Moderate',
+    basis: 'ENISA ICT service management (B2B) — MSP/MSSP proxy',
+  },
+  'Critical Infrastructure / Energy': {
+    lo: 5.3e9,
+    hi: 6.9e9,
+    confidence: 'High',
+    basis: 'ENISA Energy sector — baseline is capex, not revenue',
+  },
+  Telecommunications: {
+    lo: 5.19e9,
+    hi: 5.66e9,
+    confidence: 'High',
+    basis: 'ENISA Digital Infrastructure (Telecoms)',
+  },
+  'Education / Research': {
+    lo: 2.75e9,
+    hi: 6.3e9,
+    confidence: 'Low',
+    basis: 'CoSN 2024 IT-budget survey x MS-ISAC/CIS NCSR — widest, least rigorous range',
+  },
+  'Legal / Notary / eSignature': {
+    lo: 3.77e9,
+    hi: 4.61e9,
+    confidence: 'Low',
+    basis: 'ENISA Digital Infrastructure (Trust services) — weak proxy, not law firms',
+  },
+  'Supply Chain / Logistics': {
+    lo: 2.69e9,
+    hi: 3.07e9,
+    confidence: 'Moderate',
+    basis: 'ENISA Transport sector (parent)',
+  },
+  'Water / Wastewater': {
+    lo: 509.2e6,
+    hi: 562.8e6,
+    confidence: 'Moderate',
+    basis: 'ENISA Drinking water + Waste water sectors, averaged',
+  },
+  'Automotive / Connected Vehicles': {
+    lo: 0.48e9,
+    hi: 0.55e9,
+    confidence: 'Low',
+    basis: 'ENISA Transport > Road transport — proxy only',
+  },
+  'Aerospace / Aviation': {
+    lo: 0.47e9,
+    hi: 0.53e9,
+    confidence: 'High',
+    basis: 'ENISA Transport > Aviation',
+  },
+  'Rail / Transit': {
+    lo: 0.13e9,
+    hi: 0.15e9,
+    confidence: 'High',
+    basis: 'ENISA Transport > Railway',
+  },
+}
+
+function CyberOpportunityBadge({ industry }: { industry: string }) {
+  const est = CYBER_OPPORTUNITY[industry]
+  if (!est) return null
+  return (
+    <span
+      title={`Estimated cybersecurity-opportunity range — ${est.confidence} confidence. Basis: ${est.basis}. Not an official statistic: mixes ENISA sector data with lower-rigor semi-official surveys, self-computed. See INDUSTRY-CYBER-OPPORTUNITY-RANKING-REPORT-08172026.md.`}
+      className="inline-flex items-center gap-1 rounded-full bg-status-info/10 px-2 py-0.5 text-xs font-medium text-status-info"
+    >
+      Est. cyber opportunity: {formatMarketSize(est.lo)}–{formatMarketSize(est.hi)}
+      <span className="opacity-70">({est.confidence} confidence)</span>
+    </span>
+  )
 }
 
 // ── Main view ────────────────────────────────────────────────────────────────
@@ -781,18 +874,30 @@ export function IndustryLandscapeView() {
   const selectedMechanism = searchParams.get('mechanism')
   const mode: 'industry' | 'mechanism' = selectedMechanism ? 'mechanism' : 'industry'
 
-  const industries = useMemo(
-    () =>
-      Array.from(new Set(useCases.map((u) => u.industry))).sort((a, b) => {
-        const rankA = CYBER_OPPORTUNITY_RANK[a] ?? Infinity
-        const rankB = CYBER_OPPORTUNITY_RANK[b] ?? Infinity
-        return rankA !== rankB ? rankA - rankB : a.localeCompare(b)
-      }),
-    [useCases]
-  )
   const marketByIndustry = useMemo(
     () => new Map(marketSizes.map((m) => [m.industry, m])),
     [marketSizes]
+  )
+  // Tile order (2026-08-17): descending by the market-size badge shown on
+  // each tile, since that's the only ranking number the reader can actually
+  // see — an earlier version sorted by a separate, unlabeled cyber-opportunity
+  // estimate and it read as broken once market-size badges landed (e.g.
+  // Energy's $3.40T badge outranking Financial Services' $2.44T while sitting
+  // below it in the list). What you see is what determines the order now.
+  // The 3 industries exempt from market-size entirely (Cross-Industry, HSM,
+  // IoT) have no badge to sort by, so they fall back to alphabetical, always
+  // after every industry that has one.
+  const industries = useMemo(
+    () =>
+      Array.from(new Set(useCases.map((u) => u.industry))).sort((a, b) => {
+        const sizeA = marketByIndustry.get(a)?.marketSizeUsd
+        const sizeB = marketByIndustry.get(b)?.marketSizeUsd
+        if (sizeA !== undefined && sizeB !== undefined) return sizeB - sizeA
+        if (sizeA !== undefined) return -1
+        if (sizeB !== undefined) return 1
+        return a.localeCompare(b)
+      }),
+    [useCases, marketByIndustry]
   )
   const useCasesByIndustry = useMemo(() => {
     const map = new Map<string, IndustryUseCase[]>()
@@ -1051,6 +1156,7 @@ export function IndustryLandscapeView() {
                       No official market-size figure
                     </span>
                   )}
+                  <CyberOpportunityBadge industry={selectedIndustry} />
                   <Link
                     to={`/threats?industry=${encodeURIComponent(selectedIndustry)}`}
                     className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
