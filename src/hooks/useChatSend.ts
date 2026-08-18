@@ -24,18 +24,39 @@ import { useVersionStore } from '@/store/useVersionStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
 import { chunkToResource } from '@/services/search/chunkToResource'
-import { getTrustScore } from '@/data/trustScore/trustScoreData'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 /**
- * Resolve a RAG chunk's trust tier for inline citation chips (§14.3 step 4).
- * Returns undefined when the chunk doesn't resolve to a scored resource —
- * the citation then renders without a chip rather than showing a misleading tier.
+ * Load the trust-score module on demand and return a chunk→tier resolver.
+ *
+ * Deliberately a DYNAMIC import. `trustScoreData` statically pulls in fifteen
+ * data modules — library, timeline, compliance, threats, leaders, migrate,
+ * algorithms, the enrichment sets — i.e. very nearly the whole dataset. A
+ * static import here put all of it on the landing page's critical path, because
+ * this hook is reached from the chat panel in MainLayout: the eager preload
+ * measured 15.28 MB against a 15.00 MB budget, and `trusted_sources_*.csv`
+ * alone contributed ~950 KB (the glob inlines every live generation, though
+ * only the newest is ever served).
+ *
+ * Nothing here is needed until a query is actually sent, so the cost belongs on
+ * the first send rather than on first paint. Resolved once per send and reused
+ * across chunks — the module cache makes repeat imports free.
+ *
+ * DO NOT convert this back to a static import to tidy it up. See
+ * scripts/ci/precache-budget.ts for what that regresses.
  */
-function tierForChunk(c: RAGChunk): ChatSourceRef['trustTier'] {
-  const ref = chunkToResource(c)
-  if (!ref) return undefined
-  return getTrustScore(ref.resourceType, ref.resourceId)?.tier
+async function loadTierResolver(): Promise<(c: RAGChunk) => ChatSourceRef['trustTier']> {
+  const { getTrustScore } = await import('@/data/trustScore/trustScoreData')
+  /**
+   * Resolve a RAG chunk's trust tier for inline citation chips (§14.3 step 4).
+   * Returns undefined when the chunk doesn't resolve to a scored resource —
+   * the citation then renders without a chip rather than showing a misleading tier.
+   */
+  return (c: RAGChunk) => {
+    const ref = chunkToResource(c)
+    if (!ref) return undefined
+    return getTrustScore(ref.resourceType, ref.resourceId)?.tier
+  }
 }
 
 const STREAM_TIMEOUT_MS = 60_000
@@ -250,6 +271,7 @@ export function useChatSend() {
         )
 
         // Build deduplicated source references for attribution
+        const tierForChunk = await loadTierResolver()
         const seenTitles = new Map<string, number>()
         for (const c of chunks) {
           const existingIdx = seenTitles.get(c.title)

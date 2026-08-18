@@ -15,7 +15,7 @@ import {
   getCryptoFamilyFromPQCName,
   getTransitionFunctionGroup,
 } from '../../data/algorithmsData'
-import { isCertifiedTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
+import { isStatusFilterTier, type AlgorithmStatusTier } from '../../data/algorithmStatusTier'
 import { passesCnsa20Filter } from './cnsa20'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
@@ -482,20 +482,26 @@ export function useAlgorithmExplorer(
 
   // Status filter helper. "Certified" reads the normalized status-maturity
   // enum (WORKSTREAMS.md §WS-A) instead of comparing the raw status string —
-  // the whitelist is exactly ['final', 'regional']. The 'Candidate' /
-  // 'To Be Checked' dropdown options remain raw-string matches since those
-  // are literal values the CSVs still use verbatim.
+  // the whitelist is ['final', 'regional', 'fips-draft'] (isStatusFilterTier,
+  // algorithmStatusTier.ts). The 'Candidate' / 'To Be Checked' dropdown
+  // options remain raw-string matches since those are literal values the
+  // CSVs still use verbatim.
   //
   // NOTE: 'regional' means "final within its own jurisdiction (KpqC/BSI
   // winners), not FIPS-Certified" (algorithmStatusTier.ts) — e.g. AIMer,
-  // HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1). This
-  // "Certified" bucket is deliberately broader than FIPS and is fine for a
-  // plain Status dropdown labeled "Certified" — but it must never back
-  // anything claiming to be "FIPS-validated". See isFipsValidated() below.
+  // HAETAE, SMAUG-T, NTRU+ (KpqC), Classic-McEliece (BSI TR-02102-1).
+  // 'fips-draft' means "NIST-selected, FIPS text not yet published" — e.g.
+  // HQC, FN-DSA — included here so the default view doesn't hide NIST's own
+  // picks, even though they're not final. This "Certified" bucket is
+  // deliberately broader than FIPS and is fine for a plain Status dropdown
+  // labeled "Certified" — but it must never back anything claiming to be
+  // "FIPS-validated" (see isFipsValidated() below) or suppress the "Draft"
+  // badge (isCertifiedTier/isDraftTier stay strict — see
+  // algorithmStatusTier.ts).
   const matchesStatusFilter = useCallback(
     (status: string, tier: AlgorithmStatusTier) => {
       if (filterStatus === 'All') return true
-      if (filterStatus === 'Certified') return isCertifiedTier(tier)
+      if (filterStatus === 'Certified') return isStatusFilterTier(tier)
       return status === filterStatus
     },
     [filterStatus]

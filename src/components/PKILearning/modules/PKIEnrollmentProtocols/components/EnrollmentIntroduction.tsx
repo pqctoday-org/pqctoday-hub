@@ -81,7 +81,7 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             <strong>Composite enrollment.</strong> Hybrid PKI (one cert carrying both classical and
             PQC pubkeys) is currently a draft track —{' '}
             <code>draft-ietf-lamps-pq-composite-sigs-19</code> and{' '}
-            <code>draft-ietf-lamps-pq-composite-kem-14</code>. Both EST and CMP can carry composite
+            <code>draft-ietf-lamps-pq-composite-kem</code>. Both EST and CMP can carry composite
             requests once the OIDs stabilize.
           </li>
         </ol>

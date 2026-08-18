@@ -1987,17 +1987,28 @@ export const hsm_sign = (
 /**
  * ML-DSA sign raw bytes (for X.509 TBS certificate signing).
  * Same as hsm_sign but accepts Uint8Array directly instead of string.
+ *
+ * `opts.context` carries the PKCS#11 v3.2 CK_SIGN_ADDITIONAL_CONTEXT context
+ * string (FIPS 204 Algorithm 2 `ctx`). Composite ML-DSA requires it: the
+ * signature label MUST be passed verbatim as ctx, or composite verifiers
+ * reject the signature — see certBuilder.ts buildCompositeCertDraft19.
  */
 export const hsm_signBytesMLDSA = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  data: Uint8Array
+  data: Uint8Array,
+  opts?: MLDSASignOptions
 ): Uint8Array => {
+  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
+
   const mech = M._malloc(12)
-  M.setValue(mech, CKM_ML_DSA, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32') // pParameter
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32') // ulParameterLen
 
   const msgPtr = writeBytes(M, data)
   const sigLenPtr = allocUlong(M)
@@ -2023,6 +2034,7 @@ export const hsm_signBytesMLDSA = (
     M._free(msgPtr)
     M._free(sigLenPtr)
     if (sigPtr) M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 
@@ -2729,12 +2741,18 @@ export const hsm_generateRSAKeyPair = (
   }
 }
 
-/** RSA sign via C_SignInit + C_Sign (PKCS#1 v1.5 or PSS). */
-export const hsm_rsaSign = (
+/**
+ * RSA sign over raw bytes via C_SignInit + C_Sign (PKCS#1 v1.5 or PSS).
+ *
+ * The byte-oriented form exists for callers that sign a structure rather than
+ * text — composite-sig needs it to sign the message representative M', whose
+ * bytes are not valid UTF-8 and so cannot round-trip through the string API.
+ */
+export const hsm_signBytesRSA = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string,
+  data: Uint8Array,
   mechType: number = CKM_SHA256_RSA_PKCS
 ): Uint8Array => {
   const isPSS =
@@ -2744,17 +2762,16 @@ export const hsm_rsaSign = (
   let pssParams: { ptr: number; len: number } | null = null
   if (isPSS) pssParams = buildPSSParams(M, mechType)
   const mech = buildMech(M, mechType, pssParams?.ptr ?? 0, pssParams?.len ?? 0)
-  const msgBytes = new TextEncoder().encode(message)
-  const msgPtr = writeBytes(M, msgBytes)
+  const msgPtr = writeBytes(M, data)
   const sigLenPtr = allocUlong(M)
   let sigPtr = 0
   try {
-    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(RSA)')
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(RSA,len)')
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(RSA,bytes)')
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr), 'C_Sign(RSA,bytes,len)')
     const sigLen = readUlong(M, sigLenPtr)
     sigPtr = M._malloc(sigLen)
     writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(RSA)')
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr), 'C_Sign(RSA,bytes)')
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
     M._free(mech)
@@ -2763,6 +2780,80 @@ export const hsm_rsaSign = (
     if (sigPtr) M._free(sigPtr)
     if (pssParams) M._free(pssParams.ptr)
   }
+}
+
+/** RSA sign via C_SignInit + C_Sign (PKCS#1 v1.5 or PSS). */
+export const hsm_rsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string,
+  mechType: number = CKM_SHA256_RSA_PKCS
+): Uint8Array =>
+  hsm_signBytesRSA(M, hSession, privHandle, new TextEncoder().encode(message), mechType)
+
+/**
+ * C_GetAttributeValue(CKA_MODULUS, CKA_PUBLIC_EXPONENT) → DER `RSAPublicKey`.
+ *
+ * PKCS#11 exposes an RSA public key as two separate big-integer attributes,
+ * while draft-ietf-lamps-pq-composite-sigs §4.1 wants the traditional half of a
+ * composite key as a DER `RSAPublicKey ::= SEQUENCE { modulus INTEGER,
+ * publicExponent INTEGER }` (RFC 8017 §A.1.1). This assembles one from the
+ * other.
+ *
+ * Both values are unsigned magnitudes from PKCS#11, so each gets a 0x00 pad
+ * whenever its top bit is set — an ASN.1 INTEGER is signed, and omitting the
+ * pad would encode a negative modulus that no parser accepts.
+ */
+export const hsm_extractRSAPublicKeyDer = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number
+): Uint8Array => {
+  const readAttr = (attrType: number, what: string): Uint8Array => {
+    const lenTpl = buildTemplate(M, [{ type: attrType }])
+    checkRV(
+      M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1),
+      `C_GetAttributeValue(${what},len)`
+    )
+    const len = readUlong(M, lenTpl.ptr + 8)
+    freeTemplate(M, lenTpl, 1)
+
+    const valPtr = M._malloc(len)
+    const valTpl = buildTemplate(M, [{ type: attrType, bytesPtr: valPtr, bytesLen: len }])
+    try {
+      checkRV(
+        M._C_GetAttributeValue(hSession, pubHandle, valTpl.ptr, 1),
+        `C_GetAttributeValue(${what})`
+      )
+      return M.HEAPU8.slice(valPtr, valPtr + len)
+    } finally {
+      freeTemplate(M, valTpl, 1)
+      M._free(valPtr)
+    }
+  }
+
+  const derInteger = (magnitude: Uint8Array): number[] => {
+    let i = 0
+    while (i < magnitude.length - 1 && magnitude[i] === 0) i++ // drop redundant leading zeros
+    const body = magnitude.subarray(i)
+    const needsPad = (body[0] & 0x80) !== 0
+    const content = needsPad ? [0x00, ...body] : [...body]
+    return [0x02, ...derLen(content.length), ...content]
+  }
+
+  const modulus = readAttr(CKA_MODULUS, 'CKA_MODULUS')
+  const exponent = readAttr(CKA_PUBLIC_EXPONENT, 'CKA_PUBLIC_EXPONENT')
+  const body = [...derInteger(modulus), ...derInteger(exponent)]
+  return new Uint8Array([0x30, ...derLen(body.length), ...body])
+}
+
+/** Minimal DER definite-length encoder for the RSAPublicKey assembly above. */
+const derLen = (len: number): number[] => {
+  if (len < 0x80) return [len]
+  const out: number[] = []
+  for (let v = len; v > 0; v >>>= 8) out.unshift(v & 0xff)
+  return [0x80 | out.length, ...out]
 }
 
 /** RSA verify via C_VerifyInit + C_Verify. Returns true if valid. */
@@ -3630,25 +3721,24 @@ export const hsm_importEdDSAPublicKey = (
 }
 
 /** EdDSA sign via C_SignInit(CKM_EDDSA) + C_Sign. */
-export const hsm_eddsaSign = (
+export const hsm_signBytesEdDSA = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string,
+  data: Uint8Array,
   mechType: number = CKM_EDDSA
 ): Uint8Array => {
   const mech = buildMech(M, mechType)
-  const msgBytes = new TextEncoder().encode(message)
-  const msgPtr = writeBytes(M, msgBytes)
+  const msgPtr = writeBytes(M, data)
   const sigLenPtr = allocUlong(M)
   let sigPtr = 0
   try {
-    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(EdDSA)')
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(EdDSA,len)')
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(EdDSA,bytes)')
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr), 'C_Sign(EdDSA,bytes,len)')
     const sigLen = readUlong(M, sigLenPtr)
     sigPtr = M._malloc(sigLen)
     writeUlong(M, sigLenPtr, sigLen)
-    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(EdDSA)')
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr), 'C_Sign(EdDSA,bytes)')
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
     M._free(mech)
@@ -3657,6 +3747,23 @@ export const hsm_eddsaSign = (
     if (sigPtr) M._free(sigPtr)
   }
 }
+
+/**
+ * EdDSA sign via C_SignInit(CKM_EDDSA) + C_Sign.
+ *
+ * Note the default mechanism is CKM_EDDSA (pure Ed25519 per RFC 8032 §5.1),
+ * NOT CKM_EDDSA_PH. Composite-sig requires the pure form: it signs the message
+ * representative M' directly, and pre-hashing it would implement Ed25519ph — a
+ * different algorithm the draft does not specify for these profiles.
+ */
+export const hsm_eddsaSign = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  message: string,
+  mechType: number = CKM_EDDSA
+): Uint8Array =>
+  hsm_signBytesEdDSA(M, hSession, privHandle, new TextEncoder().encode(message), mechType)
 
 /** EdDSA verify via C_VerifyInit(CKM_EDDSA) + C_Verify. Returns true if valid. */
 export const hsm_eddsaVerify = (

@@ -48,6 +48,25 @@ const MARKET_SIZE_EXEMPT = new Set([
   'Internet of Things (IoT)',
 ])
 
+/** Mechanism for industries a freshness pass deprecates because their
+ *  market-size row cites a pre-2024 figure with no compliant successor from
+ *  the SAME publisher/account — as opposed to MARKET_SIZE_EXEMPT, where no
+ *  official-statistics concept exists at all. All three industries the
+ *  2026-08-17 pass first put here (Education / Research, Healthcare /
+ *  Pharmaceutical, Water / Wastewater) were reinstated the same day on a
+ *  second, deeper look — in each case the GLOBAL total genuinely had no
+ *  successor, but a different US federal agency (Census's Annual Survey of
+ *  School System Finances for Education; US CMS NHE for Healthcare;
+ *  Census's raw FY2024 "Individual Unit Files" public-use data, one level
+ *  deeper than the missing quinquennial summary spreadsheet, for Water)
+ *  published a real ≥2024 US-scoped figure. Same US-narrowing pattern as
+ *  Cloud/IT/Media/Telecom elsewhere in this file. Kept as an empty set
+ *  (not deleted) so the next freshness pass has the mechanism ready — move
+ *  an industry back to an active row (not into MARKET_SIZE_EXEMPT) the
+ *  moment a qualifying figure appears; only reach for MARKET_SIZE_EXEMPT if
+ *  a future check concludes no official-statistics concept exists at all. */
+const MARKET_SIZE_STALE_PENDING_REFRESH = new Set<string>([])
+
 describe('industry-landscape driftguards', () => {
   it('loads all three CSV families', () => {
     expect(useCases.length).toBeGreaterThan(50)
@@ -348,7 +367,7 @@ describe('industry-landscape driftguards', () => {
   it('market sizes cover every non-exempt industry, with sane values', () => {
     const byIndustry = new Map(marketSizes.map((m) => [m.industry, m]))
     for (const ind of getLandscapeIndustries()) {
-      if (MARKET_SIZE_EXEMPT.has(ind)) continue
+      if (MARKET_SIZE_EXEMPT.has(ind) || MARKET_SIZE_STALE_PENDING_REFRESH.has(ind)) continue
       const m = byIndustry.get(ind)
       expect(m, `industry "${ind}" has no market-size row`).toBeDefined()
       expect(m!.marketSizeUsd).toBeGreaterThan(1e9)

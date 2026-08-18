@@ -743,7 +743,7 @@ S8Y=
         {hybridCertFiles.length === 0 && (
           <p className="mt-3 text-xs text-muted-foreground">
             Hybrid/PQC certificates are optional — this workshop focuses on classical PKI. To
-            explore the 6 hybrid formats (Pure PQC, Composite, Alt-Sig, Related Certs, Chameleon),
+            explore the 8 hybrid formats (Pure PQC, Composite, Alt-Sig, Related Certs, Chameleon),
             generate them in{' '}
             <span className="text-primary font-medium">Playground → Hybrid Certs</span>, then return
             here to parse and compare their X.509 structures.

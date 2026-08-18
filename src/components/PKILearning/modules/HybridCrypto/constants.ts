@@ -199,7 +199,15 @@ export interface HybridCertFormat {
   standard: string
   standardUrl: string
   oids: string[]
-  status: 'Published' | 'IETF Last Call' | 'AD Evaluation' | 'Active Draft' | 'Informational'
+  status:
+    | 'Published'
+    | 'RFC Editor Queue'
+    | 'IESG Evaluation'
+    | 'IETF Last Call'
+    | 'AD Evaluation'
+    | 'Active Draft'
+    | 'Expired Draft'
+    | 'Informational'
   statusColor: string
   /** Whether the format is quantum-safe. 'system' = only quantum-safe as a multi-cert system. */
   quantumSafe: boolean | 'system'
@@ -283,33 +291,66 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     standard: 'draft-ietf-lamps-pq-composite-sigs',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
     oids: ['1.3.6.1.5.5.7.6.45'],
-    status: 'IETF Last Call',
+    status: 'RFC Editor Queue',
     statusColor: 'primary',
     quantumSafe: true,
     legacyCompat: false,
     description:
-      'Both classical and PQC keys/signatures under a single composite OID. Both must verify.',
+      'Both classical and PQC keys/signatures under a single composite OID, each stored as a raw concatenation with the ML-DSA component first. Both must verify.',
     structureLines: [
       { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
       { text: 'tbsCertificate      TBSCertificate {', color: 'muted', indent: 1 },
-      { text: 'subjectPublicKeyInfo  CompositePublicKey {', color: 'primary', indent: 2 },
-      { text: 'ecPublicKey         EC P-256 (65 bytes)', color: 'warning', indent: 3 },
-      { text: 'mldsaPublicKey      ML-DSA-65 (1952 bytes)', color: 'success', indent: 3 },
-      { text: '}', color: 'primary', indent: 2 },
+      { text: 'subjectPublicKeyInfo {', color: 'muted', indent: 2 },
+      {
+        text: 'algorithm         MLDSA65-ECDSA-P256-SHA512 (1.3.6.1.5.5.7.6.45)',
+        color: 'primary',
+        indent: 3,
+      },
+      {
+        text: 'subjectPublicKey  BIT STRING (2017 bytes) — raw concatenation:',
+        color: 'primary',
+        indent: 3,
+      },
+      {
+        text: 'mldsaPublicKey  ML-DSA-65 (1952 bytes)  ← ML-DSA FIRST',
+        color: 'success',
+        indent: 4,
+      },
+      { text: 'ecPublicKey     EC P-256  (65 bytes, X9.62)', color: 'warning', indent: 4 },
+      { text: '}', color: 'muted', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       {
         text: 'signatureAlgorithm  MLDSA65-ECDSA-P256-SHA512 (1.3.6.1.5.5.7.6.45),',
         color: 'primary',
         indent: 1,
       },
-      { text: 'signatureValue      CompositeSignature {', color: 'primary', indent: 1 },
-      { text: 'ecdsaSignature      ECDSA (72 bytes)', color: 'warning', indent: 2 },
-      { text: 'mldsaSignature      ML-DSA-65 (3309 bytes)', color: 'success', indent: 2 },
-      { text: '}', color: 'primary', indent: 1 },
+      {
+        text: 'signatureValue      BIT STRING (~3379 bytes) — raw concatenation:',
+        color: 'primary',
+        indent: 1,
+      },
+      {
+        text: 'mldsaSignature  ML-DSA-65 (3309 bytes)  ← ML-DSA FIRST',
+        color: 'success',
+        indent: 2,
+      },
+      { text: 'ecdsaSignature  ECDSA (70-72 bytes, DER)', color: 'warning', indent: 2 },
       { text: '}', color: 'foreground', indent: 0 },
+      { text: '', color: 'muted', indent: 0 },
+      {
+        text: '// No ASN.1 SEQUENCE wraps the components — §5.1 puts the',
+        color: 'muted',
+        indent: 0,
+      },
+      {
+        text: '// raw bytes straight into the BIT STRING. A verifier splits',
+        color: 'muted',
+        indent: 0,
+      },
+      { text: '// at the ML-DSA fixed length (FIPS 204).', color: 'muted', indent: 0 },
     ],
     educationalNote:
-      'Composite certificates bind both algorithms under a single OID (1.3.6.1.5.5.7.6.45) and require both signatures to verify — if either fails, the certificate is rejected. This demo generates a real DER-encoded composite certificate with CompositePublicKey and CompositeSignatureValue per draft-ietf-lamps-pq-composite-sigs-15. Legacy validators cannot process composite OIDs.',
+      "Composite certificates bind both algorithms under a single OID (1.3.6.1.5.5.7.6.45) and require both signatures to verify — if either fails, the certificate is rejected. Both the public key and the signature are RAW CONCATENATIONS with the ML-DSA component first (§4.1, §4.3); there is no ASN.1 wrapper, so a verifier splits at ML-DSA's fixed length. Both components sign a shared message representative M' = Prefix || Label || len(ctx) || ctx || PH(TBS), and ML-DSA takes the signature label as its FIPS 204 context — this is what prevents either half being stripped and reused. Legacy validators cannot process composite OIDs at all: composite is NOT backward compatible.",
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
@@ -441,7 +482,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     standard: 'draft-ietf-lamps-pq-composite-kem',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
     oids: ['1.3.6.1.5.5.7.6.58'],
-    status: 'AD Evaluation',
+    status: 'IESG Evaluation',
     statusColor: 'primary',
     quantumSafe: true,
     legacyCompat: false,
@@ -469,7 +510,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'draft-ietf-lamps-pq-composite-kem-17 defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, RSA-2048/3072/4096, brainpoolP256) under a single OID (encoded ML-KEM component first, then the classical component — §4.1). Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries (OpenSSL 3.5 + oqs-provider). KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
+      'draft-ietf-lamps-pq-composite-kem defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, RSA-2048/3072/4096, brainpoolP256) under a single OID (encoded ML-KEM component first, then the classical component — §4.1). Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries: stock OpenSSL 3.6.3 registers no composite algorithms at all and fails to load a composite public key, so composite certificates are NOT backward compatible. KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
     classicalAlg: 'X25519',
     pqcAlg: 'ML-KEM-768',
   },
@@ -481,8 +522,8 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     standard: 'draft-bonnell-lamps-chameleon-certs-07',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-bonnell-lamps-chameleon-certs/',
     oids: ['2.16.840.1.114027.80.6.1'],
-    status: 'Active Draft',
-    statusColor: 'warning',
+    status: 'Expired Draft',
+    statusColor: 'muted',
     quantumSafe: true,
     legacyCompat: true,
     description:
@@ -504,7 +545,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. draft-bonnell-lamps-chameleon-certs-07 is pre-RFC; commercial CA adoption is limited to pilot deployments as of 2025. This demo generates a real DER-encoded chameleon cert with a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). The delta extension encodes only the differences (signature, public key, extensions) needed to reconstruct the classical partner cert — but validating it requires a chameleon-aware parser. Legacy validators see only the ML-DSA-65 primary and will silently ignore the delta.',
+      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. IMPORTANT STATUS: draft-bonnell-lamps-chameleon-certs-07 is an INDIVIDUAL submission that EXPIRED on 2026-04-21 and was never adopted as a LAMPS working-group document — there is no draft-ietf-lamps-chameleon-certs, and the work was not renamed or absorbed elsewhere. Treat it as a dormant design, not an active standards track; it is taught here because the delta-encoding approach is instructive and saw pilot CA deployments. This demo generates a real DER-encoded chameleon cert with a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). The delta extension encodes only the differences (signature, public key, extensions) needed to reconstruct the classical partner cert — but validating it requires a chameleon-aware parser. Legacy validators see only the ML-DSA-65 primary and silently ignore the delta: verified against OpenSSL 3.6.3, which validates the ML-DSA-65 signature and reports the delta as an unrecognised OID.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

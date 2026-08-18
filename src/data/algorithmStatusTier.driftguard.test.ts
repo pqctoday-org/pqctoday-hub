@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import Papa from 'papaparse'
 import { mapReferenceStatusToTier } from './pqcAlgorithmsData'
 import { mapTransitionStatusToTier } from './algorithmsData'
+import { isCertifiedTier, isDraftTier, isStatusFilterTier } from './algorithmStatusTier'
 
 const dataDir = dirname(fileURLToPath(import.meta.url))
 
@@ -81,6 +82,57 @@ describe('algorithm status tier — drift guard (WS-A)', () => {
         () => mapTransitionStatusToTier(status, pqcReplacement),
         `unmapped transition status: ${JSON.stringify(status)} (pqc_replacement: ${JSON.stringify(pqcReplacement)})`
       ).not.toThrow()
+    }
+  })
+})
+
+describe('certified vs status-filter tiers must stay separate', () => {
+  // Two deliberately different questions:
+  //   isCertifiedTier      — "is this genuinely final?"  drives the green
+  //                          badge, the sort order, and the Playground's
+  //                          Draft warning on the key-generation picker.
+  //   isStatusFilterTier   — "should this show in the default view?"  one
+  //                          tier broader, so NIST's own selections (HQC,
+  //                          FN-DSA) are not hidden from migration planning.
+  //
+  // The failure mode this guards is someone tidying the two into one. Widening
+  // isCertifiedTier to match the filter would put a green "Certified" badge on
+  // a pre-final algorithm AND suppress the Playground's Draft warning while a
+  // user generates keys with it. Narrowing the filter to match isCertifiedTier
+  // would re-hide FN-DSA-512, which personaConfig.ts lists as a headline
+  // executive algorithm.
+
+  it('fips-draft shows in the default filter but is NOT treated as certified', () => {
+    expect(isStatusFilterTier('fips-draft')).toBe(true)
+    expect(isCertifiedTier('fips-draft')).toBe(false)
+    // The Playground's Draft badge keys off isDraftTier — it MUST still fire.
+    expect(isDraftTier('fips-draft')).toBe(true)
+  })
+
+  it('the two predicates are not the same function', () => {
+    const tiers = ['final', 'regional', 'fips-draft'] as const
+    const certified = tiers.filter(isCertifiedTier)
+    const filtered = tiers.filter(isStatusFilterTier)
+    expect(filtered.length).toBeGreaterThan(certified.length)
+    // Every certified tier must also pass the filter — the filter is a
+    // superset, never a different set.
+    for (const t of certified) {
+      expect(isStatusFilterTier(t), `${t} is certified but hidden by the filter`).toBe(true)
+    }
+  })
+
+  it('genuinely final tiers are certified under both', () => {
+    for (const t of ['final', 'regional'] as const) {
+      expect(isCertifiedTier(t)).toBe(true)
+      expect(isStatusFilterTier(t)).toBe(true)
+      expect(isDraftTier(t)).toBe(false)
+    }
+  })
+
+  it('non-standardized and placeholder stay out of both', () => {
+    for (const t of ['non-standardized', 'placeholder'] as const) {
+      expect(isCertifiedTier(t)).toBe(false)
+      expect(isStatusFilterTier(t), `${t} must not appear in the default view`).toBe(false)
     }
   })
 })

@@ -134,7 +134,7 @@ export function calculateJWTSize(
 // Real sign/verify for the API Security & JWT workshop.
 //
 // Algorithms follow RFC 9964 (ML-DSA for JOSE and COSE, published May 2026)
-// and draft-ietf-jose-pq-composite-sigs-01 for the hybrid family.
+// and draft-ietf-jose-pq-composite-sigs-03 for the hybrid family.
 //
 // Two backends are supported:
 //   - 'noble'    — @noble/post-quantum + @noble/curves (pure JS)
@@ -149,7 +149,7 @@ export type JwsAlg =
   | 'SLH-DSA-SHA2-128s'
   | 'SLH-DSA-SHA2-192s'
   | 'SLH-DSA-SHA2-256s'
-  // draft-ietf-jose-pq-composite-sigs-01 Table 2 (all 6 JOSE composite algs)
+  // draft-ietf-jose-pq-composite-sigs-03 Table 2 (all 6 JOSE composite algs)
   | 'ML-DSA-44-ES256'
   | 'ML-DSA-65-ES256'
   | 'ML-DSA-87-ES384'
@@ -264,7 +264,7 @@ const SLH_DSA_PARAM_SET: Record<
   'SLH-DSA-SHA2-256s': CKP_SLH_DSA_SHA2_256S,
 }
 
-// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-01) ────────
+// ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-03) ────────
 //
 // §4.4 (Encoding Rules): byte streams of the keys and signatures are directly
 // concatenated, ML-DSA first then traditional. Component sizes are fixed so
@@ -443,6 +443,14 @@ function traditionalSign(spec: CompositeSpec, mPrime: Uint8Array, sk: Uint8Array
       return ed448.sign(mPrime, sk)
     case 'ecdsa-p256-sha256':
       // noble returns Uint8Array (raw r||s, 64 B for P-256)
+      // No `format` option: @noble defaults to COMPACT (raw r||s, 64 B),
+      // which is what draft-ietf-jose-pq-composite-sigs-03 §3 requires — it
+      // adapts the LAMPS serialization "to use raw fixed-length encodings for
+      // ECDSA components". (-01 simply deferred to LAMPS, i.e. DER
+      // Ecdsa-Sig-Value.) Verified empirically 2026-08-18 before bumping the
+      // -01 citations to -03: the emitted signature is 64 bytes, not DER.
+      // Do NOT add `format: 'der'` here — that would silently break JOSE
+      // conformance, the same way the X.509 composite path broke in F17.
       return p256.sign(sha256(mPrime), sk)
     case 'ecdsa-p384-sha384':
       // noble returns Uint8Array (raw r||s, 96 B for P-384)
@@ -547,7 +555,7 @@ export async function generateJwsKeyPair(opts: {
 
   if (isComposite(alg)) {
     // Composite key: ML-DSA component first, then traditional — per
-    // draft-ietf-jose-pq-composite-sigs-01 §4.4 (Encoding Rules).
+    // draft-ietf-jose-pq-composite-sigs-03 §4.4 (Encoding Rules).
     const spec = COMPOSITE_SPECS[alg]
     const ml = mlDsaSuiteForVariant(spec.mlDsaVariant).keygen()
     const trad = generateTraditionalKeyPair(spec)
@@ -601,7 +609,7 @@ export async function signJWS(opts: {
   } else if (isSlhDsa(alg)) {
     signature = SLH_DSA_SUITES[alg].sign(signingBytes, keyPair.secretKey)
   } else if (isComposite(alg)) {
-    // draft-ietf-jose-pq-composite-sigs-01 §4.2:
+    // draft-ietf-jose-pq-composite-sigs-03 §4.2:
     //   M' = base64url(Prefix || Label || 0x00 || PH(signing_input))
     //   ML-DSA component signs M' with ctx=Label (deterministic mode)
     //   Traditional component signs M'
