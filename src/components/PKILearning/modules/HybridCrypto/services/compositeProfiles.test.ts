@@ -37,7 +37,7 @@ import {
   type CompositeProfileDraft19,
 } from './certBuilder'
 import { verifyCompositeCert, findCompositeProfile } from './compositeVerifier'
-import { EXTERNAL_VECTOR_COVERAGE_GAPS } from '../data/externalVectors'
+import { EXTERNAL_COMPOSITE_VECTORS, EXTERNAL_VECTOR_COVERAGE_GAPS } from '../data/externalVectors'
 
 const ALL_PROFILES: CompositeProfileDraft19[] = [
   COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256,
@@ -380,21 +380,37 @@ describe('fail-closed contract', () => {
 })
 
 describe('cross-implementation coverage', () => {
-  it('records which recommended profiles still lack an external witness', () => {
-    // Not a pass/fail on the gaps themselves — it asserts the list stays honest.
-    // If someone adds a profile without an external vector and does not record
-    // the gap, or closes a gap without removing the entry, this fails.
-    const gapOids = new Set(EXTERNAL_VECTOR_COVERAGE_GAPS.map((g) => g.oid))
-    expect(gapOids).toEqual(
-      new Set([
-        '1.3.6.1.5.5.7.6.41', // RSA-3072: PH SHA-512 vs Table 2 SHA-256, unwitnessed
-        '1.3.6.1.5.5.7.6.39', // Ed25519
-        '1.3.6.1.5.5.7.6.48', // Ed25519
-      ])
-    )
+  it('every implemented profile has an external vector, and the gap list says so', () => {
+    // The real assertion: no profile may be implemented without an outside
+    // witness unless the gap is recorded. Round-trips are self-consistent by
+    // construction, so a profile with neither a vector nor a recorded gap is
+    // exactly the blind spot F17 lived in.
+    const witnessed = new Set(EXTERNAL_COMPOSITE_VECTORS.map((v) => v.oid))
+    const recordedGaps = new Set(EXTERNAL_VECTOR_COVERAGE_GAPS.map((g) => g.oid))
+
+    for (const p of ALL_PROFILES) {
+      expect(
+        witnessed.has(p.compositeOid) || recordedGaps.has(p.compositeOid),
+        `${p.label} is implemented with neither an external vector nor a recorded ` +
+          `gap in EXTERNAL_VECTOR_COVERAGE_GAPS. Add one or the other — an ` +
+          `unwitnessed profile that nothing flags is how F17 survived a green suite.`
+      ).toBe(true)
+    }
+
+    // As of 2026-08-18 all three gaps closed, so this should be empty. If a
+    // future profile lands without a vector this stops being true, and the
+    // entry it needs must explain what specifically goes unchecked.
+    expect(EXTERNAL_VECTOR_COVERAGE_GAPS).toEqual([])
     for (const g of EXTERNAL_VECTOR_COVERAGE_GAPS) {
       expect(findCompositeProfile(g.oid), `${g.label} is listed but not implemented`).toBeDefined()
       expect(g.unverified.length, `${g.label}: say what goes unchecked`).toBeGreaterThan(80)
+    }
+  })
+
+  it('covers every §10.4-recommended profile with an external vector', () => {
+    const witnessed = new Set(EXTERNAL_COMPOSITE_VECTORS.map((v) => v.oid))
+    for (const p of COMPOSITE_PROFILES_RECOMMENDED) {
+      expect(witnessed.has(p.compositeOid), `${p.label}: no external vector`).toBe(true)
     }
   })
 })

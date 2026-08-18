@@ -789,6 +789,112 @@ export const COMPOSITE_PROFILES_RECOMMENDED: readonly CompositeProfileDraft19[] 
   COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512, // SUF-CMA concerns (see §9.2.2)
 ]
 
+/** One selectable composite profile, with the guidance the draft gives for it. */
+export interface CompositeProfileChoice {
+  profile: CompositeProfileDraft19
+  /** Short label for a picker, e.g. 'ML-DSA-65 + ECDSA P-256' */
+  shortLabel: string
+  /** When §10.4 suggests reaching for this one */
+  useWhen: string
+  /** true if §10.4 lists it; false = implemented but not recommended */
+  recommended: boolean
+}
+
+/**
+ * Every composite profile the workshop can mint, in the order §10.4 presents
+ * its recommendations.
+ *
+ * The `useWhen` strings paraphrase §10.4 rather than inventing advice. Note the
+ * draft is explicit that it "does not list any particular composite algorithm
+ * as mandatory-to-implement" — this is guidance for narrowing an awkward number
+ * of options, not a conformance ranking.
+ */
+export const COMPOSITE_PROFILE_CHOICES: readonly CompositeProfileChoice[] = [
+  {
+    profile: COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+    shortLabel: 'ML-DSA-65 + ECDSA P-256',
+    useWhen: 'General use — §10.4 calls this the best overall balance of performance and security.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA65_RSA3072_PSS_SHA512,
+    shortLabel: 'ML-DSA-65 + RSA-3072 PSS',
+    useWhen:
+      'When RSA is required. Note the draft points here rather than at the RSA-2048 profile below.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA44_ECDSA_P256_SHA256,
+    shortLabel: 'ML-DSA-44 + ECDSA P-256',
+    useWhen: 'When performance or bandwidth is a concern.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA44_ED25519_SHA512,
+    shortLabel: 'ML-DSA-44 + Ed25519',
+    useWhen:
+      'When performance or bandwidth is a concern. Smallest traditional half of any profile: 32-byte key, 64-byte signature.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512,
+    shortLabel: 'ML-DSA-87 + ECDSA P-384',
+    useWhen: 'When NIST security level 5 is required, and only then — the largest option here.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512,
+    shortLabel: 'ML-DSA-65 + Ed25519',
+    useWhen:
+      'Where SUF-CMA is a concern. Read §9.2.2 first: the draft concludes Composite ML-DSA is NOT SUF-CMA secure against quantum adversaries. Ed25519 removes ECDSA’s trivial signature malleability, which is a real improvement but not the full property.',
+    recommended: true,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256,
+    shortLabel: 'ML-DSA-44 + RSA-2048 PSS',
+    useWhen:
+      'Not recommended by §10.4 — included because it is the composite certificate you are most likely to meet in the wild. For new RSA deployments the draft points at RSA-3072 above.',
+    recommended: false,
+  },
+]
+
+/**
+ * Convert a raw `r || s` ECDSA signature into a DER `Ecdsa-Sig-Value`.
+ *
+ * PKCS#11 `C_Sign` returns ECDSA signatures as the raw fixed-width
+ * concatenation `r || s` (64 bytes for P-256, 96 for P-384). draft §4.1
+ * requires the opposite: "A signature MUST be encoded as an Ecdsa-Sig-Value as
+ * specified in Section 2.2.3 of [RFC3279]" — a `SEQUENCE { r INTEGER, s
+ * INTEGER }`. Handing the raw form straight to the certificate builder produces
+ * a composite signature that no conformant verifier accepts.
+ *
+ * Found 2026-08-18: the workshop's HSM-backed minting path did exactly that.
+ * The bug was invisible because nothing could verify a composite certificate
+ * until compositeVerifier existed — the same shape as F17, where signer and
+ * verifier had to disagree before anyone noticed.
+ *
+ * Each half is an unsigned big-endian magnitude, so it gets a 0x00 pad whenever
+ * its top bit is set: ASN.1 INTEGER is signed, and without the pad a value with
+ * the high bit set encodes as negative.
+ */
+export function ecdsaRawSignatureToDer(raw: Uint8Array): Uint8Array {
+  if (raw.length === 0 || raw.length % 2 !== 0) {
+    throw new Error(`Raw ECDSA signature must be an even number of bytes (got ${raw.length})`)
+  }
+  const half = raw.length / 2
+  const encodeInt = (magnitude: Uint8Array): number[] => {
+    let i = 0
+    while (i < magnitude.length - 1 && magnitude[i] === 0) i++
+    const body = magnitude.subarray(i)
+    const content = (body[0] & 0x80) !== 0 ? [0x00, ...body] : [...body]
+    return [0x02, content.length, ...content]
+  }
+  const body = [...encodeInt(raw.subarray(0, half)), ...encodeInt(raw.subarray(half))]
+  // r and s are at most 66 bytes even for P-521, so the SEQUENCE body always
+  // fits the short-form length. No multi-byte length case to handle.
+  return new Uint8Array([0x30, body.length, ...body])
+}
+
 /**
  * Composite ML-DSA signer contract.
  *
