@@ -13,6 +13,7 @@ import {
   Download,
 } from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
+import { COMPOSITE_PROFILE_CHOICES } from '../services/certBuilder'
 import {
   HYBRID_CERT_FORMATS,
   STATUS_BADGE_CLASSES,
@@ -66,6 +67,16 @@ export const HybridCertFormats: React.FC = () => {
   }, [generatingFormat])
   const [expandedViews, setExpandedViews] = useState<Record<string, 'pem' | 'parsed' | null>>({})
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
+  /**
+   * Which draft §6 composite profile the 'composite' format mints. Defaults to
+   * the first entry, id-MLDSA65-ECDSA-P256-SHA512 — §10.4's general-use pick.
+   */
+  const [compositeOid, setCompositeOid] = useState<string>(
+    COMPOSITE_PROFILE_CHOICES[0].profile.compositeOid
+  )
+  const compositeChoice =
+    COMPOSITE_PROFILE_CHOICES.find((c) => c.profile.compositeOid === compositeOid) ??
+    COMPOSITE_PROFILE_CHOICES[0]
   const hsm = useHSM()
 
   const toggleView = (key: string, view: 'pem' | 'parsed') => {
@@ -196,18 +207,26 @@ export const HybridCertFormats: React.FC = () => {
           }))
           if (!certResult.error) pushHybridFiles(formatId, pqcCerts)
         } else if (formatId === 'composite') {
-          // Real composite certificate (draft-ietf-lamps-pq-composite-sigs-15)
+          // Real composite certificate (draft-ietf-lamps-pq-composite-sigs)
+          // Resolved HERE rather than closed over: generateFormat is memoised,
+          // and capturing the derived object would pin whichever profile was
+          // selected when the callback was last built — the dropdown would move
+          // the label while still minting the original profile.
+          const chosen =
+            COMPOSITE_PROFILE_CHOICES.find((c) => c.profile.compositeOid === compositeOid) ??
+            COMPOSITE_PROFILE_CHOICES[0]
           const certResult = await hybridCryptoService.generateCompositeCert(
             subject,
             M,
             hSession,
-            onKeyTracked
+            onKeyTracked,
+            chosen.profile
           )
           const compCerts = certResult.error
             ? []
             : [
                 {
-                  label: 'Composite: MLDSA65-ECDSA-P256-SHA512',
+                  label: `Composite: ${chosen.profile.label.replace(/^id-/, '')}`,
                   pem: certResult.pem,
                   parsed: certResult.parsed,
                   type: 'pqc' as const,
@@ -312,7 +331,7 @@ export const HybridCertFormats: React.FC = () => {
           }))
           if (!certResult.error) pushHybridFiles(formatId, kemCerts)
         } else if (formatId === 'composite-kem') {
-          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem-17.
+          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem.
           const certResult = await hybridCryptoService.generateCompositeKEMCert(
             'ML-KEM-768',
             'X25519',
@@ -383,7 +402,7 @@ export const HybridCertFormats: React.FC = () => {
       setGeneratingFormat(null)
       if (!skipStateReset) setGenerating(null)
     },
-    [hsm, onKeyTracked, pushHybridFiles]
+    [hsm, onKeyTracked, pushHybridFiles, compositeOid]
   )
 
   const generateAll = useCallback(async () => {
@@ -537,16 +556,65 @@ export const HybridCertFormats: React.FC = () => {
 
                 {/* Generate button or results */}
                 {!result && !isGeneratingThis && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => generateFormat(fmt.id)}
-                    disabled={generating !== null || !hsm.isReady}
-                    className="flex items-center gap-2 text-primary border-primary/20 hover:bg-primary/10"
-                  >
-                    <Play size={14} fill="currentColor" />
-                    Generate
-                  </Button>
+                  <div className="space-y-2">
+                    {fmt.id === 'composite' && (
+                      <div className="space-y-1">
+                        <label
+                          htmlFor="composite-profile"
+                          className="block text-xs font-medium text-muted-foreground"
+                        >
+                          Composite profile (draft §6)
+                        </label>
+                        <select
+                          id="composite-profile"
+                          value={compositeOid}
+                          onChange={(e) => setCompositeOid(e.target.value)}
+                          disabled={generating !== null}
+                          className="w-full max-w-md rounded-md border border-border bg-background px-2 py-1.5 text-xs disabled:opacity-50"
+                        >
+                          <optgroup label="Recommended by §10.4">
+                            {COMPOSITE_PROFILE_CHOICES.filter((c) => c.recommended).map((c) => (
+                              <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
+                                {c.shortLabel} — {c.profile.compositeOid}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Also implemented">
+                            {COMPOSITE_PROFILE_CHOICES.filter((c) => !c.recommended).map((c) => (
+                              <option key={c.profile.compositeOid} value={c.profile.compositeOid}>
+                                {c.shortLabel} — {c.profile.compositeOid}
+                              </option>
+                            ))}
+                          </optgroup>
+                        </select>
+                        <p className="text-[10px] leading-relaxed text-muted-foreground">
+                          {compositeChoice.useWhen}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          <span className="font-mono">{compositeChoice.profile.label}</span> — PH{' '}
+                          {compositeChoice.profile.preHash}, traditional{' '}
+                          {compositeChoice.profile.classical.kind === 'ed25519'
+                            ? 'Ed25519 (hashes internally, no separate hash)'
+                            : compositeChoice.profile.classical.kind === 'rsa-pss'
+                              ? `RSA-${compositeChoice.profile.classical.modulusBits} PSS with ${compositeChoice.profile.classical.tradHash}`
+                              : `ECDSA ${compositeChoice.profile.classical.curve} with ${compositeChoice.profile.classical.tradHash}`}
+                          . The pre-hash and the traditional hash are chosen independently — the
+                          SHA-xxx in the profile name is the pre-hash, not the traditional
+                          algorithm’s hash.
+                        </p>
+                      </div>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => generateFormat(fmt.id)}
+                      disabled={generating !== null || !hsm.isReady}
+                      className="flex items-center gap-2 text-primary border-primary/20 hover:bg-primary/10"
+                    >
+                      <Play size={14} fill="currentColor" />
+                      Generate
+                    </Button>
+                  </div>
                 )}
 
                 {isGeneratingThis && (
@@ -582,7 +650,7 @@ export const HybridCertFormats: React.FC = () => {
                           {fmt.id === 'pure-pqc-kem' &&
                             'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
                           {fmt.id === 'composite-kem' &&
-                            'Per draft-ietf-lamps-pq-composite-kem-17 §6 (AD Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
+                            'Per draft-ietf-lamps-pq-composite-kem §6 (IESG Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
                         </p>
                         {!isGeneratingThis && (
                           <Button

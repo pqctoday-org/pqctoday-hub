@@ -17,7 +17,7 @@ The PKI Enrollment Protocols module covers EST (Enrollment over Secure Transport
 - **RFC 9909** — Algorithm Identifiers for SLH-DSA in X.509 PKI; companion to RFC 9881 for stateless hash-based signatures
 - **RFC 9936** — Use of ML-KEM in CMS; downstream consumer of ML-KEM certs in S/MIME
 - **RFC 9629** — KEM algorithms in CMS (KEMRecipientInfo); upstream of RFC 9936
-- **Composite signatures (draft-ietf-lamps-pq-composite-sigs-19)** and **composite KEMs (draft-ietf-lamps-pq-composite-kem-14)** — IETF drafts defining one certificate carrying both classical and PQC public keys under composite OIDs; OpenSSL 3.6 does not yet ship these; production deployments use parallel certs instead
+- **Composite signatures (draft-ietf-lamps-pq-composite-sigs)** and **composite KEMs (draft-ietf-lamps-pq-composite-kem)** — IETF drafts defining one certificate carrying both classical and PQC public keys under composite OIDs; OpenSSL 3.6 does not yet ship these; production deployments use parallel certs instead
 - **PBM-MAC protection (RFC 4210 §5.1.3.1)** — Password-Based Message Authentication Code; shared-secret protection mode where the requester and CA share a one-time secret; HMAC over the PKIMessage header + body
 - **Signature-based protection (RFC 4210 §5.1.3.3)** — protected by a signing key; requires both sides to have certificates and signing keys
 - **Implicit confirm vs explicit certConf** — CMP normally requires a second round trip where the EE confirms it received the cert; if both sides agree, this can be skipped via the `implicitConfirm` extension in the IR header
@@ -54,4 +54,4 @@ The workshop has 6 steps:
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - draft-ietf-lamps-pq-composite-sigs-19
-- draft-ietf-lamps-pq-composite-kem-14
+- draft-ietf-lamps-pq-composite-kem

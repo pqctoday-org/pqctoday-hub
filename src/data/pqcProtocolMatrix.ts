@@ -8,9 +8,12 @@
  *
  * The 4 dimensions reflect the published external PQC-readiness heatmap:
  *  - pureKem   = pure post-quantum KEM (e.g. ML-KEM-only, no classical fallback)
- *  - hybridKem = classical + PQ KEM concatenation (e.g. X25519+ML-KEM-768)
+ *  - hybridKem = PQ + classical KEM concatenation (ML-KEM component encoded
+ *                FIRST per composite-kem §4.1; TLS named groups use their own
+ *                wire order, e.g. X25519MLKEM768)
  *  - pureSig   = pure PQ signature/auth (e.g. ML-DSA-only, SLH-DSA-only)
- *  - hybridSig = classical + PQ composite signature (e.g. ECDSA+ML-DSA)
+ *  - hybridSig = PQ + classical composite signature (ML-DSA component encoded
+ *                FIRST per composite-sigs §4.3, raw concatenation, no ASN.1 wrapper)
  *
  * Dimension status values (coarse — kept for backwards compatibility and as
  * the heatmap fallback when `stage` is absent):
@@ -50,7 +53,7 @@
 import type { Freshness } from './contentFreshness'
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-11'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-08-17'
 
 /**
  * Structured freshness for the content-freshness manifest — pairs the snapshot
@@ -1006,6 +1009,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-12',
         localFile: '/library/RFC_9909.html',
       },
+      {
+        // Added 2026-08-17: a published X.509 hybrid mechanism the row omitted.
+        // Related Certificates pair a classical and a PQC certificate via a
+        // binding hash — distinct from composite (single OID, both-must-verify).
+        id: 'RFC-9763',
+        title: 'RFC 9763 — Related Certificates for Multiple Authentications',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9763',
+        date: '2025-06',
+        localFile: '/library/RFC-9763.html',
+      },
     ],
     latestDraft: [
       {
@@ -1016,11 +1029,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-lamps-pq-composite-sigs-19.html',
       },
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-17',
-        title: 'draft-ietf-lamps-pq-composite-kem-17 — Composite ML-KEM in X.509 (IETF Last Call)',
+        id: 'draft-ietf-lamps-pq-composite-kem-19',
+        title: 'draft-ietf-lamps-pq-composite-kem-19 — Composite ML-KEM in X.509 (IESG Evaluation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-07',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
+        date: '2026-08-14',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-19.html',
       },
     ],
     dimensions: {
@@ -1044,7 +1057,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'ietf-last-call',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-lamps-pq-composite-kem-18 is 'Waiting for AD Go-Ahead' — IETF Last Call has CLOSED and no ballot is open, so Last Call is the last completed milestone.",
+          "Re-verified 2026-08-17 against the datatracker: draft-ietf-lamps-pq-composite-kem-19 (posted 2026-08-14) moved to IESG Evaluation on 2026-08-13 and is on the 2026-09-03 IESG telechat agenda. This scale has no 'iesg-evaluation' member, so the stage stays at the last COMPLETED milestone (IETF Last Call, level 6); the ballot is open but not concluded.",
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1672,12 +1685,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-lamps-pq-composite-kem-17',
+        id: 'draft-ietf-lamps-pq-composite-kem-19',
         title:
-          'draft-ietf-lamps-pq-composite-kem-17 — Composite ML-KEM (enrollment payload, IETF Last Call)',
+          'draft-ietf-lamps-pq-composite-kem-19 — Composite ML-KEM (enrollment payload, IESG Evaluation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
-        date: '2026-07',
-        localFile: '/library/draft-ietf-lamps-pq-composite-kem-16.html',
+        date: '2026-08-14',
+        localFile: '/library/draft-ietf-lamps-pq-composite-kem-19.html',
       },
       {
         id: 'draft-ietf-lamps-pq-composite-sigs-19',
@@ -1714,7 +1727,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'ietf-last-call',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Inherits draft-ietf-lamps-pq-composite-kem-18, 'Waiting for AD Go-Ahead' (Last Call closed, no ballot).",
+          "Re-verified 2026-08-17. Inherits draft-ietf-lamps-pq-composite-kem-19: IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat. Stage held at the last completed milestone (IETF Last Call, level 6) because this scale has no 'iesg-evaluation' member.",
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -1790,9 +1803,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureKemNote:
           'ML-KEM-768 key generation + encapsulation/decapsulation drives the RFC 9810 encrCert POP round-trip; full CMP KUR PKIMessage wrap is illustrative.',
         hybridKemNote:
-          'Composite KEM (draft-ietf-lamps-pq-composite-kem-16) deferred — awaiting OpenSSL composite provider integration.',
+          'Composite KEM (draft-ietf-lamps-pq-composite-kem) deferred — awaiting composite provider support; stock OpenSSL 3.6.3 registers no composite algorithms (verified 2026-08-17).',
         hybridSigNote:
-          'Composite sigs (draft-ietf-lamps-pq-composite-sigs-19) deferred — awaiting OpenSSL composite provider integration.',
+          'Composite sigs (draft-ietf-lamps-pq-composite-sigs) deferred — awaiting composite provider support; stock OpenSSL 3.6.3 registers no composite algorithms (verified 2026-08-17).',
       },
     ],
     liveDeployments: [
@@ -1874,7 +1887,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         stage: 'individual-draft',
         stageNote:
           "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. The only hybrid-KEM mechanism for PKINIT is draft-bokovoy-kitten-pkinit-pqc-01 — stream None, IESG state 'I-D Exists', never WG-adopted, no formal standing in the IETF process.",
-        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still in IETF Last Call at the X.509 layer (see X.509 row).',
+        note: 'Same draft as Pure KEM; hybrid mode composes with draft-ietf-lamps-pq-composite-kem, itself still pre-RFC at the X.509 layer (IESG Evaluation) (see X.509 row).',
         refs: [
           {
             kind: 'draft',

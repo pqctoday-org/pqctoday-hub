@@ -313,7 +313,7 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              draft-composite-kem-14 <ExternalLink size={12} />
+              draft-composite-kem <ExternalLink size={12} />
             </Button>
           </a>
           <a
