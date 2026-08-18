@@ -46,8 +46,8 @@ Industry Landscape now covers Cryptocurrency/Blockchain consensus mechanisms, mi
 
 ### Data
 
-- Re-verified ~130 migrate-catalog products against current vendor evidence (spotcheck batches 39–64).
-- Refreshed the AI assistant's search index (16,322 chunks, up from 15,620) to reflect all of the above.
+- Re-verified ~130 migrate-catalog products against current vendor evidence (spotcheck batches 39–64). [persona:ops] [persona:architect]
+- Refreshed the AI assistant's search index (16,322 chunks, up from 15,620) to reflect all of the above. [persona:curious] [persona:researcher]
 
 ## [4.51.0] - 2026-08-16
 
