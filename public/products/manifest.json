@@ -9158,8 +9158,256 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "manual"
+  },
+  {
+   "softwareName": "kiteworks-pqc-file-sharing",
+   "filename": "kiteworks-pqc-file-sharing-brief-8d7239b4.html",
+   "url": "https://www.kiteworks.com/platform/compliance/fips-compliance/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "kiteworks-pqc-file-sharing",
+   "filename": "kiteworks-pqc-file-sharing-manual-7c33ede3.html",
+   "url": "https://kiteworks.com/kiteworks-file-sharing-collaboration/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "tii-pqc-library-uae",
+   "filename": "tii-pqc-library-uae-brief-cb5192d5.html",
+   "url": "https://www.tii.ae/cryptography",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "tii-pqc-library-uae",
+   "filename": "tii-pqc-library-uae-manual-e0e54f02.html",
+   "url": "https://www.tii.ae/news/abu-dhabis-tii-unveils-first-post-quantum-cryptography-library-uae",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "quranium-pqc-blockchain",
+   "filename": "quranium-pqc-blockchain-brief-46cccd98.pdf",
+   "url": "https://www.quranium.org/pdf/QRN-White-Paper-VF.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "quranium-pqc-blockchain",
+   "filename": "quranium-pqc-blockchain-manual-f8b6c974.html",
+   "url": "https://www.quranium.org/docs",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cryptpad-pqc-collaboration",
+   "filename": "cryptpad-pqc-collaboration-brief-dcaeb039.html",
+   "url": "https://blog.cryptpad.org/2026/02/16/cryptpad-overview-2025/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "tii-pqc-library-uae",
+   "filename": "tii-pqc-library-uae-manual-ccf7cd17.html",
+   "url": "https://www.tii.ae/insights/post-quantum-cryptography-preparing-digitally-secure-future",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "tii-pqc-library-uae",
+   "filename": "tii-pqc-library-uae-brief-f33e5f7c.html",
+   "url": "https://github.com/Crypto-TII",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "enquantum-pqc-accelerator",
+   "filename": "enquantum-pqc-accelerator-brief-10ef20a1.html",
+   "url": "https://www.enquantum.io/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "kryptus-knet-hsm-pqc",
+   "filename": "kryptus-knet-hsm-pqc-brief-fc21e9c3.html",
+   "url": "https://kryptus.com/practical-guide-to-quantum-safe-transition/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "kryptus-knet-hsm-pqc",
+   "filename": "kryptus-knet-hsm-pqc-manual-26cf3820.pdf",
+   "url": "https://kryptus.com/wp-content/uploads/2026/06/appnote-adcs-ml-dsa-knet-en.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "fenasbac-pix-pqc-research",
+   "filename": "fenasbac-pix-pqc-research-brief-b1aaf880.pdf",
+   "url": "https://www.fenasbac.com.br/documentos/quantum-cryptography-pix-en.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sequre-quantum-chile",
+   "filename": "sequre-quantum-chile-brief-ff9568b3.html",
+   "url": "https://sequrequantum.com/2025/chile-takes-a-leap-in-medical-cybersecurity-with-quantum-technology/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "turkcell-nokia-quantum-safe-ipsec",
+   "filename": "turkcell-nokia-quantum-safe-ipsec-brief-51c78538.html",
+   "url": "https://www.nokia.com/customer-success/nokia-and-turkcell-demonstrate-industry-leading-quantum-safe-protection-for-mobile-subscribers/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "qatar-qc2-quantum-center",
+   "filename": "qatar-qc2-quantum-center-brief-21826fbc.html",
+   "url": "https://www.hbku.edu.qa/en/cse/qc2",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "secqai-q-locked-tpm-taiwan-tsmc",
+   "filename": "secqai-q-locked-tpm-taiwan-tsmc-brief-f8d4a508.html",
+   "url": "https://www.secqai.com/insights-and-news/secqai-tape-out-cheri-pqc-tpm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "madquantum-cm-spain",
+   "filename": "madquantum-cm-spain-brief-cec3e08b.html",
+   "url": "https://networks.imdea.org/madrid-leads-the-development-of-quantum-safe-communications-through-the-madquantum-cm-project/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "quantumctek-pqc-chip",
+   "filename": "quantumctek-pqc-chip-brief-114d7961.html",
+   "url": "https://www.quantum-info.com/English/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "chelpis-quantum-pqc-taiwan",
+   "filename": "chelpis-quantum-pqc-taiwan-brief-5c9686d3.html",
+   "url": "https://www.chelpis.com/post/chelpis-presents-taiwan-s-post-quantum-cryptography-migration-framework",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "secqai-q-locked-tpm-taiwan-tsmc",
+   "filename": "secqai-q-locked-tpm-taiwan-tsmc-manual-98d43623.html",
+   "url": "https://www.secqai.com/our-products/tpm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "china-telecom-quantum-group",
+   "filename": "china-telecom-quantum-group-brief-28d0295e.html",
+   "url": "https://quantumcomputingreport.com/china-telecom-deploys-hybrid-quantum-safe-encryption-system-across-16-cities/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "china-telecom-quantum-group",
+   "filename": "china-telecom-quantum-group-brief-b861d989.html",
+   "url": "https://thequantuminsider.com/2025/05/20/china-telecom-launches-hybrid-quantum-safe-encryption-system-completes-1000-kilometer-secure-call/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "chelpis-quantum-pqc-taiwan",
+   "filename": "chelpis-quantum-pqc-taiwan-manual-7bd4f2e8.html",
+   "url": "https://github.com/chelpis/pqtunnel",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "aimer-reference-implementation",
+   "filename": "aimer-reference-implementation-brief-e4f1fee4.html",
+   "url": "https://github.com/samsungsds-opensource/AIMer",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "qapp-pqc-tls-gateway-russia",
+   "filename": "qapp-pqc-tls-gateway-russia-brief-f5b4efad.html",
+   "url": "https://qapp.tech/cases/gazprombank",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "smaug-t-reference-implementation",
+   "filename": "smaug-t-reference-implementation-brief-77882df4.html",
+   "url": "https://github.com/hmchoe0528/SMAUG-T_public",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "ntru-reference-implementation",
+   "filename": "ntru-reference-implementation-brief-a8e11084.html",
+   "url": "https://github.com/ntruplus/ntruplus",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "haetae-reference-implementation",
+   "filename": "haetae-reference-implementation-brief-aa56a2a4.html",
+   "url": "https://kpqc.cryptolab.co.kr/haetae",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "smaug-t-reference-implementation",
+   "filename": "smaug-t-reference-implementation-manual-bc5af652.html",
+   "url": "https://github.com/CryptoLabInc/SMAUG-T",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "smaug-t-reference-implementation",
+   "filename": "smaug-t-reference-implementation-brief-eff035ac.html",
+   "url": "https://kpqc.cryptolab.co.kr/smaug-t",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1389,
- "downloaded": 1389
+ "total": 1420,
+ "downloaded": 1420
 }
