@@ -47,6 +47,7 @@ Hybrid certificates in the workshop now cover all six algorithm pairings the cur
 
 ### Changed
 
+- **HQC and FN-DSA now appear in the default algorithm view** [view:/algorithms] [persona:architect] [persona:developer] [persona:executive]: both are NIST selections whose FIPS documents are not published yet, and the default "Certified" filter was hiding them — including FN-DSA-512, which the executive view already highlights as a headline algorithm. They still show a "Draft" badge and are still excluded from anything claiming FIPS validation, so nothing is presented as more final than it is.
 - **Industry Landscape tiles sort by cybersecurity opportunity** [view:/industry] [persona:executive] [persona:architect]: tiles order by estimated market opportunity and show the badge they are sorted by, so the ranking is visible rather than implied.
 
 ### Data
