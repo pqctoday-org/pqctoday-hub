@@ -11454,8 +11454,152 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "ns3-network-simulator",
+      "filename": "ns3-network-simulator-manual-1a917615.html",
+      "url": "https://www.nsnam.org/docs/manual/singlehtml/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "ns3-network-simulator",
+      "filename": "ns3-network-simulator-brief-c6ba055d.html",
+      "url": "https://www.nsnam.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openqkdnetwork-qkd-net",
+      "filename": "openqkdnetwork-qkd-net-manual-9e8ca616.html",
+      "url": "https://www.openqkdnetwork.net/getting-started",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "openqkdnetwork-qkd-net",
+      "filename": "openqkdnetwork-qkd-net-brief-ef32a27b.html",
+      "url": "https://github.com/Open-QKD-Network/qkd-net",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "red-hat-enterprise-linux-10-2",
+      "filename": "red-hat-enterprise-linux-10-2-brief-40ea29cc.html",
+      "url": "https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux-10/post-quantum-cryptography",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "red-hat-enterprise-linux-10-2",
+      "filename": "red-hat-enterprise-linux-10-2-manual-6c39df6a.html",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html-single/10.2_release_notes/index",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "red-hat-ansible-automation-platform-pqc",
+      "filename": "red-hat-ansible-automation-platform-pqc-brief-ff4af379.html",
+      "url": "https://www.redhat.com/en/blog/how-red-hat-integrating-post-quantum-cryptography-our-products",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hp-endpoint-security-controller-cryptographic-library",
+      "filename": "hp-endpoint-security-controller-cryptographic-library-brief-9f4e00f1.html",
+      "url": "https://threatresearch.ext.hp.com/designing-pc-firmware-protection-for-the-quantum-era/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "solarwinds-java-cryptographic-library",
+      "filename": "solarwinds-java-cryptographic-library-brief-698e71cf.html",
+      "url": "https://www.bouncycastle.org/about/bouncy-castle-fips-faq/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "tellabs-panorama-pon-manager-cryptographic-module",
+      "filename": "tellabs-panorama-pon-manager-cryptographic-module-brief-a0c6d673.html",
+      "url": "https://tellabs.com/tellabs-earns-updated-jitc-certification/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "clear-cryptosystem",
+      "filename": "clear-cryptosystem-brief-3c2e7a0d.html",
+      "url": "https://quantumknight.io/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "certicom-pqc-code-signing",
+      "filename": "certicom-pqc-code-signing-brief-f9da41de.html",
+      "url": "https://www.certicom.com/en/products-and-services/code-signing-key-management-server",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "certicom-pqc-code-signing",
+      "filename": "certicom-pqc-code-signing-manual-ebd30888.pdf",
+      "url": "https://www.certicom.com/content/dam/certicom/pdf/Certicom_CodeSigning_Datasheet_v9.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "blackberry-qnx-hypervisor-8",
+      "filename": "blackberry-qnx-hypervisor-8-brief-9c3b0ce5.pdf",
+      "url": "https://qnx.software/content/dam/qnx-xwalk/pdf/product-briefs/qnx-hypervisor-8-product-brief.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "intel-tdx-trust-domain-extensions",
+      "filename": "intel-tdx-trust-domain-extensions-manual-dcdda1d9.html",
+      "url": "https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/documentation.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "intel-tdx-trust-domain-extensions",
+      "filename": "intel-tdx-trust-domain-extensions-brief-0dd4b029.html",
+      "url": "https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "blackberry-qnx-hypervisor-8",
+      "filename": "blackberry-qnx-hypervisor-8-manual-23a74078.html",
+      "url": "https://blackberry.qnx.com/en/products/foundation-software/qnx-hypervisor",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hp-endpoint-security-controller-cryptographic-library",
+      "filename": "hp-endpoint-security-controller-cryptographic-library-manual-72f42e8b.html",
+      "url": "https://www.hp.com/us-en/newsroom/blogs/2024/hp-launches-business-pc-to-protect-against-quantum-computer-hacks.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1676,
-  "downloaded": 1676
+  "total": 1694,
+  "downloaded": 1694
 }
