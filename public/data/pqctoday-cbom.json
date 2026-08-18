@@ -3601,7 +3601,7 @@
           "primitive": "kem"
         }
       },
-      "description": "First HSM to receive PCI HSM validation with PQC support (June 2025). Supports ML-DSA ML-KEM and SLH-DSA (pre-loaded) for financial and enterprise security.",
+      "description": "First HSM to receive PCI HSM validation with PQC support (June 2025). Supports ML-DSA and ML-KEM (FIPS 203/204 compliant), with SLH-DSA support described by Futurex as 'on the horizon' (not yet shipped) as of the June 2025 announcement, for financial and enterprise security.",
       "externalReferences": [
         {
           "type": "website",
@@ -7517,9 +7517,14 @@
       "name": "Element (Matrix Protocol)",
       "version": "Current",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "Element implements PQXDH (Post-Quantum Extended Diffie-Hellman) for end-to-end encrypted messaging.",
+      "description": "Element (built on the Matrix protocol) has post-quantum encryption on its roadmap; a PQXDH-style handshake (X3DH extended with ML-KEM/Kyber) has been under development on the vodozemac crypto library, but per Matrix.org's own Dec 2025 status update this is not yet shipped -- Post-Quantum encryption remains listed among items still 'to progress'.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -8183,9 +8188,14 @@
       "name": "openSUSE Leap",
       "version": "16.0",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "openSUSE ships OpenSSL 3.x. Leap 16 expected with OpenSSL 3.5+ enabling PQC by default.",
+      "description": "openSUSE ships OpenSSL 3.x; Leap 16 is expected to ship OpenSSL 3.5+ enabling PQC by default. Additionally, as of April 2026, openSUSE natively packages libzupt (in both Leap and Tumbleweed) -- a post-quantum SDK providing ML-KEM-768 + X25519 hybrid encryption for files and binary data, with C++/Python/Java bindings (Node.js in development).",
       "externalReferences": [
         {
           "type": "vcs",
@@ -10220,7 +10230,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Coinbase plans to introduce 'quantum-proof' custody services for institutional clients by late 2026, combining existing encryption with emerging NIST-reviewed post-quantum standards (hybrid approach, no single algorithm committed yet). A Coinbase advisory board of cryptographers (convened Jan 2026) published a ~50-page position paper in April 2026 on quantum threats to blockchain; CEO Brian Armstrong also leads an industry coalition pushing Winternitz/BIP-360 for Bitcoin.",
+      "description": "Coinbase plans to introduce 'quantum-proof' custody services for institutional clients by late 2026, combining existing encryption with emerging NIST-reviewed post-quantum standards (hybrid approach, no single algorithm committed yet). A Coinbase advisory board of cryptographers (convened Jan 2026) published a ~50-page position paper in April 2026 on quantum threats to blockchain; CEO Brian Armstrong also leads an industry coalition pushing Winternitz/BIP-360 for Bitcoin. Building PQ-CoreKMS, a post-quantum version of its CoreKMS Multi-Party Computation (MPC) key-management system that protects approximately 99.9% of custodied assets; plans an automated post-quantum signing pipeline (secure enclaves, secret-sharing, threshold cryptography) within the next year. Coinbase is also a founding member of the Bitcoin Security Consortium (with BlackRock, Fidelity Digital Assets, Block, Blockstream, Strategy) funding Bitcoin post-quantum developer work including BIP-360.",
       "externalReferences": [
         {
           "type": "website",
@@ -11844,9 +11854,13 @@
       "name": "Cisco IOS XR",
       "version": "25.4.2",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
       },
-      "description": "Cisco IOS XR is the service-provider routing OS for ASR 9000, NCS, and 8000 platforms. PQC IPsec and TLS migration expected to follow IOS XE 26 roadmap; formal IOS XR PQC release not yet announced as of Q1 2026.",
+      "description": "Cisco IOS XR is the service-provider routing OS for ASR 9000, NCS, and 8000 platforms. Separately from the ML-KEM/ML-DSA (NIST-PQC) roadmap, which is not yet GA, IOS XR has shipped a distinct quantum-safe mechanism since Release 24.1.1 on the Cisco NCS 1004 optical platform: RFC 8784 Postquantum Preshared Keys (PPK) for IKEv2/OTNsec encryption, available as manual PPK or dynamic PPK via the Cisco Secure Key Integration Protocol (SKIP) against an external key source (e.g. QKD). This is a symmetric-key-based quantum-resistance method, not a NIST ML-KEM/ML-DSA lattice algorithm. Full IOS XR NIST-PQC (ML-KEM/ML-DSA) migration is expected to follow the IOS XE 26 roadmap; not yet formally announced as of Q1 2026.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -12886,7 +12900,7 @@
           "primitive": "kem"
         }
       },
-      "description": "JetBrains TeamCity: CI/CD. Java-based. PQC depends on JDK. Java 24+ has ML-KEM/ML-DSA.",
+      "description": "JetBrains TeamCity: CI/CD, Java-based. Starting with TeamCity 2026.1, the SERVER supports only Java 21 (build agents support Java 21 through 25). Because ML-KEM/ML-DSA landed as standard JDK features only in Java 24 (JEP 496/497), the TeamCity server's Java-21-only requirement means the server process itself has no path to native JVM PQC support under 2026.1; a build agent running under JDK 24+ could access JVM-level PQC APIs for build-time crypto operations, but that is agent-side only, not server-side.",
       "externalReferences": [
         {
           "type": "website",
@@ -13412,12 +13426,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "ONTAP 9.18.1 introduces PQC support for data in transit, enabling the ability to use post-quantum algorithms (ML-KEM / FIPS 203) for data-in-transit. NetApp also markets quantum-ready data-at-rest encryption (cryptographic agility, AES-256). PQC for data in transit added in ONTAP 9.18.1 (released February 2026).",
+      "description": "Beginning with ONTAP 9.18.1, SSL in ONTAP supports the ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205) post-quantum cryptographic algorithms for data-in-transit; these are negotiated only when FIPS is disabled and the peer also supports them. NetApp also markets quantum-ready data-at-rest encryption (cryptographic agility, AES-256).",
       "externalReferences": [
         {
           "type": "website",
@@ -14926,7 +14939,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "IDnomic PKI became PQC-ready Q4 2023. Hybrid and PQC-only electronic certs.",
+      "description": "IDnomic PKI is not yet confirmed PQC-ready. The vendor's own FAQ (cryptovision.com, CMS-modified as recently as 2026-01-20) still phrases its PQC-readiness target in future tense -- 'will be PQC-ready by End of 2023' -- rather than as a completed milestone. IDnomic PKI supports hybrid certificates allowing coexistence of classical asymmetric cryptography with PQC algorithms once selected; no specific PQC algorithm is named as implemented.",
       "externalReferences": [
         {
           "type": "website",
@@ -15247,7 +15260,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Supports ML-KEM/Kyber and ML-DSA/Dilithium including hybrid dual-stack migration. Common Criteria certified. SLH-DSA, LMS, XMSS not confirmed.",
+      "description": "I4P's own official Trident HSM product page's Cryptography specification table lists exactly one entry under 'Post-Quantum algorithms': SPHINCS+ (= SLH-DSA) -- confirming SLH-DSA support. The same table has no ML-KEM/Kyber or ML-DSA/Dilithium entry; those algorithms named in pqc_support are not independently confirmed by this primary source. (Common Criteria certification status is out of this skill's scope.)",
       "externalReferences": [
         {
           "type": "website",
@@ -18699,7 +18712,7 @@
           "algorithmFamily": "ML-KEM"
         }
       },
-      "description": "Cloud SASE platform with ML-KEM post-quantum key exchange for secure web gateway and ZTNA.",
+      "description": "Cloud SASE platform preparing ML-KEM (specifically ML-KEM 768) post-quantum key exchange for secure web gateway and ZTNA. Per Netskope's own blog, the quantum-resilient version of Netskope One is still in development, not yet shipped/GA.",
       "externalReferences": [
         {
           "type": "website",
@@ -21326,9 +21339,13 @@
       "name": "HP Enterprise Printers PQC",
       "version": "2026",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
       },
-      "description": "World's first printers with quantum-resistant firmware. LMS hash-based signatures for secure boot.",
+      "description": "World's first quantum-resistant printers (HP LaserJet Enterprise 8000 Series, Managed E700/E800 Series, Color LaserJet Enterprise 5000/6000 and X500/X600 Series), with hardware and firmware layers enabling quantum resistance at the device level. HP's own technical white paper (v1.0, Jan 2026) frames this as quantum-resistant digital code signing for firmware/software aligned with NSA CNSA 2.0 guidance and NIST's finalized PQC standards (ML-DSA / FIPS 204, ML-KEM / FIPS 203) -- ahead of the 2027 U.S. federal National Security Systems mandate. Requires HP FutureSmart 5.9.2.3+ and admin-enabled activation via the Embedded Web Server; activation is irreversible (modifies OTP memory/hardware fuses).",
       "externalReferences": [
         {
           "type": "website",
@@ -21505,9 +21522,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "f5e36ea3b38937cb",
+      "bom-ref": "425d25bd986042f1",
       "name": "Open Quantum Safe liboqs",
-      "version": "0.15.0",
+      "version": "0.16.0",
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -21900,9 +21917,14 @@
       "name": "NXP S32K5 Automotive PQC MCU",
       "version": "S32K5xx",
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
       },
-      "description": "16nm FinFET automotive MCU with PQC crypto-agility for SDV",
+      "description": "16nm FinFET automotive MCU with PQC crypto-agility for SDV (software-defined vehicles), part of NXP's CoreRide zonal architecture platform. Per NXP's own official PQC strategy article, S32K5 (alongside i.MX 94/95, S32N, and MCX) is named as one of the first product families to receive NXP's PQC-ready Hardware Security Engine (HSE): pre-provisioned public key material compatible with FIPS 204 (ML-DSA), plus the option to use LMS (NIST SP 800-208) for secure software/firmware verification.",
       "externalReferences": [
         {
           "type": "website",
@@ -23221,7 +23243,7 @@
       "externalReferences": [
         {
           "type": "website",
-          "url": "https://tadviser.com/index.php/Article:Post-quantum_cryptography"
+          "url": "https://qapp.tech/cases/gazprombank"
         }
       ],
       "properties": [
@@ -23351,7 +23373,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/kpqc-cryptocon/SMAUG-T"
+          "url": "https://github.com/CryptoLabInc/SMAUG-T"
         },
         {
           "type": "website",
@@ -23516,7 +23538,7 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/kpqc-cryptocon/NTRUplus"
+          "url": "https://github.com/ntruplus/ntruplus"
         },
         {
           "type": "website",
@@ -31147,7 +31169,7 @@
           "primitive": "kem"
         }
       },
-      "description": "CAVP/ACVP-validated IP implementing ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205). The accelerators combine hardware with embedded firmware to remain crypto-agile across future PQC algorithm updates, targeting edge to cloud SoCs.",
+      "description": "CAVP/ACVP-validated IP implementing ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), and XMSS and LMS (SP 800-208). The accelerators combine hardware with embedded firmware to remain crypto-agile across future PQC algorithm updates, targeting edge to cloud SoCs.",
       "externalReferences": [
         {
           "type": "website",
@@ -35465,6 +35487,60 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "80"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "e9101ab33b98cbc3",
+      "name": "KpqClean (Korean PQC Reference)",
+      "version": "Current",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "AIMer-128f, AIMer-192f, AIMer-256f, HAETAE-2, HAETAE-3, HAETAE-5, NTRU+-1152, NTRU+-1277, NTRU+-768, SMAUG-T-128, SMAUG-T-192, SMAUG-T-256",
+          "primitive": "other"
+        }
+      },
+      "description": "Clean reference implementations of all KpqC (Korean Post-Quantum Cryptography) competition algorithms, modelled on PQClean.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/kpqc-cryptocraft/KpqClean"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/kpqc-cryptocraft/KpqClean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "kpqclean-korean-reference"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Libraries"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "algo_product_xref"
+        },
+        {
+          "name": "pqctoday:algorithm_implementations",
+          "value": "AIMer-128f (KpqClean (Korean reference)); AIMer-192f (KpqClean (Korean reference)); AIMer-256f (KpqClean (Korean reference)); HAETAE-2 (KpqClean (Korean reference)); HAETAE-3 (KpqClean (Korean reference)); HAETAE-5 (KpqClean (Korean reference)); NTRU+-1152 (KpqClean (Korean reference)); NTRU+-1277 (KpqClean (Korean reference)); NTRU+-768 (KpqClean (Korean reference)); SMAUG-T-128 (KpqClean (Korean reference)); SMAUG-T-192 (KpqClean (Korean reference)); SMAUG-T-256 (KpqClean (Korean reference))"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "60"
         }
       ]
     }
