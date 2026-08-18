@@ -1106,6 +1106,7 @@ export function IndustryLandscapeView() {
                   {count} use case{count === 1 ? '' : 's'}
                 </span>
                 {market && <MarketSizeBadge m={market} />}
+                <CyberOpportunityBadge industry={ind} />
               </Button>
             )
           })}
