@@ -10078,8 +10078,256 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "manual"
+  },
+  {
+   "softwareName": "solana",
+   "filename": "solana-brief-a2fbb4f8.html",
+   "url": "https://solana.com/news/quantum-readiness",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sectigo-cert-manager-2026",
+   "filename": "sectigo-cert-manager-2026-brief-786c8f87.html",
+   "url": "https://www.sectigo.com/resource-library/private-pqc-brief",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sectigo-cert-manager-2026",
+   "filename": "sectigo-cert-manager-2026-manual-fd6002d7.html",
+   "url": "https://support.sectigo.com/Com_KnowledgeDetailPage?Id=kA01N000000bvJA",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "a10-networks-thunder-adc",
+   "filename": "a10-networks-thunder-adc-brief-22021e10.html",
+   "url": "https://www.a10networks.com/blog/post-quantum-cryptography-comes-to-a10-ssl-tls-data-plane/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "netapp-ontap-9-16",
+   "filename": "netapp-ontap-9-16-brief-ff070571.html",
+   "url": "https://www.netapp.com/cyber-resilience/post-quantum-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "netapp-ontap-9-16",
+   "filename": "netapp-ontap-9-16-manual-b9193108.html",
+   "url": "https://docs.netapp.com/us-en/ontap/networking/configure_network_security_using_federal_information_processing_standards_fips.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "commvault-cloud",
+   "filename": "commvault-cloud-brief-01e3f2d5.html",
+   "url": "https://www.commvault.com/explore/post-quantum-cryptography",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "commvault-cloud",
+   "filename": "commvault-cloud-manual-859cfcfb.html",
+   "url": "https://documentation.commvault.com/v11/commcell-console/enabling_post_quantum_cryptography.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "sectigo-cert-manager-2026",
+   "filename": "sectigo-cert-manager-2026-manual-0b9542bc.html",
+   "url": "https://www.sectigo.com/knowledge-base/detail/Sectigo-Certificate-Manager-SCM-Administrator-guide/kA01N000000bvJA",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "sectigo-cert-manager-2026",
+   "filename": "sectigo-cert-manager-2026-manual-6bc88318.pdf",
+   "url": "https://www.sectigo.com/uploads/resources/CertificateManager.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "nexus-group-certificate-manager",
+   "filename": "nexus-group-certificate-manager-brief-7b498298.html",
+   "url": "https://www.nexusgroup.com/post-quantum-cryptography-nexus-pki/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nexus-group-certificate-manager",
+   "filename": "nexus-group-certificate-manager-manual-5397205c.html",
+   "url": "https://doc.nexusgroup.com/nexus-certificate-manager/8.14/release-notes-certificate-manager-8-13-0",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mbedtls",
+   "filename": "mbedtls-brief-af1d951b.html",
+   "url": "https://mbed-tls.readthedocs.io/en/latest/project/roadmap/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mbedtls",
+   "filename": "mbedtls-manual-b1fe800f.html",
+   "url": "https://github.com/Mbed-TLS/mbedtls",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "kryptonite-shipovnik-pqc-signature-russia",
+   "filename": "kryptonite-shipovnik-pqc-signature-russia-manual-fbf56d3e.html",
+   "url": "https://github.com/Kryptonite-RU/shipovnik-py",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "libsodium",
+   "filename": "libsodium-brief-9825cd8c.html",
+   "url": "https://github.com/jedisct1/libsodium/blob/master/ChangeLog",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "libsodium",
+   "filename": "libsodium-manual-b0df3a59.html",
+   "url": "https://doc.libsodium.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "hashicorp-vault",
+   "filename": "hashicorp-vault-brief-a73f31ed.html",
+   "url": "https://www.hashicorp.com/en/blog/quantum-security-and-cryptography-in-hashicorp-vault",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hashicorp-vault",
+   "filename": "hashicorp-vault-manual-1c074f77.html",
+   "url": "https://developer.hashicorp.com/vault/docs/secrets/transit",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "oracle-key-vault",
+   "filename": "oracle-key-vault-manual-6890e90b.html",
+   "url": "https://docs.oracle.com/en/database/oracle/key-vault/21.14/okvag/changes-this-release-oracle-key-vault.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "boringssl",
+   "filename": "boringssl-brief-92e53026.html",
+   "url": "https://boringssl.googlesource.com/boringssl/+/master/crypto/fipsmodule/FIPS.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hashicorp-vault",
+   "filename": "hashicorp-vault-brief-0d0fef05.html",
+   "url": "https://www.hashicorp.com/en/blog/vault-enterprise-20-modernizes-identity-security-at-scale",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "libsodium",
+   "filename": "libsodium-manual-6bdba668.html",
+   "url": "https://doc.libsodium.org/advanced/ml-kem768",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "boringssl",
+   "filename": "boringssl-brief-2f25bce9.html",
+   "url": "https://boringssl.googlesource.com/boringssl/+/master/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "boringssl",
+   "filename": "boringssl-manual-8a9ab3b8.html",
+   "url": "https://boringssl.googlesource.com/boringssl/+/refs/heads/master/include/openssl/mlkem.h",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "gnutls",
+   "filename": "gnutls-manual-252886ad.html",
+   "url": "https://gitlab.com/gnutls/gnutls/-/raw/master/NEWS",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "libressl",
+   "filename": "libressl-brief-91f828ae.html",
+   "url": "https://raw.githubusercontent.com/libressl/portable/master/ChangeLog",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "android-16",
+   "filename": "android-16-brief-4a8b0b46.html",
+   "url": "https://security.googleblog.com/2026/03/post-quantum-cryptography-in-android.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "futurex-cryptohub",
+   "filename": "futurex-cryptohub-brief-a98e4656.html",
+   "url": "https://www.futurex.com/news/futurex-sets-pqc-ready-standard",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "thales-payshield-10k",
+   "filename": "thales-payshield-10k-manual-53242a02.html",
+   "url": "https://cpl.thalesgroup.com/resources/encryption/payshield-10k-data-sheet",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "thales-payshield-10k",
+   "filename": "thales-payshield-10k-manual-419aa212.pdf",
+   "url": "https://cpl.thalesgroup.com/sites/default/files/content/data_sheets/field_document/2023-05/payshield10k-ds.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
   }
  ],
- "total": 1504,
- "downloaded": 1504
+ "total": 1535,
+ "downloaded": 1535
 }
