@@ -12422,8 +12422,208 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "tcpdump",
+      "filename": "tcpdump-brief-48b5364f.html",
+      "url": "https://www.tcpdump.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "tcpdump",
+      "filename": "tcpdump-manual-6b0b0d3e.html",
+      "url": "https://www.tcpdump.org/manpages/tcpdump.1.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wireshark-tshark",
+      "filename": "wireshark-tshark-brief-46799d05.html",
+      "url": "https://www.wireshark.org/docs/man-pages/tshark.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wireshark-tshark",
+      "filename": "wireshark-tshark-manual-6f8b1739.html",
+      "url": "https://www.wireshark.org/docs/wsug_html_chunked/AppToolstshark.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "python-ssl-module",
+      "filename": "python-ssl-module-brief-479ab647.html",
+      "url": "https://docs.python.org/3.15/whatsnew/3.15.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "python-ssl-module",
+      "filename": "python-ssl-module-manual-2972c04f.html",
+      "url": "https://docs.python.org/3.15/library/ssl.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "microsoft-365",
+      "filename": "microsoft-365-brief-429e3ba8.html",
+      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ML-DSA-OSH-open-source-hardware-implemen",
+      "filename": "ML-DSA-OSH-open-source-hardware-implemen-brief-3a49b451.html",
+      "url": "https://github.com/KULeuven-COSIC/ML-DSA-OSH",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Preparing-for-The-Quantum-Era-AT-T-Busin",
+      "filename": "Preparing-for-The-Quantum-Era-AT-T-Busin-brief-6b94ace9.html",
+      "url": "https://about.att.com/story/2026/cisco-post-quantum-cryptography.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "STMicroelectronics-ST54M-Post-Quantum-Se",
+      "filename": "STMicroelectronics-ST54M-Post-Quantum-Se-brief-73cadd43.html",
+      "url": "https://newsroom.st.com/media-center/press-item.html/p4784.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "STMicroelectronics-ST54M-Post-Quantum-Se",
+      "filename": "STMicroelectronics-ST54M-Post-Quantum-Se-manual-102a3d30.html",
+      "url": "https://www.st.com/content/st_com/en/campaigns/st54m-pqc-hardware-accelerator-mobile-z26.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "QASM-Cryptographic-Module",
+      "filename": "QASM-Cryptographic-Module-brief-49198966.html",
+      "url": "https://www.prnewswire.com/news-releases/crypto4a-technologies-submits-pqc-capable-qasm-for-fips-140-3-level-3-certification-302407674.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-NEO",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-NEO-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-NEO",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-NEO-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-2-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-3-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-4-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-5-manual-7207bcf8.html",
+      "url": "https://edu.chainguard.dev/chainguard/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "HiPKI-SafGuard-2000-PQC-Library",
+      "filename": "HiPKI-SafGuard-2000-PQC-Library-brief-3bb66c35.html",
+      "url": "https://secpaas.org.tw/W_Menu_PageDetail?ID=33&detailID=60",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
-  "total": 1797,
-  "downloaded": 1797
+  "total": 1822,
+  "downloaded": 1822
 }
