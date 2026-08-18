@@ -217,7 +217,33 @@ const SEALSQ_RENAMED_TO_QS7001 =
   'Quantum Shield QS7001" and the rename was propagated into this xref, ' +
   'which is keyed by software_name. Both generations hold 800 rows.'
 
+/** industry_standards_: `standard_id` embeds the IETF draft revision, so a
+ *  revision bump necessarily changes the primary key. These two rows were
+ *  RE-IDENTIFIED from draft-16 to draft-19 when the composite-KEM draft
+ *  advanced (same industry, same standard, same library_ref target) — they
+ *  were not retired, and the -19 rows that replaced them are present and
+ *  active in the same generation. Deprecating the -16 rows instead would
+ *  assert a retirement decision that was never made, and would leave rows
+ *  pointing at a library entry that is itself deprecated. */
+const COMPOSITE_KEM_DRAFT_REVISION_BUMP =
+  'standard_id embeds the IETF draft revision, so advancing composite-KEM from ' +
+  '-16 to -19 necessarily changes the key. Rows re-identified, not removed: the ' +
+  'replacement -19 rows are active in the same generation, same industry and ' +
+  'same standard. Recorded 2026-08-18.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  {
+    family: 'industry_standards_',
+    key: 'draft-ietf-lamps-pq-composite-kem-16',
+    reason: COMPOSITE_KEM_DRAFT_REVISION_BUMP,
+    recorded: '2026-08-18',
+  },
+  {
+    family: 'industry_standards_',
+    key: 'draft-ietf-lamps-pq-composite-kem-16-water',
+    reason: COMPOSITE_KEM_DRAFT_REVISION_BUMP,
+    recorded: '2026-08-18',
+  },
   {
     family: 'migrate_certification_xref_',
     key: 'Azure Dedicated HSM (Marvell LiquidSecurity) | azure-dedicated-hsm-marvell-liquidsecurity | Common Criteria | cc-marvell-ls2-hsm-hardware-version--cn9310410-03-c-firmware-version--marvell-ls2-fw-10-24-0780-bootloader-version--marvell-ls2-uboot-10-24-0702-r01-sb-or-marvell-ls2-uboot-10-24-0702-r02-sb-21e2cbbe',
