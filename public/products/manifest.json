@@ -9886,8 +9886,200 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "x-cube-pqc-stm32-post-quantum-cryptographic-library",
+   "filename": "x-cube-pqc-stm32-post-quantum-cryptographic-library-brief-2f03bbd8.pdf",
+   "url": "https://www.st.com/resource/en/data_brief/x-cube-pqc.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "st33ktpm2x-stsafe-tpm",
+   "filename": "st33ktpm2x-stsafe-tpm-manual-dd504f35.html",
+   "url": "https://github.com/STMicroelectronics/STSAFE-TPM/blob/main/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "stsafe-v100-tpm",
+   "filename": "stsafe-v100-tpm-manual-dd504f35.html",
+   "url": "https://github.com/STMicroelectronics/STSAFE-TPM/blob/main/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "st33ktpm2x-stsafe-tpm",
+   "filename": "st33ktpm2x-stsafe-tpm-brief-3450ec6f.html",
+   "url": "https://www.st.com/en/secure-mcus/st33ktpm2x.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "stsafe-v100-tpm",
+   "filename": "stsafe-v100-tpm-brief-6771ad8a.html",
+   "url": "https://www.st.com/en/secure-mcus/stsafe-v100-tpm.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "neslib-cryptographic-library-incl-neslib-pqml",
+   "filename": "neslib-cryptographic-library-incl-neslib-pqml-brief-391c646c.html",
+   "url": "https://blog.st.com/pqc-post-quantum-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "synopsys-agile-pqc-public-key-accelerator-pka",
+   "filename": "synopsys-agile-pqc-public-key-accelerator-pka-brief-a1cb253f.html",
+   "url": "https://www.synopsys.com/resources/agile-pqc-public-key-accelerators-datasheet.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "synopsys-agile-pqc-public-key-accelerator-pka",
+   "filename": "synopsys-agile-pqc-public-key-accelerator-pka-brief-0dd3b8f2.html",
+   "url": "https://www.synopsys.com/designware-ip/security-ip/cryptography-ip/public-key-accelerators/agile-pqc-pka.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "tq42-cryptography",
+   "filename": "tq42-cryptography-brief-f79e576c.html",
+   "url": "https://terra-quantum-public.github.io/tq42-pqc-oss/post_quantum_algs/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "tq42-cryptography",
+   "filename": "tq42-cryptography-manual-891fcb96.html",
+   "url": "https://github.com/terra-quantum-public/tq42-pqc-oss",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "tutus-farist-ieg",
+   "filename": "tutus-farist-ieg-brief-3310909f.pdf",
+   "url": "https://tutus.se/pdf/tutus-pblad-ieg-r220-eng-digital.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "utimaco-quantum-protect-stateful-hash-based-signature-module",
+   "filename": "utimaco-quantum-protect-stateful-hash-based-signature-module-brief-a11df1f3.html",
+   "url": "https://utimaco.com/data-protection/gp-hsm/application-package/quantum-protect",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "wolfcrypt-post-quantum",
+   "filename": "wolfcrypt-post-quantum-brief-8bac3371.html",
+   "url": "https://www.wolfssl.com/products/wolfcrypt-post-quantum/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "linux-ima-evm",
+   "filename": "linux-ima-evm-brief-7593e095.html",
+   "url": "https://github.com/linux-integrity/ima-evm-utils",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "linux-ima-evm",
+   "filename": "linux-ima-evm-manual-e4ff3d99.html",
+   "url": "https://www.mankier.com/1/evmctl",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "toshiba-qkd-system",
+   "filename": "toshiba-qkd-system-brief-a7608468.html",
+   "url": "https://www.toshiba.eu/quantum/news/toshiba-announces-integrated-pqc-qkd-solution-for-quantum-safe-networking/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "imperva-waf",
+   "filename": "imperva-waf-brief-d0ce3915.html",
+   "url": "https://www.imperva.com/blog/post-quantum-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "splunk-enterprise",
+   "filename": "splunk-enterprise-manual-0231cd95.html",
+   "url": "https://help.splunk.com/en/splunk-enterprise/administer/manage-users-and-security/10.4/secure-splunk-platform-communications-with-transport-layer-security-certificates/post-quantum-cryptography-support-in-splunk-enterprise-10.4",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "istio-service-mesh",
+   "filename": "istio-service-mesh-manual-4c4f6ed3.html",
+   "url": "https://istio.io/latest/news/releases/1.27.x/announcing-1.27/change-notes/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "coinbase-custody",
+   "filename": "coinbase-custody-brief-d3288c40.html",
+   "url": "https://www.coinbase.com/blog/what-coinbase-is-doing-to-prepare-for-post-quantum-cryptography",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "coinbase-custody",
+   "filename": "coinbase-custody-manual-0ebbf75a.html",
+   "url": "https://www.coinbase.com/blog/coinbase-quantum-advisory-council-publishes-position-paper-on-quantum-computing-and-blockchain",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "ethereum-geth",
+   "filename": "ethereum-geth-brief-9b454f42.html",
+   "url": "https://ethereum.org/roadmap/future-proofing/quantum-resistance/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "fireblocks",
+   "filename": "fireblocks-brief-a98a9deb.html",
+   "url": "https://www.fireblocks.com/blog/quantum-risk-in-crypto-what-institutions-need-to-know",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "fireblocks",
+   "filename": "fireblocks-manual-2854581d.html",
+   "url": "https://www.fireblocks.com/blog/google-quantum-research-institutional-crypto-security",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
   }
  ],
- "total": 1480,
- "downloaded": 1480
+ "total": 1504,
+ "downloaded": 1504
 }
