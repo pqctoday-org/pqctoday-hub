@@ -27,6 +27,10 @@ import { OP_TEMPLATES } from './opTemplates'
 // re-implemented here: agreement between this and the KMIP wasm engine's
 // own encoder is the actual cross-check value (plan §"WP6-b").
 import { parseCertificateInfo } from '../../../components/PKILearning/modules/HybridCrypto/services/derParser'
+// Generic ASN.1 primitive, not a certBuilder.ts "builder" — importing it
+// doesn't compromise this test's deliberate independence from
+// certBuilder.ts's own cert-construction functions (see header above).
+import { canonicalPositiveInteger } from '@/utils/derInteger'
 import { AsnConvert } from '@peculiar/asn1-schema'
 import {
   Certificate,
@@ -458,7 +462,8 @@ describe('op-template pipeline (real wasm engine)', () => {
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     const tbs = new TBSCertificate({
       version: Version.v3,
-      serialNumber: new Uint8Array(crypto.randomBytes(8)).buffer as ArrayBuffer,
+      serialNumber: canonicalPositiveInteger(new Uint8Array(crypto.randomBytes(8)))
+        .buffer as ArrayBuffer,
       signature: sigAlgId,
       issuer: name,
       validity: new Validity({ notBefore, notAfter }),
@@ -570,7 +575,13 @@ describe('op-template pipeline (real wasm engine)', () => {
       (mprime, mldsaCtx) =>
         Promise.resolve(ml_dsa65.sign(mprime, mldsaKp.secretKey, { context: mldsaCtx })),
       (mprime) =>
-        Promise.resolve(new Uint8Array(crypto.sign('sha512', Buffer.from(mprime), privateKey))),
+        // draft §6: id-MLDSA65-ECDSA-P256-SHA512's "Traditional Signature
+        // Algorithm" is ecdsa-with-SHA256 — the SHA512 in the profile name is
+        // the pre-hash PH applied when building M', not the ECDSA hash (which
+        // tracks the curve). Was 'sha512' until 2026-08-17, matching a bug the
+        // engine and this test shared; corrected after the Bouncy Castle IETF
+        // Hackathon r5 trust anchor verified under SHA-256 and failed SHA-512.
+        Promise.resolve(new Uint8Array(crypto.sign('sha256', Buffer.from(mprime), privateKey))),
       '/CN=wp-c8-direction2-external-composite'
     )
     const certHex = Buffer.from(cert).toString('hex')

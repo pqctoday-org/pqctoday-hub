@@ -120,7 +120,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     })
   }
 
-  // ── Self-pinned composite KAT (draft-ietf-jose-pq-composite-sigs-01) ────
+  // ── Self-pinned composite KAT (draft-ietf-jose-pq-composite-sigs-03) ────
   {
     const v = (compositeKat as { vector: typeof compositeKat.vector }).vector
     const start = performance.now()
@@ -156,7 +156,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     }
     out.push({
       id: 'composite-sigs-snapshot',
-      spec: 'draft-ietf-jose-pq-composite-sigs-01 §4 (self-pinned snapshot)',
+      spec: 'draft-ietf-jose-pq-composite-sigs-03 §4 (self-pinned snapshot)',
       reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
       vector: 'ML-DSA-65-Ed25519',
       description:
@@ -185,7 +185,7 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     }
     out.push({
       id: 'composite-sigs-verify',
-      spec: 'draft-ietf-jose-pq-composite-sigs-01 §4.3',
+      spec: 'draft-ietf-jose-pq-composite-sigs-03 §4.3',
       reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
       vector: 'ML-DSA-65-Ed25519',
       description: 'Verify the pinned composite JWS (both ML-DSA and Ed25519 components)',
@@ -406,7 +406,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
     evidence: 'verifyJWS({tampered header}) returned valid=false',
   })
 
-  // ── 8. draft-ietf-jose-pq-composite-sigs-01 §3 — composite framing ─────
+  // ── 8. draft-ietf-jose-pq-composite-sigs-03 §3 — composite framing ─────
   const compKp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
   const compSigned = await signJWS({
     alg: 'ML-DSA-65-Ed25519',
@@ -418,7 +418,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   const compAlg = compDecoded?.header?.['alg']
   checks.push({
     id: 'composite-sigs-alg-code',
-    spec: 'draft-ietf-jose-pq-composite-sigs-01 §3',
+    spec: 'draft-ietf-jose-pq-composite-sigs-03 §3',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description: 'Composite token uses the MLDSA65-Ed25519 alg identifier',
     passed: compAlg === 'ML-DSA-65-Ed25519',
@@ -426,7 +426,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   })
   checks.push({
     id: 'composite-sigs-size',
-    spec: 'draft-ietf-jose-pq-composite-sigs-01 §4.4',
+    spec: 'draft-ietf-jose-pq-composite-sigs-03 §4.4',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description:
       'Composite signature = direct concat: 3309 B ML-DSA-65 || 64 B Ed25519 (ML-DSA first per §4.4)',
@@ -440,7 +440,7 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
   })
   checks.push({
     id: 'composite-sigs-verify',
-    spec: 'draft-ietf-jose-pq-composite-sigs-01 §4',
+    spec: 'draft-ietf-jose-pq-composite-sigs-03 §4',
     reference: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
     description: 'Composite verify accepts the well-formed token',
     passed: compVerify.valid === true,
@@ -923,7 +923,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-01
+            draft-ietf-jose-pq-composite-sigs-03
           </a>
           . The KAT panel below replays NIST ACVP test vectors (FIPS 203/204) against the same
           primitives the workshop uses.
@@ -1025,7 +1025,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-jose-pq-composite-sigs-01
+            draft-ietf-jose-pq-composite-sigs-03
           </a>
           .
         </p>

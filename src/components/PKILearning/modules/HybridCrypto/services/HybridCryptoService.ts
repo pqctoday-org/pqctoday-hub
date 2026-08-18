@@ -21,17 +21,28 @@ import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
   hsm_generateSLHDSAKeyPair,
+  hsm_generateEdDSAKeyPair,
+  hsm_generateRSAKeyPair,
   hsm_extractKeyValue,
   hsm_extractECPoint,
+  hsm_extractRSAPublicKeyDer,
   hsm_signBytesMLDSA,
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
+  hsm_signBytesEdDSA,
+  hsm_signBytesRSA,
   CKM_ECDSA_SHA256,
-  CKM_ECDSA_SHA512,
+  CKM_ECDSA_SHA384,
+  CKM_SHA256_RSA_PKCS_PSS,
 } from '@/wasm/softhsm'
 import {
   buildSelfSignedX509,
-  buildCompositeCert,
+  buildCompositeCertDraft19,
+  ecdsaRawSignatureToDer,
+  COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
+  ML_DSA_44_OID_STR,
+  ML_DSA_87_OID_STR,
+  type CompositeProfileDraft19,
   buildCompositeKEMCert,
   buildAltSigCert,
   buildRelatedCertPair as buildRelatedCertPairDER,
@@ -44,6 +55,7 @@ import {
   COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
   COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR,
   type SignerFn,
+  type CompositeMLDSASignerFn,
 } from './certBuilder'
 
 export interface KeyGenResult {
@@ -675,21 +687,113 @@ export class HybridCryptoService {
     M: SoftHSMModule,
     hSession: number,
     onKey?: KeyTracker,
-    mechType: number = CKM_ECDSA_SHA256
+    mechType: number = CKM_ECDSA_SHA256,
+    curve: 'P-256' | 'P-384' = 'P-256'
   ): Promise<{
     publicKeyRaw: Uint8Array
     signerFn: SignerFn
+    /**
+     * Same key, but the signature is re-encoded as a DER Ecdsa-Sig-Value.
+     * Composite requires this; the legacy formats below expect the raw form.
+     */
+    derSignerFn: SignerFn
   }> {
-    const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
-    if (onKey) onKey(privHandle, 'ecdsa', 'ECDSA P-256 (Cert Gen)', 'private')
-    if (onKey) onKey(pubHandle, 'ecdsa', 'ECDSA P-256 Public (Cert Gen)', 'public')
+    const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'sign')
+    if (onKey) onKey(privHandle, 'ecdsa', `ECDSA ${curve} (Cert Gen)`, 'private')
+    if (onKey) onKey(pubHandle, 'ecdsa', `ECDSA ${curve} Public (Cert Gen)`, 'public')
     const ecPoint = hsm_extractECPoint(M, hSession, pubHandle)
-    // CKA_EC_POINT is DER OCTET STRING wrapping the uncompressed point — strip the DER header
-    const rawPub = ecPoint.length === 67 ? ecPoint.slice(2) : ecPoint // 04 41 04...
+    // CKA_EC_POINT is a DER OCTET STRING wrapping the uncompressed point.
+    // Strip the 2-byte header by comparing against the expected point length
+    // rather than sniffing the first byte — an uncompressed point ALSO starts
+    // with 0x04, so a tag check cannot tell wrapper from payload.
+    const pointLen = curve === 'P-384' ? 97 : 65
+    const rawPub = ecPoint.length === pointLen + 2 ? ecPoint.slice(2) : ecPoint
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
       return hsm_signBytesECDSA(M, hSession, privHandle, tbs, mechType)
     }
-    return { publicKeyRaw: rawPub, signerFn }
+    // PKCS#11 C_Sign returns raw r||s. draft §4.1 requires an Ecdsa-Sig-Value.
+    const derSignerFn: SignerFn = async (tbs: Uint8Array) => {
+      return ecdsaRawSignatureToDer(await signerFn(tbs))
+    }
+    return { publicKeyRaw: rawPub, signerFn, derSignerFn }
+  }
+
+  /**
+   * Generate an Ed25519 key pair + signer via SoftHSM PKCS#11, for the
+   * composite profiles whose traditional half is Ed25519 (.39 and .48).
+   *
+   * CKM_EDDSA (not CKM_EDDSA_PH) is deliberate: composite signs the message
+   * representative M' directly as PureEdDSA per RFC 8032 §5.1. Pre-hashing
+   * would implement Ed25519ph, which the draft does not specify here.
+   */
+  private async generateEd25519KeyPairForCert(
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<{ publicKeyRaw: Uint8Array; signerFn: SignerFn }> {
+    const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, 'Ed25519', false)
+    if (onKey) onKey(privHandle, 'eddsa', 'Ed25519 (Cert Gen)', 'private')
+    if (onKey) onKey(pubHandle, 'eddsa', 'Ed25519 Public (Cert Gen)', 'public')
+    // Unlike an EC point, softhsm returns the Ed25519 public key as the bare
+    // 32 raw bytes RFC 8410 specifies — no OCTET STRING wrapper to strip.
+    const publicKeyRaw = hsm_extractECPoint(M, hSession, pubHandle)
+    const signerFn: SignerFn = async (mprime: Uint8Array) =>
+      hsm_signBytesEdDSA(M, hSession, privHandle, mprime)
+    return { publicKeyRaw, signerFn }
+  }
+
+  /**
+   * Generate an RSA key pair + RSASSA-PSS signer via SoftHSM PKCS#11, for the
+   * composite profiles whose traditional half is RSA (.37 at 2048, .41 at 3072).
+   *
+   * CKM_SHA256_RSA_PKCS_PSS matches draft §6.1 Table 2 exactly — SHA-256 digest,
+   * MGF1-SHA-256, 32-byte salt — for BOTH key sizes. Note that .41's pre-hash is
+   * SHA-512 while its PSS hash stays SHA-256; the mechanism here follows Table 2,
+   * not the profile name.
+   */
+  private async generateRSAKeyPairForCert(
+    M: SoftHSMModule,
+    hSession: number,
+    modulusBits: 2048 | 3072,
+    onKey?: KeyTracker
+  ): Promise<{ publicKeyDer: Uint8Array; signerFn: SignerFn }> {
+    const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, modulusBits)
+    if (onKey) onKey(privHandle, 'rsa', `RSA-${modulusBits} (Cert Gen)`, 'private')
+    if (onKey) onKey(pubHandle, 'rsa', `RSA-${modulusBits} Public (Cert Gen)`, 'public')
+    // draft §4.1 carries the RSA tradPK as a DER RSAPublicKey, not an SPKI.
+    const publicKeyDer = hsm_extractRSAPublicKeyDer(M, hSession, pubHandle)
+    const signerFn: SignerFn = async (mprime: Uint8Array) =>
+      hsm_signBytesRSA(M, hSession, privHandle, mprime, CKM_SHA256_RSA_PKCS_PSS)
+    return { publicKeyDer, signerFn }
+  }
+
+  /**
+   * Generate the traditional half for any composite profile, dispatching on the
+   * profile's §6 classical descriptor. Returns the public key already in the
+   * encoding §4.1 requires, and a signer producing the encoding §4.1 requires.
+   */
+  private async generateClassicalForProfile(
+    profile: CompositeProfileDraft19,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<{ publicKey: Uint8Array; signerFn: SignerFn }> {
+    const spec = profile.classical
+    switch (spec.kind) {
+      case 'ecdsa': {
+        const mech = spec.tradHash === 'SHA-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
+        const ec = await this.generateECKeyPairForCert(M, hSession, onKey, mech, spec.curve)
+        return { publicKey: ec.publicKeyRaw, signerFn: ec.derSignerFn }
+      }
+      case 'ed25519': {
+        const ed = await this.generateEd25519KeyPairForCert(M, hSession, onKey)
+        return { publicKey: ed.publicKeyRaw, signerFn: ed.signerFn }
+      }
+      case 'rsa-pss': {
+        const rsa = await this.generateRSAKeyPairForCert(M, hSession, spec.modulusBits, onKey)
+        return { publicKey: rsa.publicKeyDer, signerFn: rsa.signerFn }
+      }
+    }
   }
 
   /**
@@ -699,19 +803,30 @@ export class HybridCryptoService {
   private async generateMLDSAKeyPairForCert(
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    paramSet: 44 | 65 | 87 = 65
   ): Promise<{
     publicKey: Uint8Array
     signerFn: SignerFn
+    compositeSignerFn: CompositeMLDSASignerFn
   }> {
-    const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
-    if (onKey) onKey(privHandle, 'ml-dsa', 'ML-DSA-65 (Cert Gen)', 'private')
-    if (onKey) onKey(pubHandle, 'ml-dsa', 'ML-DSA-65 Public (Cert Gen)', 'public')
+    const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, paramSet)
+    if (onKey) onKey(privHandle, 'ml-dsa', `ML-DSA-${paramSet} (Cert Gen)`, 'private')
+    if (onKey) onKey(pubHandle, 'ml-dsa', `ML-DSA-${paramSet} Public (Cert Gen)`, 'public')
     const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
       return hsm_signBytesMLDSA(M, hSession, privHandle, tbs)
     }
-    return { publicKey, signerFn }
+    // Composite ML-DSA signs M' with ctx = the profile's signature label
+    // (FIPS 204 Algorithm 2), carried as the PKCS#11 v3.2 context string.
+    // Omitting ctx yields signatures a composite verifier rejects.
+    const compositeSignerFn: CompositeMLDSASignerFn = async (
+      mprime: Uint8Array,
+      mldsaCtx: Uint8Array
+    ) => {
+      return hsm_signBytesMLDSA(M, hSession, privHandle, mprime, { context: mldsaCtx })
+    }
+    return { publicKey, signerFn, compositeSignerFn }
   }
 
   /**
@@ -744,33 +859,64 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite certificate: ML-DSA-65 + ECDSA P-256 (draft-ietf-lamps-pq-composite-sigs-15).
+   * Composite certificate: ML-DSA-65 + ECDSA P-256 (draft-ietf-lamps-pq-composite-sigs).
    * Real DER-encoded X.509 with composite OID 1.3.6.1.5.5.7.6.45.
-   * Both signatures over the same TBS bytes.
+   *
+   * Uses the current LAMPS serialization (§4): both the public key and the
+   * signature are RAW CONCATENATIONS with the ML-DSA component FIRST, carried
+   * directly in the BIT STRING with no further ASN.1 wrapping (§5.1). Both
+   * components sign the message representative
+   *   M' = Prefix || Label || len(ctx) || ctx || PH(TBS)
+   * and ML-DSA takes the signature label as its FIPS 204 ctx.
    */
   async generateCompositeCert(
     subject: string,
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    /**
+     * Which draft §6 profile to mint. Defaults to id-MLDSA65-ECDSA-P256-SHA512,
+     * the profile §10.4 calls the "best overall balance of performance and
+     * security" — and the previous hard-coded behaviour, so existing callers
+     * are unaffected.
+     */
+    profile: CompositeProfileDraft19 = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512
   ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      // Composite OID 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512 — ECDSA must use SHA-512
-      const ec = await this.generateECKeyPairForCert(M, hSession, onKey, CKM_ECDSA_SHA512)
-      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      // Every per-profile fact — ML-DSA parameter set, classical family, curve,
+      // RSA size, traditional hash — comes from the profile's draft §6
+      // descriptor. Nothing about the algorithm choice is decided here, so
+      // adding a profile needs no change to this method.
+      //
+      // The traditional hash in particular is NOT the SHAxxx in the profile
+      // name: for id-MLDSA65-ECDSA-P256-SHA512 draft §6 gives "Traditional
+      // Signature Algorithm: ecdsa-with-SHA256" — the ECDSA hash tracks the
+      // CURVE, and the name's SHA512 is the pre-hash PH applied to the message.
+      // Corrected 2026-08-17; the previous SHA-512 choice produced certificates
+      // that verified against our own verifier and would be rejected by every
+      // conformant implementation.
+      const mldsaParamSet =
+        profile.mldsaOid === ML_DSA_44_OID_STR
+          ? 44
+          : profile.mldsaOid === ML_DSA_87_OID_STR
+            ? 87
+            : 65
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey, mldsaParamSet)
+      const classical = await this.generateClassicalForProfile(profile, M, hSession, onKey)
 
-      const derBytes = await buildCompositeCert(
-        ec.publicKeyRaw,
+      const derBytes = await buildCompositeCertDraft19(
+        profile,
         mldsa.publicKey,
-        ec.signerFn,
-        mldsa.signerFn,
+        classical.publicKey,
+        mldsa.compositeSignerFn,
+        classical.signerFn,
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite', profile)
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {
@@ -1070,21 +1216,21 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem-17.
+   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem.
    *
    * The subject public key is a CompositeKEMPublicKey binding ML-KEM-768 with a classical
    * KEM (X25519 or P-256) under a single OID. Like pure KEM certs, the cert itself is signed
    * by a separate signing-capable issuer key (KEM keys cannot self-sign).
    *
-   * draft-composite-kem-17 OIDs (IANA PKIX arc; the draft moved off its
+   * draft-composite-kem OIDs (IANA PKIX arc; the draft moved off its
    * earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering —
    * verified against the live IETF datatracker as of 2026-07-03):
    *   id-MLKEM768-X25519-SHA3-256      = 1.3.6.1.5.5.7.6.58
    *   id-MLKEM768-ECDH-P256-SHA3-256   = 1.3.6.1.5.5.7.6.59
    *
    * Composite KEM (X25519 + ML-KEM-768) X.509 certificate per
-   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; AD Evaluation as
-   * of this commit — advanced past Last Call). OID
+   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; in IESG Evaluation as
+   * of 2026-08-17, on the 2026-09-03 telechat agenda). OID
    * id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58 (LAMPS draft §6).
    *
    * Why not OpenSSL: the LAMPS composite KEM draft is not yet an RFC.
@@ -1190,7 +1336,7 @@ export class HybridCryptoService {
         `    Subject: ${cn}`,
         '    Subject Public Key Info:',
         `        Public Key Algorithm: id-MLKEM768-X25519-SHA3-256 (${compositeOidStr})`,
-        `        [LAMPS draft-ietf-lamps-pq-composite-kem-17 §6  — AD Evaluation]`,
+        `        [LAMPS draft-ietf-lamps-pq-composite-kem §6  — IESG Evaluation]`,
         `            Composite Public Key (1216 bytes):`,
         `                ML-KEM-768 component   (1184 B): ${this.toHex(mlkemPair.publicKey).slice(0, 64)}…`,
         `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
@@ -1202,7 +1348,7 @@ export class HybridCryptoService {
         `    Signature Value: 3309 bytes (ML-DSA-65 signature over TBSCertificate DER)`,
         '',
         '# References:',
-        '#   draft-ietf-lamps-pq-composite-kem-17  — AD Evaluation',
+        '#   draft-ietf-lamps-pq-composite-kem  — IESG Evaluation',
         '#     §6  Subject public key encoding',
         '#     OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58',
         '#   RFC 9881  ML-DSA in X.509 (signature algorithm)',

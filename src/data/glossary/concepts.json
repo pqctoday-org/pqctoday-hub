@@ -234,7 +234,7 @@
   {
     "term": "Composite Certificate",
     "definition": "An X.509 certificate encoding both a classical and a PQC key/signature under a single composite OID. Both signatures must verify. Requires all relying parties to support the composite OID — legacy-incompatible.",
-    "technicalNote": "Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs). OpenSSL 3.6 does not yet support composite OIDs natively.",
+    "technicalNote": "Defined in IETF drafts: composite ML-KEM (draft-ietf-lamps-pq-composite-kem) and composite ML-DSA (draft-ietf-lamps-pq-composite-sigs). Both the public key and the signature are RAW CONCATENATIONS with the ML-DSA component FIRST — no ASN.1 wrapper — so a verifier splits at ML-DSA's fixed length. Each profile also fixes a traditional hash that tracks the CURVE (P-256 → SHA-256, P-384 → SHA-384); the SHAxxx in a profile name is the pre-hash applied to the message, not the traditional algorithm's hash. Neither OpenSSL 3.6.3 nor 4.x registers any composite algorithm, so stock OpenSSL cannot parse these certificates at all.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "advanced",
     "category": "concept"
@@ -251,7 +251,7 @@
   {
     "term": "Alt-Sig Certificate",
     "definition": "A single classical X.509 certificate with PQC key and signature embedded in X.509 extensions: SubjectAltPublicKeyInfo (2.5.29.72), AltSignatureAlgorithm (2.5.29.73), and AltSignatureValue (2.5.29.74). Informally called the \"Catalyst\" approach (NSA). Legacy validators ignore the unknown extensions; PQC-aware verifiers check both signatures.",
-    "technicalNote": "Defined in draft-ietf-lamps-cert-binding-for-multi-auth. Distinct from Related Certificates (RFC 9763), which uses two separate certificates bound by a hash. Alt-Sig keeps everything in one certificate.",
+    "technicalNote": "Defined by ITU-T X.509 (2019) §9.8 — NOT by an IETF draft. (This entry previously credited draft-ietf-lamps-cert-binding-for-multi-auth, which is a different mechanism and is itself expired.) Distinct from Related Certificates (RFC 9763), which uses two separate certificates bound by a hash; Alt-Sig keeps everything in one certificate. Verified against OpenSSL 3.6.3: it validates the classical signature and ignores the alt-signature extensions entirely, which is what gives backward compatibility — and also means a legacy validator provides NO quantum protection even though it reports success.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"
@@ -259,7 +259,7 @@
   {
     "term": "Chameleon Certificate",
     "definition": "A single X.509 certificate that encodes a classical \"delta\" variant inside a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). PQC-aware verifiers reconstruct the classical certificate from the delta; legacy systems see a standard classical cert.",
-    "technicalNote": "Defined in draft-bonnell-lamps-chameleon-certs (DigiCert, Entrust). More bandwidth-efficient than related certs (RFC 9763) because only one certificate is transmitted. However, as a draft standard, adoption is still emerging.",
+    "technicalNote": "Defined in draft-bonnell-lamps-chameleon-certs (DigiCert, Entrust). More bandwidth-efficient than related certs (RFC 9763) because only one certificate is transmitted. STATUS: the draft is an INDIVIDUAL submission that EXPIRED on 2026-04-21 and was never adopted as a LAMPS working-group document — there is no draft-ietf-lamps-chameleon-certs, and the work was not renamed or absorbed elsewhere. Treat it as a dormant design worth understanding, not an active standards track.",
     "relatedModule": "/learn/hybrid-crypto",
     "complexity": "intermediate",
     "category": "concept"

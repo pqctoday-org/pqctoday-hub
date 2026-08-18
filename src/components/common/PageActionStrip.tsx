@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { FileClock, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -86,22 +87,60 @@ export const PageActionStrip = ({
   // unreachable by touch/keyboard). Now a real toggleable popover, same
   // click-outside/Escape pattern used elsewhere in this app (e.g. the old
   // RegionIndustryPill).
+  //
+  // 2026-08-18 bug fix ("nothing happens when I click"): the popover used to
+  // be `absolute` inside this strip. MainLayout's top bar wraps the strip in
+  // a `flex-nowrap overflow-x-auto` row (added 2026-08-01 to stop the two
+  // button clusters from overlapping) — per the CSS overflow spec, setting
+  // only overflow-x forces the browser to compute overflow-y as 'auto' too,
+  // so that 40px-tall row silently clipped the popover the instant it
+  // dropped below the row's own bounds. Portal it to `document.body` and
+  // position it from the trigger's live bounding rect instead, same pattern
+  // `InlineTooltip.tsx` already uses for exactly this class of problem.
   const [infoOpen, setInfoOpen] = useState(false)
-  const infoRef = useRef<HTMLDivElement>(null)
+  const [infoPosition, setInfoPosition] = useState<{ top: number; left: number } | null>(null)
+  const infoTriggerRef = useRef<HTMLButtonElement>(null)
+  const infoPopoverRef = useRef<HTMLDivElement>(null)
+
+  const toggleInfo = () => {
+    if (infoOpen) {
+      setInfoOpen(false)
+      return
+    }
+    const rect = infoTriggerRef.current?.getBoundingClientRect()
+    if (rect) {
+      const popoverWidth = 288 // w-72
+      setInfoPosition({
+        top: rect.bottom + 8,
+        left: Math.max(8, Math.min(rect.left, window.innerWidth - popoverWidth - 8)),
+      })
+    }
+    setInfoOpen(true)
+  }
 
   useEffect(() => {
     if (!infoOpen) return
     const onPointerDown = (e: MouseEvent) => {
-      if (infoRef.current && !infoRef.current.contains(e.target as Node)) setInfoOpen(false)
+      if (
+        infoTriggerRef.current?.contains(e.target as Node) ||
+        infoPopoverRef.current?.contains(e.target as Node)
+      )
+        return
+      setInfoOpen(false)
     }
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setInfoOpen(false)
     }
+    // A scroll can move the trigger relative to the viewport without moving
+    // this fixed-position popover — close rather than let it drift/misalign.
+    const onScroll = () => setInfoOpen(false)
     document.addEventListener('mousedown', onPointerDown)
     document.addEventListener('keydown', onKeyDown)
+    window.addEventListener('scroll', onScroll, { capture: true })
     return () => {
       document.removeEventListener('mousedown', onPointerDown)
       document.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('scroll', onScroll, { capture: true })
     }
   }, [infoOpen])
 
@@ -119,10 +158,11 @@ export const PageActionStrip = ({
         </span>
       )}
       {!showSkeleton && dataSource && (
-        <div className="relative" ref={infoRef}>
+        <>
           <Button
+            ref={infoTriggerRef}
             variant="ghost"
-            onClick={() => setInfoOpen((o) => !o)}
+            onClick={toggleInfo}
             aria-haspopup="dialog"
             aria-expanded={infoOpen}
             className="flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
@@ -132,16 +172,26 @@ export const PageActionStrip = ({
             <FileClock size={13} aria-hidden="true" />
             <span>Info</span>
           </Button>
-          {infoOpen && (
-            <div
-              role="dialog"
-              aria-label="Data source"
-              className="glass-panel absolute left-0 top-full z-50 mt-2 w-72 p-3 text-xs text-foreground shadow-xl"
-            >
-              {dataSource}
-            </div>
-          )}
-        </div>
+          {infoOpen &&
+            infoPosition &&
+            createPortal(
+              <div
+                ref={infoPopoverRef}
+                role="dialog"
+                aria-label="Data source"
+                style={{
+                  position: 'fixed',
+                  top: infoPosition.top,
+                  left: infoPosition.left,
+                  zIndex: 9999,
+                }}
+                className="glass-panel w-72 p-3 text-xs text-foreground shadow-xl"
+              >
+                {dataSource}
+              </div>,
+              document.body
+            )}
+        </>
       )}
       {onExport && (
         <Button

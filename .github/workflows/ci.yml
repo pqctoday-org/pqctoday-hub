@@ -46,8 +46,30 @@ jobs:
           # The "Detect WASM backend changes" + "Post CSV diff comment" steps
           # both run `git diff --name-only origin/main...HEAD`, which fails
           # with "ambiguous argument" on the default shallow (fetch-depth: 1)
-          # checkout because origin/main is never fetched.
+          # checkout because origin/main is never fetched. Same for
+          # check-tool-version-bump / check-module-version-bump, which also
+          # `git show origin/main:<path>`. So fetch-depth stays 0 — a merge
+          # base must exist.
           fetch-depth: 0
+          # ...but do NOT download historical file CONTENTS. A partial clone
+          # fetches the full commit graph (so merge-base and `git show
+          # origin/main:<path>` still resolve) and pulls individual blobs on
+          # demand, which is only the handful those steps actually read.
+          #
+          # Added 2026-08-18 because this job was being killed at its 30-minute
+          # cap INSIDE actions/checkout — every later step reported "never
+          # started". It was never a slow build or slow tests: a successful run
+          # is ~14 min (Test 5.8, Build 2.6, Lint 1.4). The repository is the
+          # problem — .git is 3.8 GB, dominated by regenerated artefacts that
+          # cannot delta-compress: public/data/rag-corpus.json (403 stored
+          # copies) and public/data/embeddings.bin (147 copies, 48 MB each,
+          # rewritten in full on every index refresh) together account for
+          # ~9.4 GB of raw historical content. None of it is ever read by CI.
+          #
+          # This is a mitigation, not the fix. Every RAG refresh still adds
+          # ~48 MB to history permanently — see repo-size-analysis-08182026.md
+          # for the remediation tiers, of which this is Tier 1.
+          filter: blob:none
 
       - name: Use Node.js 22
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -520,3 +542,37 @@ jobs:
 
       - name: Cross-impl KATs (src/test/kat/)
         run: npx vitest run src/test/kat/
+
+  gate-cacp:
+    # CACP/KMIP playground gate — CI-visible tests (src/components/Playground/kmip,
+    # src/wasm/kmip), the local-only suite covering the same paths (booting the
+    # real wasm engine is heavier than the default suite budget — project
+    # directive 2026-07-01: new suites are local-only), and the wasm-provenance
+    # check (a no-op here: it only compares against a sibling pqctoday-hsm
+    # checkout, which doesn't exist in this job — see
+    # scripts/ci/check-wasm-provenance.ts).
+    #
+    # Held out of `checks` deliberately, same rationale as kat-node24: a
+    # separate job keeps the main job's run time and toolchain assumptions
+    # unchanged. Verified stable with 100 consecutive local runs (0 failures)
+    # before being wired in — see the serial-number DER-canonicalization fix
+    # this job is meant to guard (certBuilder.ts::generateSerialBytes).
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: CACP/KMIP playground gate
+        run: npm run gate:cacp
