@@ -11358,8 +11358,104 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "openbao",
+      "filename": "openbao-brief-54bae9a4.html",
+      "url": "https://github.com/openbao/openbao/issues/496",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openpgp-js",
+      "filename": "openpgp-js-brief-65ab2050.html",
+      "url": "https://github.com/openpgpjs/openpgpjs/pull/2022",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openpgp-js",
+      "filename": "openpgp-js-manual-7afe155d.html",
+      "url": "https://github.com/openpgpjs/openpgpjs/issues/2004",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mlspp",
+      "filename": "mlspp-brief-f28b640b.html",
+      "url": "https://github.com/cisco/mlspp/pull/456",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "getsops-sops",
+      "filename": "getsops-sops-brief-6c1fe85f.html",
+      "url": "https://github.com/getsops/sops/issues/2057",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ivpn",
+      "filename": "ivpn-brief-22a6ebc0.html",
+      "url": "https://www.ivpn.net/knowledgebase/general/quantum-resistant-vpn-connections/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ivpn",
+      "filename": "ivpn-manual-28f066e2.html",
+      "url": "https://www.ivpn.net/knowledgebase/general/quantum-resistance-faq/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "libtpms",
+      "filename": "libtpms-brief-e77b3f8c.html",
+      "url": "https://github.com/stefanberger/libtpms",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "swtpm",
+      "filename": "swtpm-brief-c4b186d5.html",
+      "url": "https://github.com/stefanberger/swtpm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "eclipse-mosquitto",
+      "filename": "eclipse-mosquitto-brief-930d1ce6.html",
+      "url": "https://mosquitto.org/documentation/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "microsoft-playwright",
+      "filename": "microsoft-playwright-brief-7cd8f9ea.html",
+      "url": "https://playwright.dev",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wireguard-go",
+      "filename": "wireguard-go-brief-fd978210.html",
+      "url": "https://git.zx2c4.com/wireguard-go/about/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
-  "total": 1664,
-  "downloaded": 1664
+  "total": 1676,
+  "downloaded": 1676
 }
