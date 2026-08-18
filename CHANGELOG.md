@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.52.0] - 2026-08-17
+
+Industry Landscape now covers Cryptocurrency/Blockchain consensus mechanisms, migrate-catalog product tiles link straight to vendor documentation, and the AI assistant recovers hundreds of sentences it was previously cutting off mid-thought.
+
+### Added
+
+- **Cryptocurrency/Blockchain coverage added to Industry Landscape** [view:/algorithms] [persona:researcher] [persona:developer] [persona:architect]: new entries cover Solana's transaction signing, Cardano's Ouroboros consensus (VRF + Key-Evolving Signatures), and related chain-specific cryptography — each backed by primary vendor/protocol documentation, not secondary reporting.
+- **Three new signature mechanism families tracked** [view:/algorithms] [persona:developer] [persona:architect]: EdDSA, BLS, and Schnorr are now first-class mechanism families across the algorithm taxonomy, closing a gap where chains using them (Solana, Ethereum consensus, Polkadot) had no home in the crypto inventory.
+- **Product Brief and User Manual links on migrate-catalog product tiles** [view:/migrate] [persona:ops] [persona:architect]: where a vendor publishes one, it now links directly from the product card instead of requiring a search.
+
+### Fixed
+
+- **AI assistant answers recover sentences that used to get cut off mid-thought** [persona:curious] [persona:researcher]: a text-extraction bug was splitting sentences at inline elements (tooltips, bold text) and discarding the short fragments — sometimes dropping the subject of the sentence entirely. Recovered content across all Learn modules.
+- **Two Learn modules (Government & Defense, Trust Services) now fully searchable by the AI assistant** [view:/learn] [persona:curious]: these shipped without the summaries the assistant and search index depend on; both are now indexed.
+
+### Data
+
+- Re-verified ~130 migrate-catalog products against current vendor evidence (spotcheck batches 39–64).
+- Refreshed the AI assistant's search index (16,322 chunks, up from 15,620) to reflect all of the above.
+
 ## [4.51.0] - 2026-08-16
 
 Industry Landscape rows now show whether their cited evidence names the crypto directly or is a governance driver proven elsewhere, and the Journey panel stops missing milestones in Command Center and OpenSSL Studio.
