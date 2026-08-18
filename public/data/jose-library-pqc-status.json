@@ -1,0 +1,84 @@
+{
+  "$schema": "internal: PQC support status for libraries listed in the JOSE protocol-matrix row",
+  "generated_at": "2026-05-17",
+  "source": "manual transcription from each library's CHANGELOG / release notes (refresh via scripts/audit-jose-matrix.ts)",
+  "libraries": {
+    "nimbus-jose-jwt": {
+      "name": "Nimbus JOSE+JWT",
+      "current_version": "10.3",
+      "release_date": "2025-05-09",
+      "ml_dsa_jws": false,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://bitbucket.org/connect2id/nimbus-jose-jwt/raw/master/CHANGELOG.txt",
+      "notes": "Marketing page acknowledges a draft-ietf-jose-pqc-kem contribution from MONET+, but the released 11.0 CHANGELOG mentions no PQC algorithms. Java-only."
+    },
+    "bouncy-castle-java": {
+      "name": "Bouncy Castle Java",
+      "current_version": "1.80",
+      "release_date": "2025-01-14",
+      "ml_dsa_jws": false,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://www.bouncycastle.org/releasenotes.html",
+      "notes": "Ships raw PQC primitives (ML-DSA / ML-KEM / SLH-DSA) as JCA providers, but no JOSE adapter is included. Pairs with Nimbus or jose4j for JWS framing — neither of which currently exposes the BC PQC providers as JOSE alg codes."
+    },
+    "jose4j": {
+      "name": "jose4j",
+      "current_version": "0.9.6",
+      "release_date": "2024-03-06",
+      "ml_dsa_jws": false,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://bitbucket.org/b_c/jose4j/wiki/Home",
+      "notes": "Pluggable via JCA; could in principle delegate PQC sign/verify to a BC provider, but no first-class alg codes wired up."
+    },
+    "go-jose-v4": {
+      "name": "go-jose v4",
+      "current_version": "4.1.4",
+      "release_date": "2026-03-31",
+      "ml_dsa_jws": false,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://github.com/go-jose/go-jose/blob/main/CHANGELOG.md",
+      "notes": "Classical only; no open PR for cose-dilithium alg codes."
+    },
+    "pyjwt": {
+      "name": "PyJWT",
+      "current_version": "2.12.1",
+      "release_date": "2026-03-13",
+      "ml_dsa_jws": false,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://github.com/jpadilla/pyjwt/blob/master/CHANGELOG.rst",
+      "notes": "Classical only; depends on cryptography lib which exposes some PQC but PyJWT has not registered the alg codes."
+    },
+    "noble-post-quantum": {
+      "name": "@noble/post-quantum",
+      "current_version": "0.6.1",
+      "release_date": "2026-04-12",
+      "ml_dsa_jws": true,
+      "slh_dsa_jws": true,
+      "ml_kem_jwe": true,
+      "composite_sigs": false,
+      "evidence": "https://github.com/paulmillr/noble-post-quantum/blob/main/CHANGELOG.md",
+      "notes": "Provides raw sign/verify/encapsulate/decapsulate for ML-DSA, ML-KEM, SLH-DSA, Falcon. JOSE framing is hand-rolled by the consumer (see this workshop). Pure JS, audited, MIT — fits browser SPA stack natively."
+    },
+    "panva-jose": {
+      "name": "panva/jose (npm jose)",
+      "current_version": "6.2.3",
+      "release_date": "2026-04-27",
+      "ml_dsa_jws": true,
+      "slh_dsa_jws": false,
+      "ml_kem_jwe": false,
+      "composite_sigs": false,
+      "evidence": "https://github.com/panva/jose/pull/816",
+      "notes": "ML-DSA support landed via PR #816 with AKP key type, but the implementation requires Node 24.7+ or browser WebCrypto PQC primitives — the latter has not shipped in Chrome/Firefox as of 2026-05-16."
+    }
+  }
+}

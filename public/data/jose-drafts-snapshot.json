@@ -1,0 +1,46 @@
+{
+  "$schema": "internal: JOSE/COSE PQC draft snapshot",
+  "generated_at": "2026-05-17",
+  "source": "datatracker.ietf.org (manual transcription — refresh via scripts/audit-jose-matrix.ts)",
+  "drafts": {
+    "draft-ietf-cose-dilithium": {
+      "current_version": "11",
+      "current_date": "2025-11-15",
+      "status": "IESG (submitted)",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/",
+      "alg_codes_introduced": ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87"],
+      "key_type_introduced": "AKP",
+      "covers": ["pureSig (JOSE inherits)"]
+    },
+    "draft-ietf-jose-pq-composite-sigs": {
+      "current_version": "01",
+      "current_date": "2026-02-27",
+      "status": "WG draft",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/",
+      "alg_codes_introduced": [
+        "ML-DSA-44-ES256",
+        "ML-DSA-65-ES256",
+        "ML-DSA-87-ES384",
+        "ML-DSA-44-Ed25519",
+        "ML-DSA-65-Ed25519",
+        "ML-DSA-87-Ed448"
+      ],
+      "covers": ["hybridSig"]
+    },
+    "draft-ietf-jose-pqc-kem": {
+      "current_version": "05",
+      "current_date": "2025-12-09",
+      "status": "WG draft",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
+      "alg_codes_introduced": ["ML-KEM-512", "ML-KEM-768", "ML-KEM-1024"],
+      "covers": ["pureKem (JWE)"]
+    },
+    "draft-reddy-cose-jose-pqc-hybrid-hpke": {
+      "current_version": "11",
+      "current_date": "2026-02-16",
+      "status": "individual",
+      "url": "https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/",
+      "covers": ["hybridKem"]
+    }
+  }
+}
