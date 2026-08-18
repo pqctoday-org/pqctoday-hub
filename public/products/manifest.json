@@ -9630,8 +9630,160 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "ibm-cbomkit",
+   "filename": "ibm-cbomkit-brief-9bcc0f52.html",
+   "url": "https://github.com/cbomkit/cbomkit/blob/main/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "open-policy-agent-opa",
+   "filename": "open-policy-agent-opa-manual-3bd05248.html",
+   "url": "https://www.openpolicyagent.org/docs",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cyclonedx-cdxgen",
+   "filename": "cyclonedx-cdxgen-brief-9e49b64e.html",
+   "url": "https://github.com/CycloneDX/cdxgen/blob/master/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "red-hat-enterprise-linux-9-8",
+   "filename": "red-hat-enterprise-linux-9-8-manual-429db0ee.html",
+   "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/9.8_release_notes/new-features",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "red-hat-trusted-artifact-signer-pqc",
+   "filename": "red-hat-trusted-artifact-signer-pqc-brief-d2294108.html",
+   "url": "https://developers.redhat.com/products/trusted-artifact-signer",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "red-hat-certificate-system-11",
+   "filename": "red-hat-certificate-system-11-brief-072cf1e6.html",
+   "url": "https://www.redhat.com/en/technologies/cloud-computing/certificate-system",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hpe-aruba-arubaos-cx",
+   "filename": "hpe-aruba-arubaos-cx-manual-e2009573.pdf",
+   "url": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/fundamentals_6300-6400.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "libgcrypt",
+   "filename": "libgcrypt-brief-43d988e5.html",
+   "url": "https://github.com/gpg/libgcrypt/blob/master/README",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "libgcrypt",
+   "filename": "libgcrypt-manual-5246028d.html",
+   "url": "https://github.com/gpg/libgcrypt/blob/master/NEWS",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "falcon-reference-implementation",
+   "filename": "falcon-reference-implementation-brief-252b339e.pdf",
+   "url": "https://falcon-sign.info/falcon.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hqc-reference-implementation",
+   "filename": "hqc-reference-implementation-brief-22cf61da.pdf",
+   "url": "https://pqc-hqc.org/doc/hqc_specifications_2025_08_22.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sphincs-reference",
+   "filename": "sphincs-reference-brief-342947f0.html",
+   "url": "https://github.com/sphincs/sphincsplus/blob/master/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "classic-mceliece-reference",
+   "filename": "classic-mceliece-reference-brief-e1d9b975.pdf",
+   "url": "https://classic.mceliece.org/mceliece-spec-20221023.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "microsoft-pqcrypto-lweke",
+   "filename": "microsoft-pqcrypto-lweke-brief-ea8f76de.html",
+   "url": "https://github.com/microsoft/PQCrypto-LWEKE/blob/master/README.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pqmagic-shanghai-jiao-tong-university",
+   "filename": "pqmagic-shanghai-jiao-tong-university-brief-093689f1.html",
+   "url": "https://github.com/pqcrypto-cn/PQMagic/blob/main/README_EN.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "asustor-post-quantum-cryptography-module",
+   "filename": "asustor-post-quantum-cryptography-module-brief-bb3e3cc6.html",
+   "url": "https://www.asustor.com/adm/adm5_1",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "blackberry-certicom-security-builder-fips-module",
+   "filename": "blackberry-certicom-security-builder-fips-module-brief-ad947f23.html",
+   "url": "https://www.certicom.com/content/certicom/en/products-and-services/security-libraries.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "c-dot-ml-kem-cryptographic-algorithms",
+   "filename": "c-dot-ml-kem-cryptographic-algorithms-brief-e0e93396.html",
+   "url": "https://www.cdot.in/cdotweb/web/product_category.php?lang=en&catId=10",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "blackberry-certicom-security-builder-fips-module",
+   "filename": "blackberry-certicom-security-builder-fips-module-brief-9a7be1ea.html",
+   "url": "https://www.certicom.com/en/fips",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1448,
- "downloaded": 1448
+ "total": 1467,
+ "downloaded": 1467
 }
