@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-18',
 
   standards: [
     getStandard('FIPS 203'),
