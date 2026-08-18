@@ -10646,8 +10646,280 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "thales-5g-quantum-safe-sim",
+   "filename": "thales-5g-quantum-safe-sim-brief-39a1d397.html",
+   "url": "https://www.thalesgroup.com/en/markets/digital-identity-and-security/mobile/5G-skt-post-quantum-user-case",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "g-d-quantum-safe-sim-platform",
+   "filename": "g-d-quantum-safe-sim-platform-brief-d0c812a7.html",
+   "url": "https://www.gi-de.com/en/digital-security/connectivity-iot/sim-card/pqc-sim",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "thales-5g-quantum-safe-sim",
+   "filename": "thales-5g-quantum-safe-sim-brief-5fd3489a.html",
+   "url": "https://www.thalesgroup.com/en/news-centre/press-releases/sk-telecom-and-thales-collaborate-post-quantum-cryptography-enhance",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "thales-5g-quantum-safe-sim",
+   "filename": "thales-5g-quantum-safe-sim-brief-47fd07c2.html",
+   "url": "https://www.thalesgroup.com/en/news-centre/press-releases/thales-sets-world-first-quantum-safe-security-5g-networks",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "idemia-pqc-secure-element",
+   "filename": "idemia-pqc-secure-element-brief-aedebdd4.html",
+   "url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "element-matrix-protocol",
+   "filename": "element-matrix-protocol-brief-a2788e88.html",
+   "url": "https://element.io/blog/meet-element-r-our-new-unified-crypto-implementation/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "element-matrix-protocol",
+   "filename": "element-matrix-protocol-brief-6808254e.html",
+   "url": "https://matrix.org/blog/2025/12/24/matrix-holiday-special/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "microsoft-entra-id",
+   "filename": "microsoft-entra-id-brief-429e3ba8.html",
+   "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "microsoft-entra-id",
+   "filename": "microsoft-entra-id-manual-279f0369.html",
+   "url": "https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-faq",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "alpine-linux",
+   "filename": "alpine-linux-brief-885f954e.html",
+   "url": "https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.22.0",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "freebsd",
+   "filename": "freebsd-manual-892569dc.html",
+   "url": "https://www.freebsd.org/releases/15.0R/relnotes/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "opensuse-leap",
+   "filename": "opensuse-leap-brief-86435a13.html",
+   "url": "https://9to5linux.com/opensuse-lands-post-quantum-hybrid-cryptography-in-leap-and-tumbleweed",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "opensuse-leap",
+   "filename": "opensuse-leap-manual-8e019a75.html",
+   "url": "https://doc.opensuse.org/release-notes/x86_64/openSUSE/Leap/16.0/html/release-notes-leap-160/index.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "delinea-secret-server",
+   "filename": "delinea-secret-server-manual-92295c2f.html",
+   "url": "https://docs.delinea.com/online-help/secret-server-11-6-x/quantumlocks/understanding-quantumlocks/quantumlock-overview.htm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "delinea-secret-server",
+   "filename": "delinea-secret-server-brief-190da16a.html",
+   "url": "https://delinea.com/news/delinea-industry-first-quantum-safe-encryption-privileged-accounts",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "asyncssh",
+   "filename": "asyncssh-manual-d2897655.html",
+   "url": "https://asyncssh.readthedocs.io/en/latest/changes.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "teleport-access-platform",
+   "filename": "teleport-access-platform-brief-f7b017a9.html",
+   "url": "https://goteleport.com/blog/ditching-rsa-made-teleport-more-efficient/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "teleport-access-platform",
+   "filename": "teleport-access-platform-manual-b8fb71ac.html",
+   "url": "https://goteleport.com/docs/reference/signature-algorithms/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cisco-asa-adaptive-security-appliance",
+   "filename": "cisco-asa-adaptive-security-appliance-brief-9bec261f.html",
+   "url": "https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "cisco-meraki-mx-cloud-managed-firewall",
+   "filename": "cisco-meraki-mx-cloud-managed-firewall-brief-942c4493.html",
+   "url": "https://documentation.meraki.com/SASE_and_SD-WAN/MX/Product_Information/Overviews_and_Datasheets/C8455-G2-MX_Datasheet",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pfsense-community-edition",
+   "filename": "pfsense-community-edition-manual-0eb2d735.html",
+   "url": "https://docs.netgate.com/pfsense/en/latest/releases/2-9-0.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cisco-meraki-mx-cloud-managed-firewall",
+   "filename": "cisco-meraki-mx-cloud-managed-firewall-brief-537ce4fd.html",
+   "url": "https://www.cisco.com/site/us/en/products/collateral/networking/sdwan-routers/8000-secure-routers/8400-series-secure-routers-ds.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "opnsense",
+   "filename": "opnsense-manual-2ba70910.html",
+   "url": "https://docs.opnsense.org/releases/CE_26.7.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "nginx-plus",
+   "filename": "nginx-plus-brief-9cb0ba7f.html",
+   "url": "https://blog.nginx.org/blog/pqc-nginx",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "traefik",
+   "filename": "traefik-brief-5736031d.html",
+   "url": "https://traefik.io/blog/traefik-proxy-v3-5",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nginx-plus",
+   "filename": "nginx-plus-manual-85bd7666.html",
+   "url": "https://community.f5.com/kb/technicalarticles/f5-nginx-plus-r33-release-now-available/336403",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "openvpn",
+   "filename": "openvpn-brief-4894e482.html",
+   "url": "https://openvpn.net/blog/openvpn-2-7-0-post-quantum-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "openvpn",
+   "filename": "openvpn-manual-620a0003.html",
+   "url": "https://blog.openvpn.net/quantum-safe-vpn",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "nec-5g-core",
+   "filename": "nec-5g-core-brief-7d5d246d.html",
+   "url": "https://www.nec.com/en/global/solutions/5g/4G-5G-Converged-Core.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "openwrt",
+   "filename": "openwrt-manual-846f67ce.html",
+   "url": "https://forum.openwrt.org/t/warning-from-openssh-client-when-connecting-to-dropbear-ssh-server-in-openwrt-connection-is-not-using-a-post-quantum-key-exchange-algorithm/241796",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "freebsd",
+   "filename": "freebsd-brief-10a95652.html",
+   "url": "https://www.freebsd.org/releases/15.0R/announce/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "opensuse-leap",
+   "filename": "opensuse-leap-brief-014f6cf2.html",
+   "url": "https://news.opensuse.org/2026/04/28/quantum-opensuse",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "asyncssh",
+   "filename": "asyncssh-brief-c0e72059.html",
+   "url": "https://asyncssh.readthedocs.io/en/latest/index.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pfsense-community-edition",
+   "filename": "pfsense-community-edition-brief-5a7a7724.html",
+   "url": "https://docs.netgate.com/pfsense/en/latest/releases/2-8-1.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1575,
- "downloaded": 1575
+ "total": 1609,
+ "downloaded": 1609
 }
