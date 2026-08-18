@@ -26,7 +26,7 @@ const SECTIONS = [
     id: 'hybrid-jwt',
     title: 'Step 3 — Hybrid JWT',
     description:
-      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-01; dual-signature migration pattern',
+      'Composite ML-DSA-65+Ed25519 JWT per draft-ietf-jose-pq-composite-sigs-03; dual-signature migration pattern',
   },
   {
     id: 'jwe-encryption',

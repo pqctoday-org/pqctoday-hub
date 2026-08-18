@@ -3,7 +3,7 @@
 /**
  * Self-pinned composite KAT — guards the ML-DSA-65+Ed25519 wire format.
  *
- * draft-ietf-jose-pq-composite-sigs-01 has not yet published worked test
+ * draft-ietf-jose-pq-composite-sigs-03 has not yet published worked test
  * vectors, so this snapshot pins our own deterministic output. Any drift
  * in:
  *   - composite key concat order (ML-DSA first, then traditional)
@@ -36,7 +36,7 @@ function bytesToHex(bytes: Uint8Array): string {
   return hex
 }
 
-describe('Composite ML-DSA-65+Ed25519 — self-pinned KAT (draft-ietf-jose-pq-composite-sigs-01)', () => {
+describe('Composite ML-DSA-65+Ed25519 — self-pinned KAT (draft-ietf-jose-pq-composite-sigs-03)', () => {
   const v = (kat as { vector: typeof kat.vector }).vector
 
   it('seeded keygen + signJWS produces byte-equal expected JWS', async () => {

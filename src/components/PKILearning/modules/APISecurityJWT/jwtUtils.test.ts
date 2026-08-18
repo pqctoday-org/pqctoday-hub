@@ -138,7 +138,7 @@ describe('signJWS / verifyJWS — noble backend', () => {
       backend: 'noble',
     })
     expect(signed.token.split('.').length).toBe(3)
-    // draft-ietf-jose-pq-composite-sigs-01 §4.4: 3309 B ML-DSA-65 || 64 B Ed25519
+    // draft-ietf-jose-pq-composite-sigs-03 §4.4: 3309 B ML-DSA-65 || 64 B Ed25519
     expect(signed.signature.length).toBe(3309 + 64)
 
     const v = await verifyJWS({
@@ -300,7 +300,7 @@ describe('standards compliance — JWS framing', () => {
     expect(decoded?.header?.alg).toBe('ML-DSA-87')
   })
 
-  it('draft-ietf-jose-pq-composite-sigs-01 §3: MLDSA65-Ed25519 alg + framed sig length', async () => {
+  it('draft-ietf-jose-pq-composite-sigs-03 §3: MLDSA65-Ed25519 alg + framed sig length', async () => {
     const kp = await generateJwsKeyPair({ alg: 'ML-DSA-65-Ed25519', backend: 'noble' })
     const signed = await signJWS({
       alg: 'ML-DSA-65-Ed25519',
@@ -310,7 +310,7 @@ describe('standards compliance — JWS framing', () => {
     })
     const decoded = decodeJWT(signed.token)
     expect(decoded?.header?.alg).toBe('ML-DSA-65-Ed25519')
-    // draft-ietf-jose-pq-composite-sigs-01 §4.4: direct concat, ML-DSA first
+    // draft-ietf-jose-pq-composite-sigs-03 §4.4: direct concat, ML-DSA first
     expect(signed.signature.length).toBe(3309 + 64)
   })
 })
