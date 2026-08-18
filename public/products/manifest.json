@@ -9782,8 +9782,112 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "codebat-ml-dsa-cryptographic-engine",
+   "filename": "codebat-ml-dsa-cryptographic-engine-brief-ea55b857.html",
+   "url": "https://codebat.ai/product",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "cryptonext-quantum-safe-library-c-qsl",
+   "filename": "cryptonext-quantum-safe-library-c-qsl-brief-f209c4c7.html",
+   "url": "https://www.cryptonext-security.com/en/products-pqc-remediation/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "fortipqc-software-library",
+   "filename": "fortipqc-software-library-brief-14de34a9.html",
+   "url": "https://fortifyiq.com/software-cryptography/pqc-cryptographic-libraries/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "trusty-tee",
+   "filename": "trusty-tee-brief-5f576864.html",
+   "url": "https://source.android.com/docs/security/features/trusty",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "trusty-tee",
+   "filename": "trusty-tee-manual-3ce4a4cc.html",
+   "url": "https://blog.google/security/security-for-the-quantum-era-implementing-post-quantum-cryptography-in-android/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "boringcrypto",
+   "filename": "boringcrypto-brief-92e53026.html",
+   "url": "https://boringssl.googlesource.com/boringssl/+/master/crypto/fipsmodule/FIPS.md",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "novachips-nv7x-controller-p2-series-ssd",
+   "filename": "novachips-nv7x-controller-p2-series-ssd-brief-c84f6a06.html",
+   "url": "https://www.globenewswire.com/news-release/2026/01/06/3213301/0/en/Novachips-Debuts-New-Self-Encrypting-P2-series-SSDs-Compliant-with-CNSA-2-0.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nuvoton-nct6694b-cryptographic-engine",
+   "filename": "nuvoton-nct6694b-cryptographic-engine-brief-9bbfd0f2.html",
+   "url": "https://www.nuvoton.com/products/cloud-computing/ebmc/ebmc-for-remote-management-security/nct6694b/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "libpqsecure",
+   "filename": "libpqsecure-brief-59e910e5.html",
+   "url": "https://pqsecurity.com/pqsecure-software/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pqperform-lattice",
+   "filename": "pqperform-lattice-brief-c73ed003.html",
+   "url": "https://pqshield.com/use_cases/maximum-performance-pqperform-lattice/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pufpqc",
+   "filename": "pufpqc-brief-b3c51411.html",
+   "url": "https://www.pufsecurity.com/products/puf-based-post-quantum-cryptographypqc/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "unisentry-secic-hsm-pqc-crypto-module",
+   "filename": "unisentry-secic-hsm-pqc-crypto-module-brief-f3fd9110.html",
+   "url": "https://www.st.com/en/partner-products-and-services/secic-hsm.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "unisentry-secic-hsm-pqc-crypto-module",
+   "filename": "unisentry-secic-hsm-pqc-crypto-module-brief-a8b11628.html",
+   "url": "https://www.ti.com.cn/tool/cn/USIT-3P-SECIC-PQC",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1467,
- "downloaded": 1467
+ "total": 1480,
+ "downloaded": 1480
 }
