@@ -12622,8 +12622,184 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "huawei-pqc-network-security",
+      "filename": "huawei-pqc-network-security-brief-275154d8.html",
+      "url": "https://e.huawei.com/en/news/2026/solutions/enterprise-network/xinghe-intelligent-traffic-encryption",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hbs-lms",
+      "filename": "hbs-lms-brief-47cd13f0.html",
+      "url": "https://github.com/Fraunhofer-AISEC/hbs-lms-rust/blob/master/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hawk-reference-implementation",
+      "filename": "hawk-reference-implementation-brief-5300e036.html",
+      "url": "https://hawk-sign.info/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hawk-reference-implementation",
+      "filename": "hawk-reference-implementation-manual-63a7f1e4.pdf",
+      "url": "https://hawk-sign.info/hawk-spec.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "JEP-527-Post-Quantum-Hybrid-Key-Exchange",
+      "filename": "JEP-527-Post-Quantum-Hybrid-Key-Exchange-brief-53dcba8a.html",
+      "url": "https://openjdk.org/jeps/527",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "PQCA-mldsa-native",
+      "filename": "PQCA-mldsa-native-brief-d214f49c.html",
+      "url": "https://github.com/pq-code-package/mldsa-native/blob/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "PQCA-mldsa-native",
+      "filename": "PQCA-mldsa-native-manual-4066ccf8.html",
+      "url": "https://pqca.org/blog/2025/pqca-announces-alpha-release-of-mldsa-native/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Microsoft-Research-Post-Quantum-TLS",
+      "filename": "Microsoft-Research-Post-Quantum-TLS-brief-e7966eda.html",
+      "url": "https://www.microsoft.com/en-us/research/project/post-quantum-tls/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "IDEMIA-Sphere-Cryptographic-Library",
+      "filename": "IDEMIA-Sphere-Cryptographic-Library-brief-cc5514e4.html",
+      "url": "https://www.idemia.com/quantum-ready-cryptographic-libraries",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "IDEMIA-Sphere-Cryptographic-Library",
+      "filename": "IDEMIA-Sphere-Cryptographic-Library-manual-a1eae56e.html",
+      "url": "https://www.idemia.com/press-release/idemia-secure-transactions-unveils-idemia-sphere-cryptographic-library-certified-set-algorithms-quantum-safe-security-2025-07-09",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE",
+      "filename": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE-brief-6467eed2.html",
+      "url": "https://www.jmemtek.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE",
+      "filename": "Jmem-PUF-Embedded-Quantum-Safe-PQCryptoE-manual-d55f676d.html",
+      "url": "https://www.jmemtek.com/whitepaper/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "PQSecure-libpqsecure-rs",
+      "filename": "PQSecure-libpqsecure-rs-brief-59e910e5.html",
+      "url": "https://pqsecurity.com/pqsecure-software/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "PQSecure-Agility",
+      "filename": "PQSecure-Agility-brief-5a9c23f6.html",
+      "url": "https://pqsecurity.com/pqsecure-hardware/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Xiphera-XIP6220B",
+      "filename": "Xiphera-XIP6220B-brief-9dfa9e76.pdf",
+      "url": "https://xiphera.com/wp-content/uploads/XIP6220B_PB.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Quantum-Xchange-PhioTX",
+      "filename": "Quantum-Xchange-PhioTX-manual-b7075a85.html",
+      "url": "https://quantumxc.com/news-resources/container-encryption-key-management-system/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-6-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-7-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro",
+      "filename": "The-OpenSSL-Corporation-OpenSSL-FIPS-Pro-brief-339856d6.html",
+      "url": "https://openssl-library.org/post/2025-10-09-ossl3.5.4-fips-submission/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Quantum-Secure-Encryption-Corp-QPA-v2",
+      "filename": "Quantum-Secure-Encryption-Corp-QPA-v2-brief-445f5869.html",
+      "url": "https://www.prnewswire.com/news-releases/quantum-secure-encryption-corp-announces-official-launch-of-qpa-v2-its-enterprise-post-quantum-cryptographic-migration-platform-302734784.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Oracle-OpenSSL-FIPS-Provider",
+      "filename": "Oracle-OpenSSL-FIPS-Provider-brief-b03b8c62.html",
+      "url": "https://docs.oracle.com/en/operating-systems/oracle-linux/10/relnotes10.1/ol10-features-Security.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hbs-lms",
+      "filename": "hbs-lms-manual-76c92792.html",
+      "url": "https://docs.rs/hbs-lms/latest/hbs_lms/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1822,
-  "downloaded": 1822
+  "total": 1844,
+  "downloaded": 1844
 }
