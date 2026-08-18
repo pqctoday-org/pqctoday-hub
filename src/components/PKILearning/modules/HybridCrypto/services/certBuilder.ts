@@ -155,6 +155,15 @@ export const COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR = '1.3.6.1.5.5.7.6.45'
 /** id-MLDSA87-ECDSA-P384-SHA512 — 1.3.6.1.5.5.7.6.49 (draft-19 §6) */
 export const COMPOSITE_MLDSA87_ECDSA_P384_SHA512_OID_STR = '1.3.6.1.5.5.7.6.49'
 
+/** id-MLDSA44-Ed25519-SHA512 — 1.3.6.1.5.5.7.6.39 (draft-19 §6) */
+export const COMPOSITE_MLDSA44_ED25519_SHA512_OID_STR = '1.3.6.1.5.5.7.6.39'
+
+/** id-MLDSA65-RSA3072-PSS-SHA512 — 1.3.6.1.5.5.7.6.41 (draft-19 §6) */
+export const COMPOSITE_MLDSA65_RSA3072_PSS_SHA512_OID_STR = '1.3.6.1.5.5.7.6.41'
+
+/** id-MLDSA65-Ed25519-SHA512 — 1.3.6.1.5.5.7.6.48 (draft-19 §6) */
+export const COMPOSITE_MLDSA65_ED25519_SHA512_OID_STR = '1.3.6.1.5.5.7.6.48'
+
 // Legacy OID exports (raw bytes) for backward compat with existing callers
 export const SLH_DSA_SHA2_128S_OID = new Uint8Array([
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14,
@@ -207,6 +216,13 @@ function buildRSAEncryptionAlgId(): AlgorithmIdentifier {
     algorithm: RSA_ENCRYPTION_OID_STR,
     parameters: nullParams.buffer as ArrayBuffer,
   })
+}
+
+function buildEd25519AlgId(): AlgorithmIdentifier {
+  // RFC 8410 §3: the parameters field MUST be absent for id-Ed25519 — not
+  // NULL. Encoding NULL here would produce an AlgorithmIdentifier that
+  // conformant parsers reject.
+  return new AlgorithmIdentifier({ algorithm: ED25519_OID_STR })
 }
 
 function buildName(subject: string): Name {
@@ -495,6 +511,73 @@ export type CompositePreHash = 'SHA-256' | 'SHA-512'
 export type CompositeTradHash = 'SHA-256' | 'SHA-384' | 'SHA-512'
 
 /**
+ * The traditional (non-PQ) half of a composite profile, exactly as draft-19 §6
+ * specifies it.
+ *
+ * This is a DISCRIMINATED UNION rather than a bag of optional fields on purpose.
+ * Each traditional family needs a genuinely different set of parameters, and the
+ * previous shape — a single `tradHash` plus an if-chain over composite OIDs in
+ * the verifier — could not express Ed25519 (which has no separate hash) or an
+ * RSA size at all. It also meant every new profile required editing the
+ * verifier's control flow, which is precisely how F17 (the 2026-08-17
+ * traditional-hash bug) stayed invisible: the spec facts lived in code paths
+ * instead of in data. Here they live in data, and the verifier switches on
+ * `kind` with an exhaustive check.
+ */
+export type CompositeClassicalSpec =
+  /** draft §6 "Traditional Algorithm: ECDSA" */
+  | {
+      kind: 'ecdsa'
+      curve: 'P-256' | 'P-384'
+      /**
+       * draft §6 "Traditional Signature Algorithm" — `ecdsa-with-SHAxxx`.
+       *
+       * CRITICAL and easy to get wrong: the `SHAxxx` in a profile NAME is the
+       * pre-hash PH applied to the message, NOT this hash. For
+       * id-MLDSA65-ECDSA-P256-SHA512 the traditional algorithm is
+       * `ecdsa-with-SHA256` — the ECDSA hash tracks the CURVE, not the name.
+       * Getting this wrong yields certificates that verify against your own
+       * verifier and fail against every conformant one (found 2026-08-17 by
+       * checking a Bouncy Castle IETF Hackathon vector).
+       */
+      tradHash: CompositeTradHash
+      /** Uncompressed SEC1 point length: 65 (P-256) / 97 (P-384). */
+      pubKeyBytes: number
+    }
+  /** draft §6 "Traditional Signature Algorithm: id-RSASSA-PSS" */
+  | {
+      kind: 'rsa-pss'
+      /**
+       * draft §6 "RSA size". NORMATIVE, and checkable: §3.3 step 2 requires a
+       * verifier to output "Invalid signature" if a component key "is not of
+       * the correct type or length for the given component algorithm". A cert
+       * claiming id-MLDSA65-RSA3072-PSS-SHA512 while carrying a 2048-bit
+       * modulus is therefore invalid, not merely unusual.
+       */
+      modulusBits: 2048 | 3072
+      /**
+       * draft §6.1 Table 2 `hashAlgorithm` and `maskGenAlgorithm.parameters`.
+       * Both 2048 and 3072 use SHA-256 — again NOT the profile name's PH.
+       */
+      tradHash: 'SHA-256'
+      /** draft §6.1 Table 2 `saltLength`. */
+      saltLength: 32
+      /** draft §6: "the exponent is RECOMMENDED to be 65537". */
+      recommendedExponent: 65537
+    }
+  /** draft §6 "Traditional Signature Algorithm: id-Ed25519" */
+  | {
+      kind: 'ed25519'
+      /**
+       * Ed25519 is PureEdDSA (RFC 8032 §5.1): it hashes the message internally
+       * with SHA-512 as part of the algorithm. There is no separate traditional
+       * hash to choose, which is why this variant carries no `tradHash`.
+       */
+      pubKeyBytes: 32
+      sigBytes: 64
+    }
+
+/**
  * Describes one LAMPS composite-sig profile from draft-19 §6.
  *
  * Captures everything needed to construct the message representative
@@ -539,19 +622,20 @@ export interface CompositeProfileDraft19 {
    */
   mldsaPubKeyBytes: number
   /**
-   * Hash used by the TRADITIONAL component when it signs M' — draft §6's
-   * "Traditional Signature Algorithm" for the profile.
-   *
-   * CRITICAL and easy to get wrong: the `SHA512` in a profile NAME is the
-   * pre-hash PH applied to the message, NOT the traditional algorithm's hash.
-   * For id-MLDSA65-ECDSA-P256-SHA512 the traditional algorithm is
-   * `ecdsa-with-SHA256` — the ECDSA hash tracks the CURVE, not the name.
-   * Getting this wrong yields certificates that verify against your own
-   * verifier and fail against every conformant one (found 2026-08-17 by
-   * checking a Bouncy Castle IETF Hackathon vector).
+   * The traditional component's family and its draft §6 parameters. See
+   * {@link CompositeClassicalSpec} — in particular the warning that a profile
+   * name's `SHAxxx` is the pre-hash PH, never the traditional algorithm's hash.
    */
-  tradHash: CompositeTradHash
+  classical: CompositeClassicalSpec
 }
+
+/** draft §6.1 Table 2 — shared by every RSASSA-PSS profile at 2048 and 3072 bits. */
+const RSA_PSS_TABLE2 = {
+  kind: 'rsa-pss',
+  tradHash: 'SHA-256',
+  saltLength: 32,
+  recommendedExponent: 65537,
+} as const
 
 export const COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256: CompositeProfileDraft19 = {
   compositeOid: COMPOSITE_MLDSA44_RSA2048_PSS_SHA256_OID_STR,
@@ -562,7 +646,31 @@ export const COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256: CompositeProfileDraft
   buildClassicalAlgId: buildRSAEncryptionAlgId,
   mldsaSigBytes: 2420,
   mldsaPubKeyBytes: 1312,
-  tradHash: 'SHA-256', // §6: id-RSASSA-PSS, PH=SHA256
+  classical: { ...RSA_PSS_TABLE2, modulusBits: 2048 },
+}
+
+/**
+ * id-MLDSA44-Ed25519-SHA512 — 1.3.6.1.5.5.7.6.39 (draft §6).
+ *
+ * One of the two profiles §10.4 RECOMMENDS "when performance or bandwidth is a
+ * concern", alongside .40. Ed25519 gives the smallest traditional half of any
+ * profile: 32-byte key, 64-byte signature, both fixed-length.
+ *
+ * Note the pre-hash is SHA512 rather than SHA256 as with the other ML-DSA-44
+ * profiles. Per the draft's §6 note this is deliberate — for Ed25519 and Ed448
+ * the pre-hash is chosen to match the hash inside RFC 8032 itself (SHA-512 for
+ * Ed25519ph), not to match the ML-DSA parameter set.
+ */
+export const COMPOSITE_PROFILE_MLDSA44_ED25519_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA44_ED25519_SHA512_OID_STR,
+  label: 'id-MLDSA44-Ed25519-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA44-Ed25519-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_44_OID_STR,
+  buildClassicalAlgId: buildEd25519AlgId,
+  mldsaSigBytes: 2420,
+  mldsaPubKeyBytes: 1312,
+  classical: { kind: 'ed25519', pubKeyBytes: 32, sigBytes: 64 },
 }
 
 /**
@@ -584,7 +692,56 @@ export const COMPOSITE_PROFILE_MLDSA44_ECDSA_P256_SHA256: CompositeProfileDraft1
   buildClassicalAlgId: buildECAlgId,
   mldsaSigBytes: 2420,
   mldsaPubKeyBytes: 1312,
-  tradHash: 'SHA-256', // §6: ecdsa-with-SHA256 (same as PH here — the control case)
+  // §6: ecdsa-with-SHA256 (same as PH here — the control case)
+  classical: { kind: 'ecdsa', curve: 'P-256', tradHash: 'SHA-256', pubKeyBytes: 65 },
+}
+
+/**
+ * id-MLDSA65-RSA3072-PSS-SHA512 — 1.3.6.1.5.5.7.6.41 (draft §6).
+ *
+ * The profile §10.4 RECOMMENDS "when RSA is required". Note that the draft
+ * points at RSA-3072 here, NOT at the RSA-2048 profile (.37) — so .37 is
+ * implemented for teaching and for the certificates learners will actually meet
+ * in the wild, while .41 is the one to reach for in new deployments.
+ *
+ * The RSA size is a normative §6 parameter, and §3.3 step 2 requires a verifier
+ * to reject a component key that "is not of the correct type or length". The
+ * verifier enforces exactly 3072 bits here.
+ */
+export const COMPOSITE_PROFILE_MLDSA65_RSA3072_PSS_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA65_RSA3072_PSS_SHA512_OID_STR,
+  label: 'id-MLDSA65-RSA3072-PSS-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA65-RSA3072-PSS-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_65_OID_STR,
+  buildClassicalAlgId: buildRSAEncryptionAlgId,
+  mldsaSigBytes: 3309,
+  mldsaPubKeyBytes: ML_DSA_65_PUBKEY_BYTES,
+  // §6.1 Table 2 covers BOTH 2048 and 3072 — the PSS hash stays SHA-256 even
+  // though PH is SHA-512 here. Same trap as the ECDSA profiles.
+  classical: { ...RSA_PSS_TABLE2, modulusBits: 3072 },
+}
+
+/**
+ * id-MLDSA65-Ed25519-SHA512 — 1.3.6.1.5.5.7.6.48 (draft §6).
+ *
+ * §10.4 names this one for applications concerned with SUF-CMA. Read §9.2.2
+ * carefully before relying on that: the draft's own analysis concludes
+ * Composite ML-DSA is NOT SUF-CMA secure against quantum adversaries, and that
+ * "applications where SUF-CMA security is critical SHOULD NOT use Composite
+ * ML-DSA". What Ed25519 buys is the removal of ECDSA's trivial signature
+ * malleability, which is a real improvement but not the full property.
+ */
+export const COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA65_ED25519_SHA512_OID_STR,
+  label: 'id-MLDSA65-Ed25519-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA65-Ed25519-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_65_OID_STR,
+  buildClassicalAlgId: buildEd25519AlgId,
+  mldsaSigBytes: 3309,
+  mldsaPubKeyBytes: ML_DSA_65_PUBKEY_BYTES,
+  classical: { kind: 'ed25519', pubKeyBytes: 32, sigBytes: 64 },
 }
 
 export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512: CompositeProfileDraft19 = {
@@ -596,7 +753,8 @@ export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512: CompositeProfileDraft1
   buildClassicalAlgId: buildECAlgId,
   mldsaSigBytes: 3309,
   mldsaPubKeyBytes: ML_DSA_65_PUBKEY_BYTES,
-  tradHash: 'SHA-256', // §6: ecdsa-with-SHA256 (NOT SHA-512 — that is PH)
+  // §6: ecdsa-with-SHA256 (NOT SHA-512 — that is PH)
+  classical: { kind: 'ecdsa', curve: 'P-256', tradHash: 'SHA-256', pubKeyBytes: 65 },
 }
 
 export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft19 = {
@@ -608,8 +766,28 @@ export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft1
   buildClassicalAlgId: buildECP384AlgId,
   mldsaSigBytes: 4627,
   mldsaPubKeyBytes: 2592,
-  tradHash: 'SHA-384', // §6: ecdsa-with-SHA384 (NOT SHA-512 — that is PH)
+  // §6: ecdsa-with-SHA384 (NOT SHA-512 — that is PH)
+  classical: { kind: 'ecdsa', curve: 'P-384', tradHash: 'SHA-384', pubKeyBytes: 97 },
 }
+
+/**
+ * The six profiles draft §10.4 RECOMMENDS for applications with no regulatory
+ * or legacy constraint, in the draft's own order.
+ *
+ * §10.4 is explicit that the specification "does not list any particular
+ * composite algorithm as mandatory-to-implement" — this is a recommendation to
+ * narrow the combinatorial explosion, not a conformance requirement. .37 is
+ * deliberately absent: it is implemented above, but the draft points at .41 for
+ * RSA.
+ */
+export const COMPOSITE_PROFILES_RECOMMENDED: readonly CompositeProfileDraft19[] = [
+  COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512, // general use — "best overall balance"
+  COMPOSITE_PROFILE_MLDSA65_RSA3072_PSS_SHA512, // when RSA is required
+  COMPOSITE_PROFILE_MLDSA44_ECDSA_P256_SHA256, // performance / bandwidth
+  COMPOSITE_PROFILE_MLDSA44_ED25519_SHA512, // performance / bandwidth
+  COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512, // NIST level 5 only
+  COMPOSITE_PROFILE_MLDSA65_ED25519_SHA512, // SUF-CMA concerns (see §9.2.2)
+]
 
 /**
  * Composite ML-DSA signer contract.
