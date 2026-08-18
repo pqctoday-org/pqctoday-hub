@@ -738,6 +738,38 @@ function IndustryCrossRefs({
   )
 }
 
+/**
+ * Tile order (2026-08-17): estimated cybersecurity-opportunity ranking from
+ * pqctoday-priv/maintenance/INDUSTRY-CYBER-OPPORTUNITY-RANKING-REPORT-08172026.md
+ * — baseline market size x a compound cyber-spend-%-of-revenue ratio (mostly
+ * ENISA NIS Investments 2025 sector data; Retail from RH-ISAC/IANS; Education
+ * from CoSN + MS-ISAC, the least rigorous row in the report, flagged there as
+ * such). Deliberately NOT shown to the reader as a labeled "opportunity"
+ * sort — the report mixes official and lower-rigor sources and is a private
+ * research artifact, not a data source held to this app's official-only bar,
+ * so this is presentation ordering only, not a claim rendered anywhere in
+ * the UI. The 7 industries with no ranking (4 "insufficient signal" in the
+ * report, 3 fully exempt from market-size entirely — Cross-Industry, HSM,
+ * IoT) sort alphabetically after the ranked 15, never interspersed.
+ */
+const CYBER_OPPORTUNITY_RANK: Record<string, number> = {
+  'Healthcare / Pharmaceutical': 1,
+  'Financial Services / Banking': 2,
+  'Government / Defense': 3,
+  'Retail / E-Commerce': 4,
+  'Cloud Computing / Data Centers': 5,
+  'IT Industry / Software': 6,
+  'Critical Infrastructure / Energy': 7,
+  Telecommunications: 8,
+  'Education / Research': 9,
+  'Legal / Notary / eSignature': 10,
+  'Supply Chain / Logistics': 11,
+  'Water / Wastewater': 12,
+  'Automotive / Connected Vehicles': 13,
+  'Aerospace / Aviation': 14,
+  'Rail / Transit': 15,
+}
+
 // ── Main view ────────────────────────────────────────────────────────────────
 
 export function IndustryLandscapeView() {
@@ -750,7 +782,12 @@ export function IndustryLandscapeView() {
   const mode: 'industry' | 'mechanism' = selectedMechanism ? 'mechanism' : 'industry'
 
   const industries = useMemo(
-    () => Array.from(new Set(useCases.map((u) => u.industry))).sort(),
+    () =>
+      Array.from(new Set(useCases.map((u) => u.industry))).sort((a, b) => {
+        const rankA = CYBER_OPPORTUNITY_RANK[a] ?? Infinity
+        const rankB = CYBER_OPPORTUNITY_RANK[b] ?? Infinity
+        return rankA !== rankB ? rankA - rankB : a.localeCompare(b)
+      }),
     [useCases]
   )
   const marketByIndustry = useMemo(
