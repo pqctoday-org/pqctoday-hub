@@ -11598,8 +11598,280 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "aws-secrets-manager",
+      "filename": "aws-secrets-manager-brief-3e6b3f64.html",
+      "url": "https://aws.amazon.com/secrets-manager/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aws-secrets-manager",
+      "filename": "aws-secrets-manager-manual-79e54f8d.html",
+      "url": "https://docs.aws.amazon.com/secretsmanager/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "aws-secrets-manager",
+      "filename": "aws-secrets-manager-manual-1b73f7aa.html",
+      "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/pqtls.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "keysight-cyperf",
+      "filename": "keysight-cyperf-manual-daea549d.pdf",
+      "url": "https://docs.keysight.com/keysightcyperf/files/1008013358/1013697484/1/1774938974000/CyPerf_UserGuide_v26.0.0.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cato-networks-sase",
+      "filename": "cato-networks-sase-brief-9baa54ac.html",
+      "url": "https://www.catonetworks.com/sase/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolftpm-pqc",
+      "filename": "wolftpm-pqc-brief-ae949764.html",
+      "url": "https://www.wolfssl.com/products/wolftpm/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wolftpm-pqc",
+      "filename": "wolftpm-pqc-manual-13b9f41e.pdf",
+      "url": "https://www.wolfssl.com/documentation/manuals/wolftpm/wolfTPM-Manual.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cato-networks-sase",
+      "filename": "cato-networks-sase-brief-b6f74c05.html",
+      "url": "https://www.catonetworks.com/blog/the-post-quantum-journey-begins/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cato-networks-sase",
+      "filename": "cato-networks-sase-manual-03387694.html",
+      "url": "https://support.catonetworks.com/hc/en-us/articles/4413273491857-Configuring-TLS-Inspection-Policy-for-the-Account",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "ssh-com-tectia",
+      "filename": "ssh-com-tectia-brief-6b2bda0e.pdf",
+      "url": "https://www.inter-datasecurity.com/images/solutions/Tectia_ClientServer_datasheet.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-hsm-softhsmv3",
+      "filename": "pqctoday-hsm-softhsmv3-brief-85241c05.html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-opgpkcs11",
+      "filename": "pqctoday-opgpkcs11-brief-85241c05.html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-pkcs11-provider",
+      "filename": "pqctoday-pkcs11-provider-brief-63b701b7.html",
+      "url": "https://github.com/latchset/pkcs11-provider",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "renesas-veridify-pqc-for-ra-mcus",
+      "filename": "renesas-veridify-pqc-for-ra-mcus-brief-74a615fe.html",
+      "url": "https://www.veridify.com/dome/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "renesas-veridify-pqc-for-ra-mcus",
+      "filename": "renesas-veridify-pqc-for-ra-mcus-brief-c7ce6b99.html",
+      "url": "https://www.renesas.com/en/document/prb/veridifys-dome",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "jtesta-ssh-audit",
+      "filename": "jtesta-ssh-audit-brief-8bc9e02f.html",
+      "url": "https://github.com/jtesta/ssh-audit",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bwesterb-mtc",
+      "filename": "bwesterb-mtc-brief-615c0da0.html",
+      "url": "https://github.com/bwesterb/mtc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rosenpass",
+      "filename": "rosenpass-brief-89a3923d.html",
+      "url": "https://rosenpass.eu/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rosenpass",
+      "filename": "rosenpass-manual-bf10a0df.html",
+      "url": "https://github.com/rosenpass/rosenpass",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "rosenpass",
+      "filename": "rosenpass-manual-a7a9b749.html",
+      "url": "https://github.com/rosenpass/rosenpass/releases",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cryptsoft",
+      "filename": "cryptsoft-brief-83c6ff76.html",
+      "url": "https://cryptsoft.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cryptsoft",
+      "filename": "cryptsoft-manual-7b28c2e4.html",
+      "url": "https://www.prnewswire.com/news-releases/support-latest-post-quantum-cryptography-algorithms-with-cryptsofts-sdks-302413925.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "python-cryptography",
+      "filename": "python-cryptography-brief-3a0ff04d.html",
+      "url": "https://cryptography.io/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "python-cryptography",
+      "filename": "python-cryptography-manual-295b4b1b.html",
+      "url": "https://cryptography.io/en/latest/changelog/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "prometheus",
+      "filename": "prometheus-brief-83b34141.html",
+      "url": "https://prometheus.io/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "prometheus",
+      "filename": "prometheus-manual-882b1d8f.html",
+      "url": "https://github.com/prometheus/prometheus/releases",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "amazon-cloudfront-pqc",
+      "filename": "amazon-cloudfront-pqc-brief-038c6b65.html",
+      "url": "https://aws.amazon.com/security/post-quantum-cryptography/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "amazon-cloudfront-pqc",
+      "filename": "amazon-cloudfront-pqc-manual-a467e016.html",
+      "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "f5-big-ip-pqc",
+      "filename": "f5-big-ip-pqc-brief-3a78e86e.html",
+      "url": "https://www.f5.com/company/blog/f5-extends-nist-compliant-pqc-cipher-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "f5-big-ip-pqc",
+      "filename": "f5-big-ip-pqc-manual-d6428e5a.html",
+      "url": "https://my.f5.com/manage/s/article/K000148294",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "traefik-proxy-pqc",
+      "filename": "traefik-proxy-pqc-brief-5736031d.html",
+      "url": "https://traefik.io/blog/traefik-proxy-v3-5",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "traefik-proxy-pqc",
+      "filename": "traefik-proxy-pqc-manual-0eaff4ef.html",
+      "url": "https://github.com/traefik/traefik/pull/11731",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "f5-big-ip-pqc",
+      "filename": "f5-big-ip-pqc-manual-8294bea3.html",
+      "url": "https://community.f5.com/kb/technicalarticles/future-proofing-your-network-enabling-quantum-ciphers-on-f5-big-ip-tmos-17-5-1/342586",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "traefik-proxy-pqc",
+      "filename": "traefik-proxy-pqc-manual-2dce7eaa.html",
+      "url": "https://doc.traefik.io/traefik/reference/routing-configuration/http/tls/tls-options/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1694,
-  "downloaded": 1694
+  "total": 1728,
+  "downloaded": 1728
 }
