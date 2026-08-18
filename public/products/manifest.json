@@ -10326,8 +10326,328 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "manual"
+  },
+  {
+   "softwareName": "marvell-liquidsecurity-2",
+   "filename": "marvell-liquidsecurity-2-brief-5916c168.html",
+   "url": "https://www.marvell.com/products/security-solutions/liquidsecurity2.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "google-cloud-hsm",
+   "filename": "google-cloud-hsm-brief-4dbae895.html",
+   "url": "https://cloud.google.com/security/products/security-key-management",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "google-cloud-hsm",
+   "filename": "google-cloud-hsm-manual-0f2eb769.html",
+   "url": "https://cloud.google.com/kms/docs/hsm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "entrust-pki",
+   "filename": "entrust-pki-manual-2290f67d.html",
+   "url": "https://docs.pkiaas.entrust.com/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "smallstep-certificate-authority",
+   "filename": "smallstep-certificate-authority-brief-30e71703.html",
+   "url": "https://github.com/smallstep/certificates",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "smallstep-certificate-authority",
+   "filename": "smallstep-certificate-authority-manual-6ca4ec22.html",
+   "url": "https://smallstep.com/docs/step-ca/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "ibm-quantum-safe-toolkit",
+   "filename": "ibm-quantum-safe-toolkit-brief-d23dd5f0.html",
+   "url": "https://www.ibm.com/quantum/quantum-safe",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "marvell-liquidsecurity-2",
+   "filename": "marvell-liquidsecurity-2-brief-451d4b37.pdf",
+   "url": "https://www.marvell.com/content/dam/marvell/en/public-collateral/security-solutions/marvell-liquidsecurity2-hsm-adapters-product-brief.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nimbus-jose-jwt",
+   "filename": "nimbus-jose-jwt-brief-0b5fa6ed.html",
+   "url": "https://connect2id.com/products/nimbus-jose-jwt",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nimbus-jose-jwt",
+   "filename": "nimbus-jose-jwt-manual-cf95aac4.html",
+   "url": "https://javadoc.io/doc/com.nimbusds/nimbus-jose-jwt/latest/index.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cockroachdb-encryption",
+   "filename": "cockroachdb-encryption-manual-b9a6c741.html",
+   "url": "https://www.cockroachlabs.com/docs/stable/encryption.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "sigstore-cosign",
+   "filename": "sigstore-cosign-brief-b79d966d.html",
+   "url": "https://github.com/sigstore/cosign",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sigstore-cosign",
+   "filename": "sigstore-cosign-manual-2a1b240b.html",
+   "url": "https://docs.sigstore.dev/cosign/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cockroachdb-encryption",
+   "filename": "cockroachdb-encryption-manual-24a05484.html",
+   "url": "https://www.cockroachlabs.com/docs/stable/security-reference/transport-layer-security",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cockroachdb-encryption",
+   "filename": "cockroachdb-encryption-brief-ed09bf8e.html",
+   "url": "https://www.cockroachlabs.com/security/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sigstore-cosign",
+   "filename": "sigstore-cosign-manual-c04c9390.html",
+   "url": "https://docs.sigstore.dev/cosign/signing/signing_with_blobs/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "apple-codesign",
+   "filename": "apple-codesign-manual-26fbab3f.html",
+   "url": "https://developer.apple.com/documentation/security/code_signing_services",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "globalsign-digital-signing-service",
+   "filename": "globalsign-digital-signing-service-brief-0909c292.html",
+   "url": "https://www.globalsign.com/en/digital-signing-service",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "globalsign-digital-signing-service",
+   "filename": "globalsign-digital-signing-service-manual-ef07aa07.html",
+   "url": "https://support.globalsign.com/atlas/atlas-portal-technical-resources/digital-signing-service-dss-technical-resources",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "google-cloud-kms-cloud-gateway",
+   "filename": "google-cloud-kms-cloud-gateway-brief-4dbae895.html",
+   "url": "https://cloud.google.com/security/products/security-key-management",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "google-cloud-kms-cloud-gateway",
+   "filename": "google-cloud-kms-cloud-gateway-manual-fd0efa54.html",
+   "url": "https://cloud.google.com/kms/docs",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "thales-ciphertrust-manager",
+   "filename": "thales-ciphertrust-manager-brief-500eea91.html",
+   "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-manager",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nginx",
+   "filename": "nginx-brief-9cb0ba7f.html",
+   "url": "https://blog.nginx.org/blog/pqc-nginx",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "nginx",
+   "filename": "nginx-manual-ce9ea6dd.html",
+   "url": "https://nginx.org/en/docs/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "apache-http-server",
+   "filename": "apache-http-server-brief-817996e5.html",
+   "url": "https://httpd.apache.org",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "apache-http-server",
+   "filename": "apache-http-server-manual-5b46b89a.html",
+   "url": "https://httpd.apache.org/docs/2.4/mod/mod_ssl.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "keycloak",
+   "filename": "keycloak-brief-cf202af5.html",
+   "url": "https://www.keycloak.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "keycloak",
+   "filename": "keycloak-manual-d9ee4c73.html",
+   "url": "https://www.keycloak.org/guides",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "google-cloud-kms-cloud-gateway",
+   "filename": "google-cloud-kms-cloud-gateway-manual-ac79258e.html",
+   "url": "https://docs.cloud.google.com/kms/docs/digital-signatures",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "virtru-data-protection",
+   "filename": "virtru-data-protection-brief-45635f10.html",
+   "url": "https://www.virtru.com/data-security-platform/product-overview",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "virtru-data-protection",
+   "filename": "virtru-data-protection-manual-6cc84fe4.html",
+   "url": "https://support.virtru.com/hc/en-us",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "aws-cloudhsm",
+   "filename": "aws-cloudhsm-brief-4c23b7f5.html",
+   "url": "https://aws.amazon.com/cloudhsm/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "aws-cloudhsm",
+   "filename": "aws-cloudhsm-manual-240a1211.html",
+   "url": "https://docs.aws.amazon.com/cloudhsm/latest/userguide/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "hashicorp-vault-transit",
+   "filename": "hashicorp-vault-transit-brief-d0afdc0a.html",
+   "url": "https://www.hashicorp.com/en/products/vault/use-cases/data-protection",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hashicorp-vault-transit",
+   "filename": "hashicorp-vault-transit-manual-1c074f77.html",
+   "url": "https://developer.hashicorp.com/vault/docs/secrets/transit",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "id-quantique-cerberis-xgr-qkd",
+   "filename": "id-quantique-cerberis-xgr-qkd-brief-5f682eb2.html",
+   "url": "https://www.idquantique.com/idq-unveils-cerberis-xgr/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "id-quantique-cerberis-xgr-qkd",
+   "filename": "id-quantique-cerberis-xgr-qkd-manual-092ec5ad.html",
+   "url": "https://www.idquantique.com/quantum-safe-security/products/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "id-quantique-cerberis-xgr-qkd",
+   "filename": "id-quantique-cerberis-xgr-qkd-manual-b886c56a.html",
+   "url": "https://www.idquantique.com/quantum-safe-security/products/cerberis-xgr-qkd-system/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "ericsson-quantum-safe-5g",
+   "filename": "ericsson-quantum-safe-5g-manual-bab17dfd.html",
+   "url": "https://www.ericsson.com/en/reports-and-papers/ericsson-technology-review/articles/migrating-telecom-to-quantum-resistant-cryptography",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "ericsson-quantum-safe-5g",
+   "filename": "ericsson-quantum-safe-5g-brief-3ca0c857.html",
+   "url": "https://www.ericsson.com/en/security/quantum-safe-networks",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1535,
- "downloaded": 1535
+ "total": 1575,
+ "downloaded": 1575
 }
