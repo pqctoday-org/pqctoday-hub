@@ -53,6 +53,14 @@ describe('findCompositeProfile', () => {
   it('resolves the MLDSA65-ECDSA-P256-SHA512 OID', () => {
     expect(findCompositeProfile('1.3.6.1.5.5.7.6.45')?.label).toBe('id-MLDSA65-ECDSA-P256-SHA512')
   })
+  it('resolves the MLDSA65-ECDSA-P384-SHA512 (.46) OID, added 2026-08-18 for parity with the KMIP engine', () => {
+    const profile = findCompositeProfile('1.3.6.1.5.5.7.6.46')
+    expect(profile?.label).toBe('id-MLDSA65-ECDSA-P384-SHA512')
+    expect(profile?.preHash).toBe('SHA-512')
+    // Traditional hash tracks the P-384 curve, not the SHA512 pre-hash in
+    // the profile name — same trap as .45/.49 (see certBuilder.ts).
+    expect(profile?.classical).toMatchObject({ kind: 'ecdsa', curve: 'P-384', tradHash: 'SHA-384' })
+  })
   it('returns undefined for a non-composite OID', () => {
     expect(findCompositeProfile(ML_DSA_65_OID_STR)).toBeUndefined()
   })

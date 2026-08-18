@@ -916,7 +916,7 @@ export class HybridCryptoService {
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite', profile)
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {

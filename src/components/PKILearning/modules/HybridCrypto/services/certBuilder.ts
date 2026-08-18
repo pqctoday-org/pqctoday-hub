@@ -156,6 +156,16 @@ export const COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR = '1.3.6.1.5.5.7.6.45'
 /** id-MLDSA87-ECDSA-P384-SHA512 — 1.3.6.1.5.5.7.6.49 (draft-19 §6) */
 export const COMPOSITE_MLDSA87_ECDSA_P384_SHA512_OID_STR = '1.3.6.1.5.5.7.6.49'
 
+/**
+ * id-MLDSA65-ECDSA-P384-SHA512 — 1.3.6.1.5.5.7.6.46 (draft-19 §6).
+ *
+ * Added 2026-08-18 alongside the matching KMIP engine profile (composite/
+ * hybrid remediation plan's Gap 3) — the one profile in the engine's
+ * §6 set that had no hub-side counterpart either, closing the last
+ * mismatch between the two.
+ */
+export const COMPOSITE_MLDSA65_ECDSA_P384_SHA512_OID_STR = '1.3.6.1.5.5.7.6.46'
+
 /** id-MLDSA44-Ed25519-SHA512 — 1.3.6.1.5.5.7.6.39 (draft-19 §6) */
 export const COMPOSITE_MLDSA44_ED25519_SHA512_OID_STR = '1.3.6.1.5.5.7.6.39'
 
@@ -771,6 +781,32 @@ export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft1
 }
 
 /**
+ * id-MLDSA65-ECDSA-P384-SHA512 — 1.3.6.1.5.5.7.6.46 (draft §6).
+ *
+ * Added 2026-08-18. Not a §10.4 recommendation (a mismatched-tier pairing —
+ * "medium" ML-DSA-65 with "high" P-384 — rather than one of the matched-tier
+ * pairs .45/.49 above), but implemented for parity with the KMIP engine,
+ * which added it the same day to close its own last gap against the
+ * draft's full §6 set. Pre-hash/traditional-hash pairing confirmed against
+ * the same shared external KAT vector the engine's implementation was
+ * verified against (tcId `id-MLDSA65-ECDSA-P384-SHA512`: ph=SHA512,
+ * trad_hash=SHA384).
+ */
+export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P384_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA65_ECDSA_P384_SHA512_OID_STR,
+  label: 'id-MLDSA65-ECDSA-P384-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA65-ECDSA-P384-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_65_OID_STR,
+  buildClassicalAlgId: buildECP384AlgId,
+  mldsaSigBytes: 3309,
+  mldsaPubKeyBytes: ML_DSA_65_PUBKEY_BYTES,
+  // §6: ecdsa-with-SHA384 (NOT SHA-512 — that is PH). Traditional hash
+  // tracks the P-384 curve, same as .49 above.
+  classical: { kind: 'ecdsa', curve: 'P-384', tradHash: 'SHA-384', pubKeyBytes: 97 },
+}
+
+/**
  * The six profiles draft §10.4 RECOMMENDS for applications with no regulatory
  * or legacy constraint, in the draft's own order.
  *
@@ -854,6 +890,13 @@ export const COMPOSITE_PROFILE_CHOICES: readonly CompositeProfileChoice[] = [
     shortLabel: 'ML-DSA-44 + RSA-2048 PSS',
     useWhen:
       'Not recommended by §10.4 — included because it is the composite certificate you are most likely to meet in the wild. For new RSA deployments the draft points at RSA-3072 above.',
+    recommended: false,
+  },
+  {
+    profile: COMPOSITE_PROFILE_MLDSA65_ECDSA_P384_SHA512,
+    shortLabel: 'ML-DSA-65 + ECDSA P-384',
+    useWhen:
+      'Not a §10.4 recommendation — a mismatched-tier pairing (medium ML-DSA-65 with high-security P-384) rather than one of the matched-tier options above. Included for parity with the KMIP engine, which implements it.',
     recommended: false,
   },
 ]
@@ -1390,7 +1433,22 @@ export function buildParsedText(
   subject: string,
   notBefore: Date,
   notAfter: Date,
-  formatHint?: string
+  formatHint?: string,
+  /**
+   * Required when `formatHint === 'composite'`. Everything the composite
+   * SPKI/signature breakdown below prints — the classical family, curve,
+   * byte lengths, OID — comes from this, not from a hardcoded assumption.
+   *
+   * Found 2026-08-18 while adding the .46 profile: this branch was
+   * hardcoded to id-MLDSA65-ECDSA-P256-SHA512's own label, OID, and byte
+   * lengths regardless of which profile was actually selected. Every
+   * profile OTHER than .45 itself showed the wrong classical family name
+   * and OID in its Parsed tab — RSA-PSS and Ed25519 profiles (.37, .39,
+   * .41, .48) as well as the other ECDSA ones — and any ML-DSA-44 profile
+   * would have shown a garbage byte-range split too, since the hardcoded
+   * split point (.45's ML-DSA-65 lengths) doesn't match ML-DSA-44's.
+   */
+  compositeProfile?: CompositeProfileDraft19
 ): string {
   const info = parseCertificateInfo(der)
   const algLabel = oidToLabel(info.algorithmOID)
@@ -1407,28 +1465,55 @@ export function buildParsedText(
 
   // Build SPKI section — format-specific breakdown for composite/alt-sig/chameleon
   const spkiLines: string[] = ['    Subject Public Key Info:']
-  if (formatHint === 'composite') {
-    // Derived from the actual certificate, not hardcoded: a composite verifier
-    // splits both the key and the signature at the ML-DSA component's fixed
-    // length (FIPS 204), because the concatenation carries no internal framing.
-    // Deriving it here means this panel can never disagree with the bytes.
-    const mldsaPkBytes = ML_DSA_65_PUBKEY_BYTES
-    const mldsaSigBytes = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512.mldsaSigBytes
+  if (formatHint === 'composite' && compositeProfile) {
+    // Derived from the actual profile and certificate, not hardcoded: a
+    // composite verifier splits both the key and the signature at the
+    // ML-DSA component's fixed length (FIPS 204), because the
+    // concatenation carries no internal framing. Deriving it here means
+    // this panel can never disagree with the bytes, or with which
+    // profile was actually selected.
+    const mldsaLabel =
+      compositeProfile.mldsaOid === ML_DSA_44_OID_STR
+        ? 'ML-DSA-44'
+        : compositeProfile.mldsaOid === ML_DSA_87_OID_STR
+          ? 'ML-DSA-87'
+          : 'ML-DSA-65'
+    const mldsaPkBytes = compositeProfile.mldsaPubKeyBytes
+    const mldsaSigBytes = compositeProfile.mldsaSigBytes
     const tradPkBytes = info.publicKeySizeBytes - mldsaPkBytes
     const tradSigBytes = info.signatureSizeBytes - mldsaSigBytes
+    const classical = compositeProfile.classical
+    const tradFamilyLabel =
+      classical.kind === 'ecdsa'
+        ? `EC ${classical.curve}`
+        : classical.kind === 'rsa-pss'
+          ? `RSA-${classical.modulusBits}`
+          : 'Ed25519'
+    const tradPkEncoding =
+      classical.kind === 'ecdsa'
+        ? 'X9.62 uncompressed point'
+        : classical.kind === 'rsa-pss'
+          ? 'RSAPublicKey, DER'
+          : 'RFC 8032, raw 32 bytes'
+    const tradSigEncoding =
+      classical.kind === 'ecdsa'
+        ? 'Ecdsa-Sig-Value, DER'
+        : classical.kind === 'rsa-pss'
+          ? 'RSASSA-PSS, fixed-width'
+          : 'RFC 8032, raw 64 bytes'
 
     spkiLines.push(
-      '        Public Key Algorithm: MLDSA65-ECDSA-P256-SHA512 [Composite OID 1.3.6.1.5.5.7.6.45]'
+      `        Public Key Algorithm: ${compositeProfile.label} [Composite OID ${compositeProfile.compositeOid}]`
     )
     spkiLines.push(
       `        CompositePublicKey — raw concatenation, ${info.publicKeySizeBytes} bytes total:`
     )
     if (tradPkBytes > 0) {
       spkiLines.push(
-        `            [0..${mldsaPkBytes - 1}]  ML-DSA-65 — ${mldsaPkBytes} bytes  (FIPS 204, lattice-based)`
+        `            [0..${mldsaPkBytes - 1}]  ${mldsaLabel} — ${mldsaPkBytes} bytes  (FIPS 204, lattice-based)`
       )
       spkiLines.push(
-        `            [${mldsaPkBytes}..${info.publicKeySizeBytes - 1}]  EC P-256  — ${tradPkBytes} bytes  (X9.62 uncompressed point)`
+        `            [${mldsaPkBytes}..${info.publicKeySizeBytes - 1}]  ${tradFamilyLabel}  — ${tradPkBytes} bytes  (${tradPkEncoding})`
       )
     } else {
       spkiLines.push(
@@ -1438,9 +1523,11 @@ export function buildParsedText(
     spkiLines.push('        No ASN.1 wrapping: the BIT STRING holds the raw bytes directly.')
     spkiLines.push('        Signature splits the same way — ML-DSA first:')
     if (tradSigBytes > 0) {
-      spkiLines.push(`            [0..${mldsaSigBytes - 1}]  ML-DSA-65 — ${mldsaSigBytes} bytes`)
       spkiLines.push(
-        `            [${mldsaSigBytes}..${info.signatureSizeBytes - 1}]  ECDSA P-256 — ${tradSigBytes} bytes (Ecdsa-Sig-Value, DER)`
+        `            [0..${mldsaSigBytes - 1}]  ${mldsaLabel} — ${mldsaSigBytes} bytes`
+      )
+      spkiLines.push(
+        `            [${mldsaSigBytes}..${info.signatureSizeBytes - 1}]  ${tradFamilyLabel} — ${tradSigBytes} bytes (${tradSigEncoding})`
       )
     }
     spkiLines.push('        -- verifier MUST validate BOTH components')
