@@ -11134,8 +11134,232 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "ascertia-adss-pki-server",
+   "filename": "ascertia-adss-pki-server-brief-80d1a9c5.html",
+   "url": "https://blog.ascertia.com/implementing-pki-digital-signatures-using-pqc-in-adss-server",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "ascertia-adss-pki-server",
+   "filename": "ascertia-adss-pki-server-manual-17176963.html",
+   "url": "https://www.ascertia.com/product-documentation/adss-server/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "eviden-idnomic-pki",
+   "filename": "eviden-idnomic-pki-brief-9f1d1458.html",
+   "url": "https://www.cryptovision.com/en/products/pki-solutions/idnomic-pki/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mtg-ag-clm",
+   "filename": "mtg-ag-clm-brief-616ba281.html",
+   "url": "https://www.mtg.de/en/certificate-lifecycle-manager/what-is-certificate-lifecycle-management/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mtg-ag-clm",
+   "filename": "mtg-ag-clm-manual-a7f4d88c.html",
+   "url": "https://docs.mtg.de/enterprise-resource-security/latest/introduction.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "i4p-trident-hsm",
+   "filename": "i4p-trident-hsm-brief-c5bc553d.html",
+   "url": "https://www.i4p.com/products/trident-hsm/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "wisesat-pqc-constellation",
+   "filename": "wisesat-pqc-constellation-brief-44a936ad.html",
+   "url": "https://spaceaiq.com/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sealsq-qvault-tpm",
+   "filename": "sealsq-qvault-tpm-brief-6a12c90d.html",
+   "url": "https://www.sealsq.com/products/secure-element/tpm/qvaulttpm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "i4p-trident-hsm",
+   "filename": "i4p-trident-hsm-manual-9881af76.html",
+   "url": "https://www.i4p.com/2022/07/01/quantum-key-distribution-with-trident/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "caddy-server",
+   "filename": "caddy-server-brief-3ed922bf.html",
+   "url": "https://caddyserver.com/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "caddy-server",
+   "filename": "caddy-server-manual-6ea5176b.html",
+   "url": "https://caddyserver.com/docs/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mtg-ag-clm",
+   "filename": "mtg-ag-clm-manual-04bb87e7.html",
+   "url": "https://docs.mtg.de/enterprise-resource-security/latest/comp-reference.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "sealsq-qvault-tpm",
+   "filename": "sealsq-qvault-tpm-manual-399d8d15.html",
+   "url": "https://www.sealsq.com/investors/news-releases/sealsq-announces-qvault-tpm-compliance-with-highest-security-key-lengths-for-post-quantum-protection-in-defense-iot-and-automotive",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cisco-catalyst-9500-pqc",
+   "filename": "cisco-catalyst-9500-pqc-brief-373a1a15.html",
+   "url": "https://www.cisco.com/c/en/us/products/collateral/switches/catalyst-9500-series-switches/nb-06-cat9500-ser-data-sheet-cte-en.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sk-telecom-5g-pqc-sim",
+   "filename": "sk-telecom-5g-pqc-sim-brief-39a1d397.html",
+   "url": "https://www.thalesgroup.com/en/markets/digital-identity-and-security/mobile/5G-skt-post-quantum-user-case",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "qusecure-quprotect-tactical",
+   "filename": "qusecure-quprotect-tactical-brief-3580fcca.html",
+   "url": "https://www.qusecure.com/post-quantum-cryptography/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mastercard-quantum-resistant-contactless",
+   "filename": "mastercard-quantum-resistant-contactless-brief-2956a133.html",
+   "url": "https://www.mastercard.com/news/perspectives/2021/taking-a-quantum-leap-into-the-future-of-financial-services/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "sk-telecom-5g-pqc-sim",
+   "filename": "sk-telecom-5g-pqc-sim-manual-ac95fe83.pdf",
+   "url": "https://www.thalesgroup.com/sites/default/files/2025-04/MCS-entreprise-mobilecommunications-SKtelecom.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cisco-catalyst-9500-pqc",
+   "filename": "cisco-catalyst-9500-pqc-manual-9da8f0a4.html",
+   "url": "https://blogs.cisco.com/security/quantum-cryptography-whats-coming-next",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mastercard-quantum-resistant-contactless",
+   "filename": "mastercard-quantum-resistant-contactless-manual-d914c594.pdf",
+   "url": "https://www.mastercard.com/content/dam/mccom/shared/news-and-trends/stories/2025/quantum-explainer-and-white-paper/Migration-to-post-quantum-cryptography-WhitePaper_2025.pdf",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "netskope-one-pqc",
+   "filename": "netskope-one-pqc-brief-d024248e.html",
+   "url": "https://www.netskope.com/blog/planning-for-a-post-quantum-world-now",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "opera-browser-pqc",
+   "filename": "opera-browser-pqc-brief-4d0de7f9.html",
+   "url": "https://blogs.opera.com/desktop/2025/07/opera-revamped-vpn-pro-lightway/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "simplex-chat-pqc",
+   "filename": "simplex-chat-pqc-brief-73bef781.html",
+   "url": "https://simplex.chat/blog/20240314-simplex-chat-v5-6-quantum-resistance-signal-double-ratchet-algorithm.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "stv-post-quantum-secure-drones",
+   "filename": "stv-post-quantum-secure-drones-brief-5c704bc9.html",
+   "url": "https://thequantuminsider.com/2026/03/31/stv-post-quantum-secure-drone-communications/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "landis-gyr-sealsq-smart-grid-pki",
+   "filename": "landis-gyr-sealsq-smart-grid-pki-brief-17e02fd7.html",
+   "url": "https://www.landisgyr.com/us/en/home/news-media/newsroom/2025/Landis-Gyr-Taps-SEALSQ-for-Enhanced-Smart-Grid-Network-Security-in-North-America",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "dyber-quantatpm",
+   "filename": "dyber-quantatpm-brief-6c2de53b.html",
+   "url": "https://dyber.org/quantatpm/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "powerdns-pqc-dnssec",
+   "filename": "powerdns-pqc-dnssec-brief-f3cadb09.html",
+   "url": "https://blog.powerdns.com/2024/07/15/more-pqc-in-powerdns-a-dnssec-field-study",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "giesecke-devrient-pqc-id-card",
+   "filename": "giesecke-devrient-pqc-id-card-brief-aaff7710.html",
+   "url": "https://www.gi-de.com/en/about-us/press/press-releases/germany-sets-new-standards-for-secure-id-documents-in-the-quantum-computing-era",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1636,
- "downloaded": 1636
+ "total": 1664,
+ "downloaded": 1664
 }
