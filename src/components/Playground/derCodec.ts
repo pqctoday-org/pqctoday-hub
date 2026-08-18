@@ -13,6 +13,8 @@
  * ASN.1 library.
  */
 
+import { canonicalPositiveInteger } from '@/utils/derInteger'
+
 /** Concatenate byte arrays. */
 export function derCat(...arrays: Uint8Array[]): Uint8Array {
   const total = arrays.reduce((s, a) => s + a.length, 0)
@@ -44,8 +46,11 @@ export function derTLV(tag: number, content: Uint8Array): Uint8Array {
 /** INTEGER (0x02). Pads a leading 0x00 when the high bit is set, so the value
  *  is interpreted as positive (two's-complement). */
 export function derInteger(bytes: Uint8Array): Uint8Array {
-  const padded = bytes.length > 0 && bytes[0] & 0x80 ? derCat(new Uint8Array([0x00]), bytes) : bytes
-  return derTLV(0x02, padded)
+  // Canonicalizes fully (strips a redundant leading zero, not just pads a
+  // set sign bit) — see src/utils/derInteger.ts's header for why the pad-
+  // only version of this rule is an incomplete fix, found 2026-08-18.
+  const canonical = bytes.length > 0 ? canonicalPositiveInteger(bytes) : new Uint8Array([0x00])
+  return derTLV(0x02, canonical)
 }
 
 /** SEQUENCE (0x30) wrapper. */

@@ -76,6 +76,7 @@ import { ErrorAlert } from '@/components/ui/error-alert'
 import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { derCat, derTLV, derBitString, encodeRsaPublicKeyDER } from '../derCodec'
+import { canonicalPositiveInteger } from '@/utils/derInteger'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -258,8 +259,11 @@ function buildHsmSelfSignedCert(
     ])
 
   // 4. Random serial (8 bytes, high bit clear → positive integer)
-  const serial = crypto.getRandomValues(new Uint8Array(8))
-  serial[0] &= 0x7f
+  // Canonicalized, not just sign-masked — see src/utils/derInteger.ts:
+  // a bare `bytes[0] &= 0x7f` stops the value from NEEDING a sign-pad but
+  // misses the mirror case (a redundant leading zero), which is itself
+  // non-canonical DER and can fail a stricter downstream parser.
+  const serial = canonicalPositiveInteger(crypto.getRandomValues(new Uint8Array(8)))
 
   const now = new Date()
   const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
@@ -281,7 +285,7 @@ function buildHsmSelfSignedCert(
   // 6. Build TBSCertificate and serialize to DER (this is what we sign)
   const tbs = new X509TBS({
     version: 2, // v3
-    serialNumber: serial.buffer,
+    serialNumber: serial.buffer as ArrayBuffer,
     signature: sigAlgId,
     issuer: buildName(cn, org),
     validity: new X509Validity({ notBefore: now, notAfter: expiry }),
@@ -353,8 +357,11 @@ function buildHsmMlDsaSelfSignedCert(
     ])
 
   // 5. Random serial (8 bytes, high bit clear → positive integer)
-  const serial = crypto.getRandomValues(new Uint8Array(8))
-  serial[0] &= 0x7f
+  // Canonicalized, not just sign-masked — see src/utils/derInteger.ts:
+  // a bare `bytes[0] &= 0x7f` stops the value from NEEDING a sign-pad but
+  // misses the mirror case (a redundant leading zero), which is itself
+  // non-canonical DER and can fail a stricter downstream parser.
+  const serial = canonicalPositiveInteger(crypto.getRandomValues(new Uint8Array(8)))
 
   const now = new Date()
   const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
@@ -378,7 +385,7 @@ function buildHsmMlDsaSelfSignedCert(
   // 7. TBSCertificate
   const tbs = new X509TBS({
     version: 2, // v3
-    serialNumber: serial.buffer,
+    serialNumber: serial.buffer as ArrayBuffer,
     signature: sigAlgId,
     issuer: buildName(cn, org),
     validity: new X509Validity({ notBefore: now, notAfter: expiry }),
@@ -435,8 +442,11 @@ async function buildMlDsaSelfSignedCertAsync(
       ]),
     ])
 
-  const serial = crypto.getRandomValues(new Uint8Array(8))
-  serial[0] &= 0x7f
+  // Canonicalized, not just sign-masked — see src/utils/derInteger.ts:
+  // a bare `bytes[0] &= 0x7f` stops the value from NEEDING a sign-pad but
+  // misses the mirror case (a redundant leading zero), which is itself
+  // non-canonical DER and can fail a stricter downstream parser.
+  const serial = canonicalPositiveInteger(crypto.getRandomValues(new Uint8Array(8)))
   const now = new Date()
   const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
 
@@ -453,7 +463,7 @@ async function buildMlDsaSelfSignedCertAsync(
 
   const tbs = new X509TBS({
     version: 2,
-    serialNumber: serial.buffer,
+    serialNumber: serial.buffer as ArrayBuffer,
     signature: sigAlgId,
     issuer: buildName(cn, org),
     validity: new X509Validity({ notBefore: now, notAfter: expiry }),

@@ -4,6 +4,18 @@
 //   - Algorithm OIDs (signatureAlgorithm, subjectPublicKeyInfo)
 //   - Extension OIDs from the v3 extensions block
 //   - BIT STRING lengths for key/signature sizing
+//
+// Deliberately lenient about DER canonicality (audited 2026-08-18): it
+// parses by tag+length only and never checks whether an INTEGER's content
+// is the minimal two's-complement encoding X.690 §8.3.2 requires — a
+// certificate with a non-canonical (but otherwise valid) serial number
+// parses here without complaint. This is intentional and safe ONLY
+// because `CertInfo` feeds nothing but display (HybridCertInspector's
+// text dump, certBuilder.ts's buildParsedText) — the actual Valid/Invalid
+// verdict for a composite certificate comes from compositeVerifier.ts,
+// a separate module that fails closed on anything it doesn't recognize.
+// If a future feature ever wires this parser's output into a pass/fail
+// decision, this leniency needs to be revisited then.
 
 /** Result from parsing an X.509 certificate DER structure. */
 export interface CertInfo {

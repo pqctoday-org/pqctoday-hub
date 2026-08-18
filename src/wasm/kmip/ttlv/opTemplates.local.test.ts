@@ -27,6 +27,10 @@ import { OP_TEMPLATES } from './opTemplates'
 // re-implemented here: agreement between this and the KMIP wasm engine's
 // own encoder is the actual cross-check value (plan §"WP6-b").
 import { parseCertificateInfo } from '../../../components/PKILearning/modules/HybridCrypto/services/derParser'
+// Generic ASN.1 primitive, not a certBuilder.ts "builder" — importing it
+// doesn't compromise this test's deliberate independence from
+// certBuilder.ts's own cert-construction functions (see header above).
+import { canonicalPositiveInteger } from '@/utils/derInteger'
 import { AsnConvert } from '@peculiar/asn1-schema'
 import {
   Certificate,
@@ -398,24 +402,6 @@ describe('op-template pipeline (real wasm engine)', () => {
     // RSA/ECDSA where signing and SPKI algorithm OIDs differ).
     certifyByUidAndAssertStructure('ML-DSA-65', 'ML-DSA-65', ML_DSA_65_OID_STR, ML_DSA_65_OID_STR)
   })
-
-  /**
-   * Trim/pad a random magnitude to a canonical DER INTEGER content per
-   * X.690 §8.3.2 (fewest octets; a leading 0x00 only when the top bit of
-   * the first content byte would otherwise read the value as negative).
-   * Local to this test deliberately — mirrors, but does not import,
-   * certBuilder.ts's own `canonicalPositiveInteger()` (see this file's
-   * header: WP6-c avoids depending on certBuilder.ts's builders so the
-   * two implementations stay genuinely independent).
-   */
-  function canonicalPositiveInteger(bytes: Uint8Array): Uint8Array {
-    let i = 0
-    while (i < bytes.length - 1 && bytes[i] === 0) i++
-    const needsPad = (bytes[i] & 0x80) !== 0
-    const out = new Uint8Array((needsPad ? 1 : 0) + (bytes.length - i))
-    out.set(bytes.subarray(i), needsPad ? 1 : 0)
-    return out
-  }
 
   it('WP6-c: an independently-built, externally-signed cert Validates — cross-engine, no shared code with this Rust engine', async () => {
     // The strongest check in the cert-ops plan: two independent crypto
