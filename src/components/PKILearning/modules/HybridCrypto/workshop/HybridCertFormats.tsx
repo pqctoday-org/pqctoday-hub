@@ -196,7 +196,7 @@ export const HybridCertFormats: React.FC = () => {
           }))
           if (!certResult.error) pushHybridFiles(formatId, pqcCerts)
         } else if (formatId === 'composite') {
-          // Real composite certificate (draft-ietf-lamps-pq-composite-sigs-15)
+          // Real composite certificate (draft-ietf-lamps-pq-composite-sigs)
           const certResult = await hybridCryptoService.generateCompositeCert(
             subject,
             M,
@@ -312,7 +312,7 @@ export const HybridCertFormats: React.FC = () => {
           }))
           if (!certResult.error) pushHybridFiles(formatId, kemCerts)
         } else if (formatId === 'composite-kem') {
-          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem-17.
+          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem.
           const certResult = await hybridCryptoService.generateCompositeKEMCert(
             'ML-KEM-768',
             'X25519',
@@ -582,7 +582,7 @@ export const HybridCertFormats: React.FC = () => {
                           {fmt.id === 'pure-pqc-kem' &&
                             'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
                           {fmt.id === 'composite-kem' &&
-                            'Per draft-ietf-lamps-pq-composite-kem-17 §6 (AD Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
+                            'Per draft-ietf-lamps-pq-composite-kem §6 (IESG Evaluation). OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58. SubjectPublicKey = mlkem768PubKey(1184B) ‖ x25519PubKey(32B). OpenSSL 3.5+ supports X25519MLKEM768 as a TLS hybrid named group but not as an X.509 SPKI encoder; this workshop mints the cert via @noble/curves/x25519 + @noble/post-quantum/ml-kem and signs it with a transient ML-DSA-65 issuer (RFC 9881), since KEM keys cannot self-sign.'}
                         </p>
                         {!isGeneratingThis && (
                           <Button

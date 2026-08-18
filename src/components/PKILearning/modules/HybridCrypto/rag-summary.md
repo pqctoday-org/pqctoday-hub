@@ -14,7 +14,7 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
 - **SP 800-227 §4 implementation requirements**: implicit rejection (FIPS 203 §7.1) returns a pseudorandom key on decapsulation failure instead of an error, making chosen-ciphertext probing useless; constant-time decapsulation is required for FIPS validation (execution time/memory access/branch behaviour must not depend on secret bits or ciphertext validity); encapsulation must use an approved SP 800-90A/B/C DRBG for the 32-byte `m` — weak RNG collapses ML-KEM security to zero; hybrid side-channel hardening must cover both halves (a timing leak in X25519 or ML-KEM-768 compromises the combined session key)
 - **CNSA 2.0** (NSA) mandates PQC adoption for national security systems by 2030, with hybrid key exchange required during the transition window
 - **RFC 9794** standardizes terminology for hybrid schemes — "composite" (single OID, both-must-verify) vs "non-composite" (parallel independent algorithms); establishes "PQ/T" (Post-Quantum / Traditional) naming
-- **Six certificate format approaches**:
+- **Eight certificate format approaches** (six signature formats + two KEM formats):
   - **Pure PQC (ML-DSA)** — standard single-algorithm X.509 using ML-DSA signatures; OIDs standardized in RFC 9881; ready today in OpenSSL 3.x
   - **Pure PQC (SLH-DSA)** — hash-based signature X.509 certificates; OIDs in RFC 9909; ANSSI allows standalone use without hybrid
   - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs; strongest security model
@@ -35,7 +35,7 @@ The workshop has 5 hands-on steps:
 1. **Hybrid Key Generation** — generate and compare classical, pure PQC, and hybrid key pairs, observing key size differences across categories
 2. **Hybrid Encryption and Signing Demo** — perform KEM encapsulation and digital signature operations in hybrid mode, comparing classical and PQC outputs
 3. **Hybrid CA Setup** — set up a hybrid certificate authority with both classical and PQC keys
-4. **Hybrid Certificate Formats** — generate and compare six X.509 approaches: Pure PQC (ML-DSA-65), Pure PQC (SLH-DSA-128s), Composite (ML-DSA-65 + ECDSA), Alt-Sig/Catalyst (ECDSA primary + ML-DSA extensions), Related Certs (RFC 9763), and Chameleon Certificates
+4. **Hybrid Certificate Formats** — generate and compare eight X.509 approaches: Pure PQC (ML-DSA-65), Pure PQC (SLH-DSA-128s), Composite (ML-DSA-65 + ECDSA), Alt-Sig/Catalyst (ECDSA primary + ML-DSA extensions), Related Certs (RFC 9763), and Chameleon Certificates
 5. **Certificate Inspector** — deep-dive into generated certificates with Tree, Raw, and Size views; also inspect real IETF Hackathon reference certificates from the pqc-certificates test vector repository
 
 ## IETF Reference Certificates
@@ -57,7 +57,7 @@ Note: No official test vector exists for Related Certificates (RFC 9763) — the
 - RFC 9909 (SLH-DSA stateless hash-based signature OIDs in X.509)
 - RFC 9763 (Related Certificates for PKI)
 - draft-ietf-lamps-pq-composite-sigs (Composite Signatures)
-- draft-ietf-lamps-cert-binding-for-multi-auth (Alt-Sig / Catalyst)
+- ITU-T X.509 (2019) §9.8 — Alt-Sig / Catalyst extensions (2.5.29.72/73/74)
 - draft-bonnell-lamps-chameleon-certs (Chameleon Certificates)
 - RFC 9794 (Terminology for Post-Quantum Traditional Hybrid Schemes)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)

@@ -570,7 +570,13 @@ describe('op-template pipeline (real wasm engine)', () => {
       (mprime, mldsaCtx) =>
         Promise.resolve(ml_dsa65.sign(mprime, mldsaKp.secretKey, { context: mldsaCtx })),
       (mprime) =>
-        Promise.resolve(new Uint8Array(crypto.sign('sha512', Buffer.from(mprime), privateKey))),
+        // draft §6: id-MLDSA65-ECDSA-P256-SHA512's "Traditional Signature
+        // Algorithm" is ecdsa-with-SHA256 — the SHA512 in the profile name is
+        // the pre-hash PH applied when building M', not the ECDSA hash (which
+        // tracks the curve). Was 'sha512' until 2026-08-17, matching a bug the
+        // engine and this test shared; corrected after the Bouncy Castle IETF
+        // Hackathon r5 trust anchor verified under SHA-256 and failed SHA-512.
+        Promise.resolve(new Uint8Array(crypto.sign('sha256', Buffer.from(mprime), privateKey))),
       '/CN=wp-c8-direction2-external-composite'
     )
     const certHex = Buffer.from(cert).toString('hex')

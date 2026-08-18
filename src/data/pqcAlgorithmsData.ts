@@ -208,6 +208,12 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'Candidate|||draft-ietf-sshm-mlkem-hybrid-kex': 'ietf-draft', // SSH ML-KEM hybrids
   'Candidate|||draft-ietf-lamps-pq-composite-kem-16': 'ietf-draft', // Composite ML-KEM (pre-08072026 snapshots)
   'Candidate|||draft-ietf-lamps-pq-composite-kem-18': 'ietf-draft', // Composite ML-KEM — draft bumped to -18 (2026-07-23), still IESG "Waiting for AD Go-Ahead"
+  // -19 posted 2026-08-14; IESG state moved to "IESG Evaluation" on 2026-08-13
+  // and it is on the 2026-09-03 telechat agenda. Verified against the
+  // datatracker 2026-08-17. Older keys above are retained deliberately: this
+  // lookup throws on an unregistered pair, so the key must exist BEFORE the
+  // CSV bumps to -19, and archived CSV snapshots still carry -16/-18.
+  'Candidate|||draft-ietf-lamps-pq-composite-kem-19': 'ietf-draft', // Composite ML-KEM
   // BLS12-381 (2026-08-16): draft-irtf-cfrg-bls-signature is an active
   // IRTF CFRG Internet-Draft, verified against the datatracker directly —
   // not yet an RFC.

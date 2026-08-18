@@ -18,9 +18,11 @@ export const content: ModuleContent = {
     getStandard('RFC 9794'), // Hybrid terminology
     getStandard('RFC 9881'), // ML-DSA OIDs in X.509
     getStandard('RFC-9909'), // SLH-DSA profile in X.509
+    getStandard('RFC-9935'), // ML-KEM OIDs in X.509 — backs the pure-KEM cert format
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
+    getStandard('draft-ietf-lamps-pq-composite-kem-19'), // Composite ML-KEM
     getStandard('RFC-9763'), // Related Certificates
     getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates
   ],
@@ -54,8 +56,8 @@ export const content: ModuleContent = {
     nistRecommendation:
       'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
     certFormatExplain:
-      'Six certificate approaches exist for PQC X.509: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in extensions), Related Certificates (paired certs with binding hash, RFC 9763), and Chameleon (delta extension, draft-bonnell).',
-    compositeSigSize: '3,381 bytes',
+      'Eight certificate approaches are covered here — six that carry signatures, plus two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in X.509 extensions, ITU-T X.509 (2019) §9.8), Related Certificates (paired certs with a binding hash, RFC 9763), and Chameleon (delta extension — an expired individual draft, taught as a design study). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (single OID over ML-KEM plus a classical KEM). Only Alt-Sig, Related Certificates and Chameleon remain verifiable by a validator that does not understand PQC; composite is not backward compatible.',
+    compositeSigSize: '~3,379 bytes',
     altSigSize: '2,017 bytes',
   },
 }

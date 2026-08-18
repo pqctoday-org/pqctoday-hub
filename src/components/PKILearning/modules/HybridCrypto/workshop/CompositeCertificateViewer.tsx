@@ -47,11 +47,14 @@ const CERT_ALGORITHMS: CertAlgoConfig[] = [
     opensslAlg: 'COMPOSITE',
     type: 'hybrid',
     formatType: 'composite',
-    standard: 'draft-ietf-lamps-pq-composite-sigs-14',
+    standard: 'draft-ietf-lamps-pq-composite-sigs',
     standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/',
-    oid: '2.16.840.1.114027.80.8.1.6',
+    // 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512 in the IANA PKIX arc.
+    // Previously carried 2.16.840.1.114027.80.8.1.6 — a RETIRED Entrust
+    // private-enterprise OID the draft moved off. Corrected 2026-08-17.
+    oid: '1.3.6.1.5.5.7.6.45',
     description:
-      'id-MLDSA65-ECDSA-P256: both sigs must verify — component certs shown (OpenSSL composite OIDs pending)',
+      'id-MLDSA65-ECDSA-P256-SHA512: both sigs must verify — component certs shown (stock OpenSSL has no composite support)',
   },
 ]
 
@@ -320,7 +323,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                         <div className="space-y-3">
                           <p className="text-xs text-muted-foreground">
                             Component certificates generated. In a true composite cert
-                            (draft-ietf-lamps-pq-composite-sigs-14), both would be packaged under a
+                            (draft-ietf-lamps-pq-composite-sigs), both would be packaged under a
                             single OID ({config?.oid}).
                           </p>
                           {result.components.map((comp) => (
@@ -571,14 +574,15 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <p className="text-xs text-muted-foreground">
             <strong className="text-primary">
-              Composite (draft-ietf-lamps-pq-composite-sigs-14):
+              Composite (draft-ietf-lamps-pq-composite-sigs):
             </strong>{' '}
             Would use a single composite OID (e.g.,{' '}
-            <span className="font-mono">id-MLDSA65-ECDSA-P256 = 2.16.840.1.114027.80.8.1.6</span>)
-            that encodes both algorithm identifiers. The public key and signature fields both
-            contain the concatenation of the classical and PQC components. Both signatures must
-            verify independently. OpenSSL composite OID support is not yet in production releases —
-            the component certs above represent what would be packaged together.
+            <span className="font-mono">id-MLDSA65-ECDSA-P256-SHA512 = 1.3.6.1.5.5.7.6.45</span>)
+            that encodes both algorithm identifiers. The public key and signature fields each
+            contain a raw concatenation with the ML-DSA component FIRST, then the classical one — no
+            ASN.1 wrapper. Both components must verify. Stock OpenSSL 3.6.3 registers no composite
+            algorithms at all (verified 2026-08-17), so the component certs above represent what
+            would be packaged together.
           </p>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">

@@ -1987,17 +1987,28 @@ export const hsm_sign = (
 /**
  * ML-DSA sign raw bytes (for X.509 TBS certificate signing).
  * Same as hsm_sign but accepts Uint8Array directly instead of string.
+ *
+ * `opts.context` carries the PKCS#11 v3.2 CK_SIGN_ADDITIONAL_CONTEXT context
+ * string (FIPS 204 Algorithm 2 `ctx`). Composite ML-DSA requires it: the
+ * signature label MUST be passed verbatim as ctx, or composite verifiers
+ * reject the signature — see certBuilder.ts buildCompositeCertDraft19.
  */
 export const hsm_signBytesMLDSA = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  data: Uint8Array
+  data: Uint8Array,
+  opts?: MLDSASignOptions
 ): Uint8Array => {
+  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
+
   const mech = M._malloc(12)
-  M.setValue(mech, CKM_ML_DSA, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32') // pParameter
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32') // ulParameterLen
 
   const msgPtr = writeBytes(M, data)
   const sigLenPtr = allocUlong(M)
@@ -2023,6 +2034,7 @@ export const hsm_signBytesMLDSA = (
     M._free(msgPtr)
     M._free(sigLenPtr)
     if (sigPtr) M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 

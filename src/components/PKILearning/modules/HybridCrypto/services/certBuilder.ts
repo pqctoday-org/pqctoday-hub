@@ -2,15 +2,39 @@
 // X.509 certificate builder using @peculiar/asn1-schema for standards-compliant DER encoding.
 // All ASN.1 encoding goes through Peculiar's schema-validated serializer — no hand-rolled DER.
 //
-// Supports 6 PQC/hybrid certificate formats:
+// Supports 8 PQC/hybrid certificate formats (6 signature + 2 KEM):
 //   1. Pure PQC (ML-DSA-65) — RFC 9881
 //   2. Pure PQC (SLH-DSA-128s) — RFC 9909
-//   3. Composite (ML-DSA-65 + ECDSA P-256) — draft-ietf-lamps-pq-composite-sigs-15
+//   3. Composite (ML-DSA-65 + ECDSA P-256) — draft-ietf-lamps-pq-composite-sigs
 //   4. Alt-Sig / Catalyst — ITU-T X.509 (2019) §9.8
 //   5. Related Certificates — RFC 9763
-//   6. Chameleon — draft-bonnell-lamps-chameleon-certs-07
+//   6. Chameleon — draft-bonnell-lamps-chameleon-certs (EXPIRED individual draft)
+//   7. Pure PQC KEM (ML-KEM-768) — RFC 9935
+//   8. Composite KEM (ML-KEM-768 + classical) — draft-ietf-lamps-pq-composite-kem
 //
 // Signing is performed by async signer functions — SoftHSM PKCS#11 (C_Sign).
+//
+// ⚠️  DO NOT build composite structures from `@peculiar/asn1-x509-post-quantum`.
+//     It is an installed dependency and ships invitingly-named classes
+//     (CompositePublicKey, CompositeSignatureValue, CompositeAlgorithmIdentifier),
+//     but it implements the ABANDONED draft-02-era composite format:
+//       · id_alg_composite = 1.3.6.1.4.1.18227.2.1 — the OpenCA PRIVATE
+//         ENTERPRISE arc, not the PKIX arc the draft now uses (1.3.6.1.5.5.7.6.x)
+//       · CompositeSignatureValue ::= SEQUENCE SIZE (2..MAX) OF BIT STRING —
+//         the ASN.1-wrapped layout the draft dropped at -06; the current
+//         serialization is a RAW CONCATENATION, ML-DSA component first
+//       · id_Dilithium3_ECDSA_P256 — pre-standardization naming (now ML-DSA-65)
+//     Nothing imports it today (it appears only in the About-page SBOM list).
+//     Reaching for it would silently reintroduce the exact wire-format defect
+//     this module was corrected for on 2026-08-17 — and it would look more
+//     authoritative in review than the hand-assembled structures below, not
+//     less. That is why the composite key/signature bytes are assembled here.
+//     Surveyed 2026-08-17: no third-party library available to this project
+//     implements the CURRENT composite format — not OpenSSL 3.6.3 or 4.x
+//     (zero composite algorithms registered), not @oqs/liboqs-js (no composite
+//     concept), not @peculiar/x509 (does not know the PKIX composite OIDs).
+//     The only independent implementation that agrees with this file is the
+//     Rust KMIP engine — see compositeVerifier.ts for the parity proof.
 
 import { AsnConvert, OctetString } from '@peculiar/asn1-schema'
 import {
@@ -37,10 +61,10 @@ import { parseCertificateInfo, oidToLabel } from './derParser'
 /** ML-DSA-65 — 2.16.840.1.101.3.4.3.18 (RFC 9881) */
 export const ML_DSA_65_OID_STR = '2.16.840.1.101.3.4.3.18'
 
-/** id-MLKEM768-X25519-SHA3-256 — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem-17 §6, verified against the IANA PKIX arc as of 2026-07-03; the draft moved off its earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering) */
+/** id-MLKEM768-X25519-SHA3-256 (aka X-Wing) — 1.3.6.1.5.5.7.6.58 (draft-ietf-lamps-pq-composite-kem §6). Re-verified 2026-08-17 against the -19 text: the allocated block 1.3.6.1.5.5.7.6.55–.66 is unchanged from -17. The draft moved off its earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering. */
 export const COMPOSITE_KEM_MLKEM768_X25519_OID_STR = '1.3.6.1.5.5.7.6.58'
 
-/** id-MLKEM768-ECDH-P256-SHA3-256 — 1.3.6.1.5.5.7.6.59 (draft-ietf-lamps-pq-composite-kem-17 §6) */
+/** id-MLKEM768-ECDH-P256-SHA3-256 — 1.3.6.1.5.5.7.6.59 (draft-ietf-lamps-pq-composite-kem §6; unchanged -17→-19) */
 export const COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR = '1.3.6.1.5.5.7.6.59'
 
 /** SLH-DSA-SHA2-128s — 2.16.840.1.101.3.4.3.20 (RFC 9909) */
@@ -77,7 +101,7 @@ export const SHA256_OID_STR = '2.16.840.1.101.3.4.2.1'
 // ---------------------------------------------------------------------------
 // OID constants for LAMPS composite-sig draft-19 (id-pq-composite-sigs)
 // All composite OIDs live under the PKIX alg arc: 1.3.6.1.5.5.7.6.{37..51}
-// Reference: draft-ietf-lamps-pq-composite-sigs-19 §6
+// Reference: draft-ietf-lamps-pq-composite-sigs §6
 // ---------------------------------------------------------------------------
 
 /** ML-DSA-44 — 2.16.840.1.101.3.4.3.17 (FIPS 204) */
@@ -85,6 +109,13 @@ export const ML_DSA_44_OID_STR = '2.16.840.1.101.3.4.3.17'
 
 /** ML-DSA-87 — 2.16.840.1.101.3.4.3.19 (FIPS 204) */
 export const ML_DSA_87_OID_STR = '2.16.840.1.101.3.4.3.19'
+
+/**
+ * ML-DSA-65 public key length in bytes (FIPS 204 Table 2).
+ * Fixed-length: this is the offset a composite verifier splits at, since the
+ * composite concatenation carries no internal length framing.
+ */
+export const ML_DSA_65_PUBKEY_BYTES = 1952
 
 /** RSASSA-PSS — 1.2.840.113549.1.1.10 (RFC 8017 §A.2.3) */
 export const RSA_PSS_OID_STR = '1.2.840.113549.1.1.10'
@@ -291,7 +322,7 @@ export async function buildSelfSignedX509(
 
 // ---------------------------------------------------------------------------
 // 1b. Composite KEM certificate (X25519MLKEM768 + ML-DSA-65 issuer)
-//     Per draft-ietf-lamps-pq-composite-kem-17 §6
+//     Per draft-ietf-lamps-pq-composite-kem §6
 //
 //     Subject public key: id-MLKEM768-X25519-SHA3-256 (1.3.6.1.5.5.7.6.58)
 //     SubjectPublicKey:   mlkem768PublicKey(1184B) || x25519PublicKey(32B) = 1216B
@@ -346,13 +377,30 @@ export async function buildCompositeKEMCert(
 }
 
 // ---------------------------------------------------------------------------
-// 2. Composite certificate (ML-DSA-65 + ECDSA P-256)
-//    Per draft-ietf-lamps-pq-composite-sigs-15 §4, §5, §6
+// 2. Composite certificate — SUPERSEDED ENCODING, retained for comparison only
+//
+// ⚠️  DO NOT USE FOR NEW CODE. Use buildCompositeCertDraft19 (§2b) instead.
+//
+// This builder emits `CompositeSignatureValue ::= SEQUENCE SIZE (2) OF BIT
+// STRING` with the ECDSA component first. That structure appeared only in
+// draft-ietf-lamps-pq-composite-sigs; -04 replaced it with a plain BIT
+// STRING, and from -06 onward the identifier was removed entirely in favour of
+// raw byte concatenation. No current draft specifies this layout, and a
+// composite-aware verifier rejects certificates built with it.
+//
+// It is kept ONLY as a teaching exhibit — the "before" half of the before/after
+// comparison showing why LAMPS abandoned ASN.1-wrapped composite signatures in
+// favour of fixed-length concatenation. Nothing in the workshop signing path
+// calls it.
 // ---------------------------------------------------------------------------
 
 /**
- * Builds a composite certificate with OID 1.3.6.1.5.5.7.6.45.
- * CompositeSignatureValue ::= SEQUENCE SIZE (2) OF BIT STRING
+ * Builds a composite certificate using the SUPERSEDED draft-02-era encoding.
+ * CompositeSignatureValue ::= SEQUENCE SIZE (2) OF BIT STRING (ECDSA first).
+ *
+ * @deprecated Superseded by {@link buildCompositeCertDraft19}, which implements
+ * the current raw-concatenation serialization (ML-DSA first). Retained for
+ * format comparison only.
  */
 export async function buildCompositeCert(
   ecPubKey: Uint8Array,
@@ -417,18 +465,24 @@ export async function buildCompositeCert(
 // ---------------------------------------------------------------------------
 // 2b. Composite certificate — draft-19 LAMPS profiles
 //
-// PROFILE DIFFERENCES vs the older buildCompositeCert above (which targets
-// draft-15): draft-19 §4.3 encodes CompositeSignatureValue as the plain byte
-// concatenation `mldsaSig || tradSig` inside the outer BIT STRING — NOT as
-// `SEQUENCE OF BIT STRING`. ML-DSA always comes first; the verifier splits
-// at the ML-DSA signature's fixed length per FIPS 204 (Table 1 in the draft).
+// THIS IS THE CURRENT, CONFORMANT BUILDER — the workshop signing path uses it.
 //
-// The CompositePublicKey is also a plain concat per draft-19 §4.1:
+// PROFILE DIFFERENCES vs the superseded buildCompositeCert above: §4.3 encodes
+// the composite signature as the plain byte concatenation `mldsaSig || tradSig`
+// inside the outer BIT STRING — NOT as `SEQUENCE OF BIT STRING`. ML-DSA always
+// comes first; the verifier splits at the ML-DSA signature's fixed length per
+// FIPS 204 (Table 1 in the draft).
+//
+// The composite public key is also a plain concat per §4.1:
 //   `output mldsaPK || tradPK`  (not a SEQUENCE of SPKIs).
+// Per §5.1 the BIT STRING carries that raw byte string "without further
+// encoding". The identifier `CompositeSignatureValue` no longer exists in the
+// specification at all.
 //
-// We do NOT modify the existing draft-15 builder so its consumers in the
-// HybridCrypto workshop keep their byte layouts. Pick this builder for any
-// new code that must interoperate with draft-19 verifiers.
+// Verified against draft-ietf-lamps-pq-composite-sigs (RFC Editor queue) on
+// 2026-08-17. The wire format is byte-identical across -15..-19; those
+// revisions differ only editorially, so the version suffix is deliberately
+// omitted from teaching prose.
 // ---------------------------------------------------------------------------
 
 /** Fixed Prefix per draft-19 §2.2: ASCII "CompositeAlgorithmSignatures2025" */
@@ -436,6 +490,9 @@ export const COMPOSITE_DRAFT19_PREFIX = new TextEncoder().encode('CompositeAlgor
 
 /** Pre-hash function name as accepted by Web Crypto / Node crypto digest APIs */
 export type CompositePreHash = 'SHA-256' | 'SHA-512'
+
+/** Hash used by the traditional component (draft §6 "Traditional Signature Algorithm"). */
+export type CompositeTradHash = 'SHA-256' | 'SHA-384' | 'SHA-512'
 
 /**
  * Describes one LAMPS composite-sig profile from draft-19 §6.
@@ -471,6 +528,29 @@ export interface CompositeProfileDraft19 {
    * Used by verifiers to split mldsaSig from tradSig in the concat encoding.
    */
   mldsaSigBytes: number
+  /**
+   * ML-DSA public key length in bytes (FIPS 204 Table 2):
+   *   ML-DSA-44 → 1312
+   *   ML-DSA-65 → 1952
+   *   ML-DSA-87 → 2592
+   * Used by verifiers to split mldsaPK from tradPK in the concat encoding —
+   * the composite key carries no internal length framing, so the split point
+   * is this fixed length and nothing else.
+   */
+  mldsaPubKeyBytes: number
+  /**
+   * Hash used by the TRADITIONAL component when it signs M' — draft §6's
+   * "Traditional Signature Algorithm" for the profile.
+   *
+   * CRITICAL and easy to get wrong: the `SHA512` in a profile NAME is the
+   * pre-hash PH applied to the message, NOT the traditional algorithm's hash.
+   * For id-MLDSA65-ECDSA-P256-SHA512 the traditional algorithm is
+   * `ecdsa-with-SHA256` — the ECDSA hash tracks the CURVE, not the name.
+   * Getting this wrong yields certificates that verify against your own
+   * verifier and fail against every conformant one (found 2026-08-17 by
+   * checking a Bouncy Castle IETF Hackathon vector).
+   */
+  tradHash: CompositeTradHash
 }
 
 export const COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256: CompositeProfileDraft19 = {
@@ -481,6 +561,30 @@ export const COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256: CompositeProfileDraft
   mldsaOid: ML_DSA_44_OID_STR,
   buildClassicalAlgId: buildRSAEncryptionAlgId,
   mldsaSigBytes: 2420,
+  mldsaPubKeyBytes: 1312,
+  tradHash: 'SHA-256', // §6: id-RSASSA-PSS, PH=SHA256
+}
+
+/**
+ * id-MLDSA44-ECDSA-P256-SHA256 — 1.3.6.1.5.5.7.6.40 (draft §6).
+ *
+ * Added 2026-08-18. The only profile where PH and the traditional hash are the
+ * SAME (both SHA-256), which makes it the control case for the F17 class of
+ * bug: an implementation that wrongly uses PH as the traditional hash still
+ * produces a VALID certificate here, and only diverges on profiles where the
+ * two differ. Second-source verified against the IETF Hackathon r5
+ * composite-sigs-ref-impl artifact for this OID.
+ */
+export const COMPOSITE_PROFILE_MLDSA44_ECDSA_P256_SHA256: CompositeProfileDraft19 = {
+  compositeOid: '1.3.6.1.5.5.7.6.40',
+  label: 'id-MLDSA44-ECDSA-P256-SHA256',
+  signatureLabel: 'COMPSIG-MLDSA44-ECDSA-P256-SHA256',
+  preHash: 'SHA-256',
+  mldsaOid: ML_DSA_44_OID_STR,
+  buildClassicalAlgId: buildECAlgId,
+  mldsaSigBytes: 2420,
+  mldsaPubKeyBytes: 1312,
+  tradHash: 'SHA-256', // §6: ecdsa-with-SHA256 (same as PH here — the control case)
 }
 
 export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512: CompositeProfileDraft19 = {
@@ -491,6 +595,8 @@ export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512: CompositeProfileDraft1
   mldsaOid: ML_DSA_65_OID_STR,
   buildClassicalAlgId: buildECAlgId,
   mldsaSigBytes: 3309,
+  mldsaPubKeyBytes: ML_DSA_65_PUBKEY_BYTES,
+  tradHash: 'SHA-256', // §6: ecdsa-with-SHA256 (NOT SHA-512 — that is PH)
 }
 
 export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft19 = {
@@ -501,6 +607,8 @@ export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft1
   mldsaOid: ML_DSA_87_OID_STR,
   buildClassicalAlgId: buildECP384AlgId,
   mldsaSigBytes: 4627,
+  mldsaPubKeyBytes: 2592,
+  tradHash: 'SHA-384', // §6: ecdsa-with-SHA384 (NOT SHA-512 — that is PH)
 }
 
 /**
@@ -559,7 +667,7 @@ export async function buildCompositeMessageRepresentative(
 /**
  * Builds a draft-19-compliant composite-sig X.509 certificate.
  *
- * Implements Composite-ML-DSA.Sign per draft-ietf-lamps-pq-composite-sigs-19
+ * Implements Composite-ML-DSA.Sign per draft-ietf-lamps-pq-composite-sigs
  * §3.2 + §4:
  *
  *   M' = Prefix || Label || len(ctx) || ctx || PH(TBS)
@@ -1014,13 +1122,42 @@ export function buildParsedText(
   // Build SPKI section — format-specific breakdown for composite/alt-sig/chameleon
   const spkiLines: string[] = ['    Subject Public Key Info:']
   if (formatHint === 'composite') {
+    // Derived from the actual certificate, not hardcoded: a composite verifier
+    // splits both the key and the signature at the ML-DSA component's fixed
+    // length (FIPS 204), because the concatenation carries no internal framing.
+    // Deriving it here means this panel can never disagree with the bytes.
+    const mldsaPkBytes = ML_DSA_65_PUBKEY_BYTES
+    const mldsaSigBytes = COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512.mldsaSigBytes
+    const tradPkBytes = info.publicKeySizeBytes - mldsaPkBytes
+    const tradSigBytes = info.signatureSizeBytes - mldsaSigBytes
+
     spkiLines.push(
       '        Public Key Algorithm: MLDSA65-ECDSA-P256-SHA512 [Composite OID 1.3.6.1.5.5.7.6.45]'
     )
-    spkiLines.push('        CompositePublicKey ::= SEQUENCE {')
-    spkiLines.push('            [0] ML-DSA-65  — 1952 bytes  (FIPS 204, lattice-based)')
-    spkiLines.push('            [1] EC P-256   — 65 bytes   (NIST P-256, uncompressed)')
-    spkiLines.push('        }  -- verifier MUST validate BOTH signatures')
+    spkiLines.push(
+      `        CompositePublicKey — raw concatenation, ${info.publicKeySizeBytes} bytes total:`
+    )
+    if (tradPkBytes > 0) {
+      spkiLines.push(
+        `            [0..${mldsaPkBytes - 1}]  ML-DSA-65 — ${mldsaPkBytes} bytes  (FIPS 204, lattice-based)`
+      )
+      spkiLines.push(
+        `            [${mldsaPkBytes}..${info.publicKeySizeBytes - 1}]  EC P-256  — ${tradPkBytes} bytes  (X9.62 uncompressed point)`
+      )
+    } else {
+      spkiLines.push(
+        `            (unexpected key size — expected > ${mldsaPkBytes} bytes for a composite key)`
+      )
+    }
+    spkiLines.push('        No ASN.1 wrapping: the BIT STRING holds the raw bytes directly.')
+    spkiLines.push('        Signature splits the same way — ML-DSA first:')
+    if (tradSigBytes > 0) {
+      spkiLines.push(`            [0..${mldsaSigBytes - 1}]  ML-DSA-65 — ${mldsaSigBytes} bytes`)
+      spkiLines.push(
+        `            [${mldsaSigBytes}..${info.signatureSizeBytes - 1}]  ECDSA P-256 — ${tradSigBytes} bytes (Ecdsa-Sig-Value, DER)`
+      )
+    }
+    spkiLines.push('        -- verifier MUST validate BOTH components')
   } else if (formatHint === 'alt-sig') {
     spkiLines.push(`        Public Key Algorithm: ${algLabel}  [primary classical key]`)
     spkiLines.push(`            Public-Key: (${info.publicKeySizeBytes * 8} bit)`)

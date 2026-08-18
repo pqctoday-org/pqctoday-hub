@@ -396,7 +396,18 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   governance-maturity processing) — no rows in that source changed.
   //   Real fix: find why the one-hop alias misses this specific row, or
   //   re-cite the requirements against RFC-9763 directly.
-  'governance-maturity': 87,
+  //   2026-08-17: 95 (bumped from 87, +8). Cause is fully understood and is a
+  //   DELIBERATE data change, not drift: the composite-KEM remediation added
+  //   draft-ietf-lamps-pq-composite-kem-19 as the active row and deprecated
+  //   -14 and -16 (superseded_by chained -14 → -16 → -19). Chunks citing the
+  //   two newly-deprecated revisions therefore stop resolving to an ACTIVE
+  //   library row and join the same unscored bucket that already held -10/-11/
+  //   -12. No chunk lost its evidence — the documents remain in the library,
+  //   correctly marked superseded (deprecate, never delete).
+  //   Real fix (unchanged from the note above): make tier resolution follow
+  //   `superseded_by` one hop so a deprecated-but-superseded row scores via its
+  //   replacement. That would retire most of this pin rather than grow it.
+  'governance-maturity': 95,
 }
 
 /**

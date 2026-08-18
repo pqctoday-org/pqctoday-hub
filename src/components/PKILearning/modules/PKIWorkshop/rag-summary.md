@@ -8,7 +8,7 @@ The PKI Workshop is a hands-on learning module that teaches Public Key Infrastru
 - X.509v3 certificate structure: version, serial number, signature algorithm, issuer, validity, subject, Subject Public Key Info, and extensions (Key Usage, Basic Constraints, SAN, CRL Distribution Points)
 - Certificate lifecycle: key generation, CSR creation (PKCS#10 / RFC 2986), CA signing, certificate parsing, and revocation (CRL per RFC 5280 Section 5, OCSP per RFC 6960)
 - Classical vs PQC algorithms: RSA/ECDSA signatures (quantum-vulnerable via Shor's algorithm) vs ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) post-quantum replacements
-- Hybrid and composite certificates: combining classical and PQC algorithms in a single certificate for backward compatibility during the transition period
+- Hybrid and composite certificates: combining classical and PQC algorithms during the transition. Backward compatibility depends on the format — Alt-Sig/Catalyst, Related Certificates and Chameleon keep a classical signature a legacy validator can still verify; COMPOSITE certificates do not (both components must verify, and a validator without composite support cannot parse the key at all).
 - Merkle Tree Certificates (MTCs): IETF draft-davidben-tls-merkle-tree-certs proposal by Google and Cloudflare that batches certificates into a Merkle tree, replacing per-certificate PQ signatures with compact inclusion proofs (~736 bytes vs ~12.3 KB for traditional PQC chains)
 - PQC migration challenges: certificate size growth (ML-DSA-87 public keys ~2,592 bytes vs ~91 bytes (SPKI) for ECDSA P-256), constrained device support, cross-signed trust chains, and CNSA 2.0 exclusive-use deadlines (2030 for software/firmware signing and networking; 2033 for large PKI systems)
 

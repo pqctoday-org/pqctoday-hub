@@ -27,11 +27,11 @@ import {
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
   CKM_ECDSA_SHA256,
-  CKM_ECDSA_SHA512,
 } from '@/wasm/softhsm'
 import {
   buildSelfSignedX509,
-  buildCompositeCert,
+  buildCompositeCertDraft19,
+  COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
   buildCompositeKEMCert,
   buildAltSigCert,
   buildRelatedCertPair as buildRelatedCertPairDER,
@@ -44,6 +44,7 @@ import {
   COMPOSITE_KEM_MLKEM768_X25519_OID_STR,
   COMPOSITE_KEM_MLKEM768_SECP256R1_OID_STR,
   type SignerFn,
+  type CompositeMLDSASignerFn,
 } from './certBuilder'
 
 export interface KeyGenResult {
@@ -703,6 +704,7 @@ export class HybridCryptoService {
   ): Promise<{
     publicKey: Uint8Array
     signerFn: SignerFn
+    compositeSignerFn: CompositeMLDSASignerFn
   }> {
     const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
     if (onKey) onKey(privHandle, 'ml-dsa', 'ML-DSA-65 (Cert Gen)', 'private')
@@ -711,7 +713,16 @@ export class HybridCryptoService {
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
       return hsm_signBytesMLDSA(M, hSession, privHandle, tbs)
     }
-    return { publicKey, signerFn }
+    // Composite ML-DSA signs M' with ctx = the profile's signature label
+    // (FIPS 204 Algorithm 2), carried as the PKCS#11 v3.2 context string.
+    // Omitting ctx yields signatures a composite verifier rejects.
+    const compositeSignerFn: CompositeMLDSASignerFn = async (
+      mprime: Uint8Array,
+      mldsaCtx: Uint8Array
+    ) => {
+      return hsm_signBytesMLDSA(M, hSession, privHandle, mprime, { context: mldsaCtx })
+    }
+    return { publicKey, signerFn, compositeSignerFn }
   }
 
   /**
@@ -744,9 +755,15 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite certificate: ML-DSA-65 + ECDSA P-256 (draft-ietf-lamps-pq-composite-sigs-15).
+   * Composite certificate: ML-DSA-65 + ECDSA P-256 (draft-ietf-lamps-pq-composite-sigs).
    * Real DER-encoded X.509 with composite OID 1.3.6.1.5.5.7.6.45.
-   * Both signatures over the same TBS bytes.
+   *
+   * Uses the current LAMPS serialization (§4): both the public key and the
+   * signature are RAW CONCATENATIONS with the ML-DSA component FIRST, carried
+   * directly in the BIT STRING with no further ASN.1 wrapping (§5.1). Both
+   * components sign the message representative
+   *   M' = Prefix || Label || len(ctx) || ctx || PH(TBS)
+   * and ML-DSA takes the signature label as its FIPS 204 ctx.
    */
   async generateCompositeCert(
     subject: string,
@@ -758,15 +775,23 @@ export class HybridCryptoService {
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      // Composite OID 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512 — ECDSA must use SHA-512
-      const ec = await this.generateECKeyPairForCert(M, hSession, onKey, CKM_ECDSA_SHA512)
+      // Composite OID 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512.
+      // The ECDSA component signs M' with SHA-256, NOT SHA-512: draft §6 gives
+      // this profile "Traditional Signature Algorithm: ecdsa-with-SHA256", and
+      // the SHA512 in the profile NAME is the pre-hash PH applied to the
+      // message, not the traditional algorithm's hash (the ECDSA hash tracks
+      // the curve — P-384 uses SHA-384). Corrected 2026-08-17; the previous
+      // SHA-512 choice produced certificates that verified against our own
+      // verifier and would be rejected by every conformant implementation.
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey, CKM_ECDSA_SHA256)
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
 
-      const derBytes = await buildCompositeCert(
-        ec.publicKeyRaw,
+      const derBytes = await buildCompositeCertDraft19(
+        COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512,
         mldsa.publicKey,
+        ec.publicKeyRaw,
+        mldsa.compositeSignerFn,
         ec.signerFn,
-        mldsa.signerFn,
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
@@ -1070,21 +1095,21 @@ export class HybridCryptoService {
   }
 
   /**
-   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem-17.
+   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem.
    *
    * The subject public key is a CompositeKEMPublicKey binding ML-KEM-768 with a classical
    * KEM (X25519 or P-256) under a single OID. Like pure KEM certs, the cert itself is signed
    * by a separate signing-capable issuer key (KEM keys cannot self-sign).
    *
-   * draft-composite-kem-17 OIDs (IANA PKIX arc; the draft moved off its
+   * draft-composite-kem OIDs (IANA PKIX arc; the draft moved off its
    * earlier 2.16.840.1.114027.80.5.2.x private-enterprise numbering —
    * verified against the live IETF datatracker as of 2026-07-03):
    *   id-MLKEM768-X25519-SHA3-256      = 1.3.6.1.5.5.7.6.58
    *   id-MLKEM768-ECDH-P256-SHA3-256   = 1.3.6.1.5.5.7.6.59
    *
    * Composite KEM (X25519 + ML-KEM-768) X.509 certificate per
-   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; AD Evaluation as
-   * of this commit — advanced past Last Call). OID
+   * `draft-ietf-lamps-pq-composite-kem` (IETF LAMPS WG; in IESG Evaluation as
+   * of 2026-08-17, on the 2026-09-03 telechat agenda). OID
    * id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58 (LAMPS draft §6).
    *
    * Why not OpenSSL: the LAMPS composite KEM draft is not yet an RFC.
@@ -1190,7 +1215,7 @@ export class HybridCryptoService {
         `    Subject: ${cn}`,
         '    Subject Public Key Info:',
         `        Public Key Algorithm: id-MLKEM768-X25519-SHA3-256 (${compositeOidStr})`,
-        `        [LAMPS draft-ietf-lamps-pq-composite-kem-17 §6  — AD Evaluation]`,
+        `        [LAMPS draft-ietf-lamps-pq-composite-kem §6  — IESG Evaluation]`,
         `            Composite Public Key (1216 bytes):`,
         `                ML-KEM-768 component   (1184 B): ${this.toHex(mlkemPair.publicKey).slice(0, 64)}…`,
         `                X25519 component       (32 B):   ${this.toHex(x25519Pair.publicKey).slice(0, 64)}…`,
@@ -1202,7 +1227,7 @@ export class HybridCryptoService {
         `    Signature Value: 3309 bytes (ML-DSA-65 signature over TBSCertificate DER)`,
         '',
         '# References:',
-        '#   draft-ietf-lamps-pq-composite-kem-17  — AD Evaluation',
+        '#   draft-ietf-lamps-pq-composite-kem  — IESG Evaluation',
         '#     §6  Subject public key encoding',
         '#     OID id-MLKEM768-X25519-SHA3-256 = 1.3.6.1.5.5.7.6.58',
         '#   RFC 9881  ML-DSA in X.509 (signature algorithm)',

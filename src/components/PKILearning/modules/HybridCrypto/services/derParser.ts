@@ -150,7 +150,7 @@ const OID_LABELS: Record<string, string> = {
   '2.5.29.32': 'Certificate Policies',
   '2.5.29.35': 'Authority Key Identifier',
   '2.5.29.37': 'Extended Key Usage',
-  // Alt-sig extensions (catalyst / draft-ietf-lamps-cert-binding-for-multi-auth)
+  // Alt-sig extensions (catalyst) — defined by ITU-T X.509 (2019) §9.8
   '2.5.29.72': 'SubjectAltPublicKeyInfo (alt-sig PQC key)',
   '2.5.29.73': 'AltSignatureAlgorithm (alt-sig algorithm)',
   '2.5.29.74': 'AltSignatureValue (alt-sig PQC signature)',

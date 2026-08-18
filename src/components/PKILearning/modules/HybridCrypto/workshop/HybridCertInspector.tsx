@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import {
   Loader2,
   Play,
@@ -12,10 +12,13 @@ import {
   ChevronRight,
   FlaskConical,
   Globe,
+  ShieldCheck,
+  ShieldAlert,
 } from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import { HYBRID_CERT_FORMATS } from '../constants'
 import { parseCertificateInfo, oidToLabel, type CertInfo } from '../services/derParser'
+import { verifyCompositeCert, type CompositeVerifyResult } from '../services/compositeVerifier'
 import {
   IETF_CERT_VECTORS,
   decodeDer,
@@ -221,6 +224,11 @@ export const HybridCertInspector: React.FC = () => {
     certIdx: number
   } | null>(null)
   const [viewMode, setViewMode] = useState<'tree' | 'raw' | 'size'>('tree')
+  // Composite self-signature verification. The workshop mints composite certs
+  // but nothing here could check one — parsing is not verification. Both
+  // components must verify (AND construction), and the ML-DSA half only
+  // verifies when the signature label is supplied as its FIPS 204 ctx.
+  const [compositeVerify, setCompositeVerify] = useState<CompositeVerifyResult | null>(null)
 
   // --- Source toggle ---
   const [source, setSource] = useState<'generated' | 'ietf'>('generated')
@@ -313,6 +321,35 @@ export const HybridCertInspector: React.FC = () => {
     selectedCert !== null ? certs[selectedCert.formatIdx]?.certs[selectedCert.certIdx] : null
 
   const selectedFormat = selectedCert !== null ? certs[selectedCert.formatIdx] : null
+
+  useEffect(() => {
+    let cancelled = false
+    const pem = selected?.pem
+    // Single, asynchronous state write: every path resolves through this
+    // promise rather than calling setState synchronously in the effect body
+    // (which triggers cascading renders).
+    const resolveVerdict = async (): Promise<CompositeVerifyResult | null> => {
+      if (!pem) return null
+      const b64 = pem.replace(/-----(BEGIN|END) CERTIFICATE-----/g, '').replace(/\s+/g, '')
+      let der: Uint8Array
+      try {
+        der = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))
+      } catch {
+        return null
+      }
+      const r = await verifyCompositeCert(der)
+      // Only surface a verdict for certificates that ARE composite; other
+      // formats are verified elsewhere (or by OpenSSL) and a "not composite"
+      // banner on a pure-PQC cert would just be noise.
+      return r.recognized ? r : null
+    }
+    void resolveVerdict().then((r) => {
+      if (!cancelled) setCompositeVerify(r)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [selected?.pem])
 
   const parsedTree = selected ? parseCertText(selected.parsed) : []
 
@@ -597,6 +634,81 @@ export const HybridCertInspector: React.FC = () => {
                             ?.standard || ''}
                           <ExternalLink size={10} />
                         </a>
+                      </div>
+                    )}
+
+                    {/* Composite self-signature verification */}
+                    {compositeVerify && (
+                      <div
+                        className={`rounded-lg p-3 border ${
+                          compositeVerify.valid
+                            ? 'bg-success/5 border-success/30'
+                            : 'bg-destructive/5 border-destructive/30'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          {compositeVerify.valid ? (
+                            <ShieldCheck size={14} className="text-success shrink-0" />
+                          ) : (
+                            <ShieldAlert size={14} className="text-destructive shrink-0" />
+                          )}
+                          <span
+                            className={`text-xs font-bold ${
+                              compositeVerify.valid ? 'text-success' : 'text-destructive'
+                            }`}
+                          >
+                            {compositeVerify.valid
+                              ? 'Composite signature VERIFIED'
+                              : 'Composite signature INVALID'}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground font-mono ml-auto truncate">
+                            {compositeVerify.profileLabel}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+                          {[compositeVerify.mldsa, compositeVerify.classical].map(
+                            (c, i) =>
+                              c && (
+                                <div
+                                  key={i}
+                                  className="flex items-center gap-2 text-[10px] font-mono bg-background/60 rounded px-2 py-1"
+                                >
+                                  <span
+                                    className={
+                                      c.verified === true
+                                        ? 'text-success'
+                                        : c.verified === false
+                                          ? 'text-destructive'
+                                          : 'text-muted-foreground'
+                                    }
+                                  >
+                                    {c.verified === true ? '✓' : c.verified === false ? '✗' : '—'}
+                                  </span>
+                                  <span className="text-foreground w-44 shrink-0 truncate">
+                                    {c.algorithm}
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    {c.bytes} B {c.range}
+                                  </span>
+                                  {c.detail && (
+                                    <span className="text-muted-foreground truncate">
+                                      — {c.detail}
+                                    </span>
+                                  )}
+                                </div>
+                              )
+                          )}
+                        </div>
+
+                        <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                          Verified in-browser against the LAMPS composite draft: the key and
+                          signature are split at ML-DSA&apos;s fixed length (no ASN.1 framing to
+                          read), both components are checked over the shared message representative
+                          M&apos;, and ML-DSA takes the signature label as its FIPS&nbsp;204
+                          context. BOTH must verify — composite is an AND construction, not a
+                          fallback.
+                        </p>
                       </div>
                     )}
 
