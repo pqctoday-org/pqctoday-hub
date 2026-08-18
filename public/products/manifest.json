@@ -10918,8 +10918,224 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "apache-traffic-server",
+   "filename": "apache-traffic-server-manual-34553c72.html",
+   "url": "https://docs.trafficserver.apache.org/en/latest/admin-guide/security/index.en.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "eclipse-jetty",
+   "filename": "eclipse-jetty-manual-04cf5b69.html",
+   "url": "https://jetty.org/docs/jetty/12.1/operations-guide/protocols/index.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "wildfly-jboss",
+   "filename": "wildfly-jboss-brief-4f8b7a93.html",
+   "url": "https://www.wildfly.org/news/2026/05/21/WildFly-40-is-released/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "payara-server",
+   "filename": "payara-server-brief-9112d74c.html",
+   "url": "https://docs.payara.fish/community/docs/Release%20Notes/Release%20Notes%207.2026.5.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "jenkins",
+   "filename": "jenkins-manual-815ae663.html",
+   "url": "https://www.jenkins.io/changelog/2.555.2/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "apache-traffic-server",
+   "filename": "apache-traffic-server-brief-fdd7dcbc.html",
+   "url": "https://trafficserver.apache.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "eclipse-jetty",
+   "filename": "eclipse-jetty-brief-834c9423.html",
+   "url": "https://eclipse.dev/jetty/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "wildfly-jboss",
+   "filename": "wildfly-jboss-manual-a5b0f2b8.html",
+   "url": "https://docs.wildfly.org/40/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "jenkins",
+   "filename": "jenkins-brief-de215430.html",
+   "url": "https://www.jenkins.io/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "postgresql",
+   "filename": "postgresql-brief-7f5ed88e.html",
+   "url": "https://www.postgresql.org/docs/release/18.0/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "postgresql",
+   "filename": "postgresql-manual-9c2218fd.html",
+   "url": "https://www.postgresql.org/docs/current/ssl-tcp.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "redis",
+   "filename": "redis-brief-3ab8e3ed.html",
+   "url": "https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisce/redisos-8.6-release-notes/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mariadb-server",
+   "filename": "mariadb-server-manual-92bd91d9.html",
+   "url": "https://mariadb.com/docs/server/security/encryption/data-in-transit-encryption/using-tlsv13",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mariadb-server",
+   "filename": "mariadb-server-brief-c4ec4871.html",
+   "url": "https://mariadb.com/docs/release-notes/community-server/11.8/what-is-mariadb-118",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "taurus-sa",
+   "filename": "taurus-sa-brief-c63bad60.html",
+   "url": "https://www.taurushq.com/blog/faster-post-quantum-signatures-introducing-ml-dsa-b/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "avalanche",
+   "filename": "avalanche-brief-34c8ab41.html",
+   "url": "https://forum.avax.network/t/acp-idea-staged-transition-to-quantum-resistant-cryptography-aip-qr-001/7055",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "hyperledger-besu",
+   "filename": "hyperledger-besu-manual-8062b676.html",
+   "url": "https://besu.hyperledger.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "cisco-ios-xr",
+   "filename": "cisco-ios-xr-manual-6eca9ec0.html",
+   "url": "https://www.cisco.com/c/en/us/td/docs/optical/ncs1004/241x/configuration/guide/b-configuration-guide-ncs1004-r2411/m-sec-cfg-quantum-encryption-ppk.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "fortinet-fortimanager",
+   "filename": "fortinet-fortimanager-brief-4eaf380b.html",
+   "url": "https://docs.fortinet.com/document/fortimanager/7.6.6/release-notes/207023/new-features",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "fortinet-fortiauthenticator",
+   "filename": "fortinet-fortiauthenticator-manual-1965f0a8.html",
+   "url": "https://docs.fortinet.com/document/fortiauthenticator/6.6.6/release-notes",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "jetbrains-teamcity-2026-1",
+   "filename": "jetbrains-teamcity-2026-1-brief-3f5f1822.html",
+   "url": "https://www.jetbrains.com/help/teamcity/roadmap-outline.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "docker-engine-28-0",
+   "filename": "docker-engine-28-0-brief-71e48dc0.html",
+   "url": "https://docs.docker.com/engine/release-notes/28/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "azure-aks",
+   "filename": "azure-aks-manual-faec3b94.html",
+   "url": "https://learn.microsoft.com/en-us/azure/aks/container-network-security-cilium-mutual-tls-concepts",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "hyland-onbase",
+   "filename": "hyland-onbase-manual-b3eed789.html",
+   "url": "https://docs.hyland.com/r/OnBase/System-Administration-On-Premises/Foundation-24.1/On-Premises-System-Administration/Configuration-Module/System-Wide-Settings/Cryptography-Settings/Changing-the-Encryption-Suite-and-Version-Compatibility",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "hyland-onbase",
+   "filename": "hyland-onbase-brief-01a79aa2.html",
+   "url": "https://www.hyland.com/en/company/newsroom/onbase-26-1",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "jetbrains-teamcity-2026-1",
+   "filename": "jetbrains-teamcity-2026-1-manual-f355bb01.html",
+   "url": "https://www.jetbrains.com/help/teamcity/supported-platforms-and-environments.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "bitgo",
+   "filename": "bitgo-brief-5ac3f390.html",
+   "url": "https://investors.bitgo.com/news/news-details/2026/BitGo-and-Silence-Laboratories-Complete-First-Post-Quantum-MPC-Transaction-Simulation-by-a-Regulated-Custodian/default.aspx",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1609,
- "downloaded": 1609
+ "total": 1636,
+ "downloaded": 1636
 }
