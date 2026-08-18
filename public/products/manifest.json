@@ -11870,8 +11870,240 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "strongswan",
+      "filename": "strongswan-brief-988c0aa7.html",
+      "url": "https://strongswan.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "strongswan",
+      "filename": "strongswan-manual-ca2d8ff0.html",
+      "url": "https://docs.strongswan.org/docs/latest/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "btq-bitcoin-quantum",
+      "filename": "btq-bitcoin-quantum-brief-9875147b.html",
+      "url": "https://bitcoinquantum.com",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "btq-bitcoin-quantum",
+      "filename": "btq-bitcoin-quantum-manual-4af6b940.html",
+      "url": "https://docs.bitcoinquantum.com",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hitachi-domobile",
+      "filename": "hitachi-domobile-brief-87f10274.html",
+      "url": "https://www.hitachi-solutions-create.co.jp/solution/domobile_asp/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hitachi-domobile",
+      "filename": "hitachi-domobile-manual-cf2da3bd.html",
+      "url": "https://www.hitachi-solutions-create.co.jp/solution/domobile_asp/support/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "project-eleven-solana-pqc",
+      "filename": "project-eleven-solana-pqc-brief-a243f451.html",
+      "url": "https://www.projecteleven.com/blog/project-eleven-to-advance-post-quantum-security-for-the-solana-network",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "gmail-google-workspace",
+      "filename": "gmail-google-workspace-brief-54c6aca6.html",
+      "url": "https://workspace.google.com/products/gmail/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "gmail-google-workspace",
+      "filename": "gmail-google-workspace-manual-772c4cc8.html",
+      "url": "https://support.google.com/mail/?hl=en",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sealsq-qs7001",
+      "filename": "sealsq-qs7001-brief-fbc9cbd3.html",
+      "url": "https://www.sealsq.com/semiconductors/platforms/quantum-shield/qs7001",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wire",
+      "filename": "wire-brief-aa45f272.html",
+      "url": "https://wire.com/en",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "wire",
+      "filename": "wire-manual-f6eca64d.html",
+      "url": "https://docs.wire.com/latest/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "ibm-hyper-protect-crypto",
+      "filename": "ibm-hyper-protect-crypto-brief-0dab3775.html",
+      "url": "https://cloud.ibm.com/catalog/services/hyper-protect-crypto-services",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ibm-hyper-protect-crypto",
+      "filename": "ibm-hyper-protect-crypto-manual-8120bb0d.html",
+      "url": "https://cloud.ibm.com/docs/hs-crypto?topic=hs-crypto-get-started",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "cisco-secure-client-anyconnect",
+      "filename": "cisco-secure-client-anyconnect-brief-0c45cf28.html",
+      "url": "https://www.cisco.com/c/en/us/products/security/anyconnect-secure-mobility-client/index.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cisco-secure-client-anyconnect",
+      "filename": "cisco-secure-client-anyconnect-manual-5895df9b.html",
+      "url": "https://www.cisco.com/c/en/us/td/docs/security/vpn_client/anyconnect/Cisco-Secure-Client-5/admin/guide/b-cisco-secure-client-admin-guide-5-1.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "wire",
+      "filename": "wire-brief-c0ca87a2.html",
+      "url": "https://wire.com/en/blog/messaging-layer-security-evolving-secure-communication",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "zscaler-zia-pqc",
+      "filename": "zscaler-zia-pqc-brief-2b7f9711.pdf",
+      "url": "https://www.zscaler.com/resources/solution-briefs/post-quantum-cryptography.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "zscaler-zia-pqc",
+      "filename": "zscaler-zia-pqc-manual-2d0b9980.pdf",
+      "url": "https://www.zscaler.com/resources/brochures/post-quantum-cryptography-inspection.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "vox-messenger-pqc",
+      "filename": "vox-messenger-pqc-brief-b80f0747.html",
+      "url": "https://vox-messenger.app/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "vox-messenger-pqc",
+      "filename": "vox-messenger-pqc-manual-27007285.html",
+      "url": "https://vox-messenger.app/what-is-end-to-end-encryption/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sap-cryptographic-library-8-6-pqc",
+      "filename": "sap-cryptographic-library-8-6-pqc-brief-35d52de1.html",
+      "url": "https://community.sap.com/t5/technology-blog-posts-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "sophos-xgs",
+      "filename": "sophos-xgs-manual-cf5e1c4c.html",
+      "url": "https://docs.sophos.com/releasenotes/output/en-us/nsg/sf_215_rn.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sonicwall-sonicos",
+      "filename": "sonicwall-sonicos-manual-223c99da.html",
+      "url": "https://www.sonicwall.com/support/technical-documentation/docs/sonicos-7-0-0-0-ipsec_vpn/Content/ipsec-vpn-types-vpn-security-about-suite-b.htm/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "forgerock-access-management",
+      "filename": "forgerock-access-management-manual-2d466b98.html",
+      "url": "https://docs.pingidentity.com/pingam/release-notes/requirements.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "sailpoint-identity-security-cloud",
+      "filename": "sailpoint-identity-security-cloud-brief-8ac0fcdb.html",
+      "url": "https://www.sailpoint.com/why-us/trust/cybersecurity",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "azure-managed-hsm",
+      "filename": "azure-managed-hsm-manual-35099ec4.html",
+      "url": "https://github.com/MicrosoftDocs/azure-security-docs/blob/main/articles/key-vault/managed-hsm/about-keys.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "gcp-secret-manager",
+      "filename": "gcp-secret-manager-manual-ff6e1d40.html",
+      "url": "https://docs.cloud.google.com/secret-manager/docs/cmek",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hashicorp-consul-connect-service-mesh",
+      "filename": "hashicorp-consul-connect-service-mesh-manual-2a1d2a7f.html",
+      "url": "https://www.consul.io/docs/connect",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1728,
-  "downloaded": 1728
+  "total": 1757,
+  "downloaded": 1757
 }
