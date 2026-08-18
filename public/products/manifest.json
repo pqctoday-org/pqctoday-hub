@@ -12102,8 +12102,328 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "hpe-alletra-mp",
+      "filename": "hpe-alletra-mp-brief-ebda8c66.html",
+      "url": "https://www.hpe.com/us/en/storage/alletra.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hpe-alletra-mp",
+      "filename": "hpe-alletra-mp-manual-0895b73b.html",
+      "url": "https://support.hpe.com/connect/s/product?language=en_US&kmpmoid=1014790250&tab=manuals",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "pure-storage-purity-fa-6-6",
+      "filename": "pure-storage-purity-fa-6-6-brief-a84cdde0.html",
+      "url": "https://blog.purestorage.com/purity-fa-releases/purity-fa-6-6-0-paving-the-way-for-flasharray-e/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "oauth-2-0-openid-connect-oidc",
+      "filename": "oauth-2-0-openid-connect-oidc-brief-6ea33c2e.html",
+      "url": "https://oauth.net/2/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "oauth-2-0-openid-connect-oidc",
+      "filename": "oauth-2-0-openid-connect-oidc-manual-d6c90b0c.html",
+      "url": "https://openid.net/specs/openid-connect-core-1_0.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hyperledger-fabric",
+      "filename": "hyperledger-fabric-brief-6ff536c8.html",
+      "url": "https://hyperledger-fabric.readthedocs.io/en/latest/whatis.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "hyperledger-fabric",
+      "filename": "hyperledger-fabric-manual-0a60084f.html",
+      "url": "https://hyperledger-fabric.readthedocs.io/en/release-2.5/ops_guide.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "ibm-z-vse",
+      "filename": "ibm-z-vse-brief-adb5016d.pdf",
+      "url": "https://www.redbooks.ibm.com/redbooks/pdfs/sg247436.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ibm-z-vse",
+      "filename": "ibm-z-vse-manual-3d132b0f.pdf",
+      "url": "https://publibfp.dhe.ibm.com/epubs/pdf/iesame81.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hyperledger-fabric",
+      "filename": "hyperledger-fabric-manual-de514c39.html",
+      "url": "https://hyperledger-fabric.readthedocs.io/en/latest/ops_guide.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hyperledger-fabric-3-0-pqc",
+      "filename": "hyperledger-fabric-3-0-pqc-brief-ddfc1188.html",
+      "url": "https://arxiv.org/abs/2010.06571",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "rubrik-security-cloud",
+      "filename": "rubrik-security-cloud-brief-72ce0dce.pdf",
+      "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/white-paper/wp-rubrik-security-cloud-architecture-and-security-implementation.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "quantum-leap-africa-aims",
+      "filename": "quantum-leap-africa-aims-brief-07bacc0a.html",
+      "url": "https://qla.aimsric.org/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "quantum-leap-africa-aims",
+      "filename": "quantum-leap-africa-aims-manual-5cdbeb8e.html",
+      "url": "https://aims.ac.rw/quantum-leap-africa-qla/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hex-trust-custody",
+      "filename": "hex-trust-custody-brief-cc21fcc3.html",
+      "url": "https://www.hextrust.com/services/hex-trust-custody",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "komainu-custody",
+      "filename": "komainu-custody-brief-c654ac96.html",
+      "url": "https://komainu.com/services/custody/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "komainu-custody",
+      "filename": "komainu-custody-manual-a236c111.html",
+      "url": "https://komainu.com/expertise/security/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "rubrik-security-cloud",
+      "filename": "rubrik-security-cloud-manual-6abc4ec4.pdf",
+      "url": "https://www.rubrik.com/content/dam/rubrik/en/resources/data-sheet/Data-Sheet-Data-Encryption.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "hex-trust-custody",
+      "filename": "hex-trust-custody-manual-83b35cf3.html",
+      "url": "https://help.hextrust.com/knowledge/hardware-security-modules",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "descope-platform",
+      "filename": "descope-platform-brief-736d739c.html",
+      "url": "https://www.descope.com/security-compliance",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "descope-platform",
+      "filename": "descope-platform-manual-4166d0f4.html",
+      "url": "https://docs.descope.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "stytch-platform",
+      "filename": "stytch-platform-brief-40b89f05.html",
+      "url": "https://stytch.com/docs/resources/security-and-trust/security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "stytch-platform",
+      "filename": "stytch-platform-manual-d91a3fb6.html",
+      "url": "https://stytch.com/docs/get-started/overview",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "robust-intelligence-cisco-ai-defense",
+      "filename": "robust-intelligence-cisco-ai-defense-brief-07111a22.pdf",
+      "url": "https://www.cisco.com/c/en/us/products/collateral/security/ai-defense/ai-defense-ds.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "robust-intelligence-cisco-ai-defense",
+      "filename": "robust-intelligence-cisco-ai-defense-manual-444b1e97.html",
+      "url": "https://securitydocs.cisco.com/docs/ai-def/user/97384.dita",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "galileo-ai-platform",
+      "filename": "galileo-ai-platform-brief-a23d5b1a.html",
+      "url": "https://galileo.ai/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "galileo-ai-platform",
+      "filename": "galileo-ai-platform-manual-ceb984e3.html",
+      "url": "https://docs.galileo.ai/what-is-galileo",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "beyondtrust-pathfinder-platform",
+      "filename": "beyondtrust-pathfinder-platform-brief-9e96c6d0.html",
+      "url": "https://www.beyondtrust.com/press/pathfinder",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "beyondtrust-pathfinder-platform",
+      "filename": "beyondtrust-pathfinder-platform-manual-6fbe012c.html",
+      "url": "https://docs.beyondtrust.com/bt-docs/docs/welcome-to-the-pathfinder-platform",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "docusign-iam",
+      "filename": "docusign-iam-brief-f3d1819f.html",
+      "url": "https://www.docusign.com/trust/security/esignature",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "docusign-iam",
+      "filename": "docusign-iam-manual-b486835f.html",
+      "url": "https://support.docusign.com/s/articles/Is-DocuSign-Legal-in-my-Country?language=en_US",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "anydesk-remote-desktop",
+      "filename": "anydesk-remote-desktop-brief-084c1844.html",
+      "url": "https://anydesk.com/en/security",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "anydesk-remote-desktop",
+      "filename": "anydesk-remote-desktop-manual-d83041ca.html",
+      "url": "https://support.anydesk.com/docs/user-guides",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "anchore-syft",
+      "filename": "anchore-syft-brief-a85c0de9.html",
+      "url": "https://github.com/anchore/syft/blob/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "anchore-syft",
+      "filename": "anchore-syft-manual-6349c867.html",
+      "url": "https://github.com/anchore/syft/wiki",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "thalesgroup-kmip-go",
+      "filename": "thalesgroup-kmip-go-brief-5ec30711.html",
+      "url": "https://github.com/ThalesGroup/kmip-go",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "thalesgroup-kmip-go",
+      "filename": "thalesgroup-kmip-go-manual-2ede1c9e.html",
+      "url": "https://github.com/ThalesGroup/kmip-go/blob/master/docs.go",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "nlnetlabs-ldnsutils",
+      "filename": "nlnetlabs-ldnsutils-brief-1dcebeb1.html",
+      "url": "https://github.com/NLnetLabs/ldns/blob/develop/README",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "nlnetlabs-ldnsutils",
+      "filename": "nlnetlabs-ldnsutils-manual-c65fbab2.html",
+      "url": "https://www.nlnetlabs.nl/documentation/ldns/ldns-keygen/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "nlnetlabs-ldnsutils",
+      "filename": "nlnetlabs-ldnsutils-manual-248c5ce2.html",
+      "url": "https://dnst.docs.nlnetlabs.nl/en/latest/man/ldns-keygen.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1757,
-  "downloaded": 1757
+  "total": 1797,
+  "downloaded": 1797
 }
