@@ -9406,8 +9406,232 @@
    "status": "downloaded",
    "priority": "spotcheck",
    "docType": "brief"
+  },
+  {
+   "softwareName": "mayo-reference-implementation",
+   "filename": "mayo-reference-implementation-brief-a82aefdd.html",
+   "url": "https://github.com/PQCMayo/MAYO-C",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "bouncy-castle",
+   "filename": "bouncy-castle-brief-27e4acc3.html",
+   "url": "https://github.com/bcgit/bc-java",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "bouncy-castle",
+   "filename": "bouncy-castle-manual-38dbae87.html",
+   "url": "https://www.bouncycastle.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mozilla-nss",
+   "filename": "mozilla-nss-brief-8325d13e.html",
+   "url": "https://firefox-source-docs.mozilla.org/security/nss/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "rustcrypto-slh-dsa-2",
+   "filename": "rustcrypto-slh-dsa-2-brief-d7df41cd.html",
+   "url": "https://github.com/RustCrypto/signatures",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "circl",
+   "filename": "circl-brief-3495068d.html",
+   "url": "https://github.com/cloudflare/circl",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "mozilla-nss",
+   "filename": "mozilla-nss-manual-9b69e534.html",
+   "url": "https://firefox-source-docs.mozilla.org/security/nss/releases/nss_3_119.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "hndl-simulator-hndl-dev",
+   "filename": "hndl-simulator-hndl-dev-brief-31cb3ec5.html",
+   "url": "https://github.com/perlab-uc3m/hndl-dev",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "aws-certificate-manager",
+   "filename": "aws-certificate-manager-brief-9cd4a970.html",
+   "url": "https://aws.amazon.com/certificate-manager/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "cosmian-kms",
+   "filename": "cosmian-kms-brief-e35d682e.html",
+   "url": "https://docs.cosmian.com/key_management_system/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "cosmian-kms",
+   "filename": "cosmian-kms-manual-146864c5.html",
+   "url": "https://github.com/Cosmian/kms",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "openssl-3-5-0",
+   "filename": "openssl-3-5-0-brief-c3f9dad1.html",
+   "url": "https://www.openssl.org/news/openssl-3.5-notes.html",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "cryspen-libcrux",
+   "filename": "cryspen-libcrux-brief-f85cc6fe.html",
+   "url": "https://github.com/cryspen/libcrux",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "aws-certificate-manager",
+   "filename": "aws-certificate-manager-manual-6b95621f.html",
+   "url": "https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "trailofbits-ml-dsa",
+   "filename": "trailofbits-ml-dsa-brief-45c35f21.html",
+   "url": "https://github.com/trailofbits/ml-dsa",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "infosecglobal-agilesec",
+   "filename": "infosecglobal-agilesec-brief-d970553c.html",
+   "url": "https://www.infosecglobal.com/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "openmls",
+   "filename": "openmls-brief-2f163bd9.html",
+   "url": "https://openmls.tech/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "openmls",
+   "filename": "openmls-manual-10a26f5f.html",
+   "url": "https://github.com/openmls/openmls",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "mls-rs",
+   "filename": "mls-rs-brief-ffb7830d.html",
+   "url": "https://github.com/awslabs/mls-rs",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "pqctoday-tpm",
+   "filename": "pqctoday-tpm-brief-8188fbb9.html",
+   "url": "https://github.com/pqctoday-org/pqctoday-tpm",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "openmls",
+   "filename": "openmls-brief-fd8859ea.html",
+   "url": "https://blog.openmls.tech/posts/2024-04-11-pq-openmls/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "chrony-ntpd",
+   "filename": "chrony-ntpd-brief-ec166bde.html",
+   "url": "https://chrony-project.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "easyrsa-openvpn",
+   "filename": "easyrsa-openvpn-brief-339845c3.html",
+   "url": "https://easy-rsa.readthedocs.io/en/latest/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "qkdnetsim-module",
+   "filename": "qkdnetsim-module-brief-8724549d.html",
+   "url": "https://www.qkdnetsim.info/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "qkdnetsim-module",
+   "filename": "qkdnetsim-module-manual-04390c37.html",
+   "url": "https://github.com/QKDNetSim/QKDNetSim",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "filesottile-age-encryption",
+   "filename": "filesottile-age-encryption-brief-4a017349.html",
+   "url": "https://age-encryption.org/",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
+  },
+  {
+   "softwareName": "filesottile-age-encryption",
+   "filename": "filesottile-age-encryption-manual-d0d149b8.html",
+   "url": "https://github.com/FiloSottile/age",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "manual"
+  },
+  {
+   "softwareName": "sequence-quantum-toolbox",
+   "filename": "sequence-quantum-toolbox-brief-cbc6e615.html",
+   "url": "https://github.com/sequence-toolbox/SeQUeNCe",
+   "status": "downloaded",
+   "priority": "spotcheck",
+   "docType": "brief"
   }
  ],
- "total": 1420,
- "downloaded": 1420
+ "total": 1448,
+ "downloaded": 1448
 }
