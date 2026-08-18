@@ -39,7 +39,12 @@ export type AlgorithmStatusTier =
   | 'non-standardized'
 
 /** Default "Certified" filter whitelist — everything else, including
- *  'placeholder', is excluded from the default view. */
+ *  'placeholder', is excluded from the default view. Drives the green
+ *  "success" badge/sort order (AlgorithmComparison, MobileTransitionWizard,
+ *  MobileAlgorithmList) and the Playground's Draft-badge suppression
+ *  (algorithmPickerStatus.tsx) — keep this strict to genuinely-final tiers,
+ *  since widening it would hide the Draft warning on a pre-final algorithm
+ *  in the key-generation picker. */
 const CERTIFIED_TIERS: ReadonlySet<AlgorithmStatusTier> = new Set(['final', 'regional'])
 
 export function isCertifiedTier(tier: AlgorithmStatusTier): boolean {
@@ -49,4 +54,23 @@ export function isCertifiedTier(tier: AlgorithmStatusTier): boolean {
 /** Draft/Candidate badge condition — anything not whitelisted as Certified. */
 export function isDraftTier(tier: AlgorithmStatusTier): boolean {
   return !isCertifiedTier(tier)
+}
+
+/** Status-filter "Certified" dropdown bucket (Transition Guide / Detailed
+ *  Comparison default view) — one tier broader than CERTIFIED_TIERS:
+ *  'fips-draft' (HQC, FN-DSA) is already NIST-selected, just pre-publication,
+ *  so hiding it from the default view misleads migration planning — see
+ *  personaConfig.ts's executive `highlight` list, which already names
+ *  FN-DSA-512 as a headline algorithm the old default silently hid.
+ *  Deliberately NOT reused for the badge/sort/Playground call sites above:
+ *  those must keep showing "Draft" on fips-draft rows even though this
+ *  filter now surfaces them by default. */
+const STATUS_FILTER_TIERS: ReadonlySet<AlgorithmStatusTier> = new Set([
+  'final',
+  'regional',
+  'fips-draft',
+])
+
+export function isStatusFilterTier(tier: AlgorithmStatusTier): boolean {
+  return STATUS_FILTER_TIERS.has(tier)
 }
