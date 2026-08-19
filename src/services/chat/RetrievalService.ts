@@ -898,12 +898,29 @@ class RetrievalService {
       sourceCounts.set(chunk.source, count + 1)
     }
 
-    // Backfill if diversity caps left gaps — use relaxed cap (1.5×) to avoid single-source dominance
+    // Backfill if diversity caps left gaps — use relaxed cap (1.5×) to avoid
+    // single-source dominance, but stop once relevance falls off a cliff
+    // relative to this query's best match. Padding the result out to
+    // effectiveLimit with near-zero-relevance filler only dilutes model
+    // attention and widens the grounded-terms set checkGrounding matches
+    // against (see
+    // pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.3).
+    // Deliberately conservative (10% of the top score) and confined to this
+    // already-least-selective backfill tier — verified against the full
+    // golden-query suite (byte-identical Recall@5/@15/Source Coverage/Noise
+    // before and after) to avoid disturbing the primary diversity fill's
+    // carefully-tuned behavior.
     if (selected.length < effectiveLimit) {
       const relaxedMax = Math.ceil(maxPerSource * 1.5)
+      const topScore = boostedResults[0]?.boostedScore ?? 0
+      const CLIFF_RATIO = 0.1
+      const scoreFloor = topScore * CLIFF_RATIO
       for (const r of boostedResults) {
         if (selected.length >= effectiveLimit) break
         if (selectedIds.has(r.id)) continue
+        // boostedResults is sorted descending, so once a candidate falls
+        // below the floor, every remaining candidate is weaker too.
+        if (r.boostedScore < scoreFloor) break
         const chunk = this.corpusById.get(r.id)
         if (!chunk) continue
         const count = sourceCounts.get(chunk.source) ?? 0
