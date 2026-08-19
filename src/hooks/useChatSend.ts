@@ -204,7 +204,7 @@ export function useChatSend() {
           .filter((m) => m.role === 'user')
           .slice(-5)
           .map((m) => m.content)
-        const chunks = retrievalService.search(trimmed, undefined, {
+        const chunks = await retrievalService.searchWithEmbeddingFallback(trimmed, undefined, {
           page: pageContext.page,
           moduleId: pageContext.moduleId,
           relevantSources: pageContext.relevantSources,

@@ -99,6 +99,12 @@ vi.mock('@/services/chat/RetrievalService', () => ({
   retrievalService: {
     initialize: (...args: unknown[]) => mockInitialize(...args),
     search: (...args: unknown[]) => mockSearch(...(args as [string])),
+    // useChatSend.ts calls searchWithEmbeddingFallback(), not search()
+    // directly — with the embedding-retrieval flag off (the default),
+    // it's a synchronous passthrough to search() wrapped in a resolved
+    // promise, so mock it the same way here.
+    searchWithEmbeddingFallback: (...args: unknown[]) =>
+      Promise.resolve(mockSearch(...(args as [string]))),
   },
   classifyIntent: vi.fn().mockReturnValue('general'),
   buildTrustRefusal: vi.fn().mockReturnValue(null),
