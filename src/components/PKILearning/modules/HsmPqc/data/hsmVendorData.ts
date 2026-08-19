@@ -95,7 +95,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     name: 'Utimaco',
     product: 'SecurityServer Se Gen2 (Quantum Protect)',
     type: 'on-prem',
-    catalogName: 'Utimaco SecurityServer',
+    catalogName: 'Utimaco uTrust HSM',
     fips140Level: 'FIPS 140-3 Level 3 (cert #3925)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     formFactor: 'pcie',

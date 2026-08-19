@@ -192,7 +192,18 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     2026-06-30: bumped 0 → 1 — 06302026_r1 catalog audit added
   //     software-hipaa-quantum-security-rule without a corpus trust-score entry;
   //     will resolve to 0 on the next refresh-index run.
-  migrate: 1,
+  //     2026-08-19: bumped 1 → 4 — vendor-remediation pass deprecated 3 migrate
+  //     rows (software-id-quantique-cerberis-xgr-qkd: discontinued product,
+  //     vendor-confirmed; software-utimaco-securityserver,
+  //     software-utimaco-quantum-protect-suite: duplicates of
+  //     utimaco-utrust-hsm, details folded into the survivor). Ran
+  //     refresh-index locally to confirm this drives back to 0 — it does, but
+  //     the same run also regenerates ~900 orphaned source_passages entries
+  //     (the documented, unrelated C4 PROV-chain gap this file's
+  //     MAX_DOC_WITHOUT_PASSAGES comment already warns against triggering via
+  //     an unrelated data change), so the refreshed corpus was not committed.
+  //     Will resolve to 0 on the next refresh-index run authorized on its own.
+  migrate: 4,
   timeline: 1,
   //     2026-07-29: DRIVEN DOWN 3 → 1 (maintenance-flow remediation WP-0.1).
   //     The 07-24 entry below predicted this would "resolve to 1 on the next
