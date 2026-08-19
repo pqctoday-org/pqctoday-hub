@@ -31,7 +31,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'definition',
     mustInclude: ['algo-ml-kem'],
     expectedSources: ['algorithms', 'glossary'],
-    minTop5Hits: 0, // algo chunks in top 15 but Q&A chunks dominate top 5 after citation backfill
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Explain post-quantum cryptography',
@@ -281,7 +281,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'definition',
     mustInclude: ['page-guide-leaders'],
     expectedSources: ['documentation'],
-    minTop5Hits: 0, // page-guide-leaders ranks in top 5; individual leader- chunks pushed down
+    minTop5Hits: 1, // measured 2026-08-18: page-guide-leaders consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'United Arab Emirates PQC strategy',
@@ -395,14 +395,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'whats_new',
     mustInclude: ['changelog-'],
     expectedSources: ['changelog'],
-    minTop5Hits: 0, // changelog chunks in top 15 but library/RFC chunks dominate top 5
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'New features',
     expectedIntent: 'whats_new',
     mustInclude: ['changelog-'],
     expectedSources: ['changelog'],
-    minTop5Hits: 0, // keyword "features" may pull module content; changelog still in top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Release notes',
@@ -418,7 +418,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'whats_new',
     mustInclude: ['changelog-'],
     expectedSources: ['changelog'],
-    minTop5Hits: 0, // "site" may dilute; changelog in top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'What was added recently?',
@@ -443,14 +443,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['page-guide-transparency'],
     expectedSources: ['documentation'],
-    minTop5Hits: 0, // may rank lower; must be in top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Is this site endorsed by any organization?',
     expectedIntent: 'general',
     mustInclude: ['page-guide-transparency'],
     expectedSources: ['documentation'],
-    minTop5Hits: 0, // "endorsed" keyword matches transparency chunk; may rank lower
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- Content validation / peer review ---
@@ -466,14 +466,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['page-guide-transparency'],
     expectedSources: ['documentation'],
-    minTop5Hits: 0, // "peer review" keywords match; may rank lower
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'What is the content validation process?',
     expectedIntent: 'definition',
     mustInclude: ['page-guide-transparency'],
     expectedSources: ['documentation'],
-    minTop5Hits: 0, // "validation process" matches but glossary/module chunks may rank higher
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- Terms of service ---
@@ -500,14 +500,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['patent-'],
     expectedSources: ['patents'],
-    minTop5Hits: 0, // assignee match returns patent chunks in top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Patent landscape for post-quantum cryptography',
     expectedIntent: 'general',
     mustInclude: ['patent-'],
     expectedSources: ['patents'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- CSWP.39 5-step process ---
@@ -516,7 +516,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['cswp39-step-'],
     expectedSources: ['cswp39'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Explain CSWP.39 step 3 Identify Gaps',
@@ -539,7 +539,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['gov-maturity-'],
     expectedSources: ['governance-maturity'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- Curious Explorer persona ---
@@ -564,7 +564,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['module-healthcare-pqc'],
     expectedSources: ['modules'],
-    minTop5Hits: 0, // multi-hop; healthcare chunks spread across top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // === ROUND 7 NEGATIVES: disambiguation / out-of-scope ===
@@ -575,7 +575,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['module-qkd'],
     expectedSources: ['modules'],
-    minTop5Hits: 0, // QKD module discusses positioning vs. NIST PQC
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- Knowledge Graph removed (v3.5.10–v3.5.11) ---
@@ -585,7 +585,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['right-panel-'],
     expectedSources: ['right-panel'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
     mustExclude: ['kg-', 'mindmap-', 'graph-panel-'],
   },
 
@@ -595,7 +595,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['algo-'],
     expectedSources: ['algorithms'],
-    minTop5Hits: 0, // FN-DSA standardised; "Falcon" was the round-3 NIST name
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // === ROUND 7: Expanded hub scope (Protocol Support matrix, CBOM, Closure,
@@ -609,14 +609,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['protocol-matrix-'],
     expectedSources: ['protocol-matrix'],
-    minTop5Hits: 0, // protocol-matrix chunks in top 15; glossary/library compete for top 5
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Which protocols have standardized PQC support?',
     expectedIntent: 'general',
     mustInclude: ['protocol-matrix-'],
     expectedSources: ['protocol-matrix', 'tracks'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- CBOM (Cryptographic Bill of Materials, module cbom) ---
@@ -653,14 +653,14 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['business-tool-board-pitch'],
     expectedSources: ['business-center'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
   {
     query: 'Vendor scorecard for HSM suppliers',
     expectedIntent: 'general',
     mustInclude: ['business-tool-vendor-scorecard'],
     expectedSources: ['business-center'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- CSWP.39 governance maturity evidence (/compliance?tab=cswp39&evref=<id>) ---
@@ -669,7 +669,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['gov-maturity-'],
     expectedSources: ['governance-maturity', 'cswp39'],
-    minTop5Hits: 0,
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 
   // --- Patents (/patents?patent=<id>) ---
@@ -678,7 +678,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedIntent: 'general',
     mustInclude: ['patent-'],
     expectedSources: ['patents'],
-    minTop5Hits: 0, // glossary "lattice" def ranks first; patent chunks follow in top 15
+    minTop5Hits: 1, // measured 2026-08-18: consistently top-5; was waived at 0, now a real floor
   },
 ]
 
@@ -781,14 +781,36 @@ describe('Golden Query Suite', () => {
       metrics.totalQueries > 0 ? metrics.intentCorrect / metrics.totalQueries : 1
 
     console.warn(`\n=== RAG Accuracy Metrics ===`)
-    console.warn(`  Intent Accuracy: ${(intentAccuracy * 100).toFixed(1)}% (target: ≥90%)`)
-    console.warn(`  Recall@5:        ${(recall5 * 100).toFixed(1)}% (target: ≥80%)`)
-    console.warn(`  Recall@15:       ${(recall15 * 100).toFixed(1)}% (target: ≥95%)`)
-    console.warn(`  Source Coverage:  ${(sourceCoverage * 100).toFixed(1)}% (target: ≥90%)`)
-    console.warn(`  Noise Rate:      ${(noiseRate * 100).toFixed(1)}% (target: <5%)`)
+    console.warn(
+      `  Intent Accuracy: ${(intentAccuracy * 100).toFixed(1)}% (target: ≥90%) [${metrics.intentCorrect}/${metrics.totalQueries}]`
+    )
+    console.warn(
+      `  Recall@5:        ${(recall5 * 100).toFixed(1)}% (target: ≥80%) [${metrics.recall5Hits}/${metrics.recall5Total}]`
+    )
+    console.warn(
+      `  Recall@15:       ${(recall15 * 100).toFixed(1)}% (target: ≥95%) [${metrics.recall15Hits}/${metrics.recall15Total}]`
+    )
+    console.warn(
+      `  Source Coverage:  ${(sourceCoverage * 100).toFixed(1)}% (target: ≥90%) [${metrics.sourceCoverageHits}/${metrics.sourceCoverageTotal}]`
+    )
+    console.warn(
+      `  Noise Rate:      ${(noiseRate * 100).toFixed(1)}% (target: <5%) [${metrics.noiseHits}/${metrics.noiseChecks}]`
+    )
 
     expect(intentAccuracy).toBeGreaterThanOrEqual(0.9)
     expect(recall15).toBeGreaterThanOrEqual(0.95)
     expect(noiseRate).toBeLessThanOrEqual(0.05)
+
+    // Recall@5 and Source Coverage were previously computed and logged but
+    // never asserted — this suite could regress on either without failing.
+    // Recall@5 already clears its stated 80% target (measured 84.1%, 53/63
+    // on 2026-08-18), so assert the target directly.
+    expect(recall5).toBeGreaterThanOrEqual(0.8)
+    // Source Coverage does NOT yet clear its stated 90% target (measured
+    // 87.3%, 103/118 on 2026-08-18). Asserting 0.90 here would fail
+    // immediately, so the floor below is the measured value, not the goal —
+    // closing this gap is tracked separately (see
+    // pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.2-1.3).
+    expect(sourceCoverage).toBeGreaterThanOrEqual(0.87)
   })
 })
