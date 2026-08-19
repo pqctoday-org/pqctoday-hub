@@ -296,6 +296,52 @@ describe.skip('useChatSend', () => {
       expect(assistantMsg.followUps).toEqual([])
     })
 
+    it('appends a fact-check notice when the response contradicts chunk metadata', async () => {
+      // Product certification claim contradicted by the retrieved migrate
+      // chunk's own metadata — verifyFacts() should catch this even though
+      // "Acme Widget" and "FIPS validated" are each individually grounded
+      // (checkGrounding's entity-presence check cannot catch a wrong
+      // RELATIONSHIP between two grounded entities).
+      mockSearch.mockReturnValueOnce([
+        {
+          id: 'chunk-migrate-1',
+          source: 'migrate',
+          title: 'Acme Widget',
+          content: 'Acme Widget is a hardware security module.',
+          category: 'migrate',
+          metadata: { fipsValidated: 'No' },
+        },
+      ])
+      setupStream(['Acme Widget is FIPS validated.'])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('Is Acme Widget FIPS validated?')
+      })
+
+      const assistantMsg = mockAddMessage.mock.calls[1][0] as ChatMessage
+      expect(assistantMsg.content).toContain('**Fact-check notice:**')
+      expect(assistantMsg.content).toContain(
+        'Acme Widget is NOT FIPS validated according to the PQC Today database'
+      )
+    })
+
+    it('does not append a fact-check notice for an unremarkable, grounded response', async () => {
+      setupStream(['The answer is 42.'])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('What is ML-KEM?')
+      })
+
+      const assistantMsg = mockAddMessage.mock.calls[1][0] as ChatMessage
+      expect(assistantMsg.content).toBe('The answer is 42.')
+      expect(assistantMsg.content).not.toContain('Fact-check notice')
+      expect(assistantMsg.content).not.toContain('Accuracy notice')
+    })
+
     it('deduplicates sourceRefs by title', async () => {
       // mockSearch returns two chunks with title "ML-KEM" and one with "ML-DSA"
       setupStream(['Answer.'])

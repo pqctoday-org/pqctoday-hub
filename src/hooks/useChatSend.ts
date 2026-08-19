@@ -16,6 +16,7 @@ import {
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { checkGrounding } from '@/services/chat/groundingCheck'
+import { verifyFacts } from '@/services/chat/factVerification'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
 import { getCached, setCache } from '@/services/chat/responseCache'
@@ -337,11 +338,34 @@ export function useChatSend() {
         const { cleanContent, followUps } = parseFollowUps(fullContent)
 
         // Check if response references entities not found in RAG context
+        // (entity-presence — catches fabricated names/products/standards),
+        // and separately check specific factual claims (FIPS↔algorithm
+        // attribution, security levels, standard dates, non-PQC
+        // misattribution, product certification claims) against known
+        // ground truth — catches wrong RELATIONSHIPS between entities that
+        // are each individually grounded (e.g. "Product X is FIPS 140-3
+        // certified" when both "Product X" and "FIPS 140-3" appear in the
+        // retrieved chunks but not together), which checkGrounding cannot.
         const grounding = checkGrounding(cleanContent, chunks)
-        let finalContent = grounding.hasWarning
-          ? cleanContent.trimEnd() +
+        const factViolations = verifyFacts(cleanContent, chunks)
+
+        let finalContent = cleanContent
+        if (factViolations.length > 0) {
+          // A fact violation is a specific, mechanically-confirmed
+          // contradiction — surface it distinctly and more prominently
+          // than the generic entity-presence notice below, naming what
+          // was actually wrong instead of just urging a cross-check.
+          const violationLines = factViolations
+            .map((v) => `- **${v.expected}** — the response said: "${v.found}"`)
+            .join('\n')
+          finalContent =
+            finalContent.trimEnd() +
+            `\n\n> **Fact-check notice:** This response contains a claim that contradicts the PQC Today database:\n${violationLines}`
+        } else if (grounding.hasWarning) {
+          finalContent =
+            finalContent.trimEnd() +
             '\n\n> **Accuracy notice:** This response may reference items not verified in the PQC Today database. Please cross-check specific names, dates, or claims against the source pages linked above.'
-          : cleanContent
+        }
 
         // Graceful degradation hint for local mode: suggest Flash for thin answers
         if (
