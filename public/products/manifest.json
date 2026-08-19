@@ -13022,8 +13022,48 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "kryptonite-shipovnik-pqc-signature-russia",
+      "filename": "kryptonite-shipovnik-pqc-signature-russia-manual-fc0b1301.html",
+      "url": "https://raw.githubusercontent.com/Kryptonite-RU/shipovnik-py/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "mavenir-cloud-ran",
+      "filename": "mavenir-cloud-ran-brief-e5f8da16.pdf",
+      "url": "https://www.mavenir.com/wp-content/uploads/2022/11/Mavenir_WP_OpenRAN_Security.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "kpqclean-korean-reference",
+      "filename": "kpqclean-korean-reference-brief-5fda651a.html",
+      "url": "https://raw.githubusercontent.com/kpqc-cryptocraft/KpqClean/main/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-kmip",
+      "filename": "pqctoday-kmip-brief-acd57540.html",
+      "url": "https://raw.githubusercontent.com/pqctoday-org/pqctoday-hsm/main/kmip/README.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "arqit-quantumcloud",
+      "filename": "arqit-quantumcloud-brief-c9eaa75b.html",
+      "url": "https://ir.arqit.uk/news-events/press-releases/detail/47/arqit-announces-quantumcloud-powered-by-aws",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
-  "total": 1872,
-  "downloaded": 1872
+  "total": 1877,
+  "downloaded": 1877
 }
