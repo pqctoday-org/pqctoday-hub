@@ -12798,8 +12798,80 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "aigis-reference-implementation",
+      "filename": "aigis-reference-implementation-brief-c962d937.html",
+      "url": "https://pqcrypto.dev/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "aigis-reference-implementation",
+      "filename": "aigis-reference-implementation-manual-093689f1.html",
+      "url": "https://github.com/pqcrypto-cn/PQMagic/blob/main/README_EN.md",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "quantum-emotion-sentry-q",
+      "filename": "quantum-emotion-sentry-q-brief-d0c74e0c.html",
+      "url": "https://www.quantumemotion.com/roadmap",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bradesco-ibm-quantum-safe",
+      "filename": "bradesco-ibm-quantum-safe-brief-19dea411.html",
+      "url": "https://brasil.newsroom.ibm.com/2023-07-31-Bradesco-inicia-jornada-de-criptografia-pos-quantica-com-a-IBM",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "e-nokia-quantum-safe-network",
+      "filename": "e-nokia-quantum-safe-network-brief-54d4e9c7.html",
+      "url": "https://quantumuniversum.com/securing-the-digital-backbone-nokia-and-e-deliver-quantum-safe-networks-in-practice/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ibm-z16-crypto-express-8s",
+      "filename": "ibm-z16-crypto-express-8s-brief-60f04da7.pdf",
+      "url": "https://public.dhe.ibm.com/security/cryptocards/pciecc5/docs/4770_Data_Sheet.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cyberzero-quantanaut",
+      "filename": "cyberzero-quantanaut-brief-cddcb42e.html",
+      "url": "https://cyberzero.io/products/quantanaut/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "toppan-pqc-card",
+      "filename": "toppan-pqc-card-brief-7125831c.html",
+      "url": "https://www.holdings.toppan.com/en/news/2026/08/newsrelease260803_1.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ibm-z16-crypto-express-8s",
+      "filename": "ibm-z16-crypto-express-8s-manual-61ad154a.html",
+      "url": "https://community.ibm.com/HigherLogic/System/DownloadDocumentFile.ashx?DocumentFileKey=e3c34bdc-64c1-67d4-545d-60855dd7921b",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
     }
   ],
-  "total": 1844,
-  "downloaded": 1844
+  "total": 1853,
+  "downloaded": 1853
 }
