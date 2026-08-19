@@ -13062,8 +13062,128 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "brief"
+    },
+    {
+      "softwareName": "resquant-crypto-accelerator",
+      "filename": "resquant-crypto-accelerator-brief-d8931bfb.html",
+      "url": "https://www.resquant.com/solutions",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "crypto4a-qxvault",
+      "filename": "crypto4a-qxvault-brief-fdfa35ab.html",
+      "url": "https://crypto4a.com/products/blade-modules/qx-vault",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "xiphera-xqlave",
+      "filename": "xiphera-xqlave-brief-534a2a52.html",
+      "url": "https://xiphera.com/post-quantum-cryptography/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "fastly-pqc-cdn",
+      "filename": "fastly-pqc-cdn-brief-84c90e63.html",
+      "url": "https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "signquantum-pqc-e-signature",
+      "filename": "signquantum-pqc-e-signature-brief-1f570557.html",
+      "url": "https://signquantum.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "tiktok-pqc-data-protection",
+      "filename": "tiktok-pqc-data-protection-brief-57e0f41a.html",
+      "url": "https://developers.tiktok.com/blog/scaling-user-data-protection-quantum-resistant-cryptography-tiktok",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ntt-pqc-secure-transport",
+      "filename": "ntt-pqc-secure-transport-brief-a4c4aad6.html",
+      "url": "https://www.rd.ntt/e/research/JN202302_20961.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "ntt-pqc-secure-transport",
+      "filename": "ntt-pqc-secure-transport-brief-e83af276.html",
+      "url": "https://group.ntt/en/newsrelease/2024/10/30/241030a.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "samsung-sds-s-cape-pqc-platform",
+      "filename": "samsung-sds-s-cape-pqc-platform-brief-5738d5f4.html",
+      "url": "https://www.samsungsds.com/en/news/1287864_5252.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "asus-post-quantum-cryptography-module",
+      "filename": "asus-post-quantum-cryptography-module-brief-6bb54ef4.html",
+      "url": "https://press.asus.com/news/press-releases/asus-expertbook-ultra/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "cgi-momentum-java-cryptographic-module",
+      "filename": "cgi-momentum-java-cryptographic-module-brief-9921ffde.html",
+      "url": "https://www.cgi.com/us/en-us/news/federal-government/cgis-momentum-java-cryptographic-module-receives-federal-information",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "code-siren-post-quantum-cryptographic-pqc-library",
+      "filename": "code-siren-post-quantum-cryptographic-pqc-library-brief-05b8ddd2.html",
+      "url": "https://www.polynom.app/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "code-siren-post-quantum-cryptographic-pqc-library",
+      "filename": "code-siren-post-quantum-cryptographic-pqc-library-brief-434775e7.html",
+      "url": "https://www.codesiren.com/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "trend-micro-java-crypto-module",
+      "filename": "trend-micro-java-crypto-module-brief-be79e269.html",
+      "url": "https://www.safelogic.com/our-customers/trend-micro",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "SUSE-Rancher-Kubernetes-Cryptographic-Li",
+      "filename": "SUSE-Rancher-Kubernetes-Cryptographic-Li-brief-b5e39d8d.html",
+      "url": "https://www.corsec.com/suse-fips/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
-  "total": 1877,
-  "downloaded": 1877
+  "total": 1892,
+  "downloaded": 1892
 }
