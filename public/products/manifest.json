@@ -12870,8 +12870,160 @@
       "status": "downloaded",
       "priority": "spotcheck",
       "docType": "manual"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8-brief-9615c1cc.html",
+      "url": "https://www.chainguard.dev/unchained/chainguard-containers-enabled-with-pqc-support",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8",
+      "filename": "Chainguard-FIPS-Provider-for-OpenSSL-SHA-8-manual-02e06e9b.html",
+      "url": "https://edu.chainguard.dev/platform/fips/fips-images/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "SecureMachines-Prastaara-Quantum-Cryptog",
+      "filename": "SecureMachines-Prastaara-Quantum-Cryptog-brief-2afbfe60.html",
+      "url": "https://securemachines.in/products",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "IBM-Quantum-Safe-Migration-Orchestrator",
+      "filename": "IBM-Quantum-Safe-Migration-Orchestrator-brief-dc3b077c.html",
+      "url": "https://www.ibm.com/new/announcements/how-ibms-quantum-safe-migration-orchestrator-coordinates-quantum-safe-migration",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Ledger-SDK-Post-Quantum-Cryptography",
+      "filename": "Ledger-SDK-Post-Quantum-Cryptography-brief-af0bf395.html",
+      "url": "https://www.ledger.com/blog-post-quantum-cryptography-ledger-sdk",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "AWS-Key-Management-Service-Cryptographic",
+      "filename": "AWS-Key-Management-Service-Cryptographic-brief-858228f9.html",
+      "url": "https://aws.amazon.com/blogs/security/post-quantum-ml-dsa-code-signing-with-aws-private-ca-and-aws-kms/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "AWS-Key-Management-Service-Cryptographic",
+      "filename": "AWS-Key-Management-Service-Cryptographic-manual-4f7a2e0a.html",
+      "url": "https://docs.aws.amazon.com/kms/latest/developerguide/mldsa.html",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "libbitcoinpqc",
+      "filename": "libbitcoinpqc-brief-7b8f1d70.html",
+      "url": "https://github.com/cryptoquick/libbitcoinpqc",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "CryptoScan",
+      "filename": "CryptoScan-brief-01d09699.html",
+      "url": "https://github.com/csnp/cryptoscan",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "entrust-cryptographic-platform",
+      "filename": "entrust-cryptographic-platform-manual-7f3fe650.pdf",
+      "url": "https://www.entrust.com/sites/default/files/2025-04/csp-pki-certificate-lifecycle-management-ds.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "entrust-cryptographic-platform",
+      "filename": "entrust-cryptographic-platform-brief-519a087d.pdf",
+      "url": "https://www.entrust.com/sites/default/files/2025-04/cryptographic-security-platform-sb.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "01-quantum-ironcap",
+      "filename": "01-quantum-ironcap-brief-50825be4.pdf",
+      "url": "https://www.01com.com/pdf/ironcap-white-paper.pdf",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "bouncy-castle-java",
+      "filename": "bouncy-castle-java-manual-81b7a9d3.html",
+      "url": "https://www.bouncycastle.org/documentation/documentation-java/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "manual"
+    },
+    {
+      "softwareName": "osslsigncode",
+      "filename": "osslsigncode-brief-908ed5e0.html",
+      "url": "https://github.com/mtrojnar/osslsigncode",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "openssl-3-6",
+      "filename": "openssl-3-6-brief-3dbf571f.html",
+      "url": "https://openssl-library.org/news/openssl-3.6-notes/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-strongswan-pkcs11",
+      "filename": "pqctoday-strongswan-pkcs11-brief-85241c05.html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "softhsmrustv3",
+      "filename": "softhsmrustv3-brief-85241c05.html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "pqctoday-bench-harness",
+      "filename": "pqctoday-bench-harness-brief-85241c05.html",
+      "url": "https://github.com/pqctoday-org/pqctoday-hsm",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
+    },
+    {
+      "softwareName": "Libpqsecure-rs",
+      "filename": "Libpqsecure-rs-brief-59e910e5.html",
+      "url": "https://pqsecurity.com/pqsecure-software/",
+      "status": "downloaded",
+      "priority": "spotcheck",
+      "docType": "brief"
     }
   ],
-  "total": 1853,
-  "downloaded": 1853
+  "total": 1872,
+  "downloaded": 1872
 }
