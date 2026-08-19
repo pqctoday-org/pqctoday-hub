@@ -11281,9 +11281,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "5a8a5bfd1cf60f8c",
+      "bom-ref": "4238cebf197619b2",
       "name": "Keysight CyPerf",
-      "version": "7.0.2",
+      "version": "26.0.0 (March 2026)",
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
@@ -24223,12 +24223,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "signature",
-          "algorithmFamily": "ML-DSA"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "Certicom's own Code Signing and Key Management Server product page confirms support for 'quantum resistant digital signature algorithms' alongside traditional RSA/ECDSA. The specific claim that it uses ML-DSA (Dilithium) with NXP S32G secure boot for automotive OTA/SBOM signing comes from a separate BlackBerry/NXP joint announcement (electronicspecifier.com), not from Certicom's own documentation directly.",
+      "description": "Certicom's own Code Signing and Key Management Server product page confirms support for 'quantum resistant digital signature algorithms' alongside traditional RSA/ECDSA. Certicom's own datasheet (v9, hosted at certicom.com) independently confirms specific algorithm names directly: 'Traditional RSA, ECDSA & Quantum Resistant LMS, XMSS and Dilithium digital signatures.' This datasheet is dated approximately 2022 (pre-dates FIPS 204 finalization; still uses 'Dilithium' rather than 'ML-DSA', and does not mention ML-KEM) but is genuinely Certicom's own first-party documentation. The specific claim that it uses ML-DSA (Dilithium) with NXP S32G secure boot for automotive OTA/SBOM signing still comes only from the separate BlackBerry/NXP joint announcement (electronicspecifier.com), not from Certicom's own documentation.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -25651,12 +25650,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM",
-          "primitive": "kem",
-          "algorithmFamily": "ML-KEM"
+          "parameterSetIdentifier": "ML-KEM, FrodoKEM",
+          "primitive": "kem"
         }
       },
-      "description": "Tectia Quantum-Safe Edition integrates Crystals-Kyber (the NIST-selected ML-KEM predecessor) for post-quantum key exchange in SSH sessions. Announced August 2022 as the first enterprise SSH product with NIST-selected PQC. No FIPS 203 (ML-KEM) update confirmed as of 2026-05.",
+      "description": "Tectia Quantum-Safe Edition integrates Crystals-Kyber (the NIST-selected ML-KEM predecessor) for post-quantum key exchange in SSH sessions. Announced August 2022 as the first enterprise SSH product with NIST-selected PQC. The Quantum-Safe optional module additionally offers SABER, FrodoKEM and SNTRU as alternative PQC-ECDH hybrid options alongside Kyber. No FIPS 203 (ML-KEM) update confirmed as of 2026-05.",
       "externalReferences": [
         {
           "type": "website",
@@ -27410,7 +27408,7 @@
           "primitive": "kem"
         }
       },
-      "description": "OpenPGP.js PQC PR series tracks draft-ietf-openpgp-pqc (composite ML-KEM+ECDH encryption, composite ML-DSA+ECDSA signatures, standalone SLH-DSA).",
+      "description": "OpenPGP.js PR #2022 ('[v7] PQC: implement ML-KEM-768+X25519 and ML-DSA-65+Ed25519', merged into the v7 branch 2026-07-10) implements draft-ietf-openpgp-pqc: composite ML-KEM-768+X25519 encryption and composite ML-DSA-65+Ed25519 signatures (paired with Ed25519, not ECDSA). Standalone SLH-DSA support is not confirmed in the merged PR. Not yet published to npm as of 2026-08-18 -- available only on the unreleased v7 branch.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -27563,7 +27561,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "C++ reference implementation for MLS protocol; PQ work in progress aligned with draft-ietf-mls-pq-ciphersuites.",
+      "description": "C++ reference implementation for the MLS protocol. Hybrid post-quantum cipher suites (draft-ietf-mls-pq-ciphersuites) are implemented and merged into the main branch: PR #456 'Add support for hybrid PQ cipher suites' (merged 2025-11-24) and PR #455 'Add support for CFRG Hybrid KEMs' (merged 2025-11-23), built on liboqs with an OpenSSL 1.1 dependency (no PQ support yet on BoringSSL). Pure-PQ (non-hybrid) cipher suites are explicitly not implemented.",
       "externalReferences": [
         {
           "type": "vcs",
@@ -31993,9 +31991,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "6f6556567fb4c27e",
+      "bom-ref": "ba3f8f2662a7b7f9",
       "name": "Rosenpass",
-      "version": "v0.2.2",
+      "version": "v0.2.3",
       "manufacturer": {
         "name": "Rosenpass Project"
       },
@@ -32100,9 +32098,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "86362eaf31a12efa",
+      "bom-ref": "69f345695883c857",
       "name": "cryptography (pyca/cryptography)",
-      "version": "49.0.0",
+      "version": "50.0.0",
       "manufacturer": {
         "name": "Python Cryptographic Authority (PyCA)"
       },
@@ -32251,9 +32249,9 @@
     },
     {
       "type": "cryptographic-asset",
-      "bom-ref": "566e338503e7aae1",
+      "bom-ref": "8958951221b2a8fd",
       "name": "Prometheus",
-      "version": "3.12.0",
+      "version": "3.14.0",
       "manufacturer": {
         "name": "Prometheus Authors (CNCF)"
       },
@@ -32309,7 +32307,7 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
-      "description": "Amazon CloudFront supports hybrid post-quantum key establishment across all existing TLS connections at client-to-edge, automatically enabled for TLS 1.3 customers at no additional cost, across all CloudFront edge locations.",
+      "description": "Amazon CloudFront supports hybrid post-quantum key establishment across all existing TLS connections at client-to-edge, automatically enabled for TLS 1.3 customers at no additional cost, across all CloudFront edge locations. Supported quantum-safe key-exchange groups per the CloudFront Developer Guide: X25519MLKEM768 and SecP256r1MLKEM768 (TLS 1.3 only).",
       "externalReferences": [
         {
           "type": "website",
@@ -33740,9 +33738,14 @@
         "name": "Quantum Xchange Inc."
       },
       "cryptoProperties": {
-        "assetType": "related-crypto-material"
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
       },
-      "description": "The document lists only classical cryptographic algorithms (AES, RSA, ECDSA, DSA, SHA). There is no mention of Post-Quantum Cryptography (PQC) algorithms or support.",
+      "description": "Phio TX supports the FIPS 203 ML-KEM algorithm for quantum-safe MACsec and IPsec VPNs. The Phio TX-EM virtualized container variant hardens SKIP-enabled Cisco networking infrastructure and enables smoother migration to post-quantum cryptography. (Source: vendor's own product datasheet, published 2025-09-19.)",
       "externalReferences": [],
       "properties": [
         {
@@ -35354,7 +35357,7 @@
           "primitive": "kem"
         }
       },
-      "description": "OpenSSL 3.6.x carries ML-KEM, ML-DSA and SLH-DSA natively — no external provider — plus the hybrid TLS 1.3 groups (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024). This is the branch the pqctoday sandbox builds every scenario against. IMPORTANT: 3.6 is NOT an LTS branch and reaches end of life on 2026-11-01; the LTS branch is 3.5.x, supported to 2030-04-08, which carries the same PQC algorithm set. Anyone adopting 3.6 for PQC should plan the move to an LTS or later branch before that date.",
+      "description": "OpenSSL 3.6.x carries ML-KEM, ML-DSA and SLH-DSA natively -- no external provider -- plus the hybrid TLS 1.3 groups (X25519MLKEM768, SecP256r1MLKEM768, SecP384r1MLKEM1024). 3.6 also added LMS signature VERIFICATION support per NIST SP 800-208, present in both the FIPS and default providers (verification only, not key generation or signing). This is the branch the pqctoday sandbox builds every scenario against. IMPORTANT: 3.6 is NOT an LTS branch and reaches end of life on 2026-11-01; the LTS branch is 3.5.x, supported to 2030-04-08, which carries the same PQC algorithm set. Anyone adopting 3.6 for PQC should plan the move to an LTS or later branch before that date.",
       "externalReferences": [
         {
           "type": "vcs",

@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.54.0] - 2026-08-19
+
+More than double the product catalog now links straight to a vendor's own brief and user manual, 22 newly-discovered PQC patents are indexed, and every citation on the protocol-interoperability matrix now resolves to real evidence.
+
+### Data
+
+- **Product brief and user manual links more than doubled, to 670 of 1,011 catalog products** [view:/migrate] [persona:ops] [persona:architect]: was 327. Each link is backed by a downloaded, verified copy of the document it points to, not just a search result.
+- **22 new PQC patents added, and a taxonomy error caught before it shipped** [view:/patents] [persona:researcher] [persona:architect]: 1,806 active patents now, up from 1,784, all newly-discovered filings passed the security-classification and PQC-relevance checks before being added. A batch of 13 new entries had briefly mis-tagged the McEliece cryptosystem as "classical" cryptography rather than the NIST round-4 post-quantum candidate it actually is — corrected before merge, so the error never reached the site.
+- **Every citation on the protocol interoperability matrix now resolves to real evidence** [view:/algorithms] [persona:developer] [persona:architect]: 13 protocol specifications the matrix cited (RFC 6488, RFC 10024, and 11 IETF drafts covering hybrid PQC in JOSE, PKINIT, SSH, RPKI, and EAP) had no backing library entry or were filed under a mismatched id, so their citations went nowhere. All 13 now resolve.
+
 ## [4.53.0] - 2026-08-18
 
 Hybrid certificates in the workshop now cover all six algorithm pairings the current standard recommends — and can be verified, not just generated — while the landing page loads noticeably less up front.
