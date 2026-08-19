@@ -1012,8 +1012,19 @@ export const MainLayout = () => {
                   open) with no shared overflow handling, reading as
                   overlapping text. One flex-nowrap + overflow-x-auto row: at
                   narrow widths the whole bar scrolls together instead of any
-                  part of it ever clipping/overlapping. */}
-              <div className="hidden lg:flex items-center justify-between gap-2 flex-1 min-w-0 flex-nowrap overflow-x-auto">
+                  part of it ever clipping/overlapping.
+                  2026-08-19 bug fix: that overflow-x-auto row had no scroll
+                  affordance, so on any lg+ viewport too narrow to fit every
+                  button (e.g. a tablet in portrait) the trailing buttons —
+                  role switcher included — were reachable only by a scroll
+                  gesture the user had no indication existed (real-device
+                  report: "can't scroll to the right of the top bar"). Now
+                  wrapped in the same ScrollFadeContainer the mobile nav row
+                  below already uses for this exact problem. */}
+              <ScrollFadeContainer
+                className="hidden lg:flex flex-1 min-w-0"
+                scrollClassName="flex items-center justify-between gap-2 flex-nowrap"
+              >
                 <div className="flex items-center gap-1.5 shrink-0">
                   {showWipChip && (
                     <span
@@ -1120,7 +1131,7 @@ export const MainLayout = () => {
                     <ChevronDown size={11} aria-hidden="true" className="shrink-0" />
                   </Button>
                 </div>
-              </div>
+              </ScrollFadeContainer>
 
               {/* Mobile nav row — icon-only row + "More" sheet trigger.
                 Unchanged mechanism from before the rail rebuild; only the
@@ -1368,21 +1379,26 @@ export const MainLayout = () => {
                   Assistant
                 </Button>
 
-                {/* Switch role shortcut — only when a persona is set */}
-                {selectedPersona && (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={() => {
-                      setMoreMenuOpen(false)
-                      setPersonaSwitchOpen(true)
-                    }}
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-                  >
-                    <UserCog size={18} aria-hidden="true" />
-                    Switch role
-                  </Button>
-                )}
+                {/* Switch role shortcut — unconditional, mirroring the desktop
+                    top-bar button (also unconditional; roleShortLabel already
+                    defaults to 'Everyone' when no persona is set). Previously
+                    gated on `selectedPersona`, which left mobile users with no
+                    persona set with zero way to open the picker at all — the
+                    desktop-only top-bar trigger is `hidden lg:flex` and this
+                    sheet was the sole mobile entry point (bug found 2026-08-19
+                    from a real-device report: "no option visible"). */}
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => {
+                    setMoreMenuOpen(false)
+                    setPersonaSwitchOpen(true)
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                >
+                  <UserCog size={18} aria-hidden="true" />
+                  {selectedPersona ? 'Switch role' : 'Choose your role'}
+                </Button>
               </div>
             </div>
           </>
