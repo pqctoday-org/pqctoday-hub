@@ -4488,6 +4488,9 @@
       "bom-ref": "116db8e7ad82e8a9",
       "name": "DigiCert SigningHub",
       "version": "Current",
+      "manufacturer": {
+        "name": "Ascertia Ltd."
+      },
       "cryptoProperties": {
         "assetType": "related-crypto-material"
       },
@@ -4495,7 +4498,7 @@
       "externalReferences": [
         {
           "type": "website",
-          "url": "DEAD LINK — https://www.digicert.com/signing/signhub returns HTTP 404, confirmed by direct fetch."
+          "url": "https://www.ascertia.com/products/signinghub/"
         }
       ],
       "properties": [
@@ -15305,7 +15308,7 @@
           "primitive": "kem"
         }
       },
-      "description": "Quantum Protect firmware on u.trust GP HSM Se-Series supports CAVP-validated ML-KEM, ML-DSA, LMS, HSS, and XMSS/XMSS-MT (plus SHA/SHAKE); SLH-DSA is listed by Utimaco as in progress / on the roadmap, not yet generally available. Free simulator available. NIST CAVP validation numbers 40010 and 40011.",
+      "description": "Quantum Protect firmware on u.trust GP HSM Se-Series supports CAVP-validated ML-KEM, ML-DSA, LMS, HSS, and XMSS/XMSS-MT (plus SHA/SHAKE); SLH-DSA is listed by Utimaco as in progress / on the roadmap, not yet generally available. Free simulator available. NIST CAVP validation numbers 40010 and 40011, corroborated by CAVP cert #20182 for the LMS stateful hash-based signature module (folded in from the now-deprecated utimaco-quantum-protect-stateful-hash-based-signature-module row, which described the same u.trust Anchor platform). Supports custom PQC algorithm loading through CryptoServer SDK. Available in network and PCIe form factors (folded in from the now-deprecated utimaco-securityserver row, which described the same hardware line).",
       "externalReferences": [
         {
           "type": "website",
@@ -29249,12 +29252,11 @@
       "cryptoProperties": {
         "assetType": "related-crypto-material",
         "algorithmProperties": {
-          "parameterSetIdentifier": "ML-DSA",
-          "primitive": "signature",
-          "algorithmFamily": "ML-DSA"
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
         }
       },
-      "description": "Implements ML-DSA (FIPS 204) key generation, signature generation and signature verification, validated through the NIST ACVP/CAVP program (product 19565, validation ID A6828, April 2025).",
+      "description": "Implements ML-DSA (FIPS 204) key generation, signature generation and signature verification, validated through the NIST ACVP/CAVP program (product 19565, validation ID A6828, April 2025). ASUS's own ExpertBook Ultra press release (Jan 2026) additionally states BIOS/firmware protection support for ML-KEM (FIPS 203) as part of the ExpertGuardian security architecture: \"ExpertBook Ultra strengthens long-term BIOS protection by adding post-quantum cryptography (PQC) into the firmware security layer. With support for NIST-aligned PQC algorithms -- including ML-KEM (FIPS 203) and ML-DSA (FIPS 204) -- it further reinforces the platform chain of trust.\"",
       "externalReferences": [
         {
           "type": "website",
@@ -31835,11 +31837,11 @@
       "externalReferences": [
         {
           "type": "vcs",
-          "url": "https://github.com/pqctoday-org/pqctoday-kmip"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/tree/main/kmip"
         },
         {
           "type": "website",
-          "url": "https://github.com/pqctoday-org/pqctoday-kmip"
+          "url": "https://github.com/pqctoday-org/pqctoday-hsm/tree/main/kmip"
         }
       ],
       "properties": [
@@ -34288,7 +34290,7 @@
         },
         {
           "name": "pqctoday:fips_validated",
-          "value": "Yes (Validated under NIST Cryptographic Algorithm Validation Program; algorithms reference FIPS186-5 and SP800-56Cr1)"
+          "value": "Yes (NIST CAVP, same record covers classical FIPS186-5/SP800-56Cr1 algorithms AND post-quantum SLH-DSA per FIPS 205)"
         },
         {
           "name": "pqctoday:algorithm_source",

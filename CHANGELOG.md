@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.55.0] - 2026-08-19
+
+More product briefs and user manuals are linked, a batch of vendor data mistakes are corrected, the Industry Landscape page no longer sends you to the wrong Learn module, and changing your role on mobile actually works now.
+
+### Data
+
+- **Product brief and user manual links, now on 695 of 1,011 catalog products** [view:/migrate] [persona:ops] [persona:architect]: was 670. Each new link is backed by a downloaded, verified copy of the document it points to, not just a search result.
+- **Vendor data cleanup: 2 new vendors registered, 5 mismapped products repointed, 4 stale product rows retired** [view:/migrate] [persona:ops] [persona:architect]: Codegic (Pakistan-based PKI vendor) and Zhengzhou Xinda Yimi Technology (the actual maker of the "MiXin PQC01" chip) are now in the vendor registry, and 5 products that had been pointed at the wrong vendor now point at the right one. Separately, a discontinued product (ID Quantique's Cerberis XGR QKD) and 3 rows that turned out to be duplicates of Utimaco's current u.trust HSM line (their unique details were preserved by folding them into that surviving entry first) were retired, each backed by a live-reverified source.
+
+### Fixed
+
+- **The Industry Landscape page no longer points "Supply Chain / Logistics" at the wrong Learn module** [view:/algorithms] [persona:researcher] [persona:architect]: it linked to the vendor/software supply-chain risk module, but this industry's actual topics — port PKI, electronic bills of lading, customs systems — have nothing to do with that. It now shows no module rather than a misleading one, until a dedicated one exists.
+- **Changing your role on mobile actually works now** [persona:curious] [persona:researcher] [persona:executive] [persona:developer] [persona:architect] [persona:ops]: two separate bugs made the role switcher unreachable on phones and tablets. If no role was set yet, there was no button anywhere in the mobile menu to open the picker. And once the screen was wide enough to show the desktop-style top bar (e.g. landscape orientation), the switcher button could scroll out of view with no indication there was more to scroll to. Both fixed.
+
 ## [4.54.0] - 2026-08-19
 
 More than double the product catalog now links straight to a vendor's own brief and user manual, 22 newly-discovered PQC patents are indexed, and every citation on the protocol-interoperability matrix now resolves to real evidence.
@@ -36,7 +50,7 @@ More than double the product catalog now links straight to a vendor's own brief 
 ### Data
 
 - **Product brief and user manual links more than doubled, to 670 of 1,011 catalog products** [view:/migrate] [persona:ops] [persona:architect]: was 327. Each link is backed by a downloaded, verified copy of the document it points to, not just a search result.
-- **22 new PQC patents added, and a taxonomy error caught before it shipped** [view:/patents] [persona:researcher] [persona:architect]: 1,806 active patents now, up from 1,784, all newly-discovered filings passed the security-classification and PQC-relevance checks before being added. A batch of 13 new entries had briefly mis-tagged the McEliece cryptosystem as "classical" cryptography rather than the NIST round-4 post-quantum candidate it actually is — corrected before merge, so the error never reached the site.
+- **22 new patents added — 7 of them post-quantum — and a taxonomy error caught before it shipped** [view:/patents] [persona:researcher] [persona:architect]: 1,806 active patents now, up from 1,784. Every new filing passed the security-classification screen; of the 22, 7 also met the stricter bar the site's "PQC & hybrid" view uses (a named PQC algorithm, or hybrid/PQC-only design) — the rest are adjacent crypto patents kept for context. A batch of 13 pre-existing entries had briefly mis-tagged the McEliece cryptosystem as "classical" cryptography rather than the NIST round-4 post-quantum candidate it actually is — corrected before merge, so the error never reached the site.
 - **Every citation on the protocol interoperability matrix now resolves to real evidence** [view:/algorithms] [persona:developer] [persona:architect]: 13 protocol specifications the matrix cited (RFC 6488, RFC 10024, and 11 IETF drafts covering hybrid PQC in JOSE, PKINIT, SSH, RPKI, and EAP) had no backing library entry or were filed under a mismatched id, so their citations went nowhere. All 13 now resolve.
 
 ## [4.53.0] - 2026-08-18
