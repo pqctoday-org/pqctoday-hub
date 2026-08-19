@@ -67,16 +67,21 @@ describe('sectorCodesFor', () => {
 })
 
 describe('learnModulesForIndustry', () => {
-  it('resolves a module for the 20 industries that declare one', () => {
+  it('resolves a module for the 19 industries that declare one', () => {
+    // 2026-08-19: was 20 — Supply Chain / Logistics's learn_module_id was
+    // cleared (vendor-risk covers vendor/software supply-chain risk, not the
+    // physical maritime/customs/EBL use cases this industry actually lists;
+    // no dedicated logistics module exists to relink to instead).
     const withModule = getLandscapeIndustries().filter(
       (i) => learnModulesForIndustry(i, useCases).length > 0
     )
-    expect(withModule).toHaveLength(20)
+    expect(withModule).toHaveLength(19)
   })
 
-  it('returns nothing for the two industries with no module', () => {
+  it('returns nothing for the three industries with no module', () => {
     expect(learnModulesForIndustry('Cross-Industry', useCases)).toEqual([])
     expect(learnModulesForIndustry('Media / Entertainment / DRM', useCases)).toEqual([])
+    expect(learnModulesForIndustry('Supply Chain / Logistics', useCases)).toEqual([])
   })
 
   it('de-duplicates the industry-level module across its use-case rows', () => {
