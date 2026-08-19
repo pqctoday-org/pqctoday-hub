@@ -761,6 +761,16 @@ def normalize_for_library(ref_id: str) -> str:
 # tight — only add an alias when the canonical library slug is non-derivable.
 REF_ID_ALIASES = {
     "RFC-7030": "IETF-RFC-7030-EST",
+    # 2026-08-18: these 5 library rows predate this cross-reference and were
+    # minted from the document's human title (add_library_row's normal
+    # behavior) rather than its draft slug, so the un-versioned draft-id the
+    # matrix carries never matches on its own. Real evidence already cached
+    # under each one — this is an ID-naming gap, not a missing-document gap.
+    "draft-miller-sshm-composite-sigs": "Post-Quantum-Composite-Signatures-in-SSH",
+    "draft-yoshikawa-sidrops-pqc-rpki": "Post-Quantum-Signature-Algorithm-Profile-and-Migration-Consi",
+    "draft-ietf-emu-pqc-eapaka": "Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA",
+    "draft-ietf-emu-hybrid-pqc-eapaka": "Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum",
+    "draft-ietf-emu-pqc-eap-tls": "Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods-WG-draft",
 }
 
 
