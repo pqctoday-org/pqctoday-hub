@@ -333,6 +333,66 @@ describe.skip('useChatSend', () => {
       )
     })
 
+    it('appends a citation notice when a cited claim is not found in the cited chunk, stripping the citations block from display', async () => {
+      setupStream([
+        'ML-KEM was standardized in 1994.\n\n```citations\n[{"claimExcerpt": "ML-KEM was standardized in 1994", "chunkId": "chunk-1"}]\n```',
+      ])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('When was ML-KEM standardized?')
+      })
+
+      const assistantMsg = mockAddMessage.mock.calls[1][0] as ChatMessage
+      expect(assistantMsg.content).toContain('**Citation notice:**')
+      expect(assistantMsg.content).toContain("Cited source doesn't contain this claim")
+      expect(assistantMsg.content).not.toContain('```citations')
+    })
+
+    it('does not append a citation notice when the cited claim is actually in the cited chunk', async () => {
+      setupStream([
+        'ML-KEM is a key encapsulation mechanism.\n\n```citations\n[{"claimExcerpt": "ML-KEM is a key encapsulation mechanism", "chunkId": "chunk-1"}]\n```',
+      ])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('What is ML-KEM?')
+      })
+
+      const assistantMsg = mockAddMessage.mock.calls[1][0] as ChatMessage
+      expect(assistantMsg.content).toBe('ML-KEM is a key encapsulation mechanism.')
+      expect(assistantMsg.content).not.toContain('Citation notice')
+      expect(assistantMsg.content).not.toContain('```citations')
+    })
+
+    it('prioritizes the citation notice over the fact-check notice when both would fire', async () => {
+      mockSearch.mockReturnValueOnce([
+        {
+          id: 'chunk-migrate-1',
+          source: 'migrate',
+          title: 'Acme Widget',
+          content: 'Acme Widget is a hardware security module.',
+          category: 'migrate',
+          metadata: { fipsValidated: 'No' },
+        },
+      ])
+      setupStream([
+        'Acme Widget is FIPS validated.\n\n```citations\n[{"claimExcerpt": "Acme Widget is FIPS validated", "chunkId": "chunk-migrate-1"}]\n```',
+      ])
+      const { useChatSend } = await import('./useChatSend')
+      const { result } = renderHook(() => useChatSend())
+
+      await act(async () => {
+        await result.current.sendQuery('Is Acme Widget FIPS validated?')
+      })
+
+      const assistantMsg = mockAddMessage.mock.calls[1][0] as ChatMessage
+      expect(assistantMsg.content).toContain('**Citation notice:**')
+      expect(assistantMsg.content).not.toContain('Fact-check notice')
+    })
+
     it('does not append a fact-check notice for an unremarkable, grounded response', async () => {
       setupStream(['The answer is 42.'])
       const { useChatSend } = await import('./useChatSend')

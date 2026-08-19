@@ -34,3 +34,17 @@ function readFlag(name: string, envKey: string): boolean {
  */
 export const useEmbeddingRetrieval = (): boolean =>
   readFlag('pqc-feature-embedding-retrieval', 'VITE_FEATURE_EMBEDDING_RETRIEVAL')
+
+/**
+ * Structured claim citations — asks the model to emit a machine-checkable
+ * `\`\`\`citations` block (claimExcerpt + chunkId pairs) alongside its
+ * prose, verified against the retrieved chunks via exact chunk-id +
+ * text-containment matching (citationVerification.ts), not fuzzy
+ * entity-presence matching. Off by default: whether Gemini 2.5 Flash and
+ * WebLLM Qwen3-8B reliably comply with the new output format across real
+ * query variety is a live-traffic question that hasn't been measured —
+ * flip on for measurement, then default-on once compliance is green. See
+ * pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §7.1.
+ */
+export const useStructuredCitations = (): boolean =>
+  readFlag('pqc-feature-structured-citations', 'VITE_FEATURE_STRUCTURED_CITATIONS')

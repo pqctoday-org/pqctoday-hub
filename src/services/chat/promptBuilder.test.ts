@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect } from 'vitest'
-import { buildLocalSystemPrompt } from './promptBuilder'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { buildLocalSystemPrompt, buildGeminiSystemPrompt } from './promptBuilder'
 import type { RAGChunk } from '@/types/ChatTypes'
+
+let structuredCitationsEnabled = false
+vi.mock('@/services/featureFlags', () => ({
+  useStructuredCitations: () => structuredCitationsEnabled,
+  useEmbeddingRetrieval: () => false,
+}))
 
 /** Minimal RAGChunk for tests that need context blocks */
 const mockChunk: RAGChunk = {
@@ -23,6 +29,10 @@ const mockChunk: RAGChunk = {
 // been silently dropped rather than compacted: certification-status claims,
 // product-algorithm-support claims, and source-specific (not generic) hedging.
 describe('buildLocalSystemPrompt', () => {
+  beforeEach(() => {
+    structuredCitationsEnabled = false
+  })
+
   it('includes "PQC Today Assistant" identity text', () => {
     const result = buildLocalSystemPrompt([])
     expect(result).toContain('PQC Today Assistant')
@@ -78,5 +88,48 @@ describe('buildLocalSystemPrompt', () => {
   it('includes retrieved chunk content in the context block', () => {
     const result = buildLocalSystemPrompt([mockChunk])
     expect(result).toContain('ML-KEM is a lattice-based key encapsulation mechanism')
+  })
+})
+
+// Structured citations (§7.1 of the hallucination-reduction plan) are gated
+// behind useStructuredCitations() — off by default. These tests pin both
+// halves of that contract: zero prompt change when off (so the flag is
+// truly a no-op today), and the citation instruction + chunk-id context
+// header present when on, for BOTH providers.
+describe('structured citations (useStructuredCitations flag)', () => {
+  beforeEach(() => {
+    structuredCitationsEnabled = false
+  })
+
+  it('local prompt: omits the citations instruction and chunk ids when off', () => {
+    const result = buildLocalSystemPrompt([mockChunk])
+    expect(result).not.toMatch(/```citations/)
+    expect(result).not.toContain('id: test-1')
+  })
+
+  it('gemini prompt: omits the citations instruction and chunk ids when off', () => {
+    const result = buildGeminiSystemPrompt([mockChunk])
+    expect(result).not.toMatch(/```citations/)
+    expect(result).not.toContain('id: test-1')
+  })
+
+  it('local prompt: includes the citations instruction and chunk id when on', () => {
+    structuredCitationsEnabled = true
+    const result = buildLocalSystemPrompt([mockChunk])
+    expect(result).toMatch(/```citations/)
+    expect(result).toContain('id: test-1')
+    expect(result).toMatch(/claimExcerpt/)
+    expect(result).toMatch(/chunkId/)
+  })
+
+  it('gemini prompt: includes the citations instruction and chunk id when on', () => {
+    structuredCitationsEnabled = true
+    const result = buildGeminiSystemPrompt([mockChunk])
+    expect(result).toMatch(/```citations/)
+    expect(result).toContain('id: test-1')
+    expect(result).toMatch(/claimExcerpt/)
+    expect(result).toMatch(/chunkId/)
+    // Instructed to appear before the follow-ups fence, not after.
+    expect(result.indexOf('```citations')).toBeLessThan(result.indexOf('FOLLOW-UP SUGGESTIONS'))
   })
 })
