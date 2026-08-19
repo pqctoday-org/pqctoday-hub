@@ -3612,8 +3612,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'firmware (2025) — ML-KEM + ML-DSA via PKCS#11 / CNG / JCE',
       },
       {
-        productId: 'utimaco-securityserver',
-        name: 'Utimaco SecurityServer',
+        productId: 'utimaco-utrust-hsm',
+        name: 'Utimaco uTrust HSM',
         versionNote:
           'Quantum Protect application package (u.trust GP HSM Se-Series, announced 2025-04-02) — ML-KEM / ML-DSA / LMS / XMSS via PKCS#11',
       },

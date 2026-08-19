@@ -65,7 +65,7 @@ export const HSM_VENDORS: HsmVendorRecord[] = [
   },
   {
     id: 'utimaco-cp5',
-    catalogName: 'Utimaco SecurityServer',
+    catalogName: 'Utimaco uTrust HSM',
     vendor: 'Utimaco',
     product: 'SecurityServer CP5 Se-Series',
     firmwareRev: '6.0.1',
