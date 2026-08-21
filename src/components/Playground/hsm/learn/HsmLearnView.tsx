@@ -232,8 +232,8 @@ function LessonRunner({
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
 
   return (
-    <div className="flex gap-4">
-      <nav className="w-48 shrink-0 space-y-1">
+    <div className="flex flex-col gap-4 lg:flex-row">
+      <nav className="w-full shrink-0 space-y-1 lg:w-48">
         {lessons.map((l, i) => (
           <Button
             key={l.id}
@@ -414,7 +414,7 @@ export function HsmLearnView({ onTryInWorkbench }: { onTryInWorkbench: (tab: str
 
   return (
     <GlossaryProvider data={PKCS11_GLOSSARY_DATA}>
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1 space-y-4">
           <div className="flex items-center gap-1 border-b border-border">
             {(

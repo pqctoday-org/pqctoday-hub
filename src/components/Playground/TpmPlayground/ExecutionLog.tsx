@@ -80,39 +80,41 @@ function FieldTable({
   rows: { name: string; type: string; value: string; description: React.ReactNode }[]
 }) {
   return (
-    <table className="w-full text-xs">
-      <thead>
-        <tr className="border-b border-border/50">
-          <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[30%]">
-            Field
-          </th>
-          <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[15%]">
-            Type
-          </th>
-          <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Value / Meaning
-          </th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-border/30">
-        {rows.map((row, i) => (
-          <tr key={i} className="hover:bg-muted/10">
-            <td className="px-2 py-1.5 font-mono text-[10px] text-foreground align-top">
-              {row.name}
-            </td>
-            <td className="px-2 py-1.5 font-mono text-[10px] text-secondary align-top">
-              {row.type}
-            </td>
-            <td className="px-2 py-1.5 align-top space-y-0.5">
-              <div className="font-mono text-[10px] text-primary">{row.value}</div>
-              <div className="text-[10px] text-muted-foreground leading-snug">
-                {row.description}
-              </div>
-            </td>
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[420px] text-xs">
+        <thead>
+          <tr className="border-b border-border/50">
+            <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[30%]">
+              Field
+            </th>
+            <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[15%]">
+              Type
+            </th>
+            <th className="text-left px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Value / Meaning
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="divide-y divide-border/30">
+          {rows.map((row, i) => (
+            <tr key={i} className="hover:bg-muted/10">
+              <td className="px-2 py-1.5 font-mono text-[10px] text-foreground align-top">
+                {row.name}
+              </td>
+              <td className="px-2 py-1.5 font-mono text-[10px] text-secondary align-top">
+                {row.type}
+              </td>
+              <td className="px-2 py-1.5 align-top space-y-0.5">
+                <div className="font-mono text-[10px] text-primary">{row.value}</div>
+                <div className="text-[10px] text-muted-foreground leading-snug">
+                  {row.description}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

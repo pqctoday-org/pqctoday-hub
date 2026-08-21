@@ -368,123 +368,127 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
               <div className="bg-muted px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Signature Algorithms (FIPS 204 / 205)
               </div>
-              <table className="w-full text-[10px]">
-                <thead>
-                  <tr className="bg-muted/50 text-muted-foreground border-b border-border">
-                    <th className="p-2 text-left font-medium">Algorithm</th>
-                    <th className="p-2 text-center font-medium">NIST Level</th>
-                    <th className="p-2 text-right font-medium">Sig Size</th>
-                    <th className="p-2 text-right font-medium">Pub Key</th>
-                    <th className="p-2 text-right font-medium">Sign Speed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    {
-                      alg: 'ML-DSA-44',
-                      level: 'L2 (~AES-128)',
-                      sig: '2,420 B',
-                      pub: '1,312 B',
-                      speed: 'Fast',
-                    },
-                    {
-                      alg: 'ML-DSA-65',
-                      level: 'L3 (~AES-192)',
-                      sig: '3,309 B',
-                      pub: '1,952 B',
-                      speed: 'Medium',
-                    },
-                    {
-                      alg: 'ML-DSA-87',
-                      level: 'L5 (~AES-256)',
-                      sig: '4,627 B',
-                      pub: '2,592 B',
-                      speed: 'Slower',
-                    },
-                    {
-                      alg: 'SLH-DSA-SHA2-128s',
-                      level: 'L1',
-                      sig: '7,856 B',
-                      pub: '32 B',
-                      speed: 'Slow (⚠ TLS use not standardized)',
-                    },
-                    {
-                      alg: 'ECDSA P-256',
-                      level: 'Classical',
-                      sig: '~72 B',
-                      pub: '64 B',
-                      speed: 'Very fast',
-                    },
-                    {
-                      alg: 'RSA-PSS 2048',
-                      level: 'Classical',
-                      sig: '256 B',
-                      pub: '256 B',
-                      speed: 'Fast',
-                    },
-                  ].map((row, i) => (
-                    <tr
-                      key={row.alg}
-                      className={`border-t border-border ${i % 2 === 0 ? 'bg-card' : 'bg-muted/30'}`}
-                    >
-                      <td className="p-2 font-mono font-medium">{row.alg}</td>
-                      <td className="p-2 text-center text-muted-foreground">{row.level}</td>
-                      <td className="p-2 text-right font-mono">{row.sig}</td>
-                      <td className="p-2 text-right font-mono">{row.pub}</td>
-                      <td className="p-2 text-right text-muted-foreground">{row.speed}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px]">
+                  <thead>
+                    <tr className="bg-muted/50 text-muted-foreground border-b border-border">
+                      <th className="p-2 text-left font-medium">Algorithm</th>
+                      <th className="p-2 text-center font-medium">NIST Level</th>
+                      <th className="p-2 text-right font-medium">Sig Size</th>
+                      <th className="p-2 text-right font-medium">Pub Key</th>
+                      <th className="p-2 text-right font-medium">Sign Speed</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        alg: 'ML-DSA-44',
+                        level: 'L2 (~AES-128)',
+                        sig: '2,420 B',
+                        pub: '1,312 B',
+                        speed: 'Fast',
+                      },
+                      {
+                        alg: 'ML-DSA-65',
+                        level: 'L3 (~AES-192)',
+                        sig: '3,309 B',
+                        pub: '1,952 B',
+                        speed: 'Medium',
+                      },
+                      {
+                        alg: 'ML-DSA-87',
+                        level: 'L5 (~AES-256)',
+                        sig: '4,627 B',
+                        pub: '2,592 B',
+                        speed: 'Slower',
+                      },
+                      {
+                        alg: 'SLH-DSA-SHA2-128s',
+                        level: 'L1',
+                        sig: '7,856 B',
+                        pub: '32 B',
+                        speed: 'Slow (⚠ TLS use not standardized)',
+                      },
+                      {
+                        alg: 'ECDSA P-256',
+                        level: 'Classical',
+                        sig: '~72 B',
+                        pub: '64 B',
+                        speed: 'Very fast',
+                      },
+                      {
+                        alg: 'RSA-PSS 2048',
+                        level: 'Classical',
+                        sig: '256 B',
+                        pub: '256 B',
+                        speed: 'Fast',
+                      },
+                    ].map((row, i) => (
+                      <tr
+                        key={row.alg}
+                        className={`border-t border-border ${i % 2 === 0 ? 'bg-card' : 'bg-muted/30'}`}
+                      >
+                        <td className="p-2 font-mono font-medium">{row.alg}</td>
+                        <td className="p-2 text-center text-muted-foreground">{row.level}</td>
+                        <td className="p-2 text-right font-mono">{row.sig}</td>
+                        <td className="p-2 text-right font-mono">{row.pub}</td>
+                        <td className="p-2 text-right text-muted-foreground">{row.speed}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div className="rounded-lg border border-border overflow-hidden">
               <div className="bg-muted px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Key Exchange Groups (FIPS 203, RFC 8446)
               </div>
-              <table className="w-full text-[10px]">
-                <thead>
-                  <tr className="bg-muted/50 text-muted-foreground border-b border-border">
-                    <th className="p-2 text-left font-medium">Group</th>
-                    <th className="p-2 text-center font-medium">NIST Level</th>
-                    <th className="p-2 text-right font-medium">Key Share (pk + ct)</th>
-                    <th className="p-2 text-right font-medium">Deployed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { grp: 'X25519', level: 'Classical', share: '32 + 32 B', dep: 'Universal' },
-                    { grp: 'ML-KEM-512', level: 'L1', share: '800 + 768 B', dep: 'Experimental' },
-                    {
-                      grp: 'ML-KEM-768',
-                      level: 'L3',
-                      share: '1,184 + 1,088 B',
-                      dep: 'Experimental',
-                    },
-                    {
-                      grp: 'ML-KEM-1024',
-                      level: 'L5',
-                      share: '1,568 + 1,568 B',
-                      dep: 'Experimental',
-                    },
-                    {
-                      grp: 'X25519MLKEM768 (hybrid)',
-                      level: 'L3',
-                      share: '~1,216 + 1,120 B',
-                      dep: 'Chrome, Firefox',
-                    },
-                  ].map((row, i) => (
-                    <tr
-                      key={row.grp}
-                      className={`border-t border-border ${i % 2 === 0 ? 'bg-card' : 'bg-muted/30'}`}
-                    >
-                      <td className="p-2 font-mono font-medium">{row.grp}</td>
-                      <td className="p-2 text-center text-muted-foreground">{row.level}</td>
-                      <td className="p-2 text-right font-mono">{row.share}</td>
-                      <td className="p-2 text-right text-muted-foreground">{row.dep}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[10px]">
+                  <thead>
+                    <tr className="bg-muted/50 text-muted-foreground border-b border-border">
+                      <th className="p-2 text-left font-medium">Group</th>
+                      <th className="p-2 text-center font-medium">NIST Level</th>
+                      <th className="p-2 text-right font-medium">Key Share (pk + ct)</th>
+                      <th className="p-2 text-right font-medium">Deployed</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {[
+                      { grp: 'X25519', level: 'Classical', share: '32 + 32 B', dep: 'Universal' },
+                      { grp: 'ML-KEM-512', level: 'L1', share: '800 + 768 B', dep: 'Experimental' },
+                      {
+                        grp: 'ML-KEM-768',
+                        level: 'L3',
+                        share: '1,184 + 1,088 B',
+                        dep: 'Experimental',
+                      },
+                      {
+                        grp: 'ML-KEM-1024',
+                        level: 'L5',
+                        share: '1,568 + 1,568 B',
+                        dep: 'Experimental',
+                      },
+                      {
+                        grp: 'X25519MLKEM768 (hybrid)',
+                        level: 'L3',
+                        share: '~1,216 + 1,120 B',
+                        dep: 'Chrome, Firefox',
+                      },
+                    ].map((row, i) => (
+                      <tr
+                        key={row.grp}
+                        className={`border-t border-border ${i % 2 === 0 ? 'bg-card' : 'bg-muted/30'}`}
+                      >
+                        <td className="p-2 font-mono font-medium">{row.grp}</td>
+                        <td className="p-2 text-center text-muted-foreground">{row.level}</td>
+                        <td className="p-2 text-right font-mono">{row.share}</td>
+                        <td className="p-2 text-right text-muted-foreground">{row.dep}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </details>

@@ -134,6 +134,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
                 variant="ghost"
                 title={part.title}
                 aria-label={`Go to step ${idx + 1}: ${part.title}`}
+                aria-current={idx === currentPart ? 'step' : undefined}
                 className={`flex flex-col items-center gap-2 group h-auto px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -148,7 +149,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
                 >
                   <Icon size={18} />
                 </div>
-                <span className="text-sm font-medium hidden md:block">
+                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
                   {part.title.split(':')[0]}
                 </span>
               </Button>

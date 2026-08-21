@@ -132,47 +132,49 @@ export function RiskScoreWorking({
             )}
             , then summed.
           </p>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
-                <th className="py-1 text-left font-semibold">Category</th>
-                <th className="py-1 text-right font-semibold">Score</th>
-                <th className="py-1 text-right font-semibold">Weight</th>
-                <th className="py-1 text-right font-semibold">Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {working.rows.map((row) => (
-                <tr key={row.label} className="border-b border-border/50">
-                  <td className="py-1.5 pr-2 text-foreground">
-                    {row.label}
-                    {row.note && (
-                      <span className="block text-[10px] leading-snug text-muted-foreground">
-                        {row.note}
-                      </span>
-                    )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border text-[10px] uppercase tracking-wide text-muted-foreground">
+                  <th className="py-1 text-left font-semibold">Category</th>
+                  <th className="py-1 text-right font-semibold">Score</th>
+                  <th className="py-1 text-right font-semibold">Weight</th>
+                  <th className="py-1 text-right font-semibold">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {working.rows.map((row) => (
+                  <tr key={row.label} className="border-b border-border/50">
+                    <td className="py-1.5 pr-2 text-foreground">
+                      {row.label}
+                      {row.note && (
+                        <span className="block text-[10px] leading-snug text-muted-foreground">
+                          {row.note}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-1.5 text-right font-mono text-muted-foreground">
+                      {Math.round(row.score)}
+                    </td>
+                    <td className="py-1.5 text-right font-mono text-muted-foreground">
+                      ×{row.weight}
+                    </td>
+                    <td className="py-1.5 text-right font-mono text-foreground">
+                      {row.contribution.toFixed(1)}
+                    </td>
+                  </tr>
+                ))}
+                <tr>
+                  <td className="py-1.5 font-semibold text-foreground" colSpan={3}>
+                    Weighted total
                   </td>
-                  <td className="py-1.5 text-right font-mono text-muted-foreground">
-                    {Math.round(row.score)}
-                  </td>
-                  <td className="py-1.5 text-right font-mono text-muted-foreground">
-                    ×{row.weight}
-                  </td>
-                  <td className="py-1.5 text-right font-mono text-foreground">
-                    {row.contribution.toFixed(1)}
+                  <td className="py-1.5 text-right font-mono font-semibold text-foreground">
+                    {working.base.toFixed(1)}
                   </td>
                 </tr>
-              ))}
-              <tr>
-                <td className="py-1.5 font-semibold text-foreground" colSpan={3}>
-                  Weighted total
-                </td>
-                <td className="py-1.5 text-right font-mono font-semibold text-foreground">
-                  {working.base.toFixed(1)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
             {result.preBoostScore !== undefined && result.preBoostScore !== result.riskScore ? (
               <>

@@ -56,10 +56,15 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full text-left"
+        // `Button` sets `whitespace-nowrap`; without `whitespace-normal` + `min-w-0`
+        // the flex-1 heading takes its full intrinsic width (up to ~500px) and pushes
+        // the whole section past a 390px viewport.
+        className="flex h-auto w-full items-center gap-3 whitespace-normal py-2 text-left"
       >
         <div className="p-2 rounded-lg bg-primary/10 shrink-0">{icon}</div>
-        <h2 className="text-xl font-bold text-gradient flex-1">{title}</h2>
+        <h2 className="min-w-0 flex-1 break-words text-lg font-bold text-gradient sm:text-xl">
+          {title}
+        </h2>
         <ChevronRight
           size={18}
           className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}

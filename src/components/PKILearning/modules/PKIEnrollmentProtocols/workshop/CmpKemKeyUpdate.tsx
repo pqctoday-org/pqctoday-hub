@@ -217,101 +217,103 @@ export const CmpKemKeyUpdate: React.FC = () => {
             The cert this step issues is fully spec-conformant — every byte traces to a published
             standard:
           </p>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-1 pr-2 font-medium text-foreground">Layer</th>
-                <th className="text-left py-1 pr-2 font-medium text-foreground">Standard</th>
-                <th className="text-left py-1 font-medium text-foreground">What it specifies</th>
-              </tr>
-            </thead>
-            <tbody className="font-mono">
-              <tr className="border-b border-border/50">
-                <td className="py-1 pr-2">SPKI algorithm OID</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://www.rfc-editor.org/rfc/rfc9935"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    RFC 9935 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">ML-KEM-512/768/1024 OIDs in X.509</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-1 pr-2">SPKI key bytes (1184 B)</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    FIPS 203 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">ML-KEM key generation + encap/decap</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-1 pr-2">signatureAlgorithm OID</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://www.rfc-editor.org/rfc/rfc9881"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    RFC 9881 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">ML-DSA-44/65/87 OIDs in X.509</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-1 pr-2">signatureValue bytes (3309 B)</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    FIPS 204 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">ML-DSA signing (CA side)</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-1 pr-2">CMP IR/IP envelope + encrCert POP</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://www.rfc-editor.org/rfc/rfc9810"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    RFC 9810 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">CMP Updates for KEM (2025-07)</td>
-              </tr>
-              <tr>
-                <td className="py-1 pr-2">Downstream: same cert in S/MIME</td>
-                <td className="py-1 pr-2">
-                  <a
-                    href="https://www.rfc-editor.org/rfc/rfc9936"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline inline-flex items-center gap-0.5"
-                  >
-                    RFC 9936 <ExternalLink size={10} />
-                  </a>
-                </td>
-                <td className="py-1">ML-KEM in CMS (2026-03)</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-1 pr-2 font-medium text-foreground">Layer</th>
+                  <th className="text-left py-1 pr-2 font-medium text-foreground">Standard</th>
+                  <th className="text-left py-1 font-medium text-foreground">What it specifies</th>
+                </tr>
+              </thead>
+              <tbody className="font-mono">
+                <tr className="border-b border-border/50">
+                  <td className="py-1 pr-2">SPKI algorithm OID</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://www.rfc-editor.org/rfc/rfc9935"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      RFC 9935 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">ML-KEM-512/768/1024 OIDs in X.509</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1 pr-2">SPKI key bytes (1184 B)</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      FIPS 203 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">ML-KEM key generation + encap/decap</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1 pr-2">signatureAlgorithm OID</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://www.rfc-editor.org/rfc/rfc9881"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      RFC 9881 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">ML-DSA-44/65/87 OIDs in X.509</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1 pr-2">signatureValue bytes (3309 B)</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      FIPS 204 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">ML-DSA signing (CA side)</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-1 pr-2">CMP IR/IP envelope + encrCert POP</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://www.rfc-editor.org/rfc/rfc9810"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      RFC 9810 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">CMP Updates for KEM (2025-07)</td>
+                </tr>
+                <tr>
+                  <td className="py-1 pr-2">Downstream: same cert in S/MIME</td>
+                  <td className="py-1 pr-2">
+                    <a
+                      href="https://www.rfc-editor.org/rfc/rfc9936"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline inline-flex items-center gap-0.5"
+                    >
+                      RFC 9936 <ExternalLink size={10} />
+                    </a>
+                  </td>
+                  <td className="py-1">ML-KEM in CMS (2026-03)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </details>
 

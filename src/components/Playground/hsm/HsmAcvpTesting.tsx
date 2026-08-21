@@ -2891,67 +2891,69 @@ export const HsmAcvpTesting = () => {
             Test Results
           </h4>
           <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
-                <tr>
-                  <th className="p-3 font-bold">Algorithm</th>
-                  <th className="p-3 font-bold">Test Case</th>
-                  <th className="p-3 font-bold">Status</th>
-                  <th className="p-3 font-bold">Details</th>
-                  <th className="p-3 font-bold">Ref</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {results.length === 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-foreground/30 italic">
-                      No results yet. Run the validation suite to assert ACVP compliance.
-                    </td>
+                    <th className="p-3 font-bold">Algorithm</th>
+                    <th className="p-3 font-bold">Test Case</th>
+                    <th className="p-3 font-bold">Status</th>
+                    <th className="p-3 font-bold">Details</th>
+                    <th className="p-3 font-bold">Ref</th>
                   </tr>
-                ) : (
-                  results.map((res) => (
-                    <tr key={res.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="p-3 font-medium text-foreground">{res.algorithm}</td>
-                      <td className="p-3 text-muted-foreground">{res.testCase}</td>
-                      <td className="p-3">
-                        <span
-                          className={clsx(
-                            'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
-                            res.status === 'pass'
-                              ? 'bg-success/20 text-success'
-                              : 'bg-destructive/20 text-destructive'
-                          )}
-                        >
-                          {res.status === 'pass' ? (
-                            <CheckCircle size={12} />
-                          ) : (
-                            <XCircle size={12} />
-                          )}
-                          {res.status}
-                        </span>
-                      </td>
-                      <td
-                        className="p-3 text-muted-foreground truncate max-w-[200px]"
-                        title={res.details}
-                      >
-                        {res.details}
-                      </td>
-                      <td className="p-3">
-                        <a
-                          href={res.referenceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-primary/70 transition-colors"
-                          title={res.referenceUrl}
-                        >
-                          <ExternalLink size={12} />
-                        </a>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {results.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-foreground/30 italic">
+                        No results yet. Run the validation suite to assert ACVP compliance.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    results.map((res) => (
+                      <tr key={res.id} className="hover:bg-muted/30 transition-colors">
+                        <td className="p-3 font-medium text-foreground">{res.algorithm}</td>
+                        <td className="p-3 text-muted-foreground">{res.testCase}</td>
+                        <td className="p-3">
+                          <span
+                            className={clsx(
+                              'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
+                              res.status === 'pass'
+                                ? 'bg-success/20 text-success'
+                                : 'bg-destructive/20 text-destructive'
+                            )}
+                          >
+                            {res.status === 'pass' ? (
+                              <CheckCircle size={12} />
+                            ) : (
+                              <XCircle size={12} />
+                            )}
+                            {res.status}
+                          </span>
+                        </td>
+                        <td
+                          className="p-3 text-muted-foreground truncate max-w-[200px]"
+                          title={res.details}
+                        >
+                          {res.details}
+                        </td>
+                        <td className="p-3">
+                          <a
+                            href={res.referenceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-primary/70 transition-colors"
+                            title={res.referenceUrl}
+                          >
+                            <ExternalLink size={12} />
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

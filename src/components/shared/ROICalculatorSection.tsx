@@ -424,50 +424,52 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
     >
       {/* Print-only summary */}
       <div className="hidden print:block mb-4 text-sm">
-        <table className="w-full text-left border-collapse">
-          <tbody>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Capital Expenditure</td>
-              <td>{formatUSD(computed.migrationCost)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Annual Opex</td>
-              <td>{formatUSD(annualOpex)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Total Cost ({horizon}yr)</td>
-              <td>{formatUSD(computed.totalCost ?? computed.migrationCost)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Avoided Breach Cost</td>
-              <td>{formatUSD(computed.avoidedBreachCost)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Compliance Savings</td>
-              <td>{formatUSD(computed.complianceSavings)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Cost of Inaction ({horizon}yr)</td>
-              <td>{formatUSD(computed.costOfInaction ?? 0)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">NPV @ {discountRatePct}%</td>
-              <td>{formatUSD(computed.npv ?? 0)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Net ROI</td>
-              <td>{formatPercent(computed.netRoiPercent)}</td>
-            </tr>
-            <tr>
-              <td className="py-1 pr-4 font-medium">Payback Period</td>
-              <td>
-                {isFinite(computed.paybackMonths)
-                  ? `${Math.ceil(computed.paybackMonths)} months`
-                  : 'N/A'}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <tbody>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Capital Expenditure</td>
+                <td>{formatUSD(computed.migrationCost)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Annual Opex</td>
+                <td>{formatUSD(annualOpex)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Total Cost ({horizon}yr)</td>
+                <td>{formatUSD(computed.totalCost ?? computed.migrationCost)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Avoided Breach Cost</td>
+                <td>{formatUSD(computed.avoidedBreachCost)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Compliance Savings</td>
+                <td>{formatUSD(computed.complianceSavings)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Cost of Inaction ({horizon}yr)</td>
+                <td>{formatUSD(computed.costOfInaction ?? 0)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">NPV @ {discountRatePct}%</td>
+                <td>{formatUSD(computed.npv ?? 0)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Net ROI</td>
+                <td>{formatPercent(computed.netRoiPercent)}</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-4 font-medium">Payback Period</td>
+                <td>
+                  {isFinite(computed.paybackMonths)
+                    ? `${Math.ceil(computed.paybackMonths)} months`
+                    : 'N/A'}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Computation breakdown */}

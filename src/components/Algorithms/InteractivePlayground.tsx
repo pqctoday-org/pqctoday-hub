@@ -521,43 +521,45 @@ export const InteractivePlayground = () => {
             </label>
             <div className="bg-muted/30 border border-border rounded-lg overflow-hidden h-64 flex flex-col">
               <div className="overflow-y-auto flex-1 custom-scrollbar">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
-                    <tr>
-                      <th className="p-3 font-bold">Name</th>
-                      <th className="p-3 font-bold">Type</th>
-                      <th className="p-3 font-bold">Algorithm</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/40">
-                    {keyStore.length === 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                       <tr>
-                        <td colSpan={3} className="p-8 text-center text-foreground/30 italic">
-                          No keys generated yet...
-                        </td>
+                        <th className="p-3 font-bold">Name</th>
+                        <th className="p-3 font-bold">Type</th>
+                        <th className="p-3 font-bold">Algorithm</th>
                       </tr>
-                    ) : (
-                      keyStore.map((key) => (
-                        <tr key={key.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="p-3 font-medium text-foreground">{key.name}</td>
-                          <td className="p-3">
-                            <span
-                              className={clsx(
-                                'px-2 py-0.5 rounded text-[10px] uppercase font-bold',
-                                key.type === 'public'
-                                  ? 'bg-primary/20 text-primary'
-                                  : 'bg-secondary/20 text-secondary'
-                              )}
-                            >
-                              {key.type}
-                            </span>
+                    </thead>
+                    <tbody className="divide-y divide-border/40">
+                      {keyStore.length === 0 ? (
+                        <tr>
+                          <td colSpan={3} className="p-8 text-center text-foreground/30 italic">
+                            No keys generated yet...
                           </td>
-                          <td className="p-3 text-muted-foreground">{key.algorithm}</td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        keyStore.map((key) => (
+                          <tr key={key.id} className="hover:bg-muted/30 transition-colors">
+                            <td className="p-3 font-medium text-foreground">{key.name}</td>
+                            <td className="p-3">
+                              <span
+                                className={clsx(
+                                  'px-2 py-0.5 rounded text-[10px] uppercase font-bold',
+                                  key.type === 'public'
+                                    ? 'bg-primary/20 text-primary'
+                                    : 'bg-secondary/20 text-secondary'
+                                )}
+                              >
+                                {key.type}
+                              </span>
+                            </td>
+                            <td className="p-3 text-muted-foreground">{key.algorithm}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

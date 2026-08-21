@@ -58,6 +58,9 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
+  /** Tap/keyboard-pinned node — touch devices never fire hover, so the full
+   *  hash was unreachable on mobile and by keyboard before this. */
+  const [pinnedNode, setPinnedNode] = useState<string | null>(null)
 
   // Animation state
   const [animationLevel, setAnimationLevel] = useState<number | null>(null)
@@ -153,7 +156,8 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
         <h3 className="text-lg font-bold text-foreground mb-2">Interactive Merkle Tree Builder</h3>
         <p className="text-sm text-muted-foreground">
           Add certificate leaves, then build the tree to see SHA-256 hashes computed at each level.
-          Hover over any node to see its full hash.
+          Tap (or hover, or focus with the keyboard and press Enter) on any node to see its full
+          hash.
         </p>
       </div>
 
@@ -302,11 +306,15 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
                   </div>
                   <div className="flex justify-center gap-1 flex-wrap">
                     {level.map((node) => {
-                      const isHovered = hoveredNode === node.hash
+                      const isHovered = hoveredNode === node.hash || pinnedNode === node.hash
                       return (
                         <div
                           key={`${levelIdx}-${node.index}`}
-                          className={`relative px-2 py-1.5 rounded text-[10px] font-mono border transition-all cursor-default ${
+                          role="button"
+                          tabIndex={0}
+                          aria-expanded={isHovered}
+                          aria-label={`${node.label} — ${isHovered ? node.hash : 'show full hash'}`}
+                          className={`relative px-2 py-1.5 rounded text-[10px] font-mono border transition-all cursor-pointer ${
                             isRoot
                               ? 'bg-accent/20 text-accent border-accent/50 font-bold'
                               : isLeaf
@@ -315,6 +323,13 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
                           } ${isHovered ? 'ring-2 ring-primary shadow-lg' : ''}`}
                           onMouseEnter={() => setHoveredNode(node.hash)}
                           onMouseLeave={() => setHoveredNode(null)}
+                          onClick={() => setPinnedNode((p) => (p === node.hash ? null : node.hash))}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              setPinnedNode((p) => (p === node.hash ? null : node.hash))
+                            }
+                          }}
                         >
                           <div className="text-[9px] text-muted-foreground mb-0.5">
                             {node.label}
@@ -322,7 +337,7 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
                           <div>{truncateHash(node.hash, 6)}</div>
                           {/* Tooltip showing full hash */}
                           {isHovered && (
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-background border border-border rounded shadow-lg text-[9px] text-foreground whitespace-nowrap z-10">
+                            <div className="absolute bottom-full left-1/2 z-10 mb-2 max-w-[70vw] -translate-x-1/2 whitespace-normal break-all rounded border border-border bg-background px-2 py-1 text-[9px] text-foreground shadow-lg sm:max-w-none sm:whitespace-nowrap">
                               {node.hash}
                             </div>
                           )}

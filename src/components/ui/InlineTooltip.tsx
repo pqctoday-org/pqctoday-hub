@@ -108,7 +108,11 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
         onBlur={close}
         onClick={() => setIsOpen((prev) => !prev)}
         className={clsx(
-          'inline cursor-help border-b border-dotted border-primary/40 text-inherit font-inherit transition-colors hover:border-primary hover:text-primary',
+          // `whitespace-normal` overrides Button's base `whitespace-nowrap`: an inline
+          // glossary trigger must wrap with the prose around it. Without it a long term
+          // ("Cryptographically Relevant Quantum Computer (CRQC)") took its full
+          // intrinsic width and pushed the page past a 390px viewport.
+          'inline cursor-help whitespace-normal border-b border-dotted border-primary/40 text-inherit font-inherit transition-colors hover:border-primary hover:text-primary',
           'print:border-0 print:cursor-default'
         )}
         aria-expanded={isOpen}

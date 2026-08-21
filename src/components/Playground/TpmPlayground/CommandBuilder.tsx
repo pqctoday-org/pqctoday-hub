@@ -813,39 +813,41 @@ export function CommandBuilder({
             Parameters
           </p>
           <div className="border border-border rounded-lg overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-muted/30 border-b border-border">
-                  <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[35%]">
-                    Name
-                  </th>
-                  <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[25%]">
-                    Type
-                  </th>
-                  <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Value / Description
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/50">
-                {cmdDef.params(effectiveAlgo).map((param, i) => (
-                  <tr key={i} className="hover:bg-muted/10">
-                    <td className="px-2 py-2 font-mono text-[11px] text-foreground align-top">
-                      {param.name}
-                    </td>
-                    <td className="px-2 py-2 font-mono text-[10px] text-secondary align-top">
-                      {param.tpmType}
-                    </td>
-                    <td className="px-2 py-2 align-top space-y-0.5">
-                      <div className="font-mono text-[10px] text-primary">{param.value}</div>
-                      <div className="text-[10px] text-muted-foreground leading-snug">
-                        {param.description}
-                      </div>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-muted/30 border-b border-border">
+                    <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[35%]">
+                      Name
+                    </th>
+                    <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-[25%]">
+                      Type
+                    </th>
+                    <th className="text-left px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Value / Description
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  {cmdDef.params(effectiveAlgo).map((param, i) => (
+                    <tr key={i} className="hover:bg-muted/10">
+                      <td className="px-2 py-2 font-mono text-[11px] text-foreground align-top">
+                        {param.name}
+                      </td>
+                      <td className="px-2 py-2 font-mono text-[10px] text-secondary align-top">
+                        {param.tpmType}
+                      </td>
+                      <td className="px-2 py-2 align-top space-y-0.5">
+                        <div className="font-mono text-[10px] text-primary">{param.value}</div>
+                        <div className="text-[10px] text-muted-foreground leading-snug">
+                          {param.description}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

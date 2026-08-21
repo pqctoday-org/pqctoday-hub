@@ -330,10 +330,10 @@ export function TpmLearnView({
   const allDone = stepStates.every((s) => s.status === 'ok' || s.status === 'refused-ok')
 
   return (
-    <div className="flex items-start gap-4">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <div className="min-w-0 flex-1">
-        <div className="flex gap-4">
-          <nav className="w-52 shrink-0 space-y-1">
+        <div className="flex flex-col gap-4 lg:flex-row">
+          <nav className="w-full shrink-0 space-y-1 lg:w-52">
             {TPM_LESSONS.map((l, i) => (
               <Button
                 key={l.id}

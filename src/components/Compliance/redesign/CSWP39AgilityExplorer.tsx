@@ -551,30 +551,32 @@ function EvidenceView({
       {/* Satisfies table */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
         <ScrollFadeContainer>
-          <table className="w-full min-w-[640px] text-left text-xs">
-            <thead className="bg-muted/40 text-[10.5px] uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-4 py-2.5 font-semibold">Regulation</th>
-                <th className="px-4 py-2.5 font-semibold">Obligation</th>
-                <th className="px-4 py-2.5 font-semibold">Deliverable that satisfies it</th>
-                <th className="px-4 py-2.5 font-semibold">Phase</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SATISFIES_ROWS.map((r) => (
-                <tr key={r.regulation} className="border-t border-border/60">
-                  <td className="px-4 py-2.5 font-semibold text-foreground">{r.regulation}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{r.obligation}</td>
-                  <td className="px-4 py-2.5 font-medium text-status-success">{r.deliverable}</td>
-                  <td className="px-4 py-2.5">
-                    <span className="inline-flex rounded-md border border-status-info/40 bg-status-info/10 px-2 py-0.5 text-[10px] font-semibold text-status-info">
-                      {r.phase}
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left text-xs">
+              <thead className="bg-muted/40 text-[10.5px] uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2.5 font-semibold">Regulation</th>
+                  <th className="px-4 py-2.5 font-semibold">Obligation</th>
+                  <th className="px-4 py-2.5 font-semibold">Deliverable that satisfies it</th>
+                  <th className="px-4 py-2.5 font-semibold">Phase</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {SATISFIES_ROWS.map((r) => (
+                  <tr key={r.regulation} className="border-t border-border/60">
+                    <td className="px-4 py-2.5 font-semibold text-foreground">{r.regulation}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{r.obligation}</td>
+                    <td className="px-4 py-2.5 font-medium text-status-success">{r.deliverable}</td>
+                    <td className="px-4 py-2.5">
+                      <span className="inline-flex rounded-md border border-status-info/40 bg-status-info/10 px-2 py-0.5 text-[10px] font-semibold text-status-info">
+                        {r.phase}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </ScrollFadeContainer>
       </div>
 

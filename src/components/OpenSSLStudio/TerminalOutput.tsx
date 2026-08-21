@@ -180,49 +180,51 @@ export const TerminalOutput = () => {
             )}
           </div>
         ) : (
-          <table className="w-full text-left border-collapse table-fixed">
-            <colgroup>
-              <col className="w-24 sm:w-40" />
-              <col className="w-auto" />
-              <col className="w-7" />
-            </colgroup>
-            <tbody className="divide-y divide-border" data-testid="terminal-logs">
-              {filteredLogs.map((log) => (
-                <tr key={log.id} className="group hover:bg-muted/30 transition-colors">
-                  <td className="px-1.5 sm:px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[9px] sm:text-[10px] select-none border-r border-border">
-                    [{log.timestamp}]
-                  </td>
-                  <td
-                    className={clsx(
-                      'px-1.5 sm:px-3 py-1 align-top font-mono leading-tight break-all whitespace-pre-wrap text-[11px]',
-                      log.type === 'error'
-                        ? 'text-status-error'
-                        : log.type === 'info'
-                          ? 'text-status-info'
-                          : 'text-foreground/80'
-                    )}
-                  >
-                    {log.message}
-                  </td>
-                  <td className="px-1 py-1 align-top w-7">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyLine(log.id, log.message)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 h-auto min-h-0 rounded text-muted-foreground hover:text-foreground"
-                      aria-label="Copy line"
-                    >
-                      {copiedId === log.id ? (
-                        <Check size={11} className="text-status-success" />
-                      ) : (
-                        <Copy size={11} />
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-fixed">
+              <colgroup>
+                <col className="w-24 sm:w-40" />
+                <col className="w-auto" />
+                <col className="w-7" />
+              </colgroup>
+              <tbody className="divide-y divide-border" data-testid="terminal-logs">
+                {filteredLogs.map((log) => (
+                  <tr key={log.id} className="group hover:bg-muted/30 transition-colors">
+                    <td className="px-1.5 sm:px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[9px] sm:text-[10px] select-none border-r border-border">
+                      [{log.timestamp}]
+                    </td>
+                    <td
+                      className={clsx(
+                        'px-1.5 sm:px-3 py-1 align-top font-mono leading-tight break-all whitespace-pre-wrap text-[11px]',
+                        log.type === 'error'
+                          ? 'text-status-error'
+                          : log.type === 'info'
+                            ? 'text-status-info'
+                            : 'text-foreground/80'
                       )}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    >
+                      {log.message}
+                    </td>
+                    <td className="px-1 py-1 align-top w-7">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyLine(log.id, log.message)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 h-auto min-h-0 rounded text-muted-foreground hover:text-foreground"
+                        aria-label="Copy line"
+                      >
+                        {copiedId === log.id ? (
+                          <Check size={11} className="text-status-success" />
+                        ) : (
+                          <Copy size={11} />
+                        )}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

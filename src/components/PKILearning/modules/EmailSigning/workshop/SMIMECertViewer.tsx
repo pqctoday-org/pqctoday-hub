@@ -63,36 +63,38 @@ export const SMIMECertViewer: React.FC = () => {
           </div>
 
           <ScrollFadeContainer>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Field</th>
-                  <th className="text-left p-2 font-bold">
-                    <span className="text-warning">RSA-2048</span>
-                  </th>
-                  <th className="text-left p-2 font-bold">
-                    <span className="text-success">ML-DSA-65</span>
-                  </th>
-                  {showNotes && (
-                    <th className="text-left p-2 text-muted-foreground font-medium">Notes</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {CERT_FIELD_COMPARISON.map((row) => (
-                  <tr key={row.field} className="border-b border-border/50">
-                    <td className="p-2 text-muted-foreground font-medium whitespace-nowrap">
-                      {row.field}
-                    </td>
-                    <td className="p-2 font-mono text-xs text-foreground">{row.rsaValue}</td>
-                    <td className="p-2 font-mono text-xs text-foreground">{row.mlDsaValue}</td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 text-muted-foreground font-medium">Field</th>
+                    <th className="text-left p-2 font-bold">
+                      <span className="text-warning">RSA-2048</span>
+                    </th>
+                    <th className="text-left p-2 font-bold">
+                      <span className="text-success">ML-DSA-65</span>
+                    </th>
                     {showNotes && (
-                      <td className="p-2 text-xs text-muted-foreground">{row.notes}</td>
+                      <th className="text-left p-2 text-muted-foreground font-medium">Notes</th>
                     )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {CERT_FIELD_COMPARISON.map((row) => (
+                    <tr key={row.field} className="border-b border-border/50">
+                      <td className="p-2 text-muted-foreground font-medium whitespace-nowrap">
+                        {row.field}
+                      </td>
+                      <td className="p-2 font-mono text-xs text-foreground">{row.rsaValue}</td>
+                      <td className="p-2 font-mono text-xs text-foreground">{row.mlDsaValue}</td>
+                      {showNotes && (
+                        <td className="p-2 text-xs text-muted-foreground">{row.notes}</td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </ScrollFadeContainer>
 
           {/* Size Impact Visual */}

@@ -332,6 +332,10 @@ export const GridMigrationRoadmap: React.FC<GridMigrationRoadmapProps> = ({
 }) => {
   // Gantt hover state
   const [hoveredPhase, setHoveredPhase] = useState<string | null>(null)
+  /** Tap/keyboard-pinned phase — touch devices never fire hover, so the phase
+   *  detail (NERC CIP refs, FTE, cost, milestones) was unreachable on mobile
+   *  and by keyboard before this. */
+  const [pinnedPhase, setPinnedPhase] = useState<string | null>(null)
 
   // Computed adjusted phases
   const adjustedPhases = useMemo(() => {
@@ -532,14 +536,25 @@ export const GridMigrationRoadmap: React.FC<GridMigrationRoadmapProps> = ({
         <div className="space-y-2">
           {adjustedPhases.map(({ phase, adjusted }) => {
             const colors = riskLevelColor(phase.riskLevel)
-            const isHovered = hoveredPhase === phase.id
+            const isHovered = hoveredPhase === phase.id || pinnedPhase === phase.id
 
             return (
               <div
                 key={phase.id}
-                className="flex items-center gap-2"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isHovered}
+                aria-label={`${phase.name} — ${isHovered ? 'hide' : 'show'} phase detail`}
+                className="flex items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onMouseEnter={() => setHoveredPhase(phase.id)}
                 onMouseLeave={() => setHoveredPhase(null)}
+                onClick={() => setPinnedPhase((p) => (p === phase.id ? null : phase.id))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setPinnedPhase((p) => (p === phase.id ? null : phase.id))
+                  }
+                }}
               >
                 {/* Phase label */}
                 <div className="w-[140px] sm:w-[200px] shrink-0 text-right pr-2">
@@ -569,7 +584,7 @@ export const GridMigrationRoadmap: React.FC<GridMigrationRoadmapProps> = ({
                   {/* Hover tooltip */}
                   {isHovered && (
                     <div
-                      className="absolute -top-16 bg-card border border-border rounded-lg p-2 shadow-lg z-10 min-w-[200px] pointer-events-none"
+                      className="absolute -top-16 z-10 max-w-[70vw] min-w-[160px] rounded-lg border border-border bg-card p-2 shadow-lg pointer-events-none sm:min-w-[200px]"
                       style={{
                         left: `${(adjusted.startMonth / maxMonth) * 100}%`,
                       }}

@@ -194,6 +194,8 @@ function WorkshopStepper({
                 variant="ghost"
                 key={part.id}
                 onClick={() => onPartChange(idx)}
+                aria-label={part.title}
+                aria-current={idx === currentPart ? 'step' : undefined}
                 className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -208,7 +210,7 @@ function WorkshopStepper({
                 >
                   <Icon size={16} />
                 </div>
-                <span className="text-sm font-medium hidden md:block">
+                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
                   {part.title.split(':')[0]}
                 </span>
               </Button>

@@ -284,45 +284,47 @@ export function SshLearnSection() {
 
         {timelineOpen && (
           <div className="px-4 pb-4">
-            <table className="w-full text-xs border-collapse mt-2">
-              <thead>
-                <tr className="border-b border-border/50">
-                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
-                    Algorithm
-                  </th>
-                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
-                    OpenSSH
-                  </th>
-                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
-                    Spec
-                  </th>
-                  <th className="text-left py-1.5 text-muted-foreground font-semibold">
-                    Quantum-safe
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {SSH_KEX_ALGORITHMS.map((kex) => (
-                  <tr
-                    key={kex.id}
-                    className="border-b border-border/20 hover:bg-muted/10 transition-colors"
-                  >
-                    <td className="py-1.5 pr-3 font-mono text-foreground">{kex.id}</td>
-                    <td className="py-1.5 pr-3 text-muted-foreground">{kex.opensshVersion}</td>
-                    <td className="py-1.5 pr-3 font-mono text-muted-foreground text-[10px]">
-                      {kex.rfcOrDraft}
-                    </td>
-                    <td className="py-1.5">
-                      {kex.quantumSafe ? (
-                        <span className="text-status-success">✓</span>
-                      ) : (
-                        <span className="text-status-error">✗</span>
-                      )}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse mt-2">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                      Algorithm
+                    </th>
+                    <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                      OpenSSH
+                    </th>
+                    <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                      Spec
+                    </th>
+                    <th className="text-left py-1.5 text-muted-foreground font-semibold">
+                      Quantum-safe
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {SSH_KEX_ALGORITHMS.map((kex) => (
+                    <tr
+                      key={kex.id}
+                      className="border-b border-border/20 hover:bg-muted/10 transition-colors"
+                    >
+                      <td className="py-1.5 pr-3 font-mono text-foreground">{kex.id}</td>
+                      <td className="py-1.5 pr-3 text-muted-foreground">{kex.opensshVersion}</td>
+                      <td className="py-1.5 pr-3 font-mono text-muted-foreground text-[10px]">
+                        {kex.rfcOrDraft}
+                      </td>
+                      <td className="py-1.5">
+                        {kex.quantumSafe ? (
+                          <span className="text-status-success">✓</span>
+                        ) : (
+                          <span className="text-status-error">✗</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
