@@ -14,7 +14,7 @@ import { LEARN_SECTIONS, WORKSHOP_STEPS } from '../components/PKILearning/module
 import { applyModuleRenames } from '../components/PKILearning/manifest/contentVersion'
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 
-const MODULE_STORE_VERSION = 15
+const MODULE_STORE_VERSION = 16
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -71,6 +71,59 @@ interface ModuleState extends LearningProgress {
   pushRiskScoreSnapshot: (score: number) => void
   trackDailyVisit: () => void
   dismissCheckpointScoringNotice: () => void
+}
+
+/**
+ * The two Skills & Team workshop steps (Crypto Champion Roster, Team Sizing
+ * Calculator) both used to save `skills-team-structure::skills-team-plan`, and
+ * `addExecutiveDocument` keys on `moduleId::type` — so whichever one saved last
+ * silently replaced the other's draft. They now own distinct types; this maps a
+ * document a user already holds back onto the step that wrote it.
+ *
+ * Signals, most reliable first. Both shapes exist in the wild: drafts written
+ * after the WS6 follow-up carry an `__artifactScope` stamp, earlier ones carry
+ * no `inputs` at all. A document matching NO signal is deliberately left as
+ * `skills-team-plan` — still a live type, still rendered — rather than dropped
+ * or guessed at.
+ */
+function classifySkillsTeamArtifact(doc: {
+  id?: unknown
+  title?: unknown
+  data?: unknown
+  inputs?: unknown
+}): 'crypto-champion-roster' | 'team-sizing-plan' | undefined {
+  const inputs =
+    typeof doc.inputs === 'object' && doc.inputs !== null
+      ? (doc.inputs as Record<string, unknown>)
+      : undefined
+
+  // 1. The scope stamp the WS6 workaround wrote onto `inputs`.
+  const scope = typeof inputs?.__artifactScope === 'string' ? inputs.__artifactScope : undefined
+  if (scope === 'skills-team-crypto-champions') return 'crypto-champion-roster'
+  if (scope === 'skills-team-sizing') return 'team-sizing-plan'
+
+  // 2. The document id prefix — unchanged since either component was written.
+  const id = typeof doc.id === 'string' ? doc.id : ''
+  if (id.startsWith('champions-')) return 'crypto-champion-roster'
+  if (id.startsWith('skills-team-')) return 'team-sizing-plan'
+
+  // 3. The generated title (a user CAN rename a card, hence not first).
+  const title = typeof doc.title === 'string' ? doc.title.trim() : ''
+  if (title === 'Crypto Champion Program Roster') return 'crypto-champion-roster'
+  if (title === 'PQC Team Sizing Plan') return 'team-sizing-plan'
+
+  // 4. The saved form shape, then the exported markdown heading.
+  if (inputs && typeof inputs.rows === 'object' && inputs.rows !== null) {
+    return 'crypto-champion-roster'
+  }
+  if (inputs && (typeof inputs.instances === 'number' || typeof inputs.phase === 'string')) {
+    return 'team-sizing-plan'
+  }
+  const data = typeof doc.data === 'string' ? doc.data.trimStart() : ''
+  if (data.startsWith('# Crypto Champion Program Roster')) return 'crypto-champion-roster'
+  if (data.startsWith('# PQC Team Sizing Plan')) return 'team-sizing-plan'
+
+  return undefined
 }
 
 const INITIAL_STATE: LearningProgress = {
@@ -804,6 +857,42 @@ export const useModuleStore = create<ModuleState>()(
         if (version <= 14) {
           state.checkpointScoringNoticeSeen = false
           state.version = '15.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 15 → Version 16: split the shared `skills-team-plan` save slot.
+        // Both Skills & Team workshop steps wrote `skills-team-structure::
+        // skills-team-plan`, so the store's `moduleId::type` key let one step's
+        // draft overwrite the other's. Each step now owns its own type; re-type
+        // what users already hold so no saved draft is orphaned. Documents that
+        // match no signal keep `skills-team-plan` (a live type) — nothing is
+        // dropped, merged, or reset here.
+        if (version <= 15) {
+          if (Array.isArray(state.artifacts?.executiveDocuments)) {
+            state.artifacts.executiveDocuments = state.artifacts.executiveDocuments.map(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (d: any) => {
+                if (!d || typeof d !== 'object') return d
+                if (d.moduleId !== 'skills-team-structure' || d.type !== 'skills-team-plan') {
+                  return d
+                }
+                const retyped = classifySkillsTeamArtifact(d)
+                if (!retyped) return d
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const next: any = { ...d, type: retyped }
+                // The scope marker only existed to keep the shared slot's
+                // restores apart. A distinct type does that now, and an
+                // unscoped reader would not match a still-stamped blob.
+                if (next.inputs && typeof next.inputs === 'object') {
+                  const cleaned: Record<string, unknown> = { ...next.inputs }
+                  delete cleaned.__artifactScope
+                  next.inputs = cleaned
+                }
+                return next
+              }
+            )
+          }
+          state.version = '16.0.0'
           state.timestamp = Date.now()
         }
 

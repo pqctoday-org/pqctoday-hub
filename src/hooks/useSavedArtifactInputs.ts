@@ -5,10 +5,9 @@ import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storag
 
 /**
  * Several components legitimately share one `ExecutiveDocumentType` — the
- * PQC GRC workshop's KRI Cascade saves as `kpi-dashboard`, its Exception
- * Register saves as `risk-register`, and both Skills & Team workshop steps
- * save as `skills-team-plan`, each alongside a real standalone tool of that
- * same type. That was harmless while `inputs` was only ever written on an
+ * PQC GRC workshop's KRI Cascade saves as `kpi-dashboard` and its Exception
+ * Register saves as `risk-register`, each alongside a real standalone tool of
+ * that same type. That was harmless while `inputs` was only ever written on an
  * explicit export by the standalone tools; once every artifact autosaves
  * (WS6), an unscoped `useSavedArtifactInputs('kpi-dashboard')` would happily
  * restore the KRI Cascade's `{ levelOf, statusOf }` into the KPI Dashboard.
@@ -18,7 +17,9 @@ import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storag
  * Unscoped readers (every pre-existing caller) see only unscoped writes, so
  * the added restore hooks cannot cross-contaminate a tool that was already
  * correct. The proper fix is distinct `ExecutiveDocumentType` ids for those
- * workshop steps; this keeps the collision inert until then.
+ * workshop steps — the route the two Skills & Team steps took in store v16
+ * (`crypto-champion-roster` / `team-sizing-plan`); this keeps the remaining
+ * collisions inert until they follow.
  */
 interface ArtifactScopeMarker {
   __artifactScope?: unknown

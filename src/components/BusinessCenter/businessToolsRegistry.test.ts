@@ -59,6 +59,8 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'program-charter',
   'initial-scoping',
   'skills-team-plan',
+  'crypto-champion-roster',
+  'team-sizing-plan',
   'infra-modernization-plan',
   'refresh-cycle-alignment',
   'accelerated-execution-profile',
@@ -73,6 +75,11 @@ const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<Executi
   // sim-roadmap is produced by the Simulation (WS-15), not authored via a
   // Command-Center builder tool — it has a label + pillar but no tool component.
   'sim-roadmap',
+  // Split out of `skills-team-plan` (store v16). Both are produced by the
+  // Skills & Team Learn workshop, not by a Command-Center builder; the
+  // standalone Skills & Team Plan tool keeps `skills-team-plan`.
+  'crypto-champion-roster',
+  'team-sizing-plan',
 ])
 
 describe('Command Center registry — drift guard', () => {

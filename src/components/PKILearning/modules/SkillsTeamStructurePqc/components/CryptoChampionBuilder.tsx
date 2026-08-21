@@ -5,13 +5,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { CHAMPION_PLATFORMS, type ChampionPlatform } from '../data/teamModel'
-import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
-
-/** Both Skills & Team workshop steps save under the `skills-team-plan`
- *  document type, which the standalone Skills & Team Plan tool also owns. The
- *  scope keeps all three apart now that every artifact autosaves — see
- *  `scopedArtifactInputs`. */
-const SCOPE = 'skills-team-crypto-champions'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 /** Whether a champion has completed each of the four readiness commitments
  *  (p. 164): foundations training, quarterly briefings, design-review sign-off,
@@ -43,7 +37,7 @@ interface SavedChampionInputs {
 export const CryptoChampionBuilder: React.FC = () => {
   // Restore the last-saved roster so named champions survive navigation, now
   // that ExportableArtifact autosaves them. (WS6 task 6.)
-  const savedInputs = useSavedArtifactInputs<SavedChampionInputs>('skills-team-plan', SCOPE)
+  const savedInputs = useSavedArtifactInputs<SavedChampionInputs>('crypto-champion-roster')
   const [rows, setRows] = useState<Record<ChampionPlatform, ChampionRow>>(() => {
     const acc = {} as Record<ChampionPlatform, ChampionRow>
     for (const p of CHAMPION_PLATFORMS) acc[p] = { ...emptyRow(), ...savedInputs?.rows?.[p] }
@@ -92,10 +86,10 @@ export const CryptoChampionBuilder: React.FC = () => {
     addExecutiveDocument({
       id: `champions-${Date.now()}`,
       moduleId: 'skills-team-structure',
-      type: 'skills-team-plan',
+      type: 'crypto-champion-roster',
       title: 'Crypto Champion Program Roster',
       data: exportMarkdown,
-      inputs: scopedArtifactInputs(SCOPE, { rows } satisfies SavedChampionInputs),
+      inputs: { rows } satisfies SavedChampionInputs,
       createdAt: Date.now(),
     })
   }, [addExecutiveDocument, exportMarkdown, rows])
