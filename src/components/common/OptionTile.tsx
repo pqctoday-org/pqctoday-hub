@@ -45,6 +45,12 @@ export const OptionTile: React.FC<OptionTileProps> = ({
       {icon && <span className="shrink-0">{icon}</span>}
       <span className="text-sm font-semibold leading-tight">{label}</span>
     </div>
-    {description && <p className="text-xs leading-snug opacity-70 break-words">{description}</p>}
+    {/* a11y (WS14, 2026-08-21): the description used to carry `opacity-70`. On the
+        unselected tile the inherited colour is already `text-muted-foreground`, so
+        dimming it a second time rendered 12px text at #7e8894 on #f6f9fb — 3.4:1,
+        below WCAG AA's 4.5:1 (axe `color-contrast`, serious, 3 nodes on
+        /business/tools/policy-generator). Dropping the extra opacity leaves the
+        semantic token to do the job and measures ~6.9:1. */}
+    {description && <p className="text-xs leading-snug break-words">{description}</p>}
   </Button>
 )

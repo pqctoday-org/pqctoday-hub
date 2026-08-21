@@ -3913,8 +3913,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       )}
 
       <GlossaryAutoWrap>
+        {/* a11y (WS14, 2026-08-21): the inner grid is `min-w-[480px]`, so this
+            wrapper does scroll below ~480px. Verified 2026-08-21: axe does NOT
+            currently flag it — the grid holds 4 focusable buttons, so it passes
+            on `focusable-content` (same shape as WireTreeView.tsx). This is
+            defensive: the pass depends on those buttons staying focusable, and
+            `tabIndex={0}` makes the region keyboard-scrollable regardless. */}
         <div
           className={`overflow-x-auto relative ${hasCrashed ? 'opacity-50 pointer-events-none' : ''}`}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx). Applied defensively here — see the comment above for why the rule does not currently match.
+          tabIndex={0}
+          role="region"
+          aria-label="IKEv2 handshake diagram — initiator and responder message exchange"
+          data-testid="vpn-handshake-diagram"
         >
           <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-start min-w-[480px]">
             <div>
