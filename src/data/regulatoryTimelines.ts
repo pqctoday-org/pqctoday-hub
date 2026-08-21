@@ -108,6 +108,49 @@ export const NIST_DEPRECATION = {
   fipsFinalized: '2024-08-13',
 } as const
 
+// ── EO 14412 (US federal CIVILIAN systems) ────────────────────────────────
+
+/**
+ * Executive Order 14412, "Securing the Nation Against Advanced Cryptographic
+ * Attacks" — signed 22 June 2026, published in the Federal Register 25 June
+ * 2026 — with OMB Memorandum M-26-15 (24 June 2026) as implementing guidance.
+ *
+ * This is a DIFFERENT clock from `CNSA_2_0`, and conflating the two is the most
+ * common executive-level error about US PQC policy. CNSA 2.0 governs National
+ * Security Systems; EO 14412 governs federal *civilian* High Value Assets and
+ * high-impact systems, plus the contractors serving them. NSS are explicitly
+ * out of scope for M-26-15.
+ *
+ * The key-establishment/signature split is deliberate: key establishment
+ * carries harvest-now-decrypt-later exposure, so it moves a year earlier.
+ *
+ * Library: `EO-2026-06-22-Securing-the-Nation`, `OMB-M-26-15`.
+ */
+export const EO_14412 = {
+  /** Signed by the President. */
+  signedDate: '2026-06-22',
+  /** Published in the Federal Register. */
+  publishedDate: '2026-06-25',
+  /**
+   * PQC for key establishment (ML-KEM / FIPS 203) on federal HVAs, high-impact
+   * systems and covered contractors — by 31 December of this year.
+   * Same year as the US sim deadline, so it reads from the CSV.
+   */
+  keyEstablishment: US_DEADLINE,
+  /**
+   * PQC for digital signatures on the same systems — by 31 December of this
+   * year. No `is_sim_deadline` CSV row is tagged for the signature leg, so this
+   * one is stated directly from the order.
+   */
+  digitalSignatures: 2031,
+  /** FAR Council proposed rule on contractor FIPS/PQC compliance — EO +180 days. */
+  farProposedRuleDue: '2026-12-19',
+  /** CISA guidance on minimum CBOM elements — EO +270 days. */
+  cbomGuidanceDue: '2027-03-19',
+  /** M-26-15's outer full-migration horizon for federal civilian systems. */
+  fullMigration: 2035,
+} as const
+
 // ── FIPS Standards ────────────────────────────────────────────────────────
 
 export const FIPS_STANDARDS = {

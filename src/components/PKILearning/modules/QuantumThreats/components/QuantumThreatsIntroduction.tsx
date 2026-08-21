@@ -67,7 +67,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 <InlineTooltip term="Entanglement">Entanglement:</InlineTooltip>
               </strong>{' '}
               qubits can be correlated so measuring one instantly determines the other. Together, N
-              qubits can process 2<sup>N</sup> states in parallel.
+              qubits hold a superposition over all 2<sup>N</sup> basis states at once — though a
+              measurement still returns only one of them.
             </p>
           </div>
         </div>
@@ -114,8 +115,8 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 </div>
               </div>
               <p>
-                RSA-2048 requires ~4,098 logical qubits. A CRQC could factor it in hours, not
-                billions of years.
+                RSA-2048 requires ~1,537 logical qubits (Gidney 2025, down from the 2016-era ~4,098
+                estimate). A CRQC could factor it in under a week, not billions of years.
               </p>
             </div>
           </div>

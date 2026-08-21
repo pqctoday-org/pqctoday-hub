@@ -95,7 +95,7 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       badge: "Shor's",
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'secp256k1 would require an estimated\u22641,200 logical qubits — significantly fewer than RSA-2048 (~4,098). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
+        'secp256k1 would require an estimated\u22641,200 logical qubits — fewer than RSA-2048 (~1,537 per Gidney 2025). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
       config: { step: 0, algorithmA: 'ECDSA secp256k1' },
     },
     {

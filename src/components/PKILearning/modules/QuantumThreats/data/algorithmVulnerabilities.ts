@@ -16,7 +16,7 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~4,098 logical qubits',
+    quantumComplexity: '~1,537 logical qubits (revised, Gidney 2025)',
     recommendation: 'Replace with ML-KEM / ML-DSA',
   },
   {
@@ -79,7 +79,8 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'GNFS O(e^{1.9 * n^{1/3}})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~4,098 logical qubits',
+    quantumComplexity:
+      '~4,098 logical qubits (2016-era 2n+2 estimate; no revised figure published)',
     recommendation: 'Replace with ML-KEM',
   },
   {
