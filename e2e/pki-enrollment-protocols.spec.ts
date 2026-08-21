@@ -38,13 +38,21 @@ async function openWorkshop(page: Page) {
   await suppressWhatsNew(page)
   await page.goto(ROUTE)
   // The Tabs component uses custom <button> elements, not role="tab".
-  await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
+  await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()
 }
 
 // Navigate the step indicator (the pill-button row at the top of the workshop pane).
 // Each button's visible label is step.title.split(':')[0] = "Step 1" … "Step 6".
 async function goToStep(page: Page, n: 1 | 2 | 3 | 4 | 5 | 6) {
-  await page.getByRole('button', { name: `Step ${n}`, exact: true }).click()
+  // WorkshopStepper's `aria-label` is the FULL step title ("Step 3: EST
+  // simpleenroll"), optionally suffixed " (current)"/" (completed)" — an exact
+  // 'Step 3' match therefore finds nothing. Anchor on the "Step N" prefix so the
+  // query holds under either labelling, and take the first of the two steppers
+  // rendered (desktop rail + workshop header); the first is the enabled one.
+  await page
+    .getByRole('button', { name: new RegExp(`^Step ${n}\\b`) })
+    .first()
+    .click()
 }
 
 // Helper: wait for the KeyGen step to produce a key. The PEM lives inside a

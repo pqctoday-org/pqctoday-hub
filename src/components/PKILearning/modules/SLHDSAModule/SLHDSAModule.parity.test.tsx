@@ -28,7 +28,7 @@ describe('SLHDSAModule render parity', () => {
     expect(
       screen.getByText(/Master FIPS 205 SLH-DSA .* stateless hash-based signatures/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -37,7 +37,7 @@ describe('SLHDSAModule render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

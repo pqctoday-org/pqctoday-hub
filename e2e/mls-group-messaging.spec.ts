@@ -43,7 +43,7 @@ test.describe('MLS — Group Messaging module', () => {
   test('Workshop tab renders TreeKEM and Provider components', async ({ page }) => {
     await suppressWhatsNew(page)
     await page.goto(ROUTE)
-    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()
     // TreeKEMVisualizer is the first workshop block; ProviderArchitecture follows.
     // Use page text rather than role-based selectors since these are static
     // sections, not interactive controls.
@@ -56,7 +56,7 @@ test.describe('MLS — Group Messaging module', () => {
   test('References tab loads without error', async ({ page }) => {
     await suppressWhatsNew(page)
     await page.goto(ROUTE)
-    await page.getByRole('button', { name: 'References', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'References', exact: true }).first().click()
     // ModuleReferencesTab renders some heading or table — just confirm
     // navigation didn't blank the page.
     await expect(page.getByRole('heading', { name: /MLS — Group Messaging/ })).toBeVisible()
@@ -98,7 +98,7 @@ test.describe('MLS — Playground tool', () => {
     await suppressWhatsNew(page)
     await page.goto('/algorithms')
     await page
-      .getByRole('button', { name: /Protocol Support/i })
+      .getByRole('tab', { name: /Protocol Support/i })
       .first()
       .click()
     await page

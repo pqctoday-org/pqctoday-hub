@@ -244,8 +244,11 @@ test.describe('WS14 — scrollable visualisations reachable by keyboard', () => 
     await expect(page.getByText(/Both handshakes complete/i).first()).toBeVisible({
       timeout: 180_000,
     })
+    // WS7 (2026-08-21): the wire-packets toggle became a real ARIA tab when
+    // ModuleTabBar/tabs.tsx adopted the APG pattern, so `role: 'button'` no
+    // longer matches it.
     await page
-      .getByRole('button', { name: /wire packets/i })
+      .getByRole('tab', { name: /wire packets/i })
       .first()
       .click()
 

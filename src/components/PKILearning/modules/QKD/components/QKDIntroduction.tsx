@@ -149,7 +149,15 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           commercial systems are deployed by governments and telecom operators worldwide, though
           significant constraints remain.
         </p>
-        <div className="overflow-x-auto">
+        {/* WS7: horizontally-scrollable table with no focusable content — axe
+            `scrollable-region-focusable`. tabIndex makes it keyboard-scrollable. */}
+        <div
+          className="overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="QKD technology comparison table"
+        >
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
@@ -254,7 +262,15 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </div>
 
         <h3 className="text-sm font-bold text-foreground mb-2">Key Satellite QKD Initiatives</h3>
-        <div className="overflow-x-auto">
+        {/* WS7: horizontally-scrollable table with no focusable content — axe
+            `scrollable-region-focusable`. tabIndex makes it keyboard-scrollable. */}
+        <div
+          className="overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Satellite QKD initiatives table"
+        >
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">

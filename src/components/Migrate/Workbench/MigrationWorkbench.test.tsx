@@ -84,7 +84,7 @@ describe('MigrationWorkbench (integration)', () => {
     fireEvent.click(screen.getAllByRole('button', { name: /^Choose / })[0])
     // switch to the Plan tab — the foundation choice must surface (it was
     // previously dropped because the plan only understood replace-assets)
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('Foundations & infrastructure')).toBeInTheDocument()
     // category shown as the row caption, with a per-product remove button
     expect(screen.getByText('Crypto libraries & frameworks')).toBeInTheDocument()
@@ -106,7 +106,7 @@ describe('MigrationWorkbench (integration)', () => {
       tab: 'plan',
     })
     renderWorkbench()
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('A Product That No Longer Exists')).toBeInTheDocument()
     expect(screen.getByText('No longer in catalog')).toBeInTheDocument()
   })
@@ -124,7 +124,7 @@ describe('MigrationWorkbench (integration)', () => {
       tab: 'plan',
     })
     renderWorkbench()
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('A Renamed Product')).toBeInTheDocument()
     expect(screen.queryByText('No longer in catalog')).not.toBeInTheDocument()
     expect(
@@ -141,7 +141,7 @@ describe('MigrationWorkbench (integration)', () => {
     fireEvent.click(screen.getAllByRole('button', { name: /^Choose / })[0])
     const inPlan = useMigrateSelectionStore.getState().choice.foundations ?? []
     expect(inPlan.length).toBe(2)
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     // two distinct product rows, each removable
     expect(
       screen.getAllByRole('button', { name: /Remove .* from plan/i }).length
@@ -151,14 +151,14 @@ describe('MigrationWorkbench (integration)', () => {
   it('plan tab shows waves once an asset is planned', () => {
     useMigrateSelectionStore.setState({ plan: ['tls'], tab: 'plan' })
     renderWorkbench()
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('External-facing live traffic')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Export plan \+ CBOM/i })).toBeInTheDocument()
   })
 
   it('vendor roadmaps tab lists vendors with roadmaps', () => {
     renderWorkbench()
-    fireEvent.click(screen.getByRole('button', { name: /Vendor roadmaps/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Vendor roadmaps/i }))
     expect(screen.getByText(/vendors with a published\s+PQC roadmap/i)).toBeInTheDocument()
     expect(screen.getByLabelText('Filter vendor roadmaps')).toBeInTheDocument()
     // at least one vendor card links to its products
@@ -168,7 +168,7 @@ describe('MigrationWorkbench (integration)', () => {
   it('empty plan tab prompts to add assets', () => {
     useMigrateSelectionStore.setState({ plan: [], tab: 'plan' })
     renderWorkbench()
-    fireEvent.click(screen.getByRole('button', { name: /Plan & sequence/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /Plan & sequence/i }))
     expect(screen.getByText('Nothing in your plan yet')).toBeInTheDocument()
   })
 

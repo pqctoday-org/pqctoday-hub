@@ -53,13 +53,13 @@ test.describe('PQC Candidates & Standardisation Lifecycle module', () => {
   })
 
   test('Workshop tab mounts and shows all six step icons', async ({ page }) => {
-    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()
     // Step labels appear on md+ breakpoints — assert at least one is visible (we know desktop runs in CI).
     await expect(page.getByText(/Standardisation Lifecycle/i).first()).toBeVisible()
   })
 
   test('References tab shows entries for the 9 candidates', async ({ page }) => {
-    await page.getByRole('button', { name: 'References', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'References', exact: true }).first().click()
     // FAEST Round-2 Specification should appear (or the title fragment we control).
     await expect(page.getByText(/FAEST.*Round 2/i).first()).toBeVisible()
     await expect(page.getByText(/SQIsign.*Round 2/i).first()).toBeVisible()
@@ -73,7 +73,7 @@ test.describe('PQC Candidates & Standardisation Lifecycle module', () => {
   test('Family selector switches between MPCitH, Multivariate, Isogeny, Lattice', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()
     // Step 2 is "Family Math Explainer" — navigate to it by clicking next twice.
     // (Alternative: directly click the family-math step icon — the icon has no text, so use Next Step.)
     const next = page.getByRole('button', { name: /Next Step/i })

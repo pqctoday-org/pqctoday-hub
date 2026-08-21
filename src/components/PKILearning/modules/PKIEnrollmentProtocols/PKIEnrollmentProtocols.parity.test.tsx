@@ -32,7 +32,7 @@ describe('PKIEnrollmentProtocols render parity', () => {
       screen.getByText(/RFC 7030 \(EST\) and RFC 9810 \(CMP, KEM update\)/)
     ).toBeInTheDocument()
     for (const name of ['Learn', 'Visual', 'Workshop', 'References', 'Tools & Products']) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
     expect(screen.queryByRole('button', { name: 'Exercises' })).not.toBeInTheDocument()
   })

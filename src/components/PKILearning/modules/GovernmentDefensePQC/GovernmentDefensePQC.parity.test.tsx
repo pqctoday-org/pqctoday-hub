@@ -28,7 +28,7 @@ describe('GovernmentDefensePQC', () => {
     )
     expect(screen.getByRole('heading', { name: 'Government & Defense PQC' })).toBeInTheDocument()
     for (const name of ['Learn', 'Workshop', 'References']) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 

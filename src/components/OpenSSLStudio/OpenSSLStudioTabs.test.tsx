@@ -44,7 +44,7 @@ describe('OpenSSLStudioView Tabs', () => {
     expect(screen.getByText('OpenSslLearnView')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /terminal/i })).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: /workbench/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /workbench/i }))
 
     expect(screen.getByRole('button', { name: /terminal/i })).toBeInTheDocument()
   })

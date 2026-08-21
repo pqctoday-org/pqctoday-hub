@@ -27,7 +27,7 @@ describe('VPNSSHModule render parity', () => {
     expect(
       screen.getByText(/Explore post-quantum key exchange in IKEv2, SSH, and WireGuard protocols/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -36,7 +36,7 @@ describe('VPNSSHModule render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

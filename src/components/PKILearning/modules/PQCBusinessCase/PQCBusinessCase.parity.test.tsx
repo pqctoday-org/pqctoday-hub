@@ -29,7 +29,7 @@ describe('PQCBusinessCase render parity', () => {
     expect(
       screen.getByText(/Quantify costs, model ROI, and build compelling investment cases/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -38,7 +38,7 @@ describe('PQCBusinessCase render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

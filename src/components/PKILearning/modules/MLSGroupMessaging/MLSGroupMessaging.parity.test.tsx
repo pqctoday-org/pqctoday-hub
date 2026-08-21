@@ -25,7 +25,7 @@ describe('MLSGroupMessaging render parity', () => {
     expect(screen.getByRole('heading', { name: 'MLS — Group Messaging' })).toBeInTheDocument()
     expect(screen.getByText(/Messaging Layer Security \(RFC 9420\)/)).toBeInTheDocument()
     for (const name of ['Learn', 'Visual', 'Workshop', 'References', 'Tools & Products']) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
     // reduced tab set: no Exercises tab
     expect(screen.queryByRole('button', { name: 'Exercises' })).not.toBeInTheDocument()

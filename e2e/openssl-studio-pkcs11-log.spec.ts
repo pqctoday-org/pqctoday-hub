@@ -34,7 +34,7 @@ test.describe('OpenSSL Studio — PKCS#11 call log', () => {
     await openStudio(page)
 
     // The Studio opens on the Learn tab — the workbench is a sibling tab.
-    await page.getByRole('button', { name: 'Workbench', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'Workbench', exact: true }).first().click()
 
     // openssl.wasm + pkcs11-provider registration is slow on a cold worker.
     await page.getByRole('button', { name: 'PKCS#11 (HSM)' }).click({ timeout: 60_000 })
@@ -71,7 +71,7 @@ test.describe('OpenSSL Studio — PKCS#11 call log', () => {
   // list one the token had lost. This asks the token instead.
   test('Token Inventory reads real objects back out of the token', async ({ page }) => {
     await openStudio(page)
-    await page.getByRole('button', { name: 'Workbench', exact: true }).first().click()
+    await page.getByRole('tab', { name: 'Workbench', exact: true }).first().click()
     await page.getByRole('button', { name: 'PKCS#11 (HSM)' }).click({ timeout: 60_000 })
 
     await page

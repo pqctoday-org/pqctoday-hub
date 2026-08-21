@@ -138,8 +138,13 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
       </div>
 
       {/* Phase Progress Bar */}
+      {/* WS7: axe flags this container too — measured live, `scrollable-region-focusable`
+          fires on BOTH this progress rail and the qubit grid below (752px content in a
+          636px box at 900px wide). role="progressbar" does not exempt a scroll container
+          from needing a keyboard route to its own overflow, so it gets the same fix. */}
       <div
-        className="flex items-center gap-1 overflow-x-auto pb-2"
+        className="flex items-center gap-1 overflow-x-auto pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        tabIndex={0}
         role="progressbar"
         aria-label="BB84 protocol progress"
         aria-valuenow={currentPhaseIndex + 1}
@@ -170,7 +175,18 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
 
       {/* Qubit Grid Visualization */}
       {state.aliceQubits.length > 0 && (
-        <div className="bg-muted/30 rounded-lg p-4 border border-border overflow-x-auto">
+        // WS7: `overflow-x-auto` + a `min-w-max` child means this grid scrolls
+        // horizontally as soon as numQubits exceeds the container width, and it
+        // holds no focusable content — axe `scrollable-region-focusable`. A
+        // keyboard-only user could not scroll it at all before this tabIndex.
+        <div
+          className="bg-muted/30 rounded-lg p-4 border border-border overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making it focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / ui/ScrollFadeContainer.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="BB84 qubit grid — Alice, Bob and Eve basis choices and measurements per qubit"
+          data-testid="bb84-qubit-grid"
+        >
           <div className="grid grid-cols-1 gap-4 min-w-max">
             {/* Header row */}
             <div

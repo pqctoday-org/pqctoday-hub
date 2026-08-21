@@ -71,7 +71,7 @@ test.describe('VPN PQC runtime capabilities', () => {
     const clientAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()
     await clientAlgSelect.selectOption('ML-DSA')
     await page
-      .getByRole('button', { name: /Server Token/i })
+      .getByRole('tab', { name: /Server Token/i })
       .first()
       .click()
     const serverAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()

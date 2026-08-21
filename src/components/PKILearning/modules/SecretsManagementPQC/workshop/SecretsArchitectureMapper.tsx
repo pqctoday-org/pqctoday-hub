@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { AlertTriangle, Key, Shield, Database, FileKey, Lock, UserCheck, Coins } from 'lucide-react'
+import {
+  AlertTriangle,
+  Check,
+  Key,
+  Shield,
+  Database,
+  FileKey,
+  Lock,
+  UserCheck,
+  Coins,
+} from 'lucide-react'
 import {
   SECRET_CATEGORIES,
   HNDL_RISK_LABELS,
@@ -51,55 +61,67 @@ const SecretCard: React.FC<SecretCardProps> = ({ category, selected, onToggle })
   const hndlClass = HNDL_BADGE_CLASSES[category.hndlExposure]
 
   return (
+    // Non-interactive card shell. WS7: the `role="checkbox"` region below is the
+    // ONLY interactive element in the selection path — the raw
+    // `<input type="checkbox">` that used to sit inside it was both an
+    // unlabelled form field and a nested interactive control (axe
+    // `nested-interactive` + `label`), and "Show mitigation" is now a sibling of
+    // the checkbox rather than a descendant of it, for the same reason.
     <div
-      className={`glass-panel p-4 cursor-pointer transition-all border-2 ${
+      className={`glass-panel p-4 transition-all border-2 ${
         selected ? 'border-primary' : 'border-border'
       }`}
-      onClick={onToggle}
-      role="checkbox"
-      aria-checked={selected}
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault()
-          onToggle()
-        }
-      }}
     >
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-primary/10 shrink-0">
-            {SECRET_TYPE_ICONS[category.type]}
+      <div
+        className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        onClick={onToggle}
+        role="checkbox"
+        aria-checked={selected}
+        aria-label={`${category.name} — ${HNDL_RISK_LABELS[category.pqcRisk]} risk, ${HNDL_LABELS[category.hndlExposure]}`}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault()
+            onToggle()
+          }
+        }}
+      >
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-primary/10 shrink-0">
+              {SECRET_TYPE_ICONS[category.type]}
+            </div>
+            <span className="text-sm font-bold text-foreground">{category.name}</span>
           </div>
-          <span className="text-sm font-bold text-foreground">{category.name}</span>
+          {/* Decorative check-mark: the selected state is already announced by
+              aria-checked on the wrapper, so this must NOT be a form control. */}
+          <span
+            aria-hidden="true"
+            className={`mt-0.5 shrink-0 w-4 h-4 rounded border flex items-center justify-center ${
+              selected ? 'bg-primary border-primary text-primary-foreground' : 'border-input'
+            }`}
+          >
+            {selected && <Check size={12} strokeWidth={3} />}
+          </span>
         </div>
-        <input
-          type="checkbox"
-          checked={selected}
-          onChange={onToggle}
-          className="mt-0.5 shrink-0"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </div>
 
-      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{category.description}</p>
+        <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{category.description}</p>
 
-      <div className="flex flex-wrap gap-2 mb-2">
-        <span className={`text-[10px] px-2 py-0.5 rounded border font-bold ${riskClass}`}>
-          {HNDL_RISK_LABELS[category.pqcRisk]} Risk
-        </span>
-        <span className={`text-[10px] font-medium ${hndlClass}`}>
-          {HNDL_LABELS[category.hndlExposure]}
-        </span>
+        <div className="flex flex-wrap gap-2 mb-2">
+          <span className={`text-[10px] px-2 py-0.5 rounded border font-bold ${riskClass}`}>
+            {HNDL_RISK_LABELS[category.pqcRisk]} Risk
+          </span>
+          <span className={`text-[10px] font-medium ${hndlClass}`}>
+            {HNDL_LABELS[category.hndlExposure]}
+          </span>
+        </div>
       </div>
 
       <Button
         variant="ghost"
         className="text-[10px] text-primary hover:underline"
-        onClick={(e) => {
-          e.stopPropagation()
-          setExpanded(!expanded)
-        }}
+        aria-expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
       >
         {expanded ? 'Hide details' : 'Show mitigation'}
       </Button>

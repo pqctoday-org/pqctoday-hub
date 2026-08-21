@@ -25,7 +25,7 @@ describe('WebGatewayPQC render parity', () => {
     expect(screen.getByRole('heading', { name: 'Web Gateway PQC' })).toBeInTheDocument()
     // in-page description (the override slot)
     expect(screen.getByText(/PQC deployment at the infrastructure edge/)).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -34,7 +34,7 @@ describe('WebGatewayPQC render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

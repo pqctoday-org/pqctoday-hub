@@ -128,12 +128,12 @@ describe('SshSimulationPanel', () => {
 
   it('shows the PKCS#11 calls tab', () => {
     renderPanel()
-    expect(screen.getByRole('button', { name: /pkcs#?11/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /pkcs#?11/i })).toBeInTheDocument()
   })
 
   it('shows the wire packets tab unconditionally', () => {
     renderPanel()
-    expect(screen.getByRole('button', { name: /wire packets/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /wire packets/i })).toBeInTheDocument()
   })
 
   it('description advertises real softhsmv3 PKCS#11', () => {

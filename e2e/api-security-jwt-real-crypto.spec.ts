@@ -43,7 +43,7 @@ async function suppressWhatsNew(page: Page) {
 async function openWorkshop(page: Page) {
   await suppressWhatsNew(page)
   await page.goto(ROUTE)
-  await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
+  await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()
 }
 
 test.describe('API Security & JWT workshop — real crypto', () => {
