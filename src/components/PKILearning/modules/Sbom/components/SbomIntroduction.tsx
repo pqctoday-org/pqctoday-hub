@@ -153,19 +153,38 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
         </p>
         <p>
           <Badge kind="view" />
-          If you generate or request SBOMs today: the hash and license fields are the two most
-          likely to already be in your pipeline&apos;s output (both formats have carried the fields
-          all along — see the workshop step below), while the document-level additions are new
-          metadata your SBOM tooling may not populate yet.
+          Real-world tooling hasn&apos;t caught up yet. We checked seven generators&apos; actual
+          current default output (not the format&apos;s theoretical capability) against these ten
+          elements: none is fully 2026-compliant out of the box.{' '}
+          <strong>
+            npm&apos;s native <code>npm sbom</code>
+          </strong>{' '}
+          comes closest at 9 of 10 fields (missing only the signature); <strong>pip-audit</strong>{' '}
+          trails furthest behind at 2 of 10, and still emits the older CycloneDX 1.4 schema. Two
+          gaps are universal across every tool checked: none sign the SBOM automatically, and{' '}
+          <strong>SBOM Generation Context</strong> has no clean mapping in any of them. Treat this
+          as an August 2026 snapshot, not a fixed verdict — SBOM generators are actively adding
+          fields as adoption of the 2026 baseline spreads, so expect these numbers to climb;
+          re-check a tool&apos;s current release before relying on it for a real compliance claim.
         </p>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onNavigateToWorkshop?.(0)}
-          className="border-primary text-primary hover:bg-primary/10"
-        >
-          See the new fields mapped in both formats →
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onNavigateToWorkshop?.(0)}
+            className="border-primary text-primary hover:bg-primary/10"
+          >
+            See the new fields mapped in both formats →
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onNavigateToWorkshop?.(1)}
+            className="border-primary text-primary hover:bg-primary/10"
+          >
+            See the full per-tool breakdown →
+          </Button>
+        </div>
       </Section>
 
       <Section id="sbom-vex" icon={Bug} title="VEX closes the vulnerability-triage gap">

@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'sbom',
-  contentVersion: 5,
+  contentVersion: 6,
   lm_id: 'LM-063',
   title: 'Software Bill of Materials (SBOM)',
   description:
