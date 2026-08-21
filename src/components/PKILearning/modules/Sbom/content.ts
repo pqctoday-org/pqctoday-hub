@@ -14,12 +14,13 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'sbom',
   version: '1.0.0',
-  lastReviewed: '2026-07-08',
+  lastReviewed: '2026-08-21',
 
   standards: [
     getStandard('SPDX-Spec-ISO-5962'),
     getStandard('CycloneDX-Spec-Overview'),
     getStandard('NTIA-SBOM-Minimum-Elements-2021'),
+    getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
     getStandard('OASIS-CSAF-2.0-VEX'),
     getStandard('EO-14028'),
     getStandard('EU-CRA-REG-2024-2847'),
@@ -46,7 +47,7 @@ export const content: ModuleContent = {
     formats:
       "SPDX (Linux Foundation; standardized as ISO/IEC 5962:2021) and CycloneDX (OWASP; standardized as ECMA-424) are the two general-purpose BOM formats. SPDX grew out of license-compliance tooling and has the deeper license/provenance model; CycloneDX grew out of application-security tooling and is the more extensible object model, with sibling BOM types (SaaSBOM, HBOM, ML-BOM, VDR/VEX) built on the same schema. Which format to pick for a cryptographic inventory specifically is the CBOM module's question, not this one — and CycloneDX's own algorithm/curve-naming registry is covered by the CycloneDX Cryptography Registry module, not here.",
     elements:
-      'NTIA\'s 2021 "Minimum Elements for a Software Bill of Materials" defines seven required fields per component: Supplier Name, Component Name, Version, Other Unique Identifiers, Dependency Relationship, Author of SBOM Data, and Timestamp. A 2025 CISA successor draft proposes four additions (Component Hash, License Information, Tool Name, Generation Context) but remained a pre-decisional public-comment draft as of this writing — treat the original seven as the current, final baseline.',
+      'NTIA\'s 2021 "Minimum Elements for a Software Bill of Materials" defined seven required fields per component: Supplier Name, Component Name, Version, Other Unique Identifiers, Dependency Relationship, Author of SBOM Data, and Timestamp. CISA, with NSA, FBI, and 15 international partner cyber agencies, finalized a successor on 29 July 2026 — the "2026 Minimum Elements for a Software Bill of Materials" v2.1 — that preserves those seven while adding ten new required elements (among them SBOM Author Signature, Component Hash Value/Algorithm, SBOM Tool Name/Version, SBOM Data Format Name/Version, and Component License) and clarifying scope on eight more. Treat the 2026 v2.1 elements as the current baseline; the 2021 set remains useful context for anything built against the original EO 14028 mandate.',
     vex: "An SBOM lists what is present; it says nothing about whether a listed component's known vulnerabilities are actually reachable in this product. VEX (Vulnerability Exploitability eXchange, defined as Profile 5 of OASIS CSAF 2.0) closes that gap with a machine-readable affected/not-affected/fixed/under-investigation statement per CVE per product — turning a raw CVE-in-my-SBOM alert into a triage decision instead of a fire drill.",
     regulation:
       'Two mandates drive SBOM adoption: US Executive Order 14028 (May 2021) requires software vendors selling to the federal government to provide an SBOM, which is what produced the NTIA minimum-elements work. The EU Cyber Resilience Act (Regulation EU 2024/2847) requires manufacturers of products with digital elements to maintain an SBOM covering top-level dependencies, with the main obligations applying from 11 December 2027.',

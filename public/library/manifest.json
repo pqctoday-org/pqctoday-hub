@@ -10434,6 +10434,16 @@
       "sizeBytes": 77496,
       "contentType": "text/html",
       "sha256": "5e9212ba779cb31e688dd7a5e5ab2e4e3af17d7e4579f887181e4d13abcd8f47"
+    },
+    {
+      "refId": "2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM",
+      "title": "2026 Minimum Elements for a Software Bill of Materials (SBOM)",
+      "url": "https://www.cisa.gov/sites/default/files/2026-07/2026_cisa_sbom_minimum_elements_508c.pdf",
+      "status": "downloaded",
+      "filename": "2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM.pdf",
+      "sizeBytes": 1283529,
+      "contentType": "application/pdf",
+      "sha256": "b42046c466ea3afcd2110b9b20607896d7172d6aaf66051459a769d0aa7456fc"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
