@@ -2,7 +2,7 @@
 import type { FC } from 'react'
 import { useSectionAnchors } from '@/components/PKILearning/common/LearnSection'
 import { Link } from 'react-router'
-import { Package, FileJson, ListChecks, Bug, Scale, ArrowRightLeft } from 'lucide-react'
+import { Package, FileJson, ListChecks, Bug, Scale, ArrowRightLeft, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -125,11 +125,46 @@ export const SbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           author and timestamp — live at the document level, not per component.
         </p>
         <p>
-          <Badge kind="view" />A 2025 CISA successor draft proposes four additions (Component Hash,
-          License Information, Tool Name, Generation Context) but remained a pre-decisional
-          public-comment draft as of this writing — treat the original seven as the current, final
-          baseline until that changes.
+          <Badge kind="std" />
+          CISA finalized a successor on 29 July 2026 — the{' '}
+          <em>2026 Minimum Elements for a Software Bill of Materials</em>, v2.1 — co-authored with
+          NSA, FBI, and 15 international partner cyber agencies. It keeps all seven of the above and
+          adds ten more; see the next section for what changed and why.
         </p>
+      </Section>
+
+      <Section id="sbom-2026-update" icon={Sparkles} title="What changed in the 2026 update">
+        <p>
+          <Badge kind="std" />
+          The seven elements above went unchanged for four years while SBOM tooling matured well
+          past what they were designed for. The 2026 update is a strict superset — nothing from 2021
+          was removed or redefined — adding <strong>ten new required elements</strong>: seven at the
+          document level (<strong>SBOM Author Signature</strong>,{' '}
+          <strong>SBOM Data Format Name</strong>, <strong>SBOM Data Format Version</strong>,{' '}
+          <strong>SBOM Tool Name</strong>, <strong>SBOM Tool Version</strong>,{' '}
+          <strong>SBOM Version</strong>, and <strong>SBOM Generation Context</strong>) and three per
+          component (<strong>Component Hash Algorithm</strong>,{' '}
+          <strong>Component Hash Value</strong>, and <strong>Component License</strong>). Eight more
+          existing elements — including <strong>SBOM Author</strong>,{' '}
+          <strong>Component Producer</strong>, <strong>Component Identifiers</strong>, and{' '}
+          <strong>Component Version</strong> — gained clarified scope without changing what they
+          require.
+        </p>
+        <p>
+          <Badge kind="view" />
+          If you generate or request SBOMs today: the hash and license fields are the two most
+          likely to already be in your pipeline&apos;s output (both formats have carried the fields
+          all along — see the workshop step below), while the document-level additions are new
+          metadata your SBOM tooling may not populate yet.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onNavigateToWorkshop?.(0)}
+          className="border-primary text-primary hover:bg-primary/10"
+        >
+          See the new fields mapped in both formats →
+        </Button>
       </Section>
 
       <Section id="sbom-vex" icon={Bug} title="VEX closes the vulnerability-triage gap">
