@@ -5,6 +5,13 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { CHAMPION_PLATFORMS, type ChampionPlatform } from '../data/teamModel'
+import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+
+/** Both Skills & Team workshop steps save under the `skills-team-plan`
+ *  document type, which the standalone Skills & Team Plan tool also owns. The
+ *  scope keeps all three apart now that every artifact autosaves — see
+ *  `scopedArtifactInputs`. */
+const SCOPE = 'skills-team-crypto-champions'
 
 /** Whether a champion has completed each of the four readiness commitments
  *  (p. 164): foundations training, quarterly briefings, design-review sign-off,
@@ -29,10 +36,17 @@ const COMMITMENTS: { key: keyof Omit<ChampionRow, 'name'>; label: string; help: 
   { key: 'upgrades', label: 'Upgrades', help: 'Shepherds PQC library upgrades in their domain' },
 ]
 
+interface SavedChampionInputs {
+  rows: Record<ChampionPlatform, ChampionRow>
+}
+
 export const CryptoChampionBuilder: React.FC = () => {
+  // Restore the last-saved roster so named champions survive navigation, now
+  // that ExportableArtifact autosaves them. (WS6 task 6.)
+  const savedInputs = useSavedArtifactInputs<SavedChampionInputs>('skills-team-plan', SCOPE)
   const [rows, setRows] = useState<Record<ChampionPlatform, ChampionRow>>(() => {
     const acc = {} as Record<ChampionPlatform, ChampionRow>
-    for (const p of CHAMPION_PLATFORMS) acc[p] = emptyRow()
+    for (const p of CHAMPION_PLATFORMS) acc[p] = { ...emptyRow(), ...savedInputs?.rows?.[p] }
     return acc
   })
   const { addExecutiveDocument } = useModuleStore()
@@ -81,9 +95,10 @@ export const CryptoChampionBuilder: React.FC = () => {
       type: 'skills-team-plan',
       title: 'Crypto Champion Program Roster',
       data: exportMarkdown,
+      inputs: scopedArtifactInputs(SCOPE, { rows } satisfies SavedChampionInputs),
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, rows])
 
   return (
     <div className="space-y-6">

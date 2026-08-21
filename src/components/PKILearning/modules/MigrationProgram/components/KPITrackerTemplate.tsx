@@ -14,6 +14,7 @@ import {
 import type { KpiDefinition, KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_CATALOG, KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 import { rowsToCsv } from '@/services/export/csvExport'
+import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
 
 const MODULE_ID = 'migration-program'
 const SURFACE = 'migration' as const
@@ -21,6 +22,8 @@ const SURFACE = 'migration' as const
 // a new empty array on every call, failing Object.is equality and causing
 // an infinite re-render loop.
 const EMPTY_HISTORY: { ts: number; score: number }[] = []
+/** Matches KPIDashboardBuilder's proven 500 ms scorecard debounce. */
+const KPI_AUTOSAVE_DELAY_MS = 500
 
 function coercePersona(p: string | null | undefined): KpiPersonaId {
   if (p && (KPI_PERSONAS as readonly string[]).includes(p)) return p as KpiPersonaId
@@ -271,7 +274,33 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
     return rowsToCsv([header, ...rows])
   }, [dimensions, activePersona, userScores, userWeights, touchedIds])
 
+  // Everything that round-trips through `inputs`. Watched by the autosave
+  // below instead of the markdown, because a value can change here without
+  // changing a single character of the export — e.g. a start year entered
+  // while no migration deadline is known leaves Pace-to-Deadline a manual
+  // slider, so the rendered table is byte-identical. (WS6 task 3.)
+  const savedInputsSnapshot = useMemo(
+    () =>
+      ({
+        personaOverride,
+        startYear,
+        userScores,
+        userWeights,
+        touchedIds: Array.from(touchedIds),
+      }) satisfies SavedKpiTrackerInputs,
+    [personaOverride, startYear, userScores, userWeights, touchedIds]
+  )
+  const inputsSignature = useMemo(() => JSON.stringify(savedInputsSnapshot), [savedInputsSnapshot])
+
+  // Guarded so it is idempotent: this component mounts ExportableArtifact
+  // alongside the live scorecard, so BOTH that component's autosave and the
+  // interval below can reach this callback for the same edit. Whichever fires
+  // first wins; the other becomes a no-op instead of a duplicate write.
+  const lastSavedSignatureRef = useRef<string | null>(null)
   const handleExport = useCallback(() => {
+    const signature = `${inputsSignature}\u0000${exportMarkdown}`
+    if (lastSavedSignatureRef.current === signature) return
+    lastSavedSignatureRef.current = signature
     addExecutiveDocument({
       id: `kpi-tracker-${activePersona}-${Date.now()}`,
       moduleId: MODULE_ID,
@@ -279,25 +308,54 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
       title: `PQC Migration KPI Tracker — ${activePersona}`,
       data: exportMarkdown,
       // Persist so the tracker is restorable (see savedInputs above).
-      inputs: {
-        personaOverride,
-        startYear,
-        userScores,
-        userWeights,
-        touchedIds: Array.from(touchedIds),
-      } satisfies SavedKpiTrackerInputs,
+      inputs: savedInputsSnapshot,
       createdAt: Date.now(),
     })
-  }, [
-    addExecutiveDocument,
-    exportMarkdown,
-    activePersona,
-    personaOverride,
-    startYear,
-    userScores,
-    userWeights,
-    touchedIds,
-  ])
+  }, [addExecutiveDocument, exportMarkdown, activePersona, savedInputsSnapshot, inputsSignature])
+
+  // Debounced autosave, ported from KPIDashboardBuilder's `scheduleSave`
+  // (the one tool in this family that already had real persistence).
+  const handleExportRef = useRef(handleExport)
+  useEffect(() => {
+    handleExportRef.current = handleExport
+  }, [handleExport])
+
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const savePendingRef = useRef(false)
+  const mountedOnceRef = useRef(false)
+  const userInteracted = useHasUserInteracted()
+
+  useEffect(() => {
+    if (!mountedOnceRef.current) {
+      mountedOnceRef.current = true
+      return
+    }
+    // The scorecard's first auto-sync is not an edit.
+    if (!userInteracted.current) return
+    savePendingRef.current = true
+    saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null
+      savePendingRef.current = false
+      handleExportRef.current()
+    }, KPI_AUTOSAVE_DELAY_MS)
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current)
+        saveTimerRef.current = null
+      }
+    }
+  }, [inputsSignature, userInteracted])
+
+  // Flush a pending write on unmount so navigating away inside the debounce
+  // window keeps the edit.
+  useEffect(() => {
+    return () => {
+      if (savePendingRef.current) {
+        savePendingRef.current = false
+        handleExportRef.current()
+      }
+    }
+  }, [])
 
   const seedSources: string[] = []
   if (execData.riskScore !== null) seedSources.push('assessment risk score')

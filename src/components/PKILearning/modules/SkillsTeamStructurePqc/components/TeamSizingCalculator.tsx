@@ -7,6 +7,13 @@ import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ROLE_CROSSWALK, CORE_ROLE_ORDER, ROLE_DETAIL, SIZING } from '../data/teamModel'
+import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+
+/** Both Skills & Team workshop steps save under the `skills-team-plan`
+ *  document type, which the standalone Skills & Team Plan tool also owns. The
+ *  scope keeps all three apart now that every artifact autosaves — see
+ *  `scopedArtifactInputs`. */
+const SCOPE = 'skills-team-sizing'
 
 type Phase = 'firstTwoYears' | 'productionRollout'
 
@@ -18,11 +25,21 @@ function variableFte(instances: number, ratio: number): number {
 
 const DEDICATED_CORE_COUNT = CORE_ROLE_ORDER.filter((r) => ROLE_DETAIL[r].dedicatedOverhead).length
 
+interface SavedSizingInputs {
+  instances: number
+  phase: Phase
+  otInScope: boolean
+  seedCleared: boolean
+}
+
 export const TeamSizingCalculator: React.FC = () => {
-  const [instances, setInstances] = useState<number>(2000)
-  const [phase, setPhase] = useState<Phase>('firstTwoYears')
-  const [otInScope, setOtInScope] = useState<boolean>(false)
-  const [seedCleared, setSeedCleared] = useState(false)
+  // Restore the last-saved sizing so estate size / phase / OT scope survive
+  // navigation, now that ExportableArtifact autosaves them. (WS6 task 6.)
+  const savedInputs = useSavedArtifactInputs<SavedSizingInputs>('skills-team-plan', SCOPE)
+  const [instances, setInstances] = useState<number>(savedInputs?.instances ?? 2000)
+  const [phase, setPhase] = useState<Phase>(savedInputs?.phase ?? 'firstTwoYears')
+  const [otInScope, setOtInScope] = useState<boolean>(savedInputs?.otInScope ?? false)
+  const [seedCleared, setSeedCleared] = useState(savedInputs?.seedCleared ?? false)
   const { addExecutiveDocument } = useModuleStore()
   const { industry } = useExecutiveModuleData()
 
@@ -91,9 +108,15 @@ export const TeamSizingCalculator: React.FC = () => {
       type: 'skills-team-plan',
       title: 'PQC Team Sizing Plan',
       data: exportMarkdown,
+      inputs: scopedArtifactInputs(SCOPE, {
+        instances,
+        phase,
+        otInScope,
+        seedCleared,
+      } satisfies SavedSizingInputs),
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, instances, phase, otInScope, seedCleared])
 
   return (
     <div className="space-y-6">

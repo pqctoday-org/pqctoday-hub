@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router'
 import { ExternalLink } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { complianceFrameworks } from '@/data/complianceData'
 import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
@@ -269,6 +270,12 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
   const navigate = useNavigate()
   const [seedCleared, setSeedCleared] = React.useState(false)
+  // Read half of the autosave pair — without it the checklist would save on
+  // every keystroke and still open blank on the next visit. (WS6.)
+  const savedFormData =
+    useSavedArtifactInputs<Record<string, Record<string, string | string[]>>>(
+      'compliance-checklist'
+    )
 
   const trackedFrameworks = useMemo(() => {
     if (myFrameworks.length === 0) return []
@@ -321,6 +328,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
       type: 'compliance-checklist',
       title: 'PQC Compliance Checklist',
       data: markdown,
+      inputs: data,
       createdAt: Date.now(),
       moduleId: 'compliance-strategy',
     })
@@ -368,6 +376,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
         title="PQC Compliance Checklist"
         description="Per-framework checklist of the PQC controls that compliance audits will probe. Star frameworks on /compliance to add them; complete the assessment to flag PQC-required frameworks."
         sections={sections}
+        initialData={savedFormData}
         onExport={handleExport}
         exportFilename="pqc-compliance-checklist"
         exportFormats={['markdown', 'csv', 'pdf']}
