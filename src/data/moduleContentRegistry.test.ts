@@ -17,6 +17,6 @@ describe('moduleContentRegistry', () => {
   })
 
   it('includes a known module with its known lastReviewed date', () => {
-    expect(MODULE_LAST_REVIEWED['sbom']).toBe('2026-07-08')
+    expect(MODULE_LAST_REVIEWED['sbom']).toBe('2026-08-21')
   })
 })
