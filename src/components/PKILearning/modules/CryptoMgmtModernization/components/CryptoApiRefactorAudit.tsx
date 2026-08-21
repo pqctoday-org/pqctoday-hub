@@ -18,6 +18,7 @@ import { Code2, ShieldCheck, ArrowRight } from 'lucide-react'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Recommendation engine (pure function — testable in isolation)
@@ -720,6 +721,12 @@ export function renderCryptoApiMarkdown(
 export const CryptoApiRefactorAudit: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
+  // Read half of WS6's autosave: ArtifactBuilder now writes a draft on every
+  // edit, so without this the draft is written and never read back. The type
+  // is unique to this tool, so no `scope` is needed.
+  const savedFormData =
+    useSavedArtifactInputs<Record<string, Record<string, string | string[]>>>('crypto-api-refactor')
+
   const sections = useMemo(() => SECTIONS, [])
 
   const handleExport = useCallback(
@@ -732,6 +739,8 @@ export const CryptoApiRefactorAudit: React.FC = () => {
         type: 'crypto-api-refactor',
         title: `Crypto API Refactor Audit - ${language}`,
         data: markdown,
+        // Persist the raw form so the draft is restorable on remount.
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -789,6 +798,7 @@ export const CryptoApiRefactorAudit: React.FC = () => {
         title="Crypto API Refactor Audit"
         description="Fill in the stack inventory and refactor scope; the engine returns a phased refactor plan with language-specific call-site checklist."
         sections={sections}
+        initialData={savedFormData}
         onExport={handleExport}
         exportFilename="crypto-api-refactor-audit"
         renderPreview={renderCryptoApiMarkdown}

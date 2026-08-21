@@ -21,6 +21,7 @@ import { Cloud, ShieldCheck, ArrowRight } from 'lucide-react'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { softwareData } from '@/data/migrateData'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -996,6 +997,13 @@ export function renderCloudMatrixMarkdown(
 export const CloudResponsibilityMatrix: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
+  // Read half of WS6's autosave: ArtifactBuilder now writes a draft on every
+  // edit, so without this the draft is written and never read back. The type
+  // is unique to this tool, so no `scope` is needed.
+  const savedFormData = useSavedArtifactInputs<Record<string, Record<string, string | string[]>>>(
+    'cloud-responsibility-matrix'
+  )
+
   const sections = useMemo(() => SECTIONS, [])
 
   const handleExport = useCallback(
@@ -1016,6 +1024,8 @@ export const CloudResponsibilityMatrix: React.FC = () => {
         type: 'cloud-responsibility-matrix',
         title: `Cloud Responsibility Matrix - ${providerSummary}`,
         data: markdown,
+        // Persist the raw form so the draft is restorable on remount.
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -1076,6 +1086,7 @@ export const CloudResponsibilityMatrix: React.FC = () => {
         title="Cloud Shared-Responsibility Crypto Matrix"
         description="Fill in the cloud posture and crypto inventory; the engine returns a per-cell responsibility matrix with PQC availability + watch-outs."
         sections={sections}
+        initialData={savedFormData}
         onExport={handleExport}
         exportFilename="cloud-responsibility-matrix"
         renderPreview={renderCloudMatrixMarkdown}
