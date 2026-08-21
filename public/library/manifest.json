@@ -10444,6 +10444,86 @@
       "sizeBytes": 1283529,
       "contentType": "application/pdf",
       "sha256": "b42046c466ea3afcd2110b9b20607896d7172d6aaf66051459a769d0aa7456fc"
+    },
+    {
+      "refId": "Implementation-of-a-Hybrid-QKD-PQC-Network-and-Applications",
+      "title": "Implementation of a Hybrid QKD/PQC Network and Applications",
+      "url": "https://doi.org/10.1109/QCNC69040.2026.00025",
+      "status": "downloaded",
+      "filename": "Implementation-of-a-Hybrid-QKD-PQC-Network-and-Applications.html",
+      "sizeBytes": 299124,
+      "contentType": "text/html",
+      "sha256": "764e795303cc2a3510440100a48e8f03f46ee297f25f6fd6f5238d50a90a9d59"
+    },
+    {
+      "refId": "The-supersingular-isogeny-problem-in-time-and-memory-p-1-3-o",
+      "title": "The supersingular isogeny problem in time and memory p^{1/3+o(1)}",
+      "url": "https://eprint.iacr.org/2026/1486",
+      "status": "downloaded",
+      "filename": "The-supersingular-isogeny-problem-in-time-and-memory-p-1-3-o.html",
+      "sizeBytes": 14852,
+      "contentType": "text/html",
+      "sha256": "6bc74f3c72a10243aa36dfcbbdffbac1b5c330695163a2b8702123205c2fdf0c"
+    },
+    {
+      "refId": "Solving-the-supersingular-isogeny-problem-in-time-p-2-5-o-1",
+      "title": "Solving the supersingular isogeny problem in time p^{2/5+o(1)} using bivariate multipoint evaluation",
+      "url": "https://eprint.iacr.org/2026/1575",
+      "status": "downloaded",
+      "filename": "Solving-the-supersingular-isogeny-problem-in-time-p-2-5-o-1.html",
+      "sizeBytes": 14828,
+      "contentType": "text/html",
+      "sha256": "7948e12dc01d5c9930aa6d8f70a0369f3720ff86adcdad3fce378a0e9db28e48"
+    },
+    {
+      "refId": "OFFICIAL-COMMENT-SQIsign-lives",
+      "title": "[OFFICIAL COMMENT] SQIsign lives",
+      "url": "https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/TVIAOVbYP1w/m/K9_etUqkBwAJ",
+      "status": "downloaded",
+      "filename": "OFFICIAL-COMMENT-SQIsign-lives.html",
+      "sizeBytes": 895093,
+      "contentType": "text/html",
+      "sha256": "d568a3ca7e3245f0e3afd1b6dfd2785475c6253eb7d5c234ed2b4a40e7b6d3dc"
+    },
+    {
+      "refId": "Discovering-cryptographic-weaknesses-with-Claude",
+      "title": "Discovering cryptographic weaknesses with Claude",
+      "url": "https://www.anthropic.com/research/discovering-cryptographic-weaknesses",
+      "status": "downloaded",
+      "filename": "Discovering-cryptographic-weaknesses-with-Claude.html",
+      "sizeBytes": 188847,
+      "contentType": "text/html",
+      "sha256": "eb88230e69fa1c16d5d37927ba97db8d184b0d4b8aa6abe556adb9a58b58da96"
+    },
+    {
+      "refId": "HAWK-n-Key-Recovery-Reduces-to-SVP-in-Dimension-n-2-1",
+      "title": "HAWK-n Key Recovery Reduces to SVP in Dimension n/2 + 1",
+      "url": "https://groups.google.com/a/list.nist.gov/g/pqc-forum/c/2r2u6SbHun4",
+      "status": "downloaded",
+      "filename": "HAWK-n-Key-Recovery-Reduces-to-SVP-in-Dimension-n-2-1.html",
+      "sizeBytes": 1456305,
+      "contentType": "text/html",
+      "sha256": "966e857e0ddfd7a994a79ea0841dff566760400a087fbfb5b4ee9e8e70305b3e"
+    },
+    {
+      "refId": "A-Polynomial-Time-Quantum-Algorithm-for-the-Dihedral-Coset-P",
+      "title": "A Polynomial-Time Quantum Algorithm for the Dihedral Coset Problem",
+      "url": "https://eprint.iacr.org/2026/1591",
+      "status": "downloaded",
+      "filename": "A-Polynomial-Time-Quantum-Algorithm-for-the-Dihedral-Coset-P.html",
+      "sizeBytes": 15667,
+      "contentType": "text/html",
+      "sha256": "ea79ccbb2d4b8db20175cae458d49986badf876d194c3d2206e0ca7d90255c06"
+    },
+    {
+      "refId": "Quasipolynomial-Cryptanalysis-of-the-McEliece-Cryptosystem-o",
+      "title": "Quasipolynomial Cryptanalysis of the McEliece Cryptosystem (or: PIR Meets McEliece)",
+      "url": "https://eprint.iacr.org/2026/1630",
+      "status": "downloaded",
+      "filename": "Quasipolynomial-Cryptanalysis-of-the-McEliece-Cryptosystem-o.html",
+      "sizeBytes": 16094,
+      "contentType": "text/html",
+      "sha256": "b3163d0bb474d0aa5a0e440e5578425787be672ea5bc789acf93a8f91976288e"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
