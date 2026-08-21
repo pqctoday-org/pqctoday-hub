@@ -32,10 +32,10 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 128,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 6146,
+    estimatedQubits: 2043,
     status: 'broken',
     notes:
-      "Larger key does not help — Shor's scales polynomially with key size. Still the older 2016-era (2n+2) estimate; no CFS-style revised resource estimate has been published for this key size yet (unlike RSA-2048).",
+      "Larger key does not help — Shor's scales polynomially with key size, and the revised circuits scale as n/2 + o(n). Gidney 2025 estimates 2,043 logical qubits for RSA-3072, as reported by Chevignard et al. 2026 — down from the older 2016-era ~6,146 (2n+2) estimate. Note this is BELOW the 2,124 qubits the best space-optimised attack needs for a 256-bit elliptic curve at comparable classical security.",
   },
   {
     name: 'RSA-4096',
@@ -47,7 +47,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 8194,
     status: 'broken',
     notes:
-      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate; no CFS-style revised resource estimate has been published for this key size yet (unlike RSA-2048).',
+      'Even 4096-bit RSA provides zero post-quantum security. Still the older 2016-era (2n+2) estimate — no revised resource estimate has been published for this key size, unlike RSA-2048 and RSA-3072. On the n/2 + o(n) scaling of the revised circuits the real figure would be far lower; treat 8,194 as an upper bound, not a target.',
   },
   {
     name: 'ECDSA P-256',
@@ -675,7 +675,7 @@ export const CRQC_QUBIT_THRESHOLDS = {
 export const QUBIT_ESTIMATE_SOURCES = {
   /** RSA-2048, current best: 1,409 active / 1,537 incl. idle; <1M noisy physical qubits. */
   gidney2025: 'https://arxiv.org/abs/2505.15917',
-  /** RSA-2048 factoring, ~1,730 logical qubits at ~2 trillion Toffoli gates. */
+  /** RSA-2048 factoring, 1,730 logical qubits at 2^36 Toffoli gates (their own wording). */
   cfs2024Factoring: 'https://eprint.iacr.org/2024/222',
   /** 256-bit ECDLP, 1,100 logical qubits (asymptotically 3.12n + o(n)), >100B Toffoli gates. */
   cfs2026EllipticCurves: 'https://eprint.iacr.org/2026/280',

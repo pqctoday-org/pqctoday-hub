@@ -13,12 +13,15 @@ export const content: ModuleContent = {
   lastReviewed: '2026-08-10',
 
   standards: [
-    getStandard('FIPS 203'),
-    // The resource-estimate papers behind every qubit figure in this module.
-    // Cited so the numbers are one click from their source, and so the accuracy
-    // spot-check has the documents those claims actually come from.
+    // Resource-estimate papers first — every qubit figure in this module comes
+    // from one of these four, and they are the claims most likely to go stale.
+    // The accuracy spot-check samples this list by even stride, so relevance
+    // order is what decides which documents the numbers get checked against.
     getStandard('ref-gidney-factor-rsa'),
     getStandard('Google-QuantumAI-EC-Crypto-Quantum-2026'),
+    getStandard('FIPS 203'),
+    getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Factoring'),
+    getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms'),
     getStandard('NIST IR 8547'),
   ],
 
