@@ -37,6 +37,52 @@ export interface LearningPersona {
   quizCategories: string[]
 }
 
+/**
+ * B+ remediation WS8 (2026-08-21) — discoverability repair.
+ *
+ * Three modules were in ZERO persona paths and therefore reachable only by
+ * Browse: `5g-security`, `trust-services-pqc` (both censused by WS8) and
+ * `government-defense-pqc` (shipped 2026-07-30, after that census — found by
+ * WS17's re-count and confirmed here). All three now sit in >= 2 paths.
+ *
+ * Position is load-bearing, not cosmetic. `CuriousModuleView.tsx` resolves
+ * Previous/Next Module purely by array index (`recommendedPath.indexOf(id)` then
+ * `[idx +/- 1]`), and `computeNextIncompleteModuleId` (PersonaPathView, driving
+ * the "Continue where you left off" card) walks `pathItems` in order. So a module
+ * appended just before `'quiz'` only ever surfaces as "next" once a learner has
+ * finished the entire 19-52 item path. Every WS8 insertion is therefore placed
+ * INSIDE an existing topical cluster of the target persona's own path, never at
+ * the tail. The `pathItems` twin must move with it — the lockstep guard in
+ * `learningPersonas.test.ts` enforces exact order equality.
+ *
+ * (`NextModuleCTA.tsx` implements the same index walk and is what WS8's brief
+ * named, but it is currently rendered nowhere — ModuleShell's P2.3 completion
+ * footer replaced it with a `trackOrder`-based handoff. Verified 2026-08-21:
+ * `grep -rn 'NextModuleCTA' src` finds only the file itself and comments.)
+ *
+ * Deliberate non-additions, recorded so a future pass does not "fix" them by rote:
+ * - `mls-group-messaging` stays at 3/6 personas (developer, architect,
+ *   researcher). It is protocol-implementation content for one messaging spec
+ *   (RFC 9420); developer/architect/researcher IS its natural audience. Pushing
+ *   it into executive/ops/curious would be the blanket rule WS8 explicitly
+ *   rejects. Narrow reach here is correct scoping, not a gap.
+ * - `pqc-candidates` (4/6), `database-encryption-pqc` (5/6) and `os-pqc` (4/6)
+ *   are NOT narrow on the persona axis at all. Their real gap is a different
+ *   axis entirely — see the follow-up note below.
+ *
+ * FOLLOW-UP, NOT CLOSED HERE — industry-landscape cross-links. Ten modules have
+ * zero `learn_module_id` rows in `industry_landscape_08182026.csv` (re-counted
+ * 2026-08-21 with csv.DictReader, not a naive comma split): `crypto-registry`,
+ * `sbom`, `mls-group-messaging`, `ai-security-pqc`, `confidential-computing`,
+ * `platform-eng-pqc`, `vendor-risk` (all seven got persona-path fixes above) plus
+ * `pqc-candidates`, `database-encryption-pqc`, `os-pqc` (deliberately untouched
+ * here — see above). Persona paths cannot fix that axis; it needs an Industry
+ * Landscape data pass. `digital-assets` is explicitly NOT in this set: it has 14
+ * cross-links, the most of any module checked — an earlier census reported 0 for
+ * it, which was a parser artifact. For reference, the three reinstated modules
+ * are not at zero either (`5g-security` 6, `trust-services-pqc` 4,
+ * `government-defense-pqc` 4) — their gap was persona reach, which is now closed.
+ */
 export const PERSONAS: Record<PersonaId, LearningPersona> = {
   executive: {
     id: 'executive',
@@ -50,17 +96,23 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'exec-quantum-impact',
       'quantum-threats',
       'pqc-risk-management',
+      'ai-security-pqc',
       'data-asset-sensitivity',
       'pqc-business-case',
       'pqc-governance',
       'skills-team-structure',
       'pqc-grc',
       'compliance-strategy',
+      'trust-services-pqc',
       'crypto-mgmt-modernization',
+      'sbom',
+      'crypto-registry',
       'standards-bodies',
+      'government-defense-pqc',
       'crypto-agility',
       'migration-program',
       'vendor-risk',
+      'digital-assets',
       'verification-closure',
       'iam-pqc',
       'quiz',
@@ -76,6 +128,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         categories: ['pqc-fundamentals', 'exec-quantum-impact', 'quantum-threats'],
       },
       { type: 'module', moduleId: 'pqc-risk-management' },
+      { type: 'module', moduleId: 'ai-security-pqc' },
       { type: 'module', moduleId: 'data-asset-sensitivity' },
       { type: 'module', moduleId: 'pqc-business-case' },
       {
@@ -93,8 +146,12 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'skills-team-structure' },
       { type: 'module', moduleId: 'pqc-grc' },
       { type: 'module', moduleId: 'compliance-strategy' },
+      { type: 'module', moduleId: 'trust-services-pqc' },
       { type: 'module', moduleId: 'crypto-mgmt-modernization' },
+      { type: 'module', moduleId: 'sbom' },
+      { type: 'module', moduleId: 'crypto-registry' },
       { type: 'module', moduleId: 'standards-bodies' },
+      { type: 'module', moduleId: 'government-defense-pqc' },
       {
         type: 'checkpoint',
         id: 'exec-cp-3',
@@ -112,6 +169,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'crypto-agility' },
       { type: 'module', moduleId: 'migration-program' },
       { type: 'module', moduleId: 'vendor-risk' },
+      { type: 'module', moduleId: 'digital-assets' },
       { type: 'module', moduleId: 'verification-closure' },
       { type: 'module', moduleId: 'iam-pqc' },
       {
@@ -129,11 +187,26 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    // Core GRC track only. The industry deep-dive modules (kms / healthcare /
-    // emv / ai / aerospace) were removed from the mandatory executive path so a
-    // busy exec reaches the capstone after the governance core (~10h) instead of
-    // ~14h; those modules remain available via Browse for anyone who wants them.
-    estimatedMinutes: 615,
+    // Governance-first track. The industry deep-dive modules (kms / healthcare /
+    // emv / aerospace) were removed from the mandatory executive path so a busy
+    // exec reaches the capstone after the governance core; those modules remain
+    // available via Browse for anyone who wants them.
+    //
+    // WS8 (2026-08-21) re-added five governance-shaped modules that had narrow or
+    // zero persona reach, each next to the content it belongs with rather than at
+    // the tail: `ai-security-pqc` beside `pqc-risk-management` (AI-security
+    // governance is board-level risk scanning), `trust-services-pqc` after
+    // `compliance-strategy` (qualified signatures / TSP conformity / 30-year
+    // archival liability are compliance topics), `sbom` + `crypto-registry` after
+    // `crypto-mgmt-modernization` (the same CBOM-governance cluster developer and
+    // architect already walk), `government-defense-pqc` after `standards-bodies`
+    // (CNSA 2.0 / OMB / statute mandate stack), and `digital-assets` beside
+    // `vendor-risk` (custody risk sits on the same board risk register).
+    // `ai-security-pqc` was one of the modules trimmed in the earlier pass; it is
+    // back deliberately, and the ~10h concern that motivated that trim is now
+    // carried by `essentials` (200 min) rather than by the full path, since the
+    // capstone unlocks on essentials, not on the whole recommendedPath.
+    estimatedMinutes: 925,
     essentials: [
       'pqc-101',
       'exec-quantum-impact',
@@ -186,6 +259,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'vpn-ssh-pqc',
       'mls-group-messaging',
       'web-gateway-pqc',
+      '5g-security',
       'pqc-testing-validation',
       'hybrid-crypto',
       'crypto-agility',
@@ -233,6 +307,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'vpn-ssh-pqc' },
       { type: 'module', moduleId: 'mls-group-messaging' },
       { type: 'module', moduleId: 'web-gateway-pqc' },
+      { type: 'module', moduleId: '5g-security' },
       { type: 'module', moduleId: 'pqc-testing-validation' },
       {
         type: 'checkpoint',
@@ -315,7 +390,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1695,
+    estimatedMinutes: 1755,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -388,6 +463,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'tls-basics',
       'network-security-pqc',
       'mls-group-messaging',
+      '5g-security',
       'pqc-testing-validation',
       'kms-pqc',
       'hsm-pqc',
@@ -396,6 +472,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'os-pqc',
       'secure-boot-pqc',
       'confidential-computing',
+      'platform-eng-pqc',
       'stateful-signatures',
       'slh-dsa',
       'pki-workshop',
@@ -403,6 +480,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'merkle-tree-certs',
       'email-signing',
       'digital-id',
+      'trust-services-pqc',
       'iam-pqc',
       'api-security-jwt',
       'code-signing',
@@ -452,6 +530,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'tls-basics' },
       { type: 'module', moduleId: 'network-security-pqc' },
       { type: 'module', moduleId: 'mls-group-messaging' },
+      { type: 'module', moduleId: '5g-security' },
       { type: 'module', moduleId: 'pqc-testing-validation' },
       { type: 'module', moduleId: 'kms-pqc' },
       { type: 'module', moduleId: 'hsm-pqc' },
@@ -474,6 +553,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'os-pqc' },
       { type: 'module', moduleId: 'secure-boot-pqc' },
       { type: 'module', moduleId: 'confidential-computing' },
+      { type: 'module', moduleId: 'platform-eng-pqc' },
       { type: 'module', moduleId: 'stateful-signatures' },
       { type: 'module', moduleId: 'slh-dsa' },
       { type: 'module', moduleId: 'pki-workshop' },
@@ -496,6 +576,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'email-signing' },
       { type: 'module', moduleId: 'digital-id' },
+      { type: 'module', moduleId: 'trust-services-pqc' },
       { type: 'module', moduleId: 'iam-pqc' },
       {
         type: 'checkpoint',
@@ -514,7 +595,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1785,
+    estimatedMinutes: 1985,
     essentials: [
       'pqc-101',
       'arch-quantum-impact',
@@ -619,6 +700,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'healthcare-pqc',
       'automotive-pqc',
       'aerospace-pqc',
+      'government-defense-pqc',
       'pqc-risk-management',
       'pqc-business-case',
       'pqc-governance',
@@ -747,6 +829,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'healthcare-pqc' },
       { type: 'module', moduleId: 'automotive-pqc' },
       { type: 'module', moduleId: 'aerospace-pqc' },
+      { type: 'module', moduleId: 'government-defense-pqc' },
       {
         type: 'checkpoint',
         id: 'res-cp-6',
@@ -787,7 +870,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // the Banking & Settlement path). A learner arriving via an industry path
     // sees only that path's duration; this figure is the whole-catalogue sum
     // the persona test asserts.
-    estimatedMinutes: 2745,
+    estimatedMinutes: 2805,
     essentials: [
       'pqc-101',
       'research-quantum-impact',
@@ -831,6 +914,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'database-encryption-pqc',
       'os-pqc',
       'secure-boot-pqc',
+      'confidential-computing',
       'standards-bodies',
       'crypto-agility',
       'migration-program',
@@ -838,6 +922,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'sbom',
       'cbom',
       'crypto-registry',
+      'vendor-risk',
       'verification-closure',
       'soc-implementation-pqc',
       'platform-eng-pqc',
@@ -889,6 +974,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'database-encryption-pqc' },
       { type: 'module', moduleId: 'os-pqc' },
       { type: 'module', moduleId: 'secure-boot-pqc' },
+      { type: 'module', moduleId: 'confidential-computing' },
       {
         type: 'checkpoint',
         id: 'ops-cp-3',
@@ -910,6 +996,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'sbom' },
       { type: 'module', moduleId: 'cbom' },
       { type: 'module', moduleId: 'crypto-registry' },
+      { type: 'module', moduleId: 'vendor-risk' },
       { type: 'module', moduleId: 'verification-closure' },
       { type: 'module', moduleId: 'soc-implementation-pqc' },
       { type: 'module', moduleId: 'platform-eng-pqc' },
@@ -943,7 +1030,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1765,
+    estimatedMinutes: 1855,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',

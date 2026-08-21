@@ -43,17 +43,21 @@ const NICE_EXEMPT: Record<string, string> = {
 /**
  * Modules deliberately absent from every persona's recommendedPath.
  *
- * The two 2026-07-30 modules sit here NOT because they should stay unsurfaced,
- * but because adding a module to a persona path changes that persona's
- * advertised `estimatedMinutes` and reorders a published learning journey —
- * a content decision for the module's owner, not a side effect of a test.
- * They are listed so the decision is owed rather than forgotten.
+ * EMPTY as of B+ remediation WS8 (2026-08-21), and that is the point: all three
+ * modules that used to sit here — `5g-security`, `trust-services-pqc` and
+ * `government-defense-pqc`, the exact "AWAITING DECISION" entries this list was
+ * created to make visible — now have real, content-justified path placements
+ * (see the WS8 header comment in `learningPersonas.ts`). Every learn module is
+ * reachable from at least one learning journey.
+ *
+ * Keep the mechanism, not the entries. An exemption is still the honest escape
+ * hatch for a module that genuinely should not be in any path — but it costs a
+ * written reason, which is what never happened for the three above. The stronger
+ * placement contract WS8 established (>= 2 paths for the reinstated modules,
+ * cluster-adjacent insertion positions, a no-regression ratchet on single-path
+ * modules) lives in `personaPathPlacement.driftguard.test.ts`.
  */
-const PERSONA_PATH_EXEMPT: Record<string, string> = {
-  '5g-security': 'pre-existing gap — Industries-track module in no persona path',
-  'government-defense-pqc': 'AWAITING DECISION (2026-07-30): which persona path should carry it',
-  'trust-services-pqc': 'AWAITING DECISION (2026-07-30): which persona path should carry it',
-}
+const PERSONA_PATH_EXEMPT: Record<string, string> = {}
 
 const learnModuleIds = Object.keys(MODULE_CATALOG).filter((id) => !NOT_A_LEARN_MODULE.has(id))
 
