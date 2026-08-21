@@ -41,6 +41,7 @@ const SECTIONS = [
   { id: 'sbom-why', label: 'Why an SBOM' },
   { id: 'sbom-formats', label: 'SPDX vs CycloneDX' },
   { id: 'sbom-elements', label: 'Minimum Elements' },
+  { id: 'sbom-2026-update', label: '2026 Update' },
   { id: 'sbom-vex', label: 'VEX' },
   { id: 'sbom-regulation', label: 'Regulation' },
   { id: 'sbom-to-cbom', label: 'Bridge to CBOM' },
