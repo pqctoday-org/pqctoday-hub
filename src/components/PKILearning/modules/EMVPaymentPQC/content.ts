@@ -37,7 +37,7 @@ export const content: ModuleContent = {
     // host. Verified against the cached document: "G7 CYBER EXPERT GROUP
     // STATEMENT ON Advancing a Coordinated Roadmap for the Transition to
     // Post-Quantum Cryptography in the Financial Sector", January 2026.
-    getStandard('G7-CEG-Financial-PQC-2026'),
+    getStandard('G7-Financial-PQC-Roadmap-2026'),
     getStandard('SG-MAS-Quantum-Advisory-2024'),
     // Added 2026-08-01: read against the cached PDF (was named-but-unread in
     // EPC_CITED_EMERGING). Sets a dated transition expectation, not an
