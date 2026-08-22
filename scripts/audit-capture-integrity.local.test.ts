@@ -26,6 +26,7 @@ import {
   type UpstreamFetchImpl,
   fallbackCacheRoots,
   resolveCapturePath,
+  checkDuplicateCaptures,
 } from './audit-capture-integrity'
 
 const sha = (s: string | Buffer): string => createHash('sha256').update(s).digest('hex')
@@ -502,5 +503,68 @@ describe('the library cache has two roots', () => {
     expect(resolveCapturePath(fallbackCacheRoots(lec()), 'library', 'Nowhere.pdf')).toBe(
       path.join(lec(), 'library', 'Nowhere.pdf')
     )
+  })
+})
+
+describe('same-URL grouping is scoped to library', () => {
+  // Several rows sharing ONE source URL means different things per collection.
+  // A library reference_id IS a document, so two rows on one URL is a duplicate
+  // row. A timeline event and a threat are not documents: four separate NSA
+  // milestones (2025, 2025, 2027, 2031) are all evidenced by one CNSA FAQ, and
+  // three distinct threats cite that same document. On 2026-08-22 that normal
+  // shape accounted for 16 of 21 same-URL findings — noise that trains people
+  // to ignore the audit.
+  const capture = (collection: string, refId: string, url: string, sha: string) => ({
+    collection,
+    refId,
+    entry: { refId, url, status: 'downloaded', sha256: sha, filename: `${refId}.html` },
+    cachedPath: `/nowhere/${refId}.html`,
+    diskSha256: sha,
+    declaredUrl: url,
+    active: true,
+  })
+
+  const SHA = 'f'.repeat(64)
+
+  it('reports two library rows sharing one URL', () => {
+    const out = checkDuplicateCaptures([
+      capture('library', 'FIPS-198', 'https://x.test/hmac.pdf', SHA),
+      capture('library', 'FIPS-198-1', 'https://x.test/hmac.pdf', SHA),
+    ] as never)
+    expect(out.map((f) => f.kind)).toEqual(['duplicate-capture-same-url'])
+  })
+
+  it('stays silent for timeline rows sharing one source document', () => {
+    const out = checkDuplicateCaptures([
+      capture('timeline', 'nsa-cnsa-1-0-deadline', 'https://x.test/cnsa-faq.pdf', SHA),
+      capture('timeline', 'nsa-cnsa-2-0-revised', 'https://x.test/cnsa-faq.pdf', SHA),
+      capture('timeline', 'nsa-nss-acquisitions', 'https://x.test/cnsa-faq.pdf', SHA),
+    ] as never)
+    expect(out).toEqual([])
+  })
+
+  it('stays silent for threats rows sharing one source document', () => {
+    const out = checkDuplicateCaptures([
+      capture('threats', 'AERO-002', 'https://x.test/cnsa-faq.pdf', SHA),
+      capture('threats', 'GOV-001', 'https://x.test/cnsa-faq.pdf', SHA),
+    ] as never)
+    expect(out).toEqual([])
+  })
+
+  it('still reports DIFFERENT urls on one capture, in every collection', () => {
+    // This is always at least one row's evidence being wrong — BIS "Project
+    // Leap Phase 2" and "BIS Papers No 149" were two different documents
+    // sharing one file, in threats.
+    for (const collection of ['library', 'timeline', 'threats']) {
+      const out = checkDuplicateCaptures([
+        capture(collection, 'A', 'https://x.test/one.pdf', SHA),
+        capture(collection, 'B', 'https://x.test/two.pdf', SHA),
+      ] as never)
+      expect(
+        out.map((f) => f.kind),
+        collection
+      ).toEqual(['duplicate-capture'])
+      expect(out[0].severity).toBe('high')
+    }
   })
 })

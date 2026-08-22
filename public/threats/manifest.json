@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-22T12:40:46.000Z",
-  "source": "quantum_threats_hsm_industries_08212026_r1.csv",
+  "generated": "2026-08-22T12:50:13.000Z",
+  "source": "quantum_threats_hsm_industries_08222026.csv",
   "summary": {
     "ok": 134,
     "missing": 0,
@@ -19,7 +19,7 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AERO-003",
@@ -32,7 +32,7 @@
       "sizeBytes": 124245,
       "contentType": "application/pdf",
       "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUTO-001",
@@ -45,7 +45,7 @@
       "sizeBytes": 96359,
       "contentType": "text/html",
       "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUTO-002",
@@ -59,7 +59,7 @@
       "sizeBytes": 63622,
       "contentType": "text/html",
       "sha256": "536af6c6eab47a707a95ae7b1c39cb34623fe5019c0ca0e316fcf182d3516504",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUTO-003",
@@ -72,7 +72,7 @@
       "sizeBytes": 565909,
       "contentType": "text/html",
       "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUTO-004",
@@ -85,7 +85,7 @@
       "sizeBytes": 96359,
       "contentType": "text/html",
       "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CLOUD-001",
@@ -98,7 +98,7 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CLOUD-002",
@@ -111,7 +111,7 @@
       "sizeBytes": 163997,
       "contentType": "text/html",
       "sha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CLOUD-003",
@@ -124,7 +124,7 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CLOUD-004",
@@ -137,7 +137,7 @@
       "sizeBytes": 1289805,
       "contentType": "application/pdf",
       "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-001",
@@ -151,7 +151,7 @@
       "sizeBytes": 2573722,
       "contentType": "application/pdf",
       "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-002",
@@ -164,7 +164,7 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-003",
@@ -178,7 +178,7 @@
       "sizeBytes": 2573722,
       "contentType": "application/pdf",
       "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-004",
@@ -191,7 +191,7 @@
       "sizeBytes": 8451384,
       "contentType": "application/pdf",
       "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-005",
@@ -205,7 +205,7 @@
       "sizeBytes": 45146,
       "contentType": "text/html",
       "sha256": "2969100196f6ff1db8751531ac0c382449877838e0713fb33d2fb1bb349cebe6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-006",
@@ -218,7 +218,7 @@
       "sizeBytes": 722379,
       "contentType": "application/pdf",
       "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-007",
@@ -231,7 +231,7 @@
       "sizeBytes": 553179,
       "contentType": "application/pdf",
       "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-008",
@@ -244,7 +244,7 @@
       "sizeBytes": 44071,
       "contentType": "text/html",
       "sha256": "5bae2d62fd014338fa90bf6d06e3bd85b61f15ce9cb7e76e46555a0d21eaaec6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRYPTO-001",
@@ -257,7 +257,7 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRYPTO-002",
@@ -270,7 +270,7 @@
       "sizeBytes": 363044,
       "contentType": "text/html",
       "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRYPTO-003",
@@ -283,7 +283,7 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRYPTO-004",
@@ -297,7 +297,7 @@
       "sizeBytes": 232249,
       "contentType": "text/html",
       "sha256": "a762794a9dfe427300a36b0b6adcbc7986fcb3555c19b35f427c1118232afbf3",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "ENERGY-001",
@@ -310,7 +310,7 @@
       "sizeBytes": 429896,
       "contentType": "text/html",
       "sha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "ENERGY-002",
@@ -323,7 +323,7 @@
       "sizeBytes": 81505,
       "contentType": "text/html",
       "sha256": "072c67670f4e93d7734c5a614c47f6a4e155a249997053a5cc10528dc7f1ed4d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "ENERGY-003",
@@ -336,7 +336,7 @@
       "sizeBytes": 139197,
       "contentType": "text/html",
       "sha256": "c1e61638574f411688258fbc62657d2fe86f5f0e334e7972e8bbaa8c16536552",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "ENERGY-004",
@@ -349,7 +349,7 @@
       "sizeBytes": 93028,
       "contentType": "text/html",
       "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FIN-001",
@@ -362,7 +362,7 @@
       "sizeBytes": 1383045,
       "contentType": "application/pdf",
       "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FIN-002",
@@ -375,7 +375,7 @@
       "sizeBytes": 397965,
       "contentType": "application/pdf",
       "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FIN-003",
@@ -388,7 +388,7 @@
       "sizeBytes": 1097369,
       "contentType": "application/pdf",
       "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FIN-004",
@@ -401,7 +401,7 @@
       "sizeBytes": 902987,
       "contentType": "application/pdf",
       "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FIN-005",
@@ -414,7 +414,7 @@
       "sizeBytes": 37763,
       "contentType": "text/html",
       "sha256": "065fa8bcb99f647311399265b0b7c3ce45b9fee47594acfcd3ed0869598da0d3",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUS-FIN-001",
@@ -427,7 +427,7 @@
       "sizeBytes": 274706,
       "contentType": "application/pdf",
       "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUS-FIN-002",
@@ -435,12 +435,12 @@
       "title": "BIS Innovation Hub \u2014 Project Leap Phase 2: Quantum-Proofing Payment Systems",
       "url": "https://www.bis.org/publ/othp107.htm",
       "status": "downloaded",
-      "file": "threats/AUS-FIN-002.pdf",
-      "filename": "AUS-FIN-002.pdf",
-      "sizeBytes": 1097369,
-      "contentType": "application/pdf",
-      "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "file": "threats/AUS-FIN-002.html",
+      "filename": "AUS-FIN-002.html",
+      "sizeBytes": 26352,
+      "contentType": "text/html",
+      "sha256": "ceb92bcc2bf4e758165aa099f85e14882e233a0e5bd06ca40acea9ff7969ff42",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "GOV-001",
@@ -453,7 +453,7 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "GOV-002",
@@ -466,7 +466,7 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "GOV-003",
@@ -479,7 +479,7 @@
       "sizeBytes": 72805,
       "contentType": "text/html",
       "sha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "GOV-004",
@@ -492,7 +492,7 @@
       "sizeBytes": 157041,
       "contentType": "text/html",
       "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "GOV-005",
@@ -505,7 +505,7 @@
       "sizeBytes": 586858,
       "contentType": "application/pdf",
       "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUS-GOV-001",
@@ -518,7 +518,7 @@
       "sizeBytes": 482289,
       "contentType": "text/html",
       "sha256": "0dae19e352eb7f04bb537ab2d32545bd94256071e832fcbc7773598094b6f81b",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUS-GOV-002",
@@ -532,7 +532,7 @@
       "sizeBytes": 48958,
       "contentType": "text/html",
       "sha256": "edfd79e38229373cf3ecfb599f7a86aed2332079fab6527b1d97e35c98befe9d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HLTH-001",
@@ -545,7 +545,7 @@
       "sizeBytes": 145863,
       "contentType": "text/html",
       "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HLTH-002",
@@ -558,7 +558,7 @@
       "sizeBytes": 1067591,
       "contentType": "text/html",
       "sha256": "6129643c6a6a6f5f07e1829c1e99e3318b64fd3820874daa8f26e18a7f6e916f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HLTH-003",
@@ -571,7 +571,7 @@
       "sizeBytes": 1195625,
       "contentType": "application/pdf",
       "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HLTH-004",
@@ -584,7 +584,7 @@
       "sizeBytes": 242831,
       "contentType": "application/pdf",
       "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HLTH-005",
@@ -597,7 +597,7 @@
       "sizeBytes": 242831,
       "contentType": "application/pdf",
       "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "INS-001",
@@ -611,7 +611,7 @@
       "sizeBytes": 238211,
       "contentType": "application/pdf",
       "sha256": "761e268abebbe55d4612b406d1ea1cfcba23b86264da2255ef15134da601e45f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "INS-002",
@@ -625,7 +625,7 @@
       "sizeBytes": 205519,
       "contentType": "text/html",
       "sha256": "c39f19800dbb5636c59b1546a12606ade59a514f0a95ca8b3e69863ff4526b64",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "INS-003",
@@ -639,7 +639,7 @@
       "sizeBytes": 96444,
       "contentType": "text/html",
       "sha256": "98cbc50f6c35b62e4da80c6cfbf3f1ea699a6077668e093dc6ce2011e113eafb",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IOT-001",
@@ -653,7 +653,7 @@
       "sizeBytes": 333346,
       "contentType": "text/html",
       "sha256": "7e0b806f9819511bb65a3cb9525e2bd4bd9bccdf60728d6895ac5c39ad646adf",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IOT-002",
@@ -666,7 +666,7 @@
       "sizeBytes": 93028,
       "contentType": "text/html",
       "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IOT-003",
@@ -679,7 +679,7 @@
       "sizeBytes": 66356,
       "contentType": "text/html",
       "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IOT-004",
@@ -693,7 +693,7 @@
       "sizeBytes": 85353,
       "contentType": "text/html",
       "sha256": "28aa9d6ecbfb6067b1d170b4754bc6cd2257415e33b45ee09d9b480539d54c41",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IT-001",
@@ -706,7 +706,7 @@
       "sizeBytes": 34496,
       "contentType": "text/html",
       "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IT-002",
@@ -719,7 +719,7 @@
       "sizeBytes": 44365,
       "contentType": "text/html",
       "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IT-003",
@@ -732,7 +732,7 @@
       "sizeBytes": 61179,
       "contentType": "text/html",
       "sha256": "583c2e2f31d3f2219a8602c041517c13db0d857c1f5c4d19f6c1e5415c489027",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IT-004",
@@ -745,7 +745,7 @@
       "sizeBytes": 25607,
       "contentType": "text/html",
       "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "LEG-001",
@@ -758,7 +758,7 @@
       "sizeBytes": 170568,
       "contentType": "application/pdf",
       "sha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "LEG-002",
@@ -771,7 +771,7 @@
       "sizeBytes": 835958,
       "contentType": "text/html",
       "sha256": "b5bea7bfe0a69f57a548c6936cb663972b9c51f7eb16482367648f8fd7035ccf",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "LEG-003",
@@ -784,7 +784,7 @@
       "sizeBytes": 70119,
       "contentType": "application/pdf",
       "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "LEG-004",
@@ -798,7 +798,7 @@
       "sizeBytes": 2818618,
       "contentType": "application/pdf",
       "sha256": "ea7eb645bcd3feaf3ab9ea7dfc3c8987a08bf260c40682df1e5e8292bf9fe9b4",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "MEDIA-001",
@@ -811,7 +811,7 @@
       "sizeBytes": 549667,
       "contentType": "application/pdf",
       "sha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "MEDIA-002",
@@ -824,7 +824,7 @@
       "sizeBytes": 41479,
       "contentType": "text/html",
       "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "MEDIA-003",
@@ -837,7 +837,7 @@
       "sizeBytes": 1632263,
       "contentType": "application/pdf",
       "sha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "PCI-001",
@@ -851,7 +851,7 @@
       "sizeBytes": 163141,
       "contentType": "text/html",
       "sha256": "4e1df3226efc594e06702049b544850130eb19b4c58d39cda3bc35c1e92afefb",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "PCI-002",
@@ -864,7 +864,7 @@
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
       "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "PCI-003",
@@ -877,7 +877,7 @@
       "sizeBytes": 2986027,
       "contentType": "application/pdf",
       "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RAIL-001",
@@ -890,7 +890,7 @@
       "sizeBytes": 447147,
       "contentType": "application/pdf",
       "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RAIL-002",
@@ -904,7 +904,7 @@
       "sizeBytes": 96898,
       "contentType": "text/html",
       "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RETAIL-001",
@@ -917,7 +917,7 @@
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
       "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RETAIL-002",
@@ -931,7 +931,7 @@
       "sizeBytes": 1518858,
       "contentType": "application/pdf",
       "sha256": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RETAIL-003",
@@ -945,7 +945,7 @@
       "sizeBytes": 100213,
       "contentType": "text/html",
       "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "SUPPLY-001",
@@ -958,7 +958,7 @@
       "sizeBytes": 57115,
       "contentType": "text/html",
       "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "SUPPLY-002",
@@ -971,7 +971,7 @@
       "sizeBytes": 327717,
       "contentType": "text/html",
       "sha256": "f3195b67bc88c0d2bbf1fb2055d87810f63b637467b91093845d863dd2ba80e5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "SUPPLY-003",
@@ -984,7 +984,7 @@
       "sizeBytes": 3453262,
       "contentType": "application/pdf",
       "sha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELCO-001",
@@ -997,7 +997,7 @@
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
       "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELCO-002",
@@ -1010,7 +1010,7 @@
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
       "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELCO-003",
@@ -1023,7 +1023,7 @@
       "sizeBytes": 6530714,
       "contentType": "application/pdf",
       "sha256": "b410718064fbf84cd24d3ba30dbd542bbbcbe6f6d9d2a63f4f51cf98906090a5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELCO-004",
@@ -1036,7 +1036,7 @@
       "sizeBytes": 5887929,
       "contentType": "application/pdf",
       "sha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELCO-005",
@@ -1049,7 +1049,7 @@
       "sizeBytes": 142762,
       "contentType": "application/pdf",
       "sha256": "0d088f1d5235566b47cc66f03df61526f32655e08e426b9a84d3a4c2c8555eaf",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATER-001",
@@ -1062,7 +1062,7 @@
       "sizeBytes": 75363,
       "contentType": "text/html",
       "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATER-002",
@@ -1076,7 +1076,7 @@
       "sizeBytes": 75074,
       "contentType": "text/html",
       "sha256": "9019f864e36470513a088284961f2e6515a3a7d4a39e182b52c6f1aa34f830c2",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "EDU-001",
@@ -1089,7 +1089,7 @@
       "sizeBytes": 133108,
       "contentType": "text/html",
       "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "EDU-002",
@@ -1102,7 +1102,7 @@
       "sizeBytes": 59911,
       "contentType": "text/html",
       "sha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "EDU-003",
@@ -1115,7 +1115,7 @@
       "sizeBytes": 1023165,
       "contentType": "text/html",
       "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "EDU-004",
@@ -1128,7 +1128,7 @@
       "sizeBytes": 1593213,
       "contentType": "application/pdf",
       "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "EDU-005",
@@ -1141,7 +1141,7 @@
       "sizeBytes": 107031,
       "contentType": "text/html",
       "sha256": "64dcab3685f817b6454bc541cc5aa3262a73ca9961f58d868944bb5e45c74ccd",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-009",
@@ -1154,7 +1154,7 @@
       "sizeBytes": 56705,
       "contentType": "text/html",
       "sha256": "f9241b193d4c75cd6df5ed5c01609230568e2c4afbe7d8d9bf890e93f541df58",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-010",
@@ -1167,7 +1167,7 @@
       "sizeBytes": 347373,
       "contentType": "text/html",
       "sha256": "b4ec7dcdbcacca53c211d083cb47c024d654c5607a5aa94a15d1658838a60e80",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-011",
@@ -1180,7 +1180,7 @@
       "sizeBytes": 11334,
       "contentType": "text/html",
       "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-012",
@@ -1193,7 +1193,7 @@
       "sizeBytes": 66677,
       "contentType": "text/html",
       "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-013",
@@ -1206,7 +1206,7 @@
       "sizeBytes": 172257,
       "contentType": "text/html",
       "sha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RAIL-003",
@@ -1219,7 +1219,7 @@
       "sizeBytes": 765307,
       "contentType": "application/pdf",
       "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RAIL-004",
@@ -1232,7 +1232,7 @@
       "sizeBytes": 353605,
       "contentType": "text/html",
       "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "RAIL-005",
@@ -1246,7 +1246,7 @@
       "sizeBytes": 179499,
       "contentType": "text/html",
       "sha256": "b6bb1cc029166dd0931d285efdf7bc0cfe64b8b019dde0e7648f9920ed98837c",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATER-005",
@@ -1259,7 +1259,7 @@
       "sizeBytes": 273250,
       "contentType": "text/html",
       "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATER-003",
@@ -1272,7 +1272,7 @@
       "sizeBytes": 58728,
       "contentType": "text/html",
       "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATER-004",
@@ -1285,7 +1285,7 @@
       "sizeBytes": 1178202,
       "contentType": "application/pdf",
       "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CI-001",
@@ -1298,7 +1298,7 @@
       "sizeBytes": 71078,
       "contentType": "text/html",
       "sha256": "c22e0a1dbff3b28fa6014aeeb235a7f693e338271fc7740e5959188221a66fad",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CI-002",
@@ -1312,7 +1312,7 @@
       "sizeBytes": 53760,
       "contentType": "text/html",
       "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CI-003",
@@ -1325,7 +1325,7 @@
       "sizeBytes": 1004392,
       "contentType": "application/pdf",
       "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-014",
@@ -1338,7 +1338,7 @@
       "sizeBytes": 2637856,
       "contentType": "application/pdf",
       "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-015",
@@ -1351,7 +1351,7 @@
       "sizeBytes": 1688080,
       "contentType": "application/pdf",
       "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-016",
@@ -1364,7 +1364,7 @@
       "sizeBytes": 2417007,
       "contentType": "application/pdf",
       "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-017",
@@ -1377,7 +1377,7 @@
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROSS-018",
@@ -1390,7 +1390,7 @@
       "sizeBytes": 884808,
       "contentType": "application/pdf",
       "sha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HSM-001",
@@ -1403,7 +1403,7 @@
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IOT-005",
@@ -1416,7 +1416,7 @@
       "sizeBytes": 1194488,
       "contentType": "application/pdf",
       "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AUS-TEL-001",
@@ -1429,7 +1429,7 @@
       "sizeBytes": 396130,
       "contentType": "application/pdf",
       "sha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "IT-006",
@@ -1442,7 +1442,7 @@
       "sizeBytes": 40713,
       "contentType": "text/html",
       "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HSM-002",
@@ -1455,7 +1455,7 @@
       "sizeBytes": 18963192,
       "contentType": "text/html",
       "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "AERO-008",
@@ -1469,7 +1469,7 @@
       "sizeBytes": 115591,
       "contentType": "text/html",
       "sha256": "869486f31699c559f4bd30fd5de95418b8360db2d308c7df11968df84da7ca30",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "WATE-001",
@@ -1482,7 +1482,7 @@
       "sizeBytes": 235296,
       "contentType": "application/pdf",
       "sha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-001",
@@ -1495,7 +1495,7 @@
       "sizeBytes": 4451297,
       "contentType": "application/pdf",
       "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-001",
@@ -1508,7 +1508,7 @@
       "sizeBytes": 12089813,
       "contentType": "application/pdf",
       "sha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-002",
@@ -1521,7 +1521,7 @@
       "sizeBytes": 1354180,
       "contentType": "application/pdf",
       "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-002",
@@ -1534,7 +1534,7 @@
       "sizeBytes": 2159075,
       "contentType": "application/pdf",
       "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-003",
@@ -1547,7 +1547,7 @@
       "sizeBytes": 178446,
       "contentType": "text/html",
       "sha256": "9fe15290729f182f0e44e066ccef532b8d7939c8b4f9b69e1217cb0e40ba668c",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "INTE-001",
@@ -1560,7 +1560,7 @@
       "sizeBytes": 81922,
       "contentType": "application/pdf",
       "sha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-004",
@@ -1573,7 +1573,7 @@
       "sizeBytes": 568388,
       "contentType": "application/pdf",
       "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-005",
@@ -1586,7 +1586,7 @@
       "sizeBytes": 1365473,
       "contentType": "application/pdf",
       "sha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "ENER-001",
@@ -1599,7 +1599,7 @@
       "sizeBytes": 871081,
       "contentType": "application/pdf",
       "sha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "HEAL-001",
@@ -1612,7 +1612,7 @@
       "sizeBytes": 919857,
       "contentType": "application/pdf",
       "sha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "PAYM-001",
@@ -1625,7 +1625,7 @@
       "sizeBytes": 478488,
       "contentType": "application/pdf",
       "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-003",
@@ -1638,7 +1638,7 @@
       "sizeBytes": 280746,
       "contentType": "application/pdf",
       "sha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRIT-001",
@@ -1651,7 +1651,7 @@
       "sizeBytes": 429362,
       "contentType": "text/html",
       "sha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-004",
@@ -1664,7 +1664,7 @@
       "sizeBytes": 170658,
       "contentType": "text/html",
       "sha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-005",
@@ -1677,7 +1677,7 @@
       "sizeBytes": 2660860,
       "contentType": "application/pdf",
       "sha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CROS-006",
@@ -1690,7 +1690,7 @@
       "sizeBytes": 844313,
       "contentType": "application/pdf",
       "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-006",
@@ -1703,7 +1703,7 @@
       "sizeBytes": 138500,
       "contentType": "application/pdf",
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "TELE-001",
@@ -1716,7 +1716,7 @@
       "sizeBytes": 1480897,
       "contentType": "application/pdf",
       "sha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "FINA-007",
@@ -1729,7 +1729,7 @@
       "sizeBytes": 219678,
       "contentType": "text/html",
       "sha256": "9757bf1981b6264c27fcbe1596a2f43329b3fb643f1dafb08ade652313e090fb",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRIT-002",
@@ -1742,7 +1742,7 @@
       "sizeBytes": 209080,
       "contentType": "text/html",
       "sha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "CRIT-003",
@@ -1755,7 +1755,7 @@
       "sizeBytes": 212301,
       "contentType": "text/html",
       "sha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     },
     {
       "threatId": "INSU-001",
@@ -1768,7 +1768,7 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
-      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z"
     }
   ]
 }

@@ -28,7 +28,7 @@ export const DATA_FILENAMES: GeneratedDataFilenames = {
   library: 'library_08222026.csv',
   timeline: 'timeline_08212026_r3.csv',
   migrate: 'pqc_product_catalog_08182026_r34.csv',
-  threats: 'quantum_threats_hsm_industries_08212026_r1.csv',
+  threats: 'quantum_threats_hsm_industries_08222026.csv',
   leaders: 'leaders_08092026_r8.csv',
   compliance: 'compliance_08212026.csv',
   algorithms: 'algorithms_transitions_07282026.csv',

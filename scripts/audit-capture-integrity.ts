@@ -64,7 +64,7 @@
  *                                    audit's normalized-text comparison so a
  *                                    site-chrome change is not called drift)
  *   capture-missing            MED   manifest says downloaded, nothing on disk
- *   duplicate-capture-same-url INFO  byte-identical entries that all declare
+ *   duplicate-capture-same-url INFO  LIBRARY ONLY — byte-identical entries that all declare
  *                                    ONE url — duplicate ROWS citing one
  *                                    document, benign for capture integrity
  *   no-stored-hash             LOW   nothing to compare against
@@ -479,10 +479,27 @@ export function checkDuplicateCaptures(captures: Capture[]): Finding[] {
       Boolean
     )
     const distinct = urls.length > 1
+
+    // Several rows sharing ONE source URL means different things per
+    // collection, and reporting it uniformly trains people to ignore the
+    // audit. A library reference_id IS a document, so two rows on one URL is
+    // a duplicate row — FIPS-198 and FIPS-198-1 are both "The Keyed-Hash
+    // Message Authentication Code (HMAC)". A timeline event and a threat are
+    // NOT documents: four separate NSA milestones (2025, 2025, 2027, 2031)
+    // are all evidenced by one CNSA FAQ, and three distinct threats
+    // (satellite HNDL, classified-data HNDL, compliance deadline) cite that
+    // same document. That is the normal, correct shape, and on 2026-08-22 it
+    // accounted for 16 of the 21 same-URL findings. Suppressed for those two
+    // collections; the byte-identical-with-DIFFERENT-urls case stays reported
+    // everywhere, because that is always at least one row's evidence being
+    // wrong regardless of collection.
+    const collection = [...byRef.values()][0].collection
+    if (!distinct && collection !== 'library') continue
+
     findings.push({
       kind: distinct ? 'duplicate-capture' : 'duplicate-capture-same-url',
       severity: distinct ? 'high' : 'info',
-      collection: [...byRef.values()][0].collection,
+      collection,
       refIds,
       detail: distinct
         ? `${refIds.length} active entries declare ${urls.length} different source URLs but are backed by ONE byte-identical capture — at least one row's evidence is not its document`
