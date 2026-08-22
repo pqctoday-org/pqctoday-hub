@@ -794,6 +794,10 @@
         "label": "Minimum Elements"
       },
       {
+        "id": "sbom-2026-update",
+        "label": "2026 Update"
+      },
+      {
         "id": "sbom-vex",
         "label": "VEX & Vulnerability Triage"
       },
@@ -3950,6 +3954,7 @@
         "SPDX / ISO 5962",
         "CycloneDX / ECMA-424",
         "NTIA Minimum Elements",
+        "CISA 2026 Minimum Elements v2.1",
         "OASIS CSAF 2.0 (VEX)"
       ]
     },

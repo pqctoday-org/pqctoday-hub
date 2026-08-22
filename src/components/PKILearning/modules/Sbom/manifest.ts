@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'sbom',
+  contentVersion: 6,
   lm_id: 'LM-063',
   title: 'Software Bill of Materials (SBOM)',
   description:
@@ -18,6 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'sbom-why', label: 'Why an SBOM' },
     { id: 'sbom-formats', label: 'SPDX vs CycloneDX' },
     { id: 'sbom-elements', label: 'Minimum Elements' },
+    { id: 'sbom-2026-update', label: '2026 Update' },
     { id: 'sbom-vex', label: 'VEX & Vulnerability Triage' },
     { id: 'sbom-regulation', label: 'EO 14028 & EU CRA' },
     { id: 'sbom-to-cbom', label: 'Bridge: From SBOM to CBOM' },
@@ -33,6 +35,7 @@ const manifest: ModuleManifest = {
       'SPDX / ISO 5962',
       'CycloneDX / ECMA-424',
       'NTIA Minimum Elements',
+      'CISA 2026 Minimum Elements v2.1',
       'OASIS CSAF 2.0 (VEX)',
     ],
   },

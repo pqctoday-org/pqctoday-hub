@@ -103,6 +103,7 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'NIST SP 800-131A',
       'ISO/IEC 27001',
       'NTIA Minimum Elements',
+      'CISA 2026 Minimum Elements v2.1',
       'OASIS CSAF 2.0 (VEX)',
     ])
     for (const entry of Object.values(MODULE_TAXONOMY)) {
