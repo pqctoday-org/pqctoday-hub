@@ -1112,8 +1112,10 @@
       "status": "downloaded",
       "reason": "resilient fetch (playwright-stealth)",
       "file": "timeline/Canada_CCCS_ITSP_40_111_v4_PQC_Algorithms_Approved.html",
-      "sha256": "8fcfa55dc50e2baebb6b9d37016e7c4d59f2130e1fbbbbd7d0b2b78754339f69",
-      "sizeBytes": 125333
+      "sha256": "8a48be8b94fba6c89da95a52a8a14bb150d25e4f1bc0fb90e112d21f0f09e206",
+      "sizeBytes": 264573,
+      "previousSha256": "8fcfa55dc50e2baebb6b9d37016e7c4d59f2130e1fbbbbd7d0b2b78754339f69",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Nigeria:NDPC \u2014 NDPA General Application Directive 2025",
@@ -1838,9 +1840,11 @@
       "url": "https://www.boi.org.il/media/sm4f1ssu/202501en.pdf",
       "status": "downloaded",
       "file": "timeline/Bank-of-Israel-Banking-System-Preparedness-for-Quantum-Compu.pdf",
-      "sizeBytes": 586324,
+      "sizeBytes": 325353,
       "contentType": "text/html",
-      "sha256": "e52faba1037e27256dcf60a59400e695d14038ae73f6f82b4c063c9b32d5801c"
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5",
+      "previousSha256": "e52faba1037e27256dcf60a59400e695d14038ae73f6f82b4c063c9b32d5801c",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Denmark:SAMSIK \u2014 Transition to Quantum-Safe Cryptography",
@@ -1865,27 +1869,33 @@
       "url": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
       "status": "downloaded",
       "file": "timeline/Sweden-NCSC-National-Recommendations-for-Quantum-Safe-Crypto.pdf",
-      "sizeBytes": 1798842,
+      "sizeBytes": 1064410,
       "contentType": "text/html",
-      "sha256": "63ab77008d589fa951ad8006729d9d3a3c06671e6041c86b401496a7174671c9"
+      "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325",
+      "previousSha256": "63ab77008d589fa951ad8006729d9d3a3c06671e6041c86b401496a7174671c9",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Switzerland:NCSC Switzerland \u2014 Quantum Computers and Post-Quantum Cryptography \u2014 Technology Brief",
       "url": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/technologiebetrachtung-qcpqc-en.pdf.download.pdf/technologiebetrachtung-qcpqc-en.pdf",
       "status": "downloaded",
       "file": "timeline/Switzerland-NCSC-Quantum-Computers-and-Post-Quantum-Cryptogr.pdf",
-      "sizeBytes": 416698,
+      "sizeBytes": 236045,
       "contentType": "text/html",
-      "sha256": "11ccb56b1fce3c736110d7da7a35829d2ef78384dd3d98aa8913b428ee9ecee2"
+      "sha256": "696f29544743b81598fe3d7caf09b1d1f97c6e96479ba77a408ed47538190f37",
+      "previousSha256": "11ccb56b1fce3c736110d7da7a35829d2ef78384dd3d98aa8913b428ee9ecee2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Jordan:Central Bank of Jordan \u2014 Quantum-Resistant Encryption Roadmap for the Financial Sector",
       "url": "https://www.petra.gov.jo/Include/InnerPage.jsp?ID=79851&lang=en&name=en_news",
       "status": "downloaded",
       "file": "timeline/Central-Bank-of-Jordan-Quantum-Resistant-Encryption-Roadmap.html",
-      "sizeBytes": 98485,
+      "sizeBytes": 103114,
       "contentType": "text/html",
-      "sha256": "187f0e4df01710cdb7c911a2035f302dde2a16aa48d632c71fa3ecd5a2349218"
+      "sha256": "acaa85d15dc9b19df5a89773c95e29d01949bbda8cf1a021ca334b738a1be4eb",
+      "previousSha256": "187f0e4df01710cdb7c911a2035f302dde2a16aa48d632c71fa3ecd5a2349218",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Canada:OSFI \u2014 Guideline B-13 \u2014 Technology and Cyber Risk Management",
@@ -1937,9 +1947,11 @@
       "url": "https://pqc-learn.ncsa.or.th",
       "status": "downloaded",
       "file": "timeline/Thailand-NCSA-Quantum-Ready-2030-Roadmap.html",
-      "sizeBytes": 95269,
+      "sizeBytes": 111272,
       "contentType": "text/html",
-      "sha256": "e40e04f917bb202d23ee507dac7e7343687da7191d5caeedd159adc495dd829e"
+      "sha256": "9dd39856a009457090e13c0c724bd80a659de24aa3c306429b4f7ce739f04eb8",
+      "previousSha256": "e40e04f917bb202d23ee507dac7e7343687da7191d5caeedd159adc495dd829e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "Indonesia:BSSN \u2014 National PQC Migration Roadmap Task Force \u2014 Inaugural Meeting",
@@ -1982,9 +1994,11 @@
       "url": "https://fedscoop.com/wp-content/uploads/sites/5/2026/03/PCQRFI697DCK-26-RFI-PQCFinal.pdf",
       "status": "downloaded",
       "file": "timeline/FAA-Request-for-Information-Post-Quantum-Cryptography-Suppor.pdf",
-      "sizeBytes": 878320,
+      "sizeBytes": 491496,
       "contentType": "text/html",
-      "sha256": "3f8864c82130c5fdaae27fdf0891016db62ffc181a8e268007b47cdaeb0ae052"
+      "sha256": "1b8a9008158d86ae0e1bfc8da7f0dabbc0de530033bc24d50969d83334c56eb5",
+      "previousSha256": "3f8864c82130c5fdaae27fdf0891016db62ffc181a8e268007b47cdaeb0ae052",
+      "rehashedAt": "2026-08-22"
     },
     {
       "label": "European Union:European Commission \u2014 EUDI Wallet Available in All Member States",
