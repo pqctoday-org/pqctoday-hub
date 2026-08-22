@@ -190,7 +190,7 @@ export function defaultCacheRoot(): string {
   )
 }
 
-/** The library cache has TWO roots, and reading only one is wrong.
+/** The library cache has TWO live roots, and reading only one is wrong.
  *
  *  Evidence moved to `local-evidence-cache/` on 2026-07-12, but the
  *  pre-relocation `pqctoday-priv/public/` tree still holds 843 library files,
@@ -204,7 +204,17 @@ export function defaultCacheRoot(): string {
  *  `public/` predates the relocation and every refetch since has landed in
  *  `local-evidence-cache/`. The new root is the live one; `public/` is a
  *  fallback for what was never migrated, never an alternative reading of a
- *  file that exists in both. */
+ *  file that exists in both.
+ *
+ *  A THIRD directory, `pqctoday-priv/cowork/public/`, holds 438 captures, 26
+ *  of them found nowhere else. It is deliberately NOT a root here: it is a
+ *  working area last written on 2026-06-05, carrying CSVs dated March-May, and
+ *  every one of its unique captures is superseded — with capture-missing at 0,
+ *  no row depends on it. Adding it would resolve live rows against May-vintage
+ *  copies, which is the same mistake as preferring `public/` over the
+ *  relocated root, one generation further back. If a future row ever does
+ *  depend on it, that shows up here as a capture-missing finding, which is the
+ *  right way to learn it. */
 export function fallbackCacheRoots(primary: string): string[] {
   const priv = path.resolve(primary, '..')
   const legacy = path.join(priv, 'public')
