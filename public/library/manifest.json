@@ -11087,6 +11087,16 @@
       "sizeBytes": 115168,
       "contentType": "text/html",
       "sha256": "991fb98a28d513833ae9e8bfa2ad600a1ba202f158d9feba2741b686b894affa"
+    },
+    {
+      "refId": "Post-Quantum-Protocols-for-Banking-Applications",
+      "title": "Post-Quantum Protocols for Banking Applications",
+      "url": "https://csrc.nist.gov/csrc/media/Events/2022/fourth-pqc-standardization-conference/documents/papers/post-quantum-protocols-for-banking-applications-pqc2022.pdf",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Protocols-for-Banking-Applications.pdf",
+      "sizeBytes": 523890,
+      "contentType": "application/pdf",
+      "sha256": "d96cccfb645c8f2a0d63c5bb3ea80d905953cb8d3e95c9896741b91f2842b5ee"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

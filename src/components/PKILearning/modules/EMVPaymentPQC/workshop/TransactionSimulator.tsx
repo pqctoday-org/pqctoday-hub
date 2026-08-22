@@ -24,14 +24,37 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 
-const EMV_KAT_SPECS: KatTestSpec[] = [
+export const EMV_KAT_SPECS: KatTestSpec[] = [
   {
-    id: 'emv-txn-sign',
-    useCase: 'EMV transaction authorization (ML-DSA-44)',
-    standard: 'EMVCo + FIPS 204',
+    // CORRECTED 2026-08-22. This ran ML-DSA-44 over a message labelled "EMV ARQC"
+    // and called it "EMV transaction authorization". An ARQC is not signed. It is a
+    // symmetric MAC, and putting a post-quantum SIGNATURE on it taught two wrong
+    // things at once: that EMV authorises transactions with a signature, and that
+    // the symmetric side needs PQC migration.
+    //
+    // Bettale/De Oliveira/Dottax (IDEMIA), "Post-Quantum Protocols for Banking
+    // Applications", NIST 4th PQC Standardization Conference 2022, is explicit:
+    // EMV "make[s] use of asymmetric cryptography (RSA) for card authentication by
+    // the terminal, and symmetric cryptography (usually TDES) for transaction
+    // certificates intended for the issuer", the cryptograms being "computed thanks
+    // to a MAC function - usually based on DES or Triple-DES". That paper selects
+    // EMV CDA as the protocol to make post-quantum and implements it with Falcon
+    // and CRYSTALS-Dilithium on real banking smart cards.
+    //
+    // EMVCo's own Quantum Position Statement agrees on the symmetric half: Grover
+    // "is theoretically much faster than classical search for symmetric keys but is
+    // completely impractical and therefore is not a concern for EMV."
+    //
+    // The demo is therefore repointed at Combined Data Authentication, which is the
+    // RSA-based step that genuinely has to migrate. The ARPC entry below already
+    // modelled the symmetric half correctly as AES-CMAC; the two are now consistent.
+    id: 'emv-cda-sign',
+    useCase: 'Combined Data Authentication — card signature (ML-DSA-44)',
+    standard: 'EMVCo CDA + FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 44 },
-    message: 'EMV ARQC: amount=99.50,currency=840,merchant=PQC_STORE,ATC=0042',
+    message:
+      'EMV CDA dynamic application data: amount=99.50,currency=840,ATC=0042,unpredictable=A3F19C20',
   },
   {
     id: 'emv-card-ecdsa',

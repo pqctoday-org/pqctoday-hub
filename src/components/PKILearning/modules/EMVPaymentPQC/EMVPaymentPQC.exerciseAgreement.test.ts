@@ -27,6 +27,7 @@ import { describe, it, expect } from 'vitest'
 import { TRANSACTION_FLOWS } from './data/transactionFlowData'
 import { TOKENIZATION_FLOWS } from './data/tokenizationData'
 import { KEY_INJECTION_CEREMONY } from './data/posCryptoData'
+import { EMV_KAT_SPECS } from './workshop/TransactionSimulator'
 
 /** Primitives Shor breaks. A step naming one of these cannot be quantum-safe. */
 const QUANTUM_BREAKABLE = /RSA|ECDSA|ECDH|ECC|X25519|Ed25519/
@@ -90,5 +91,54 @@ describe('exercise answers agree with the workshop data', () => {
         f.steps.reduce((sum, s) => sum + s.latencyMs, 0)
       )
     })
+  })
+})
+
+/**
+ * The KAT specs must agree with the module's own model of what EMV is.
+ *
+ * Added 2026-08-22 after the maintainer caught `emv-txn-sign`: it ran an ML-DSA-44
+ * signature over a message labelled "EMV ARQC" and called it "EMV transaction
+ * authorization". Everything else in this module already had it right — the
+ * transaction-flow data marks ARQC steps quantum-safe, rag-summary.md calls
+ * ARQC/ARPC "symmetric MACs — quantum-safe", the introduction says "3DES/AES ARQC
+ * generation", and the test above cites the same fact from 2026-07-31. Only the
+ * demo disagreed, and no guard covered the KAT specs, so it stood.
+ *
+ * An ARQC is a MAC. Bettale/De Oliveira/Dottax (IDEMIA), "Post-Quantum Protocols
+ * for Banking Applications" (NIST 4th PQC Standardization Conference, 2022): EMV
+ * uses "asymmetric cryptography (RSA) for card authentication by the terminal, and
+ * symmetric cryptography (usually TDES) for transaction certificates intended for
+ * the issuer". EMVCo's Quantum Position Statement adds that Grover is "completely
+ * impractical and therefore is not a concern for EMV".
+ */
+describe('KAT specs agree with the module’s model of EMV', () => {
+  const SYMMETRIC_MECHANISMS = /\bARQC\b|\bARPC\b|\bTC\b|application cryptogram/i
+  const PQC_SIGNATURE = /mldsa|slhdsa|fndsa/i
+
+  it('no post-quantum SIGNATURE demo targets a symmetric cryptogram', () => {
+    const offenders = EMV_KAT_SPECS.filter(
+      (spec) =>
+        PQC_SIGNATURE.test(spec.kind.type) &&
+        (SYMMETRIC_MECHANISMS.test(spec.useCase) || SYMMETRIC_MECHANISMS.test(spec.message ?? ''))
+    ).map((s) => `${s.id}: ${s.useCase}`)
+
+    expect(
+      offenders,
+      'A PQC signature cannot authenticate an ARQC/ARPC/TC — those are symmetric MACs, and ' +
+        'EMVCo states the symmetric side is not a quantum concern. Point the demo at CDA / ' +
+        'offline data authentication, which is the RSA-based step that must migrate.'
+    ).toEqual([])
+  })
+
+  it('the ML-DSA demo names the asymmetric mechanism it actually models', () => {
+    const mldsa = EMV_KAT_SPECS.filter((s) => PQC_SIGNATURE.test(s.kind.type))
+    expect(mldsa.length).toBeGreaterThan(0)
+    for (const spec of mldsa) {
+      expect(
+        `${spec.useCase} ${spec.standard}`,
+        `${spec.id} should name CDA / data authentication, the RSA-based step PQC replaces`
+      ).toMatch(/CDA|data authentication|card authentication/i)
+    }
   })
 })
