@@ -96,9 +96,12 @@
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
       "status": "downloaded",
       "filename": "FIPS_206.html",
-      "sizeBytes": 61179,
+      "sizeBytes": 61053,
       "contentType": "text/html",
-      "sha256": "12975e05fb94c8725c8593b172d10bcba6850c0aa2830cb182ecbc6f315eb0ba"
+      "sha256": "744443f72f02ea1b0823069bb3047133ac6cfbaa4dd69999457e3705964ffba9",
+      "previousSha256": "12975e05fb94c8725c8593b172d10bcba6850c0aa2830cb182ecbc6f315eb0ba",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: FIPS 206 (FN-DSA) is NOT PUBLISHED. The row cites csrc.nist.gov/projects/post-quantum-cryptography, which is the only page that exists for it, so the capture is the PQC project page rather than the standard. Correct as cited; revisit when NIST publishes the standard."
     },
     {
       "refId": "FIPS 186-5",
@@ -3455,9 +3458,12 @@
       "url": "https://www.fsisac.com/the-timeline-for-post-quantum-cryptographic-migration",
       "status": "downloaded",
       "filename": "FS-ISAC-PQC-Timeline-2026.html",
-      "sizeBytes": 21206,
+      "sizeBytes": 19513,
       "contentType": "text/html",
-      "sha256": "5db7b441846e2998707fa2cf6979266d8ce8dc3a089d0e44feb2debff49dce1c"
+      "sha256": "d30b090f0a6f1ca72b75e21026b3af5f04dcc9a90d49715d0f20c91b6d78f8bb",
+      "previousSha256": "5db7b441846e2998707fa2cf6979266d8ce8dc3a089d0e44feb2debff49dce1c",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: the page is a JavaScript-rendered HubSpot template. Every fetch tier returns the same CSS/JS shell with no article text. Needs a rendering fetch or a human download."
     },
     {
       "refId": "arXiv-2603-28728",
@@ -7720,9 +7726,12 @@
       "url": "https://cloudsecurityalliance.org/",
       "status": "downloaded",
       "filename": "CSA-Crypto-News-June-2026.html",
-      "sizeBytes": 116608,
+      "sizeBytes": 116371,
       "contentType": "text/html",
-      "sha256": "ecfbb88d596418daeb49fba19775f9562af1ae20bad086d80e4754eebe3c0197"
+      "sha256": "d4f2e2cdc961f941f9a1d846f37b28e7ec1f5652953cd7634775fbd2af709f0d",
+      "previousSha256": "ecfbb88d596418daeb49fba19775f9562af1ae20bad086d80e4754eebe3c0197",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: cloudsecurityalliance.org renders its blog and artifact listings in JavaScript; no listing the fetcher can read exposes the June 2026 issue, and no on-domain URL pattern resolved. Needs a rendering fetch or a human download."
     },
     {
       "refId": "Bernstein-MLDSA-Bugs-2026",
