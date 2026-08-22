@@ -126,8 +126,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Hybrid Certificate Formats',
     emoji: '📜',
     useCase:
-      'Generate and compare all 8 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, backward compatibility, and encapsulation round-trips.',
-    algorithms: ['8 Formats', 'X.509', 'RFC 9935'],
+      'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, backward compatibility, and encapsulation round-trips.',
+    algorithms: ['7 Formats', 'X.509', 'RFC 9935'],
     difficulty: 'advanced',
     trackId: 'infrastructure',
     tool: {
