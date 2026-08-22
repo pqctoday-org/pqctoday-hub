@@ -48,7 +48,7 @@ export const LIBRARY_EXECUTIVE_PICKS: readonly LibraryExecutivePick[] = [
       "Germany's federal cryptographic recommendations. Sets the EU-side bar for which algorithms regulators consider acceptable.",
   },
   {
-    referenceId: 'EU-REC-2024-1101',
+    referenceId: 'EC-Recommendation-2024-1101',
     label: 'EU Recommendation 2024/1101',
     blurb:
       "European Commission's coordinated PQC migration recommendation. The compliance lens any multi-jurisdiction enterprise has to plan around.",
