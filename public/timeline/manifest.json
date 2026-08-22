@@ -290,7 +290,8 @@
       "file": "timeline/France_ANSSI_PQC_FAQ_Published.html",
       "sha256": "35bd1698606c5c87f8e630325de17abb703133dd841d9bb5cce7fab4721296f2",
       "sizeBytes": 63048,
-      "backfilledAt": "2026-08-21"
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: citation verified against the capture"
     },
     {
       "label": "International:GSMA \u2014 PQ.03 v2.0 Guidelines",
@@ -2737,6 +2738,16 @@
       "sha256": "a48dc0bbef13b92ab7c891880e39104f079ead9efc03d0c0c71ab2d9bffc8308",
       "backfilledAt": "2026-08-21",
       "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Japan CRYPTREC PQC Migration Planning",
+      "url": "https://www.cryptrec.go.jp/report/cryptrec-gl-2007-2024.pdf",
+      "status": "downloaded",
+      "file": "timeline/Japan_CRYPTREC_PQC_Guideline_2024.pdf",
+      "sizeBytes": 1312893,
+      "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: citation verified against the capture"
     }
   ],
   "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects \u2014 a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
