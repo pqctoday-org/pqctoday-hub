@@ -457,6 +457,28 @@ function extractComponentText(filePath: string): string {
   return parts.join('\n')
 }
 
+/**
+ * .tsx sitting directly in a module's own directory, excluding index.tsx
+ * (already collected by the caller) and tests. NOT recursive: subdirectories
+ * are picked up deliberately by name, so a new `services/`-shaped folder of
+ * implementation code cannot silently enter the fact-checker's input.
+ */
+function listModuleRootTsx(moduleDir: string): string[] {
+  if (!fs.existsSync(moduleDir)) return []
+  return fs
+    .readdirSync(moduleDir, { withFileTypes: true })
+    .filter(
+      (e) =>
+        e.isFile() &&
+        e.name.endsWith('.tsx') &&
+        e.name !== 'index.tsx' &&
+        !e.name.endsWith('.test.tsx') &&
+        !e.name.endsWith('.spec.tsx')
+    )
+    .map((e) => path.join(moduleDir, e.name))
+    .sort()
+}
+
 function listTsxFiles(dir: string): string[] {
   if (!fs.existsSync(dir)) return []
   const out: string[] = []
@@ -667,6 +689,30 @@ async function buildModuleSnapshot(
   if (fs.existsSync(indexPath)) componentPaths.push(indexPath)
   componentPaths.push(...listTsxFiles(path.join(moduleDir, 'components')))
   componentPaths.push(...listTsxFiles(path.join(moduleDir, 'workshop')))
+  // ADDED 2026-08-22. Some modules put their main interactive teaching surface
+  // at the module ROOT or in a sibling directory rather than under
+  // components/workshop, and everything there was invisible to the accuracy
+  // spot-check — it fact-checks exactly this list. Measured across all 65
+  // modules: 7,312 KB was in scope and 943 KB was not (11%), concentrated in
+  // five modules. The worst was Module1-Introduction, where the checker read
+  // 2,033 characters while 107 KB of module-root .tsx sat unexamined; FiveG
+  // (SuciFlow/AuthFlow/ProvisioningFlow), DigitalAssets (flows/), PKIWorkshop
+  // and TLSBasics are the others.
+  //
+  // APPENDED LAST, deliberately. accuracy_spotcheck assembles narratives first,
+  // then these files in order, then truncates at 24,000 chars — and 20 of 65
+  // modules already hit that cap. Appending here means a capped module keeps
+  // exactly the text it had (the new paths simply do not fit) while the
+  // under-cap modules this is for absorb the addition; every one of the five
+  // has 10-22k chars of headroom. So the widening costs no extra LLM spend and
+  // cannot displace prose that was already being checked.
+  //
+  // services/, utils/ and hooks/ are deliberately NOT included: they are
+  // implementation, not learner-facing prose, and extractComponentText would
+  // mostly return identifier noise from them.
+  componentPaths.push(...listModuleRootTsx(moduleDir))
+  componentPaths.push(...listTsxFiles(path.join(moduleDir, 'flows')))
+  componentPaths.push(...listTsxFiles(path.join(moduleDir, 'simulate')))
   // A content.ts that is NOT ModuleContent-shaped (MLSGroupMessaging's
   // LEARN_CHAPTERS) still carries learner-facing prose — surface it to the
   // fact-checker as a component-text entry so it isn't invisible.
