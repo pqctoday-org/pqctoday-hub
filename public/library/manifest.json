@@ -42,7 +42,7 @@
     },
     {
       "refId": "TCG-TPM-V185-Part0",
-      "title": "TCG TPM 2.0 Library Specification V185 — Part 0: Introduction",
+      "title": "TCG TPM 2.0 Library Specification V185 \u2014 Part 0: Introduction",
       "url": "https://trustedcomputinggroup.org/wp-content/uploads/Trusted-Platform-Module-2.0-Library-Part-0-Introduction_Version-185_pub.pdf",
       "status": "downloaded",
       "filename": "TCG-TPM-V185-Part0-Introduction.pdf",
@@ -52,7 +52,7 @@
     },
     {
       "refId": "TCG-TPM-V185-Part1",
-      "title": "TCG TPM 2.0 Library Specification V185 — Part 1: Architecture",
+      "title": "TCG TPM 2.0 Library Specification V185 \u2014 Part 1: Architecture",
       "url": "https://trustedcomputinggroup.org/wp-content/uploads/Trusted-Platform-Module-2.0-Library-Part-1-Architecture_Version-185_pub.pdf",
       "status": "downloaded",
       "filename": "TCG-TPM-V185-Part1-Architecture.pdf",
@@ -62,7 +62,7 @@
     },
     {
       "refId": "TCG-TPM-V185-Part2",
-      "title": "TCG TPM 2.0 Library Specification V185 — Part 2: Structures",
+      "title": "TCG TPM 2.0 Library Specification V185 \u2014 Part 2: Structures",
       "url": "https://trustedcomputinggroup.org/wp-content/uploads/Trusted-Platform-Module-2.0-Library-Part-2-Structures_Version-185_pub.pdf",
       "status": "downloaded",
       "filename": "TCG-TPM-V185-Part2-Structures.pdf",
@@ -692,7 +692,7 @@
     },
     {
       "refId": "EO-14306",
-      "title": "Executive Order 14306 — Sustaining Select Cybersecurity Efforts (PQC Provisions)",
+      "title": "Executive Order 14306 \u2014 Sustaining Select Cybersecurity Efforts (PQC Provisions)",
       "url": "https://www.whitehouse.gov/presidential-actions/2025/06/sustaining-select-efforts-to-strengthen-the-nations-cybersecurity-and-amending-executive-order-13694-and-executive-order-14144/",
       "status": "downloaded",
       "filename": "EO-14306.html",
@@ -1242,7 +1242,7 @@
     },
     {
       "refId": "ISO-18013-5-mDL",
-      "title": "ISO/IEC 18013-5:2021 — Mobile Driving Licence (mDL) Application",
+      "title": "ISO/IEC 18013-5:2021 \u2014 Mobile Driving Licence (mDL) Application",
       "url": "https://www.iso.org/standard/69084.html",
       "status": "downloaded",
       "filename": "ISO-18013-5-mDL.html",
@@ -1252,7 +1252,7 @@
     },
     {
       "refId": "RFC-9901-SD-JWT-VC",
-      "title": "RFC 9901 — Selective Disclosure for JWTs (SD-JWT)",
+      "title": "RFC 9901 \u2014 Selective Disclosure for JWTs (SD-JWT)",
       "url": "https://www.rfc-editor.org/rfc/rfc9901",
       "status": "downloaded",
       "filename": "RFC-9901-SD-JWT-VC.html",
@@ -1262,7 +1262,7 @@
     },
     {
       "refId": "IETF-SD-JWT-Draft",
-      "title": "Selective Disclosure for JWTs (SD-JWT) — draft-ietf-oauth-selective-disclosure-jwt",
+      "title": "Selective Disclosure for JWTs (SD-JWT) \u2014 draft-ietf-oauth-selective-disclosure-jwt",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/",
       "status": "downloaded",
       "filename": "IETF-SD-JWT-Draft.html",
@@ -1342,7 +1342,7 @@
     },
     {
       "refId": "India-DST-Quantum-Safe-Roadmap-2026",
-      "title": "India DST Task Force Report — Phased Roadmap for Migration to Post-Quantum Cryptography under NQM",
+      "title": "India DST Task Force Report \u2014 Phased Roadmap for Migration to Post-Quantum Cryptography under NQM",
       "url": "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
       "status": "downloaded",
       "filename": "India-DST-Quantum-Safe-Roadmap-2026.pdf",
@@ -1372,13 +1372,13 @@
     },
     {
       "refId": "GRI-Quantum-Threat-Timeline-2024",
-      "title": "Quantum Threat Timeline Report 2025",
-      "url": "https://globalriskinstitute.org/mp-files/pdf-quantum-threat-timeline-report-2025.pdf/",
+      "title": "Quantum Threat Timeline Report 2024",
+      "url": "https://globalriskinstitute.org/mp-files/quantum-threat-timeline-report-2024.pdf/",
       "status": "downloaded",
       "filename": "GRI-Quantum-Threat-Timeline-2024.pdf",
-      "sizeBytes": 9075183,
+      "sizeBytes": 8451384,
       "contentType": "application/pdf",
-      "sha256": "b4df230e5a0049ed916a895f2c4553bf3d125f4122588e421fb585c40994915e"
+      "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979"
     },
     {
       "refId": "RFC 5652",
@@ -1532,7 +1532,7 @@
     },
     {
       "refId": "NIST-SP-800-57-Pt1-R6",
-      "title": "Recommendation for Key Management: Part 1 – General (Revision 6)",
+      "title": "Recommendation for Key Management: Part 1 \u2013 General (Revision 6)",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-57-Pt1-R6.pdf",
@@ -1612,7 +1612,7 @@
     },
     {
       "refId": "NSM-10",
-      "title": "National Security Memorandum 10 — Promoting U.S. Leadership in Quantum Computing",
+      "title": "National Security Memorandum 10 \u2014 Promoting U.S. Leadership in Quantum Computing",
       "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/",
       "status": "downloaded",
       "filename": "NSM-10.html",
@@ -1622,7 +1622,7 @@
     },
     {
       "refId": "OMB-M-23-02",
-      "title": "OMB Memorandum M-23-02 — Migrating to Post-Quantum Cryptography",
+      "title": "OMB Memorandum M-23-02 \u2014 Migrating to Post-Quantum Cryptography",
       "url": "https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf",
       "status": "downloaded",
       "filename": "OMB-M-23-02.pdf",
@@ -1652,7 +1652,7 @@
     },
     {
       "refId": "EO-14144",
-      "title": "Executive Order 14144 — Strengthening and Promoting Innovation in the Nation's Cybersecurity",
+      "title": "Executive Order 14144 \u2014 Strengthening and Promoting Innovation in the Nation's Cybersecurity",
       "url": "https://www.federalregister.gov/documents/2025/01/17/2025-01470/strengthening-and-promoting-innovation-in-the-nations-cybersecurity",
       "status": "downloaded",
       "filename": "EO-14144.html",
@@ -1662,7 +1662,7 @@
     },
     {
       "refId": "BIS-Paper-158",
-      "title": "BIS Paper 158 — Quantum-Readiness Roadmap for Financial Systems",
+      "title": "BIS Paper 158 \u2014 Quantum-Readiness Roadmap for Financial Systems",
       "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
       "status": "downloaded",
       "filename": "BIS-Paper-158.html",
@@ -1672,7 +1672,7 @@
     },
     {
       "refId": "EU-NIS-CG-Roadmap-v1.1",
-      "title": "EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1",
+      "title": "EU NIS Cooperation Group \u2014 Coordinated Implementation Roadmap for PQC Transition v1.1",
       "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "status": "downloaded",
       "filename": "EU-NIS-CG-Roadmap-v1.1.html",
@@ -1682,7 +1682,7 @@
     },
     {
       "refId": "G7-CEG-Financial-PQC-2026",
-      "title": "G7 Cyber Expert Group — Advancing a Coordinated Approach to PQC Transition for the Financial Sector",
+      "title": "G7 Cyber Expert Group \u2014 Advancing a Coordinated Approach to PQC Transition for the Financial Sector",
       "url": "https://home.treasury.gov/",
       "status": "downloaded",
       "filename": "G7-CEG-Financial-PQC-2026.html",
@@ -1692,7 +1692,7 @@
     },
     {
       "refId": "PKI-Consortium-PQC-2025",
-      "title": "PKI Consortium PQC Conference 2025 — Conclusions and Call to Action",
+      "title": "PKI Consortium PQC Conference 2025 \u2014 Conclusions and Call to Action",
       "url": "https://pkic.org/2025/11/04/post-quantum-cryptography-conference-2025-concludes-with-urgent-call-for-global-migration-to-quantum-resistant-encryption-systems/",
       "status": "downloaded",
       "filename": "PKI-Consortium-PQC-2025.html",
@@ -1702,7 +1702,7 @@
     },
     {
       "refId": "HKMA-Fintech-Blueprint-2026",
-      "title": "HKMA Fintech Promotion Blueprint (From Adoption to Advancement) — Quantum Preparedness Index",
+      "title": "HKMA Fintech Promotion Blueprint (From Adoption to Advancement) \u2014 Quantum Preparedness Index",
       "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/02/20260203-3/",
       "status": "downloaded",
       "filename": "HKMA-Fintech-Blueprint-2026.html",
@@ -1732,7 +1732,7 @@
     },
     {
       "refId": "UAE-DESC-PQC-Guideline",
-      "title": "Dubai Electronic Security Center — Post-Quantum Cryptography Guideline",
+      "title": "Dubai Electronic Security Center \u2014 Post-Quantum Cryptography Guideline",
       "url": "https://www.desc.gov.ae/dubai-electronic-security-center-launches-new-innovative-projects-at-gisec-global-2025/",
       "status": "downloaded",
       "filename": "UAE-DESC-PQC-Guideline.html",
@@ -1742,7 +1742,7 @@
     },
     {
       "refId": "Saudi-NCA-ECC2-2024",
-      "title": "Saudi Arabia National Cybersecurity Authority — Essential Cybersecurity Controls ECC-2:2024",
+      "title": "Saudi Arabia National Cybersecurity Authority \u2014 Essential Cybersecurity Controls ECC-2:2024",
       "url": "https://nca.gov.sa/",
       "status": "downloaded",
       "filename": "Saudi-NCA-ECC2-2024.html",
@@ -1752,7 +1752,7 @@
     },
     {
       "refId": "Microsoft-QSP-Roadmap-2025",
-      "title": "Microsoft Quantum Safe Program (QSP) — Accelerating the Quantum-Safe Timeline to 2029",
+      "title": "Microsoft Quantum Safe Program (QSP) \u2014 Accelerating the Quantum-Safe Timeline to 2029",
       "url": "https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/",
       "status": "downloaded",
       "filename": "Microsoft-QSP-Roadmap-2025.html",
@@ -1872,7 +1872,7 @@
     },
     {
       "refId": "CA-TBS-SPIN-PQC-2025",
-      "title": "Canada TBS SPIN 2025-01 — Migrating Government of Canada Systems to Post-Quantum Cryptography",
+      "title": "Canada TBS SPIN 2025-01 \u2014 Migrating Government of Canada Systems to Post-Quantum Cryptography",
       "url": "https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html",
       "status": "downloaded",
       "filename": "CA-TBS-SPIN-PQC-2025.html",
@@ -1922,7 +1922,7 @@
     },
     {
       "refId": "AU-ASD-ISM-Crypto-2024",
-      "title": "ASD Information Security Manual — Guidelines for Cryptography (December 2024)",
+      "title": "ASD Information Security Manual \u2014 Guidelines for Cryptography (December 2024)",
       "url": "https://www.cyber.gov.au/sites/default/files/2024-12/22.%20ISM%20-%20Guidelines%20for%20Cryptography%20(December%202024).pdf",
       "status": "downloaded",
       "filename": "AU-ASD-ISM-Crypto-2024.pdf",
@@ -1942,7 +1942,7 @@
     },
     {
       "refId": "Europol-QSFF-Call-to-Action-2025",
-      "title": "Europol Quantum Safe Financial Forum — Call to Action",
+      "title": "Europol Quantum Safe Financial Forum \u2014 Call to Action",
       "url": "https://www.europol.europa.eu/cms/sites/default/files/documents/Quantum-safe-financial-forum-2025.pdf",
       "status": "downloaded",
       "filename": "Quantum-safe-financial-forum-2025.pdf",
@@ -1962,7 +1962,7 @@
     },
     {
       "refId": "UK-DSIT-CNI-PQC-Perspectives-2025",
-      "title": "UK DSIT — Perspectives on the Plan for PQC Transition from CNI Sectors",
+      "title": "UK DSIT \u2014 Perspectives on the Plan for PQC Transition from CNI Sectors",
       "url": "https://assets.publishing.service.gov.uk/media/692820edb3b9afff34e960f6/Regulator_and_industry_perspectives_on_the_current_plan_for_PQC_transition.pdf",
       "status": "downloaded",
       "filename": "UK-DSIT-CNI-PQC-Perspectives-2025.pdf",
@@ -2032,7 +2032,7 @@
     },
     {
       "refId": "UK-NCSC-PQC-Whitepaper-2024",
-      "title": "NCSC White Paper — Next Steps in Preparing for Post-Quantum Cryptography",
+      "title": "NCSC White Paper \u2014 Next Steps in Preparing for Post-Quantum Cryptography",
       "url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
       "status": "downloaded",
       "filename": "next-steps-preparing-for-post-quantum-cryptography.pdf",
@@ -2062,7 +2062,7 @@
     },
     {
       "refId": "IN-TEC-PQC-Migration-Report-2025",
-      "title": "India TEC Technical Report TEC 910018:2025 — Migration to Post-Quantum Cryptography",
+      "title": "India TEC Technical Report TEC 910018:2025 \u2014 Migration to Post-Quantum Cryptography",
       "url": "https://www.tec.gov.in/pdf/TR/Final%20technical%20report%20on%20migration%20to%20PQC%2028-03-25.pdf",
       "status": "downloaded",
       "filename": "IN-TEC-PQC-Migration-Report-2025.pdf",
@@ -2072,7 +2072,7 @@
     },
     {
       "refId": "BIS-OTHP107",
-      "title": "Project Leap Phase 2 — Quantum-proofing payment systems",
+      "title": "Project Leap Phase 2 \u2014 Quantum-proofing payment systems",
       "url": "https://www.bis.org/publ/othp107.pdf",
       "status": "downloaded",
       "filename": "othp107.pdf",
@@ -2282,7 +2282,7 @@
     },
     {
       "refId": "NIST NCCoE SP 1800-38B",
-      "title": "Migration to Post-Quantum Cryptography: Quantum Readiness — Cryptographic Discovery",
+      "title": "Migration to Post-Quantum Cryptography: Quantum Readiness \u2014 Cryptographic Discovery",
       "url": "https://www.nccoe.nist.gov/sites/default/files/2023-12/pqc-migration-nist-sp-1800-38b-preliminary-draft.pdf",
       "status": "downloaded",
       "filename": "NIST_NCCoE_SP_1800-38B.pdf",
@@ -2352,7 +2352,7 @@
     },
     {
       "refId": "DoD-CIO-PQC-Memo-2025",
-      "title": "DoD CIO Memorandum — Preparing for Migration to Post Quantum Cryptography",
+      "title": "DoD CIO Memorandum \u2014 Preparing for Migration to Post Quantum Cryptography",
       "url": "https://dodcio.defense.gov/Portals/0/Documents/Library/PreparingForMigrationPQC.pdf",
       "status": "downloaded",
       "filename": "DoD-CIO-PQC-Memo-2025.pdf",
@@ -2372,7 +2372,7 @@
     },
     {
       "refId": "CISA-Bad-Practices-PQC-2025",
-      "title": "CISA/FBI Product Security Bad Practices (Updated — PQC Recommendation)",
+      "title": "CISA/FBI Product Security Bad Practices (Updated \u2014 PQC Recommendation)",
       "url": "https://www.cisa.gov/resources-tools/resources/product-security-bad-practices",
       "status": "downloaded",
       "filename": "CISA-Bad-Practices-PQC-2025.html",
@@ -2502,7 +2502,7 @@
     },
     {
       "refId": "RFC-9964",
-      "title": "RFC 9964 — ML-DSA for JOSE and COSE",
+      "title": "RFC 9964 \u2014 ML-DSA for JOSE and COSE",
       "url": "https://www.rfc-editor.org/rfc/rfc9964.html",
       "status": "downloaded",
       "filename": "RFC-9964.html",
@@ -2742,7 +2742,7 @@
     },
     {
       "refId": "ASC-X9-TR-50-2019",
-      "title": "ASC X9 TR 50-2019 — Quantum Techniques in Cryptographic Message Syntax (CMS)",
+      "title": "ASC X9 TR 50-2019 \u2014 Quantum Techniques in Cryptographic Message Syntax (CMS)",
       "url": "https://x9.org/wp-content/uploads/2019/03/ASC-X9-TR-50-2019-Quantum-Techniques-in-Cryptographic-Message-Syntax-1.pdf",
       "status": "downloaded",
       "filename": "ASC-X9-TR-50-2019-Quantum-Techniques-CMS.pdf",
@@ -2752,7 +2752,7 @@
     },
     {
       "refId": "ASC-X9-IR-F01-2022",
-      "title": "ASC X9 IR 01-2022 — Quantum Computing Risks to the Financial Services Industry",
+      "title": "ASC X9 IR 01-2022 \u2014 Quantum Computing Risks to the Financial Services Industry",
       "url": "https://x9.org/wp-content/uploads/2022/11/X9F-Quantum-Computing-Risk-Study-Group-IR-F01-2022_20221129-Published-PDF.pdf",
       "status": "downloaded",
       "filename": "ASC-X9-IR-F01-2022-Quantum-Computing-Risk-Study.pdf",
@@ -2762,7 +2762,7 @@
     },
     {
       "refId": "ASC-X9-PQC-Readiness-2025",
-      "title": "ASC X9 Report — Post-Quantum Cryptography Financial Readiness Needs Assessment (2025)",
+      "title": "ASC X9 Report \u2014 Post-Quantum Cryptography Financial Readiness Needs Assessment (2025)",
       "url": "https://x9.org/wp-content/uploads/2025/08/New-X9-Report-Supplies-Guidance-on-Migrating-to-Post-quantum-Cryptography-Safely-and-Cost-effectively-FINAL.pdf",
       "status": "downloaded",
       "filename": "ASC-X9-PQC-Financial-Readiness-2025.pdf",
@@ -2772,7 +2772,7 @@
     },
     {
       "refId": "ASC-X9-Financial-PKI",
-      "title": "ASC X9 Financial PKI — Post-Quantum Cryptography Trust Framework for Financial Services",
+      "title": "ASC X9 Financial PKI \u2014 Post-Quantum Cryptography Trust Framework for Financial Services",
       "url": "https://x9.org/signing-ceremony-for-x9-financial-pki-takes-place/",
       "status": "downloaded",
       "filename": "ASC-X9-Financial-PKI-Signing-Ceremony.html",
@@ -3142,7 +3142,7 @@
     },
     {
       "refId": "IEEE-P1931-1-ROSA",
-      "title": "IEEE P1931.1: Standard for Post-Quantum Cryptography — ROust Security Architecture (ROSA)",
+      "title": "IEEE P1931.1: Standard for Post-Quantum Cryptography \u2014 ROust Security Architecture (ROSA)",
       "url": "https://standards.ieee.org/ieee/1931.1/7556/",
       "status": "downloaded",
       "filename": "IEEE_P1931.1.html",
@@ -3192,7 +3192,7 @@
     },
     {
       "refId": "SandboxAQ-PQC-Readiness-2025",
-      "title": "State of PQC Readiness 2025 — Annual Industry Survey",
+      "title": "State of PQC Readiness 2025 \u2014 Annual Industry Survey",
       "url": "https://www.sandboxaq.com/pqc-readiness-2025",
       "status": "downloaded",
       "filename": "SandboxAQ-PQC-Readiness-2025.html",
@@ -3202,7 +3202,7 @@
     },
     {
       "refId": "JPMorgan-RWPQC-2025",
-      "title": "JPMorgan Chase — Real World PQC 2025 Presentation",
+      "title": "JPMorgan Chase \u2014 Real World PQC 2025 Presentation",
       "url": "https://na.eventscloud.com/file_uploads/ab7bb42621635d48dc3daf1fe30d5def_Day1-1530-JPMorgan_Chase_RWPQC25.pdf",
       "status": "downloaded",
       "filename": "Day1-1530-JPMorgan_Chase_RWPQC25.pdf",
@@ -3232,7 +3232,7 @@
     },
     {
       "refId": "EPC-342-08-Crypto-Guidelines-v16",
-      "title": "EPC 342-08 v16.0 — Guidelines on Cryptographic Algorithms Usage and Key Management (2026)",
+      "title": "EPC 342-08 v16.0 \u2014 Guidelines on Cryptographic Algorithms Usage and Key Management (2026)",
       "url": "https://www.europeanpaymentscouncil.eu/document-library/guidance-documents/guidelines-cryptographic-algorithms-usage-and-key-management",
       "status": "downloaded",
       "filename": "EPC-342-08-Crypto-Guidelines-v16.html",
@@ -3242,7 +3242,7 @@
     },
     {
       "refId": "FIPS-180-4",
-      "title": "Secure Hash Standard (SHS) — SHA-1, SHA-224, SHA-256, SHA-384, SHA-512",
+      "title": "Secure Hash Standard (SHS) \u2014 SHA-1, SHA-224, SHA-256, SHA-384, SHA-512",
       "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf",
       "status": "downloaded",
       "filename": "FIPS-180-4.pdf",
@@ -3262,7 +3262,7 @@
     },
     {
       "refId": "RFC-9935",
-      "title": "Internet X.509 PKI — Algorithm Identifiers for ML-KEM",
+      "title": "Internet X.509 PKI \u2014 Algorithm Identifiers for ML-KEM",
       "url": "https://www.rfc-editor.org/rfc/rfc9935",
       "status": "downloaded",
       "filename": "RFC-9935.html",
@@ -3392,7 +3392,7 @@
     },
     {
       "refId": "Bernstein-Lange-Fallout-2017",
-      "title": "Post-quantum cryptography — dealing with the fallout of physics success",
+      "title": "Post-quantum cryptography \u2014 dealing with the fallout of physics success",
       "url": "https://eprint.iacr.org/2017/314.pdf",
       "status": "downloaded",
       "filename": "Bernstein-Lange-Fallout-2017.pdf",
@@ -3572,7 +3572,7 @@
     },
     {
       "refId": "ANSSI-PG-083-v3-2026",
-      "title": "Règles et Recommandations Concernant le Choix et le Dimensionnement des Mécanismes Cryptographiques (v3.00)",
+      "title": "R\u00e8gles et Recommandations Concernant le Choix et le Dimensionnement des M\u00e9canismes Cryptographiques (v3.00)",
       "url": "https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf",
       "status": "downloaded",
       "filename": "ANSSI-PG-083-v3-2026.pdf",
@@ -4102,7 +4102,7 @@
     },
     {
       "refId": "FIPS-140-3-STANDARD",
-      "title": "FIPS 140-3 — Security Requirements for Cryptographic Modules",
+      "title": "FIPS 140-3 \u2014 Security Requirements for Cryptographic Modules",
       "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.140-3.pdf",
       "status": "downloaded",
       "filename": "FIPS-140-3-STANDARD.pdf",
@@ -4122,7 +4122,7 @@
     },
     {
       "refId": "NIST-SP-800-140A",
-      "title": "NIST SP 800-140A — CMVP Documentation Requirements",
+      "title": "NIST SP 800-140A \u2014 CMVP Documentation Requirements",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140A.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-140A.pdf",
@@ -4142,7 +4142,7 @@
     },
     {
       "refId": "NIST-SP-800-140D",
-      "title": "NIST SP 800-140D Rev. 2 — CMVP-Approved Sensitive Security Parameter Generation and Establishment Methods",
+      "title": "NIST SP 800-140D Rev. 2 \u2014 CMVP-Approved Sensitive Security Parameter Generation and Establishment Methods",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Dr2.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-140D.pdf",
@@ -4152,7 +4152,7 @@
     },
     {
       "refId": "NIST-SP-800-140E",
-      "title": "NIST SP 800-140E — CMVP Approved Authentication Mechanisms",
+      "title": "NIST SP 800-140E \u2014 CMVP Approved Authentication Mechanisms",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140E.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-140E.pdf",
@@ -4162,7 +4162,7 @@
     },
     {
       "refId": "NIST-SP-800-140F",
-      "title": "NIST SP 800-140F — CMVP Approved Non-Invasive Attack Mitigation Test Methods",
+      "title": "NIST SP 800-140F \u2014 CMVP Approved Non-Invasive Attack Mitigation Test Methods",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140F.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-140F.pdf",
@@ -4192,7 +4192,7 @@
     },
     {
       "refId": "CC-2022-PART1",
-      "title": "Common Criteria 2022 Part 1 — Introduction and General Model (R1)",
+      "title": "Common Criteria 2022 Part 1 \u2014 Introduction and General Model (R1)",
       "url": "https://www.commoncriteriaportal.org/files/ccfiles/CC2022PART1R1.pdf",
       "status": "downloaded",
       "filename": "CC-2022-PART1.pdf",
@@ -4202,7 +4202,7 @@
     },
     {
       "refId": "CC-2022-PART2",
-      "title": "Common Criteria 2022 Part 2 — Security Functional Components (R1)",
+      "title": "Common Criteria 2022 Part 2 \u2014 Security Functional Components (R1)",
       "url": "https://www.commoncriteriaportal.org/files/ccfiles/CC2022PART2R1.pdf",
       "status": "downloaded",
       "filename": "CC-2022-PART2.pdf",
@@ -4212,7 +4212,7 @@
     },
     {
       "refId": "CC-2022-PART3",
-      "title": "Common Criteria 2022 Part 3 — Security Assurance Components (R1)",
+      "title": "Common Criteria 2022 Part 3 \u2014 Security Assurance Components (R1)",
       "url": "https://www.commoncriteriaportal.org/files/ccfiles/CC2022PART3R1.pdf",
       "status": "downloaded",
       "filename": "CC-2022-PART3.pdf",
@@ -4232,7 +4232,7 @@
     },
     {
       "refId": "BSI-BSZ-METHOD",
-      "title": "BSI BSZ — Accelerated Security Certification Evaluation Process (v2.1)",
+      "title": "BSI BSZ \u2014 Accelerated Security Certification Evaluation Process (v2.1)",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/BSZ/BSZ-Evaluation.pdf?__blob=publicationFile&v=5",
       "status": "downloaded",
       "filename": "BSI-BSZ-METHOD.pdf",
@@ -4242,7 +4242,7 @@
     },
     {
       "refId": "HIPAA-45-CFR-164",
-      "title": "HIPAA Security Rule — 45 CFR Part 164",
+      "title": "HIPAA Security Rule \u2014 45 CFR Part 164",
       "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164",
       "status": "downloaded",
       "filename": "HIPAA-45-CFR-164.html",
@@ -4252,7 +4252,7 @@
     },
     {
       "refId": "FERPA-34-CFR-99",
-      "title": "FERPA — 34 CFR Part 99",
+      "title": "FERPA \u2014 34 CFR Part 99",
       "url": "https://www.ecfr.gov/current/title-34/subtitle-A/part-99",
       "status": "downloaded",
       "filename": "FERPA-34-CFR-99.html",
@@ -4262,7 +4262,7 @@
     },
     {
       "refId": "COPPA-16-CFR-312",
-      "title": "COPPA Rule — 16 CFR Part 312",
+      "title": "COPPA Rule \u2014 16 CFR Part 312",
       "url": "https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-312",
       "status": "downloaded",
       "filename": "COPPA-16-CFR-312.html",
@@ -4272,7 +4272,7 @@
     },
     {
       "refId": "FDA-21-CFR-11",
-      "title": "FDA 21 CFR Part 11 — Electronic Records; Electronic Signatures",
+      "title": "FDA 21 CFR Part 11 \u2014 Electronic Records; Electronic Signatures",
       "url": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-11",
       "status": "downloaded",
       "filename": "FDA-21-CFR-11.html",
@@ -4282,7 +4282,7 @@
     },
     {
       "refId": "FISMA-NIST-SP-800-53r5",
-      "title": "NIST SP 800-53 Rev. 5 Release 5.2.0 — Security and Privacy Controls for Information Systems and Organizations",
+      "title": "NIST SP 800-53 Rev. 5 Release 5.2.0 \u2014 Security and Privacy Controls for Information Systems and Organizations",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r5.pdf",
       "status": "downloaded",
       "filename": "FISMA-NIST-SP-800-53r5.pdf",
@@ -4292,7 +4292,7 @@
     },
     {
       "refId": "HITECH-PL-111-5",
-      "title": "HITECH Act — Public Law 111-5 (ARRA Title XIII)",
+      "title": "HITECH Act \u2014 Public Law 111-5 (ARRA Title XIII)",
       "url": "https://www.govinfo.gov/content/pkg/PLAW-111publ5/pdf/PLAW-111publ5.pdf",
       "status": "downloaded",
       "filename": "HITECH-PL-111-5.pdf",
@@ -4302,7 +4302,7 @@
     },
     {
       "refId": "NERC-CIP-REQS",
-      "title": "NERC Reliability Standards — Complete Set (including CIP)",
+      "title": "NERC Reliability Standards \u2014 Complete Set (including CIP)",
       "url": "https://www.nerc.com/pa/Stand/Reliability%20Standards%20Complete%20Set/RSCompleteSet.pdf",
       "status": "downloaded",
       "filename": "NERC-CIP-REQS.html",
@@ -4322,7 +4322,7 @@
     },
     {
       "refId": "ETSI-EN-303645",
-      "title": "ETSI EN 303 645 V3.1.3 — Cyber Security for Consumer IoT: Baseline Requirements",
+      "title": "ETSI EN 303 645 V3.1.3 \u2014 Cyber Security for Consumer IoT: Baseline Requirements",
       "url": "https://www.etsi.org/deliver/etsi_en/303600_303699/303645/03.01.03_60/en_303645v030103p.pdf",
       "status": "downloaded",
       "filename": "ETSI-EN-303645.pdf",
@@ -4362,7 +4362,7 @@
     },
     {
       "refId": "HKMA-FINTECH-BLUEPRINT-2026",
-      "title": "HKMA Fintech Promotion Blueprint (Fintech 2030) — Feb 2026",
+      "title": "HKMA Fintech Promotion Blueprint (Fintech 2030) \u2014 Feb 2026",
       "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
       "status": "downloaded",
       "filename": "HKMA-FINTECH-BLUEPRINT-2026.pdf",
@@ -4372,7 +4372,7 @@
     },
     {
       "refId": "NY-DFS-23-NYCRR-500-A2",
-      "title": "NY DFS 23 NYCRR Part 500 — Cybersecurity Requirements (Amendment 2)",
+      "title": "NY DFS 23 NYCRR Part 500 \u2014 Cybersecurity Requirements (Amendment 2)",
       "url": "https://www.dfs.ny.gov/system/files/documents/2023/12/rf23_nycrr_part_500_amend02_20231101.pdf",
       "status": "downloaded",
       "filename": "NY-DFS-23-NYCRR-500-A2.pdf",
@@ -4392,7 +4392,7 @@
     },
     {
       "refId": "DORA-REG-2022-2554",
-      "title": "Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554",
+      "title": "Digital Operational Resilience Act (DORA) \u2014 Regulation EU 2022/2554",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R2554",
       "status": "downloaded",
       "filename": "DORA-REG-2022-2554.pdf",
@@ -4402,7 +4402,7 @@
     },
     {
       "refId": "GDPR-REG-2016-679",
-      "title": "General Data Protection Regulation (GDPR) — Regulation EU 2016/679",
+      "title": "General Data Protection Regulation (GDPR) \u2014 Regulation EU 2016/679",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0679",
       "status": "downloaded",
       "filename": "GDPR-REG-2016-679.pdf",
@@ -4412,7 +4412,7 @@
     },
     {
       "refId": "EIDAS-REG-910-2014",
-      "title": "eIDAS Regulation — Regulation EU 910/2014 (eIDAS 1.0)",
+      "title": "eIDAS Regulation \u2014 Regulation EU 910/2014 (eIDAS 1.0)",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32014R0910",
       "status": "downloaded",
       "filename": "EIDAS-REG-910-2014.pdf",
@@ -4422,7 +4422,7 @@
     },
     {
       "refId": "EU-CRA-REG-2024-2847",
-      "title": "EU Cyber Resilience Act (CRA) — Regulation EU 2024/2847",
+      "title": "EU Cyber Resilience Act (CRA) \u2014 Regulation EU 2024/2847",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32024R2847",
       "status": "downloaded",
       "filename": "EU-CRA-REG-2024-2847.pdf",
@@ -4432,7 +4432,7 @@
     },
     {
       "refId": "MICA-REG-2023-1114",
-      "title": "Markets in Crypto-Assets Regulation (MiCA) — Regulation EU 2023/1114",
+      "title": "Markets in Crypto-Assets Regulation (MiCA) \u2014 Regulation EU 2023/1114",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32023R1114",
       "status": "downloaded",
       "filename": "MICA-REG-2023-1114.pdf",
@@ -4442,7 +4442,7 @@
     },
     {
       "refId": "EU-REC-2024-1101",
-      "title": "EU Commission Recommendation on PQC — 2024/1101",
+      "title": "EU Commission Recommendation on PQC \u2014 2024/1101",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32024H1101",
       "status": "downloaded",
       "filename": "EU-REC-2024-1101.pdf",
@@ -4452,7 +4452,7 @@
     },
     {
       "refId": "Saudi-NCA-NCS1-2020",
-      "title": "Saudi NCA — National Cryptographic Standards (NCS-1:2020)",
+      "title": "Saudi NCA \u2014 National Cryptographic Standards (NCS-1:2020)",
       "url": "https://nca.gov.sa/",
       "status": "downloaded",
       "filename": "Saudi-NCA-NCS1-2020.html",
@@ -4482,7 +4482,7 @@
     },
     {
       "refId": "NZISM-V3-9",
-      "title": "New Zealand Information Security Manual (NZISM) v3.9 — November 2025",
+      "title": "New Zealand Information Security Manual (NZISM) v3.9 \u2014 November 2025",
       "url": "https://nzism.gcsb.govt.nz/",
       "status": "downloaded",
       "filename": "NZISM-V3-9.html",
@@ -4522,7 +4522,7 @@
     },
     {
       "refId": "draft-ietf-lamps-kyber-certificates",
-      "title": "Internet X.509 PKI — Algorithm Identifiers for ML-KEM",
+      "title": "Internet X.509 PKI \u2014 Algorithm Identifiers for ML-KEM",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-kyber-certificates/",
       "status": "downloaded",
       "filename": "draft-ietf-lamps-kyber-certificates.html",
@@ -4652,7 +4652,7 @@
     },
     {
       "refId": "NIST-IR-8547-IPD2",
-      "title": "NIST IR 8547 IPD2 — Transition to Post-Quantum Cryptography Standards",
+      "title": "NIST IR 8547 IPD2 \u2014 Transition to Post-Quantum Cryptography Standards",
       "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "status": "downloaded",
       "filename": "NIST-IR-8547-IPD2.html",
@@ -4672,7 +4672,7 @@
     },
     {
       "refId": "CSA-CryptoNews-May2026",
-      "title": "CSA Crypto News — May 2026",
+      "title": "CSA Crypto News \u2014 May 2026",
       "url": "https://cloudsecurityalliance.org/",
       "status": "downloaded",
       "filename": "CSA-CryptoNews-May2026.html",
@@ -4702,7 +4702,7 @@
     },
     {
       "refId": "AU-Privacy-Act-APPs",
-      "title": "Australian Privacy Act 1988 — Australian Privacy Principles (APPs)",
+      "title": "Australian Privacy Act 1988 \u2014 Australian Privacy Principles (APPs)",
       "url": "https://www.legislation.gov.au/C2004A03712",
       "status": "downloaded",
       "filename": "AU-Privacy-Act-APPs.html",
@@ -4792,7 +4792,7 @@
     },
     {
       "refId": "QCReport-QDay-Accelerated-Timeline-2026",
-      "title": "Q-Day: Accelerated Timeline Across Wider Attack Surface — Executive Summary",
+      "title": "Q-Day: Accelerated Timeline Across Wider Attack Surface \u2014 Executive Summary",
       "url": "https://quantumcomputingreport.com/q-day-accelerated-timeline-across-wider-attack-surface-executive-summary/",
       "status": "downloaded",
       "filename": "QCReport-QDay-Accelerated-Timeline-2026.html",
@@ -4902,7 +4902,7 @@
     },
     {
       "refId": "ISO/IEC 18033-2:2006/AMD1:2017",
-      "title": "ISO/IEC 18033-2:2006/AMD1:2017 — Encryption Algorithms Amendment 1: Post-Quantum KEMs",
+      "title": "ISO/IEC 18033-2:2006/AMD1:2017 \u2014 Encryption Algorithms Amendment 1: Post-Quantum KEMs",
       "url": "https://www.iso.org/standard/85646.html",
       "status": "downloaded",
       "filename": "ISO_IEC_18033-2_2006_AMD1_2017.html",
@@ -4932,7 +4932,7 @@
     },
     {
       "refId": "IEEE 1609.2 Amendment",
-      "title": "IEEE 1609.2 Amendment — Post-Quantum Cryptography for V2X Communications Security",
+      "title": "IEEE 1609.2 Amendment \u2014 Post-Quantum Cryptography for V2X Communications Security",
       "url": "https://standards.ieee.org/ieee/1609.2/7389/",
       "status": "downloaded",
       "filename": "IEEE_1609.2_Amendment.html",
@@ -4942,7 +4942,7 @@
     },
     {
       "refId": "IEC 62443",
-      "title": "IEC 62443 — Industrial Automation and Control Systems Security Standards Series",
+      "title": "IEC 62443 \u2014 Industrial Automation and Control Systems Security Standards Series",
       "url": "https://www.iec.ch/taxonomy/term/778",
       "status": "downloaded",
       "filename": "IEC-62443.html",
@@ -4962,7 +4962,7 @@
     },
     {
       "refId": "China YD/T 3834.1-2021",
-      "title": "YD/T 3834.1-2021 — China Telecom Industry Standard for PQC in Mobile Networks",
+      "title": "YD/T 3834.1-2021 \u2014 China Telecom Industry Standard for PQC in Mobile Networks",
       "url": "https://www.ttbz.org.cn/StandardManage/Detail/53484/",
       "status": "downloaded",
       "filename": "China_YD_T_3834.1-2021.html",
@@ -4992,7 +4992,7 @@
     },
     {
       "refId": "ISO/IEC NP 29192-8",
-      "title": "ISO/IEC NP 29192-8 — Lightweight Cryptography: Post-Quantum Algorithms",
+      "title": "ISO/IEC NP 29192-8 \u2014 Lightweight Cryptography: Post-Quantum Algorithms",
       "url": "https://www.iso.org/standard/80114.html",
       "status": "downloaded",
       "filename": "ISO-IEC-NP-29192-8.html",
@@ -5002,7 +5002,7 @@
     },
     {
       "refId": "CAB-Forum-SC-081v3",
-      "title": "CA/Browser Forum Ballot SC-081v3 — Post-Quantum Key Exchange in TLS",
+      "title": "CA/Browser Forum Ballot SC-081v3 \u2014 Post-Quantum Key Exchange in TLS",
       "url": "https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/",
       "status": "downloaded",
       "filename": "CAB-Forum-SC-081v3.html",
@@ -5062,7 +5062,7 @@
     },
     {
       "refId": "CNSSP 15",
-      "title": "CNSS Policy 15 — Use of Public Standards for Secure Information Sharing",
+      "title": "CNSS Policy 15 \u2014 Use of Public Standards for Secure Information Sharing",
       "url": "https://imlive.s3.amazonaws.com/Federal%20Government/ID151830346965529215587195222610265670631/CNSSP15.pdf",
       "status": "downloaded",
       "filename": "CNSSP_15.pdf",
@@ -5172,7 +5172,7 @@
     },
     {
       "refId": "EO-14028",
-      "title": "Executive Order 14028 — Improving the Nation's Cybersecurity",
+      "title": "Executive Order 14028 \u2014 Improving the Nation's Cybersecurity",
       "url": "https://www.federalregister.gov/documents/2021/05/17/2021-10460/improving-the-nations-cybersecurity",
       "status": "downloaded",
       "filename": "EO-14028.html",
@@ -5182,7 +5182,7 @@
     },
     {
       "refId": "ANSI X9.62",
-      "title": "ANSI X9.62 — Public Key Cryptography for the Financial Services Industry: ECDSA",
+      "title": "ANSI X9.62 \u2014 Public Key Cryptography for the Financial Services Industry: ECDSA",
       "url": "https://webstore.ansi.org/standards/ascx9/ansix9622005",
       "status": "downloaded",
       "filename": "ANSI-X9.62.html",
@@ -5192,7 +5192,7 @@
     },
     {
       "refId": "ANSI X9.63",
-      "title": "ANSI X9.63 — Public Key Cryptography for the Financial Services Industry: ECDH",
+      "title": "ANSI X9.63 \u2014 Public Key Cryptography for the Financial Services Industry: ECDH",
       "url": "https://webstore.ansi.org/standards/ascx9/ansix9632011",
       "status": "downloaded",
       "filename": "ANSI-X9.63.html",
@@ -5202,7 +5202,7 @@
     },
     {
       "refId": "SEC 1",
-      "title": "SEC 1 v2.0 — Elliptic Curve Cryptography",
+      "title": "SEC 1 v2.0 \u2014 Elliptic Curve Cryptography",
       "url": "https://www.secg.org/sec1-v2.pdf",
       "status": "downloaded",
       "filename": "SEC_1.pdf",
@@ -5212,7 +5212,7 @@
     },
     {
       "refId": "IEEE 1363",
-      "title": "IEEE 1363-2000 — Standard Specifications for Public-Key Cryptography",
+      "title": "IEEE 1363-2000 \u2014 Standard Specifications for Public-Key Cryptography",
       "url": "https://standards.ieee.org/ieee/1363/2049/",
       "status": "downloaded",
       "filename": "IEEE_1363.html",
@@ -5222,7 +5222,7 @@
     },
     {
       "refId": "IEEE 1363a",
-      "title": "IEEE 1363a-2004 — Standard Specifications for Public-Key Cryptography Amendment 1",
+      "title": "IEEE 1363a-2004 \u2014 Standard Specifications for Public-Key Cryptography Amendment 1",
       "url": "https://standards.ieee.org/ieee/1363a/2004/",
       "status": "downloaded",
       "filename": "IEEE_1363a.html",
@@ -5232,7 +5232,7 @@
     },
     {
       "refId": "ISO/IEC 18033-2:2006",
-      "title": "ISO/IEC 18033-2:2006 — Information Technology: Encryption Algorithms — Part 2: Asymmetric Ciphers",
+      "title": "ISO/IEC 18033-2:2006 \u2014 Information Technology: Encryption Algorithms \u2014 Part 2: Asymmetric Ciphers",
       "url": "https://www.iso.org/standard/37971.html",
       "status": "downloaded",
       "filename": "ISO-IEC-18033-2-2006.html",
@@ -5242,7 +5242,7 @@
     },
     {
       "refId": "NIAP",
-      "title": "NIAP — National Information Assurance Partnership",
+      "title": "NIAP \u2014 National Information Assurance Partnership",
       "url": "https://www.niap-ccevs.org/",
       "status": "downloaded",
       "filename": "NIAP.html",
@@ -5642,7 +5642,7 @@
     },
     {
       "refId": "draft-celi-wiggers-tls-authkem",
-      "title": "TLS AuthKEM — Certificate-Based Authentication with KEM in TLS 1.3",
+      "title": "TLS AuthKEM \u2014 Certificate-Based Authentication with KEM in TLS 1.3",
       "url": "https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/",
       "status": "downloaded",
       "filename": "draft-celi-wiggers-tls-authkem.html",
@@ -5672,7 +5672,7 @@
     },
     {
       "refId": "draft-ietf-tls-rfc8447bis-15",
-      "title": "IANA Registry Updates for TLS and DTLS — RFC 8447 bis",
+      "title": "IANA Registry Updates for TLS and DTLS \u2014 RFC 8447 bis",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-rfc8447bis/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-rfc8447bis-15.html",
@@ -5682,7 +5682,7 @@
     },
     {
       "refId": "BIP-43",
-      "title": "Bitcoin BIP-43 — Purpose Field for Deterministic Wallets",
+      "title": "Bitcoin BIP-43 \u2014 Purpose Field for Deterministic Wallets",
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki",
       "status": "downloaded",
       "filename": "BIP-43.html",
@@ -5692,7 +5692,7 @@
     },
     {
       "refId": "EIP-2",
-      "title": "Ethereum EIP-2 — Homestead Hard Fork Changes",
+      "title": "Ethereum EIP-2 \u2014 Homestead Hard Fork Changes",
       "url": "https://eips.ethereum.org/EIPS/eip-2",
       "status": "downloaded",
       "filename": "EIP-2.html",
@@ -5702,7 +5702,7 @@
     },
     {
       "refId": "EIP-2718",
-      "title": "Ethereum EIP-2718 — Typed Transaction Envelope",
+      "title": "Ethereum EIP-2718 \u2014 Typed Transaction Envelope",
       "url": "https://eips.ethereum.org/EIPS/eip-2718",
       "status": "downloaded",
       "filename": "EIP-2718.html",
@@ -5712,7 +5712,7 @@
     },
     {
       "refId": "EIP-2929",
-      "title": "Ethereum EIP-2929 — Gas Cost Increases for State Access Opcodes",
+      "title": "Ethereum EIP-2929 \u2014 Gas Cost Increases for State Access Opcodes",
       "url": "https://eips.ethereum.org/EIPS/eip-2929",
       "status": "downloaded",
       "filename": "EIP-2929.html",
@@ -5722,7 +5722,7 @@
     },
     {
       "refId": "EIP-2930",
-      "title": "Ethereum EIP-2930 — Optional Access Lists",
+      "title": "Ethereum EIP-2930 \u2014 Optional Access Lists",
       "url": "https://eips.ethereum.org/EIPS/eip-2930",
       "status": "downloaded",
       "filename": "EIP-2930.html",
@@ -5732,7 +5732,7 @@
     },
     {
       "refId": "EIP-3541",
-      "title": "Ethereum EIP-3541 — Reject New Contract Code Starting With 0xEF",
+      "title": "Ethereum EIP-3541 \u2014 Reject New Contract Code Starting With 0xEF",
       "url": "https://eips.ethereum.org/EIPS/eip-3541",
       "status": "downloaded",
       "filename": "EIP-3541.html",
@@ -5742,7 +5742,7 @@
     },
     {
       "refId": "EIP-3607",
-      "title": "Ethereum EIP-3607 — Reject Transactions From Senders With Deployed Code",
+      "title": "Ethereum EIP-3607 \u2014 Reject Transactions From Senders With Deployed Code",
       "url": "https://eips.ethereum.org/EIPS/eip-3607",
       "status": "downloaded",
       "filename": "EIP-3607.html",
@@ -5752,7 +5752,7 @@
     },
     {
       "refId": "EIP-4844",
-      "title": "Ethereum EIP-4844 — Shard Blob Transactions (Proto-Danksharding)",
+      "title": "Ethereum EIP-4844 \u2014 Shard Blob Transactions (Proto-Danksharding)",
       "url": "https://eips.ethereum.org/EIPS/eip-4844",
       "status": "downloaded",
       "filename": "EIP-4844.html",
@@ -5772,7 +5772,7 @@
     },
     {
       "refId": "RFC 8037",
-      "title": "CFRG Elliptic Curves for JOSE — Ed25519 and X25519",
+      "title": "CFRG Elliptic Curves for JOSE \u2014 Ed25519 and X25519",
       "url": "https://www.rfc-editor.org/rfc/rfc8037.html",
       "status": "downloaded",
       "filename": "RFC_8037.html",
@@ -6392,7 +6392,7 @@
     },
     {
       "refId": "BIKE-Round4-Spec-2022",
-      "title": "BIKE: Bit Flipping Key Encapsulation — Round 4 Specification",
+      "title": "BIKE: Bit Flipping Key Encapsulation \u2014 Round 4 Specification",
       "url": "https://bikesuite.org/files/v5.0/BIKE_Spec.2022.10.04.1.pdf",
       "status": "downloaded",
       "filename": "BIKE-Round4-Spec-2022.pdf",
@@ -6412,7 +6412,7 @@
     },
     {
       "refId": "India-DST-NQM-Roadmap",
-      "title": "India DST Task Force Report — Phased Roadmap for Migration to Post-Quantum Cryptography under NQM",
+      "title": "India DST Task Force Report \u2014 Phased Roadmap for Migration to Post-Quantum Cryptography under NQM",
       "url": "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
       "status": "downloaded",
       "filename": "India-DST-NQM-Roadmap.pdf",
@@ -6452,7 +6452,7 @@
     },
     {
       "refId": "India-TEC-910018-2025",
-      "title": "India TEC Technical Report TEC 910018:2025 — Migration to Post-Quantum Cryptography",
+      "title": "India TEC Technical Report TEC 910018:2025 \u2014 Migration to Post-Quantum Cryptography",
       "url": "https://www.tec.gov.in/pdf/TR/Final%20technical%20report%20on%20migration%20to%20PQC%2028-03-25.pdf",
       "status": "downloaded",
       "filename": "India-TEC-910018-2025.pdf",
@@ -6602,7 +6602,7 @@
     },
     {
       "refId": "draft-ietf-lamps-kyber-certificates-11",
-      "title": "Internet X.509 PKI — Algorithm Identifiers for ML-KEM",
+      "title": "Internet X.509 PKI \u2014 Algorithm Identifiers for ML-KEM",
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-kyber-certificates/",
       "status": "downloaded",
       "filename": "draft-ietf-lamps-kyber-certificates-11.html",
@@ -6682,7 +6682,7 @@
     },
     {
       "refId": "NIST-SP-800-57-Pt1-R5",
-      "title": "Recommendation for Key Management: Part 1 – General (Revision 5)",
+      "title": "Recommendation for Key Management: Part 1 \u2013 General (Revision 5)",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-57-Pt1-R5.pdf",
@@ -7282,7 +7282,7 @@
     },
     {
       "refId": "draft-ietf-mls-combiner-02",
-      "title": "MLS Combiner — Traditional + PQ MLS hybrid session",
+      "title": "MLS Combiner \u2014 Traditional + PQ MLS hybrid session",
       "url": "https://www.ietf.org/archive/id/draft-ietf-mls-combiner-02.txt",
       "status": "downloaded",
       "filename": "draft-ietf-mls-combiner-02.txt",
@@ -7312,7 +7312,7 @@
     },
     {
       "refId": "RFC 9364",
-      "title": "DNS Security Extensions (DNSSEC) — BCP 237",
+      "title": "DNS Security Extensions (DNSSEC) \u2014 BCP 237",
       "url": "https://datatracker.ietf.org/doc/html/rfc9364",
       "status": "downloaded",
       "filename": "RFC_9364.html",
@@ -7362,7 +7362,7 @@
     },
     {
       "refId": "TCG-TPM-2.0-Library-v1.85-Errata",
-      "title": "TCG TPM 2.0 Library Specification v1.85 — Errata",
+      "title": "TCG TPM 2.0 Library Specification v1.85 \u2014 Errata",
       "url": "https://trustedcomputinggroup.org/resource/tpm-library-specification/",
       "status": "downloaded",
       "filename": "TCG-TPM-2.0-Library-v1.85-Errata.html",
@@ -7542,7 +7542,7 @@
     },
     {
       "refId": "CISA-Quantum-Readiness-Roadmap",
-      "title": "CISA/NSA/NIST Quantum-Readiness — Migration to Post-Quantum Cryptography",
+      "title": "CISA/NSA/NIST Quantum-Readiness \u2014 Migration to Post-Quantum Cryptography",
       "url": "https://www.cisa.gov/sites/default/files/2023-08/Quantum%20Readiness_Final_CLEAR_508c%20(3).pdf",
       "status": "downloaded",
       "filename": "CISA-Quantum-Readiness-Roadmap.pdf",
@@ -7552,7 +7552,7 @@
     },
     {
       "refId": "AU-National-Quantum-Strategy-2023",
-      "title": "Australia National Quantum Strategy — Building a Thriving Future with Australia's Quantum Advantage",
+      "title": "Australia National Quantum Strategy \u2014 Building a Thriving Future with Australia's Quantum Advantage",
       "url": "https://www.industry.gov.au/sites/default/files/2023-05/national-quantum-strategy.pdf",
       "status": "downloaded",
       "filename": "AU-National-Quantum-Strategy-2023.pdf",
@@ -7812,7 +7812,7 @@
     },
     {
       "refId": "ENISA-SBOM-Adoption-2026",
-      "title": "ENISA — SBOM Adoption State of Play 2026: Survey Results and Analysis",
+      "title": "ENISA \u2014 SBOM Adoption State of Play 2026: Survey Results and Analysis",
       "url": "https://www.enisa.europa.eu/publications/sbom-adoption-state-of-play-2026",
       "status": "downloaded",
       "filename": "ENISA-SBOM-Adoption-2026.pdf",
@@ -7952,7 +7952,7 @@
     },
     {
       "refId": "ISO-IEC-27001-2022",
-      "title": "ISO/IEC 27001:2022 — Information Security Management Systems — Requirements",
+      "title": "ISO/IEC 27001:2022 \u2014 Information Security Management Systems \u2014 Requirements",
       "url": "https://www.iso.org/standard/27001",
       "status": "downloaded",
       "filename": "ISO-IEC-27001-2022.html",
@@ -7962,7 +7962,7 @@
     },
     {
       "refId": "ENISA-Hybridization-Standardisation-Status",
-      "title": "Hybridization of Traditional Cryptographic Mechanisms with PQC — Standardisation Status",
+      "title": "Hybridization of Traditional Cryptographic Mechanisms with PQC \u2014 Standardisation Status",
       "url": "https://certification.enisa.europa.eu/document/download/02f54596-6a99-4c9e-88c4-8c711ebff9c1_en?filename=ENISA%20report%20-%20Hybridization%20of%20traditional%20cryptographic%20mechanisms%20with%20PQC%20-%20Standardisation%20Status%20-%2030%20April%202026%20.pdf",
       "status": "downloaded",
       "filename": "ENISA-Hybridization-Standardisation-Status.pdf",
@@ -8092,7 +8092,7 @@
     },
     {
       "refId": "OASIS-CSAF-2.0-VEX",
-      "title": "Common Security Advisory Framework (CSAF) Version 2.0 — VEX Profile",
+      "title": "Common Security Advisory Framework (CSAF) Version 2.0 \u2014 VEX Profile",
       "url": "https://docs.oasis-open.org/csaf/csaf/v2.0/os/csaf-v2.0-os.html",
       "status": "downloaded",
       "filename": "OASIS-CSAF-2.0-VEX.html",
@@ -8102,7 +8102,7 @@
     },
     {
       "refId": "OMB-M-26-15",
-      "title": "OMB Memorandum M-26-15 — Execution of the Migration to Post-Quantum Cryptography",
+      "title": "OMB Memorandum M-26-15 \u2014 Execution of the Migration to Post-Quantum Cryptography",
       "url": "https://www.whitehouse.gov/wp-content/uploads/2026/06/M-26-15-Execution-of-the-Migration-to-Post-Quantum-Cryptography.pdf",
       "status": "downloaded",
       "filename": "OMB-M-26-15.pdf",
@@ -8112,7 +8112,7 @@
     },
     {
       "refId": "EO-14413",
-      "title": "Executive Order 14413 — Ushering in the Next Frontier of Quantum Innovation",
+      "title": "Executive Order 14413 \u2014 Ushering in the Next Frontier of Quantum Innovation",
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/",
       "status": "downloaded",
       "filename": "EO-14413.html",
@@ -8122,7 +8122,7 @@
     },
     {
       "refId": "NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum",
-      "title": "NIST IR 8547 (Initial Public Draft) — Transition to Post-Quantum Cryptography Standards",
+      "title": "NIST IR 8547 (Initial Public Draft) \u2014 Transition to Post-Quantum Cryptography Standards",
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "downloaded",
       "filename": "NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum.pdf",
@@ -8132,7 +8132,7 @@
     },
     {
       "refId": "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1",
-      "title": "RFC 9846 — The Transport Layer Security (TLS) Protocol Version 1.3",
+      "title": "RFC 9846 \u2014 The Transport Layer Security (TLS) Protocol Version 1.3",
       "url": "https://www.rfc-editor.org/rfc/rfc9846.html",
       "status": "downloaded",
       "filename": "RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1.html",
@@ -8142,7 +8142,7 @@
     },
     {
       "refId": "SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model",
-      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 1 – PIV Card Application Namespace, Data Model and Representation",
+      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 1 \u2013 PIV Card Application Namespace, Data Model and Representation",
       "url": "https://raw.githubusercontent.com/usnistgov/piv-standards/main/800-73pt1/SP800-73pt1.md",
       "status": "downloaded",
       "filename": "SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model.md",
@@ -8152,7 +8152,7 @@
     },
     {
       "refId": "SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa",
-      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 2 – PIV Card Application Card Command Interface",
+      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 2 \u2013 PIV Card Application Card Command Interface",
       "url": "https://raw.githubusercontent.com/usnistgov/piv-standards/main/800-73pt2/SP800-73pt2.md",
       "status": "downloaded",
       "filename": "SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa.md",
@@ -8512,7 +8512,7 @@
     },
     {
       "refId": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
-      "title": "ISO/IEC 18033-2:2006/Amd 2:2026 - Information technology — Security techniques — Encryption algorithms — Part 2: Asymmetric ciphers — Amendment 2",
+      "title": "ISO/IEC 18033-2:2006/Amd 2:2026 - Information technology \u2014 Security techniques \u2014 Encryption algorithms \u2014 Part 2: Asymmetric ciphers \u2014 Amendment 2",
       "url": "https://www.iso.org/standard/86890.html",
       "status": "downloaded",
       "filename": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur.html",
@@ -8932,7 +8932,7 @@
     },
     {
       "refId": "UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS",
-      "title": "UNISIG SUBSET-137 — ERTMS/ETCS On-line Key Management FFFIS",
+      "title": "UNISIG SUBSET-137 \u2014 ERTMS/ETCS On-line Key Management FFFIS",
       "url": "https://www.era.europa.eu/system/files/2023-01/sos3_index083_-_subset-137_v100.pdf",
       "status": "downloaded",
       "filename": "UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS.pdf",
@@ -8952,7 +8952,7 @@
     },
     {
       "refId": "IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk",
-      "title": "IMO MSC-FAL.1/Circ.3/Rev.2 — Guidelines on Maritime Cyber Risk Management",
+      "title": "IMO MSC-FAL.1/Circ.3/Rev.2 \u2014 Guidelines on Maritime Cyber Risk Management",
       "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/MSC-FAL.1-Circ.3-Rev.2%20-%20Guidelines%20On%20Maritime%20Cyber%20Risk%20Management%20(Secretariat)%20(1).pdf",
       "status": "downloaded",
       "filename": "IMO-MSC-FAL-1-Circ-3-Rev-2-Guidelines-on-Maritime-Cyber-Risk.pdf",
@@ -8982,7 +8982,7 @@
     },
     {
       "refId": "DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification",
-      "title": "DVB BlueBook A165 — Extensions to the CI Plus Specification",
+      "title": "DVB BlueBook A165 \u2014 Extensions to the CI Plus Specification",
       "url": "https://dvb.org/wp-content/uploads/2019/12/a165-extensions-to-the-ci-plus-specification-drts-103-205-v141.pdf",
       "status": "downloaded",
       "filename": "DVB-BlueBook-A165-Extensions-to-the-CI-Plus-Specification.pdf",
@@ -8992,7 +8992,7 @@
     },
     {
       "refId": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag",
-      "title": "UN Regulation No 155 — Cyber Security and Cyber Security Management System",
+      "title": "UN Regulation No 155 \u2014 Cyber Security and Cyber Security Management System",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:42021X0387",
       "status": "downloaded",
       "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
@@ -9002,7 +9002,7 @@
     },
     {
       "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D",
-      "title": "ONC Health IT Certification Criterion § 170.315(d)(7) — End-User Device Encryption",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(7) \u2014 End-User Device Encryption",
       "url": "https://www.healthit.gov/test-method/end-user-device-encryption",
       "status": "downloaded",
       "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D.html",
@@ -9012,7 +9012,7 @@
     },
     {
       "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity",
-      "title": "ONC Health IT Certification Criterion § 170.315(d)(8) — Integrity",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(8) \u2014 Integrity",
       "url": "https://www.healthit.gov/test-method/integrity",
       "status": "downloaded",
       "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-8-Integrity.html",
@@ -9022,7 +9022,7 @@
     },
     {
       "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co",
-      "title": "ONC Health IT Certification Criterion § 170.315(d)(9) — Trusted Connection",
+      "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(9) \u2014 Trusted Connection",
       "url": "https://www.healthit.gov/test-method/trusted-connection",
       "status": "downloaded",
       "filename": "ONC-Health-IT-Certification-Criterion-170-315-d-9-Trusted-Co.html",
@@ -9042,7 +9042,7 @@
     },
     {
       "refId": "Campbell-Enterprise-PQC-Timelines-2026",
-      "title": "ATIS — Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
+      "title": "ATIS \u2014 Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
       "url": "https://doi.org/10.3390/computers15010009",
       "status": "downloaded",
       "filename": "Campbell-Enterprise-PQC-Timelines-2026.pdf",
@@ -9087,7 +9087,7 @@
     },
     {
       "refId": "Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile",
-      "title": "Federal PKI Common Policy X.509 Certificate and CRL Profile — Post-Quantum (Draft)",
+      "title": "Federal PKI Common Policy X.509 Certificate and CRL Profile \u2014 Post-Quantum (Draft)",
       "url": "https://www.idmanagement.gov/docs/fpki-x509-cert-profile-common-pqc.pdf",
       "status": "downloaded",
       "filename": "Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile.pdf",
@@ -9117,7 +9117,7 @@
     },
     {
       "refId": "NIST-SP-800-171-Rev-3-Protecting-Controlled-Unclassified-Inf",
-      "title": "NIST SP 800-171 Rev. 3 — Protecting Controlled Unclassified Information in Nonfederal Systems and Organizations",
+      "title": "NIST SP 800-171 Rev. 3 \u2014 Protecting Controlled Unclassified Information in Nonfederal Systems and Organizations",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171r3.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-171-Rev-3-Protecting-Controlled-Unclassified-Inf.pdf",
@@ -9127,7 +9127,7 @@
     },
     {
       "refId": "NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy",
-      "title": "NIST SP 800-210 — General Access Control Guidance for Cloud Systems",
+      "title": "NIST SP 800-210 \u2014 General Access Control Guidance for Cloud Systems",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-210.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy.pdf",
@@ -9137,7 +9137,7 @@
     },
     {
       "refId": "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp",
-      "title": "RFC 3161 — Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP)",
+      "title": "RFC 3161 \u2014 Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP)",
       "url": "https://www.rfc-editor.org/rfc/rfc3161.txt",
       "status": "downloaded",
       "filename": "RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp.html",
@@ -9147,7 +9147,7 @@
     },
     {
       "refId": "ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp",
-      "title": "ETSI EN 319 422 V1.1.1 — Time-stamping protocol and time-stamp token profiles",
+      "title": "ETSI EN 319 422 V1.1.1 \u2014 Time-stamping protocol and time-stamp token profiles",
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
       "status": "downloaded",
       "filename": "ETSI-EN-319-422-V1-1-1-Time-stamping-protocol-and-time-stamp.pdf",
@@ -9157,7 +9157,7 @@
     },
     {
       "refId": "ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch",
-      "title": "ETSI TS 103 764 — Rail Telecommunications (RT); FRMCS System Architecture",
+      "title": "ETSI TS 103 764 \u2014 Rail Telecommunications (RT); FRMCS System Architecture",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.00_30/ts_103764v010100va.pdf",
       "status": "downloaded",
       "filename": "ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch.pdf",
@@ -9167,7 +9167,7 @@
     },
     {
       "refId": "ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport",
-      "title": "ETSI TS 103 765-1 — Rail Telecommunications (RT); FRMCS Transport Stratum",
+      "title": "ETSI TS 103 765-1 \u2014 Rail Telecommunications (RT); FRMCS Transport Stratum",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376501/01.01.01_60/ts_10376501v010101p.pdf",
       "status": "downloaded",
       "filename": "ETSI-TS-103-765-1-Rail-Telecommunications-RT-FRMCS-Transport.pdf",
@@ -9217,7 +9217,7 @@
     },
     {
       "refId": "ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S",
-      "title": "ETSI TS 103 765-2 — Rail Telecommunications (RT); FRMCS Service Stratum",
+      "title": "ETSI TS 103 765-2 \u2014 Rail Telecommunications (RT); FRMCS Service Stratum",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376502/01.01.01_60/ts_10376502v010101p.pdf",
       "status": "downloaded",
       "filename": "ETSI-TS-103-765-2-Rail-Telecommunications-RT-FRMCS-Service-S.pdf",
@@ -9227,7 +9227,7 @@
     },
     {
       "refId": "ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ",
-      "title": "ETSI TS 103 765-4 — Rail Telecommunications (RT); FRMCS On-Network Interworking",
+      "title": "ETSI TS 103 765-4 \u2014 Rail Telecommunications (RT); FRMCS On-Network Interworking",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/10376504/01.01.01_60/ts_10376504v010101p.pdf",
       "status": "downloaded",
       "filename": "ETSI-TS-103-765-4-Rail-Telecommunications-RT-FRMCS-On-Networ.pdf",
@@ -9237,7 +9237,7 @@
     },
     {
       "refId": "UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System",
-      "title": "UIC FRMCS-T v1.0 — Future Railway Mobile Communication System Technical Specification",
+      "title": "UIC FRMCS-T v1.0 \u2014 Future Railway Mobile Communication System Technical Specification",
       "url": "https://uic.org/IMG/pdf/frmcs-t_v1_0_.pdf",
       "status": "downloaded",
       "filename": "UIC-FRMCS-T-v1-0-Future-Railway-Mobile-Communication-System.pdf",
@@ -9257,7 +9257,7 @@
     },
     {
       "refId": "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us",
-      "title": "EPC 342-08 v16.0.1 — Guidelines on Cryptographic Algorithms Usage and Key Management (2026)",
+      "title": "EPC 342-08 v16.0.1 \u2014 Guidelines on Cryptographic Algorithms Usage and Key Management (2026)",
       "url": "https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2026-06/EPC342-08%20v16.0.1%20Approved%20-%20Guidelines%20on%20Cryptographic%20Algorithms%20Usage%20and%20Key%20Management.pdf",
       "status": "downloaded",
       "filename": "EPC-342-08-v16-0-1-Guidelines-on-Cryptographic-Algorithms-Us.pdf",
@@ -9267,7 +9267,7 @@
     },
     {
       "refId": "NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for",
-      "title": "NIST SP 800-78-5 — Cryptographic Algorithms and Key Sizes for Personal Identity Verification",
+      "title": "NIST SP 800-78-5 \u2014 Cryptographic Algorithms and Key Sizes for Personal Identity Verification",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-78-5.pdf",
       "status": "downloaded",
       "filename": "NIST-SP-800-78-5-Cryptographic-Algorithms-and-Key-Sizes-for.pdf",
@@ -9277,7 +9277,7 @@
     },
     {
       "refId": "GFMA-Quantum-Migration-Mapping-the-Emerging-Landscape-Octobe",
-      "title": "GFMA — Quantum Migration: Mapping the Emerging Landscape (October 2025)",
+      "title": "GFMA \u2014 Quantum Migration: Mapping the Emerging Landscape (October 2025)",
       "url": "https://www.sifma.org/wp-content/uploads/2025/10/Quantum-Migration-October-2025-GFMA.pdf",
       "status": "downloaded",
       "filename": "GFMA-Quantum-Migration-Mapping-the-Emerging-Landscape-Octobe.pdf",
@@ -9297,7 +9297,7 @@
     },
     {
       "refId": "EBA-RTS-SCA-2018-389",
-      "title": "Commission Delegated Regulation (EU) 2018/389 — RTS on Strong Customer Authentication and Secure Communication",
+      "title": "Commission Delegated Regulation (EU) 2018/389 \u2014 RTS on Strong Customer Authentication and Secure Communication",
       "url": "https://www.legislation.gov.uk/eur/2018/389/data.htm",
       "status": "downloaded",
       "filename": "EBA-RTS-SCA-2018-389.html",
@@ -9337,7 +9337,7 @@
     },
     {
       "refId": "EMV-Book2-v4.3",
-      "title": "EMV Integrated Circuit Card Specifications for Payment Systems — Book 2: Security and Key Management, Version 4.3",
+      "title": "EMV Integrated Circuit Card Specifications for Payment Systems \u2014 Book 2: Security and Key Management, Version 4.3",
       "url": "https://www.emvco.com/specifications/emv-integrated-circuit-card-specifications-for-payment-systems-book-2-security-and-key-management/",
       "status": "downloaded",
       "filename": "EMV-Book2-v4.3.pdf",
@@ -9367,7 +9367,7 @@
     },
     {
       "refId": "RU-Nijmegen-EMV-Course-Notes",
-      "title": "EMV — Radboud University Digital Security course notes (Erik Poll)",
+      "title": "EMV \u2014 Radboud University Digital Security course notes (Erik Poll)",
       "url": "https://www.cs.ru.nl/~erikpoll/spp/EMV_lecture.pdf",
       "status": "downloaded",
       "filename": "RU-Nijmegen-EMV-Course-Notes.pdf",
@@ -9427,7 +9427,7 @@
     },
     {
       "refId": "ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity",
-      "title": "ICAO Assembly Resolution A41-19 — Aviation Cybersecurity",
+      "title": "ICAO Assembly Resolution A41-19 \u2014 Aviation Cybersecurity",
       "url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
       "status": "downloaded",
       "filename": "ICAO-Assembly-Resolution-A41-19-Aviation-Cybersecurity.pdf",
@@ -9437,7 +9437,7 @@
     },
     {
       "refId": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio",
-      "title": "10 CFR 73.54 — Protection of Digital Computer and Communication Systems and Networks",
+      "title": "10 CFR 73.54 \u2014 Protection of Digital Computer and Communication Systems and Networks",
       "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
       "status": "downloaded",
       "filename": "10-CFR-73-54-Protection-of-Digital-Computer-and-Communicatio.html",
@@ -9447,7 +9447,7 @@
     },
     {
       "refId": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025",
-      "title": "Munich Re — Cyber Insurance: Risks and Trends 2025",
+      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025",
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "status": "downloaded",
       "filename": "Munich-Re-Cyber-Insurance-Risks-and-Trends-2025.html",
@@ -9457,7 +9457,7 @@
     },
     {
       "refId": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C",
-      "title": "HHS HIPAA Security Rule — 45 CFR Part 164 Subpart C",
+      "title": "HHS HIPAA Security Rule \u2014 45 CFR Part 164 Subpart C",
       "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
       "status": "downloaded",
       "filename": "HHS-HIPAA-Security-Rule-45-CFR-Part-164-Subpart-C.html",
@@ -9497,7 +9497,7 @@
     },
     {
       "refId": "FDA-DSCSA-Standards-for-the-Interoperable-Exchange-of-Inform",
-      "title": "FDA — DSCSA Standards for the Interoperable Exchange of Information",
+      "title": "FDA \u2014 DSCSA Standards for the Interoperable Exchange of Information",
       "url": "https://www.fda.gov/media/171796/download",
       "status": "downloaded",
       "filename": "FDA-DSCSA-Standards-for-the-Interoperable-Exchange-of-Inform.pdf",
@@ -9527,7 +9527,7 @@
     },
     {
       "refId": "49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems",
-      "title": "49 CFR Part 236 Subpart I — Positive Train Control Systems",
+      "title": "49 CFR Part 236 Subpart I \u2014 Positive Train Control Systems",
       "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
       "status": "downloaded",
       "filename": "49-CFR-Part-236-Subpart-I-Positive-Train-Control-Systems.html",
@@ -9567,7 +9567,7 @@
     },
     {
       "refId": "RFC-9019-A-Firmware-Update-Architecture-for-Internet-of-Thin",
-      "title": "RFC 9019 — A Firmware Update Architecture for Internet of Things (SUIT)",
+      "title": "RFC 9019 \u2014 A Firmware Update Architecture for Internet of Things (SUIT)",
       "url": "https://www.rfc-editor.org/rfc/rfc9019.txt",
       "status": "downloaded",
       "filename": "RFC-9019-A-Firmware-Update-Architecture-for-Internet-of-Thin.html",
@@ -9577,7 +9577,7 @@
     },
     {
       "refId": "Ethereum-Foundation-Roadmap-Account-Abstraction",
-      "title": "Ethereum Foundation Roadmap — Account Abstraction",
+      "title": "Ethereum Foundation Roadmap \u2014 Account Abstraction",
       "url": "https://ethereum.org/roadmap/account-abstraction/",
       "status": "downloaded",
       "filename": "Ethereum-Foundation-Roadmap-Account-Abstraction.html",
@@ -9587,7 +9587,7 @@
     },
     {
       "refId": "Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape",
-      "title": "Mastercard — Migration to Post-Quantum Cryptography White Paper 2025",
+      "title": "Mastercard \u2014 Migration to Post-Quantum Cryptography White Paper 2025",
       "url": "https://www.mastercard.com/content/dam/mccom/shared/news-and-trends/stories/2025/quantum-explainer-and-white-paper/Migration-to-post-quantum-cryptography-WhitePaper_2025.pdf",
       "status": "downloaded",
       "filename": "Mastercard-Migration-to-Post-Quantum-Cryptography-White-Pape.pdf",
@@ -9597,7 +9597,7 @@
     },
     {
       "refId": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures",
-      "title": "PCI DSS v4.0.1 — Requirements and Testing Procedures",
+      "title": "PCI DSS v4.0.1 \u2014 Requirements and Testing Procedures",
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
       "filename": "PCI-DSS-v4-0-1-Requirements-and-Testing-Procedures.pdf",
@@ -9607,7 +9607,7 @@
     },
     {
       "refId": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023",
-      "title": "FDA — Cybersecurity in Medical Devices: Premarket Guidance 2023",
+      "title": "FDA \u2014 Cybersecurity in Medical Devices: Premarket Guidance 2023",
       "url": "https://www.fda.gov/media/119933/download",
       "status": "downloaded",
       "filename": "FDA-Cybersecurity-in-Medical-Devices-Premarket-Guidance-2023.pdf",
@@ -9627,7 +9627,7 @@
     },
     {
       "refId": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow",
-      "title": "University of Toronto — Researcher Leads Effort to Protect Power Grids from Quantum Computer Hacks",
+      "title": "University of Toronto \u2014 Researcher Leads Effort to Protect Power Grids from Quantum Computer Hacks",
       "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
       "status": "downloaded",
       "filename": "University-of-Toronto-Researcher-Leads-Effort-to-Protect-Pow.html",
@@ -9637,7 +9637,7 @@
     },
     {
       "refId": "Solana-Docs-Transactions",
-      "title": "Solana Docs — Transactions",
+      "title": "Solana Docs \u2014 Transactions",
       "url": "https://solana.com/docs/core/transactions",
       "status": "downloaded",
       "filename": "Solana-Docs-Transactions.html",
@@ -9647,7 +9647,7 @@
     },
     {
       "refId": "SIMD-0461-Falcon-FN-DSA-Signature-Verification-Precompile",
-      "title": "SIMD-0461 — Falcon (FN-DSA) Signature Verification Precompile",
+      "title": "SIMD-0461 \u2014 Falcon (FN-DSA) Signature Verification Precompile",
       "url": "https://github.com/solana-foundation/solana-improvement-documents/pull/461",
       "status": "downloaded",
       "filename": "SIMD-0461-Falcon-FN-DSA-Signature-Verification-Precompile.html",
@@ -9657,7 +9657,7 @@
     },
     {
       "refId": "CIP-3-Wallet-key-generation-BIP32-Ed25519",
-      "title": "CIP-3 — Wallet key generation (BIP32-Ed25519)",
+      "title": "CIP-3 \u2014 Wallet key generation (BIP32-Ed25519)",
       "url": "https://cips.cardano.org/cip/CIP-3",
       "status": "downloaded",
       "filename": "CIP-3-Wallet-key-generation-BIP32-Ed25519.html",
@@ -9677,7 +9677,7 @@
     },
     {
       "refId": "Cardano-cardano-crypto-praos-VRF-suite-ECVRF-ED25519-SHA512",
-      "title": "Cardano cardano-crypto-praos — VRF suite (ECVRF-ED25519-SHA512-ELL2)",
+      "title": "Cardano cardano-crypto-praos \u2014 VRF suite (ECVRF-ED25519-SHA512-ELL2)",
       "url": "https://github.com/IntersectMBO/cardano-base/blob/master/cardano-crypto-praos/cbits/crypto_vrf.h",
       "status": "downloaded",
       "filename": "Cardano-cardano-crypto-praos-VRF-suite-ECVRF-ED25519-SHA512.html",
@@ -9687,7 +9687,7 @@
     },
     {
       "refId": "input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes",
-      "title": "input-output-hk/kes — Cardano Key Evolving Signatures (Sum6Kes, Ed25519 depth-zero)",
+      "title": "input-output-hk/kes \u2014 Cardano Key Evolving Signatures (Sum6Kes, Ed25519 depth-zero)",
       "url": "https://github.com/input-output-hk/kes",
       "status": "downloaded",
       "filename": "input-output-hk-kes-Cardano-Key-Evolving-Signatures-Sum6Kes.html",
@@ -9707,7 +9707,7 @@
     },
     {
       "refId": "Safe-Wallet-Safe-sol-multisig-signature-verification",
-      "title": "Safe{Wallet} — Safe.sol (multisig signature verification)",
+      "title": "Safe{Wallet} \u2014 Safe.sol (multisig signature verification)",
       "url": "https://raw.githubusercontent.com/safe-global/safe-smart-account/main/contracts/Safe.sol",
       "status": "downloaded",
       "filename": "Safe-Wallet-Safe-sol-multisig-signature-verification.html",
@@ -9717,7 +9717,7 @@
     },
     {
       "refId": "Wormhole-Docs-VAAs-Guardian-signature-scheme",
-      "title": "Wormhole Docs — VAAs (Guardian signature scheme)",
+      "title": "Wormhole Docs \u2014 VAAs (Guardian signature scheme)",
       "url": "https://wormhole.com/docs/protocol/infrastructure/vaas/",
       "status": "downloaded",
       "filename": "Wormhole-Docs-VAAs-Guardian-signature-scheme.html",
@@ -9727,7 +9727,7 @@
     },
     {
       "refId": "Polkadot-Wiki-Cryptography-sr25519-BABE",
-      "title": "Polkadot Wiki — Cryptography (sr25519, BABE)",
+      "title": "Polkadot Wiki \u2014 Cryptography (sr25519, BABE)",
       "url": "https://wiki.polkadot.com/learn/learn-cryptography/",
       "status": "downloaded",
       "filename": "Polkadot-Wiki-Cryptography-sr25519-BABE.html",
@@ -9737,7 +9737,7 @@
     },
     {
       "refId": "CometBFT-Docs-Validators-Ed25519-consensus-signing",
-      "title": "CometBFT Docs — Validators (Ed25519 consensus signing)",
+      "title": "CometBFT Docs \u2014 Validators (Ed25519 consensus signing)",
       "url": "https://docs.cosmos.network/cometbft/v0.38/docs/core/Validators",
       "status": "downloaded",
       "filename": "CometBFT-Docs-Validators-Ed25519-consensus-signing.html",
@@ -9747,7 +9747,7 @@
     },
     {
       "refId": "cosmos-sdk-CHANGELOG-ML-DSA-65-FIPS-204-validator-account-ke",
-      "title": "cosmos-sdk CHANGELOG — ML-DSA-65 (FIPS 204) validator/account key support",
+      "title": "cosmos-sdk CHANGELOG \u2014 ML-DSA-65 (FIPS 204) validator/account key support",
       "url": "https://raw.githubusercontent.com/cosmos/cosmos-sdk/main/CHANGELOG.md",
       "status": "downloaded",
       "filename": "cosmos-sdk-CHANGELOG-ML-DSA-65-FIPS-204-validator-account-ke.html",
@@ -9757,7 +9757,7 @@
     },
     {
       "refId": "Avalanche-Docs-Cryptographic-Primitives",
-      "title": "Avalanche Docs — Cryptographic Primitives",
+      "title": "Avalanche Docs \u2014 Cryptographic Primitives",
       "url": "https://build.avax.network/docs/api-reference/standards/cryptographic-primitives",
       "status": "downloaded",
       "filename": "Avalanche-Docs-Cryptographic-Primitives.html",
@@ -9767,7 +9767,7 @@
     },
     {
       "refId": "Avalanche-Docs-What-is-ICM-Warp-Messaging-BLS",
-      "title": "Avalanche Docs — What is ICM? (Warp Messaging BLS)",
+      "title": "Avalanche Docs \u2014 What is ICM? (Warp Messaging BLS)",
       "url": "https://build.avax.network/docs/cross-chain/avalanche-warp-messaging/overview",
       "status": "downloaded",
       "filename": "Avalanche-Docs-What-is-ICM-Warp-Messaging-BLS.html",
@@ -9777,7 +9777,7 @@
     },
     {
       "refId": "Arbitrum-Docs-Inside-AnyTrust-DAC-BLS-signing",
-      "title": "Arbitrum Docs — Inside AnyTrust (DAC BLS signing)",
+      "title": "Arbitrum Docs \u2014 Inside AnyTrust (DAC BLS signing)",
       "url": "https://docs.arbitrum.io/inside-anytrust",
       "status": "downloaded",
       "filename": "Arbitrum-Docs-Inside-AnyTrust-DAC-BLS-signing.html",
@@ -9787,7 +9787,7 @@
     },
     {
       "refId": "3GPP-TS-35-216-SNOW-3G-Specification",
-      "title": "3GPP TS 35.216 — SNOW 3G Specification",
+      "title": "3GPP TS 35.216 \u2014 SNOW 3G Specification",
       "url": "https://www.etsi.org/deliver/etsi_ts/135200_135299/135216/17.00.00_60/ts_135216v170000p.pdf",
       "status": "downloaded",
       "filename": "3GPP-TS-35-216-SNOW-3G-Specification.pdf",
@@ -9797,7 +9797,7 @@
     },
     {
       "refId": "3GPP-TS-35-222-ZUC-Specification",
-      "title": "3GPP TS 35.222 — ZUC Specification",
+      "title": "3GPP TS 35.222 \u2014 ZUC Specification",
       "url": "https://www.etsi.org/deliver/etsi_ts/135200_135299/135222/17.00.00_60/ts_135222v170000p.pdf",
       "status": "downloaded",
       "filename": "3GPP-TS-35-222-ZUC-Specification.pdf",
@@ -9807,7 +9807,7 @@
     },
     {
       "refId": "RFC-8998-ShangMi-SM-Cipher-Suites-for-TLS-1-3",
-      "title": "RFC 8998 — ShangMi (SM) Cipher Suites for TLS 1.3",
+      "title": "RFC 8998 \u2014 ShangMi (SM) Cipher Suites for TLS 1.3",
       "url": "https://www.rfc-editor.org/rfc/rfc8998.txt",
       "status": "downloaded",
       "filename": "RFC-8998-ShangMi-SM-Cipher-Suites-for-TLS-1-3.html",
@@ -9817,7 +9817,7 @@
     },
     {
       "refId": "RFC-9563-SM2-Digital-Signature-Algorithm-for-DNSSEC",
-      "title": "RFC 9563 — SM2 Digital Signature Algorithm for DNSSEC",
+      "title": "RFC 9563 \u2014 SM2 Digital Signature Algorithm for DNSSEC",
       "url": "https://www.rfc-editor.org/rfc/rfc9563.txt",
       "status": "downloaded",
       "filename": "RFC-9563-SM2-Digital-Signature-Algorithm-for-DNSSEC.html",
@@ -9827,7 +9827,7 @@
     },
     {
       "refId": "Internet2-PQC-Demo-on-the-National-Backbone",
-      "title": "Internet2 — PQC Demo on the National Backbone",
+      "title": "Internet2 \u2014 PQC Demo on the National Backbone",
       "url": "https://internet2.edu/demo-achieves-post-quantum-cryptography-on-the-internet2-national-backbone/",
       "status": "downloaded",
       "filename": "Internet2-PQC-Demo-on-the-National-Backbone.html",
@@ -9837,7 +9837,7 @@
     },
     {
       "refId": "IETF-LAMPS-Composite-ML-DSA-Signatures-draft-19-RFC-Ed-Queue",
-      "title": "IETF LAMPS — Composite ML-DSA Signatures (draft-19, RFC Ed Queue)",
+      "title": "IETF LAMPS \u2014 Composite ML-DSA Signatures (draft-19, RFC Ed Queue)",
       "url": "https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-sigs-19.html",
       "status": "downloaded",
       "filename": "IETF-LAMPS-Composite-ML-DSA-Signatures-draft-19-RFC-Ed-Queue.html",
@@ -9847,7 +9847,7 @@
     },
     {
       "refId": "GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem",
-      "title": "GSMA PQ.04 — Post-Quantum Cryptography in the IoT Ecosystem",
+      "title": "GSMA PQ.04 \u2014 Post-Quantum Cryptography in the IoT Ecosystem",
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2025/02/PQ.04-Post-Quantum-Cryptography-in-IoT-Ecosystem-v1.0.pdf",
       "status": "downloaded",
       "filename": "GSMA-PQ-04-Post-Quantum-Cryptography-in-the-IoT-Ecosystem.pdf",
@@ -9857,7 +9857,7 @@
     },
     {
       "refId": "BFO-Post-Quantum-Cryptography-Is-Coming-to-PDF",
-      "title": "BFO — Post-Quantum Cryptography Is Coming to PDF",
+      "title": "BFO \u2014 Post-Quantum Cryptography Is Coming to PDF",
       "url": "https://bfo.com/blog/2025/09/30/post_quantum_cryptography_is_coming_to_pdf/",
       "status": "downloaded",
       "filename": "BFO-Post-Quantum-Cryptography-Is-Coming-to-PDF.html",
@@ -9867,7 +9867,7 @@
     },
     {
       "refId": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management",
-      "title": "PCI SSC — Key Blocks 101/104 (AES/TDES key management)",
+      "title": "PCI SSC \u2014 Key Blocks 101/104 (AES/TDES key management)",
       "url": "https://blog.pcisecuritystandards.org/key-blocks-104",
       "status": "downloaded",
       "filename": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management.html",
@@ -9877,7 +9877,7 @@
     },
     {
       "refId": "Apple-Pay-Guide-Process-Payment-ECDH-SHA",
-      "title": "Apple Pay Guide — Process Payment (ECDH, SHA)",
+      "title": "Apple Pay Guide \u2014 Process Payment (ECDH, SHA)",
       "url": "https://developer.apple.com/library/archive/ApplePay_Guide/ProcessPayment.html",
       "status": "downloaded",
       "filename": "Apple-Pay-Guide-Process-Payment-ECDH-SHA.html",
@@ -9887,7 +9887,7 @@
     },
     {
       "refId": "W3C-Secure-Payment-Confirmation",
-      "title": "W3C — Secure Payment Confirmation",
+      "title": "W3C \u2014 Secure Payment Confirmation",
       "url": "https://www.w3.org/TR/secure-payment-confirmation/",
       "status": "downloaded",
       "filename": "W3C-Secure-Payment-Confirmation.html",
@@ -9897,7 +9897,7 @@
     },
     {
       "refId": "AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets",
-      "title": "AWS Security Blog — ML-KEM Post-Quantum TLS in KMS/ACM/Secrets Manager",
+      "title": "AWS Security Blog \u2014 ML-KEM Post-Quantum TLS in KMS/ACM/Secrets Manager",
       "url": "https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager",
       "status": "downloaded",
       "filename": "AWS-Security-Blog-ML-KEM-Post-Quantum-TLS-in-KMS-ACM-Secrets.html",
@@ -9907,7 +9907,7 @@
     },
     {
       "refId": "Google-Cloud-Blog-Quantum-Safe-Digital-Signatures-in-Cloud-K",
-      "title": "Google Cloud Blog — Quantum-Safe Digital Signatures in Cloud KMS",
+      "title": "Google Cloud Blog \u2014 Quantum-Safe Digital Signatures in Cloud KMS",
       "url": "https://cloud.google.com/blog/products/identity-security/future-proofing-data-integrity-quantum-safe-digital-signatures-in-cloud-kms",
       "status": "downloaded",
       "filename": "Google-Cloud-Blog-Quantum-Safe-Digital-Signatures-in-Cloud-K.html",
@@ -9917,7 +9917,7 @@
     },
     {
       "refId": "Securosys-Primus-HSM-CyberVault-PQC-ready",
-      "title": "Securosys — Primus HSM CyberVault (PQC-ready)",
+      "title": "Securosys \u2014 Primus HSM CyberVault (PQC-ready)",
       "url": "https://www.securosys.com/en/news/securosys-launches-next-generation-hsm-pqc-ready",
       "status": "downloaded",
       "filename": "Securosys-Primus-HSM-CyberVault-PQC-ready.html",
@@ -9927,7 +9927,7 @@
     },
     {
       "refId": "ACS-ACOSJ-P-PBOC-3.0-DC-EC-Card",
-      "title": "ACS ACOSJ-P PBOC 3.0 DC/EC Card — Product Specification",
+      "title": "ACS ACOSJ-P PBOC 3.0 DC/EC Card \u2014 Product Specification",
       "url": "https://www.acs.com.hk/en/products/476/acosj-p-pboc-3.0-dc-ec-card/",
       "status": "downloaded",
       "filename": "ACS-ACOSJ-P-PBOC-3.0-DC-EC-Card.html",
@@ -9937,7 +9937,7 @@
     },
     {
       "refId": "PCI-PIN-v3-1-ROC-Reporting-Template",
-      "title": "PCI PIN Security Requirements v3.1 — ROC Reporting Template",
+      "title": "PCI PIN Security Requirements v3.1 \u2014 ROC Reporting Template",
       "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
       "status": "downloaded",
       "filename": "PCI-PIN-v3-1-ROC-Reporting-Template.pdf",
@@ -9957,7 +9957,7 @@
     },
     {
       "refId": "PCI-Card-Production-Logical-Security-v3-0-1",
-      "title": "PCI Card Production and Provisioning — Logical Security Requirements v3.0.1",
+      "title": "PCI Card Production and Provisioning \u2014 Logical Security Requirements v3.0.1",
       "url": "https://www.cardtechcorp.com/wp-content/uploads/2023/07/PCI_CP_Logical_SR_TPs_v3.0.1-EN.pdf",
       "status": "downloaded",
       "filename": "PCI-Card-Production-Logical-Security-v3-0-1.pdf",
@@ -9967,7 +9967,7 @@
     },
     {
       "refId": "PCI-3DS-Core-v1-0-ROC-Reporting-Template",
-      "title": "PCI 3DS Core Security Standard v1.0 — ROC Reporting Template",
+      "title": "PCI 3DS Core Security Standard v1.0 \u2014 ROC Reporting Template",
       "url": "https://listings.pcisecuritystandards.org/documents/PCI-3DS-Core-v1-ROC-Reporting-Template.pdf",
       "status": "downloaded",
       "filename": "PCI-3DS-Core-v1-0-ROC-Reporting-Template.pdf",
@@ -9997,7 +9997,7 @@
     },
     {
       "refId": "SWIFT-Qualified-Certificates-Certificate-Policy",
-      "title": "SWIFT Qualified Certificates — Certificate Policy",
+      "title": "SWIFT Qualified Certificates \u2014 Certificate Policy",
       "url": "https://www.swift.com/sites/default/files/documents/swift_qualified_certificates_certificate_policy_may_2013.pdf",
       "status": "downloaded",
       "filename": "SWIFT-Qualified-Certificates-Certificate-Policy.pdf",
@@ -10007,7 +10007,7 @@
     },
     {
       "refId": "CNSSP-11-IA-Product-Acquisition-Policy",
-      "title": "CNSS Policy No. 11 — National Policy Governing the Acquisition of IA and IA-Enabled IT Products",
+      "title": "CNSS Policy No. 11 \u2014 National Policy Governing the Acquisition of IA and IA-Enabled IT Products",
       "url": "https://www.cnss.gov/CNSS/issuances/Policies.cfm",
       "status": "downloaded",
       "filename": "CNSSP-11-IA-Product-Acquisition-Policy.pdf",
@@ -10037,7 +10037,7 @@
     },
     {
       "refId": "CIR-EU-2025-1943-Qualified-Certificates-Reference-Standards",
-      "title": "Commission Implementing Regulation (EU) 2025/1943 — reference standards for qualified certificates",
+      "title": "Commission Implementing Regulation (EU) 2025/1943 \u2014 reference standards for qualified certificates",
       "url": "https://eur-lex.europa.eu/eli/reg_impl/2025/1943/oj",
       "status": "downloaded",
       "filename": "CIR-EU-2025-1943-Qualified-Certificates-Reference-Standards.txt",
@@ -10047,7 +10047,7 @@
     },
     {
       "refId": "CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps",
-      "title": "Commission Implementing Regulation (EU) 2025/1929 — qualified electronic time stamps",
+      "title": "Commission Implementing Regulation (EU) 2025/1929 \u2014 qualified electronic time stamps",
       "url": "https://eur-lex.europa.eu/eli/reg_impl/2025/1929/oj",
       "status": "downloaded",
       "filename": "CIR-EU-2025-1929-Qualified-Electronic-Time-Stamps.txt",
@@ -10057,7 +10057,7 @@
     },
     {
       "refId": "CIR-EU-2024-2981-EU-Digital-Identity-Wallet-Certification",
-      "title": "Commission Implementing Regulation (EU) 2024/2981 — certification of European Digital Identity Wallets",
+      "title": "Commission Implementing Regulation (EU) 2024/2981 \u2014 certification of European Digital Identity Wallets",
       "url": "https://eur-lex.europa.eu/eli/reg_impl/2024/2981/oj",
       "status": "downloaded",
       "filename": "CIR-EU-2024-2981-EU-Digital-Identity-Wallet-Certification.txt",
@@ -10067,7 +10067,7 @@
     },
     {
       "refId": "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme",
-      "title": "Commission Implementing Regulation (EU) 2024/482 — the EUCC cybersecurity certification scheme",
+      "title": "Commission Implementing Regulation (EU) 2024/482 \u2014 the EUCC cybersecurity certification scheme",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32024R0482",
       "status": "downloaded",
       "filename": "CIR-EU-2024-482-EUCC-Cybersecurity-Certification-Scheme.txt",
@@ -10077,7 +10077,7 @@
     },
     {
       "refId": "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
-      "title": "NIST CMVP — FIPS 140-2 to FIPS 140-3 transition timeline",
+      "title": "NIST CMVP \u2014 FIPS 140-2 to FIPS 140-3 transition timeline",
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
       "status": "downloaded",
       "filename": "NIST-CMVP-140-2-to-140-3-Transition-Timeline.html",
@@ -10087,7 +10087,7 @@
     },
     {
       "refId": "China-Cryptography-Law-2019-NPC",
-      "title": "Cryptography Law of the People’s Republic of China (中华人民共和国密码法)",
+      "title": "Cryptography Law of the People\u2019s Republic of China (\u4e2d\u534e\u4eba\u6c11\u5171\u548c\u56fd\u5bc6\u7801\u6cd5)",
       "url": "http://www.npc.gov.cn/npc/c1773/c1848/c21114/c36794/c36798/201910/t20191028_301735.html",
       "status": "downloaded",
       "filename": "China-Cryptography-Law-2019-NPC.txt",
@@ -10444,6 +10444,26 @@
       "sizeBytes": 1283529,
       "contentType": "application/pdf",
       "sha256": "b42046c466ea3afcd2110b9b20607896d7172d6aaf66051459a769d0aa7456fc"
+    },
+    {
+      "refId": "NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew",
+      "title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+      "status": "downloaded",
+      "filename": "NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew.pdf",
+      "sizeBytes": 1946127,
+      "contentType": "application/pdf",
+      "sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1"
+    },
+    {
+      "refId": "Content-Credentials-C2PA-Technical-Specification-Version-2-4",
+      "title": "Content Credentials: C2PA Technical Specification, Version 2.4",
+      "url": "https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html",
+      "status": "downloaded",
+      "filename": "Content-Credentials-C2PA-Technical-Specification-Version-2-4.html",
+      "sizeBytes": 1065169,
+      "contentType": "text/html",
+      "sha256": "d55caebd96206f0de667962a4bab7098c6b6468fba68f8b55bcdd3a12d1ed26d"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00"
