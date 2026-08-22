@@ -17,8 +17,9 @@ export const content: ModuleContent = {
   // either subject until 2026-08-22.
   standards: [
     getStandard('NIST IR 8547'),
-    getStandard('OWASP-CycloneDX-CBOM-Guide'),
+    getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline'),
     getStandard('FIPS 203'),
+    getStandard('OWASP-CycloneDX-CBOM-Guide'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
   ],
