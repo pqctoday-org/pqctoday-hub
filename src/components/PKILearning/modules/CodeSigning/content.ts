@@ -10,9 +10,17 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'code-signing',
   version: '1.0.0',
-  lastReviewed: '2026-07-19',
+  lastReviewed: '2026-08-22',
 
   standards: [
+    // Added 2026-08-22. This module states "CNSA 2.0 mandates LMS/XMSS for firmware
+    // signing in national security systems by 2030" and cited nothing for it. Verified
+    // by hand against the cached advisory: Table I lists Leighton-Micali Signature (LMS)
+    // and Xtended Merkle Signature Scheme (XMSS) as the "Asymmetric algorithm for
+    // digitally signing firmware and software" per NIST SP 800-208, and the timing
+    // section gives software and firmware signing as exclusively CNSA 2.0 by 2030.
+    // Declared FIRST so the four-document stride opens it.
+    getStandard('NSA CNSA 2.0'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST SP 800-208'),

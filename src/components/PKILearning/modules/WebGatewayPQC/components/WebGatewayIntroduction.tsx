@@ -330,10 +330,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           <p>
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
-            distributed globally. Cloudflare deployed X25519MLKEM768 in production in 2024, AWS
-            CloudFront enabled PQC hybrid key establishment by default on all its TLS security
-            policies (client-to-edge) in September 2025, and nginx supports it via OpenSSL. This
-            makes CDN edge nodes the largest real-world PQC deployment today.
+            distributed globally. AWS CloudFront added hybrid post-quantum key establishment for
+            client-to-edge TLS in September 2025, in its TLS1.3_2025 security policy — our
+            proof-gated catalogue records the announcement of 5 September 2025. nginx supports
+            X25519MLKEM768 through OpenSSL 3.5+ (nginx 1.30.2 stable / 1.31.1 mainline). Browsers
+            are further ahead than most gateways: Chrome has used ML-KEM as its default TLS and QUIC
+            key exchange since Chrome 131, Firefox since 132, Edge since 131. Between the browser
+            default and the CDN edge, this is the largest real-world PQC deployment today.
           </p>
 
           <div className="space-y-2">
@@ -373,10 +376,12 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            Gateway vendor PQC readiness varies significantly. Some products (Cloudflare Edge, F5
-            BIG-IP 17.5+, Envoy) already support hybrid PQC TLS in production, while others (Imperva
-            WAF, Broadcom Avi, Zscaler) are still on the roadmap. Understanding each vendor&apos;s
-            status and upgrade path is critical for planning.
+            Gateway vendor PQC readiness varies significantly. F5 BIG-IP carries ML-KEM hybrid key
+            exchange from the 17.5.1 PQC minor, generally available across the product in 21.1 (May
+            2026); Envoy supports hybrid PQC TLS in production. Others (Imperva WAF, Broadcom Avi,
+            Zscaler) are still on the roadmap. Understanding each vendor&apos;s status and upgrade
+            path is critical for planning &mdash; and version numbers here move quickly, so confirm
+            against the vendor&apos;s own release notes before committing to a date.
           </p>
 
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
