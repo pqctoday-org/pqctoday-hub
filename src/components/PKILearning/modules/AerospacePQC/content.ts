@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'aerospace-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
   standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
 

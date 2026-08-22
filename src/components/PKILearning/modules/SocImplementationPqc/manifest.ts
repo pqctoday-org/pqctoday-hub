@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'soc-implementation-pqc',
+  contentVersion: 2,
   lm_id: 'LM-057',
   title: 'SOC Implementation for PQC',
   description:

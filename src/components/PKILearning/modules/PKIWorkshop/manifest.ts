@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pki-workshop',
+  contentVersion: 2,
   lm_id: 'LM-020',
   title: 'PKI',
   description:

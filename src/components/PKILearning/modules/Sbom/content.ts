@@ -14,7 +14,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'sbom',
   version: '1.0.0',
-  lastReviewed: '2026-08-21',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('SPDX-Spec-ISO-5962'),

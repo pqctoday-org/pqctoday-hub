@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
   version: '2.1.1',
-  lastReviewed: '2026-08-01',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 186-5'),

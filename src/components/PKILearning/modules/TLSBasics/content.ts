@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.0',
-  lastReviewed: '2026-07-08',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 203'),

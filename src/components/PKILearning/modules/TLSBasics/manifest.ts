@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'tls-basics',
+  contentVersion: 2,
   lm_id: 'LM-008',
   title: 'TLS Basics',
   description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',

@@ -10,7 +10,7 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 export const content: ModuleContent = {
   moduleId: 'cbom',
   version: '1.0.0',
-  lastReviewed: '2026-07-08',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
