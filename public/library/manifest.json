@@ -1805,14 +1805,15 @@
     {
       "refId": "Malaysia-NACSA-PQC-2025",
       "title": "Malaysia National Cryptography Policy and PQC Migration Plan 2025-2030",
-      "url": "https://www.nacsa.gov.my/",
+      "url": "https://www.nacsa.gov.my/pelan-tindakan-mykriptografi.php",
       "status": "downloaded",
       "filename": "Malaysia-NACSA-PQC-2025.html",
-      "sizeBytes": 31865,
+      "sizeBytes": 10103,
       "contentType": "text/html",
-      "sha256": "f3b423c32c651dd26f06c637e53f24b4e5da5b660f18a5ac05b5b587ffe19a68",
-      "previousSha256": "e7bddb6111f5062c21d7ab3ac1e2d80e7f62f378f4a83ce0397def3a7e389d61",
-      "rehashedAt": "2026-08-22"
+      "sha256": "137d2927b438a78b4a979c2384e2f28cbb7e33e010b894312c79a484939f24a9",
+      "previousSha256": "137d2927b438a78b4a979c2384e2f28cbb7e33e010b894312c79a484939f24a9",
+      "rehashedAt": "2026-08-21",
+      "previousFilename": "Malaysia-NACSA-PQC-2025.html"
     },
     {
       "refId": "HK-CI-Ordinance-2025",
@@ -1839,12 +1840,15 @@
     {
       "refId": "Saudi-NCA-ECC2-2024",
       "title": "Saudi Arabia National Cybersecurity Authority \u2014 Essential Cybersecurity Controls ECC-2:2024",
-      "url": "https://nca.gov.sa/",
+      "url": "https://cdn.nca.gov.sa/api/files/public/upload/86e09090-44e4-481f-bc28-355673607654_ECC--2024-EN.pdf",
       "status": "downloaded",
-      "filename": "Saudi-NCA-ECC2-2024.html",
-      "sizeBytes": 672791,
-      "contentType": "text/html",
-      "sha256": "7d99db542f8048c902fa6ff25b2230a63309698fc414ec988c7aa3f2d31d45c4"
+      "filename": "Saudi-NCA-ECC2-2024.pdf",
+      "sizeBytes": 1231347,
+      "contentType": "application/pdf",
+      "sha256": "146505199e5374d99302fc3d7e1fdc73b6e2f3292fefd535d5dd891294a81db1",
+      "previousFilename": "Saudi-NCA-ECC2-2024.html",
+      "previousSha256": "7d99db542f8048c902fa6ff25b2230a63309698fc414ec988c7aa3f2d31d45c4",
+      "rehashedAt": "2026-08-21"
     },
     {
       "refId": "Microsoft-QSP-Roadmap-2025",
@@ -4628,12 +4632,15 @@
     {
       "refId": "Saudi-NCA-NCS1-2020",
       "title": "Saudi NCA \u2014 National Cryptographic Standards (NCS-1:2020)",
-      "url": "https://nca.gov.sa/",
+      "url": "https://nca.gov.sa/ncs_en.pdf",
       "status": "downloaded",
-      "filename": "Saudi-NCA-NCS1-2020.html",
-      "sizeBytes": 673304,
-      "contentType": "text/html",
-      "sha256": "f2fbec467b7e5d04d50dce907f37691429e478cb416bbe879407a318e7d9616e"
+      "filename": "Saudi-NCA-NCS1-2020.pdf",
+      "sizeBytes": 1120163,
+      "contentType": "application/pdf",
+      "sha256": "c800087578e91a1b72a75ee493ace6a7ebd5ea83595bb3442ba01804a3c097b5",
+      "previousFilename": "Saudi-NCA-NCS1-2020.html",
+      "previousSha256": "f2fbec467b7e5d04d50dce907f37691429e478cb416bbe879407a318e7d9616e",
+      "rehashedAt": "2026-08-21"
     },
     {
       "refId": "US-TREASURY-FSRMP-2025",
