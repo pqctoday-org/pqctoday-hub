@@ -616,7 +616,9 @@
       "filename": "3GPP_TS_33.501.html",
       "sizeBytes": 645652,
       "contentType": "text/html",
-      "sha256": "806f0f5adc954b6e1ab2af622530dd36779f090d6607c3da61f7e4f6d6ad3f62"
+      "sha256": "2a9e0a80fae15d0ae63c597caa5f1d75df05173675b79c32b4c3a78cde1084fa",
+      "previousSha256": "806f0f5adc954b6e1ab2af622530dd36779f090d6607c3da61f7e4f6d6ad3f62",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 8391",
@@ -802,9 +804,11 @@
       "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-90A-R1.html",
-      "sizeBytes": 41117,
+      "sizeBytes": 40991,
       "contentType": "text/html",
-      "sha256": "c6f50d3ebc6e35c043b0bc8bb070d0101d51a4e66ae67e52182cc3a627589a40"
+      "sha256": "316fe76ee68f70129f8a6e2ed367193268d9ee11fe1f924be817113c5c64e862",
+      "previousSha256": "c6f50d3ebc6e35c043b0bc8bb070d0101d51a4e66ae67e52182cc3a627589a40",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-SP-800-90B",
@@ -942,9 +946,11 @@
       "url": "https://datatracker.ietf.org/doc/html/rfc9258",
       "status": "downloaded",
       "filename": "RFC-9258.html",
-      "sizeBytes": 100139,
+      "sizeBytes": 100158,
       "contentType": "text/html",
-      "sha256": "02400222883af6c7789a928db6b0f6e2a83842068e67c0d4bdf00f63fbe7876a"
+      "sha256": "4b709985bff7a71e09bec1243fe2f272b1845b75f4d907bea718c20dc5e69967",
+      "previousSha256": "02400222883af6c7789a928db6b0f6e2a83842068e67c0d4bdf00f63fbe7876a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-SP-800-108-R1",
@@ -1234,9 +1240,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9162",
       "status": "downloaded",
       "filename": "RFC-9162.html",
-      "sizeBytes": 1238095,
+      "sizeBytes": 1239063,
       "contentType": "text/html",
-      "sha256": "91f8cfc059f0f386d8caa4c588dcdf02479d989be8cf98906094ee1892163454"
+      "sha256": "ff34c2b6b3fabc528651e91cf74dbe9000d4bb31dec1fbb95f7879164e21710b",
+      "previousSha256": "91f8cfc059f0f386d8caa4c588dcdf02479d989be8cf98906094ee1892163454",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Cloudflare-MTC-Blog",
@@ -1278,9 +1286,11 @@
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1183",
       "status": "downloaded",
       "filename": "eIDAS-2-Regulation.html",
-      "sizeBytes": 835966,
+      "sizeBytes": 835968,
       "contentType": "text/html",
-      "sha256": "4408e38b1b10c1912921ead83b6af944eec032d53e0a27bd478ad9a32cc065e7"
+      "sha256": "a4f0af6cbfe01ff998fdeabd30f083a1eeb40d8865cb69d6156b672edcba4575",
+      "previousSha256": "4408e38b1b10c1912921ead83b6af944eec032d53e0a27bd478ad9a32cc065e7",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EUDI-Wallet-ARF",
@@ -1417,9 +1427,11 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-22/rev-1a/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-22-R1A.html",
-      "sizeBytes": 49334,
+      "sizeBytes": 49208,
       "contentType": "text/html",
-      "sha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d"
+      "sha256": "7969b0c6015fa95fb4815128436520728f827e3f323a4e6dd0bbba6a42e51e28",
+      "previousSha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BSI-AIS-20-31",
@@ -2511,9 +2523,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc7662",
       "status": "downloaded",
       "filename": "IETF_RFC_7662.html",
-      "sizeBytes": 222373,
+      "sizeBytes": 223336,
       "contentType": "text/html",
-      "sha256": "d8b5661f74f8467e316a78198b3d4915736877a2d00b8f233fe0f4ef3089d827"
+      "sha256": "da6fb31c4ba1a61641517680e93953508eb9dac29aaad8428fa2495df2d5d0ae",
+      "previousSha256": "d8b5661f74f8467e316a78198b3d4915736877a2d00b8f233fe0f4ef3089d827",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-jose-pq-composite-sigs",
@@ -2657,9 +2671,11 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
       "status": "downloaded",
       "filename": "NIST_SP_800-90A.html",
-      "sizeBytes": 41117,
+      "sizeBytes": 40991,
       "contentType": "text/html",
-      "sha256": "1c5c3d744575168562c92e8448d0276e86edb3f75ef0d98eb1ef6d6ad6b31a7a"
+      "sha256": "e0e6644db15269a48f2252de5993f458dbe64489713a0d6a6dd4da9066a5e053",
+      "previousSha256": "1c5c3d744575168562c92e8448d0276e86edb3f75ef0d98eb1ef6d6ad6b31a7a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST SP 800-108",
@@ -5997,9 +6013,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc8410",
       "status": "downloaded",
       "filename": "RFC-8410.html",
-      "sizeBytes": 232468,
+      "sizeBytes": 236868,
       "contentType": "text/html",
-      "sha256": "b7098a5d2f724cdc7d11cfd1a7df0c09784757e1dc5a78fbe5493c988ab3029f"
+      "sha256": "a8537452e574cca118c8bfd808be6e544b20dd2a9e532a7b48e2f51102bda69f",
+      "previousSha256": "b7098a5d2f724cdc7d11cfd1a7df0c09784757e1dc5a78fbe5493c988ab3029f",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC-6960",
@@ -7323,9 +7341,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lake-edhoc-psk/",
       "status": "downloaded",
       "filename": "draft-ietf-lake-edhoc-psk.html",
-      "sizeBytes": 116656,
+      "sizeBytes": 115893,
       "contentType": "text/html",
-      "sha256": "261b8fe323d26a1756aa7b6d14e6cfd572aa5a065b0d364157f61232f4ee101c"
+      "sha256": "3022188e18d66a4c81aa8a46b80f01c5a0f4f8755ec002edd6fcfba834566e60",
+      "previousSha256": "261b8fe323d26a1756aa7b6d14e6cfd572aa5a065b0d364157f61232f4ee101c",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-tls-mldsa-03",
@@ -8263,9 +8283,11 @@
       "url": "https://hal.science/hal-01661212",
       "status": "downloaded",
       "filename": "SCA-2017-AES-CNN-Jitter.html",
-      "sizeBytes": 12611,
+      "sizeBytes": 16752,
       "contentType": "text/html",
-      "sha256": "c103ed2f95348b57fff3e76c4a5c01948a76071743f7199b84a5fc6e408a5730"
+      "sha256": "99afe96173e4b9d2bd05d4287e4f8402e911eb030c2a3008d522a0b2aed13124",
+      "previousSha256": "c103ed2f95348b57fff3e76c4a5c01948a76071743f7199b84a5fc6e408a5730",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "CycloneDX-Cryptography-Registry",
@@ -8647,9 +8669,11 @@
       "url": "https://datatracker.ietf.org/doc/rfc9958/",
       "status": "downloaded",
       "filename": "RFC-9958.html",
-      "sizeBytes": 160365,
+      "sizeBytes": 160947,
       "contentType": "text/html",
-      "sha256": "92b150952349c3e60c45631e0fc3c2c7e77afe49b04d1a2873f2f423965bbb25"
+      "sha256": "38fbc1bef2379f48e874062d62baaeed847ae8fd8094ea7837dad6f3d9e2c414",
+      "previousSha256": "92b150952349c3e60c45631e0fc3c2c7e77afe49b04d1a2873f2f423965bbb25",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi",
@@ -8975,9 +8999,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-reddy-tls-slhdsa/",
       "status": "downloaded",
       "filename": "Use-of-SLH-DSA-in-TLS-1-3.html",
-      "sizeBytes": 43201,
+      "sizeBytes": 24700,
       "contentType": "text/html",
-      "sha256": "b4252112c00a8a2c54f082ee9f2b12e96e033299532691647e8f60b3dc18bdaa"
+      "sha256": "a824e28952a318589dbfce357035b3f208842bf3ca1999e6df524330d310f052",
+      "previousSha256": "b4252112c00a8a2c54f082ee9f2b12e96e033299532691647e8f60b3dc18bdaa",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco",
