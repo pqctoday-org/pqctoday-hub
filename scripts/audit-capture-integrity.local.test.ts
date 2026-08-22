@@ -24,6 +24,8 @@ import {
   type Collection,
   type ManifestEntry,
   type UpstreamFetchImpl,
+  fallbackCacheRoots,
+  resolveCapturePath,
 } from './audit-capture-integrity'
 
 const sha = (s: string | Buffer): string => createHash('sha256').update(s).digest('hex')
@@ -444,5 +446,61 @@ describe('upstream probe', () => {
     // 100% forever), so the checkpoint now reads c+d, not a+b+c+d.
     const state2 = JSON.parse(fs.readFileSync(cp, 'utf8'))
     expect(state2.library.cumulative_checked_ids).toEqual(['c', 'd'])
+  })
+})
+
+describe('the library cache has two roots', () => {
+  // Evidence moved to local-evidence-cache/ on 2026-07-12, but the
+  // pre-relocation pqctoday-priv/public/ tree still holds 843 library files.
+  // Resolving against the new root alone reported 3 of them as
+  // `capture-missing` when the file was on disk the whole time — 9 false
+  // positives across the collections, every one of them wrong.
+  let tmp: string
+
+  beforeEach(() => {
+    tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'two-roots-'))
+    fs.mkdirSync(path.join(tmp, 'local-evidence-cache', 'library'), { recursive: true })
+    fs.mkdirSync(path.join(tmp, 'public', 'library'), { recursive: true })
+  })
+  afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }))
+
+  const lec = () => path.join(tmp, 'local-evidence-cache')
+
+  it('lists the legacy public/ tree as a fallback root', () => {
+    expect(fallbackCacheRoots(lec())).toEqual([lec(), path.join(tmp, 'public')])
+  })
+
+  it('never lists a root twice when the primary IS the legacy tree', () => {
+    const legacy = path.join(tmp, 'public')
+    expect(fallbackCacheRoots(legacy)).toEqual([legacy])
+  })
+
+  it('finds a capture that exists ONLY in the legacy tree', () => {
+    // Bluetooth-Core-6.0, EMV-Book2-v4.3 and ref-joseph-transitioning are
+    // real rows with exactly this shape.
+    const only = path.join(tmp, 'public', 'library', 'EMV-Book2-v4.3.pdf')
+    fs.writeFileSync(only, 'legacy bytes')
+    expect(resolveCapturePath(fallbackCacheRoots(lec()), 'library', 'EMV-Book2-v4.3.pdf')).toBe(
+      only
+    )
+  })
+
+  it('prefers the relocated copy when BOTH roots hold the file', () => {
+    // This is the load-bearing half. Where both roots have a copy they
+    // usually DISAGREE — 97 of 107 captures on 2026-08-22 — because public/
+    // predates the relocation and every refetch since landed in the new root.
+    // Reading the legacy copy would re-record a stale hash as verified.
+    const fresh = path.join(tmp, 'local-evidence-cache', 'library', 'BIP-32.html')
+    const stale = path.join(tmp, 'public', 'library', 'BIP-32.html')
+    fs.writeFileSync(fresh, 'x'.repeat(453659))
+    fs.writeFileSync(stale, 'y'.repeat(429591))
+    expect(resolveCapturePath(fallbackCacheRoots(lec()), 'library', 'BIP-32.html')).toBe(fresh)
+  })
+
+  it('reports a genuinely absent capture against the relocated root', () => {
+    // So the finding names where the file SHOULD be, not the legacy tree.
+    expect(resolveCapturePath(fallbackCacheRoots(lec()), 'library', 'Nowhere.pdf')).toBe(
+      path.join(lec(), 'library', 'Nowhere.pdf')
+    )
   })
 })

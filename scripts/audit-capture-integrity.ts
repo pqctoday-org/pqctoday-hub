@@ -190,6 +190,37 @@ export function defaultCacheRoot(): string {
   )
 }
 
+/** The library cache has TWO roots, and reading only one is wrong.
+ *
+ *  Evidence moved to `local-evidence-cache/` on 2026-07-12, but the
+ *  pre-relocation `pqctoday-priv/public/` tree still holds 843 library files,
+ *  3 of which exist ONLY there. Resolving against the new root alone reported
+ *  those 3 as `capture-missing` when the file was on disk the whole time.
+ *
+ *  `audit-capture-matches-title.py` has always resolved this correctly:
+ *  CACHE_ROOTS = ("local-evidence-cache", "public"), first match wins. Same
+ *  order here, and the order matters — where both roots hold a copy they
+ *  usually DISAGREE (97 of 107 captures checked on 2026-08-22), because
+ *  `public/` predates the relocation and every refetch since has landed in
+ *  `local-evidence-cache/`. The new root is the live one; `public/` is a
+ *  fallback for what was never migrated, never an alternative reading of a
+ *  file that exists in both. */
+export function fallbackCacheRoots(primary: string): string[] {
+  const priv = path.resolve(primary, '..')
+  const legacy = path.join(priv, 'public')
+  return primary === legacy ? [primary] : [primary, legacy]
+}
+
+/** First root that actually holds the file, or the primary path so a genuinely
+ *  missing capture still reports against the location it should have been in. */
+export function resolveCapturePath(roots: string[], collection: string, rel: string): string {
+  for (const root of roots) {
+    const candidate = path.join(root, collection, rel)
+    if (fs.existsSync(candidate)) return candidate
+  }
+  return path.join(roots[0], collection, rel)
+}
+
 /** Rotation state lives with the other maintenance checkpoints in the private
  *  checkout, never in the hub's tracked tree — a bounded sweep's cursor is
  *  operational state, not published data. */
@@ -287,7 +318,9 @@ export function loadCaptures(
       url: entry.url ?? '',
       status: entry.status ?? '',
     })
-    const cachedPath = rel ? path.join(cacheRoot, collection, rel) : null
+    const cachedPath = rel
+      ? resolveCapturePath(fallbackCacheRoots(cacheRoot), collection, rel)
+      : null
     // refId is absent on most timeline entries; fall back to the filename so
     // findings are still addressable rather than a list of "undefined".
     const refId = (entry.refId ?? '').trim() || rel || entry.url || '(unidentified entry)'
