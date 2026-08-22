@@ -22,7 +22,10 @@ export const content: ModuleContent = {
     getStandard('RFC 7228'),
     getStandard('RFC 7250'),
     getStandard('RFC 8391'),
-    getStandard('RFC 8446'),
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
+    // RFC 8446 sections where it discusses the original, which stays accurate.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
     getStandard('RFC 8554'),
     getStandard('RFC 8879'),
     getStandard('RFC 9019'),

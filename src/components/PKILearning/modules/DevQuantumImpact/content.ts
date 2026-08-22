@@ -17,7 +17,10 @@ export const content: ModuleContent = {
   // OpenPGP spec this module's prose actually discusses. RFC 9580 is the base
   // OpenPGP spec and was the only one cited until 2026-08-22.
   standards: [
-    getStandard('RFC 8446'),
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
+    // RFC 8446 sections where it discusses the original, which stays accurate.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('NIST SP 800-227'),

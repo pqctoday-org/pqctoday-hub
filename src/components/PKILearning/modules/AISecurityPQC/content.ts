@@ -11,7 +11,13 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-10',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('RFC 8446')],
+  standards: [
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446".
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDH P-256'),
@@ -35,6 +41,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Configure verification layers, visualize model collapse, compare signing overheads. Model Weight Vault — Configure model encryption/signing, compare classical vs PQC overhead. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay.',
     relatedStandards:
-      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 8446 (TLS 1.3) — transport security for AI API endpoints. NIST AI RMF — AI risk management framework',
+      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) — transport security for AI API endpoints. NIST AI RMF — AI risk management framework',
   },
 }
