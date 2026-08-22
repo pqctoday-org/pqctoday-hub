@@ -24,6 +24,7 @@ import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
 import { DATA_FILENAMES } from './generated/dataFilenames.generated'
+import { LIBRARY_CATEGORIES } from './libraryData'
 
 interface Row {
   reference_id?: string
@@ -72,6 +73,30 @@ describe('library manual_category vocabulary', () => {
       collisions,
       `near-duplicate manual_category spellings:\n  ${collisions.join('\n  ')}`
     ).toEqual([])
+  })
+
+  it('every active row uses a value from LIBRARY_CATEGORIES', () => {
+    // Added 2026-08-22 with the consolidation from 82 distinct values to 13.
+    // useLibraryPipeline builds its filter chips from LIBRARY_CATEGORIES, so a
+    // row carrying anything else matches NO chip and is reachable only under
+    // "All" — 163 rows were in that state, silently.
+    const allowed = new Set<string>(LIBRARY_CATEGORIES)
+    const offenders = new Map<string, string[]>()
+    for (const row of activeRows()) {
+      const value = (row.manual_category ?? '').trim()
+      const id = (row.reference_id ?? '?').trim()
+      if (!value) {
+        offenders.set('(blank)', [...(offenders.get('(blank)') ?? []), id])
+      } else if (!allowed.has(value)) {
+        offenders.set(value, [...(offenders.get(value) ?? []), id])
+      }
+    }
+    const report = [...offenders.entries()]
+      .map(([v, ids]) => `${v} (${ids.length}): ${ids.slice(0, 3).join(', ')}`)
+      .join('\n  ')
+    expect(offenders.size, `manual_category values outside LIBRARY_CATEGORIES:\n  ${report}`).toBe(
+      0
+    )
   })
 
   it('reduces the two spellings of the live defect to one shape', () => {
