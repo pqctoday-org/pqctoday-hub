@@ -49,13 +49,6 @@
       "backfilledAt": "2026-08-21"
     },
     {
-      "label": "Global:Microsoft \u2014 Quantum Safe Program Launch",
-      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_Microsoft_Quantum_Safe_Program_Launch.html"
-    },
-    {
       "label": "Global:Microsoft \u2014 Majorana 1 Quantum Chip",
       "url": "https://azure.microsoft.com/en-us/blog/quantum/2025/02/19/microsoft-unveils-majorana-1-the-worlds-first-quantum-processor-powered-by-topological-qubits/",
       "status": "skipped",
@@ -66,46 +59,11 @@
       "backfilledAt": "2026-08-21"
     },
     {
-      "label": "Global:PQShield \u2014 UltraPQ-Suite Launched",
-      "url": "https://pqshield.com/pqshield-launches-ultrapq-suite-for-deeply-specialized-implementations-of-post-quantum-cryptography/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_PQShield_UltraPQ-Suite_Launched.html"
-    },
-    {
-      "label": "Global:PQShield \u2014 100th Research Paper Milestone",
-      "url": "https://pqshield.com/pqshield-hits-100-research-papers-pushing-post-quantum-cryptography-from-theory-to-reality/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_PQShield_100th_Research_Paper_Milestone.html"
-    },
-    {
-      "label": "Global:PQShield \u2014 Carahsoft Government Partnership",
-      "url": "https://pqshield.com/pqshield-and-carahsoft-partner-to-make-powerful-post-quantum-cryptography-solutions-available-to-government-agencies/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_PQShield_Carahsoft_Government_Partnership.html"
-    },
-    {
       "label": "United States:SandboxAQ \u2014 AQtive Guard Pentagon 5-Year Agreement",
       "url": "https://www.sandboxaq.com/press/sandboxaq-and-dow-cio-partner-to-strengthen-us-defenses-against-quantum-and-ai-driven-cyber-threats",
       "status": "skipped",
       "reason": "already-exists",
       "file": "timeline/United_States_SandboxAQ_AQtive_Guard_Pentagon_5-Year_Agreement.html"
-    },
-    {
-      "label": "United States:SandboxAQ \u2014 AQtive Guard FedRAMP Ready",
-      "url": "https://www.sandboxaq.com/press/sandboxaq-achieves-fedramp-ready-status-powering-enterprise-readiness-across-the-defense-and-public-sector",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_SandboxAQ_AQtive_Guard_FedRAMP_Ready.html"
-    },
-    {
-      "label": "United States:SandboxAQ/MITRE/LF \u2014 RWPQC 2025 Conference",
-      "url": "https://www.sandboxaq.com/press/rwpqc-2025-brings-together-industry-leaders-to-advance-cybersecurity-and-quantum-innovation",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_SandboxAQ_MITRE_LF_RWPQC_2025_Conference.html"
     },
     {
       "label": "Australia:ASD \u2014 Initial PQC Planning Guide",
@@ -156,20 +114,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "timeline/China_CACR_CACR_PQC_Competition_Results.html"
-    },
-    {
-      "label": "China:ICCS \u2014 NGCC Program Launched",
-      "url": "https://thequantuminsider.com/2025/02/18/china-launches-its-own-quantum-resistant-encryption-standard-bypassing-us-efforts/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/China_ICCS_NGCC_Program_Launched.html"
-    },
-    {
-      "label": "China:China Telecom \u2014 Hybrid Quantum-Safe System Launched",
-      "url": "https://thequantuminsider.com/2025/05/20/china-telecom-launches-hybrid-quantum-safe-encryption-system-completes-1000-kilometer-secure-call/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.html"
     },
     {
       "label": "Czech Republic:NUKIB \u2014 Cryptographic Recommendations",
@@ -318,13 +262,6 @@
       "file": "timeline/Germany_BSI_Bundesdruckerei_Quantum-Secure_ID_Card_Demonstrator.html"
     },
     {
-      "label": "Germany:BSI/DLR \u2014 QUANTITY Initiative Launched",
-      "url": "https://www.postquantumcryptography.de/publications/bsi-compliant-pqc.html",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Germany_BSI_DLR_QUANTITY_Initiative_Launched.html"
-    },
-    {
       "label": "India:TEC \u2014 TEC Technical Report Published",
       "url": "https://www.tec.gov.in/pdf/TR/Final%20technical%20report%20on%20migration%20to%20PQC%2028-03-25.pdf",
       "status": "skipped",
@@ -375,13 +312,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "timeline/Japan_CRYPTREC_PQC_Guideline_GL-2004-2022.html"
-    },
-    {
-      "label": "Japan:NEDO \u2014 K Program PQC Research",
-      "url": "https://pqshield.com/pqshield-announces-participation-in-nedo-program-to-implement-post-quantum-cryptography-across-japan/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Japan_NEDO_K_Program_PQC_Research.html"
     },
     {
       "label": "Japan:METI/NISC \u2014 Cybersecurity Industry Policy Package",
@@ -666,14 +596,11 @@
       "url": "https://quantumcomputingreport.com/news/",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_States_SEALSQ_US_Post-Quantum_Root_of_Trust_Service_Launch.html"
-    },
-    {
-      "label": "International:Samsung/Thales \u2014 ML-KEM Embedded Secure Element Breakthrough",
-      "url": "https://www.asdnews.com/news/defense/2026/01/06/thales-powers-ceswinning-postquantum-chip-samsung-electronics",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/International_Samsung_Thales_ML-KEM_Embedded_Secure_Element_Breakthrough.html"
+      "file": "timeline/United_States_SEALSQ_US_Post-Quantum_Root_of_Trust_Launch_PressRelease.html",
+      "sizeBytes": 82190,
+      "sha256": "9c28921a3d3a3f74dadac8db49f25c4d504986fde74a347cce400eb6a63df54e",
+      "resolvedAt": "2026-08-21",
+      "resolvedBasis": "two entries named different captures; read both and kept the row's local_file, which is the document"
     },
     {
       "label": "International:IETF \u2014 RFC 9794 PQC Hybrid Terminology",
@@ -691,13 +618,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html"
-    },
-    {
-      "label": "Global:Quantinuum \u2014 Helios Quantum Computer Commercial Launch",
-      "url": "https://www.quantinuum.com/press-releases/quantinuum-announces-commercial-launch-of-new-helios-quantum-computer-that-offers-unprecedented-accuracy-to-enable-generative-quantum-ai-genqai",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_Quantinuum_Helios_Quantum_Computer_Commercial_Launch.html"
     },
     {
       "label": "United States:Congress \u2014 National Quantum Initiative Reauthorization Act",
@@ -718,20 +638,6 @@
       "sha256": "c90875cf78ac29e0f4c72c70c9bb84205ab0d3154191fc1116c16d096af36013",
       "sizeBytes": 113939,
       "backfilledAt": "2026-08-21"
-    },
-    {
-      "label": "Global:Ethereum Foundation \u2014 Post-Quantum Security Top Priority",
-      "url": "https://www.coindesk.com/tech/2026/01/24/ethereum-foundation-makes-post-quantum-security-a-top-priority-as-new-team-forms",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_Ethereum_Foundation_Post-Quantum_Security_Top_Priority.html"
-    },
-    {
-      "label": "Singapore:Quantinuum/NQO \u2014 Helios Quantum Computer Singapore Deployment",
-      "url": "https://www.quantinuum.com/press-releases/singapores-national-quantum-office-and-quantinuum-forge-strategic-partnership-to-accelerate-quantum-computing",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Singapore_Quantinuum_NQO_Helios_Quantum_Computer_Singapore_Deployment.html"
     },
     {
       "label": "International:ETSI/IQC \u2014 ETSI/IQC QSC Conference 2026",
@@ -852,20 +758,6 @@
       "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
-      "label": "United Arab Emirates:ADGM/TII \u2014 Quantum-Secure Communications Testbed",
-      "url": "https://www.zawya.com/en/business/technology-and-telecom/uaes-first-quantum-secure-communications-testbed-launched-in-abu-dhabi-o2g1yxt7",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_Arab_Emirates_ADGM_TII_Quantum-Secure_Communications_Testbed.html"
-    },
-    {
-      "label": "United Arab Emirates:UAE CSC \u2014 National Encryption Policy Approved",
-      "url": "https://pqshield.com/uae-establishes-requirements-for-cryptographic-controls-and-migration-planning/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_Arab_Emirates_UAE_CSC_National_Encryption_Policy_Approved.html"
-    },
-    {
       "label": "Saudi Arabia:NCA \u2014 ECC-2:2024 Cybersecurity Controls",
       "url": "https://www.twobirds.com/en/insights/2025/united-arab-emirates/saudi-arabia-national-cybersecurity-authority-regulations-2024",
       "status": "skipped",
@@ -907,18 +799,15 @@
       "file": "timeline/Jordan_CBJ_Jordan_Financial_Sector_PQC_Roadmap.html"
     },
     {
-      "label": "Global:Ethereum Foundation \u2014 Vitalik Buterin Publishes PQ Defense Roadmap",
-      "url": "https://www.coindesk.com/tech/2026/02/26/vitalik-buterin-unveils-ethereum-roadmap-to-counter-quantum-computing-threat/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_Ethereum_Foundation_Vitalik_Buterin_Publishes_PQ_Defense_Roadmap.html"
-    },
-    {
       "label": "United States:Google \u2014 Google Cloud ML-KEM Default and Chrome MTC Program",
       "url": "https://blog.google/innovation-and-ai/technology/safety-security/the-quantum-era-is-coming-are-we-ready-to-secure-it/",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_States_Google_Google_Cloud_ML-KEM_Default_and_Chrome_MTC_Program.html"
+      "file": "timeline/United_States_Google_Chrome_MTC_Cloudflare_Quantum_Safe_HTTPS.html",
+      "sizeBytes": 258525,
+      "sha256": "186fa0769db2c5660ea54ac583e8699d967aefabeb21317bf257bcb263c84211",
+      "resolvedAt": "2026-08-21",
+      "resolvedBasis": "two entries named different captures; read both and kept the row's local_file, which is the document"
     },
     {
       "label": "European Union:EC \u2014 Cryptographic Inventory Mandate",
@@ -959,69 +848,6 @@
       "file": "timeline/Global_TCG_TPM_2.0_PQC_Library_Specification_Draft.html"
     },
     {
-      "label": "United States:Google \u2014 Google PQC Migration 2029 Timeline",
-      "url": "https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_Google_Google_PQC_Migration_2029_Timeline.html"
-    },
-    {
-      "label": "Canada:BTQ Technologies \u2014 Bitcoin Quantum Testnet Launch",
-      "url": "https://www.newswire.ca/news-releases/btq-technologies-launches-bitcoin-quantum-testnet-marking-17-years-since-bitcoin-s-genesis-block-with-first-quantum-safe-fork-887920063.html",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Canada_BTQ_Technologies_Bitcoin_Quantum_Testnet_Launch.html"
-    },
-    {
-      "label": "United States:Algorand Foundation \u2014 First Post-Quantum Mainnet Transaction",
-      "url": "https://algorand.co/technology/post-quantum",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_Algorand_Foundation_First_Post-Quantum_Mainnet_Transaction.html"
-    },
-    {
-      "label": "United States:Bitcoin Core \u2014 BIP-360 Pay-to-Merkle-Root Proposal",
-      "url": "https://bitcoinmagazine.com/news/bitcoin-advances-toward-quantum-resistance",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_Bitcoin_Core_BIP-360_Pay-to-Merkle-Root_Proposal.html"
-    },
-    {
-      "label": "United States:Ethereum Foundation \u2014 Strawmap PQC Roadmap Published",
-      "url": "https://www.kucoin.com/news/flash/ethereum-foundation-unveils-strawmap-roadmap-for-2026-2029",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_Ethereum_Foundation_Strawmap_PQC_Roadmap_Published.html"
-    },
-    {
-      "label": "France:IDEMIA \u2014 First PQC Hardware Accelerator Announced",
-      "url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/France_IDEMIA_First_PQC_Hardware_Accelerator_Announced.html"
-    },
-    {
-      "label": "Germany:Infineon \u2014 First CC EAL6 PQC Security Controller",
-      "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html"
-    },
-    {
-      "label": "Germany:Adva \u2014 BSI-Approved 400G PQC Encryptor",
-      "url": "https://www.advasecurity.com/en/newsroom/press-releases/20250925-adva-network-security-scores-world-first-with-bsi-approved-400g-encryption-solution",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Germany_Adva_BSI-Approved_400G_PQC_Encryptor.html"
-    },
-    {
-      "label": "United States:OpenSSL \u2014 OpenSSL 3.6.1 PQC Release",
-      "url": "https://openssl-library.org/post/2026-01-27-release-announcement/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/United_States_OpenSSL_OpenSSL_3.6.1_PQC_Release.html"
-    },
-    {
       "label": "Global:FS-ISAC \u2014 FS-ISAC PQC Migration Timeline Position Paper Published",
       "url": "https://www.fsisac.com/the-timeline-for-post-quantum-cryptographic-migration",
       "status": "skipped",
@@ -1038,13 +864,6 @@
       "sizeBytes": 419893,
       "backfilledAt": "2026-08-21",
       "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
-    },
-    {
-      "label": "African Union:AUC \u2014 Malabo Convention Enters Into Force",
-      "url": "http://web.archive.org/web/20260531032620/https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/African_Union_AUC_Malabo_Convention_Enters_Into_Force.html"
     },
     {
       "label": "International:GSMA \u2014 Mobile Network Operator PQC Transition Window",
@@ -1076,13 +895,6 @@
       "file": "timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html"
     },
     {
-      "label": "Kenya:ODPC \u2014 ODPC Guidance on Data Protection by Design",
-      "url": "https://www.odpc.go.ke/guidelines-2/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Kenya_ODPC_ODPC_Guidance_on_Data_Protection_by_Design.html"
-    },
-    {
       "label": "Egypt:MCIT \u2014 Law 151/2020 Executive Regulations Issued",
       "url": "https://www.legal500.com/developments/thought-leadership/overview-of-the-executive-regulations-of-the-egyptian-personal-data-protection-law/",
       "status": "skipped",
@@ -1091,13 +903,6 @@
       "sha256": "265d73b1c39c0390d0c6e25639f7fc4ca4419aaf7b27c53a6e80ab08188bdc0b",
       "sizeBytes": 309566,
       "backfilledAt": "2026-08-21"
-    },
-    {
-      "label": "Global:OpenSSL \u2014 OpenSSL 3.5.0 Native PQC Release",
-      "url": "https://www.openssl.org/news/openssl-3.5-notes.html",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "timeline/Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html"
     },
     {
       "label": "BIS:BIS \u2014 Paper 158 Quantum Roadmap",
@@ -1325,9 +1130,11 @@
       "url": "https://thequantuminsider.com/2026/05/06/korea-expands-post-quantum-cryptography-pilot/",
       "status": "downloaded",
       "reason": "resilient fetch (curl_cffi:chrome124)",
-      "file": "timeline/South_Korea_MSIT_K_PQC_Master_Plan_to_2035.html",
-      "sha256": "9c29c341220cdabd0c080e48715c222501af12a320b59756ff029b9ccd7adaee",
-      "sizeBytes": 271144
+      "file": "timeline/Korea_K-PQC_Master_Plan_Boannews_2023-07-12.html",
+      "sha256": "00c93a526259b28baf39ca9e4dbb8ba25fa05c513b58e1017927c398e998192c",
+      "sizeBytes": 57554,
+      "resolvedAt": "2026-08-21",
+      "resolvedBasis": "two entries named different captures; read both and kept the row's local_file, which is the document"
     },
     {
       "label": "Australia:ASD \u2014 ISM December 2024 Update",
@@ -1622,13 +1429,6 @@
       "sizeBytes": 287520
     },
     {
-      "label": "United States:SEALSQ \u2014 US Post-Quantum Root of Trust Service Launch",
-      "url": "https://www.sealsq.com/investors/news-events",
-      "file": "United_States_SEALSQ_US_Post-Quantum_Root_of_Trust_Service_Launched.html",
-      "sha256": "abaa8f9a84c16dc48a1e86400d2b5634909fb3c9f17d5ac5e4753aeb352fc328",
-      "sizeBytes": 107967
-    },
-    {
       "label": "Global:Quantinuum \u2014 Helios Quantum Computer Commercial Launch",
       "url": "https://www.quantinuum.com/press-releases/quantinuum-announces-commercial-launch-of-new-helios-quantum-computer-that-offers-unprecedented-accuracy-to-enable-generative-quantum-ai-genqai",
       "file": "Global_Quantinuum_Helios_Quantum_Computer_Commercial_Launch.html",
@@ -1648,13 +1448,6 @@
       "file": "Singapore_Quantinuum_NQO_Helios_Quantum_Computer_Singapore_Deployment.html",
       "sha256": "0f8f535cf06f93c9d37a47cfd1d4d2b6bfb20cd9a5e909ce0bd3b9c2174e5193",
       "sizeBytes": 176718
-    },
-    {
-      "label": "United States:Google \u2014 Google Cloud ML-KEM Default and Chrome MTC Program",
-      "url": "https://blog.google/innovation-and-ai/technology/safety-security/the-quantum-era-is-coming-are-we-ready-to-secure-it/",
-      "file": "United_States_Google_Google_Cloud_ML-KEM_Default_and_Chrome_MTC.html",
-      "sha256": "fd960de283c62fda46a36329e90dcfee1b376b40733cd393e1f679bee926af87",
-      "sizeBytes": 388374
     },
     {
       "label": "United States:Google \u2014 Google PQC Migration 2029 Timeline",
@@ -1727,13 +1520,6 @@
       "sizeBytes": 149657
     },
     {
-      "label": "Global:3GPP SA3 \u2014 3GPP TR 33.938 PQC Transition Study",
-      "url": "https://www.3gpp.org/DynaReport/33938.htm",
-      "file": "Global_3GPP_SA3_3GPP_TR_33.938_PQC_Transition_Study.html",
-      "sha256": "8132afad0e616e31dbdbb206d3236bf97844998658c47888c4c273b709c2c86e",
-      "sizeBytes": 194770
-    },
-    {
       "label": "Kenya:ODPC \u2014 ODPC Guidance on Data Protection by Design",
       "url": "https://www.odpc.go.ke/guidelines-2/",
       "file": "Kenya_ODPC_ODPC_Guidance_on_Data_Protection_by_Design.html",
@@ -1746,20 +1532,6 @@
       "file": "Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html",
       "sha256": "0df0e0b2863ade949da6d4079a4e9e4efb1aecabca4b48447c216c68a08e3ac8",
       "sizeBytes": 45881
-    },
-    {
-      "label": "European Union:ENISA \u2014 ENISA PQC Anticipating Threats",
-      "url": "https://www.enisa.europa.eu/news/post-quantum-cryptography-anticipating-threats-and-preparing-the-future",
-      "file": "European_Union_ENISA_ENISA_PQC_Anticipating_Threats.html",
-      "sha256": "958a7812d3c6e0bd40b5f50fafee9f227ee0f4a6cb7e0420720318d1c65f817a",
-      "sizeBytes": 57285
-    },
-    {
-      "label": "International:ISO/IEC \u2014 ISO/IEC SC27 PQC Standardization",
-      "url": "https://www.iso.org/committee/45306.html",
-      "file": "International_ISO_IEC_ISO_IEC_SC27_PQC_Standardization.html",
-      "sha256": "30a74569a7c1fd3d5a779977a119d05493d5a871c661a93112169ec223764bea",
-      "sizeBytes": 138287
     },
     {
       "label": "Japan:NEDO \u2014 K Program PQC Research",
@@ -1790,13 +1562,6 @@
       "sizeBytes": 449570
     },
     {
-      "label": "South Korea:MSIT \u2014 K-PQC Master Plan to 2035",
-      "url": "https://kpqc.cryptolab.co.kr/",
-      "file": "South_Korea_MSIT_K-PQC_Master_Plan_to_2035.html",
-      "sha256": "f508bc71349a3b9454e2f5c489f51020cde85f3f42f83d663aeb7677164005f1",
-      "sizeBytes": 140553
-    },
-    {
       "label": "United Arab Emirates:ADGM/TII \u2014 Quantum-Secure Communications Testbed",
       "url": "https://www.adgm.com/media/announcements/adgm-and-adgm-academy-team-up-with-tii-hub71-and-aspire-to-launch-uaes-first-quantum-secure-communications-testbed",
       "file": "United_Arab_Emirates_ADGM_TII_Quantum-Secure_Communications_Testbed.html",
@@ -1816,13 +1581,6 @@
       "file": "International_Samsung_Thales_ML-KEM_Embedded_Secure_Element_Breakthrough.html",
       "sha256": "2753f94d35a24b037f587b96fb36df6aee8a687149314a0d44eb026b3181ef9a",
       "sizeBytes": 400066
-    },
-    {
-      "label": "United Arab Emirates:UAE CSC \u2014 UAE Crypto Discovery Tool and PQC Index",
-      "url": "https://www.mediaoffice.abudhabi/en/security/uae-cybersecurity-council-partners-with-quantumgate-to-launch-crypto-discovery-tool/",
-      "file": "United_Arab_Emirates_UAE_CSC_UAE_Crypto_Discovery_Tool_and_PQC_Index.html",
-      "sha256": "f849118d676e6815832e18cc5b43a02ad587778a1f54c5bd66a433788e0cf4b7",
-      "sizeBytes": 40950
     },
     {
       "label": "Spain:CCN \u2014 Four-Phase PQC Approach",
