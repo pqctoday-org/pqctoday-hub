@@ -21,18 +21,6 @@
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee"
     },
     {
-      "refId": "3GPP-PQC-Study-2025",
-      "title": "Study on Preparing for Transition to Post Quantum Cryptography in 3GPP",
-      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/",
-      "status": "downloaded",
-      "filename": "3GPP-PQC-Study-2025.html",
-      "sizeBytes": 26667,
-      "contentType": "text/html",
-      "sha256": "71429d04678d796b88440df4c1e1c343a12fba63aa3dd0f597feb7e9e37b2318",
-      "previousSha256": "74991bb7b2db226d2e2803d5fcfaed2e948ec820f06e8cba3a528ff55e4132f4",
-      "rehashedAt": "2026-08-22"
-    },
-    {
       "refId": "liboqs-v0.15.0",
       "title": "Open Quantum Safe liboqs Library v0.15.0",
       "url": "https://openquantumsafe.org/liboqs/",
@@ -515,18 +503,6 @@
       "sha256": "ab09144a6b59602d11ba1dc54eed7f2cfa3689f6991e21c207c188a4688f4d4d"
     },
     {
-      "refId": "ENISA PQC Guidelines",
-      "title": "Post-Quantum Cryptography: Current State and Quantum Mitigation",
-      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
-      "status": "downloaded",
-      "filename": "ENISA_PQC_Guidelines.html",
-      "sizeBytes": 53760,
-      "contentType": "text/html",
-      "sha256": "b052556a2ffc3ce610b0db7c5b719c83d22d7de08849c802aa3a64550c24c2b3",
-      "previousSha256": "ec37e112f6934c9e47059c8b1e32f39575bd1c818c25c5e66e619970ef35e7c3",
-      "rehashedAt": "2026-08-22"
-    },
-    {
       "refId": "EUCC v2.0 ACM",
       "title": "EU Cybersecurity Certification Agreed Cryptographic Mechanisms v2.0",
       "url": "https://certification.enisa.europa.eu/document/download/f4657490-9757-4a97-8deb-fd4d6a1358ee_en?filename=EUCC_guidelines_Agreed+Cryptographic+Mechanisms+v2.pdf",
@@ -587,16 +563,6 @@
       "sizeBytes": 424862,
       "contentType": "text/html",
       "sha256": "deef53973e490e59f294df6fd6fa22ea75728dd3a640456c487a3083d022d2eb"
-    },
-    {
-      "refId": "Canada CSE PQC Guidance",
-      "title": "Roadmap for the migration to post-quantum cryptography for the Government of Canada (ITSM.40.001)",
-      "url": "https://www.cyber.gc.ca/sites/default/files/itsm.40.001-migration-post-quantum-cryptography-government-canada-e.pdf",
-      "status": "downloaded",
-      "filename": "Canada_CSE_PQC_Guidance.html",
-      "sizeBytes": 649278,
-      "contentType": "text/html",
-      "sha256": "79cb1a08a7f75533e81ffbd614d62543d87e3f7434e66f0ae59ec7ffdbdae7ca"
     },
     {
       "refId": "GSMA PQ.03 PQC Guidelines",
@@ -797,18 +763,6 @@
       "sizeBytes": 182919,
       "contentType": "text/html",
       "sha256": "a56025a78f832393e64dc28f4c6b14a95463bad520f047083a5ab992a3876b57"
-    },
-    {
-      "refId": "NIST-SP-800-90A-R1",
-      "title": "SP 800-90A Rev. 1: Recommendation for Random Number Generation Using Deterministic Random Bit Generators",
-      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-90A-R1.html",
-      "sizeBytes": 40991,
-      "contentType": "text/html",
-      "sha256": "316fe76ee68f70129f8a6e2ed367193268d9ee11fe1f924be817113c5c64e862",
-      "previousSha256": "c6f50d3ebc6e35c043b0bc8bb070d0101d51a4e66ae67e52182cc3a627589a40",
-      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-SP-800-90B",
@@ -1369,16 +1323,6 @@
       "rehashedAt": "2026-08-22"
     },
     {
-      "refId": "CSC-API-v2-Spec",
-      "title": "Cloud Signature Consortium API V2.2 Specification",
-      "url": "https://cloudsignatureconsortium.org/wp-content/uploads/2025/11/csc-api.pdf",
-      "status": "downloaded",
-      "filename": "CSC-API-v2-Spec.html",
-      "sizeBytes": 4143407,
-      "contentType": "text/html",
-      "sha256": "339cb9905a9ae3779e4a99ff2dc57a3f5243528dfb3578ee5c91745929fa76c1"
-    },
-    {
       "refId": "ETSI-EN-319-411",
       "title": "ETSI EN 319 411-1 V1.5.1 (2025-04)",
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/31941101/01.05.01_60/en_31941101v010501p.pdf",
@@ -1387,16 +1331,6 @@
       "sizeBytes": 361944,
       "contentType": "application/pdf",
       "sha256": "273705802db7e2c68574ae83f169c1dbaa50b30f18f0ad7e8dfa23d606e425c6"
-    },
-    {
-      "refId": "NIST-SP-800-63-3",
-      "title": "NIST SP 800-63-4 Digital Identity Guidelines",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63-4.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-63-3.html",
-      "sizeBytes": 858054,
-      "contentType": "text/html",
-      "sha256": "2f5b107de218a0fc3fe7f7e91b2ece5babb001eda5745b7c568a3cc876002f2d"
     },
     {
       "refId": "NIST-SP-800-131A-Rev3",
@@ -1860,30 +1794,6 @@
       "contentType": "text/html",
       "sha256": "a82c6ee1dfbb2617f9d391e71df998074314b3d47beffc0bacb12cf1f7405f7a",
       "previousSha256": "b7395d8c02bde12c46dbd6172c270963f6a56e74d64ae0f61260a4e074628ad1",
-      "rehashedAt": "2026-08-22"
-    },
-    {
-      "refId": "PQCC-Migration-Roadmap-2025",
-      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Migration Roadmap",
-      "url": "https://pqcc.org/post-quantum-cryptography-migration-roadmap/",
-      "status": "downloaded",
-      "filename": "PQCC-Migration-Roadmap-2025.html",
-      "sizeBytes": 138750,
-      "contentType": "text/html",
-      "sha256": "f125d443129f48c660af0b64dd10f313db79240d4f26d96230d7965302de3f43",
-      "previousSha256": "a91fdcd3203abe17b9c3fdd6c1bad18a0a3dd67a5047d4e39917a63f5eb5db73",
-      "rehashedAt": "2026-08-22"
-    },
-    {
-      "refId": "PQCC-Inventory-Workbook-2025",
-      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Inventory Workbook",
-      "url": "https://pqcc.org/pqc-inventory-workbook/",
-      "status": "downloaded",
-      "filename": "PQCC-Inventory-Workbook-2025.html",
-      "sizeBytes": 139332,
-      "contentType": "text/html",
-      "sha256": "faeb11cad041ddcd9a72208128e55d979e90bc98c6d510479f328d85a403cad5",
-      "previousSha256": "a136ddca0b425f5f0fee634e5700ddd883f0b72212fa7faaa2eb3c8d8f86272e",
       "rehashedAt": "2026-08-22"
     },
     {
@@ -2670,18 +2580,6 @@
       "sha256": "9b0dd77131ade3617a91cd8457fa09e0dc354c273bb2220a6afeaca16e5defe7"
     },
     {
-      "refId": "NIST SP 800-90A",
-      "title": "Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1",
-      "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
-      "status": "downloaded",
-      "filename": "NIST_SP_800-90A.html",
-      "sizeBytes": 40991,
-      "contentType": "text/html",
-      "sha256": "e0e6644db15269a48f2252de5993f458dbe64489713a0d6a6dd4da9066a5e053",
-      "previousSha256": "1c5c3d744575168562c92e8448d0276e86edb3f75ef0d98eb1ef6d6ad6b31a7a",
-      "rehashedAt": "2026-08-22"
-    },
-    {
       "refId": "NIST SP 800-108",
       "title": "Recommendation for Key Derivation Using Pseudorandom Functions",
       "url": "https://csrc.nist.gov/pubs/sp/800/108/r1/upd1/final",
@@ -3042,42 +2940,6 @@
       "sizeBytes": 173698,
       "contentType": "application/pdf",
       "sha256": "ef17baf17d6bfb84c0a7675c00ff064776c8c78f3dd8fa393e74e447d8f084f1"
-    },
-    {
-      "refId": "ENISA-Crypto-Market-Analysis-2024",
-      "title": "Cryptographic Products and Services Market Analysis",
-      "url": "https://www.enisa.europa.eu/publications/cryptographic-products-and-services-market-analysis",
-      "status": "downloaded",
-      "filename": "ENISA-Crypto-Market-Analysis-2024.html",
-      "sizeBytes": 52954,
-      "contentType": "text/html",
-      "sha256": "bac5fd5aa72372b52ca31a00cc4f07025490d8a1745ac62f904f7e856d6a8720",
-      "previousSha256": "23ba1c1818e4be89dea8dc31bc1524dcf15272de9ac65997be331ffb384fc667",
-      "rehashedAt": "2026-08-22"
-    },
-    {
-      "refId": "ENISA-State-of-Cybersecurity-2024",
-      "title": "2024 Report on the State of Cybersecurity in the Union",
-      "url": "https://www.enisa.europa.eu/publications/2024-report-on-the-state-of-the-cybersecurity-in-the-union",
-      "status": "downloaded",
-      "filename": "ENISA-State-of-Cybersecurity-2024.html",
-      "sizeBytes": 53649,
-      "contentType": "text/html",
-      "sha256": "b79006fdf65e13891a2d54f88b04a19e219bef1ff3d9d433916c799ab46ff615",
-      "previousSha256": "d5e9021940fc94298fda59215e83272928b05a817190d6f61da1bd39cfa6e1a4",
-      "rehashedAt": "2026-08-22"
-    },
-    {
-      "refId": "ENISA-Threat-Landscape-2025",
-      "title": "ENISA Threat Landscape 2025",
-      "url": "https://www.enisa.europa.eu/publications/enisa-threat-landscape-2025",
-      "status": "downloaded",
-      "filename": "ENISA-Threat-Landscape-2025.html",
-      "sizeBytes": 53017,
-      "contentType": "text/html",
-      "sha256": "e197e68e148daf9580f9335ef6c43d87246f836917b75ce5ec1287dc0db89cc7",
-      "previousSha256": "d768b8485c4412e3b17e17824d2b9ebaca7307be5927fcee2589fc78eed526bb",
-      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ECCG-ACM-v2",
@@ -4220,16 +4082,6 @@
       "sha256": "2f3e574ed16a883886bf0486c763aaf3291cd4986dbdfdf03ae72cb9892d0289"
     },
     {
-      "refId": "NIST-SP-800-140B",
-      "title": "NIST SP 800-140B Rev. 1: CMVP Security Policy Requirements",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Br1.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-140B.html",
-      "sizeBytes": 589224,
-      "contentType": "text/html",
-      "sha256": "dd68511f9160bf53dfabe9617d4a3528f578836b5b7b50dff002a7ab57275fef"
-    },
-    {
       "refId": "IETF-RFC-8996",
       "title": "RFC 8996: Deprecating TLS 1.0 and 1.1",
       "url": "https://www.rfc-editor.org/rfc/rfc8996",
@@ -4651,26 +4503,6 @@
       "sizeBytes": 3088964,
       "contentType": "application/pdf",
       "sha256": "844a3f790d6de7286244bb78ca8e0be638e7e0dce92b7f40c369ee7494449a4d"
-    },
-    {
-      "refId": "CMMC-2.0-MODEL",
-      "title": "Cybersecurity Maturity Model Certification (CMMC) Model Overview v2.13",
-      "url": "https://dodcio.defense.gov/CMMC/Documentation/",
-      "status": "downloaded",
-      "filename": "CMMC-2.0-MODEL.html",
-      "sizeBytes": 40620,
-      "contentType": "text/html",
-      "sha256": "a84f83d19cbd4806815d1933ecae83d3d011f348b9a229dda083442e7fd11dee"
-    },
-    {
-      "refId": "NZISM-V3-9",
-      "title": "New Zealand Information Security Manual (NZISM) v3.9 \u2014 November 2025",
-      "url": "https://nzism.gcsb.govt.nz/",
-      "status": "downloaded",
-      "filename": "NZISM-V3-9.html",
-      "sizeBytes": 23387,
-      "contentType": "text/html",
-      "sha256": "206ff42c9a4e423a223f33ad0b1e639cb627e8c860bb72457938e1253d4c424b"
     },
     {
       "refId": "draft-vitap-ml-dsa-webauthn",
@@ -5449,16 +5281,6 @@
       "sizeBytes": 101465,
       "contentType": "text/html",
       "sha256": "03083348412cbcd6a6ac9ae02cfe8912ba769cb9a7da96e5f813695019b86648"
-    },
-    {
-      "refId": "NIAP",
-      "title": "NIAP \u2014 National Information Assurance Partnership",
-      "url": "https://www.niap-ccevs.org/",
-      "status": "downloaded",
-      "filename": "NIAP.html",
-      "sizeBytes": 29709,
-      "contentType": "text/html",
-      "sha256": "8879515cc52fcc32bd6b33211a2d89b0015443e4add2d55bec91fbfebc9ee98a"
     },
     {
       "refId": "RFC 1847",
@@ -6485,16 +6307,6 @@
       "sizeBytes": 405086,
       "contentType": "text/html",
       "sha256": "c026b610d7621d89a7037d5ccf21a6e5735b7235acc9705580460913f7d6fbf4"
-    },
-    {
-      "refId": "FIPS-198",
-      "title": "FIPS 198-1, The Keyed-Hash Message Authentication Code (HMAC)",
-      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf",
-      "status": "downloaded",
-      "filename": "FIPS-198.html",
-      "sizeBytes": 129454,
-      "contentType": "text/html",
-      "sha256": "67661ba1407b391c799ff407471de18f36697af51d78a777e817c067ac30da23"
     },
     {
       "refId": "NIST-SP-800-140Cr1",
@@ -7741,16 +7553,6 @@
       "sha256": "f9465918d7877e26e8d4934a895430cb33a4c784e8931c570901eb76b46f142a"
     },
     {
-      "refId": "GSMA-PQ02",
-      "title": "GSMA PQ.02: Guidelines for Quantum Risk Management for Telco",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-cryptography-documents/",
-      "status": "downloaded",
-      "filename": "GSMA-PQ02.html",
-      "sizeBytes": 78185,
-      "contentType": "text/html",
-      "sha256": "abccce0be00037d8bcdd01f2c2fefb68bc77abc68c96c64a035098b47ed8cfdd"
-    },
-    {
       "refId": "NIST-CSWP-39",
       "title": "NIST CSWP 39: Considerations for Achieving Cryptographic Agility",
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf",
@@ -8285,18 +8087,6 @@
       "sha256": "c58af27c42ee90f00f328a19e2a2201bf20ece51835b102326bc3692b39d0e91"
     },
     {
-      "refId": "SCA-2017-AES-CNN-Jitter",
-      "title": "Convolutional Neural Networks with Data Augmentation Against Jitter-Based Countermeasures",
-      "url": "https://hal.science/hal-01661212",
-      "status": "downloaded",
-      "filename": "SCA-2017-AES-CNN-Jitter.html",
-      "sizeBytes": 16752,
-      "contentType": "text/html",
-      "sha256": "99afe96173e4b9d2bd05d4287e4f8402e911eb030c2a3008d522a0b2aed13124",
-      "previousSha256": "c103ed2f95348b57fff3e76c4a5c01948a76071743f7199b84a5fc6e408a5730",
-      "rehashedAt": "2026-08-22"
-    },
-    {
       "refId": "CycloneDX-Cryptography-Registry",
       "title": "CycloneDX Cryptography Registry (v1.7)",
       "url": "https://cyclonedx.org/registry/cryptography/",
@@ -8751,18 +8541,6 @@
       "sizeBytes": 2547947,
       "contentType": "application/pdf",
       "sha256": "bb814317a9f632e36e62803f1c1b320e6835512e218be5ac1787eaa0f059c7ff"
-    },
-    {
-      "refId": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
-      "title": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
-      "url": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
-      "status": "downloaded",
-      "filename": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the.html",
-      "sizeBytes": 843726,
-      "contentType": "text/html",
-      "sha256": "d8a7dd317d5d102f764a26a833137493a2ea80d2cb8325d868f7ac90ceebc2a1",
-      "previousSha256": "28148e096fedadf7adf92b2bbf3223e722bb24b708f9eb6444a41aa2c41792ab",
-      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
