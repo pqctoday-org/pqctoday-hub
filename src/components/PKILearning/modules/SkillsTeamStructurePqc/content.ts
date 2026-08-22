@@ -18,13 +18,18 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-06-13',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. A staffing module: what the programme must deliver and by when drives it, so the
+  // transition report and the CNSA timeline lead. CycloneDX is the artifact the
+  // prose says the team maintains, and was never cited.
   standards: [
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('OWASP-CycloneDX-CBOM-Guide'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('FIPS 206'),
-    getStandard('NIST IR 8547'),
-    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

@@ -14,13 +14,16 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-06-13',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Detection engineering: RFC 8446 leads because hybrid-downgrade detection parses
+  // TLS 1.3 NamedGroups, which is this module's distinctive claim.
   standards: [
+    getStandard('RFC 8446'),
+    getStandard('NIST IR 8547'),
     getStandard('FIPS 203'),
+    getStandard('NIST SP 800-227'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NIST SP 800-227'),
-    getStandard('NIST IR 8547'),
-    getStandard('RFC 8446'),
   ],
 
   algorithms: [

@@ -11,12 +11,17 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-10',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Sampled at 0,1,3,4: SP 800-208 (stateful hash-based signatures) and SP 800-90A
+  // (DRBGs) are this module's distinctive subjects, and IR 8547 carries the
+  // long-retention transition claims.
   standards: [
-    getStandard('FIPS 203'),
-    getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
     getStandard('NIST SP 800-208'),
     getStandard('NIST SP 800-90A'),
+    getStandard('FIPS 203'),
+    getStandard('NIST IR 8547'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
   ],
 
   algorithms: [

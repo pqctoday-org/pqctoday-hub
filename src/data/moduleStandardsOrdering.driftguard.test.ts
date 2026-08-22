@@ -31,8 +31,25 @@ function strideSample<T>(items: T[], n: number): T[] {
 const MAX_EVIDENCE_DOCS = 4
 const POLICY_TRACKS = new Set(['Executive', 'Role Guides'])
 
-/** A cryptographic specification, as opposed to a policy or guidance document. */
-const CRYPTO_SPEC = /^(FIPS \d+|NIST SP 800-\d+[A-Za-z0-9.-]*|RFC ?\d+)$/i
+/**
+ * The generic PQC specifications nearly every module cites as background —
+ * FIPS 203/204/205/206 and SP 800-227. Deliberately NARROW.
+ *
+ * The first version of this test asked whether the sampled set was entirely
+ * "crypto specs", counting every FIPS, SP and RFC. That was wrong in both
+ * directions, and running it proved it: it false-positived `dev-quantum-impact`,
+ * whose subject genuinely IS RFC 8446 and RFC 9980, while completely MISSING
+ * `pqc-governance` — the case that motivated the guard in the first place —
+ * because one non-matching entry was enough to clear it.
+ *
+ * An RFC is a protocol document and usually the module's subject; SP 800-208 and
+ * SP 800-90A are narrow enough to be a subject too. What signals a mis-ordered
+ * policy module is the *generic* set crowding out everything specific.
+ */
+const GENERIC_PQC_SPEC = /^(FIPS 20[3-6]|NIST SP 800-227)$/i
+
+/** Sampled sets with this many generic specs have no room left for the subject. */
+const CROWDED_OUT = 3
 
 /**
  * Known offenders as of 2026-08-21, measured with the stride above. Each is a
@@ -40,12 +57,10 @@ const CRYPTO_SPEC = /^(FIPS \d+|NIST SP 800-\d+[A-Za-z0-9.-]*|RFC ?\d+)$/i
  * spot-check cannot check what the module actually teaches. Remove entries from
  * this list as they are reordered — never add to it without reading WS3.2 first.
  */
-const KNOWN_UNORDERED = new Set([
-  'arch-quantum-impact',
-  'dev-quantum-impact',
-  'ops-quantum-impact',
-  'research-quantum-impact',
-  'vendor-risk',
+const KNOWN_UNORDERED = new Set<string>([
+  // Empty as of 2026-08-22. Nine modules were reordered to get here: five found by
+  // the first (weaker) rule, then four more the corrected rule surfaced. Keep the
+  // set and both tests — the guard's job is the NEXT module that lands here.
 ])
 
 describe('standards[] ordering on policy-track modules', () => {
@@ -55,10 +70,11 @@ describe('standards[] ordering on policy-track modules', () => {
     const cited = MODULE_CITED_STANDARDS[manifest.id]
     if (!cited || cited.length === 0) continue
     const sampled = strideSample(cited, MAX_EVIDENCE_DOCS)
-    if (sampled.every((s) => CRYPTO_SPEC.test(s.id))) offenders.push(manifest.id)
+    const generic = sampled.filter((s) => GENERIC_PQC_SPEC.test(s.id)).length
+    if (generic >= CROWDED_OUT) offenders.push(manifest.id)
   }
 
-  it('no NEW policy module has all-crypto-spec sampled evidence', () => {
+  it('no NEW policy module has its subject crowded out by generic PQC specs', () => {
     expect(offenders.filter((id) => !KNOWN_UNORDERED.has(id))).toEqual([])
   })
 

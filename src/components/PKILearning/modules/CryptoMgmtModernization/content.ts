@@ -12,11 +12,18 @@ export const content: ModuleContent = {
   version: '1.1.0',
   lastReviewed: '2026-04-22',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. This module operationalises CSWP.39's process loop and leans on CMVP validation
+  // state — so those are what its claims need checking against, not the algorithm
+  // specs it cited exclusively until 2026-08-22.
   standards: [
+    getStandard('NIST CSWP 39'),
+    getStandard('NIST-CMVP-Validated-Modules'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NIST-CMVP-MIP-List'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

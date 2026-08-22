@@ -12,11 +12,16 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-10',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Five entries, so all are sampled. RFC 4253 leads because SSH host-key
+  // negotiation is this module's subject, not background; IR 8547 carries the
+  // deadline claims that had no evidence behind them at all.
   standards: [
-    getStandard('FIPS 203'),
-    getStandard('FIPS 204'),
-    getStandard('NIST SP 800-227'),
     getStandard('RFC 4253'),
+    getStandard('NIST IR 8547'),
+    getStandard('FIPS 203'),
+    getStandard('NIST SP 800-227'),
+    getStandard('FIPS 204'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-65'), getAlgorithm('ML-KEM-768')],

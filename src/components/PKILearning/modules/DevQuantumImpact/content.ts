@@ -11,12 +11,18 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-10',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Sampled at 0,1,3,5: RFC 8446 (TLS 1.3 handshake growth), FIPS 203 (key and
+  // ciphertext sizes), SP 800-227 (hybrid combiners) and RFC 9980 — the PQC
+  // OpenPGP spec this module's prose actually discusses. RFC 9580 is the base
+  // OpenPGP spec and was the only one cited until 2026-08-22.
   standards: [
+    getStandard('RFC 8446'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
     getStandard('NIST SP 800-227'),
-    getStandard('RFC 8446'),
+    getStandard('FIPS 205'),
+    getStandard('RFC 9980'),
     getStandard('RFC 9580'),
   ],
 
