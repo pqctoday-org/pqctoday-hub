@@ -674,3 +674,13 @@ pki/issued/
 !pki/ca/*.pem
 !pki/vendors/*.pem
 src/.!*!.DS_Store
+
+# Capture-integrity guard — npm run audit:capture-integrity, plus its
+# local-gate suite. Referenced by a committed package.json script, so it has
+# the same `scripts/*` trap as every entry above: without these two negations
+# `git add scripts/audit-capture-integrity.ts` is a SILENT no-op and the gate
+# exists only on the machine that wrote it. Public input (public/*/manifest.json
+# hashes, src/data/library_*.csv read-only), stdout output, no network unless
+# --upstream is passed explicitly.
+!scripts/audit-capture-integrity.ts
+!scripts/audit-capture-integrity.local.test.ts

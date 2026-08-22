@@ -66,6 +66,7 @@
     "audit:role-board-content": "tsx scripts/audit-role-board-content.ts",
     "audit:sbom-versions": "tsx scripts/audit-sbom-versions.ts",
     "audit:vendor-refs": "tsx scripts/audit-vendor-refs.ts",
+    "audit:capture-integrity": "tsx scripts/audit-capture-integrity.ts",
     "audit:trusted-source-freshness": "tsx ../pqctoday-priv/scripts/audit-trusted-source-freshness.ts",
     "audit:trusted-source-freshness:baseline": "tsx ../pqctoday-priv/scripts/audit-trusted-source-freshness.ts --baseline",
     "audit:csv-archival": "tsx scripts/audit-csv-archival.ts",
