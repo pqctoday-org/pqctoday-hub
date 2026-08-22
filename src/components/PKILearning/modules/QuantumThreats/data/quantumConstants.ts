@@ -23,7 +23,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 1537,
     status: 'broken',
     notes:
-      "Shor's algorithm factors N in polynomial time. Current best published estimate: Gidney 2025 (Google Quantum AI, arXiv:2505.15917) — 1,409 logical qubits active at peak, 1,537 including idle patches (“fewer than 1600”), factoring RSA-2048 in under a week on fewer than 1M noisy physical qubits. Supersedes Chevignard–Fouque–Schrottenloher 2024 (ePrint 2024/222), which reached ~1,730 logical qubits but at ~2 trillion Toffoli gates, and the older 2016-era ~4,098 (2n+2) estimate — matches CRQC_QUBIT_THRESHOLDS.rsa2048.",
+      "Shor's algorithm factors N in polynomial time. Current best published estimate: Gidney 2025 (Google Quantum AI, arXiv:2505.15917) — 1,409 logical qubits active at peak, 1,537 including idle patches (“fewer than 1600”), factoring RSA-2048 in under a week on fewer than 1M noisy physical qubits. Supersedes Chevignard–Fouque–Schrottenloher (ePrint 2024/222, published at CRYPTO 2025), which reached 1,730 logical qubits but at 2^36 Toffoli gates, and the older 2016-era ~4,098 (2n+2) estimate — matches CRQC_QUBIT_THRESHOLDS.rsa2048.",
   },
   {
     name: 'RSA-3072',
@@ -35,7 +35,7 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     estimatedQubits: 2043,
     status: 'broken',
     notes:
-      "Larger key does not help — Shor's scales polynomially with key size, and the revised circuits scale as n/2 + o(n). Gidney 2025 estimates 2,043 logical qubits for RSA-3072, as reported by Chevignard et al. 2026 — down from the older 2016-era ~6,146 (2n+2) estimate. Note this is BELOW the 2,124 qubits the best space-optimised attack needs for a 256-bit elliptic curve at comparable classical security.",
+      "Larger key does not help — Shor's scales polynomially with key size, and the revised circuits scale as n/2 + o(n). Gidney 2025 estimates 2,043 logical qubits for RSA-3072, as reported by Chevignard et al. (EUROCRYPT 2026) — down from the older 2016-era ~6,146 (2n+2) estimate. Note this is BELOW the 2,124 qubits the best space-optimised attack needs for a 256-bit elliptic curve at comparable classical security.",
   },
   {
     name: 'RSA-4096',
@@ -598,7 +598,7 @@ export const CRQC_DRIVERS: CrqcDriver[] = [
     summary:
       'Smarter factoring and discrete-log algorithms keep cutting the qubits an attack needs.',
     evidence:
-      'RSA-2048 physical-qubit cost fell ~20×: ~20M (Gidney+Ekerå 2019) → <1M (Gidney 2025). Logical-qubit counts fell alongside it: RSA-2048 from ~4,098 (2n+2, 2016-era) to ~1,730 (Chevignard et al. 2024) to 1,537 (Gidney 2025). For 256-bit ECDLP, 1,200 logical qubits at 90M Toffoli gates (Google Quantum AI + Ethereum Foundation, Mar 2026), or 1,100 at the cost of >100B Toffolis (Chevignard et al. 2026).',
+      'RSA-2048 physical-qubit cost fell ~20×: ~20M (Gidney+Ekerå 2019) → <1M (Gidney 2025). Logical-qubit counts fell alongside it: RSA-2048 from ~4,098 (2n+2, 2016-era) to 1,730 (Chevignard et al., CRYPTO 2025) to 1,537 (Gidney 2025). For 256-bit ECDLP, 1,200 logical qubits at 90M Toffoli gates (Google Quantum AI + Ethereum Foundation, Mar 2026), or 1,193 at the cost of 2^38.98 Toffolis per run across 22 runs (Chevignard et al., EUROCRYPT 2026) — the space-optimal end of the same trade-off.',
   },
   {
     category: 'Error correction',
@@ -668,16 +668,19 @@ export const CRQC_QUBIT_THRESHOLDS = {
  * hits the author name in the UI otherwise has nowhere to go.
  *
  * Note there are TWO distinct Chevignard–Fouque–Schrottenloher papers and they
- * solve different problems — conflating them is what this block exists to prevent:
- * the 2024 paper is about RSA *factoring*, the 2026 one about elliptic-curve
- * *discrete logarithms*.
+ * solve different problems — conflating them is what this block exists to prevent.
+ * ePrint 2024/222 (published at CRYPTO 2025) is about RSA *factoring*;
+ * ePrint 2026/280 (published at EUROCRYPT 2026) is about elliptic-curve
+ * *discrete logarithms*. Cite the ePrint number AND the venue: the ePrint year is
+ * when the preprint was first posted, the venue year is when it was published, and
+ * they differ by a year in both cases.
  */
 export const QUBIT_ESTIMATE_SOURCES = {
   /** RSA-2048, current best: 1,409 active / 1,537 incl. idle; <1M noisy physical qubits. */
   gidney2025: 'https://arxiv.org/abs/2505.15917',
-  /** RSA-2048 factoring, 1,730 logical qubits at 2^36 Toffoli gates (their own wording). */
+  /** RSA-2048 factoring, 1,730 logical qubits at 2^36 Toffoli gates. CRYPTO 2025. */
   cfs2024Factoring: 'https://eprint.iacr.org/2024/222',
-  /** 256-bit ECDLP, 1,100 logical qubits (asymptotically 3.12n + o(n)), >100B Toffoli gates. */
+  /** 256-bit ECDLP, 1,193 logical qubits (3.12n + o(n)), 2^38.98 Toffolis x22. EUROCRYPT 2026. */
   cfs2026EllipticCurves: 'https://eprint.iacr.org/2026/280',
   /** 256-bit ECDLP: 1,200 logical qubits @ 90M Toffoli, or 1,450 @ 70M. */
   googleQuantumAiEcc2026:
@@ -766,8 +769,8 @@ export const CRQC_DRIVER_MILESTONES: CrqcDriverMilestone[] = [
   {
     axis: 'Algorithms',
     year: 2024,
-    short: 'CFS ~1,730 LQ',
-    label: 'Chevignard–Fouque–Schrottenloher — ~1,730 logical for RSA-2048',
+    short: 'CFS 1,730 LQ',
+    label: 'Chevignard–Fouque–Schrottenloher (CRYPTO 2025) — 1,730 logical for RSA-2048',
   },
   {
     axis: 'Algorithms',
@@ -778,8 +781,9 @@ export const CRQC_DRIVER_MILESTONES: CrqcDriverMilestone[] = [
   {
     axis: 'Algorithms',
     year: 2026,
-    short: 'GQAI 1,200 LQ ECC',
-    label: 'Google Quantum AI + Ethereum Foundation — 256-bit ECDLP in 1,200 logical qubits',
+    short: 'ECC 1,193-1,200 LQ',
+    label:
+      'Google Quantum AI + Ethereum Foundation (1,200 LQ) and CFS at EUROCRYPT 2026 (1,193) — 256-bit ECDLP',
   },
   {
     axis: 'Error correction',
