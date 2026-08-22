@@ -34,22 +34,15 @@ interface Exception {
   recheckAfter: string
 }
 
-const EXCEPTIONS: Exception[] = [
-  {
-    ghsa: 'GHSA-w3rx-r6r6-pgpr',
-    package: 'image-size',
-    reason:
-      'DoS via infinite loop in the ICNS parser. Reaches us only through pptxgenjs, which backs the .pptx export in ExportableArtifact. No upstream fix exists: the advisory covers <=2.0.2 and 2.0.2 is the latest published image-size, while pptxgenjs 4.0.1 (also latest) still declares image-size ^1.2.1. `npm audit fix --force` only "fixes" it by downgrading pptxgenjs to 1.1.5. Unreachable here — pptxExport.ts builds slides with addText only and makes zero addImage calls, so no raster parser ever runs.',
-    recheckAfter: '2026-11-01',
-  },
-  {
-    ghsa: 'GHSA-5p2g-fcmc-qvqq',
-    package: 'image-size',
-    reason:
-      'DoS via infinite loops in the JXL and HEIF parsers. Same dependency path, same absence of an upstream fix, and same unreachability as GHSA-w3rx-r6r6-pgpr above.',
-    recheckAfter: '2026-11-01',
-  },
-]
+// Empty, and that is the desired state. Both entries that used to live here were
+// image-size DoS advisories (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq) reaching us
+// only through pptxgenjs. pptxgenjs was replaced on 2026-08-22 by a direct
+// PresentationML writer (services/export/pptxOoxml.ts), the dependency went away, and
+// this gate then failed on the exceptions themselves — exactly as designed: an
+// exception that no longer matches any advisory is dead weight that would silently
+// pre-authorise a future advisory with the same id. Add a new entry only with a reason
+// that says why it cannot be fixed AND why it is unreachable, plus a recheck date.
+const EXCEPTIONS: Exception[] = []
 
 /** Severities that fail the build when unlisted. */
 const BLOCKING = new Set(['high', 'critical'])

@@ -11067,6 +11067,16 @@
       "sha256": "bfb2949b4d0f9f020b6046cf475ce9e6eeee86639bec1af3bc17aa7b738cfb29",
       "backfilledAt": "2026-08-21",
       "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "refId": "PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group",
+      "title": "PKI Consortium Launches the CBOM Profiles Working Group",
+      "url": "https://pkic.org/2026/06/08/pki-consortium-launches-the-cbom-profiles-working-group/",
+      "status": "downloaded",
+      "filename": "PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group.html",
+      "sizeBytes": 73633,
+      "contentType": "text/html",
+      "sha256": "45169bd2ebe89b9d8356b153ed7a8a0ed3c40b8d4e3ffd71ebb90420a6d911c9"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
