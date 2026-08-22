@@ -9,12 +9,22 @@ import {
   computeProofBytes,
 } from '../data/mtcConstants'
 
-const BATCH_MARKS = [
+// Two subtree cadences, because draft-ietf-plants-merkle-tree-certs-04 §6.4 projects
+// two — a standalone subtree is cut every checkpoint (~2,500 certs, 12 hashes, 384 B),
+// a landmark-relative one every landmark (~4.4M certs, 23 hashes, 736 B). Driving both
+// columns from a single slider is what previously published a 736 B standalone proof,
+// nearly double the spec's own estimate.
+const STANDALONE_MARKS = [
   { exp: 3, label: 'Demo (8)' },
-  { exp: 12, label: 'Small CA (4K)' },
-  { exp: 16, label: 'Mid CA (65K)' },
+  { exp: 8, label: 'Fast checkpoint (256)' },
+  { exp: 12, label: 'Spec: 2s checkpoint (~2.5K)' },
+  { exp: 16, label: 'Slow checkpoint (65K)' },
+]
+
+const LANDMARK_MARKS = [
+  { exp: 16, label: 'Frequent (65K)' },
   { exp: 20, label: 'Large CA (1M)' },
-  { exp: 23, label: 'Projected (~4.4M)' },
+  { exp: 23, label: 'Spec: hourly (~4.4M)' },
   { exp: 24, label: 'Max (16.7M)' },
 ]
 
@@ -26,24 +36,27 @@ function formatBatchSize(n: number): string {
 
 export const SizeComparison: React.FC = () => {
   const [selectedAlgo, setSelectedAlgo] = useState<string>(ALGORITHM_SIZES[2].shortName)
-  const [batchExponent, setBatchExponent] = useState(23) // height 23 → 736 B proof (matches spec's ~4.4M cert benchmark)
+  // Defaults are the spec's own two operating points (§6.4), not one applied twice.
+  const [standaloneExponent, setStandaloneExponent] = useState(12) // ~2.5K certs → 12 hashes → 384 B
+  const [landmarkExponent, setLandmarkExponent] = useState(23) // ~4.4M certs → 23 hashes → 736 B
 
-  const batchSize = useMemo(() => Math.pow(2, batchExponent), [batchExponent])
-  const proofBytes = useMemo(() => computeProofBytes(batchSize), [batchSize])
-  const treeHeight = useMemo(
-    () => (batchSize < 2 ? 1 : Math.ceil(Math.log2(batchSize))),
-    [batchSize]
-  )
+  const standaloneBatch = useMemo(() => Math.pow(2, standaloneExponent), [standaloneExponent])
+  const landmarkBatch = useMemo(() => Math.pow(2, landmarkExponent), [landmarkExponent])
+  const standaloneProof = useMemo(() => computeProofBytes(standaloneBatch), [standaloneBatch])
+  const landmarkProof = useMemo(() => computeProofBytes(landmarkBatch), [landmarkBatch])
 
   const algo = useMemo(
     () => ALGORITHM_SIZES.find((a) => a.shortName === selectedAlgo) ?? ALGORITHM_SIZES[2],
     [selectedAlgo]
   )
 
-  const breakdown = useMemo(() => getSizeBreakdown(algo, proofBytes), [algo, proofBytes])
+  const breakdown = useMemo(
+    () => getSizeBreakdown(algo, standaloneProof, landmarkProof),
+    [algo, standaloneProof, landmarkProof]
+  )
   const allBreakdowns = useMemo(
-    () => ALGORITHM_SIZES.map((a) => getSizeBreakdown(a, proofBytes)),
-    [proofBytes]
+    () => ALGORITHM_SIZES.map((a) => getSizeBreakdown(a, standaloneProof, landmarkProof)),
+    [standaloneProof, landmarkProof]
   )
   const globalMax = useMemo(
     () => Math.max(...allBreakdowns.map((b) => b.traditionalTotal)),
@@ -58,53 +71,93 @@ export const SizeComparison: React.FC = () => {
         </h3>
         <p className="text-sm text-muted-foreground">
           Compare the total authentication data transmitted during a TLS handshake using traditional
-          X.509 certificate chains versus Merkle Tree Certificates. Adjust the batch size to see how
-          proof size scales logarithmically. In Step 5, you&apos;ll see the CA sign a real Merkle
-          root with ML-DSA-44 — that single signature is what makes these size savings possible.
+          X.509 certificate chains versus Merkle Tree Certificates. The two MTC columns are sized
+          from <em>separate</em> subtrees: a standalone certificate&apos;s proof reaches the latest
+          checkpoint, a landmark certificate&apos;s reaches the last landmark, and the spec projects
+          those at ~2,500 and ~4.4M certificates respectively. Adjust either to see proof size scale
+          logarithmically. In Step 5, you&apos;ll see the CA sign a real Merkle root with ML-DSA-44
+          — that single signature is what makes these size savings possible.
         </p>
       </div>
 
-      {/* Batch size slider */}
-      <div className="bg-muted/50 rounded-lg p-4 border border-border">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-sm font-bold text-foreground">Certificate Batch Size</h4>
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-mono text-foreground">
-              {formatBatchSize(batchSize)} certs
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/30">
-              Height {treeHeight} &rarr; Proof {formatBytes(proofBytes)}
-            </span>
+      {/* Subtree size sliders — one per certificate type (§6.4 projects both separately) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {(
+          [
+            {
+              key: 'standalone' as const,
+              title: 'Standalone subtree (checkpoint cadence)',
+              exponent: standaloneExponent,
+              setExponent: setStandaloneExponent,
+              batch: standaloneBatch,
+              proof: standaloneProof,
+              marks: STANDALONE_MARKS,
+              min: 3,
+              max: 16,
+              accent: 'success',
+            },
+            {
+              key: 'landmark' as const,
+              title: 'Landmark subtree (landmark cadence)',
+              exponent: landmarkExponent,
+              setExponent: setLandmarkExponent,
+              batch: landmarkBatch,
+              proof: landmarkProof,
+              marks: LANDMARK_MARKS,
+              min: 16,
+              max: 24,
+              accent: 'primary',
+            },
+          ] as const
+        ).map((cfg) => (
+          <div key={cfg.key} className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+              <h4 className="text-sm font-bold text-foreground">{cfg.title}</h4>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-mono text-foreground">
+                  {formatBatchSize(cfg.batch)} certs
+                </span>
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded border ${
+                    cfg.accent === 'success'
+                      ? 'bg-success/10 text-success border-success/30'
+                      : 'bg-primary/10 text-primary border-primary/30'
+                  }`}
+                >
+                  {cfg.exponent} hashes &rarr; {formatBytes(cfg.proof)}
+                </span>
+              </div>
+            </div>
+
+            <input
+              type="range"
+              min={cfg.min}
+              max={cfg.max}
+              step={1}
+              value={cfg.exponent}
+              onChange={(e) => cfg.setExponent(Number(e.target.value))}
+              className={`w-full ${cfg.accent === 'success' ? 'accent-success' : 'accent-primary'}`}
+              aria-label={`${cfg.title} (logarithmic)`}
+            />
+
+            <div className="flex justify-between mt-1 gap-1">
+              {cfg.marks.map((mark) => (
+                <Button
+                  key={mark.exp}
+                  onClick={() => cfg.setExponent(mark.exp)}
+                  variant="link"
+                  className={`text-[9px] h-auto p-0 text-left transition-colors ${
+                    cfg.exponent === mark.exp
+                      ? 'text-primary font-bold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {mark.label}
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
-
-        <input
-          type="range"
-          min={3}
-          max={24}
-          step={1}
-          value={batchExponent}
-          onChange={(e) => setBatchExponent(Number(e.target.value))}
-          className="w-full accent-primary"
-          aria-label="Batch size (logarithmic)"
-        />
-
-        <div className="flex justify-between mt-1">
-          {BATCH_MARKS.map((mark) => (
-            <Button
-              key={mark.exp}
-              onClick={() => setBatchExponent(mark.exp)}
-              variant="link"
-              className={`text-[9px] h-auto p-0 transition-colors ${
-                batchExponent === mark.exp
-                  ? 'text-primary font-bold'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {mark.label}
-            </Button>
-          ))}
-        </div>
+        ))}
       </div>
 
       {/* Algorithm selector */}
@@ -328,9 +381,13 @@ export const SizeComparison: React.FC = () => {
         <div className="flex items-start gap-2">
           <Info size={16} className="text-primary mt-0.5 shrink-0" />
           <div className="text-xs text-muted-foreground">
-            <strong className="text-foreground">Key insight:</strong> The MTC inclusion proof size (
-            {formatBytes(proofBytes)} for {formatBatchSize(batchSize)} certs) grows{' '}
-            <em>logarithmically</em> with batch size &mdash; doubling the batch adds only 32 bytes.
+            <strong className="text-foreground">Key insight:</strong> An MTC inclusion proof grows{' '}
+            <em>logarithmically</em> with subtree size &mdash; doubling the subtree adds only 32
+            bytes &mdash; and depends on nothing else, least of all the signature algorithm. That is
+            why the two columns differ: {formatBytes(standaloneProof)} for a standalone proof over{' '}
+            {formatBatchSize(standaloneBatch)} certs, {formatBytes(landmarkProof)} for a landmark
+            proof over {formatBatchSize(landmarkBatch)}. Charging the larger figure to both, as this
+            page once did, nearly doubles the standalone proof and understates MTC&apos;s benefit.
             Standalone savings range from ~{allBreakdowns[0].reductionPercent}% (ECDSA) to ~
             {allBreakdowns[allBreakdowns.length - 1].reductionPercent}% (SLH-DSA-128s). Landmark
             mode eliminates all signatures from the handshake (client pre-syncs the trusted
@@ -358,7 +415,7 @@ export const SizeComparison: React.FC = () => {
           </thead>
           <tbody>
             {ALGORITHM_SIZES.map((a) => {
-              const b = getSizeBreakdown(a, proofBytes)
+              const b = getSizeBreakdown(a, standaloneProof, landmarkProof)
               return (
                 <tr
                   key={a.shortName}
