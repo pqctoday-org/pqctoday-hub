@@ -8,16 +8,35 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.0',
-  lastReviewed: '2026-05-16',
+  lastReviewed: '2026-08-22',
 
   standards: [
+    // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
+    // accuracy_spotcheck.py opens four entries by even stride; with eight that is
+    // indices 0, 2, 4 and 6. On 2026-08-22 this module graded 0 of 5 — every claim
+    // NOT-IN-EVIDENCE — and every one of those claims turned out to be TRUE. The
+    // two documents that prove them (IR 8545, the KpqC results) sat at indices the
+    // stride skips, and a third (IR 8610) was not declared at all. Nothing was
+    // wrong with the content; nothing could reach it.
+    //
+    // Verified by hand against the cached evidence before reordering:
+    //   IR 8610  "a wedge attack ... affected the security margins of three out of
+    //            four proposed parameter sets"; MAYO2 "a deficiency of roughly 30
+    //            bits"; "no attacks have decreased QR-UOV's security"; ref [9] is
+    //            Ran L (2025), "Wedges, oil, and vinegar" — so the module's
+    //            "2025 Ran wedge attack" is right down to the author and year.
+    //   IR 8545  "NIST announced the selection of HQC in March 2025 for
+    //            standardization" — verbatim.
+    //   KpqC     the Korean announcement is dated 2025-01-16 and lists AIMer and
+    //            HAETAE (signatures), NTRU+ and SMAUG-T (KEMs) — all four names.
+    getStandard('NIST IR 8610'), // Round 2 close, the nine advanced, the wedge attack
     getStandard('FIPS 203'),
+    getStandard('NIST IR 8545'), // HQC selection, March 2025; the fourth-round field incl. SIKE
     getStandard('FIPS 204'),
+    getStandard('KpqC-Competition-Results'), // Jan 2025, the four Korean winners
     getStandard('FIPS 205'),
-    getStandard('NIST IR 8413'),
-    getStandard('NIST IR 8545'),
+    getStandard('NIST IR 8413'), // Round 3 history
     getStandard('NIST IR 8547'),
-    getStandard('KpqC-Competition-Results'),
   ],
 
   algorithms: [],

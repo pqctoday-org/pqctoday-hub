@@ -11077,6 +11077,16 @@
       "sizeBytes": 73633,
       "contentType": "text/html",
       "sha256": "45169bd2ebe89b9d8356b153ed7a8a0ed3c40b8d4e3ffd71ebb90420a6d911c9"
+    },
+    {
+      "refId": "RFC-9908",
+      "title": "RFC 9908",
+      "url": "https://www.rfc-editor.org/rfc/rfc9908.html",
+      "status": "downloaded",
+      "filename": "RFC-9908.html",
+      "sizeBytes": 115168,
+      "contentType": "text/html",
+      "sha256": "991fb98a28d513833ae9e8bfa2ad600a1ba202f158d9feba2741b686b894affa"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

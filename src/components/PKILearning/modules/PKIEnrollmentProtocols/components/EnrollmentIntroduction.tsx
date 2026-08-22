@@ -75,7 +75,9 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             <strong>ML-KEM enrollment.</strong> KEM keys can't sign the request, so signature-POP
             doesn't apply. RFC 9810 introduces <em>encrCert POP</em>: the CA encapsulates the new
             cert under the EE's KEM pubkey; the EE proves possession by decapsulating. EST has no
-            KEM-aware update yet.
+            KEM-aware update yet. (Checked 2026-08-22 against the three RFCs that update RFC 7030 —
+            8951, 8996 and 9908. RFC 9908, the most recent, clarifies CSR Attributes Response
+            encoding and contains no mention of KEMs at all, so this still holds.)
           </li>
           <li>
             <strong>Composite enrollment.</strong> Hybrid PKI (one cert carrying both classical and
