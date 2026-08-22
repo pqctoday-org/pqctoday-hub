@@ -2912,7 +2912,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: HQC selected as 5th PQC algorithm: NIST announced March 11 2025 the selection of HQC (Hamming Quasi-Cyclic) as a backup KEM to ML-KEM.
-- **PQC Algorithms Covered**: ML-KEM, Falcon, HQC, FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA)
+- **PQC Algorithms Covered**: ML-KEM; Falcon; HQC
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2027
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -3144,7 +3144,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: active
 - **Main Topic**: A thesis by Dirk Doesburg proposing a migration strategy for RPKI to post-quantum signatures to mitigate quantum forgery risks to BGP route origin validation.
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, FN-DSA, Falcon
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FN-DSA; Falcon
 - **Quantum Threats Addressed**: Quantum forgery of ROAs; Harvest Now Decrypt Later (implied by "Harvest Now Decrypt Later" context in general PQC, but text explicitly says "Quantum forgery of ROAs enables attackers to hijack...")
 - **Migration Timeline Info**: Years mentioned: 2024, 2025
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -3202,7 +3202,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: active
 - **Main Topic**: OpenSSH 10.0 release notes detailing the default switch to ML-KEM-768 hybrid key exchange and other security and feature updates.
-- **PQC Algorithms Covered**: ML-KEM, NTRU Prime
+- **PQC Algorithms Covered**: ML-KEM; NTRU Prime
 - **Quantum Threats Addressed**: Harvest Now Decrypt Later
 - **Migration Timeline Info**: OpenSSH 9.0 (April 2022) defaulted to sntrup761x25519-sha512; OpenSSH 10.0 (April 2025) switched default to mlkem768x25519-sha256
 - **Applicable Regions / Bodies**: None detected
