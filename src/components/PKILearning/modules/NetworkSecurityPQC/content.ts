@@ -11,8 +11,12 @@ export const content: ModuleContent = {
   moduleId: 'network-security-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
+  // Added 2026-08-22: relatedStandards asserts a date or version for this document,
+  // so nothing could check the claim without it (deprecation-timeline claim). The list stays short enough
+  // that accuracy_spotcheck.py's four-document stride still opens every entry.
 
   standards: [
+    getStandard('NIST IR 8547'),
     getStandard('FIPS 203'),
     getStandard('NIST SP 800-207'),
     getStandard('NIST SP 800-227'),

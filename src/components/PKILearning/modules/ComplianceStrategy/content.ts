@@ -11,8 +11,11 @@ export const content: ModuleContent = {
   moduleId: 'compliance-strategy',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
+  // Added 2026-08-22: relatedStandards asserts a date or version for this document,
+  // so nothing could check the claim without it (deprecation-timeline claim). The list stays short enough
+  // that accuracy_spotcheck.py's four-document stride still opens every entry.
 
-  standards: [getStandard('FIPS 203'), getStandard('NIST SP 800-227')],
+  standards: [getStandard('NIST IR 8547'), getStandard('FIPS 203'), getStandard('NIST SP 800-227')],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],
 

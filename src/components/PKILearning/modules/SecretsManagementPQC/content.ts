@@ -11,8 +11,16 @@ export const content: ModuleContent = {
   moduleId: 'secrets-management-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
+  // Added 2026-08-22: relatedStandards asserts a date or version for this document,
+  // so nothing could check the claim without it (the Final revision the prose names). The list stays short enough
+  // that accuracy_spotcheck.py's four-document stride still opens every entry.
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('NIST SP 800-227')],
+  standards: [
+    getStandard('NIST-SP-800-57-Pt1-R5'),
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('NIST SP 800-227'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),
