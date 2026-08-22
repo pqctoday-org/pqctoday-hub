@@ -11097,6 +11097,16 @@
       "sizeBytes": 523890,
       "contentType": "application/pdf",
       "sha256": "d96cccfb645c8f2a0d63c5bb3ea80d905953cb8d3e95c9896741b91f2842b5ee"
+    },
+    {
+      "refId": "RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3",
+      "title": "RFC 9954 \u2014 Hybrid Key Exchange in TLS 1.3",
+      "url": "https://www.rfc-editor.org/rfc/rfc9954.html",
+      "status": "downloaded",
+      "filename": "RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3.html",
+      "sizeBytes": 109798,
+      "contentType": "text/html",
+      "sha256": "c507f9c5759ede8c7e2b82db0305d9a978c1ebaaa59714a7424cde9811b52a7a"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
