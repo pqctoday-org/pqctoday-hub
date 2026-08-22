@@ -214,7 +214,19 @@ export function defaultCacheRoot(): string {
  *  copies, which is the same mistake as preferring `public/` over the
  *  relocated root, one generation further back. If a future row ever does
  *  depend on it, that shows up here as a capture-missing finding, which is the
- *  right way to learn it. */
+ *  right way to learn it.
+ *
+ *  SWEPT 2026-08-21, a negative result worth not repeating. The threats
+ *  collection turned out to have TWO competing manifests — the flow wrote
+ *  `public/threats/evidence/manifest.json` while the app and this audit read
+ *  `public/threats/manifest.json` — which cost real verification work before
+ *  it surfaced. A systematic sweep for the same shape found NO others: no
+ *  other collection has both `<c>/manifest.json` and
+ *  `<c>/evidence/manifest.json`. Seven further artifacts the flow writes have
+ *  no hub-side reader (the compliance, compliance-docs, vendor-roadmaps and
+ *  embed manifests, vendor-cert-counts, trusted-source-hashes, and the
+ *  industry-landscape evidence manifest), but each has several priv-side
+ *  readers — maintenance state, correctly absent from the app, not orphans. */
 export function fallbackCacheRoots(primary: string): string[] {
   const priv = path.resolve(primary, '..')
   const legacy = path.join(priv, 'public')
