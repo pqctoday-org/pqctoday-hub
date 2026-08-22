@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import { CheckCircle2, Circle, ChevronRight, Info, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { serializeDemoCommand, toHex, type DemoCommandExtras } from '../../../wasm/tpmSerializer'
 import { executeTpmCommand } from '../../../wasm/tpmBridge'
 import { useTpmBusy } from './useTpmBusy'
@@ -316,6 +317,9 @@ export function CommandBuilder({
 
   const cmdDef = getCommandDef(commandType)
   const algoOptions = getAlgoOptionsForCommand(commandType)
+  const algorithmLabel = isHybridCommand(commandType)
+    ? 'Hybrid Algorithm (educational — not TCG V1.85)'
+    : 'Algorithm (TCG V1.85)'
 
   // Determine if this command is gated on a handle
   const isGatedOnKem = cmdDef?.requiresKem && !kemHandle
@@ -683,6 +687,18 @@ export function CommandBuilder({
         >
           Command
         </label>
+        {/*
+          DOCUMENTED EXCEPTION to the <FilterDropdown> contract (WS22 Stage 2).
+          This control needs two things FilterDropdown cannot express:
+          (1) <optgroup> — the five COMMAND_GROUPS are the mental model of the
+              TPM command set and flattening them loses the teaching structure;
+          (2) per-option `disabled` — commands whose prerequisite key does not
+              exist yet MUST be unselectable. FilterDropdown has no disabled
+              option, so converting would let a learner dispatch e.g.
+              TPM2_Decapsulate with no ML-KEM handle and hit a raw TPM error.
+          Revisit if FilterDropdown ever grows grouped/disabled items.
+        */}
+        {/* eslint-disable-next-line no-restricted-syntax -- see exception note above */}
         <select
           id="cmd-type"
           value={commandType}
@@ -723,48 +739,39 @@ export function CommandBuilder({
       {/* ── Algorithm selector (only for relevant commands) ── */}
       {algoOptions.length > 0 && (
         <div>
-          <label
-            htmlFor="cmd-alg"
-            className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block"
-          >
-            {isHybridCommand(commandType)
-              ? 'Hybrid Algorithm (educational — not TCG V1.85)'
-              : 'Algorithm (TCG V1.85)'}
-          </label>
-          <select
-            id="cmd-alg"
-            value={algorithm}
-            onChange={(e) => setAlgorithm(e.target.value)}
+          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+            {algorithmLabel}
+          </div>
+          <FilterDropdown
+            items={
+              isHybridCommand(commandType)
+                ? HYBRID_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => {
+                    const { mlkem, classical } = parseHybridAlgo(a)
+                    return { id: a, label: `Hybrid: ${mlkem} + ${classical} (ML-KEM + ECDH)` }
+                  })
+                : [
+                    ...KEM_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => ({
+                      id: a,
+                      label: `${a} (0x00A0 ML-KEM)`,
+                    })),
+                    ...DSA_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => ({
+                      id: a,
+                      label: `${a} (0x00A1 ML-DSA)`,
+                    })),
+                    ...CLASSICAL_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => ({
+                      id: a,
+                      label: CLASSICAL_ALGO_LABELS[a] ?? a,
+                    })),
+                  ]
+            }
+            selectedId={algorithm}
+            onSelect={(id) => setAlgorithm(id)}
+            ariaLabel={algorithmLabel}
             disabled={disabled || isExecuting}
-            className="w-full bg-background border border-border rounded p-2 text-sm text-foreground focus:ring-primary focus:border-primary"
-          >
-            {isHybridCommand(commandType)
-              ? HYBRID_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => {
-                  const { mlkem, classical } = parseHybridAlgo(a)
-                  return (
-                    <option key={a} value={a}>
-                      Hybrid: {mlkem} + {classical} (ML-KEM + ECDH)
-                    </option>
-                  )
-                })
-              : [
-                  ...KEM_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => (
-                    <option key={a} value={a}>
-                      {a} (0x00A0 ML-KEM)
-                    </option>
-                  )),
-                  ...DSA_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => (
-                    <option key={a} value={a}>
-                      {a} (0x00A1 ML-DSA)
-                    </option>
-                  )),
-                  ...CLASSICAL_ALGOS.filter((a) => algoOptions.includes(a)).map((a) => (
-                    <option key={a} value={a}>
-                      {CLASSICAL_ALGO_LABELS[a] ?? a}
-                    </option>
-                  )),
-                ]}
-          </select>
+            hideDefaultOption
+            noContainer
+            className="w-full"
+          />
         </div>
       )}
 

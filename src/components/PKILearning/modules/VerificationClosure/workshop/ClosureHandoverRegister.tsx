@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { FileCheck2, Lock, LockOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 /**
  * Closure & Handover Register — a real closure gate. Every standing capability
@@ -69,18 +70,16 @@ export function ClosureHandoverRegister() {
             <div key={c.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <span className="text-foreground">{c.label}</span>
               <span className="flex items-center gap-1.5">
-                <select
-                  value={owner[c.id] ?? ''}
-                  onChange={(e) => setOwner((p) => ({ ...p, [c.id]: e.target.value }))}
-                  className="rounded border border-border bg-transparent px-1.5 py-1 text-xs text-foreground"
-                >
-                  <option value="">owner…</option>
-                  {OWNERS.map((o) => (
-                    <option key={o} value={o} className="bg-background">
-                      {o}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  items={OWNERS}
+                  selectedId={owner[c.id] ?? ''}
+                  onSelect={(id) => setOwner((p) => ({ ...p, [c.id]: id === 'All' ? '' : id }))}
+                  defaultLabel="owner…"
+                  defaultIcon={null}
+                  ariaLabel={`Owner for ${c.label}`}
+                  noContainer
+                  size="sm"
+                />
                 <input
                   type="date"
                   value={date[c.id] ?? ''}

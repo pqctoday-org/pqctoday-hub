@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export interface TocSection {
   id: string
@@ -106,27 +107,24 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
 
       {/* Mobile compact bar */}
       <div className="lg:hidden flex items-center gap-2 mb-4 print:hidden flex-wrap">
-        <select
-          aria-label="Jump to section"
+        <FilterDropdown
+          items={sections.map(({ id, label }) => ({ id, label }))}
           // Controlled by the same IntersectionObserver-driven `activeId` the
           // desktop rail uses, so the dropdown tracks scroll position instead
           // of freezing on whichever option was last picked (previously
           // uncontrolled — it never updated on scroll, and re-picking a
           // section you'd since scrolled away from silently did nothing
           // because the DOM's value hadn't changed from the browser's view).
-          value={activeId ?? ''}
-          onChange={(e) => {
-            if (e.target.value) scrollTo(e.target.value)
+          selectedId={activeId ?? ''}
+          onSelect={(id) => {
+            if (id !== 'All') scrollTo(id)
           }}
-          className="h-auto min-h-[44px] md:h-7 md:min-h-0 text-xs rounded border border-border bg-card text-muted-foreground px-2 flex-1 min-w-0"
-        >
-          <option value="">Jump to section…</option>
-          {sections.map(({ id, label }) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
+          defaultLabel="Jump to section…"
+          defaultIcon={null}
+          ariaLabel="Jump to section"
+          noContainer
+          className="flex-1 min-w-0"
+        />
         <Button
           type="button"
           variant="ghost"

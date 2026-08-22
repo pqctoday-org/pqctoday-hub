@@ -160,7 +160,12 @@ export function RequestSimulator({
       <div className="grid grid-cols-2 gap-2.5">
         <div>
           <FieldLabel>operation</FieldLabel>
-          <SelectField value={req.op} options={KMIP_OPS} onChange={(v) => patch('op', v)} />
+          <SelectField
+            value={req.op}
+            options={KMIP_OPS}
+            onChange={(v) => patch('op', v)}
+            ariaLabel="operation"
+          />
         </div>
         <div>
           <FieldLabel>key state</FieldLabel>
@@ -168,6 +173,7 @@ export function RequestSimulator({
             value={req.keyState}
             options={KEY_STATES}
             onChange={(v) => patch('keyState', v)}
+            ariaLabel="key state"
           />
         </div>
       </div>
@@ -262,6 +268,7 @@ export function RequestSimulator({
                 value={req.blockMode}
                 options={['', ...BLOCK_MODES]}
                 onChange={(v) => patch('blockMode', v)}
+                ariaLabel="block mode"
               />
             </div>
             <div>
@@ -270,6 +277,7 @@ export function RequestSimulator({
                 value={req.padding}
                 options={['', ...PADDING_METHODS]}
                 onChange={(v) => patch('padding', v)}
+                ariaLabel="padding"
               />
             </div>
             <div>
@@ -278,6 +286,7 @@ export function RequestSimulator({
                 value={req.deterministic}
                 options={['', 'true', 'false']}
                 onChange={(v) => patch('deterministic', v as SimRequest['deterministic'])}
+                ariaLabel="deterministic"
               />
             </div>
           </div>

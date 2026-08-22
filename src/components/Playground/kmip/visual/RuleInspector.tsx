@@ -76,6 +76,7 @@ function Field({
           value={scalar || KMIP_OPS[0]}
           options={KMIP_OPS}
           onChange={(v) => onPatchScalar(spec.key, v)}
+          ariaLabel={label}
         />
       )
       break
@@ -128,6 +129,7 @@ function Field({
           value={scalar || ALGORITHM_CLASSES[0]}
           options={ALGORITHM_CLASSES}
           onChange={(v) => onPatchScalar(spec.key, v)}
+          ariaLabel={label}
         />
       )
       break

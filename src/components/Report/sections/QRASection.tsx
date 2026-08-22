@@ -29,6 +29,7 @@ import {
   Users,
 } from 'lucide-react'
 import { CollapsibleSection } from './reportContentShared'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildQRA } from '@/hooks/assessment'
 import { ROLE_CROSSWALK, type FrameworkRoleId } from '@/data/roleCrosswalk'
 import { useReportOwnershipStore } from '@/store/useReportOwnershipStore'
@@ -229,7 +230,6 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
           {items.map((item) => {
             const phaseDef = FRAMEWORK_PHASES[item.phase]
             const owner = owners[item.priority] ?? ''
-            const selectId = `qra-owner-${item.priority}`
             return (
               <tr key={item.priority} className="border-b border-border/60 align-top">
                 <td className="py-2 pr-3 font-mono text-muted-foreground">{item.priority}</td>
@@ -240,28 +240,25 @@ function Backlog({ items }: { items: QRABacklogItem[] }) {
                   </span>
                 </td>
                 <td className="py-2 pr-3">
-                  <label htmlFor={selectId} className="sr-only">
-                    Owner for action {item.priority}
-                  </label>
-                  <select
-                    id={selectId}
-                    value={owner}
-                    onChange={(e) =>
+                  <FilterDropdown
+                    items={ROLE_OPTION_ORDER.map((roleId) => ({
+                      id: roleId,
+                      // eslint-disable-next-line security/detect-object-injection
+                      label: ROLE_CROSSWALK[roleId].label,
+                    }))}
+                    selectedId={owner}
+                    onSelect={(id) =>
                       setOwners((prev) => ({
                         ...prev,
-                        [item.priority]: e.target.value as FrameworkRoleId | '',
+                        [item.priority]: id === 'All' ? '' : (id as FrameworkRoleId),
                       }))
                     }
-                    className="w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    <option value="">Unassigned</option>
-                    {ROLE_OPTION_ORDER.map((roleId) => (
-                      <option key={roleId} value={roleId}>
-                        {/* eslint-disable-next-line security/detect-object-injection */}
-                        {ROLE_CROSSWALK[roleId].label}
-                      </option>
-                    ))}
-                  </select>
+                    defaultLabel="Unassigned"
+                    defaultIcon={null}
+                    ariaLabel={`Owner for action ${item.priority}`}
+                    noContainer
+                    className="w-full"
+                  />
                 </td>
               </tr>
             )

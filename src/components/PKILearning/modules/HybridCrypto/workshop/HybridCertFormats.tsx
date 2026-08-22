@@ -565,6 +565,17 @@ export const HybridCertFormats: React.FC = () => {
                         >
                           Composite profile (draft §6)
                         </label>
+                        {/*
+                          DOCUMENTED EXCEPTION to the <FilterDropdown> contract
+                          (WS22 Stage 2). The two <optgroup>s — "Recommended by
+                          §10.4" and "Also implemented" — are normative guidance
+                          from the composite-sigs draft, not decoration, and
+                          FilterDropdown has no grouped-item concept: flattening
+                          the list would drop the recommendation that tells a
+                          learner which profile to pick. Revisit if
+                          FilterDropdown ever grows option groups.
+                        */}
+                        {/* eslint-disable-next-line no-restricted-syntax -- see exception note above */}
                         <select
                           id="composite-profile"
                           value={compositeOid}

@@ -23,6 +23,7 @@ import {
   CornerDownRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
 import {
   type KmipEngine,
@@ -294,23 +295,19 @@ export function BatchView({
           </h4>
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-muted-foreground">add</span>
-            <select
-              value=""
-              disabled={busy}
-              onChange={(e) => {
-                if (e.target.value) addOp(e.target.value as OpSpec['op'])
-                e.target.value = ''
+            <FilterDropdown
+              items={ADDABLE}
+              selectedId=""
+              onSelect={(id) => {
+                if (id !== 'All') addOp(id as OpSpec['op'])
               }}
-              className="h-7 rounded-md border border-border bg-background px-1.5 text-xs"
-              aria-label="Add operation"
-            >
-              <option value="">＋ op…</option>
-              {ADDABLE.map((op) => (
-                <option key={op} value={op}>
-                  {op}
-                </option>
-              ))}
-            </select>
+              defaultLabel="＋ op…"
+              defaultIcon={null}
+              ariaLabel="Add operation"
+              disabled={busy}
+              noContainer
+              size="sm"
+            />
           </div>
         </div>
 

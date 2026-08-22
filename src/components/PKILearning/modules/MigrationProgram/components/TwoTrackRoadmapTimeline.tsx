@@ -8,6 +8,7 @@
  */
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { FRAMEWORK_PHASES, PHASE_ORDER, type PhaseId } from '@/data/frameworkPhases'
 import type { ExternalDeadline } from '../../../common/executive'
 import {
@@ -216,30 +217,27 @@ export const TwoTrackRoadmapTimeline: React.FC<TwoTrackRoadmapTimelineProps> = (
             onChange={(e) => setDraftYear(Number(e.target.value))}
             aria-label="Milestone year"
           />
-          <select
-            className="text-sm rounded-md border border-input bg-background p-2"
-            value={draftPhase}
-            onChange={(e) => setDraftPhase(e.target.value as PhaseId)}
-            aria-label="Framework phase"
-          >
-            {PHASE_ORDER.map((p) => (
-              <option key={p} value={p}>
-                {phaseLabel(p)} — {FRAMEWORK_PHASES[p].name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="text-sm rounded-md border border-input bg-background p-2"
-            value={draftTrack}
-            onChange={(e) => setDraftTrack(e.target.value as RoadmapTrack)}
-            aria-label="Track"
-          >
-            {TRACK_ORDER.map((t) => (
-              <option key={t} value={t}>
-                {TRACK_META[t].label}
-              </option>
-            ))}
-          </select>
+          <FilterDropdown
+            items={PHASE_ORDER.map((p) => ({
+              id: p,
+              label: `${phaseLabel(p)} — ${FRAMEWORK_PHASES[p].name}`,
+            }))}
+            selectedId={draftPhase}
+            onSelect={(id) => setDraftPhase(id as PhaseId)}
+            ariaLabel="Framework phase"
+            hideDefaultOption
+            noContainer
+            className="w-full"
+          />
+          <FilterDropdown
+            items={TRACK_ORDER.map((t) => ({ id: t, label: TRACK_META[t].label }))}
+            selectedId={draftTrack}
+            onSelect={(id) => setDraftTrack(id as RoadmapTrack)}
+            ariaLabel="Track"
+            hideDefaultOption
+            noContainer
+            className="w-full"
+          />
         </div>
         {milestones.length > 0 && (
           <div className="flex flex-wrap gap-1.5 items-center">
