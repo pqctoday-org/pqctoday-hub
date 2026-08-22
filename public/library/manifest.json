@@ -1393,10 +1393,13 @@
       "title": "Transitioning the Use of Cryptographic Algorithms and Key Lengths (Rev 3)",
       "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
       "status": "downloaded",
-      "filename": "NIST-SP-800-131A-Rev3.html",
-      "sizeBytes": 46624,
-      "contentType": "text/html",
-      "sha256": "7618f082bf8f44476b556b2961d42d77dbdb0b251108944327322386362316ca"
+      "filename": "NIST-SP-800-131A-Rev3.pdf",
+      "sizeBytes": 927584,
+      "contentType": "application/pdf",
+      "sha256": "5ffdb907e0e2375901151579422a370b655e131223a2588ea418c5df1dea6e7f",
+      "previousFilename": "NIST-SP-800-131A-Rev3.html",
+      "previousSha256": "7618f082bf8f44476b556b2961d42d77dbdb0b251108944327322386362316ca",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "India-DST-Quantum-Safe-Roadmap-2026",
@@ -1729,30 +1732,39 @@
       "title": "BIS Paper 158 \u2014 Quantum-Readiness Roadmap for Financial Systems",
       "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
       "status": "downloaded",
-      "filename": "BIS-Paper-158.html",
-      "sizeBytes": 26170,
-      "contentType": "text/html",
-      "sha256": "9c42de65bb1ff28e4c7d2b8186d2e9ef203036fd39c51a69e8467ad47294f324"
+      "filename": "BIS-Paper-158.pdf",
+      "sizeBytes": 2159075,
+      "contentType": "application/pdf",
+      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+      "previousFilename": "BIS-Paper-158.html",
+      "previousSha256": "9c42de65bb1ff28e4c7d2b8186d2e9ef203036fd39c51a69e8467ad47294f324",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EU-NIS-CG-Roadmap-v1.1",
       "title": "EU NIS Cooperation Group \u2014 Coordinated Implementation Roadmap for PQC Transition v1.1",
       "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "status": "downloaded",
-      "filename": "EU-NIS-CG-Roadmap-v1.1.html",
-      "sizeBytes": 51132,
-      "contentType": "text/html",
-      "sha256": "52feee3d7a06989e28f31bcc9ff3c5b56a924543c764520961e702c7463c11b7"
+      "filename": "EU-NIS-CG-Roadmap-v1.1.pdf",
+      "sizeBytes": 553179,
+      "contentType": "application/pdf",
+      "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
+      "previousFilename": "EU-NIS-CG-Roadmap-v1.1.html",
+      "previousSha256": "52feee3d7a06989e28f31bcc9ff3c5b56a924543c764520961e702c7463c11b7",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "G7-CEG-Financial-PQC-2026",
       "title": "G7 Cyber Expert Group \u2014 Advancing a Coordinated Approach to PQC Transition for the Financial Sector",
       "url": "https://home.treasury.gov/",
       "status": "downloaded",
-      "filename": "G7-CEG-Financial-PQC-2026.html",
-      "sizeBytes": 185554,
-      "contentType": "text/html",
-      "sha256": "03aebf90812bfd8efc4dfad25d56e9fcfaff36de2afaa11e6a9fb7034f055ce9"
+      "filename": "G7-CEG-Financial-PQC-2026.pdf",
+      "sizeBytes": 384613,
+      "contentType": "application/pdf",
+      "sha256": "8c70cf98cc6e38f7fc98bc26cf78a77c4615fa318ed52f951f6d4d23b3a421b6",
+      "previousFilename": "G7-CEG-Financial-PQC-2026.html",
+      "previousSha256": "03aebf90812bfd8efc4dfad25d56e9fcfaff36de2afaa11e6a9fb7034f055ce9",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "PKI-Consortium-PQC-2025",
@@ -2087,10 +2099,13 @@
       "title": "MAS Advisory on Addressing Cybersecurity Risks Associated with Quantum Computing",
       "url": "https://www.mas.gov.sg/regulation/circulars/advisory-on-addressing-the-cybersecurity-risks-associated-with-quantum",
       "status": "downloaded",
-      "filename": "SG-MAS-Quantum-Advisory-2024.html",
-      "sizeBytes": 246728,
-      "contentType": "text/html",
-      "sha256": "33e81c7330b0b74d9d1d46dc08fb5ba69f1c599a9706ef12a9a430f3c56dd26a"
+      "filename": "SG-MAS-Quantum-Advisory-2024.pdf",
+      "sizeBytes": 138500,
+      "contentType": "application/pdf",
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+      "previousFilename": "SG-MAS-Quantum-Advisory-2024.html",
+      "previousSha256": "33e81c7330b0b74d9d1d46dc08fb5ba69f1c599a9706ef12a9a430f3c56dd26a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "SG-MAS-QKD-Sandbox-Report-2025",
