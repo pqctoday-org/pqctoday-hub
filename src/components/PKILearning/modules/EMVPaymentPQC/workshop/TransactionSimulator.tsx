@@ -74,7 +74,12 @@ export const EMV_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'emv-arpc-cmac',
     useCase: 'ARPC message authentication (AES-CMAC)',
-    standard: 'EMVCo Book 2 + NIST SP 800-38B',
+    // Was 'EMVCo Book 2 + NIST SP 800-38B'. EMV-Book2-v4.3 was deprecated in the
+    // library on 2026-08-13 as registration-gated — "a reader cannot obtain it
+    // without an account, so it may not be cited as proof". Citing it here sent a
+    // reader to a wall. SP 800-38B specifies CMAC and is open, and the symmetric
+    // nature of the cryptograms is evidenced by the IDEMIA banking paper instead.
+    standard: 'NIST SP 800-38B (CMAC)',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/b/final',
     kind: { type: 'aescmac-verify' },
   },
