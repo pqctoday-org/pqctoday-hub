@@ -266,9 +266,12 @@
       "status": "downloaded",
       "file": "public/threats/CRYPTO-004.html",
       "filename": "CRYPTO-004.html",
-      "sizeBytes": 229995,
+      "sizeBytes": 232249,
       "contentType": "text/html",
-      "sha256": "b3c4d8a69d53eca6350dd44fb4ab29c86bb1602288382333f32c46e9507b307d"
+      "sha256": "a762794a9dfe427300a36b0b6adcbc7986fcb3555c19b35f427c1118232afbf3",
+      "previousSha256": "b3c4d8a69d53eca6350dd44fb4ab29c86bb1602288382333f32c46e9507b307d",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "ENERGY-001",
@@ -278,9 +281,12 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-001.html",
       "filename": "ENERGY-001.html",
-      "sizeBytes": 427984,
+      "sizeBytes": 429896,
       "contentType": "text/html",
-      "sha256": "eaab790540be1dc79f9876410c2967ef383d5a8e508273651388db3725560ff4"
+      "sha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
+      "previousSha256": "eaab790540be1dc79f9876410c2967ef383d5a8e508273651388db3725560ff4",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "ENERGY-002",
@@ -302,9 +308,12 @@
       "status": "downloaded",
       "file": "public/threats/ENERGY-003.html",
       "filename": "ENERGY-003.html",
-      "sizeBytes": 139717,
+      "sizeBytes": 139197,
       "contentType": "text/html",
-      "sha256": "35d483ec07fe6c65e8110684dd55d42052bf473c271223658cc85c9074befab0"
+      "sha256": "c1e61638574f411688258fbc62657d2fe86f5f0e334e7972e8bbaa8c16536552",
+      "previousSha256": "35d483ec07fe6c65e8110684dd55d42052bf473c271223658cc85c9074befab0",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "ENERGY-004",
@@ -445,9 +454,12 @@
       "status": "downloaded",
       "file": "public/threats/GOV-004.html",
       "filename": "GOV-004.html",
-      "sizeBytes": 156739,
+      "sizeBytes": 157041,
       "contentType": "text/html",
-      "sha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0"
+      "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
+      "previousSha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "GOV-005",
@@ -503,9 +515,12 @@
       "status": "downloaded",
       "file": "public/threats/HLTH-002.html",
       "filename": "HLTH-002.html",
-      "sizeBytes": 1060917,
+      "sizeBytes": 1067591,
       "contentType": "text/html",
-      "sha256": "cde395c43adf7f792fdac6330dc594e47dbf2ea63003b0edc9d832546b4ac421"
+      "sha256": "6129643c6a6a6f5f07e1829c1e99e3318b64fd3820874daa8f26e18a7f6e916f",
+      "previousSha256": "cde395c43adf7f792fdac6330dc594e47dbf2ea63003b0edc9d832546b4ac421",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "HLTH-003",
@@ -576,7 +591,10 @@
       "filename": "INS-003.html",
       "sizeBytes": 96444,
       "contentType": "text/html",
-      "sha256": "1271500e666efb48befd99a5d974c950b6001a00e185b6c644a42fe46387e101"
+      "sha256": "98cbc50f6c35b62e4da80c6cfbf3f1ea699a6077668e093dc6ce2011e113eafb",
+      "previousSha256": "1271500e666efb48befd99a5d974c950b6001a00e185b6c644a42fe46387e101",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "IOT-001",
@@ -918,9 +936,12 @@
       "status": "downloaded",
       "file": "public/threats/TELCO-003.html",
       "filename": "TELCO-003.html",
-      "sizeBytes": 202353,
+      "sizeBytes": 213132,
       "contentType": "text/html",
-      "sha256": "800b94eda9b0f8c83b557e5dcbf0d81dcd6545af6541f33a50d8bc0321172167"
+      "sha256": "9c50e472535c0cb749aa0a37ca460a3df57715f8fbb6ed1b4643446e5186f18c",
+      "previousSha256": "800b94eda9b0f8c83b557e5dcbf0d81dcd6545af6541f33a50d8bc0321172167",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "TELCO-004",
@@ -1049,9 +1070,12 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-010.html",
       "filename": "CROSS-010.html",
-      "sizeBytes": 347248,
+      "sizeBytes": 347373,
       "contentType": "text/html",
-      "sha256": "aa65dd036e1753ebea81041232fc6d0f0317fb5b58836a94a3fd519a3310a173"
+      "sha256": "b4ec7dcdbcacca53c211d083cb47c024d654c5607a5aa94a15d1658838a60e80",
+      "previousSha256": "aa65dd036e1753ebea81041232fc6d0f0317fb5b58836a94a3fd519a3310a173",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "CROSS-011",
@@ -1085,9 +1109,12 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-013.html",
       "filename": "CROSS-013.html",
-      "sizeBytes": 173685,
+      "sizeBytes": 172257,
       "contentType": "text/html",
-      "sha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943"
+      "sha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
+      "previousSha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "RAIL-003",
@@ -1348,7 +1375,10 @@
       "filename": "AERO-008.html",
       "sizeBytes": 115591,
       "contentType": "text/html",
-      "sha256": "735ec4ebbaad1fa8835848fe4cda4b3ff6fb4f3e324ea63486e613eed788dee8"
+      "sha256": "869486f31699c559f4bd30fd5de95418b8360db2d308c7df11968df84da7ca30",
+      "previousSha256": "735ec4ebbaad1fa8835848fe4cda4b3ff6fb4f3e324ea63486e613eed788dee8",
+      "rehashedAt": "2026-08-21",
+      "rehashBasis": "human-read: capture verified against main_source before recording"
     },
     {
       "threatId": "CROS-002",
@@ -1409,6 +1439,214 @@
       "sizeBytes": 138500,
       "contentType": "application/pdf",
       "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f"
+    },
+    {
+      "threatId": "CROS-001",
+      "refId": "CROS-001",
+      "title": "IAPH Cyber Resilience Guidelines for Emerging Technologies in the Maritime Supply Chain",
+      "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Security/Documents/IAPH%20Cyber%20resilience%20guidelines%20for%20emerging%20technologies%20in%20the%20maritime%20supply%20chain%20ENG.pdf",
+      "status": "downloaded",
+      "file": "threats/CROS-001.pdf",
+      "filename": "CROS-001.pdf",
+      "sizeBytes": 12089813,
+      "contentType": "application/pdf",
+      "sha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "FINA-002",
+      "refId": "FINA-002",
+      "title": "Quantum-readiness for the financial system: a roadmap",
+      "url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
+      "status": "downloaded",
+      "file": "threats/FINA-002.pdf",
+      "filename": "FINA-002.pdf",
+      "sizeBytes": 2159075,
+      "contentType": "application/pdf",
+      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CROS-003",
+      "refId": "CROS-003",
+      "title": "PQC Migration Framework - Marin Ivezic and Applied Quantum",
+      "url": "https://pqcframework.com/",
+      "status": "downloaded",
+      "file": "threats/CROS-003.html",
+      "filename": "CROS-003.html",
+      "sizeBytes": 178446,
+      "contentType": "text/html",
+      "sha256": "9fe15290729f182f0e44e066ccef532b8d7939c8b4f9b69e1217cb0e40ba668c",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "INTE-001",
+      "refId": "INTE-001",
+      "title": "ETSI TR 104 005 V1.1.1 Secure Element Technologies",
+      "url": "https://www.etsi.org/deliver/etsi_tr/104000_104099/104005/01.01.01_60/tr_104005v010101p.pdf",
+      "status": "downloaded",
+      "file": "threats/INTE-001.pdf",
+      "filename": "INTE-001.pdf",
+      "sizeBytes": 81922,
+      "contentType": "application/pdf",
+      "sha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CROS-005",
+      "refId": "CROS-005",
+      "title": "ANSSI-PG-083 Guide des mecanismes cryptographiques v3.00",
+      "url": "https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-mecanismes-crypto-3.00.pdf",
+      "status": "downloaded",
+      "file": "threats/CROS-005.pdf",
+      "filename": "CROS-005.pdf",
+      "sizeBytes": 1365473,
+      "contentType": "application/pdf",
+      "sha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "ENER-001",
+      "refId": "ENER-001",
+      "title": "NERC CIP Roadmap (January 2026)",
+      "url": "https://www.nerc.com/globalassets/our-work/reports/special-reports/nerc_cip_roadmap_01122026.pdf",
+      "status": "downloaded",
+      "file": "threats/ENER-001.pdf",
+      "filename": "ENER-001.pdf",
+      "sizeBytes": 871081,
+      "contentType": "application/pdf",
+      "sha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "HEAL-001",
+      "refId": "HEAL-001",
+      "title": "HSCC Cyber Working Group Q1 2026 Progress Report",
+      "url": "https://healthsectorcouncil.org/wp-content/uploads/2026/04/HSCC-Cyber-Working-Group-Q1-2026-Progress-Report.pdf",
+      "status": "downloaded",
+      "file": "threats/HEAL-001.pdf",
+      "filename": "HEAL-001.pdf",
+      "sizeBytes": 919857,
+      "contentType": "application/pdf",
+      "sha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "PAYM-001",
+      "refId": "PAYM-001",
+      "title": "The Impact of Quantum Computing on the Payment Card Industry",
+      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/TheImpactOfQuantumComputingOnThePaymentCardIndustry.pdf",
+      "status": "downloaded",
+      "file": "threats/PAYM-001.pdf",
+      "filename": "PAYM-001.pdf",
+      "sizeBytes": 478488,
+      "contentType": "application/pdf",
+      "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CRIT-001",
+      "refId": "CRIT-001",
+      "title": "CSA Releases A Quantum-Safe Handbook And Quantum Readiness Index",
+      "url": "https://www.csa.gov.sg/news-events/press-releases/csa-releases-a-quantum-safe-handbook-and-quantum-readiness-index/",
+      "status": "downloaded",
+      "file": "threats/CRIT-001.html",
+      "filename": "CRIT-001.html",
+      "sizeBytes": 429362,
+      "contentType": "text/html",
+      "sha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "FINA-004",
+      "refId": "FINA-004",
+      "title": "OSFI Digital and crypto risks",
+      "url": "https://www.osfi-bsif.gc.ca/en/risks/risks-arising-digital-innovations-canadian-financial-industry",
+      "status": "downloaded",
+      "file": "threats/FINA-004.html",
+      "filename": "FINA-004.html",
+      "sizeBytes": 170658,
+      "contentType": "text/html",
+      "sha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CROS-006",
+      "refId": "CROS-006",
+      "title": "CCN-TEC 009 Recommendations for a safe post-quantum transition",
+      "url": "https://www.ccn.cni.es/gl/docman/documentos-publicos/boletines-pytec/499-ccn-tec-009-recomendaciones-transicion-postcuantica-segura-english/file",
+      "status": "downloaded",
+      "file": "threats/CROS-006.pdf",
+      "filename": "CROS-006.pdf",
+      "sizeBytes": 844313,
+      "contentType": "application/pdf",
+      "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "TELE-001",
+      "refId": "TELE-001",
+      "title": "ANSSI-FT-117 Transition post-quantique d'IPsec",
+      "url": "https://messervices.cyber.gouv.fr/documents-guides/transition_post_quantique_ipsec.pdf",
+      "status": "downloaded",
+      "file": "threats/TELE-001.pdf",
+      "filename": "TELE-001.pdf",
+      "sizeBytes": 1480897,
+      "contentType": "application/pdf",
+      "sha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "FINA-007",
+      "refId": "FINA-007",
+      "title": "X9 Post Quantum Cryptography Financial Readiness Needs Assessment",
+      "url": "https://x9.org/new-x9-report-migrating-to-post-quantum-cryptography/",
+      "status": "downloaded",
+      "file": "threats/FINA-007.html",
+      "filename": "FINA-007.html",
+      "sizeBytes": 219678,
+      "contentType": "text/html",
+      "sha256": "9757bf1981b6264c27fcbe1596a2f43329b3fb643f1dafb08ade652313e090fb",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CRIT-002",
+      "refId": "CRIT-002",
+      "title": "Assessing Quantum's Risk on Critical Infrastructure - BISI",
+      "url": "https://bisi.org.uk/reports/assessing-quantums-risk-on-critical-infrastructure",
+      "status": "downloaded",
+      "file": "threats/CRIT-002.html",
+      "filename": "CRIT-002.html",
+      "sizeBytes": 209080,
+      "contentType": "text/html",
+      "sha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "CRIT-003",
+      "refId": "CRIT-003",
+      "title": "Post-Quantum Cryptography Migration in the United States - R Street Institute",
+      "url": "https://www.rstreet.org/research/post-quantum-cryptography-migration-in-the-united-states-managing-risk-and-advancing-cyber-readiness-in-critical-infrastructure/",
+      "status": "downloaded",
+      "file": "threats/CRIT-003.html",
+      "filename": "CRIT-003.html",
+      "sizeBytes": 212301,
+      "contentType": "text/html",
+      "sha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+    },
+    {
+      "threatId": "INSU-001",
+      "refId": "INSU-001",
+      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025 (Quantum computing security section)",
+      "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
+      "status": "downloaded",
+      "file": "threats/INSU-001.html",
+      "filename": "INSU-001.html",
+      "sizeBytes": 134588,
+      "contentType": "text/html",
+      "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
+      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
     }
   ]
 }
