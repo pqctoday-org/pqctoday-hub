@@ -1,12 +1,11 @@
 {
-  "generated": "2026-07-10T12:11:15.480681Z",
-  "source": "src/data/quantum_threats_hsm_industries_07092026.csv",
+  "generated": "2026-08-22T12:40:46.000Z",
+  "source": "quantum_threats_hsm_industries_08212026_r1.csv",
   "summary": {
-    "downloaded": 67,
-    "missing": 43,
-    "skipped": 0,
-    "failed": 0,
-    "persisted_skip": 0
+    "ok": 134,
+    "missing": 0,
+    "noLocalFile": 84,
+    "deprecatedRowsKept": 20
   },
   "entries": [
     {
@@ -15,46 +14,52 @@
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "file": "public/threats/AERO-002.pdf",
+      "file": "threats/AERO-002.pdf",
       "filename": "AERO-002.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AERO-003",
       "refId": "AERO-003",
       "title": "ICAO Assembly Resolution A41-19",
-      "url": "https://www.icao.int/events/a41/resolutions",
-      "status": "missing",
-      "file": "public/threats/AERO-003.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
+      "url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
+      "status": "downloaded",
+      "file": "threats/AERO-003.pdf",
+      "filename": "AERO-003.pdf",
       "sizeBytes": 124245,
-      "filename": "AERO-003.pdf"
+      "contentType": "application/pdf",
+      "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUTO-001",
       "refId": "AUTO-001",
       "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
       "url": "https://www.iso.org/standard/70918.html",
-      "status": "missing",
-      "file": "public/threats/evidence/AUTO-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/AUTO-001.html",
+      "filename": "AUTO-001.html",
+      "sizeBytes": 96359,
+      "contentType": "text/html",
       "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "sizeBytes": 96359
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUTO-002",
       "refId": "AUTO-002",
       "title": "SAE J3061 / ISO/SAE 21434 Vehicle Cybersecurity",
-      "url": "https://web.archive.org/web/20250505022636id_/https://www.sae.org/standards/content/j3061_202112",
+      "url": "https://www.sae.org/standards/content/j3061_202112/",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/AUTO-002.html",
+      "file": "threats/AUTO-002.html",
       "filename": "AUTO-002.html",
       "sizeBytes": 63622,
       "contentType": "text/html",
-      "sha256": "536af6c6eab47a707a95ae7b1c39cb34623fe5019c0ca0e316fcf182d3516504"
+      "sha256": "536af6c6eab47a707a95ae7b1c39cb34623fe5019c0ca0e316fcf182d3516504",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUTO-003",
@@ -62,46 +67,51 @@
       "title": "UNECE WP.29 Regulations R155/R156",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A42021X0387",
       "status": "downloaded",
-      "file": "public/threats/AUTO-003.html",
+      "file": "threats/AUTO-003.html",
       "filename": "AUTO-003.html",
       "sizeBytes": 565909,
       "contentType": "text/html",
-      "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b"
+      "sha256": "7706e00dabda13027ccc6912afd11eede2d6049a4ac23bb93106133a5bf6bd4b",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUTO-004",
       "refId": "AUTO-004",
       "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
       "url": "https://www.iso.org/standard/70918.html",
-      "status": "missing",
-      "file": "public/threats/evidence/AUTO-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/AUTO-004.html",
+      "filename": "AUTO-004.html",
+      "sizeBytes": 96359,
+      "contentType": "text/html",
       "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "sizeBytes": 96359
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CLOUD-001",
       "refId": "CLOUD-001",
-      "title": "Post-Quantum Cryptography Key Management | CSA",
+      "title": "Cloud Security Alliance \u2014 A Practitioner's Guide to Post-Quantum Cryptography",
       "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
       "status": "downloaded",
-      "file": "public/threats/CLOUD-001.html",
-      "sha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
-      "sizeBytes": 163997,
+      "file": "threats/CLOUD-001.html",
       "filename": "CLOUD-001.html",
-      "contentType": "text/html"
+      "sizeBytes": 163997,
+      "contentType": "text/html",
+      "sha256": "e9ac6aa530c8c5edef0f871c85204d516958c7695001ea0aa4e12f1db15275f7",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CLOUD-002",
       "refId": "CLOUD-002",
-      "title": "Post-Quantum Cryptography Key Management | CSA",
+      "title": "Cloud Security Alliance \u2014 A Practitioner's Guide to Post-Quantum Cryptography",
       "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
       "status": "downloaded",
-      "file": "public/threats/CLOUD-002.html",
-      "sha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
-      "sizeBytes": 163997,
+      "file": "threats/CLOUD-002.html",
       "filename": "CLOUD-002.html",
-      "contentType": "text/html"
+      "sizeBytes": 163997,
+      "contentType": "text/html",
+      "sha256": "81749d20a553423163414f4bd0c6787d85d52a67a8aedf87c60caf91bde4ac0d",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CLOUD-003",
@@ -109,11 +119,12 @@
       "title": "NIST IR 8547 / NIST SP 800-210",
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "downloaded",
-      "file": "public/threats/CLOUD-003.pdf",
+      "file": "threats/CLOUD-003.pdf",
       "filename": "CLOUD-003.pdf",
       "sizeBytes": 722379,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6"
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CLOUD-004",
@@ -121,23 +132,26 @@
       "title": "NIST SP 800-210 Cloud Access Control",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-210.pdf",
       "status": "downloaded",
-      "file": "public/threats/CLOUD-004.pdf",
+      "file": "threats/CLOUD-004.pdf",
       "filename": "CLOUD-004.pdf",
       "sizeBytes": 1289805,
       "contentType": "application/pdf",
-      "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95"
+      "sha256": "147271600180dfd048c21da0892a1228f574bdf7b69f5982710a3aa6ebf79a95",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-001",
       "refId": "CROSS-001",
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
-      "status": "missing",
-      "file": "public/threats/CROSS-001.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/CROSS-001.pdf",
+      "filename": "CROSS-001.pdf",
       "sizeBytes": 2573722,
-      "filename": "CROSS-001.pdf"
+      "contentType": "application/pdf",
+      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-002",
@@ -145,23 +159,26 @@
       "title": "NIST IR 8547 (IPD, Nov 2024)",
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "downloaded",
-      "file": "public/threats/CROSS-002.pdf",
+      "file": "threats/CROSS-002.pdf",
       "filename": "CROSS-002.pdf",
       "sizeBytes": 722379,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6"
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-003",
       "refId": "CROSS-003",
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
-      "status": "missing",
-      "file": "public/threats/CROSS-003.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/CROSS-003.pdf",
+      "filename": "CROSS-003.pdf",
       "sizeBytes": 2573722,
-      "filename": "CROSS-003.pdf"
+      "contentType": "application/pdf",
+      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-004",
@@ -169,23 +186,26 @@
       "title": "GRI Quantum Threat Timeline Report 2024",
       "url": "https://globalriskinstitute.org/mp-files/quantum-threat-timeline-report-2024.pdf/",
       "status": "downloaded",
-      "file": "public/threats/CROSS-004.pdf",
+      "file": "threats/CROSS-004.pdf",
       "filename": "CROSS-004.pdf",
       "sizeBytes": 8451384,
       "contentType": "application/pdf",
-      "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979"
+      "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-005",
       "refId": "CROSS-005",
       "title": "NIST FIPS 206 FN-DSA Status",
       "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/CROSS-005.html",
+      "file": "threats/CROSS-005.html",
       "filename": "CROSS-005.html",
       "sizeBytes": 45146,
       "contentType": "text/html",
-      "sha256": "2969100196f6ff1db8751531ac0c382449877838e0713fb33d2fb1bb349cebe6"
+      "sha256": "2969100196f6ff1db8751531ac0c382449877838e0713fb33d2fb1bb349cebe6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-006",
@@ -193,11 +213,12 @@
       "title": "NIST Post-Quantum Cryptography Standardization",
       "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
       "status": "downloaded",
-      "file": "public/threats/CROSS-006.pdf",
+      "file": "threats/CROSS-006.pdf",
       "filename": "CROSS-006.pdf",
       "sizeBytes": 722379,
       "contentType": "application/pdf",
-      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6"
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-007",
@@ -205,22 +226,25 @@
       "title": "European Commission Digital Strategy \u2014 PQC Roadmap",
       "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "status": "downloaded",
-      "file": "public/threats/CROSS-007.pdf",
+      "file": "threats/CROSS-007.pdf",
       "filename": "CROSS-007.pdf",
       "sizeBytes": 553179,
       "contentType": "application/pdf",
-      "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea"
+      "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-008",
       "refId": "CROSS-008",
       "title": "NIST SP 800-227 Recommendations for KEMs",
       "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
-      "status": "missing",
-      "file": "public/threats/evidence/CROSS-008.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/CROSS-008.html",
+      "filename": "CROSS-008.html",
+      "sizeBytes": 44071,
+      "contentType": "text/html",
       "sha256": "5bae2d62fd014338fa90bf6d06e3bd85b61f15ce9cb7e76e46555a0d21eaaec6",
-      "sizeBytes": 44071
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRYPTO-001",
@@ -228,11 +252,12 @@
       "title": "Federal Reserve HNDL Paper",
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "status": "downloaded",
-      "file": "public/threats/CRYPTO-001.pdf",
+      "file": "threats/CRYPTO-001.pdf",
       "filename": "CRYPTO-001.pdf",
       "sizeBytes": 397965,
       "contentType": "application/pdf",
-      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063"
+      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRYPTO-002",
@@ -240,11 +265,12 @@
       "title": "Ethereum Foundation roadmap (account abstraction track)",
       "url": "https://ethereum.org/roadmap/account-abstraction/",
       "status": "downloaded",
-      "file": "public/threats/CRYPTO-002.html",
+      "file": "threats/CRYPTO-002.html",
       "filename": "CRYPTO-002.html",
       "sizeBytes": 363044,
       "contentType": "text/html",
-      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79"
+      "sha256": "3862f8cbaf027b9e12afa2198071e71bfa39a7491af684495ce6dc8e465c2e79",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRYPTO-003",
@@ -252,26 +278,26 @@
       "title": "Federal Reserve Board FEDS Paper September 2025",
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "status": "downloaded",
-      "file": "public/threats/CRYPTO-003.pdf",
+      "file": "threats/CRYPTO-003.pdf",
       "filename": "CRYPTO-003.pdf",
       "sizeBytes": 397965,
       "contentType": "application/pdf",
-      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063"
+      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRYPTO-004",
       "refId": "CRYPTO-004",
       "title": "Cryptocurrency Security Standard (CCSS)",
       "url": "https://cryptoconsortium.org/standards-2/",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/CRYPTO-004.html",
+      "file": "threats/CRYPTO-004.html",
       "filename": "CRYPTO-004.html",
       "sizeBytes": 232249,
       "contentType": "text/html",
       "sha256": "a762794a9dfe427300a36b0b6adcbc7986fcb3555c19b35f427c1118232afbf3",
-      "previousSha256": "b3c4d8a69d53eca6350dd44fb4ab29c86bb1602288382333f32c46e9507b307d",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "ENERGY-001",
@@ -279,14 +305,12 @@
       "title": "IEC 62351-3/-5/-9 (Power Systems Security)",
       "url": "https://webstore.iec.ch/publication/6912",
       "status": "downloaded",
-      "file": "public/threats/ENERGY-001.html",
+      "file": "threats/ENERGY-001.html",
       "filename": "ENERGY-001.html",
       "sizeBytes": 429896,
       "contentType": "text/html",
       "sha256": "6ae150250e02f574fb8c60b826dfec3496f4d7447711620d1c05e9c71c37cbaa",
-      "previousSha256": "eaab790540be1dc79f9876410c2967ef383d5a8e508273651388db3725560ff4",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "ENERGY-002",
@@ -294,11 +318,12 @@
       "title": "NRC Cybersecurity Requirements (10 CFR 73.54)",
       "url": "https://www.ecfr.gov/current/title-10/chapter-I/part-73/section-73.54",
       "status": "downloaded",
-      "file": "public/threats/ENERGY-002.html",
+      "file": "threats/ENERGY-002.html",
       "filename": "ENERGY-002.html",
       "sizeBytes": 81505,
       "contentType": "text/html",
-      "sha256": "072c67670f4e93d7734c5a614c47f6a4e155a249997053a5cc10528dc7f1ed4d"
+      "sha256": "072c67670f4e93d7734c5a614c47f6a4e155a249997053a5cc10528dc7f1ed4d",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "ENERGY-003",
@@ -306,14 +331,12 @@
       "title": "University of Toronto Smart Grid Security Research",
       "url": "https://www.utoronto.ca/news/u-t-researcher-leads-effort-protect-power-utilities-quantum-attacks",
       "status": "downloaded",
-      "file": "public/threats/ENERGY-003.html",
+      "file": "threats/ENERGY-003.html",
       "filename": "ENERGY-003.html",
       "sizeBytes": 139197,
       "contentType": "text/html",
       "sha256": "c1e61638574f411688258fbc62657d2fe86f5f0e334e7972e8bbaa8c16536552",
-      "previousSha256": "35d483ec07fe6c65e8110684dd55d42052bf473c271223658cc85c9074befab0",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "ENERGY-004",
@@ -321,11 +344,12 @@
       "title": "IEC 62443 Industrial Automation Security",
       "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
       "status": "downloaded",
-      "file": "public/threats/ENERGY-004.html",
+      "file": "threats/ENERGY-004.html",
       "filename": "ENERGY-004.html",
       "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FIN-001",
@@ -333,11 +357,12 @@
       "title": "Bank for International Settlements Project Leap Phase 2",
       "url": "https://www.bis.org/publ/othp107.pdf",
       "status": "downloaded",
-      "file": "public/threats/FIN-001.pdf",
+      "file": "threats/FIN-001.pdf",
       "filename": "FIN-001.pdf",
       "sizeBytes": 1383045,
       "contentType": "application/pdf",
-      "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd"
+      "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FIN-002",
@@ -345,11 +370,12 @@
       "title": "Federal Reserve Board FEDS Paper September 2025",
       "url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
       "status": "downloaded",
-      "file": "public/threats/FIN-002.pdf",
+      "file": "threats/FIN-002.pdf",
       "filename": "FIN-002.pdf",
       "sizeBytes": 397965,
       "contentType": "application/pdf",
-      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063"
+      "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FIN-003",
@@ -357,23 +383,25 @@
       "title": "BIS Papers No. 149 on Quantum Computing (Oct 2024)",
       "url": "https://www.bis.org/publ/bppdf/bispap149.pdf",
       "status": "downloaded",
-      "file": "public/threats/FIN-003.pdf",
+      "file": "threats/FIN-003.pdf",
       "filename": "FIN-003.pdf",
       "sizeBytes": 1097369,
       "contentType": "application/pdf",
-      "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6"
+      "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FIN-004",
       "refId": "FIN-004",
-      "title": "NIST SP 800-227 KEM Recommendations",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-227.pdf",
+      "title": "PCI DSS v4.0.1",
+      "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
-      "file": "public/threats/FIN-004.pdf",
+      "file": "threats/FIN-004.pdf",
       "filename": "FIN-004.pdf",
       "sizeBytes": 902987,
       "contentType": "application/pdf",
-      "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614"
+      "sha256": "41e427a461c1ae0ceed2a68dc29507400983d1d495c35631306d0f4803ca4614",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FIN-005",
@@ -381,35 +409,38 @@
       "title": "FS-ISAC \u2014 The Timeline for Post Quantum Cryptographic Migration",
       "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
       "status": "downloaded",
-      "file": "public/threats/FIN-005.html",
+      "file": "threats/FIN-005.html",
       "filename": "FIN-005.html",
       "sizeBytes": 37763,
       "contentType": "text/html",
-      "sha256": "065fa8bcb99f647311399265b0b7c3ce45b9fee47594acfcd3ed0869598da0d3"
+      "sha256": "065fa8bcb99f647311399265b0b7c3ce45b9fee47594acfcd3ed0869598da0d3",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUS-FIN-001",
       "refId": "AUS-FIN-001",
-      "title": "APRA CPS 234 + ASD ISM",
-      "url": "https://www.apra.gov.au/information-security",
+      "title": "APRA \u2014 Prudential Standard CPS 234 Information Security (July 2019)",
+      "url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
       "status": "downloaded",
-      "file": "public/threats/AUS-FIN-001.pdf",
+      "file": "threats/AUS-FIN-001.pdf",
       "filename": "AUS-FIN-001.pdf",
       "sizeBytes": 274706,
-      "contentType": "text/html",
-      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5"
+      "contentType": "application/pdf",
+      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUS-FIN-002",
       "refId": "AUS-FIN-002",
-      "title": "BIS Project Leap Phase 2 + FS-ISAC PQC Migration Timeline",
-      "url": "https://www.bis.org/publ/bppdf/bispap149.pdf",
+      "title": "BIS Innovation Hub \u2014 Project Leap Phase 2: Quantum-Proofing Payment Systems",
+      "url": "https://www.bis.org/publ/othp107.htm",
       "status": "downloaded",
-      "file": "public/threats/AUS-FIN-002.pdf",
+      "file": "threats/AUS-FIN-002.pdf",
       "filename": "AUS-FIN-002.pdf",
       "sizeBytes": 1097369,
       "contentType": "application/pdf",
-      "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6"
+      "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "GOV-001",
@@ -417,11 +448,12 @@
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "file": "public/threats/GOV-001.pdf",
+      "file": "threats/GOV-001.pdf",
       "filename": "GOV-001.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "GOV-002",
@@ -429,22 +461,25 @@
       "title": "NSA CNSA 2.0 Guidance",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "file": "public/threats/GOV-002.pdf",
+      "file": "threats/GOV-002.pdf",
       "filename": "GOV-002.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "GOV-003",
       "refId": "GOV-003",
       "title": "CISA Product Categories for PQC Technologies",
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
-      "status": "missing",
-      "file": "public/threats/evidence/GOV-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/GOV-003.html",
+      "filename": "GOV-003.html",
+      "sizeBytes": 72805,
+      "contentType": "text/html",
       "sha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0",
-      "sizeBytes": 72805
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "GOV-004",
@@ -452,14 +487,12 @@
       "title": "Federal PKI Policy Authority",
       "url": "https://www.idmanagement.gov/fpki/",
       "status": "downloaded",
-      "file": "public/threats/GOV-004.html",
+      "file": "threats/GOV-004.html",
       "filename": "GOV-004.html",
       "sizeBytes": 157041,
       "contentType": "text/html",
       "sha256": "e83cdaf49a573c5b4df9dd2d6aae28763087054258dbba464362c900cfc9184d",
-      "previousSha256": "f15c6d85f70ca81ba747bbc0fdc911cbeaeb1468642ee29bf0fd367ef298d3b0",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "GOV-005",
@@ -467,33 +500,39 @@
       "title": "NSA CNSA 2.0 Cybersecurity Advisory",
       "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
       "status": "downloaded",
-      "file": "public/threats/GOV-005.pdf",
+      "file": "threats/GOV-005.pdf",
       "filename": "GOV-005.pdf",
       "sizeBytes": 586858,
       "contentType": "application/pdf",
-      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUS-GOV-001",
       "refId": "AUS-GOV-001",
       "title": "ASD ACSC Annual Cyber Threat Report 2024\u201325",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
-      "status": "missing",
-      "file": "public/threats/evidence/AUS-GOV-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/AUS-GOV-001.html",
+      "filename": "AUS-GOV-001.html",
+      "sizeBytes": 482289,
+      "contentType": "text/html",
       "sha256": "0dae19e352eb7f04bb537ab2d32545bd94256071e832fcbc7773598094b6f81b",
-      "sizeBytes": 482289
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUS-GOV-002",
       "refId": "AUS-GOV-002",
       "title": "ASD Information Security Manual \u2014 ISM-1917",
       "url": "https://webarchive.nla.gov.au/awa/20240101000000*/https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
-      "status": "missing",
-      "file": "public/threats/evidence/AUS-GOV-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/AUS-GOV-002.html",
+      "filename": "AUS-GOV-002.html",
+      "sizeBytes": 48958,
+      "contentType": "text/html",
       "sha256": "edfd79e38229373cf3ecfb599f7a86aed2332079fab6527b1d97e35c98befe9d",
-      "sizeBytes": 48958
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HLTH-001",
@@ -501,26 +540,25 @@
       "title": "HHS HIPAA Security Rule",
       "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C",
       "status": "downloaded",
-      "file": "public/threats/HLTH-001.html",
+      "file": "threats/HLTH-001.html",
       "filename": "HLTH-001.html",
       "sizeBytes": 145863,
       "contentType": "text/html",
-      "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a"
+      "sha256": "b997385afc728e37059371a0d560b0ba4f6b0760db180756c45edf5ee335ba9a",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HLTH-002",
       "refId": "HLTH-002",
       "title": "Thales 2025 Data Threat Report Healthcare Edition",
-      "url": "https://cpl.thalesgroup.com/data-threat-report",
+      "url": "https://cpl.thalesgroup.com/healthcare-lifesciences-data-threat-report",
       "status": "downloaded",
-      "file": "public/threats/HLTH-002.html",
+      "file": "threats/HLTH-002.html",
       "filename": "HLTH-002.html",
       "sizeBytes": 1067591,
       "contentType": "text/html",
       "sha256": "6129643c6a6a6f5f07e1829c1e99e3318b64fd3820874daa8f26e18a7f6e916f",
-      "previousSha256": "cde395c43adf7f792fdac6330dc594e47dbf2ea63003b0edc9d832546b4ac421",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HLTH-003",
@@ -528,23 +566,25 @@
       "title": "FDA Premarket Cybersecurity Guidance 2023",
       "url": "https://www.fda.gov/media/119933/download",
       "status": "downloaded",
-      "file": "public/threats/HLTH-003.pdf",
+      "file": "threats/HLTH-003.pdf",
       "filename": "HLTH-003.pdf",
       "sizeBytes": 1195625,
       "contentType": "application/pdf",
-      "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54"
+      "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HLTH-004",
       "refId": "HLTH-004",
-      "title": "FDA Cybersecurity for Medical Devices",
-      "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
-      "status": "missing",
-      "file": "public/threats/HLTH-004.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+      "title": "FDA \u2014 DSCSA Standards for the Interoperable Exchange of Information for Tracing (Guidance for Industry, Sept 2023)",
+      "url": "https://www.fda.gov/media/171796/download",
+      "status": "downloaded",
+      "file": "threats/HLTH-004.pdf",
+      "filename": "HLTH-004.pdf",
       "sizeBytes": 242831,
-      "filename": "HLTH-004.pdf"
+      "contentType": "application/pdf",
+      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HLTH-005",
@@ -552,60 +592,68 @@
       "title": "FDA Drug Supply Chain Security Act (DSCSA)",
       "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/dscsa-standards-interoperable-exchange-information-tracing-certain-human-finished-prescription-drugs",
       "status": "downloaded",
-      "file": "public/threats/HLTH-005.pdf",
+      "file": "threats/HLTH-005.pdf",
       "filename": "HLTH-005.pdf",
       "sizeBytes": 242831,
       "contentType": "application/pdf",
-      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5"
+      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "INS-001",
       "refId": "INS-001",
       "title": "NAIC Insurance Data Security Model Law (MDL-668)",
       "url": "https://content.naic.org/sites/default/files/model-law-668.pdf",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/INS-001.pdf",
+      "file": "threats/INS-001.pdf",
       "filename": "INS-001.pdf",
       "sizeBytes": 238211,
       "contentType": "application/pdf",
-      "sha256": "761e268abebbe55d4612b406d1ea1cfcba23b86264da2255ef15134da601e45f"
+      "sha256": "761e268abebbe55d4612b406d1ea1cfcba23b86264da2255ef15134da601e45f",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "INS-002",
       "refId": "INS-002",
       "title": "NAIC Model Law #668 + IAIS Insurance Core Principles",
       "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
-      "status": "missing",
-      "file": "public/threats/evidence/INS-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/INS-002.html",
+      "filename": "INS-002.html",
+      "sizeBytes": 205519,
+      "contentType": "text/html",
       "sha256": "c39f19800dbb5636c59b1546a12606ade59a514f0a95ca8b3e69863ff4526b64",
-      "sizeBytes": 205519
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "INS-003",
       "refId": "INS-003",
       "title": "Geneva Association Systemic Cyber Risk Research",
       "url": "https://www.genevaassociation.org/research-topics/cyber",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/INS-003.html",
+      "file": "threats/INS-003.html",
       "filename": "INS-003.html",
       "sizeBytes": 96444,
       "contentType": "text/html",
       "sha256": "98cbc50f6c35b62e4da80c6cfbf3f1ea699a6077668e093dc6ce2011e113eafb",
-      "previousSha256": "1271500e666efb48befd99a5d974c950b6001a00e185b6c644a42fe46387e101",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IOT-001",
       "refId": "IOT-001",
       "title": "Forescout Device Risk Research",
       "url": "https://www.forescout.com/research-labs/",
-      "status": "missing",
-      "file": "public/threats/evidence/IOT-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/IOT-001.html",
+      "filename": "IOT-001.html",
+      "sizeBytes": 333346,
+      "contentType": "text/html",
       "sha256": "7e0b806f9819511bb65a3cb9525e2bd4bd9bccdf60728d6895ac5c39ad646adf",
-      "sizeBytes": 333346
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IOT-002",
@@ -613,11 +661,12 @@
       "title": "IEC 62443 Industrial Automation Security",
       "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
       "status": "downloaded",
-      "file": "public/threats/IOT-002.html",
+      "file": "threats/IOT-002.html",
       "filename": "IOT-002.html",
       "sizeBytes": 93028,
       "contentType": "text/html",
-      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc"
+      "sha256": "57c70e249b0ffc754e8bfc0a17c1c2a1586c9f4fbdd172d088382eca351997cc",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IOT-003",
@@ -625,22 +674,26 @@
       "title": "IETF SUIT RFC 9019 + RFC 9124",
       "url": "https://www.rfc-editor.org/rfc/rfc9019.txt",
       "status": "downloaded",
-      "file": "public/threats/IOT-003.html",
+      "file": "threats/IOT-003.html",
       "filename": "IOT-003.html",
       "sizeBytes": 66356,
       "contentType": "text/html",
-      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6"
+      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IOT-004",
       "refId": "IOT-004",
       "title": "ISO/IEC 30182 Smart City Concept Model",
       "url": "https://www.iso.org/standard/53302.html",
-      "status": "missing",
-      "file": "public/threats/evidence/IOT-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/IOT-004.html",
+      "filename": "IOT-004.html",
+      "sizeBytes": 85353,
+      "contentType": "text/html",
       "sha256": "28aa9d6ecbfb6067b1d170b4754bc6cd2257415e33b45ee09d9b480539d54c41",
-      "sizeBytes": 85353
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IT-001",
@@ -648,11 +701,12 @@
       "title": "OpenSSL PQC Integration",
       "url": "https://openssl-library.org/post/2025-04-08-openssl-35-final-release/",
       "status": "downloaded",
-      "file": "public/threats/IT-001.html",
+      "file": "threats/IT-001.html",
       "filename": "IT-001.html",
       "sizeBytes": 34496,
       "contentType": "text/html",
-      "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91"
+      "sha256": "09bfd7b81332cb83f1b1b8a518491bceff811588abb9a9cc66d436d80d710a91",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IT-002",
@@ -660,22 +714,25 @@
       "title": "CA/Browser Forum PKI Standards",
       "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/",
       "status": "downloaded",
-      "file": "public/threats/IT-002.html",
+      "file": "threats/IT-002.html",
       "filename": "IT-002.html",
       "sizeBytes": 44365,
       "contentType": "text/html",
-      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71"
+      "sha256": "06912fdb80160b95429fc8ae08006a3ba10770c12586352e3c00b35c66665d71",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IT-003",
       "refId": "IT-003",
       "title": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
-      "status": "missing",
-      "file": "public/threats/evidence/IT-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/IT-003.html",
+      "filename": "IT-003.html",
+      "sizeBytes": 61179,
+      "contentType": "text/html",
       "sha256": "583c2e2f31d3f2219a8602c041517c13db0d857c1f5c4d19f6c1e5415c489027",
-      "sizeBytes": 61179
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IT-004",
@@ -683,11 +740,12 @@
       "title": "SLSA Supply Chain Security Framework (OpenSSF)",
       "url": "https://slsa.dev/spec/v1.0/levels",
       "status": "downloaded",
-      "file": "public/threats/IT-004.html",
+      "file": "threats/IT-004.html",
       "filename": "IT-004.html",
       "sizeBytes": 25607,
       "contentType": "text/html",
-      "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a"
+      "sha256": "0534af68137bb9aa8709b1bd19e8acbd86de7236887a0d332cbe7d11fb08464a",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "LEG-001",
@@ -695,46 +753,52 @@
       "title": "eIDAS Regulation EU 910/2014 + ETSI TS 119 312",
       "url": "https://www.etsi.org/deliver/etsi_ts/119300_119399/119312/01.04.03_60/ts_119312v010403p.pdf",
       "status": "downloaded",
-      "file": "public/threats/LEG-001.pdf",
+      "file": "threats/LEG-001.pdf",
       "filename": "LEG-001.pdf",
       "sizeBytes": 170568,
       "contentType": "application/pdf",
-      "sha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f"
+      "sha256": "df74e5d5f79f21fb0c86ae8e8df6c170cd7b987d207e550f0fa107c89e73e13f",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "LEG-002",
       "refId": "LEG-002",
       "title": "EU Regulation 2024/1183 (eIDAS 2.0)",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
-      "status": "missing",
-      "file": "public/threats/evidence/LEG-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/LEG-002.html",
+      "filename": "LEG-002.html",
+      "sizeBytes": 835958,
+      "contentType": "text/html",
       "sha256": "b5bea7bfe0a69f57a548c6936cb663972b9c51f7eb16482367648f8fd7035ccf",
-      "sizeBytes": 835958
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "LEG-003",
       "refId": "LEG-003",
       "title": "ETSI EN 319 422 Qualified Timestamp Policy",
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
-      "status": "missing",
-      "file": "public/threats/LEG-003.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
+      "status": "downloaded",
+      "file": "threats/LEG-003.pdf",
+      "filename": "LEG-003.pdf",
       "sizeBytes": 70119,
-      "filename": "LEG-003.pdf"
+      "contentType": "application/pdf",
+      "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "LEG-004",
       "refId": "LEG-004",
       "title": "NIST SP 800-86 Guide to Integrating Forensic Techniques",
       "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-86.pdf",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/LEG-004.pdf",
+      "file": "threats/LEG-004.pdf",
       "filename": "LEG-004.pdf",
       "sizeBytes": 2818618,
       "contentType": "application/pdf",
-      "sha256": "ea7eb645bcd3feaf3ab9ea7dfc3c8987a08bf260c40682df1e5e8292bf9fe9b4"
+      "sha256": "ea7eb645bcd3feaf3ab9ea7dfc3c8987a08bf260c40682df1e5e8292bf9fe9b4",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "MEDIA-001",
@@ -742,23 +806,25 @@
       "title": "AACS Specifications \u2014 Introduction and Common Cryptographic Elements (v0.91)",
       "url": "https://aacsla.com/wp-content/uploads/2019/02/AACS_Spec_Common_0.91.pdf",
       "status": "downloaded",
-      "file": "public/threats/MEDIA-001.pdf",
+      "file": "threats/MEDIA-001.pdf",
       "filename": "MEDIA-001.pdf",
       "sizeBytes": 549667,
       "contentType": "application/pdf",
-      "sha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4"
+      "sha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "MEDIA-002",
       "refId": "MEDIA-002",
-      "title": "A First Look at Digital Rights Management Systems for Secure Mobile Content Delivery",
+      "title": "\"A First Look at Digital Rights Management Systems for Secure Mobile Content Delivery\" (academic survey)",
       "url": "https://arxiv.org/abs/2308.00437",
       "status": "downloaded",
       "file": "threats/MEDIA-002.html",
       "filename": "MEDIA-002.html",
       "sizeBytes": 41479,
       "contentType": "text/html",
-      "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800"
+      "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "MEDIA-003",
@@ -766,107 +832,120 @@
       "title": "DVB SimulCrypt (ETSI TS 103 197) \u2014 Head-end implementation of DVB SimulCrypt",
       "url": "https://www.etsi.org/deliver/etsi_ts/103100_103199/103197/01.05.01_60/ts_103197v010501p.pdf",
       "status": "downloaded",
-      "file": "public/threats/ETSI-TS-103-197-DVB-SimulCrypt.pdf",
+      "file": "threats/ETSI-TS-103-197-DVB-SimulCrypt.pdf",
       "filename": "ETSI-TS-103-197-DVB-SimulCrypt.pdf",
       "sizeBytes": 1632263,
       "contentType": "application/pdf",
-      "sha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb"
+      "sha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "PCI-001",
       "refId": "PCI-001",
       "title": "EMVCo Book 2 Security and Key Management",
       "url": "https://www.emvco.com/specifications/",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/PCI-001.html",
+      "file": "threats/PCI-001.html",
       "filename": "PCI-001.html",
       "sizeBytes": 163141,
       "contentType": "text/html",
-      "sha256": "4e1df3226efc594e06702049b544850130eb19b4c58d39cda3bc35c1e92afefb"
+      "sha256": "4e1df3226efc594e06702049b544850130eb19b4c58d39cda3bc35c1e92afefb",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "PCI-002",
       "refId": "PCI-002",
-      "title": "PCI DSS v4.0.1 -- Requirements and Testing Procedures",
+      "title": "PCI Security Standards Council DSS 4.0.1",
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
       "file": "threats/PCI-002.pdf",
       "filename": "PCI-002.pdf",
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
-      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
+      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "PCI-003",
       "refId": "PCI-003",
-      "title": "PCI PIN Security Requirements v3.1 -- ROC Reporting Template",
+      "title": "PCI PIN Security Requirements v3.1 (ROC Reporting Template)",
       "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
       "status": "downloaded",
       "file": "threats/PCI-003.pdf",
       "filename": "PCI-003.pdf",
       "sizeBytes": 2986027,
       "contentType": "application/pdf",
-      "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6"
+      "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RAIL-001",
       "refId": "RAIL-001",
-      "title": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
-      "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
-      "status": "missing",
-      "file": "public/threats/RAIL-001.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
+      "title": "UNISIG SUBSET-137 \u2014 On-line Key Management FFFIS (KMC-ETCS)",
+      "url": "https://www.era.europa.eu/system/files/2023-09/index083_-_SUBSET-137_v400.pdf",
+      "status": "downloaded",
+      "file": "threats/RAIL-001.pdf",
+      "filename": "RAIL-001.pdf",
       "sizeBytes": 447147,
-      "filename": "RAIL-001.pdf"
+      "contentType": "application/pdf",
+      "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RAIL-002",
       "refId": "RAIL-002",
       "title": "ISO/IEC 14443 Contactless Card Standards",
       "url": "https://www.iso.org/standard/73598.html",
-      "status": "missing",
-      "file": "public/threats/RAIL-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/RAIL-002.html",
+      "filename": "RAIL-002.html",
       "sizeBytes": 96898,
-      "filename": "RAIL-002.html"
+      "contentType": "text/html",
+      "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RETAIL-001",
       "refId": "RETAIL-001",
-      "title": "PCI DSS v4.0.1 -- Requirements and Testing Procedures",
+      "title": "PCI DSS v4.0.1",
       "url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
       "status": "downloaded",
       "file": "threats/RETAIL-001.pdf",
       "filename": "RETAIL-001.pdf",
       "sizeBytes": 4458346,
       "contentType": "application/pdf",
-      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7"
+      "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RETAIL-002",
       "refId": "RETAIL-002",
       "title": "NIST Cybersecurity Framework",
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/RETAIL-002.pdf",
+      "file": "threats/RETAIL-002.pdf",
       "filename": "RETAIL-002.pdf",
       "sizeBytes": 1518858,
       "contentType": "application/pdf",
-      "sha256": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c"
+      "sha256": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RETAIL-003",
       "refId": "RETAIL-003",
       "title": "GS1 Global Standards",
       "url": "https://www.gs1.org/standards",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/RETAIL-003.html",
+      "file": "threats/RETAIL-003.html",
       "filename": "RETAIL-003.html",
       "sizeBytes": 100213,
       "contentType": "text/html",
-      "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f"
+      "sha256": "49e6979adc76b5bdd2e859c4621ee0d0126042bdaed3502e139d669546c7da8f",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "SUPPLY-001",
@@ -874,11 +953,12 @@
       "title": "IMO Maritime Cyber Risk Management Guidelines",
       "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
       "status": "downloaded",
-      "file": "public/threats/SUPPLY-001.html",
+      "file": "threats/SUPPLY-001.html",
       "filename": "SUPPLY-001.html",
       "sizeBytes": 57115,
       "contentType": "text/html",
-      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977"
+      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "SUPPLY-002",
@@ -886,11 +966,12 @@
       "title": "DCSA Electronic Bill of Lading Standards",
       "url": "https://dcsa.org/standards/bill-of-lading",
       "status": "downloaded",
-      "file": "public/threats/SUPPLY-002.html",
+      "file": "threats/SUPPLY-002.html",
       "filename": "SUPPLY-002.html",
       "sizeBytes": 327717,
       "contentType": "text/html",
-      "sha256": "f3195b67bc88c0d2bbf1fb2055d87810f63b637467b91093845d863dd2ba80e5"
+      "sha256": "f3195b67bc88c0d2bbf1fb2055d87810f63b637467b91093845d863dd2ba80e5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "SUPPLY-003",
@@ -898,50 +979,51 @@
       "title": "WCO SAFE Framework of Standards",
       "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/facilitation/instruments-and-tools/tools/safe-package/safe-framework-2025_en.pdf?la=en",
       "status": "downloaded",
-      "file": "public/threats/WCO-SAFE-Framework-of-Standards-2025.pdf",
+      "file": "threats/WCO-SAFE-Framework-of-Standards-2025.pdf",
       "filename": "WCO-SAFE-Framework-of-Standards-2025.pdf",
       "sizeBytes": 3453262,
       "contentType": "application/pdf",
-      "sha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366"
+      "sha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELCO-001",
       "refId": "TELCO-001",
-      "title": "GSMA PQ.03 -- Post Quantum Cryptography Guidelines for Telecom Use Cases v1.0",
+      "title": "GSMA Security Guidelines",
       "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
       "status": "downloaded",
       "file": "threats/TELCO-001.pdf",
       "filename": "TELCO-001.pdf",
       "sizeBytes": 1756788,
       "contentType": "application/pdf",
-      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a"
+      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELCO-002",
       "refId": "TELCO-002",
       "title": "GSMA Post-Quantum Telco Network Taskforce",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
-      "status": "missing",
-      "file": "public/threats/TELCO-002.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
+      "status": "downloaded",
+      "file": "threats/TELCO-002.pdf",
+      "filename": "TELCO-002.pdf",
       "sizeBytes": 1756788,
-      "filename": "TELCO-002.pdf"
+      "contentType": "application/pdf",
+      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELCO-003",
       "refId": "TELCO-003",
       "title": "3GPP TS 33.501 5G Security Architecture",
-      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series",
+      "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/18.09.00_60/ts_133501v180900p.pdf",
       "status": "downloaded",
-      "file": "public/threats/TELCO-003.html",
-      "filename": "TELCO-003.html",
-      "sizeBytes": 213132,
-      "contentType": "text/html",
-      "sha256": "9c50e472535c0cb749aa0a37ca460a3df57715f8fbb6ed1b4643446e5186f18c",
-      "previousSha256": "800b94eda9b0f8c83b557e5dcbf0d81dcd6545af6541f33a50d8bc0321172167",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "file": "threats/TELCO-003.pdf",
+      "filename": "TELCO-003.pdf",
+      "sizeBytes": 6530714,
+      "contentType": "application/pdf",
+      "sha256": "b410718064fbf84cd24d3ba30dbd542bbbcbe6f6d9d2a63f4f51cf98906090a5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELCO-004",
@@ -949,23 +1031,25 @@
       "title": "GSMA eSIM Specification (SGP.22)",
       "url": "https://www.gsma.com/esim/wp-content/uploads/2023/12/SGP.22-v3.1.pdf",
       "status": "downloaded",
-      "file": "public/threats/GSMA-SGP22-v3.1.pdf",
+      "file": "threats/GSMA-SGP22-v3.1.pdf",
       "filename": "GSMA-SGP22-v3.1.pdf",
       "sizeBytes": 5887929,
       "contentType": "application/pdf",
-      "sha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75"
+      "sha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELCO-005",
       "refId": "TELCO-005",
-      "title": "ETSI ISG Quantum-Safe Cryptography / 3GPP",
-      "url": "https://www.etsi.org/deliver/etsi_tr/103600_103699/103619/01.01.01_60/tr_103619v010101p.pdf",
+      "title": "GSMA \u2014 PQ.05 Post-Quantum Cryptography for 5G Roaming Use Case",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2019/03/PQ.05-Post-Quantum-Cryptography-for-5G-Roaming-use-case-1.pdf",
       "status": "downloaded",
-      "file": "public/threats/TELCO-005.pdf",
+      "file": "threats/TELCO-005.pdf",
       "filename": "TELCO-005.pdf",
       "sizeBytes": 142762,
       "contentType": "application/pdf",
-      "sha256": "0d088f1d5235566b47cc66f03df61526f32655e08e426b9a84d3a4c2c8555eaf"
+      "sha256": "0d088f1d5235566b47cc66f03df61526f32655e08e426b9a84d3a4c2c8555eaf",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "WATER-001",
@@ -973,35 +1057,39 @@
       "title": "EPA America's Water Infrastructure Act (AWIA) 2018 / CISA",
       "url": "https://www.epa.gov/waterresilience/awia-section-2013",
       "status": "downloaded",
-      "file": "public/threats/WATER-001.html",
+      "file": "threats/WATER-001.html",
       "filename": "WATER-001.html",
       "sizeBytes": 75363,
       "contentType": "text/html",
-      "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499"
+      "sha256": "7f14acd9b18e1f733420f96dc3d04106871621e9a030a730cc02c6d15a963499",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "WATER-002",
       "refId": "WATER-002",
       "title": "AWWA Cybersecurity Guidance for Water Utilities",
       "url": "https://www.cisa.gov/water",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/WATER-002.html",
+      "file": "threats/WATER-002.html",
       "filename": "WATER-002.html",
       "sizeBytes": 75074,
       "contentType": "text/html",
-      "sha256": "9019f864e36470513a088284961f2e6515a3a7d4a39e182b52c6f1aa34f830c2"
+      "sha256": "9019f864e36470513a088284961f2e6515a3a7d4a39e182b52c6f1aa34f830c2",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "EDU-001",
       "refId": "EDU-001",
       "title": "FERPA / US Department of Education",
       "url": "https://studentprivacy.ed.gov/ferpa",
-      "status": "missing",
-      "file": "public/threats/EDU-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64",
+      "status": "downloaded",
+      "file": "threats/EDU-001.html",
+      "filename": "EDU-001.html",
       "sizeBytes": 133108,
-      "filename": "EDU-001.html"
+      "contentType": "text/html",
+      "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "EDU-002",
@@ -1009,35 +1097,38 @@
       "title": "Internet2 InCommon Federation / Jisc Trust and Identity",
       "url": "https://spaces.at.internet2.edu/spaces/InCFederation/pages/46498202/Metadata+Signing+Certificate",
       "status": "downloaded",
-      "file": "public/threats/InCommon-Metadata-Signing-Certificate-Wiki.html",
+      "file": "threats/InCommon-Metadata-Signing-Certificate-Wiki.html",
       "filename": "InCommon-Metadata-Signing-Certificate-Wiki.html",
       "sizeBytes": 59911,
       "contentType": "text/html",
-      "sha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050"
+      "sha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "EDU-003",
       "refId": "EDU-003",
       "title": "W3C Verifiable Credentials Data Model 2.0",
       "url": "https://www.w3.org/TR/vc-data-model-2.0/",
-      "status": "missing",
-      "file": "public/threats/EDU-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
+      "status": "downloaded",
+      "file": "threats/EDU-003.html",
+      "filename": "EDU-003.html",
       "sizeBytes": 1023165,
-      "filename": "EDU-003.html"
+      "contentType": "text/html",
+      "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "EDU-004",
       "refId": "EDU-004",
-      "title": "CMMC 2.0 / NIST SP 800-171",
-      "url": "https://dodcio.defense.gov/CMMC/",
-      "status": "missing",
-      "file": "public/threats/EDU-004.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
+      "title": "NIST SP 800-171 Rev. 3 \u2014 Protecting Controlled Unclassified Information",
+      "url": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+      "status": "downloaded",
+      "file": "threats/EDU-004.pdf",
+      "filename": "EDU-004.pdf",
       "sizeBytes": 1593213,
-      "filename": "EDU-004.pdf"
+      "contentType": "application/pdf",
+      "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "EDU-005",
@@ -1045,22 +1136,25 @@
       "title": "Check Point Research / Higher Ed Dive",
       "url": "https://blog.checkpoint.com/research/cyber-attacks-surge-against-education-sector-ahead-of-back-to-school-season",
       "status": "downloaded",
-      "file": "public/threats/CheckPointResearch-Education-Cyberattacks-2025.html",
+      "file": "threats/CheckPointResearch-Education-Cyberattacks-2025.html",
       "filename": "CheckPointResearch-Education-Cyberattacks-2025.html",
       "sizeBytes": 107031,
       "contentType": "text/html",
-      "sha256": "64dcab3685f817b6454bc541cc5aa3262a73ca9961f58d868944bb5e45c74ccd"
+      "sha256": "64dcab3685f817b6454bc541cc5aa3262a73ca9961f58d868944bb5e45c74ccd",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-009",
       "refId": "CROSS-009",
       "title": "IETF DNSSEC PQC Strategy / Verisign Research",
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
-      "status": "missing",
-      "file": "public/threats/evidence/CROSS-009.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/CROSS-009.html",
+      "filename": "CROSS-009.html",
+      "sizeBytes": 56705,
+      "contentType": "text/html",
       "sha256": "f9241b193d4c75cd6df5ed5c01609230568e2c4afbe7d8d9bf890e93f541df58",
-      "sizeBytes": 56705
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-010",
@@ -1068,14 +1162,12 @@
       "title": "APNIC / RIPE Labs RPKI Research",
       "url": "https://blog.apnic.net/2025/07/22/how-can-rpki-can-be-made-quantum-safe/",
       "status": "downloaded",
-      "file": "public/threats/CROSS-010.html",
+      "file": "threats/CROSS-010.html",
       "filename": "CROSS-010.html",
       "sizeBytes": 347373,
       "contentType": "text/html",
       "sha256": "b4ec7dcdbcacca53c211d083cb47c024d654c5607a5aa94a15d1658838a60e80",
-      "previousSha256": "aa65dd036e1753ebea81041232fc6d0f0317fb5b58836a94a3fd519a3310a173",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-011",
@@ -1083,11 +1175,12 @@
       "title": "OpenSSH Post-Quantum Cryptography / GitHub Security",
       "url": "https://www.openssh.com/txt/release-10.0",
       "status": "downloaded",
-      "file": "public/threats/CROSS-011.html",
+      "file": "threats/CROSS-011.html",
       "filename": "CROSS-011.html",
       "sizeBytes": 11334,
       "contentType": "text/html",
-      "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872"
+      "sha256": "483c8097e5f0760d6d41bcf7e0f2dbf1942ab8eb136ea715623658d07ffde872",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-012",
@@ -1095,11 +1188,12 @@
       "title": "Sigstore / OpenSSF Supply Chain Security",
       "url": "https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
       "status": "downloaded",
-      "file": "public/threats/CROSS-012.html",
+      "file": "threats/CROSS-012.html",
       "filename": "CROSS-012.html",
       "sizeBytes": 66677,
       "contentType": "text/html",
-      "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5"
+      "sha256": "3a060b675e7294bef0d103a5580e9849987f0121ac4bf5146cabde62ceb0fee5",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-013",
@@ -1107,51 +1201,52 @@
       "title": "NIST SP 800-90B / Quantinuum Quantum Origin",
       "url": "https://www.quantinuum.com/press-releases/quantinuums-quantum-origin-becomes-first-software-quantum-random-number-generator-to-achieve-nist-validation",
       "status": "downloaded",
-      "file": "public/threats/CROSS-013.html",
+      "file": "threats/CROSS-013.html",
       "filename": "CROSS-013.html",
       "sizeBytes": 172257,
       "contentType": "text/html",
       "sha256": "0f1c3943541a3a7a4cecb2906c84ccbfbac3abe8a6176d5602691c20c5991a73",
-      "previousSha256": "3d7fe55c7f07a888c85589eb2fa9068ef0fe4b16f2a2dac7d285384d9072b943",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RAIL-003",
       "refId": "RAIL-003",
-      "title": "ETSI TS 103 764 -- FRMCS System Architecture",
+      "title": "ETSI TS 103 764 (FRMCS System Architecture) + 3GPP TS 22.289 / TS 23.289",
       "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.01_60/ts_103764v010101p.pdf",
       "status": "downloaded",
       "file": "threats/RAIL-003.pdf",
       "filename": "RAIL-003.pdf",
       "sizeBytes": 765307,
       "contentType": "application/pdf",
-      "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85"
+      "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RAIL-004",
       "refId": "RAIL-004",
-      "title": "49 CFR Part 236 Subpart I -- Positive Train Control Systems (eCFR)",
+      "title": "49 CFR Part 236 Subpart I \u2014 Positive Train Control Systems (eCFR)",
       "url": "https://www.ecfr.gov/current/title-49/subtitle-B/chapter-II/part-236/subpart-I",
       "status": "downloaded",
       "file": "threats/RAIL-004.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
-      "sizeBytes": 353605,
       "filename": "RAIL-004.html",
-      "contentType": "text/html"
+      "sizeBytes": 353605,
+      "contentType": "text/html",
+      "sha256": "6303878d24e41bd8a0536fc16ff6ef39af19f894f732bbc05a4d39a2f5ebae6f",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "RAIL-005",
       "refId": "RAIL-005",
       "title": "IEEE 1474.x (CBTC Performance Requirements)",
       "url": "https://etech.iec.ch/issue/2025-02/cyber-security-for-autonomous-vehicles",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/RAIL-005.html",
+      "file": "threats/RAIL-005.html",
       "filename": "RAIL-005.html",
       "sizeBytes": 179499,
       "contentType": "text/html",
-      "sha256": "b6bb1cc029166dd0931d285efdf7bc0cfe64b8b019dde0e7648f9920ed98837c"
+      "sha256": "b6bb1cc029166dd0931d285efdf7bc0cfe64b8b019dde0e7648f9920ed98837c",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "WATER-005",
@@ -1159,94 +1254,104 @@
       "title": "FERC Security Program for Hydropower Projects",
       "url": "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects",
       "status": "downloaded",
-      "file": "public/threats/WATER-005.html",
+      "file": "threats/WATER-005.html",
       "filename": "WATER-005.html",
       "sizeBytes": 273250,
       "contentType": "text/html",
-      "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c"
+      "sha256": "ae5a3a8f85dc297668492df6dfb997b4e0de75cb190d2e7db8417dfadc8fe49c",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "WATER-003",
       "refId": "WATER-003",
       "title": "EPA Cybersecurity for Water Sector (August 2024)",
       "url": "https://www.epa.gov/cyberwater/epa-cybersecurity-water-sector",
-      "status": "missing",
-      "file": "public/threats/WATER-003.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655",
+      "status": "downloaded",
+      "file": "threats/WATER-003.html",
+      "filename": "WATER-003.html",
       "sizeBytes": 58728,
-      "filename": "WATER-003.html"
+      "contentType": "text/html",
+      "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "WATER-004",
       "refId": "WATER-004",
       "title": "NIST NCCoE Water/Wastewater Cybersecurity Project",
       "url": "https://www.nccoe.nist.gov/sites/default/files/2023-06/securing-water-and-wastewater-utilities-project-description-final.pdf",
-      "status": "missing",
-      "file": "public/threats/WATER-004.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
+      "status": "downloaded",
+      "file": "threats/WATER-004.pdf",
+      "filename": "WATER-004.pdf",
       "sizeBytes": 1178202,
-      "filename": "WATER-004.pdf"
+      "contentType": "application/pdf",
+      "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CI-001",
       "refId": "CI-001",
       "title": "CISA Post-Quantum Cryptography Initiative / PPD-21",
       "url": "https://www.cisa.gov/quantum",
-      "status": "missing",
-      "file": "public/threats/evidence/CI-001.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "status": "downloaded",
+      "file": "threats/CI-001.html",
+      "filename": "CI-001.html",
+      "sizeBytes": 71078,
+      "contentType": "text/html",
       "sha256": "c22e0a1dbff3b28fa6014aeeb235a7f693e338271fc7740e5959188221a66fad",
-      "sizeBytes": 71078
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CI-002",
       "refId": "CI-002",
       "title": "IEC 62351 series (Power Systems Security)",
       "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
-      "status": "missing",
-      "file": "public/threats/CI-002.html",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8",
+      "rowStatus": "deprecated",
+      "status": "downloaded",
+      "file": "threats/CI-002.html",
+      "filename": "CI-002.html",
       "sizeBytes": 53760,
-      "filename": "CI-002.html"
+      "contentType": "text/html",
+      "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CI-003",
       "refId": "CI-003",
-      "title": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
-      "url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
-      "status": "missing",
-      "file": "public/threats/CI-003.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
+      "title": "TSA Pipeline Security Guidelines (March 2018, rev. April 2021)",
+      "url": "https://www.tsa.gov/sites/default/files/pipeline_security_guidelines.pdf",
+      "status": "downloaded",
+      "file": "threats/CI-003.pdf",
+      "filename": "CI-003.pdf",
       "sizeBytes": 1004392,
-      "filename": "CI-003.pdf"
+      "contentType": "application/pdf",
+      "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-014",
       "refId": "CROSS-014",
       "title": "NIST IR 8547 (IPD Nov 2024) + SP 800-131A Rev 2",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
-      "status": "missing",
-      "file": "public/threats/CROSS-014.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
+      "status": "downloaded",
+      "file": "threats/CROSS-014.pdf",
+      "filename": "CROSS-014.pdf",
       "sizeBytes": 2637856,
-      "filename": "CROSS-014.pdf"
+      "contentType": "application/pdf",
+      "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-015",
       "refId": "CROSS-015",
-      "title": "NIST SP 800-57 Part 1 Rev 6 / NIST IR 8545",
-      "url": "https://csrc.nist.gov/pubs/ir/8545/final",
-      "status": "missing",
-      "file": "public/threats/CROSS-015.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
+      "title": "NIST SP 800-57 Part 1 Rev. 5",
+      "url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
+      "status": "downloaded",
+      "file": "threats/CROSS-015.pdf",
+      "filename": "CROSS-015.pdf",
       "sizeBytes": 1688080,
-      "filename": "CROSS-015.pdf"
+      "contentType": "application/pdf",
+      "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-016",
@@ -1254,35 +1359,38 @@
       "title": "NIST SP 800-90A Rev 1 / NIST SP 800-90B",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf",
       "status": "downloaded",
-      "file": "public/threats/CROSS-016.pdf",
+      "file": "threats/CROSS-016.pdf",
       "filename": "CROSS-016.pdf",
       "sizeBytes": 2417007,
       "contentType": "application/pdf",
-      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2"
+      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-017",
       "refId": "CROSS-017",
       "title": "NIST FIPS 140-3 Implementation Guidance / TCHES 2024",
       "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
-      "status": "missing",
-      "file": "public/threats/CROSS-017.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
+      "status": "downloaded",
+      "file": "threats/CROSS-017.pdf",
+      "filename": "CROSS-017.pdf",
       "sizeBytes": 2588488,
-      "filename": "CROSS-017.pdf"
+      "contentType": "application/pdf",
+      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROSS-018",
       "refId": "CROSS-018",
-      "title": "NIST SP 800-208 + NIST SP 800-213",
-      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2022/NIST.IR.8413-upd1.pdf",
+      "title": "NIST SP 800-208",
+      "url": "https://csrc.nist.gov/pubs/sp/800/208/final",
       "status": "downloaded",
-      "file": "public/threats/CROSS-018.pdf",
+      "file": "threats/CROSS-018.pdf",
       "filename": "CROSS-018.pdf",
       "sizeBytes": 884808,
       "contentType": "application/pdf",
-      "sha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac"
+      "sha256": "ba91afac81e3bccb0fabdb5cf94d49a6deba5fbcdbcaff75fdbf0dea282205ac",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HSM-001",
@@ -1290,23 +1398,25 @@
       "title": "NIST FIPS 140-3 Physical Security Requirements / IACR PQC fault attack research",
       "url": "https://csrc.nist.gov/csrc/media/Projects/cryptographic-module-validation-program/documents/fips%20140-3/FIPS%20140-3%20IG.pdf",
       "status": "downloaded",
-      "file": "public/threats/HSM-001.pdf",
+      "file": "threats/HSM-001.pdf",
       "filename": "HSM-001.pdf",
       "sizeBytes": 2588488,
       "contentType": "application/pdf",
-      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee"
+      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IOT-005",
       "refId": "IOT-005",
       "title": "NIST SP 800-213 + NISTIR 8259A",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
-      "status": "missing",
-      "file": "public/threats/IOT-005.pdf",
-      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
-      "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
+      "status": "downloaded",
+      "file": "threats/IOT-005.pdf",
+      "filename": "IOT-005.pdf",
       "sizeBytes": 1194488,
-      "filename": "IOT-005.pdf"
+      "contentType": "application/pdf",
+      "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AUS-TEL-001",
@@ -1314,23 +1424,25 @@
       "title": "SOCI Act 2018 + CIRMP Rules 2023",
       "url": "https://www.legislation.gov.au/F2023L00112/2026-06-10/2026-06-10/text/original/pdf",
       "status": "downloaded",
-      "file": "public/threats/CIRMP-Rules-2023-consolidated-2026.pdf",
+      "file": "threats/CIRMP-Rules-2023-consolidated-2026.pdf",
       "filename": "CIRMP-Rules-2023-consolidated-2026.pdf",
       "sizeBytes": 396130,
       "contentType": "application/pdf",
-      "sha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca"
+      "sha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "IT-006",
       "refId": "IT-006",
-      "title": "NoMod: A Non-modular Attack on Module Learning With Errors",
+      "title": "\"NoMod: A Non-modular Attack on Module Learning With Errors\" (arXiv 2510.02162, Oct 2025)",
       "url": "https://arxiv.org/abs/2510.02162",
       "status": "downloaded",
       "file": "threats/IT-006.html",
       "filename": "IT-006.html",
       "sizeBytes": 40713,
       "contentType": "text/html",
-      "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b"
+      "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HSM-002",
@@ -1338,107 +1450,52 @@
       "title": "PKCS#11 v3.2 Specification / NIST SP 800-227",
       "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/cs01/pkcs11-spec-v3.2-cs01.html",
       "status": "downloaded",
-      "file": "public/threats/HSM-002.html",
+      "file": "threats/HSM-002.html",
       "filename": "HSM-002.html",
       "sizeBytes": 18963192,
       "contentType": "text/html",
-      "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681"
-    },
-    {
-      "threatId": "FINA-001",
-      "title": "HKMA Fintech Promotion Blueprint \u2014 Quantum Preparedness Index",
-      "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
-      "status": "downloaded",
-      "file": "public/threats/FINA-001.pdf",
-      "filename": "FINA-001.pdf",
-      "sizeBytes": 4451297,
-      "contentType": "application/pdf",
-      "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807"
-    },
-    {
-      "threatId": "WATE-001",
-      "title": "US Senate EPW Committee Testimony on Water Sector Cybersecurity",
-      "url": "https://www.epw.senate.gov/public/_cache/files/5/3/53d93dfe-ed8c-4e48-b705-0b16cb92c90a/FA38A32EE48D7F3D4B0C069FDC08A69E6327376EB85838A03310B2E91C8582C1.02-04-2026-dr.-simonton-testimony.pdf",
-      "status": "downloaded",
-      "file": "public/threats/WATE-001.pdf",
-      "filename": "WATE-001.pdf",
-      "sizeBytes": 235296,
-      "contentType": "application/pdf",
-      "sha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d"
+      "sha256": "0ef7e14bc9b8c915ae63623b83de724b654dcc82fc7f89cfd4e72743457f3681",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "AERO-008",
+      "refId": "AERO-008",
       "title": "IATA Aviation Cybersecurity Programme",
-      "url": "https://www.iata.org/en/programs/security/cyber-security/",
+      "url": "https://www.iata.org/en/programs/security/cybersecurity/",
+      "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "public/threats/AERO-008.html",
+      "file": "threats/AERO-008.html",
       "filename": "AERO-008.html",
       "sizeBytes": 115591,
       "contentType": "text/html",
       "sha256": "869486f31699c559f4bd30fd5de95418b8360db2d308c7df11968df84da7ca30",
-      "previousSha256": "735ec4ebbaad1fa8835848fe4cda4b3ff6fb4f3e324ea63486e613eed788dee8",
-      "rehashedAt": "2026-08-21",
-      "rehashBasis": "human-read: capture verified against main_source before recording"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
-      "threatId": "CROS-002",
-      "refId": "CROS-002",
-      "title": "Post-Quantum Considerations for Operational Technology | CISA",
-      "url": "https://www.cisa.gov/sites/default/files/2024-10/Post-Quantum%20Considerations%20for%20Operational%20Technology%20%28508%29.pdf",
+      "threatId": "WATE-001",
+      "refId": "WATE-001",
+      "title": "US Senate EPW Committee Testimony on Water Sector Cybersecurity \u2014 Dr. Simonton, Marshall University Institute for Cyber Security, Feb 2026",
+      "url": "https://www.epw.senate.gov/public/_cache/files/5/3/53d93dfe-ed8c-4e48-b705-0b16cb92c90a/FA38A32EE48D7F3D4B0C069FDC08A69E6327376EB85838A03310B2E91C8582C1.02-04-2026-dr.-simonton-testimony.pdf",
       "status": "downloaded",
-      "file": "public/threats/CISA-Post-Quantum-Considerations-OT.pdf",
-      "filename": "CISA-Post-Quantum-Considerations-OT.pdf",
-      "sizeBytes": 1354180,
+      "file": "threats/WATE-001.pdf",
+      "filename": "WATE-001.pdf",
+      "sizeBytes": 235296,
       "contentType": "application/pdf",
-      "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492"
+      "sha256": "f01c037047d7baaf5cfc7275803d9b82256c561d9c8d0fb411806095cb48004d",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
-      "threatId": "CROS-004",
-      "refId": "CROS-004",
-      "title": "BSI TR-02102-1 Cryptographic Mechanisms: Recommendations and Key Lengths",
-      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile&v=14",
+      "threatId": "FINA-001",
+      "refId": "FINA-001",
+      "title": "HKMA Fintech Promotion Blueprint \u2014 Quantum Preparedness Index",
+      "url": "https://www.hkma.gov.hk/media/eng/doc/key-information/press-release/2026/20260203e3a1.pdf",
       "status": "downloaded",
-      "file": "public/threats/BSI-TR-02102-1.pdf",
-      "filename": "BSI-TR-02102-1.pdf",
-      "sizeBytes": 568388,
+      "file": "threats/FINA-001.pdf",
+      "filename": "FINA-001.pdf",
+      "sizeBytes": 4451297,
       "contentType": "application/pdf",
-      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a"
-    },
-    {
-      "threatId": "FINA-003",
-      "refId": "FINA-003",
-      "title": "FINMA Guidance 05/2026 on quantum computing",
-      "url": "https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20260709-finma-aufsichtsmitteilung-05-2026.pdf?sc_lang=en&hash=0C6FDB12F5427E073560E67D88CCEB96",
-      "status": "downloaded",
-      "file": "public/threats/FINMA-Guidance-05-2026-Quantum-Computing.pdf",
-      "filename": "FINMA-Guidance-05-2026-Quantum-Computing.pdf",
-      "sizeBytes": 280746,
-      "contentType": "application/pdf",
-      "sha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20"
-    },
-    {
-      "threatId": "FINA-005",
-      "refId": "FINA-005",
-      "title": "FSA Report of the Study Group on Deposit-Taking Institutions Response to Post-Quantum Cryptography",
-      "url": "https://www.fsa.go.jp/singi/pqc/houkokusyo.pdf",
-      "status": "downloaded",
-      "file": "public/threats/FSA-PQC-Study-Group-Report.pdf",
-      "filename": "FSA-PQC-Study-Group-Report.pdf",
-      "sizeBytes": 2660860,
-      "contentType": "application/pdf",
-      "sha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762"
-    },
-    {
-      "threatId": "FINA-006",
-      "refId": "FINA-006",
-      "title": "MAS/TCRS/2024/01 Advisory on Addressing the Cybersecurity Risks Associated with Quantum",
-      "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
-      "status": "downloaded",
-      "file": "public/threats/MAS-TCRS-2024-01-Quantum-Advisory.pdf",
-      "filename": "MAS-TCRS-2024-01-Quantum-Advisory.pdf",
-      "sizeBytes": 138500,
-      "contentType": "application/pdf",
-      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f"
+      "sha256": "3a4c18893d54c21557ec4ef3e5c9bb6079cf505e5b0475b7046c858ea61ff807",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROS-001",
@@ -1451,7 +1508,20 @@
       "sizeBytes": 12089813,
       "contentType": "application/pdf",
       "sha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+    },
+    {
+      "threatId": "CROS-002",
+      "refId": "CROS-002",
+      "title": "Post-Quantum Considerations for Operational Technology | CISA",
+      "url": "https://www.cisa.gov/sites/default/files/2024-10/Post-Quantum%20Considerations%20for%20Operational%20Technology%20%28508%29.pdf",
+      "status": "downloaded",
+      "file": "threats/CISA-Post-Quantum-Considerations-OT.pdf",
+      "filename": "CISA-Post-Quantum-Considerations-OT.pdf",
+      "sizeBytes": 1354180,
+      "contentType": "application/pdf",
+      "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FINA-002",
@@ -1464,7 +1534,7 @@
       "sizeBytes": 2159075,
       "contentType": "application/pdf",
       "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROS-003",
@@ -1477,7 +1547,7 @@
       "sizeBytes": 178446,
       "contentType": "text/html",
       "sha256": "9fe15290729f182f0e44e066ccef532b8d7939c8b4f9b69e1217cb0e40ba668c",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "INTE-001",
@@ -1490,7 +1560,20 @@
       "sizeBytes": 81922,
       "contentType": "application/pdf",
       "sha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+    },
+    {
+      "threatId": "CROS-004",
+      "refId": "CROS-004",
+      "title": "BSI TR-02102-1 Cryptographic Mechanisms: Recommendations and Key Lengths",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile&v=14",
+      "status": "downloaded",
+      "file": "threats/BSI-TR-02102-1.pdf",
+      "filename": "BSI-TR-02102-1.pdf",
+      "sizeBytes": 568388,
+      "contentType": "application/pdf",
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROS-005",
@@ -1503,7 +1586,7 @@
       "sizeBytes": 1365473,
       "contentType": "application/pdf",
       "sha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "ENER-001",
@@ -1516,7 +1599,7 @@
       "sizeBytes": 871081,
       "contentType": "application/pdf",
       "sha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "HEAL-001",
@@ -1529,7 +1612,7 @@
       "sizeBytes": 919857,
       "contentType": "application/pdf",
       "sha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "PAYM-001",
@@ -1542,7 +1625,20 @@
       "sizeBytes": 478488,
       "contentType": "application/pdf",
       "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+    },
+    {
+      "threatId": "FINA-003",
+      "refId": "FINA-003",
+      "title": "FINMA Guidance 05/2026 on quantum computing",
+      "url": "https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20260709-finma-aufsichtsmitteilung-05-2026.pdf?sc_lang=en&hash=0C6FDB12F5427E073560E67D88CCEB96",
+      "status": "downloaded",
+      "file": "threats/FINMA-Guidance-05-2026-Quantum-Computing.pdf",
+      "filename": "FINMA-Guidance-05-2026-Quantum-Computing.pdf",
+      "sizeBytes": 280746,
+      "contentType": "application/pdf",
+      "sha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRIT-001",
@@ -1555,7 +1651,7 @@
       "sizeBytes": 429362,
       "contentType": "text/html",
       "sha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FINA-004",
@@ -1568,7 +1664,20 @@
       "sizeBytes": 170658,
       "contentType": "text/html",
       "sha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+    },
+    {
+      "threatId": "FINA-005",
+      "refId": "FINA-005",
+      "title": "FSA Report of the Study Group on Deposit-Taking Institutions Response to Post-Quantum Cryptography",
+      "url": "https://www.fsa.go.jp/singi/pqc/houkokusyo.pdf",
+      "status": "downloaded",
+      "file": "threats/FSA-PQC-Study-Group-Report.pdf",
+      "filename": "FSA-PQC-Study-Group-Report.pdf",
+      "sizeBytes": 2660860,
+      "contentType": "application/pdf",
+      "sha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CROS-006",
@@ -1581,7 +1690,20 @@
       "sizeBytes": 844313,
       "contentType": "application/pdf",
       "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
+    },
+    {
+      "threatId": "FINA-006",
+      "refId": "FINA-006",
+      "title": "MAS/TCRS/2024/01 Advisory on Addressing the Cybersecurity Risks Associated with Quantum",
+      "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
+      "status": "downloaded",
+      "file": "threats/MAS-TCRS-2024-01-Quantum-Advisory.pdf",
+      "filename": "MAS-TCRS-2024-01-Quantum-Advisory.pdf",
+      "sizeBytes": 138500,
+      "contentType": "application/pdf",
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "TELE-001",
@@ -1594,7 +1716,7 @@
       "sizeBytes": 1480897,
       "contentType": "application/pdf",
       "sha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "FINA-007",
@@ -1607,7 +1729,7 @@
       "sizeBytes": 219678,
       "contentType": "text/html",
       "sha256": "9757bf1981b6264c27fcbe1596a2f43329b3fb643f1dafb08ade652313e090fb",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRIT-002",
@@ -1620,7 +1742,7 @@
       "sizeBytes": 209080,
       "contentType": "text/html",
       "sha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "CRIT-003",
@@ -1633,7 +1755,7 @@
       "sizeBytes": 212301,
       "contentType": "text/html",
       "sha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     },
     {
       "threatId": "INSU-001",
@@ -1646,7 +1768,7 @@
       "sizeBytes": 134588,
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
-      "migratedFrom": "public/threats/evidence/manifest.json 2026-08-21"
+      "regeneratedAt": "2026-08-22T12:40:46.000Z"
     }
   ]
 }
