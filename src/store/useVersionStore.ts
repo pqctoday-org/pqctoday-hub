@@ -1,16 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { libraryMetadata } from '../data/libraryData'
-import { timelineMetadata } from '../data/timelineData'
-import { softwareMetadata } from '../data/migrateData'
-import { threatsMetadata } from '../data/threatsData'
-import { leadersMetadata } from '../data/leadersData'
-import { complianceMetadata } from '../data/complianceData'
-import { loadedTransitionMetadata } from '../data/algorithmsData'
-import { sourcesMetadata } from '../data/authoritativeSourcesData'
-import { xrefMetadata } from '../data/certificationXrefData'
-import { quizMetadata } from '../data/quizDataLoader'
+import { DATA_FILENAMES } from '../data/generated/dataFilenames.generated'
 import {
   getModuleVersionFingerprint,
   diffModuleVersions,
@@ -50,19 +41,33 @@ const EMPTY_FINGERPRINT: DataFingerprint = {
   quiz: null,
 }
 
-/** Reads current CSV filenames from data loader metadata exports. */
+/**
+ * Reads the current CSV filenames from the build-time generated constants.
+ *
+ * These used to come from ten data loaders' `metadata.filename` exports. This
+ * store is reachable statically from `main.tsx`, so those imports were EAGER —
+ * and every one of those loaders inlines its whole CSV as a raw string
+ * (`import.meta.glob({ eager: true, query: '?raw' })`). Ten filename lookups
+ * were therefore pulling ~7.2 MB of CSV text into the first-paint bundle,
+ * against `gate:precache`'s 15 MB eager-JS cap. The filenames are fixed at
+ * build time, so `scripts/generate-data-filenames.ts` resolves them there
+ * (delegating to the app's own `sortCSVFiles` for date/revision precedence)
+ * and emits them as plain strings. Behaviour is unchanged, including the
+ * `?? null` fallbacks: an unresolvable source stays `null` and is never
+ * reported as changed.
+ */
 export function getCurrentDataFingerprint(): DataFingerprint {
   return {
-    library: libraryMetadata?.filename ?? null,
-    timeline: timelineMetadata?.filename ?? null,
-    migrate: softwareMetadata?.filename ?? null,
-    threats: threatsMetadata?.filename ?? null,
-    leaders: leadersMetadata?.filename ?? null,
-    compliance: complianceMetadata?.filename ?? null,
-    algorithms: loadedTransitionMetadata?.filename ?? null,
-    authoritativeSources: sourcesMetadata?.filename ?? null,
-    certificationXref: xrefMetadata?.filename ?? null,
-    quiz: quizMetadata?.filename ?? null,
+    library: DATA_FILENAMES.library ?? null,
+    timeline: DATA_FILENAMES.timeline ?? null,
+    migrate: DATA_FILENAMES.migrate ?? null,
+    threats: DATA_FILENAMES.threats ?? null,
+    leaders: DATA_FILENAMES.leaders ?? null,
+    compliance: DATA_FILENAMES.compliance ?? null,
+    algorithms: DATA_FILENAMES.algorithms ?? null,
+    authoritativeSources: DATA_FILENAMES.authoritativeSources ?? null,
+    certificationXref: DATA_FILENAMES.certificationXref ?? null,
+    quiz: DATA_FILENAMES.quiz ?? null,
   }
 }
 

@@ -358,6 +358,14 @@ scripts/*
 # committed package.json script.
 !scripts/audit-role-board-content.ts
 
+# Data-filename generator — runs in `npm run build` and `predev`
+# (npm run generate:data-filenames) and emits src/data/generated/
+# dataFilenames.generated.ts, which useVersionStore.ts imports. Same trap as
+# every entry above: `scripts/*` makes `git add` a silent no-op, and without
+# this line the build fails file-not-found in CI and every other checkout
+# while staying green on the machine that wrote it.
+!scripts/generate-data-filenames.ts
+
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
