@@ -502,6 +502,15 @@ public/data/rag-index-freshness.json
 # Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
 !scripts/audit-content-freshness.ts
 
+# Module review-freshness gate (WS22 Stage 4) — the absolute-age half of
+# audit:content-freshness, which is already whitelisted above. Same
+# `scripts/*` trap: without these two lines `git add` is a silent no-op, the
+# gate's own helper never leaves the machine that wrote it, and
+# audit-content-freshness.ts fails module-not-found in CI and every other
+# checkout while staying green locally.
+!scripts/moduleReviewFreshness.ts
+!scripts/audit-content-freshness.local.test.ts
+
 # Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*
 # assignments (deprecated refs, name mismatches). Pure read-only against public data.
