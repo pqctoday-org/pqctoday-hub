@@ -459,7 +459,9 @@
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z",
+    "sha256": "7662ed9e1a1173031085cac9323a35507e32d0a85b64ca80795377fa71a7d3f6",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "GOV-001",
@@ -864,11 +866,13 @@
     "download_status": "ok",
     "evidence_file": "threats/MEDIA-002.html",
     "content_type": "text/html",
-    "size_bytes": 33944,
+    "size_bytes": 41479,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z",
+    "sha256": "b8f4455f8ce1300549dce9107b6b5812c07c6633ca6d11e6a1a78b43d360b800",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "MEDIA-003",
@@ -1515,11 +1519,13 @@
     "download_status": "ok",
     "evidence_file": "threats/IT-006.html",
     "content_type": "text/html",
-    "size_bytes": 14063,
+    "size_bytes": 40713,
     "http_status": 200,
     "error_message": null,
     "fetch_tier": null,
-    "downloaded_at": "2026-07-14T00:53:10.000Z"
+    "downloaded_at": "2026-07-14T00:53:10.000Z",
+    "sha256": "11871a3fbce3d9a58c4d659e07d69183a8e5690938f0769eb781f82231b97a8b",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "HSM-002",
@@ -1613,7 +1619,9 @@
     "size_bytes": 2159075,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "CROS-003",
@@ -1625,7 +1633,9 @@
     "size_bytes": 178446,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:16:40.990468+00:00"
+    "downloaded_at": "2026-07-28T11:16:40.990468+00:00",
+    "sha256": "9fe15290729f182f0e44e066ccef532b8d7939c8b4f9b69e1217cb0e40ba668c",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "INTE-001",
@@ -1637,7 +1647,9 @@
     "size_bytes": 81922,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "a1df6f8dc4918705b76e504f58709ea7c8a6e2c24aa971ead049b0e40121e4aa",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "CROS-004",
@@ -1673,7 +1685,9 @@
     "size_bytes": 871081,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "7366767bd44a0c3fdb07bb4b986e51e8fe57746803e9b7bbe1cbc86c068b2037",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "HEAL-001",
@@ -1685,7 +1699,9 @@
     "size_bytes": 919857,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "d2ca3890adefea10cafa18e0da42684252b2db12ae0c26b8c39f298b58f6f92a",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "PAYM-001",
@@ -1697,7 +1713,9 @@
     "size_bytes": 478488,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "1144cffc4ee871f503917b2ffad01bfc12c23a4cb35fb2306750fb37759c759b",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "FINA-003",
@@ -1721,7 +1739,9 @@
     "size_bytes": 429362,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:19:26.078172+00:00"
+    "downloaded_at": "2026-07-28T11:19:26.078172+00:00",
+    "sha256": "99c010440384444e11296708152e6f81f63cc680bdb255c2fe496d277e6b7f64",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "FINA-004",
@@ -1733,7 +1753,9 @@
     "size_bytes": 170658,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:19:44.260294+00:00"
+    "downloaded_at": "2026-07-28T11:19:44.260294+00:00",
+    "sha256": "c011bee9d10ac62524cae030e401ff0311e6cbbd048894f1aa962f52b9cff51d",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "FINA-005",
@@ -1757,7 +1779,9 @@
     "size_bytes": 844313,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "49dd74e588ded9b4635386a4aa7faf883028f78e5ff6073c91c65eac165e1354",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "FINA-006",
@@ -1781,7 +1805,9 @@
     "size_bytes": 1480897,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:00:00+00:00"
+    "downloaded_at": "2026-07-28T13:00:00+00:00",
+    "sha256": "a2985867e8e10162327be34a6f3dc98c940e2735313547bd5e0699d765019ebf",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "FINA-007",
@@ -1793,7 +1819,9 @@
     "size_bytes": 219678,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:21:19.622384+00:00"
+    "downloaded_at": "2026-07-28T11:21:19.622384+00:00",
+    "sha256": "9757bf1981b6264c27fcbe1596a2f43329b3fb643f1dafb08ade652313e090fb",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "CRIT-002",
@@ -1805,7 +1833,9 @@
     "size_bytes": 209080,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:21:33.579242+00:00"
+    "downloaded_at": "2026-07-28T11:21:33.579242+00:00",
+    "sha256": "9bad2cd46e74ca537b5ba66491d44d06cbd91d259f0484a6984686e76e631ab5",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "CRIT-003",
@@ -1817,7 +1847,9 @@
     "size_bytes": 212301,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T11:21:46.604034+00:00"
+    "downloaded_at": "2026-07-28T11:21:46.604034+00:00",
+    "sha256": "41f76a58bb802346b33fc309ac1446ac72b1d74c0a79764de886a14fc375cd78",
+    "backfilledAt": "2026-08-21"
   },
   {
     "threat_id": "INSU-001",
@@ -1829,6 +1861,349 @@
     "size_bytes": 134588,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-30T00:25:01.904339+00:00"
+    "downloaded_at": "2026-07-30T00:25:01.904339+00:00",
+    "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "AERO-003",
+    "source_url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
+    "main_source": "ICAO Assembly Resolution A41-19",
+    "download_status": "downloaded",
+    "evidence_file": "threats/AERO-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 124245,
+    "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CROSS-004",
+    "source_url": "https://globalriskinstitute.org/mp-files/quantum-threat-timeline-report-2024.pdf/",
+    "main_source": "GRI Quantum Threat Timeline Report 2024",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CROSS-004.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 8451384,
+    "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CROSS-007",
+    "source_url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
+    "main_source": "European Commission Digital Strategy \u2014 PQC Roadmap",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CROSS-007.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 553179,
+    "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CRYPTO-001",
+    "source_url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
+    "main_source": "Federal Reserve HNDL Paper",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CRYPTO-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 397965,
+    "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CRYPTO-003",
+    "source_url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
+    "main_source": "Federal Reserve Board FEDS Paper September 2025",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CRYPTO-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 397965,
+    "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "FIN-001",
+    "source_url": "https://www.bis.org/publ/othp107.pdf",
+    "main_source": "Bank for International Settlements Project Leap Phase 2",
+    "download_status": "downloaded",
+    "evidence_file": "threats/FIN-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1383045,
+    "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "FIN-002",
+    "source_url": "https://www.federalreserve.gov/econres/feds/files/2025093pap.pdf",
+    "main_source": "Federal Reserve Board FEDS Paper September 2025",
+    "download_status": "downloaded",
+    "evidence_file": "threats/FIN-002.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 397965,
+    "sha256": "e8c9b064ca1035590f905eac0ca823801e43fbb7a50791fb362f1ef718ab4063",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "AUS-FIN-001",
+    "source_url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
+    "main_source": "APRA \u2014 Prudential Standard CPS 234 Information Security (July 2019)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/AUS-FIN-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 274706,
+    "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "HLTH-003",
+    "source_url": "https://www.fda.gov/media/119933/download",
+    "main_source": "FDA Premarket Cybersecurity Guidance 2023",
+    "download_status": "downloaded",
+    "evidence_file": "threats/HLTH-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1195625,
+    "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "HLTH-004",
+    "source_url": "https://www.fda.gov/media/171796/download",
+    "main_source": "FDA \u2014 DSCSA Standards for the Interoperable Exchange of Information for Tracing (Guidance for Industry, Sept 2023)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/HLTH-004.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 242831,
+    "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "HLTH-005",
+    "source_url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/dscsa-standards-interoperable-exchange-information-tracing-certain-human-finished-prescription-drugs",
+    "main_source": "FDA Drug Supply Chain Security Act (DSCSA)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/HLTH-005.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 242831,
+    "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "MEDIA-001",
+    "source_url": "https://aacsla.com/wp-content/uploads/2019/02/AACS_Spec_Common_0.91.pdf",
+    "main_source": "AACS Specifications \u2014 Introduction and Common Cryptographic Elements (v0.91)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/MEDIA-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 549667,
+    "sha256": "70b509fc00ba82aee71ecc9434f5759411c6c2b4258e2d9ecdcd7be12fccbfd4",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "MEDIA-003",
+    "source_url": "https://www.etsi.org/deliver/etsi_ts/103100_103199/103197/01.05.01_60/ts_103197v010501p.pdf",
+    "main_source": "DVB SimulCrypt (ETSI TS 103 197) \u2014 Head-end implementation of DVB SimulCrypt",
+    "download_status": "downloaded",
+    "evidence_file": "threats/ETSI-TS-103-197-DVB-SimulCrypt.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1632263,
+    "sha256": "d8a4c6590d72f55a94bba961944dc341d211fb633c9451ddb08ac929fc890dcb",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "PCI-002",
+    "source_url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
+    "main_source": "PCI Security Standards Council DSS 4.0.1",
+    "download_status": "downloaded",
+    "evidence_file": "threats/PCI-002.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 4458346,
+    "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "PCI-003",
+    "source_url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf",
+    "main_source": "PCI PIN Security Requirements v3.1 (ROC Reporting Template)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/PCI-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 2986027,
+    "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "RAIL-001",
+    "source_url": "https://www.era.europa.eu/system/files/2023-09/index083_-_SUBSET-137_v400.pdf",
+    "main_source": "UNISIG SUBSET-137 \u2014 On-line Key Management FFFIS (KMC-ETCS)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/RAIL-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 447147,
+    "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "RETAIL-001",
+    "source_url": "https://www.middlebury.edu/sites/default/files/2025-01/PCI-DSS-v4_0_1.pdf",
+    "main_source": "PCI DSS v4.0.1",
+    "download_status": "downloaded",
+    "evidence_file": "threats/RETAIL-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 4458346,
+    "sha256": "5e6b9093b84007b973097d20126a3768ea2f0a1d4200255c849b0fb3bf04ebc7",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "SUPPLY-003",
+    "source_url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/facilitation/instruments-and-tools/tools/safe-package/safe-framework-2025_en.pdf?la=en",
+    "main_source": "WCO SAFE Framework of Standards",
+    "download_status": "downloaded",
+    "evidence_file": "threats/WCO-SAFE-Framework-of-Standards-2025.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 3453262,
+    "sha256": "100d60c0c3bafdae296bac2eab878acf72361e7da14a61b808791998a4289366",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "TELCO-001",
+    "source_url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
+    "main_source": "GSMA Security Guidelines",
+    "download_status": "downloaded",
+    "evidence_file": "threats/TELCO-001.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1756788,
+    "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "TELCO-002",
+    "source_url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
+    "main_source": "GSMA Post-Quantum Telco Network Taskforce",
+    "download_status": "downloaded",
+    "evidence_file": "threats/TELCO-002.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1756788,
+    "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "TELCO-004",
+    "source_url": "https://www.gsma.com/esim/wp-content/uploads/2023/12/SGP.22-v3.1.pdf",
+    "main_source": "GSMA eSIM Specification (SGP.22)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/GSMA-SGP22-v3.1.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 5887929,
+    "sha256": "c325410ed8f2f9b5ec44d1ace49619d227a4a4093e14021f817054561fa57a75",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "EDU-002",
+    "source_url": "https://spaces.at.internet2.edu/spaces/InCFederation/pages/46498202/Metadata+Signing+Certificate",
+    "main_source": "Internet2 InCommon Federation / Jisc Trust and Identity",
+    "download_status": "downloaded",
+    "evidence_file": "threats/InCommon-Metadata-Signing-Certificate-Wiki.html",
+    "content_type": "text/html",
+    "size_bytes": 59911,
+    "sha256": "1a771d36117f80a4bef451919e3f9360dd291ede6e0b8de649f71f83960cd050",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "EDU-004",
+    "source_url": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+    "main_source": "NIST SP 800-171 Rev. 3 \u2014 Protecting Controlled Unclassified Information",
+    "download_status": "downloaded",
+    "evidence_file": "threats/EDU-004.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1593213,
+    "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "RAIL-003",
+    "source_url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.01_60/ts_103764v010101p.pdf",
+    "main_source": "ETSI TS 103 764 (FRMCS System Architecture) + 3GPP TS 22.289 / TS 23.289",
+    "download_status": "downloaded",
+    "evidence_file": "threats/RAIL-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 765307,
+    "sha256": "a976832b02827c536d5ef226520abca563a8934f9123417316df38a91e517b85",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CI-003",
+    "source_url": "https://www.tsa.gov/sites/default/files/pipeline_security_guidelines.pdf",
+    "main_source": "TSA Pipeline Security Guidelines (March 2018, rev. April 2021)",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CI-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1004392,
+    "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CROSS-015",
+    "source_url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
+    "main_source": "NIST SP 800-57 Part 1 Rev. 5",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CROSS-015.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1688080,
+    "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "AUS-TEL-001",
+    "source_url": "https://www.legislation.gov.au/F2023L00112/2026-06-10/2026-06-10/text/original/pdf",
+    "main_source": "SOCI Act 2018 + CIRMP Rules 2023",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CIRMP-Rules-2023-consolidated-2026.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 396130,
+    "sha256": "e0b7ea6b0c7b9ba5b57117c4e3390d3e83dabedcace3d923c73119a9c8f25dca",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CROS-002",
+    "source_url": "https://www.cisa.gov/sites/default/files/2024-10/Post-Quantum%20Considerations%20for%20Operational%20Technology%20%28508%29.pdf",
+    "main_source": "Post-Quantum Considerations for Operational Technology | CISA",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CISA-Post-Quantum-Considerations-OT.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 1354180,
+    "sha256": "dba4051cf19460d862419f1ca895602d88619ceb07644ce140bc11b312fcf492",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "CROS-004",
+    "source_url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile&v=14",
+    "main_source": "BSI TR-02102-1 Cryptographic Mechanisms: Recommendations and Key Lengths",
+    "download_status": "downloaded",
+    "evidence_file": "threats/BSI-TR-02102-1.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 568388,
+    "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "FINA-003",
+    "source_url": "https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20260709-finma-aufsichtsmitteilung-05-2026.pdf?sc_lang=en&hash=0C6FDB12F5427E073560E67D88CCEB96",
+    "main_source": "FINMA Guidance 05/2026 on quantum computing",
+    "download_status": "downloaded",
+    "evidence_file": "threats/FINMA-Guidance-05-2026-Quantum-Computing.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 280746,
+    "sha256": "9e65246094de6dd21b4d190fdb21311e4a4cf64a1c59f1638b852b965c282f20",
+    "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "FINA-006",
+    "source_url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
+    "main_source": "MAS/TCRS/2024/01 Advisory on Addressing the Cybersecurity Risks Associated with Quantum",
+    "download_status": "downloaded",
+    "evidence_file": "threats/MAS-TCRS-2024-01-Quantum-Advisory.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 138500,
+    "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+    "backfilledAt": "2026-08-21"
   }
 ]
