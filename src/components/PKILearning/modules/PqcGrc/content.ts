@@ -13,7 +13,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-grc',
   version: '1.0.0',
-  lastReviewed: '2026-06-13',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 203'),
@@ -21,6 +21,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-22. relatedStandards prose and rag-summary.md have named
+    // SP 800-208 all along; standards[] did not, so it never reached the References
+    // tab and the accuracy check reported it with no evidence at all. The row is
+    // active and Final in the library — it was a missing declaration, not a
+    // missing document.
+    getStandard('NIST SP 800-208'),
   ],
 
   algorithms: [

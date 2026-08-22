@@ -118,7 +118,7 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
           {selectedClassIdx === 2 &&
             'Class 2 devices support ML-KEM-512/768, ML-DSA-44, and all compact PQC signatures. Hybrid X25519 + ML-KEM-768 is tight but feasible.'}
           {selectedClassIdx === 3 &&
-            'Class 3+ devices can run the full PQC suite including ML-KEM-1024 and ML-DSA-65. Hybrid modes are comfortable. Only FrodoKEM remains infeasible.'}
+            'Class 3+ devices can run the full PQC suite including ML-KEM-1024 and ML-DSA-65. Hybrid modes are comfortable. Even FrodoKEM-640 fits at ~60 KB stack — it is the conservative choice you can afford here and nowhere smaller.'}
         </p>
       </div>
     </div>

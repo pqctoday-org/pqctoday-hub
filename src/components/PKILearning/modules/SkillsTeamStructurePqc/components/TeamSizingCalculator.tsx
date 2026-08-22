@@ -211,6 +211,26 @@ export const TeamSizingCalculator: React.FC = () => {
           dedicated core: {DEDICATED_CORE_COUNT} (QRPM, Cryptographic Architect, PMO Analyst)
           {otInScope ? ' · +1 OT specialist' : ''}.
         </p>
+        {/* ADDED 2026-08-22. The heuristic's source was named in the EXPORT string and in
+            content.ts's header comment, but nothing on screen said where the ratio came
+            from — a reader working the calculator saw a hard number from nobody. No
+            standards body publishes PQC team-sizing ratios: NICE (SP 800-181r1) defines
+            work roles and competencies but no headcount, and the PQCC roadmap's
+            Activity 4.3 "Assess Workforce Needs" is qualitative. The ratio is one
+            practitioner framework's heuristic and is labelled as such. */}
+        <p className="text-[10px] text-muted-foreground mt-2 max-w-xl mx-auto">
+          Sizing ratios are a heuristic from the{' '}
+          <a
+            href="https://pqcframework.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Applied Quantum PQC Migration Framework v2.1
+          </a>{' '}
+          (Marin Ivezi&#263; / Applied Quantum, CC BY 4.0), Skills &amp; Team Structure, p.&nbsp;161
+          &mdash; not a standards-body figure. Calibrate against your own estate before budgeting.
+        </p>
       </div>
 
       {/* Export */}

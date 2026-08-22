@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.0',
-  lastReviewed: '2026-07-08',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 203'),
@@ -17,6 +17,13 @@ export const content: ModuleContent = {
     getStandard('RFC 8446'),
     getStandard('NIST SP 800-227'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
+    // DECLARED 2026-08-22. narratives.mtcProofSize states 736 bytes typical and a
+    // 384-1024 B range; all three figures come from this draft's sizing discussion
+    // (§6.4): 12 hashes / 384 B for standalone subtrees of ~2,500 certificates,
+    // 23 hashes / 736 B for landmark-relative subtrees of ~4,400,000, and "32
+    // hashes, or 1024 bytes, is sufficient for subtrees of up to 2^32". The numbers
+    // were right; nothing in the module said where they came from.
+    getStandard('draft-ietf-plants-merkle-tree-certs'),
   ],
 
   algorithms: [
