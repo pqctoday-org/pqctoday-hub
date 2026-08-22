@@ -1595,7 +1595,10 @@
     "size_bytes": 12089813,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "af5079f06124542ccdfacdfe742479daf37dea8e06f63e9af2f21c8c8157de01",
+    "backfilledAt": "2026-08-21",
+    "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
   },
   {
     "threat_id": "CROS-002",
@@ -1673,7 +1676,10 @@
     "size_bytes": 1365473,
     "http_status": 200,
     "error_message": null,
-    "downloaded_at": "2026-07-28T13:10:00+00:00"
+    "downloaded_at": "2026-07-28T13:10:00+00:00",
+    "sha256": "1baf13e8ae81bd476f09aed12885587850429a6925a182b6b8d5c76b31b288ec",
+    "backfilledAt": "2026-08-21",
+    "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
   },
   {
     "threat_id": "ENER-001",
@@ -2205,5 +2211,41 @@
     "size_bytes": 138500,
     "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
     "backfilledAt": "2026-08-21"
+  },
+  {
+    "threat_id": "TELCO-003",
+    "source_url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/18.09.00_60/ts_133501v180900p.pdf",
+    "main_source": "3GPP TS 33.501 5G Security Architecture",
+    "download_status": "downloaded",
+    "evidence_file": "threats/TELCO-003.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 6530714,
+    "sha256": "b410718064fbf84cd24d3ba30dbd542bbbcbe6f6d9d2a63f4f51cf98906090a5",
+    "backfilledAt": "2026-08-21",
+    "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+  },
+  {
+    "threat_id": "EDU-005",
+    "source_url": "https://blog.checkpoint.com/research/cyber-attacks-surge-against-education-sector-ahead-of-back-to-school-season",
+    "main_source": "Check Point Research / Higher Ed Dive",
+    "download_status": "downloaded",
+    "evidence_file": "threats/CheckPointResearch-Education-Cyberattacks-2025.html",
+    "content_type": "text/html",
+    "size_bytes": 107031,
+    "sha256": "64dcab3685f817b6454bc541cc5aa3262a73ca9961f58d868944bb5e45c74ccd",
+    "backfilledAt": "2026-08-21",
+    "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+  },
+  {
+    "threat_id": "FINA-005",
+    "source_url": "https://www.fsa.go.jp/singi/pqc/houkokusyo.pdf",
+    "main_source": "FSA Report of the Study Group on Deposit-Taking Institutions Response to Post-Quantum Cryptography",
+    "download_status": "downloaded",
+    "evidence_file": "threats/FSA-PQC-Study-Group-Report.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 2660860,
+    "sha256": "42fcd4328fbdabf466a8545ff73fb4e3115332d845e998ed6900368d4980c762",
+    "backfilledAt": "2026-08-21",
+    "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
   }
 ]

@@ -11268,9 +11268,21 @@
       "contentType": "application/pdf",
       "sha256": "e72c3bd902b34006d68aa83aed82074000d3af1a3af8fc19ab82f1d0fe66ed90",
       "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DIB-CSaaS-Slicksheet",
+      "title": "DIB Cybersecurity as a Service (CSaaS) Slick Sheet",
+      "url": "https://www.dc3.mil/Portals/100/Documents/DC3/Missions/DCISE/Files/(DOPSR)092724_CSaaSSlicksheet.pdf",
+      "status": "downloaded",
+      "filename": "DIB-CSaaS-Slicksheet.pdf",
+      "sizeBytes": 225590,
+      "contentType": "application/pdf",
+      "sha256": "bfb2949b4d0f9f020b6046cf475ce9e6eeee86639bec1af3bc17aa7b738cfb29",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
   "rehashNote": "2026-08-22: a bulk re-cache on 2026-07-29 rewrote captures without updating this manifest, so their recorded hashes had proven nothing for three weeks. Entries carrying rehashedAt were re-verified as still being the document the row claims (title screen, plus an edition-token check for rows naming a specific year or version) and their hash re-recorded from disk. previousSha256 keeps what was there before. Entries WITHOUT rehashedAt were not re-verified.",
-  "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\"."
+  "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects \u2014 a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }

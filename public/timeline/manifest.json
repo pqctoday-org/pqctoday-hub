@@ -176,7 +176,11 @@
       "url": "https://nukib.gov.cz/download/publications_en/Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/Czech_Republic_NUKIB_Cryptographic_Recommendations.pdf"
+      "file": "timeline/Czech_Republic_NUKIB_Cryptographic_Recommendations.pdf",
+      "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944",
+      "sizeBytes": 382269,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "Czech Republic:NUKIB \u2014 Key Establishment Migration",
@@ -250,14 +254,22 @@
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.pdf?__blob=publicationFile&v=4",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/France_ANSSI_BSI_NLNCSA_SE_Joint_QKD_Position_Paper.pdf"
+      "file": "timeline/France_ANSSI_BSI_NLNCSA_SE_Joint_QKD_Position_Paper.pdf",
+      "sha256": "628a2b0552cdb7175ef8e40e2239044643e4a247677f17f48842c50b94d927c3",
+      "sizeBytes": 475650,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "France:ANSSI \u2014 PQC Market Studies Published",
       "url": "https://cyber.gouv.fr/actualites/lanssi-partage-deux-etudes-de-marche-sur-la-cryptographie-post-quantique-menees-aupres",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/France_ANSSI_PQC_Market_Studies_Published.html"
+      "file": "timeline/France_ANSSI_PQC_Market_Studies_Published.html",
+      "sha256": "f0b56f26064a305530ee5963e01057f40004a26d93e742e3e8baadbcffd45973",
+      "sizeBytes": 28920,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "France:ANSSI \u2014 Cryptographic Accreditation Doctrine Updated",
@@ -267,7 +279,8 @@
       "file": "timeline/France_ANSSI_Cryptographic_Accreditation_Doctrine_Updated.html",
       "sha256": "a1d77dedb175202ce31eac55fb33d9d37e2a52030d77e1cc9c454f869a521ae8",
       "sizeBytes": 31003,
-      "backfilledAt": "2026-08-21"
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "France:ANSSI \u2014 PQC FAQ Published",
@@ -394,7 +407,8 @@
       "file": "timeline/New_Zealand_GCSB_NCSC_NZISM_v3.9_Published.html",
       "sha256": "c0b8276fbbd86e2ad47ccfa3b7d7386658c01edb1108d94210015f90712d90a4",
       "sizeBytes": 35282,
-      "backfilledAt": "2026-08-21"
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "Singapore:CSA/MAS \u2014 Financial Sector Planning",
@@ -425,14 +439,22 @@
       "url": "https://www.kpqc.or.kr/competition_02.html",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/South_Korea_NIS_KISA_KpqC_Competition_Results.html"
+      "file": "timeline/South_Korea_NIS_KISA_KpqC_Competition_Results.html",
+      "sha256": "97f43c717a5b426d098a962760110366673ce1a11b4151e0ac1def99b7c6a6bf",
+      "sizeBytes": 19496,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United Kingdom:NCSC \u2014 PQC White Paper Updated",
       "url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html"
+      "file": "timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html",
+      "sha256": "bef8b3f4eae4162f2dffe4863797deca7d019b358603706508b183ada4e6ca4c",
+      "sizeBytes": 156120,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United Kingdom:NCSC \u2014 NCSC PQC Migration Roadmap Published",
@@ -442,7 +464,8 @@
       "file": "timeline/United_Kingdom_NCSC_NCSC_PQC_Migration_Roadmap_Published.html",
       "sha256": "5bd94cc0936fd673d5d021777adf1cc60b287e2ca5d957ee881280257e122fa2",
       "sizeBytes": 173339,
-      "backfilledAt": "2026-08-21"
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United Kingdom:CMORG \u2014 Financial Sector PQC Guidance",
@@ -459,7 +482,11 @@
       "url": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_Kingdom_DSIT_CNI_Perspectives_Report.html"
+      "file": "timeline/United_Kingdom_DSIT_CNI_Perspectives_Report.html",
+      "sha256": "9b9db04f6e1afd1bcf36e063df9b6674025f6c30a1a6510c1f486241159e19e3",
+      "sizeBytes": 73294,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United States:White House \u2014 NSM-10 Published",
@@ -790,7 +817,11 @@
       "label": "Japan:NCO \u2014 Government PQC Transition Deadline",
       "url": "https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf",
       "status": "ok",
-      "file": "timeline/Japan_NCO_Government_PQC_Transition_Deadline.pdf"
+      "file": "timeline/Japan_NCO_Government_PQC_Transition_Deadline.pdf",
+      "sha256": "6c550bacbb715a71880e926e36b7bc5d67d7a3c00f6f2b6f836d54feb483c611",
+      "sizeBytes": 230950,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "Malaysia:NACSA \u2014 Malaysia National PQC Migration",
@@ -813,7 +844,11 @@
       "url": "https://www.desc.gov.ae/dubai-electronic-security-center-launches-new-innovative-projects-at-gisec-global-2025/",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_Arab_Emirates_DESC_Dubai_PQC_Guideline_Launched.html"
+      "file": "timeline/United_Arab_Emirates_DESC_Dubai_PQC_Guideline_Launched.html",
+      "sha256": "d5d6d4738796344666494d0891fe976a347779cfacca296e099ceac83b8d7db7",
+      "sizeBytes": 235147,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United Arab Emirates:ADGM/TII \u2014 Quantum-Secure Communications Testbed",
@@ -997,7 +1032,11 @@
       "url": "https://repositorio.iti.gov.br/instrucoes-normativas/IN2026_35_DOC_ICP_01.01_PQC.htm",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html"
+      "file": "timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html",
+      "sha256": "2d25791c4224eda63316291d770045fceccc3ddd6ec6c0630ba875fed240ed94",
+      "sizeBytes": 419893,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "African Union:AUC \u2014 Malabo Convention Enters Into Force",
@@ -1077,7 +1116,11 @@
       "url": "https://www.cisa.gov/quantum",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "timeline/United_States_CISA_CISA_PQC_Product_Category_List_EO_14306_Deadline.html"
+      "file": "timeline/United_States_CISA_CISA_PQC_Product_Category_List_EO_14306_Deadline.html",
+      "sha256": "175ba84d675ed2045721ba7ef72b638ea625241fe5eb5cefb90eb865982bd697",
+      "sizeBytes": 71066,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "DE:BSI \u2014 Germany Quantum-Secure ID Card Demonstrator",
@@ -1953,7 +1996,11 @@
       "label": "International:ETSI \u2014 ETSI TS 104 015 Hybrid PQC Standard Published",
       "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
       "status": "downloaded",
-      "file": "timeline/International_ETSI_ETSI_TS_104_015_Hybrid_PQC_Standard_Published.pdf"
+      "file": "timeline/International_ETSI_ETSI_TS_104_015_Hybrid_PQC_Standard_Published.pdf",
+      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
+      "sizeBytes": 257923,
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "Malaysia:NACSA \u2014 Going beyond encryption, Malaysia rolls out quantum cryptography sandbox to safeguard digital borders | Malay Mail",
@@ -2271,7 +2318,8 @@
       "file": "timeline/Spain_CCN-TEC-009_Transicion_Postcuantica.pdf",
       "sizeBytes": 3076740,
       "sha256": "16ef2f0730a7d4a9d9e77fe71eac3e0e842e372d5ef7deb44b23f616eccd9f92",
-      "backfilledAt": "2026-08-21"
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     },
     {
       "label": "United States NSA CNSA 2.0 Published",
@@ -2569,7 +2617,127 @@
       "sizeBytes": 294489,
       "sha256": "4047dae0e146fca443763b02fe2e12fe61c4a57d5f3694d17b21c754405afb27",
       "backfilledAt": "2026-08-21"
+    },
+    {
+      "label": "International PQCC PQCC PQC Migration Roadmap Published",
+      "url": "https://pqcc.org/wp-content/uploads/2025/05/PQC-Migration-Roadmap-PQCC-2.pdf",
+      "status": "downloaded",
+      "file": "timeline/International_PQCC_PQC_Migration_Roadmap_2025.pdf",
+      "sizeBytes": 749542,
+      "sha256": "134d8ddce22bf1b5d079aa4ada382ab93a638d64c458dd7b6b26dc99278ec9a4",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Italy ACN PQC Guidance Published",
+      "url": "https://www.acn.gov.it/portale/documents/20119/85999/ACN_Crittografia_Quantum_Safe.pdf",
+      "status": "downloaded",
+      "file": "timeline/Italy_ACN_Crittografia_Post-Quantum_Quantistica.pdf",
+      "sizeBytes": 3538559,
+      "sha256": "fa5682e05dd0c186f41c91c73e8c46cfeea65b75cc80919702defcf5b48eac6b",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Taiwan MODA Interim Quantum-Safe Milestone",
+      "url": "https://www-api.moda.gov.tw/File/Get/adi/zh-tw/3m7h6KvGXJUUWmU",
+      "status": "downloaded",
+      "file": "timeline/Taiwan_MODA_PQC_Migration_Guide.pdf",
+      "sizeBytes": 1659097,
+      "sha256": "6972a150377eae999caa5981d2a9ded81488c1e6a9e071fe47fdbc3b52225ebe",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "United States Google Google Cloud ML-KEM Default and Chrome MTC Program",
+      "url": "https://security.googleblog.com/2026/02/cultivating-robust-and-efficient.html",
+      "status": "downloaded",
+      "file": "timeline/United_States_Google_Chrome_MTC_Cloudflare_Quantum_Safe_HTTPS.html",
+      "sizeBytes": 258525,
+      "sha256": "186fa0769db2c5660ea54ac583e8699d967aefabeb21317bf257bcb263c84211",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Singapore MAS Financial Sector PQC Migration Plans Due",
+      "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
+      "status": "downloaded",
+      "file": "timeline/Singapore_MAS_Quantum_Advisory_2024_01.pdf",
+      "sizeBytes": 138500,
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "African Union AUC Malabo Convention Enters Into Force",
+      "url": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
+      "status": "downloaded",
+      "file": "timeline/African_Union_Convention_Cyber_Security_Personal_Data_Protection_Malabo.pdf",
+      "sizeBytes": 13794400,
+      "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Global 3GPP SA3 3GPP TR 33.938 PQC Transition Study",
+      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
+      "status": "downloaded",
+      "file": "timeline/3GPP_TR_33.938_Cryptographic_Inventory_v19.2.0.txt",
+      "sizeBytes": 28837,
+      "sha256": "d17e83a8d1a471ea642cca0fcc955b3b94f4eb0b95ef46fcddab5888de6d0aca",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "South Korea MSIT K-PQC Master Plan to 2035",
+      "url": "https://m.boannews.com/html/detail.html?idx=120080",
+      "status": "downloaded",
+      "file": "timeline/Korea_K-PQC_Master_Plan_Boannews_2023-07-12.html",
+      "sizeBytes": 57554,
+      "sha256": "00c93a526259b28baf39ca9e4dbb8ba25fa05c513b58e1017927c398e998192c",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "South Africa SA QuTI SA QuTI Quantum Communications Program",
+      "url": "https://saquti.org/flagship-quantum-communications/",
+      "status": "downloaded",
+      "file": "timeline/South_Africa_SA_QuTI_SA_QuTI_Quantum_Communications_Program.html",
+      "sizeBytes": 36066,
+      "sha256": "29745e1e9f663fc2fb8ae41f56cc2ad267a0eb599c62a4dc9ed60efcf9345131",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Spain Spain Govt Spain Quantum Technologies Strategy (EUR 808M)",
+      "url": "https://www.lamoncloa.gob.es/serviciosdeprensa/notasprensa/transformacion-digital-y-funcion-publica/paginas/2025/240425-lopez-estrategia-cuantica.aspx",
+      "status": "downloaded",
+      "file": "timeline/Spain_Quantum_Technologies_Strategy_Press_Release.html",
+      "sizeBytes": 80071,
+      "sha256": "4605159af3838bd64e4229c0ea376962715b92938930157a94d010d9a80bcbdf",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Norway NSM Quantum Migration (Kvantemigrasjon) Guidance",
+      "url": "https://nsm.no/getfile.php/1313362-1697097505/NSM/Filer/Dokumenter/Rapporter/Veileder%20i%20kvanteflytting%20fra%20NSM.pdf",
+      "status": "downloaded",
+      "file": "timeline/Norway-NSM-Quantum-Migration-Guidance.pdf",
+      "sizeBytes": 371035,
+      "sha256": "d0b5abda5e14d9b5848607734edd7dfbbdc9e151d37044bd4cf7df6fc419e787",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "label": "Russia TC26 Post-Quantum Cryptographic Mechanisms Working Group (WG 2.5)",
+      "url": "https://tc26.ru/about/structure/",
+      "status": "downloaded",
+      "file": "timeline/Russia-TC26-Structure-WG2.5-Post-Quantum.html",
+      "sizeBytes": 80022,
+      "sha256": "a48dc0bbef13b92ab7c891880e39104f079ead9efc03d0c0c71ab2d9bffc8308",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
     }
   ],
-  "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\"."
+  "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects \u2014 a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }
