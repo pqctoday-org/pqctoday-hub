@@ -4,6 +4,7 @@ import { Rocket, Clock, AlertTriangle, ShieldCheck, Key } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { SEGMENT_CADENCES } from '../data/aerospaceConstants'
 import type { PlatformCategory } from '../data/aerospaceConstants'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
 
 interface PlatformOption {
   id: PlatformCategory
@@ -71,7 +72,7 @@ const CURRENT_YEAR = new Date().getFullYear()
 export const MissionCryptoLifecyclePlanner: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformCategory>('geo-satellite')
   const [serviceLife, setServiceLife] = useState(15)
-  const [crqcYear, setCrqcYear] = useState(2035)
+  const [crqcYear, setCrqcYear] = useState<number>(CRQC_ESTIMATES.workshopDefault)
   const [launchYear, setLaunchYear] = useState(2028)
 
   const platform = useMemo(
@@ -230,7 +231,11 @@ export const MissionCryptoLifecyclePlanner: React.FC = () => {
           <input
             id="mission-crqc"
             type="range"
-            min={2030}
+            /* Deliberately wider than CRQC_ESTIMATES.upperBound (2040): a GEO
+               satellite designed today can still be flying in 2045, so the
+               planner has to let you push the CRQC date past the shared
+               research band. Not drift — a sector-specific range. */
+            min={CRQC_ESTIMATES.lowerBound}
             max={2045}
             value={crqcYear}
             onChange={(e) => setCrqcYear(Number(e.target.value))}

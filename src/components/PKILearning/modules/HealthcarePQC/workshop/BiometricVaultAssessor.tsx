@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
 import {
   BIOMETRIC_PROFILES,
   REVOCABILITY_MATRIX,
@@ -41,7 +42,7 @@ export const BiometricVaultAssessor: React.FC = () => {
   const [selectedEncryption, setSelectedEncryption] = useState(0)
   const [selectedStorage, setSelectedStorage] = useState(0)
   const [recordCount, setRecordCount] = useState(10000)
-  const [crqcYear, setCrqcYear] = useState(2035)
+  const [crqcYear, setCrqcYear] = useState<number>(CRQC_ESTIMATES.workshopDefault)
   const [showRecommendation, setShowRecommendation] = useState(false)
 
   const profile = useMemo(
@@ -216,8 +217,8 @@ export const BiometricVaultAssessor: React.FC = () => {
           <input
             id="crqc-year"
             type="range"
-            min={2030}
-            max={2040}
+            min={CRQC_ESTIMATES.lowerBound}
+            max={CRQC_ESTIMATES.upperBound}
             step={1}
             value={crqcYear}
             onChange={(e) => setCrqcYear(parseInt(e.target.value))}

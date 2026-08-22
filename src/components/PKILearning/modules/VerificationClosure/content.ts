@@ -3,6 +3,7 @@
  * Structured content for the Decommissioning & Program Closure module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
+import { NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
@@ -35,10 +36,14 @@ export const content: ModuleContent = {
   deadlines: [
     {
       label: 'Classical PKC (112-bit) deprecated',
-      year: 2030,
+      year: NIST_DEPRECATION.deprecateClassical,
       source: 'NIST IR 8547 (draft)',
     },
-    { label: 'Classical PKC disallowed', year: 2035, source: 'NIST IR 8547 (draft)' },
+    {
+      label: 'Classical PKC disallowed',
+      year: NIST_DEPRECATION.disallowClassical,
+      source: 'NIST IR 8547 (draft)',
+    },
   ],
 
   narratives: {

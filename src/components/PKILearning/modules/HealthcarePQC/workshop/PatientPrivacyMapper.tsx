@@ -10,6 +10,7 @@ import {
 } from '../data/healthcareConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
 
 const HEALTHCARE_KAT_SPECS: KatTestSpec[] = [
   {
@@ -277,7 +278,7 @@ export const PatientPrivacyMapper: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<Set<HealthcareDataCategory>>(
     new Set<HealthcareDataCategory>(['pediatric-ehr', 'genomic', 'mental-health'])
   )
-  const [crqcYear, setCrqcYear] = useState(2035)
+  const [crqcYear, setCrqcYear] = useState<number>(CRQC_ESTIMATES.workshopDefault)
 
   const toggleCategory = (id: HealthcareDataCategory) => {
     setSelectedCategories((prev) => {
@@ -419,16 +420,16 @@ export const PatientPrivacyMapper: React.FC = () => {
             <input
               id="crqc-year-slider"
               type="range"
-              min={2030}
-              max={2040}
+              min={CRQC_ESTIMATES.lowerBound}
+              max={CRQC_ESTIMATES.upperBound}
               value={crqcYear}
               onChange={(e) => setCrqcYear(Number(e.target.value))}
               className="w-full accent-primary"
             />
             <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-              <span>2030 (aggressive)</span>
-              <span>2035 (median)</span>
-              <span>2040 (conservative)</span>
+              <span>{CRQC_ESTIMATES.lowerBound} (aggressive)</span>
+              <span>{CRQC_ESTIMATES.moderate} (median)</span>
+              <span>{CRQC_ESTIMATES.upperBound} (conservative)</span>
             </div>
           </div>
 

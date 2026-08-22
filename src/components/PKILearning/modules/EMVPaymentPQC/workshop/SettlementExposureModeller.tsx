@@ -13,12 +13,13 @@ import { Landmark, TriangleAlert, ShieldCheck, Clock } from 'lucide-react'
 import { SETTLEMENT_RAILS } from '../data/bankingData'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
 
 /** Conservative / central / optimistic CRQC arrival bands, in calendar years. */
 const CRQC_BANDS = [
-  { id: 'early', label: 'Early (2030)', year: 2030 },
-  { id: 'central', label: 'Central (2035)', year: 2035 },
-  { id: 'late', label: 'Late (2040)', year: 2040 },
+  { id: 'early', label: `Early (${CRQC_ESTIMATES.lowerBound})`, year: CRQC_ESTIMATES.lowerBound },
+  { id: 'central', label: `Central (${CRQC_ESTIMATES.moderate})`, year: CRQC_ESTIMATES.moderate },
+  { id: 'late', label: `Late (${CRQC_ESTIMATES.upperBound})`, year: CRQC_ESTIMATES.upperBound },
 ] as const
 
 const RETENTION_PRESETS = [3, 5, 7, 10, 15, 25]
