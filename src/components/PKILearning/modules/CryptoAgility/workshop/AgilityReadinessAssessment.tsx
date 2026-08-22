@@ -35,7 +35,7 @@ const DIMENSIONS: DimensionDef[] = [
       {
         id: 'alg-key-size',
         text: 'Key material storage and transmission buffers are not hard-capped to classical sizes (e.g., no VARCHAR(256) for public keys, no fixed 32-byte shared secret assumptions).',
-        hint: 'PQC public keys range from 800 bytes (ML-KEM-512) to 64,000 bytes (Classic McEliece). Check DB schema, HSM slot config, and network MTU handling.',
+        hint: 'PQC public keys range from 800 bytes (ML-KEM-512) to 1,357,824 bytes (Classic McEliece-8192128) — over a megabyte, and 261,120 even at the smallest McEliece parameter set. Check DB schema, HSM slot config, and network MTU handling.',
       },
     ],
   },
