@@ -10509,9 +10509,9 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 
 ---
 
-## Japan:NISC — PQC Migration Planning
+## Japan:CRYPTREC — PQC Migration Planning
 
-- **Reference ID**: Japan:NISC — PQC Migration Planning
+- **Reference ID**: Japan:CRYPTREC — PQC Migration Planning
 - **Title**: PQC Migration Planning
 - **Authors**: National center of Incident readiness and Strategy for Cybersecurity
 - **Publication Date**: 2025-03-02

@@ -185,7 +185,6 @@
     "micro-eth-signer": "^0.18.1",
     "minisearch": "^7.2.0",
     "papaparse": "^5.5.3",
-    "pptxgenjs": "^4.0.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-focus-lock": "^2.13.7",
