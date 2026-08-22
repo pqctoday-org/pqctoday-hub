@@ -4020,7 +4020,7 @@
     },
     "tls-basics": {
       "algorithms": ["ML-KEM", "X25519", "ECDSA", "ML-DSA"],
-      "standards": ["RFC 8446", "X.509"]
+      "standards": ["RFC 9846", "X.509"]
     },
     "vpn-ssh-pqc": {
       "algorithms": ["ML-KEM", "ECDH"],

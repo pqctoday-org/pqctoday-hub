@@ -260,8 +260,11 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
           <Link to="/library?ref=eIDAS-2-Regulation" className="text-primary hover:underline">
             eIDAS 2.0 (EU 2024/1183)
           </Link>
+          {/* ADDED 2026-08-22: "superseded by eIDAS 2.0". The two regulations were listed
+              side by side as bare links, so a reader could not tell which one is operative.
+              Our library records EU 910/2014 as Superseded and EU 2024/1183 as In Force. */}
           <Link to="/library?ref=EIDAS-REG-910-2014" className="text-primary hover:underline">
-            eIDAS 1.0 (EU 910/2014)
+            eIDAS 1.0 (EU 910/2014) — superseded by eIDAS 2.0
           </Link>
           <Link to="/library?ref=CSC-API-v2-Spec" className="text-primary hover:underline">
             Cloud Signature Consortium API v2.2

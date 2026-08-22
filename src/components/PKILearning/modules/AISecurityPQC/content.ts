@@ -9,9 +9,14 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('RFC 8446')],
+  // RFC 9846 replaces RFC 8446 here, 2026-08-22 — RFC 9846 (July 2026) obsoletes it.
+  standards: [
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDH P-256'),

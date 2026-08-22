@@ -11,7 +11,7 @@ const NETSEC_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'netsec-tls-kem',
     useCase: 'TLS 1.3 key exchange (ML-KEM-768)',
-    standard: 'RFC 8446 + FIPS 203',
+    standard: 'RFC 9846 + FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
@@ -447,7 +447,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
       <KatValidationPanel
         specs={NETSEC_KAT_SPECS}
         label="Network Security PQC Known Answer Tests"
-        authorityNote="RFC 8446 · FIPS 203 · FIPS 204 · SP 800-38A"
+        authorityNote="RFC 9846 · FIPS 203 · FIPS 204 · SP 800-38A"
       />
     </div>
   )

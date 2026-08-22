@@ -650,7 +650,7 @@ export const TLSServerPanel: React.FC = () => {
               {/* Key share size reference */}
               <details className="mt-2 text-xs">
                 <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
-                  ▸ Key share size reference (FIPS 203, RFC 8446)
+                  ▸ Key share size reference (FIPS 203, RFC 9846)
                 </summary>
                 <div className="mt-1 rounded-lg border border-border overflow-hidden">
                   <div className="overflow-x-auto">

@@ -759,10 +759,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
-        id: 'draft-ietf-tls-hybrid-design-16',
-        title: 'draft-ietf-tls-hybrid-design-16 — Hybrid KEX design framework (RFC Ed Queue)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/',
-        date: '2025-09-07',
+        // PUBLISHED 2026-08-22 correction. Was labelled "(RFC Ed Queue)" at -16, dated
+        // 2025-09-07. It left that queue in July 2026: the datatracker reads
+        // "Hybrid Key Exchange in TLS 1.3 RFC 9954 ... Document Type RFC - Informational
+        // (July 2026) ... Was draft-ietf-tls-hybrid-design (tls WG)". The local capture
+        // is still the -16 draft text, so the localFile stays until the RFC is cached.
+        id: 'RFC-9954',
+        title:
+          'RFC 9954 — Hybrid Key Exchange in TLS 1.3 (Informational; was draft-ietf-tls-hybrid-design)',
+        url: 'https://www.rfc-editor.org/rfc/rfc9954.html',
+        date: '2026-07',
         localFile: '/library/draft-ietf-tls-hybrid-design-16.html',
       },
       {
@@ -2470,7 +2476,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         id: 'draft-ietf-mls-combiner-02',
-        title: 'draft-ietf-mls-combiner-02 — Traditional + PQ MLS combiner',
+        // Status added 2026-08-22: the sibling entries carry one and this did not,
+        // so a reader saw a bare draft with no hint it had stopped moving. The
+        // datatracker reads "Expired Internet-Draft (mls WG) Expired & archived".
+        title:
+          'draft-ietf-mls-combiner-02 — Traditional + PQ MLS combiner (EXPIRED & archived; WGLC revival pending)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-combiner/',
         date: '2025-10-22',
         localFile: '/library/draft-ietf-mls-combiner-02.html',

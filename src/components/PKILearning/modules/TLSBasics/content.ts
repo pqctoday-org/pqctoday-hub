@@ -14,7 +14,16 @@ export const content: ModuleContent = {
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
-    getStandard('RFC 8446'),
+    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22 — not added alongside it. RFC 9846
+    // (July 2026) obsoletes 8446 outright, so citing both would show a reader two
+    // specifications for one protocol version. Same call MerkleTreeCerts made when
+    // RFC 9162 obsoleted RFC 6962.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // The hybrid key agreements the module teaches stopped being drafts on 2026-08-10:
+    // RFC 10024 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for
+    // TLS 1.3', Standards Track, defines X25519MLKEM768, SecP256r1MLKEM768 and
+    // SecP384r1MLKEM1024.
+    getStandard('RFC-10024'),
     getStandard('NIST SP 800-227'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
     // DECLARED 2026-08-22. narratives.mtcProofSize states 736 bytes typical and a

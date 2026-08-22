@@ -327,16 +327,33 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           </h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
+          {/* RESTORED 2026-08-22, correcting an error made HERE on the same day. The original
+              sentence "Cloudflare deployed X25519MLKEM768 in production in 2024" was dropped on
+              the stated grounds that "our catalogue carries Cloudflare CIRCL, a Go crypto
+              library, and nothing evidencing the CDN deployment". That was wrong — the search
+              missed the row. pqc_product_catalog carries `Cloudflare Edge Network`,
+              pqc_support "Yes (ML-KEM-768 hybrid TLS on global edge network)",
+              pqc_status_canonical `available`, proof_url developers.cloudflare.com's PQC support
+              page, proof_publication_date 2026-05-18. This module's own gatewayData.ts has
+              carried `cloudflare-edge` at pqcStatus 'production' throughout.
+
+              The YEAR is still not restored. The catalogue's release_date for that row is
+              2025-01-01; "since late 2024" in its capability description refers to the browser
+              defaults, not to Cloudflare. So the deployment is stated without a date rather than
+              with one the proof does not carry. Dropping a supportable claim is the same class
+              of error as keeping an unsupportable one — check the catalogue by row, not by
+              vendor name. */}
           <p>
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
-            distributed globally. AWS CloudFront added hybrid post-quantum key establishment for
-            client-to-edge TLS in September 2025, in its TLS1.3_2025 security policy — our
-            proof-gated catalogue records the announcement of 5 September 2025. nginx supports
-            X25519MLKEM768 through OpenSSL 3.5+ (nginx 1.30.2 stable / 1.31.1 mainline). Browsers
-            are further ahead than most gateways: Chrome has used ML-KEM as its default TLS and QUIC
-            key exchange since Chrome 131, Firefox since 132, Edge since 131. Between the browser
-            default and the CDN edge, this is the largest real-world PQC deployment today.
+            distributed globally. Cloudflare&apos;s edge network deploys X25519MLKEM768 hybrid key
+            agreement in production across its global edge. AWS CloudFront added hybrid post-quantum
+            key establishment for client-to-edge TLS in September 2025, in its TLS1.3_2025 security
+            policy — our proof-gated catalogue records the announcement of 5 September 2025. nginx
+            supports X25519MLKEM768 through OpenSSL 3.5+ (nginx 1.30.2 stable / 1.31.1 mainline).
+            Browsers are further ahead than most gateways: Chrome has used ML-KEM as its default TLS
+            and QUIC key exchange since Chrome 131, Firefox since 132, Edge since 131. Between the
+            browser default and the CDN edge, this is the largest real-world PQC deployment today.
           </p>
 
           <div className="space-y-2">

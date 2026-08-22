@@ -25,7 +25,7 @@ Learn how to deploy post-quantum cryptography at the web infrastructure edge: re
 
 ## Referenced Standards
 
-- RFC 8446 (TLS 1.3)
+- RFC 9846 (TLS 1.3; obsoletes RFC 8446)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - RFC 8879 (Certificate Compression)

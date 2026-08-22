@@ -585,7 +585,7 @@ export const CERT_MITIGATIONS: CertMitigation[] = [
   {
     id: 'resumption',
     name: 'Session Resumption (PSK)',
-    rfc: 'RFC 8446 \u00a72.2',
+    rfc: 'RFC 9846 \u00a72.2',
     reductionPercent: 90,
     description:
       'Reuse prior session keys via PSK. Eliminates certificate exchange entirely on reconnection.',
