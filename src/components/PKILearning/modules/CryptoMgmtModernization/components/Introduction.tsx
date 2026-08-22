@@ -106,10 +106,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
             <li>
               <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence is mathematically
-              incompatible with manual CLM; cert-related outages cost $11&ndash;15M per incident
-              (Ponemon/Venafi) and 86% of organizations hit one in the last 12 months. Average
-              enterprise manages 114k+ certificates with 53% still on spreadsheets (Ponemon 2026
-              Global PKI Trends).
+              incompatible with manual CLM; cert-related outages cost an average of $11M per
+              incident and 86% of organizations hit one in the last 12 months. The average
+              enterprise manages 114k certificates with 53% still on spreadsheets (Entrust / Ponemon
+              Institute, 2024 Global PKI &amp; PQC Trends Study &mdash; quoted in full below).
             </li>
             <li>
               <strong>Crypto Libraries</strong> &mdash; the NIST CMVP Modules-in-Process queue runs

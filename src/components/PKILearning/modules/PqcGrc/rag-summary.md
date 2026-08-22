@@ -26,5 +26,5 @@ The workshop has 2 interactive steps:
 - NSA CNSA 2.0
 - FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
 - NIST SP 800-208 (Stateful Hash-Based Signatures)
-- CycloneDX 1.6 (CBOM)
+- CycloneDX 1.7 (CBOM)
 - ISO 27005 / ISO 31000 (risk management), COBIT (governance)
