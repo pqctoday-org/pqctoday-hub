@@ -242,7 +242,28 @@ export const SOURCE_LABELS: Record<string, string> = {
   // the two registries by services/search/toolSearchEntries.ts.
   'workshop-tool': 'Crypto Lab Tools',
   'business-tool': 'Business Tools',
+  // WS22 Stage 3 (2026-08-21) — the pages themselves. /revisions, /sponsor,
+  // /editorial-independence and /simulation had zero corpus chunks pointing at
+  // them, so no query could reach them. Populated from ROUTE_META by
+  // services/search/pageSearchEntries.ts.
+  page: 'Pages',
 }
+
+/**
+ * Sources the ⌘K palette guarantees a grouped-UI slot to (`ensureSources`).
+ *
+ * These are narrow, registry-derived sources in a corpus of thousands of prose
+ * chunks, so on a broad query they never reach the global top-60 and vanish
+ * from their own group. WS6a proved the lever on the two tool sources; WS22
+ * Stage 3 adds the page tier for the same reason — four routed pages had zero
+ * corpus chunks at all (see services/search/pageSearchEntries.ts).
+ *
+ * Declared as literals here so the eager palette does not have to import the
+ * entry generators; `pageSearchEntries.driftguard.test.ts` asserts this array
+ * matches the real WORKSHOP_TOOL_SOURCE / BUSINESS_TOOL_SOURCE / PAGE_SOURCE
+ * constants, so a rename cannot silently unwire the guarantee.
+ */
+export const PALETTE_ENSURE_SOURCES = ['workshop-tool', 'business-tool', 'page'] as const
 
 /** Sources hidden from curious persona when advancedViewsUnlocked is false */
 export const ADVANCED_SOURCES = new Set(['openssl-guide', 'playground-guide', 'certifications'])
