@@ -215,6 +215,27 @@ export default defineConfig([
                 '!@/components/PersonaJourney',
                 '@/components/PersonaJourney/*',
                 '!@/components/PersonaJourney/PersonaBoardView',
+                // usePersonaPathItems.ts / manifest/registry.ts / manifest/types.ts
+                // (PKILearning) — pure logic/data, no JSX. Phase 5's Learn list
+                // needs the same phase-partitioned path data + manifest
+                // collection LearnRedesignView/MyPathView already read, so the
+                // module count, phase titles and per-module metadata can never
+                // drift from what desktop shows for the identical persona.
+                '!@/components/PKILearning',
+                '@/components/PKILearning/*',
+                '!@/components/PKILearning/usePersonaPathItems',
+                '!@/components/PKILearning/manifest',
+                '@/components/PKILearning/manifest/*',
+                '!@/components/PKILearning/manifest/registry',
+                '!@/components/PKILearning/manifest/types',
+                // learnRedesign.helpers.ts — CHECKPOINT_PASS_THRESHOLD /
+                // isCheckpointPassed, the real per-category >=80% pass rule.
+                // Reused directly rather than reimplemented so a checkpoint
+                // can never read "passed" on mobile while desktop still shows
+                // it locked.
+                '!@/components/PKILearning/redesign',
+                '@/components/PKILearning/redesign/*',
+                '!@/components/PKILearning/redesign/learnRedesign.helpers',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
