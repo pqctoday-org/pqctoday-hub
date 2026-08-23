@@ -45,7 +45,7 @@ The workshop has 6 steps:
 - RFC 9480 (CMP Algorithms — obsoleted by RFC 9810 together with RFC 9811)
 - RFC 9811 (CMP HSM Profile)
 - RFC 4211 (CRMF)
-- RFC 6712 (CMP over HTTP)
+- RFC 9811 (CMP over HTTP — obsoletes RFC 6712 and, with RFC 9810, RFC 9480)
 - RFC 9881 (ML-DSA in X.509)
 - RFC 9935 (ML-KEM in X.509)
 - RFC 9909 (SLH-DSA in X.509)
