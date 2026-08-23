@@ -462,6 +462,13 @@ public/data/rag-index-freshness.json
 !scripts/export-learn-manifest-snapshot.ts
 !scripts/lib/jsxEntities.ts
 !scripts/lib/jsxEntities.test.ts
+# Its .local.test.ts for the same reason audit-role-board-ctas' is tracked
+# (see that note above): the suite proving this exporter collects the right
+# module text is what stops the fact-checker's INPUT from silently narrowing,
+# and an untracked suite is invisible to every checkout but the one that wrote
+# it. Added 2026-08-22, after `git add` dropped it exactly as that note
+# predicts — the warning is easy to miss when the rest of the commit succeeds.
+!scripts/export-learn-manifest-snapshot.local.test.ts
 
 # Timeline country-alias audit — CI gate that validates countryAliases.ts
 # against the latest Timeline CSV. Pure read-only against public data.
