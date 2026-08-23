@@ -224,6 +224,11 @@ export default defineConfig([
                 '!@/components/PKILearning',
                 '@/components/PKILearning/*',
                 '!@/components/PKILearning/usePersonaPathItems',
+                // moduleData.ts — MODULE_CATALOG/MODULE_TO_TRACK/TRACK_COLORS, pure
+                // data (.ts, cannot contain JSX). The same per-module title/duration/
+                // lm_id lookup PersonaPathPhase/MyPathView/BrowseAllView all read —
+                // needed to render a real module row from just a moduleId.
+                '!@/components/PKILearning/moduleData',
                 '!@/components/PKILearning/manifest',
                 '@/components/PKILearning/manifest/*',
                 '!@/components/PKILearning/manifest/registry',

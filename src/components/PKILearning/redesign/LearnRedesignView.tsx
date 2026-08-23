@@ -8,11 +8,13 @@ import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { usePersonaPathItems } from '../usePersonaPathItems'
 import { WhereToStartTree } from '../WhereToStartTree'
 import { MyPathView } from './MyPathView'
 import { BrowseAllView } from './BrowseAllView'
 import { PERSONA_ORDER, TOTAL_MODULE_COUNT, TRACK_COUNT } from './learnRedesign.helpers'
+import { MobileLearnScreen } from '@/components/Mobile/screens/MobileLearnScreen'
 
 /** 2026-08-02: 'guided' promoted from a separate `showRouter` toggle button
  *  into a real third mode, so the page offers one row of three peers —
@@ -30,6 +32,7 @@ type Mode = 'path' | 'browse' | 'guided'
  */
 export const LearnRedesignView = () => {
   const navigate = useNavigate()
+  const isMobileShell = useIsMobileShell()
   const [searchParams, setSearchParams] = useSearchParams()
   const deepLinkNice = searchParams.get('view') === 'nice'
   // ?track= presets the Browse catalog filter (restored from the legacy dashboard).
@@ -107,6 +110,8 @@ export const LearnRedesignView = () => {
     })
     return () => clearPageActions()
   }, [isEmbed])
+
+  if (isMobileShell) return <MobileLearnScreen />
 
   return (
     <div className="space-y-4">
