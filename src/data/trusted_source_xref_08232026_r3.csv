@@ -2806,3 +2806,4 @@ algorithm,sr25519,web3-foundation,direct
 algorithm,SM2,ietf,direct
 library,draft-ietf-mls-pq-ciphersuites-06,ietf,direct
 library,2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM,cisa,direct
+library,ISO-IEC-27001-2022,iso-iec-sc27,direct
