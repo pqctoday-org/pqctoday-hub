@@ -14,7 +14,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'sbom',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('SPDX-Spec-ISO-5962'),
@@ -22,8 +22,11 @@ export const content: ModuleContent = {
     // Repointed 2026-08-22: this declared the DEPRECATED row `NTIA-SBOM-Minimum-Elements-2021`,
     // whose superseded_by names CISA's 2026 revision. A module pointing the accuracy
     // check at a retired row is worse than pointing it nowhere — the check runs, reads
-    // a superseded document, and reports success.
-    getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
+    // a superseded document, and reports success. (De-duplicated 2026-08-23: this module
+    // already cited the CISA row separately for its own reasons — the 'What changed in
+    // 2026' section compares it against the NTIA original — so the repoint above landed
+    // as a second, redundant entry rather than a net-new citation. The NTIA-2021 content
+    // stays in prose only, same as this codebase's established RFC-8446-in-prose pattern.)
     getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
     getStandard('OASIS-CSAF-2.0-VEX'),
     getStandard('EO-14028'),
