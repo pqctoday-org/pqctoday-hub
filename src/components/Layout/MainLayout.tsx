@@ -71,8 +71,12 @@ import {
 } from '../../data/personaConfig'
 import { REGION_LABELS } from '../../data/regionIndustryOptions'
 import { PERSONAS } from '../../data/learningPersonas'
-import type { ViewType } from '../../data/authoritativeSourcesData'
-import type { PageId } from '../../data/userManualData'
+import {
+  ROUTE_VIEW_TYPE,
+  ROUTE_PAGE_ID,
+  pageIdForNestedRoute,
+  ROUTE_SHARE,
+} from '../../data/routePageMeta'
 import {
   getRailSections,
   getRowTreatment,
@@ -89,145 +93,11 @@ import {
 // every January).
 const COPYRIGHT_YEAR = new Date().getFullYear()
 
-// ── Route → shared-component-id lookups for the top bar's icon cluster ──────
-// Both SourcesButton and UserManualButton require a page-specific id; only the
-// routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
-// / userManualData.ts). Routes without an entry simply omit that button, same
-// as PageHeader.tsx's own `showSources = !!viewType` conditional.
-// '/compliance' is deliberately ABSENT here — final self-review finding
-// (2026-08-01, this fixup session's verification pass): ux-standard.md P10
-// has a MUST NOT rule ("Do not render SourcesButton on this page — provenance
-// is surfaced inline via TrustPathPopover on framework tiles and a
-// ContentUpdatesFeed in PageHeader"), and ComplianceView.tsx's own
-// (now-removed) PageHeader call enforced it with an explicit `suppressSources`
-// prop alongside `viewType="Compliance"`. The nav-rebuild commit (857b8219b)
-// that introduced this global top-bar Sources button copied every page's
-// viewType into this map WITHOUT carrying over that suppression, so the top
-// bar had already been silently violating the MUST NOT since before this
-// session started (the header-dedup commit, f5421407c, then preserved that
-// pre-existing gap rather than introducing it fresh — it never modeled
-// `suppressSources` at all). Caught auditing Sources coverage for this
-// review; fixed by omission rather than adding a suppression mechanism, since
-// '/compliance' is the only route that ever needed one.
-export const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
-  '/timeline': 'Timeline',
-  '/library': 'Library',
-  '/threats': 'Threats',
-  '/leaders': 'Leaders',
-  '/algorithms': 'Algorithms',
-  '/migrate': 'Migrate',
-  // ADDED 2026-08-07. /patents had no Sources button since the page shipped.
-  // The cause was not a missing route entry: NEITHER source registry
-  // contained a single patent authority, so a 'Patents' ViewType would have
-  // filtered to zero rows. USPTO (issuing authority for all 1,185 active
-  // patent rows) and Google Patents (the index harvest_google_patents.py
-  // actually queries) are now registered in both registries with
-  // patents_csv=Yes, so this finally resolves to real sources.
-  '/patents': 'Patents',
-  // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
-  // (it reuses the Library authoritative-sources list — there is no distinct
-  // "OpenSSL" ViewType) — preserved here so /openssl keeps its Sources button.
-  '/openssl': 'Library',
-}
-
-const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
-  '/timeline': 'timeline',
-  '/algorithms': 'algorithms',
-  '/library': 'library',
-  '/playground': 'playground',
-  '/openssl': 'openssl-studio',
-  '/threats': 'threats',
-  '/leaders': 'leaders',
-  '/compliance': 'compliance',
-  '/migrate': 'migrate',
-  '/assess': 'assess',
-  '/report': 'report',
-  '/business': 'business-center',
-  // BusinessToolsGrid ('/business/tools') is a separate nested route from
-  // BusinessCenterView ('/business' index) but shares the same pageId — its
-  // own (now-removed) PageHeader call passed pageId="business-center" too.
-  '/business/tools': 'business-center',
-  '/learn': 'learn',
-}
-
-/**
- * Prefix fallback for `ROUTE_PAGE_ID`, which is an exact-path table. Nested
- * routes inherit their section's user-manual page — `/learn/pqc-101` and
- * `/learn/quiz` both document under `learn`. Deliberately a small explicit
- * list, not a generic "first path segment" rule: only sections whose nested
- * routes genuinely share one manual entry belong here.
- */
-const NESTED_ROUTE_PAGE_ID: ReadonlyArray<readonly [string, PageId]> = [['/learn/', 'learn']]
-
-const pageIdForNestedRoute = (pathname: string): PageId | undefined =>
-  NESTED_ROUTE_PAGE_ID.find(([prefix]) => pathname.startsWith(prefix))?.[1]
-
-// Bespoke Share title/text per route — preserved from each page's own
-// (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
-// global top bar's ShareButton keeps the same copy instead of falling back to
-// the generic `"{route label} — PQC Today"` title for every route. Routes
-// absent here (e.g. /learn, /migrate) never had a bespoke shareTitle on their
-// PageHeader either — they keep the generic fallback, same as before.
-//
-// Two of these intentionally approximate rather than reproduce a dynamic
-// shareText (see IMPLEMENTATION-PLAN follow-up, 2026-08-01 PageHeader
-// consolidation):
-//  - /algorithms used `${algorithmData.length || 'dozens of'}` — reusing the
-//    same page's own "no data yet" fallback copy ("dozens of") rather than
-//    duplicating its data-loading hook here.
-//  - /business/tools used `${BUSINESS_TOOLS.length}` — reusing the page's own
-//    static `description` copy instead of importing the tools registry (a
-//    sizeable data+icon module) into the always-loaded MainLayout shell.
-const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
-  '/algorithms': {
-    title: 'PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More',
-    text: 'Compare dozens of cryptographic algorithms side-by-side — security levels, key sizes, and performance.',
-  },
-  '/assess': {
-    title: 'PQC Risk Assessment — Post-Quantum Cryptography Migration Tool',
-    text: 'Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization.',
-  },
-  '/business': {
-    title: 'PQC Command Center — Quantum Readiness Workspace',
-    text: 'Your PQC readiness command center — risk, compliance, governance, and actionable next steps.',
-  },
-  '/business/tools': {
-    title: 'PQC Business Tools — Planning & Governance Toolkit',
-    text: 'Interactive planning and governance tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, and more.',
-  },
-  '/compliance': {
-    title: 'PQC Compliance Tracker — Standards, Certifications, Frameworks',
-    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks.',
-  },
-  '/leaders': {
-    title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',
-    text: 'Meet the people contributing to the advances of post-quantum cryptography.',
-  },
-  '/library': {
-    title: 'PQC Library — NIST, IETF, ETSI & More',
-    text: 'Explore post-quantum cryptography standards, drafts, and key documents.',
-  },
-  '/openssl': {
-    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.3 in Your Browser',
-    text: 'Run real OpenSSL 3.6.3 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
-  },
-  '/patents': {
-    title: 'PQC Patents — Post-Quantum Migration Patent Corpus',
-    text: 'Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions.',
-  },
-  '/report': {
-    title: 'PQC Assessment Report — Post-Quantum Cryptography Risk Analysis',
-    text: 'View your personalized PQC risk score, migration priorities, and actionable recommendations.',
-  },
-  '/threats': {
-    title: 'Quantum Threats Dashboard — Industry Risk Analysis',
-    text: 'Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements.',
-  },
-  '/timeline': {
-    title: 'PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap',
-    text: 'Compare PQC migration timelines across nations — track phases from discovery to full migration.',
-  },
-}
+// Route -> shared-component-id lookups (ROUTE_VIEW_TYPE, ROUTE_PAGE_ID,
+// NESTED_ROUTE_PAGE_ID, pageIdForNestedRoute, ROUTE_SHARE) moved to
+// '@/data/routePageMeta' (pure-move extraction E-5, IMPLEMENTATION-PLAN.md
+// §5.4) so the mobile shell's page-actions selector can read the same
+// tables this top bar reads.
 
 // Left-border + tint per FOR YOU row treatment. MORE rows never use these —
 // they get a fixed, smaller/muted style regardless of treatment (see RailRow).
