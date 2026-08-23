@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { describe, it, expect } from 'vitest'
+import { getMobilePageActions, pageIdForMobileRoute } from './getMobilePageActions'
+
+describe('getMobilePageActions', () => {
+  it("always includes Assistant, Journey, FAQ, Glossary and What's new", () => {
+    const { actions } = getMobilePageActions('/some-route-with-no-gates')
+    const ids = actions.map((a) => a.id)
+    expect(ids).toEqual(
+      expect.arrayContaining(['assistant', 'journey', 'faq', 'glossary', 'whatsNew'])
+    )
+  })
+
+  it('includes Sources for a route with a registered ViewType', () => {
+    const { actions, sourcesViewType } = getMobilePageActions('/timeline')
+    expect(actions.map((a) => a.id)).toContain('sources')
+    expect(sourcesViewType).toBe('Timeline')
+  })
+
+  it('omits Sources for /compliance — the ux-standard.md P10 MUST NOT', () => {
+    const { actions, sourcesViewType } = getMobilePageActions('/compliance')
+    expect(actions.map((a) => a.id)).not.toContain('sources')
+    expect(sourcesViewType).toBeUndefined()
+  })
+
+  it('omits Sources for a route with no registered ViewType at all', () => {
+    const { actions } = getMobilePageActions('/assess')
+    expect(actions.map((a) => a.id)).not.toContain('sources')
+  })
+})
+
+describe('pageIdForMobileRoute', () => {
+  it('resolves an exact-path entry', () => {
+    expect(pageIdForMobileRoute('/timeline')).toBe('timeline')
+  })
+
+  it('resolves a nested route via the prefix fallback', () => {
+    expect(pageIdForMobileRoute('/learn/pqc-101')).toBe('learn')
+  })
+
+  it('returns undefined for a route with no page id at all', () => {
+    expect(pageIdForMobileRoute('/does-not-exist')).toBeUndefined()
+  })
+})

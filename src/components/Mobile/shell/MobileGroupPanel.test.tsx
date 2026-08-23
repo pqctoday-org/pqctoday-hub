@@ -1,0 +1,58 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent, within } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+import { MobileGroupPanel } from './MobileGroupPanel'
+
+function renderPanel(props: Partial<React.ComponentProps<typeof MobileGroupPanel>> = {}) {
+  return render(
+    <MemoryRouter>
+      <MobileGroupPanel groupId="reference" open onClose={vi.fn()} persona={null} {...props} />
+    </MemoryRouter>
+  )
+}
+
+describe('MobileGroupPanel', () => {
+  it('renders nothing when closed', () => {
+    renderPanel({ open: false })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('shows real page tiles for the no-persona (ungated) case', () => {
+    renderPanel({ groupId: 'reference', persona: null })
+    // Reference includes Algorithms, Library, Community (Leaders), Patents, Revisions in the ungated set.
+    expect(screen.getByRole('button', { name: 'Algorithms' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Library' })).toBeInTheDocument()
+  })
+
+  it('gates the tile set per persona — curious has no Patents TILE, matching the real PERSONA_ABSENT_PATHS.curious entry', () => {
+    renderPanel({ groupId: 'reference', persona: 'curious' })
+    // "Patents" still appears once, inside the absence explanation itself —
+    // that's the footer working correctly, not a tile. Assert on the grid
+    // specifically via its testid rather than a bare text query.
+    const grid = screen.getByTestId('mobile-group-panel-reference').querySelector('.grid')
+    expect(within(grid as HTMLElement).queryByText('Patents')).not.toBeInTheDocument()
+  })
+
+  it('closes and navigates when a tile is tapped', () => {
+    const onClose = vi.fn()
+    renderPanel({ groupId: 'reference', persona: null, onClose })
+    fireEvent.click(screen.getByRole('button', { name: 'Algorithms' }))
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders the real "not offered for your role" reason for curious/Patents', () => {
+    renderPanel({ groupId: 'reference', persona: 'curious' })
+    expect(screen.getByText(/Patent law is a specialist read/i)).toBeInTheDocument()
+  })
+
+  it('navigates to the instead-path when the absence link is tapped', () => {
+    const onClose = vi.fn()
+    renderPanel({ groupId: 'reference', persona: 'curious', onClose })
+    const absenceRow = screen
+      .getByText(/Patent law is a specialist read/i)
+      .closest('div') as HTMLElement
+    fireEvent.click(within(absenceRow).getByRole('button', { name: 'Algorithms' }))
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+})

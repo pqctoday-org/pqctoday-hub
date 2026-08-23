@@ -1,0 +1,74 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter, Route, Routes } from 'react-router'
+import { MainLayout } from './MainLayout'
+import { usePersonaStore } from '../../store/usePersonaStore'
+
+vi.mock('../../vite-env.d.ts', () => ({
+  __BUILD_TIMESTAMP__: 'Dec 6, 2024, 5:00 PM CST',
+}))
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('../../hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
+
+function renderLayout(initialEntry = '/') {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<div>Home Page</div>} />
+          <Route path="/timeline" element={<div>Timeline Page</div>} />
+        </Route>
+      </Routes>
+    </MemoryRouter>
+  )
+}
+
+describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+    usePersonaStore.getState().setPersona(null)
+    usePersonaStore.setState({ hasSkippedPersonalization: false, hasSeenPersonaPicker: false })
+  })
+
+  it('flag off: renders the legacy mobile nav row, not the new mobile header/bottom bar', async () => {
+    mockUseIsMobileShell.mockReturnValue(false)
+    usePersonaStore.getState().setPersona('executive')
+    renderLayout('/timeline')
+    expect(await screen.findByRole('navigation', { name: /main navigation/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument()
+  })
+
+  // The mobile shell components are React.lazy() (IMPLEMENTATION-PLAN.md's
+  // precache-budget finding: a static import measurably grew the eager
+  // bundle for every desktop visitor even with the flag off). findBy* waits
+  // for the lazy chunk to resolve — the real reason this needs to be async,
+  // not a workaround for anything flaky.
+  it('flag on, persona already chosen: renders the new mobile header and bottom bar, not the legacy chrome', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().setPersona('executive')
+    renderLayout('/timeline')
+    expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Home/ })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Learn/ })).toBeInTheDocument()
+  })
+
+  it('flag on, no persona chosen and not skipped: shows the first-run role picker instead of any chrome', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderLayout('/')
+    expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Home/ })).not.toBeInTheDocument()
+  })
+
+  it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().skipPersonalization()
+    renderLayout('/timeline')
+    expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
+    expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
+  })
+})

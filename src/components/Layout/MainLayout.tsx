@@ -47,6 +47,31 @@ import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
+import { useIsMobileShell } from '../../hooks/useIsMobileShell'
+
+// Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
+// MainLayout is mounted on every route, so a static import here would put
+// the whole mobile shell (and everything it pulls in — RoleHomeView,
+// SourcesModal, Glossary, UserManualPanel) into every desktop visitor's
+// eager bundle even though useIsMobileShell() is false for nearly all of
+// them. Found via the precache budget: a static import measurably grew the
+// eager payload (19.64 -> 19.66 MB) for a feature that render-guards itself
+// off. `!isMobileShell` bails before React ever needs these — the
+// `<Suspense fallback={null}>` around each usage never has anything to show.
+const MobileHeader = React.lazy(() =>
+  import('../Mobile/shell/MobileHeader').then((m) => ({ default: m.MobileHeader }))
+)
+const MobileBottomBar = React.lazy(() =>
+  import('../Mobile/shell/MobileBottomBar').then((m) => ({ default: m.MobileBottomBar }))
+)
+const MobilePageActionsSheet = React.lazy(() =>
+  import('../Mobile/shell/MobilePageActionsSheet').then((m) => ({
+    default: m.MobilePageActionsSheet,
+  }))
+)
+const MobileRoleSelection = React.lazy(() =>
+  import('../Mobile/shell/MobileRoleSelection').then((m) => ({ default: m.MobileRoleSelection }))
+)
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -381,9 +406,25 @@ export const MainLayout = () => {
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
   const [personaSwitchOpen, setPersonaSwitchOpen] = React.useState(false)
 
-  // Close the More menu on route changes (e.g., browser back button)
+  // Mobile UX layer (design_handoff_pqc_mobile_ux/IMPLEMENTATION-PLAN.md).
+  // Flag off (default) or >=1024px: isMobileShell is false and every branch
+  // below renders exactly the desktop/legacy-mobile tree it always has —
+  // this is the ENTIRE Rule 1 guarantee, not a promise elsewhere. Mirrors
+  // the isCuriousMobileTakeover suppression exactly: that screen supplies
+  // its own chrome, so the mobile shell stays suppressed there too until
+  // Phase 4 retires CuriousMobileBoard.
+  const isMobileShell = useIsMobileShell()
+  const [mobilePageActionsOpen, setMobilePageActionsOpen] = React.useState(false)
+  const [mobileRoleSwitchOpen, setMobileRoleSwitchOpen] = React.useState(false)
+  // Same condition LandingView.tsx already uses for the identical no-persona
+  // state (Rule 2 — one source of truth for "has this user chosen or
+  // explicitly skipped personalization yet").
+  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization
+
+  // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
     setMoreMenuOpen(false)
+    setMobilePageActionsOpen(false)
   }, [location.pathname])
 
   // ── Desktop rail's collapsible MORE section (2026-08-01 declutter follow-up) ──
@@ -848,7 +889,16 @@ export const MainLayout = () => {
         {/* Suppressed for the Curious-mobile-board takeover (see
             `isCuriousMobileTakeover` above) — that screen renders its own
             header; this one would only double up underneath it. */}
-        {!isCuriousMobileTakeover && (
+        {!isCuriousMobileTakeover && isMobileShell && !isMobileFirstRun && (
+          <React.Suspense fallback={null}>
+            <MobileHeader
+              persona={selectedPersona}
+              onOpenPageActions={() => setMobilePageActionsOpen(true)}
+              onOpenRoleSwitch={() => setMobileRoleSwitchOpen(true)}
+            />
+          </React.Suspense>
+        )}
+        {!isCuriousMobileTakeover && !isMobileShell && (
           <header
             className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
             role="banner"
@@ -1077,10 +1127,34 @@ export const MainLayout = () => {
           </header>
         )}
 
+        {/* Mobile UX layer — bottom bar + its group panels/sheets, replacing
+            the legacy "More" sheet below for isMobileShell. Suppressed
+            during first run (RoleHomeView takes the whole screen) and the
+            Curious-mobile takeover, same as MobileHeader above. */}
+        {!isCuriousMobileTakeover && isMobileShell && !isMobileFirstRun && (
+          <React.Suspense fallback={null}>
+            <MobileBottomBar persona={selectedPersona} />
+            <MobilePageActionsSheet
+              open={mobilePageActionsOpen}
+              onClose={() => setMobilePageActionsOpen(false)}
+            />
+            <MobileRoleSelection
+              variant="switch"
+              open={mobileRoleSwitchOpen}
+              onClose={() => setMobileRoleSwitchOpen(false)}
+            />
+          </React.Suspense>
+        )}
+        {isMobileShell && isMobileFirstRun && !isCuriousMobileTakeover && (
+          <React.Suspense fallback={null}>
+            <MobileRoleSelection variant="firstRun" />
+          </React.Suspense>
+        )}
+
         {/* Mobile "More" bottom sheet — unreachable in the Curious-mobile
             takeover state anyway (its trigger button lives inside the
             suppressed header above), gated explicitly for clarity/safety. */}
-        {!isCuriousMobileTakeover && moreMenuOpen && (
+        {!isCuriousMobileTakeover && !isMobileShell && moreMenuOpen && (
           <>
             {/* Backdrop */}
             <div
@@ -1277,7 +1351,18 @@ export const MainLayout = () => {
         {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
         {/* Scrollable content area */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+        <div
+          ref={scrollContainerRef}
+          className={cn(
+            'flex-1 overflow-y-auto overflow-x-hidden min-h-0',
+            // Clears the fixed bottom bar (handoff: "96px bottom pad on
+            // scroll containers") — only when it's actually rendered.
+            isMobileShell &&
+              !isMobileFirstRun &&
+              !isCuriousMobileTakeover &&
+              'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom))]'
+          )}
+        >
           {isCuriousMobileTakeover ? (
             /* Curious-mobile takeover: bare Outlet, no container padding, no
                banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
