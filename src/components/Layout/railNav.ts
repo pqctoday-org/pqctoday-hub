@@ -82,34 +82,54 @@ export interface RailSections {
  * see railNav.test.ts. The last term is what keeps the coverage invariant true
  * while still letting a route render no row at all for a given role.
  */
+// Paths MainLayout places itself, outside the FOR YOU group mechanism:
+// '/' renders at the very top of the rail and '/about' as the very last row;
+// '/learn', '/timeline' and '/threats' are appended to the Reference group
+// and '/business/tools' to Practice, both unconditionally and by path
+// literal (see MainLayout's `displayPaths`). Including any of them in
+// researcher's FOR YOU would render them TWICE — once from group.paths and
+// once from that render-only append.
+// '/revisions' is excluded for the same reason it was dropped from every
+// persona's PERSONA_NAV_PATHS on 2026-08-01 ("remove more and revisions from
+// the left bar"). Researcher takes the whole nav universe, so without this it
+// would silently reappear inside the Reference group — invisible today only
+// because Reference is collapsed by default, which is not a guarantee.
+//
+// Hoisted to module scope (2026-08-23, mobile UX layer) so
+// `getUngatedGroupablePaths` below can reuse it without duplicating the
+// list — purely a refactor, `getRailSections`'s own behavior is unchanged.
+export const RAIL_SELF_PLACED_PATHS = [
+  '/',
+  '/about',
+  '/learn',
+  '/timeline',
+  '/threats',
+  '/business/tools',
+  '/revisions',
+]
+
+/**
+ * Every path `getForYouGroups` can meaningfully bucket, with no persona
+ * gating applied — the same "whole nav universe" computation
+ * `getRailSections` already does for researcher, generalized. Needed because
+ * `getForYouGroups(forYou)` returns an empty array for `forYou: null` (no
+ * persona selected) — the desktop rail's no-persona state shows a flat
+ * "Everything, unfiltered" list instead of grouped tiles, but the mobile
+ * shell's Workflow/Practice/Reference tabs are fixed UI slots that need
+ * *something* to show even with no persona chosen yet. This keeps that
+ * "everything, unfiltered" behavior consistent rather than inventing a
+ * second, ungated taxonomy.
+ */
+export function getUngatedGroupablePaths(): string[] {
+  return Object.keys(NAV_PATH_LABELS).filter(
+    (path) => !RAIL_SELF_PLACED_PATHS.includes(path) && !RAIL_HIDDEN_PATHS.includes(path)
+  )
+}
+
 export function getRailSections(persona: PersonaId | null): RailSections {
   // eslint-disable-next-line security/detect-object-injection
   const allowed = persona ? PERSONA_NAV_PATHS[persona] : null
-  // Paths MainLayout places itself, outside the FOR YOU group mechanism:
-  // '/' renders at the very top of the rail and '/about' as the very last row;
-  // '/learn', '/timeline' and '/threats' are appended to the Reference group
-  // and '/business/tools' to Practice, both unconditionally and by path
-  // literal (see MainLayout's `displayPaths`). Including any of them in
-  // researcher's FOR YOU would render them TWICE — once from group.paths and
-  // once from that render-only append.
-  // '/revisions' is excluded for the same reason it was dropped from every
-  // persona's PERSONA_NAV_PATHS on 2026-08-01 ("remove more and revisions from
-  // the left bar"). Researcher takes the whole nav universe, so without this it
-  // would silently reappear inside the Reference group — invisible today only
-  // because Reference is collapsed by default, which is not a guarantee.
-  const RAIL_SELF_PLACED_PATHS = [
-    '/',
-    '/about',
-    '/learn',
-    '/timeline',
-    '/threats',
-    '/business/tools',
-    '/revisions',
-  ]
-  const researcherSeesAll =
-    persona === 'researcher'
-      ? Object.keys(NAV_PATH_LABELS).filter((path) => !RAIL_SELF_PLACED_PATHS.includes(path))
-      : null
+  const researcherSeesAll = persona === 'researcher' ? getUngatedGroupablePaths() : null
   const forYou = (researcherSeesAll ?? allowed ?? []).filter(
     (path) => !RAIL_HIDDEN_PATHS.includes(path)
   )

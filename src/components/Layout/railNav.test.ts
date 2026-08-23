@@ -12,7 +12,9 @@ import {
   getRowTreatment,
   getForYouGroups,
   getGroupAbsences,
+  getUngatedGroupablePaths,
   RAIL_ALWAYS_VISIBLE_PATHS,
+  RAIL_SELF_PLACED_PATHS,
 } from './railNav'
 
 const ALL_PERSONAS: PersonaId[] = [
@@ -246,5 +248,25 @@ describe('getRowTreatment', () => {
 
   it('null persona never gets marked/featured treatment', () => {
     expect(getRowTreatment(null, '/simulation', false)).toBe('plain')
+  })
+})
+
+describe('getUngatedGroupablePaths — mobile shell fallback for no-persona', () => {
+  it('excludes every self-placed and hidden path', () => {
+    const paths = getUngatedGroupablePaths()
+    for (const p of RAIL_SELF_PLACED_PATHS) expect(paths).not.toContain(p)
+    for (const p of RAIL_HIDDEN_PATHS) expect(paths).not.toContain(p)
+  })
+
+  it('matches exactly what researcher (the existing "sees everything" persona) gets in FOR YOU', () => {
+    const { forYou } = getRailSections('researcher')
+    expect(new Set(getUngatedGroupablePaths())).toEqual(new Set(forYou))
+  })
+
+  it('every returned path resolves to a real group via getForYouGroups, or lands in the "other" catch-all', () => {
+    const paths = getUngatedGroupablePaths()
+    const groups = getForYouGroups(paths)
+    const grouped = new Set(groups.flatMap((g) => g.paths))
+    expect(grouped).toEqual(new Set(paths))
   })
 })
