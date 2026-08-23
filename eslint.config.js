@@ -140,6 +140,17 @@ export default defineConfig([
   // each gets an explicit, reviewed exception here rather than opening its
   // whole feature directory.
   //
+  // A second, narrower category: a .tsx component EXPLICITLY built for reuse
+  // across callers, with no baked-in desktop-only layout of its own — e.g.
+  // RoleHomeView (its own doc comment: "Self-contained: not wired into
+  // routing/LandingView here. The caller decides where this renders"), whose
+  // per-role urgency/first-win copy is hand-authored editorial text that must
+  // never be forked into a second copy. Importing it means an edit to that
+  // file could still affect desktop's LandingView — accepted deliberately,
+  // caught by the Rule 1 DOM-invariance gate (which already samples `/`) if
+  // it ever actually happens. This is NOT a license to reach for any
+  // component that merely looks reusable; each one is its own reviewed line.
+  //
   // Each exception needs FOUR lines, not one — this is the `ignore` package
   // (gitignore semantics) `no-restricted-imports` runs on under the hood, and
   // gitignore refuses to un-ignore a file inside an already-fully-ignored
@@ -176,6 +187,22 @@ export default defineConfig([
                 '!@/components/Patents/redesign',
                 '@/components/Patents/redesign/*',
                 '!@/components/Patents/redesign/usePatentKpis',
+                // RoleHomeView.tsx (RoleHome) — the "Who's asking?" first-run
+                // picker, already self-contained and reused by LandingView;
+                // its per-role copy must not be duplicated (see comment above).
+                '!@/components/RoleHome',
+                '@/components/RoleHome/*',
+                '!@/components/RoleHome/RoleHomeView',
+                // Glossary.tsx / UserManualPanel.tsx (common) — same category
+                // as RoleHomeView: self-contained isOpen/onClose content
+                // panels already responsive (w-full with a max-w cap), reused
+                // by their respective desktop trigger buttons. SourcesModal
+                // is the same pattern but needs no exception — it already
+                // lives under the exempt src/components/ui/.
+                '!@/components/common',
+                '@/components/common/*',
+                '!@/components/common/Glossary',
+                '!@/components/common/UserManualPanel',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
