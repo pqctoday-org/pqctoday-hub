@@ -18,8 +18,8 @@ import {
   ArrowLeft,
   Sparkles,
   X,
-  Layers,
 } from 'lucide-react'
+import { STABLE_TABS, type StableTab } from '@/data/complianceStableTabs'
 // TrustTierFilter (the control) is no longer rendered here — see the note at
 // its old render site. The hook and matcher stay: `?tier=` deep links still
 // filter the page, they just have no second on-screen control.
@@ -78,32 +78,9 @@ import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 // ── Stable tab model ───────────────────────────────────────────────────────
 // Four tabs, same order for every persona. Persona is a LENS (it tunes content
 // in place via the shared control deck) — it never reorders the bar.
-
-type StableTab =
-  | 'obligations'
-  | 'requirements'
-  | 'progress'
-  | 'products'
-  | 'landscape'
-  | 'records'
-  | 'foryou'
-  | 'cswp39'
-
-const STABLE_TABS: { id: StableTab; label: string; icon: typeof Layers }[] = [
-  // RENAMED 2026-08-11: 'Obligations' overclaimed. Most rows here are
-  // standards and certification schemes that merely APPLY — the tier system
-  // exists precisely to separate those from the ones that bind — and the page
-  // calls itself a reference, not a workspace. The id stays 'obligations' so
-  // every ?tab= and #hash link already in the wild keeps resolving.
-  { id: 'obligations', label: 'Rules & Standards', icon: ShieldCheck },
-  { id: 'requirements', label: 'Requirements', icon: BookOpen },
-  { id: 'progress', label: 'Progress', icon: CalendarClock },
-  { id: 'products', label: 'Products', icon: PackageSearch },
-  { id: 'landscape', label: 'Landscape', icon: Layers },
-  { id: 'records', label: 'Product Records', icon: GlobeLock },
-  { id: 'foryou', label: 'For You', icon: Sparkles },
-  { id: 'cswp39', label: 'CSWP.39 Agility', icon: Workflow },
-]
+// StableTab / STABLE_TABS moved to '@/data/complianceStableTabs' (pure-move
+// extraction E-2, IMPLEMENTATION-PLAN.md §5.4) so the mobile layer can read
+// the same 8 views this page reads.
 
 function stableTabFor(activeTab: MobileSection): StableTab {
   if (isLandscapeTab(activeTab)) return 'landscape'
