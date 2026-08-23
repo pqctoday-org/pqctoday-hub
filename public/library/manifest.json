@@ -11107,6 +11107,16 @@
       "sizeBytes": 109798,
       "contentType": "text/html",
       "sha256": "c507f9c5759ede8c7e2b82db0305d9a978c1ebaaa59714a7424cde9811b52a7a"
+    },
+    {
+      "refId": "eIDAS-Regulation-EU-910-2014-consolidated-text-as-amended-by",
+      "title": "eIDAS Regulation (EU) 910/2014 \u2014 consolidated text as amended by (EU) 2024/1183",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:02014R0910-20240520",
+      "status": "downloaded",
+      "filename": "eIDAS-Regulation-EU-910-2014-consolidated-text-as-amended-by.pdf",
+      "sizeBytes": 728613,
+      "contentType": "application/pdf",
+      "sha256": "43222a1faffe5cb94e878c8ad06d4c617fe2de1d9d1b6663c5619d09214747f6"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

@@ -188,7 +188,13 @@ describe('modules that declare a superseded standard must say so', () => {
     }
     expect(staleIds.size).toBeGreaterThan(0) // and guard that the corpus HAS stale rows
 
-    const DISCLOSES = /obsolet|expir|withdrawn|supersed|no longer|replaced by|revival|deprecat/i
+    // 'rewritten' and 'amended' added 2026-08-22: an EU regulation that is heavily
+    // amended is not 'obsoleted' in the IETF sense, and the honest disclosure for the
+    // 2014 capture of eIDAS is that Regulation (EU) 2024/1183 rewrote it — 39 'is
+    // replaced by the following' instructions. Forcing RFC vocabulary onto a
+    // regulation would make the page less accurate to satisfy a regex.
+    const DISCLOSES =
+      /obsolet|expir|withdrawn|supersed|no longer|replaced by|revival|deprecat|rewritten|amended/i
     /** How far from a mention of the document the status word may sit. */
     const WINDOW = 260
 

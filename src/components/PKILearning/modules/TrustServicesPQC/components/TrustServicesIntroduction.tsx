@@ -267,7 +267,7 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
               operative regulation, in its amended form — which is exactly why a reader needs
               the relationship spelled out rather than a one-word verdict either way. */}
           <Link to="/library?ref=EIDAS-REG-910-2014" className="text-primary hover:underline">
-            eIDAS 1.0 (EU 910/2014) &mdash; as amended by eIDAS 2.0
+            eIDAS 1.0 (EU 910/2014, original 2014 text) &mdash; rewritten by eIDAS 2.0
           </Link>
           <Link to="/library?ref=CSC-API-v2-Spec" className="text-primary hover:underline">
             Cloud Signature Consortium API v2.2
