@@ -7,6 +7,8 @@ import { SourcesModal } from '@/components/ui/SourcesModal'
 import { Glossary } from '@/components/common/Glossary'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { getMobilePageActions, type MobilePageActionId } from './getMobilePageActions'
+import { useMobileWhatsNewStatus } from './mobileWhatsNew'
+import { useVersionStore } from '@/store/useVersionStore'
 import { MobileSheet } from '../primitives/Sheet'
 
 const ICONS: Record<MobilePageActionId, typeof Bot> = {
@@ -34,6 +36,14 @@ export interface MobilePageActionsSheetProps {
  * Ask/Journey buttons already write to — no new panel built. Sources and
  * Glossary reuse their real desktop content components directly. FAQ and
  * What's new navigate to their real pages.
+ *
+ * What's new's sub-label ("N since your last visit", handoff: "'What's new'
+ * carries its unread count") overrides getMobilePageActions' static "Recent
+ * changes to this site" when there really is unread news — that function is
+ * pure (pathname → actions), so live unread state is layered on here rather
+ * than threaded through it. Opening the row marks the version seen, exactly
+ * as dismissing the desktop WhatsNewModal already does, so the dot clears
+ * once the user has actually looked.
  */
 export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheetProps) {
   const location = useLocation()
@@ -41,8 +51,15 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
   const openRightPanel = useRightPanelStore((s) => s.open)
   const [sourcesOpen, setSourcesOpen] = useState(false)
   const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const { hasUnread, count } = useMobileWhatsNewStatus()
+  const markAllSeen = useVersionStore((s) => s.markAllSeen)
 
-  const { actions, sourcesViewType } = getMobilePageActions(location.pathname)
+  const { actions: rawActions, sourcesViewType } = getMobilePageActions(location.pathname)
+  const actions = rawActions.map((action) =>
+    action.id === 'whatsNew' && hasUnread
+      ? { ...action, sub: `${count} since your last visit` }
+      : action
+  )
 
   const handleSelect = (id: MobilePageActionId) => {
     switch (id) {
@@ -60,6 +77,7 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
         return
       case 'whatsNew':
         onClose()
+        markAllSeen()
         navigate('/revisions')
         return
       case 'sources':
