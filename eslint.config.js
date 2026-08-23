@@ -124,5 +124,67 @@ export default defineConfig([
     },
   },
 
+  // Mobile UX layer isolation boundary (IMPLEMENTATION-PLAN.md §5.2 —
+  // "Forbidden edits: viewport branches inside shared components"). Files
+  // under src/components/Mobile/ may import data modules, hooks and stores
+  // freely, but never a desktop VIEW component — that's exactly how a
+  // "quick mobile tweak" turns into a change the laptop UI also renders.
+  // ui/ is exempt (shared primitives, not desktop-specific views); Mobile/
+  // itself is exempt (internal imports between its own files).
+  //
+  // A handful of pure logic/data modules (no JSX, no rendering) legitimately
+  // live inside a Feature's components/ directory rather than under src/data/
+  // — e.g. railNav.ts (Layout's rail-section logic) and usePatentKpis.ts
+  // (Patents' KPI derivation hook). Reading these directly is exactly Rule 2
+  // ("same data sources") working as intended, not a boundary violation, so
+  // each gets an explicit, reviewed exception here rather than opening its
+  // whole feature directory.
+  //
+  // Each exception needs FOUR lines, not one — this is the `ignore` package
+  // (gitignore semantics) `no-restricted-imports` runs on under the hood, and
+  // gitignore refuses to un-ignore a file inside an already-fully-ignored
+  // directory. `!@/components/Foo/bar` alone is silently a no-op. The
+  // correct idiom: un-ignore the directory itself (so the matcher can look
+  // inside it), immediately re-ignore everything else in it, then un-ignore
+  // the one file. Verified against the `ignore` package directly before
+  // landing this — a `!@/components/Layout` line with no matching
+  // `@/components/Layout/*` re-block silently allowed MainLayout.tsx too,
+  // which is exactly the desktop-view leak this rule exists to prevent.
+  //
+  // Add a new exception only for a genuinely non-view module (no JSX) — a
+  // real .tsx component belongs behind a pure-move extraction (§5.4) instead.
+  {
+    files: ['src/components/Mobile/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@/components/*',
+                '!@/components/ui',
+                '!@/components/ui/*',
+                '!@/components/Mobile',
+                '!@/components/Mobile/*',
+                // railNav.ts (Layout) — pure rail-section logic, no JSX.
+                '!@/components/Layout',
+                '@/components/Layout/*',
+                '!@/components/Layout/railNav',
+                // usePatentKpis.ts (Patents/redesign) — pure KPI derivation hook, no JSX.
+                '!@/components/Patents',
+                '!@/components/Patents/redesign',
+                '@/components/Patents/redesign/*',
+                '!@/components/Patents/redesign/usePatentKpis',
+              ],
+              message:
+                'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   eslintConfigPrettier,
 ])

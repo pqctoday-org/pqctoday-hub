@@ -48,3 +48,16 @@ export const useEmbeddingRetrieval = (): boolean =>
  */
 export const useStructuredCitations = (): boolean =>
   readFlag('pqc-feature-structured-citations', 'VITE_FEATURE_STRUCTURED_CITATIONS')
+
+/**
+ * Mobile UX layer (design_handoff_pqc_mobile_ux, IMPLEMENTATION-PLAN.md).
+ * Off by default: `MainLayout` and `SimulationView` keep rendering their
+ * existing desktop/legacy-mobile trees exactly as today (Rule 1 — zero
+ * full-size impact) until this is explicitly turned on. localStorage
+ * override lets the branch be reviewed live without a rebuild; the
+ * build-time env var is the release gate (§Phase 11 of the plan — flipping
+ * the default is a deliberate go-live decision, not a side effect of
+ * merging).
+ */
+export const useMobileShell = (): boolean =>
+  readFlag('pqc-feature-mobile-shell', 'VITE_FEATURE_MOBILE_SHELL')

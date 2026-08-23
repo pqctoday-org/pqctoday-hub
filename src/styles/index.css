@@ -124,6 +124,17 @@
   --z-index-dialog: 101;
   --z-index-disclaimer: 110;
   --z-index-tooltip: 9999;
+
+  /* Mobile UX layer (design_handoff_pqc_mobile_ux). The bottom nav and group
+     panels reuse --z-index-nav-backdrop/--z-index-nav — they're the exact
+     replacement for the existing `lg:hidden` mobile header/More-sheet that
+     already sits at that level. The workshop dock is a persistent bar ABOVE
+     the nav bar but below toasts/sheets, so it gets its own slot between the
+     two. Sheets (⋯, quiz, glossary drill-down) reuse --z-index-overlay/
+     --z-index-dialog, same as every other modal in the app — the plan's
+     "one sheet at a time" rule means no separate stacking range is needed. */
+  --z-index-mobile-dock: 72;
+  --mobile-nav-height: 77px;
 }
 
 @layer base {
