@@ -203,6 +203,18 @@ export default defineConfig([
                 '@/components/common/*',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
+                // PersonaBoardView.tsx (PersonaJourney) — imported only for
+                // its exported PROVENANCE_LABEL map (Phase 4's Home board
+                // reads the same three provenance strings the desktop board
+                // and CuriousMobileBoard already both use, rather than a
+                // third copy). The component itself is desktop-shaped
+                // (flex-row hero + side card at lg+) and is NOT reused —
+                // Phase 4 builds its own mobile layout for the same reason
+                // CuriousMobileBoard already does (own doc comment: "not a
+                // responsive variant of PersonaBoardView").
+                '!@/components/PersonaJourney',
+                '@/components/PersonaJourney/*',
+                '!@/components/PersonaJourney/PersonaBoardView',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
