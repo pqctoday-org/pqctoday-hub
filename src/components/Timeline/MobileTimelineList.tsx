@@ -13,6 +13,12 @@ import { Button } from '@/components/ui/button'
 
 interface MobileTimelineListProps {
   data: GanttCountryData[]
+  /** Initial view when the reader has no stored preference yet. Defaults to
+   *  'swipe' (unchanged existing behavior) — the mobile UX layer's Timeline
+   *  screen (design handoff §17: "Compact is the default view") passes
+   *  'compact' explicitly. A reader's own past choice, once made, still wins
+   *  either way — this only affects the very first render. */
+  defaultMode?: MobileViewMode
 }
 
 // Alongside the existing one-phase-at-a-time swipe carousel, "compact" shows every
@@ -26,16 +32,19 @@ type MobileViewMode = 'swipe' | 'compact'
 
 const VIEW_MODE_STORAGE_KEY = 'timeline-mobile-view-mode'
 
-function readStoredViewMode(): MobileViewMode {
+function readStoredViewMode(fallback: MobileViewMode): MobileViewMode {
   const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY)
-  return stored === 'compact' ? 'compact' : 'swipe'
+  if (stored === 'compact' || stored === 'swipe') return stored
+  return fallback
 }
 
-export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
+export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimelineListProps) => {
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
-  const [viewMode, setViewModeState] = useState<MobileViewMode>(readStoredViewMode)
+  const [viewMode, setViewModeState] = useState<MobileViewMode>(() =>
+    readStoredViewMode(defaultMode)
+  )
 
   const setViewMode = (mode: MobileViewMode) => {
     setViewModeState(mode)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MobileTimelineView } from './MobileTimelineView'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -13,7 +13,29 @@ import { applyTimelineScope } from '@/data/timelineScope'
 // over time.
 const REAL_GANTT_DATA = transformToGanttData(applyTimelineScope(timelineData, {}))
 
+// Same "next imminent phase" logic as the component's own nextTwoPhases(),
+// recomputed independently here as a test oracle so the banner assertion
+// stays correct against whatever the real CSV currently contains, rather
+// than assuming a specific phase is (or isn't) imminent this year.
+function expectedNextUp(countryName: string) {
+  const country = REAL_GANTT_DATA.find((d) => d.country.countryName === countryName)
+  if (!country) return null
+  const year = new Date().getFullYear()
+  const phases = [...country.phases]
+    .filter((p) => Number.isFinite(p.startYear) && p.startYear > 0)
+    .sort((a, b) => a.startYear - b.startYear)
+  const nextIdx = phases.findIndex((p) => p.startYear >= year)
+  if (nextIdx < 0) return null
+  const next = phases[nextIdx]
+  if (next.startYear > year + 1) return null
+  return next
+}
+
 describe('MobileTimelineView', () => {
+  beforeEach(() => {
+    localStorage.removeItem('timeline-mobile-view-mode')
+  })
+
   afterEach(() => {
     usePersonaStore.getState().setRegion('global')
   })
@@ -54,7 +76,41 @@ describe('MobileTimelineView', () => {
   it('states what was cut rather than silently dropping it', () => {
     render(<MobileTimelineView />)
     expect(
-      screen.getByText(/Region and category filters, search, calendar export/i)
+      screen.getByText(/Switching region, a deadlines-only filter, phase-type color coding/i)
     ).toBeInTheDocument()
+  })
+
+  it('defaults to compact view (design handoff §17) when the reader has no stored preference', () => {
+    usePersonaStore.getState().setRegion('americas')
+    render(<MobileTimelineView />)
+    expect(screen.getByRole('button', { name: 'All phases' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByRole('button', { name: 'Swipe' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it("honors a reader's own stored view-mode choice over the compact default", () => {
+    localStorage.setItem('timeline-mobile-view-mode', 'swipe')
+    usePersonaStore.getState().setRegion('americas')
+    render(<MobileTimelineView />)
+    expect(screen.getByRole('button', { name: 'Swipe' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('the "Next 12 months" banner matches the real data — present only when the reader\'s next phase is this year or next, and never otherwise', () => {
+    usePersonaStore.getState().setRegion('americas')
+    render(<MobileTimelineView />)
+    const expected = expectedNextUp('United States')
+    const banner = screen.queryByText('Next 12 months')
+    if (expected) {
+      expect(banner).toBeInTheDocument()
+      expect(
+        screen.getByText(`One marker lands: ${expected.title} (${expected.startYear}).`, {
+          exact: false,
+        })
+      ).toBeInTheDocument()
+    } else {
+      expect(banner).not.toBeInTheDocument()
+    }
   })
 })
