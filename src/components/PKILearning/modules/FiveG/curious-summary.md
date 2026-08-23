@@ -10,7 +10,9 @@ Adversaries are actively harvesting encrypted cellular traffic today. When quant
 
 ## The Key Takeaway
 
-We must implement "3GPP Profile C," which uses the post-quantum ML-KEM (Kyber) algorithm. This ensures that the SUCI privacy framework and the 5G mutual authentication (5G-AKA) process remain completely secure against future quantum threats.
+The fix everyone points to is a post-quantum SUCI scheme built on ML-KEM, usually called "Profile C". Be careful with that name: **3GPP has not standardised it.** TS 33.501 Annex C defines exactly three schemes — the null-scheme, Profile A and Profile B — and both real profiles are ECIES. "Profile C" and its 0x3 identifier come from a research proposal, not from the standard.
+
+So the honest position is that the quantum weakness in SUCI concealment is real and the ML-KEM answer is well understood, but there is nothing to comply with yet. Treat Profile C as the shape of the likely fix, not as a specification you can implement against.
 
 ## What's Happening
 

@@ -36,11 +36,11 @@ describe('PQCCandidatesModule', () => {
 
   it('renders all five tab triggers', () => {
     renderModule()
-    expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Visual' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Workshop' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Exercises' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'References' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Learn' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Visual' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Workshop' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Exercises' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'References' })).toBeInTheDocument()
   })
 
   it('renders Learn-tab section headings', () => {

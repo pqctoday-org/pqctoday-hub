@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'trust-services-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-07-30',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra'),

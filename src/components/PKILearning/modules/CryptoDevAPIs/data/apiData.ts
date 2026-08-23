@@ -198,7 +198,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
       'Node.js',
       '.NET (P/Invoke)',
     ],
-    standards: ['FIPS 140-3', 'TLS 1.2/1.3 (RFC 8446)', 'PKCS#1/5/8/12', 'X.509'],
+    standards: ['FIPS 140-3', 'TLS 1.2/1.3 (RFC 9846)', 'PKCS#1/5/8/12', 'X.509'],
   },
   {
     id: 'pkcs11',

@@ -27,7 +27,7 @@ describe('QuantumThreats render parity', () => {
     expect(
       screen.getByText(/How quantum computers break RSA, ECC, and weaken AES/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -36,7 +36,7 @@ describe('QuantumThreats render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

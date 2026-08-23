@@ -114,6 +114,25 @@ export const LIBRARY_CATEGORIES = [
   'Migration Guidance',
   'Algorithm Specifications',
   'Industry & Research',
+  // EXTENDED 2026-08-22. 163 active rows carried a manual_category outside the
+  // original ten and so matched NO filter chip — visible only under "All".
+  // These three are the clusters that genuinely do not reduce to an existing
+  // value; everything else was mapped onto the ten (see CATEGORY_ALIASES).
+  //
+  // 'Compliance & Certification' covers what was split across "Standards &
+  // Compliance" (46), "Compliance Frameworks" (39) and "Certification Schemes"
+  // (13). Folding those into 'Government & Policy' would lose the distinction
+  // a reader is actually filtering on: a policy statement is not an auditable
+  // control framework.
+  //
+  // 'Blockchain Standards' is 25 BIPs and EIPs — a coherent corpus with its own
+  // numbering and its own audience.
+  //
+  // 'Implementations' covers libraries, vendor roadmaps, hardware and firmware:
+  // documents about SHIPPING code rather than about a specification.
+  'Compliance & Certification',
+  'Blockchain Standards',
+  'Implementations',
 ] as const
 
 export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]

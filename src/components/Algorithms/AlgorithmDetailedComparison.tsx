@@ -30,6 +30,26 @@ import { classifyCnsa20, cnsa20ChipClasses } from './cnsa20'
 import { MAX_COMPARE } from './useAlgorithmExplorer'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 
+/**
+ * What the RAM column can and cannot tell a reader.
+ *
+ * ADDED 2026-08-22 after a catalogue-vs-module check reported three "disagreements"
+ * that were not module errors. The catalogue's `stack_ram_bytes` gives ML-DSA-44 and
+ * ML-DSA-65 the SAME ~14000 — two parameter sets cannot genuinely need identical
+ * stack — so the column is a coarse family-level estimate, and it carries no
+ * operation qualifier even though signing and verifying differ by an order of
+ * magnitude for lattice signatures.
+ *
+ * The numbers are NOT changed: correcting them needs measured, citable per-parameter-set
+ * figures, which is a research task under the proof gate. What is fixed is the silence —
+ * a reader comparing two rows with the same value deserves to know why.
+ */
+const RAM_CAVEAT =
+  'Coarse family-level estimates from the algorithm catalogue, not measured per parameter set — ' +
+  'some parameter sets within a family share a single figure. They carry no sign/verify ' +
+  'qualifier, and for lattice signatures those differ by roughly an order of magnitude. ' +
+  'Measure on your own target before sizing hardware.'
+
 type SortField = 'name' | 'type' | 'pubkey' | 'sig' | 'keygen' | 'sign' | 'verify' | 'ram'
 type SortDir = 'asc' | 'desc'
 
@@ -538,7 +558,11 @@ function BrowseTable({
             <tr className="bg-muted/50 text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
               <th className="p-3 w-8" aria-label="Select for comparison" />
               {headers.map(([field, label]) => (
-                <th key={field} className="p-3 font-semibold">
+                <th
+                  key={field}
+                  className="p-3 font-semibold"
+                  title={field === 'ram' ? RAM_CAVEAT : undefined}
+                >
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(field)}
@@ -677,6 +701,9 @@ function BrowseTable({
             })}
           </tbody>
         </table>
+        <p className="px-3 pb-3 pt-2 text-xs text-muted-foreground">
+          <span className="font-semibold">RAM figures are approximate.</span> {RAM_CAVEAT}
+        </p>
       </div>
 
       {/* Mobile cards */}

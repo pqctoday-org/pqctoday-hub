@@ -89,8 +89,12 @@ export const CbomIntroduction: FC<Props> = ({ onNavigateToWorkshop }) => {
           <Badge kind="view" />
           Start with a <strong>Minimum Viable CBOM</strong>: capture the fields you need to
           prioritise (algorithm, where it&apos;s used, what it protects, owner), not a perfect
-          catalogue. Regulators now expect one — the EU PQC Roadmap (23 Jun 2025) requires
-          cryptographic inventories by end of 2026.
+          catalogue. Regulators are converging on the same expectation: the EU&apos;s NIS
+          Cooperation Group roadmap (v1.1, 11 Jun 2025) sets an end-2026 milestone for Member States
+          whose first steps include mature cryptographic asset management, saying they &ldquo;should
+          promote and support that useful cryptographic inventories are being created and
+          maintained&rdquo; and naming CBOM as a recommended format. It is guidance to Member States
+          rather than a direct obligation on you — but it is what national rules will be built from.
         </p>
       </Section>
 

@@ -13,7 +13,7 @@ nodes on your tree path change — that's an O(log N) update, not O(N).
 
 It's already shipping: WhatsApp, Cisco Webex, AWS Wickr, Google Messages.
 The next chapter is post-quantum: ML-KEM and ML-DSA suites are in IETF
-Last Call as of March 2026.
+at draft -06 as of July 2026, with a revised I-D outstanding.
 
 This module covers:
 

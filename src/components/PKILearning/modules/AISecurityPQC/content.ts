@@ -15,7 +15,9 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446".
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". Repointed off RFC 8446
+    // 2026-08-22; the library row for 8446 already carried 9846 as its
+    // supersession pointer.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
   ],
 

@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { logEvent } from '@/utils/analytics'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
@@ -603,17 +604,15 @@ function DemoCaSetup({ engine, onDone }: { engine: KmipEngine; onDone: () => voi
           {result.label}
         </span>
       )}
-      <select
-        value={algorithm}
-        onChange={(e) => setAlgorithm(e.target.value as (typeof DEMO_CA_ALGORITHMS)[number])}
-        className="h-7 rounded border border-border bg-background px-1.5 text-[10.5px]"
-      >
-        {DEMO_CA_ALGORITHMS.map((a) => (
-          <option key={a} value={a}>
-            {a}
-          </option>
-        ))}
-      </select>
+      <FilterDropdown
+        items={[...DEMO_CA_ALGORITHMS]}
+        selectedId={algorithm}
+        onSelect={(id) => setAlgorithm(id as (typeof DEMO_CA_ALGORITHMS)[number])}
+        ariaLabel="Demo CA algorithm"
+        hideDefaultOption
+        noContainer
+        size="sm"
+      />
       <Button
         size="sm"
         variant="outline"

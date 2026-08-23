@@ -29,7 +29,7 @@ describe('TrustServicesPQC', () => {
       screen.getByRole('heading', { name: 'Trust Services & Long-Term Signatures' })
     ).toBeInTheDocument()
     for (const name of ['Learn', 'Workshop', 'References']) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 

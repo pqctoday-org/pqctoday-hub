@@ -105,7 +105,7 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.queryByText('Est. readiness')).not.toBeInTheDocument()
     // not rendered until the Signals tab is opened (one panel at a time)
     expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Signals' }))
     expect(screen.getByText('Vital signs')).toBeInTheDocument()
     // HNDL/TNFL de-duplicated out of Vital signs (2026-08-02) — Program status
     // above it already shows both, with per-tier track bars.
@@ -202,7 +202,7 @@ describe('SimulationView (Mission Control)', () => {
   it('opening a Learn/Activity resource from the list keeps the sim header (embeds, no navigation)', () => {
     renderPage()
     // the resource columns live in their own tab since 2026-08-02
-    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Resources' }))
     // the "Open a resource" lists now embed in-sim: such items say "opens in simulation"
     const embeddable = screen.getAllByText('opens in simulation')
     expect(embeddable.length).toBeGreaterThan(0)
@@ -232,15 +232,15 @@ describe('SimulationView (Mission Control)', () => {
   it('shows phase artifacts under Progress and gates the architecture view by phase', () => {
     renderPage()
     // Artifacts moved out of the old Expert rail into the Progress tab (2026-08-02)
-    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Progress' }))
     expect(screen.getByText(/Executive Mandate artifacts/)).toBeInTheDocument()
     // p0 (Executive Mandate) produces artifacts but is not an architecture phase
-    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Signals' }))
     expect(screen.queryByText(/Your architecture/)).not.toBeInTheDocument()
     // P1 (Discovery) acts on the estate → architecture view appears in Signals.
     // Switching phase resets the tab to Decide, so Signals is re-opened here.
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
-    fireEvent.click(screen.getByRole('button', { name: 'Signals' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Signals' }))
     expect(screen.getByText(/Your architecture/)).toBeInTheDocument()
   })
 
@@ -253,23 +253,23 @@ describe('SimulationView (Mission Control)', () => {
     expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
     expect(screen.queryByText('Vital signs')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Progress' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Progress' }))
     expect(screen.getByText(/Maturity gates/)).toBeInTheDocument()
     expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Resources' }))
     expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
     expect(screen.queryByText(/Maturity gates/)).not.toBeInTheDocument()
   })
 
   it('resets to the Decide tab when the phase changes', () => {
     renderPage()
-    fireEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Resources' }))
     expect(screen.getByText(/Open a resource/)).toBeInTheDocument()
     // switching phase must not land the player on the new phase's Resources tab
     fireEvent.click(screen.getByRole('button', { name: /Discovery/i }))
     expect(screen.queryByText(/Open a resource/)).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Decide' })).toHaveAttribute('data-state', 'active')
+    expect(screen.getByRole('tab', { name: 'Decide' })).toHaveAttribute('data-state', 'active')
   })
 
   it('End Quarter advances the turn and opens the Quarter Report', () => {

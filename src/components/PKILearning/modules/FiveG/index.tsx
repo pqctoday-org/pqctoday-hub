@@ -20,7 +20,11 @@ const PARTS = [
   {
     id: 'suci',
     title: 'Part 1: SUCI Deconcealment',
-    description: 'Subscriber Privacy: ECIES (Profile A/B) & KEM (Profile C).',
+    // "Profile C" is named here because the workshop walks through it, but it is NOT a
+    // 3GPP profile — TS 33.501 Annex C defines null-scheme, Profile A and Profile B only,
+    // both ECIES. The label carries the qualifier so a reader meeting it in the tab
+    // strip is not misled before reaching the explanation.
+    description: 'Subscriber Privacy: ECIES (Profile A/B) & KEM (proposed Profile C).',
     icon: Shield,
   },
   {
@@ -124,6 +128,8 @@ export const FiveGModule: React.FC = () => {
                 variant="ghost"
                 key={part.id}
                 onClick={() => handlePartChange(idx)}
+                aria-label={part.title}
+                aria-current={idx === currentPart ? 'step' : undefined}
                 className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -138,7 +144,7 @@ export const FiveGModule: React.FC = () => {
                 >
                   <Icon size={16} />
                 </div>
-                <span className="text-sm font-medium hidden md:block">
+                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
                   {part.title.split(':')[0]}
                 </span>
               </Button>

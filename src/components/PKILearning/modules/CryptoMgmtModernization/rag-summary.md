@@ -13,7 +13,7 @@ schedule or never?"
 ## Why now — three forcing functions independent of quantum arrival
 
 1. **47-day TLS certificate cadence** by March 2029 (CA/B Forum Ballot SC-081v3, April 2025).
-   Validity reduces from 398d → 200d (2026) → 100d (2027) → 47d (2029). Manual CLM becomes
+   Validity reduces from 398d → 200d (from 2026-03-15) → 100d (from 2027-03-15) → 47d (from 2029-03-15), per TLS BR §6.3.2. Manual CLM becomes
    mathematically impossible at this cadence.
 2. **FIPS 140-3 Level 3 validation drift**. Every CMVP certificate is bound to a specific
    version, firmware, and platform. The September 2025 FIPS 140-3 Implementation Guidance
@@ -22,7 +22,7 @@ schedule or never?"
    not an annual audit.
 3. **Library EoL and CVE cadence**. OpenSSL 1.1.1 EoL (September 2023). Bouncy Castle
    high-severity CVEs per release. OMB M-23-02 annual cryptographic inventory mandate for US
-   federal agencies through 2035. CNSA 2.0 National Security Systems deadlines (2030/2033).
+   federal agencies through 2035. CNSA 2.0 National Security Systems: CNSSP 15 requires new acquisitions to be compliant from 1 Jan 2027, phases out non-supporting equipment by 31 Dec 2030 and mandates the algorithms by 31 Dec 2031 (FAQ Ver. 2.1, Dec 2024); the 2022 advisory per-class timetable runs 2030 (software/firmware signing) and 2033 (web/cloud/OS).
 
 ## Five pillars of CPM
 
@@ -66,7 +66,7 @@ Quantum-dependent benefits are additive, never load-bearing.
 
 ## Key standards
 
-CA/B Forum SC-081v3 · NIST FIPS 140-3 IG Sep 2025 · SP 800-140B · CMVP Validated Modules + MIP
+CA/B Forum SC-081v3 · NIST FIPS 140-3 IG (last updated 16 Apr 2026) · SP 800-140B · CMVP Validated Modules + MIP
 · OMB M-23-02 · NSA CNSA 2.0 · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
 CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · Entrust/Ponemon 2024 Global PKI & PQC Trends Study · NIST IR 8547 (HNDL) · Microsoft
 CPM (2026-04) · Keyfactor/EJBCA CPM · Gartner (Mahdi, Lowans).

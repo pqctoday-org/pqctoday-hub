@@ -6,6 +6,7 @@ import type { ArtifactSection } from '../../../common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { ScorecardOutput } from './VendorScorecardBuilder'
 
@@ -428,6 +429,12 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
     useExecutiveModuleData()
   const vendorDependency = useAssessmentStore((s) => s.vendorDependency)
 
+  // This generator had NO restore hook at all — the worst persistence in the
+  // business-tool batch. Autosave alone would have written clause drafts that
+  // could never be read back, so the read half lands with it. (WS6.)
+  const savedFormData =
+    useSavedArtifactInputs<Record<string, Record<string, string | string[]>>>('contract-clause')
+
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
       const md = renderContractPreview(data)
@@ -437,6 +444,8 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
         type: 'contract-clause',
         title: `PQC Vendor Contract Requirements — ${new Date().toLocaleDateString()}`,
         data: md,
+        // Persist the raw form so the draft is restorable on remount.
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -510,6 +519,7 @@ export const ContractClauseGenerator: React.FC<ContractClauseGeneratorProps> = (
         description="Generated contract clauses for vendor PQC compliance."
         sections={CONTRACT_SECTIONS}
         demoFill={CONTRACT_DEMO_FILL}
+        initialData={savedFormData}
         onExport={handleExport}
         exportFilename="pqc-vendor-contract"
         exportFormats={['markdown', 'pdf']}

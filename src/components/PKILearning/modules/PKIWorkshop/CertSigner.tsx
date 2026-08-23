@@ -354,7 +354,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
             ? `  keyUsage = digitalSignature, keyEncipherment\n` +
               `    digitalSignature: required for TLS 1.3 (server signs the handshake transcript with its private key).\n` +
               `    keyEncipherment: required only for TLS 1.2 RSA key exchange (client encrypts pre-master secret with server pubkey).\n` +
-              `    Note: TLS 1.3 (RFC 8446) removed RSA key exchange — keyEncipherment is a legacy value for TLS 1.2 backward compat only.\n` +
+              `    Note: TLS 1.3 (RFC 9846) removed RSA key exchange — keyEncipherment is a legacy value for TLS 1.2 backward compat only.\n` +
               `    Note: RSA-PSS (RFC 8017) also uses only digitalSignature — keyEncipherment is an RSA PKCS#1 v1.5 concept.\n\n`
             : `  keyUsage = digitalSignature\n` +
               `    ECDSA and PQC algorithms authenticate via signature only — key exchange uses ephemeral ECDH or KEM.\n` +

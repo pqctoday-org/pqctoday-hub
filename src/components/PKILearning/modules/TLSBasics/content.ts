@@ -14,12 +14,25 @@ export const content: ModuleContent = {
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
-    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
-    // RFC 8446 sections where it discusses the original, which stays accurate.
+    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22 — not added alongside it. RFC 9846
+    // (July 2026) obsoletes 8446 outright, so citing both would show a reader two
+    // specifications for one protocol version. Same call MerkleTreeCerts made when
+    // RFC 9162 obsoleted RFC 6962.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // The hybrid key agreements the module teaches stopped being drafts on 2026-08-10:
+    // RFC 10024 'Post-Quantum Traditional (PQ/T) Hybrid Key Agreement Mechanisms for
+    // TLS 1.3', Standards Track, defines X25519MLKEM768, SecP256r1MLKEM768 and
+    // SecP384r1MLKEM1024.
+    getStandard('RFC-10024'),
     getStandard('NIST SP 800-227'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
+    // DECLARED 2026-08-22. narratives.mtcProofSize states 736 bytes typical and a
+    // 384-1024 B range; all three figures come from this draft's sizing discussion
+    // (§6.4): 12 hashes / 384 B for standalone subtrees of ~2,500 certificates,
+    // 23 hashes / 736 B for landmark-relative subtrees of ~4,400,000, and "32
+    // hashes, or 1024 bytes, is sufficient for subtrees of up to 2^32". The numbers
+    // were right; nothing in the module said where they came from.
+    getStandard('draft-ietf-plants-merkle-tree-certs'),
   ],
 
   algorithms: [

@@ -358,6 +358,14 @@ scripts/*
 # committed package.json script.
 !scripts/audit-role-board-content.ts
 
+# Data-filename generator — runs in `npm run build` and `predev`
+# (npm run generate:data-filenames) and emits src/data/generated/
+# dataFilenames.generated.ts, which useVersionStore.ts imports. Same trap as
+# every entry above: `scripts/*` makes `git add` a silent no-op, and without
+# this line the build fails file-not-found in CI and every other checkout
+# while staying green on the machine that wrote it.
+!scripts/generate-data-filenames.ts
+
 # NVD CVE scraper — runs weekly in .github/workflows/update-cve.yml (public
 # CI), must be tracked or that workflow fails with "No such file or directory"
 # (as it silently did for weeks — see git history). Reads public CPE xref CSV,
@@ -495,6 +503,15 @@ public/data/rag-index-freshness.json
 # (CMVP/FIPS status, protocol-matrix snapshot, Q-Day anchor) aged past 90 days.
 # Reads src/data/contentFreshness.ts. Must be tracked to run in CI.
 !scripts/audit-content-freshness.ts
+
+# Module review-freshness gate (WS22 Stage 4) — the absolute-age half of
+# audit:content-freshness, which is already whitelisted above. Same
+# `scripts/*` trap: without these two lines `git add` is a silent no-op, the
+# gate's own helper never leaves the machine that wrote it, and
+# audit-content-freshness.ts fails module-not-found in CI and every other
+# checkout while staying green locally.
+!scripts/moduleReviewFreshness.ts
+!scripts/audit-content-freshness.local.test.ts
 
 # Vendor-ref integrity audit — CI gate that validates vendor_id assignments in
 # the product catalog against the vendor roadmap CSV. Catches wrong VND-*
@@ -659,3 +676,13 @@ pki/issued/
 !pki/ca/*.pem
 !pki/vendors/*.pem
 src/.!*!.DS_Store
+
+# Capture-integrity guard — npm run audit:capture-integrity, plus its
+# local-gate suite. Referenced by a committed package.json script, so it has
+# the same `scripts/*` trap as every entry above: without these two negations
+# `git add scripts/audit-capture-integrity.ts` is a SILENT no-op and the gate
+# exists only on the machine that wrote it. Public input (public/*/manifest.json
+# hashes, src/data/library_*.csv read-only), stdout output, no network unless
+# --upstream is passed explicitly.
+!scripts/audit-capture-integrity.ts
+!scripts/audit-capture-integrity.local.test.ts

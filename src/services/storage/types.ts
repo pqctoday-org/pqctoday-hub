@@ -67,6 +67,13 @@ export type ExecutiveDocumentType =
   | 'program-charter'
   | 'initial-scoping'
   | 'skills-team-plan'
+  // Split out of `skills-team-plan` (store v16). Both Skills & Team workshop
+  // steps used to save under that one id with the same moduleId, and the
+  // artifact store keys on `moduleId::type` — so one step's draft silently
+  // replaced the other's. `skills-team-plan` still belongs to the standalone
+  // Command Center tool.
+  | 'crypto-champion-roster'
+  | 'team-sizing-plan'
   | 'infra-modernization-plan'
   | 'refresh-cycle-alignment'
   | 'accelerated-execution-profile'

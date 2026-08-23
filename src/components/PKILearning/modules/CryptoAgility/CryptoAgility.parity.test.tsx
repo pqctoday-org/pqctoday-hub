@@ -30,7 +30,7 @@ describe('CryptoAgility render parity', () => {
     expect(
       screen.getByText(/Design systems that can rapidly swap cryptographic algorithms/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -39,7 +39,7 @@ describe('CryptoAgility render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

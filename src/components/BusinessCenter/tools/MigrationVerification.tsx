@@ -22,6 +22,7 @@ import React, { useMemo, useState } from 'react'
 import { ClipboardCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import {
@@ -444,20 +445,15 @@ export const MigrationVerification: React.FC = () => {
                 aria-label="Material"
                 className="text-xs sm:col-span-2"
               />
-              <select
-                value={d.kind}
-                onChange={(e) =>
-                  setDecommission(d.id, { kind: e.target.value as DecommissionKind })
-                }
-                aria-label="Kind"
-                className="text-xs rounded-md border border-input bg-background p-2"
-              >
-                {DECOMMISSION_KINDS.map((k) => (
-                  <option key={k} value={k}>
-                    {k}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                items={[...DECOMMISSION_KINDS]}
+                selectedId={d.kind}
+                onSelect={(id) => setDecommission(d.id, { kind: id as DecommissionKind })}
+                ariaLabel="Kind"
+                hideDefaultOption
+                noContainer
+                size="sm"
+              />
               <Input
                 type="date"
                 value={d.retiredDate}
@@ -472,18 +468,15 @@ export const MigrationVerification: React.FC = () => {
                 aria-label="Owner"
                 className="text-xs"
               />
-              <select
-                value={d.method}
-                onChange={(e) => setDecommission(d.id, { method: e.target.value })}
-                aria-label="Destruction method"
-                className="text-xs rounded-md border border-input bg-background p-2"
-              >
-                {DECOMMISSION_METHODS.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
+              <FilterDropdown
+                items={[...DECOMMISSION_METHODS]}
+                selectedId={d.method}
+                onSelect={(id) => setDecommission(d.id, { method: id })}
+                ariaLabel="Destruction method"
+                hideDefaultOption
+                noContainer
+                size="sm"
+              />
               <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <input
                   type="checkbox"

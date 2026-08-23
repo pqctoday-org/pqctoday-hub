@@ -78,7 +78,8 @@ export const STANDARD_TAXONOMY = [
   'FIPS 204',
   'FIPS 205',
   'NIST SP 800-208',
-  'RFC 8446',
+  // RFC 9846 (July 2026) obsoleted RFC 8446; no manifest names 8446 any more.
+  'RFC 9846',
   'RFC 9421',
   'RFC 9180',
   'RFC 9442',

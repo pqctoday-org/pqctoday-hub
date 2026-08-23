@@ -56,7 +56,7 @@ The workshop has 5 interactive steps:
 - FIPS 205 (SLH-DSA — stateless hash-based signatures in the PQC certificate hierarchy)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid configuration basis)
 - NIST IR 8547 (Transition to Post-Quantum Cryptography Standards — program context the posture registry derives from)
-- RFC 8446 (TLS 1.3 — where hybrid key shares are negotiated by NamedGroup codepoints, not X.509 OIDs)
+- RFC 9846 (TLS 1.3, obsoletes RFC 8446 — where hybrid key shares are negotiated by NamedGroup codepoints, not X.509 OIDs)
 
 ## Cross-References
 

@@ -82,7 +82,7 @@ const TLSPanel: React.FC = () => {
           </a>
         </div>
         <p className="text-xs text-muted-foreground">
-          RFC 8446 (TLS 1.3) derives session keys from a shared secret produced by the key exchange
+          RFC 9846 (TLS 1.3) derives session keys from a shared secret produced by the key exchange
           (e.g., ECDH or ML-KEM). RFC 9258 adds an <strong>external PSK importer</strong>: a QKD key
           delivered via the ETSI GS QKD 014 REST API can be bound to a specific KDF hash and
           imported as a pre-shared key, replacing or augmenting the key-exchange-derived secret.
@@ -106,7 +106,7 @@ const TLSPanel: React.FC = () => {
         <div className="bg-success/5 border border-success/20 rounded p-3">
           <div className="font-bold text-success mb-1">③ TLS 1.3 Handshake</div>
           <div className="text-muted-foreground">
-            PSK binder replaces or augments ECDH-derived Early Secret in the key schedule (RFC 8446
+            PSK binder replaces or augments ECDH-derived Early Secret in the key schedule (RFC 9846
             §7.1)
           </div>
         </div>

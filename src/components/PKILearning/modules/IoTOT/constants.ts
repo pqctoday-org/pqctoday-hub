@@ -107,13 +107,29 @@ export const CONSTRAINED_ALGORITHMS: ConstrainedAlgorithm[] = [
   {
     name: 'FrodoKEM-640',
     type: 'KEM',
-    ramKB: 180,
+    // CORRECTED 2026-08-22. ramKB was 180, which is FrodoKEM-1344's figure applied
+    // to FrodoKEM-640 — a threefold overstatement. The algorithm catalogue
+    // (pqc_complete_algorithm_reference) gives stack_ram_bytes ~60000 for -640,
+    // ~120000 for -976 and ~180000 for -1344.
+    //
+    // The verdict survives the correction, which is why it is worth stating
+    // precisely: RFC 7228 Table 1 puts Class 0 at << 10 KiB RAM, Class 1 at
+    // ~10 KiB and Class 2 at ~50 KiB, so ~60 KB is still out of reach for all
+    // three — but by a factor of roughly 1.2 against Class 2, not 3.6. "Infeasible
+    // for IoT" was right for the wrong reason, and a reader sizing a Class 2 device
+    // deserves the real margin.
+    ramKB: 60,
     publicKeyBytes: 9616,
     ciphertextOrSigBytes: 9720,
     nistLevel: 1,
     quantumSafe: true,
-    suitableForClass: [],
-    notes: 'Conservative (no ring structure). ~180 KB RAM — infeasible for IoT.',
+    // [3] not [] — same correction as ramKB above. The explorer derives its
+    // red/amber/green badge from THIS array, not from ramKB, so leaving it empty
+    // would have rendered FrodoKEM-640 as "exceeds capabilities" on a 256 KB
+    // Class 3+ device that it uses under a quarter of.
+    suitableForClass: [3],
+    notes:
+      'Conservative (no ring structure). ~60 KB stack RAM — still above RFC 7228 Class 2 (~50 KiB), so infeasible across Class 0-2.',
   },
   // Signatures
   {
@@ -569,7 +585,7 @@ export const CERT_MITIGATIONS: CertMitigation[] = [
   {
     id: 'resumption',
     name: 'Session Resumption (PSK)',
-    rfc: 'RFC 8446 \u00a72.2',
+    rfc: 'RFC 9846 \u00a72.2',
     reductionPercent: 90,
     description:
       'Reuse prior session keys via PSK. Eliminates certificate exchange entirely on reconnection.',

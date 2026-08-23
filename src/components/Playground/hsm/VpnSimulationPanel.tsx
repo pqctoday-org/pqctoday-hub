@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VpnWireVisualization } from './VpnWireVisualization'
 import { VpnPacketInspector } from './VpnPacketInspector'
 import { VpnScorecard } from './VpnScorecard'
@@ -3913,8 +3914,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       )}
 
       <GlossaryAutoWrap>
+        {/* a11y (WS14, 2026-08-21): the inner grid is `min-w-[480px]`, so this
+            wrapper does scroll below ~480px. Verified 2026-08-21: axe does NOT
+            currently flag it — the grid holds 4 focusable buttons, so it passes
+            on `focusable-content` (same shape as WireTreeView.tsx). This is
+            defensive: the pass depends on those buttons staying focusable, and
+            `tabIndex={0}` makes the region keyboard-scrollable regardless. */}
         <div
           className={`overflow-x-auto relative ${hasCrashed ? 'opacity-50 pointer-events-none' : ''}`}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx). Applied defensively here — see the comment above for why the rule does not currently match.
+          tabIndex={0}
+          role="region"
+          aria-label="IKEv2 handshake diagram — initiator and responder message exchange"
+          data-testid="vpn-handshake-diagram"
         >
           <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-start min-w-[480px]">
             <div>
@@ -4928,34 +4940,42 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     <div>
                       <div className="text-xs font-semibold mb-2">Authentication Key Type</div>
                       <div className="flex gap-2 items-center flex-wrap">
-                        <select
-                          value={clientAlg}
-                          onChange={(e) => setClientAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
-                        >
-                          <option value="ML-DSA">ML-DSA (PQC)</option>
-                          <option value="RSA">RSA (Classical)</option>
-                        </select>
+                        <FilterDropdown
+                          items={[
+                            { id: 'ML-DSA', label: 'ML-DSA (PQC)' },
+                            { id: 'RSA', label: 'RSA (Classical)' },
+                          ]}
+                          selectedId={clientAlg}
+                          onSelect={(id) => setClientAlg(id)}
+                          ariaLabel="Client authentication key type"
+                          hideDefaultOption
+                          noContainer
+                          size="sm"
+                        />
                         {clientAlg === 'ML-DSA' ? (
-                          <select
-                            value={clientSize}
-                            onChange={(e) => setClientSize(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="44">ML-DSA-44</option>
-                            <option value="65">ML-DSA-65</option>
-                            <option value="87">ML-DSA-87</option>
-                          </select>
+                          <FilterDropdown
+                            items={[
+                              { id: '44', label: 'ML-DSA-44' },
+                              { id: '65', label: 'ML-DSA-65' },
+                              { id: '87', label: 'ML-DSA-87' },
+                            ]}
+                            selectedId={clientSize}
+                            onSelect={(id) => setClientSize(id)}
+                            ariaLabel="Client ML-DSA parameter set"
+                            hideDefaultOption
+                            noContainer
+                            size="sm"
+                          />
                         ) : (
-                          <select
-                            value={clientClassAlg}
-                            onChange={(e) => setClientClassAlg(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="RSA-2048">RSA-2048</option>
-                            <option value="RSA-3072">RSA-3072</option>
-                            <option value="RSA-4096">RSA-4096</option>
-                          </select>
+                          <FilterDropdown
+                            items={['RSA-2048', 'RSA-3072', 'RSA-4096']}
+                            selectedId={clientClassAlg}
+                            onSelect={(id) => setClientClassAlg(id)}
+                            ariaLabel="Client RSA key size"
+                            hideDefaultOption
+                            noContainer
+                            size="sm"
+                          />
                         )}
                         <span className="text-[10px] text-muted-foreground mr-4">
                           Keys generated in worker HSM
@@ -5033,34 +5053,42 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     <div>
                       <div className="text-xs font-semibold mb-2">Authentication Key Type</div>
                       <div className="flex gap-2 items-center flex-wrap">
-                        <select
-                          value={serverAlg}
-                          onChange={(e) => setServerAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
-                        >
-                          <option value="ML-DSA">ML-DSA (PQC)</option>
-                          <option value="RSA">RSA (Classical)</option>
-                        </select>
+                        <FilterDropdown
+                          items={[
+                            { id: 'ML-DSA', label: 'ML-DSA (PQC)' },
+                            { id: 'RSA', label: 'RSA (Classical)' },
+                          ]}
+                          selectedId={serverAlg}
+                          onSelect={(id) => setServerAlg(id)}
+                          ariaLabel="Server authentication key type"
+                          hideDefaultOption
+                          noContainer
+                          size="sm"
+                        />
                         {serverAlg === 'ML-DSA' ? (
-                          <select
-                            value={serverSize}
-                            onChange={(e) => setServerSize(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="44">ML-DSA-44</option>
-                            <option value="65">ML-DSA-65</option>
-                            <option value="87">ML-DSA-87</option>
-                          </select>
+                          <FilterDropdown
+                            items={[
+                              { id: '44', label: 'ML-DSA-44' },
+                              { id: '65', label: 'ML-DSA-65' },
+                              { id: '87', label: 'ML-DSA-87' },
+                            ]}
+                            selectedId={serverSize}
+                            onSelect={(id) => setServerSize(id)}
+                            ariaLabel="Server ML-DSA parameter set"
+                            hideDefaultOption
+                            noContainer
+                            size="sm"
+                          />
                         ) : (
-                          <select
-                            value={serverClassAlg}
-                            onChange={(e) => setServerClassAlg(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="RSA-2048">RSA-2048</option>
-                            <option value="RSA-3072">RSA-3072</option>
-                            <option value="RSA-4096">RSA-4096</option>
-                          </select>
+                          <FilterDropdown
+                            items={['RSA-2048', 'RSA-3072', 'RSA-4096']}
+                            selectedId={serverClassAlg}
+                            onSelect={(id) => setServerClassAlg(id)}
+                            ariaLabel="Server RSA key size"
+                            hideDefaultOption
+                            noContainer
+                            size="sm"
+                          />
                         )}
                         <span className="text-[10px] text-muted-foreground mr-4">
                           Keys generated in worker HSM

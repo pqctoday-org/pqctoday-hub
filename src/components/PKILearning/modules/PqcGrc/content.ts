@@ -26,6 +26,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
+    // DECLARED 2026-08-22. relatedStandards prose and rag-summary.md have named
+    // SP 800-208 all along; standards[] did not, so it never reached the References
+    // tab and the accuracy check reported it with no evidence at all. The row is
+    // active and Final in the library — it was a missing declaration, not a
+    // missing document.
+    getStandard('NIST SP 800-208'),
   ],
 
   algorithms: [

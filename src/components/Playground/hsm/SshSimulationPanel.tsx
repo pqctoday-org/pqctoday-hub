@@ -662,8 +662,21 @@ const RealityBadge: React.FC<{ real: boolean }> = ({ real }) => (
   </span>
 )
 
+// a11y (WS14, 2026-08-21): the ladder can scroll horizontally and holds no
+// focusable descendant. Verified 2026-08-21: axe does NOT currently flag it —
+// the `flex-1`+`truncate` rows fit their box (286px content in 286px even at
+// 320px wide), so the rule never matches. Defensive hardening, not a violation
+// removed; `tabIndex={0}` + `role="region"` + label keep it keyboard-reachable
+// if the content ever widens.
 const WirePacketLadder: React.FC<{ packets: SshWirePacket[] }> = ({ packets }) => (
-  <div className="p-3 space-y-1.5 font-mono text-xs overflow-x-auto">
+  <div
+    className="p-3 space-y-1.5 font-mono text-xs overflow-x-auto"
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx). Applied defensively here — see the comment above for why the rule does not currently match.
+    tabIndex={0}
+    role="region"
+    aria-label="SSH key exchange packet ladder — client and server message sequence"
+    data-testid="ssh-wire-ladder"
+  >
     <div className="flex justify-between text-[10px] text-muted-foreground mb-3 px-1">
       <span>CLIENT</span>
       <span>SERVER</span>

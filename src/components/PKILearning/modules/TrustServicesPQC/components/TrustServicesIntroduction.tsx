@@ -260,8 +260,14 @@ export const TrustServicesIntroduction: React.FC<Props> = ({ onNavigateToWorksho
           <Link to="/library?ref=eIDAS-2-Regulation" className="text-primary hover:underline">
             eIDAS 2.0 (EU 2024/1183)
           </Link>
+          {/* ADDED 2026-08-22, then CORRECTED the same day. The first wording said
+              "superseded by eIDAS 2.0", which is wrong: Regulation (EU) 2024/1183 is titled
+              "amending Regulation (EU) No 910/2014" and amends it article by article. Every
+              "repealing" in its text names a DIFFERENT instrument. 910/2014 is still the
+              operative regulation, in its amended form — which is exactly why a reader needs
+              the relationship spelled out rather than a one-word verdict either way. */}
           <Link to="/library?ref=EIDAS-REG-910-2014" className="text-primary hover:underline">
-            eIDAS 1.0 (EU 910/2014)
+            eIDAS 1.0 (EU 910/2014, original 2014 text) &mdash; rewritten by eIDAS 2.0
           </Link>
           <Link to="/library?ref=CSC-API-v2-Spec" className="text-primary hover:underline">
             Cloud Signature Consortium API v2.2

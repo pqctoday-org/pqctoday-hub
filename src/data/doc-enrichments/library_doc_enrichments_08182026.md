@@ -294,7 +294,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: A survey examining the quantum vulnerability and post-quantum migration status of nine widely deployed network and security protocols including TLS, IPsec, BGP, DNSSEC, SSH, QUIC, OpenID Connect, OpenVPN, and Signal Protocol.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, CRYSTALS-Kyber, NTRU, SABER, CRYSTALS-Dilithium, FALCON, SPHINCS+, Kyber, Dilithium
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; CRYSTALS-Kyber; NTRU; SABER; CRYSTALS-Dilithium; FALCON; SPHINCS+; Kyber; Dilithium
 - **Quantum Threats Addressed**: Shor’s algorithm, harvest-now decrypt-later threat, quantum vulnerability of classical public-key primitives
 - **Migration Timeline Info**: NIST published first PQC standards in August 2024; retiring quantum-vulnerable algorithms by 2030 and fully retiring them by 2035
 - **Applicable Regions / Bodies**: None detected
@@ -564,7 +564,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-05-01
 - **Document Status**: Study Item Approved
 - **Main Topic**: Study on integrating standalone or hybrid PQC algorithms into existing 5G security protocols.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, hybrid key exchange
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA
 - **Quantum Threats Addressed**: Harvest Now Decrypt Later (HNDL), Cryptographically Relevant Quantum Computer (CRQC)
 - **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022
 - **Applicable Regions / Bodies**: Bodies: 3GPP
@@ -618,7 +618,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-02-01
 - **Document Status**: Published
 - **Main Topic**: Industry white paper examining post-quantum cryptography impacts on 5G and telecommunications network security, covering algorithm readiness, protocol migration, and vendor ecosystem status.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: CRQC, Shor’s Algorithm, Harvest Now, Decrypt Later, Grover’s algorithm
 - **Migration Timeline Info**: CRQC estimates point to the 2030 - 2040 timeframe; NIST standardized first three PQC algorithms in August 2024
 - **Applicable Regions / Bodies**: None detected
@@ -1752,7 +1752,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-01
 - **Document Status**: Published
 - **Main Topic**: A comprehensive, phase-by-phase enterprise methodology for migrating cryptography to post-quantum standards before quantum computers arrive.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS, FN-DSA, HQC
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; LMS; XMSS; FN-DSA; HQC
 - **Quantum Threats Addressed**: CRQC, HNDL, TNFL
 - **Migration Timeline Info**: NIST IR 8547 deprecation and disallowance timelines; CNSA 2.0 milestones; Qby-Q Year 1 plan; landscape state as of March 2026
 - **Applicable Regions / Bodies**: United States (Federal agencies); Netherlands (Dutch PQC Migration Handbook)
@@ -2130,7 +2130,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2019-03-01
 - **Document Status**: Published
 - **Main Topic**: ASC X9 TR 50-2019 investigates the use of Cryptographic Message Syntax (CMS) in the presence of a quantum-capable attacker and provides recommendations for migrating classical financial systems to quantum-safe algorithms.
-- **PQC Algorithms Covered**: Hash-Based Cryptography, Code-Based Cryptography, Lattice-Based Cryptography, Multivariate Polynomial-Based Cryptography, Isogeny-Based Cryptography
+- **PQC Algorithms Covered**: Hash-Based Cryptography
 - **Quantum Threats Addressed**: Quantum-capable attacker
 - **Migration Timeline Info**: Keywords: required by, prohibited
 - **Applicable Regions / Bodies**: Regions: United States, United Kingdom, Germany, France, Canada, International, Bodies: NIST, NSA
@@ -2184,7 +2184,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
 - **Main Topic**: ASD guidelines for cryptography detailing approved algorithms, protocols, and post-quantum transition requirements for Australian government systems.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: Shor's algorithm, cryptographically relevant quantum computer (CRQC)
 - **Migration Timeline Info**: Support for ASD-approved PQC algorithms by 2030; DH/ECDH not approved beyond 2030
 - **Applicable Regions / Bodies**: Regions: Australia; Bodies: Australian Signals Directorate (ASD)
@@ -2670,7 +2670,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Solutions Solutions Can a blockchain do that?
-- **PQC Algorithms Covered**: Falcon, XMSS
+- **PQC Algorithms Covered**: Falcon; XMSS
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2024, 2026
 - **Applicable Regions / Bodies**: Regions: United States, India, Bodies: NIST
@@ -3048,7 +3048,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-02-21
 - **Document Status**: Published
 - **Main Topic**: Apple's announcement of PQ3, a hybrid post-quantum cryptographic protocol for iMessage that achieves Level 3 security by combining ML-KEM with periodic key rotation.
-- **PQC Algorithms Covered**: ML-KEM, Kyber
+- **PQC Algorithms Covered**: ML-KEM; Kyber
 - **Quantum Threats Addressed**: Harvest Now, Decrypt Later; quantum attacks on classical mathematical problems
 - **Migration Timeline Info**: Rollout starts with iOS 17.4, iPadOS 17.4, macOS 14.4, and watchOS 10.4; full replacement within supported conversations this year
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -3102,7 +3102,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Skip to content Navigation Menu Toggle navigation Sign in Appearance settings Platform AI CODE CREATION GitHub Copilot Write better code with AI GitHub Spark Build and deploy intelligent apps GitHub Models Manage and compare prompts MCP Registry New
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FN-DSA; Falcon; SPHINCS+
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2022, 2025, 2026
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -3318,7 +3318,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: ANSSI update on migration to post-quantum cryptography, detailing algorithm recommendations, hybridization techniques, and an accelerated timeline for French security visas.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber, ML-KEM, CRYSTALS-Dilithium, Falcon, SPHINCS+, XMSS, FrodoKEM
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; ML-KEM; CRYSTALS-Dilithium; Falcon; SPHINCS+; XMSS; FrodoKEM
 - **Quantum Threats Addressed**: Potential quantum computer impact on current digital infrastructures; Harvest Now Decrypt Later implied by confidentiality protection beyond 2030
 - **Migration Timeline Info**: First French security visas for hybrid PQC products expected 2024-2025; protection required for products used beyond 2030
 - **Applicable Regions / Bodies**: Regions: France; Bodies: ANSSI, NIST, French Government
@@ -4074,7 +4074,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-01-31
 - **Document Status**: Technical Guideline
 - **Main Topic**: BSI Technical Guideline TR-02102-1 providing recommendations for cryptographic mechanisms, key lengths, and migration to post-quantum cryptography including hybridization strategies.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, XMSS, LMS, FrodoKEM, Classic McEliece, HQC
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS; FrodoKEM; Classic McEliece; HQC
 - **Quantum Threats Addressed**: Quantum-safe cryptography requirements; Harvest Now Decrypt Later (implied by migration periods and discontinuation of classic mechanisms)
 - **Migration Timeline Info**: Discontinuation of DSA recommendation from 2029; transitional extension of RSA 2000+ bits conformance to end of 2023; inclusion of migration periods for PQ cryptography
 - **Applicable Regions / Bodies**: Regions: Germany; Bodies: Federal Office for Information Security (BSI)
@@ -4128,7 +4128,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-01-31
 - **Document Status**: Technical Guideline
 - **Main Topic**: BSI Technical Guideline TR-02102-2 providing recommendations for TLS versions, cipher suites, and key lengths, including migration timelines for quantum-safe mechanisms.
-- **PQC Algorithms Covered**: ML-KEM, hybrid key exchange (ML-KEM + X25519/P-256)
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: Ongoing development of sufficiently large quantum computers
 - **Migration Timeline Info**: Sole use of classic key agreement mechanisms recommended only until end of 2031; TLS 1.2 recommendations discontinued from end of 2031
 - **Applicable Regions / Bodies**: Germany; Federal Office for Information Security
@@ -4668,7 +4668,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-06-01
 - **Document Status**: Published
 - **Main Topic**: Cryptanalysis demonstrating that software vulnerabilities in ML-DSA implementations can be exploited to forge signatures in seconds, with quantified risk comparisons between solo and hybrid deployments.
-- **PQC Algorithms Covered**: ML-DSA, Dilithium, ML-KEM
+- **PQC Algorithms Covered**: ML-DSA; Dilithium; ML-KEM
 - **Quantum Threats Addressed**: Quantum attacks on ECC; quantum timelines
 - **Migration Timeline Info**: Estimates of breakable keys for years 2027 through 2039; discussion of deployment urgency and "panic" to upgrade
 - **Applicable Regions / Bodies**: Regions: USA; Taiwan; Bodies: NIST; Academia Sinica; University of Illinois at Chicago
@@ -6720,7 +6720,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2021-02-08
 - **Document Status**: Final
 - **Main Topic**: Official algorithm specification for CRYSTALS-Dilithium covering lattice-based digital signature schemes with EUF-CMA security and parameter sets Dilithium2/3/5.
-- **PQC Algorithms Covered**: CRYSTALS-Dilithium, ML-DSA
+- **PQC Algorithms Covered**: CRYSTALS-Dilithium; ML-DSA
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: Years mentioned: 2021
 - **Applicable Regions / Bodies**: Regions: United States, Germany, France, Bodies: NIST
@@ -7098,7 +7098,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-05-20
 - **Document Status**: Published
 - **Main Topic**: Czech NUKIB publishes minimum requirements for cryptographic algorithms including PQC readiness guidance and a 2027 migration deadline.
-- **PQC Algorithms Covered**: ML-KEM-1024, ML-KEM-768, Kyber-1024, Kyber-768, FrodoKEM-1344, FrodoKEM-976, mceliece8192128, mceliece6688128, mceliece460896, mceliece8192128f, mceliece6688128f, mceliece460896f, LMS, XMSS, ML-DSA-87, ML-DSA-65, SLH-DSA, SPHINCS+, Falcon
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-KEM-768; Kyber-1024; Kyber-768; FrodoKEM-1344; FrodoKEM-976; Classic-McEliece-8192128; Classic-McEliece-6688128; Classic-McEliece-460896; LMS; XMSS; ML-DSA-87; ML-DSA-65; SLH-DSA; SPHINCS+; Falcon
 - **Quantum Threats Addressed**: Quantum vulnerability of classical asymmetric algorithms; quantum algorithms targeting cryptography
 - **Migration Timeline Info**: 2027 deadline for key establishment migration
 - **Applicable Regions / Bodies**: Regions: Czech Republic; Bodies: National Cyber and Information Security Agency (NÚKIB)
@@ -7422,7 +7422,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2020-02-01
 - **Document Status**: Competition Results
 - **Main Topic**: Announcement of the winners of the Chinese Academy of Cryptologic Research (CACR) national post-quantum cryptography competition, identifying Aigi-sig, LAC.PKE, and Aigis-enc as the selected lattice-based algorithms.
-- **PQC Algorithms Covered**: Aigi-sig; LAC.PKE; Aigis-enc
+- **PQC Algorithms Covered**: Aigis-sig-L1; LAC.PKE; Aigis-enc
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: Regions: China; Bodies: CACR
@@ -7530,7 +7530,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-05-30
 - **Document Status**: Published
 - **Main Topic**: Circle's three-phase post-quantum security roadmap for securing the Arc blockchain, USDC smart contracts, and digital assets against quantum threats.
-- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, X-Wing
+- **PQC Algorithms Covered**: ML-KEM; SLH-DSA; X-Wing
 - **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later, Shor's Algorithm, Grover's Algorithm, at-rest forgery, retroactive privacy loss, consensus disruption, history rewrite, P2P session compromise, RPC interception, on-spend
 - **Migration Timeline Info**: Three-phase strategy: Readiness phase (assessing risk, SLH-DSA precompile, hybrid KEM); Transition phase (dual mode, hybrid signatures); Final phase (fully post-quantum switchover); 5-10 year window for regulatory guidance
 - **Applicable Regions / Bodies**: None detected
@@ -7854,7 +7854,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-30
 - **Document Status**: Released
 - **Main Topic**: Cloudflare's accelerated post-quantum roadmap targeting full PQ security including authentication by 2029, driven by recent quantum computing breakthroughs.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: Harvest-now/decrypt-later attacks; Q-Day; quantum-forged keys; downgrade attacks
 - **Migration Timeline Info**: 2029 target for full post-quantum secure infrastructure; 2022 enabled post-quantum encryption for all websites and APIs; 2019 began preparing post-quantum migration
 - **Applicable Regions / Bodies**: None detected
@@ -8286,7 +8286,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-02-24
 - **Document Status**: Published
 - **Main Topic**: The CycloneDX Cryptography Registry v1.7 provides a machine-readable naming standard for cryptographic algorithm families and elliptic curves to ensure consistent identification in supply chain security.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, XMSS, LMS
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Inconsistent naming of classical and post-quantum algorithms across scanners, HSMs, protocols and libraries makes it impossible to reliably tell which systems are quantum-vulnerable at scale; the registry gives every tool a shared vocabulary to answer that question.
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: OWASP; CycloneDX project (ECMA-424 steward).
@@ -8448,7 +8448,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-02-01
 - **Document Status**: Published
 - **Main Topic**: NUKIB publishes minimum cryptographic algorithm requirements for Czech liable entities, including PQC migration guidance and a 2027 deadline for key establishment.
-- **PQC Algorithms Covered**: ML-KEM-1024; ML-KEM-768; Kyber-1024; Kyber-768; FrodoKEM-1344; FrodoKEM-976; mceliece8192128; mceliece6688128; mceliece460896; mceliece8192128f; mceliece6688128f; mceliece460896f; LMS; XMSS; ML-DSA-87; ML-DSA-65; SLH-DSA; SPHINCS+; Falcon
+- **PQC Algorithms Covered**: ML-KEM-1024; ML-KEM-768; Kyber-1024; Kyber-768; FrodoKEM-1344; FrodoKEM-976; Classic-McEliece-8192128; Classic-McEliece-6688128; Classic-McEliece-460896; LMS; XMSS; ML-DSA-87; ML-DSA-65; SLH-DSA; SPHINCS+; Falcon
 - **Quantum Threats Addressed**: Quantum vulnerability of classical asymmetric algorithms; quantum algorithms targeting cryptography
 - **Migration Timeline Info**: 2027 deadline for key establishment migration
 - **Applicable Regions / Bodies**: Regions: Czech Republic; Bodies: National Cyber and Information Security Agency (NÚKIB)
@@ -10284,7 +10284,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-12-01
 - **Document Status**: Position Paper
 - **Main Topic**: Overview of PQC standardization, algorithm families, and mitigation proposals for European organizations.
-- **PQC Algorithms Covered**: code-based, isogeny-based, hash-based, lattice-based, multivariate-based
+- **PQC Algorithms Covered**: hash-based; lattice-based
 - **Quantum Threats Addressed**: quantum capable attacker
 - **Migration Timeline Info**: Years mentioned: 2021, 2022, 2023, 2024, 2025
 - **Applicable Regions / Bodies**: Regions: Europe; Bodies: ENISA, NIST
@@ -11526,7 +11526,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2016-06-01
 - **Document Status**: Published
 - **Main Topic**: Recommendations on business continuity planning and algorithm selection to address the impact of quantum computing on ICT security.
-- **PQC Algorithms Covered**: SPHINCS+, XMSS
+- **PQC Algorithms Covered**: SPHINCS+; XMSS
 - **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm; invalidation of RSA and ECC asymmetric cryptography; halving of symmetric cryptographic strength
 - **Migration Timeline Info**: Speculation that viable quantum computers may be built within the next 10 to 20 years
 - **Applicable Regions / Bodies**: European Union; ETSI Technical Committee Cyber Security (CYBER)
@@ -12768,7 +12768,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2023-05-01
 - **Document Status**: Published
 - **Main Topic**: Review of cryptographic security mechanisms in Intelligent Transport Systems (ITS) and Cooperative ITS regarding quantum computing vulnerability and migration recommendations.
-- **PQC Algorithms Covered**: Falcon, SPHINCS+
+- **PQC Algorithms Covered**: Falcon; SPHINCS+
 - **Quantum Threats Addressed**: Attack by a quantum computer; susceptibility to attack by a quantum computer
 - **Migration Timeline Info**: Years mentioned: 2022, 2023; Keywords: mandate
 - **Applicable Regions / Bodies**: Bodies: ETSI, IEEE, ITU-T, ISO, CEN
@@ -12876,7 +12876,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-10-01
 - **Document Status**: Published
 - **Main Topic**: The document provides practical guidance on deploying hybrid classical-plus-PQC schemes, addressing implementation considerations, key combiner design, protocol integration, and performance tradeoffs.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, Classic McEliece, XMSS, LMS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; Falcon; SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium; Classic McEliece; XMSS; LMS
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024; Keywords: deprecat
 - **Applicable Regions / Bodies**: France
@@ -13578,7 +13578,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-04-11
 - **Document Status**: Policy Recommendation
 - **Main Topic**: EU Commission Recommendation for a coordinated implementation roadmap for the transition to Post-Quantum Cryptology among Member States.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Target 2030 for critical systems
 - **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Commission
@@ -13956,7 +13956,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-04-01
 - **Document Status**: Certification Framework
 - **Main Topic**: Guidelines on agreed cryptographic mechanisms including PQC algorithms for EUCC certification of ICT products.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; HQC
 - **Quantum Threats Addressed**: CRQC, general quantum threats to certified products
 - **Migration Timeline Info**: Years mentioned: 2024, 2025
 - **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Cybersecurity Certification Group (ECCG), European Union Agency for Cybersecurity (ENISA)
@@ -15900,7 +15900,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: TECHNICAL REPORT Migration to POST QUANTUM CRYPTOGRAPHY TEC 910018:2025 ISO 9001:2015 TELECOMMUNICATION ENGINEERING CENTRE DEPARTMENT OF TELECOMMUNICATIONS MINISTRY OF COMMUNICATIONS GOVERNMENT OF INDIA RELEASE 1.0 TEC 910018:2025 JANUARY 2025 Teleco
-- **PQC Algorithms Covered**: SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025; Keywords: required by
 - **Applicable Regions / Bodies**: Regions: United States, India, Bodies: NIST
@@ -16602,7 +16602,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-10-01
 - **Document Status**: Permanent Reference Document
 - **Main Topic**: Guidelines for integrating Post-Quantum Cryptography into telecom use cases, including TLS, IKE, and 5G infrastructure.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Store now, decrypt later; attacks using classic and/or cryptographically relevant quantum computers
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -16656,7 +16656,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-10-01
 - **Document Status**: Permanent Reference Document
 - **Main Topic**: Guidelines for integrating Post-Quantum Cryptography into telecom use cases including TLS, IKE, and 5G infrastructure.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FrodoKEM, Classic McEliece, BIKE, HQC, XMSS, LMS, Falcon
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FrodoKEM; Classic McEliece; BIKE; HQC; XMSS; LMS; Falcon
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024
 - **Applicable Regions / Bodies**: GSM Association
@@ -16926,7 +16926,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-03-02
 - **Document Status**: Published
 - **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
-- **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
+- **PQC Algorithms Covered**: ML-KEM; Classic McEliece; FrodoKEM; AIMer; HAETAE; SMAUG-T; NTRU+
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
 - **Applicable Regions / Bodies**: Australia, Canada, China, Czech Republic, European Union, France, Germany, Israel, Italy, Japan, Netherlands, New Zealand, Singapore, South Korea, Spain, United Kingdom, United States
@@ -17790,7 +17790,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-08-22
 - **Document Status**: NIST Round 4 Selection
 - **Main Topic**: Specification and design evolution of the Hamming Quasi-Cyclic (HQC) code-based Key Encapsulation Mechanism selected as a backup to ML-KEM.
-- **PQC Algorithms Covered**: HQC, HQC-PKE, HQC-KEM, HQC-RMRS
+- **PQC Algorithms Covered**: HQC; HQC-PKE; HQC-KEM; HQC-RMRS
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Selected March 2025; Draft FIPS expected 2026; Final FIPS expected 2027
 - **Applicable Regions / Bodies**: Bodies: NIST
@@ -20328,7 +20328,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Skip to main content Datatracker Groups By area/parent Apps & Realtime General Internet Ops & Management Routing Security Web and Internet Transport IESG IAB IRTF IETF LLC RFC Editor Other Active AGs Active Areas Active Directorates Active IAB Worksh
-- **PQC Algorithms Covered**: ML-KEM, FIPS 203 (ML-KEM)
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2021, 2022, 2023, 2024, 2026
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
@@ -21030,7 +21030,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-03-28
 - **Document Status**: Published
 - **Main Topic**: Telecommunications Engineering Centre (TEC) India technical report on migrating to post-quantum cryptography.
-- **PQC Algorithms Covered**: SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025; Keywords: required by
 - **Applicable Regions / Bodies**: Regions: United States, India, Bodies: NIST
@@ -22110,7 +22110,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-02-04
 - **Document Status**: Published
 - **Main Topic**: India DST Task Force Report on the phased roadmap for migration to Post-Quantum Cryptography under the National Quantum Mission, including testing frameworks and strategic timelines.
-- **PQC Algorithms Covered**: ML-KEM, Dilithium
+- **PQC Algorithms Covered**: ML-KEM; Dilithium
 - **Quantum Threats Addressed**: Harvest Now, Decrypt Later (HNDL); Shor’s algorithm; large-scale, fault-tolerant quantum computers
 - **Migration Timeline Info**: CII foundations by 2027; high-priority systems by 2028; full CII by 31 December 2029; nationwide by 2033; vendors to provide CBOM after FY2026-2027
 - **Applicable Regions / Bodies**: Regions: India; Bodies: Department of Science and Technology (DST), National Quantum Mission (NQM), Centre for Development of Telematics (C-DOT), Telecommunication Engineering Centre (TEC), Data Security Council of India (DSCI), Bureau of Indian Standards (BIS), Standardisation Testing and Quality Certification (STQC), National Cyber Coordination Centre (NCCS)
@@ -22488,7 +22488,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-03-01
 - **Document Status**: Technical Report
 - **Main Topic**: Japanese government evaluation of PQC algorithms covering ML-KEM/DSA/SLH-DSA/FN-DSA/HQC with security analysis and migration guidance based on Mosca's inequality framework.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, FrodoKEM, Classic McEliece, BIKE, HQC, XMSS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; Falcon; SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium; FrodoKEM; Classic McEliece; BIKE; HQC; XMSS
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2029, 2030, 2031, 2033, 2035, 2039; Keywords: cnsa 2.0
 - **Applicable Regions / Bodies**: Regions: United States, France, Japan, South Korea, International, Bodies: NIST, ANSSI, NCSC, CRYPTREC
@@ -24486,7 +24486,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
 - **Main Topic**: Specification of the ML-DSA-MTL signature scheme for DNSSEC using ML-DSA-44 and Merkle Tree Ladders.
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -25026,7 +25026,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-06-29
 - **Document Status**: Final
 - **Main Topic**: Strategies and practices for achieving cryptographic agility to facilitate the transition to post-quantum cryptography and future algorithm updates.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, FIPS 204 (ML-DSA)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: cryptographically relevant quantum computers (CRQCs)
 - **Migration Timeline Info**: Milestones: continued to be used in many applications until it was finally disallowed in 2024 | security strength for the current public-key algorithms would be disallowed in 2031 to facilitate | ward compatibility. Some web browsers provide a 10 NIST CSWP 39 December 19, 2025 Considerations for Achieving Crypto...
 - **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, National Cybersecurity Center of Excellence (NCCoE)
@@ -25296,7 +25296,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2022-09-29
 - **Document Status**: Final
 - **Main Topic**: Status report on the third round of the NIST Post-Quantum Cryptography Standardization Process, selecting algorithms for standardization and advancing candidates to the fourth round.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber (ML-KEM), CRYSTALS-Dilithium (ML-DSA), FALCON (FN-DSA), SPHINCS+ (SLH-DSA), BIKE, Classic McEliece, HQC, SIKE, NTRU, Saber
+- **PQC Algorithms Covered**: CRYSTALS-Kyber (ML-KEM); CRYSTALS-Dilithium (ML-DSA); FALCON (FN-DSA); SPHINCS+ (SLH-DSA); BIKE; Classic McEliece; HQC; SIKE; NTRU; Saber
 - **Quantum Threats Addressed**: Quantum computers; Harvest Now Decrypt Later (implied by "protecting sensitive U.S. Government information well into the foreseeable future, including after the advent of quantum computers")
 - **Migration Timeline Info**: NIST hopes to publish the completed standard by 2024; NIST plans to host a 4th NIST PQC Standardization Conference in the winter of 2022
 - **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology (NIST); U.S. Department of Commerce; National Cybersecurity Center of Excellence
@@ -25674,7 +25674,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2023-12-01
 - **Document Status**: Preliminary Draft Practice Guide
 - **Main Topic**: Preliminary draft guidance on testing interoperability and performance of quantum-resistant cryptography technologies for enterprise migration.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber, CRYSTALS-Dilithium, Falcon, SPHINCS+, Stateful hash-based signatures (LMS/XMSS/HSS), FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon; SPHINCS+
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Public comment period: December 19, 2023 through February 20, 2024
 - **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; National Cybersecurity Center of Excellence
@@ -25728,7 +25728,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-01-01
 - **Document Status**: Web Resource
 - **Main Topic**: NIST FAQ addressing implementation details, standardization process, and migration guidance for FIPS 203/204/205 post-quantum cryptography standards.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, Kyber512, ML-KEM-512
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; Kyber512; ML-KEM-512
 - **Quantum Threats Addressed**: Shor’s algorithm, Grover’s algorithm
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: United States; NIST
@@ -27564,7 +27564,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-17
 - **Document Status**: Initial Public Draft
 - **Main Topic**: Guidance for generating cryptographic keys for use with approved algorithms. Rev. 3 integrates PQC key generation (ML-KEM, ML-DSA), introduces KEM-based symmetric key establishment, and expands seed-expansion methods via SHAKE and DRBGs. Aligns randomness guidance with SP 800-90C.
-- **PQC Algorithms Covered**: ML-KEM (FIPS 203), ML-DSA (FIPS 204); seed-based deterministic key generation using SHAKE-128/256 and SP 800-90A DRBGs
+- **PQC Algorithms Covered**: ML-KEM (FIPS 203); ML-DSA (FIPS 204); seed-based deterministic key generation using SHAKE-128/256 and SP 800-90A DRBGs
 - **Quantum Threats Addressed**: Harvest-now-decrypt-later (HNDL) risk mitigated by transitioning key generation to PQC algorithms; classical asymmetric key generation (RSA, ECDH) is quantum-vulnerable
 - **Migration Timeline Info**: Public comment period closes June 16, 2026; final publication expected late 2026; applicable to federal agencies under FISMA and OMB Circular A-130
 - **Applicable Regions / Bodies**: United States (federal); Global (advisory); NIST, U.S. Department of Commerce
@@ -29508,7 +29508,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2022-05-04
 - **Document Status**: Final
 - **Main Topic**: National Security Memorandum 10 directs U.S. federal agencies to inventory cryptographic systems and transition to quantum-resistant cryptography by 2035 while promoting leadership in quantum information science.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA (NIST PQC standards mandated)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (NIST PQC standards mandated)
 - **Quantum Threats Addressed**: cryptanalytically relevant quantum computer (CRQC)
 - **Migration Timeline Info**: Goal of mitigating quantum risk as much as feasible by 2035; first sets of standards expected by 2024; deprecation timeline proposed within 90 days of standard release with a goal to move systems off vulnerable cryptography within a decade.
 - **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology (NIST), National Security Agency (NSA), Cybersecurity and Infrastructure Security Agency (CISA), Office of Management and Budget (OMB), National Cyber Director, Office of Science and Technology Policy, Federal Civilian Executive Branch (FCEB) Agencies.
@@ -30156,7 +30156,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2022-11-18
 - **Document Status**: Final
 - **Main Topic**: OMB Memorandum M-23-02 directs federal agencies to conduct prioritized inventories of cryptographic systems vulnerable to cryptanalytically relevant quantum computers and outlines migration planning requirements.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA (referenced as NIST PQC standards)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA (referenced as NIST PQC standards)
 - **Quantum Threats Addressed**: Cryptanalytically relevant quantum computer (CRQC); Harvest Now Decrypt Later (encrypted data recorded now and later decrypted)
 - **Migration Timeline Info**: Designate lead within 30 days; submit first inventory by May 4, 2023; annual inventories until 2035; goal to mitigate quantum risk by 2035
 - **Applicable Regions / Bodies**: United States; Executive Departments and Agencies; Office of Management and Budget (OMB); Office of the National Cyber Director (ONCD); Department of Homeland Security Cybersecurity and Infrastructure Security Agency (CISA); National Security Agency (NSA); National Institute of Standards and Technology (NIST); FedRAMP Program Management Office (PMO)
@@ -31236,7 +31236,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-07-18
 - **Document Status**: Published
 - **Main Topic**: Proposal and performance analysis of a post-quantum SUCI protection scheme (Profile C) using ML-KEM (Kyber-512) for 5G subscriber identity encryption.
-- **PQC Algorithms Covered**: ML-KEM, CRYSTALS-Kyber, Kyber-512, Kyber-768, Kyber-1024, CRYSTALS-Dilithium, FALCON, SPHINCS+, SABER, NTRU
+- **PQC Algorithms Covered**: ML-KEM; CRYSTALS-Kyber; Kyber-512; Kyber-768; Kyber-1024; CRYSTALS-Dilithium; FALCON; SPHINCS+; SABER; NTRU
 - **Quantum Threats Addressed**: Shor's algorithm, quantum attacks on discrete-logarithm-based elliptic curve algorithms
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: Bodies: NIST, 3GPP
@@ -31506,7 +31506,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-01-01
 - **Document Status**: Published
 - **Main Topic**: Analysis of side-channel and fault-injection attacks on software implementations of ML-KEM and ML-DSA lattice-based algorithms.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, CRYSTALS-Kyber, CRYSTALS-Dilithium
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; CRYSTALS-Kyber; CRYSTALS-Dilithium
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -31938,7 +31938,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Internet-Draft (Working Group Document)
 - **Main Topic**: Best-practice recommendations for implementing quantum-ready TLS/DTLS 1.3 application profiles, including hybrid key exchange and composite certificates.
-- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; SLH-DSA; ML-DSA
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Harvest Now, Decrypt Later (HNDL)
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -32910,7 +32910,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Draft
 - **Main Topic**: Platform Back DigiCert ONE Platform PKI Certificate Lifecycle Management Code & Software Signing IoT & Connected Devices TrustCore SDK Document & eSignature DNS Solutions Public Trust TLS/SSL Certificates Private/Internal PKI DDoS Mitigation Service
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, FN-DSA, Falcon, FIPS 206 (FN-DSA)
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FN-DSA; Falcon
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025, 2026, 2027
 - **Applicable Regions / Bodies**: Regions: United States, European Union, Canada, Japan, South Korea, Bodies: NIST
@@ -32964,7 +32964,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-05-06
 - **Document Status**: Released
 - **Main Topic**: Overview of Post-Quantum Cryptography fundamentals, NIST standardization, algorithm selection, and the threat landscape including Harvest Now Decrypt Later and QKD limitations.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, CRYSTALS-Kyber, CRYSTALS-Dilithium, Sphincs+, FALCON, SIKE, Rainbow
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; CRYSTALS-Kyber; CRYSTALS-Dilithium; Sphincs+; FALCON; SIKE; Rainbow
 - **Quantum Threats Addressed**: Harvest now, decrypt later (HNDL); quantum computer attacks on asymmetric encryption; future quantum capabilities
 - **Migration Timeline Info**: NIST released first finalized standards in August 2024; quantum computer with sufficient power not expected for at least another decade
 - **Applicable Regions / Bodies**: United Kingdom; Bodies: NIST (National Institute of Standards and Technology), NCSC (National Cyber Security Centre), The Quantum Finance Boardroom
@@ -33126,7 +33126,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-27
 - **Document Status**: Released
 - **Main Topic**: Overview of quantum security threats, post-quantum cryptography solutions, and the global race to migrate infrastructure to quantum-safe encryption.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA
 - **Quantum Threats Addressed**: Harvest Now Decrypt Later, Shor's Algorithm, Grover's Algorithm
 - **Migration Timeline Info**: Cryptographic transitions historically take 10-20 years; NSA mandates quantum-resistant algorithms by 2035; Cloudflare and Google target full migration by 2029
 - **Applicable Regions / Bodies**: Regions: United States, China, European Union, South Korea, Japan, Singapore; Bodies: NIST, NSA, CISA, ETSI, Federal Reserve
@@ -33288,7 +33288,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-14
 - **Document Status**: Released
 - **Main Topic**: CryptoNext Security becomes the first EU company to achieve full NIST quantum-safe certification for ML-KEM, ML-DSA, and SLH-DSA implementations integrated into ProvenRun’s ProvenHSM.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, CRYSTALS-Kyber, CRYSTALS-Dilithium, Falcon
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; CRYSTALS-Kyber; CRYSTALS-Dilithium; Falcon
 - **Quantum Threats Addressed**: future quantum computer attacks; quantum-enabled attacks
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: Regions: European Union; Bodies: National Institute of Standards and Technology (NIST)
@@ -38310,7 +38310,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-06-01
 - **Document Status**: Proposed Standard
 - **Main Topic**: Defines algorithm identifiers and ASN.1 encoding formats for HSS, XMSS, and XMSS MT stateful hash-based signature schemes in X.509 PKI.
-- **PQC Algorithms Covered**: HSS, XMSS, XMSS MT
+- **PQC Algorithms Covered**: HSS; XMSS; XMSS MT
 - **Quantum Threats Addressed**: quantum computers
 - **Migration Timeline Info**: Years mentioned: 2021, 2024, 2025
 - **Applicable Regions / Bodies**: Regions: France, International, Bodies: ANSSI
@@ -38472,7 +38472,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-07-19
 - **Document Status**: Proposed Standard
 - **Main Topic**: Specifies conventions for using the SLH-DSA stateless hash-based signature algorithm with the Cryptographic Message Syntax (CMS).
-- **PQC Algorithms Covered**: SLH-DSA, LMS, XMSS
+- **PQC Algorithms Covered**: SLH-DSA; LMS; XMSS
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers (CRQCs)
 - **Migration Timeline Info**: Years mentioned: 2025
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
@@ -42414,7 +42414,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Unverified — needs review
 - **Main Topic**: An informational guide for engineers on the threat of cryptographically relevant quantum computers and the transition to post-quantum cryptography algorithms.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Shor's algorithm; Grover's algorithm; Quantum Side-Channel Attacks
 - **Migration Timeline Info**: Migration time "y" is likely measured in years for moderately sized organizations; immediate transition needed for long-lived sensitive data
 - **Applicable Regions / Bodies**: United States; National Security Agency (NSA); German Federal Office for Information Security (BSI); National Institute of Standards and Technology (NIST)
@@ -43224,7 +43224,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-02-20
 - **Document Status**: Published
 - **Main Topic**: Advisory outlining cybersecurity risks from quantum computing and mitigating measures for financial institutions.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, hybrid algorithms
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Cybersecurity risks arising from developments in quantum computing
 - **Migration Timeline Info**: Years mentioned: 2022
 - **Applicable Regions / Bodies**: Regions: Singapore; Bodies: Monetary Authority of Singapore
@@ -43278,7 +43278,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-10-23
 - **Document Status**: Draft/Consultation
 - **Main Topic**: A draft handbook providing a four-pillar framework for Critical Information Infrastructure owners to prepare for quantum-safe migration.
-- **PQC Algorithms Covered**: SLH-DSA, XMSS, LMS
+- **PQC Algorithms Covered**: SLH-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Cryptanalytically Relevant Quantum Computer (CRQC), Shor's algorithm, Grover's algorithm, Q-day
 - **Migration Timeline Info**: Expert estimates place the horizon for Q-day within the next 5-10 years; migration is a multi-year endeavour executed in phases.
 - **Applicable Regions / Bodies**: Regions: Singapore; Bodies: CSA, GovTech, IMDA
@@ -43926,7 +43926,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-05-04
 - **Document Status**: Preprint
 - **Main Topic**: Monte Carlo simulation study of PQC signature migration in Australian real-time payment infrastructure (NPP, RITS, SWIFT) assessing SLA compliance, queue saturation, and HNDL risk.
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, SPHINCS+, Falcon, ML-KEM
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; SPHINCS+; Falcon; ML-KEM
 - **Quantum Threats Addressed**: Harvest Now, Decrypt Later (HNDL), Cryptographically Relevant Quantum Computers (CRQC), Shor's Algorithm, Grover's Algorithm
 - **Migration Timeline Info**: CRQCs projected 2030–2035; Migration costs peak 2026, decline by 2028; SLA compliance holds through 2029
 - **Applicable Regions / Bodies**: Regions: Australia; Bodies: Reserve Bank of Australia (RBA), Australian Prudential Regulation Authority (APRA)
@@ -44358,7 +44358,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-08-13
 - **Document Status**: Published
 - **Main Topic**: Normative registry of signing algorithms for Sigstore clients and services, including ECDSA, RSA, Ed25519, and ML-DSA variants.
-- **PQC Algorithms Covered**: ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -44466,7 +44466,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-10-23
 - **Document Status**: Guidance
 - **Main Topic**: Singapore guidance for organizations preparing for PQC transition, including a Quantum-Safe Handbook and Quantum Readiness Index.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, hybrid algorithms
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Quantum Computer
 - **Migration Timeline Info**: Years mentioned: 2025, 2026
 - **Applicable Regions / Bodies**: Regions: Singapore; Bodies: None detected
@@ -44574,7 +44574,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Helius Docs Sign In Open main menu Products Solutions Resources Blog Pricing Stake 6.35 % Docs Sign In Blog / Research What Would Solana Need to Change to Become Quantum Ready?
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Dilithium
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FN-DSA; Falcon; SPHINCS+; CRYSTALS-Dilithium
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025, 2026
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -44736,7 +44736,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Sui.io Home About Contribute an Article Cryptography Securing Sui in the Quantum Computing Era Although quantum computing threatens the cryptographic security of blockchains, builders can take measures now to secure their Sui apps.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; Falcon; SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium
 - **Quantum Threats Addressed**: Shor's Algorithm, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Milestones: ST) has mandated the transition to quantum-resistant cryptographic standards by 2035, deprecating classical algorithm... | -resistant cryptographic standards by 2035, deprecating classical algorithms by 2030
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -45330,7 +45330,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-01-01
 - **Document Status**: Active
 - **Main Topic**: TNO (Netherlands Organisation for Applied Scientific Research) whitepaper on practical migration strategies to post-quantum cryptography.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, BIKE, HQC, XMSS, LMS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), SP 800-208 (LMS/XMSS)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; Falcon; SPHINCS+; CRYSTALS-Kyber; CRYSTALS-Dilithium; BIKE; HQC; XMSS; LMS
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Harvest Now Decrypt Later (HNDL), HNDL, Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Milestones: ely, the goal is for all applications to adhere to CNSA Suite 2.0 by default by 2033. In terms of security, the manda...
 - **Applicable Regions / Bodies**: Regions: United States, United Kingdom, Germany, France, Canada, South Korea, Singapore, International, Bodies: NIST, NSA, BSI, ANSSI, NCSC
@@ -45546,7 +45546,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Published
 - **Main Topic**: Real-world scale testing reveals the significant performance degradation and infrastructure costs of migrating to Post-Quantum Cryptography, emphasizing the need for early measurement and planning.
-- **PQC Algorithms Covered**: ML-KEM-768, Kyber
+- **PQC Algorithms Covered**: ML-KEM-768; Kyber
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -45816,7 +45816,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-04-01
 - **Document Status**: Published
 - **Main Topic**: UK Cross Market Operational Resilience Group (CMORG) publishes PQC guidance for UK financial sector.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Grover's Algorithm, Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2020, 2023, 2024, 2025
 - **Applicable Regions / Bodies**: Regions: United States, European Union, United Kingdom, Germany, France, International, Bodies: NIST, CISA, ANSSI, NCSC
@@ -45924,7 +45924,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-05-01
 - **Document Status**: Published
 - **Main Topic**: UK NCSC guidance on three-phase PQC migration timelines and activities for UK industry, government, and critical national infrastructure.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, XMSS, LMS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), SP 800-208 (LMS/XMSS)
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Harvest Now Decrypt Later; threat from future large-scale, fault-tolerant quantum computers
 - **Migration Timeline Info**: By 2028: Define migration goals, carry out discovery, build initial plan; By 2031: Carry out early, highest-priority PQC migration activities; By 2035: Complete migration to PQC of all systems
 - **Applicable Regions / Bodies**: Regions: United Kingdom; Bodies: NCSC
@@ -47490,7 +47490,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-03-18
 - **Document Status**: Active
 - **Main Topic**: Academic survey on post-quantum cryptography covering lattice-based, code-based, multivariate, and hash-based schemes with analysis of quantum threats to classical cryptography.
-- **PQC Algorithms Covered**: CRYSTALS-DILITHIUM, FALCON, Classic McEliece, BIKE, HQC, Rainbow, SIKE, SPHINCS+, PICNIC, CRYSTALS-Kyber
+- **PQC Algorithms Covered**: CRYSTALS-DILITHIUM; FALCON; Classic McEliece; BIKE; HQC; Rainbow; SIKE; SPHINCS+; PICNIC; CRYSTALS-Kyber
 - **Quantum Threats Addressed**: Shor's algorithm; quantum computing threats to RSA and ECC
 - **Migration Timeline Info**: Years mentioned: 2020, 2021, 2023
 - **Applicable Regions / Bodies**: Regions: United States, European Union, India, International, Bodies: NIST
@@ -47598,7 +47598,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-07-30
 - **Document Status**: Published
 - **Main Topic**: Analysis of quantum threats to nuclear power plant I&C systems and a defense-in-depth PQC migration framework.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HQC, FN-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; HQC; FN-DSA
 - **Quantum Threats Addressed**: CRQC, Harvest-Now Decrypt-Later, Shor's Algorithm, Grover's Algorithm
 - **Migration Timeline Info**: CRQC expected within 10-15 years; nuclear asset lifecycles 60-80 years
 - **Applicable Regions / Bodies**: None detected
@@ -47760,7 +47760,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-30
 - **Document Status**: Published
 - **Main Topic**: A survey examining the post-quantum migration status, cryptographic foundations, and quantum risks across nine widely deployed protocols including TLS, IPsec, BGP, DNSSEC, SSH, QUIC, OpenID Connect, OpenVPN, and Signal Protocol.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HQC, CRYSTALS-Kyber, NTRU, SABER, CRYSTALS-Dilithium, Classic McEliece, Rainbow, GeMSS, SIKE, PICNIC, FALCON, FN-DSA, XMSS, SPHINCS+, BIKE
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; HQC; CRYSTALS-Kyber; NTRU; SABER; CRYSTALS-Dilithium; Classic McEliece; Rainbow; GeMSS; SIKE; PICNIC; FALCON; FN-DSA; XMSS; SPHINCS+; BIKE
 - **Quantum Threats Addressed**: Shor's algorithm; harvest-now, decrypt-later threat; integer factorisation; discrete logarithm problems
 - **Migration Timeline Info**: NIST draft standards released in 2023; FIPS 203, 204, 205 published August 2024; HQC draft standard expected 2026 and finalisation by 2027; deprecate quantum-vulnerable algorithms by 2030; fully retire them by 2035
 - **Applicable Regions / Bodies**: None detected
@@ -48030,7 +48030,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2023-10-01
 - **Document Status**: Internet Draft
 - **Main Topic**: Proposes a Key Encapsulation Mechanism (KEM)-based authentication mechanism for TLS 1.3 that replaces certificate-based signature authentication with KEM-based authentication using ML-KEM.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, Falcon
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; Falcon
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -48084,7 +48084,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-05-04
 - **Document Status**: Draft (Individual Submission, Informational)
 - **Main Topic**: A construction for KEM-based authentication in TLS 1.3 that replaces classical signature-based authentication with key exchange protocols using long-term KEM public keys.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, Falcon
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; Falcon
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -48354,7 +48354,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-05-01
 - **Document Status**: Published
 - **Main Topic**: This document specifies JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) serializations for the Module-Lattice-Based Digital Signature Standard (ML-DSA).
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2022, 2024, 2025, 2026; Keywords: disallow
 - **Applicable Regions / Bodies**: United States; NIST
@@ -48408,7 +48408,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-28
 - **Document Status**: Active
 - **Main Topic**: This document specifies JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) serializations for the ML-DSA post-quantum digital signature scheme.
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -48840,7 +48840,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-09-29
 - **Document Status**: Internet-Draft
 - **Main Topic**: Specification of ML-KEM integration into IKEv2 for quantum-resistant key establishment in VPN and IPsec tunnels.
-- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **PQC Algorithms Covered**: ML-KEM; ML-KEM-512; ML-KEM-768; ML-KEM-1024
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); harvest-now-decrypt-later attack
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
@@ -49056,7 +49056,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2024-07-01
 - **Document Status**: Internet Draft
 - **Main Topic**: Specifies a generic mechanism for integrating post-quantum cryptographic digital signature algorithms, specifically ML-DSA and SLH-DSA, into the IKEv2 protocol for authentication.
-- **PQC Algorithms Covered**: ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC)
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -49704,7 +49704,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-01
 - **Document Status**: Published (RFC 9936)
 - **Main Topic**: Specification of conventions for using ML-KEM with the Cryptographic Message Syntax (CMS) via the KEMRecipientInfo structure defined in RFC 9629.
-- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **PQC Algorithms Covered**: ML-KEM; ML-KEM-512; ML-KEM-768; ML-KEM-1024
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025, 2026
 - **Applicable Regions / Bodies**: United States; NIST
@@ -50622,7 +50622,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-18
 - **Document Status**: Draft (WG Last Call)
 - **Main Topic**: Registers post-quantum and hybrid cipher suites for the Messaging Layer Security (MLS) protocol using ML-KEM and ML-DSA.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: Harvest now, decrypt later
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -50676,7 +50676,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-07-01
 - **Document Status**: Internet-Draft
 - **Main Topic**: Defines PQ/T composite schemes for OpenPGP combining ML-KEM and ML-DSA with ECDH and ECDSA using NIST and Brainpool elliptic curve domain parameters.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: Cryptographically relevant quantum computer
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: Regions: Germany; Bodies: IETF, BSI, MTG AG, NIST
@@ -50784,7 +50784,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-11-13
 - **Document Status**: Internet-Draft
 - **Main Topic**: This document defines a post-quantum public key algorithm extension for the OpenPGP protocol, establishing composite encryption and signature schemes to ensure long-term security against quantum computers.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: cryptographically relevant quantum computer (CRQC)
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -50838,7 +50838,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-01-06
 - **Document Status**: Internet-Draft
 - **Main Topic**: This document defines a post-quantum public key algorithm extension for the OpenPGP protocol, specifying composite and standalone schemes for encryption and signatures.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: cryptographically relevant quantum computer (CRQC)
 - **Migration Timeline Info**: Expires 17 July 2026
 - **Applicable Regions / Bodies**: None detected
@@ -51378,7 +51378,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-08-26
 - **Document Status**: Internet-Draft (RFC Editor Queue)
 - **Main Topic**: Practical guidance for engineers on implementing post-quantum cryptography algorithms and protocols, including threat landscape, algorithm selection, and transition challenges.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Shor's algorithm; Grover's algorithm; Quantum Side-Channel Attacks
 - **Migration Timeline Info**: Years mentioned: 2023, 2025, 2026
 - **Applicable Regions / Bodies**: United States; National Security Agency (NSA); German Federal Office for Information Security (BSI); National Institute of Standards and Technology (NIST)
@@ -51486,7 +51486,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-06-13
 - **Document Status**: Active
 - **Main Topic**: This document defines terminology for post-quantum traditional hybrid schemes to ensure consistency and clarity across different protocols, standards, and organizations.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
 - **Quantum Threats Addressed**: Shor's Algorithm, Cryptographically Relevant Quantum Computer (CRQC)
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -51756,7 +51756,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: Not specified
 - **Document Status**: Active
 - **Main Topic**: This document proposes a Key Encapsulation Mechanism (KEM)-based authentication mechanism for TLS 1.3, replacing digital signatures with KEM operations for peer authentication.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, FALCON
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FALCON
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -52188,7 +52188,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-01-01
 - **Document Status**: Internet-Draft
 - **Main Topic**: Specifies the integration of ML-DSA signature algorithms for authentication in TLS 1.3 via signature_algorithms and signature_algorithms_cert extensions.
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -52242,7 +52242,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-09-26
 - **Document Status**: Internet-Draft
 - **Main Topic**: Specifies the integration of ML-DSA signature algorithms for authentication in TLS 1.3 via signature_algorithms and signature_algorithms_cert extensions.
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -52296,7 +52296,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-25
 - **Document Status**: Internet-Draft
 - **Main Topic**: This memo specifies how the post-quantum signature scheme ML-DSA (FIPS 204) is used for authentication in TLS 1.3 via signature_algorithms and signature_algorithms_cert extensions.
-- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **PQC Algorithms Covered**: ML-DSA; ML-DSA-44; ML-DSA-65; ML-DSA-87
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
@@ -52458,7 +52458,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-07-22
 - **Document Status**: Internet-Draft
 - **Main Topic**: Defines standalone ML-KEM key agreement for TLS 1.3 by registering ML-KEM-512, ML-KEM-768, and ML-KEM-1024 as NamedGroups.
-- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **PQC Algorithms Covered**: ML-KEM; ML-KEM-512; ML-KEM-768; ML-KEM-1024
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -52782,7 +52782,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-02-24
 - **Document Status**: Internet-Draft
 - **Main Topic**: Best practices and recommendations for implementing quantum-ready usage profiles in TLS-based applications, including hybrid key exchange and authentication strategies.
-- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; SLH-DSA; ML-DSA
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Harvest Now, Decrypt Later (HNDL) attacks; impersonation attacks
 - **Migration Timeline Info**: Immediate action required for data confidentiality due to HNDL risks; forward-thinking planning required for authentication systems
 - **Applicable Regions / Bodies**: None detected
@@ -52836,7 +52836,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-25
 - **Document Status**: Internet-Draft
 - **Main Topic**: Best practices and recommendations for implementing quantum-ready usage profiles in TLS-based applications, including hybrid key exchange and authentication strategies.
-- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, ML-DSA
+- **PQC Algorithms Covered**: ML-KEM; SLH-DSA; ML-DSA
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC); Harvest Now, Decrypt Later (HNDL)
 - **Migration Timeline Info**: Immediate action required for data confidentiality due to HNDL risks; forward-thinking planning required for authentication
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
@@ -53052,7 +53052,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2025-07-20
 - **Document Status**: Internet-Draft (Expired 2026-01-21; check IETF Datatracker for latest revision)
 - **Main Topic**: Guidance on migration to post-quantum cryptography in internet protocols, outlining challenges and considerations for protocol designers and implementers.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: quantum computer attacks
 - **Migration Timeline Info**: Years mentioned: 2025, 2026
 - **Applicable Regions / Bodies**: Regions: International
@@ -53268,7 +53268,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-22
 - **Document Status**: IETF Draft
 - **Main Topic**: Specifies the use of Post-Quantum and Hybrid KEMs within HPKE for JOSE and COSE, defining algorithm identifiers and key formats.
-- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **PQC Algorithms Covered**: ML-KEM; ML-KEM-512; ML-KEM-768; ML-KEM-1024
 - **Quantum Threats Addressed**: Quantum cryptanalysis
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -53700,7 +53700,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-17
 - **Document Status**: Draft (Individual Submission)
 - **Main Topic**: A strategy for deploying post-quantum cryptography in DNSSEC using a dual-algorithm approach with conservative and low-impact options.
-- **PQC Algorithms Covered**: SLH-DSA, Falcon, XMSS, LMS, ML-DSA, SQIsign, MAYO, SNOVA
+- **PQC Algorithms Covered**: SLH-DSA; Falcon; XMSS; LMS; ML-DSA; SQIsign; MAYO; SNOVA
 - **Quantum Threats Addressed**: trust now/forge later
 - **Migration Timeline Info**: Large system operators encourage full migration to PQC in the next four years
 - **Applicable Regions / Bodies**: None detected
@@ -53754,7 +53754,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-04-19
 - **Document Status**: Internet-Draft (Individual Submission)
 - **Main Topic**: Defines new EDHOC cipher suites incorporating ML-KEM and ML-DSA for quantum-resistant key establishment in constrained IoT environments.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, FN-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FN-DSA
 - **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC)
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -53970,7 +53970,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-02
 - **Document Status**: Internet-Draft
 - **Main Topic**: Specifies a KEM-based authentication mechanism for IKEv2 as a more efficient alternative to post-quantum signature algorithms like ML-DSA.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Cryptographically-relevant quantum computers (CRQC); harvest-now-and-decrypt-later (HNDL) attack
 - **Migration Timeline Info**: None detected
 - **Applicable Regions / Bodies**: None detected
@@ -54024,7 +54024,7 @@ enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 - **Last Updated**: 2026-03-25
 - **Document Status**: Internet-Draft
 - **Main Topic**: Specifies a KEM-based authentication mechanism for IKEv2 as a more efficient alternative to post-quantum signature algorithms like ML-DSA.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
 - **Quantum Threats Addressed**: Cryptographically-relevant quantum computers (CRQC); harvest-now-and-decrypt-later (HNDL) attack
 - **Migration Timeline Info**: Years mentioned: 2024, 2026
 - **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST

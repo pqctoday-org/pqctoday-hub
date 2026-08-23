@@ -27,7 +27,7 @@ describe('PQCCandidates render parity', () => {
     ).toBeInTheDocument()
     // in-page description differs from the catalog description (the override slot)
     expect(screen.getByText(/How NIST evaluates new post-quantum mechanisms/)).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -36,7 +36,7 @@ describe('PQCCandidates render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

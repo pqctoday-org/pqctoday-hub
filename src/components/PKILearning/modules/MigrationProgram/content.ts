@@ -10,13 +10,13 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.0',
-  lastReviewed: '2026-04-12',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
     getStandard('EO-14306'),
-    getStandard('G7-CEG-Financial-PQC-2026'),
+    getStandard('G7-Financial-PQC-Roadmap-2026'),
     getStandard('ANSSI-PQC-FAQ-2025'),
   ],
 

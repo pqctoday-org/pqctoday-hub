@@ -131,7 +131,7 @@ test.describe('Simulation — Verification & Closure is played (PR-3)', () => {
       page.getByText(/Set the Verification Standard & Closure Plan/i).first()
     ).toBeVisible({ timeout: 15_000 })
     await page
-      .getByRole('button', { name: /^Progress$/i })
+      .getByRole('tab', { name: /^Progress$/i })
       .first()
       .click()
     await expect(

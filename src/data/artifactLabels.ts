@@ -46,6 +46,8 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'program-charter': 'Program Charter',
   'initial-scoping': 'Initial Scoping Assessment',
   'skills-team-plan': 'Skills & Team Plan',
+  'crypto-champion-roster': 'Crypto Champion Roster',
+  'team-sizing-plan': 'Team Sizing Plan',
   'infra-modernization-plan': 'Infrastructure Modernization Plan',
   'refresh-cycle-alignment': 'Refresh-Cycle Alignment',
   'accelerated-execution-profile': 'Accelerated Execution Profile',

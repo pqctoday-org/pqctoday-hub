@@ -25,7 +25,7 @@ describe('SocImplementationPqc render parity', () => {
     expect(screen.getByRole('heading', { name: 'SOC Implementation for PQC' })).toBeInTheDocument()
     // in-page description differs from the catalog description (the override slot)
     expect(screen.getByText(/Build the SOC.s quantum security capability/)).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -34,7 +34,7 @@ describe('SocImplementationPqc render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

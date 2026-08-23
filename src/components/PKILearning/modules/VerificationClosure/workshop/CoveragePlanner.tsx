@@ -80,34 +80,38 @@ export function CoveragePlanner() {
         <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
           <Calculator size={15} className="text-primary" /> Verification plan
         </div>
-        <table className="w-full text-sm">
-          <tbody>
-            <tr className="border-b border-border/50">
-              <td className="py-1 text-foreground">Tier-1 — verify 100%</td>
-              <td className="py-1 text-right font-mono text-foreground">{v1.toLocaleString()}</td>
-              <td className="py-1 text-right text-xs text-muted-foreground">handshake evidence</td>
-            </tr>
-            <tr className="border-b border-border/50">
-              <td className="py-1 text-foreground">Tier-2 — {sample}% sample</td>
-              <td className="py-1 text-right font-mono text-foreground">{v2.toLocaleString()}</td>
-              <td className="py-1 text-right text-xs text-muted-foreground">sampled scan</td>
-            </tr>
-            <tr className="border-b border-border/50">
-              <td className="py-1 text-foreground">Tier-3 — {sample}% sample</td>
-              <td className="py-1 text-right font-mono text-foreground">{v3.toLocaleString()}</td>
-              <td className="py-1 text-right text-xs text-muted-foreground">drift monitoring</td>
-            </tr>
-            <tr>
-              <td className="py-1 font-semibold text-foreground">Total verifications</td>
-              <td className="py-1 text-right font-mono font-semibold text-primary">
-                {total.toLocaleString()}
-              </td>
-              <td className="py-1 text-right text-xs text-muted-foreground">
-                {pct}% of {estate.toLocaleString()}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <tbody>
+              <tr className="border-b border-border/50">
+                <td className="py-1 text-foreground">Tier-1 — verify 100%</td>
+                <td className="py-1 text-right font-mono text-foreground">{v1.toLocaleString()}</td>
+                <td className="py-1 text-right text-xs text-muted-foreground">
+                  handshake evidence
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="py-1 text-foreground">Tier-2 — {sample}% sample</td>
+                <td className="py-1 text-right font-mono text-foreground">{v2.toLocaleString()}</td>
+                <td className="py-1 text-right text-xs text-muted-foreground">sampled scan</td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="py-1 text-foreground">Tier-3 — {sample}% sample</td>
+                <td className="py-1 text-right font-mono text-foreground">{v3.toLocaleString()}</td>
+                <td className="py-1 text-right text-xs text-muted-foreground">drift monitoring</td>
+              </tr>
+              <tr>
+                <td className="py-1 font-semibold text-foreground">Total verifications</td>
+                <td className="py-1 text-right font-mono font-semibold text-primary">
+                  {total.toLocaleString()}
+                </td>
+                <td className="py-1 text-right text-xs text-muted-foreground">
+                  {pct}% of {estate.toLocaleString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p className="mt-3 text-xs text-muted-foreground">
           ≈ <strong>{perWave.toLocaleString()}</strong> sampled verifications per wave. Any sampled
           failure → verify 100% of that wave. Control basis: NIST CSWP 48 (draft) → CSF 2.0 / SP

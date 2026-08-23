@@ -7,6 +7,7 @@ import {
   NF_COMPETENCY_AREAS,
   CA_TO_NFCOM,
   NICE_COMPETENCY_AREAS,
+  NICE_COMPONENTS_VERSION,
 } from './niceFramework'
 import { NICE_MODULE_MAP } from './niceModuleMapping'
 
@@ -45,6 +46,8 @@ function officialIdsOfType(elementType: string): Set<string> {
 describe('NICE Framework drift-guard (v2.2.0)', () => {
   it('the vendored components file is the expected version (2.2.0)', () => {
     expect(loadOfficial().documents[0]?.version).toBe('2.2.0')
+    // The exported constant is what the UI labels figures with; it must track the file.
+    expect(NICE_COMPONENTS_VERSION).toBe(loadOfficial().documents[0]?.version)
   })
 
   it('every work-role niceCode exists in the official v2.2.0 components', () => {

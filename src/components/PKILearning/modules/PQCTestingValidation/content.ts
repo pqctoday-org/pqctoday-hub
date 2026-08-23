@@ -7,9 +7,16 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
-  moduleId: 'p-q-c-testing-validation',
+  // Corrected 2026-08-22: this read 'p-q-c-testing-validation', an id used
+  // NOWHERE else — manifest.ts, the /learn route, the simulation trees and every
+  // pre-existing library module_ids value all say 'pqc-testing-validation'. It was
+  // invisible until writeback_module_ids.py trusted this field and wrote the bad id
+  // onto four library rows, which the hub's C4 check rejected immediately. Tooling
+  // keyed on content.ts (learn_snapshot.py, and through it the spot-check rotation)
+  // was addressing this module by a name the catalogue does not know.
+  moduleId: 'pqc-testing-validation',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 186-5'),

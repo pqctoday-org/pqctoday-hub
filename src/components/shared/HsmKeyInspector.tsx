@@ -225,71 +225,73 @@ const KeyAttrModal = ({
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Identity
           </p>
-          <table className="w-full table-fixed text-xs font-mono border-collapse">
-            <tbody>
-              <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
-                <td className="py-1.5 text-foreground break-all">
-                  {fmtUlong(attrs.ckClass, CKO_NAMES)}
-                </td>
-              </tr>
-              <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
-                <td className="py-1.5 text-foreground break-all">
-                  {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
-                </td>
-              </tr>
-              {attrs.ckKeyGenMechanism !== null && (
+          <div className="overflow-x-auto">
+            <table className="w-full table-fixed text-xs font-mono border-collapse">
+              <tbody>
                 <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
+                  <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
                   <td className="py-1.5 text-foreground break-all">
-                    {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
+                    {fmtUlong(attrs.ckClass, CKO_NAMES)}
                   </td>
                 </tr>
-              )}
-              {attrs.ckParameterSet !== null && (
                 <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
                   <td className="py-1.5 text-foreground break-all">
-                    {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                    {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
                   </td>
                 </tr>
-              )}
-              {attrs.ckValueLen !== null && (
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>
-                  <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
-                </tr>
-              )}
-              {attrs.ckCheckValue && (
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
-                  <td className="py-1.5 text-status-success font-bold font-mono break-all">
-                    {Array.from(attrs.ckCheckValue.slice(0, 3))
-                      .map((b) => b.toString(16).padStart(2, '0'))
-                      .join('')
-                      .toUpperCase()}
-                  </td>
-                </tr>
-              )}
-              {attrs.ckHssKeysRemaining !== null && (
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_HSS_KEYS_REMAINING</td>
-                  <td className="py-1.5 text-foreground tabular-nums">
-                    {attrs.ckHssKeysRemaining.toLocaleString()} remaining
-                  </td>
-                </tr>
-              )}
-              {attrs.ckXmssKeysRemaining !== null && (
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_XMSS_KEYS_REMAINING</td>
-                  <td className="py-1.5 text-foreground tabular-nums">
-                    {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                {attrs.ckKeyGenMechanism !== null && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
+                    <td className="py-1.5 text-foreground break-all">
+                      {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
+                    </td>
+                  </tr>
+                )}
+                {attrs.ckParameterSet !== null && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
+                    <td className="py-1.5 text-foreground break-all">
+                      {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                    </td>
+                  </tr>
+                )}
+                {attrs.ckValueLen !== null && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>
+                    <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
+                  </tr>
+                )}
+                {attrs.ckCheckValue && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
+                    <td className="py-1.5 text-status-success font-bold font-mono break-all">
+                      {Array.from(attrs.ckCheckValue.slice(0, 3))
+                        .map((b) => b.toString(16).padStart(2, '0'))
+                        .join('')
+                        .toUpperCase()}
+                    </td>
+                  </tr>
+                )}
+                {attrs.ckHssKeysRemaining !== null && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_HSS_KEYS_REMAINING</td>
+                    <td className="py-1.5 text-foreground tabular-nums">
+                      {attrs.ckHssKeysRemaining.toLocaleString()} remaining
+                    </td>
+                  </tr>
+                )}
+                {attrs.ckXmssKeysRemaining !== null && (
+                  <tr className="border-b border-border/40">
+                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_XMSS_KEYS_REMAINING</td>
+                    <td className="py-1.5 text-foreground tabular-nums">
+                      {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Boolean capabilities */}
@@ -297,18 +299,20 @@ const KeyAttrModal = ({
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Capabilities
           </p>
-          <table className="w-full text-xs font-mono border-collapse">
-            <tbody>
-              {BOOL_ATTRS.map(({ label, key }) => (
-                <tr key={key} className="border-b border-border/40">
-                  <td className="py-1 pr-4 text-muted-foreground w-40">{label}</td>
-                  <td className="py-1">
-                    <BoolCell value={attrs[key] as boolean | null} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs font-mono border-collapse">
+              <tbody>
+                {BOOL_ATTRS.map(({ label, key }) => (
+                  <tr key={key} className="border-b border-border/40">
+                    <td className="py-1 pr-4 text-muted-foreground w-40">{label}</td>
+                    <td className="py-1">
+                      <BoolCell value={attrs[key] as boolean | null} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <p className="text-xs text-muted-foreground">

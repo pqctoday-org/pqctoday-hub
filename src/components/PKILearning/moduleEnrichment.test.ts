@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
   MODULE_PLAYGROUND_TOOL,
   MODULE_TAXONOMY,
+  STANDARD_TAXONOMY,
   getPlaygroundToolForModule,
   shouldShowPlaygroundLink,
   getModuleAlgorithms,
@@ -82,19 +83,12 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'ECDH',
       'X25519',
     ])
-    const STDS = new Set([
-      'FIPS 203',
-      'FIPS 204',
-      'FIPS 205',
-      'NIST SP 800-208',
-      'RFC 8446',
-      'RFC 9421',
-      'RFC 9180',
-      'RFC 9442',
-      'RFC 9794',
-      'X.509',
-      'PKCS#11',
-      'JOSE',
+    // Spread the canonical list rather than restating it. Restating it cost a
+    // debugging pass on 2026-08-22: repointing one manifest from RFC 8446 to RFC 9846
+    // failed here, and the fix needed the SAME edit in two files that had silently
+    // been copies of each other. Only the extras below are listed by hand.
+    const STDS = new Set<string>([
+      ...STANDARD_TAXONOMY,
       'CycloneDX / ECMA-424',
       'CycloneDX Cryptography Registry',
       'SPDX / ISO 5962',

@@ -128,6 +128,24 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   'ISO 18033-2 Amd2|||NIST Round 3 alternate (not advanced); BSI/ANSSI & ISO 18033-2 recommended':
     'final',
   'Standardised (ETSI TS 104 015)|||ETSI TS 104 015 (published Feb 2025)': 'final',
+  // ADDED 2026-08-22 with six catalogue rows for algorithms the enrichment
+  // legitimately names and the reference CSV lacked. This guard caught them
+  // immediately and said exactly what to do — the whole point of it.
+  //
+  // The four NIST Round 3 rejects are 'eliminated', not 'round4-not-selected':
+  // that tier means a concluded Round 4 (BIKE), and these lost in Round 3.
+  // Rainbow and GeMSS additionally fell to cryptanalysis, which is the same
+  // tier for a different reason and is spelled out in each row's own status.
+  'NIST Round 3 finalist — no longer being considered (NIST IR 8413-upd1 §4.3.4)|||': 'eliminated', // Saber — Kyber selected instead
+  'NIST Round 3 finalist — no longer being considered (NIST IR 8413-upd1 §4.5.3); BROKEN — do not deploy|||':
+    'eliminated', // Rainbow — Beullens cryptanalysis of UOV/Rainbow
+  'NIST Round 3 alternate — no longer being considered (NIST IR 8413-upd1 §4.5.2)|||': 'eliminated', // Picnic
+  'NIST Round 3 alternate — no longer being considered (NIST IR 8413-upd1 §4.5.1)|||': 'eliminated', // GeMSS — an attack dramatically reduced its security
+  // Ascon is a PUBLISHED standard, hence 'final' — but it is lightweight
+  // symmetric crypto, not post-quantum public-key. The row's own status says so
+  // rather than leaving a reader to infer it from the tier badge.
+  'SP 800-232 (standardised) — lightweight symmetric, NOT a post-quantum public-key algorithm|||SP 800-232':
+    'final', // Ascon-AEAD128, Ascon-Hash256
   'Candidate|||Draft (Selected 2025)': 'fips-draft', // HQC
   // FN-DSA: FIPS 206 is announced/in development — NO public draft exists yet
   // (csrc.nist.gov is the source of truth; the ipd URL 404s). Tier stays

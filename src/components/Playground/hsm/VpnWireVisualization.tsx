@@ -93,7 +93,21 @@ export const VpnWireVisualization: React.FC<VpnWireVisualizationProps> = ({
         </div>
       </div>
 
-      <div className="relative overflow-auto rounded-lg border border-border bg-card/40">
+      {/* a11y (WS14, 2026-08-21): this wrapper can scroll, and the SVG
+          inside is `role="img"`, never focusable. Verified 2026-08-21: axe does
+          NOT currently flag it — the `w-full` SVG does not actually overflow, so
+          `scrollable-region-focusable` never matches. Defensive hardening, not a
+          violation removed: the rule would fire the moment the content widened.
+          `tabIndex={0}` + `role="region"` + its own label make the diagram
+          scrollable by keyboard alone and announce it as a landmark. */}
+      <div
+        className="relative overflow-auto rounded-lg border border-border bg-card/40"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as ui/ScrollFadeContainer.tsx). Applied defensively here — see the comment above for why the rule does not currently match.
+        tabIndex={0}
+        role="region"
+        aria-label="IKEv2 packet sequence diagram"
+        data-testid="vpn-wire-scroll"
+      >
         <svg
           width={500}
           height={svgHeight}

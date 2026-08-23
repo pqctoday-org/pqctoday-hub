@@ -15,6 +15,8 @@ import { PageMeta } from './seo/PageMeta'
 import { EmbedLayout } from './components/Layout/EmbedLayout'
 import { EmbedRouteGuard } from './embed/EmbedRouteGuard'
 import { EmbedNavigationGuard } from './embed/EmbedNavigationGuard'
+import { LibraryViewSkeleton } from './components/Library/redesign/LibraryViewSkeleton'
+import { MigrationWorkbenchSkeleton } from './components/Migrate/Workbench/MigrationWorkbenchSkeleton'
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -263,7 +265,11 @@ function App() {
         path="library"
         element={
           <ErrorBoundary>
-            <LibraryViewRedesign />
+            {/* Route-local Suspense so the wait for the /library chunk paints a
+                page-shaped skeleton instead of the app-wide splash. */}
+            <Suspense fallback={<LibraryViewSkeleton />}>
+              <LibraryViewRedesign />
+            </Suspense>
           </ErrorBoundary>
         }
       />
@@ -334,7 +340,10 @@ function App() {
         path="migrate"
         element={
           <ErrorBoundary>
-            <MigrationWorkbench />
+            {/* Route-local Suspense — same reasoning as /library above. */}
+            <Suspense fallback={<MigrationWorkbenchSkeleton />}>
+              <MigrationWorkbench />
+            </Suspense>
           </ErrorBoundary>
         }
       />

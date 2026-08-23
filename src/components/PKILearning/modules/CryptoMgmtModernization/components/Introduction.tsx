@@ -71,7 +71,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <StatCard
               label="Certificates & PKI — 47-day TLS by 2029"
               value="47 d"
-              note="CA/B Forum SC-081v3 (April 2025). Phased: 200d (2026) → 100d (2027) → 47d (March 2029). Manual CLM breaks mathematically at this cadence."
+              note="CA/B Forum SC-081v3 (April 2025), ratified into TLS BR §6.3.2: 398d until 2026-03-15, then 200d, then 100d from 2027-03-15, then 47d from 2029-03-15. Manual CLM breaks mathematically at this cadence."
             />
             <StatCard
               label="Crypto Libraries — FIPS 140-3 CMVP queue"
@@ -86,7 +86,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <StatCard
               label="Key Material — CNSA 2.0 deadlines"
               value="2030 / 2033"
-              note="National Security Systems must use CNSA 2.0 algorithms in software/firmware signing by 2030 and broadly by 2033 (CSA/NSA CNSA 2.0). HSM/KMS rekey lead times measured in years."
+              note="CNSSP 15 requires new NSS acquisitions to be CNSA 2.0-compliant from 1 Jan 2027, phases out equipment that cannot support CNSA 2.0 by 31 Dec 2030, and mandates CNSA 2.0 algorithms by 31 Dec 2031 (NSA CNSA 2.0 FAQ Ver. 2.1, Dec 2024). The 2022 advisory per-class timetable runs software/firmware signing exclusive by 2030, web/cloud/OS by 2033. HSM/KMS rekey lead times measured in years."
             />
           </div>
           <Quote cite="NIST CSWP.39 §5, Considerations for Achieving Crypto Agility (December 2025)">

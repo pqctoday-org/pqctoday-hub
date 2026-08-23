@@ -14,7 +14,11 @@ const manifest: ModuleManifest = {
   difficulty: 'intermediate',
   frameworkPhase: 'verify-close',
   track: 'Executive',
-  trackOrder: 10,
+  // 9, not 10, since WS8 moved soc-implementation-pqc out of this track:
+  // conformance.test.ts asserts trackOrder === the module's index in the
+  // trackOrder-sorted MODULE_TRACKS array, so the Executive track must stay
+  // contiguous from 0.
+  trackOrder: 9,
   learnSections: [
     { id: 'decommission', label: 'Retire Classical Crypto' },
     { id: 'verify-evidence', label: 'Prove the Migration' },

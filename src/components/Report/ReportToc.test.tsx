@@ -33,15 +33,15 @@ describe('ReportToc — mobile dropdown tracks scroll position', () => {
     vi.unstubAllGlobals()
   })
 
-  it('mobile select defaults to the placeholder before any section intersects', () => {
+  it('mobile jump-to dropdown defaults to the placeholder before any section intersects', () => {
     render(<ReportToc sections={SECTIONS} onExpandAll={vi.fn()} onCollapseAll={vi.fn()} />)
-    const select = screen.getByLabelText('Jump to section') as HTMLSelectElement
-    expect(select.value).toBe('')
+    const trigger = screen.getByRole('button', { name: 'Jump to section' })
+    expect(trigger).toHaveTextContent('Jump to section…')
   })
 
-  it('mobile select value updates to match the section the IntersectionObserver reports active', () => {
+  it('mobile jump-to dropdown updates to match the section the IntersectionObserver reports active', () => {
     render(<ReportToc sections={SECTIONS} onExpandAll={vi.fn()} onCollapseAll={vi.fn()} />)
-    const select = screen.getByLabelText('Jump to section') as HTMLSelectElement
+    const trigger = screen.getByRole('button', { name: 'Jump to section' })
 
     expect(capturedCallback).not.toBeNull()
     act(() => {
@@ -51,7 +51,7 @@ describe('ReportToc — mobile dropdown tracks scroll position', () => {
       )
     })
 
-    expect(select.value).toBe('report-section-b')
+    expect(trigger).toHaveTextContent('Section B')
   })
 
   it('desktop rail highlights the same active section as the mobile select', () => {

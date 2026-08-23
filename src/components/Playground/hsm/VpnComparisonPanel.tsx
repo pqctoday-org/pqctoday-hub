@@ -227,54 +227,56 @@ export function VpnComparisonPanel({ selectedMode }: Props) {
           encrypted IKE_AUTH payload. ML-DSA pushes IKE_AUTH well past a 1,500 B MTU — this is the
           message that most needs RFC 7383 fragmentation (IKE_SA_INIT cannot fragment at all).
         </p>
-        <table className="w-full text-xs border-collapse">
-          <thead>
-            <tr className="border-b border-border/50">
-              <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
-                Auth method
-              </th>
-              <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold w-full">
-                Estimated SK payload
-              </th>
-              <th className="text-left py-1.5 text-muted-foreground font-semibold whitespace-nowrap">
-                Quantum-safe
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {authEntries.map(([method, bytes]) => {
-              const isMlDsa = method.startsWith('ML-DSA')
-              const isPsk = method === 'PSK'
-              return (
-                <tr key={method} className="border-b border-border/20">
-                  <td className="py-1.5 pr-3 font-mono text-foreground whitespace-nowrap">
-                    {method}
-                  </td>
-                  <td className="py-1.5 pr-3">
-                    <SizeBar
-                      bytes={bytes}
-                      max={maxAuth}
-                      className={
-                        isMlDsa
-                          ? 'bg-primary/80'
-                          : isPsk
-                            ? 'bg-muted-foreground/50'
-                            : 'bg-destructive/60'
-                      }
-                    />
-                  </td>
-                  <td className="py-1.5">
-                    {isMlDsa || isPsk ? (
-                      <span className="text-status-success">✓</span>
-                    ) : (
-                      <span className="text-status-error">✗</span>
-                    )}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border/50">
+                <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                  Auth method
+                </th>
+                <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold w-full">
+                  Estimated SK payload
+                </th>
+                <th className="text-left py-1.5 text-muted-foreground font-semibold whitespace-nowrap">
+                  Quantum-safe
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {authEntries.map(([method, bytes]) => {
+                const isMlDsa = method.startsWith('ML-DSA')
+                const isPsk = method === 'PSK'
+                return (
+                  <tr key={method} className="border-b border-border/20">
+                    <td className="py-1.5 pr-3 font-mono text-foreground whitespace-nowrap">
+                      {method}
+                    </td>
+                    <td className="py-1.5 pr-3">
+                      <SizeBar
+                        bytes={bytes}
+                        max={maxAuth}
+                        className={
+                          isMlDsa
+                            ? 'bg-primary/80'
+                            : isPsk
+                              ? 'bg-muted-foreground/50'
+                              : 'bg-destructive/60'
+                        }
+                      />
+                    </td>
+                    <td className="py-1.5">
+                      {isMlDsa || isPsk ? (
+                        <span className="text-status-success">✓</span>
+                      ) : (
+                        <span className="text-status-error">✗</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
         <p className="text-[10px] text-muted-foreground leading-relaxed">
           ML-KEM key exchange uses IANA-assigned IKEv2 KE Methods 35/36/37 (ML-KEM-512/768/1024);
           the ML-DSA IKEv2 AUTH method (draft-sfluhrer-ipsecme-ikev2-mldsa) has no IANA assignment

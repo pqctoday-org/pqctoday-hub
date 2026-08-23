@@ -31,7 +31,7 @@ The workshop has 3 interactive steps:
 - FIPS 205 (SLH-DSA, Stateless Hash-Based Digital Signature Standard)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — hybrid KEM combiners)
 - RFC 9980 (Post-Quantum Cryptography in OpenPGP — ML-DSA / ML-KEM / SLH-DSA)
-- RFC 8446 (TLS 1.3 — key_share extension, hybrid group negotiation)
+- RFC 9846 (TLS 1.3, obsoletes RFC 8446 — key_share extension, hybrid group negotiation)
 - IETF draft-connolly-cfrg-xwing (X-Wing hybrid KEM combiner)
 - IETF draft-ietf-tls-mlkem (ML-KEM in TLS 1.3)
 - IETF draft-ietf-jose-fully-specified-algorithms (ML-DSA JOSE algorithm IDs)

@@ -24,8 +24,20 @@ import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistr
  * the 40 characters immediately before a §, so only that reference is
  * exempted rather than everything else on the line.
  */
+// Documents OTHER than CSWP.39 that legitimately carry §-numbered sections. A §-ref
+// preceded by one of these is that document's section, not a claim about CSWP.39.
+// `TLS BR` / `Baseline Requirements` added 2026-08-22: the crypto-mgmt-modernization
+// module cites CA/B Forum TLS BR §6.3.2 for the certificate-validity ladder, and the
+// same file also mentions CSWP.39, so without this every such citation reads as a
+// fabricated CSWP.39 heading. Widening this list never weakens the gate for CSWP.39
+// itself — a bare §-ref, or one next to CSWP.39, is still judged against the real
+// headings.
 const OTHER_DOCUMENT =
-  /(ISO|IEC\b|SP\s?800|FIPS|RFC|NIS2|DORA|PHASE-OVERLAY|CSWP[\s._]?3[68]A?\b|CSWP[\s._]?4)/i
+  /(ISO|IEC\b|SP\s?800|FIPS|RFC|NIS2|DORA|PHASE-OVERLAY|TLS\s?BR|Baseline\s?Requirements|CSWP[\s._]?3[68]A?\b|CSWP[\s._]?4)/i
+
+/** OTHER_DOCUMENT plus CSWP.39 itself, global — so the loop below can ask which
+ *  document name sits CLOSEST to a §-ref rather than whether any appears at all. */
+const NEAREST_DOCUMENT = new RegExp(`${OTHER_DOCUMENT.source}|CSWP[\\s._]?39`, 'gi')
 
 /** Pull every "§N.N.N" token out of a string. */
 function refsIn(text: string): string[] {
@@ -138,7 +150,17 @@ describe('CSWP.39 §-reference provenance', () => {
           // have been waved through. Caught reviewing this gate, not by it.
           for (const m of line.matchAll(/§\s?\d(?:\.\d){0,2}/g)) {
             const before = line.slice(Math.max(0, (m.index ?? 0) - 40), m.index ?? 0)
-            if (OTHER_DOCUMENT.test(before)) continue
+            // The NEAREST document name wins, not merely the presence of one.
+            // Testing `OTHER_DOCUMENT.test(before)` let "TLS BR §6.3.2, and
+            // CSWP.39 §5.5" excuse the fabricated §5.5, because "TLS BR" was
+            // still inside the 40-char window. That hole existed for every
+            // token in the list (ISO, RFC, SP 800 ...) and was found by a
+            // sabotage check on 2026-08-22, not by the gate. Taking the last
+            // match closes it: a CSWP.39 mention standing between another
+            // document and the §-ref reclaims the reference.
+            const names = [...before.matchAll(NEAREST_DOCUMENT)]
+            const nearest = names.length ? names[names.length - 1][0] : ''
+            if (nearest && !/CSWP[\s._]?39/i.test(nearest)) continue
             const ref = m[0].replace(/\s/g, '')
             if (!isRealCswp39Ref(ref)) {
               offenders.push(`${file.split('/src/')[1]}: ${ref} — ${code.slice(0, 90)}`)

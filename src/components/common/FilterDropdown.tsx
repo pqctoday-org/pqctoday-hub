@@ -31,6 +31,20 @@ interface FilterDropdownProps {
   onMultiSelect?: (ids: string[]) => void
   /** Shows a search input at the top of the menu to filter items by label */
   searchable?: boolean
+  /**
+   * Accessible name for the trigger when no visible `label` is rendered.
+   * Mirrors the `aria-label` a native `<select>` would carry in a dense control
+   * cluster where a visible label does not fit.
+   */
+  ariaLabel?: string
+  /** Disables the trigger, mirroring a native `<select disabled>`. */
+  disabled?: boolean
+  /**
+   * Omits the leading "All"/clear row. Use for closed value sets (a command,
+   * an algorithm, a phase) where every option is a real value and a clear row
+   * would be a dead option.
+   */
+  hideDefaultOption?: boolean
 }
 
 export const FilterDropdown: React.FC<FilterDropdownProps> = ({
@@ -48,6 +62,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   multiSelectedIds,
   onMultiSelect,
   searchable,
+  ariaLabel,
+  disabled = false,
+  hideDefaultOption = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -134,6 +151,32 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       window.removeEventListener('scroll', handleScroll)
     }
   }, [isOpen, searchable])
+
+  // Keep the portal menu inside the viewport. The menu is `position: fixed` at
+  // the trigger's bottom edge, so a trigger low on the page opened a menu that
+  // ran off-screen (measured 65px past the fold on the CACP visual editor) —
+  // strictly worse than the native <select> popup it replaces, which the
+  // browser flips automatically. Measured after the portal paints, then flipped
+  // above the trigger when there is room, otherwise clamped to the fold.
+  useEffect(() => {
+    if (!isOpen || !menuPos) return
+    const menu = menuPortalRef.current
+    const trigger = buttonRef.current
+    if (!menu || !trigger) return
+    const height = menu.getBoundingClientRect().height
+    if (height === 0) return
+    const rect = trigger.getBoundingClientRect()
+    const fitsBelow = rect.bottom + height <= window.innerHeight - 8
+    const fitsAbove = rect.top - height >= 8
+    const desired = fitsBelow
+      ? rect.bottom
+      : fitsAbove
+        ? rect.top - height
+        : Math.max(8, window.innerHeight - height - 8)
+    if (Math.abs(desired - menuPos.top) > 1) {
+      setMenuPos((prev) => (prev ? { ...prev, top: desired } : prev))
+    }
+  }, [isOpen, menuPos])
 
   // Reset search and focus input when dropdown opens
   useEffect(() => {
@@ -236,6 +279,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         ref={menuPortalRef}
         role="listbox"
         aria-labelledby={labelId}
+        aria-label={labelId ? undefined : ariaLabel}
         aria-multiselectable={isMulti}
         style={{
           position: 'fixed',
@@ -263,35 +307,37 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
           </div>
         )}
         <div className="max-h-60 overflow-y-auto">
-          {/* All / Clear Option */}
-          <Button
-            variant="ghost"
-            role="option"
-            aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
-            onClick={() => {
-              if (isMulti) {
-                handleMultiToggle('All')
-              } else {
-                onSelect('All')
-                setIsOpen(false)
-              }
-            }}
-            onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
-            className={clsx(
-              'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
-              (isMulti ? multiCount === 0 : isDefaultSelected)
-                ? 'text-primary bg-muted/30'
-                : 'text-muted-foreground'
-            )}
-          >
-            <span className="opacity-50 flex items-center justify-center w-6" aria-hidden="true">
-              {defaultIcon}
-            </span>
-            {defaultLabel}
-            {isMulti && multiCount === 0 && (
-              <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
-            )}
-          </Button>
+          {/* All / Clear Option — omitted for closed value sets */}
+          {!hideDefaultOption && (
+            <Button
+              variant="ghost"
+              role="option"
+              aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
+              onClick={() => {
+                if (isMulti) {
+                  handleMultiToggle('All')
+                } else {
+                  onSelect('All')
+                  setIsOpen(false)
+                }
+              }}
+              onKeyDown={(e) => handleOptionKeyDown(e, 'All')}
+              className={clsx(
+                'w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors focus:outline-none focus-visible:bg-muted/50 border-b border-border flex items-center gap-2',
+                (isMulti ? multiCount === 0 : isDefaultSelected)
+                  ? 'text-primary bg-muted/30'
+                  : 'text-muted-foreground'
+              )}
+            >
+              <span className="opacity-50 flex items-center justify-center w-6" aria-hidden="true">
+                {defaultIcon}
+              </span>
+              {defaultLabel}
+              {isMulti && multiCount === 0 && (
+                <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
+              )}
+            </Button>
+          )}
 
           {normalizedItems
             .filter((item) => item.id !== 'All')
@@ -349,6 +395,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       variant="ghost"
       ref={buttonRef}
       data-testid="filter-dropdown"
+      disabled={disabled}
       onClick={() => {
         if (!isOpen) {
           const rect = buttonRef.current?.getBoundingClientRect()
@@ -362,6 +409,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       aria-haspopup="listbox"
       aria-expanded={isOpen}
       aria-labelledby={labelId}
+      aria-label={labelId ? undefined : ariaLabel}
       className={clsx(
         'flex items-center gap-1 rounded-md transition-colors justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground overflow-hidden',
         size === 'sm'

@@ -26,6 +26,18 @@ interface WorkshopStepperProps {
  *  future    → bg-muted, muted text
  *
  * Shows dot-only on mobile (label hidden), full pill on ≥ sm.
+ *
+ * Label-visibility breakpoint — deliberate, and coordinated with the icon-row
+ * stepper that always renders directly above this one (ModuleShell.tsx's local
+ * `WorkshopStepper`, plus its hand-copies in FiveG / PKIWorkshop / DigitalID /
+ * MerkleWorkshopSteps, all reached through `WorkshopStepHeader`). That row now
+ * shows a short "Step N" caption at every viewport width and carries the full
+ * step title as its `aria-label`, and `WorkshopStepHeader` renders the current
+ * step's full title as a heading immediately below. Un-hiding this pill's label
+ * below `sm:` would therefore duplicate text that is already on screen twice and
+ * reintroduce the crowding an 8-step workshop hits at 390px — so the `sm:` gate
+ * stays. Screen-reader parity is unaffected: `aria-label` below carries the full
+ * label at every width regardless of the visual breakpoint.
  */
 export const WorkshopStepper: React.FC<WorkshopStepperProps> = ({
   steps,

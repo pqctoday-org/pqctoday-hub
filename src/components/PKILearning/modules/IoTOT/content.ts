@@ -13,18 +13,28 @@ export const content: ModuleContent = {
   lastReviewed: '2026-08-22',
 
   standards: [
+    // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
+    // Class 0-3 RAM and flash budgets that every sizing claim in this module is
+    // measured against, so it belongs at the head of the References tab — and the
+    // accuracy spot-check samples by even stride over this array, so declaration
+    // order decides whether the module's own yardstick is ever opened. It was not,
+    // on 2026-08-22, which is why "FrodoKEM-640 requires ~180 KB" came back with no
+    // evidence at all rather than a contradiction. 14 documents against a 4-document
+    // sample means no ordering makes them all visible; put the yardstick first.
+    getStandard('RFC 7228'),
     getStandard('IEC 62443'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 206'),
     getStandard('NIST SP 800-208'),
     getStandard('NIST-SP-800-232'),
-    getStandard('RFC 7228'),
     getStandard('RFC 7250'),
     getStandard('RFC 8391'),
     // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
-    // RFC 8446 sections where it discusses the original, which stays accurate.
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446", and the library row for 8446
+    // already carried 9846 as its supersession pointer. Repointed 2026-08-22.
+    // In-module prose still cites RFC 8446 sections where it discusses the original,
+    // which stays accurate: TLS 1.3 the protocol is unchanged; the specification moved.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
     getStandard('RFC 8554'),
     getStandard('RFC 8879'),

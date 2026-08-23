@@ -78,7 +78,18 @@ describe('B2 module-change diff ("What\'s New")', () => {
   it('getModuleVersionFingerprint covers every manifest, defaulting to version 1', () => {
     const fp = getModuleVersionFingerprint()
     expect(Object.keys(fp).length).toBe(MANIFESTS.length)
-    expect(fp['hsm-pqc']).toBe(1) // no explicit contentVersion → default 1
+
+    // The default is checked against a manifest that HAS no contentVersion, found
+    // at run time rather than named. This asserted `fp['hsm-pqc'] === 1`, which
+    // broke on 2026-08-22 when emit_revision.py bumped that module to 2 — the
+    // bump was correct, and hard-coding one module as "the unversioned one" made
+    // a routine content edit look like a defect. Every module is versioned
+    // eventually; the DEFAULT is the invariant, so assert that instead.
+    const unversioned = MANIFESTS.find((m) => m.contentVersion === undefined)
+    if (unversioned) expect(fp[unversioned.id]).toBe(1)
+    for (const m of MANIFESTS) {
+      expect(fp[m.id], `${m.id} fingerprint`).toBe(m.contentVersion ?? 1)
+    }
   })
 
   it('detects added modules', () => {

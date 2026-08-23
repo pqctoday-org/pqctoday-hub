@@ -11,6 +11,8 @@ export const content: ModuleContent = {
   moduleId: 'compliance-strategy',
   version: '1.0.1',
   lastReviewed: '2026-08-22',
+  // IR 8547 added 2026-08-22: relatedStandards asserts a date or version for it, so
+  // nothing could check that deprecation-timeline claim without it being declared.
 
   standards: [
     getStandard('FIPS 203'),

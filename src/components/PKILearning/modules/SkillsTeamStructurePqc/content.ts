@@ -30,6 +30,23 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('FIPS 206'),
+    // DECLARED 2026-08-22. This is a WORKFORCE module and every other document
+    // here is an algorithm or transition standard — none of them say anything
+    // about roles, skills or team sizing, which is why the accuracy check graded
+    // five staffing claims against FIPS 203/204/206 and returned no evidence for
+    // any of them. The role -> skill-set mapping has been anchored to NICE
+    // Components v2.2.0 in the UI footnote since 2026-08-09 and in
+    // roleCrosswalk.ts's ROLE_SOURCES; it was never declared here, so it reached
+    // neither the References tab nor the sampler.
+    getStandard('NIST SP 800-181r1'),
+    // The second workforce anchor, and the only OTHER framework on disk that treats
+    // staffing as a first-class activity: PQCC's Activity 4.3 'Assess Workforce
+    // Needs' — 'identify gaps within current workflows, distributing necessary
+    // training, and/or determining if additional talent is needed', with outcomes
+    // feeding budget (3.1) and implementation (3.5). Qualitative, not quantitative:
+    // no standards body publishes PQC headcount ratios, which is why the sizing
+    // numbers stay attributed to the Applied Quantum framework in the UI.
+    getStandard('PQCC-Migration-Roadmap-2025'),
   ],
 
   algorithms: [

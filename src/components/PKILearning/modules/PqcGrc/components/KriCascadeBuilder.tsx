@@ -5,9 +5,14 @@ import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '../../../common/executive'
+import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { KRIS, KRI_LEVELS, type Kri, type KriLevel, type KriStatus } from '../data/grcData'
 
 const MODULE_ID = 'pqc-grc'
+/** This workshop step saves under the `kpi-dashboard` document type, which the
+ *  PQC Governance KPI Dashboard also owns. The scope keeps the two apart now
+ *  that every artifact autosaves — see `scopedArtifactInputs`. */
+const SCOPE = 'pqc-grc-kri-cascade'
 
 const LEVEL_ORDER: KriLevel[] = ['board', 'ciso', 'operational']
 
@@ -52,11 +57,25 @@ function buildSeed(): { levelOf: Record<string, KriLevel>; statusOf: Record<stri
   return { levelOf, statusOf }
 }
 
+interface SavedCascadeInputs {
+  levelOf: Record<string, KriLevel>
+  statusOf: Record<string, KriStatus>
+}
+
 export const KriCascadeBuilder: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
   const seed = useMemo(() => buildSeed(), [])
-  const [levelOf, setLevelOf] = useState<Record<string, KriLevel>>(seed.levelOf)
-  const [statusOf, setStatusOf] = useState<Record<string, KriStatus>>(seed.statusOf)
+  // Restore the last-saved cascade so level/status edits survive navigation,
+  // now that ExportableArtifact autosaves them. (WS6 task 6.)
+  const savedInputs = useSavedArtifactInputs<SavedCascadeInputs>('kpi-dashboard', SCOPE)
+  const [levelOf, setLevelOf] = useState<Record<string, KriLevel>>(() => ({
+    ...seed.levelOf,
+    ...(savedInputs?.levelOf ?? {}),
+  }))
+  const [statusOf, setStatusOf] = useState<Record<string, KriStatus>>(() => ({
+    ...seed.statusOf,
+    ...(savedInputs?.statusOf ?? {}),
+  }))
 
   const krisByLevel = useMemo(() => {
     const map: Record<KriLevel, Kri[]> = { board: [], ciso: [], operational: [] }
@@ -115,9 +134,10 @@ export const KriCascadeBuilder: React.FC = () => {
       type: 'kpi-dashboard',
       title: 'PQC GRC — KRI Cascade Dashboard',
       data: exportMarkdown,
+      inputs: scopedArtifactInputs(SCOPE, { levelOf, statusOf } satisfies SavedCascadeInputs),
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, levelOf, statusOf])
 
   return (
     <div className="space-y-6">

@@ -7,6 +7,7 @@ import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ROLE_CROSSWALK, CORE_ROLE_ORDER, ROLE_DETAIL, SIZING } from '../data/teamModel'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 type Phase = 'firstTwoYears' | 'productionRollout'
 
@@ -18,11 +19,21 @@ function variableFte(instances: number, ratio: number): number {
 
 const DEDICATED_CORE_COUNT = CORE_ROLE_ORDER.filter((r) => ROLE_DETAIL[r].dedicatedOverhead).length
 
+interface SavedSizingInputs {
+  instances: number
+  phase: Phase
+  otInScope: boolean
+  seedCleared: boolean
+}
+
 export const TeamSizingCalculator: React.FC = () => {
-  const [instances, setInstances] = useState<number>(2000)
-  const [phase, setPhase] = useState<Phase>('firstTwoYears')
-  const [otInScope, setOtInScope] = useState<boolean>(false)
-  const [seedCleared, setSeedCleared] = useState(false)
+  // Restore the last-saved sizing so estate size / phase / OT scope survive
+  // navigation, now that ExportableArtifact autosaves them. (WS6 task 6.)
+  const savedInputs = useSavedArtifactInputs<SavedSizingInputs>('team-sizing-plan')
+  const [instances, setInstances] = useState<number>(savedInputs?.instances ?? 2000)
+  const [phase, setPhase] = useState<Phase>(savedInputs?.phase ?? 'firstTwoYears')
+  const [otInScope, setOtInScope] = useState<boolean>(savedInputs?.otInScope ?? false)
+  const [seedCleared, setSeedCleared] = useState(savedInputs?.seedCleared ?? false)
   const { addExecutiveDocument } = useModuleStore()
   const { industry } = useExecutiveModuleData()
 
@@ -88,12 +99,18 @@ export const TeamSizingCalculator: React.FC = () => {
     addExecutiveDocument({
       id: `skills-team-${Date.now()}`,
       moduleId: 'skills-team-structure',
-      type: 'skills-team-plan',
+      type: 'team-sizing-plan',
       title: 'PQC Team Sizing Plan',
       data: exportMarkdown,
+      inputs: {
+        instances,
+        phase,
+        otInScope,
+        seedCleared,
+      } satisfies SavedSizingInputs,
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, instances, phase, otInScope, seedCleared])
 
   return (
     <div className="space-y-6">
@@ -193,6 +210,26 @@ export const TeamSizingCalculator: React.FC = () => {
           Variable pool: {variable} FTE from the {ratio.toLocaleString()}-instance ratio &middot;
           dedicated core: {DEDICATED_CORE_COUNT} (QRPM, Cryptographic Architect, PMO Analyst)
           {otInScope ? ' · +1 OT specialist' : ''}.
+        </p>
+        {/* ADDED 2026-08-22. The heuristic's source was named in the EXPORT string and in
+            content.ts's header comment, but nothing on screen said where the ratio came
+            from — a reader working the calculator saw a hard number from nobody. No
+            standards body publishes PQC team-sizing ratios: NICE (SP 800-181r1) defines
+            work roles and competencies but no headcount, and the PQCC roadmap's
+            Activity 4.3 "Assess Workforce Needs" is qualitative. The ratio is one
+            practitioner framework's heuristic and is labelled as such. */}
+        <p className="text-[10px] text-muted-foreground mt-2 max-w-xl mx-auto">
+          Sizing ratios are a heuristic from the{' '}
+          <a
+            href="https://pqcframework.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Applied Quantum PQC Migration Framework v2.1
+          </a>{' '}
+          (Marin Ivezi&#263; / Applied Quantum, CC BY 4.0), Skills &amp; Team Structure, p.&nbsp;161
+          &mdash; not a standards-body figure. Calibrate against your own estate before budgeting.
         </p>
       </div>
 

@@ -24,7 +24,7 @@ describe('KmsPqc render parity', () => {
     expect(screen.getByRole('heading', { name: 'KMS & PQC Key Management' })).toBeInTheDocument()
     // in-page description (the override slot)
     expect(screen.getByText(/Master PQC key management patterns/)).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -33,7 +33,7 @@ describe('KmsPqc render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

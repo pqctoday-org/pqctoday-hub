@@ -10,13 +10,17 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'hsm-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NIST SP 800-108'),
+    // Repointed 2026-08-22: this declared the DEPRECATED row `NIST SP 800-108`,
+    // whose superseded_by names this one. A module pointing the accuracy check at a
+    // retired row is worse than pointing it nowhere — the check runs, reads a
+    // superseded document, and reports success.
+    getStandard('NIST-SP-800-108-R1'),
     getStandard('NIST SP 800-208'),
   ],
 

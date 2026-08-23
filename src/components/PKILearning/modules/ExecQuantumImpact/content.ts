@@ -13,7 +13,7 @@ export const content: ModuleContent = {
 
   standards: [
     getStandard('NSA CNSA 2.0'),
-    getStandard('NIST-IR-8547-Initial-Public-Draft-Transition-to-Post-Quantum'),
+    getStandard('NIST IR 8547'),
     getStandard('NSM-10'),
     getStandard('EO-14306'),
     getStandard('EO-2026-06-22-Securing-the-Nation'),

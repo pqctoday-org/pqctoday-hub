@@ -119,8 +119,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               <div className="text-sm font-bold text-foreground">Distribute Inclusion Proofs</div>
               <p className="text-xs text-muted-foreground">
                 Each certificate holder receives a compact <strong>inclusion proof</strong>: the
-                chain of sibling hashes from their leaf up to the root. This proof is 736 bytes for
-                a batch of ~4.4 million certificates (23 sibling hashes &times; 32 bytes).
+                chain of sibling hashes from their leaf up to the root. Its size depends only on how
+                large the subtree is: 384 bytes for a standalone certificate&apos;s ~2,500-entry
+                checkpoint subtree (12 hashes &times; 32 bytes), 736 bytes for a landmark subtree of
+                ~4.4 million (23 hashes &times; 32 bytes) &mdash; both projected in the spec&apos;s
+                own size estimates.
               </p>
             </div>
           </div>
@@ -247,7 +250,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-sm font-bold text-success mb-2">Advantages (both types)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
-                &bull; Massive size reduction (60&ndash;63% standalone, 92% landmark for ML-DSA)
+                &bull; Massive size reduction (63&ndash;65% standalone, 92&ndash;96% landmark for
+                ML-DSA)
               </li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>
@@ -360,11 +364,11 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                   <tr className="border-b border-border/50">
                     <td className="py-2 pr-3 font-medium text-foreground">Standalone MTC</td>
                     <td className="text-right py-2 px-2 font-mono">3,860 B</td>
-                    <td className="text-right py-2 px-2 font-mono">736 B</td>
+                    <td className="text-right py-2 px-2 font-mono">384 B</td>
                     <td className="text-right py-2 px-2 font-mono text-primary font-bold">
-                      4,796 B
+                      4,444 B
                     </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">60%</td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">63%</td>
                   </tr>
                   <tr>
                     <td className="py-2 pr-3 font-medium text-foreground">
@@ -379,9 +383,12 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               </table>
               <p className="text-[10px] text-muted-foreground mt-2">
                 Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 2 SCTs (238 B) + metadata (600
-                B). Standalone: 1 CA sig (2,420 B) + 1 key (1,312 B) + cosigner sigs (~128 B) + 736
+                B). Standalone: 1 CA sig (2,420 B) + 1 key (1,312 B) + cosigner sigs (~128 B) + 384
                 B proof + 200 B metadata. Landmark: 736 B proof + 200 B metadata only &mdash; client
-                has trusted subtree cached. Cosigner overhead is policy-dependent (minimum shown).
+                has trusted subtree cached. The two proofs differ because they reach different
+                subtrees: a standalone proof stops at the latest checkpoint (~2,500 entries), a
+                landmark proof at the last landmark (~4.4M). Cosigner overhead is policy-dependent
+                (minimum shown).
               </p>
             </div>
 

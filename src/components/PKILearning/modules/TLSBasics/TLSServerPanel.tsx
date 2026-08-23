@@ -650,40 +650,42 @@ export const TLSServerPanel: React.FC = () => {
               {/* Key share size reference */}
               <details className="mt-2 text-xs">
                 <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
-                  ▸ Key share size reference (FIPS 203, RFC 8446)
+                  ▸ Key share size reference (FIPS 203, RFC 9846)
                 </summary>
                 <div className="mt-1 rounded-lg border border-border overflow-hidden">
-                  <table className="w-full text-[10px]">
-                    <thead>
-                      <tr className="bg-muted text-muted-foreground">
-                        <th className="p-1.5 text-left font-medium">Group</th>
-                        <th className="p-1.5 text-right font-medium">Key Share (ClientHello)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[...CLASSICAL_GROUPS, ...PQC_GROUPS, ...HYBRID_GROUPS].map((group, i) => (
-                        <tr
-                          key={group}
-                          className={clsx(
-                            'border-t border-border',
-                            i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
-                          )}
-                        >
-                          <td
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="bg-muted text-muted-foreground">
+                          <th className="p-1.5 text-left font-medium">Group</th>
+                          <th className="p-1.5 text-right font-medium">Key Share (ClientHello)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...CLASSICAL_GROUPS, ...PQC_GROUPS, ...HYBRID_GROUPS].map((group, i) => (
+                          <tr
+                            key={group}
                             className={clsx(
-                              'p-1.5 font-mono',
-                              serverConfig.groups.includes(group) && 'text-tertiary font-bold'
+                              'border-t border-border',
+                              i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
                             )}
                           >
-                            {GROUP_LABELS[group] ?? group}
-                          </td>
-                          <td className="p-1.5 text-right font-mono text-muted-foreground">
-                            {GROUP_SIZE[group] ?? '—'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            <td
+                              className={clsx(
+                                'p-1.5 font-mono',
+                                serverConfig.groups.includes(group) && 'text-tertiary font-bold'
+                              )}
+                            >
+                              {GROUP_LABELS[group] ?? group}
+                            </td>
+                            <td className="p-1.5 text-right font-mono text-muted-foreground">
+                              {GROUP_SIZE[group] ?? '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </details>
             </div>
@@ -732,38 +734,40 @@ export const TLSServerPanel: React.FC = () => {
                   ▸ Signature size reference (FIPS 204)
                 </summary>
                 <div className="mt-1 rounded-lg border border-border overflow-hidden">
-                  <table className="w-full text-[10px]">
-                    <thead>
-                      <tr className="bg-muted text-muted-foreground">
-                        <th className="p-1.5 text-left font-medium">Algorithm</th>
-                        <th className="p-1.5 text-right font-medium">Signature</th>
-                        <th className="p-1.5 text-right font-medium">Public Key</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {SIG_ALGS.filter((a) => SIG_SIZE[a]).map((alg, i) => (
-                        <tr
-                          key={alg}
-                          className={clsx(
-                            'border-t border-border',
-                            i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
-                          )}
-                        >
-                          <td
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[10px]">
+                      <thead>
+                        <tr className="bg-muted text-muted-foreground">
+                          <th className="p-1.5 text-left font-medium">Algorithm</th>
+                          <th className="p-1.5 text-right font-medium">Signature</th>
+                          <th className="p-1.5 text-right font-medium">Public Key</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {SIG_ALGS.filter((a) => SIG_SIZE[a]).map((alg, i) => (
+                          <tr
+                            key={alg}
                             className={clsx(
-                              'p-1.5 font-mono',
-                              serverConfig.signatureAlgorithms.includes(alg) &&
-                                'text-tertiary font-bold'
+                              'border-t border-border',
+                              i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
                             )}
                           >
-                            {alg}
-                          </td>
-                          <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].sig}</td>
-                          <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].pub}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            <td
+                              className={clsx(
+                                'p-1.5 font-mono',
+                                serverConfig.signatureAlgorithms.includes(alg) &&
+                                  'text-tertiary font-bold'
+                              )}
+                            >
+                              {alg}
+                            </td>
+                            <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].sig}</td>
+                            <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].pub}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </details>
             </div>

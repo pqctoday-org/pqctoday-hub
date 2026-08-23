@@ -16,6 +16,7 @@ import {
   VolumeX,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import {
@@ -496,23 +497,21 @@ export const WorkshopPanel: React.FC = () => {
               </Button>
             </div>
             {ttsEnabled && voices.length > 0 && (
-              <select
-                value={ttsVoiceURI ?? ''}
-                onChange={(e) => setTtsVoiceURI(e.target.value || null)}
-                aria-label="Pick an English voice"
-                className="w-full h-8 text-xs rounded-md bg-card border border-border text-foreground px-2 hover:border-primary/40 focus:border-primary focus:outline-none transition-colors"
-              >
-                <option value="">Browser default</option>
-                {voices
+              <FilterDropdown
+                items={voices
                   .filter((v) => v.lang?.toLowerCase().startsWith('en'))
-                  .map((v) => (
-                    <option key={v.voiceURI} value={v.voiceURI}>
-                      {v.name}
-                      {v.lang ? ` · ${v.lang}` : ''}
-                      {v.default ? ' · default' : ''}
-                    </option>
-                  ))}
-              </select>
+                  .map((v) => ({
+                    id: v.voiceURI,
+                    label: `${v.name}${v.lang ? ` · ${v.lang}` : ''}${v.default ? ' · default' : ''}`,
+                  }))}
+                selectedId={ttsVoiceURI ?? ''}
+                onSelect={(id) => setTtsVoiceURI(id === 'All' ? null : id)}
+                defaultLabel="Browser default"
+                defaultIcon={null}
+                ariaLabel="Pick an English voice"
+                noContainer
+                className="w-full"
+              />
             )}
           </div>
         </div>

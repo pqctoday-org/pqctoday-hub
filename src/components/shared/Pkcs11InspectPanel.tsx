@@ -46,7 +46,7 @@ const CollapsibleValue = ({ value, isOutput = false }: { value: string; isOutput
 }
 
 export const AttributeRow = ({ attr }: { attr: DecodedAttribute }) => (
-  <div className="grid grid-cols-[10rem_1fr] gap-x-3 text-xs font-mono py-0.5 border-b border-border/20 last:border-0">
+  <div className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-x-3 text-xs font-mono py-0.5 border-b border-border/20 last:border-0">
     <div className="text-muted-foreground truncate" title={attr.typeName}>
       {attr.typeName}
       <span className="ml-1 text-foreground/30">{attr.typeHex}</span>
@@ -146,7 +146,7 @@ const renderSection = (section: InspectSection, idx: number) => (
 )
 
 export const InspectPanel = ({ inspect }: { inspect: Pkcs11LogInspect }) => (
-  <div className="mt-2 ml-4 pl-3 border-l-2 border-primary/30 bg-muted/30 rounded-r-lg p-3">
+  <div className="mt-2 ml-1 pl-2 sm:ml-4 sm:pl-3 border-l-2 border-primary/30 bg-muted/30 rounded-r-lg p-2 sm:p-3">
     {inspect.inputs.map(renderSection)}
 
     {inspect.outputs && inspect.outputs.length > 0 && (

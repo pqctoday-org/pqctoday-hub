@@ -62,8 +62,8 @@ const LogEntryRow = ({
         aria-expanded={hasInspect ? expanded : undefined}
         className={`grid ${
           beginnerMode
-            ? 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem_12rem]'
-            : 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem]'
+            ? 'grid-cols-[1rem_minmax(0,7rem)_minmax(0,12rem)_minmax(0,1fr)_minmax(0,6rem)_minmax(0,4rem)_minmax(0,12rem)]'
+            : 'grid-cols-[1rem_minmax(0,7rem)_minmax(0,12rem)_minmax(0,1fr)_minmax(0,6rem)_minmax(0,4rem)]'
         } gap-x-2 text-xs font-mono py-0.5 border-b border-border/10 last:border-0 px-1 rounded items-start
           ${hasInspect ? 'cursor-pointer hover:bg-muted/30' : ''}`}
         onClick={hasInspect ? () => setExpanded((v) => !v) : undefined}
@@ -328,22 +328,26 @@ export const Pkcs11LogPanel = ({
       data-pkcs11-log-entries={log.length}
       data-pkcs11-crypto-entries={countCryptoCalls(log)}
     >
-      {/* Header */}
-      <div className="w-full flex items-center justify-between gap-2 text-sm font-semibold">
+      {/* Header — wraps at narrow widths. Every child here is `whitespace-nowrap`
+          (Button's own base class), so without `flex-wrap` + a shrinkable title
+          the row demanded ~820px of intrinsic width and pushed the whole page
+          content off the left edge on a 390px viewport (the app shell scrolls
+          horizontally under `overflow-x:hidden`, so the user had no way back). */}
+      <div className="w-full flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm font-semibold">
         <Button
           variant="ghost"
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-2 text-sm font-semibold"
+          className="flex min-w-0 max-w-full flex-1 items-center justify-start gap-2 text-left text-sm font-semibold"
           aria-expanded={open}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex min-w-0 items-center gap-2">
             {open ? (
-              <ChevronDown size={14} className="text-muted-foreground" />
+              <ChevronDown size={14} className="shrink-0 text-muted-foreground" />
             ) : (
-              <ChevronRight size={14} className="text-muted-foreground" />
+              <ChevronRight size={14} className="shrink-0 text-muted-foreground" />
             )}
-            {title}
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="truncate">{title}</span>
+            <span className="shrink-0 text-xs font-normal text-muted-foreground">
               ({visibleLog.length} calls
               {inspectableCount > 0 && (
                 <span className="text-primary"> · {inspectableCount} inspectable</span>
@@ -353,7 +357,7 @@ export const Pkcs11LogPanel = ({
           </span>
         </Button>
         {/* Controls are siblings of the toggle button (not nested) — valid DOM. */}
-        <span className="flex items-center gap-1">
+        <span className="flex flex-wrap items-center gap-1">
           {showBeginnerMode && (
             <Button
               variant={beginnerMode ? 'secondary' : 'ghost'}
@@ -438,12 +442,12 @@ export const Pkcs11LogPanel = ({
                   PKCS#11 parameters &amp; attributes
                 </p>
               )}
-              <div className="space-y-0 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar relative">
+              <div className="space-y-0 max-h-[500px] overflow-x-auto overflow-y-auto pr-2 custom-scrollbar relative">
                 <div
                   className={`grid ${
                     beginnerMode
-                      ? 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem_12rem]'
-                      : 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem]'
+                      ? 'grid-cols-[1rem_minmax(0,7rem)_minmax(0,12rem)_minmax(0,1fr)_minmax(0,6rem)_minmax(0,4rem)_minmax(0,12rem)]'
+                      : 'grid-cols-[1rem_minmax(0,7rem)_minmax(0,12rem)_minmax(0,1fr)_minmax(0,6rem)_minmax(0,4rem)]'
                   } gap-x-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 mb-1 border-b border-border/30 px-1 sticky top-0 bg-background/95 backdrop-blur z-10`}
                 >
                   <span className="w-2.5" />
