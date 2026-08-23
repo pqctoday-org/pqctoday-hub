@@ -51,13 +51,32 @@ export const useStructuredCitations = (): boolean =>
 
 /**
  * Mobile UX layer (design_handoff_pqc_mobile_ux, IMPLEMENTATION-PLAN.md).
- * Off by default: `MainLayout` and `SimulationView` keep rendering their
- * existing desktop/legacy-mobile trees exactly as today (Rule 1 — zero
- * full-size impact) until this is explicitly turned on. localStorage
- * override lets the branch be reviewed live without a rebuild; the
- * build-time env var is the release gate (§Phase 11 of the plan — flipping
- * the default is a deliberate go-live decision, not a side effect of
- * merging).
+ * ON by default as of 2026-08-23 — a deliberate go-live decision made
+ * directly by the user, not a side effect of a merge. Every phone visitor
+ * (viewport below `lg`, not embedded — see useIsMobileShell) now sees this
+ * layer. Finished sections (Home, Explore, Learn) get the real mobile
+ * redesign; sections not yet rebuilt fall back to their desktop rendering
+ * inside the mobile chrome, or an explicit "not built for mobile yet"
+ * message where one exists — never a blank or broken screen (Rule 1 still
+ * guarantees desktop at >=lg is completely unaffected either way).
+ *
+ * Opt-out without a rebuild: localStorage 'pqc-feature-mobile-shell' = '0'.
+ * Opt-out at build time: VITE_FEATURE_MOBILE_SHELL = '0'. ('1' / unset both
+ * mean on, kept for anyone who already has the old opt-in value set.)
  */
-export const useMobileShell = (): boolean =>
-  readFlag('pqc-feature-mobile-shell', 'VITE_FEATURE_MOBILE_SHELL')
+export const useMobileShell = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const env = (import.meta as any).env
+  if (env && env.VITE_FEATURE_MOBILE_SHELL === '0') return false
+  try {
+    if (
+      typeof localStorage !== 'undefined' &&
+      localStorage.getItem('pqc-feature-mobile-shell') === '0'
+    ) {
+      return false
+    }
+  } catch {
+    // SSR / private-mode / Safari ITP — fall through to default-on
+  }
+  return true
+}

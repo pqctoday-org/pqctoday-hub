@@ -24,20 +24,31 @@ describe('useIsMobileShell', () => {
     localStorage.clear()
   })
 
-  it('is false when the flag is off, even below lg', () => {
+  // On by default as of 2026-08-23 (deliberate go-live decision — see
+  // featureFlags.ts) — no localStorage/env setup needed for the on case
+  // below; explicit '0' is the opt-out path, not '1' for opt-in.
+
+  it('is true below lg with no flag set at all (the new default)', () => {
+    mockMatchMedia(true)
+    const { result } = renderHook(() => useIsMobileShell())
+    expect(result.current).toBe(true)
+  })
+
+  it('is false when explicitly opted out via "0", even below lg', () => {
+    localStorage.setItem('pqc-feature-mobile-shell', '0')
     mockMatchMedia(true)
     const { result } = renderHook(() => useIsMobileShell())
     expect(result.current).toBe(false)
   })
 
-  it('is false when the flag is on but the viewport is at/above lg', () => {
+  it('is false when the viewport is at/above lg, flag on (default) or explicit "1"', () => {
     localStorage.setItem('pqc-feature-mobile-shell', '1')
     mockMatchMedia(false)
     const { result } = renderHook(() => useIsMobileShell())
     expect(result.current).toBe(false)
   })
 
-  it('is true when the flag is on and the viewport is below lg', () => {
+  it('is true when explicit "1" and the viewport is below lg (legacy opt-in value still works)', () => {
     localStorage.setItem('pqc-feature-mobile-shell', '1')
     mockMatchMedia(true)
     const { result } = renderHook(() => useIsMobileShell())
