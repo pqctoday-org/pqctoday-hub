@@ -1,0 +1,44 @@
+[
+  {
+    "literal": "66 operations",
+    "reason": "Hand-verified against the KMIP playground's own copy (KmipPlaygroundView.tsx:757: '62 of the 66 operations in KMIP 3.0 CSD02 ... genuinely run here'). No live-exported constant exists for this count yet — building one means adding a counter to the KMIP operation registry, out of scope for the 2026-08-23 accuracy pass. Re-check against KmipPlaygroundView.tsx:757 before the next freshness expiry; if it has drifted again, that is the signal to build the real token.",
+    "source": "src/components/Playground/kmip/KmipPlaygroundView.tsx:757",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "eight phases",
+    "reason": "Verified against the published framework document directly: pqc-references/framework-2.1.yaml's framework.phases is a list of 8 (numbered 0-7), gates run G0->G1 through G6->G7, no G8. This is an external published-document fact, not app state, so no in-repo TS export exists to tokenise against.",
+    "source": "pqc-references/framework-2.1.yaml (framework.phases)",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "OpenSSL 3.6.3",
+    "reason": "Verified against OpenSSLStudioView.tsx:196, Workbench.test.tsx, and pqcProtocolMatrix.ts:1822 (all fixed to 3.6.3 as of 2026-08-23, correcting a stale 3.6.2 the board previously carried). The version string now appears literally in at least four places in the codebase; tokenising all of them against one source is a real improvement but a larger change than this pass covers — flagged, not built.",
+    "source": "src/components/OpenSSLStudio/OpenSSLStudioView.tsx:196",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "SP 800-90B",
+    "reason": "Correct as written on both rows that carry it (researcher/reproduce cta_secondary_label and grid_card_body,1) — SP 800-90B is genuinely the entropy-source health-test standard being referenced. This is the same standard name the 2026-08-23 audit corrected a MISATTRIBUTION against (grid_card_body,1 previously credited monobit/frequency, which are SP 800-22 tests, to SP 800-90B); the standard-number citation itself was always right.",
+    "source": "src/components/Playground/workshopRegistry.tsx:410-417",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "Nine phases",
+    "reason": "Correct and distinct from the framework's 8-phase count (see the 'eight phases' exception above): this sentence describes the SIMULATION's played phases, which include verify-close (this site's own terminal phase, gate G8) on top of the published framework's 8 — 9 total, genuinely played end to end. The board's proof_chip that wrongly attributed this 9 to 'the published framework' was fixed 2026-08-23; this sub sentence, which only claims the simulation plays nine, was already correct.",
+    "source": "src/data/frameworkPhases.ts (LIFECYCLE_PHASES — PHASE_ORDER minus 'foundations')",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "three sectors",
+    "reason": "Self-referential, not an external fact: the sentence names exactly three sectors immediately before this phrase ('...adopted across HSM and KMIP interfaces, and nothing at all in EMV card authentication — three sectors, three different stages'). True by construction as long as the sentence lists three examples; cannot drift independently of the prose it summarises.",
+    "source": "self-referential (see researcher/field,sub)",
+    "last_reviewed": "2026-08-23"
+  },
+  {
+    "literal": "2033",
+    "reason": "executive/deadlines side_card_row_value,0 — CNSA 2.0's own full-transition mandate year (distinct fact from the CRQC arrival estimate, which happens to share the same digits this cycle and is now tokenised on this same board via side_card_row_value,1's {crqc_estimate_row}). Verified against quantumConstants.ts's NSA CNSA 2.0 tracked-source entry (yearHigh: 2033, 'exclusive use 2030 (signing, networking) and 2033 (web/cloud, OS)'). That entry is a field inside an array, not a standalone named export, so no simple token exists yet — building one means extracting a single tracked source by id rather than reusing an existing re-export. If this drifts before the next freshness expiry, that is the signal to build it.",
+    "source": "src/components/PKILearning/modules/QuantumThreats/data/quantumConstants.ts:381 (NSA CNSA 2.0 tracked source)",
+    "last_reviewed": "2026-08-23"
+  }
+]
