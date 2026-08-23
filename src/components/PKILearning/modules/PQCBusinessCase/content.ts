@@ -25,7 +25,10 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('Cyentia IRIS 2025'),
-    getStandard('FIPS-140-3'),
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
     getStandard('NIST CSWP 39'),
   ],
 

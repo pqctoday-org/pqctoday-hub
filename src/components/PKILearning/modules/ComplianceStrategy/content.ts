@@ -33,7 +33,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 199'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('FIPS-140-3'),
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
     getStandard('NIST CSWP 39'),
     getStandard('NIST SP 800-30'),
     getStandard('NSA CNSA 2.0 FAQ'),

@@ -25,7 +25,10 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
-    getStandard('FIPS-140-3'),
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
     getStandard('NIST IR 8547'),
     getStandard('NSM-10'),
   ],
