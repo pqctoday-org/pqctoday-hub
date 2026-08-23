@@ -25,6 +25,12 @@ describe('MobileGroupPanel', () => {
     expect(screen.getByRole('button', { name: 'Library' })).toBeInTheDocument()
   })
 
+  it('always includes Timeline and Threats — RAIL_ALWAYS_VISIBLE_PATHS on desktop, never persona-gated', () => {
+    renderPanel({ groupId: 'reference', persona: 'curious' })
+    expect(screen.getByRole('button', { name: 'Timeline' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Threats' })).toBeInTheDocument()
+  })
+
   it('gates the tile set per persona — curious has no Patents TILE, matching the real PERSONA_ABSENT_PATHS.curious entry', () => {
     renderPanel({ groupId: 'reference', persona: 'curious' })
     // "Patents" still appears once, inside the absence explanation itself —

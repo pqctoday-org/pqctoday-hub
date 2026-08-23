@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobileHeader } from './MobileHeader'
+import { useVersionStore } from '@/store/useVersionStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 function renderHeader(
   initialPath: string,
@@ -25,6 +27,11 @@ function renderHeader(
     </MemoryRouter>
   )
 }
+
+afterEach(() => {
+  useVersionStore.getState().resetForTesting()
+  usePersonaStore.getState().setPersona(null)
+})
 
 describe('MobileHeader', () => {
   it('shows the brand wordmark on Home, not a back button', () => {
@@ -60,8 +67,22 @@ describe('MobileHeader', () => {
   })
 
   it('always renders Search and More', () => {
+    useVersionStore.getState().markAllSeen()
     renderHeader('/assess')
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'More' })).toBeInTheDocument()
+  })
+
+  it("shows the More button's unread dot when there are real unseen changelog entries", () => {
+    useVersionStore.getState().resetForTesting()
+    renderHeader('/assess')
+    expect(screen.getByRole('button', { name: 'More — unread updates' })).toBeInTheDocument()
+  })
+
+  it('hides the unread dot once the version is marked seen', () => {
+    useVersionStore.getState().markAllSeen()
+    renderHeader('/assess')
+    expect(screen.getByRole('button', { name: 'More' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'More — unread updates' })).not.toBeInTheDocument()
   })
 })

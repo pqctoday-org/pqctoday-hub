@@ -14,6 +14,7 @@ import {
   type ForYouGroupId,
 } from '@/components/Layout/railNav'
 import { MobileSheet } from '../primitives/Sheet'
+import { MOBILE_REFERENCE_APPEND_PATHS } from './mobileNavGroups'
 
 export interface MobileGroupPanelProps {
   groupId: ForYouGroupId
@@ -37,6 +38,11 @@ export interface MobileGroupPanelProps {
  * desktop rail's own no-persona state shows, just grouped into tiles
  * instead of a flat list, since the bottom bar's three tabs are fixed UI
  * slots that need to show something regardless of persona.
+ *
+ * Reference always gets '/timeline' and '/threats' appended (see
+ * mobileNavGroups.ts) — both are RAIL_ALWAYS_VISIBLE_PATHS on desktop,
+ * reachable by every persona and never persona-gated, so unlike the rest of
+ * this panel's tile set they need no absence handling.
  */
 export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGroupPanelProps) {
   const navigate = useNavigate()
@@ -45,7 +51,10 @@ export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGrou
   const groups = getForYouGroups(groupablePaths)
   const group = groups.find((g) => g.id === groupId)
   const absences = getGroupAbsences(persona, groupId)
-  const paths = group?.paths ?? []
+  const paths =
+    groupId === 'reference'
+      ? [...(group?.paths ?? []), ...MOBILE_REFERENCE_APPEND_PATHS]
+      : (group?.paths ?? [])
 
   const handleSelect = (path: string) => {
     onClose()

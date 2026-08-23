@@ -11,8 +11,12 @@ import { UserManualPanel } from '@/components/common/UserManualPanel'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useCommandPaletteStore } from '@/store/useCommandPaletteStore'
 import { ROUTE_SHARE } from '@/data/routePageMeta'
+import { FOR_YOU_GROUP_LABELS } from '@/components/Layout/railNav'
+import { cn } from '@/lib/utils'
 import { mobileIconButton, mobileRolePill } from '../mobileTokens'
 import { pageIdForMobileRoute } from './getMobilePageActions'
+import { mobileGroupIdForPath } from './mobileNavGroups'
+import { useMobileWhatsNewStatus } from './mobileWhatsNew'
 
 export interface MobileHeaderProps {
   persona: PersonaId | null
@@ -26,28 +30,25 @@ export interface MobileHeaderProps {
  * four of the desktop top bar's nine controls the handoff promotes, with
  * the rest folded into the ⋯ sheet (MobilePageActionsSheet).
  *
- * Simplification vs. the handoff, stated rather than silently dropped: the
- * ⋯ button's unread red dot (handoff: "6px red unread dot... when there is
- * unread news") has no data source yet — there is no unread-tracking
- * mechanism anywhere in this codebase today, on desktop or otherwise
- * (WhatsNewModal shows itself once per new app version; it has no per-item
- * read state). Left off rather than inventing tracking state as a side
- * effect of the nav shell. The crumb line above the page title (handoff:
- * "crumb 10.5px/700 uppercase") is the same kind of deferred polish — the
- * title itself is real (NAV_PATH_LABELS), the crumb needs the FOR_YOU group
- * name for the current route, which railNav.ts doesn't expose per-path yet.
+ * The ⋯ button's unread red dot (handoff: "6px red unread dot... when there
+ * is unread news") reads useMobileWhatsNewStatus — the same real
+ * lastSeenVersion/changelog computation the desktop WhatsNewModal already
+ * uses to decide what counts as unseen, not a static/invented indicator.
  */
 export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: MobileHeaderProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const openPalette = useCommandPaletteStore((s) => s.open)
   const pageActions = usePageActionsStore((s) => s.current)
+  const { hasUnread } = useMobileWhatsNewStatus()
   const [guideOpen, setGuideOpen] = useState(false)
 
   const isHome = location.pathname === '/'
   const pageIdForRoute = pageIdForMobileRoute(location.pathname)
   const shareForRoute = ROUTE_SHARE[location.pathname]
   const title = isHome ? undefined : NAV_PATH_LABELS[location.pathname]
+  const groupId = isHome ? undefined : mobileGroupIdForPath(location.pathname)
+  const crumb = groupId ? FOR_YOU_GROUP_LABELS[groupId] : undefined
   // Handoff: "13px person icon plus the SHORT role label" — PERSONAS has no
   // dedicated short-label field, so this derives one from the real label
   // (first word: "Executive / GRC" -> "Executive") rather than inventing new
@@ -81,6 +82,11 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
                 <ChevronLeft size={20} aria-hidden="true" />
               </Button>
               <div className="min-w-0 flex-1">
+                {crumb && (
+                  <p className="truncate text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                    {crumb}
+                  </p>
+                )}
                 <p className="truncate text-[17px] font-extrabold leading-tight text-foreground">
                   {title ?? 'PQC Today'}
                 </p>
@@ -107,7 +113,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
               text={pageActions?.shareText ?? shareForRoute?.text}
               url={pageActions?.url}
               variant="icon"
-              className={mobileIconButton}
+              buttonClassName={mobileIconButton}
             />
 
             {pageIdForRoute && (
@@ -134,10 +140,16 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
             <Button
               type="button"
               onClick={onOpenPageActions}
-              aria-label="More"
-              className={mobileIconButton}
+              aria-label={hasUnread ? 'More — unread updates' : 'More'}
+              className={cn(mobileIconButton, 'relative')}
             >
               <MoreHorizontal size={15} aria-hidden="true" />
+              {hasUnread && (
+                <span
+                  aria-hidden="true"
+                  className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-destructive"
+                />
+              )}
             </Button>
           </div>
         </div>
