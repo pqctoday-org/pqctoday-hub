@@ -97,6 +97,8 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
           <div className="flex shrink-0 items-center gap-1.5">
             <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={openPalette}
               aria-label="Search"
               className={mobileIconButton}
@@ -119,6 +121,8 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
             {pageIdForRoute && (
               <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setGuideOpen(true)}
                 aria-label="Guide"
                 className={mobileIconButton}
@@ -139,6 +143,8 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
 
             <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={onOpenPageActions}
               aria-label={hasUnread ? 'More — unread updates' : 'More'}
               className={cn(mobileIconButton, 'relative')}
