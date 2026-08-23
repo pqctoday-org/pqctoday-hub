@@ -35,6 +35,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
+import { decodeJsxEntities } from './lib/jsxEntities'
 import { KNOWN_MISSING } from './audit-module-infographics'
 // Runtime constant (the default tab set); the file's other imports are
 // type-only and erased by tsx, so this execute-imports cleanly.
@@ -347,27 +348,6 @@ const ATTR_ALLOWLIST = new Set([
 
 const CLASS_UTIL_FNS = new Set(['cn', 'clsx', 'cva', 'classnames', 'twmerge'])
 
-/** Decode the JSX entities that show up in learner-facing text. */
-const JSX_ENTITIES: Record<string, string> = {
-  '&apos;': "'",
-  '&#39;': "'",
-  '&quot;': '"',
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&nbsp;': ' ',
-  '&mdash;': '—',
-  '&ndash;': '–',
-  '&hellip;': '…',
-  '&rarr;': '→',
-  '&larr;': '←',
-  '&times;': '×',
-}
-
-function decodeJsxEntities(s: string): string {
-  return s.replace(/&[a-z]+;|&#\d+;/gi, (m) => JSX_ENTITIES[m] ?? m)
-}
-
 /** Token that looks like a Tailwind/CSS utility rather than a word. */
 const UTILITY_TOKEN = /^[a-z0-9\-:[\]/.%!&>_()#,']+$/
 
@@ -427,7 +407,36 @@ function extractComponentText(filePath: string): string {
     parts.push(text)
   }
 
+  /**
+   * `<sup>`/`<sub>` content belongs to the run of text around it, not beside
+   * it. Pushed separately it is almost always 1-2 characters and dies on the
+   * length guard above, so `2<sup>N</sup>` extracted as bare `2` — the
+   * meaningful half deleted. That is how "a superposition over all 2^N basis
+   * states" reached the accuracy checker as "over all 2 basis states".
+   *
+   * Eight live values across 7 module files: N, 48, -20, n, n/2, m, H, 400.
+   */
+  const appendInline = (marker: string, raw: string): void => {
+    const text = decodeJsxEntities(raw.replace(/\s+/g, ' ').trim())
+    if (!text) return
+    if (parts.length === 0) {
+      push(marker + text)
+      return
+    }
+    const merged = parts[parts.length - 1] + marker + text
+    parts[parts.length - 1] = merged
+    seen.add(merged)
+  }
+
   const visit = (node: ts.Node): void => {
+    if (ts.isJsxElement(node)) {
+      const tag = node.openingElement.tagName.getText().toLowerCase()
+      if (tag === 'sup' || tag === 'sub') {
+        const inner = node.children.map((c) => (ts.isJsxText(c) ? c.text : c.getText())).join('')
+        appendInline(tag === 'sup' ? '^' : '_', inner)
+        return // children consumed — do not re-visit them as standalone text
+      }
+    }
     if (ts.isJsxText(node)) {
       push(node.text)
     } else if (

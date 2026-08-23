@@ -452,6 +452,8 @@ public/data/rag-index-freshness.json
 # public inputs, JSON output written outside the repo. Must be tracked so
 # `npm run export:learn-snapshot` works from a fresh checkout.
 !scripts/export-learn-manifest-snapshot.ts
+!scripts/lib/jsxEntities.ts
+!scripts/lib/jsxEntities.test.ts
 
 # Timeline country-alias audit — CI gate that validates countryAliases.ts
 # against the latest Timeline CSV. Pure read-only against public data.
