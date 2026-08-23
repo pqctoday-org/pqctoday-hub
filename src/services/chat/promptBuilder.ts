@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { RAGChunk } from '@/types/ChatTypes'
 import type { PageContext } from '@/hooks/usePageContext'
+import { useStructuredCitations } from '@/services/featureFlags'
 
 /**
  * Approximate character budget for RAG context blocks in the system prompt.
@@ -154,14 +155,17 @@ const REGION_LABELS: Record<string, string> = {
 function buildContextBlocks(
   chunks: RAGChunk[],
   maxChars = MAX_CONTEXT_CHARS,
-  compact = false
+  compact = false,
+  includeIds = false
 ): string {
   const allBlocks: string[] = []
   let totalChars = 0
   const chunkContentLimit = compact ? 600 : Infinity
 
   for (const c of chunks) {
-    const header = `--- Source: ${c.source} | ${c.title} ---`
+    const header = includeIds
+      ? `--- Source: ${c.source} | ${c.title} | id: ${c.id} ---`
+      : `--- Source: ${c.source} | ${c.title} ---`
     const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
     const content =
       compact && c.content.length > chunkContentLimit
@@ -242,7 +246,20 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
 /* ------------------------------------------------------------------ */
 
 export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
-  const contextBlocks = buildContextBlocks(chunks)
+  // See featureFlags.ts: plain flag check, not a React Hook — the `use`
+  // prefix is this module's naming convention for every flag, including
+  // ones (like this one) meant to be read from prompt-building code.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const citationsEnabled = useStructuredCitations()
+  const contextBlocks = buildContextBlocks(chunks, MAX_CONTEXT_CHARS, false, citationsEnabled)
+  const citationsSection = citationsEnabled
+    ? `CITATIONS (recommended): after a specific factual claim — a standard/algorithm attribute, certification status, date, or security level — cite the exact chunk it came from. Before the follow-ups fence, add a \`\`\`citations code fence containing a JSON array of {"claimExcerpt": "<the exact claim text as you wrote it>", "chunkId": "<the chunk's id, shown as "| id: <id>" in its context block below>"}. Only cite chunk ids that actually appear in the context below — never invent one. Example:
+\`\`\`citations
+[{"claimExcerpt": "ML-KEM-768 provides NIST security level 3", "chunkId": "algo-ml-kem-768"}]
+\`\`\`
+
+`
+    : ''
   const {
     pageNote,
     personaSection,
@@ -309,7 +326,7 @@ GUIDELINES:
 5. Learning modules (51 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [KMS & PQC Key Management](/learn/kms-pqc), [HSM & PQC Operations](/learn/hsm-pqc), [Data & Asset Sensitivity](/learn/data-asset-sensitivity), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance), [Crypto Dev APIs](/learn/crypto-dev-apis), [Web Gateway PQC](/learn/web-gateway-pqc), [Standards Bodies](/learn/standards-bodies), [Confidential Computing](/learn/confidential-computing), [Database Encryption](/learn/database-encryption-pqc), [Energy & Utilities](/learn/energy-utilities-pqc), [EMV Payments](/learn/emv-payment-pqc), [AI Security & PQC](/learn/ai-security-pqc), [Platform Engineering](/learn/platform-eng-pqc), [Healthcare PQC](/learn/healthcare-pqc), [Aerospace PQC](/learn/aerospace-pqc), [Automotive PQC](/learn/automotive-pqc), [Executive Quantum Impact](/learn/exec-quantum-impact), [Developer Quantum Impact](/learn/dev-quantum-impact), [Architect Quantum Impact](/learn/arch-quantum-impact), [Ops Quantum Impact](/learn/ops-quantum-impact), [Researcher Quantum Impact](/learn/research-quantum-impact), [Secrets Management](/learn/secrets-management-pqc), [Network Security](/learn/network-security-pqc), [IAM & Identity](/learn/iam-pqc), [Secure Boot & Firmware](/learn/secure-boot-pqc), [OS Crypto Stacks](/learn/os-pqc), [Cryptographic Bill of Materials (CBOM)](/learn/cbom), [Verification & Closure](/learn/verification-closure)
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
 
-FOLLOW-UP SUGGESTIONS:
+${citationsSection}FOLLOW-UP SUGGESTIONS:
 After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering).${pageContext?.experienceLevel === 'curious' ? '\nFOLLOW-UP STYLE: The user is non-technical. Follow-up questions should use simple language and invite exploration (e.g., "What does this mean for online banking?" rather than "How does ML-KEM integrate with TLS 1.3?").' : ''}
 Example:
 \`\`\`followups
@@ -331,8 +348,15 @@ export function buildLocalSystemPrompt(
   maxContextChars: number = LOCAL_MAX_CONTEXT_CHARS,
   maxEntities: number = LOCAL_MAX_INVENTORY_ENTITIES
 ): string {
+  // See buildGeminiSystemPrompt for why this flag check is safe outside a
+  // component despite the `use` prefix.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const citationsEnabled = useStructuredCitations()
   // Compact mode: truncate chunk content to fit more chunks in limited context
-  const contextBlocks = buildContextBlocks(chunks, maxContextChars, true)
+  const contextBlocks = buildContextBlocks(chunks, maxContextChars, true, citationsEnabled)
+  const citationsNote = citationsEnabled
+    ? `\nCitations (recommended): cite factual claims to their source chunk id (shown as "id: <id>" in context). Before the followups fence, add a \`\`\`citations fence: [{"claimExcerpt": "<exact claim text>", "chunkId": "<id from context below>"}]. Only cite ids that appear below.\n`
+    : ''
 
   // Compact page/persona context — every token counts at 4K
   let pageNote = ''
@@ -382,8 +406,9 @@ export function buildLocalSystemPrompt(
   return `You are PQC Today Assistant — expert in post-quantum cryptography.
 ${pageNote}${personaNote}${experienceNote}${profileNote}${assessNote}
 Answer ONLY from context below. Never fabricate names, dates, numbers, quotes, or claims. Don't infer facts the context doesn't state.
+Never invent certification status (FIPS validated, ACVP certified, etc.) or claim a product supports an algorithm unless the context states it.
 If sources conflict, say so instead of picking one silently.
-If unsure, say "Based on the PQC Today database, I don't have that information."
+If context is insufficient, say so — name the specific source you checked (e.g. "the Library database"), not just "the database" — then still answer from what IS available.
 ${inventorySection}
 Pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL](/openssl), [Learn](/learn), [Business](/business), [Tools](/business/tools), [Patents](/patents), [Quiz](/learn/quiz), [FAQ](/faq), [Explore](/explore)
 ${topModules}
@@ -400,7 +425,7 @@ Self-check: only use paths/params listed above — if unsure, link the bare path
 Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)
 
 BREVITY: Keep answers to 2–4 short paragraphs. Use bullet points for lists. Do not repeat the question. Do not add preamble. Educational only — not production advice.
-
+${citationsNote}
 After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering):${pageContext?.experienceLevel === 'curious' ? '\nFollow-ups should use simple language — no jargon.' : ''}
 \`\`\`followups
 Example follow-up question 1?

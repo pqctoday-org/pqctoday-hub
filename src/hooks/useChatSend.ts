@@ -15,7 +15,10 @@ import {
   EngineDisconnectedError,
 } from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
+import { parseCitations } from '@/services/chat/parseCitations'
+import { verifyCitations } from '@/services/chat/citationVerification'
 import { checkGrounding } from '@/services/chat/groundingCheck'
+import { verifyFacts } from '@/services/chat/factVerification'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
 import { getCached, setCache } from '@/services/chat/responseCache'
@@ -203,7 +206,7 @@ export function useChatSend() {
           .filter((m) => m.role === 'user')
           .slice(-5)
           .map((m) => m.content)
-        const chunks = retrievalService.search(trimmed, undefined, {
+        const chunks = await retrievalService.searchWithEmbeddingFallback(trimmed, undefined, {
           page: pageContext.page,
           moduleId: pageContext.moduleId,
           relevantSources: pageContext.relevantSources,
@@ -333,15 +336,63 @@ export function useChatSend() {
           appendStreamingContent(chunk)
         }
 
-        // Parse follow-ups from response and strip the block from displayed content
-        const { cleanContent, followUps } = parseFollowUps(fullContent)
+        // Parse citations first (parseCitations is not anchored to the end
+        // of the string — the citations fence is instructed to appear
+        // BEFORE the follow-ups fence, see promptBuilder.ts §7.1), then
+        // follow-ups from what remains and strip both blocks from the
+        // displayed content.
+        const { cleanContent: contentAfterCitations, citations } = parseCitations(fullContent)
+        const { cleanContent, followUps } = parseFollowUps(contentAfterCitations)
 
-        // Check if response references entities not found in RAG context
+        // Three checks, cheapest/most-specific first in priority:
+        // 1. Citation check (exact chunk-id + text-containment match) — only
+        //    populated when the model actually emitted a ```citations block
+        //    (useStructuredCitations flag, off by default); the strongest
+        //    signal of the three since it names the EXACT chunk a claim
+        //    came from, so "is this claim in that chunk" is exact-match,
+        //    not a heuristic guess.
+        // 2. Fact violation check — specific, mechanically-confirmed
+        //    contradictions against known ground truth (FIPS↔algorithm
+        //    attribution, security levels, standard dates, non-PQC
+        //    misattribution, product certification claims).
+        // 3. Grounding check — entity-presence only, catches fabricated
+        //    names/products/standards but not wrong RELATIONSHIPS between
+        //    entities that are each individually grounded (e.g. "Product X
+        //    is FIPS 140-3 certified" when both "Product X" and "FIPS
+        //    140-3" appear in the retrieved chunks but not together) —
+        //    which (1) and (2) exist specifically to catch.
+        const citationViolations = verifyCitations(citations, chunks)
         const grounding = checkGrounding(cleanContent, chunks)
-        let finalContent = grounding.hasWarning
-          ? cleanContent.trimEnd() +
+        const factViolations = verifyFacts(cleanContent, chunks)
+
+        let finalContent = cleanContent
+        if (citationViolations.length > 0) {
+          const violationLines = citationViolations
+            .map((v) =>
+              v.reason === 'unknown-chunk'
+                ? `- Cited a source not among this answer's retrieved evidence: "${v.claimExcerpt}"`
+                : `- Cited source doesn't contain this claim: "${v.claimExcerpt}"`
+            )
+            .join('\n')
+          finalContent =
+            finalContent.trimEnd() +
+            `\n\n> **Citation notice:** This response cited a source for a claim that doesn't check out:\n${violationLines}`
+        } else if (factViolations.length > 0) {
+          // A fact violation is a specific, mechanically-confirmed
+          // contradiction — surface it distinctly and more prominently
+          // than the generic entity-presence notice below, naming what
+          // was actually wrong instead of just urging a cross-check.
+          const violationLines = factViolations
+            .map((v) => `- **${v.expected}** — the response said: "${v.found}"`)
+            .join('\n')
+          finalContent =
+            finalContent.trimEnd() +
+            `\n\n> **Fact-check notice:** This response contains a claim that contradicts the PQC Today database:\n${violationLines}`
+        } else if (grounding.hasWarning) {
+          finalContent =
+            finalContent.trimEnd() +
             '\n\n> **Accuracy notice:** This response may reference items not verified in the PQC Today database. Please cross-check specific names, dates, or claims against the source pages linked above.'
-          : cleanContent
+        }
 
         // Graceful degradation hint for local mode: suggest Flash for thin answers
         if (
