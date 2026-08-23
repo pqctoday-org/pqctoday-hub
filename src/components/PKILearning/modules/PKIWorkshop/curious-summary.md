@@ -8,7 +8,7 @@ Because Root Certificate Authorities can live for 20+ years, they are highly vul
 
 ### The Key Takeaway
 
-Migration to PQC is urgent: NIST IR 8547 (draft) proposes deprecating classical public-key algorithms by 2030 and disallowing them by 2035, while NSA's CNSA 2.0 requires exclusive PQC use by 2030 (signing, networking) or 2033 (web/cloud, operating systems). Organizations must immediately test hybrid certificates or emerging solutions like Merkle Tree Certificates (MTCs), which significantly reduce PQC signature overhead.
+Migration to PQC is urgent: NIST IR 8547 (draft) proposes deprecating classical public-key algorithms by 2030 and disallowing them by 2035, while NSA's CNSA 2.0 requires exclusive PQC use in **national security systems** by 2030 (signing, networking) or 2033 (web/cloud, operating systems). Organizations must immediately test hybrid certificates or emerging solutions like Merkle Tree Certificates (MTCs), which significantly reduce PQC signature overhead.
 
 ### What's Happening
 

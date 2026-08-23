@@ -13,9 +13,15 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.1',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
+  standards: [
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+    // The deadlines below are IR 8547's; cite it so they are traceable.
+    getStandard('NIST IR 8547'),
+  ],
 
   algorithms: [
     getAlgorithm('ML-KEM-768'),
@@ -87,7 +93,11 @@ export const transitionTable = {
 
 /** PQC timeline milestones — years from regulatory constants, not hardcoded */
 export const timelineMilestones = [
-  { year: '2016', event: 'NIST launches PQC standardization competition', phase: 'Research' },
+  {
+    year: '2016',
+    event: 'NIST opens the PQC standardization process (call for proposals)',
+    phase: 'Research',
+  },
   {
     year: '2022',
     event: 'NIST selects first PQC standards (Kyber, Dilithium, FALCON, SPHINCS+)',
@@ -99,8 +109,20 @@ export const timelineMilestones = [
     phase: 'Standardization',
   },
   {
+    year: '2025',
+    event:
+      'NIST selects HQC as a backup KEM (IR 8545) and finalizes SP 800-227, its KEM usage guidance',
+    phase: 'Standardization',
+  },
+  {
     year: String(CNSA_2_0.softwarePreferred),
     event: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
+    phase: 'Policy',
+  },
+  {
+    year: '2026',
+    event:
+      'EO 14412 sets U.S. federal civilian PQC deadlines — key establishment 2030, digital signatures 2031',
     phase: 'Policy',
   },
   {

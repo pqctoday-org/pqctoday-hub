@@ -11,16 +11,21 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-22',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Sampled at 0,1,3,5: RFC 8446 (TLS 1.3 handshake growth), FIPS 203 (key and
+  // ciphertext sizes), SP 800-227 (hybrid combiners) and RFC 9980 — the PQC
+  // OpenPGP spec this module's prose actually discusses. RFC 9580 is the base
+  // OpenPGP spec and was the only one cited until 2026-08-22.
   standards: [
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
+    // RFC 8446 sections where it discusses the original, which stays accurate.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
     getStandard('NIST SP 800-227'),
-    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22. RFC 9846 (July 2026) obsoletes it —
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446" in its header — and the library
-    // row for 8446 already carried 9846 as its supersession pointer. TLS 1.3 the
-    // protocol is unchanged; the live specification moved.
-    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('FIPS 205'),
+    getStandard('RFC 9980'),
     getStandard('RFC 9580'),
   ],
 

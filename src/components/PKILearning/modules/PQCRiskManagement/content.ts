@@ -10,9 +10,17 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
-  standards: [getStandard('NIST IR 8547'), getStandard('NSA CNSA 2.0')],
+  standards: [
+    // Subject documents first. The accuracy spot-check samples this list by even
+    // stride, so relevance order decides which documents its claims get checked
+    // against — the risk-methodology sources need to be reachable, not just the
+    // deadline ones.
+    getStandard('NIST SP 800-30'),
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),

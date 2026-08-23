@@ -279,7 +279,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
             },
             {
               t: 'Vendor PQC licensing & upgrades',
-              d: 'HSM firmware upgrades alone can run $50K–$500K+ depending on module count.',
+              d: 'Often a step change rather than a line item: price HSM firmware upgrades and any PQC feature licences with your own vendor, per module, before assuming a number.',
             },
             {
               t: 'HSM & hardware refresh',
@@ -328,26 +328,32 @@ const Step1WhyConceptsCosts: React.FC = () => (
 
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-2">
-            Reference anchors (order-of-magnitude)
+            The one published anchor — and how to build your own
           </div>
           <ul className="text-[11px] text-muted-foreground space-y-1">
             <li>
-              &bull; Discovery &amp; inventory: <strong>$2–5M</strong> for a large operator (~1
-              year).
+              &bull; The only large-scale PQC migration cost figure published by an accountable body
+              is the U.S. federal civilian estimate: <strong>$7.1B for 2025–2035</strong> (OMB,
+              Report to Congress). It was built bottom-up from agency cryptographic inventories —
+              which is why it is quotable and most vendor figures are not.
             </li>
             <li>
-              &bull; Assessment &amp; planning: only <strong>~1–2%</strong> of total — but
-              determines whether the other 98% is spent in the right order.
+              &bull; Beware round numbers with no owner. Per-organization PQC program costs
+              circulate widely (&ldquo;$2–5M for discovery&rdquo;, &ldquo;$300–500M for a global
+              telco&rdquo;) and almost none of them trace to a published methodology. If you cannot
+              name whose board approved a number, do not put it in front of yours.
             </li>
             <li>
-              &bull; Full program: order of <strong>$300–500M over a decade</strong> for a major
-              global telco; U.S. federal civilian comparator <strong>$7.1B for 2025–2035</strong>{' '}
-              (OMB). Peak staffing dozens of FTEs.
+              &bull; Derive your own instead: count the assets you actually have (certificates,
+              HSMs, applications, third-party integrations), price one representative unit of each
+              with your own vendors, and multiply. The Cost Model Explorer in Step 1 does this
+              across six model families so you can see the spread rather than a single number.
             </li>
           </ul>
           <p className="text-[10px] text-muted-foreground mt-2">
             Present gross program cost and net <em>incremental</em> cost separately — much of the
-            spend is modernization you needed anyway.
+            spend is modernization you needed anyway. And state which method produced each figure; a
+            board can challenge a method, but it cannot challenge a number from nowhere.
           </p>
         </div>
       </div>
@@ -382,7 +388,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
             },
             {
               t: 'Probabilistic (Monte Carlo)',
-              d: 'Put distributions on the uncertain drivers and simulate to a confidence band (P10/P50/P90) instead of a single number. Demonstrated for real-time payments in a 2026 preprint.',
+              d: 'Put distributions on the uncertain drivers and simulate to a confidence band (P10/P50/P90) instead of a single number. Best where the drivers are genuinely uncertain and a single point estimate would be false precision.',
             },
             {
               t: 'Judgemental / scenario',

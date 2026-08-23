@@ -29,6 +29,41 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.56.0] - 2026-08-23
+
+A large accuracy pass across the Learn modules — dozens of citations now point at the standard that is actually current — plus a References tab showing what each module cites, working autosave in the business tools, and a keyboard-navigable, higher-contrast interface.
+
+### Added
+
+- **Every Learn module now has a References tab showing exactly what it cites** [view:/learn] [persona:curious] [persona:researcher] [persona:architect]: each cited standard is listed and linked straight to its Library entry, so you can check a module's sources without hunting for them. Which documents a module cites is now also enforced — a module that makes a dated claim has to declare the document that claim comes from.
+- **Related modules, and 25 more pages reachable from search** [view:/learn] [persona:curious]: modules now suggest what to read next, and 25 pages that existed but could only be found by knowing their URL now appear in global search.
+- **Slide export no longer depends on a third-party generator** [view:/learn] [persona:executive] [persona:architect]: exports are written directly in the PowerPoint format, which removes a large dependency from the download and fixes exports that came out corrupted.
+
+### Fixed
+
+- **Nine modules cited a TLS specification that was replaced in July 2026** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: they pointed at RFC 8446, which RFC 9846 now obsoletes. All nine repointed, along with a module citing an SBOM document superseded by CISA's 2026 revision and another citing a retired NIST random-number publication. In total 65 citations that pointed at withdrawn or superseded Library entries now point at the live ones.
+- **The 5G module told readers to implement a profile 3GPP never defined** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: its plain-English summary described a post-quantum profile that does not exist in the specification. Corrected.
+- **A payment module described card authorisation cryptography wrongly** [view:/learn] [persona:developer] [persona:architect]: it said an EMV ARQC is something you sign with ML-DSA. An ARQC is a MAC, and the module now says so.
+- **Wrong key and signature sizes in three places** [view:/learn] [persona:developer] [persona:architect]: FrodoKEM sizing was wrong, a crypto-agility sizing hint understated post-quantum key sizes by a factor of four, and a Merkle Tree Certificate proof was given as 736 bytes when a standalone proof is 384.
+- **Business-tool drafts are no longer silently lost** [view:/business] [persona:executive] [persona:architect]: the tools claimed to autosave but did not, so work could disappear on navigating away. Autosave is now real.
+- **Modules that had dropped out of the guided paths are back** [view:/learn] [persona:curious] [persona:researcher]: several modules existed but were unreachable from any role's learning path. They have been reinstated, and a check now fails the build if it happens again.
+- **Keyboard and screen-reader navigation through module tabs** [view:/learn] [persona:curious]: tabbed sections across the site now follow the standard accessibility pattern, and a contrast problem affecting readability was fixed.
+- **Phone and tablet layout fixes** [view:/learn] [persona:curious] [persona:ops]: step labels, log panels and wide tables no longer overflow their containers on small screens; 22 dropdowns that used the raw browser control now match the rest of the interface.
+- **The Assistant's local model had weaker anti-hallucination instructions than the cloud one** [persona:developer] [persona:researcher]: two rules present in the cloud prompt — never invent a certification status, never claim a product supports an algorithm unless the source says so — had been dropped from the on-device prompt, which is the more hallucination-prone path. Restored.
+- **The Assistant stopped padding answers with weak sources** [persona:researcher] [persona:curious]: when it could not find enough strongly-matching passages it filled the remainder with whatever scored next, however poorly. Those weak matches diluted the answer and widened what its own fact-check treated as supported. It now stops at a quality floor instead.
+- **The sandbox no longer overstates what it supports** [view:/playground] [persona:developer] [persona:ops]: a scenario summary claimed 8 certificate formats where the underlying tool supports fewer.
+- **A secure-boot page linked to a superseded PKCS#11 draft** [view:/learn] [persona:developer] [persona:ops]: it now points at the ratified version.
+- **The Algorithms page said what its memory column cannot tell you** [view:/algorithms] [persona:developer] [persona:architect]: the RAM figures are peak working-set measurements from one implementation, not a portable requirement, and the column now says so rather than implying a hardware bar.
+
+### Data
+
+- **Every claim about a source document is now backed by a verified copy** [view:/library] [persona:researcher] [persona:architect]: 181 stored documents were brought under hash verification after individual screening, and the number of unverified stored copies went from 249 to 1. Where no fetch can retrieve a document — four paywalled standards among them — that is now recorded with the reason instead of left looking unchecked.
+- **Duplicate and misattributed Library entries cleaned up** [view:/library] [persona:researcher]: 13 duplicate documents were merged (two of them filed under misleading names), and 11 entries that credited the European Commission for other organisations' work now name the real publisher. A compliance entry that attributed South Korea's KCMVP scheme to NIST now attributes it to KISA.
+- **Six documents were serving a catalogue or project page instead of the standard itself** [view:/library] [persona:researcher] [persona:architect]: including FIPS 206, whose evidence was the NIST project page rather than the draft. Each now has the real document.
+- **eIDAS is described correctly** [view:/compliance] [persona:executive] [persona:architect]: Regulation 910/2014 was marked as superseded. It is amended, not superseded, and the amending text that actually applies has been added.
+- **The protocol matrix is current against the IETF datatracker** [view:/algorithms] [persona:developer] [persona:architect]: every drafted specification that had moved on was refreshed, and RFC 9954 added. The TLS module's hybrid key agreements are now cited as RFC 10024, which became a Standards Track RFC on 2026-08-10.
+- **Six algorithms the site already had data for are now in the catalogue** [view:/algorithms] [persona:developer] [persona:researcher]: they were present in the underlying data but never surfaced.
+
 ## [4.55.0] - 2026-08-19
 
 More product briefs and user manuals are linked, a batch of vendor data mistakes are corrected, the Industry Landscape page no longer sends you to the wrong Learn module, and changing your role on mobile actually works now.

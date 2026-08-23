@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CRQC_ESTIMATES } from '@/data/regulatoryTimelines'
 import {
   PHARMA_PHASE_CONFIGS,
   DEFAULT_DRUG_PIPELINE,
@@ -76,7 +77,7 @@ function getUrgencyClassification(totalExposureM: number): {
 
 export const PharmaIPCalculator: React.FC = () => {
   const [pipeline, setPipeline] = useState<DrugPipelineEntry[]>(DEFAULT_DRUG_PIPELINE)
-  const [crqcYear, setCrqcYear] = useState(2035)
+  const [crqcYear, setCrqcYear] = useState<number>(CRQC_ESTIMATES.workshopDefault)
 
   const addCompound = useCallback(() => {
     setPipeline((prev) => [

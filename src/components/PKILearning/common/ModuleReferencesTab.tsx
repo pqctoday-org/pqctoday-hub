@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, BookOpen, CalendarCheck } from 'lucide-react'
+import { ExternalLink, BookOpen, CalendarCheck, Quote } from 'lucide-react'
 import { Link } from 'react-router'
 import { getLibraryItemsForModule } from '@/data/libraryData'
-import { MODULE_LAST_REVIEWED } from '@/data/moduleContentRegistry'
+import { MODULE_LAST_REVIEWED, MODULE_CITED_STANDARDS } from '@/data/moduleContentRegistry'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface ModuleReferencesTabProps {
@@ -20,10 +20,70 @@ function LastReviewedNote({ moduleId }: { moduleId: string }) {
   )
 }
 
-export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
-  const items = getLibraryItemsForModule(moduleId)
+/**
+ * The standards this module's own content.ts cites, each linked into the
+ * Library by reference id.
+ *
+ * Distinct from the list below it on purpose. That list is the library's view
+ * — every row tagged with this module id, often dozens — and it answers "what
+ * else is relevant here". This one answers "what does this module actually
+ * teach from", which is a much shorter and more useful answer, and it was not
+ * shown anywhere in the product before 2026-08-21.
+ */
+function CitedStandards({ moduleId }: { moduleId: string }) {
+  const cited = MODULE_CITED_STANDARDS[moduleId] // eslint-disable-line security/detect-object-injection
+  if (!cited || cited.length === 0) return null
+  return (
+    <section className="mb-6">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5 mb-1">
+        <Quote size={14} aria-hidden="true" />
+        Cited in this module
+      </h3>
+      <p className="text-xs text-muted-foreground mb-3">
+        The documents this module&apos;s claims are drawn from. Each opens its Library entry.
+      </p>
+      <ul className="space-y-2 list-none">
+        {cited.map((std) => (
+          <li key={std.id} className="glass-panel p-3">
+            <Link
+              to={std.deepLink}
+              className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
+            >
+              {std.title || std.id}
+            </Link>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="text-xs text-muted-foreground font-mono">{std.id}</span>
+              {std.organization && (
+                <span className="text-xs text-muted-foreground">{std.organization}</span>
+              )}
+              {std.type && (
+                <span className="text-xs px-1.5 py-0.5 rounded border border-border text-muted-foreground bg-muted/30">
+                  {std.type}
+                </span>
+              )}
+              {/* Status is shown deliberately: a learner should see
+                  "Draft Standard (not yet published)" next to FIPS 206 rather
+                  than infer from its absence. */}
+              {std.status && (
+                <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                  {std.status}
+                </span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
-  if (items.length === 0) {
+export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
+  const cited = MODULE_CITED_STANDARDS[moduleId] ?? [] // eslint-disable-line security/detect-object-injection
+  const citedIds = new Set(cited.map((s) => s.id))
+  // Anything already named above is not repeated here.
+  const items = getLibraryItemsForModule(moduleId).filter((i) => !citedIds.has(i.referenceId))
+
+  if (items.length === 0 && cited.length === 0) {
     return (
       <div>
         <LastReviewedNote moduleId={moduleId} />
@@ -39,14 +99,17 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
   return (
     <div className="space-y-3">
       <LastReviewedNote moduleId={moduleId} />
-      <p className="text-sm text-muted-foreground mb-4">
-        Standards, RFCs, and guidance documents relevant to this module. All items are also
-        available in the{' '}
-        <Link to="/library" className="text-primary hover:underline">
-          Standards Library
-        </Link>
-        .
-      </p>
+      <CitedStandards moduleId={moduleId} />
+      {items.length > 0 && (
+        <p className="text-sm text-muted-foreground mb-4">
+          {cited.length > 0 ? 'Further s' : 'S'}tandards, RFCs, and guidance documents relevant to
+          this module. All items are also available in the{' '}
+          <Link to="/library" className="text-primary hover:underline">
+            Standards Library
+          </Link>
+          .
+        </p>
+      )}
       {items.map((item) => (
         <div key={item.referenceId} className="glass-panel p-4 flex items-start gap-3">
           <div className="flex-1 min-w-0">

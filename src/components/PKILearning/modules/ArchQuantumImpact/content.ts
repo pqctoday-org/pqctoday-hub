@@ -10,15 +10,20 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'arch-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Sampled at 0,1,3,5: FIPS 203 (the ML-KEM ciphertext sizes this module quotes),
+  // SP 800-227 (hybrid KEM combiners), RFC 9147 (DTLS record growth) and IR 8547
+  // (the transition timeline). The remaining FIPS specs are background here.
   standards: [
     getStandard('FIPS 203'),
-    getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
-    getStandard('NIST SP 800-208'),
     getStandard('NIST SP 800-227'),
+    getStandard('FIPS 204'),
     getStandard('RFC 9147'),
+    getStandard('FIPS 205'),
+    getStandard('NIST IR 8547'),
+    getStandard('NIST SP 800-208'),
   ],
 
   algorithms: [

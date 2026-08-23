@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-grc',
+  contentVersion: 2,
   lm_id: 'LM-058',
   title: 'PQC GRC',
   description:

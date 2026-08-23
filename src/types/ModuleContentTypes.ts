@@ -66,7 +66,37 @@ export interface ModuleContent {
   /** ISO date (YYYY-MM-DD) when module factual content was last reviewed */
   lastReviewed: string
 
-  /** Standards referenced in this module — each resolved from standardsRegistry */
+  /**
+   * Standards referenced in this module — each resolved from standardsRegistry.
+   *
+   * **ORDER MATTERS. Put the documents this module's own claims come from first.**
+   *
+   * This list does double duty. It is the citation list a learner sees in the
+   * References tab, and it is the evidence pool the accuracy spot-check grades the
+   * module against. That second job is order-sensitive: `accuracy_spotcheck.py`
+   * samples by deterministic even stride and reads only the first four documents it
+   * selects, so a 6-entry list is sampled at indices 0, 1, 3, 4 and an 8-entry list
+   * at 0, 2, 4, 6. Whatever falls outside that is never opened, and the module's
+   * claims about it are never checked.
+   *
+   * A governance module that leads with four FIPS algorithm specifications gets
+   * graded against ML-KEM's internals instead of OMB M-23-02 — which is what was
+   * happening until 2026-08-21. Reordering `pqc-governance` and `pqc-risk-management`
+   * by relevance took the seven Essentials from 20 of 35 claims graded to 33.
+   *
+   * **Adding more documents does not help — this was measured, not assumed.** Over
+   * the same seven modules: 4 documents at a 16k evidence budget graded 33 of 35
+   * claims; 6 at 16k graded 32; 6 at 24k graded 28. Volume is not a lever. Order is
+   * the only one.
+   *
+   * The trade this forces is real and worth understanding before you reorder.
+   * `quantum-threats` leads with the four resource-estimate papers its qubit figures
+   * come from, so all five of its claims grade — and its FIPS 203 and NIST IR 8547
+   * entries are now never sampled. That is deliberate: the qubit numbers are this
+   * module's distinctive and most volatile content, while the ML-KEM and deadline
+   * statements are stable boilerplate that other modules cite and do check. Order by
+   * what would be most damaging to get wrong *here*.
+   */
   standards: StandardRef[]
 
   /** Algorithms used/discussed in this module — each from algorithmProperties */

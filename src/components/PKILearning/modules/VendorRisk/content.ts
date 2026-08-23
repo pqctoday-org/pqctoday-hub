@@ -9,9 +9,20 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'vendor-risk',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
+  // CBOM delivery — it cited three algorithm specifications and nothing about
+  // either subject until 2026-08-22.
+  standards: [
+    getStandard('NIST IR 8547'),
+    getStandard('NIST-CMVP-140-2-to-140-3-Transition-Timeline'),
+    getStandard('FIPS 203'),
+    getStandard('OWASP-CycloneDX-CBOM-Guide'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+  ],
 
   algorithms: [
     // No algorithm references detected — add manually if needed

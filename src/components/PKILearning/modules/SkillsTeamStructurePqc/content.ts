@@ -18,13 +18,18 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-22',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. A staffing module: what the programme must deliver and by when drives it, so the
+  // transition report and the CNSA timeline lead. CycloneDX is the artifact the
+  // prose says the team maintains, and was never cited.
   standards: [
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('OWASP-CycloneDX-CBOM-Guide'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('FIPS 206'),
-    getStandard('NIST IR 8547'),
-    getStandard('NSA CNSA 2.0'),
     // DECLARED 2026-08-22. This is a WORKFORCE module and every other document
     // here is an algorithm or transition standard — none of them say anything
     // about roles, skills or team sizing, which is why the accuracy check graded

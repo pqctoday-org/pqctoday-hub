@@ -13,53 +13,71 @@
  *   3. Fabricated publication dates for NIST standards
  */
 
-// ── Ground truth facts (derived from scripts/fact_allowlists.json) ─────────
+import { ALGORITHM_REGISTRY } from '../../data/algorithmProperties'
 
-/** FIPS standard → canonical algorithm family name */
-const FIPS_ALGORITHM: Record<string, string> = {
-  '203': 'ML-KEM',
-  '204': 'ML-DSA',
-  '205': 'SLH-DSA',
-  '206': 'FN-DSA',
+// ── Ground truth facts ──────────────────────────────────────────────────
+//
+// FIPS_ALGORITHM and SECURITY_LEVELS are DERIVED from ALGORITHM_REGISTRY
+// (src/data/algorithmProperties.ts), itself auto-generated from the latest
+// pqc_complete_algorithm_reference_*.csv by
+// scripts/generate-algorithm-properties.ts. This keeps both tables in sync
+// with the CSV automatically — no separate allowlist file, no drift risk.
+//
+// STANDARD_DATES and NON_PQC_STANDARDS below are NOT CSV-derived — the
+// registry carries no publication-date or non-PQC-standard fields, and
+// (verified against scripts/generate-fact-allowlists.py in pqctoday-priv,
+// this file's predecessor before the CSV-derived tables above replaced
+// the equivalent hand-typed ones) neither was fact_allowlists.json's
+// version of these two tables; both were always hand-maintained literals,
+// just previously duplicated across a Python script and this file. They
+// remain explicit hand-maintained constants here — that is what they
+// have always actually been.
+
+/** Strip a numeric/parameter-set suffix to the base algorithm family name,
+ *  e.g. 'ML-KEM-768' → 'ML-KEM', 'SLH-DSA-SHA2-192s' → 'SLH-DSA'. */
+function baseAlgorithmFamily(name: string): string {
+  if (name.startsWith('SLH-DSA-')) return 'SLH-DSA'
+  return name.replace(/-\d+$/, '')
 }
 
-/** Algorithm variant → NIST security level */
-const SECURITY_LEVELS: Record<string, number> = {
-  'ML-KEM-512': 1,
-  'ML-KEM-768': 3,
-  'ML-KEM-1024': 5,
-  'ML-DSA-44': 2,
-  'ML-DSA-65': 3,
-  'ML-DSA-87': 5,
-  'FN-DSA-512': 1,
-  'FN-DSA-1024': 5,
-  // SLH-DSA parameter sets (SHA2/SHAKE × 128/192/256 × s/f)
-  'SLH-DSA-SHA2-128S': 1,
-  'SLH-DSA-SHA2-128F': 1,
-  'SLH-DSA-SHAKE-128S': 1,
-  'SLH-DSA-SHAKE-128F': 1,
-  'SLH-DSA-SHA2-192S': 3,
-  'SLH-DSA-SHA2-192F': 3,
-  'SLH-DSA-SHAKE-192S': 3,
-  'SLH-DSA-SHAKE-192F': 3,
-  'SLH-DSA-SHA2-256S': 5,
-  'SLH-DSA-SHA2-256F': 5,
-  'SLH-DSA-SHAKE-256S': 5,
-  'SLH-DSA-SHAKE-256F': 5,
+/** FIPS standard number → canonical algorithm family name, derived from
+ *  every ALGORITHM_REGISTRY entry whose fipsStandard names FIPS 203-206
+ *  (206 is carried as 'FIPS 206 (in development)' pending publication). */
+const FIPS_ALGORITHM: Record<string, string> = {}
+for (const entry of Object.values(ALGORITHM_REGISTRY)) {
+  const m = entry.fipsStandard ? /FIPS\s+(20[3-6])\b/.exec(entry.fipsStandard) : null
+  if (m) FIPS_ALGORITHM[m[1]] = baseAlgorithmFamily(entry.name)
 }
 
-/** Known publication dates for key standards (month + year only for matching) */
+/** Algorithm variant → NIST security level, derived from ALGORITHM_REGISTRY.
+ *  Keys are upper-cased (registry uses lowercase 's'/'f' parameter-set
+ *  suffixes; checkSecurityLevels() below matches and looks up upper-case). */
+const SECURITY_LEVELS: Record<string, number> = {}
+for (const entry of Object.values(ALGORITHM_REGISTRY)) {
+  if (typeof entry.securityLevel === 'number') {
+    SECURITY_LEVELS[entry.name.toUpperCase()] = entry.securityLevel
+  }
+}
+
+/** Known publication dates for key standards (month + year only for matching).
+ *  Hand-maintained — see note above. Update when FIPS 206 publishes. */
 const STANDARD_DATES: Record<string, string> = {
   'FIPS 203': 'August 2024',
   'FIPS 204': 'August 2024',
   'FIPS 205': 'August 2024',
 }
 
-/** Standards that are NOT PQC — LLM sometimes misattributes PQC algorithms to them */
+/** Standards that are NOT PQC — LLM sometimes misattributes PQC algorithms to
+ *  them. Hand-maintained — see note above. FIPS 140-3 is intentionally
+ *  excluded: it is a validation framework that CAN legitimately co-occur
+ *  with PQC algorithm names ("ML-KEM validated under FIPS 140-3" is accurate). */
 const NON_PQC_STANDARDS: Record<string, string> = {
-  'RFC 8446': 'TLS 1.3',
-  'RFC 5246': 'TLS 1.2',
-  'FIPS 186': 'Digital Signature Standard (classical)',
+  'RFC 8446': 'TLS 1.3 (2018) — does NOT include PQC algorithms',
+  'RFC 5246': 'TLS 1.2 (2008) — does NOT include PQC algorithms',
+  'RFC 4346': 'TLS 1.1 (2006) — does NOT include PQC algorithms',
+  'FIPS 186': 'Digital Signature Standard (classical ECDSA/RSA/DSA) — NOT PQC',
+  'SP 800-56A': 'Key agreement (classical ECDH) — NOT PQC',
+  'SP 800-56B': 'Key transport (classical RSA) — NOT PQC',
 }
 
 // ── Verification patterns ─────────────────────────────────────────────────

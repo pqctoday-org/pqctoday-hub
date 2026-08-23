@@ -11117,6 +11117,26 @@
       "sizeBytes": 728613,
       "contentType": "application/pdf",
       "sha256": "43222a1faffe5cb94e878c8ad06d4c617fe2de1d9d1b6663c5619d09214747f6"
+    },
+    {
+      "refId": "Reducing-the-Number-of-Qubits-in-Quantum-Factoring",
+      "title": "Reducing the Number of Qubits in Quantum Factoring",
+      "url": "https://eprint.iacr.org/2024/222.pdf",
+      "status": "downloaded",
+      "filename": "Reducing-the-Number-of-Qubits-in-Quantum-Factoring.pdf",
+      "sizeBytes": 581217,
+      "contentType": "application/pdf",
+      "sha256": "a41d5d1fc7570ea875e493b6cb59cc2bcbbf60f9a2a294a7df0bfc18cafa005d"
+    },
+    {
+      "refId": "Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms",
+      "title": "Reducing the Number of Qubits in Quantum Discrete Logarithms on Elliptic Curves",
+      "url": "https://eprint.iacr.org/2026/280.pdf",
+      "status": "downloaded",
+      "filename": "Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms.pdf",
+      "sizeBytes": 502632,
+      "contentType": "application/pdf",
+      "sha256": "823e72795f0ef3ab17ef346d4ebc0b9ec9275d0b672e98a029d1e94c8d39f493"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

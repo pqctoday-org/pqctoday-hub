@@ -76,7 +76,7 @@ const SCENARIOS: Scenario[] = [
     badge: 'Commerce',
     badgeColor: 'bg-status-success/20 text-status-success border-status-success/50',
     observe:
-      'All 6 steps are quantum-vulnerable. The total PQC latency overhead is under 10% — well within acceptable limits for non-real-time commerce.',
+      'All 6 steps are quantum-vulnerable. The simulator puts the total PQC latency overhead at 10.9% (220 ms to 244 ms), which it labels Moderate — its Acceptable band ends at 5%. Tolerable for non-real-time commerce, but not free: the same overhead on a latency-budgeted flow would need the per-step figures examined rather than the total.',
     config: { step: 4 },
   },
   {

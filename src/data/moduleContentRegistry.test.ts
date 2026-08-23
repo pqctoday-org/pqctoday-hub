@@ -23,8 +23,13 @@ describe('moduleContentRegistry', () => {
     // behaviour trains people to edit the fixture, and the next time it fails for
     // a real reason they will edit it again. What actually needs guarding is that
     // this specific id resolves at all: `sbom` is a real module directory, so a
-    // glob or id-derivation change that stops finding it must fail here.
+    // glob or id-derivation change that stops finding it must fail here — and that
+    // the value is a date PARSED out of content.ts rather than a placeholder.
     expect(Object.keys(MODULE_LAST_REVIEWED)).toContain('sbom')
-    expect(MODULE_LAST_REVIEWED['sbom']).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    const reviewed = MODULE_LAST_REVIEWED['sbom']
+    expect(reviewed).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(new Date(reviewed).getTime(), 'a parsed date, not an epoch/placeholder').toBeGreaterThan(
+      new Date('2026-01-01').getTime()
+    )
   })
 })

@@ -263,6 +263,17 @@ const Step2ApproachAndDeadlines: React.FC = () => (
               source: 'NSA',
             },
             {
+              year: '2030',
+              event:
+                'EO 14412 — federal civilian HVAs, high-impact systems and covered contractors on PQC for key establishment (ML-KEM)',
+              source: 'EO 14412',
+            },
+            {
+              year: '2031',
+              event: 'EO 14412 — the same systems on PQC for digital signatures',
+              source: 'EO 14412',
+            },
+            {
               year: '2035',
               event: 'NIST RSA/ECC disallowed entirely (NIST IR 8547)',
               source: 'NIST',
@@ -303,9 +314,9 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Beyond the major US and EU frameworks, individual countries are setting their own PQC
-          transition deadlines. Organizations operating internationally must track these
-          jurisdiction-specific requirements.
+          Individual countries are setting their own PQC transition deadlines, and they do not line
+          up. Organizations operating internationally must track every jurisdiction they touch — the
+          binding date is the earliest one, not the average.
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -320,6 +331,20 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
               </tr>
             </thead>
             <tbody className="text-muted-foreground">
+              <tr className="border-b border-border/50">
+                <td className="py-2 px-2 font-medium text-foreground">United States</td>
+                <td className="py-2 px-2">EOP / OMB / NSA</td>
+                <td className="py-2 px-2 font-mono text-primary">2030</td>
+                <td className="py-2 px-2">
+                  Two parallel clocks. <strong>Federal civilian</strong>: EO 14412 (22 June 2026)
+                  requires High Value Assets, high-impact systems and covered contractors to use PQC
+                  for key establishment by 31 December 2030 and for digital signatures by 31
+                  December 2031, implemented by OMB M-26-15.{' '}
+                  <strong>National security systems</strong>: CNSA 2.0 — software/firmware signing
+                  and traditional networking exclusive by 2030; web browsers/servers, cloud and
+                  operating systems by 2033; NSS transition complete by 2035 per NSM-10.
+                </td>
+              </tr>
               <tr className="border-b border-border/50">
                 <td className="py-2 px-2 font-medium text-foreground">Australia</td>
                 <td className="py-2 px-2">ASD</td>
@@ -482,6 +507,25 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-sm font-bold text-foreground mb-1">
+              Executive Order 14412 &amp; OMB M-26-15 &mdash; the binding federal civilian mandate
+            </div>
+            <p className="text-xs text-muted-foreground">
+              EO 14412 (signed June 22, 2026) &mdash; &ldquo;Securing the Nation Against Advanced
+              Cryptographic Attacks&rdquo; &mdash; is the order that actually sets dates. Federal
+              High Value Assets, high-impact systems and covered contractors must use PQC for{' '}
+              <strong>key establishment by December 31, 2030</strong> and for{' '}
+              <strong>digital signatures by December 31, 2031</strong>. The function split is
+              deliberate: key establishment carries harvest-now-decrypt-later exposure, so it moves
+              first. It further directs a FAR Council proposed rule on contractor FIPS/PQC
+              compliance (due December 19, 2026) and CISA guidance on minimum{' '}
+              <InlineTooltip term="CBOM">CBOM</InlineTooltip> elements (due March 19, 2027). OMB
+              Memorandum M-26-15 (June 24, 2026) is the implementing guidance: a five-phase agency
+              schedule and PQC migration plans filed with OMB. National security systems are out of
+              scope &mdash; they remain under CNSA 2.0.
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <div className="text-sm font-bold text-foreground mb-1">
               <InlineTooltip term="DORA">DORA</InlineTooltip> (EU Digital Operational Resilience)
             </div>
             <p className="text-xs text-muted-foreground">
@@ -497,8 +541,10 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             </div>
             <p className="text-xs text-muted-foreground">
               A CBOM is your foundational compliance artifact &mdash; you cannot migrate what you
-              haven&apos;t inventoried. Studies show 70% of organizations lack a complete
-              cryptographic inventory. For the full CBOM framework, including CycloneDX format
+              haven&apos;t inventoried, and in most organizations the inventory does not yet exist
+              in any auditable form. EO 14412 puts a date on it: CISA guidance on the minimum
+              elements of a CBOM is due 19 March 2027, to enable automated assessment of
+              cryptographic assets. For the full CBOM framework, including CycloneDX format
               requirements and vendor contract language, see{' '}
               <Link to="/learn/vendor-risk" className="text-primary hover:underline">
                 Vendor &amp; Supply Chain Risk

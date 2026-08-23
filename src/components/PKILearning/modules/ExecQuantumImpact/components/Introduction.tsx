@@ -93,25 +93,60 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
               &mdash; NIST IR 8547, Transition to Post-Quantum Cryptography Standards
             </p>
           </div>
+          <p>
+            Two separate US clocks run in parallel, and boards routinely conflate them. CNSA 2.0
+            governs <em>National Security Systems</em>. Executive Order 14412, &ldquo;Securing the
+            Nation Against Advanced Cryptographic Attacks&rdquo; (signed 22 June 2026), governs
+            federal <em>civilian</em> systems and the contractors that serve them — with OMB
+            Memorandum M-26-15 (24 June 2026) as its implementing guidance. If you sell to the US
+            government, the second clock is the one that reaches you.
+          </p>
           <ul className="space-y-2 list-none">
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2030:</strong> CNSA 2.0 requires PQC exclusively for software/firmware
+                <strong>Dec 2026:</strong> EO 14412 directs the FAR Council to publish a proposed
+                rule requiring covered federal contractors to meet NIST FIPS standards, including
+                PQC. M-26-15 required agency PQC migration plans at OMB within 120 days of issue
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
+              <span>
+                <strong>2030:</strong> EO 14412 — federal High Value Assets and high-impact systems,
+                and covered contractors, on PQC for <em>key establishment</em> (ML-KEM, FIPS 203) by
+                31 December 2030
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
+              <span>
+                <strong>2031:</strong> EO 14412 — the same systems on PQC for{' '}
+                <em>digital signatures</em> by 31 December 2031. The split is deliberate: key
+                establishment carries the harvest-now-decrypt-later risk, so it moves first
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
+              <span>
+                <strong>2030:</strong> CNSA 2.0 (NSS) requires PQC exclusively for software/firmware
                 signing and networking equipment (VPNs, routers)
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
               <span>
-                <strong>2033:</strong> Full PQC transition for web browsers, cloud services, and
-                operating systems
+                <strong>2033:</strong> CNSA 2.0 exclusive for web browsers/servers, cloud services
+                and operating systems — also niche equipment and custom/legacy applications
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-primary mt-0.5 shrink-0" />
               <span>
-                <strong>2035:</strong> Complete deprecation of all classical asymmetric cryptography
+                <strong>2035:</strong> NSA expects the transition to quantum-resistant algorithms
+                for <em>National Security Systems</em> to be complete, in line with NSM-10.
+                Separately, NIST IR 8547 targets disallowing classical public-key algorithms for
+                federal use after 2035 — neither is a global sunset of RSA and ECC
               </span>
             </li>
           </ul>

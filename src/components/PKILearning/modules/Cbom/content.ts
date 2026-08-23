@@ -3,6 +3,7 @@
  * Structured content for the CBOM module.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
+import { NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import { getStandard } from '@/data/standardsRegistry'
 import { getAlgorithm } from '@/data/algorithmProperties'
 
@@ -44,8 +45,16 @@ export const content: ModuleContent = {
       year: 2026,
       source: 'EU NIS CG Coordinated Implementation Roadmap v1.1 (11 Jun 2025)',
     },
-    { label: 'Classical PKC deprecated (RSA/ECC)', year: 2030, source: 'NIST IR 8547' },
-    { label: 'Classical PKC disallowed', year: 2035, source: 'NIST IR 8547' },
+    {
+      label: 'Classical PKC deprecated (RSA/ECC)',
+      year: NIST_DEPRECATION.deprecateClassical,
+      source: 'NIST IR 8547',
+    },
+    {
+      label: 'Classical PKC disallowed',
+      year: NIST_DEPRECATION.disallowClassical,
+      source: 'NIST IR 8547',
+    },
   ],
 
   narratives: {

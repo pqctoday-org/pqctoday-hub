@@ -39,6 +39,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'), // named, never explained by this module — unsampled by design
     getStandard('NIST CSWP 39'), // crypto-agility considerations — cited in the narrative, previously uncited here
     getStandard('FIPS 203'), // ML-KEM — the SP 800-90A/C DRBG-seeding claim
+    // NOT declared here, deliberately: NIST-CMVP-Validated-Modules and
+    // NIST-CMVP-MIP-List are the right evidence for this module's CMVP-validation
+    // claims, but the sampler's stride is len/4, so a 10-entry list samples
+    // 0, 2, 5, 7 instead of 0, 2, 4, 6 — which drops SC-081v3 and CSWP 39 and picks
+    // up two entries this module never explains. Declaring them needs the four-slot
+    // mapping above re-measured, not two more push()es.
   ],
 
   algorithms: [

@@ -5,6 +5,8 @@ import { Link } from 'react-router'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { NIST_DEPRECATION } from '@/data/regulatoryTimelines'
+import { timelineMilestones } from './content'
 import {
   AlertTriangle,
   ArrowRight,
@@ -252,34 +254,13 @@ const Step2WhatsChanging: React.FC = () => {
 }
 
 const Step3Timeline: React.FC = () => {
-  const milestones = [
-    { year: '2016', event: 'NIST launches PQC standardization competition', phase: 'Research' },
-    {
-      year: '2022',
-      event: 'NIST selects first PQC standards (Kyber, Dilithium, FALCON, SPHINCS+)',
-      phase: 'Selection',
-    },
-    {
-      year: '2024',
-      event: 'FIPS 203, 204, 205 published — PQC standards are official',
-      phase: 'Standardization',
-    },
-    {
-      year: '2025',
-      event: 'CNSA 2.0 begins phased PQC mandates for U.S. national security systems',
-      phase: 'Policy',
-    },
-    {
-      year: '2030',
-      event: 'NIST target: deprecate RSA-2048 and 112-bit ECC',
-      phase: 'Deprecation',
-    },
-    {
-      year: '2035',
-      event: 'NIST target: disallow all classical public-key crypto',
-      phase: 'Deadline',
-    },
-  ]
+  // Rendered from the module's own content.ts rather than a second hardcoded
+  // copy — the years there derive from `regulatoryTimelines`, so a deadline
+  // change updates this view too. (Until 2026-08-21 this component kept its own
+  // duplicate list, which had silently fallen three milestones behind.)
+  const milestones = timelineMilestones
+  const thisYear = new Date().getFullYear()
+  const yearsToDeprecation = NIST_DEPRECATION.deprecateClassical - thisYear
 
   return (
     <div className="space-y-6">
@@ -293,36 +274,42 @@ const Step3Timeline: React.FC = () => {
         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
 
         <div className="space-y-4">
-          {milestones.map((m, i) => (
-            <div key={m.year} className="flex gap-4 items-start relative">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 bg-background z-10 shrink-0 ${
-                  i <= 3
-                    ? 'border-status-success text-status-success'
-                    : 'border-status-warning text-status-warning'
-                }`}
-              >
-                {i <= 3 ? '✓' : '!'}
-              </div>
-              <div className="glass-panel p-4 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-bold text-foreground">{m.year}</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                    {m.phase}
-                  </span>
+          {milestones.map((m) => {
+            // Past/future by the milestone's own year, not its position — the
+            // list grows, and an index cutoff silently mislabels new entries.
+            const done = parseInt(m.year, 10) <= thisYear
+            return (
+              <div key={`${m.year}-${m.event}`} className="flex gap-4 items-start relative">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 bg-background z-10 shrink-0 ${
+                    done
+                      ? 'border-status-success text-status-success'
+                      : 'border-status-warning text-status-warning'
+                  }`}
+                >
+                  {done ? '✓' : '!'}
                 </div>
-                <p className="text-sm text-muted-foreground">{m.event}</p>
+                <div className="glass-panel p-4 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-bold text-foreground">{m.year}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      {m.phase}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{m.event}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
       <div className="glass-panel p-4 border-l-4 border-l-status-warning">
         <p className="text-sm text-muted-foreground">
-          <strong className="text-status-warning">Key takeaway:</strong> With NIST targeting 2030
-          for RSA deprecation, organizations have roughly 4 years to migrate. Many compliance
-          frameworks are already requiring PQC readiness assessments.
+          <strong className="text-status-warning">Key takeaway:</strong> With NIST targeting{' '}
+          {NIST_DEPRECATION.deprecateClassical} for RSA deprecation, organizations have roughly{' '}
+          {yearsToDeprecation} years to migrate. Many compliance frameworks already require PQC
+          readiness assessments.
         </p>
       </div>
 

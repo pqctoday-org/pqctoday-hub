@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.55.0",
+  "version": "4.56.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -217,6 +217,7 @@
     "ajv-formats": "^3.0.1",
     "axe-playwright": "^2.2.2",
     "daff": "^1.4.2",
+    "entities": "^6.0.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",

@@ -12,8 +12,9 @@ software, and keys.
   them stops working.
 - Every crypto library and HSM has a FIPS 140-3 "driver's license" (a CMVP certificate) that
   can **expire or be revoked**. You have to watch for those notices monthly.
-- A **single expired certificate** costs organizations $11–15M on average when it causes an
-  outage.
+- A **single expired certificate** costs organizations about **$11M** on average when it causes
+  an outage, and 86% of them had at least one such outage last year (Entrust / Ponemon
+  Institute, 2024 Global PKI & PQC Trends Study).
 - Forrester measured a **312% return** on automating certificate lifecycle management — pure
   savings, unrelated to quantum.
 

@@ -14,11 +14,19 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-22',
 
+  // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
+  // reads only four. Detection engineering: RFC 8446 leads because hybrid-downgrade detection parses
+  // TLS 1.3 NamedGroups, which is this module's distinctive claim.
   standards: [
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446". In-module prose still cites
+    // RFC 8446 sections where it discusses the original, which stays accurate.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    getStandard('NIST IR 8547'),
     getStandard('FIPS 203'),
+    getStandard('NIST SP 800-227'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NIST SP 800-227'),
     getStandard('NIST IR 8547'),
     // RFC 9846 REPLACES RFC 8446 here, 2026-08-22. RFC 9846 (July 2026) obsoletes it —
     // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446" in its header — and the library

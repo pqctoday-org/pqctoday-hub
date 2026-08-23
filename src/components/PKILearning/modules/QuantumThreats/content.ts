@@ -10,9 +10,20 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
-  standards: [getStandard('FIPS 203')],
+  standards: [
+    // Resource-estimate papers first — every qubit figure in this module comes
+    // from one of these four, and they are the claims most likely to go stale.
+    // The accuracy spot-check samples this list by even stride, so relevance
+    // order is what decides which documents the numbers get checked against.
+    getStandard('ref-gidney-factor-rsa'),
+    getStandard('Google-QuantumAI-EC-Crypto-Quantum-2026'),
+    getStandard('FIPS 203'),
+    getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Factoring'),
+    getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms'),
+    getStandard('NIST IR 8547'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),
@@ -55,7 +66,7 @@ export const content: ModuleContent = {
     overview:
       "The Quantum Threats module provides an in-depth technical explanation of how quantum computers threaten current cryptographic systems. It covers the physics of qubits and superposition, explains Shor's algorithm (which breaks RSA and ECC) and Grover's algorithm (which weakens AES and SHA), presents CRQC timeline projections from multiple agencies, and details both the HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attack models.",
     keyConcepts:
-      "Qubits and superposition — quantum bits exist in a combination of 0 and 1 simultaneously; entanglement correlates qubits so N qubits can process 2^N states in parallel. Shor's Algorithm — solves integer factorization (RSA) and discrete logarithm (ECC/DH) in polynomial time O(n^3); RSA-2048 requires approximately 4,098 logical qubits; per the revised Google Quantum AI circuits (March 2026), 256-bit elliptic curves (P-256, Curve25519, secp256k1) break with ≤1,200 logical qubits — roughly half prior estimates.",
+      "Qubits and superposition — quantum bits exist in a combination of 0 and 1 simultaneously; entanglement correlates them, so an N-qubit register holds a superposition over 2^N basis states at once. That is not 2^N computations run in parallel: a measurement returns one outcome, so an algorithm only wins when interference concentrates amplitude onto the answer — which is precisely what Shor's does. Shor's Algorithm — solves integer factorization (RSA) and discrete logarithm (ECC/DH) in polynomial time O(n^3); RSA-2048 needs approximately 1,537 logical qubits (Gidney 2025, Google Quantum AI — down from the 2016-era ~4,098 figure); per the Google Quantum AI / Ethereum Foundation circuits (March 2026), 256-bit elliptic curves (P-256, Curve25519, secp256k1) break with ≤1,200 logical qubits, a low-end estimate other published work puts higher.",
     workshopSummary:
       'The workshop has 5 interactive steps: Security Level Degradation — visualize how quantum attacks reduce the effective security level of classical algorithms, with configurable algorithm selection. Algorithm Vulnerability Matrix — comprehensive comparison grid of all algorithms versus quantum attack types. Key Size Analyzer — side-by-side comparison of two algorithms showing key sizes, ciphertext sizes, and security parameters.',
     relatedStandards:

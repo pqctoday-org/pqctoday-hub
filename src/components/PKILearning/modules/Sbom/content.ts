@@ -20,9 +20,9 @@ export const content: ModuleContent = {
     getStandard('SPDX-Spec-ISO-5962'),
     getStandard('CycloneDX-Spec-Overview'),
     // Repointed 2026-08-22: this declared the DEPRECATED row `NTIA-SBOM-Minimum-Elements-2021`,
-    // whose superseded_by names this one. A module pointing the accuracy check at a
-    // retired row is worse than pointing it nowhere — the check runs, reads a
-    // superseded document, and reports success.
+    // whose superseded_by names CISA's 2026 revision. A module pointing the accuracy
+    // check at a retired row is worse than pointing it nowhere — the check runs, reads
+    // a superseded document, and reports success.
     getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
     getStandard('2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM'),
     getStandard('OASIS-CSAF-2.0-VEX'),

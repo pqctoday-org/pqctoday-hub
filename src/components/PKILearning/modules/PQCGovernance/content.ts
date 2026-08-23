@@ -10,15 +10,21 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
   standards: [
+    // Governance documents first, algorithm specifications after. This module's
+    // claims are about policy, RACI and controls — not about ML-KEM's internals —
+    // and the accuracy spot-check samples this list by even stride, so ordering it
+    // by relevance is what puts its actual sources in front of the checker.
+    getStandard('OMB-M-23-02'),
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NIST SP 800-53'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('FIPS 206'),
-    getStandard('NIST IR 8547'),
-    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

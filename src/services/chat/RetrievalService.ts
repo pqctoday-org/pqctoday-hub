@@ -4,6 +4,8 @@ import type { RAGChunk } from '@/types/ChatTypes'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 import { chunkToResource, trustTierMultiplier } from '@/services/search/chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
+import { cosineSearch } from '@/services/search/embeddingRetrieval'
+import { useEmbeddingRetrieval } from '@/services/featureFlags'
 
 /**
  * Query intent — determines source boosting and diversity strategy.
@@ -896,12 +898,29 @@ class RetrievalService {
       sourceCounts.set(chunk.source, count + 1)
     }
 
-    // Backfill if diversity caps left gaps — use relaxed cap (1.5×) to avoid single-source dominance
+    // Backfill if diversity caps left gaps — use relaxed cap (1.5×) to avoid
+    // single-source dominance, but stop once relevance falls off a cliff
+    // relative to this query's best match. Padding the result out to
+    // effectiveLimit with near-zero-relevance filler only dilutes model
+    // attention and widens the grounded-terms set checkGrounding matches
+    // against (see
+    // pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.3).
+    // Deliberately conservative (10% of the top score) and confined to this
+    // already-least-selective backfill tier — verified against the full
+    // golden-query suite (byte-identical Recall@5/@15/Source Coverage/Noise
+    // before and after) to avoid disturbing the primary diversity fill's
+    // carefully-tuned behavior.
     if (selected.length < effectiveLimit) {
       const relaxedMax = Math.ceil(maxPerSource * 1.5)
+      const topScore = boostedResults[0]?.boostedScore ?? 0
+      const CLIFF_RATIO = 0.1
+      const scoreFloor = topScore * CLIFF_RATIO
       for (const r of boostedResults) {
         if (selected.length >= effectiveLimit) break
         if (selectedIds.has(r.id)) continue
+        // boostedResults is sorted descending, so once a candidate falls
+        // below the floor, every remaining candidate is weaker too.
+        if (r.boostedScore < scoreFloor) break
         const chunk = this.corpusById.get(r.id)
         if (!chunk) continue
         const count = sourceCounts.get(chunk.source) ?? 0
@@ -1004,6 +1023,89 @@ class RetrievalService {
     }
 
     return selected
+  }
+
+  /**
+   * Same as search(), but when the embedding-retrieval flag is on
+   * (useEmbeddingRetrieval() — off by default, see featureFlags.ts) and
+   * lexical+expansion retrieval didn't fill the target count, tops up the
+   * result with semantically-similar chunks lexical search missed entirely
+   * — e.g. a paraphrased query sharing no vocabulary with the corpus, which
+   * the QUERY_EXPANSIONS synonym table can't cover for every phrasing.
+   *
+   * Deliberately NOT a re-ranking blend: embedding hits are only ever
+   * APPENDED to fill remaining slots, never reordering or displacing a
+   * chunk lexical search already found. This sidesteps the open
+   * calibration question a true blended rerank would require (relative
+   * weight of a cosine score vs. an intent/persona/trust-tier-boosted
+   * MiniSearch score) — see
+   * pqctoday-hub-assistant-hallucination-reduction-plan-08182026.md §1.2.
+   * search() itself is untouched: its scoring/diversity/guarantee logic
+   * and every existing test against it are unaffected by this method.
+   *
+   * Async because cosineSearch() lazily fetches the ~33MB embedding model
+   * + ~16MB embeddings.bin on first call — a real network/compute cost,
+   * which is why this is a separate method rather than a change to
+   * search()'s synchronous signature (widely depended on: the golden-query
+   * suite and every other RetrievalService test call it directly).
+   *
+   * Fails soft: if the embedding runtime is unreachable (offline, fetch
+   * failure, no WebGPU/wasm backend), silently returns the lexical-only
+   * result — this is a supplementary recall boost, never a hard dependency.
+   *
+   * Note on how often this actually fires: search()'s own backfill pass
+   * (fuzzy: 0.2, prefix: true in UnifiedSearchService's MiniSearch config)
+   * fills the target count from ANY scored candidate, however weakly
+   * matched, once the corpus is realistically sized — so a literal gap
+   * (results.length < target) is the less common case in production, not
+   * the general case. This mechanism helps genuinely under-matched queries
+   * (e.g. suppressed-source-only candidate pools, very restrictive intent
+   * limits, narrow corpus subsets) rather than acting as a general
+   * paraphrase-query fix — a full re-ranking blend would be needed for
+   * that, and was deliberately not built here (see the calibration-risk
+   * note above).
+   */
+  async searchWithEmbeddingFallback(
+    query: string,
+    limit?: number,
+    pageContext?: PageContext
+  ): Promise<RAGChunk[]> {
+    const results = this.search(query, limit, pageContext)
+    // useEmbeddingRetrieval is a plain flag check (localStorage/env read,
+    // see featureFlags.ts), not a React Hook — it only carries the `use`
+    // prefix because every flag in that module follows the same naming
+    // convention, including ones (like this one) meant to be read from
+    // service/data-layer code, not components.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    if (!useEmbeddingRetrieval()) return results
+
+    const target = limit ?? getLimitForIntent(classifyIntent(query))
+    const gap = target - results.length
+    if (gap <= 0) return results
+
+    // Same suppression rules search() applies via addChunk() — an embedding
+    // hit must not resurface a quiz chunk the user didn't ask for, or a
+    // curious-mode summary outside curious mode.
+    const quizExplicit = /\b(quiz|quizzes|test me|practice questions?|flashcards?)\b/i.test(query)
+    const isCurious = pageContext?.experienceLevel === 'curious'
+
+    try {
+      const seen = new Set(results.map((c) => c.id))
+      const hits = await cosineSearch(query, { k: gap + 5 })
+      for (const hit of hits) {
+        if (results.length >= target) break
+        if (seen.has(hit.chunkId)) continue
+        const chunk = this.corpusById.get(hit.chunkId)
+        if (!chunk) continue
+        if (chunk.source === 'quiz' && !quizExplicit) continue
+        if (chunk.source === 'module-curious' && !isCurious) continue
+        results.push(chunk)
+        seen.add(hit.chunkId)
+      }
+    } catch {
+      // See "Fails soft" above.
+    }
+    return results
   }
 
   get isReady(): boolean {

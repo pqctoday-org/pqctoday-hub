@@ -21,10 +21,11 @@ export const content: ModuleContent = {
     // superseded document, and reports success.
     getStandard('NIST-SP-800-108-R1'),
     getStandard('RFC 4253'),
-    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22. RFC 9846 (July 2026) obsoletes it —
-    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446" in its header — and the library
-    // row for 8446 already carried 9846 as its supersession pointer. TLS 1.3 the
-    // protocol is unchanged; the live specification moved.
+    // RFC 9846 (July 2026) is the current TLS 1.3 specification — its header reads
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446", and the library row for 8446
+    // already carried 9846 as its supersession pointer. Repointed 2026-08-22.
+    // In-module prose still cites RFC 8446 sections where it discusses the original,
+    // which stays accurate: TLS 1.3 the protocol is unchanged; the specification moved.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
   ],
 

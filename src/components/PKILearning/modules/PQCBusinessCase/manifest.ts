@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'pqc-business-case',
+  contentVersion: 2,
   lm_id: 'LM-036',
   title: 'PQC Business Case',
   description:

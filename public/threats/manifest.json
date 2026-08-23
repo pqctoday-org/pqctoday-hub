@@ -1,11 +1,12 @@
 {
-  "generated": "2026-08-22T12:50:13.000Z",
-  "source": "quantum_threats_hsm_industries_08222026.csv",
+  "generated": "2026-07-10T12:11:15.480681Z",
+  "source": "src/data/quantum_threats_hsm_industries_07092026.csv",
   "summary": {
-    "ok": 134,
-    "missing": 0,
-    "noLocalFile": 84,
-    "deprecatedRowsKept": 20
+    "downloaded": 67,
+    "missing": 43,
+    "skipped": 0,
+    "failed": 0,
+    "persisted_skip": 0
   },
   "entries": [
     {
@@ -25,14 +26,17 @@
       "threatId": "AERO-003",
       "refId": "AERO-003",
       "title": "ICAO Assembly Resolution A41-19",
-      "url": "https://www.icao.int/sites/default/files/sp-files/aviationcybersecurity/Documents/A41-19.pdf",
+      "url": "https://www.icao.int/events/a41/resolutions",
       "status": "downloaded",
-      "file": "threats/AERO-003.pdf",
-      "filename": "AERO-003.pdf",
-      "sizeBytes": 124245,
-      "contentType": "application/pdf",
-      "sha256": "96f4ae2e305299e02f4b13bdf56e0db749bb8b987ed83a68f4f9efb65b7e9f28",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/AERO-003.html",
+      "filename": "AERO-003.html",
+      "sizeBytes": 82036,
+      "contentType": "text/html",
+      "sha256": "bb709f5addb9fa978e5adab59f7ea7686c6529e5635cd5464cbc548470363086",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome"
     },
     {
       "threatId": "AUTO-001",
@@ -42,10 +46,13 @@
       "status": "downloaded",
       "file": "threats/AUTO-001.html",
       "filename": "AUTO-001.html",
-      "sizeBytes": 96359,
+      "sizeBytes": 96747,
       "contentType": "text/html",
-      "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "AUTO-002",
@@ -82,10 +89,13 @@
       "status": "downloaded",
       "file": "threats/AUTO-004.html",
       "filename": "AUTO-004.html",
-      "sizeBytes": 96359,
+      "sizeBytes": 96747,
       "contentType": "text/html",
-      "sha256": "72343d38c9b874974d166b73bbd8f89428d0cd6739b9f73a733afaf355458a3a",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "fcf28063bbfad129941c44d45f14ff59fe4fdb03c0341777f16b2e07b3433b2d",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CLOUD-001",
@@ -143,15 +153,18 @@
       "threatId": "CROSS-001",
       "refId": "CROSS-001",
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "threats/CROSS-001.pdf",
-      "filename": "CROSS-001.pdf",
-      "sizeBytes": 2573722,
-      "contentType": "application/pdf",
-      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/CROSS-001.html",
+      "filename": "CROSS-001.html",
+      "sizeBytes": 727282,
+      "contentType": "text/html",
+      "sha256": "6f4da4d4af0c61ddb54083d714d4bc978b12f1002b654db615e19dc0cf189ecf",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-002",
@@ -170,15 +183,18 @@
       "threatId": "CROSS-003",
       "refId": "CROSS-003",
       "title": "IBM Institute for Business Value \u2014 Secure the Post-Quantum Future 2025",
-      "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
+      "url": "https://www.ibm.com/think/insights/post-quantum-cryptography",
       "rowStatus": "deprecated",
       "status": "downloaded",
-      "file": "threats/CROSS-003.pdf",
-      "filename": "CROSS-003.pdf",
-      "sizeBytes": 2573722,
-      "contentType": "application/pdf",
-      "sha256": "2dc8fb921775d3c6a15b6ae531bd0d3b0bc8f735856d23f7052c073a1b77e4b5",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/CROSS-003.html",
+      "filename": "CROSS-003.html",
+      "sizeBytes": 727282,
+      "contentType": "text/html",
+      "sha256": "6f4da4d4af0c61ddb54083d714d4bc978b12f1002b654db615e19dc0cf189ecf",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-004",
@@ -241,10 +257,13 @@
       "status": "downloaded",
       "file": "threats/CROSS-008.html",
       "filename": "CROSS-008.html",
-      "sizeBytes": 44071,
+      "sizeBytes": 43945,
       "contentType": "text/html",
-      "sha256": "5bae2d62fd014338fa90bf6d06e3bd85b61f15ce9cb7e76e46555a0d21eaaec6",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "fdfbf889a98bb9affcb12caaa158b1cf92a17fa0a9edc0b184b284f8cef65159",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CRYPTO-001",
@@ -476,10 +495,13 @@
       "status": "downloaded",
       "file": "threats/GOV-003.html",
       "filename": "GOV-003.html",
-      "sizeBytes": 72805,
+      "sizeBytes": 73321,
       "contentType": "text/html",
-      "sha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "c89cff65f3f67ebb16a9a3103181eec6b9d2ba7dfec5838f92b73a426736d2d6",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "GOV-004",
@@ -515,10 +537,13 @@
       "status": "downloaded",
       "file": "threats/AUS-GOV-001.html",
       "filename": "AUS-GOV-001.html",
-      "sizeBytes": 482289,
+      "sizeBytes": 482469,
       "contentType": "text/html",
-      "sha256": "0dae19e352eb7f04bb537ab2d32545bd94256071e832fcbc7773598094b6f81b",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "a496b941bce32f5adc3335a9f56fb7a01a87d6b323d8e7d172fb3b79c3f64333",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "AUS-GOV-002",
@@ -529,10 +554,13 @@
       "status": "downloaded",
       "file": "threats/AUS-GOV-002.html",
       "filename": "AUS-GOV-002.html",
-      "sizeBytes": 48958,
+      "sizeBytes": 7558,
       "contentType": "text/html",
-      "sha256": "edfd79e38229373cf3ecfb599f7a86aed2332079fab6527b1d97e35c98befe9d",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "a0bfda93fd325c0c5a458dda49482e094c6b80afe3b91a1eb187b3a82ef85693",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "HLTH-001",
@@ -576,15 +604,18 @@
     {
       "threatId": "HLTH-004",
       "refId": "HLTH-004",
-      "title": "FDA \u2014 DSCSA Standards for the Interoperable Exchange of Information for Tracing (Guidance for Industry, Sept 2023)",
-      "url": "https://www.fda.gov/media/171796/download",
+      "title": "FDA Cybersecurity for Medical Devices",
+      "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
       "status": "downloaded",
-      "file": "threats/HLTH-004.pdf",
-      "filename": "HLTH-004.pdf",
-      "sizeBytes": 242831,
-      "contentType": "application/pdf",
-      "sha256": "fe5c46a6121758e17badc0b82d9dd452489e62941b8068d797ee06d5f082d6b5",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/HLTH-004.html",
+      "filename": "HLTH-004.html",
+      "sizeBytes": 98611,
+      "contentType": "text/html",
+      "sha256": "7f514ca581f9f96ca9336ebadcc1db7f68af734debb63b6d7d75f2d7c68b53b6",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "HLTH-005",
@@ -622,10 +653,13 @@
       "status": "downloaded",
       "file": "threats/INS-002.html",
       "filename": "INS-002.html",
-      "sizeBytes": 205519,
+      "sizeBytes": 84865,
       "contentType": "text/html",
-      "sha256": "c39f19800dbb5636c59b1546a12606ade59a514f0a95ca8b3e69863ff4526b64",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "e95916408ea6d9773ffc0f1bad43af4c08001a4c397b13f72ae4614dcc3ad999",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome"
     },
     {
       "threatId": "INS-003",
@@ -650,10 +684,13 @@
       "status": "downloaded",
       "file": "threats/IOT-001.html",
       "filename": "IOT-001.html",
-      "sizeBytes": 333346,
+      "sizeBytes": 705716,
       "contentType": "text/html",
-      "sha256": "7e0b806f9819511bb65a3cb9525e2bd4bd9bccdf60728d6895ac5c39ad646adf",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "160c3379f378b59a20f61b7ea4023d0db4dfb054ef31faaae28f31b114ab9035",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome"
     },
     {
       "threatId": "IOT-002",
@@ -690,10 +727,13 @@
       "status": "downloaded",
       "file": "threats/IOT-004.html",
       "filename": "IOT-004.html",
-      "sizeBytes": 85353,
+      "sizeBytes": 85691,
       "contentType": "text/html",
-      "sha256": "28aa9d6ecbfb6067b1d170b4754bc6cd2257415e33b45ee09d9b480539d54c41",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "506e95c0af7b1dcc2cc48d930c1f54c36856bc3368ee7ea79b641908fa041c58",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "IT-001",
@@ -729,10 +769,13 @@
       "status": "downloaded",
       "file": "threats/IT-003.html",
       "filename": "IT-003.html",
-      "sizeBytes": 61179,
+      "sizeBytes": 61055,
       "contentType": "text/html",
-      "sha256": "583c2e2f31d3f2219a8602c041517c13db0d857c1f5c4d19f6c1e5415c489027",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "f8b327f585629673d40d4d9c8b3d86509edb8d108869841ab53d7a2d75f73f52",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "IT-004",
@@ -768,10 +811,13 @@
       "status": "downloaded",
       "file": "threats/LEG-002.html",
       "filename": "LEG-002.html",
-      "sizeBytes": 835958,
+      "sizeBytes": 835956,
       "contentType": "text/html",
-      "sha256": "b5bea7bfe0a69f57a548c6936cb663972b9c51f7eb16482367648f8fd7035ccf",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "15f26715a4e48c580090016cceed0c9f57d27719dff2e13674e996942fcc5b18",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "LEG-003",
@@ -784,7 +830,9 @@
       "sizeBytes": 70119,
       "contentType": "application/pdf",
       "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "LEG-004",
@@ -882,15 +930,18 @@
     {
       "threatId": "RAIL-001",
       "refId": "RAIL-001",
-      "title": "UNISIG SUBSET-137 \u2014 On-line Key Management FFFIS (KMC-ETCS)",
-      "url": "https://www.era.europa.eu/system/files/2023-09/index083_-_SUBSET-137_v400.pdf",
+      "title": "UNISIG Subset-037 / Subset-038 (ETCS Baseline 3)",
+      "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
       "status": "downloaded",
-      "file": "threats/RAIL-001.pdf",
-      "filename": "RAIL-001.pdf",
-      "sizeBytes": 447147,
-      "contentType": "application/pdf",
-      "sha256": "aa8871417f3b8ee4620abeff2dc27e3e54e340209928e8c0fafe1e53001f0ed6",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/RAIL-001.html",
+      "filename": "RAIL-001.html",
+      "sizeBytes": 61226,
+      "contentType": "text/html",
+      "sha256": "2be0591dd46b297f91dc89dbd95987380b13cf1459369f8964f932703c0e408b",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "RAIL-002",
@@ -901,10 +952,13 @@
       "status": "downloaded",
       "file": "threats/RAIL-002.html",
       "filename": "RAIL-002.html",
-      "sizeBytes": 96898,
+      "sizeBytes": 97236,
       "contentType": "text/html",
-      "sha256": "03f4e45eba7c25cf9c1257dd527ba5abc68955f46345d2692947c0d55e29bfe1",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "af3571e857456a06cddf70792e93912720d9d834846d72028882079a53a6bbdb",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "RETAIL-001",
@@ -1003,27 +1057,31 @@
       "threatId": "TELCO-002",
       "refId": "TELCO-002",
       "title": "GSMA Post-Quantum Telco Network Taskforce",
-      "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-v1.0.pdf",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-telco-network-task-force/",
       "status": "downloaded",
-      "file": "threats/TELCO-002.pdf",
-      "filename": "TELCO-002.pdf",
-      "sizeBytes": 1756788,
-      "contentType": "application/pdf",
-      "sha256": "13b67e85fa816ac65036290a57de6327a008056c73210e1e03b078038e69118a",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/TELCO-002.html",
+      "filename": "TELCO-002.html",
+      "sizeBytes": 111413,
+      "contentType": "text/html",
+      "sha256": "ea721ffe7248a7828cd8402d1d55c9cf05c4f9f0bdf92ed3471b199fa02b6dbf",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "TELCO-003",
       "refId": "TELCO-003",
       "title": "3GPP TS 33.501 5G Security Architecture",
-      "url": "https://www.etsi.org/deliver/etsi_ts/133500_133599/133501/18.09.00_60/ts_133501v180900p.pdf",
+      "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series",
       "status": "downloaded",
       "file": "threats/TELCO-003.pdf",
       "filename": "TELCO-003.pdf",
-      "sizeBytes": 6530714,
+      "sizeBytes": 3874483,
       "contentType": "application/pdf",
-      "sha256": "b410718064fbf84cd24d3ba30dbd542bbbcbe6f6d9d2a63f4f51cf98906090a5",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "35a1c4b948f5d8df1c38de24cf780b4cb065159f5922ad91351a49f8108fb5a2",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22"
     },
     {
       "threatId": "TELCO-004",
@@ -1086,10 +1144,13 @@
       "status": "downloaded",
       "file": "threats/EDU-001.html",
       "filename": "EDU-001.html",
-      "sizeBytes": 133108,
+      "sizeBytes": 133312,
       "contentType": "text/html",
-      "sha256": "58ca9ed839b97c6ea079a4bbc5da42421d66e4ef8745ae0b49c7353eb39b6a64",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "fc8a093ed69e8464a441b3532df4446aff06b5830fb8d41fa63642335507417b",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "EDU-002",
@@ -1115,20 +1176,26 @@
       "sizeBytes": 1023165,
       "contentType": "text/html",
       "sha256": "a9196a3d0b6601356c4e127bad24f8c7f2c17f6ed22e41b35755a910104156f8",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome"
     },
     {
       "threatId": "EDU-004",
       "refId": "EDU-004",
-      "title": "NIST SP 800-171 Rev. 3 \u2014 Protecting Controlled Unclassified Information",
-      "url": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+      "title": "CMMC 2.0 / NIST SP 800-171",
+      "url": "https://dodcio.defense.gov/CMMC/",
       "status": "downloaded",
-      "file": "threats/EDU-004.pdf",
-      "filename": "EDU-004.pdf",
-      "sizeBytes": 1593213,
-      "contentType": "application/pdf",
-      "sha256": "3e4631df8b5d61f40a6e542b52779ef30ddbbfff31e09214fa94ad6e6f5e6d08",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/EDU-004.html",
+      "filename": "EDU-004.html",
+      "sizeBytes": 40492,
+      "contentType": "text/html",
+      "sha256": "9c1e48d857b471dd6e729c02581b9d769df123b37a39897bd147b520ed431463",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "EDU-005",
@@ -1151,10 +1218,13 @@
       "status": "downloaded",
       "file": "threats/CROSS-009.html",
       "filename": "CROSS-009.html",
-      "sizeBytes": 56705,
+      "sizeBytes": 56718,
       "contentType": "text/html",
-      "sha256": "f9241b193d4c75cd6df5ed5c01609230568e2c4afbe7d8d9bf890e93f541df58",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "8e45c4909b2eb481bc627aff3eccd57d0d5597a8b4bf84d8d68db37969203d6c",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-010",
@@ -1272,7 +1342,10 @@
       "sizeBytes": 58728,
       "contentType": "text/html",
       "sha256": "71245cef147987312a53a7e45ec54a955ea142c2f9bcb20c9dbbd30007f75655",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "WATER-004",
@@ -1285,7 +1358,9 @@
       "sizeBytes": 1178202,
       "contentType": "application/pdf",
       "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CI-001",
@@ -1295,10 +1370,13 @@
       "status": "downloaded",
       "file": "threats/CI-001.html",
       "filename": "CI-001.html",
-      "sizeBytes": 71078,
+      "sizeBytes": 69692,
       "contentType": "text/html",
-      "sha256": "c22e0a1dbff3b28fa6014aeeb235a7f693e338271fc7740e5959188221a66fad",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "f7d6f6583f882b73c9471a87f3cc242ffd27234e0b20b5606d46e005d6c71b0d",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CI-002",
@@ -1309,23 +1387,29 @@
       "status": "downloaded",
       "file": "threats/CI-002.html",
       "filename": "CI-002.html",
-      "sizeBytes": 53760,
+      "sizeBytes": 58715,
       "contentType": "text/html",
-      "sha256": "bf0ce0739c653a70ec19bcf9e236a994dfe3e61b55572af3f7864bed1c0d5ed8",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "54b88829f2a3ec51b11c336530fd8a7aa41c8c52bc6081299c337a5a61f9a4cc",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CI-003",
       "refId": "CI-003",
-      "title": "TSA Pipeline Security Guidelines (March 2018, rev. April 2021)",
-      "url": "https://www.tsa.gov/sites/default/files/pipeline_security_guidelines.pdf",
+      "title": "TSA Security Directive SD-02C + PHMSA 49 CFR 192/195",
+      "url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
       "status": "downloaded",
-      "file": "threats/CI-003.pdf",
-      "filename": "CI-003.pdf",
-      "sizeBytes": 1004392,
-      "contentType": "application/pdf",
-      "sha256": "611a70018a677d95dbe668dfa9f23177db624dfba8a5c1d0e159908a865de99e",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/CI-003.html",
+      "filename": "CI-003.html",
+      "sizeBytes": 83576,
+      "contentType": "text/html",
+      "sha256": "279b7b4929d6daea668685616858d77597700461c1a4da7c045cc22c3eae0dd2",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-014",
@@ -1338,20 +1422,25 @@
       "sizeBytes": 2637856,
       "contentType": "application/pdf",
       "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-015",
       "refId": "CROSS-015",
-      "title": "NIST SP 800-57 Part 1 Rev. 5",
-      "url": "https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final",
+      "title": "NIST SP 800-57 Part 1 Rev 6 / NIST IR 8545",
+      "url": "https://csrc.nist.gov/pubs/ir/8545/final",
       "status": "downloaded",
-      "file": "threats/CROSS-015.pdf",
-      "filename": "CROSS-015.pdf",
-      "sizeBytes": 1688080,
-      "contentType": "application/pdf",
-      "sha256": "cc32391022c1382ac7c91490f6bcc8838e0f889925270da23ef4e800e2ecb7ad",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "file": "threats/CROSS-015.html",
+      "filename": "CROSS-015.html",
+      "sizeBytes": 49572,
+      "contentType": "text/html",
+      "sha256": "ce2ca69aa950613a2973bd369c25d67158a6ac38d5fe635dd80eadebf56caa42",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "reason": "local_file recorded in CSV but absent on disk (never synced to this checkout)",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-016",
@@ -1374,10 +1463,12 @@
       "status": "downloaded",
       "file": "threats/CROSS-017.pdf",
       "filename": "CROSS-017.pdf",
-      "sizeBytes": 2588488,
+      "sizeBytes": 3138012,
       "contentType": "application/pdf",
-      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "sha256": "15ebdd396a31129f9d75137ace99be56b1085feb25a95c990f8b6558440aeb02",
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "CROSS-018",
@@ -1416,7 +1507,9 @@
       "sizeBytes": 1194488,
       "contentType": "application/pdf",
       "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
-      "regeneratedAt": "2026-08-22T12:50:13.000Z"
+      "regeneratedAt": "2026-08-22T12:50:13.000Z",
+      "downloadedAt": "2026-08-22",
+      "fetchTier": "curl_cffi:chrome124"
     },
     {
       "threatId": "AUS-TEL-001",

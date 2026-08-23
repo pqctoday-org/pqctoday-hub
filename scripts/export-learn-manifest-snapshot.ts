@@ -35,6 +35,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import ts from 'typescript'
+import { decodeJsxEntities } from './lib/jsxEntities'
 import { KNOWN_MISSING } from './audit-module-infographics'
 // Runtime constant (the default tab set); the file's other imports are
 // type-only and erased by tsx, so this execute-imports cleanly.
@@ -347,27 +348,6 @@ const ATTR_ALLOWLIST = new Set([
 
 const CLASS_UTIL_FNS = new Set(['cn', 'clsx', 'cva', 'classnames', 'twmerge'])
 
-/** Decode the JSX entities that show up in learner-facing text. */
-const JSX_ENTITIES: Record<string, string> = {
-  '&apos;': "'",
-  '&#39;': "'",
-  '&quot;': '"',
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&nbsp;': ' ',
-  '&mdash;': '—',
-  '&ndash;': '–',
-  '&hellip;': '…',
-  '&rarr;': '→',
-  '&larr;': '←',
-  '&times;': '×',
-}
-
-function decodeJsxEntities(s: string): string {
-  return s.replace(/&[a-z]+;|&#\d+;/gi, (m) => JSX_ENTITIES[m] ?? m)
-}
-
 /** Token that looks like a Tailwind/CSS utility rather than a word. */
 const UTILITY_TOKEN = /^[a-z0-9\-:[\]/.%!&>_()#,']+$/
 
@@ -427,7 +407,36 @@ function extractComponentText(filePath: string): string {
     parts.push(text)
   }
 
+  /**
+   * `<sup>`/`<sub>` content belongs to the run of text around it, not beside
+   * it. Pushed separately it is almost always 1-2 characters and dies on the
+   * length guard above, so `2<sup>N</sup>` extracted as bare `2` — the
+   * meaningful half deleted. That is how "a superposition over all 2^N basis
+   * states" reached the accuracy checker as "over all 2 basis states".
+   *
+   * Eight live values across 7 module files: N, 48, -20, n, n/2, m, H, 400.
+   */
+  const appendInline = (marker: string, raw: string): void => {
+    const text = decodeJsxEntities(raw.replace(/\s+/g, ' ').trim())
+    if (!text) return
+    if (parts.length === 0) {
+      push(marker + text)
+      return
+    }
+    const merged = parts[parts.length - 1] + marker + text
+    parts[parts.length - 1] = merged
+    seen.add(merged)
+  }
+
   const visit = (node: ts.Node): void => {
+    if (ts.isJsxElement(node)) {
+      const tag = node.openingElement.tagName.getText().toLowerCase()
+      if (tag === 'sup' || tag === 'sub') {
+        const inner = node.children.map((c) => (ts.isJsxText(c) ? c.text : c.getText())).join('')
+        appendInline(tag === 'sup' ? '^' : '_', inner)
+        return // children consumed — do not re-visit them as standalone text
+      }
+    }
     if (ts.isJsxText(node)) {
       push(node.text)
     } else if (
@@ -455,6 +464,28 @@ function extractComponentText(filePath: string): string {
   visit(sf)
 
   return parts.join('\n')
+}
+
+/**
+ * .tsx sitting directly in a module's own directory, excluding index.tsx
+ * (already collected by the caller) and tests. NOT recursive: subdirectories
+ * are picked up deliberately by name, so a new `services/`-shaped folder of
+ * implementation code cannot silently enter the fact-checker's input.
+ */
+function listModuleRootTsx(moduleDir: string): string[] {
+  if (!fs.existsSync(moduleDir)) return []
+  return fs
+    .readdirSync(moduleDir, { withFileTypes: true })
+    .filter(
+      (e) =>
+        e.isFile() &&
+        e.name.endsWith('.tsx') &&
+        e.name !== 'index.tsx' &&
+        !e.name.endsWith('.test.tsx') &&
+        !e.name.endsWith('.spec.tsx')
+    )
+    .map((e) => path.join(moduleDir, e.name))
+    .sort()
 }
 
 function listTsxFiles(dir: string): string[] {
@@ -667,6 +698,30 @@ async function buildModuleSnapshot(
   if (fs.existsSync(indexPath)) componentPaths.push(indexPath)
   componentPaths.push(...listTsxFiles(path.join(moduleDir, 'components')))
   componentPaths.push(...listTsxFiles(path.join(moduleDir, 'workshop')))
+  // ADDED 2026-08-22. Some modules put their main interactive teaching surface
+  // at the module ROOT or in a sibling directory rather than under
+  // components/workshop, and everything there was invisible to the accuracy
+  // spot-check — it fact-checks exactly this list. Measured across all 65
+  // modules: 7,312 KB was in scope and 943 KB was not (11%), concentrated in
+  // five modules. The worst was Module1-Introduction, where the checker read
+  // 2,033 characters while 107 KB of module-root .tsx sat unexamined; FiveG
+  // (SuciFlow/AuthFlow/ProvisioningFlow), DigitalAssets (flows/), PKIWorkshop
+  // and TLSBasics are the others.
+  //
+  // APPENDED LAST, deliberately. accuracy_spotcheck assembles narratives first,
+  // then these files in order, then truncates at 24,000 chars — and 20 of 65
+  // modules already hit that cap. Appending here means a capped module keeps
+  // exactly the text it had (the new paths simply do not fit) while the
+  // under-cap modules this is for absorb the addition; every one of the five
+  // has 10-22k chars of headroom. So the widening costs no extra LLM spend and
+  // cannot displace prose that was already being checked.
+  //
+  // services/, utils/ and hooks/ are deliberately NOT included: they are
+  // implementation, not learner-facing prose, and extractComponentText would
+  // mostly return identifier noise from them.
+  componentPaths.push(...listModuleRootTsx(moduleDir))
+  componentPaths.push(...listTsxFiles(path.join(moduleDir, 'flows')))
+  componentPaths.push(...listTsxFiles(path.join(moduleDir, 'simulate')))
   // A content.ts that is NOT ModuleContent-shaped (MLSGroupMessaging's
   // LEARN_CHAPTERS) still carries learner-facing prose — surface it to the
   // fact-checker as a component-text entry so it isn't invisible.
