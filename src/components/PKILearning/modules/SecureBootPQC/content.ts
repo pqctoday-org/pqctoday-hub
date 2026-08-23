@@ -51,6 +51,16 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
     getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 11889" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M'),
+    // DECLARED 2026-08-23: this module names "RFC 9909" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9909'),
   ],
 
   algorithms: [

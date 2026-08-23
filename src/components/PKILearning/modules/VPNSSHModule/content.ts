@@ -11,7 +11,23 @@ export const content: ModuleContent = {
   version: '1.0.0',
   lastReviewed: '2026-08-22',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('RFC 9370')],
+  // Expanded from a single line 2026-08-23. The one-line form is why the five
+  // declarations below first landed in algorithms[] — an applier that looked for the
+  // next '\n  ],' found the ALGORITHMS array's close, because this block had none of
+  // its own. Only tsc caught it; a span-based self-check repeated the same mistake and
+  // reported it clean.
+  standards: [
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('RFC 9370'),
+    // DECLARED 2026-08-23: named to a reader with nothing cited. Captures verified
+    // clean (no Obsoleted-by / Withdrawn header) before declaring.
+    getStandard('RFC-3526-More-Modular-Exponential-MODP-Diffie-Hellman-groups'),
+    getStandard('IETF RFC 7296'),
+    getStandard('RFC-7383'),
+    getStandard('IETF RFC 8731'),
+    getStandard('RFC-9242'),
+  ],
 
   algorithms: [
     getAlgorithm('Ed25519'),

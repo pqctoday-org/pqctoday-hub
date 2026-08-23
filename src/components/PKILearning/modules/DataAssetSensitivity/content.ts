@@ -40,6 +40,31 @@ export const content: ModuleContent = {
     // Final publication — Rev 6 exists in the catalogue but its own cover page reads
     // "Initial Public Draft" and cited nothing for it.
     getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "FIPS 200" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('FIPS-200-Minimum-Security-Requirements-for-Federal-Informati'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 27001" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-27001-2022'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 27005" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-27005-2022-Guidance-on-managing-information-security'),
+    // DECLARED 2026-08-23: this module names "SP 800-60" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform'),
+    // DECLARED 2026-08-23: this module names "SP 800-82" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST SP 800-82 Rev. 3'),
   ],
 
   algorithms: [

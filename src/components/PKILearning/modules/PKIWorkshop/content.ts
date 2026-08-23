@@ -30,6 +30,26 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
     getStandard('NIST-SP-800-131A-Rev3'),
+    // DECLARED 2026-08-23: this module names "RFC 2986" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-2986-PKCS-10-Certification-Request-Syntax-Specification'),
+    // DECLARED 2026-08-23: this module names "RFC 5480" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF RFC 5480'),
+    // DECLARED 2026-08-23: this module names "RFC 6066" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-6066-Transport-Layer-Security-TLS-Extensions-Extension-D'),
+    // DECLARED 2026-08-23: this module names "RFC 9909" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9909'),
   ],
 
   algorithms: [

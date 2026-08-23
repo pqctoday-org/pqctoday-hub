@@ -36,6 +36,11 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-23: this module names RFC 3161 as the timestamping protocol behind a mechanism it describes. RFC 5816
     // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
     getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
+    // DECLARED 2026-08-23: this module names "SP 800-89" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D'),
   ],
 
   algorithms: [

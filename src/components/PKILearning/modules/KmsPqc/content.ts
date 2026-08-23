@@ -50,6 +50,16 @@ export const content: ModuleContent = {
     // Final publication — Rev 6 exists in the catalogue but its own cover page reads
     // "Initial Public Draft" and cited nothing for it.
     getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "SP 800-108" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-108-R1'),
+    // DECLARED 2026-08-23: this module names "SP 800-38F" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope'),
   ],
 
   algorithms: [

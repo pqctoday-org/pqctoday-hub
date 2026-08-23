@@ -25,6 +25,31 @@ export const content: ModuleContent = {
     getStandard('RFC 9811'),
     getStandard('RFC 9881'),
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
+    // DECLARED 2026-08-23: this module names "RFC 4211" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-4211-Internet-X-509-PKI-Certificate-Request-Message-Form'),
+    // DECLARED 2026-08-23: this module names "RFC 9908" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9908'),
+    // DECLARED 2026-08-23: this module names "RFC 9909" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9909'),
+    // DECLARED 2026-08-23: this module names "RFC 9935" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9935'),
+    // DECLARED 2026-08-23: this module names "RFC 9936" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9936'),
   ],
 
   algorithms: [

@@ -44,6 +44,21 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "SP 800-208" against a row filed as NIST SP 800-208.
     getStandard('NIST SP 800-208'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 7816" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit'),
+    // DECLARED 2026-08-23: this module names "RFC 8032" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-8032'),
+    // DECLARED 2026-08-23: this module names "RFC 9763" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9763'),
   ],
 
   algorithms: [

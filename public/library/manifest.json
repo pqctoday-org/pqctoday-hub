@@ -11377,6 +11377,16 @@
       "sizeBytes": 0,
       "contentType": "text/html",
       "sha256": ""
+    },
+    {
+      "refId": "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security",
+      "title": "RFC 9700 \u2014 Best Current Practice for OAuth 2.0 Security",
+      "url": "https://www.rfc-editor.org/rfc/rfc9700.html",
+      "status": "downloaded",
+      "filename": "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security.html",
+      "sizeBytes": 261599,
+      "contentType": "text/html",
+      "sha256": "c00e2234fcd79581bc29669c60d693afaa42f67d9205bddee848f757ae975419"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

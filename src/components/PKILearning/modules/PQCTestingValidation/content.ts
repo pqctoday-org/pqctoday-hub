@@ -47,6 +47,11 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match
     // the prose "FIPS 198-1" against a row filed as FIPS-198-1.
     getStandard('FIPS-198-1'),
+    // DECLARED 2026-08-23: this module names "FIPS 197" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('FIPS-197'),
   ],
 
   algorithms: [

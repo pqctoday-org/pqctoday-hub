@@ -33,6 +33,11 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
     getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names "RFC 9846" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
   ],
 
   algorithms: [

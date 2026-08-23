@@ -43,6 +43,36 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "FIPS 180-4" against a row filed as FIPS-180-4.
     getStandard('FIPS-180-4'),
+    // DECLARED 2026-08-23: this module names "RFC 5480" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF RFC 5480'),
+    // DECLARED 2026-08-23: this module names "RFC 8032" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-8032'),
+    // DECLARED 2026-08-23: this module names "RFC 8410" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-8410'),
+    // DECLARED 2026-08-23: this module names "RFC 9846" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // DECLARED 2026-08-23: this module names "SP 800-56C" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-56C-R2'),
+    // DECLARED 2026-08-23: this module names "SP 800-90A" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90A-R1'),
   ],
 
   algorithms: [

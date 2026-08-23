@@ -85,6 +85,41 @@ export const content: ModuleContent = {
     // Final publication — Rev 6 exists in the catalogue but its own cover page reads
     // "Initial Public Draft" and cited nothing for it.
     getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "RFC 7030" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF-RFC-7030-EST'),
+    // DECLARED 2026-08-23: this module names "RFC 7465" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-7465'),
+    // DECLARED 2026-08-23: this module names "RFC 8555" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF RFC 8555'),
+    // DECLARED 2026-08-23: this module names "SP 800-140B" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-140B'),
+    // DECLARED 2026-08-23: this module names "SP 800-90A" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90A-R1'),
+    // DECLARED 2026-08-23: this module names "SP 800-90B" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90B'),
+    // DECLARED 2026-08-23: this module names "SP 800-90C" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90C'),
   ],
 
   algorithms: [

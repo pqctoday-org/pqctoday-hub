@@ -57,6 +57,31 @@ export const content: ModuleContent = {
     // Final publication — Rev 6 exists in the catalogue but its own cover page reads
     // "Initial Public Draft" and cited nothing for it.
     getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "EO 14028" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('EO-14028'),
+    // DECLARED 2026-08-23: this module names "EO 14306" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('EO-14306'),
+    // DECLARED 2026-08-23: this module names "SP 800-128" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-128-Guide-for-Security-Focused-Configuration-Man'),
+    // DECLARED 2026-08-23: this module names "SP 800-60" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform'),
+    // DECLARED 2026-08-23: this module names "SP 800-90B" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90B'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],
