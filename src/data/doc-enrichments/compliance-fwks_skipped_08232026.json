@@ -1,0 +1,12 @@
+[
+  {
+    "ref_id": "KE-DPA-TEXT",
+    "framework_id": "KE-DPA",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "NERC-CIP-REQS",
+    "framework_id": "NERC-CIP",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  }
+]
