@@ -1333,40 +1333,42 @@ export function StatefulSignaturesDemo() {
                       )}
                     </div>
                     {hssHexRows.length > 0 && (
-                      <table className="w-full text-xs font-mono border-collapse mt-1">
-                        <tbody>
-                          {hssHexRows.map((row, i) =>
-                            row.type === 'header' ? (
-                              <tr key={i} className="border-t-2 border-border bg-muted/30">
-                                <td
-                                  colSpan={2}
-                                  className="py-1.5 px-2 text-xs font-semibold text-muted-foreground tracking-wide"
-                                >
-                                  {row.label}
-                                  {row.hex ? ` — ${row.hex}` : ''}
-                                </td>
-                              </tr>
-                            ) : (
-                              <tr key={i} className="border-t border-border/40">
-                                <td className="py-1 pr-3 text-muted-foreground whitespace-nowrap w-48 align-top">
-                                  {row.label}
-                                </td>
-                                <td
-                                  className={`py-1 break-all align-top ${
-                                    row.type === 'pass'
-                                      ? 'text-status-success font-semibold'
-                                      : row.type === 'fail'
-                                        ? 'text-status-error font-semibold'
-                                        : 'text-foreground'
-                                  }`}
-                                >
-                                  {row.hex}
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs font-mono border-collapse mt-1">
+                          <tbody>
+                            {hssHexRows.map((row, i) =>
+                              row.type === 'header' ? (
+                                <tr key={i} className="border-t-2 border-border bg-muted/30">
+                                  <td
+                                    colSpan={2}
+                                    className="py-1.5 px-2 text-xs font-semibold text-muted-foreground tracking-wide"
+                                  >
+                                    {row.label}
+                                    {row.hex ? ` — ${row.hex}` : ''}
+                                  </td>
+                                </tr>
+                              ) : (
+                                <tr key={i} className="border-t border-border/40">
+                                  <td className="py-1 pr-3 text-muted-foreground whitespace-nowrap w-48 align-top">
+                                    {row.label}
+                                  </td>
+                                  <td
+                                    className={`py-1 break-all align-top ${
+                                      row.type === 'pass'
+                                        ? 'text-status-success font-semibold'
+                                        : row.type === 'fail'
+                                          ? 'text-status-error font-semibold'
+                                          : 'text-foreground'
+                                    }`}
+                                  >
+                                    {row.hex}
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
                 )}
@@ -1417,40 +1419,42 @@ export function StatefulSignaturesDemo() {
                       )}
                     </div>
                     {xmssHexRows.length > 0 && (
-                      <table className="w-full text-xs font-mono border-collapse mt-1">
-                        <tbody>
-                          {xmssHexRows.map((row, i) =>
-                            row.type === 'header' ? (
-                              <tr key={i} className="border-t-2 border-border bg-muted/30">
-                                <td
-                                  colSpan={2}
-                                  className="py-1.5 px-2 text-xs font-semibold text-muted-foreground tracking-wide"
-                                >
-                                  {row.label}
-                                  {row.hex ? ` — ${row.hex}` : ''}
-                                </td>
-                              </tr>
-                            ) : (
-                              <tr key={i} className="border-t border-border/40">
-                                <td className="py-1 pr-3 text-muted-foreground whitespace-nowrap w-48 align-top">
-                                  {row.label}
-                                </td>
-                                <td
-                                  className={`py-1 break-all align-top ${
-                                    row.type === 'pass'
-                                      ? 'text-status-success font-semibold'
-                                      : row.type === 'fail'
-                                        ? 'text-status-error font-semibold'
-                                        : 'text-foreground'
-                                  }`}
-                                >
-                                  {row.hex}
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs font-mono border-collapse mt-1">
+                          <tbody>
+                            {xmssHexRows.map((row, i) =>
+                              row.type === 'header' ? (
+                                <tr key={i} className="border-t-2 border-border bg-muted/30">
+                                  <td
+                                    colSpan={2}
+                                    className="py-1.5 px-2 text-xs font-semibold text-muted-foreground tracking-wide"
+                                  >
+                                    {row.label}
+                                    {row.hex ? ` — ${row.hex}` : ''}
+                                  </td>
+                                </tr>
+                              ) : (
+                                <tr key={i} className="border-t border-border/40">
+                                  <td className="py-1 pr-3 text-muted-foreground whitespace-nowrap w-48 align-top">
+                                    {row.label}
+                                  </td>
+                                  <td
+                                    className={`py-1 break-all align-top ${
+                                      row.type === 'pass'
+                                        ? 'text-status-success font-semibold'
+                                        : row.type === 'fail'
+                                          ? 'text-status-error font-semibold'
+                                          : 'text-foreground'
+                                    }`}
+                                  >
+                                    {row.hex}
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     )}
                   </div>
                 )}

@@ -28,7 +28,7 @@ describe('ExecQuantumImpact render parity', () => {
     expect(
       screen.getByText(/Understand the quantum threat from an executive and governance perspective/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -37,7 +37,7 @@ describe('ExecQuantumImpact render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

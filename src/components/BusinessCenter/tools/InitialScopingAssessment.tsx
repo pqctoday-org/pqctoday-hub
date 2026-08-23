@@ -15,6 +15,7 @@ import { ClipboardList, ChevronDown, ChevronRight, Info } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -310,9 +311,6 @@ function RowList({
   )
 }
 
-const SELECT_CLASS =
-  'h-7 rounded border border-border bg-background text-[11px] px-1.5 text-foreground'
-
 export const InitialScopingAssessment: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
   const savedInputs = useSavedArtifactInputs<ScopingState>('initial-scoping')
@@ -447,31 +445,28 @@ export const InitialScopingAssessment: React.FC = () => {
               </div>
               <div className="flex flex-wrap items-center gap-2 pl-7">
                 <span className="text-[10px] text-muted-foreground">Priority</span>
-                <select
-                  value={sys.priority}
-                  onChange={(e) => setSystem(i, { priority: e.target.value as Priority })}
-                  className={SELECT_CLASS}
-                  aria-label={`System ${i + 1} priority`}
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p === '—' ? '— (untriaged)' : p}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  items={PRIORITIES.map((p) => ({
+                    id: p,
+                    label: p === '—' ? '— (untriaged)' : p,
+                  }))}
+                  selectedId={sys.priority}
+                  onSelect={(id) => setSystem(i, { priority: id as Priority })}
+                  ariaLabel={`System ${i + 1} priority`}
+                  hideDefaultOption
+                  noContainer
+                  size="sm"
+                />
                 <span className="text-[10px] text-muted-foreground">Owner</span>
-                <select
-                  value={sys.ownership}
-                  onChange={(e) => setSystem(i, { ownership: e.target.value as Ownership })}
-                  className={SELECT_CLASS}
-                  aria-label={`System ${i + 1} ownership`}
-                >
-                  {OWNERSHIPS.map((o) => (
-                    <option key={o} value={o}>
-                      {o}
-                    </option>
-                  ))}
-                </select>
+                <FilterDropdown
+                  items={OWNERSHIPS}
+                  selectedId={sys.ownership}
+                  onSelect={(id) => setSystem(i, { ownership: id as Ownership })}
+                  ariaLabel={`System ${i + 1} ownership`}
+                  hideDefaultOption
+                  noContainer
+                  size="sm"
+                />
                 <Input
                   value={sys.notes}
                   onChange={(e) => setSystem(i, { notes: e.target.value })}

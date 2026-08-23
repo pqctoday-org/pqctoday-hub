@@ -57,7 +57,14 @@ const DIMENSIONS: DimensionDef[] = [
       {
         id: 'proto-hybrid',
         text: 'Hybrid key exchange (classical + PQC in the same TLS handshake) has been tested in a non-production environment and a rollout plan exists.',
-        hint: 'RFC 8446 + X25519MLKEM768 hybrid is the current IETF standard. Cloudflare and Chrome both shipped this in 2024.',
+        // CORRECTED 2026-08-22. Was 'RFC 8446 + X25519MLKEM768 hybrid is the current IETF
+        // standard. Cloudflare and Chrome both shipped this in 2024.' Three things moved:
+        // RFC 9846 obsoleted RFC 8446 in July 2026; X25519MLKEM768 stopped being a draft
+        // on 2026-08-10 when RFC 10024 published it Standards Track; and of the two
+        // vendors only Chrome is dated 2024 in our proof-gated catalogue (Chrome 131,
+        // release_date 2024-11-01). The Cloudflare Edge Network row is real and
+        // production, but carries release_date 2025-01-01, so it is named without a year.
+        hint: 'X25519MLKEM768 is no longer a draft: RFC 10024 (August 2026) defines it Standards Track for TLS 1.3, which RFC 9846 now specifies. Chrome has defaulted to it since Chrome 131 (November 2024); Cloudflare runs it in production across its edge.',
       },
     ],
   },

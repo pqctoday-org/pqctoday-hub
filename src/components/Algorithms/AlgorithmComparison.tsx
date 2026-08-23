@@ -15,6 +15,7 @@ import {
   ArrowDown,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import clsx from 'clsx'
 import { useState, useEffect, useMemo } from 'react'
 import { logEvent } from '../../utils/analytics'
@@ -245,11 +246,18 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                   <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">
                     Sort by:
                   </span>
-                  <select
-                    className="bg-background border border-input rounded-md text-sm p-1.5 flex-1 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-foreground"
-                    value={`${sortColumn || 'none'}-${sortDirection || 'none'}`}
-                    onChange={(e) => {
-                      const [col, dir] = e.target.value.split('-')
+                  <FilterDropdown
+                    items={[
+                      { id: 'none-none', label: 'Default' },
+                      { id: 'deprecation-asc', label: 'Urgency (Earliest first)' },
+                      { id: 'deprecation-desc', label: 'Urgency (Latest first)' },
+                      { id: 'function-asc', label: 'Function (A-Z)' },
+                      { id: 'classical-asc', label: 'Classical Algorithm (A-Z)' },
+                      { id: 'pqc-asc', label: 'PQC Alternative (A-Z)' },
+                    ]}
+                    selectedId={`${sortColumn || 'none'}-${sortDirection || 'none'}`}
+                    onSelect={(value) => {
+                      const [col, dir] = value.split('-')
                       if (col === 'none') {
                         setSortColumn(null)
                         setSortDirection(null)
@@ -261,14 +269,11 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         }
                       }
                     }}
-                  >
-                    <option value="none-none">Default</option>
-                    <option value="deprecation-asc">Urgency (Earliest first)</option>
-                    <option value="deprecation-desc">Urgency (Latest first)</option>
-                    <option value="function-asc">Function (A-Z)</option>
-                    <option value="classical-asc">Classical Algorithm (A-Z)</option>
-                    <option value="pqc-asc">PQC Alternative (A-Z)</option>
-                  </select>
+                    ariaLabel="Sort by"
+                    hideDefaultOption
+                    noContainer
+                    className="flex-1 min-w-0"
+                  />
                 </div>
                 <MobileAlgorithmList
                   data={sortedData}

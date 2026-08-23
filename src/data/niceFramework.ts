@@ -22,6 +22,20 @@
 /** Proficiency tier aligned to NICE proficiency scale concept */
 export type NiceProficiencyTier = 'awareness' | 'practitioner' | 'expert'
 
+/**
+ * The vendored NICE Framework Components version this data layer is aligned to.
+ *
+ * Exported so UI that labels a NICE figure reads the version from one place instead
+ * of hardcoding a string that goes stale the day the components file is re-vendored.
+ * `niceFramework.drift.test.ts` asserts this equals the vendored JSON's own
+ * `documents[0].version`, so the label cannot drift from the data silently.
+ *
+ * Confirmed current 2026-08-22 against CISA's live NICCS tool, which states "The NICE
+ * Framework data used for this tool is from the NICE Framework Components version
+ * 2.2.0", and against the CPRT export URL, which still serves the byte-identical file.
+ */
+export const NICE_COMPONENTS_VERSION = '2.2.0'
+
 /** Internal work-role slug (stable key; maps to an official v2.2.0 work-role ID via `niceCode`). */
 export type NiceWorkRoleId =
   | 'security-architect'

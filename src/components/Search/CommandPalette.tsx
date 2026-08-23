@@ -6,8 +6,12 @@ import FocusLock from 'react-focus-lock'
 import { Search, Clock, X, ArrowRight, CornerDownLeft, ChevronUp, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { SearchResult } from '@/services/search/SearchIndex'
-import { chunkToRoute, SOURCE_LABELS, ADVANCED_SOURCES } from '@/data/searchRoutes'
-import { BUSINESS_TOOL_SOURCE, WORKSHOP_TOOL_SOURCE } from '@/services/search/toolSearchEntries'
+import {
+  chunkToRoute,
+  SOURCE_LABELS,
+  ADVANCED_SOURCES,
+  PALETTE_ENSURE_SOURCES,
+} from '@/data/searchRoutes'
 import { useSearchHistoryStore } from '@/store/useSearchHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -146,16 +150,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     setLoading(true)
     setError(null)
 
-    // `ensureSources` (WS6a): the two tool registries are narrow sources in a
-    // corpus of thousands of prose chunks, so on a broad algorithm query like
-    // "ML-KEM" they never reach the global top-60 and disappear from their own
-    // group. This guarantees them a slot without displacing anything.
+    // `ensureSources` (WS6a, extended WS22 Stage 3): the two tool registries and
+    // the page tier are narrow sources in a corpus of thousands of prose chunks,
+    // so on a broad algorithm query like "ML-KEM" they never reach the global
+    // top-60 and disappear from their own group. This guarantees them a slot
+    // without displacing anything.
     loadSearchModule()
       .then((m) =>
         m.search(query, {
           limit: 60,
           authoritativeOnly,
-          ensureSources: [WORKSHOP_TOOL_SOURCE, BUSINESS_TOOL_SOURCE],
+          ensureSources: [...PALETTE_ENSURE_SOURCES],
           ensureLimit: 3,
         })
       )

@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { QRASection } from './QRASection'
 import { useReportOwnershipStore } from '../../../store/useReportOwnershipStore'
+import { ROLE_CROSSWALK } from '../../../data/roleCrosswalk'
 import type { AssessmentInput, AssessmentResult } from '../../../hooks/assessmentTypes'
 
 // framer-motion is pulled in transitively via CollapsibleSection's tree; mock it
@@ -105,16 +106,21 @@ describe('QRASection', () => {
   it('renders the prioritised backlog with owner selects', () => {
     renderQRA()
     expect(screen.getByText('Build a cryptographic inventory and CBOM.')).toBeInTheDocument()
-    // One owner <select> per backlog item, keyboard-accessible via label.
-    const selects = screen.getAllByLabelText(/Owner for action/i)
-    expect(selects).toHaveLength(2)
+    // One owner dropdown per backlog item, each with its own accessible name.
+    const owners = screen.getAllByRole('button', { name: /Owner for action/i })
+    expect(owners).toHaveLength(2)
   })
 
   it('allows re-assigning a backlog item owner', () => {
     renderQRA()
-    const select = screen.getByLabelText('Owner for action 1') as HTMLSelectElement
-    fireEvent.change(select, { target: { value: 'qrpm' } })
-    expect(select.value).toBe('qrpm')
+    const trigger = screen.getByRole('button', { name: 'Owner for action 1' })
+    fireEvent.click(trigger)
+    const option = screen
+      .getAllByRole('option')
+      .find((o) => o.textContent === ROLE_CROSSWALK.qrpm.label)
+    expect(option, 'qrpm option not offered').toBeTruthy()
+    fireEvent.click(option!)
+    expect(trigger).toHaveTextContent(ROLE_CROSSWALK.qrpm.label)
   })
 
   it('renders the program ownership block distinct from per-item owners', () => {

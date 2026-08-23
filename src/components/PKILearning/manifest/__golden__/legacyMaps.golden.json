@@ -3671,6 +3671,15 @@
           "duration": "45 min",
           "difficulty": "advanced",
           "frameworkPhase": "foundations"
+        },
+        {
+          "id": "soc-implementation-pqc",
+          "lm_id": "LM-057",
+          "title": "SOC Implementation for PQC",
+          "description": "Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on, detection-engineering and CTI skills, and a phased SOC implementation plan with four quantum playbooks.",
+          "duration": "60 min",
+          "difficulty": "advanced",
+          "frameworkPhase": "p6"
         }
       ]
     },
@@ -3816,15 +3825,6 @@
           "duration": "30 min",
           "difficulty": "intermediate",
           "frameworkPhase": "foundations"
-        },
-        {
-          "id": "soc-implementation-pqc",
-          "lm_id": "LM-057",
-          "title": "SOC Implementation for PQC",
-          "description": "Operationalize PQC defense in the SOC: five detection use cases (hybrid downgrade, crypto drift, certificate-lifecycle anomalies, signature integrity, HNDL indicators), the posture registry they depend on, detection-engineering and CTI skills, and a phased SOC implementation plan with four quantum playbooks.",
-          "duration": "60 min",
-          "difficulty": "advanced",
-          "frameworkPhase": "p6"
         },
         {
           "id": "verification-closure",
@@ -4020,7 +4020,7 @@
     },
     "tls-basics": {
       "algorithms": ["ML-KEM", "X25519", "ECDSA", "ML-DSA"],
-      "standards": ["RFC 8446", "X.509"]
+      "standards": ["RFC 9846", "X.509"]
     },
     "vpn-ssh-pqc": {
       "algorithms": ["ML-KEM", "ECDH"],

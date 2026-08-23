@@ -60,164 +60,166 @@ const LogsTabSoftware: React.FC = () => {
 
       <div className="flex-1 overflow-hidden rounded-xl border border-border bg-card flex flex-col">
         <div className="overflow-y-auto flex-1 custom-scrollbar">
-          <table className="w-full text-left text-sm table-fixed">
-            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
-              <tr>
-                <th
-                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
-                  style={{ width: columnWidths.timestamp }}
-                  onClick={() => handleSort('timestamp')}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    Timestamp
-                    {sortColumn === 'timestamp' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp size={14} className="text-primary shrink-0" />
-                      ) : (
-                        <ArrowDown size={14} className="text-primary shrink-0" />
-                      ))}
-                    {sortColumn !== 'timestamp' && (
-                      <ArrowUpDown size={14} className="opacity-30 shrink-0" />
-                    )}
-                  </div>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-                    onMouseDown={(e) => startResize(e, 'timestamp')}
-                  />
-                </th>
-                <th
-                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
-                  style={{ width: columnWidths.keyLabel }}
-                  onClick={() => handleSort('keyLabel')}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    Key Label
-                    {sortColumn === 'keyLabel' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp size={14} className="text-primary shrink-0" />
-                      ) : (
-                        <ArrowDown size={14} className="text-primary shrink-0" />
-                      ))}
-                    {sortColumn !== 'keyLabel' && (
-                      <ArrowUpDown size={14} className="opacity-30 shrink-0" />
-                    )}
-                  </div>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-                    onMouseDown={(e) => startResize(e, 'keyLabel')}
-                  />
-                </th>
-                <th
-                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
-                  style={{ width: columnWidths.operation }}
-                  onClick={() => handleSort('operation')}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    Operation
-                    {sortColumn === 'operation' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp size={14} className="text-primary shrink-0" />
-                      ) : (
-                        <ArrowDown size={14} className="text-primary shrink-0" />
-                      ))}
-                    {sortColumn !== 'operation' && (
-                      <ArrowUpDown size={14} className="opacity-30 shrink-0" />
-                    )}
-                  </div>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-                    onMouseDown={(e) => startResize(e, 'operation')}
-                  />
-                </th>
-                <th
-                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
-                  style={{ width: columnWidths.result }}
-                  onClick={() => handleSort('result')}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    Results
-                    {sortColumn === 'result' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp size={14} className="text-primary shrink-0" />
-                      ) : (
-                        <ArrowDown size={14} className="text-primary shrink-0" />
-                      ))}
-                    {sortColumn !== 'result' && (
-                      <ArrowUpDown size={14} className="opacity-30 shrink-0" />
-                    )}
-                  </div>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-                    onMouseDown={(e) => startResize(e, 'result')}
-                  />
-                </th>
-                <th
-                  className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors text-right relative group"
-                  style={{ width: columnWidths.executionTime }}
-                  onClick={() => handleSort('executionTime')}
-                >
-                  <div className="flex items-center justify-end gap-2 overflow-hidden">
-                    Execution Time
-                    {sortColumn === 'executionTime' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp size={14} className="text-primary shrink-0" />
-                      ) : (
-                        <ArrowDown size={14} className="text-primary shrink-0" />
-                      ))}
-                    {sortColumn !== 'executionTime' && (
-                      <ArrowUpDown size={14} className="opacity-30 shrink-0" />
-                    )}
-                  </div>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
-                    onMouseDown={(e) => startResize(e, 'executionTime')}
-                  />
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {sortedLogs.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm table-fixed">
+              <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md select-none">
                 <tr>
-                  <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
-                    No operations performed yet.
-                  </td>
-                </tr>
-              ) : (
-                sortedLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-accent transition-colors">
-                    <td className="p-4 font-mono text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                      {log.timestamp}
-                    </td>
-                    <td className="p-4 font-medium text-foreground overflow-hidden text-ellipsis">
-                      {log.keyLabel}
-                    </td>
-                    <td className="p-4 text-accent overflow-hidden text-ellipsis">
-                      {log.operation}
-                    </td>
-                    <td
-                      className="p-4 text-sm text-muted-foreground overflow-hidden text-ellipsis"
-                      title={log.result}
-                    >
-                      {log.result}
-                    </td>
-                    <td
-                      className={clsx(
-                        'p-4 text-right font-mono text-xs font-bold overflow-hidden text-ellipsis',
-                        getPerformanceColor(log.executionTime)
+                  <th
+                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    style={{ width: columnWidths.timestamp }}
+                    onClick={() => handleSort('timestamp')}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      Timestamp
+                      {sortColumn === 'timestamp' &&
+                        (sortDirection === 'asc' ? (
+                          <ArrowUp size={14} className="text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown size={14} className="text-primary shrink-0" />
+                        ))}
+                      {sortColumn !== 'timestamp' && (
+                        <ArrowUpDown size={14} className="opacity-30 shrink-0" />
                       )}
-                    >
-                      {log.executionTime.toFixed(2)} ms
+                    </div>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
+                      onMouseDown={(e) => startResize(e, 'timestamp')}
+                    />
+                  </th>
+                  <th
+                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    style={{ width: columnWidths.keyLabel }}
+                    onClick={() => handleSort('keyLabel')}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      Key Label
+                      {sortColumn === 'keyLabel' &&
+                        (sortDirection === 'asc' ? (
+                          <ArrowUp size={14} className="text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown size={14} className="text-primary shrink-0" />
+                        ))}
+                      {sortColumn !== 'keyLabel' && (
+                        <ArrowUpDown size={14} className="opacity-30 shrink-0" />
+                      )}
+                    </div>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
+                      onMouseDown={(e) => startResize(e, 'keyLabel')}
+                    />
+                  </th>
+                  <th
+                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    style={{ width: columnWidths.operation }}
+                    onClick={() => handleSort('operation')}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      Operation
+                      {sortColumn === 'operation' &&
+                        (sortDirection === 'asc' ? (
+                          <ArrowUp size={14} className="text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown size={14} className="text-primary shrink-0" />
+                        ))}
+                      {sortColumn !== 'operation' && (
+                        <ArrowUpDown size={14} className="opacity-30 shrink-0" />
+                      )}
+                    </div>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
+                      onMouseDown={(e) => startResize(e, 'operation')}
+                    />
+                  </th>
+                  <th
+                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors relative group"
+                    style={{ width: columnWidths.result }}
+                    onClick={() => handleSort('result')}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      Results
+                      {sortColumn === 'result' &&
+                        (sortDirection === 'asc' ? (
+                          <ArrowUp size={14} className="text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown size={14} className="text-primary shrink-0" />
+                        ))}
+                      {sortColumn !== 'result' && (
+                        <ArrowUpDown size={14} className="opacity-30 shrink-0" />
+                      )}
+                    </div>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
+                      onMouseDown={(e) => startResize(e, 'result')}
+                    />
+                  </th>
+                  <th
+                    className="p-4 font-bold cursor-pointer hover:bg-accent transition-colors text-right relative group"
+                    style={{ width: columnWidths.executionTime }}
+                    onClick={() => handleSort('executionTime')}
+                  >
+                    <div className="flex items-center justify-end gap-2 overflow-hidden">
+                      Execution Time
+                      {sortColumn === 'executionTime' &&
+                        (sortDirection === 'asc' ? (
+                          <ArrowUp size={14} className="text-primary shrink-0" />
+                        ) : (
+                          <ArrowDown size={14} className="text-primary shrink-0" />
+                        ))}
+                      {sortColumn !== 'executionTime' && (
+                        <ArrowUpDown size={14} className="opacity-30 shrink-0" />
+                      )}
+                    </div>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50"
+                      onMouseDown={(e) => startResize(e, 'executionTime')}
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {sortedLogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
+                      No operations performed yet.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  sortedLogs.map((log) => (
+                    <tr key={log.id} className="hover:bg-accent transition-colors">
+                      <td className="p-4 font-mono text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                        {log.timestamp}
+                      </td>
+                      <td className="p-4 font-medium text-foreground overflow-hidden text-ellipsis">
+                        {log.keyLabel}
+                      </td>
+                      <td className="p-4 text-accent overflow-hidden text-ellipsis">
+                        {log.operation}
+                      </td>
+                      <td
+                        className="p-4 text-sm text-muted-foreground overflow-hidden text-ellipsis"
+                        title={log.result}
+                      >
+                        {log.result}
+                      </td>
+                      <td
+                        className={clsx(
+                          'p-4 text-right font-mono text-xs font-bold overflow-hidden text-ellipsis',
+                          getPerformanceColor(log.executionTime)
+                        )}
+                      >
+                        {log.executionTime.toFixed(2)} ms
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

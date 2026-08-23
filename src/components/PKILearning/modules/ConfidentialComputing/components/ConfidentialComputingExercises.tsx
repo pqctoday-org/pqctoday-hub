@@ -94,7 +94,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Assessment',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). As of mid-2026, AWS CloudHSM exposes PQC mainly through SDK/preview paths rather than native PKCS#11 — confirm current support in AWS documentation. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
+        'Nitro attestation uses ECDSA P-384 (quantum-vulnerable). As of mid-2026 our own proof-gated catalogue records AWS CloudHSM as PARTIAL for PQC, with firmware support on the roadmap rather than generally available (proof dated 2026-05-18). How PQC is surfaced — native PKCS#11 mechanisms versus an SDK or preview path — is a deployment detail that moves faster than any catalogue, so confirm it in AWS documentation before you design around it. AES-256 memory encryption is Grover-resilient. Patient records have long retention (HIPAA: 6+ years) making HNDL exposure critical. Overall: 3 of 5 layers need PQC migration, with attestation and TLS channel as highest priority.',
       config: { step: 4 },
     },
   ]

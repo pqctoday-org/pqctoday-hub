@@ -11,7 +11,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
  */
 const manifest: ModuleManifest = {
   id: 'emv-payment-pqc',
-  contentVersion: 3,
+  contentVersion: 5,
   lm_id: 'LM-044',
   title: 'Financial Services & Payments PQC',
   description:

@@ -41,6 +41,8 @@ import { useModuleProgress } from './useModuleProgress'
 import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
+import { RelatedModulesPanel } from './RelatedModulesPanel'
+import { resolveModuleTool } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { personaPracticesModulePhase } from '@/data/personaConfig'
@@ -194,6 +196,8 @@ function WorkshopStepper({
                 variant="ghost"
                 key={part.id}
                 onClick={() => onPartChange(idx)}
+                aria-label={part.title}
+                aria-current={idx === currentPart ? 'step' : undefined}
                 className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -208,7 +212,7 @@ function WorkshopStepper({
                 >
                   <Icon size={16} />
                 </div>
-                <span className="text-sm font-medium hidden md:block">
+                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
                   {part.title.split(':')[0]}
                 </span>
               </Button>
@@ -382,6 +386,11 @@ export const ModuleShell = ({
     const idx = entry.modules.findIndex((m) => m.id === manifest.id)
     return idx >= 0 && idx < entry.modules.length - 1 ? entry.modules[idx + 1] : null
   })()
+  // WS12 gap 3 (2026-08-21) — the module's own `playgroundTool` first, then the
+  // reverse of any tool whose required `moduleLink` already points here. Three
+  // modules (confidential-computing, iam-pqc, secure-boot-pqc) had a real tool
+  // linking to them and rendered nothing back; no manifest edit closes it.
+  const relatedTool = resolveModuleTool(manifest)
   const footerLink =
     'flex items-center gap-2.5 rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors hover:border-primary/40 hover:bg-muted'
 
@@ -508,6 +517,12 @@ export const ModuleShell = ({
           </TabsContent>
         )}
       </Tabs>
+      {/* WS22 Stage 3 (2026-08-21) — module→module relations, computed from the
+          `track`/`frameworkPhase`/`taxonomy` tags the manifests already carry.
+          Rendered unconditionally (not gated on completion) because the point
+          is to be found, not to be a reward; hidden in both embed contexts for
+          the same reason the back link is. See src/data/moduleRelations.ts. */}
+      {!embedded && !iframeEmbedded ? <RelatedModulesPanel moduleId={manifest.id} /> : null}
       {/* P2.3 — completion handoff footer. Replaces the sidebar NextModuleCTA so
           finishing a module always routes somewhere, never a dead-end "Complete".
           The sim "Practice" CTA lives in the header (persistent, curated) so it is
@@ -559,8 +574,8 @@ export const ModuleShell = ({
                 </span>
               </Link>
             ) : null}
-            {manifest.playgroundTool ? (
-              <Link to={`/playground/${manifest.playgroundTool}`} className={footerLink}>
+            {relatedTool ? (
+              <Link to={`/playground/${relatedTool}`} className={footerLink}>
                 <Wrench size={15} className="shrink-0 text-primary" />
                 <span className="min-w-0">
                   <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">

@@ -58,6 +58,11 @@ export default defineConfig([
           message:
             'Raw HTML <button> tags are blocked for UI consistency. Please import and use the <Button> component from `src/components/ui/button.tsx` instead.',
         },
+        {
+          selector: "JSXElement[openingElement.name.name='select']",
+          message:
+            'Raw HTML <select> tags are blocked for UI consistency. Please import and use the <FilterDropdown> component from `src/components/common/FilterDropdown.tsx` instead. If FilterDropdown genuinely cannot express the control (e.g. <optgroup> or per-option disabled), keep the <select>, document why inline, and add a narrow `eslint-disable-next-line no-restricted-syntax` with that reason.',
+        },
       ],
     },
     languageOptions: {

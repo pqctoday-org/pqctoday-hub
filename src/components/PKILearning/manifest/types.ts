@@ -95,6 +95,20 @@ export interface ModuleManifest {
   taxonomy?: { algorithms?: string[]; standards?: string[] }
 
   /**
+   * Hand-authored module graph (WS2-module-graph.md — unbuilt as of
+   * 2026-08-21, so both arrays are empty on all 65 manifests today).
+   *
+   * These exist as the OVERRIDE SEAM for `src/data/moduleRelations.ts`: the
+   * "Related modules" panel computes its list from `track`/`frameworkPhase`/
+   * `taxonomy`, and the moment a manifest populates either array here the
+   * authored set is rendered INSTEAD of the computed one — never appended to
+   * it. Two related-modules sources stacking is the failure mode this seam
+   * exists to prevent; see the header of moduleRelations.ts.
+   */
+  prerequisiteIds?: string[]
+  followOnIds?: string[]
+
+  /**
    * Per-module learn-content version (B2). Bump when this module's content
    * materially changes so the "What's New" surface can show "<module> updated".
    * Absent ⇒ treated as 1. Independent of the persist/migrate store versions.

@@ -5,8 +5,13 @@ import { AlertTriangle, ShieldOff, Bell } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from '../../../common/executive'
+import { scopedArtifactInputs, useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 const MODULE_ID = 'pqc-grc'
+/** This workshop step saves under the `risk-register` document type, which the
+ *  standalone Risk Register tool also owns. The scope keeps the two apart now
+ *  that every artifact autosaves — see `scopedArtifactInputs`. */
+const SCOPE = 'pqc-grc-exception-register'
 
 /**
  * Exception Register Triage.
@@ -82,12 +87,24 @@ function recommendedDisposition(e: ExceptionEntry): Exclude<Disposition, null> {
   return e.ageMonths <= 6 && e.hasRemediationPlan ? 'suppress' : 'escalate'
 }
 
+interface SavedTriageInputs {
+  choices: Record<string, Disposition>
+  revealed: boolean
+}
+
 export const ExceptionRegisterTriage: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
-  const [choices, setChoices] = useState<Record<string, Disposition>>(() =>
-    Object.fromEntries(ENTRIES.map((e) => [e.id, null]))
-  )
-  const [revealed, setRevealed] = useState(false)
+  // Restore the last-saved triage so in-progress classifications survive
+  // navigation, now that ExportableArtifact autosaves them. (WS6 task 6.)
+  const savedInputs = useSavedArtifactInputs<SavedTriageInputs>('risk-register', SCOPE)
+  const [choices, setChoices] = useState<Record<string, Disposition>>(() => {
+    const blank = Object.fromEntries(ENTRIES.map((e) => [e.id, null])) as Record<
+      string,
+      Disposition
+    >
+    return { ...blank, ...(savedInputs?.choices ?? {}) }
+  })
+  const [revealed, setRevealed] = useState(savedInputs?.revealed ?? false)
 
   const setChoice = useCallback((id: string, d: Exclude<Disposition, null>) => {
     setChoices((prev) => ({ ...prev, [id]: prev[id] === d ? null : d }))
@@ -132,9 +149,10 @@ export const ExceptionRegisterTriage: React.FC = () => {
       type: 'risk-register',
       title: 'PQC GRC — Exception Register Triage',
       data: exportMarkdown,
+      inputs: scopedArtifactInputs(SCOPE, { choices, revealed } satisfies SavedTriageInputs),
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, choices, revealed])
 
   return (
     <div className="space-y-6">

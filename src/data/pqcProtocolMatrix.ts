@@ -513,11 +513,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-07-24',
       },
       {
-        id: 'draft-becker-cnsa2-ssh-profile-03',
-        title: 'draft-becker-cnsa2-ssh-profile-03 — CNSA 2.0 Profile for SSH',
+        id: 'draft-becker-cnsa2-ssh-profile-05',
+        title: 'draft-becker-cnsa2-ssh-profile-05 — CNSA 2.0 Profile for SSH (In IESG Review)',
         url: 'https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/',
         date: '2026-05-08',
-        localFile: '/library/draft-becker-cnsa2-ssh-profile-03.html',
+        localFile: '/library/draft-becker-cnsa2-ssh-profile-05.html',
       },
     ],
     dimensions: {
@@ -759,11 +759,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-tls-mldsa-04.html',
       },
       {
-        id: 'draft-ietf-tls-hybrid-design-16',
-        title: 'draft-ietf-tls-hybrid-design-16 — Hybrid KEX design framework (RFC Ed Queue)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/',
-        date: '2025-09-07',
-        localFile: '/library/draft-ietf-tls-hybrid-design-16.html',
+        // PUBLISHED 2026-08-22 correction. Was labelled "(RFC Ed Queue)" at -16, dated
+        // 2025-09-07. It left that queue in July 2026: the datatracker reads
+        // "Hybrid Key Exchange in TLS 1.3 RFC 9954 ... Document Type RFC - Informational
+        // (July 2026) ... Was draft-ietf-tls-hybrid-design (tls WG)". The local capture
+        // The RFC itself is now cached (library row RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3,
+        // added 2026-08-22), so localFile points at it rather than at the superseded draft.
+        id: 'RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3',
+        title:
+          'RFC 9954 — Hybrid Key Exchange in TLS 1.3 (Informational; was draft-ietf-tls-hybrid-design)',
+        url: 'https://www.rfc-editor.org/rfc/rfc9954.html',
+        date: '2026-07',
+        localFile: '/library/RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3.html',
       },
       {
         id: 'draft-yusef-tls-pqt-dual-certs',
@@ -1538,10 +1545,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-jose-pq-composite-sigs.html',
       },
       {
-        id: 'draft-ietf-jose-hpke-encrypt-20',
-        title: 'draft-ietf-jose-hpke-encrypt-20 — HPKE with JOSE (IESG-approved, AD Followup)',
+        id: 'draft-ietf-jose-hpke-encrypt-22',
+        // Verified live 2026-08-22: latest revision -22, last updated 2026-08-03, WG state
+        // "Submitted to IESG for Publication" with SECDIR/IETF Last Call reviews recorded.
+        // The previous label "IESG-approved, AD Followup" overstated it — that WG-stream
+        // string is the handoff TO the IESG, not an approval by it.
+        title:
+          'draft-ietf-jose-hpke-encrypt-22 — HPKE with JOSE (Submitted to IESG for Publication)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
-        date: '2026-06-15',
+        date: '2026-08-03',
       },
       {
         id: 'draft-ietf-jose-hpke-pq-pqt-01',
@@ -1649,7 +1661,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         pureSigNote:
           'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s/192s/256s; RFC 9964 KAT vectors verified in-browser.',
         hybridSigNote:
-          'MLDSA65-Ed25519 composite per draft-ietf-jose-pq-composite-sigs-01 §4; pinned KAT snapshot verified.',
+          // -01 is NOT stale here and must not be bumped: this describes what the SANDBOX
+          // pinned and verified, not which revision is current. The spec has since moved to
+          // -03 (APISecurityJWT/constants.ts already cites -03 Table 2 for its sizes), so the
+          // revision is named explicitly rather than left to read as 'the current draft'.
+          'MLDSA65-Ed25519 composite per draft-ietf-jose-pq-composite-sigs-01 §4; pinned KAT snapshot verified against that revision. The draft is now at -03.',
       },
     ],
     liveDeployments: [
@@ -2075,11 +2091,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-openpgp-nist-bp-comp-03',
-        title: 'draft-ietf-openpgp-nist-bp-comp-03 — NIST + Brainpool composites',
+        id: 'draft-ietf-openpgp-nist-bp-comp-04',
+        title: 'draft-ietf-openpgp-nist-bp-comp-04 — NIST + Brainpool composites (In WG Last Call)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-nist-bp-comp/',
         date: '2026-01-08',
-        localFile: '/library/draft-ietf-openpgp-nist-bp-comp-03.html',
+        localFile: '/library/draft-ietf-openpgp-nist-bp-comp-04.html',
       },
     ],
     dimensions: {
@@ -2218,11 +2234,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-07-05',
       },
       {
-        id: 'draft-ietf-ipsecme-ikev2-pqc-auth-08',
-        title: 'draft-ietf-ipsecme-ikev2-pqc-auth-08 — PQ Authentication in IKEv2',
+        id: 'draft-ietf-ipsecme-ikev2-pqc-auth-12',
+        title:
+          'draft-ietf-ipsecme-ikev2-pqc-auth-12 — PQ Authentication in IKEv2 (Submitted to IESG for Publication)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/',
-        date: '2026-04-14',
-        localFile: '/library/draft-ietf-ipsecme-ikev2-pqc-auth-08.html',
+        date: '2026-08-20',
+        localFile: '/library/draft-ietf-ipsecme-ikev2-pqc-auth-12.html',
       },
       {
         id: 'draft-hu-ipsecme-pqt-hybrid-auth',
@@ -2278,7 +2295,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'iesg-submitted',
         stageNote:
-          'IESG Evaluation, verified live 2026-08-09: draft-ietf-ipsecme-ikev2-pqc-auth-11 moved to IESG Evaluation 2026-07-31, ballot issued, on the 2026-08-20 telechat agenda. Supersedes the 2026-07-22 Last Call reading.',
+          'Verified live 2026-08-22: draft-ietf-ipsecme-ikev2-pqc-auth is now at -12, last updated 2026-08-20, WG state "Submitted to IESG for Publication", with OPSDIR and SECDIR Last Call reviews of -10 on record. Supersedes the 2026-08-09 reading, which said -11 was on the 2026-08-20 telechat agenda — that date has passed.',
         refs: [
           {
             kind: 'draft',
@@ -2461,26 +2478,31 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-mls-pq-ciphersuites-05',
+        id: 'draft-ietf-mls-pq-ciphersuites-06',
         title:
-          'draft-ietf-mls-pq-ciphersuites-05 — PQ Cipher Suites for MLS (Waiting for WG Chair Go-Ahead)',
+          'draft-ietf-mls-pq-ciphersuites-06 — PQ Cipher Suites for MLS (Waiting for WG Chair Go-Ahead)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/',
         date: '2026-07-02',
-        localFile: '/library/draft-ietf-mls-pq-ciphersuites-04.html',
+        localFile: '/library/draft-ietf-mls-pq-ciphersuites-06.html',
       },
       {
         id: 'draft-ietf-mls-combiner-02',
-        title: 'draft-ietf-mls-combiner-02 — Traditional + PQ MLS combiner',
+        // Status added 2026-08-22: the sibling entries carry one and this did not,
+        // so a reader saw a bare draft with no hint it had stopped moving. The
+        // datatracker reads "Expired Internet-Draft (mls WG) Expired & archived".
+        title:
+          'draft-ietf-mls-combiner-02 — Traditional + PQ MLS combiner (EXPIRED & archived; WGLC revival pending)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-combiner/',
         date: '2025-10-22',
         localFile: '/library/draft-ietf-mls-combiner-02.html',
       },
       {
-        id: 'draft-ietf-mls-extensions-09',
-        title: 'draft-ietf-mls-extensions-09 — MLS Extensions framework',
+        id: 'draft-ietf-mls-extensions-10',
+        title:
+          'draft-ietf-mls-extensions-10 — MLS Extensions framework (Waiting for Implementation; Revised I-D needed after WGLC)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-mls-extensions/',
         date: '2026-03-02',
-        localFile: '/library/draft-ietf-mls-extensions-09.html',
+        localFile: '/library/draft-ietf-mls-extensions-10.html',
       },
     ],
     dimensions: {
@@ -2861,11 +2883,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-yoshikawa-sidrops-pqc-rpki-01',
+        id: 'draft-yoshikawa-sidrops-pqc-rpki-02',
         title:
-          'draft-yoshikawa-sidrops-pqc-rpki-01 — Post-Quantum Signature Profile for RPKI (individual, not WG-adopted)',
+          'draft-yoshikawa-sidrops-pqc-rpki-02 — Post-Quantum Signature Profile for RPKI (individual, not WG-adopted)',
         url: 'https://datatracker.ietf.org/doc/draft-yoshikawa-sidrops-pqc-rpki/',
-        date: '2026-07-04',
+        date: '2026-08',
       },
     ],
     dimensions: {
@@ -3334,11 +3356,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-02-26',
       },
       {
-        id: 'draft-ietf-radext-review-radius-01',
+        id: 'draft-ietf-radext-review-radius-02',
         title:
-          'draft-ietf-radext-review-radius-01 — RADIUS security review (legacy RADIUS/UDP deprecation)',
+          'draft-ietf-radext-review-radius-02 — RADIUS security review (legacy RADIUS/UDP deprecation)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-radext-review-radius/',
-        date: '2026-07-03',
+        date: '2026-08-10',
       },
     ],
     dimensions: {

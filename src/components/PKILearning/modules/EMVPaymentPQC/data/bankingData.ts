@@ -123,7 +123,7 @@ export const SECTOR_BODIES: SectorBody[] = [
     jurisdiction: 'G7',
     // 2026-08-01: re-pointed from G7-Financial-PQC-Roadmap-2026 (the Treasury
     // press release) to the statement itself. See content.ts standards[].
-    libraryRef: 'G7-CEG-Financial-PQC-2026',
+    libraryRef: 'G7-Financial-PQC-Roadmap-2026',
     contribution:
       'Coordinated roadmap for financial-sector PQC. Explicitly sets no regulatory expectation: it prioritises risk-based sequencing "rather than prescribe fixed timelines".',
   },

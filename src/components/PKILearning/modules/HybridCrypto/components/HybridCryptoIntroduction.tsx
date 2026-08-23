@@ -464,7 +464,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            In TLS 1.3 (<InlineTooltip term="TLS">RFC 8446</InlineTooltip>), hybrid KEMs integrate
+            In TLS 1.3 (<InlineTooltip term="TLS">RFC 9846</InlineTooltip>), hybrid KEMs integrate
             into the handshake via the <code className="text-xs">key_share</code> extension. The
             client and server exchange hybrid key material just as they would for classical ECDH
             &mdash; but with larger payloads:

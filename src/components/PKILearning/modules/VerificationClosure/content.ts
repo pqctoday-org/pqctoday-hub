@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
   version: '1.1.0',
-  lastReviewed: '2026-07-22',
+  lastReviewed: '2026-08-22',
 
   // NCSC-UK's 2028/2031/2035 targets, the AIVD/CWI/TNO Handbook, and ISO/IEC
   // 27001 are still practitioner guidance / have no ACTIVE library row to

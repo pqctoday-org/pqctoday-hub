@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CompleteStepAction } from '../CompleteStepAction'
@@ -9,6 +9,74 @@ import { markdownToPdf } from '@/services/export/pdfExport'
 import { copyToClipboard } from '@/utils/clipboard'
 
 type ExportFormat = 'markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf'
+
+/** Debounce before an in-progress edit is auto-saved. Mirrors the KPI
+ *  Dashboard's proven 500 ms `scheduleSave`, lengthened slightly because this
+ *  path fires on free-text keystrokes as well as slider drags. */
+export const ARTIFACT_AUTOSAVE_DELAY_MS = 800
+
+// --- Unsaved-changes guard --------------------------------------------------
+// Autosave shrinks the true data-loss window to "closed the tab within one
+// debounce interval of the last keystroke". A `beforeunload` prompt covers
+// exactly that case. In-app navigation needs no guard once autosave lands
+// (the pending timer is flushed on unmount), so there is deliberately no
+// react-router blocker here. (WS6 task 4.)
+const dirtyArtifacts = new Set<object>()
+let unloadListenerBound = false
+
+function handleBeforeUnload(e: BeforeUnloadEvent): void {
+  if (dirtyArtifacts.size === 0) return
+  e.preventDefault()
+  e.returnValue = ''
+}
+
+/**
+ * Has the user physically interacted with the page since THIS artifact
+ * mounted? Autosave must follow a real edit, never the artifact's own data
+ * settling — several tools recompute `exportData` shortly after mount as
+ * `useExecutiveModuleData` / catalog loaders resolve, and saving on that would
+ * record artifacts the user never touched (and, where two workshop steps share
+ * one `moduleId`+`type` store slot, let merely walking past step 1 overwrite
+ * step 2's saved draft). A ref rather than state: this must not re-render.
+ */
+export function useHasUserInteracted(): React.RefObject<boolean> {
+  const interacted = useRef(false)
+  useEffect(() => {
+    interacted.current = false
+    const mark = () => {
+      interacted.current = true
+    }
+    // `input`/`change` matter as well as pointer/key: a slider drag and a
+    // paste both reach a field without a keystroke. None of these fire when
+    // React writes a value from props, which is exactly the distinction.
+    const EVENTS = ['pointerdown', 'keydown', 'input', 'change'] as const
+    for (const evt of EVENTS) window.addEventListener(evt, mark, true)
+    return () => {
+      for (const evt of EVENTS) window.removeEventListener(evt, mark, true)
+    }
+  }, [])
+  return interacted
+}
+
+/** Register (or clear) "this artifact has edits not yet written to the store".
+ *  Shared with ArtifactBuilder, whose Edit mode keeps ExportableArtifact
+ *  unmounted and so runs its own copy of the same debounce. */
+export function setArtifactDirty(token: object, dirty: boolean): void {
+  if (typeof window === 'undefined') return
+  if (dirty) {
+    dirtyArtifacts.add(token)
+    if (!unloadListenerBound) {
+      window.addEventListener('beforeunload', handleBeforeUnload)
+      unloadListenerBound = true
+    }
+    return
+  }
+  dirtyArtifacts.delete(token)
+  if (dirtyArtifacts.size === 0 && unloadListenerBound) {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+    unloadListenerBound = false
+  }
+}
 
 interface ExportableArtifactProps {
   title: string
@@ -55,7 +123,79 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
     }
   }, [onExport, exportData, lastSavedData])
 
-  const handleSaveClick = triggerSave
+  // --- Debounced autosave ---------------------------------------------------
+  // Root cause #1 of the 2026-07-03 remediation ("no persistence across
+  // navigation") was never fixed: `onExport` only ever fired from an
+  // export-adjacent click, so in-progress edits died on navigation. This
+  // effect writes them through the SAME guarded `triggerSave()` the Save
+  // button calls, so it inherits both of its guards for free — it no-ops when
+  // `onExport` is undefined (e.g. DataDrivenScorecard's internal render) and
+  // never re-saves unchanged content. (WS6 task 1.)
+  const triggerSaveRef = useRef(triggerSave)
+  useEffect(() => {
+    triggerSaveRef.current = triggerSave
+  }, [triggerSave])
+
+  const dirtyTokenRef = useRef({})
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoSavePendingRef = useRef(false)
+  const mountedOnceRef = useRef(false)
+  const userInteracted = useHasUserInteracted()
+
+  const cancelPendingAutoSave = useCallback(() => {
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current)
+      autoSaveTimerRef.current = null
+    }
+    autoSavePendingRef.current = false
+    setArtifactDirty(dirtyTokenRef.current, false)
+  }, [])
+
+  useEffect(() => {
+    // The first render is a mount, not an edit — saving here would record a
+    // pristine artifact the user never touched.
+    if (!mountedOnceRef.current) {
+      mountedOnceRef.current = true
+      return
+    }
+    if (!onExport) return
+    // Only a real edit — not the artifact's own data settling after mount.
+    if (!userInteracted.current) return
+    autoSavePendingRef.current = true
+    setArtifactDirty(dirtyTokenRef.current, true)
+    autoSaveTimerRef.current = setTimeout(() => {
+      autoSaveTimerRef.current = null
+      autoSavePendingRef.current = false
+      setArtifactDirty(dirtyTokenRef.current, false)
+      triggerSaveRef.current()
+    }, ARTIFACT_AUTOSAVE_DELAY_MS)
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current)
+        autoSaveTimerRef.current = null
+      }
+    }
+  }, [exportData, csvData, onExport, userInteracted])
+
+  // Navigating away inside the debounce window must not drop the last edit —
+  // that is the exact failure this work stream exists to fix. The cleanup
+  // above only clears the timer; this one flushes the pending write.
+  useEffect(() => {
+    const token = dirtyTokenRef.current
+    return () => {
+      if (autoSavePendingRef.current) {
+        autoSavePendingRef.current = false
+        triggerSaveRef.current()
+      }
+      setArtifactDirty(token, false)
+    }
+  }, [])
+
+  // An explicit Save must cancel the pending timer's now-redundant fire.
+  const handleSaveClick = useCallback(() => {
+    cancelPendingAutoSave()
+    triggerSave()
+  }, [cancelPendingAutoSave, triggerSave])
 
   const handleCopy = useCallback(async () => {
     const ok = await copyToClipboard(exportData)

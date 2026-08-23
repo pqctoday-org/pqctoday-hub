@@ -6,7 +6,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
-  lastReviewed: '2026-07-22',
+  lastReviewed: '2026-08-22',
 
   standards: [getStandard('FIPS 205')],
   algorithms: [getAlgorithm('SLH-DSA-SHA2-128s'), getAlgorithm('SLH-DSA-SHAKE-256f')],

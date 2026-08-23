@@ -28,7 +28,7 @@ describe('PQCTestingValidation render parity', () => {
     expect(
       screen.getByText(/Design and execute testing strategies for post-quantum cryptography/)
     ).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -37,7 +37,7 @@ describe('PQCTestingValidation render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

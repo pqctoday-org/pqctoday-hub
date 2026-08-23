@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { ExportableArtifact } from './ExportableArtifact'
+import {
+  ARTIFACT_AUTOSAVE_DELAY_MS,
+  ExportableArtifact,
+  setArtifactDirty,
+  useHasUserInteracted,
+} from './ExportableArtifact'
 import { CompleteStepAction } from '../CompleteStepAction'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { isAutoRunFillActive } from '@/components/Simulation/autorun/autoRunFill'
@@ -131,7 +136,74 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
     }
   }, [onExport, formData, currentKey, lastSavedKey])
 
-  const handleSaveClick = handleExport
+  // --- Debounced autosave (Edit mode) ---------------------------------------
+  // ExportableArtifact's own autosave cannot cover this component: it is
+  // unmounted for the entire time the user is in Edit mode, which is the
+  // default. Watch `formData` directly and write through the SAME guarded
+  // `handleExport()` the Save button calls, so the "unchanged since last save"
+  // guard applies identically. (WS6 task 2.)
+  const handleExportRef = useRef(handleExport)
+  useEffect(() => {
+    handleExportRef.current = handleExport
+  }, [handleExport])
+
+  const dirtyTokenRef = useRef({})
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoSavePendingRef = useRef(false)
+  const mountedOnceRef = useRef(false)
+  const userInteracted = useHasUserInteracted()
+
+  const cancelPendingAutoSave = useCallback(() => {
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current)
+      autoSaveTimerRef.current = null
+    }
+    autoSavePendingRef.current = false
+    setArtifactDirty(dirtyTokenRef.current, false)
+  }, [])
+
+  useEffect(() => {
+    if (!mountedOnceRef.current) {
+      mountedOnceRef.current = true
+      return
+    }
+    if (!onExport) return
+    // Only a real edit — not a re-seed from freshly-resolved upstream data.
+    if (!userInteracted.current) return
+    autoSavePendingRef.current = true
+    setArtifactDirty(dirtyTokenRef.current, true)
+    autoSaveTimerRef.current = setTimeout(() => {
+      autoSaveTimerRef.current = null
+      autoSavePendingRef.current = false
+      setArtifactDirty(dirtyTokenRef.current, false)
+      handleExportRef.current()
+    }, ARTIFACT_AUTOSAVE_DELAY_MS)
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current)
+        autoSaveTimerRef.current = null
+      }
+    }
+  }, [currentKey, onExport, userInteracted])
+
+  // Flush a pending write when the builder unmounts — navigating away inside
+  // the debounce window would otherwise lose the last edit.
+  useEffect(() => {
+    const token = dirtyTokenRef.current
+    return () => {
+      if (autoSavePendingRef.current) {
+        autoSavePendingRef.current = false
+        handleExportRef.current()
+      }
+      setArtifactDirty(token, false)
+    }
+  }, [])
+
+  // An explicit Save cancels the pending timer's now-redundant fire.
+  const handleSaveClick = useCallback(() => {
+    cancelPendingAutoSave()
+    handleExport()
+  }, [cancelPendingAutoSave, handleExport])
 
   const exportMarkdown = useMemo(() => {
     if (renderPreview) return renderPreview(formData)
@@ -336,7 +408,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           exportData={exportMarkdown}
           filename={exportFilename}
           formats={exportFormats}
-          onExport={handleExport}
+          onExport={handleSaveClick}
           wideTable={wideTable}
           csvData={exportCsv}
         >

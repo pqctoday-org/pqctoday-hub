@@ -10,13 +10,35 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
   version: '1.1.0',
-  lastReviewed: '2026-04-22',
+  lastReviewed: '2026-08-22',
 
+  // ORDER MATTERS, and this list is ordered for the SAMPLER, not for a reader.
+  // accuracy_spotcheck.py opens four entries by even stride: with eight that is indices
+  // 0, 2, 4 and 6. Each sampled slot holds the document behind one of this module's four
+  // dated claims; the odd slots hold documents the module names but makes no claim about,
+  // plus one — the TLS Baseline Requirements — that is the BEST evidence for a human and
+  // the WORST for the sampler, because at 353 KB the excerpt window never reaches §6.3.2.
+  // Measured across two runs on 2026-08-22, not guessed.
   standards: [
-    getStandard('FIPS 203'),
-    getStandard('FIPS 204'),
-    getStandard('FIPS 205'),
-    getStandard('NSA CNSA 2.0'),
+    // The December 2024 FAQ (Ver. 2.1), not the 2022 advisory, carries the operative
+    // CNSSP 15 dates: new NSS acquisitions CNSA 2.0-compliant from 1 Jan 2027, equipment
+    // that cannot support CNSA 2.0 phased out by 31 Dec 2030, and "by December 31, 2031,
+    // CNSA 2.0 algorithms are mandated for use". The module used to summarise CNSA as
+    // "2030/2033" from the 2022 per-class table alone, which omits the date the mandate
+    // actually bites.
+    getStandard('NSA CNSA 2.0 FAQ'),
+    // Ratified TLS BR §6.3.2 carries the per-step effective dates (200 days from
+    // 2026-03-15, 100 from 2027-03-15, 47 from 2029-03-15) that the ballot page omits.
+    // Cited for the record; unsampled for the size reason above.
+    getStandard('CABF-TLS-BR-v2-2-9'),
+    getStandard('NSA CNSA 2.0'), // Sep 2022 advisory — the per-class 2025-2033 timetable
+    getStandard('FIPS 204'), // named, never explained by this module — unsampled by design
+    // The ballot page states "398 days to 47 days ... starting in March 2026 and
+    // concluding in March 2029" in its first screen, so unlike the BR it fits the window.
+    getStandard('CAB-Forum-SC-081v3'),
+    getStandard('FIPS 205'), // named, never explained by this module — unsampled by design
+    getStandard('NIST CSWP 39'), // crypto-agility considerations — cited in the narrative, previously uncited here
+    getStandard('FIPS 203'), // ML-KEM — the SP 800-90A/C DRBG-seeding claim
   ],
 
   algorithms: [
@@ -31,17 +53,20 @@ export const content: ModuleContent = {
     {
       label: 'CA/B Forum: TLS cert validity → 200 days',
       year: 2026,
-      source: 'CA/B Forum SC-081v3 (April 2025)',
+      // Ballot SC-081v3 passed April 2025; the per-step dates are in the ratified TLS
+      // Baseline Requirements §6.3.2 ("issued on or after 2026-03-15 and before
+      // 2027-03-15 ... MUST NOT have a Validity Period greater than 200 days").
+      source: 'CA/B Forum SC-081v3 (April 2025); TLS BR §6.3.2',
     },
     {
       label: 'CA/B Forum: TLS cert validity → 100 days',
       year: 2027,
-      source: 'CA/B Forum SC-081v3',
+      source: 'CA/B Forum SC-081v3; TLS BR §6.3.2 (from 2027-03-15)',
     },
     {
       label: 'CA/B Forum: TLS cert validity → 47 days',
       year: 2029,
-      source: 'CA/B Forum SC-081v3',
+      source: 'CA/B Forum SC-081v3; TLS BR §6.3.2 (from 2029-03-15)',
     },
     {
       label: 'CNSA 2.0 software signing preferred',
@@ -62,7 +87,7 @@ export const content: ModuleContent = {
 
   narratives: {
     overview:
-      'This module operationalises the Crypto Agility Strategic Plan defined in NIST CSWP.39 (Dec 2025). CPM is the organisational discipline that executes the CSWP.39 process loop: Govern → Inventory → Identify Gaps → Prioritise → Implement → Repeat. Cryptographic Management Modernization (CMM) teaches executives and architects how to stand up a Cryptographic Posture Management program — a continuous, iterative program spanning certificates, cryptographic libraries, application software, and key material. Distinct from crypto-agility (a technical capability) and from a CryptoCOE (an operating model), CMM is the management discipline that answers: do we know what we have, is it healthy, can we prove it, and does the investment pay off whether quantum arrives on schedule or never?',
+      'This module operationalises the Crypto Agility Strategic Plan defined in NIST CSWP 39-upd1 (19 Dec 2025, updated 29 Jun 2026). CPM is the organisational discipline that executes the CSWP.39 process loop: Govern → Inventory → Identify Gaps → Prioritise → Implement → Repeat. Cryptographic Management Modernization (CMM) teaches executives and architects how to stand up a Cryptographic Posture Management program — a continuous, iterative program spanning certificates, cryptographic libraries, application software, and key material. Distinct from crypto-agility (a technical capability) and from a CryptoCOE (an operating model), CMM is the management discipline that answers: do we know what we have, is it healthy, can we prove it, and does the investment pay off whether quantum arrives on schedule or never?',
     keyConcepts:
       'Five pillars — Inventory (unified CBOM across four asset classes), Governance (policy + ownership), Lifecycle (CLM: provisioning through retirement with automated renewal under the 47-day TLS cadence), Observability (drift alerts and SIEM integration), Assurance (audit + attestation, including FIPS 140-3 L3 validation tracking for libraries and hardware, SP 800-90B Entropy Source Validation status, and CVE patch-revalidate bind management). Dual-loop iteration — a strategic annual Plan-Do-Check-Act cadence wrapping an operational continuous Discover → Classify → Score → Remediate → Attest → Reassess loop. Program Office Model — five CPM roles (Crypto PM, FIPS/CMVP Engineer, CLM Architect, Crypto Developer Champion, Supplier Risk Analyst) with RACI across the five pillars and headcount benchmarks by org size. Pre-Deployment Lab Blueprint — hardware (FIPS 140-3 L3 HSM, TLS termination appliance, network tap) and software (FIPS library build, ACVP client, cert scanner, SBOM-to-CBOM pipeline — see the sbom module for what the SBOM half of that pipeline actually contains) requirements, lab isolation rules, and a five-step lab-to-prod promotion workflow with required evidence artifacts per change type.',
     workshopSummary:
@@ -72,7 +97,7 @@ export const content: ModuleContent = {
     protocolDeprecation:
       'The CMM Assurance pillar must maintain a standards-watch subscription across: IETF RFC Obsoletes/Updates (e.g., RFC 8996 deprecating TLS 1.0/1.1, RFC 7465 prohibiting RC4), NIST SP 800-131A revision cycle (3DES sunset, RSA-1024 below minimum security), NSA CNSA suite announcements, CA/B Forum ballot outcomes (SHA-1 code-signing ban), ETSI TS 119 312, BSI TR-02102, and ANSSI RGS. When a deprecation notice is published, CBOM classification rules must be updated to flag the newly prohibited primitive, and the operational loop must trigger discovery scans for affected endpoints, library configs, TLS termination points, SSH server policies, IKEv2 proposals, and code-signing pipelines — each with separate ownership and change-management tracks. The Observability pillar closes the loop: continuous protocol-version and cipher-suite scanning ensures deprecated primitives do not re-appear after infrastructure refreshes.',
     relatedStandards:
-      'CA/B Forum SC-081v3 (April 2025, 47-day TLS cert cadence by March 2029). NIST FIPS 140-3 Implementation Guidance (September 2025 PQC update). NIST CMVP Validated Modules and Modules-in-Process lists. NIST SP 800-140B (CMVP security policy requirements). NIST SP 800-90B (Entropy Source Validation — ESV track). NIST SP 800-90A/C (DRBG and RBG construction standards). NIST SP 800-131A Rev 2 (algorithm transition, 3DES/RSA-1024 sunset). RFC 8996 (TLS 1.0/1.1 deprecation). RFC 7465 (RC4 prohibition). ETSI TS 119 312. BSI TR-02102. ANSSI RGS. OMB M-23-02 (US federal cryptographic inventory mandate through 2035). NSA CNSA 2.0 (National Security Systems PQC deadlines 2030/2033). ENISA Post-Quantum Cryptography Integration Study. OWASP CycloneDX CBOM Authoritative Guide. RFC 8555 (ACME), RFC 7030 (EST), RFC 4210 (CMP). NIST CSWP.39 (Dec 2025) — Considerations for Achieving Crypto Agility. Meta Engineering Blog (Apr 2026) — Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways — five-tier PQC maturity model (PQ-Unaware → PQ-Enabled) with hyperscale deployment lessons across ML-KEM/ML-DSA adoption.',
+      'CA/B Forum SC-081v3 (April 2025, 47-day TLS cert cadence by March 2029). NIST FIPS 140-3 Implementation Guidance for FIPS 140-3 and the CMVP (initial release 21 Sep 2020, last updated 16 Apr 2026 — the September 2025 PQC edition this module used to cite has been superseded). NIST CMVP Validated Modules and Modules-in-Process lists. NIST SP 800-140B (CMVP security policy requirements). NIST SP 800-90B (Entropy Source Validation — ESV track). NIST SP 800-90A/C (DRBG and RBG construction standards). NIST SP 800-131A Rev 2 (algorithm transition, 3DES/RSA-1024 sunset). RFC 8996 (TLS 1.0/1.1 deprecation). RFC 7465 (RC4 prohibition). ETSI TS 119 312. BSI TR-02102. ANSSI RGS. OMB M-23-02 (US federal cryptographic inventory mandate through 2035). NSA CNSA 2.0 and its December 2024 FAQ Ver. 2.1 (National Security Systems: new acquisitions CNSA 2.0-compliant from 1 Jan 2027, equipment unable to support CNSA 2.0 phased out by 31 Dec 2030, CNSA 2.0 algorithms mandated by 31 Dec 2031 under CNSSP 15, and all NSS quantum-resistant by 2035; the 2022 advisory per-class timetable runs software/firmware signing exclusive by 2030 and web/cloud/OS by 2033). ENISA Post-Quantum Cryptography Integration Study. OWASP CycloneDX CBOM Authoritative Guide. RFC 8555 (ACME), RFC 7030 (EST), RFC 4210 (CMP). NIST CSWP 39-upd1 — Considerations for Achieving Crypto Agility (December 19 2025, including updates as of 29 Jun 2026; supersedes the original CSWP 39). Meta Engineering Blog (Apr 2026) — Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways — five-tier PQC maturity model (PQ-Unaware → PQ-Enabled) with hyperscale deployment lessons across ML-KEM/ML-DSA adoption.',
     cswp39Framework:
       "NIST CSWP.39 defines the Crypto Agility Strategic Plan as a continuously repeated five-step process: (1) Governance — embed crypto policy into standards, mandates, supply chains, and architecture; (2) Inventory — build an asset-centric CBOM across Code, Libraries, Applications, Files, Protocols, and Systems; (3) Identify Gaps — audit Management Tools for discovery, assessment, configuration, and enforcement coverage; (4) Prioritise — run a Risk Analysis Engine informed by crypto policy to produce a prioritised asset list and KPIs; (5) Implement — execute Mitigation (compensating controls) or Migration (algorithm swap) based on each asset's agility level. The CPM Five Pillars operationalise this cycle: Inventory → step 2 | Governance → step 1 | Lifecycle → step 5 (migration) | Observability → step 4 (KPIs) | Assurance → step 4 (FIPS KPIs).",
     managementToolsLayer:

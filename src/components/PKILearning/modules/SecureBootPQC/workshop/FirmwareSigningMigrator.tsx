@@ -1180,30 +1180,32 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                     Current signing: RSA-2048 (quantum-vulnerable)
                   </span>
                 </div>
-                <table className="w-full text-xs mt-2">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-1 text-muted-foreground font-medium">
-                        Component
-                      </th>
-                      <th className="text-right py-1 text-muted-foreground font-medium">Size</th>
-                      <th className="text-right py-1 text-muted-foreground font-medium">Hash</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {MOCK_MANIFEST.components.map((c) => (
-                      <tr key={c.name} className="border-b border-border/50">
-                        <td className="py-1 text-foreground">{c.name}</td>
-                        <td className="py-1 text-right font-mono text-muted-foreground">
-                          {c.size}
-                        </td>
-                        <td className="py-1 text-right font-mono text-muted-foreground truncate max-w-[100px]">
-                          {c.hash}
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs mt-2">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-1 text-muted-foreground font-medium">
+                          Component
+                        </th>
+                        <th className="text-right py-1 text-muted-foreground font-medium">Size</th>
+                        <th className="text-right py-1 text-muted-foreground font-medium">Hash</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {MOCK_MANIFEST.components.map((c) => (
+                        <tr key={c.name} className="border-b border-border/50">
+                          <td className="py-1 text-foreground">{c.name}</td>
+                          <td className="py-1 text-right font-mono text-muted-foreground">
+                            {c.size}
+                          </td>
+                          <td className="py-1 text-right font-mono text-muted-foreground truncate max-w-[100px]">
+                            {c.hash}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </details>
@@ -1294,7 +1296,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             <LibRef id="FIPS 204" label="FIPS 204" />
             <LibRef id="FIPS 205" label="FIPS 205" />
             <LibRef id="FIPS 186-5" label="FIPS 186-5" />
-            <LibRef id="PKCS11-V32-OASIS" label="PKCS#11 v3.2" />
+            <LibRef id="PKCS11-V32-OS-OASIS" label="PKCS#11 v3.2" />
           </div>
 
           {isLive && (
@@ -1797,90 +1799,94 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
                 Migration Comparison: {classicalAlgo} → {pqcAlgo}
               </span>
             </div>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-1.5 text-muted-foreground font-medium">Metric</th>
-                  <th className="text-right py-1.5 text-status-error font-medium">
-                    {classicalAlgo}
-                  </th>
-                  <th className="text-right py-1.5 text-primary font-medium">{pqcAlgo}</th>
-                  <th className="text-right py-1.5 text-muted-foreground font-medium">Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    metric: 'Public key',
-                    classical: `${classicalPubDisplay.toLocaleString()} B`,
-                    pqc: `${pqcPubDisplay.toLocaleString()} B`,
-                    change: `${(pqcPubDisplay / classicalPubDisplay).toFixed(1)}×`,
-                  },
-                  {
-                    metric: 'Private key',
-                    classical: `${classicalPrivDisplay.toLocaleString()} B`,
-                    pqc: `${pqcPrivDisplay.toLocaleString()} B`,
-                    change: `${(pqcPrivDisplay / classicalPrivDisplay).toFixed(1)}×`,
-                  },
-                  {
-                    metric: 'Signature',
-                    classical: `${displayClassicalSig.toLocaleString()} B`,
-                    pqc: `${displayPqcSig.toLocaleString()} B`,
-                    change: `${sigRatio}×`,
-                  },
-                  {
-                    metric: 'Hash (digest)',
-                    classical: hashAlgo,
-                    pqc: pqcAlgo.startsWith('ML-DSA')
-                      ? 'SHAKE-256 (internal)'
-                      : 'SHA-256/SHA-512 (internal)',
-                    change: '—',
-                  },
-                  {
-                    metric: 'Signing mode',
-                    classical: `Hash+Sign (${hashAlgo})`,
-                    pqc: 'Pure (RFC 9882/9814)',
-                    change: '✓',
-                  },
-                  {
-                    metric: 'Quantum-safe',
-                    classical: 'No',
-                    pqc: 'Yes',
-                    change: '✓',
-                  },
-                  {
-                    metric: 'NIST level',
-                    classical: '~112-bit classical',
-                    pqc:
-                      pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'NIST Level 1' : MLDSA_NIST_LEVEL[pqcAlgo],
-                    change: '↑',
-                  },
-                  {
-                    metric: 'Standard',
-                    classical: 'FIPS 186-5',
-                    pqc: pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205',
-                    change: '—',
-                  },
-                  {
-                    metric: 'CMS spec',
-                    classical: 'RFC 5652',
-                    pqc: pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882' : 'RFC 9814',
-                    change: '—',
-                  },
-                ].map((row) => (
-                  <tr key={row.metric} className="border-b border-border/50">
-                    <td className="py-1.5 text-foreground">{row.metric}</td>
-                    <td className="py-1.5 text-right font-mono text-status-error">
-                      {row.classical}
-                    </td>
-                    <td className="py-1.5 text-right font-mono text-primary">{row.pqc}</td>
-                    <td className="py-1.5 text-right font-bold text-status-warning">
-                      {row.change}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-1.5 text-muted-foreground font-medium">Metric</th>
+                    <th className="text-right py-1.5 text-status-error font-medium">
+                      {classicalAlgo}
+                    </th>
+                    <th className="text-right py-1.5 text-primary font-medium">{pqcAlgo}</th>
+                    <th className="text-right py-1.5 text-muted-foreground font-medium">Change</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      metric: 'Public key',
+                      classical: `${classicalPubDisplay.toLocaleString()} B`,
+                      pqc: `${pqcPubDisplay.toLocaleString()} B`,
+                      change: `${(pqcPubDisplay / classicalPubDisplay).toFixed(1)}×`,
+                    },
+                    {
+                      metric: 'Private key',
+                      classical: `${classicalPrivDisplay.toLocaleString()} B`,
+                      pqc: `${pqcPrivDisplay.toLocaleString()} B`,
+                      change: `${(pqcPrivDisplay / classicalPrivDisplay).toFixed(1)}×`,
+                    },
+                    {
+                      metric: 'Signature',
+                      classical: `${displayClassicalSig.toLocaleString()} B`,
+                      pqc: `${displayPqcSig.toLocaleString()} B`,
+                      change: `${sigRatio}×`,
+                    },
+                    {
+                      metric: 'Hash (digest)',
+                      classical: hashAlgo,
+                      pqc: pqcAlgo.startsWith('ML-DSA')
+                        ? 'SHAKE-256 (internal)'
+                        : 'SHA-256/SHA-512 (internal)',
+                      change: '—',
+                    },
+                    {
+                      metric: 'Signing mode',
+                      classical: `Hash+Sign (${hashAlgo})`,
+                      pqc: 'Pure (RFC 9882/9814)',
+                      change: '✓',
+                    },
+                    {
+                      metric: 'Quantum-safe',
+                      classical: 'No',
+                      pqc: 'Yes',
+                      change: '✓',
+                    },
+                    {
+                      metric: 'NIST level',
+                      classical: '~112-bit classical',
+                      pqc:
+                        pqcAlgo === 'SLH-DSA-SHA2-128S'
+                          ? 'NIST Level 1'
+                          : MLDSA_NIST_LEVEL[pqcAlgo],
+                      change: '↑',
+                    },
+                    {
+                      metric: 'Standard',
+                      classical: 'FIPS 186-5',
+                      pqc: pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205',
+                      change: '—',
+                    },
+                    {
+                      metric: 'CMS spec',
+                      classical: 'RFC 5652',
+                      pqc: pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882' : 'RFC 9814',
+                      change: '—',
+                    },
+                  ].map((row) => (
+                    <tr key={row.metric} className="border-b border-border/50">
+                      <td className="py-1.5 text-foreground">{row.metric}</td>
+                      <td className="py-1.5 text-right font-mono text-status-error">
+                        {row.classical}
+                      </td>
+                      <td className="py-1.5 text-right font-mono text-primary">{row.pqc}</td>
+                      <td className="py-1.5 text-right font-bold text-status-warning">
+                        {row.change}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* NSA CNSA 2.0 callout */}

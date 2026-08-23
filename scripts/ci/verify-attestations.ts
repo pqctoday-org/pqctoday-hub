@@ -103,17 +103,42 @@ function b64decode(s: string): Uint8Array {
   return new Uint8Array(Buffer.from(s, 'base64'))
 }
 
+/**
+ * Find the public key whose kid matches, and DO NOT swallow read failures.
+ *
+ * The catch here used to be a bare `// skip unparseable files`, which is right for a
+ * malformed key file and wrong for everything else. When a read threw transiently —
+ * observed 2026-08-22 while a 620-file vitest run was saturating I/O — this returned
+ * null, `buildKeyResolver` silently fell back to maintainer-public.key, and because
+ * that file legitimately carries a DIFFERENT kid, every artifact was reported
+ * "kid-mismatch". Ten green signatures looked like ten broken ones, twice, and the
+ * output gave no hint that a key file had simply failed to open.
+ *
+ * A signature verifier must not report "wrong key" when it means "could not read the
+ * key". Malformed JSON is still skipped; anything else is rethrown.
+ */
 function loadPublicKeyByKid(kid: string, attestationDir: string): PublicKeyFile | null {
   if (!existsSync(attestationDir)) return null
   const files = readdirSync(attestationDir).filter((f) => f.endsWith('.key') || f.endsWith('.json'))
   for (const f of files) {
     if (f.includes('private') || f.includes('secret')) continue
+    const full = path.join(attestationDir, f)
+    let raw: string
     try {
-      const obj = JSON.parse(readFileSync(path.join(attestationDir, f), 'utf-8')) as PublicKeyFile
-      if (obj.kid === kid && obj.publicKey_b64 && obj.algorithm) return obj
-    } catch {
-      // skip unparseable files
+      raw = readFileSync(full, 'utf-8')
+    } catch (err) {
+      throw new Error(
+        `attestation key ${f} could not be read (${(err as Error).message}). Refusing to ` +
+          `fall back to another key — that would report every artifact as kid-mismatch.`
+      )
     }
+    let obj: PublicKeyFile
+    try {
+      obj = JSON.parse(raw) as PublicKeyFile
+    } catch {
+      continue // genuinely malformed key file — skip it, as before
+    }
+    if (obj.kid === kid && obj.publicKey_b64 && obj.algorithm) return obj
   }
   return null
 }

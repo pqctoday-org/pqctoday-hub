@@ -13,6 +13,7 @@ import { GitBranch, ShieldCheck, ArrowRight } from 'lucide-react'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Recommendation engine (pure function — testable in isolation)
@@ -589,6 +590,12 @@ export function renderHybridTransitionMarkdown(
 export const HybridTransitionPlanner: React.FC = () => {
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
+  // Read half of WS6's autosave: ArtifactBuilder now writes a draft on every
+  // edit, so without this the draft is written and never read back. The type
+  // is unique to this tool, so no `scope` is needed.
+  const savedFormData =
+    useSavedArtifactInputs<Record<string, Record<string, string | string[]>>>('hybrid-transition')
+
   const sections = useMemo(() => SECTIONS, [])
 
   const handleExport = useCallback(
@@ -601,6 +608,8 @@ export const HybridTransitionPlanner: React.FC = () => {
         type: 'hybrid-transition',
         title: `Hybrid Transition Plan - ${protocol}`,
         data: markdown,
+        // Persist the raw form so the draft is restorable on remount.
+        inputs: data,
         createdAt: Date.now(),
       })
     },
@@ -656,6 +665,7 @@ export const HybridTransitionPlanner: React.FC = () => {
         title="Hybrid Algorithm Transition Plan"
         description="Fill in the inventory and constraint sections, then preview the recommended pathway."
         sections={sections}
+        initialData={savedFormData}
         onExport={handleExport}
         exportFilename="hybrid-transition-plan"
         renderPreview={renderHybridTransitionMarkdown}

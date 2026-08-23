@@ -25,7 +25,7 @@ describe('EnergyUtilities render parity', () => {
     expect(screen.getByRole('heading', { name: 'Energy & Utilities PQC' })).toBeInTheDocument()
     // in-page description (stable substring)
     expect(screen.getByText(/PQC migration for power grids and utilities/)).toBeInTheDocument()
-    // the standard six-tab set (triggers render as buttons)
+    // the standard six-tab set (WS7: triggers expose role="tab")
     for (const name of [
       'Learn',
       'Visual',
@@ -34,7 +34,7 @@ describe('EnergyUtilities render parity', () => {
       'References',
       'Tools & Products',
     ]) {
-      expect(screen.getByRole('button', { name })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name })).toBeInTheDocument()
     }
   })
 })

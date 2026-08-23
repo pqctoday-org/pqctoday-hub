@@ -318,38 +318,42 @@ export function OpsRotationView({ profileOverride, onSelectFramework }: OpsRotat
           </span>
         </header>
         <div className="glass-panel p-2">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground border-b border-border">
-                <th className="text-left font-medium px-2 py-1.5">Framework</th>
-                <th className="text-left font-medium px-2 py-1.5 hidden md:table-cell">Enforcer</th>
-                <th className="text-left font-medium px-2 py-1.5">Deadline</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applicable.slice(0, 10).map((fw) => (
-                <tr key={fw.id} className="border-b border-border/40 last:border-0">
-                  <td className="px-2 py-1.5 min-w-0">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => onSelectFramework?.(fw)}
-                      className="h-auto px-0 py-0 text-left text-foreground hover:text-primary truncate"
-                      title={fw.label}
-                    >
-                      {fw.label}
-                    </Button>
-                  </td>
-                  <td className="px-2 py-1.5 text-muted-foreground hidden md:table-cell">
-                    {fw.enforcementBody || '—'}
-                  </td>
-                  <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">
-                    {fw.deadline || '—'}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="text-muted-foreground border-b border-border">
+                  <th className="text-left font-medium px-2 py-1.5">Framework</th>
+                  <th className="text-left font-medium px-2 py-1.5 hidden md:table-cell">
+                    Enforcer
+                  </th>
+                  <th className="text-left font-medium px-2 py-1.5">Deadline</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {applicable.slice(0, 10).map((fw) => (
+                  <tr key={fw.id} className="border-b border-border/40 last:border-0">
+                    <td className="px-2 py-1.5 min-w-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => onSelectFramework?.(fw)}
+                        className="h-auto px-0 py-0 text-left text-foreground hover:text-primary truncate"
+                        title={fw.label}
+                      >
+                        {fw.label}
+                      </Button>
+                    </td>
+                    <td className="px-2 py-1.5 text-muted-foreground hidden md:table-cell">
+                      {fw.enforcementBody || '—'}
+                    </td>
+                    <td className="px-2 py-1.5 text-muted-foreground whitespace-nowrap">
+                      {fw.deadline || '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 

@@ -7,6 +7,7 @@
 // only the common subset; expert shows all 18 with their raw snake_case name.
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
 import { POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import {
@@ -36,28 +37,22 @@ export function RulePalette({ guided, activePresetFile, onSelectPreset, onAddRul
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="border-b border-border p-3">
-        <label
-          htmlFor="cacp-policy-switcher"
-          className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
-        >
+        <div className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           Policy
-        </label>
-        <select
-          id="cacp-policy-switcher"
-          value={activePresetFile ?? ''}
-          onChange={(e) => {
-            const p = POLICY_PRESETS.find((x) => x.file === e.target.value)
+        </div>
+        <FilterDropdown
+          items={POLICY_PRESETS.map((p) => ({ id: p.file, label: p.label }))}
+          selectedId={activePresetFile ?? ''}
+          onSelect={(id) => {
+            const p = POLICY_PRESETS.find((x) => x.file === id)
             if (p) onSelectPreset(p)
           }}
-          className="w-full rounded-lg border border-input bg-background/40 px-2 py-1.5 text-[12.5px] font-semibold text-foreground outline-none focus:border-primary"
-        >
-          {!activePresetFile && <option value="">— built-in permissive —</option>}
-          {POLICY_PRESETS.map((p) => (
-            <option key={p.file} value={p.file}>
-              {p.label}
-            </option>
-          ))}
-        </select>
+          defaultLabel="— built-in permissive —"
+          defaultIcon={null}
+          ariaLabel="Policy"
+          noContainer
+          className="w-full"
+        />
       </div>
 
       <div className="border-b border-border px-3 py-2.5">

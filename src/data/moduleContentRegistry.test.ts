@@ -16,7 +16,15 @@ describe('moduleContentRegistry', () => {
     }
   })
 
-  it('includes a known module with its known lastReviewed date', () => {
-    expect(MODULE_LAST_REVIEWED['sbom']).toBe('2026-08-21')
+  it('carries a real date for a named module, not just any populated map', () => {
+    // Pins the module, NOT its date. Pinning '2026-08-21' for `sbom` broke on
+    // 2026-08-22 the moment emit_revision.py bumped it — which is a review doing
+    // exactly what it should, not a regression. A fixture that fails on correct
+    // behaviour trains people to edit the fixture, and the next time it fails for
+    // a real reason they will edit it again. What actually needs guarding is that
+    // this specific id resolves at all: `sbom` is a real module directory, so a
+    // glob or id-derivation change that stops finding it must fail here.
+    expect(Object.keys(MODULE_LAST_REVIEWED)).toContain('sbom')
+    expect(MODULE_LAST_REVIEWED['sbom']).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 })

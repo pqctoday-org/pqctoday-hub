@@ -6,6 +6,7 @@ import { chunkToResource, trustTierMultiplier } from './chunkToResource'
 import { getTrustScore } from '@/data/trustScore'
 import type { TrustTier } from '@/data/trustScore'
 import { TOOL_ENTRIES_VERSION, toolSearchEntries } from './toolSearchEntries'
+import { PAGE_ENTRIES_VERSION, pageSearchEntries } from './pageSearchEntries'
 
 /**
  * UnifiedSearchService — single MiniSearch instance + entityIndex + corpus map
@@ -30,14 +31,18 @@ const CORPUS_PATH = '/data/rag-corpus.json'
 const CACHE_KEY = 'pqc-search-index-v2'
 
 /**
- * WS6a (2026-08-02) — the 71 browser-runnable tools are appended to the loaded
- * corpus so every one of them is a global ⌘K result. Derived from the two
- * registries at load time, never written to rag-corpus.json, so a renamed tool
- * cannot drift out of search. Sandbox scenarios are excluded (browser-only
- * grading scope) — see toolSearchEntries.ts.
+ * Registry-derived entries appended to the loaded corpus so narrow surfaces are
+ * globally searchable without being written into rag-corpus.json (a rename
+ * therefore cannot drift them out of search).
+ *
+ * - WS6a (2026-08-02): the 71 browser-runnable tools, from the two registries.
+ *   Sandbox scenarios are excluded (browser-only grading scope) — see
+ *   toolSearchEntries.ts.
+ * - WS22 Stage 3 (2026-08-21): the page tier, from ROUTE_META. Four routed
+ *   pages had zero chunks pointing at them — see pageSearchEntries.ts.
  */
-function withToolEntries(chunks: RAGChunk[]): RAGChunk[] {
-  return [...chunks, ...toolSearchEntries()]
+async function withRegistryEntries(chunks: RAGChunk[]): Promise<RAGChunk[]> {
+  return [...chunks, ...toolSearchEntries(), ...(await pageSearchEntries())]
 }
 
 const MINISEARCH_CONFIG = {
@@ -150,10 +155,10 @@ export class UnifiedSearchService {
     const data = await response.json()
 
     if (Array.isArray(data)) {
-      this._corpus = withToolEntries(data)
+      this._corpus = await withRegistryEntries(data)
       this._generatedAt = null
     } else {
-      this._corpus = withToolEntries(data.chunks ?? [])
+      this._corpus = await withRegistryEntries(data.chunks ?? [])
       this._generatedAt = data.generatedAt ?? null
     }
 
@@ -259,16 +264,18 @@ export class UnifiedSearchService {
     const response = await fetch(CORPUS_PATH)
     if (!response.ok) throw new Error(`Failed to fetch corpus: ${response.status}`)
     const data = await response.json()
-    const chunks: RAGChunk[] = withToolEntries(Array.isArray(data) ? data : (data.chunks ?? []))
+    const chunks: RAGChunk[] = await withRegistryEntries(
+      Array.isArray(data) ? data : (data.chunks ?? [])
+    )
     const corpusVersion: string =
       (Array.isArray(data) ? null : (data.generatedAt ?? null)) ?? 'unknown'
     this._generatedAt = corpusVersion === 'unknown' ? null : corpusVersion
-    // Tool entries are registry-derived, not part of the corpus, so
+    // Tool and page entries are registry-derived, not part of the corpus, so
     // `generatedAt` alone cannot express "this index was built without them".
     // Compounding the key means an index cached before WS6a is discarded
     // instead of served — otherwise the first visit after this ships would
     // restore a tool-less index and search would look unchanged.
-    const version = `${corpusVersion}+tools${TOOL_ENTRIES_VERSION}`
+    const version = `${corpusVersion}+tools${TOOL_ENTRIES_VERSION}+pages${PAGE_ENTRIES_VERSION}`
 
     try {
       const cached = await localforage.getItem<CachedIndex>(CACHE_KEY)

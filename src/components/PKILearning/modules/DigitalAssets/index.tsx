@@ -139,7 +139,7 @@ export const DigitalAssetsModule: React.FC = () => {
                 variant="ghost"
                 key={chain.id}
                 onClick={() => selectChain(chain.id)}
-                className={`bg-card border border-border rounded-xl p-6 text-left transition-colors group ${
+                className={`bg-card border border-border rounded-xl p-6 h-auto w-full min-w-0 flex flex-col items-start whitespace-normal text-left transition-colors group ${
                   chain.id === 'pqc-migration'
                     ? 'hover:border-destructive/50 border-destructive/20'
                     : chain.id === 'custody-architecture'
@@ -159,7 +159,9 @@ export const DigitalAssetsModule: React.FC = () => {
                   {chain.icon}
                 </div>
                 <h3 className="text-lg font-bold text-foreground mb-1">{chain.label}</h3>
-                <p className="text-xs text-muted-foreground font-mono">{chain.description}</p>
+                <p className="max-w-full break-words text-xs text-muted-foreground font-mono">
+                  {chain.description}
+                </p>
               </Button>
             ))}
           </div>

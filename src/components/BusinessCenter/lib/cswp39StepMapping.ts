@@ -47,8 +47,10 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'kpi-tracker',
     'compliance-timeline',
     'crqc-scenario',
-    // Foundations staffing artifact lives alongside the KPI/maturity surfaces.
+    // Foundations staffing artifacts live alongside the KPI/maturity surfaces.
     'skills-team-plan',
+    'crypto-champion-roster',
+    'team-sizing-plan',
     'refresh-cycle-alignment',
     'accelerated-execution-profile',
   ],
@@ -103,6 +105,8 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'program-charter': 'governance',
   'initial-scoping': 'governance',
   'skills-team-plan': 'governance',
+  'crypto-champion-roster': 'governance',
+  'team-sizing-plan': 'governance',
   'infra-modernization-plan': 'architecture',
   'refresh-cycle-alignment': 'architecture',
   'accelerated-execution-profile': 'governance',
@@ -147,6 +151,12 @@ const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
   // sim-roadmap (WS-15) has no builder tool, so it isn't in ARTIFACT_TYPE_TO_TOOL_ID;
   // bucket it in the migration zone like a hand-built migration roadmap.
   'sim-roadmap': 'migration',
+  // Split out of `skills-team-plan` (store v16) — both are produced by the
+  // Skills & Team workshop, not by a Command Center builder, so they have no
+  // ARTIFACT_TYPE_TO_TOOL_ID entry. Bucket them with the Skills & Team Plan
+  // tool they were split from.
+  'crypto-champion-roster': 'risk-management',
+  'team-sizing-plan': 'risk-management',
 }
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from

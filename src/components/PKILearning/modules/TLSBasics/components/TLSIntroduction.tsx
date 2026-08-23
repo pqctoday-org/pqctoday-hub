@@ -57,11 +57,19 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <Shield size={20} /> What is TLS 1.3?
         </h2>
         <p className="text-foreground/80 leading-relaxed">
-          <InlineTooltip term="TLS">TLS</InlineTooltip> 1.3 (RFC 8446) is the latest version of the
-          Transport Layer Security protocol, securing virtually all HTTPS traffic on the internet.
-          It was a major overhaul from TLS 1.2, removing insecure legacy features and introducing
-          mandatory <InlineTooltip term="Forward Secrecy">forward secrecy</InlineTooltip>, a faster
-          1-RTT handshake, and a dramatically simplified cipher suite list.
+          {/* CORRECTED 2026-08-22. Said "TLS 1.3 (RFC 8446) is the latest version". RFC 9846
+              (July 2026) obsoletes RFC 8446 — its header reads "Obsoletes: 5077, 5246, 6961,
+              7627, 8422, 8446" and its abstract "This document obsoletes RFC 8446, which
+              specified TLS 1.3." The protocol version is unchanged; the SPECIFICATION moved,
+              and a module whose subject is TLS 1.3 must point at the live one. The accuracy
+              check graded this claim SUPPORTED — against the cached RFC 8446, which of course
+              says it specifies TLS 1.3. A verdict is only as current as the document sampled. */}
+          <InlineTooltip term="TLS">TLS</InlineTooltip> 1.3 is the latest version of the Transport
+          Layer Security protocol, securing virtually all HTTPS traffic on the internet. It is
+          specified by RFC 9846 (July 2026), which obsoleted the original RFC 8446. It was a major
+          overhaul from TLS 1.2, removing insecure legacy features and introducing mandatory{' '}
+          <InlineTooltip term="Forward Secrecy">forward secrecy</InlineTooltip>, a faster 1-RTT
+          handshake, and a dramatically simplified cipher suite list.
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">

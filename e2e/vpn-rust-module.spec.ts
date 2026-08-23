@@ -154,7 +154,7 @@ for (const { mode, expectEcdh, expectMlKem } of PSK_SCENARIOS) {
 
     // Switch to Server tab and set server alg to ML-DSA
     await page
-      .getByRole('button', { name: /Server Token/i })
+      .getByRole('tab', { name: /Server Token/i })
       .first()
       .click()
     const serverAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()

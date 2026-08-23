@@ -16,6 +16,7 @@ import {
   Briefcase,
   Landmark,
 } from 'lucide-react'
+import { NICE_WORK_ROLES, NICE_COMPONENTS_VERSION } from '@/data/niceFramework'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
@@ -119,6 +120,15 @@ const Step1ChallengeAndRoles: React.FC = () => (
                 <th className="text-left p-2 border-b border-border text-foreground font-semibold min-w-[180px]">
                   Source
                 </th>
+                {/* ADDED 2026-08-22. roleCrosswalk.ts has carried `niceRoles` per role all
+                    along and the footnote below has cited NICE v2.2.0 since 2026-08-09, but
+                    nothing on the page showed WHICH work role each program role maps to —
+                    the reader was asked to take the anchoring on trust. Rendering the
+                    official codes also means a re-vendored components version that renames
+                    or retires a role becomes visible here, not just in the drift guard. */}
+                <th className="text-left p-2 border-b border-border text-foreground font-semibold min-w-[190px]">
+                  NICE work role (v{NICE_COMPONENTS_VERSION})
+                </th>
                 <th className="text-center p-2 border-b border-border text-foreground font-semibold min-w-[110px]">
                   Typical FTE
                 </th>
@@ -143,6 +153,16 @@ const Step1ChallengeAndRoles: React.FC = () => (
                     </td>
                     <td className="p-2 border-b border-border text-xs text-muted-foreground">
                       {detail.source}
+                    </td>
+                    <td className="p-2 border-b border-border text-xs text-muted-foreground">
+                      {role.niceRoles.map((nr) => (
+                        <span key={nr} className="block">
+                          <span className="font-mono text-[10px] text-accent">
+                            {NICE_WORK_ROLES[nr].niceCode}
+                          </span>{' '}
+                          {NICE_WORK_ROLES[nr].officialName}
+                        </span>
+                      ))}
                     </td>
                     <td className="p-2 border-b border-border text-center text-xs font-bold text-primary">
                       {role.typicalFte}

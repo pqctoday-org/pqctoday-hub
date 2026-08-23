@@ -104,7 +104,7 @@ describe('useModuleStore', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     const customProgress = { version: '2.0.0', preferences: { theme: 'light' } } as any
     useModuleStore.getState().loadProgress(customProgress)
-    expect(useModuleStore.getState().version).toBe('15.0.0') // migrated to current
+    expect(useModuleStore.getState().version).toBe('16.0.0') // migrated to current
     expect(useModuleStore.getState().preferences.theme).toBe('light') // value preserved
   })
 
@@ -131,7 +131,7 @@ describe('useModuleStore', () => {
     expect(mods['kms-pqc']).toBeDefined()
     expect(mods['kms-pqc'].timeSpent).toBe(42)
     expect(mods['hsm-pqc']).toBeDefined()
-    expect(useModuleStore.getState().version).toBe('15.0.0')
+    expect(useModuleStore.getState().version).toBe('16.0.0')
   })
 
   it('resets a specific module', () => {
@@ -156,7 +156,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
@@ -174,7 +174,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
@@ -186,7 +186,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
@@ -200,7 +200,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
   })
@@ -224,7 +224,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v5State, 5)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     // key-management should be removed
     expect(migrated.modules['key-management']).toBeUndefined()
     // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
@@ -260,7 +260,7 @@ describe('useModuleStore', () => {
       kpiHistory: { riskScore: [] },
     }
     const migrated = migrate(v11State, 11)
-    expect(migrated.version).toBe('15.0.0')
+    expect(migrated.version).toBe('16.0.0')
     const ids = migrated.artifacts.executiveDocuments.map((d: { id: string }) => d.id)
     expect(ids).toEqual(['a', 'c'])
     // Records without prior `inputs` stay undefined; records with `inputs` retain them.

@@ -53,12 +53,12 @@ test.describe('PQC SSH Simulator', () => {
   })
 
   test('shows the PKCS#11 calls tab', async ({ page }) => {
-    const pkcs11Tab = page.getByRole('button', { name: /pkcs#?11/i })
+    const pkcs11Tab = page.getByRole('tab', { name: /pkcs#?11/i })
     await expect(pkcs11Tab).toBeVisible()
   })
 
   test('shows the wire packets tab unconditionally', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /wire packets/i })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /wire packets/i })).toBeVisible()
   })
 
   test('links to the learn module', async ({ page }) => {
@@ -114,7 +114,7 @@ test.describe('PQC SSH Simulator', () => {
     test('full run completes and produces wire packets', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
       await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await page.getByRole('button', { name: /wire packets/i }).click()
+      await page.getByRole('tab', { name: /wire packets/i }).click()
       await expect(page.getByText('SSH_MSG_KEX_ECDH_INIT').first()).toBeVisible()
       await expect(page.getByText('SSH_MSG_USERAUTH_SUCCESS').first()).toBeVisible()
     })
@@ -122,7 +122,7 @@ test.describe('PQC SSH Simulator', () => {
     test('PKCS#11 log shows real ML-DSA + ML-KEM mechanisms after run', async ({ page }) => {
       await page.getByRole('button', { name: /run.*handshake/i }).click()
       await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
-      await page.getByRole('button', { name: /pkcs#?11/i }).click()
+      await page.getByRole('tab', { name: /pkcs#?11/i }).click()
       await expect(
         page.getByText(/C_GenerateKeyPair|C_Sign|C_EncapsulateKey/i).first()
       ).toBeVisible()

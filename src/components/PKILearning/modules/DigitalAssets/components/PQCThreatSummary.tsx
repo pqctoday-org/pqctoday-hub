@@ -26,66 +26,68 @@ export const PQCThreatSummary: React.FC = () => {
 
       {/* Vulnerability Table */}
       <div className="glass-panel p-0 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/30">
-              <th className="text-left p-3 font-semibold text-foreground">Chain</th>
-              <th className="text-left p-3 font-semibold text-foreground">Algorithm</th>
-              <th className="text-left p-3 font-semibold text-foreground">Quantum Threat</th>
-              <th className="text-left p-3 font-semibold text-foreground">Migration Status</th>
-            </tr>
-          </thead>
-          <tbody className="text-muted-foreground">
-            <tr className="border-b border-border/50">
-              <td className="p-3 font-medium text-foreground">Bitcoin</td>
-              <td className="p-3 font-mono text-xs">secp256k1 ECDSA</td>
-              <td className="p-3">
-                Shor's algorithm breaks ECDLP. ~$718B in vulnerable P2PK addresses with exposed
-                public keys.
-              </td>
-              <td className="p-3 space-y-1">
-                <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
-                  BIP-360 (P2QRH) — Draft
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  New quantum-resistant address type via soft fork
-                </p>
-              </td>
-            </tr>
-            <tr className="border-b border-border/50">
-              <td className="p-3 font-medium text-foreground">Ethereum</td>
-              <td className="p-3 font-mono text-xs">secp256k1 ECDSA + BLS12-381</td>
-              <td className="p-3">
-                All accounts that have transacted expose public keys. Validator BLS signatures also
-                vulnerable.
-              </td>
-              <td className="p-3 space-y-1">
-                <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
-                  EIP-7702 + AA path — Active
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  PQC signing available today via Account Abstraction; EF PQC team funded
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td className="p-3 font-medium text-foreground">Solana</td>
-              <td className="p-3 font-mono text-xs">Ed25519 EdDSA</td>
-              <td className="p-3">
-                Shor's algorithm breaks Ed25519. All account public keys are the address itself
-                (always exposed).
-              </td>
-              <td className="p-3 space-y-1">
-                <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
-                  SIMD community discussion
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  No ratified proposal; structural migration challenge
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="text-left p-3 font-semibold text-foreground">Chain</th>
+                <th className="text-left p-3 font-semibold text-foreground">Algorithm</th>
+                <th className="text-left p-3 font-semibold text-foreground">Quantum Threat</th>
+                <th className="text-left p-3 font-semibold text-foreground">Migration Status</th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              <tr className="border-b border-border/50">
+                <td className="p-3 font-medium text-foreground">Bitcoin</td>
+                <td className="p-3 font-mono text-xs">secp256k1 ECDSA</td>
+                <td className="p-3">
+                  Shor's algorithm breaks ECDLP. ~$718B in vulnerable P2PK addresses with exposed
+                  public keys.
+                </td>
+                <td className="p-3 space-y-1">
+                  <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
+                    BIP-360 (P2QRH) — Draft
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    New quantum-resistant address type via soft fork
+                  </p>
+                </td>
+              </tr>
+              <tr className="border-b border-border/50">
+                <td className="p-3 font-medium text-foreground">Ethereum</td>
+                <td className="p-3 font-mono text-xs">secp256k1 ECDSA + BLS12-381</td>
+                <td className="p-3">
+                  All accounts that have transacted expose public keys. Validator BLS signatures
+                  also vulnerable.
+                </td>
+                <td className="p-3 space-y-1">
+                  <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-accent/20 text-accent">
+                    EIP-7702 + AA path — Active
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    PQC signing available today via Account Abstraction; EF PQC team funded
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td className="p-3 font-medium text-foreground">Solana</td>
+                <td className="p-3 font-mono text-xs">Ed25519 EdDSA</td>
+                <td className="p-3">
+                  Shor's algorithm breaks Ed25519. All account public keys are the address itself
+                  (always exposed).
+                </td>
+                <td className="p-3 space-y-1">
+                  <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-warning/20 text-warning">
+                    SIMD community discussion
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    No ratified proposal; structural migration challenge
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* HNFL Callout */}

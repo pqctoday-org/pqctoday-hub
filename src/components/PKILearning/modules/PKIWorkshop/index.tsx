@@ -286,6 +286,8 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
                 variant="ghost"
                 key={part.id}
                 onClick={() => setCurrentStep(idx)}
+                aria-label={part.title}
+                aria-current={idx === currentStep ? 'step' : undefined}
                 className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -300,7 +302,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({
                 >
                   <Icon size={16} />
                 </div>
-                <span className="text-sm font-medium hidden md:block">
+                <span className="block max-w-[68px] truncate text-[11px] font-medium leading-tight sm:max-w-none sm:text-sm">
                   {part.title.split(':')[0]}
                 </span>
               </Button>

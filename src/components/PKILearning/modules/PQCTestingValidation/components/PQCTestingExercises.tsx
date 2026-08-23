@@ -84,13 +84,20 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
     },
     {
       id: 'eu-deadline-strategy',
-      title: '6. EU 2026 Inventory Deadline Strategy',
+      title: '6. EU 2026 Inventory Milestone Strategy',
       description:
-        'The European Commission mandated complete cryptographic asset inventory by end-2026. You are a CISO at a financial institution in the inventory phase. Build a test strategy covering your enterprise IT environment: 15,000 endpoints, 3 datacenters, 200+ SaaS integrations, and 3 legacy COBOL systems with RSA-1024.',
+        // CORRECTED 2026-08-22. This said the European Commission MANDATED a complete
+        // cryptographic asset inventory by end-2026. Three things wrong: the document is the
+        // NIS Cooperation Group Coordinated Implementation Roadmap v1.1 (11 June 2025), not a
+        // Commission mandate; it RECOMMENDS rather than requires, saying Member States
+        // "should promote and support that useful cryptographic inventories are being created
+        // and maintained"; and Milestone 1 binds MEMBER STATES, not the enterprises reading
+        // this. The same claim was corrected in the cbom module the same day.
+        'The EU NIS Cooperation Group roadmap (v1.1, 11 Jun 2025) sets an end-2026 milestone for Member States whose First Steps include mature cryptographic asset management, with CBOM named as a recommended format. It is guidance that national rules will be built from rather than a direct obligation on you — but the institutions in scope are planning against it. You are a CISO at a financial institution in the inventory phase. Build a test strategy covering your enterprise IT environment: 15,000 endpoints, 3 datacenters, 200+ SaaS integrations, and 3 legacy COBOL systems with RSA-1024.',
       badge: 'Strategy Builder',
       badgeColor: 'bg-accent/20 text-accent border-accent/50',
       observe:
-        'For enterprise IT in inventory phase with EU 2026 deadline: priority steps are passive network discovery (1-2 weeks), active endpoint scanning (1 week), and certificate inventory via CLM platform (2-3 days). Tool recommendations: CryptoNext COMPASS for passive discovery (NIST NCCoE recommended), pqcscan for active scanning, Keyfactor AgileSec for certificate inventory. CBOM generation from COBOL systems requires manual code review — flag as high-effort item requiring specialist engagement.',
+        'For enterprise IT in inventory phase against the EU 2026 milestone: priority steps are passive network discovery (1-2 weeks), active endpoint scanning (1 week), and certificate inventory via CLM platform (2-3 days). Tool recommendations: CryptoNext COMPASS for passive discovery (NIST NCCoE recommended), pqcscan for active scanning, Keyfactor AgileSec for certificate inventory. CBOM generation from COBOL systems requires manual code review — flag as high-effort item requiring specialist engagement.',
       config: { step: 5 },
     },
   ]

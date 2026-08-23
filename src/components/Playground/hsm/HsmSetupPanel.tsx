@@ -337,30 +337,32 @@ export const HsmSetupPanel = () => {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Token Info (C_GetTokenInfo)
               </p>
-              <table className="w-full text-xs font-mono border-collapse">
-                <tbody>
-                  <InfoRow label="Label" value={tokenInfo.label} />
-                  <InfoRow label="Manufacturer" value={tokenInfo.manufacturerID} />
-                  <InfoRow label="Model" value={tokenInfo.model} />
-                  <InfoRow label="Serial" value={tokenInfo.serialNumber} />
-                  <InfoRow
-                    label="FW Version"
-                    value={`${tokenInfo.firmwareVersion.major}.${tokenInfo.firmwareVersion.minor}`}
-                  />
-                  <InfoRow
-                    label="HW Version"
-                    value={`${tokenInfo.hardwareVersion.major}.${tokenInfo.hardwareVersion.minor}`}
-                  />
-                  <InfoRow
-                    label="Flags"
-                    value={`0x${tokenInfo.flags.toString(16).padStart(8, '0')}`}
-                  />
-                  <InfoRow
-                    label="PIN length"
-                    value={`${tokenInfo.ulMinPinLen}–${tokenInfo.ulMaxPinLen}`}
-                  />
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs font-mono border-collapse">
+                  <tbody>
+                    <InfoRow label="Label" value={tokenInfo.label} />
+                    <InfoRow label="Manufacturer" value={tokenInfo.manufacturerID} />
+                    <InfoRow label="Model" value={tokenInfo.model} />
+                    <InfoRow label="Serial" value={tokenInfo.serialNumber} />
+                    <InfoRow
+                      label="FW Version"
+                      value={`${tokenInfo.firmwareVersion.major}.${tokenInfo.firmwareVersion.minor}`}
+                    />
+                    <InfoRow
+                      label="HW Version"
+                      value={`${tokenInfo.hardwareVersion.major}.${tokenInfo.hardwareVersion.minor}`}
+                    />
+                    <InfoRow
+                      label="Flags"
+                      value={`0x${tokenInfo.flags.toString(16).padStart(8, '0')}`}
+                    />
+                    <InfoRow
+                      label="PIN length"
+                      value={`${tokenInfo.ulMinPinLen}–${tokenInfo.ulMaxPinLen}`}
+                    />
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
           {sessionInfo && (
@@ -368,20 +370,22 @@ export const HsmSetupPanel = () => {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Session Info (C_GetSessionInfo)
               </p>
-              <table className="w-full text-xs font-mono border-collapse">
-                <tbody>
-                  <InfoRow label="Slot ID" value={String(sessionInfo.slotID)} />
-                  <InfoRow
-                    label="State"
-                    value={SESSION_STATE_NAMES[sessionInfo.state] ?? String(sessionInfo.state)}
-                  />
-                  <InfoRow
-                    label="Flags"
-                    value={`0x${sessionInfo.flags.toString(16).padStart(8, '0')}`}
-                  />
-                  <InfoRow label="Device Error" value={String(sessionInfo.ulDeviceError)} />
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs font-mono border-collapse">
+                  <tbody>
+                    <InfoRow label="Slot ID" value={String(sessionInfo.slotID)} />
+                    <InfoRow
+                      label="State"
+                      value={SESSION_STATE_NAMES[sessionInfo.state] ?? String(sessionInfo.state)}
+                    />
+                    <InfoRow
+                      label="Flags"
+                      value={`0x${sessionInfo.flags.toString(16).padStart(8, '0')}`}
+                    />
+                    <InfoRow label="Device Error" value={String(sessionInfo.ulDeviceError)} />
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

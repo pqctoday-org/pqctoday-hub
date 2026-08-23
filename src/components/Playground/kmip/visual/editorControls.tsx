@@ -7,6 +7,7 @@ import { useId, useState, type ReactNode } from 'react'
 import { X, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
 
 export function FieldLabel({ children }: { children: ReactNode }) {
@@ -129,28 +130,35 @@ export function ChipToggleGroup({
   )
 }
 
-/** Single-select over a closed option set. */
+/**
+ * Single-select over a closed option set. An empty string inside `options` is
+ * the "unset / any" choice — rendered as FilterDropdown's clear row rather than
+ * a blank option, so the menu never shows an unlabelled entry.
+ */
 export function SelectField({
   value,
   options,
   onChange,
+  ariaLabel,
 }: {
   value: string
   options: readonly string[]
   onChange: (next: string) => void
+  ariaLabel?: string
 }) {
+  const allowsUnset = options.includes('')
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-lg border border-input bg-background/40 px-2 py-1.5 font-mono text-[12px] text-foreground outline-none focus:border-primary"
-    >
-      {options.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
-      ))}
-    </select>
+    <FilterDropdown
+      items={options.filter((o) => o !== '')}
+      selectedId={value}
+      onSelect={(id) => onChange(id === 'All' ? '' : id)}
+      defaultLabel="any"
+      defaultIcon={null}
+      hideDefaultOption={!allowsUnset}
+      ariaLabel={ariaLabel}
+      noContainer
+      className="w-full"
+    />
   )
 }
 

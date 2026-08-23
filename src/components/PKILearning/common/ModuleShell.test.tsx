@@ -41,7 +41,7 @@ describe('ModuleShell', () => {
     expect(screen.getByRole('heading', { name: 'Test Module' })).toBeInTheDocument()
     expect(screen.getByText('Catalog description')).toBeInTheDocument()
     expect(screen.getByText('LEARN BODY')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Learn' })).toBeInTheDocument()
   })
 
   // Moved here from PKILearningView's utility row (2026-08-02), which was
@@ -116,8 +116,8 @@ describe('ModuleShell', () => {
       ],
     }
     renderShell(<ModuleShell manifest={reduced} learn={<div>L</div>} exercises={<div>E</div>} />)
-    expect(screen.getByRole('button', { name: 'Learn' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Workshop' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Learn' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Workshop' })).toBeInTheDocument()
     // Visual is the 2nd standard tab (always inline) — its absence proves exclusion.
     expect(screen.queryByRole('button', { name: 'Visual' })).not.toBeInTheDocument()
   })
@@ -135,7 +135,7 @@ describe('ModuleShell', () => {
         renderWorkshopStep={(i) => <div>STEP BODY {i}</div>}
       />
     )
-    expect(screen.getByRole('button', { name: 'Workshop' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Workshop' })).toBeInTheDocument()
   })
 
   it('passes a nav api to function slots (goToWorkshop switches tab)', () => {
@@ -242,7 +242,7 @@ describe('ModuleShell', () => {
         workshop={(api) => <Button onClick={api.resetWorkshop}>RESET WORKSHOP</Button>}
       />
     )
-    fireEvent.click(screen.getByRole('button', { name: 'Workshop' }))
+    fireEvent.click(screen.getByRole('tab', { name: 'Workshop' }))
     fireEvent.click(screen.getByRole('button', { name: 'RESET WORKSHOP' }))
     expect(onReset).toHaveBeenCalledTimes(1)
     ok.mockRestore()

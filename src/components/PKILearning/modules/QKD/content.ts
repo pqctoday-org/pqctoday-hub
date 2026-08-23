@@ -9,15 +9,23 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'qkd',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-22',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
-    getStandard('NIST SP 800-108'),
+    // Repointed 2026-08-22: this declared the DEPRECATED row `NIST SP 800-108`,
+    // whose superseded_by names this one. A module pointing the accuracy check at a
+    // retired row is worse than pointing it nowhere — the check runs, reads a
+    // superseded document, and reports success.
+    getStandard('NIST-SP-800-108-R1'),
     getStandard('RFC 4253'),
-    getStandard('RFC 8446'),
+    // RFC 9846 REPLACES RFC 8446 here, 2026-08-22. RFC 9846 (July 2026) obsoletes it —
+    // "Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446" in its header — and the library
+    // row for 8446 already carried 9846 as its supersession pointer. TLS 1.3 the
+    // protocol is unchanged; the live specification moved.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768')],

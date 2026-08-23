@@ -1364,8 +1364,25 @@ export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
 // ── Library: persona → preferred document categories ─────────────────────
 
 export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
-  executive: ['Government & Policy', 'Migration Guidance', 'Industry & Research'],
-  developer: ['Protocols', 'KEM', 'Digital Signature', 'Algorithm Specifications'],
+  // 'Compliance & Certification', 'Blockchain Standards' and 'Implementations'
+  // were added to LIBRARY_CATEGORIES on 2026-08-22. A category absent from every
+  // persona list is invisible in persona-filtered views, so each is assigned
+  // here rather than left to default: compliance to the roles that answer for
+  // it, implementations to the ones that ship code.
+  executive: [
+    'Government & Policy',
+    'Migration Guidance',
+    'Industry & Research',
+    'Compliance & Certification',
+  ],
+  developer: [
+    'Protocols',
+    'KEM',
+    'Digital Signature',
+    'Algorithm Specifications',
+    'Implementations',
+    'Blockchain Standards',
+  ],
   architect: [
     'PKI Certificate Management',
     'KEM',
@@ -1381,6 +1398,8 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
     'Migration Guidance',
     'NIST Standards',
     'Algorithm Specifications',
+    'Compliance & Certification',
+    'Implementations',
   ],
   curious: ['Migration Guidance', 'Government & Policy'],
 }

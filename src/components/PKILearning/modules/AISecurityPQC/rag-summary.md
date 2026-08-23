@@ -36,5 +36,5 @@ workshop_steps: 7
 - FIPS 203 (ML-KEM) — key encapsulation for data and model encryption
 - FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials
 - C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard
-- RFC 8446 (TLS 1.3) — transport security for AI API endpoints
+- RFC 9846 (TLS 1.3, obsoletes RFC 8446) — transport security for AI API endpoints
 - NIST AI RMF — AI risk management framework

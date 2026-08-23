@@ -219,13 +219,6 @@ export function SbomSection() {
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
-                    <span className="text-muted-foreground">pptxgenjs</span>
-                    <div className="flex flex-col items-end shrink-0">
-                      <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
-                      <span className="text-xs text-muted-foreground">v4.0.1</span>
-                    </div>
-                  </li>
-                  <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">cborg</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">Apache-2.0</span>

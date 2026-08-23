@@ -21,16 +21,6 @@
       "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee"
     },
     {
-      "refId": "3GPP-PQC-Study-2025",
-      "title": "Study on Preparing for Transition to Post Quantum Cryptography in 3GPP",
-      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/",
-      "status": "downloaded",
-      "filename": "3GPP-PQC-Study-2025.html",
-      "sizeBytes": 26812,
-      "contentType": "text/html",
-      "sha256": "74991bb7b2db226d2e2803d5fcfaed2e948ec820f06e8cba3a528ff55e4132f4"
-    },
-    {
       "refId": "liboqs-v0.15.0",
       "title": "Open Quantum Safe liboqs Library v0.15.0",
       "url": "https://openquantumsafe.org/liboqs/",
@@ -106,9 +96,12 @@
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
       "status": "downloaded",
       "filename": "FIPS_206.html",
-      "sizeBytes": 61179,
+      "sizeBytes": 61053,
       "contentType": "text/html",
-      "sha256": "12975e05fb94c8725c8593b172d10bcba6850c0aa2830cb182ecbc6f315eb0ba"
+      "sha256": "744443f72f02ea1b0823069bb3047133ac6cfbaa4dd69999457e3705964ffba9",
+      "previousSha256": "12975e05fb94c8725c8593b172d10bcba6850c0aa2830cb182ecbc6f315eb0ba",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: FIPS 206 (FN-DSA) is NOT PUBLISHED. The row cites csrc.nist.gov/projects/post-quantum-cryptography, which is the only page that exists for it, so the capture is the PQC project page rather than the standard. Correct as cited; revisit when NIST publishes the standard."
     },
     {
       "refId": "FIPS 186-5",
@@ -256,9 +249,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-hybrid-design-16.html",
-      "sizeBytes": 79914,
+      "sizeBytes": 79933,
       "contentType": "text/html",
-      "sha256": "d85ab7201471674e9e948c7a8bd4904abf6f5e0775a95db1a143e51e67f545cc"
+      "sha256": "fd85ac7035f13f96830b020ba27812274944e0a6c8d7f83dcf738248b7aa468f",
+      "previousSha256": "d85ab7201471674e9e948c7a8bd4904abf6f5e0775a95db1a143e51e67f545cc",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-tls-ecdhe-mlkem-04",
@@ -276,9 +271,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-tls-mlkem-07.html",
-      "sizeBytes": 62528,
+      "sizeBytes": 64675,
       "contentType": "text/html",
-      "sha256": "0afdbd8dfce9ad747d949765fa6655a1994aed84a7ba6279350530c32c8ea85a"
+      "sha256": "837c88936cdf573a5bd7fb72ec7802a1ec02567ce987aaec6483fc26e7bf8a5a",
+      "previousSha256": "0afdbd8dfce9ad747d949765fa6655a1994aed84a7ba6279350530c32c8ea85a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-ipsecme-ikev2-mlkem",
@@ -296,9 +293,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-yang-tls-hybrid-sm2-mlkem/",
       "status": "downloaded",
       "filename": "draft-yang-tls-hybrid-sm2-mlkem-02.html",
-      "sizeBytes": 43618,
+      "sizeBytes": 15151,
       "contentType": "text/html",
-      "sha256": "4b66dd8899a5d233782801a121000e9f7837a976321dd112c8e1b65dc22a3b6e"
+      "sha256": "53d101d00b8ce5c23613ead2c1292205b8fff349ecff908eabd19d156f3b41d4",
+      "previousSha256": "4b66dd8899a5d233782801a121000e9f7837a976321dd112c8e1b65dc22a3b6e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC 9881",
@@ -346,9 +345,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/",
       "status": "downloaded",
       "filename": "draft-ietf-openpgp-pqc-17.html",
-      "sizeBytes": 825164,
+      "sizeBytes": 825183,
       "contentType": "text/html",
-      "sha256": "373bbf3c87412f1431c55163f354d1929b0ff11b6d434732f222ad143ec3cfdb"
+      "sha256": "c99992cc6c17ffbb95d11270a93d8fde36ec1287f9f6abfc97aaf37749632e10",
+      "previousSha256": "373bbf3c87412f1431c55163f354d1929b0ff11b6d434732f222ad143ec3cfdb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-pquip-pqc-engineers-14",
@@ -376,9 +377,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/01/",
       "status": "downloaded",
       "filename": "draft-ietf-uta-pqc-app-01.html",
-      "sizeBytes": 97320,
+      "sizeBytes": 97339,
       "contentType": "text/html",
-      "sha256": "53f3450016f52111b9d54ea62b598c1b0245267c0480f5985a9eada7f61438cb"
+      "sha256": "18a8478a7944f73376239fcf1e3f0e2584059374f870d6e341f10445d45d96c7",
+      "previousSha256": "53f3450016f52111b9d54ea62b598c1b0245267c0480f5985a9eada7f61438cb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-kwiatkowski-pquip-pqc-migration-00",
@@ -396,9 +399,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-wang-ipsecme-kem-auth-ikev2/03/",
       "status": "downloaded",
       "filename": "draft-wang-ipsecme-kem-auth-ikev2-03.html",
-      "sizeBytes": 97312,
+      "sizeBytes": 97331,
       "contentType": "text/html",
-      "sha256": "a7b29359b8ae00413e276feebec7e863e53ac939244c4bf554bf5433c6f7889d"
+      "sha256": "85ec137743f2a129193646ab41030734645669365718746e9a18ef3dbd9418ab",
+      "previousSha256": "a7b29359b8ae00413e276feebec7e863e53ac939244c4bf554bf5433c6f7889d",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ETSI TS 103 744",
@@ -501,16 +506,6 @@
       "sha256": "ab09144a6b59602d11ba1dc54eed7f2cfa3689f6991e21c207c188a4688f4d4d"
     },
     {
-      "refId": "ENISA PQC Guidelines",
-      "title": "Post-Quantum Cryptography: Current State and Quantum Mitigation",
-      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
-      "status": "downloaded",
-      "filename": "ENISA_PQC_Guidelines.html",
-      "sizeBytes": 53760,
-      "contentType": "text/html",
-      "sha256": "ec37e112f6934c9e47059c8b1e32f39575bd1c818c25c5e66e619970ef35e7c3"
-    },
-    {
       "refId": "EUCC v2.0 ACM",
       "title": "EU Cybersecurity Certification Agreed Cryptographic Mechanisms v2.0",
       "url": "https://certification.enisa.europa.eu/document/download/f4657490-9757-4a97-8deb-fd4d6a1358ee_en?filename=EUCC_guidelines_Agreed+Cryptographic+Mechanisms+v2.pdf",
@@ -546,9 +541,11 @@
       "url": "https://www.iso.org/standard/80492.html",
       "status": "downloaded",
       "filename": "ISO_IEC_14888-4_2024.html",
-      "sizeBytes": 88242,
+      "sizeBytes": 88046,
       "contentType": "text/html",
-      "sha256": "e3d12ad9a22a9e930ee24e123724d32aa65aa81a5e755671be3fa7a80bc64083"
+      "sha256": "d7a2d976272b6b4844d961c76f1ef5d8bd24623a052b3f4f9542f9641ce3cc00",
+      "previousSha256": "e3d12ad9a22a9e930ee24e123724d32aa65aa81a5e755671be3fa7a80bc64083",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Japan CRYPTREC Report 2024",
@@ -571,16 +568,6 @@
       "sha256": "deef53973e490e59f294df6fd6fa22ea75728dd3a640456c487a3083d022d2eb"
     },
     {
-      "refId": "Canada CSE PQC Guidance",
-      "title": "Roadmap for the migration to post-quantum cryptography for the Government of Canada (ITSM.40.001)",
-      "url": "https://www.cyber.gc.ca/sites/default/files/itsm.40.001-migration-post-quantum-cryptography-government-canada-e.pdf",
-      "status": "downloaded",
-      "filename": "Canada_CSE_PQC_Guidance.html",
-      "sizeBytes": 649278,
-      "contentType": "text/html",
-      "sha256": "79cb1a08a7f75533e81ffbd614d62543d87e3f7434e66f0ae59ec7ffdbdae7ca"
-    },
-    {
       "refId": "GSMA PQ.03 PQC Guidelines",
       "title": "Post-Quantum Cryptography Guidelines for Telecom Use Cases",
       "url": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
@@ -598,7 +585,9 @@
       "filename": "3GPP_TS_33.501.html",
       "sizeBytes": 645652,
       "contentType": "text/html",
-      "sha256": "806f0f5adc954b6e1ab2af622530dd36779f090d6607c3da61f7e4f6d6ad3f62"
+      "sha256": "2a9e0a80fae15d0ae63c597caa5f1d75df05173675b79c32b4c3a78cde1084fa",
+      "previousSha256": "806f0f5adc954b6e1ab2af622530dd36779f090d6607c3da61f7e4f6d6ad3f62",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 8391",
@@ -646,9 +635,11 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "downloaded",
       "filename": "CISA-PQC-CATEGORY-LIST-2026.html",
-      "sizeBytes": 72805,
+      "sizeBytes": 73284,
       "contentType": "text/html",
-      "sha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0"
+      "sha256": "55767a81617138bb1097d6371e5f02d9f94edf7a361eae2f604f037d7472046e",
+      "previousSha256": "ac32e0816da4e2d8cd6476106cf0f892f4be8fc4f954e9ef9cd09a06aee831b0",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ETSI-TS-104-015",
@@ -686,9 +677,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/04/",
       "status": "downloaded",
       "filename": "draft-ietf-cose-falcon-04.html",
-      "sizeBytes": 93412,
+      "sizeBytes": 92649,
       "contentType": "text/html",
-      "sha256": "50c5a2e13d399dc59904d80e0abb3060de1fc1284b201425d1687f259b7b5eaa"
+      "sha256": "b4d7b68e8559a92a3d7b641f582f0fff670014bd1c663ad10797cf0742e4bbb5",
+      "previousSha256": "50c5a2e13d399dc59904d80e0abb3060de1fc1284b201425d1687f259b7b5eaa",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EO-14306",
@@ -696,9 +689,11 @@
       "url": "https://www.whitehouse.gov/presidential-actions/2025/06/sustaining-select-efforts-to-strengthen-the-nations-cybersecurity-and-amending-executive-order-13694-and-executive-order-14144/",
       "status": "downloaded",
       "filename": "EO-14306.html",
-      "sizeBytes": 292186,
+      "sizeBytes": 320921,
       "contentType": "text/html",
-      "sha256": "9c1db9bf7bd4b35537cf7a3a14a39e6994d2d7024f60cc4fe4adb7ca5e14d3c0"
+      "sha256": "81b4bd64bb2fdb8d473e5d4fe19effd2b0d7af0135e0999f39e121932df9080b",
+      "previousSha256": "9c1db9bf7bd4b35537cf7a3a14a39e6994d2d7024f60cc4fe4adb7ca5e14d3c0",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "CA-B-Forum-Ballot-SMC013",
@@ -726,9 +721,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-hbs-state/",
       "status": "downloaded",
       "filename": "draft-ietf-pquip-hbs-state.html",
-      "sizeBytes": 111809,
+      "sizeBytes": 111828,
       "contentType": "text/html",
-      "sha256": "a1b580198dbdecbfc9a94750d3922464efbfc0e4ac804f7faa2c03c13c019974"
+      "sha256": "07dcb56a85fa890519726ef9e819f86fb0fa9c85216d775bd743fb147972bbcc",
+      "previousSha256": "a1b580198dbdecbfc9a94750d3922464efbfc0e4ac804f7faa2c03c13c019974",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-sfluhrer-ipsecme-ikev2-mldsa-01",
@@ -769,16 +766,6 @@
       "sizeBytes": 182919,
       "contentType": "text/html",
       "sha256": "a56025a78f832393e64dc28f4c6b14a95463bad520f047083a5ab992a3876b57"
-    },
-    {
-      "refId": "NIST-SP-800-90A-R1",
-      "title": "SP 800-90A Rev. 1: Recommendation for Random Number Generation Using Deterministic Random Bit Generators",
-      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-90A-R1.html",
-      "sizeBytes": 41117,
-      "contentType": "text/html",
-      "sha256": "c6f50d3ebc6e35c043b0bc8bb070d0101d51a4e66ae67e52182cc3a627589a40"
     },
     {
       "refId": "NIST-SP-800-90B",
@@ -916,9 +903,11 @@
       "url": "https://datatracker.ietf.org/doc/html/rfc9258",
       "status": "downloaded",
       "filename": "RFC-9258.html",
-      "sizeBytes": 100139,
+      "sizeBytes": 100158,
       "contentType": "text/html",
-      "sha256": "02400222883af6c7789a928db6b0f6e2a83842068e67c0d4bdf00f63fbe7876a"
+      "sha256": "4b709985bff7a71e09bec1243fe2f272b1845b75f4d907bea718c20dc5e69967",
+      "previousSha256": "02400222883af6c7789a928db6b0f6e2a83842068e67c0d4bdf00f63fbe7876a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-SP-800-108-R1",
@@ -976,9 +965,11 @@
       "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
       "status": "downloaded",
       "filename": "PKCS11-V32-OS-OASIS.html",
-      "sizeBytes": 5478477,
+      "sizeBytes": 5478332,
       "contentType": "text/html",
-      "sha256": "e8c20c64b0650647b2a797274510f9112a8769eedf0bd85c17a7a0bf093d7f20"
+      "sha256": "0fc998ee599bee2ae6ecf845d17790784384ae0751f2159d90fc75c3cf58de24",
+      "previousSha256": "e8c20c64b0650647b2a797274510f9112a8769eedf0bd85c17a7a0bf093d7f20",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-32",
@@ -986,9 +977,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki",
       "status": "downloaded",
       "filename": "BIP-32.html",
-      "sizeBytes": 439856,
+      "sizeBytes": 453659,
       "contentType": "text/html",
-      "sha256": "4272486cf75461003bd9a8d8bcc3fd17f6095c0f751c6d9c84ceff5846750150"
+      "sha256": "927cdd6f665bb4f30fdf8b0e9aad81420fc0ab3eae2f51ace282dff0e43b5920",
+      "previousSha256": "4272486cf75461003bd9a8d8bcc3fd17f6095c0f751c6d9c84ceff5846750150",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-39",
@@ -996,9 +989,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
       "status": "downloaded",
       "filename": "BIP-39.html",
-      "sizeBytes": 292876,
+      "sizeBytes": 315621,
       "contentType": "text/html",
-      "sha256": "bafd11adf0e2c8628042fd10099ff3cce742cf1c373a4dbabff22b756720bdd9"
+      "sha256": "29adca74e748f00bc8394b81ffddad806333bed12ab28bb8c025fec308a1c76d",
+      "previousSha256": "bafd11adf0e2c8628042fd10099ff3cce742cf1c373a4dbabff22b756720bdd9",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-44",
@@ -1006,9 +1001,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki",
       "status": "downloaded",
       "filename": "BIP-44.html",
-      "sizeBytes": 310770,
+      "sizeBytes": 324574,
       "contentType": "text/html",
-      "sha256": "806ebe7ef11160b62ceec3cf80362b8ff610fa7fd2c78c1c469b4bf38af452bb"
+      "sha256": "542adad0dee49249be524c674133979fd625011689c03a47494568604e579a19",
+      "previousSha256": "806ebe7ef11160b62ceec3cf80362b8ff610fa7fd2c78c1c469b4bf38af452bb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "SLIP-0010",
@@ -1016,9 +1013,11 @@
       "url": "https://github.com/satoshilabs/slips/blob/master/slip-0010.md",
       "status": "downloaded",
       "filename": "SLIP-0010.html",
-      "sizeBytes": 406820,
+      "sizeBytes": 420628,
       "contentType": "text/html",
-      "sha256": "7ffd22a0e77e788208ae1966be46fe3b63017238cb93f75a1532b50cdd6cf758"
+      "sha256": "3570b4e27d786edd7f3c1f02353f45c1509b903e8ba5f48f22c6259b962b4352",
+      "previousSha256": "7ffd22a0e77e788208ae1966be46fe3b63017238cb93f75a1532b50cdd6cf758",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EIP-55",
@@ -1056,9 +1055,11 @@
       "url": "https://datatracker.ietf.org/doc/html/rfc8032",
       "status": "downloaded",
       "filename": "RFC-8032.html",
-      "sizeBytes": 173519,
+      "sizeBytes": 173538,
       "contentType": "text/html",
-      "sha256": "148d3fbe66e772c805fef90d2586cf3794fe53c1058fc84086ae98ada70125b1"
+      "sha256": "cde1974dbd72b6586515ae2363be89d9d499a1d2be52b136ed49bd8e3943f8b5",
+      "previousSha256": "148d3fbe66e772c805fef90d2586cf3794fe53c1058fc84086ae98ada70125b1",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Bitcoin-Whitepaper",
@@ -1096,9 +1097,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki",
       "status": "downloaded",
       "filename": "BIP-141.html",
-      "sizeBytes": 426805,
+      "sizeBytes": 440614,
       "contentType": "text/html",
-      "sha256": "30c41f62aac5f9dd8a28dbed1df23f1a147edd8c7f1b6b9a24830e2dc87fc037"
+      "sha256": "8795286ecdac31e9a98dfa997bdbbf0e26a1c3be39b9fad39f486883547be157",
+      "previousSha256": "30c41f62aac5f9dd8a28dbed1df23f1a147edd8c7f1b6b9a24830e2dc87fc037",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-340",
@@ -1106,9 +1109,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki",
       "status": "downloaded",
       "filename": "BIP-340.html",
-      "sizeBytes": 466521,
+      "sizeBytes": 480325,
       "contentType": "text/html",
-      "sha256": "c76d527f87a3db2e391dcb86a5064cf2b740b90dafd2885131a6d47600a03192"
+      "sha256": "27fd9d5caf8808845f023c09a0af7bee97d992b4f62d000f1c155be4de4d6b1f",
+      "previousSha256": "c76d527f87a3db2e391dcb86a5064cf2b740b90dafd2885131a6d47600a03192",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-341",
@@ -1116,9 +1121,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki",
       "status": "downloaded",
       "filename": "BIP-341.html",
-      "sizeBytes": 496414,
+      "sizeBytes": 510221,
       "contentType": "text/html",
-      "sha256": "e2c5d66eb08bff0d0ac1f6ba4ab83e8233e6575a766df6ea18d99e9cd762540b"
+      "sha256": "77f6ad73042dc1771985b094cd16bc697fbb650a4294bd15042c720c17dc96af",
+      "previousSha256": "e2c5d66eb08bff0d0ac1f6ba4ab83e8233e6575a766df6ea18d99e9cd762540b",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Bitcoin-BIP360-P2QRH",
@@ -1126,9 +1133,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki",
       "status": "downloaded",
       "filename": "Bitcoin-BIP360-P2QRH.html",
-      "sizeBytes": 461101,
+      "sizeBytes": 476196,
       "contentType": "text/html",
-      "sha256": "638c241ead544e93a4795cb36fdb7b5b49b5db070ecbe102f9fa264fd7a83e6f"
+      "sha256": "9cbb148f6536e6b131915cddb643974289e5b799933089f88fa8883ee2ca08dc",
+      "previousSha256": "638c241ead544e93a4795cb36fdb7b5b49b5db070ecbe102f9fa264fd7a83e6f",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Ethereum-EIP4337-AA",
@@ -1166,9 +1175,11 @@
       "url": "https://ethresear.ch/t/tasklist-for-post-quantum-eth/21296",
       "status": "downloaded",
       "filename": "Ethereum-PQC-Tasklist-Ethresearch.html",
-      "sizeBytes": 260346,
+      "sizeBytes": 466703,
       "contentType": "text/html",
-      "sha256": "5583b2500d77f3b18a516d16c5b6c34523d3a7acf06c4db33c7f9cd163fab63a"
+      "sha256": "e05ab715220bbdfa5b9f0f7691d0bc0eabb6b23248e450597147c34add2c4d47",
+      "previousSha256": "5583b2500d77f3b18a516d16c5b6c34523d3a7acf06c4db33c7f9cd163fab63a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF-MTC-Draft-09",
@@ -1186,9 +1197,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9162",
       "status": "downloaded",
       "filename": "RFC-9162.html",
-      "sizeBytes": 1238095,
+      "sizeBytes": 1239063,
       "contentType": "text/html",
-      "sha256": "91f8cfc059f0f386d8caa4c588dcdf02479d989be8cf98906094ee1892163454"
+      "sha256": "ff34c2b6b3fabc528651e91cf74dbe9000d4bb31dec1fbb95f7879164e21710b",
+      "previousSha256": "91f8cfc059f0f386d8caa4c588dcdf02479d989be8cf98906094ee1892163454",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Cloudflare-MTC-Blog",
@@ -1196,9 +1209,11 @@
       "url": "https://blog.cloudflare.com/bootstrap-mtc/",
       "status": "downloaded",
       "filename": "Cloudflare-MTC-Blog.html",
-      "sizeBytes": 538537,
+      "sizeBytes": 538485,
       "contentType": "text/html",
-      "sha256": "ef598876c378636429ce146f297bd352f3c86b8ae01308ea29b63326db2dcf3d"
+      "sha256": "c1d72e449d18f9770d50eb065fdf61c6e12f4f23b6398bd858797bc69759910e",
+      "previousSha256": "ef598876c378636429ce146f297bd352f3c86b8ae01308ea29b63326db2dcf3d",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Radboud-MTC-Thesis-2025",
@@ -1216,9 +1231,11 @@
       "url": "https://blog.cloudflare.com/pq-2025/",
       "status": "downloaded",
       "filename": "Cloudflare-PQ-Internet-2025.html",
-      "sizeBytes": 602151,
+      "sizeBytes": 603595,
       "contentType": "text/html",
-      "sha256": "85936957c0ee70b20446d33c18d37726abe8d978582c711e5e18f52e17fd12ec"
+      "sha256": "d4a34a194e3288fc74049eac58d44471803ad4b304bcb258018d8110df528514",
+      "previousSha256": "85936957c0ee70b20446d33c18d37726abe8d978582c711e5e18f52e17fd12ec",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "eIDAS-2-Regulation",
@@ -1226,9 +1243,11 @@
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1183",
       "status": "downloaded",
       "filename": "eIDAS-2-Regulation.html",
-      "sizeBytes": 835966,
+      "sizeBytes": 835968,
       "contentType": "text/html",
-      "sha256": "4408e38b1b10c1912921ead83b6af944eec032d53e0a27bd478ad9a32cc065e7"
+      "sha256": "a4f0af6cbfe01ff998fdeabd30f083a1eeb40d8865cb69d6156b672edcba4575",
+      "previousSha256": "4408e38b1b10c1912921ead83b6af944eec032d53e0a27bd478ad9a32cc065e7",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EUDI-Wallet-ARF",
@@ -1246,9 +1265,11 @@
       "url": "https://www.iso.org/standard/69084.html",
       "status": "downloaded",
       "filename": "ISO-18013-5-mDL.html",
-      "sizeBytes": 93619,
+      "sizeBytes": 93424,
       "contentType": "text/html",
-      "sha256": "d137430c68ebfb41ba7564e4992e9a3c39de82160b2409467df5aa9baef19a84"
+      "sha256": "58ef81ff05ea2e4dae53cbd3a38f5a59a633f2f7eb230a5a1c4870c734f74b93",
+      "previousSha256": "d137430c68ebfb41ba7564e4992e9a3c39de82160b2409467df5aa9baef19a84",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC-9901-SD-JWT-VC",
@@ -1256,9 +1277,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9901",
       "status": "downloaded",
       "filename": "RFC-9901-SD-JWT-VC.html",
-      "sizeBytes": 2017539,
+      "sizeBytes": 2018502,
       "contentType": "text/html",
-      "sha256": "09ad9cdd0257adf1fce643948eb6b107813ff8f4c377abb6a872bb0a8e2914da"
+      "sha256": "d56586cbb389262c1665c25dbc3d90ee9f3df152070ebcc655bf6b16fb8ac078",
+      "previousSha256": "09ad9cdd0257adf1fce643948eb6b107813ff8f4c377abb6a872bb0a8e2914da",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF-SD-JWT-Draft",
@@ -1296,19 +1319,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/20/",
       "status": "downloaded",
       "filename": "IETF-Token-Status-List.html",
-      "sizeBytes": 217346,
+      "sizeBytes": 217365,
       "contentType": "text/html",
-      "sha256": "8c00f970e24131a851bf39cf111d030a43c967fddeb81c465ab39cc90373a6ca"
-    },
-    {
-      "refId": "CSC-API-v2-Spec",
-      "title": "Cloud Signature Consortium API V2.2 Specification",
-      "url": "https://cloudsignatureconsortium.org/wp-content/uploads/2025/11/csc-api.pdf",
-      "status": "downloaded",
-      "filename": "CSC-API-v2-Spec.html",
-      "sizeBytes": 4143407,
-      "contentType": "text/html",
-      "sha256": "339cb9905a9ae3779e4a99ff2dc57a3f5243528dfb3578ee5c91745929fa76c1"
+      "sha256": "90c1cfecbf75510398421a3e27eab01372fdefe8e35e687e14f20ca93951969f",
+      "previousSha256": "8c00f970e24131a851bf39cf111d030a43c967fddeb81c465ab39cc90373a6ca",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ETSI-EN-319-411",
@@ -1321,24 +1336,17 @@
       "sha256": "273705802db7e2c68574ae83f169c1dbaa50b30f18f0ad7e8dfa23d606e425c6"
     },
     {
-      "refId": "NIST-SP-800-63-3",
-      "title": "NIST SP 800-63-4 Digital Identity Guidelines",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63-4.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-63-3.html",
-      "sizeBytes": 858054,
-      "contentType": "text/html",
-      "sha256": "2f5b107de218a0fc3fe7f7e91b2ece5babb001eda5745b7c568a3cc876002f2d"
-    },
-    {
       "refId": "NIST-SP-800-131A-Rev3",
       "title": "Transitioning the Use of Cryptographic Algorithms and Key Lengths (Rev 3)",
       "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
       "status": "downloaded",
-      "filename": "NIST-SP-800-131A-Rev3.html",
-      "sizeBytes": 46624,
-      "contentType": "text/html",
-      "sha256": "7618f082bf8f44476b556b2961d42d77dbdb0b251108944327322386362316ca"
+      "filename": "NIST-SP-800-131A-Rev3.pdf",
+      "sizeBytes": 927584,
+      "contentType": "application/pdf",
+      "sha256": "5ffdb907e0e2375901151579422a370b655e131223a2588ea418c5df1dea6e7f",
+      "previousFilename": "NIST-SP-800-131A-Rev3.html",
+      "previousSha256": "7618f082bf8f44476b556b2961d42d77dbdb0b251108944327322386362316ca",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "India-DST-Quantum-Safe-Roadmap-2026",
@@ -1356,9 +1364,11 @@
       "url": "https://csrc.nist.gov/publications/detail/sp/800-22/rev-1a/final",
       "status": "downloaded",
       "filename": "NIST-SP-800-22-R1A.html",
-      "sizeBytes": 49334,
+      "sizeBytes": 49208,
       "contentType": "text/html",
-      "sha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d"
+      "sha256": "7969b0c6015fa95fb4815128436520728f827e3f323a4e6dd0bbba6a42e51e28",
+      "previousSha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BSI-AIS-20-31",
@@ -1372,13 +1382,13 @@
     },
     {
       "refId": "GRI-Quantum-Threat-Timeline-2024",
-      "title": "Quantum Threat Timeline Report 2025",
-      "url": "https://globalriskinstitute.org/mp-files/pdf-quantum-threat-timeline-report-2025.pdf/",
+      "title": "Quantum Threat Timeline Report 2024",
+      "url": "https://globalriskinstitute.org/mp-files/quantum-threat-timeline-report-2024.pdf/",
       "status": "downloaded",
       "filename": "GRI-Quantum-Threat-Timeline-2024.pdf",
-      "sizeBytes": 9075183,
+      "sizeBytes": 8451384,
       "contentType": "application/pdf",
-      "sha256": "b4df230e5a0049ed916a895f2c4553bf3d125f4122588e421fb585c40994915e"
+      "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979"
     },
     {
       "refId": "RFC 5652",
@@ -1426,9 +1436,11 @@
       "url": "https://rosenpass.eu/whitepaper.pdf",
       "status": "downloaded",
       "filename": "Rosenpass-Protocol.pdf",
-      "sizeBytes": 346888,
+      "sizeBytes": 347277,
       "contentType": "application/pdf",
-      "sha256": "cb9279883159541a1e68574f9e93b8a8590c7a0c446fc979a88f5d8bbdd77052"
+      "sha256": "c5b7d2e809093b8be660707ff95fbc8d1b6d3d92e3df45922699d0bbc05ac310",
+      "previousSha256": "cb9279883159541a1e68574f9e93b8a8590c7a0c446fc979a88f5d8bbdd77052",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IEEE-802-1AE-2018",
@@ -1546,9 +1558,11 @@
       "url": "https://docs.oasis-open.org/kmip/kmip-spec/v2.1/os/kmip-spec-v2.1-os.html",
       "status": "downloaded",
       "filename": "KMIP-V2-1-OASIS.html",
-      "sizeBytes": 3352859,
+      "sizeBytes": 3352714,
       "contentType": "text/html",
-      "sha256": "4384728788a95b079c508df2ebccb506d5a7988248bf13fabb58a2523df90b2c"
+      "sha256": "b2cc1b1c53baa4176e7b357e4aad8f7ebc30d8c51aa1b07459754a763ffd0659",
+      "previousSha256": "4384728788a95b079c508df2ebccb506d5a7988248bf13fabb58a2523df90b2c",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC 7228",
@@ -1658,37 +1672,48 @@
       "filename": "EO-14144.html",
       "sizeBytes": 146090,
       "contentType": "text/html",
-      "sha256": "ff699157bee574a081ee73a09d279c7043accaf01197b4e6138274ad653e770a"
+      "sha256": "462842608537c63ef8e87e610db61d9d034670f45b3f3b870520ec9c42e2c947",
+      "previousSha256": "ff699157bee574a081ee73a09d279c7043accaf01197b4e6138274ad653e770a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIS-Paper-158",
       "title": "BIS Paper 158 \u2014 Quantum-Readiness Roadmap for Financial Systems",
       "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
       "status": "downloaded",
-      "filename": "BIS-Paper-158.html",
-      "sizeBytes": 26170,
-      "contentType": "text/html",
-      "sha256": "9c42de65bb1ff28e4c7d2b8186d2e9ef203036fd39c51a69e8467ad47294f324"
+      "filename": "BIS-Paper-158.pdf",
+      "sizeBytes": 2159075,
+      "contentType": "application/pdf",
+      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c",
+      "previousFilename": "BIS-Paper-158.html",
+      "previousSha256": "9c42de65bb1ff28e4c7d2b8186d2e9ef203036fd39c51a69e8467ad47294f324",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EU-NIS-CG-Roadmap-v1.1",
       "title": "EU NIS Cooperation Group \u2014 Coordinated Implementation Roadmap for PQC Transition v1.1",
       "url": "https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography",
       "status": "downloaded",
-      "filename": "EU-NIS-CG-Roadmap-v1.1.html",
-      "sizeBytes": 51132,
-      "contentType": "text/html",
-      "sha256": "52feee3d7a06989e28f31bcc9ff3c5b56a924543c764520961e702c7463c11b7"
+      "filename": "EU-NIS-CG-Roadmap-v1.1.pdf",
+      "sizeBytes": 553179,
+      "contentType": "application/pdf",
+      "sha256": "e76b0ea3abe5606e71d49c154a2fe1422413b5c31d0cc8dbf87a74263ead00ea",
+      "previousFilename": "EU-NIS-CG-Roadmap-v1.1.html",
+      "previousSha256": "52feee3d7a06989e28f31bcc9ff3c5b56a924543c764520961e702c7463c11b7",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "G7-CEG-Financial-PQC-2026",
       "title": "G7 Cyber Expert Group \u2014 Advancing a Coordinated Approach to PQC Transition for the Financial Sector",
       "url": "https://home.treasury.gov/",
       "status": "downloaded",
-      "filename": "G7-CEG-Financial-PQC-2026.html",
-      "sizeBytes": 185554,
-      "contentType": "text/html",
-      "sha256": "03aebf90812bfd8efc4dfad25d56e9fcfaff36de2afaa11e6a9fb7034f055ce9"
+      "filename": "G7-CEG-Financial-PQC-2026.pdf",
+      "sizeBytes": 384613,
+      "contentType": "application/pdf",
+      "sha256": "8c70cf98cc6e38f7fc98bc26cf78a77c4615fa318ed52f951f6d4d23b3a421b6",
+      "previousFilename": "G7-CEG-Financial-PQC-2026.html",
+      "previousSha256": "03aebf90812bfd8efc4dfad25d56e9fcfaff36de2afaa11e6a9fb7034f055ce9",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "PKI-Consortium-PQC-2025",
@@ -1696,9 +1721,11 @@
       "url": "https://pkic.org/2025/11/04/post-quantum-cryptography-conference-2025-concludes-with-urgent-call-for-global-migration-to-quantum-resistant-encryption-systems/",
       "status": "downloaded",
       "filename": "PKI-Consortium-PQC-2025.html",
-      "sizeBytes": 79146,
+      "sizeBytes": 79601,
       "contentType": "text/html",
-      "sha256": "0c6622fbd6fe399b16764e23ce65bc5c4c24554e9173a2c29f9474096aafbe37"
+      "sha256": "31fad614828ce7b1ee9ed6f3c132eca6135b172ff0ba9cb2700ec48712939b9b",
+      "previousSha256": "0c6622fbd6fe399b16764e23ce65bc5c4c24554e9173a2c29f9474096aafbe37",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "HKMA-Fintech-Blueprint-2026",
@@ -1706,19 +1733,24 @@
       "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/02/20260203-3/",
       "status": "downloaded",
       "filename": "HKMA-Fintech-Blueprint-2026.html",
-      "sizeBytes": 82280,
+      "sizeBytes": 81742,
       "contentType": "text/html",
-      "sha256": "a96f7489dfa588289fff9d13c2c5e687efca0ba180085ab9fe5fb996f6755ea2"
+      "sha256": "7456c0bdbc0863a8cc1d310bff1f2d0c3a575dc6dae6488c26ae5b3b4b1f9e68",
+      "previousSha256": "a96f7489dfa588289fff9d13c2c5e687efca0ba180085ab9fe5fb996f6755ea2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Malaysia-NACSA-PQC-2025",
       "title": "Malaysia National Cryptography Policy and PQC Migration Plan 2025-2030",
-      "url": "https://www.nacsa.gov.my/",
+      "url": "https://www.nacsa.gov.my/pelan-tindakan-mykriptografi.php",
       "status": "downloaded",
       "filename": "Malaysia-NACSA-PQC-2025.html",
-      "sizeBytes": 31865,
+      "sizeBytes": 10103,
       "contentType": "text/html",
-      "sha256": "e7bddb6111f5062c21d7ab3ac1e2d80e7f62f378f4a83ce0397def3a7e389d61"
+      "sha256": "137d2927b438a78b4a979c2384e2f28cbb7e33e010b894312c79a484939f24a9",
+      "previousSha256": "137d2927b438a78b4a979c2384e2f28cbb7e33e010b894312c79a484939f24a9",
+      "rehashedAt": "2026-08-21",
+      "previousFilename": "Malaysia-NACSA-PQC-2025.html"
     },
     {
       "refId": "HK-CI-Ordinance-2025",
@@ -1736,19 +1768,24 @@
       "url": "https://www.desc.gov.ae/dubai-electronic-security-center-launches-new-innovative-projects-at-gisec-global-2025/",
       "status": "downloaded",
       "filename": "UAE-DESC-PQC-Guideline.html",
-      "sizeBytes": 235147,
+      "sizeBytes": 235166,
       "contentType": "text/html",
-      "sha256": "e1a38e5fedd01d4f32acd05ae814532d98423a070331ca23d727e101612156b9"
+      "sha256": "192466ccd9190102a7892162e07baed8ca4b3329090a17f7286ce3ed5b74c24b",
+      "previousSha256": "e1a38e5fedd01d4f32acd05ae814532d98423a070331ca23d727e101612156b9",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Saudi-NCA-ECC2-2024",
       "title": "Saudi Arabia National Cybersecurity Authority \u2014 Essential Cybersecurity Controls ECC-2:2024",
-      "url": "https://nca.gov.sa/",
+      "url": "https://cdn.nca.gov.sa/api/files/public/upload/86e09090-44e4-481f-bc28-355673607654_ECC--2024-EN.pdf",
       "status": "downloaded",
-      "filename": "Saudi-NCA-ECC2-2024.html",
-      "sizeBytes": 672791,
-      "contentType": "text/html",
-      "sha256": "7d99db542f8048c902fa6ff25b2230a63309698fc414ec988c7aa3f2d31d45c4"
+      "filename": "Saudi-NCA-ECC2-2024.pdf",
+      "sizeBytes": 1231347,
+      "contentType": "application/pdf",
+      "sha256": "146505199e5374d99302fc3d7e1fdc73b6e2f3292fefd535d5dd891294a81db1",
+      "previousFilename": "Saudi-NCA-ECC2-2024.html",
+      "previousSha256": "7d99db542f8048c902fa6ff25b2230a63309698fc414ec988c7aa3f2d31d45c4",
+      "rehashedAt": "2026-08-21"
     },
     {
       "refId": "Microsoft-QSP-Roadmap-2025",
@@ -1756,29 +1793,11 @@
       "url": "https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/",
       "status": "downloaded",
       "filename": "Microsoft-QSP-Roadmap-2025.html",
-      "sizeBytes": 282861,
+      "sizeBytes": 283426,
       "contentType": "text/html",
-      "sha256": "b7395d8c02bde12c46dbd6172c270963f6a56e74d64ae0f61260a4e074628ad1"
-    },
-    {
-      "refId": "PQCC-Migration-Roadmap-2025",
-      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Migration Roadmap",
-      "url": "https://pqcc.org/post-quantum-cryptography-migration-roadmap/",
-      "status": "downloaded",
-      "filename": "PQCC-Migration-Roadmap-2025.html",
-      "sizeBytes": 138750,
-      "contentType": "text/html",
-      "sha256": "a91fdcd3203abe17b9c3fdd6c1bad18a0a3dd67a5047d4e39917a63f5eb5db73"
-    },
-    {
-      "refId": "PQCC-Inventory-Workbook-2025",
-      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Inventory Workbook",
-      "url": "https://pqcc.org/pqc-inventory-workbook/",
-      "status": "downloaded",
-      "filename": "PQCC-Inventory-Workbook-2025.html",
-      "sizeBytes": 139332,
-      "contentType": "text/html",
-      "sha256": "a136ddca0b425f5f0fee634e5700ddd883f0b72212fa7faaa2eb3c8d8f86272e"
+      "sha256": "a82c6ee1dfbb2617f9d391e71df998074314b3d47beffc0bacb12cf1f7405f7a",
+      "previousSha256": "b7395d8c02bde12c46dbd6172c270963f6a56e74d64ae0f61260a4e074628ad1",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Singapore-NQSN-Plus",
@@ -1796,9 +1815,11 @@
       "url": "https://cyber.gouv.fr/cryptographie-post-quantique-faq",
       "status": "downloaded",
       "filename": "ANSSI-PQC-FAQ-2025.html",
-      "sizeBytes": 63062,
+      "sizeBytes": 63090,
       "contentType": "text/html",
-      "sha256": "a3b3d9aabbc687c94b00579322a4bf81f74fbc9ec7921c8ec0ab2c247855090b"
+      "sha256": "470b48e25f871cd6114282f83a8050d310784518051868657fa6ddc64f7eb308",
+      "previousSha256": "a3b3d9aabbc687c94b00579322a4bf81f74fbc9ec7921c8ec0ab2c247855090b",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EC-Recommendation-2024-1101",
@@ -1876,9 +1897,11 @@
       "url": "https://www.canada.ca/en/government/system/digital-government/policies-standards/spin/migrating-government-canada-post-quantum-cryptography.html",
       "status": "downloaded",
       "filename": "CA-TBS-SPIN-PQC-2025.html",
-      "sizeBytes": 36513,
+      "sizeBytes": 36552,
       "contentType": "text/html",
-      "sha256": "9b78023c823d87bf77c57f3503615431eb690dbea875a8682b61274f70353db3"
+      "sha256": "491d16060cf827ba7896e7f68dd6b77298c65f77c8191d5ffc3c2e546f595815",
+      "previousSha256": "9b78023c823d87bf77c57f3503615431eb690dbea875a8682b61274f70353db3",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IN-CERTIN-QBOM-Guidelines-2025",
@@ -2005,10 +2028,13 @@
       "title": "MAS Advisory on Addressing Cybersecurity Risks Associated with Quantum Computing",
       "url": "https://www.mas.gov.sg/regulation/circulars/advisory-on-addressing-the-cybersecurity-risks-associated-with-quantum",
       "status": "downloaded",
-      "filename": "SG-MAS-Quantum-Advisory-2024.html",
-      "sizeBytes": 246728,
-      "contentType": "text/html",
-      "sha256": "33e81c7330b0b74d9d1d46dc08fb5ba69f1c599a9706ef12a9a430f3c56dd26a"
+      "filename": "SG-MAS-Quantum-Advisory-2024.pdf",
+      "sizeBytes": 138500,
+      "contentType": "application/pdf",
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f",
+      "previousFilename": "SG-MAS-Quantum-Advisory-2024.html",
+      "previousSha256": "33e81c7330b0b74d9d1d46dc08fb5ba69f1c599a9706ef12a9a430f3c56dd26a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "SG-MAS-QKD-Sandbox-Report-2025",
@@ -2018,7 +2044,9 @@
       "filename": "SG-MAS-QKD-Sandbox-Report-2025.html",
       "sizeBytes": 253950,
       "contentType": "text/html",
-      "sha256": "3783b5cbcab1020327a9f992fe99c9585779e6300809203c50e2f466cd9c8530"
+      "sha256": "0d805650ce5f72181c414d450115d96fc8d267e61a29e07b65823acc2001c946",
+      "previousSha256": "3783b5cbcab1020327a9f992fe99c9585779e6300809203c50e2f466cd9c8530",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NATO-Quantum-Strategy-2024",
@@ -2026,9 +2054,11 @@
       "url": "https://www.nato.int/cps/en/natohq/news_221601.htm",
       "status": "downloaded",
       "filename": "NATO-Quantum-Strategy-2024.html",
-      "sizeBytes": 313589,
+      "sizeBytes": 313593,
       "contentType": "text/html",
-      "sha256": "b2e46e1c9b0b2fbefb5b8e3e30bd516afc492f4eb8f96bd5495b3bd7b7ddfd30"
+      "sha256": "31959b7221bd896bd1173bdba8f8456d55b0752429f8f5dc984cd2cde8e6ce59",
+      "previousSha256": "b2e46e1c9b0b2fbefb5b8e3e30bd516afc492f4eb8f96bd5495b3bd7b7ddfd30",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "UK-NCSC-PQC-Whitepaper-2024",
@@ -2266,9 +2296,11 @@
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf",
       "status": "downloaded",
       "filename": "NIST_CSWP_39.pdf",
-      "sizeBytes": 1277231,
+      "sizeBytes": 1083017,
       "contentType": "application/pdf",
-      "sha256": "11c7c012423a8612a7bc42a1a7b5458437180dc47404bafc79f52ef97372c821"
+      "sha256": "e6b147d23eba193653f2abb3abe03fc25e63a9a91df918440b5445f9f58e9ac6",
+      "previousSha256": "11c7c012423a8612a7bc42a1a7b5458437180dc47404bafc79f52ef97372c821",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST NCCoE SP 1800-38A",
@@ -2376,9 +2408,11 @@
       "url": "https://www.cisa.gov/resources-tools/resources/product-security-bad-practices",
       "status": "downloaded",
       "filename": "CISA-Bad-Practices-PQC-2025.html",
-      "sizeBytes": 88444,
+      "sizeBytes": 88923,
       "contentType": "text/html",
-      "sha256": "7b50c0e6f263e10e4c15f48d6a62319f980a71223a41ca2c56d4dcce645bc7c0"
+      "sha256": "9198ac22351cbeb9721143220d3835261c28ff47e56233fb584770e53b92df62",
+      "previousSha256": "7b50c0e6f263e10e4c15f48d6a62319f980a71223a41ca2c56d4dcce645bc7c0",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST SP 800-90",
@@ -2406,9 +2440,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc7662",
       "status": "downloaded",
       "filename": "IETF_RFC_7662.html",
-      "sizeBytes": 222373,
+      "sizeBytes": 223336,
       "contentType": "text/html",
-      "sha256": "d8b5661f74f8467e316a78198b3d4915736877a2d00b8f233fe0f4ef3089d827"
+      "sha256": "da6fb31c4ba1a61641517680e93953508eb9dac29aaad8428fa2495df2d5d0ae",
+      "previousSha256": "d8b5661f74f8467e316a78198b3d4915736877a2d00b8f233fe0f4ef3089d827",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-jose-pq-composite-sigs",
@@ -2416,9 +2452,11 @@
       "url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-01.html",
       "status": "downloaded",
       "filename": "draft-ietf-jose-pq-composite-sigs.html",
-      "sizeBytes": 460679,
+      "sizeBytes": 460698,
       "contentType": "text/html",
-      "sha256": "4e916ef3793907ac80903261763758c0eca5602cf4d4ca9b904e22f7ac88df0c"
+      "sha256": "63b787822376e261d9c0af019158982fd5b2866d87289e03e2994fec82b2ce1b",
+      "previousSha256": "4e916ef3793907ac80903261763758c0eca5602cf4d4ca9b904e22f7ac88df0c",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST SP 800-88",
@@ -2516,9 +2554,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9701",
       "status": "downloaded",
       "filename": "IETF_RFC_9701.html",
-      "sizeBytes": 383152,
+      "sizeBytes": 384115,
       "contentType": "text/html",
-      "sha256": "45c2a0cb166e644228eabbf4c2ef2d5acd4f6cba50e91175afb1e5fbea92fd5f"
+      "sha256": "92dac93e893cf10b339cf9a06969d9fcba15b2144c9b774b46a4ad1c51ed9268",
+      "previousSha256": "45c2a0cb166e644228eabbf4c2ef2d5acd4f6cba50e91175afb1e5fbea92fd5f",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 6979",
@@ -2526,9 +2566,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc6979",
       "status": "downloaded",
       "filename": "IETF_RFC_6979.html",
-      "sizeBytes": 540810,
+      "sizeBytes": 541773,
       "contentType": "text/html",
-      "sha256": "b9813942f2ff0b7b9a1cb11b790ccebe274ea6674331efee32efb12e71720e56"
+      "sha256": "8e3863bb802d0d3c9bc0ae99cd35c91b1e3de5d4506ace93a298d09aee7d304e",
+      "previousSha256": "b9813942f2ff0b7b9a1cb11b790ccebe274ea6674331efee32efb12e71720e56",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST SP 800-90B",
@@ -2539,16 +2581,6 @@
       "sizeBytes": 1043696,
       "contentType": "application/pdf",
       "sha256": "9b0dd77131ade3617a91cd8457fa09e0dc354c273bb2220a6afeaca16e5defe7"
-    },
-    {
-      "refId": "NIST SP 800-90A",
-      "title": "Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1",
-      "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
-      "status": "downloaded",
-      "filename": "NIST_SP_800-90A.html",
-      "sizeBytes": 41117,
-      "contentType": "text/html",
-      "sha256": "1c5c3d744575168562c92e8448d0276e86edb3f75ef0d98eb1ef6d6ad6b31a7a"
     },
     {
       "refId": "NIST SP 800-108",
@@ -2586,9 +2618,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc5480",
       "status": "downloaded",
       "filename": "IETF_RFC_5480.html",
-      "sizeBytes": 216689,
+      "sizeBytes": 217652,
       "contentType": "text/html",
-      "sha256": "72157bc0eb30f5ca306c61cb7ef3afc099b516757ae28c9bfa305bacd13cc6ca"
+      "sha256": "0db1ebbf6c2029a5b4d532e6c8b7ede7b04494aa41f3bb55a875b060d8991780",
+      "previousSha256": "72157bc0eb30f5ca306c61cb7ef3afc099b516757ae28c9bfa305bacd13cc6ca",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 4556",
@@ -2596,9 +2630,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc4556",
       "status": "downloaded",
       "filename": "IETF_RFC_4556.html",
-      "sizeBytes": 451466,
+      "sizeBytes": 452429,
       "contentType": "text/html",
-      "sha256": "19bfd0f9d5de39ba5fd2bdcf2a3fc5085a258ab08203f938b7dfb2d499dffe91"
+      "sha256": "137dbd6120c1321b14bfc1dcfc4a061b392562bc2c23acaf08c246566021dc79",
+      "previousSha256": "19bfd0f9d5de39ba5fd2bdcf2a3fc5085a258ab08203f938b7dfb2d499dffe91",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-tls-merkle-tree-certs",
@@ -2656,9 +2692,11 @@
       "url": "https://www.ietf.org/archive/id/draft-sfluhrer-ssh-mldsa-06.html",
       "status": "downloaded",
       "filename": "draft-sfluhrer-ssh-mldsa.html",
-      "sizeBytes": 60942,
+      "sizeBytes": 60961,
       "contentType": "text/html",
-      "sha256": "2d0ff336dd77759cd877c9775c8ff61b2d29b75141fe7dc60d578eda3786a0c4"
+      "sha256": "a1fbbb1cd619bd7a4c59c5dd3cf1918e9ab88005c2ee34007fc9fb31bf30ed6d",
+      "previousSha256": "2d0ff336dd77759cd877c9775c8ff61b2d29b75141fe7dc60d578eda3786a0c4",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 5656",
@@ -2666,9 +2704,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc5656",
       "status": "downloaded",
       "filename": "IETF_RFC_5656.html",
-      "sizeBytes": 256476,
+      "sizeBytes": 257439,
       "contentType": "text/html",
-      "sha256": "285428bc9a81e0ae28ddc6d81d2d2148a7208ebd5b45e896742a89e7266008ce"
+      "sha256": "588901784eb9eb120acc2a8545db30e76cfe16316fefc32ae939b8c522c1ac24",
+      "previousSha256": "285428bc9a81e0ae28ddc6d81d2d2148a7208ebd5b45e896742a89e7266008ce",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 8709",
@@ -2676,9 +2716,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc8709",
       "status": "downloaded",
       "filename": "IETF_RFC_8709.html",
-      "sizeBytes": 213917,
+      "sizeBytes": 214880,
       "contentType": "text/html",
-      "sha256": "4da326756986a54f94bbc3ec357374e6627592b77e92592edb165dcf66a416ae"
+      "sha256": "c4039a389d08018973966e5d7fa9d15095509cf9e9352a0a5d686d86b718e3f2",
+      "previousSha256": "4da326756986a54f94bbc3ec357374e6627592b77e92592edb165dcf66a416ae",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 4880",
@@ -2726,9 +2768,11 @@
       "url": "https://www.ietf.org/archive/id/draft-sfluhrer-ipsecme-ikev2-mldsa-01.html",
       "status": "downloaded",
       "filename": "draft-sfluhrer-ipsecme-ikev2-mldsa.html",
-      "sizeBytes": 61063,
+      "sizeBytes": 61082,
       "contentType": "text/html",
-      "sha256": "b3582708f5bf447289561efd78e9e9f5c518b884f9fd6cee5c11821cda2c3dac"
+      "sha256": "0b28595a9c9535da280c4cef6c68ff6bfc50daee5846c2c37412d62fb1e04d87",
+      "previousSha256": "b3582708f5bf447289561efd78e9e9f5c518b884f9fd6cee5c11821cda2c3dac",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "GRI-Quantum-Threat-Timeline-2025",
@@ -2901,36 +2945,6 @@
       "sha256": "ef17baf17d6bfb84c0a7675c00ff064776c8c78f3dd8fa393e74e447d8f084f1"
     },
     {
-      "refId": "ENISA-Crypto-Market-Analysis-2024",
-      "title": "Cryptographic Products and Services Market Analysis",
-      "url": "https://www.enisa.europa.eu/publications/cryptographic-products-and-services-market-analysis",
-      "status": "downloaded",
-      "filename": "ENISA-Crypto-Market-Analysis-2024.html",
-      "sizeBytes": 52954,
-      "contentType": "text/html",
-      "sha256": "23ba1c1818e4be89dea8dc31bc1524dcf15272de9ac65997be331ffb384fc667"
-    },
-    {
-      "refId": "ENISA-State-of-Cybersecurity-2024",
-      "title": "2024 Report on the State of Cybersecurity in the Union",
-      "url": "https://www.enisa.europa.eu/publications/2024-report-on-the-state-of-the-cybersecurity-in-the-union",
-      "status": "downloaded",
-      "filename": "ENISA-State-of-Cybersecurity-2024.html",
-      "sizeBytes": 53649,
-      "contentType": "text/html",
-      "sha256": "d5e9021940fc94298fda59215e83272928b05a817190d6f61da1bd39cfa6e1a4"
-    },
-    {
-      "refId": "ENISA-Threat-Landscape-2025",
-      "title": "ENISA Threat Landscape 2025",
-      "url": "https://www.enisa.europa.eu/publications/enisa-threat-landscape-2025",
-      "status": "downloaded",
-      "filename": "ENISA-Threat-Landscape-2025.html",
-      "sizeBytes": 53017,
-      "contentType": "text/html",
-      "sha256": "d768b8485c4412e3b17e17824d2b9ebaca7307be5927fcee2589fc78eed526bb"
-    },
-    {
       "refId": "ECCG-ACM-v2",
       "title": "ECCG Agreed Cryptographic Mechanisms Version 2.0",
       "url": "https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG+Agreed+Cryptographic+Mechanisms+version+2.pdf",
@@ -3046,9 +3060,11 @@
       "url": "https://link.springer.com/book/10.1007/978-3-540-88702-7",
       "status": "downloaded",
       "filename": "Bernstein-Lange-PQC-Survey.html",
-      "sizeBytes": 268984,
+      "sizeBytes": 269009,
       "contentType": "text/html",
-      "sha256": "9b7f47cb0c84b29ca59b4f72607a618b37fda8aecc23b1b4ca3c71f423998e4a"
+      "sha256": "53784cd683d97617c1766004ebc1985812368d593c25254a27820b796e06d7b2",
+      "previousSha256": "9b7f47cb0c84b29ca59b4f72607a618b37fda8aecc23b1b4ca3c71f423998e4a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "CIRCL-Cloudflare",
@@ -3056,9 +3072,11 @@
       "url": "https://github.com/cloudflare/circl",
       "status": "downloaded",
       "filename": "CIRCL_Cloudflare_.html",
-      "sizeBytes": 391880,
+      "sizeBytes": 405974,
       "contentType": "text/html",
-      "sha256": "a34cbcc0a2ebd1943cf6f37762a6397d0feaa863a81161ea17652c122be16753"
+      "sha256": "61179c6b727ab76a3cdf69f27ae2cedd6292f61e3412a176ef125f85e7fdcb92",
+      "previousSha256": "a34cbcc0a2ebd1943cf6f37762a6397d0feaa863a81161ea17652c122be16753",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "PQClean",
@@ -3066,9 +3084,11 @@
       "url": "https://github.com/PQClean/PQClean",
       "status": "downloaded",
       "filename": "PQClean.html",
-      "sizeBytes": 361025,
+      "sizeBytes": 367902,
       "contentType": "text/html",
-      "sha256": "e50849cb469bea46b14efaa5f264d9380c8a22c7c19ca4479e8ed556f7294037"
+      "sha256": "127247230625ad487e8a0337f34ea18f3b60b6f685fbb133677fe034e499a9c6",
+      "previousSha256": "e50849cb469bea46b14efaa5f264d9380c8a22c7c19ca4479e8ed556f7294037",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Liboqs-python",
@@ -3076,9 +3096,11 @@
       "url": "https://github.com/open-quantum-safe/liboqs-python",
       "status": "downloaded",
       "filename": "Liboqs-python.html",
-      "sizeBytes": 353904,
+      "sizeBytes": 368570,
       "contentType": "text/html",
-      "sha256": "70244558da24141956885347c7fb31e6a6c4e4b00ec2b2cc00825810073f43eb"
+      "sha256": "9dd2624b62f70a44bc44f86b25bd27f0143b179e9ad9ff7db9225ba1b0eeb376",
+      "previousSha256": "70244558da24141956885347c7fb31e6a6c4e4b00ec2b2cc00825810073f43eb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Liboqs-go",
@@ -3086,9 +3108,11 @@
       "url": "https://github.com/open-quantum-safe/liboqs-go",
       "status": "downloaded",
       "filename": "Liboqs-go.html",
-      "sizeBytes": 360227,
+      "sizeBytes": 369879,
       "contentType": "text/html",
-      "sha256": "73e124d3fdcace0b140c70a61dc78ca3300c7caffc759e90cf0bf971364f15d1"
+      "sha256": "f9bc3b2e43367ee0fa42620ccbfcc7c7ba3e4aaeb00d8f5efee6ee1033c46814",
+      "previousSha256": "73e124d3fdcace0b140c70a61dc78ca3300c7caffc759e90cf0bf971364f15d1",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Liboqs-cpp",
@@ -3096,9 +3120,11 @@
       "url": "https://github.com/open-quantum-safe/liboqs-cpp",
       "status": "downloaded",
       "filename": "Liboqs-cpp.html",
-      "sizeBytes": 353872,
+      "sizeBytes": 361818,
       "contentType": "text/html",
-      "sha256": "4fdb6bd5897bec0776286b85d33a942b59ec7d992da96911d7bc294e6ffecb0e"
+      "sha256": "5a9b1bd9536473288502313568034cf3bbf69e4280ada0b004a16e5d6c61c5b5",
+      "previousSha256": "4fdb6bd5897bec0776286b85d33a942b59ec7d992da96911d7bc294e6ffecb0e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Lattice-Estimator",
@@ -3106,9 +3132,11 @@
       "url": "https://github.com/malb/lattice-estimator",
       "status": "downloaded",
       "filename": "Lattice-Estimator.html",
-      "sizeBytes": 365930,
+      "sizeBytes": 375672,
       "contentType": "text/html",
-      "sha256": "0b7dd37de83fdd50c074028433a36fe846f10a2a1d5ae76552e75302a0d831ff"
+      "sha256": "3f4ba6517f902a8da4626eff9804214824feb6daa4d4e210f6542f998accbc97",
+      "previousSha256": "0b7dd37de83fdd50c074028433a36fe846f10a2a1d5ae76552e75302a0d831ff",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "FPLLL",
@@ -3116,9 +3144,11 @@
       "url": "https://github.com/fplll/fplll",
       "status": "downloaded",
       "filename": "FPLLL.html",
-      "sizeBytes": 442939,
+      "sizeBytes": 447179,
       "contentType": "text/html",
-      "sha256": "81e8ad8d8f67ece252d760c9fa54ebf693be457d581fdb013eecbf56754c7584"
+      "sha256": "89b60b907c53ae455d88b9506084129fe8eb1ea5ec57980f2fa6d64e2533ee7f",
+      "previousSha256": "81e8ad8d8f67ece252d760c9fa54ebf693be457d581fdb013eecbf56754c7584",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ETSI-TS-103-673",
@@ -3136,9 +3166,11 @@
       "url": "https://datatracker.ietf.org/doc/rfc9242/",
       "status": "downloaded",
       "filename": "IETF_RFC_9242.html",
-      "sizeBytes": 69849,
+      "sizeBytes": 69868,
       "contentType": "text/html",
-      "sha256": "4f9aac20816d1ec7408eae6695a779ef0447010b0dc4696e3bc0ec1afc02b695"
+      "sha256": "150e9c1afd28a63c64ba517b6830360b00977e8d5408cf8eb8a5405bb4e3cb26",
+      "previousSha256": "4f9aac20816d1ec7408eae6695a779ef0447010b0dc4696e3bc0ec1afc02b695",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IEEE-P1931-1-ROSA",
@@ -3426,9 +3458,12 @@
       "url": "https://www.fsisac.com/the-timeline-for-post-quantum-cryptographic-migration",
       "status": "downloaded",
       "filename": "FS-ISAC-PQC-Timeline-2026.html",
-      "sizeBytes": 21206,
+      "sizeBytes": 19513,
       "contentType": "text/html",
-      "sha256": "5db7b441846e2998707fa2cf6979266d8ce8dc3a089d0e44feb2debff49dce1c"
+      "sha256": "d30b090f0a6f1ca72b75e21026b3af5f04dcc9a90d49715d0f20c91b6d78f8bb",
+      "previousSha256": "5db7b441846e2998707fa2cf6979266d8ce8dc3a089d0e44feb2debff49dce1c",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: the page is a JavaScript-rendered HubSpot template. Every fetch tier returns the same CSS/JS shell with no article text. Needs a rendering fetch or a human download."
     },
     {
       "refId": "arXiv-2603-28728",
@@ -3496,9 +3531,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc5869",
       "status": "downloaded",
       "filename": "RFC_5869.html",
-      "sizeBytes": 169218,
+      "sizeBytes": 32664,
       "contentType": "text/html",
-      "sha256": "4e818672715d694a7a5916cc7053c34118f3bdfa86e84147bdc9d3001df90fa5"
+      "sha256": "7399e3b7f85078b2faff422964ab4560f67a2135a0b0fe1f5a4e8e96bdc94f45",
+      "previousSha256": "4e818672715d694a7a5916cc7053c34118f3bdfa86e84147bdc9d3001df90fa5",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "OASIS-SAML-2-0-Core",
@@ -3586,9 +3623,11 @@
       "url": "https://www.jbs.cam.ac.uk/2025/why-quantum-matters-now-for-blockchain/",
       "status": "downloaded",
       "filename": "Cambridge-JBS-Quantum-Blockchain-2025.html",
-      "sizeBytes": 213617,
+      "sizeBytes": 211278,
       "contentType": "text/html",
-      "sha256": "2433dc7471d74a71a3ec1627a6c19546e40162e8d34e7c4511198b677a605ced"
+      "sha256": "7a3eb986759def0ed79c46934556690b77de474bd3072824ad15a29cdb9e75c0",
+      "previousSha256": "2433dc7471d74a71a3ec1627a6c19546e40162e8d34e7c4511198b677a605ced",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "PROACT-2025-SCA-Lattice-PQC",
@@ -3676,9 +3715,11 @@
       "url": "https://www.invicti.com/blog/web-security/cryptographic-failures",
       "status": "downloaded",
       "filename": "Invicti-OWASP-CryptoFailures-2025.html",
-      "sizeBytes": 135151,
+      "sizeBytes": 138569,
       "contentType": "text/html",
-      "sha256": "2fe21c4c76e7513d14f9211c67056879c3df1c82f9879c54f6f4e7785eb4e4ea"
+      "sha256": "9ace2dac53ce1038e8bd69983ba44719e7281da8c5fc8ea11ce52eeab3fb4901",
+      "previousSha256": "2fe21c4c76e7513d14f9211c67056879c3df1c82f9879c54f6f4e7785eb4e4ea",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Springer-MathFoundations-PQC-2026",
@@ -3686,9 +3727,11 @@
       "url": "https://doi.org/10.1007/978-981-96-1218-5",
       "status": "downloaded",
       "filename": "Springer-MathFoundations-PQC-2026.html",
-      "sizeBytes": 311043,
+      "sizeBytes": 311530,
       "contentType": "text/html",
-      "sha256": "4f7fc444d2337ec9b8f77d76edc7d6a816e3a76a60a0ab8b02bd5bc3058477a2"
+      "sha256": "292aa2f0894a6d67ef06be34864d522fe7fc8827d5e97226b6223b24b09046f8",
+      "previousSha256": "4f7fc444d2337ec9b8f77d76edc7d6a816e3a76a60a0ab8b02bd5bc3058477a2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-SP-800-133r3-ipd",
@@ -3906,9 +3949,11 @@
       "url": "https://www.keyfactor.com/blog/introducing-the-cryptographic-bill-of-materials-cbom-a-foundation-for-modern-cryptographic-management/",
       "status": "downloaded",
       "filename": "Keyfactor-Introducing-CBOM.html",
-      "sizeBytes": 139234,
+      "sizeBytes": 139674,
       "contentType": "text/html",
-      "sha256": "72f25898d0862648391ca74c87e2276148ecf09b2c0d72921cbe531531cd02fb"
+      "sha256": "7fa16a2af5453b2f8dac97603c6f5f279178c9f2ed11339e93823f090763c2c9",
+      "previousSha256": "72f25898d0862648391ca74c87e2276148ecf09b2c0d72921cbe531531cd02fb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Deloitte-TechTrends-2025-Quantum",
@@ -3966,9 +4011,11 @@
       "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/modules-in-process/modules-in-process-list",
       "status": "downloaded",
       "filename": "NIST-CMVP-MIP-List.html",
-      "sizeBytes": 166231,
+      "sizeBytes": 153534,
       "contentType": "text/html",
-      "sha256": "89148b39de68a2b7543f5ad99049dbbef5ee77ac7ea9cb1bfdcf5df8aea3db17"
+      "sha256": "c2744c8447466d548e25be3d11840a34a9bee62a468dd6f502e971b8d7e72d67",
+      "previousSha256": "89148b39de68a2b7543f5ad99049dbbef5ee77ac7ea9cb1bfdcf5df8aea3db17",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST-CMVP-Validated-Modules",
@@ -4039,16 +4086,6 @@
       "sizeBytes": 812780,
       "contentType": "application/pdf",
       "sha256": "2f3e574ed16a883886bf0486c763aaf3291cd4986dbdfdf03ae72cb9892d0289"
-    },
-    {
-      "refId": "NIST-SP-800-140B",
-      "title": "NIST SP 800-140B Rev. 1: CMVP Security Policy Requirements",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Br1.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-140B.html",
-      "sizeBytes": 589224,
-      "contentType": "text/html",
-      "sha256": "dd68511f9160bf53dfabe9617d4a3528f578836b5b7b50dff002a7ab57275fef"
     },
     {
       "refId": "IETF-RFC-8996",
@@ -4453,12 +4490,15 @@
     {
       "refId": "Saudi-NCA-NCS1-2020",
       "title": "Saudi NCA \u2014 National Cryptographic Standards (NCS-1:2020)",
-      "url": "https://nca.gov.sa/",
+      "url": "https://nca.gov.sa/ncs_en.pdf",
       "status": "downloaded",
-      "filename": "Saudi-NCA-NCS1-2020.html",
-      "sizeBytes": 673304,
-      "contentType": "text/html",
-      "sha256": "f2fbec467b7e5d04d50dce907f37691429e478cb416bbe879407a318e7d9616e"
+      "filename": "Saudi-NCA-NCS1-2020.pdf",
+      "sizeBytes": 1120163,
+      "contentType": "application/pdf",
+      "sha256": "c800087578e91a1b72a75ee493ace6a7ebd5ea83595bb3442ba01804a3c097b5",
+      "previousFilename": "Saudi-NCA-NCS1-2020.html",
+      "previousSha256": "f2fbec467b7e5d04d50dce907f37691429e478cb416bbe879407a318e7d9616e",
+      "rehashedAt": "2026-08-21"
     },
     {
       "refId": "US-TREASURY-FSRMP-2025",
@@ -4469,26 +4509,6 @@
       "sizeBytes": 3088964,
       "contentType": "application/pdf",
       "sha256": "844a3f790d6de7286244bb78ca8e0be638e7e0dce92b7f40c369ee7494449a4d"
-    },
-    {
-      "refId": "CMMC-2.0-MODEL",
-      "title": "Cybersecurity Maturity Model Certification (CMMC) Model Overview v2.13",
-      "url": "https://dodcio.defense.gov/CMMC/Documentation/",
-      "status": "downloaded",
-      "filename": "CMMC-2.0-MODEL.html",
-      "sizeBytes": 40620,
-      "contentType": "text/html",
-      "sha256": "a84f83d19cbd4806815d1933ecae83d3d011f348b9a229dda083442e7fd11dee"
-    },
-    {
-      "refId": "NZISM-V3-9",
-      "title": "New Zealand Information Security Manual (NZISM) v3.9 \u2014 November 2025",
-      "url": "https://nzism.gcsb.govt.nz/",
-      "status": "downloaded",
-      "filename": "NZISM-V3-9.html",
-      "sizeBytes": 23387,
-      "contentType": "text/html",
-      "sha256": "206ff42c9a4e423a223f33ad0b1e639cb627e8c860bb72457938e1253d4c424b"
     },
     {
       "refId": "draft-vitap-ml-dsa-webauthn",
@@ -4736,9 +4756,11 @@
       "url": "https://quantumzeitgeist.com/pqshield-quantum-threats-enterprises-must/",
       "status": "downloaded",
       "filename": "PQShield-4-Quantum-Threats-Enterprises-2026.html",
-      "sizeBytes": 161444,
+      "sizeBytes": 162194,
       "contentType": "text/html",
-      "sha256": "05dd70389740f5fc2b96ef7c23b8b2ef62e4cddf4e6bba6f010317369901bb0e"
+      "sha256": "bd4f7a078adbee4c90c7dd41433ea14606dbe41151a99766b6732a1a1d3b5158",
+      "previousSha256": "05dd70389740f5fc2b96ef7c23b8b2ef62e4cddf4e6bba6f010317369901bb0e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "GopherSecurity-PQC-Agility-MCP-2026",
@@ -4746,9 +4768,11 @@
       "url": "https://www.gopher.security/blog/post-quantum-cryptographic-agility-mcp-transport",
       "status": "downloaded",
       "filename": "GopherSecurity-PQC-Agility-MCP-2026.html",
-      "sizeBytes": 151621,
+      "sizeBytes": 151556,
       "contentType": "text/html",
-      "sha256": "14745ae79d9ead68f7ac711f980602ce8633e1d5264d4d645cf520f7c3ae34dc"
+      "sha256": "cd07e715f844c23cbe88ce3377f56b36f6610e65885bbf5afde72ae67e6d27f6",
+      "previousSha256": "14745ae79d9ead68f7ac711f980602ce8633e1d5264d4d645cf520f7c3ae34dc",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QuantumInsider-Why-2026-Matters-QS",
@@ -4756,9 +4780,11 @@
       "url": "https://thequantuminsider.com/2026/04/28/why-2026-matters-quantum-security/",
       "status": "downloaded",
       "filename": "QuantumInsider-Why-2026-Matters-QS.html",
-      "sizeBytes": 281673,
+      "sizeBytes": 228590,
       "contentType": "text/html",
-      "sha256": "2b79d9b99c34c0c6a877b0475856958899c061c4d898b84a0a9e24ac32380ae6"
+      "sha256": "87f25f165b4b5f2cdad231a8eaa8e7f63d4c721c2ac97c5cf13e69f896d36ac2",
+      "previousSha256": "2b79d9b99c34c0c6a877b0475856958899c061c4d898b84a0a9e24ac32380ae6",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QuantumInsider-QS-Threats-Solutions-2026",
@@ -4766,9 +4792,11 @@
       "url": "https://thequantuminsider.com/2026/04/27/quantum-security-threats-solutions-race-protect-data/",
       "status": "downloaded",
       "filename": "QuantumInsider-QS-Threats-Solutions-2026.html",
-      "sizeBytes": 300131,
+      "sizeBytes": 243888,
       "contentType": "text/html",
-      "sha256": "f6c41592abfaf586f2c75f28413b1ef2f2b8d44dbb2669a1ce7f5323e4eea849"
+      "sha256": "24a313ab014601b4160fc2471fad1abbb8191b4567e121a51179186391310789",
+      "previousSha256": "f6c41592abfaf586f2c75f28413b1ef2f2b8d44dbb2669a1ce7f5323e4eea849",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Microchip-TS1800-PQC-RootOfTrust-2026",
@@ -4776,9 +4804,11 @@
       "url": "https://embeddedcomputing.com/technology/processing/compute-modules/microchip-expands-family-of-post-quantum-ready-root-of-trust-controllers",
       "status": "downloaded",
       "filename": "Microchip-TS1800-PQC-RootOfTrust-2026.html",
-      "sizeBytes": 22414,
+      "sizeBytes": 34122,
       "contentType": "text/html",
-      "sha256": "cdcb7bfa84bbf9ff4c38fc5d6c1acee2e19af0997f62fd808c0cc8df148fa36a"
+      "sha256": "8b322853fcbf8db49fac16727ab4e11efe1fed4ef562e78dc9ff5484a3483f93",
+      "previousSha256": "cdcb7bfa84bbf9ff4c38fc5d6c1acee2e19af0997f62fd808c0cc8df148fa36a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ITPro-Monetizing-Quantum-Shift-PQC-2026",
@@ -4786,9 +4816,11 @@
       "url": "https://www.itpro.com/security/monetizing-the-quantum-shift-11-pqc-channel-opportunities",
       "status": "downloaded",
       "filename": "ITPro-Monetizing-Quantum-Shift-PQC-2026.html",
-      "sizeBytes": 985968,
+      "sizeBytes": 1028045,
       "contentType": "text/html",
-      "sha256": "23bec0fc374c36350de98b6d30c41a8d7e325089aa54fda8fe1efd53138d17b8"
+      "sha256": "bb3be95755b4152325775e32b682d968b55bdb63d93f9f2a08a86a21e140625d",
+      "previousSha256": "23bec0fc374c36350de98b6d30c41a8d7e325089aa54fda8fe1efd53138d17b8",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QCReport-QDay-Accelerated-Timeline-2026",
@@ -4796,9 +4828,11 @@
       "url": "https://quantumcomputingreport.com/q-day-accelerated-timeline-across-wider-attack-surface-executive-summary/",
       "status": "downloaded",
       "filename": "QCReport-QDay-Accelerated-Timeline-2026.html",
-      "sizeBytes": 139635,
+      "sizeBytes": 134627,
       "contentType": "text/html",
-      "sha256": "13f398997974f065c3da828997a861036378d43441fb56eb66934cedc43c555f"
+      "sha256": "d12d498a4a78772fc3bbe62c2a144cd7265b6ad3435ced531b4480eb07f27ef0",
+      "previousSha256": "13f398997974f065c3da828997a861036378d43441fb56eb66934cedc43c555f",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ArsTechnica-Ransomware-Quantum-Safe-2026",
@@ -4806,9 +4840,11 @@
       "url": "https://arstechnica.com/security/2026/04/now-even-ransomware-is-using-post-quantum-cryptography/",
       "status": "downloaded",
       "filename": "ArsTechnica-Ransomware-Quantum-Safe-2026.html",
-      "sizeBytes": 146563,
+      "sizeBytes": 147021,
       "contentType": "text/html",
-      "sha256": "e2d699d4f1c7114fe43aed17fc249db8ebcb212dc4ce8d4b8bff7027b469f9d2"
+      "sha256": "779d5c457bfe1997aa17ae362ed47992c7acb475241f3092e8645f39da61f47e",
+      "previousSha256": "e2d699d4f1c7114fe43aed17fc249db8ebcb212dc4ce8d4b8bff7027b469f9d2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QuantumInsider-AES128-Safe-Quantum-2026",
@@ -4816,9 +4852,11 @@
       "url": "https://thequantuminsider.com/2026/04/21/cryptologist-finds-aes-128-likely-safe-from-quantum-attack/",
       "status": "downloaded",
       "filename": "QuantumInsider-AES128-Safe-Quantum-2026.html",
-      "sizeBytes": 274900,
+      "sizeBytes": 221889,
       "contentType": "text/html",
-      "sha256": "d96065560f54ad6457fe50f349643e2c37be8e4141969aba82aa39127f181d14"
+      "sha256": "936419a8c1bf1ca627651dfa65b4ae8fb6b7de448711ef05e2da6f7bc0410f7e",
+      "previousSha256": "d96065560f54ad6457fe50f349643e2c37be8e4141969aba82aa39127f181d14",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QuantumZeitgeist-CryptoNext-NIST-Cert-2026",
@@ -4826,9 +4864,11 @@
       "url": "https://quantumzeitgeist.com/nist-quantum-safe-certification-cryptonext-security/",
       "status": "downloaded",
       "filename": "QuantumZeitgeist-CryptoNext-NIST-Cert-2026.html",
-      "sizeBytes": 152387,
+      "sizeBytes": 152266,
       "contentType": "text/html",
-      "sha256": "3297a3f3bcdf95a81203a5f9f2b37e1d4f58dd35ec9ec7f44697fca0d39d68c0"
+      "sha256": "305809ab0a6913560a4c86ad01bf0631da9b3f08a0909f17576d4811915b2b06",
+      "previousSha256": "3297a3f3bcdf95a81203a5f9f2b37e1d4f58dd35ec9ec7f44697fca0d39d68c0",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EFF-Encryption-Y2K-Moment-2026",
@@ -4856,9 +4896,11 @@
       "url": "https://thequantuminsider.com/2026/04/08/quantum-xchange-phio-tx-cmc-launch/",
       "status": "downloaded",
       "filename": "QuantumInsider-QuantumXChange-PhioTX-2026.html",
-      "sizeBytes": 271307,
+      "sizeBytes": 217996,
       "contentType": "text/html",
-      "sha256": "d4775b36e5187dd0cbc5c2da797a30199f526f4ef2d74c33fc1ca1f4fed2b943"
+      "sha256": "2fd0f96bc297671bd3a0aff9ce15228cb19002c2197685a8636a4ad054c4e274",
+      "previousSha256": "d4775b36e5187dd0cbc5c2da797a30199f526f4ef2d74c33fc1ca1f4fed2b943",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Cloudflare-PostQuantum-Roadmap-2026",
@@ -4866,9 +4908,11 @@
       "url": "https://blog.cloudflare.com/post-quantum-roadmap/",
       "status": "downloaded",
       "filename": "Cloudflare-PostQuantum-Roadmap-2026.html",
-      "sizeBytes": 492516,
+      "sizeBytes": 504329,
       "contentType": "text/html",
-      "sha256": "3857a58f44fe30796a77a0662d02800d47a55f44cbc0246621c67ff35a275750"
+      "sha256": "af14889aa57def2da961cf57b0ac393b3bc86d36faf7639647628a665b0409d4",
+      "previousSha256": "3857a58f44fe30796a77a0662d02800d47a55f44cbc0246621c67ff35a275750",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "QCReport-QSE-Enterprise-PQC-Platform-2026",
@@ -4876,9 +4920,11 @@
       "url": "https://quantumcomputingreport.com/qse-launches-enterprise-post-quantum-migration-platform-with-qpa-v2-release/",
       "status": "downloaded",
       "filename": "QCReport-QSE-Enterprise-PQC-Platform-2026.html",
-      "sizeBytes": 142221,
+      "sizeBytes": 137213,
       "contentType": "text/html",
-      "sha256": "e42e9fd0f47e850947ceabd4abbbd3e26dae261b2abe9086b4d0362c0e80afa0"
+      "sha256": "46e1356534eb2e21f621a3ce68bc7c94e8369bf365954c5e022ace131398b010",
+      "previousSha256": "e42e9fd0f47e850947ceabd4abbbd3e26dae261b2abe9086b4d0362c0e80afa0",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "YahooFinance-Quantum-Ready-2030-2026",
@@ -4896,9 +4942,11 @@
       "url": "https://thequantuminsider.com/2026/03/25/25-companies-building-the-quantum-cryptography-communications-markets/",
       "status": "downloaded",
       "filename": "QuantumInsider-25-Companies-PQC-2026.html",
-      "sizeBytes": 291359,
+      "sizeBytes": 235830,
       "contentType": "text/html",
-      "sha256": "f49265ed099d29d2012a9ba0946742d0a05af9f56c88245abdde8f3d68ff2038"
+      "sha256": "5780e78b32b7e166b28727bae42b2d2c67cf75adc319df650043d3a10aaea266",
+      "previousSha256": "f49265ed099d29d2012a9ba0946742d0a05af9f56c88245abdde8f3d68ff2038",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ISO/IEC 18033-2:2006/AMD1:2017",
@@ -5241,16 +5289,6 @@
       "sha256": "03083348412cbcd6a6ac9ae02cfe8912ba769cb9a7da96e5f813695019b86648"
     },
     {
-      "refId": "NIAP",
-      "title": "NIAP \u2014 National Information Assurance Partnership",
-      "url": "https://www.niap-ccevs.org/",
-      "status": "downloaded",
-      "filename": "NIAP.html",
-      "sizeBytes": 29709,
-      "contentType": "text/html",
-      "sha256": "8879515cc52fcc32bd6b33211a2d89b0015443e4add2d55bec91fbfebc9ee98a"
-    },
-    {
       "refId": "RFC 1847",
       "title": "Security Multiparts for MIME: Multipart/Signed and Multipart/Encrypted",
       "url": "https://www.rfc-editor.org/rfc/rfc1847.html",
@@ -5586,9 +5624,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9180.html",
       "status": "downloaded",
       "filename": "IETF_RFC_9180.html",
-      "sizeBytes": 1327966,
+      "sizeBytes": 351470,
       "contentType": "text/html",
-      "sha256": "ea618c28f3dccbfa6180a711c97984c9c22343cf4e427b2d783fabb6bb618a93"
+      "sha256": "2eb1e3854c68dd6f7a8a1b0684eb5f0cce355a618d21d5eb108a4679dd792297",
+      "previousSha256": "ea618c28f3dccbfa6180a711c97984c9c22343cf4e427b2d783fabb6bb618a93",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC 9480",
@@ -5686,9 +5726,11 @@
       "url": "https://github.com/bitcoin/bips/blob/master/bip-0043.mediawiki",
       "status": "downloaded",
       "filename": "BIP-43.html",
-      "sizeBytes": 270544,
+      "sizeBytes": 284455,
       "contentType": "text/html",
-      "sha256": "6f9f71f2dbe31ee6a1492e6f2110818ad2f06656c9898c6e18ec69d56e2c194b"
+      "sha256": "518b3c59cf820ee944bdc60811e941edb92bdec803a138889654b3ad12c328b2",
+      "previousSha256": "6f9f71f2dbe31ee6a1492e6f2110818ad2f06656c9898c6e18ec69d56e2c194b",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "EIP-2",
@@ -5806,9 +5848,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc8410",
       "status": "downloaded",
       "filename": "RFC-8410.html",
-      "sizeBytes": 232468,
+      "sizeBytes": 236868,
       "contentType": "text/html",
-      "sha256": "b7098a5d2f724cdc7d11cfd1a7df0c09784757e1dc5a78fbe5493c988ab3029f"
+      "sha256": "a8537452e574cca118c8bfd808be6e544b20dd2a9e532a7b48e2f51102bda69f",
+      "previousSha256": "b7098a5d2f724cdc7d11cfd1a7df0c09784757e1dc5a78fbe5493c988ab3029f",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC-6960",
@@ -6271,16 +6315,6 @@
       "sha256": "c026b610d7621d89a7037d5ccf21a6e5735b7235acc9705580460913f7d6fbf4"
     },
     {
-      "refId": "FIPS-198",
-      "title": "FIPS 198-1, The Keyed-Hash Message Authentication Code (HMAC)",
-      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf",
-      "status": "downloaded",
-      "filename": "FIPS-198.html",
-      "sizeBytes": 129454,
-      "contentType": "text/html",
-      "sha256": "67661ba1407b391c799ff407471de18f36697af51d78a777e817c067ac30da23"
-    },
-    {
       "refId": "NIST-SP-800-140Cr1",
       "title": "NIST SP 800-140C Rev. 2 - CMVP Approved Security Functions",
       "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Cr2.pdf",
@@ -6386,9 +6420,11 @@
       "url": "https://doi.org/10.3390/app8112014",
       "status": "downloaded",
       "filename": "MDPI-2018-NTRU-SingleTrace-SCA.html",
-      "sizeBytes": 2223,
+      "sizeBytes": 649134,
       "contentType": "text/html",
-      "sha256": "7545e52b59c65678efee1cf81c5d6bfe99997a3a61ba3fe66203fba348e83c63"
+      "sha256": "06baf2465ac14f8f8cdbc42905af3a7a8b446b9efd22357da039145b52f25132",
+      "previousSha256": "7545e52b59c65678efee1cf81c5d6bfe99997a3a61ba3fe66203fba348e83c63",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIKE-Round4-Spec-2022",
@@ -6426,9 +6462,11 @@
       "url": "https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition",
       "status": "downloaded",
       "filename": "ANSSI-PQC-Position-2022.html",
-      "sizeBytes": 56757,
+      "sizeBytes": 67511,
       "contentType": "text/html",
-      "sha256": "d4147fc34c6b5ecc087cbb3d4081591a9b29fed152aa6051253279d704b7dff3"
+      "sha256": "a6a01f195c3640b4d181e01fd3cd2994b2ac37e19ade989dd72572a138bad60b",
+      "previousSha256": "d4147fc34c6b5ecc087cbb3d4081591a9b29fed152aa6051253279d704b7dff3",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "NIST SP 800-53",
@@ -6476,9 +6514,11 @@
       "url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-04.txt",
       "status": "downloaded",
       "filename": "draft-ietf-plants-merkle-tree-certs.html",
-      "sizeBytes": 240191,
+      "sizeBytes": 194381,
       "contentType": "text/html",
-      "sha256": "84ef4839100661fe62c6958472621ccb1134b3b32b0fdb3979c7f51e70212f0e"
+      "sha256": "8a89a487a7aa096d2af286394218ad20808612b6bd26e2738c80ec828a30b617",
+      "previousSha256": "84ef4839100661fe62c6958472621ccb1134b3b32b0fdb3979c7f51e70212f0e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "IETF RFC 9162",
@@ -7126,9 +7166,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lake-edhoc-psk/",
       "status": "downloaded",
       "filename": "draft-ietf-lake-edhoc-psk.html",
-      "sizeBytes": 116656,
+      "sizeBytes": 115893,
       "contentType": "text/html",
-      "sha256": "261b8fe323d26a1756aa7b6d14e6cfd572aa5a065b0d364157f61232f4ee101c"
+      "sha256": "3022188e18d66a4c81aa8a46b80f01c5a0f4f8755ec002edd6fcfba834566e60",
+      "previousSha256": "261b8fe323d26a1756aa7b6d14e6cfd572aa5a065b0d364157f61232f4ee101c",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-tls-mldsa-03",
@@ -7156,9 +7198,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/",
       "status": "downloaded",
       "filename": "draft-ietf-lamps-pq-composite-sigs-19.html",
-      "sizeBytes": 764101,
+      "sizeBytes": 764120,
       "contentType": "text/html",
-      "sha256": "8a6cc24397d885ee50ff8572c032150fde3a9b7ab3752d60aff12dc5cf02f665"
+      "sha256": "83cd80ac662884882feef11f2a93d17b3cdc97d70076411073a1aaddc8f37de7",
+      "previousSha256": "8a6cc24397d885ee50ff8572c032150fde3a9b7ab3752d60aff12dc5cf02f665",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-lamps-pq-composite-kem-14",
@@ -7186,9 +7230,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-ikev2-mlkem-05.html",
-      "sizeBytes": 80845,
+      "sizeBytes": 80856,
       "contentType": "text/html",
-      "sha256": "925e91c10f28a50d6e17aa5ebf2d7b48204a1906dc725b5759b234eef7ed9efb"
+      "sha256": "4364c371dec23b76c807bab10dfa456ee523f4384fa67d215afe6ed25eb69222",
+      "previousSha256": "925e91c10f28a50d6e17aa5ebf2d7b48204a1906dc725b5759b234eef7ed9efb",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-ipsecme-ikev2-pqc-auth-08",
@@ -7196,9 +7242,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-ikev2-pqc-auth-08.html",
-      "sizeBytes": 92355,
+      "sizeBytes": 93354,
       "contentType": "text/html",
-      "sha256": "4f1bfd4b4f2f187e51f8b76539ff7e71079006f47b599568302c424104d847ae"
+      "sha256": "c41b23ba781964712edfb5e9b17bb54cce5d795dbe4a23830e08b12b384ff8b3",
+      "previousSha256": "4f1bfd4b4f2f187e51f8b76539ff7e71079006f47b599568302c424104d847ae",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-ipsecme-hybrid-kem-ikev2-frodo-00",
@@ -7206,9 +7254,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-hybrid-kem-ikev2-frodo/",
       "status": "downloaded",
       "filename": "draft-ietf-ipsecme-hybrid-kem-ikev2-frodo-00.html",
-      "sizeBytes": 80236,
+      "sizeBytes": 80820,
       "contentType": "text/html",
-      "sha256": "e1af94298771ad99a60f74ed21a9a99aaced79bb2e088ae8e0bbf7e225953e69"
+      "sha256": "1693c22cf1b957eb27c5896f6e038ebbaa21217fce3b060f22cfd1189ab84b47",
+      "previousSha256": "e1af94298771ad99a60f74ed21a9a99aaced79bb2e088ae8e0bbf7e225953e69",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC 9941",
@@ -7226,9 +7276,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-sshm-mlkem-hybrid-kex/",
       "status": "downloaded",
       "filename": "draft-ietf-sshm-mlkem-hybrid-kex-10.html",
-      "sizeBytes": 87449,
+      "sizeBytes": 87468,
       "contentType": "text/html",
-      "sha256": "415874547f8e6ac40e27be30c02f1a8ff46dd7ead8e4b7e5a663a1ecb65d2a83"
+      "sha256": "2b9e419bbc7b297f4a89ea8f57c09a1638118c6b4ce75f29681bf91fe9aad32b",
+      "previousSha256": "415874547f8e6ac40e27be30c02f1a8ff46dd7ead8e4b7e5a663a1ecb65d2a83",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-becker-cnsa2-ssh-profile-03",
@@ -7236,9 +7288,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-becker-cnsa2-ssh-profile/",
       "status": "downloaded",
       "filename": "draft-becker-cnsa2-ssh-profile-03.html",
-      "sizeBytes": 71857,
+      "sizeBytes": 74133,
       "contentType": "text/html",
-      "sha256": "3b9869acf0d6657b13f21e1b12c847651205e2887d80be1cda2c4fd8fab450b2"
+      "sha256": "d5296efa0fbf3036a5edf751a01a78b4379cc8bc0b391b77e96bd50938dee9a8",
+      "previousSha256": "3b9869acf0d6657b13f21e1b12c847651205e2887d80be1cda2c4fd8fab450b2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "RFC 9325",
@@ -7276,9 +7330,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-mls-pq-ciphersuites/",
       "status": "downloaded",
       "filename": "draft-ietf-mls-pq-ciphersuites-04.html",
-      "sizeBytes": 62138,
+      "sizeBytes": 62858,
       "contentType": "text/html",
-      "sha256": "831691635609cec0d574a3f09fac08699f05fcbd3539f6a58de8679e816c7bd1"
+      "sha256": "a8e02674f0ca54e6372ccc717a7961a4cecaa350055498bbed5596744365f903",
+      "previousSha256": "831691635609cec0d574a3f09fac08699f05fcbd3539f6a58de8679e816c7bd1",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "draft-ietf-mls-combiner-02",
@@ -7336,9 +7392,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "status": "downloaded",
       "filename": "draft-sheth-pqc-dnssec-strategy-01.html",
-      "sizeBytes": 56705,
+      "sizeBytes": 56715,
       "contentType": "text/html",
-      "sha256": "5314b3ac5125b80b440ddef839d84f8778af526efb507112fa4b758f4805482e"
+      "sha256": "ce573a5b3401b0020b85d698b54d1e94efe70925f5a80ca7da5ba60d89d99d40",
+      "previousSha256": "5314b3ac5125b80b440ddef839d84f8778af526efb507112fa4b758f4805482e",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "TCG-PC-Client-Platform-TPM-Profile-v1.07",
@@ -7501,16 +7559,6 @@
       "sha256": "f9465918d7877e26e8d4934a895430cb33a4c784e8931c570901eb76b46f142a"
     },
     {
-      "refId": "GSMA-PQ02",
-      "title": "GSMA PQ.02: Guidelines for Quantum Risk Management for Telco",
-      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-cryptography-documents/",
-      "status": "downloaded",
-      "filename": "GSMA-PQ02.html",
-      "sizeBytes": 78185,
-      "contentType": "text/html",
-      "sha256": "abccce0be00037d8bcdd01f2c2fefb68bc77abc68c96c64a035098b47ed8cfdd"
-    },
-    {
       "refId": "NIST-CSWP-39",
       "title": "NIST CSWP 39: Considerations for Achieving Cryptographic Agility",
       "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf",
@@ -7666,9 +7714,11 @@
       "url": "https://www.linkedin.com/posts/ingrid-vasiliu-feltes-mdmba_computing-ai-business-activity-7467077511668117505-3fhf",
       "status": "downloaded",
       "filename": "Spherity-PQC-Identity-Corridors-2026.html",
-      "sizeBytes": 421409,
+      "sizeBytes": 421379,
       "contentType": "text/html",
-      "sha256": "e7cde2ae7fe273fbb4af352d2b33d094f4ff69e407772461ac4ec5ecaf28d47b"
+      "sha256": "696b97ed4669e28fa1874d6f05330dfd80b21025e01693747ee63108dd751a62",
+      "previousSha256": "e7cde2ae7fe273fbb4af352d2b33d094f4ff69e407772461ac4ec5ecaf28d47b",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "CSA-Crypto-News-June-2026",
@@ -7676,9 +7726,12 @@
       "url": "https://cloudsecurityalliance.org/",
       "status": "downloaded",
       "filename": "CSA-Crypto-News-June-2026.html",
-      "sizeBytes": 116608,
+      "sizeBytes": 116371,
       "contentType": "text/html",
-      "sha256": "ecfbb88d596418daeb49fba19775f9562af1ae20bad086d80e4754eebe3c0197"
+      "sha256": "d4f2e2cdc961f941f9a1d846f37b28e7ec1f5652953cd7634775fbd2af709f0d",
+      "previousSha256": "ecfbb88d596418daeb49fba19775f9562af1ae20bad086d80e4754eebe3c0197",
+      "rehashedAt": "2026-08-21",
+      "captureLimitation": "not-improvable: cloudsecurityalliance.org renders its blog and artifact listings in JavaScript; no listing the fetcher can read exposes the June 2026 issue, and no on-domain URL pattern resolved. Needs a rendering fetch or a human download."
     },
     {
       "refId": "Bernstein-MLDSA-Bugs-2026",
@@ -7756,9 +7809,11 @@
       "url": "https://www.rfc-editor.org/rfc/rfc9345.html",
       "status": "downloaded",
       "filename": "draft-ietf-tls-subcerts.html",
-      "sizeBytes": 98210,
+      "sizeBytes": 74443,
       "contentType": "text/html",
-      "sha256": "5a430faad133f8113d66773d0015e1ec799c47cecafb3880eb9340044b4916a2"
+      "sha256": "56f980996d53738266c4b501892aedafee37a922ef026e79b6dcc5576e2cdc9f",
+      "previousSha256": "5a430faad133f8113d66773d0015e1ec799c47cecafb3880eb9340044b4916a2",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "ANSSI-PQC-SSH-Transition-v2",
@@ -8041,16 +8096,6 @@
       "sha256": "c58af27c42ee90f00f328a19e2a2201bf20ece51835b102326bc3692b39d0e91"
     },
     {
-      "refId": "SCA-2017-AES-CNN-Jitter",
-      "title": "Convolutional Neural Networks with Data Augmentation Against Jitter-Based Countermeasures",
-      "url": "https://hal.science/hal-01661212",
-      "status": "downloaded",
-      "filename": "SCA-2017-AES-CNN-Jitter.html",
-      "sizeBytes": 12611,
-      "contentType": "text/html",
-      "sha256": "c103ed2f95348b57fff3e76c4a5c01948a76071743f7199b84a5fc6e408a5730"
-    },
-    {
       "refId": "CycloneDX-Cryptography-Registry",
       "title": "CycloneDX Cryptography Registry (v1.7)",
       "url": "https://cyclonedx.org/registry/cryptography/",
@@ -8316,9 +8361,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-kario-gss-keyex-pqc/",
       "status": "downloaded",
       "filename": "GSS-API-Key-Exchange-with-hybrid-ML-KEM.html",
-      "sizeBytes": 58863,
+      "sizeBytes": 60224,
       "contentType": "text/html",
-      "sha256": "6d35f7752db1d82af5327b9238f659540ebb7a959b2521af985d6265eaacfb96"
+      "sha256": "e248058994674313a0e6640c853d4480cf490f44bfaf994acd2518d01766e9b9",
+      "previousSha256": "6d35f7752db1d82af5327b9238f659540ebb7a959b2521af985d6265eaacfb96",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Post-Quantum-Traditional-PQ-T-Hybrid-PKI-Authentication-in-t",
@@ -8336,9 +8383,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
       "status": "downloaded",
       "filename": "Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-for-COSE.html",
-      "sizeBytes": 79371,
+      "sizeBytes": 78281,
       "contentType": "text/html",
-      "sha256": "5a52d0292975d713fa3559442e3a026dfe04616ddfa2b255a774d4b21f5d10ae"
+      "sha256": "c22257187b9e529bb244ae4ea8936072d2bb37a7220e7365c0d1200f06b6c19f",
+      "previousSha256": "5a52d0292975d713fa3559442e3a026dfe04616ddfa2b255a774d4b21f5d10ae",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "An-Assessment-Framework-for-Application-Level-Cryptographic",
@@ -8426,9 +8475,11 @@
       "url": "https://datatracker.ietf.org/doc/rfc9958/",
       "status": "downloaded",
       "filename": "RFC-9958.html",
-      "sizeBytes": 160365,
+      "sizeBytes": 160947,
       "contentType": "text/html",
-      "sha256": "92b150952349c3e60c45631e0fc3c2c7e77afe49b04d1a2873f2f423965bbb25"
+      "sha256": "38fbc1bef2379f48e874062d62baaeed847ae8fd8094ea7837dad6f3d9e2c414",
+      "previousSha256": "92b150952349c3e60c45631e0fc3c2c7e77afe49b04d1a2873f2f423965bbb25",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "2510-10436-Post-Quantum-Cryptography-and-Quantum-Safe-Securi",
@@ -8499,16 +8550,6 @@
       "sizeBytes": 2547947,
       "contentType": "application/pdf",
       "sha256": "bb814317a9f632e36e62803f1c1b320e6835512e218be5ac1787eaa0f059c7ff"
-    },
-    {
-      "refId": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
-      "title": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
-      "url": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
-      "status": "downloaded",
-      "filename": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the.html",
-      "sizeBytes": 1347430,
-      "contentType": "text/html",
-      "sha256": "28148e096fedadf7adf92b2bbf3223e722bb24b708f9eb6444a41aa2c41792ab"
     },
     {
       "refId": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
@@ -8616,9 +8657,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-miller-sshm-mldsa44-ed25519-composite-sigs/",
       "status": "downloaded",
       "filename": "ML-DSA-44-Ed255192-Composite-Signatures-in-SSH.html",
-      "sizeBytes": 40952,
+      "sizeBytes": 14017,
       "contentType": "text/html",
-      "sha256": "02358b79ce9ecc6757881643a523b6e8c097cb219d5c69fac354b0c7cfbc9074"
+      "sha256": "f848aed61990e53419c37f441fbab70d03174aae4734de6df274ddb7947b9239",
+      "previousSha256": "02358b79ce9ecc6757881643a523b6e8c097cb219d5c69fac354b0c7cfbc9074",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Module-Lattice-Based-Signatures-with-Merkle-Tree-Ladders-ML",
@@ -8656,9 +8699,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-muhammad-ahkp-pqcprotocol/",
       "status": "downloaded",
       "filename": "New-Hybrid-Post-Quantum-Protocol-Specification.html",
-      "sizeBytes": 41042,
+      "sizeBytes": 23999,
       "contentType": "text/html",
-      "sha256": "3944549bb48bdcad6b776388a59e5971b3939bd19d7dee55e2db8b65a8d2a1fc"
+      "sha256": "c48b27e2a352d6acbfb4fba4461d8ed58e68a450d09a1afa6f750e88893bfe66",
+      "previousSha256": "3944549bb48bdcad6b776388a59e5971b3939bd19d7dee55e2db8b65a8d2a1fc",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "New-Pure-Post-Quantum-Protocol-Specification",
@@ -8736,9 +8781,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-ietf-cose-sphincs-plus/",
       "status": "downloaded",
       "filename": "SLH-DSA-for-JOSE-and-COSE.html",
-      "sizeBytes": 113070,
+      "sizeBytes": 115066,
       "contentType": "text/html",
-      "sha256": "903365b91d97a64627bcd6f3cab3fd741e4c5c93ac3cceb027db8a3cc0baf63a"
+      "sha256": "cef58aaf7f1827249fba0de22d642ce470271f5d3a489043f60701bf4a1005b5",
+      "previousSha256": "903365b91d97a64627bcd6f3cab3fd741e4c5c93ac3cceb027db8a3cc0baf63a",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "Use-of-SLH-DSA-in-TLS-1-3",
@@ -8746,9 +8793,11 @@
       "url": "https://datatracker.ietf.org/doc/draft-reddy-tls-slhdsa/",
       "status": "downloaded",
       "filename": "Use-of-SLH-DSA-in-TLS-1-3.html",
-      "sizeBytes": 43201,
+      "sizeBytes": 24700,
       "contentType": "text/html",
-      "sha256": "b4252112c00a8a2c54f082ee9f2b12e96e033299532691647e8f60b3dc18bdaa"
+      "sha256": "a824e28952a318589dbfce357035b3f208842bf3ca1999e6df524330d310f052",
+      "previousSha256": "b4252112c00a8a2c54f082ee9f2b12e96e033299532691647e8f60b3dc18bdaa",
+      "rehashedAt": "2026-08-22"
     },
     {
       "refId": "X-509v3-ML-DSA-Certificates-for-the-Secure-Shell-SSH-Protoco",
@@ -10524,7 +10573,553 @@
       "sizeBytes": 16094,
       "contentType": "text/html",
       "sha256": "b3163d0bb474d0aa5a0e440e5578425787be672ea5bc789acf93a8f91976288e"
+    },
+    {
+      "refId": "NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew",
+      "title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+      "status": "downloaded",
+      "filename": "NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew.pdf",
+      "sizeBytes": 1946127,
+      "contentType": "application/pdf",
+      "sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1"
+    },
+    {
+      "refId": "Content-Credentials-C2PA-Technical-Specification-Version-2-4",
+      "title": "Content Credentials: C2PA Technical Specification, Version 2.4",
+      "url": "https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html",
+      "status": "downloaded",
+      "filename": "Content-Credentials-C2PA-Technical-Specification-Version-2-4.html",
+      "sizeBytes": 1065169,
+      "contentType": "text/html",
+      "sha256": "d55caebd96206f0de667962a4bab7098c6b6468fba68f8b55bcdd3a12d1ed26d"
+    },
+    {
+      "refId": "3GPP-PQC-Study-2025",
+      "title": "3GPP TR 33.938 V19.2.0 \u2014 3GPP Cryptographic Inventory (Release 19)",
+      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
+      "status": "downloaded",
+      "filename": "3GPP-PQC-Study-2025.docx",
+      "sizeBytes": 134945,
+      "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "ENISA PQC Guidelines",
+      "title": "Post-Quantum Cryptography: Current State and Quantum Mitigation",
+      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
+      "status": "downloaded",
+      "filename": "ENISA_PQC_Guidelines.pdf",
+      "sizeBytes": 1098869,
+      "contentType": "application/pdf",
+      "sha256": "f92b9e0fbcb25c861c9c7f493a1060cb4e116cab33254113f8350a76ccde2cea",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "Canada CSE PQC Guidance",
+      "title": "Roadmap for the migration to post-quantum cryptography for the Government of Canada (ITSM.40.001)",
+      "url": "https://www.cyber.gc.ca/sites/default/files/itsm.40.001-migration-post-quantum-cryptography-government-canada-e.pdf",
+      "status": "downloaded",
+      "filename": "Canada_CSE_PQC_Guidance.pdf",
+      "sizeBytes": 649278,
+      "contentType": "application/pdf",
+      "sha256": "79cb1a08a7f75533e81ffbd614d62543d87e3f7434e66f0ae59ec7ffdbdae7ca",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIST-SP-800-90A-R1",
+      "title": "SP 800-90A Rev. 1: Recommendation for Random Number Generation Using Deterministic Random Bit Generators",
+      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-90A-R1.pdf",
+      "sizeBytes": 2417007,
+      "contentType": "application/pdf",
+      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CSC-API-v2-Spec",
+      "title": "Cloud Signature Consortium API V2.2 Specification",
+      "url": "https://cloudsignatureconsortium.org/wp-content/uploads/2025/11/csc-api.pdf",
+      "status": "downloaded",
+      "filename": "CSC-API-v2-Spec.pdf",
+      "sizeBytes": 4143407,
+      "contentType": "application/pdf",
+      "sha256": "339cb9905a9ae3779e4a99ff2dc57a3f5243528dfb3578ee5c91745929fa76c1",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIST-SP-800-63-3",
+      "title": "NIST SP 800-63-4 Digital Identity Guidelines",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63-4.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-63-3.pdf",
+      "sizeBytes": 858054,
+      "contentType": "application/pdf",
+      "sha256": "2f5b107de218a0fc3fe7f7e91b2ece5babb001eda5745b7c568a3cc876002f2d",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "PQCC-Migration-Roadmap-2025",
+      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Migration Roadmap",
+      "url": "https://pqcc.org/post-quantum-cryptography-migration-roadmap/",
+      "status": "downloaded",
+      "filename": "PQCC-Migration-Roadmap-2025.pdf",
+      "sizeBytes": 749542,
+      "contentType": "application/pdf",
+      "sha256": "134d8ddce22bf1b5d079aa4ada382ab93a638d64c458dd7b6b26dc99278ec9a4",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "PQCC-Inventory-Workbook-2025",
+      "title": "Post-Quantum Cryptography Coalition (PQCC) PQC Inventory Workbook",
+      "url": "https://pqcc.org/pqc-inventory-workbook/",
+      "status": "downloaded",
+      "filename": "PQCC-Inventory-Workbook-2025.xlsx",
+      "sizeBytes": 87877,
+      "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "sha256": "df3ee3ecc1249e6cbf606ba82569a042528b40e00b20cf6355ff5563149c168f",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIST SP 800-90A",
+      "title": "Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1",
+      "url": "https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final",
+      "status": "downloaded",
+      "filename": "NIST_SP_800-90A.pdf",
+      "sizeBytes": 2417007,
+      "contentType": "application/pdf",
+      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "ENISA-Crypto-Market-Analysis-2024",
+      "title": "Cryptographic Products and Services Market Analysis",
+      "url": "https://www.enisa.europa.eu/publications/cryptographic-products-and-services-market-analysis",
+      "status": "downloaded",
+      "filename": "ENISA-Crypto-Market-Analysis-2024.pdf",
+      "sizeBytes": 3614689,
+      "contentType": "application/pdf",
+      "sha256": "6aa7f76cddc7f870d8b5418527aa66be33fe52787da4b480a44251b96896b9af",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "ENISA-State-of-Cybersecurity-2024",
+      "title": "2024 Report on the State of Cybersecurity in the Union",
+      "url": "https://www.enisa.europa.eu/publications/2024-report-on-the-state-of-the-cybersecurity-in-the-union",
+      "status": "downloaded",
+      "filename": "ENISA-State-of-Cybersecurity-2024.pdf",
+      "sizeBytes": 10642454,
+      "contentType": "application/pdf",
+      "sha256": "3df36fece8067be9f051eb1f163e23cdffefcfbf6c5359a70623986e05b2b979",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "ENISA-Threat-Landscape-2025",
+      "title": "ENISA Threat Landscape 2025",
+      "url": "https://www.enisa.europa.eu/publications/enisa-threat-landscape-2025",
+      "status": "downloaded",
+      "filename": "ENISA-Threat-Landscape-2025.pdf",
+      "sizeBytes": 4506241,
+      "contentType": "application/pdf",
+      "sha256": "379cba3629efda98bdfa429940b2ec22bacf367511f327c021aa5460b413f137",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIST-SP-800-140B",
+      "title": "NIST SP 800-140B Rev. 1: CMVP Security Policy Requirements",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-140Br1.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-140B.pdf",
+      "sizeBytes": 589224,
+      "contentType": "application/pdf",
+      "sha256": "dd68511f9160bf53dfabe9617d4a3528f578836b5b7b50dff002a7ab57275fef",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-2.0-MODEL",
+      "title": "Cybersecurity Maturity Model Certification (CMMC) Model Overview v2.13",
+      "url": "https://dodcio.defense.gov/CMMC/Documentation/",
+      "status": "downloaded",
+      "filename": "CMMC-2.0-MODEL.pdf",
+      "sizeBytes": 977491,
+      "contentType": "application/pdf",
+      "sha256": "3521adb262f431433bc0be3a3f7f717b0b05c61f1e5eb127c38c81d2979f4a00",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NZISM-V3-9",
+      "title": "New Zealand Information Security Manual (NZISM) v3.9 \u2014 November 2025",
+      "url": "https://nzism.gcsb.govt.nz/",
+      "status": "downloaded",
+      "filename": "NZISM-V3-9.pdf",
+      "sizeBytes": 5775995,
+      "contentType": "application/pdf",
+      "sha256": "4975bbd0729042c803548e59775443b739d5edef98f35c53ed65f24e730c59c4",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIAP",
+      "title": "NIAP \u2014 National Information Assurance Partnership",
+      "url": "https://www.niap-ccevs.org/",
+      "status": "downloaded",
+      "filename": "NIAP.pdf",
+      "sizeBytes": 3756170,
+      "contentType": "application/pdf",
+      "sha256": "852fec7215dc19ba06f33240a35c15edc1bc41a389740e7197e849997eddaeea",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "FIPS-198",
+      "title": "FIPS 198-1, The Keyed-Hash Message Authentication Code (HMAC)",
+      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.198-1.pdf",
+      "status": "downloaded",
+      "filename": "FIPS-198.pdf",
+      "sizeBytes": 129454,
+      "contentType": "application/pdf",
+      "sha256": "67661ba1407b391c799ff407471de18f36697af51d78a777e817c067ac30da23",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "GSMA-PQ02",
+      "title": "GSMA PQ.02: Guidelines for Quantum Risk Management for Telco",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/post-quantum-cryptography-documents/",
+      "status": "downloaded",
+      "filename": "GSMA-PQ02.pdf",
+      "sizeBytes": 1228363,
+      "contentType": "application/pdf",
+      "sha256": "7751a7462e35a40d3741265fd6bb8b77a92c87029e8a41a7956b65ab3d778eea",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "draft-ietf-lamps-pq-composite-kem-19",
+      "title": "Composite ML-KEM for use in X.509 Public Key Infrastructure",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-lamps-pq-composite-kem-19.html",
+      "status": "downloaded",
+      "filename": "draft-ietf-lamps-pq-composite-kem-19.html",
+      "sizeBytes": 473805,
+      "contentType": "text/html",
+      "sha256": "813f3ea31891dfd7c4449adc44dfa3ac1fb61063a822ada85f5f5dbf267e7ce1",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "SCA-2017-AES-CNN-Jitter",
+      "title": "Convolutional Neural Networks with Data Augmentation Against Jitter-Based Countermeasures",
+      "url": "https://eprint.iacr.org/2017/740",
+      "status": "downloaded",
+      "filename": "SCA-2017-AES-CNN-Jitter.pdf",
+      "sizeBytes": 1931236,
+      "contentType": "application/pdf",
+      "sha256": "ba62c51ba8cf287a3a73a143002a599b7a84d9226faf362a2e0b016c70d73047",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the",
+      "title": "NUKIB \u2014 Annex to the document \"Minimum Requirements for Cryptographic Algorithms\" (Quantum threat and quantum-resistant cryptography)",
+      "url": "https://nukib.gov.cz/download/publications_en/Annex%20to%20the%20document_Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "status": "downloaded",
+      "filename": "https-nukib-gov-cz-download-publications-en-Annex-20to-20the.pdf",
+      "sizeBytes": 843726,
+      "contentType": "application/pdf",
+      "sha256": "d8a7dd317d5d102f764a26a833137493a2ea80d2cb8325d868f7ac90ceebc2a1",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar",
+      "title": "ATIS \u2014 Preparing 5G for the Quantum Era: An Analysis of 3GPP Architecture and the Transition to Quantum-Resistant Cryptography",
+      "url": "https://cdn.atis.org/atis.org/2025/02/25152429/Preparing-5G-for-the-Quantum-Era-WP-V9.pdf",
+      "status": "downloaded",
+      "filename": "ATIS-Preparing-5G-for-the-Quantum-Era-An-Analysis-of-3GPP-Ar.pdf",
+      "sizeBytes": 3791096,
+      "contentType": "application/pdf",
+      "sha256": "53307a9b4e027095ab34b8b415e23cd78a697b4298cef5228e4d182be9053e89",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-L1-Scoping-Guide",
+      "title": "CMMC Level 1 Scoping Guidance",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/ScopingGuideL1v2.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-L1-Scoping-Guide.pdf",
+      "sizeBytes": 589054,
+      "contentType": "application/pdf",
+      "sha256": "fef1da3962dc1ba4f98ebdd41bb71bdaf17bcaf9cc0359bbd5dbe14b807c8cad",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-L1-Assessment-Guide",
+      "title": "CMMC Level 1 Self-Assessment Guide",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/AssessmentGuideL1v2.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-L1-Assessment-Guide.pdf",
+      "sizeBytes": 819911,
+      "contentType": "application/pdf",
+      "sha256": "88116fa807b3685703f08c1992580ad0cfbc22ad2bcf76f99378fadf964f7368",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-L2-Scoping-Guide",
+      "title": "CMMC Level 2 Scoping Guidance",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/ScopingGuideL2v2.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-L2-Scoping-Guide.pdf",
+      "sizeBytes": 699925,
+      "contentType": "application/pdf",
+      "sha256": "377b758393908d6c20a9813fa213c5d3ec36e00018a798d09e59f00eb8627981",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-L2-Assessment-Guide",
+      "title": "CMMC Level 2 Assessment Guide",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/AssessmentGuideL2v2.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-L2-Assessment-Guide.pdf",
+      "sizeBytes": 2272014,
+      "contentType": "application/pdf",
+      "sha256": "0dcaba1626a0d23893981d74dd3f0f2338fff54cece67d81bc811ce76392d867",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-Alignment-NIST-Standards",
+      "title": "CMMC Alignment to NIST Standards",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/CMMC-AlignmentNIST-Standards.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-Alignment-NIST-Standards.pdf",
+      "sizeBytes": 428787,
+      "contentType": "application/pdf",
+      "sha256": "796e59e8f04412975255c0c943740ab1bf694a24820553fdcdb216127042d643",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CMMC-SPRS-Guidance",
+      "title": "DoD Guidance on CMMC and SPRS",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/CMMC-SPRS.pdf",
+      "status": "downloaded",
+      "filename": "CMMC-SPRS-Guidance.pdf",
+      "sizeBytes": 4020383,
+      "contentType": "application/pdf",
+      "sha256": "1f0ac2037037d367db141f2d49741975bb0e30ea336aad6fd0ce7d0bcdcaea14",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DoD-OT-Control-Systems-SRG",
+      "title": "DoD Control Systems / OT Security Requirements Guide V2",
+      "url": "https://dl.dod.cyber.mil/wp-content/uploads/external/pdf/U_Control%20Systems_OT_V2_SRG.pdf",
+      "status": "downloaded",
+      "filename": "DoD-OT-Control-Systems-SRG.pdf",
+      "sizeBytes": 3040204,
+      "contentType": "application/pdf",
+      "sha256": "2e7fc05c8a2a49ee43847c24165dcb4bd219489f5588e635ee269c36cdd8a1d9",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "NIST-SP-800-171Ar3",
+      "title": "NIST SP 800-171Ar3: Assessing Security Requirements for CUI",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171Ar3.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-171Ar3.pdf",
+      "sizeBytes": 1228943,
+      "contentType": "application/pdf",
+      "sha256": "946d963707cdaba19901c49d5c89517adb00844fe5d101e9dac7febc68e34cfa",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CISA-OT-Asset-Inventory-Guidance",
+      "title": "Foundations for OT Cybersecurity: Asset Inventory Guidance for Owners and Operators",
+      "url": "https://www.cisa.gov/resources-tools/resources/foundations-ot-cybersecurity-asset-inventory-guidance-owners-and-operators",
+      "status": "downloaded",
+      "filename": "CISA-OT-Asset-Inventory-Guidance.pdf",
+      "sizeBytes": 1011404,
+      "contentType": "application/pdf",
+      "sha256": "a40779754d1ca789cc6cb6f4a035175541986157528b4112e2d099cae1d90749",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DFARS-252.204-7012",
+      "title": "DFARS 252.204-7012: Safeguarding Covered Defense Information and Cyber Incident Reporting",
+      "url": "https://www.acquisition.gov/dfars/252.204-7012-safeguarding-covered-defense-information-and-cyber-incident-reporting.",
+      "status": "downloaded",
+      "filename": "DFARS-252.204-7012.html",
+      "sizeBytes": 121483,
+      "contentType": "text/html",
+      "sha256": "53ce3541715604ed66050e80006d2d24cd1be358b18260a42f9c9efddb23f6e3",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DFARS-252.204-7019",
+      "title": "DFARS 252.204-7019: Notice of NIST SP 800-171 DoD Assessment Requirements",
+      "url": "https://www.acquisition.gov/dfars/252.204-7019-notice-nistsp-800-171-dod-assessment-requirements.",
+      "status": "downloaded",
+      "filename": "DFARS-252.204-7019.html",
+      "sizeBytes": 113145,
+      "contentType": "text/html",
+      "sha256": "a03196f771439263d120b210a16759f6085291706e6dee6294fda4e30199a393",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DFARS-252.204-7020",
+      "title": "DFARS 252.204-7020: NIST SP 800-171 DoD Assessment Requirements",
+      "url": "https://www.acquisition.gov/dfars/252.204-7020-nist-sp-800-171dod-assessment-requirements.",
+      "status": "downloaded",
+      "filename": "DFARS-252.204-7020.html",
+      "sizeBytes": 117632,
+      "contentType": "text/html",
+      "sha256": "c4f364b0047cc44cd35fb283955ef4553da11a8cdf8ae9b9070b2a012ba995b5",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "Brilliant-at-the-Basics-IT",
+      "title": "Brilliant at the Basics: Top 10 IT Cybersecurity Best Practices for DIB Partners",
+      "url": "https://dodcio.defense.gov/Portals/0/Documents/Library/Brilliant-at-the-Basics_IT-Tipsv1.pdf",
+      "status": "downloaded",
+      "filename": "Brilliant-at-the-Basics-IT.pdf",
+      "sizeBytes": 1632010,
+      "contentType": "application/pdf",
+      "sha256": "75b5a11f8d8f3723260bda4190ce6221b98a59544c302cf4561fec60fa22716d",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "Sigstore-Algorithm-Registry",
+      "title": "Sigstore Algorithm Registry (architecture-docs)",
+      "url": "https://github.com/sigstore/architecture-docs/blob/main/algorithm-registry.md",
+      "status": "downloaded",
+      "filename": "Sigstore-Algorithm-Registry.md",
+      "sizeBytes": 4623,
+      "contentType": "text/markdown",
+      "sha256": "db25120c1b77a17f71c3297c5b8e57ef9eb3ecd4d2e362496b5e219ebb50cc58",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "AUTOSAR-CP-SWS-CryptoDriver-R23-11",
+      "title": "AUTOSAR Classic Platform R23-11 \u2014 Specification of Crypto Driver",
+      "url": "https://www.autosar.org/fileadmin/standards/R23-11/CP/AUTOSAR_CP_SWS_CryptoDriver.pdf",
+      "status": "downloaded",
+      "filename": "AUTOSAR-CP-SWS-CryptoDriver-R23-11.pdf",
+      "sizeBytes": 846226,
+      "contentType": "application/pdf",
+      "sha256": "fe1e641afcd537d62927199365472cbd30cf8c6bab86353221b91250acf24288",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "arXiv-2602-21524-Quantum-Attacks-Nuclear",
+      "title": "Quantum Attacks Targeting Nuclear Power Plants: Threat Analysis, Defense and Mitigation Strategies",
+      "url": "https://arxiv.org/abs/2602.21524",
+      "status": "downloaded",
+      "filename": "arXiv-2602-21524-Quantum-Attacks-Nuclear.pdf",
+      "sizeBytes": 1274778,
+      "contentType": "application/pdf",
+      "sha256": "355746d6d39391f173bfca1b9b7b6db27bb926dd5902781ad6d92f5f7d842d2d",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "IACR-2024-046-Aviation-Quantum-Secure",
+      "title": "Quantum-Secure Hybrid Communication for Aviation Infrastructure",
+      "url": "https://eprint.iacr.org/2024/046",
+      "status": "downloaded",
+      "filename": "IACR-2024-046-Aviation-Quantum-Secure.pdf",
+      "sizeBytes": 817409,
+      "contentType": "application/pdf",
+      "sha256": "ba6ac7653299cc84347dbfc72d45393d545f63ede0a6e65f6eabb9c337a9f31f",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "CI-Plus-Spec-v1.3.2",
+      "title": "CI Plus Specification v1.3.2 \u2014 Content Security Extensions to the Common Interface",
+      "url": "https://www.ci-plus.com/wp-content/uploads/2019/02/ci-plus_specification_v1.3.2.pdf",
+      "status": "downloaded",
+      "filename": "CI-Plus-Spec-v1.3.2.pdf",
+      "sizeBytes": 7477037,
+      "contentType": "application/pdf",
+      "sha256": "3fcf86d7158e49bd84cc387258071bb623302b5a4da29ee1f8498a10f31b5705",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O",
+      "title": "PKCS #11 Cryptographic Token Interface Profiles Version 3.2 (OASIS Standard)",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-profiles/v3.2/os/pkcs11-profiles-v3.2-os.pdf",
+      "status": "downloaded",
+      "filename": "PKCS-11-Cryptographic-Token-Interface-Profiles-Version-3-2-O.pdf",
+      "sizeBytes": 530083,
+      "contentType": "application/pdf",
+      "sha256": "4f1e15e3f727c9d07ec81f8bb1f4aa2db8e03b2e16385c8217fbf525f1864375",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3",
+      "title": "PKCS #11 Cryptographic Token Interface Usage Guide Version 3.2",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-ug/v3.2/pkcs11-ug-v3.2.pdf",
+      "status": "downloaded",
+      "filename": "PKCS-11-Cryptographic-Token-Interface-Usage-Guide-Version-3.pdf",
+      "sizeBytes": 468117,
+      "contentType": "application/pdf",
+      "sha256": "e72c3bd902b34006d68aa83aed82074000d3af1a3af8fc19ab82f1d0fe66ed90",
+      "backfilledAt": "2026-08-21"
+    },
+    {
+      "refId": "DIB-CSaaS-Slicksheet",
+      "title": "DIB Cybersecurity as a Service (CSaaS) Slick Sheet",
+      "url": "https://www.dc3.mil/Portals/100/Documents/DC3/Missions/DCISE/Files/(DOPSR)092724_CSaaSSlicksheet.pdf",
+      "status": "downloaded",
+      "filename": "DIB-CSaaS-Slicksheet.pdf",
+      "sizeBytes": 225590,
+      "contentType": "application/pdf",
+      "sha256": "bfb2949b4d0f9f020b6046cf475ce9e6eeee86639bec1af3bc17aa7b738cfb29",
+      "backfilledAt": "2026-08-21",
+      "backfillBasis": "human-read: the automated screen failed on language or extraction, a person confirmed the document"
+    },
+    {
+      "refId": "PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group",
+      "title": "PKI Consortium Launches the CBOM Profiles Working Group",
+      "url": "https://pkic.org/2026/06/08/pki-consortium-launches-the-cbom-profiles-working-group/",
+      "status": "downloaded",
+      "filename": "PKI-Consortium-Launches-the-CBOM-Profiles-Working-Group.html",
+      "sizeBytes": 73633,
+      "contentType": "text/html",
+      "sha256": "45169bd2ebe89b9d8356b153ed7a8a0ed3c40b8d4e3ffd71ebb90420a6d911c9"
+    },
+    {
+      "refId": "RFC-9908",
+      "title": "RFC 9908",
+      "url": "https://www.rfc-editor.org/rfc/rfc9908.html",
+      "status": "downloaded",
+      "filename": "RFC-9908.html",
+      "sizeBytes": 115168,
+      "contentType": "text/html",
+      "sha256": "991fb98a28d513833ae9e8bfa2ad600a1ba202f158d9feba2741b686b894affa"
+    },
+    {
+      "refId": "Post-Quantum-Protocols-for-Banking-Applications",
+      "title": "Post-Quantum Protocols for Banking Applications",
+      "url": "https://csrc.nist.gov/csrc/media/Events/2022/fourth-pqc-standardization-conference/documents/papers/post-quantum-protocols-for-banking-applications-pqc2022.pdf",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Protocols-for-Banking-Applications.pdf",
+      "sizeBytes": 523890,
+      "contentType": "application/pdf",
+      "sha256": "d96cccfb645c8f2a0d63c5bb3ea80d905953cb8d3e95c9896741b91f2842b5ee"
+    },
+    {
+      "refId": "RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3",
+      "title": "RFC 9954 \u2014 Hybrid Key Exchange in TLS 1.3",
+      "url": "https://www.rfc-editor.org/rfc/rfc9954.html",
+      "status": "downloaded",
+      "filename": "RFC-9954-Hybrid-Key-Exchange-in-TLS-1-3.html",
+      "sizeBytes": 109798,
+      "contentType": "text/html",
+      "sha256": "c507f9c5759ede8c7e2b82db0305d9a978c1ebaaa59714a7424cde9811b52a7a"
+    },
+    {
+      "refId": "eIDAS-Regulation-EU-910-2014-consolidated-text-as-amended-by",
+      "title": "eIDAS Regulation (EU) 910/2014 \u2014 consolidated text as amended by (EU) 2024/1183",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:02014R0910-20240520",
+      "status": "downloaded",
+      "filename": "eIDAS-Regulation-EU-910-2014-consolidated-text-as-amended-by.pdf",
+      "sizeBytes": 728613,
+      "contentType": "application/pdf",
+      "sha256": "43222a1faffe5cb94e878c8ad06d4c617fe2de1d9d1b6663c5619d09214747f6"
     }
   ],
-  "generated": "2026-07-30T00:36:07.104551+00:00"
+  "generated": "2026-07-30T00:36:07.104551+00:00",
+  "rehashNote": "2026-08-22: a bulk re-cache on 2026-07-29 rewrote captures without updating this manifest, so their recorded hashes had proven nothing for three weeks. Entries carrying rehashedAt were re-verified as still being the document the row claims (title screen, plus an edition-token check for rows naming a specific year or version) and their hash re-recorded from disk. previousSha256 keeps what was there before. Entries WITHOUT rehashedAt were not re-verified.",
+  "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects \u2014 a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }

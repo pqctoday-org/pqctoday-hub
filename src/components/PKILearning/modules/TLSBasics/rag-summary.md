@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TLS Basics module provides a comprehensive introduction to Transport Layer Security 1.3 (RFC 8446) and its post-quantum cryptography integration. It covers the TLS 1.3 protocol improvements over TLS 1.2, the 1-RTT handshake process, cipher suite simplification, key exchange mechanisms (classical ECDH, pure PQC ML-KEM, and hybrid X25519MLKEM768), the HKDF-based key schedule, and the trade-offs of PQC migration in TLS. The module also covers active quantum downgrade attacks that threaten the transition period — where an adversary suppresses PQC negotiation entirely — and the layered mitigations developed by Bas Westerbaan (Cloudflare Research) and the IETF: maximum compatibility mode, PQ Lock/PQC HSTS, and PQC Continuity. The module includes a live TLS handshake simulator powered by OpenSSL WASM that demonstrates real handshake operations with configurable client and server parameters, including a downgrade attack scenario.
+The TLS Basics module provides a comprehensive introduction to Transport Layer Security 1.3 (RFC 9846, which obsoleted RFC 8446 in July 2026) and its post-quantum cryptography integration. It covers the TLS 1.3 protocol improvements over TLS 1.2, the 1-RTT handshake process, cipher suite simplification, key exchange mechanisms (classical ECDH, pure PQC ML-KEM, and hybrid X25519MLKEM768), the HKDF-based key schedule, and the trade-offs of PQC migration in TLS. The module also covers active quantum downgrade attacks that threaten the transition period — where an adversary suppresses PQC negotiation entirely — and the layered mitigations developed by Bas Westerbaan (Cloudflare Research) and the IETF: maximum compatibility mode, PQ Lock/PQC HSTS, and PQC Continuity. The module includes a live TLS handshake simulator powered by OpenSSL WASM that demonstrates real handshake operations with configurable client and server parameters, including a downgrade attack scenario.
 
 ## Key Concepts
 
@@ -40,7 +40,8 @@ The workshop is a live TLS handshake simulator with the following features:
 
 ## Related Standards
 
-- RFC 8446 (TLS 1.3)
+- RFC 9846 (TLS 1.3; obsoletes RFC 8446)
+- RFC 10024 (PQ/T hybrid key agreement for TLS 1.3)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - draft-ietf-tls-mlkem (ML-KEM for TLS 1.3)
