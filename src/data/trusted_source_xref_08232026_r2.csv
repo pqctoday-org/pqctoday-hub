@@ -2804,3 +2804,5 @@ algorithm,id-MLKEM1024-RSA3072-SHA3-256,ietf,direct
 algorithm,BLS12-381,ietf,direct
 algorithm,sr25519,web3-foundation,direct
 algorithm,SM2,ietf,direct
+library,draft-ietf-mls-pq-ciphersuites-06,ietf,direct
+library,2026-Minimum-Elements-for-a-Software-Bill-of-Materials-SBOM,cisa,direct
