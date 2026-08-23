@@ -8,7 +8,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.

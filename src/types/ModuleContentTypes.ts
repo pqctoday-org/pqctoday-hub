@@ -63,8 +63,40 @@ export interface ModuleContent {
   /** Semantic version of this module's content (major.minor.bug) */
   version?: string
 
-  /** ISO date (YYYY-MM-DD) when module factual content was last reviewed */
-  lastReviewed: string
+  /**
+   * ISO date (YYYY-MM-DD) when a human last CHECKED this module's factual claims
+   * against evidence. Written by exactly one thing — `record_module_review.py`,
+   * which refuses bulk stamping and writes a paired `revisions.jsonl` entry — so
+   * the date is always backed by a record naming who checked what.
+   *
+   * IT IS NOT "WHEN THIS FILE LAST CHANGED", and it used to be. Until 2026-08-23
+   * `apply_approved.bump_module_review` set this field on every applied edit, so
+   * editing a module marked it reviewed. The damage was not theoretical: three
+   * modules the proposals queue had flagged as 122-132 days past the review window
+   * were edited, silently re-stamped to today, and their staleness disappeared
+   * while their claims stayed unverified. Measured across all 64 modules, only 3
+   * lastReviewed dates matched a real review record and 53 overstated it, most of
+   * them by 148 days. The React app shows this value to readers as "Content last
+   * reviewed {date}" (ModuleReferencesTab), so those were reader-facing claims.
+   *
+   * Use `lastEdited` for "when did this file change". They answer different
+   * questions and a value that answers both answers neither.
+   *
+   * OPTIONAL, so that "nobody has checked this yet" is representable. Three modules
+   * (sbom, soc-implementation-pqc, verification-closure) were added after the
+   * 2026-03-28 baseline and have never been through a review, so they carry no value.
+   * ModuleReferencesTab already renders nothing when it is absent, which is the right
+   * outcome: no claim is better than a false one.
+   */
+  lastReviewed?: string
+
+  /**
+   * ISO date (YYYY-MM-DD) when this module's files last changed, for any reason.
+   * Bumped automatically by `apply_approved.bump_module_review` alongside
+   * `contentVersion`. Optional: a module that has never been edited since the split
+   * simply has no value, which is honest — do not backfill it from git mtimes.
+   */
+  lastEdited?: string
 
   /**
    * Standards referenced in this module — each resolved from standardsRegistry.
