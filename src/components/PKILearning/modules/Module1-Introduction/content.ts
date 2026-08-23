@@ -21,6 +21,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     // The deadlines below are IR 8547's; cite it so they are traceable.
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-23: this module states the EO 14412 deadlines to a reader
+    // (key establishment 2030, digital signatures 2031) and cited no document for
+    // them. audit_module_undeclared_citations.py could not see it — the row's
+    // reference_id is EO-2026-06-22-Securing-the-Nation and the module writes
+    // "Executive Order 14412", so the literal-id match never fired.
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
