@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileHomeBoard } from './MobileHomeBoard'
 import { PERSONA_JOURNEY_BOARD_VARIANTS, resolveRoleBoardVariant } from '@/data/personaConfig'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 function renderBoard(props: Partial<React.ComponentProps<typeof MobileHomeBoard>> = {}) {
   return render(
@@ -78,6 +79,15 @@ describe('MobileHomeBoard — persona selected', () => {
     renderBoard({ persona: 'executive', onOpenRoleSwitch })
     fireEvent.click(screen.getByRole('button', { name: 'Change' }))
     expect(onOpenRoleSwitch).toHaveBeenCalledTimes(1)
+  })
+
+  it('the role line adds the real live region and industry from usePersonaStore', () => {
+    usePersonaStore.getState().setRegion('eu')
+    usePersonaStore.getState().setIndustries(['Finance & Banking'])
+    renderBoard({ persona: 'executive' })
+    expect(screen.getByText(/EU · Finance & Banking/)).toBeInTheDocument()
+    usePersonaStore.getState().setRegion('global')
+    usePersonaStore.getState().setIndustries([])
   })
 
   it('works for every persona, not just executive', () => {

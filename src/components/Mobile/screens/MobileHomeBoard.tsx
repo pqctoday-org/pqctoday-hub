@@ -11,6 +11,8 @@ import {
 } from '@/data/personaConfig'
 import { Button } from '@/components/ui/button'
 import { PROVENANCE_LABEL } from '@/components/PersonaJourney/PersonaBoardView'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { cn } from '@/lib/utils'
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
@@ -69,6 +71,17 @@ export interface MobileHomeBoardProps {
  * has a live ResearcherFieldWatchCard override on desktop (reports real
  * corpus changes); this screen shows that variant's authored static side
  * card instead. A narrow, documented gap — one of thirty-six boards.
+ *
+ * Role line region/industry (handoff: "Executive / GRC · EU · Finance &
+ * Banking"): reads selectedRegion/selectedIndustries live from
+ * usePersonaStore — the same real, persisted fields PersonaSwitchModal
+ * writes and Timeline/Compliance/Threats/Algorithms already read elsewhere.
+ * Notably NOT what desktop's own PersonaBoardView shows here — its
+ * `heroBadge.text` is static per-board copy in roleBoardContent.generated.ts,
+ * identical across every persona and never interpolated with the real
+ * selection. This is a deliberate improvement on mobile, not a port: real
+ * data the user already set, rendered where the handoff's design asked for
+ * it, with no desktop file touched.
  */
 export function MobileHomeBoard({
   persona,
@@ -78,6 +91,7 @@ export function MobileHomeBoard({
 }: MobileHomeBoardProps) {
   const navigate = useNavigate()
   const [cardsExpanded, setCardsExpanded] = useState(false)
+  const { selectedRegion, selectedIndustries } = usePersonaStore()
 
   if (!persona) {
     return <MobileHomeSkipped onOpenRoleSwitch={onOpenRoleSwitch} />
@@ -87,11 +101,17 @@ export function MobileHomeBoard({
   const active = resolveRoleBoardVariant(persona, variantId)
   const board = active.board
   const tone = TONE_CLASS[board.sideCard.tone]
+  const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
+  const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
+  const roleContext = [regionLabel, industryLabel].filter(Boolean).join(' · ')
 
   return (
     <div className="px-4 pb-24 pt-4">
       <div className="mb-4 flex items-center justify-between">
-        <span className="text-[13px] font-semibold text-foreground">{PERSONAS[persona].label}</span>
+        <span className="text-[13px] font-semibold text-foreground">
+          {PERSONAS[persona].label}
+          {roleContext && <span className="text-muted-foreground"> · {roleContext}</span>}
+        </span>
         <Button
           type="button"
           variant="ghost"
