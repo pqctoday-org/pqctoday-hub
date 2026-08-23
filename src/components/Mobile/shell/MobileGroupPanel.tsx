@@ -14,7 +14,7 @@ import {
   type ForYouGroupId,
 } from '@/components/Layout/railNav'
 import { MobileSheet } from '../primitives/Sheet'
-import { MOBILE_REFERENCE_APPEND_PATHS } from './mobileNavGroups'
+import { mobileGroupDisplayPaths } from './mobileNavGroups'
 
 export interface MobileGroupPanelProps {
   groupId: ForYouGroupId
@@ -39,10 +39,14 @@ export interface MobileGroupPanelProps {
  * instead of a flat list, since the bottom bar's three tabs are fixed UI
  * slots that need to show something regardless of persona.
  *
- * Reference always gets '/timeline' and '/threats' appended (see
- * mobileNavGroups.ts) — both are RAIL_ALWAYS_VISIBLE_PATHS on desktop,
- * reachable by every persona and never persona-gated, so unlike the rest of
- * this panel's tile set they need no absence handling.
+ * Tile positions reuse computeGroupDisplayPaths (railNav.ts) via
+ * mobileGroupDisplayPaths — the exact same Timeline/Threats-in-Reference and
+ * Business-Tools-in-Practice display additions the desktop rail applies, not
+ * the raw persona-gated bucketing alone. Both are RAIL_ALWAYS_VISIBLE_PATHS
+ * / render-only additions on desktop, reachable by every persona and never
+ * persona-gated, so unlike the rest of this panel's tile set they need no
+ * absence handling. '/explore' is filtered out for mobile specifically
+ * (confirmed decision, 2026-08-23 — dropped from mobile entirely).
  */
 export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGroupPanelProps) {
   const navigate = useNavigate()
@@ -51,10 +55,7 @@ export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGrou
   const groups = getForYouGroups(groupablePaths)
   const group = groups.find((g) => g.id === groupId)
   const absences = getGroupAbsences(persona, groupId)
-  const paths =
-    groupId === 'reference'
-      ? [...(group?.paths ?? []), ...MOBILE_REFERENCE_APPEND_PATHS]
-      : (group?.paths ?? [])
+  const paths = mobileGroupDisplayPaths({ id: groupId, paths: group?.paths ?? [] }, groupablePaths)
 
   const handleSelect = (path: string) => {
     onClose()

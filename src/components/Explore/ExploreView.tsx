@@ -7,23 +7,12 @@ import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
 import { PERSONA_RECOMMENDED_PATHS } from '@/data/personaConfig'
 import { PERSONAS } from '@/data/learningPersonas'
 import { TILES, type ExploreTile } from '@/data/exploreTiles'
-import { useIsMobileShell } from '@/hooks/useIsMobileShell'
-import { MobileExploreGrid } from '@/components/Mobile/screens/MobileExploreGrid'
 
 export function ExploreView() {
   const navigate = useNavigate()
   const { selectedPersona, experienceLevel, viewAccess, setViewAccess } = usePersonaStore()
-  const isMobileShell = useIsMobileShell()
   const isCurious = selectedPersona === 'curious' || experienceLevel === 'curious'
   const isGated = isCurious && viewAccess !== 'unlocked'
-
-  // Mobile UX layer (Phase 4, second half). Placed before every hook-free
-  // branch below — nothing above this line has behavior that could differ
-  // for mobile, so this is a pure early return with zero risk to the
-  // flag-off path (Rule 1).
-  if (isMobileShell) {
-    return <MobileExploreGrid />
-  }
   const showUnlockPrompt = isGated
 
   // A tile is "recommended" for the current (non-curious) persona when its path

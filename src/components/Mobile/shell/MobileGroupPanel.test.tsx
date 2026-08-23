@@ -31,6 +31,16 @@ describe('MobileGroupPanel', () => {
     expect(screen.getByRole('button', { name: 'Threats' })).toBeInTheDocument()
   })
 
+  it('always includes Business Tools in Practice — real user-reported gap, computeGroupDisplayPaths appends it same as desktop', () => {
+    renderPanel({ groupId: 'practice', persona: null })
+    expect(screen.getByRole('button', { name: 'Business Tools' })).toBeInTheDocument()
+  })
+
+  it('never shows Explore as a Practice tile — dropped from the mobile shell entirely (confirmed decision, 2026-08-23)', () => {
+    renderPanel({ groupId: 'practice', persona: null })
+    expect(screen.queryByRole('button', { name: 'Explore' })).not.toBeInTheDocument()
+  })
+
   it('gates the tile set per persona — curious has no Patents TILE, matching the real PERSONA_ABSENT_PATHS.curious entry', () => {
     renderPanel({ groupId: 'reference', persona: 'curious' })
     // "Patents" still appears once, inside the absence explanation itself —

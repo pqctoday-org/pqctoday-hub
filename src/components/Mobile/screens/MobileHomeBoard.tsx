@@ -325,12 +325,13 @@ export function MobileHomeBoard({
  * stats bar, AskAssistantButton with five persona-branched questions). The
  * handoff's own screen 1 spec assumes a persona is selected; for the rarer
  * skip case this stays minimal rather than inventing new mobile-only copy —
- * same eyebrow line RoleHomeView already uses, a way back into role
- * selection, and a link to Explore (the page already built for exactly this
- * no-persona state).
+ * same eyebrow line RoleHomeView already uses, plus a way back into role
+ * selection. No longer links to Explore (confirmed decision, 2026-08-23:
+ * dropped from mobile entirely) — the bottom bar's Workflow/Practice/
+ * Reference groups already cover "everything, unfiltered" for a no-persona
+ * visitor via getUngatedGroupablePaths, so this stays a single CTA.
  */
 function MobileHomeSkipped({ onOpenRoleSwitch }: { onOpenRoleSwitch: () => void }) {
-  const navigate = useNavigate()
   return (
     <div className="flex flex-col items-center gap-4 px-4 pb-24 pt-16 text-center">
       <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
@@ -346,14 +347,6 @@ function MobileHomeSkipped({ onOpenRoleSwitch }: { onOpenRoleSwitch: () => void 
         className="h-11 rounded-[10px] bg-primary px-6 text-[13px] font-bold text-primary-foreground"
       >
         Pick a role
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => navigate('/explore')}
-        className="h-11 rounded-[10px] border-border px-6 text-[13px] font-bold text-foreground"
-      >
-        Browse Explore instead
       </Button>
     </div>
   )

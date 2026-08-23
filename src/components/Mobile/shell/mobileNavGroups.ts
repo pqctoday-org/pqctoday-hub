@@ -2,28 +2,37 @@
 import {
   getForYouGroups,
   getUngatedGroupablePaths,
+  computeGroupDisplayPaths,
   type ForYouGroupId,
 } from '@/components/Layout/railNav'
 
 /**
- * '/timeline' and '/threats' are RAIL_ALWAYS_VISIBLE_PATHS on desktop —
- * reachable by every persona, so they're deliberately outside
- * PERSONA_NAV_PATHS and railNav's own FOR_YOU_PATH_GROUP map entirely (see
- * that file's comments). MainLayout.tsx renders them by appending both
- * directly to the Reference rail section
- * (`group.id === 'reference' ? [...group.paths, '/timeline', '/threats'] : ...`)
- * rather than through the gated grouping mechanism.
- *
- * The mobile shell's Reference group panel and page-header crumb both need
- * the same append, or Timeline/Threats are simply unreachable/uncredited on
- * mobile — found by cross-checking the handoff's own screenshots (14-timeline,
- * 15-threats both have dedicated numbered screens, and the README's fixed
- * group table lists both under Reference) against `FOR_YOU_PATH_GROUP`, which
- * has no entry for either path. Kept as one shared constant so
- * MobileGroupPanel (tiles) and MobileHeader (crumb) can never drift from each
- * other on which group these two belong to.
+ * '/explore' is deliberately dropped from mobile entirely (confirmed
+ * decision, 2026-08-23) — the built MobileExploreGrid screen and its
+ * ExploreView wiring were reverted; mobile visitors who reach /explore
+ * directly now see desktop's ExploreView in mobile chrome, same as every
+ * other not-yet-distilled section, and it's no longer offered as a group-
+ * panel tile or given a crumb. Filtered out here — the one shared place
+ * both MobileGroupPanel (tiles) and mobileGroupIdForPath (crumb) read.
  */
-export const MOBILE_REFERENCE_APPEND_PATHS = ['/timeline', '/threats']
+const MOBILE_HIDDEN_PATHS = ['/explore']
+
+/**
+ * Real display-position tiles for a group panel, mobile's version of what
+ * MainLayout's desktop rail shows via computeGroupDisplayPaths (Business
+ * Tools in Practice, Timeline/Threats in Reference, the Workflow reorder) —
+ * reusing that exact function rather than re-deriving it, confirmed
+ * necessary after a real gap report: mobile's Practice panel was missing
+ * Business Tools entirely because this file previously only appended
+ * Timeline/Threats to Reference and used raw, unadjusted group.paths
+ * everywhere else.
+ */
+export function mobileGroupDisplayPaths(
+  group: { id: ForYouGroupId | 'other'; paths: string[] },
+  forYou: string[]
+): string[] {
+  return computeGroupDisplayPaths(group, forYou).filter((p) => !MOBILE_HIDDEN_PATHS.includes(p))
+}
 
 /**
  * Which bottom-bar group (Workflow / Practice / Reference) a route's crumb
@@ -31,11 +40,17 @@ export const MOBILE_REFERENCE_APPEND_PATHS = ['/timeline', '/threats']
  * membership is structural, not gated (gating is a separate, per-persona
  * concern already handled by getRailSections/PERSONA_ABSENT_PATHS). Reuses
  * getUngatedGroupablePaths() — the same "everything, ungated" set
- * MobileGroupPanel already falls back to with no persona selected — so a
- * path's crumb group and its tile group can never disagree.
+ * MobileGroupPanel already falls back to with no persona selected — run
+ * through computeGroupDisplayPaths so Timeline/Threats/Business Tools (which
+ * computeGroupDisplayPaths adds on top of the raw bucketing) get a crumb too.
  */
 export function mobileGroupIdForPath(pathname: string): ForYouGroupId | undefined {
-  if (MOBILE_REFERENCE_APPEND_PATHS.includes(pathname)) return 'reference'
-  const match = getForYouGroups(getUngatedGroupablePaths()).find((g) => g.paths.includes(pathname))
-  return match && match.id !== 'other' ? match.id : undefined
+  if (MOBILE_HIDDEN_PATHS.includes(pathname)) return undefined
+  const ungated = getUngatedGroupablePaths()
+  const groups = getForYouGroups(ungated)
+  for (const group of groups) {
+    if (group.id === 'other') continue
+    if (mobileGroupDisplayPaths(group, ungated).includes(pathname)) return group.id
+  }
+  return undefined
 }
