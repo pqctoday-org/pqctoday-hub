@@ -42,8 +42,8 @@ import { PatentsDrillBanner } from './PatentsDrillBanner'
 import { PatentDetailDrawer } from './PatentDetailDrawer'
 import { PatentsRecentlyAdded } from './PatentsRecentlyAdded'
 import { PatentsRoleLens } from '../PatentsRoleLens'
+import { PQC_ONLY_LS_KEY, SCOPE_PARAM, readPqcOnly, readScopeParam } from '@/data/patentsScope'
 
-const PQC_ONLY_LS_KEY = 'pqc-patents-pqc-only'
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
 const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
@@ -52,7 +52,9 @@ const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
 // a shared link shows what the sender configured, not the recipient's prior
 // preferences. Set alongside localStorage on every user-initiated change,
 // mirroring the existing sort/dir params below.
-const SCOPE_PARAM = 'scope'
+// PQC_ONLY_LS_KEY / SCOPE_PARAM moved to '@/data/patentsScope' (pure-move
+// extraction E-4, IMPLEMENTATION-PLAN.md §5.4) so the mobile Patents screen
+// reads/writes the same scope state this page does.
 const COLUMNS_PARAM = 'columns'
 const PRESET_PARAM = 'preset'
 const FILTER_PARAMS = [
@@ -74,23 +76,6 @@ const FILTER_PARAMS = [
   'fips',
   'filingYear',
 ]
-
-function readPqcOnly(): boolean {
-  try {
-    const saved = localStorage.getItem(PQC_ONLY_LS_KEY)
-    return saved === null ? true : saved === 'true'
-  } catch {
-    return true
-  }
-}
-
-/** Explicit scope from a shared-link URL, if present. `null` = not present in URL. */
-function readScopeParam(params: URLSearchParams): boolean | null {
-  const s = params.get(SCOPE_PARAM)
-  if (s === 'all') return false
-  if (s === 'pqc') return true
-  return null
-}
 
 /** Explicit columns/preset from a shared-link URL, if present. */
 function readColumnsParam(
