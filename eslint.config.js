@@ -203,6 +203,18 @@ export default defineConfig([
                 '@/components/common/*',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
+                // WhenDoesThisReachMe.tsx / MobileTimelineList.tsx (Timeline)
+                // — Phase 7's mobile Timeline screen reuses both verbatim
+                // rather than rebuilding them. WhenDoesThisReachMe is
+                // already self-contained data-driven prose (own doc
+                // comment: renders nothing rather than guessing a
+                // jurisdiction). MobileTimelineList is the pre-existing
+                // <768px breakpoint's own mobile view — already phone-
+                // tested, not a desktop layout being force-fit.
+                '!@/components/Timeline',
+                '@/components/Timeline/*',
+                '!@/components/Timeline/WhenDoesThisReachMe',
+                '!@/components/Timeline/MobileTimelineList',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board
