@@ -72,6 +72,9 @@ const MobilePageActionsSheet = React.lazy(() =>
 const MobileRoleSelection = React.lazy(() =>
   import('../Mobile/shell/MobileRoleSelection').then((m) => ({ default: m.MobileRoleSelection }))
 )
+const MobileWorkshopDock = React.lazy(() =>
+  import('../Mobile/shell/MobileWorkshopDock').then((m) => ({ default: m.MobileWorkshopDock }))
+)
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -1114,6 +1117,13 @@ export const MainLayout = () => {
               open={mobileRoleSwitchOpen}
               onClose={() => setMobileRoleSwitchOpen(false)}
             />
+            {/* Phase 6 — mounted unconditionally, not gated on route or
+                first-run: it renders null internally unless a workshop is
+                actually mode:'running' (see MobileWorkshopDock's own early
+                return), so there is nothing to gate here. Sits above
+                MobileBottomBar via its own `bottom: var(--mobile-nav-height)`
+                offset and z-mobile-dock. */}
+            <MobileWorkshopDock />
           </React.Suspense>
         )}
 
