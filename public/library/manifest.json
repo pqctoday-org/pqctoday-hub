@@ -7337,6 +7337,16 @@
       "rehashedAt": "2026-08-22"
     },
     {
+      "refId": "draft-ietf-mls-pq-ciphersuites-06",
+      "title": "draft-ietf-mls-pq-ciphersuites-06 \u2014 PQ Cipher Suites for MLS",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-mls-pq-ciphersuites-06.html",
+      "status": "downloaded",
+      "filename": "draft-ietf-mls-pq-ciphersuites-06.html",
+      "sizeBytes": 71183,
+      "contentType": "text/html",
+      "sha256": "ca70c8d9200795a6164f5572261f1addfa5f0d3cc701d98b4e15497856396c36"
+    },
+    {
       "refId": "draft-ietf-mls-combiner-02",
       "title": "MLS Combiner \u2014 Traditional + PQ MLS hybrid session",
       "url": "https://www.ietf.org/archive/id/draft-ietf-mls-combiner-02.txt",
