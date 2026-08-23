@@ -126,7 +126,7 @@ export function MobileHomeBoard({
           CuriousMobileBoard's own precedent ("six chips wrapping at 390px
           would push the headline below the fold"). */}
       <div
-        className="-mx-4 mb-5 flex snap-x gap-2 overflow-x-auto px-4 pb-1"
+        className="-mx-4 mb-5 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1"
         role="radiogroup"
         aria-label="Choose what you want to do"
         data-testid="mobile-board-variant-chips"
@@ -155,7 +155,7 @@ export function MobileHomeBoard({
         })}
       </div>
 
-      <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
         {board.heroEyebrow}
       </p>
       <h1 className="mt-1.5 text-[22px] font-extrabold leading-tight text-foreground">
@@ -181,12 +181,12 @@ export function MobileHomeBoard({
         </Button>
       </div>
 
-      <ul className="mt-4 flex flex-wrap gap-2" aria-label="Proof points">
+      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Proof points">
         {board.proofChips.map((chip, i) => (
           <li
             key={chip}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10.5px]',
+              'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11.5px]',
               i === 0
                 ? 'border-accent/30 bg-accent/10 text-accent'
                 : 'border-border bg-muted/30 text-muted-foreground'
@@ -199,7 +199,7 @@ export function MobileHomeBoard({
       </ul>
 
       {/* Side card */}
-      <section className={cn('glass-panel mt-5 flex flex-col gap-2.5 p-4', tone.panel)}>
+      <section className={cn('glass-panel mt-5 flex flex-col gap-2.5 p-3.5', tone.panel)}>
         <span className="w-fit rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           {PROVENANCE_LABEL[board.sideCard.provenance]}
         </span>
