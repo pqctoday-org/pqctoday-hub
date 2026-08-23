@@ -241,6 +241,31 @@ export default defineConfig([
                 '!@/components/PKILearning/redesign',
                 '@/components/PKILearning/redesign/*',
                 '!@/components/PKILearning/redesign/learnRedesign.helpers',
+                // Quiz's content-neutral pieces — types.ts (pure data, no
+                // JSX), useQuizState.ts (pure reducer/scoring logic, no
+                // JSX), and three components confirmed to carry no
+                // desktop-only layout assumptions (QuestionCard/
+                // FeedbackPanel already use plain flex/grid + min-h-[44px]
+                // touch targets; QuizProgress already ships its own
+                // sm:hidden/hidden:sm mobile branch). Reused directly by the
+                // mobile checkpoint quiz rather than re-implemented, so
+                // scoring/pass-threshold logic can never drift between
+                // desktop and mobile. QuizIntro/QuizWizard/QuizResults/
+                // ScoreBreakdown/TopicSelector/index.tsx stay blocked — real
+                // desktop-shaped view components.
+                '!@/components/PKILearning/modules',
+                '@/components/PKILearning/modules/*',
+                '!@/components/PKILearning/modules/Quiz',
+                '@/components/PKILearning/modules/Quiz/*',
+                '!@/components/PKILearning/modules/Quiz/types',
+                '!@/components/PKILearning/modules/Quiz/hooks',
+                '@/components/PKILearning/modules/Quiz/hooks/*',
+                '!@/components/PKILearning/modules/Quiz/hooks/useQuizState',
+                '!@/components/PKILearning/modules/Quiz/components',
+                '@/components/PKILearning/modules/Quiz/components/*',
+                '!@/components/PKILearning/modules/Quiz/components/QuestionCard',
+                '!@/components/PKILearning/modules/Quiz/components/FeedbackPanel',
+                '!@/components/PKILearning/modules/Quiz/components/QuizProgress',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
