@@ -20,7 +20,11 @@ const PARTS = [
   {
     id: 'suci',
     title: 'Part 1: SUCI Deconcealment',
-    description: 'Subscriber Privacy: ECIES (Profile A/B) & KEM (Profile C).',
+    // "Profile C" is named here because the workshop walks through it, but it is NOT a
+    // 3GPP profile — TS 33.501 Annex C defines null-scheme, Profile A and Profile B only,
+    // both ECIES. The label carries the qualifier so a reader meeting it in the tab
+    // strip is not misled before reaching the explanation.
+    description: 'Subscriber Privacy: ECIES (Profile A/B) & KEM (proposed Profile C).',
     icon: Shield,
   },
   {
