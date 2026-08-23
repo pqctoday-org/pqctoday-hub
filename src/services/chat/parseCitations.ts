@@ -35,8 +35,9 @@ export function parseCitations(content: string): {
   }
 
   const citations = parseCitationsJson(match[1])
-  const cleanContent = (content.slice(0, match.index) + content.slice(match.index! + match[0].length))
-    .trim()
+  const cleanContent = (
+    content.slice(0, match.index) + content.slice(match.index! + match[0].length)
+  ).trim()
   return { cleanContent, citations }
 }
 

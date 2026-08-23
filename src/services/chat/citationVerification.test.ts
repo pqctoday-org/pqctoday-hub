@@ -55,7 +55,12 @@ describe('verifyCitations', () => {
 
   it('is tolerant of whitespace/case differences without being fuzzy', () => {
     const violations = verifyCitations(
-      [{ claimExcerpt: '  ML-KEM-768   PROVIDES nist security  level 3  ', chunkId: 'algo-ml-kem-768' }],
+      [
+        {
+          claimExcerpt: '  ML-KEM-768   PROVIDES nist security  level 3  ',
+          chunkId: 'algo-ml-kem-768',
+        },
+      ],
       [CHUNK]
     )
     expect(violations).toEqual([])

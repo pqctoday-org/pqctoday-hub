@@ -114,12 +114,7 @@ describe('RetrievalService.searchWithEmbeddingFallback', () => {
     // a cosineSearch hit against — but query-time matching (search() itself)
     // is stubbed per-test below, so what MiniSearch would or wouldn't match
     // for QUERY against this corpus is irrelevant here.
-    service.initializeWithCorpus([
-      LEXICAL_CHUNK,
-      SEMANTIC_ONLY_CHUNK,
-      QUIZ_CHUNK,
-      CURIOUS_CHUNK,
-    ])
+    service.initializeWithCorpus([LEXICAL_CHUNK, SEMANTIC_ONLY_CHUNK, QUIZ_CHUNK, CURIOUS_CHUNK])
     embeddingRetrievalEnabled = false
     resetEmbeddingRuntime()
   })
