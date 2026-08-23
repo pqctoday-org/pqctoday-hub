@@ -63,7 +63,7 @@ export const SIGNING_TOOLS: SigningTool[] = [
       'Legacy signing tool used for Helm charts, Debian/RPM package signing, and Git commit signing. RSA or ECDSA keys stored in keyring files. Widely deployed but difficult to migrate.',
     vendor: 'GnuPG project',
     signingAlgorithm: 'rsa',
-    signatureFormat: 'OpenPGP packet format (RFC 4880)',
+    signatureFormat: 'OpenPGP packet format (RFC 9580)',
     transparencyLog: false,
     pqcReadiness: 'roadmap',
     pqcNotes:

@@ -22,7 +22,7 @@ export const PKIEnrollmentPlayground: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
-        Four-step PKI enrollment showcase — RFC 4210 (CMP) · RFC 7030 (EST) · RFC 9810 (CMP KEM).
+        Four-step PKI enrollment showcase — RFC 9810 (CMP, obsoletes RFC 4210) · RFC 7030 (EST).
         Generate a key, enroll via CMP, enroll the same key via EST, then perform a quantum-safe KEM
         key update.{' '}
         <Link
