@@ -10,10 +10,18 @@ import { MobileSheet } from '../primitives/Sheet'
  * duplicated mobile copy.
  *
  * Two render modes, sharing one component:
- *  - First run (`variant="firstRun"`): full-screen, no dismiss — matches the
- *    handoff ("Happens once, on first run... there is no intermediate
- *    confirmation screen"). Skipping is still offered (RoleHomeView's own
- *    "Show me everything" footer), it just isn't a sheet you can flick away.
+ *  - First run (`variant="firstRun"`): renders as normal scrollable content
+ *    inside MainLayout's regular header/content/bottom-nav column — not a
+ *    fixed full-viewport takeover. An earlier version used `fixed inset-0`,
+ *    which visually covered the header and bottom nav even after they were
+ *    made to render during first run — real gap found by the user directly
+ *    ("i dont see the top bar and bottom bar"), confirmed via a
+ *    zero-header/zero-nav DOM check, and against the target design screenshot
+ *    (which shows both chrome elements present on the first-run screen). No
+ *    dismiss — matches the handoff ("Happens once, on first run... there is
+ *    no intermediate confirmation screen"). Skipping is still offered
+ *    (RoleHomeView's own "Show me everything" footer), it just isn't a sheet
+ *    you can flick away.
  *  - Later switching (`variant="switch"`): the SAME cards in a dismissible
  *    MobileSheet, opened from the header's role pill — "the role is changed
  *    from the header pill, never re-asked [about region/industry]".
@@ -43,11 +51,7 @@ export function MobileRoleSelection({ variant, open, onClose }: MobileRoleSelect
   }
 
   if (variant === 'firstRun') {
-    return (
-      <div className="fixed inset-0 z-dialog overflow-y-auto bg-background">
-        <RoleHomeView onSelectPersona={handleSelect} onSkip={handleSkip} />
-      </div>
-    )
+    return <RoleHomeView onSelectPersona={handleSelect} onSkip={handleSkip} />
   }
 
   return (

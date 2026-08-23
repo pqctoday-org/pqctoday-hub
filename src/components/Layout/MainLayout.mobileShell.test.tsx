@@ -56,12 +56,16 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(await screen.findByRole('button', { name: /Learn/ })).toBeInTheDocument()
   })
 
-  it('flag on, no persona chosen and not skipped: shows the first-run role picker instead of any chrome', async () => {
+  it('flag on, no persona chosen and not skipped: shows the first-run role picker WITH the header and bottom nav still visible', async () => {
+    // Real gap found by the user directly ("i dont see the top bar and
+    // bottom bar"): an earlier version rendered the picker as a fixed
+    // full-viewport overlay and suppressed the header/nav entirely during
+    // first run. Fixed to match the target design, which shows both.
     mockUseIsMobileShell.mockReturnValue(true)
     renderLayout('/')
     expect(await screen.findByText("Who's asking?")).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Home/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Home/ })).toBeInTheDocument()
   })
 
   it('flag on, personalization explicitly skipped: shows the normal mobile chrome, not the picker again', async () => {

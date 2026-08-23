@@ -888,8 +888,11 @@ export const MainLayout = () => {
 
         {/* Suppressed for the Curious-mobile-board takeover (see
             `isCuriousMobileTakeover` above) — that screen renders its own
-            header; this one would only double up underneath it. */}
-        {!isCuriousMobileTakeover && isMobileShell && !isMobileFirstRun && (
+            header; this one would only double up underneath it. Renders
+            during first run too (real gap found by the user: the header
+            disappeared entirely on the "Who's asking?" screen) — the target
+            design keeps header/nav visible there. */}
+        {!isCuriousMobileTakeover && isMobileShell && (
           <React.Suspense fallback={null}>
             <MobileHeader
               persona={selectedPersona}
@@ -1128,10 +1131,11 @@ export const MainLayout = () => {
         )}
 
         {/* Mobile UX layer — bottom bar + its group panels/sheets, replacing
-            the legacy "More" sheet below for isMobileShell. Suppressed
-            during first run (RoleHomeView takes the whole screen) and the
-            Curious-mobile takeover, same as MobileHeader above. */}
-        {!isCuriousMobileTakeover && isMobileShell && !isMobileFirstRun && (
+            the legacy "More" sheet below for isMobileShell. Renders during
+            first run too, same as MobileHeader above — see that comment.
+            Suppressed only for the Curious-mobile takeover, which renders
+            its own chrome. */}
+        {!isCuriousMobileTakeover && isMobileShell && (
           <React.Suspense fallback={null}>
             <MobileBottomBar persona={selectedPersona} />
             <MobilePageActionsSheet
@@ -1143,11 +1147,6 @@ export const MainLayout = () => {
               open={mobileRoleSwitchOpen}
               onClose={() => setMobileRoleSwitchOpen(false)}
             />
-          </React.Suspense>
-        )}
-        {isMobileShell && isMobileFirstRun && !isCuriousMobileTakeover && (
-          <React.Suspense fallback={null}>
-            <MobileRoleSelection variant="firstRun" />
           </React.Suspense>
         )}
 
@@ -1356,9 +1355,10 @@ export const MainLayout = () => {
           className={cn(
             'flex-1 overflow-y-auto overflow-x-hidden min-h-0',
             // Clears the fixed bottom bar (handoff: "96px bottom pad on
-            // scroll containers") — only when it's actually rendered.
+            // scroll containers") — only when it's actually rendered. Now
+            // rendered during first run too (see MobileHeader comment above),
+            // so this only excludes the Curious-mobile takeover.
             isMobileShell &&
-              !isMobileFirstRun &&
               !isCuriousMobileTakeover &&
               'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom))]'
           )}
@@ -1388,6 +1388,19 @@ export const MainLayout = () => {
                 }
               >
                 <Outlet />
+              </React.Suspense>
+            </div>
+          ) : isMobileShell && isMobileFirstRun ? (
+            /* Mobile first run — the "Who's asking?" role picker renders as
+               normal in-flow content here, inside the same header/content/
+               bottom-nav column every other mobile screen uses, rather than
+               a fixed full-viewport overlay. The earlier fixed-overlay
+               version visually covered the header and bottom nav even once
+               they were made to render during first run (see the comment on
+               MobileHeader above) — real gap the user found directly. */
+            <div id="main-content" role="main">
+              <React.Suspense fallback={null}>
+                <MobileRoleSelection variant="firstRun" />
               </React.Suspense>
             </div>
           ) : (
