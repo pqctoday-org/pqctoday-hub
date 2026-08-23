@@ -108,6 +108,7 @@ import {
   getMobileVisiblePaths,
   getForYouGroups,
   getGroupAbsences,
+  computeGroupDisplayPaths,
   FOR_YOU_GROUP_BLURBS,
   RAIL_ICON_MAP,
   type RailRowTreatment,
@@ -718,57 +719,11 @@ export const MainLayout = () => {
             </>
           )}
           {forYouGroups.map((group) => {
-            // Workflow's visual order (2026-08-01 follow-up: "reorder workflow:
-            // migrate; assess; report; command center") — a fixed display
-            // priority, independent of PERSONA_NAV_PATHS's own array order.
-            // Anything not in this list (e.g. compliance) keeps its original
-            // relative order, appended after the prioritized ones.
-            // '/explore' visually moved from Practice to Workflow, first
-            // position (2026-08-01 follow-up: "Explore goes first in
-            // workflow section") — still classified 'practice' in
-            // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
-            // reassignment, not a reachability change.
-            // '/compliance' placed right before '/migrate' (2026-08-02
-            // follow-up: "compliance should be first in workflow section
-            // before migrate") — it was previously omitted from this
-            // priority list entirely, so it always fell to the end.
-            const WORKFLOW_ORDER = [
-              '/explore',
-              '/compliance',
-              '/migrate',
-              '/assess',
-              '/report',
-              '/business',
-            ]
-            // Reference visually includes Timeline + Threats (2026-08-01
-            // follow-up) even though they're globally always-visible, not
-            // persona-gated — purely a rendering position, not a reachability
-            // change (they render ONLY here, nowhere else, so there's no
-            // duplicate row). Learn was here too until 2026-08-02, when it was
+            // Learn was in this list too until 2026-08-02, when it was
             // promoted to its own row directly under Home; it is deliberately
-            // absent from this list now, since it renders unconditionally
-            // above and a second entry here would duplicate it.
-            const displayPaths =
-              group.id === 'workflow'
-                ? [
-                    ...WORKFLOW_ORDER.filter(
-                      (p) => group.paths.includes(p) || (p === '/explore' && forYou.includes(p))
-                    ),
-                    ...group.paths.filter((p) => !WORKFLOW_ORDER.includes(p)),
-                  ]
-                : group.id === 'practice'
-                  ? // '/business/tools' visually added to Practice (2026-08-01
-                    // follow-up: "add tool into practices section") — was
-                    // reached via an in-page Dashboard/Tools tab bar on
-                    // /business, now a real rail row instead. Not in
-                    // FOR_YOU_PATH_GROUP/PERSONA_NAV_PATHS at all (same
-                    // render-only-addition pattern as Reference's Learn/
-                    // Timeline/Threats above), so it renders here for every
-                    // persona that has a Practice group, unconditionally.
-                    [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
-                  : group.id === 'reference'
-                    ? [...group.paths, '/timeline', '/threats']
-                    : group.paths
+            // absent now, since it renders unconditionally above and a second
+            // entry here would duplicate it.
+            const displayPaths = computeGroupDisplayPaths(group, forYou)
             const groupHasActiveRoute = displayPaths.some((path) => isPathActive(path))
             const groupExpanded = groupHasActiveRoute || !collapsedForYouGroups.has(group.id)
             const groupContentId = `for-you-group-${group.id}`
