@@ -394,8 +394,28 @@ export const MainLayout = () => {
   // `/library`) must keep this file's normal header/nav so they aren't
   // stranded with no way to navigate away.
   const isBelowLg = useIsBelowLgViewport()
+
+  // Mobile UX layer (design_handoff_pqc_mobile_ux/IMPLEMENTATION-PLAN.md).
+  // On by default as of 2026-08-23 — see featureFlags.ts. Computed before
+  // isCuriousMobileTakeover below, which needs to know about it.
+  const isMobileShell = useIsMobileShell()
+
+  // `!isMobileShell` added 2026-08-23 — real bug, found by a test exercising
+  // the REAL useIsMobileShell/useIsBelowLgViewport hooks together for the
+  // first time (LandingView.integration.test.tsx; every earlier test of this
+  // interaction mocked useIsMobileShell directly, which bypasses this
+  // computation entirely). Without it: once the flag defaults on,
+  // LandingView's OWN isMobileShell check (placed first, see LandingView.tsx)
+  // already wins and renders the new MobileHomeBoard for curious — but this
+  // flag stayed true regardless, so MainLayout suppressed its OWN header and
+  // bottom-bar anyway, assuming the legacy CuriousMobileBoard (which supplies
+  // its own chrome) was what actually rendered. Net result: real content, no
+  // chrome at all. CuriousMobileBoard's branch in LandingView.tsx is
+  // intentionally NOT deleted (only reachable with the flag explicitly
+  // opted out via '0') — this just makes the takeover-suppression agree with
+  // which board is actually rendering.
   const isCuriousMobileTakeover =
-    selectedPersona === 'curious' && isBelowLg && location.pathname === '/'
+    selectedPersona === 'curious' && isBelowLg && location.pathname === '/' && !isMobileShell
 
   const isPathActive = React.useCallback(
     (path: string) =>
@@ -406,14 +426,6 @@ export const MainLayout = () => {
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
   const [personaSwitchOpen, setPersonaSwitchOpen] = React.useState(false)
 
-  // Mobile UX layer (design_handoff_pqc_mobile_ux/IMPLEMENTATION-PLAN.md).
-  // Flag off (default) or >=1024px: isMobileShell is false and every branch
-  // below renders exactly the desktop/legacy-mobile tree it always has —
-  // this is the ENTIRE Rule 1 guarantee, not a promise elsewhere. Mirrors
-  // the isCuriousMobileTakeover suppression exactly: that screen supplies
-  // its own chrome, so the mobile shell stays suppressed there too until
-  // Phase 4 retires CuriousMobileBoard.
-  const isMobileShell = useIsMobileShell()
   const [mobilePageActionsOpen, setMobilePageActionsOpen] = React.useState(false)
   const [mobileRoleSwitchOpen, setMobileRoleSwitchOpen] = React.useState(false)
   // Same condition LandingView.tsx already uses for the identical no-persona
