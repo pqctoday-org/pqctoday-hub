@@ -109,7 +109,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               secret using the IKEv2 key hierarchy.&rdquo;
             </blockquote>
             <p className="text-xs text-muted-foreground mt-2">
-              &mdash; draft-ietf-ipsecme-ikev2-mlkem-01
+              &mdash; draft-ietf-ipsecme-ikev2-mlkem-06
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -340,8 +340,8 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-xs font-bold text-foreground mb-1">IKEv2 (IKE_AUTH)</div>
               <p className="text-xs text-muted-foreground">
-                In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-mldsa updates the IKE_AUTH
-                phase to support{' '}
+                In addition to the AKE payloads, draft-ietf-ipsecme-ikev2-pqc-auth updates the
+                IKE_AUTH phase to support{' '}
                 <InlineTooltip term="ML-DSA">
                   <strong>ML-DSA</strong>
                 </InlineTooltip>{' '}

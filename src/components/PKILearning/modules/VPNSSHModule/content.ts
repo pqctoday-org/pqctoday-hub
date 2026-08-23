@@ -27,6 +27,14 @@ export const content: ModuleContent = {
     getStandard('RFC-7383'),
     getStandard('IETF RFC 8731'),
     getStandard('RFC-9242'),
+    // DECLARED 2026-08-23: the module states how ML-KEM and ML-DSA are carried in IKEv2
+    // and cited neither draft. The names it used were dead slugs — the library records
+    // draft-ietf-ipsecme-ikev2-mldsa and -mlkem as deprecated bare slugs superseded by
+    // the revisioned WG documents below, and one site still named Fluhrer's individual
+    // submission, whose own capture reads "Expired Internet-Draft (individual) Expired &
+    // archived".
+    getStandard('draft-ietf-ipsecme-ikev2-pqc-auth-08'),
+    getStandard('draft-ietf-ipsecme-ikev2-mlkem-06'),
   ],
 
   algorithms: [
