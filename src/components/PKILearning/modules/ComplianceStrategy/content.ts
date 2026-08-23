@@ -41,6 +41,22 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-30'),
     getStandard('NSA CNSA 2.0 FAQ'),
     getStandard('NSM-10'),
+    // DECLARED 2026-08-23: this module names SP 800-131A for algorithm transition guidance and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
+    getStandard('NIST-SP-800-131A-Rev3'),
+    // DECLARED 2026-08-23: this module names OMB M-23-02 as the source of the federal cryptographic-inventory duty and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
+    getStandard('OMB-M-23-02'),
+    // DECLARED 2026-08-23: this module names SP 800-161 as the supply-chain risk framework and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
+    getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
+    // DECLARED 2026-08-23: this module names SP 800-57 Part 1 for key-management guidance. Cites REVISION 5, which is the
+    // Final publication — Rev 6 exists in the catalogue but its own cover page reads
+    // "Initial Public Draft" and cited nothing for it.
+    getStandard('NIST-SP-800-57-Pt1-R5'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],

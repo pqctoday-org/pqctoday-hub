@@ -38,6 +38,11 @@ export const content: ModuleContent = {
     getStandard('RFC 9180'),
     getStandard('draft-ietf-pquip-hybrid-signature-spectrums'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
+    // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
+    // (the Secure Hash Standard) and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 180-4" against a row filed as FIPS-180-4.
+    getStandard('FIPS-180-4'),
   ],
 
   algorithms: [

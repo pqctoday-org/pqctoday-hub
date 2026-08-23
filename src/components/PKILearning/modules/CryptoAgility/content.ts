@@ -28,6 +28,11 @@ export const content: ModuleContent = {
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
     getStandard('RFC 9370'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [

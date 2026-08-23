@@ -27,6 +27,15 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names SP 800-57 Part 1 for key-management guidance. Cites REVISION 5, which is the
+    // Final publication — Rev 6 exists in the catalogue but its own cover page reads
+    // "Initial Public Draft" and cited nothing for it.
+    getStandard('NIST-SP-800-57-Pt1-R5'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-65'), getAlgorithm('ML-KEM-768')],

@@ -32,6 +32,11 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('IETF RFC 6979'),
     getStandard('RFC 9370'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [

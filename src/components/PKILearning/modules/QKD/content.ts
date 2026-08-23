@@ -36,6 +36,10 @@ export const content: ModuleContent = {
     getStandard('PKCS11-V32-OS-OASIS'),
     getStandard('RFC 5869'),
     getStandard('RFC-9258'),
+    // DECLARED 2026-08-23: this module names FIPS 198-1 (the keyed-hash MAC standard) for a mechanism it describes and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "FIPS 198-1" against a row filed as FIPS-198-1.
+    getStandard('FIPS-198-1'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768')],

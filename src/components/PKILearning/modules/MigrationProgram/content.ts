@@ -32,6 +32,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST CSWP 39'),
+    // DECLARED 2026-08-23: this module names OMB M-23-02 as the source of the federal cryptographic-inventory duty and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
+    getStandard('OMB-M-23-02'),
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],
