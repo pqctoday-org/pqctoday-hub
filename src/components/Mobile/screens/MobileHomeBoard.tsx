@@ -14,6 +14,7 @@ import { PROVENANCE_LABEL } from '@/components/PersonaJourney/PersonaBoardView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { cn } from '@/lib/utils'
+import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
 
 type SideCardTone = PersonaJourneyBoard['sideCard']['tone']
 
@@ -229,6 +230,11 @@ export function MobileHomeBoard({
           </p>
         )}
       </section>
+
+      {/* Workshop entry — Phase 6's own follow-up (dock had no way in from
+          Home). Renders nothing when idle-with-no-flow, running (the dock
+          already owns that state) or video mode. */}
+      <MobileWorkshopEntry />
 
       {/* Supporting cards — collapsed by default (handoff: "the board was
           five scrolls long before this"). */}
