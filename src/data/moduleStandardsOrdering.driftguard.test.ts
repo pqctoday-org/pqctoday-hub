@@ -18,8 +18,6 @@
  * real finding owed a reorder (plan item WS3.2).
  */
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { MODULE_CITED_STANDARDS } from './moduleContentRegistry'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 
@@ -31,22 +29,22 @@ function strideSample<T>(items: T[], n: number): T[] {
 }
 
 /**
- * READ from accuracy_spotcheck.py rather than hardcoded. A duplicate of this number
- * went stale the day the cap changed: audit_module_citation_coverage.py kept its own
- * `4` and went on reporting "144 of 378 never opened" about a sampler that no longer
- * existed. Same trap, same fix.
+ * Mirrors `_MAX_EVIDENCE_DOCS` in pqctoday-priv/maintenance/accuracy_spotcheck.py.
+ * 0 means NO CAP — every declared standard is opened.
+ *
+ * DUPLICATED ON PURPOSE, AND THE FIRST ATTEMPT PROVED WHY. This briefly read the value
+ * straight out of accuracy_spotcheck.py, to avoid the stale-copy trap that had just bitten
+ * audit_module_citation_coverage.py. That works locally and CANNOT work in CI: the hub's
+ * workflow checks out the hub alone, pqctoday-priv is a separate private repo, and the read
+ * died with ENOENT in a simulated CI checkout. Several scripts in ci.yml already no-op for
+ * exactly this reason.
+ *
+ * The dependency only runs one way — priv can see the hub, the hub can never see priv — so
+ * the constant lives here and pqctoday-priv/maintenance/test_hub_stride_constant_agrees.py
+ * asserts the two agree. Keep them in step by changing accuracy_spotcheck.py and letting
+ * that test fail; do not re-introduce a cross-repo read.
  */
-function spotcheckCap(): number {
-  const src = readFileSync(
-    join(process.cwd(), '..', 'pqctoday-priv', 'maintenance', 'accuracy_spotcheck.py'),
-    'utf-8'
-  )
-  const m = /LEARN_MAX_EVIDENCE_DOCS"\s*,\s*"(-?\d+)"/.exec(src)
-  if (!m) throw new Error('cannot read LEARN_MAX_EVIDENCE_DOCS from accuracy_spotcheck.py')
-  return Number(m[1])
-}
-
-const MAX_EVIDENCE_DOCS = spotcheckCap()
+const MAX_EVIDENCE_DOCS = 0
 const POLICY_TRACKS = new Set(['Executive', 'Role Guides'])
 
 /**
