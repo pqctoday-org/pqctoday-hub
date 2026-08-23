@@ -1296,7 +1296,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
             <LibRef id="FIPS 204" label="FIPS 204" />
             <LibRef id="FIPS 205" label="FIPS 205" />
             <LibRef id="FIPS 186-5" label="FIPS 186-5" />
-            <LibRef id="PKCS11-V32-OASIS" label="PKCS#11 v3.2" />
+            <LibRef id="PKCS11-V32-OS-OASIS" label="PKCS#11 v3.2" />
           </div>
 
           {isLive && (

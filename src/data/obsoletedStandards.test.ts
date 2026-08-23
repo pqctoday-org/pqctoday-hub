@@ -114,6 +114,19 @@ function searchKeys(id: string): string[] {
   )
 }
 
+/** Raw .ts/.tsx source of a module, tests excluded. Used only to find <LibRef id="...">
+ *  attributes, which are markup rather than prose, so comment-stripping is irrelevant. */
+function readerFacingSource(dir: string): string {
+  let out = ''
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) out += readerFacingSource(full)
+    else if (/\.tsx?$/.test(entry.name) && !entry.name.includes('.test.'))
+      out += readFileSync(full, 'utf-8')
+  }
+  return out
+}
+
 /** Reader-facing text only: every .ts/.tsx/.md in the module, tests excluded, comments
  *  stripped. Comments must NOT count — a maintainer note explaining the supersession is
  *  not the reader being told, and letting it count made this test pass on the exact
@@ -184,7 +197,16 @@ describe('modules that declare a superseded standard must say so', () => {
     for (const r of rows) {
       const id = (r.reference_id ?? '').trim()
       const st = (r.document_status ?? '').trim()
-      if (id && STALE.some((re) => re.test(st))) staleIds.set(id, st)
+      if (!id) continue
+      // TWO ways a row stops being citable as current, and the first version only knew
+      // the second. RFC 8446 was caught because its document_status literally reads
+      // "Obsoleted by RFC 9846". PKCS11-V32-OASIS is not: its status column says
+      // `deprecated` while document_status says the innocuous "Committee Specification
+      // Draft", so it slipped through while secure-boot-pqc linked a reader straight to
+      // a superseded draft of PKCS#11 v3.2.
+      const rowStatus = (r.status ?? 'active').trim().toLowerCase()
+      if (rowStatus === 'deprecated') staleIds.set(id, `row status: deprecated (${st})`)
+      else if (STALE.some((re) => re.test(st))) staleIds.set(id, st)
     }
     expect(staleIds.size).toBeGreaterThan(0) // and guard that the corpus HAS stale rows
 
@@ -199,16 +221,27 @@ describe('modules that declare a superseded standard must say so', () => {
     const WINDOW = 260
 
     const offenders: string[] = []
-    for (const dir of readdirSync(MODULES)) {
-      const content = join(MODULES, dir, 'content.ts')
+    for (const dirEntry of readdirSync(MODULES)) {
+      const content = join(MODULES, dirEntry, 'content.ts')
       if (!existsSync(content)) continue
+      // BOTH citation mechanisms, not just declarations. getStandard() builds the
+      // References tab; <LibRef id="..."> renders an inline clickable link a reader
+      // follows mid-sentence. Checking only the first missed a real one on 2026-08-22:
+      // secure-boot-pqc linked to PKCS11-V32-OASIS, a deprecated Committee Specification
+      // DRAFT, while the ratified PKCS11-V32-OS-OASIS existed. An inline link is if
+      // anything the more direct citation — the reader clicks it.
       const declared = [
         ...readFileSync(content, 'utf-8').matchAll(/getStandard\(\s*'([^']+)'\s*\)/g),
       ].map((m) => m[1])
+      const dir = join(MODULES, dirEntry)
+      const libRefs = [...readerFacingSource(dir).matchAll(/<LibRef\s+id=["']([^"']+)["']/g)].map(
+        (m) => m[1]
+      )
+      declared.push(...libRefs)
       const stale = declared.filter((id) => staleIds.has(id))
       if (stale.length === 0) continue
 
-      const prose = readerFacingText(join(MODULES, dir))
+      const prose = readerFacingText(join(MODULES, dirEntry))
       for (const id of stale) {
         const keys = searchKeys(id)
         // Guard the guard: an id that yields no distinctive token would pass vacuously.
@@ -226,7 +259,7 @@ describe('modules that declare a superseded standard must say so', () => {
         }
         if (!disclosed) {
           offenders.push(
-            `${dir} declares ${id} — library says "${staleIds.get(id)}" — and no ` +
+            `${dirEntry} declares ${id} — library says "${staleIds.get(id)}" — and no ` +
               `reader-facing text near it says so`
           )
         }
