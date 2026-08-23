@@ -18,17 +18,35 @@
  * real finding owed a reorder (plan item WS3.2).
  */
 import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { MODULE_CITED_STANDARDS } from './moduleContentRegistry'
 import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 
 /** Mirrors `_stride_sample()` in accuracy_spotcheck.py — keep the two in step. */
 function strideSample<T>(items: T[], n: number): T[] {
-  if (n >= items.length) return items
+  if (n <= 0 || n >= items.length) return items
   const stride = items.length / n
   return Array.from({ length: n }, (_, i) => items[Math.floor(i * stride)])
 }
 
-const MAX_EVIDENCE_DOCS = 4
+/**
+ * READ from accuracy_spotcheck.py rather than hardcoded. A duplicate of this number
+ * went stale the day the cap changed: audit_module_citation_coverage.py kept its own
+ * `4` and went on reporting "144 of 378 never opened" about a sampler that no longer
+ * existed. Same trap, same fix.
+ */
+function spotcheckCap(): number {
+  const src = readFileSync(
+    join(process.cwd(), '..', 'pqctoday-priv', 'maintenance', 'accuracy_spotcheck.py'),
+    'utf-8'
+  )
+  const m = /LEARN_MAX_EVIDENCE_DOCS"\s*,\s*"(-?\d+)"/.exec(src)
+  if (!m) throw new Error('cannot read LEARN_MAX_EVIDENCE_DOCS from accuracy_spotcheck.py')
+  return Number(m[1])
+}
+
+const MAX_EVIDENCE_DOCS = spotcheckCap()
 const POLICY_TRACKS = new Set(['Executive', 'Role Guides'])
 
 /**
@@ -75,6 +93,19 @@ describe('standards[] ordering on policy-track modules', () => {
   }
 
   it('no NEW policy module has its subject crowded out by generic PQC specs', () => {
+    // THE PREMISE IS CONDITIONAL, and as of 2026-08-22 it does not hold. This guard
+    // exists because the spot-check opened only four documents per module by even
+    // stride, so declaration ORDER decided what was ever verified. That cap was lifted
+    // the same day: every declared standard is now read, and ordering cannot crowd
+    // anything out of the evidence.
+    //
+    // Kept rather than deleted because the cap is still settable by
+    // LEARN_MAX_EVIDENCE_DOCS and MAX_EVIDENCE_DOCS is read from that file — if the cap
+    // ever returns, this guards again on its own.
+    //
+    // NOT addressed here: whether ordering still matters to a READER scanning the
+    // References tab. That is a real question and a different one.
+    if (MAX_EVIDENCE_DOCS <= 0) return
     expect(offenders.filter((id) => !KNOWN_UNORDERED.has(id))).toEqual([])
   })
 

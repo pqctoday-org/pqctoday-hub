@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'merkle-tree-certs',
   version: '1.2.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     // The MTC spec itself — cited by section (§2.1 roles, §5.3 TreeHead, §6.2-6.4
@@ -34,7 +34,12 @@ export const content: ModuleContent = {
     // SHA-256 — the leaf/internal node hash function; cited by name ("FIPS 180-4 ACVP")
     // in MerkleTreeBuilder.tsx's Known-Answer-Test panel.
     getStandard('FIPS-180-4'),
-    getStandard('FIPS 205'), // SLH-DSA (SPHINCS+) — size-comparison algorithm only; see the ordering note above
+    getStandard('FIPS 205'), // SLH-DSA (SPHINCS+) — size-comparison algorithm only; see the ordering note above,
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST SP 800-208'),
+    getStandard('draft-sheffer-tls-pqc-continuity'),
   ],
 
   algorithms: [

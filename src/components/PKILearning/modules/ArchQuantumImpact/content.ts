@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'arch-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,5: FIPS 203 (the ML-KEM ciphertext sizes this module quotes),
@@ -24,6 +24,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST IR 8547'),
     getStandard('NIST SP 800-208'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

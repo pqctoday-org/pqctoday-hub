@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -33,6 +33,11 @@ export const content: ModuleContent = {
     // hashes, or 1024 bytes, is sufficient for subtrees of up to 2^32". The numbers
     // were right; nothing in the module said where they came from.
     getStandard('draft-ietf-plants-merkle-tree-certs'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 205'),
+    getStandard('RFC 8879'),
   ],
 
   algorithms: [

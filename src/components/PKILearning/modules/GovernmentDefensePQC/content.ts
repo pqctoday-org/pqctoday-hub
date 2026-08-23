@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'government-defense-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('NSA CNSA 2.0'),
@@ -30,6 +30,11 @@ export const content: ModuleContent = {
     getStandard('Common-Policy-X-509-Certificate-and-CRL-Profile'),
     getStandard('Federal-PKI-Common-Policy-X-509-Certificate-and-CRL-Profile'),
     getStandard('X-509-Certificate-Policy-for-the-U-S-Federal-PKI-Common-Poli'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIAP'),
+    getStandard('NSM-10'),
   ],
 
   algorithms: [

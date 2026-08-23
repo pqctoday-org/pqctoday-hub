@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'trust-services-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra'),
@@ -21,6 +21,10 @@ export const content: ModuleContent = {
     getStandard('CSC-API-v2-Spec'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

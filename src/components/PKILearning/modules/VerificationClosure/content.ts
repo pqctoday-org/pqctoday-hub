@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
   version: '1.1.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   // NCSC-UK's 2028/2031/2035 targets, the AIVD/CWI/TNO Handbook, and ISO/IEC
   // 27001 are still practitioner guidance / have no ACTIVE library row to
@@ -24,6 +24,10 @@ export const content: ModuleContent = {
     getStandard('NIST CSWP 48'),
     getStandard('NIST SP 800-37'),
     getStandard('CISA-PQC-CATEGORY-LIST-2026'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST SP 800-53'),
   ],
 
   algorithms: [

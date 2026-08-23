@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'compliance-strategy',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
   // IR 8547 added 2026-08-22: relatedStandards asserts a date or version for it, so
   // nothing could check that deprecation-timeline claim without it being declared.
 
@@ -24,6 +24,19 @@ export const content: ModuleContent = {
     getStandard('NIST IR 8547'),
     getStandard('EO-2026-06-22-Securing-the-Nation'),
     getStandard('OMB-M-26-15'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ETSI TR 103 619'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('FIPS 199'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+    getStandard('FIPS-140-3'),
+    getStandard('NIST CSWP 39'),
+    getStandard('NIST SP 800-30'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NSM-10'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],

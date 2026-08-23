@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
   version: '1.1.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   // ORDER MATTERS, and this list is ordered for the SAMPLER, not for a reader.
   // accuracy_spotcheck.py opens four entries by even stride: with eight that is indices
@@ -44,7 +44,17 @@ export const content: ModuleContent = {
     // claims, but the sampler's stride is len/4, so a 10-entry list samples
     // 0, 2, 5, 7 instead of 0, 2, 4, 6 — which drops SC-081v3 and CSWP 39 and picks
     // up two entries this module never explains. Declaring them needs the four-slot
-    // mapping above re-measured, not two more push()es.
+    // mapping above re-measured, not two more push()es.,
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('BSI TR-02102-1'),
+    getStandard('CNSSP 15'),
+    getStandard('FIPS 202'),
+    getStandard('NIST IR 8547'),
+    getStandard('RFC 8996'),
+    getStandard('RFC 9370'),
+    getStandard('RFC 9629'),
   ],
 
   algorithms: [

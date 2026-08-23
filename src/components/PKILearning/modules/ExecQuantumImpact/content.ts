@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'exec-quantum-impact',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('NSA CNSA 2.0'),
@@ -20,6 +20,10 @@ export const content: ModuleContent = {
     getStandard('OMB-M-26-15'),
     getStandard('EU-NIS-CG-Roadmap-v1.1'),
     getStandard('DORA-REG-2022-2554'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 203'),
   ],
 
   algorithms: [

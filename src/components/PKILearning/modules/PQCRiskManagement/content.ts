@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     // Subject documents first. The accuracy spot-check samples this list by even
@@ -20,6 +20,11 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-30'),
     getStandard('NIST IR 8547'),
     getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST CSWP 39'),
+    getStandard('RFC 9370'),
   ],
 
   algorithms: [
