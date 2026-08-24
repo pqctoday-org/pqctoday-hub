@@ -17,6 +17,7 @@ import { mobileIconButton, mobileRolePill } from '../mobileTokens'
 import { pageIdForMobileRoute } from './getMobilePageActions'
 import { mobileGroupIdForPath } from './mobileNavGroups'
 import { useMobileWhatsNewStatus } from './mobileWhatsNew'
+import { MobileBadge } from '../primitives/Badge'
 
 export interface MobileHeaderProps {
   persona: PersonaId | null
@@ -150,12 +151,7 @@ export function MobileHeader({ persona, onOpenPageActions, onOpenRoleSwitch }: M
               className={cn(mobileIconButton, 'relative')}
             >
               <MoreHorizontal size={15} aria-hidden="true" />
-              {hasUnread && (
-                <span
-                  aria-hidden="true"
-                  className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-destructive"
-                />
-              )}
+              {hasUnread && <MobileBadge testId="mobile-header-more-unread-dot" />}
             </Button>
           </div>
         </div>

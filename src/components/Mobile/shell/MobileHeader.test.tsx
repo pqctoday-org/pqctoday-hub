@@ -77,6 +77,9 @@ describe('MobileHeader', () => {
     useVersionStore.getState().resetForTesting()
     renderHeader('/assess')
     expect(screen.getByRole('button', { name: 'More — unread updates' })).toBeInTheDocument()
+    // 2026-08-24 audit R5: this dot used to be a hand-inlined span duplicating
+    // MobileBadge's own plain-dot rendering — now the shared primitive itself.
+    expect(screen.getByTestId('mobile-header-more-unread-dot')).toBeInTheDocument()
   })
 
   it('hides the unread dot once the version is marked seen', () => {
@@ -84,5 +87,6 @@ describe('MobileHeader', () => {
     renderHeader('/assess')
     expect(screen.getByRole('button', { name: 'More' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'More — unread updates' })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('mobile-header-more-unread-dot')).not.toBeInTheDocument()
   })
 })
