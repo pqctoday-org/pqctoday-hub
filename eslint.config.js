@@ -259,13 +259,19 @@ export default defineConfig([
                 // question copy, validators and step-navigation hook every
                 // desktop Assess step already reads, so mobile's step
                 // indexing can never disagree with desktop's (both read/
-                // write the same persisted currentStep).
+                // write the same persisted currentStep). reviewModel.ts —
+                // pure answer-summarization, no JSX (AssessReview.tsx, the
+                // JSX-bearing desktop review screen that uses it, stays
+                // blocked) — the same real summarizeAnswer() desktop's
+                // review reads, so a mobile review screen's answer text can
+                // never drift from desktop's.
                 '!@/components/Assess',
                 '@/components/Assess/*',
                 '!@/components/Assess/redesign',
                 '@/components/Assess/redesign/*',
                 '!@/components/Assess/redesign/assessFlowModel',
                 '!@/components/Assess/redesign/useAssessFlow',
+                '!@/components/Assess/redesign/reviewModel',
                 // workbenchCatalog.ts / productStatus.ts / proofFreshness.ts /
                 // useMigrationPlan.ts / waves.ts / cbomExport.ts
                 // (Migrate/Workbench) — pure logic/data/hooks, no JSX. The

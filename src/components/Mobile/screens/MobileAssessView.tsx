@@ -11,6 +11,7 @@ import {
   type AssessStepKey,
 } from '@/components/Assess/redesign/assessFlowModel'
 import { useAssessFlow } from '@/components/Assess/redesign/useAssessFlow'
+import { summarizeAnswer } from '@/components/Assess/redesign/reviewModel'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_COMPLIANCE,
@@ -113,6 +114,10 @@ export function MobileAssessView() {
   const store = useAssessmentStore()
   const [showWhy, setShowWhy] = useState(false)
   const [done, setDone] = useState(store.assessmentStatus === 'complete')
+  // Restores the "no silent jump to the report" review moment desktop's own
+  // last wizard step goes through (AssessReview.tsx) — this screen used to
+  // call markComplete() directly from the last Next tap (an unlogged cut).
+  const [showReview, setShowReview] = useState(false)
 
   const [pendingResumeChoice] = useState(
     () => store.assessmentMode === 'comprehensive' && store.industry !== ''
@@ -121,10 +126,7 @@ export function MobileAssessView() {
 
   const flow = useAssessFlow({
     mode: resumeResolved ? 'quick' : (store.assessmentMode ?? 'quick'),
-    onLastStep: () => {
-      store.markComplete()
-      setDone(true)
-    },
+    onLastStep: () => setShowReview(true),
   })
 
   // Only takes effect once the user has resolved (or never had) a
@@ -199,11 +201,76 @@ export function MobileAssessView() {
             store.reset()
             setDone(false)
             setShowWhy(false)
+            setShowReview(false)
           }}
           className="mt-1 text-[11px] text-muted-foreground"
         >
           Start over
         </Button>
+      </div>
+    )
+  }
+
+  if (showReview) {
+    const answered = flow.renderOrder.filter((k) => flow.isValid(k)).length
+    return (
+      <div className="px-4 pb-4 pt-4">
+        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
+          Review your answers
+        </h1>
+        <p className="mb-4 mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
+          Edit anything before we generate your fast-track report. {answered} of {flow.total}{' '}
+          answered.
+        </p>
+
+        <div className="flex flex-col gap-2">
+          {flow.renderOrder.map((k) => {
+            const summary = summarizeAnswer(k, store)
+            return (
+              <div
+                key={k}
+                className="flex items-start gap-3 rounded-xl border border-border bg-card px-3.5 py-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="text-[12.5px] font-semibold text-foreground/90">
+                    {STEP_META[k].question}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">{summary.text}</p>
+                </div>
+                {summary.isDefault && (
+                  <span className="mt-0.5 shrink-0 rounded-full bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold text-secondary">
+                    Recommended
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="mt-5 flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowReview(false)}
+            className="h-10 gap-1 text-[12px]"
+          >
+            <ArrowLeft size={14} aria-hidden="true" /> Back
+          </Button>
+          <Button
+            type="button"
+            variant="gradient"
+            size="sm"
+            onClick={() => {
+              store.markComplete()
+              setDone(true)
+            }}
+            className="h-10 flex-1 gap-1 text-[12.5px]"
+          >
+            Generate my report
+            <ArrowRight size={14} aria-hidden="true" />
+          </Button>
+        </div>
       </div>
     )
   }
@@ -286,6 +353,15 @@ export function MobileAssessView() {
               checked={store.sensitivityUnknown}
               onChange={store.setSensitivityUnknown}
             />
+            {/* Same real explanation Step4Sensitivity.tsx shows under its own
+                toggle (2026-08-24 audit R4.6) — without it, the smart-default
+                selection that fires when this toggle is checked reads as
+                spooky (chips select themselves with no stated reason). */}
+            {store.sensitivityUnknown && (
+              <p className="text-[10.5px] italic text-muted-foreground">
+                Recommended for {store.industry || 'your industry'}. You can adjust any selection.
+              </p>
+            )}
           </>
         )}
 

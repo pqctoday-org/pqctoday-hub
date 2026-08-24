@@ -84,7 +84,7 @@ describe('MobileAssessView', () => {
     }
   })
 
-  it('completing the quick track calls markComplete and shows the real completion state', () => {
+  it('completing the quick track goes to Review first, then Generate my report calls markComplete', () => {
     useAssessmentFormStore.setState({
       industry: 'Technology',
       country: 'United States',
@@ -101,6 +101,12 @@ describe('MobileAssessView', () => {
       fireEvent.click(finishOrNext)
     }
     fireEvent.click(screen.getByRole('button', { name: /Finish/ }))
+    // 2026-08-24 audit R4.6: Finish no longer completes directly — it goes
+    // to a review screen first (the "no silent jump to the report" moment
+    // desktop's own last wizard step already has).
+    expect(screen.getByText('Review your answers')).toBeInTheDocument()
+    expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
+    fireEvent.click(screen.getByRole('button', { name: /Generate my report/ }))
     expect(screen.getByText('Assessment complete')).toBeInTheDocument()
     expect(useAssessmentFormStore.getState().assessmentStatus).toBe('complete')
   })
@@ -167,6 +173,76 @@ describe('MobileAssessView', () => {
       renderView()
       expect(screen.queryByText('Comprehensive assessment in progress')).not.toBeInTheDocument()
       expect(screen.getByText(STEP_META.industry.question)).toBeInTheDocument()
+    })
+  })
+
+  // 2026-08-24 audit R4.6: the review moment before Finish was silently
+  // skipped on mobile (desktop's own last wizard step goes through
+  // AssessReview.tsx — "no silent jump to the report" per that file's own
+  // comment). summarizeAnswer is the SAME real function AssessReview.tsx
+  // uses — no reinvented answer-text logic.
+  describe('review screen (audit R4.6)', () => {
+    function goToReview() {
+      useAssessmentFormStore.setState({
+        industry: 'Technology',
+        country: 'United States',
+        currentCryptoCategories: ['Key Exchange'],
+        dataSensitivity: ['medium'],
+        migrationStatus: 'planning',
+      })
+      renderView()
+      for (let i = 0; i < 6; i++) {
+        const btn = screen.getByRole('button', { name: /Next|Finish/ })
+        fireEvent.click(btn)
+        if (screen.queryByText('Review your answers')) break
+      }
+    }
+
+    it('shows the real question text and answer summary for every quick-track step', () => {
+      goToReview()
+      expect(screen.getByText(STEP_META.industry.question)).toBeInTheDocument()
+      expect(screen.getByText('Technology')).toBeInTheDocument()
+      expect(screen.getByText(STEP_META.migration.question)).toBeInTheDocument()
+    })
+
+    it('flags an unknown-toggle answer as "Recommended", matching the real isDefault signal', () => {
+      useAssessmentFormStore.setState({
+        industry: 'Technology',
+        country: 'United States',
+        currentCryptoCategories: ['Key Exchange'],
+        sensitivityUnknown: true,
+        migrationStatus: 'planning',
+      })
+      renderView()
+      for (let i = 0; i < 6; i++) {
+        const btn = screen.getByRole('button', { name: /Next|Finish/ })
+        fireEvent.click(btn)
+        if (screen.queryByText('Review your answers')) break
+      }
+      expect(screen.getAllByText('Recommended').length).toBeGreaterThan(0)
+    })
+
+    it('"Back" returns to the wizard without completing, "Generate my report" completes', () => {
+      goToReview()
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }))
+      expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
+      expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
+    })
+  })
+
+  describe('unknown-toggle explanation (audit R4.6)', () => {
+    it('shows the real desktop explanation only once the sensitivity toggle is checked', () => {
+      useAssessmentFormStore.setState({ industry: 'Technology', country: 'United States' })
+      renderView()
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // industry -> country
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // country -> crypto
+      fireEvent.click(screen.getByText("I'm not sure — help me choose").closest('button')!)
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // crypto -> sensitivity
+      expect(screen.queryByText(/Recommended for Technology/)).not.toBeInTheDocument()
+      fireEvent.click(screen.getByText("I'm not sure — help me choose").closest('button')!)
+      expect(
+        screen.getByText(/Recommended for Technology\. You can adjust any selection\./)
+      ).toBeInTheDocument()
     })
   })
 })
