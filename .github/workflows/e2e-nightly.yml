@@ -3,6 +3,13 @@ name: E2E (nightly full suite)
 # The complete e2e suite — including the heavy WASM/crypto specs — runs once a
 # day (and on demand), OFF the per-PR critical path so it doesn't slow PRs or
 # burn Actions minutes on every push. The fast @smoke subset gates PRs in ci.yml.
+# This run is NOT a required/branch-protected check (cron + workflow_dispatch
+# triggers can't attach to a PR's head SHA the way branch protection needs
+# anyway), so a spec that only lives here can regress on `main` for up to 24h
+# before anyone sees it. e2e/acvp-validator.spec.ts is the one exception: it's
+# also in SMOKE_SPECS (playwright.config.ts) as of 2026-08-23, so it still runs
+# here too (redundant coverage, cheap) but a regression in it is now caught
+# per-PR by ci.yml's required `checks` job instead of waiting for this run.
 on:
   schedule:
     - cron: '0 7 * * *' # 07:00 UTC daily

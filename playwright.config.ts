@@ -24,6 +24,16 @@ const SMOKE_SPECS = [
   'timeline-freshness-badge.spec.ts', // timeline page + data freshness
   'trust-tier-filter.spec.ts', // data filtering across views (library/migrate/compliance/threats/timeline)
   'compliance-foryou-executive.spec.ts', // compliance persona deep-link
+  // ACVP Validation Suite (real WASM/liboqs crypto, all ~34 test categories
+  // asserted zero-fail — see the spec's own comment on that assertion). Promoted
+  // 2026-08-23: it was previously nightly-only, so a regression anywhere
+  // outside the 2 categories the old narrow assertion checked could ship on
+  // a PR undetected. Measured cost of promoting it is small — ~21s test
+  // time that mostly overlaps idle worker time under CI's workers:2 (smoke
+  // alone: 55.5s wall; smoke + this spec: 58.4s wall, workers=2, local
+  // measurement 2026-08-23). Remove from this list only if it stops being
+  // reliably fast/green in CI, and prefer fixing the flake first.
+  'acvp-validator.spec.ts',
 ]
 // Deliberately EXCLUDED from smoke (verified slow / load-sensitive — they hit the
 // 45s timeout on a saturated machine, so they'd make the gate flaky): onboarding,
