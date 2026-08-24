@@ -12,6 +12,8 @@ import { TYPE_LABELS } from './artifactLabels'
 import { REPORT_SECTION_LABELS } from './reportSectionToCswp39'
 import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
 import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
+import { TRACK_INFO } from '../components/Assess/redesign/assessFlowModel'
+import { getLandscapeIndustries } from './industryLandscapeData'
 import {
   getCrqcConsensus,
   CRQC_ESTIMATES,
@@ -1858,6 +1860,28 @@ export const EXEC_CRQC_ESTIMATE_ROW = `${CRQC.zEstimate} (${CRQC.qdayLow}–${CR
 /** e.g. "12 yrs" / "5 yrs". */
 export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
 export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
+
+/**
+ * Question count and time estimate for the /assess quick track — the one every
+ * "Start — N questions, about M minutes" home-board CTA actually lands on
+ * (executive's persona-recommended mode, and every explicit ?mode=quick link).
+ * Single source with assessFlowModel.ts's own TRACK_INFO.quick, so a board CTA
+ * can never quote a question count or duration the live flow doesn't match —
+ * added 2026-08-23 after three boards independently guessed "8 questions" at
+ * 6/10/11 minutes against a flow that is actually 6 questions, 3 minutes.
+ */
+export const ASSESS_QUICK_QUESTION_COUNT = TRACK_INFO.quick.count
+export const ASSESS_QUICK_MINUTES = TRACK_INFO.quick.minutes
+
+/**
+ * Distinct industries in the industry-landscape catalogue — re-exported so a
+ * board claim like "22 sectors" can be tokenised against the same count
+ * `getLandscapeIndustries()` returns everywhere else, rather than a literal
+ * that silently goes stale when a sector is added or retired. Added
+ * 2026-08-23 as the first fix driven by audit-role-board-literals.ts's
+ * backfill run.
+ */
+export const INDUSTRY_LANDSCAPE_SECTOR_COUNT = getLandscapeIndustries().length
 
 /**
  * Mosca's inequality as a deadline: data that must stay secret for `x` years

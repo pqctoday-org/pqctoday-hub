@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_08102026.csv
+ * Source: src/data/role_board_content_08232026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -26,14 +26,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           text: 'Default: Americas · Finance & Banking — scenario shown: EU',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
-        headline: 'Answer the board in eleven minutes.',
-        sub: 'Eight questions about your estate. You get a defensible risk position, the regulatory dates that already bind you under NIS2 and DORA, and a board pack you can present on Thursday.',
-        ctaPrimary: 'Start — 8 questions, about 6 minutes',
+        headline: 'Answer the board in an afternoon, not a quarter.',
+        sub: 'Six questions about your estate. You get a defensible risk position, the regulatory dates that already bind you, and a board pack you can present on Thursday.',
+        ctaPrimary: 'Start — 6 questions, about 3 minutes',
         ctaPrimaryHref: '/assess',
         ctaSecondary: 'Draft the program charter',
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
-          'Verified in your browser against NIST ACVP vectors',
+          'Every regulatory date links to its source',
           '938 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'How we verify',
@@ -45,7 +45,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Data must stay secret', value: '12 yrs' },
             { label: 'Your migration takes', value: '5 yrs' },
-            { label: 'Cryptanalytic quantum computer', value: '2033 (2030–2036)' },
+            { label: 'Cryptographically relevant quantum computer', value: '2033 (2030–2036)' },
           ],
           punchline: 'Your start-by year was 2016 — you are ten years past it.',
           footnote:
@@ -55,7 +55,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Your own answers, not a sample estate',
         gridCards: [
           {
-            title: 'Eight questions, one risk position',
+            title: 'Six questions, one risk position',
             body: 'The assessment turns 8 answers about your estate into a defensible risk position, with the regulatory dates that already bind you attached to it.',
             href: '/assess',
           },
@@ -75,7 +75,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ],
         trackTitle: 'Then, if you want the background: 3 hours 20, not 15½.',
         trackNote:
-          "Seven essentials against the full 23-module, 925-minute path. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
+          "Seven essentials against the full 23-module path plus the quiz, 925 minutes in all. The path already inserts real actions like Run Risk Assessment and Explore Business Tools right where they're relevant.",
         trackChips: [
           'PQC 101',
           'Quantum impact',
@@ -105,7 +105,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'The dates were set without you.',
-        sub: 'CNSA 2.0, NIS2, DORA and every national mandate carry fixed years. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
+        sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
         ctaPrimary: 'See the mandate timeline',
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Read the threat economics',
@@ -181,7 +181,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Know what you are actually exposed to.',
-        sub: 'The same eight questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
+        sub: 'The same six questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
         ctaPrimary: 'See a finished example report',
         ctaPrimaryHref: '/report?example=1',
         ctaSecondary: 'Build the risk register',
@@ -203,7 +203,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'A number you can put in front of an auditor.',
           footnote:
-            'Illustrative until you answer the eight questions — the score, the sections and the artifacts are generated from your own answers, not from a sample estate.',
+            'Illustrative until you answer the six questions — the score, the sections and the artifacts are generated from your own answers, not from a sample estate.',
         },
         gridTitle: 'What the score gives you',
         gridSub: 'Generated from your 8 answers',
@@ -276,11 +276,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Governance artifacts', value: 'four' },
             { label: 'Report sections', value: '17' },
-            { label: 'Modules on your path', value: '23' },
+            { label: 'Teaching modules on your path', value: '23' },
           ],
           punchline: 'A plan, not a slide.',
           footnote:
-            "Illustrative until you answer the eight questions. The artifact and section counts are real — they are what this role's report and Command Center actually generate.",
+            "Illustrative until you answer the six questions. The artifact and section counts are real — they are what this role's report and Command Center actually generate.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'A plan someone can be held to',
@@ -420,7 +420,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business?zone=governance',
         proofChips: [
           'Deterministic run — same seed, same outcome',
-          'Nine phases from the published framework',
+          'Eight framework phases plus verification and closure',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -565,7 +565,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Developer / Engineer · parameter sets · sizes · who owns them',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
         headline: 'Pick the parameter set on purpose.',
-        sub: 'ML-KEM-768 or 1024. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
+        sub: 'ML-KEM-768 or 1024 — 512 exists but almost nobody should pick it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
         ctaPrimary: 'Compare the algorithms',
         ctaPrimaryHref: '/algorithms?tab=detailed&mode=compare',
         ctaSecondary: 'Negotiate the mandatory suite',
@@ -668,7 +668,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'A full OpenSSL environment',
-            body: 'OpenSSL Studio is OpenSSL 3.6.2 compiled to WASM — keygen, certificates, CSR, KEM, signing, KDF and encryption — with 11 guided lessons.',
+            body: 'OpenSSL Studio is OpenSSL 3.6.3 compiled to WASM — keygen, certificates, CSR, KEM, signing, KDF and encryption — with 11 guided lessons.',
             href: '/playground/openssl-studio',
           },
           {
@@ -722,7 +722,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/playground/cert-capacity',
         proofChips: [
           'Sizes from FIPS 203/204, not estimates',
-          'Benchmarked through a real PKCS#11 engine',
+          'Sizing model with its sources published',
           'No signup, no key required',
         ],
         sideCard: {
@@ -732,7 +732,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Enterprise workflows sized', value: 'ten' },
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
-            { label: "Sign rate on today's HSM", value: '150 ops/s · ~133× slower than ECDSA' },
+            {
+              label: 'ML-DSA-65 in classical HSM firmware',
+              value: '150 ops/s · ~133× slower than ECDSA',
+            },
           ],
           punchline: 'Budget the cores before you budget the migration.',
           footnote:
@@ -953,7 +956,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Real ML-KEM / ML-DSA / SLH-DSA, no server',
           'KMIP 3.0 conformance corpus replays live',
-          'All 66 KMIP operations documented',
+          "62 of KMIP 3.0's 66 operations run live",
         ],
         sideCard: {
           title: 'Why agility, not just algorithms',
@@ -1197,7 +1200,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
-            { label: "Sign rate on today's HSM", value: '150 ops/s · ~133× slower than ECDSA' },
+            {
+              label: 'ML-DSA-65 in classical HSM firmware',
+              value: '150 ops/s · ~133× slower than ECDSA',
+            },
             { label: 'Keys in the sample estate', value: 'seven' },
           ],
           punchline: 'Capacity is an architecture decision, not an ops surprise.',
@@ -1426,7 +1432,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/refresh-cycle-alignment',
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
-          'Benchmarked through a real PKCS#11 engine',
+          'Sizing model with its sources published',
           'CNSA 2.0 mandate dates built in',
         ],
         sideCard: {
@@ -1436,7 +1442,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'ML-DSA-65 signature', value: '3,309 B' },
             {
-              label: "ML-DSA-65 sign rate on today's HSM",
+              label: 'ML-DSA-65 in classical HSM firmware',
               value: '150 ops/s · ~133× slower than ECDSA',
             },
             { label: 'Per OCSP / CRL response', value: '+3.3 KB · ~5 KB with key' },
@@ -1496,13 +1502,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: [],
       businessToolIds: ['audit-checklist'],
       board: {
-        heroEyebrow: 'IT Ops · before anyone asks · about 10 minutes',
+        heroEyebrow: 'IT Ops · before anyone asks · about 3 minutes',
         heroBadge: {
           text: 'Americas · Energy & Utilities, Telecommunications',
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
         headline: 'Get to a number before someone asks you for one.',
-        sub: 'Eight questions about the estate you actually run — certificates, key stores, tunnels, vendors. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
+        sub: 'Six questions about the estate you actually run — certificates, key stores, tunnels, vendors. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
         ctaPrimary: 'Score your estate',
         ctaPrimaryHref: '/assess?mode=quick',
         ctaSecondary: 'Work the audit checklist',
@@ -1517,9 +1523,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Questions you answer', value: '8' },
+            { label: 'Questions you answer', value: '6' },
             { label: 'Gaps returned', value: 'in priority order' },
-            { label: 'Time', value: 'about ten minutes' },
+            { label: 'Time', value: 'about 3 minutes' },
           ],
           punchline: 'A rough number beats no number by a wide margin.',
           footnote:
@@ -1540,7 +1546,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A rough number beats no number',
-            body: 'Ten minutes of your own answers is more defensible than a quarter spent waiting for a perfect inventory that nobody has ever finished.',
+            body: 'Three minutes of your own answers is more defensible than a quarter spent waiting for a perfect inventory that nobody has ever finished.',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1991,7 +1997,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Published FIPS', value: '203, 204, 205' },
             { label: 'Selected, not standardised', value: 'HQC' },
-            { label: 'Draft', value: '206 and the composites' },
+            {
+              label: 'Announced, not drafted',
+              value: 'FIPS 206 (FN-DSA) expected; LAMPS composites already in IETF draft',
+            },
           ],
           punchline: '“Standardised” is four different states wearing one word.',
           footnote:
@@ -2085,7 +2094,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Randomness, tested not asserted',
-            body: 'The NIST SP 800-90B suite — monobit, frequency and min-entropy — run against live output rather than quoted from a datasheet.',
+            body: 'The SP 800-90B health tests — repetition count, adaptive proportion and MCV min-entropy — alongside monobit, runs and chi-squared checks, run against live output rather than quoted from a datasheet.',
             href: '/playground/entropy-test',
           },
           {
@@ -2160,7 +2169,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'Scenarios, not a single date',
-            body: 'The CRQC Scenario Planner models cryptographically-relevant-quantum-computer arrival scenarios and what each one implies for your own horizon.',
+            body: 'The CRQC Scenario Planner models cryptographically relevant quantum computer arrival scenarios and what each one implies for your own horizon.',
             href: '/business/tools/crqc-scenario',
           },
           {
@@ -2283,13 +2292,13 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: ['suci-flow'],
       businessToolIds: ['supply-chain-matrix'],
       board: {
-        heroEyebrow: 'Researcher · from the paper to the payment terminal',
+        heroEyebrow: 'Researcher · from the paper to the product',
         heroBadge: {
           text: 'All regions · unfiltered',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
-        headline: 'Follow the algorithm into production.',
-        sub: 'ML-KEM in a 5G SUCI construction, ML-DSA in payment rails, SLH-DSA in firmware signing — three sectors, three different stages. Which has adopted what, in which product and under which regulation, with the evidence attached rather than the announcement.',
+        headline: 'Follow the algorithm out of the paper.',
+        sub: 'ML-KEM adopted in online checkout and digital banking channels, ML-DSA and SLH-DSA adopted across HSM and KMIP interfaces, and nothing at all in EMV card authentication — three sectors, three different stages. Which has adopted what, in which product and under which regulation, with the evidence attached rather than the announcement.',
         ctaPrimary: 'See what has actually shipped',
         ctaPrimaryHref: '/migrate?tab=replace',
         ctaSecondary: 'Map the supply chain',
@@ -2463,7 +2472,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           rows: [
             { label: 'Encrypted data captured today', value: 'still readable later' },
             { label: 'If it must stay secret for', value: '12 years' },
-            { label: 'And the machine arrives in', value: '~2032' },
+            { label: 'And the machine arrives in', value: '2033 (2030–2036)' },
           ],
           punchline: 'The deadline already passed for some data.',
           footnote:
@@ -2551,7 +2560,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'Where would you actually stand?',
-            body: 'Eight plain questions and a rough position. About ten minutes.',
+            body: 'Six plain questions and a rough position. About 3 minutes.',
             href: '/assess?mode=quick',
           },
           {
@@ -2598,7 +2607,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Where this actually touches you.',
-        sub: 'Your card payments, the ID in your phone and your medical records all lean on the same maths. Here is what changes for each, and which one cannot wait.',
+        sub: 'The money you move, the ID in your phone and your medical records all lean on the same maths. Here is what changes for each, and which one cannot wait.',
         ctaPrimary: 'Walk through a digital ID wallet',
         ctaPrimaryHref: '/playground/digital-id',
         ctaSecondary: 'Follow a Bitcoin transaction',
@@ -2636,7 +2645,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Why these two',
-            body: 'Identity and money are the everyday systems whose data outlives the lock protecting it — which is what makes them the clear cases.',
+            body: 'Medical records outlive the lock protecting them by decades, which is why they cannot wait. Identity and money are where you can watch the change happen today.',
             href: '/library?purpose=education',
           },
         ] as [
@@ -2691,7 +2700,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Replacements', value: 'published, not proposed' },
-            { label: 'Deadlines', value: 'law in several countries' },
+            { label: 'Deadlines', value: 'binding policy in several countries' },
             { label: 'People working on it', value: 'named, with their work' },
           ],
           punchline: 'The fix exists. Fitting it everywhere is the slow part.',

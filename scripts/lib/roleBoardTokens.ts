@@ -224,8 +224,42 @@ const RESOLVERS: Record<string, Resolver> = {
     requireArgs('exec_migration_row', args, 0)
     return mod.EXEC_MIGRATION_ROW
   },
+  assess_quick_question_count: (mod, args) => {
+    requireArgs('assess_quick_question_count', args, 0)
+    return mod.toWordIfSmall(mod.ASSESS_QUICK_QUESTION_COUNT)
+  },
+  Assess_quick_question_count: (mod, args) => {
+    requireArgs('Assess_quick_question_count', args, 0)
+    return mod.capitalizedSmallNumberWord(mod.ASSESS_QUICK_QUESTION_COUNT)
+  },
+  // Digit form, for tight CTA-label contexts ("Start — 6 questions") — same
+  // precedent as report_section_total's raw String(n) above.
+  assess_quick_question_count_digit: (mod, args) => {
+    requireArgs('assess_quick_question_count_digit', args, 0)
+    return String(mod.ASSESS_QUICK_QUESTION_COUNT)
+  },
+  assess_quick_minutes: (mod, args) => {
+    requireArgs('assess_quick_minutes', args, 0)
+    return String(mod.ASSESS_QUICK_MINUTES)
+  },
+  Assess_quick_minutes_word: (mod, args) => {
+    requireArgs('Assess_quick_minutes_word', args, 0)
+    return mod.capitalizedSmallNumberWord(mod.ASSESS_QUICK_MINUTES)
+  },
+  industry_sector_count: (mod, args) => {
+    requireArgs('industry_sector_count', args, 0)
+    return String(mod.INDUSTRY_LANDSCAPE_SECTOR_COUNT)
+  },
   exec_crqc_estimate_row: (mod, args) => {
     requireArgs('exec_crqc_estimate_row', args, 0)
+    return mod.EXEC_CRQC_ESTIMATE_ROW
+  },
+  // Role-neutral alias for EXEC_CRQC_ESTIMATE_ROW — same export, no 'exec_' prefix, for
+  // boards outside the executive role (e.g. curious) that need the same consensus-window
+  // string. Added 2026-08-23 after a literal '~2032' drifted from the site's real 2033
+  // (2030-2036) consensus on curious/break.
+  crqc_estimate_row: (mod, args) => {
+    requireArgs('crqc_estimate_row', args, 0)
     return mod.EXEC_CRQC_ESTIMATE_ROW
   },
   exec_mosca_punchline: (mod, args) => {

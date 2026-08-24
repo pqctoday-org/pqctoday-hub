@@ -95,10 +95,21 @@ const merged: MaturityRequirement[] = []
 // not full paths — otherwise './archive/..._05152026.csv' would sort above
 // './..._07192026.csv' purely because of the directory prefix, and a stale
 // paraphrase would shadow the row that was meant to replace it.
+//
+// CODE-UNIT comparison, NOT localeCompare. This line used localeCompare until
+// 2026-08-23, which silently inverted the one ordering the comment above
+// promises: localeCompare treats '_' as ignorable punctuation, so it collates
+// '..._08232026_r1.csv' BELOW '..._08232026.csv' and the _r1 revision lost every
+// dedup-key collision to the file it was written to correct. Caught when four
+// eIDAS rows deprecated in an _r1 generation kept loading as active. Measured
+// across both merge-all families at the time of the fix, the change moved
+// exactly those four rows and nothing else (2026 active rows -> 2022).
 const basename = (p: string) => p.slice(p.lastIndexOf('/') + 1)
-const orderedEntries = Object.entries(modules).sort(([a], [b]) =>
-  basename(b).localeCompare(basename(a))
-)
+const orderedEntries = Object.entries(modules).sort(([a], [b]) => {
+  const x = basename(a)
+  const y = basename(b)
+  return x < y ? 1 : x > y ? -1 : 0
+})
 for (const [, content] of orderedEntries) {
   if (typeof content !== 'string') continue
   const { data } = Papa.parse<RawMaturityRow>(content.trim(), {
