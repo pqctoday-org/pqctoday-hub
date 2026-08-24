@@ -8,7 +8,7 @@ The VPN/IPsec and SSH PQC module explores how post-quantum key exchange is being
 
 - **IKEv2 handshake** (RFC 7296) — two-phase process: IKE_SA_INIT (Diffie-Hellman key exchange with KE payload, nonces, and SPIs) and IKE_AUTH (identity verification with encrypted auth payloads); derives SKEYSEED from shared secret
 - **ML-KEM in IKEv2** — draft-ietf-ipsecme-ikev2-mlkem uses the Additional Key Exchange (AKE) framework (RFC 9370) to add ML-KEM encapsulation in IKE_INTERMEDIATE without modifying the core IKEv2 state machine; encapsulation key is 1,184 bytes; combined SKEYSEED derived from both DH and KEM shared secrets via PRF
-- **ML-DSA in IKEv2** — draft-ietf-ipsecme-ikev2-mldsa updates IKE_AUTH to support ML-DSA (FIPS 204) for post-quantum certificate-based authentication
+- **ML-DSA in IKEv2** — draft-ietf-ipsecme-ikev2-pqc-auth updates IKE_AUTH to support ML-DSA (FIPS 204) for post-quantum certificate-based authentication
 - **SSH PQC evolution**: OpenSSH 8.5 (2021) added sntrup761x25519-sha512; OpenSSH 9.0 (2022) made it the default KEX; OpenSSH 9.9 (2024) added NIST-standard mlkem768x25519-sha256
 - **SSH hybrid KEX** works by concatenating classical and PQC public keys in SSH_MSG_KEX_ECDH_INIT and combining shares in SSH_MSG_KEX_ECDH_REPLY
 - **WireGuard** uses a fixed cipher suite (X25519, ChaCha20-Poly1305, BLAKE2s) with zero crypto agility — algorithms cannot be negotiated
@@ -30,7 +30,7 @@ The workshop has 3 simulation steps:
 - RFC 7296 (IKEv2)
 - RFC 9370 (Additional Key Exchange in IKEv2)
 - draft-ietf-ipsecme-ikev2-mlkem (ML-KEM for IKEv2)
-- draft-ietf-ipsecme-ikev2-mldsa (ML-DSA Authentication for IKEv2)
+- draft-ietf-ipsecme-ikev2-pqc-auth (Post-Quantum Authentication in IKEv2 using ML-DSA and SLH-DSA)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
 - OpenSSH 9.9 Release Notes (mlkem768x25519-sha256)

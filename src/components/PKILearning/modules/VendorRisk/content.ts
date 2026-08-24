@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'vendor-risk',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
@@ -27,6 +28,19 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('NIST CSWP 39'),
     getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names SP 800-208 as the stateful hash-based signature standard and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-208" against a row filed as NIST SP 800-208.
+    getStandard('NIST SP 800-208'),
+    // DECLARED 2026-08-23: this module names SP 800-161 as the supply-chain risk framework and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
+    getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
   ],
 
   algorithms: [

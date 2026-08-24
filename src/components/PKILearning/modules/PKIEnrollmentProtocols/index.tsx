@@ -28,7 +28,7 @@ export const PKIEnrollmentProtocolsModule: FC = () => {
   return (
     <ModuleShell
       manifest={manifest}
-      description="RFC 7030 (EST) and RFC 9810 (CMP, KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto + an in-browser mock CA."
+      description="RFC 7030 (EST) and RFC 9810 (CMP, obsoletes RFC 4210) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto + an in-browser mock CA."
       learn={(api) => <EnrollmentIntroduction onNavigateToWorkshop={() => api.goToWorkshop()} />}
       workshopParts={WORKSHOP_STEPS as WorkshopPart[]}
       onReset={() => {

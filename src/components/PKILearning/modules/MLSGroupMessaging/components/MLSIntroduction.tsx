@@ -57,8 +57,9 @@ export const MLSIntroduction: React.FC<MLSIntroductionProps> = ({ onNavigateToWo
           <GitBranch size={20} className="text-primary mb-2" />
           <h3 className="font-semibold">PQ ciphersuites</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            <span className="text-foreground">draft-ietf-mls-pq-ciphersuites-04</span> registers
-            ML-KEM-768 + ML-DSA-65 suites. WG Last Call as of March 2026.
+            <span className="text-foreground">draft-ietf-mls-pq-ciphersuites-06</span> registers
+            ML-KEM-768 + ML-DSA-65 suites. WG state: waiting for WG chair go-ahead, revised I-D
+            needed (2026-07-21) — past WG Last Call, not through it.
           </p>
         </div>
         <div className="glass-panel p-4">

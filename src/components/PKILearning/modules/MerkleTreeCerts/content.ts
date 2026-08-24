@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'merkle-tree-certs',
   version: '1.2.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     // The MTC spec itself — cited by section (§2.1 roles, §5.3 TreeHead, §6.2-6.4

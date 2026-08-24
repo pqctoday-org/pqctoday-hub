@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.0',
   lastReviewed: '2026-08-23',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('NIST IR 8547'),
@@ -18,6 +19,12 @@ export const content: ModuleContent = {
     getStandard('EO-14306'),
     getStandard('G7-Financial-PQC-Roadmap-2026'),
     getStandard('ANSSI-PQC-FAQ-2025'),
+    // DECLARED 2026-08-23: this module states the EO 14412 deadlines to a reader
+    // (key establishment 2030, digital signatures 2031) and cited no document for
+    // them. audit_module_undeclared_citations.py could not see it — the row's
+    // reference_id is EO-2026-06-22-Securing-the-Nation and the module writes
+    // "Executive Order 14412", so the literal-id match never fired.
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
@@ -25,6 +32,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST CSWP 39'),
+    // DECLARED 2026-08-23: this module names OMB M-23-02 as the source of the federal cryptographic-inventory duty and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
+    getStandard('OMB-M-23-02'),
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],

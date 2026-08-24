@@ -6,7 +6,8 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 export const content: ModuleContent = {
   moduleId: 'crypto-registry',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('CycloneDX-Cryptography-Registry'),

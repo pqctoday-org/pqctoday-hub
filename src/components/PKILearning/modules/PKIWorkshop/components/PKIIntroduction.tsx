@@ -66,7 +66,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
                 PKCS#10 <InlineTooltip term="Certificate Signing Request">CSR</InlineTooltip> format
                 (RFC 2986)
               </li>
-              <li>CMP enrollment (RFC 4210)</li>
+              <li>CMP enrollment (RFC 9810, obsoletes RFC 4210)</li>
             </ul>
           </div>
         </div>

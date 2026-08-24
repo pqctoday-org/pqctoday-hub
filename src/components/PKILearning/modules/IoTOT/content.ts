@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
