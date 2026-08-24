@@ -924,6 +924,22 @@ export function SimulationView() {
   // block. A reader taps in deliberately — it never auto-opens.
   const isMobileShell = useIsMobileShell()
   const [mobilePlayOpen, setMobilePlayOpen] = useState(false)
+  // mobile-ux-layer (2026-08-24 audit R1.3): "Watch the Executive Overview"
+  // walks the shared `sel` through all 9 phases via autoRunPlayer, and `sel`
+  // is persisted — so on a phone, watching once could leave `sel` past p1
+  // with the p0/p1 Play button gone for good on that device. Snapshot `sel`
+  // when a mobile watch starts and restore it the moment the run stops
+  // (autoRunPlayer.running's only false-transition, whether the run finished
+  // naturally or was closed early) — desktop's own free phase-ladder makes
+  // this unnecessary there, so it's gated to isMobileShell only.
+  const mobileWatchSelSnapshot = useRef<PhaseId | null>(null)
+  useEffect(() => {
+    if (!autoRunPlayer.running && mobileWatchSelSnapshot.current) {
+      setSel(mobileWatchSelSnapshot.current)
+      mobileWatchSelSnapshot.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRunPlayer.running])
   const [termsOpen, setTermsOpen] = useState(false)
   const [pendingModeSwitch, setPendingModeSwitch] = useState<RunMode | null>(null)
   const businessPersona = selectedPersona === 'executive' || selectedPersona === 'curious'
@@ -1688,6 +1704,38 @@ export function SimulationView() {
               where your run stands today.
             </p>
           </div>
+          {/* mobile-ux-layer (2026-08-24 audit R1.3): the only way to reach p0/p1
+              play was the phase ladder (desktop-only) or the "Watch" auto-run,
+              which walks `sel` through all 9 phases with no way back — a reader
+              past p1 (or one who just watched the overview) had no on-screen path
+              to the two playable phases. Visible here in BOTH the playable state
+              (sel already p0/p1) and this same read-only p2+ fallback, so it
+              doubles as the recovery path. */}
+          {isMobileShell && (
+            <div
+              className="flex w-full max-w-[320px] rounded-lg border border-border bg-muted/40 p-1"
+              role="group"
+              aria-label="Choose a playable phase"
+            >
+              {(['p0', 'p1'] as const).map((p) => (
+                <Button
+                  key={p}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSel(p)}
+                  aria-pressed={sel === p}
+                  className={`h-9 flex-1 text-[11.5px] font-bold ${
+                    sel === p
+                      ? 'bg-background text-primary shadow-sm'
+                      : 'text-muted-foreground hover:bg-transparent'
+                  }`}
+                >
+                  {FRAMEWORK_PHASES[p].name}
+                </Button>
+              ))}
+            </div>
+          )}
           <dl className="w-full max-w-[320px] space-y-2 text-left">
             {[
               {
@@ -1809,7 +1857,10 @@ export function SimulationView() {
                 variant={isMobileShell && (sel === 'p0' || sel === 'p1') ? 'outline' : 'gradient'}
                 size="sm"
                 className="gap-1.5"
-                onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
+                onClick={() => {
+                  if (isMobileShell) mobileWatchSelSnapshot.current = sel
+                  autoRunPlayer.start({ mode: 'walkthrough' })
+                }}
               >
                 ▶ Watch the Executive Overview
               </Button>

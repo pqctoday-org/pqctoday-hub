@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
@@ -523,5 +523,86 @@ describe('SimulationView — mobile-ux-layer real play (p0/p1)', () => {
   it('with the mobile shell off, the read-only overview never offers a Play CTA', () => {
     renderPage()
     expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer (2026-08-24 audit R1.3): before this fix, the only way to
+// reach p0/p1 on a phone was the desktop-only phase ladder or "Watch the
+// Executive Overview" — which walks the shared, persisted `sel` through all
+// 9 phases with no way back, permanently hiding the Play CTA on that device
+// after one watch. These tests cover the two-part fix: a mobile phase
+// switcher reachable from both the playable and read-only fallback states,
+// and a snapshot/restore of `sel` around a mobile-triggered watch run.
+describe('SimulationView — mobile-ux-layer phase switcher + sel restore (audit R1.3)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('offers a p0/p1 switcher on the read-only overview even past p1', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    expect(within(group).getByText('Executive Mandate')).toBeInTheDocument()
+    expect(within(group).getByText('Discovery & Inventory')).toBeInTheDocument()
+  })
+
+  it('tapping p1 in the switcher makes the p1 Play CTA reachable again', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    fireEvent.click(within(group).getByText('Discovery & Inventory'))
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    expect(
+      screen.getByRole('button', { name: /Play Discovery & Inventory now/i })
+    ).toBeInTheDocument()
+  })
+
+  it('the switcher marks the active phase via aria-pressed', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage() // default sel is p0
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    expect(within(group).getByText('Executive Mandate')).toHaveAttribute('aria-pressed', 'true')
+    expect(within(group).getByText('Discovery & Inventory')).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
+
+  it('watching the Executive Overview restores sel once the run stops, so Play stays reachable', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p1' })
+    renderPage()
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    fireEvent.click(screen.getByRole('button', { name: /Watch the Executive Overview/i }))
+    // The real autorun queue moves sel to its first phase's beat after a real
+    // (uncontrolled) short delay — waiting for that proves the snapshot was
+    // taken before start(), not after (a too-late snapshot would just
+    // re-capture the moved value and the "restore" below would be a no-op).
+    await waitFor(() => expect(useSimulationStore.getState().sel).not.toBe('p1'))
+    // The real "■ Stop" control (SimAutoRunOverlay) calls the same
+    // player.stop() that a natural run completion also calls internally —
+    // the one place `running` transitions back to false either way. jsdom
+    // has no CSS engine, so both the desktop board and the mobile fallback
+    // stay mounted at once (each with its own overlay instance sharing the
+    // same underlying player) — click the first, matching this file's
+    // established getAllByText pattern for the same reason.
+    fireEvent.click(screen.getAllByRole('button', { name: /■ Stop/i })[0])
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    expect(
+      screen.getByRole('button', { name: /Play Discovery & Inventory now/i })
+    ).toBeInTheDocument()
+  })
+
+  it('does not touch sel on desktop (isMobileShell false) — watch is left to autoRunPlayer alone', () => {
+    useSimulationStore.setState({ sel: 'p1' })
+    renderPage()
+    // With the mobile shell off, the switcher itself must not render — the
+    // snapshot/restore effect has nothing to gate without it, and desktop's
+    // own free phase ladder makes it unnecessary.
+    expect(
+      screen.queryByRole('group', { name: /choose a playable phase/i })
+    ).not.toBeInTheDocument()
   })
 })
