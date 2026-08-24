@@ -2179,6 +2179,51 @@ export const hsm_verifyBytes = (
   }
 }
 
+/**
+ * Verify a binary message (Uint8Array) against a signature, with context/preHash
+ * support — the bytes-based counterpart to `hsm_verify`, for ACVP KAT testing
+ * where the message is arbitrary bytes (not necessarily valid UTF-8 text) and
+ * the vector specifies a non-empty context string or a HashML-DSA pre-hash
+ * mechanism. `opts.hedging` is accepted for symmetry with `MLDSASignOptions`
+ * but has no effect on verification (hedge type is a sign-time-only choice).
+ */
+export const hsm_verifyBytesMLDSA = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  msgBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  opts?: MLDSASignOptions
+): boolean => {
+  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
+
+  const mech = M._malloc(12)
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32')
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32')
+
+  const msgPtr = M._malloc(msgBytes.length)
+  M.HEAPU8.set(msgBytes, msgPtr)
+  const sigPtr = M._malloc(sigBytes.length)
+  M.HEAPU8.set(sigBytes, sigPtr)
+
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit(ML-DSA,bytes)')
+  try {
+    const rv =
+      M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._C_MessageVerifyFinal(hSession)
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
+  }
+}
+
 /** C_CloseSession + C_Finalize */
 export const hsm_finalize = (M: SoftHSMModule, hSession: number): void => {
   try {

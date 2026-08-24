@@ -23,6 +23,7 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import { hexToBytes } from '@/utils/dataInputUtils'
 import mlkemTestVectors from '@/data/acvp/mlkem_test.json'
 import mldsaTestVectors from '@/data/acvp/mldsa_test.json'
+import mldsaExtendedTestVectors from '@/data/acvp/mldsa_extended_test.json'
 import slhdsaCtxTestVectors from '@/data/acvp/slhdsa_ctx_test.json'
 import sha256TestVectors from '@/data/acvp/sha256_test.json'
 import sha384TestVectors from '@/data/acvp/sha384_test.json'
@@ -93,6 +94,70 @@ describe('NIST ACVP-Server vectors verify against the real Rust engine', () => {
       expect(isValid).toBe(true)
     })
   })
+
+  const MLDSA_VARIANT: Record<string, 44 | 65 | 87> = {
+    'ML-DSA-44': 44,
+    'ML-DSA-65': 65,
+    'ML-DSA-87': 87,
+  }
+
+  describe.each(Object.keys(mldsaExtendedTestVectors.context))('ML-DSA context: %s', (paramSet) => {
+    it('verifies the NIST vector with a non-empty context string', () => {
+      const tv = (
+        mldsaExtendedTestVectors.context as Record<
+          string,
+          (typeof mldsaExtendedTestVectors.context)['ML-DSA-44']
+        >
+      )[paramSet]
+      const pubHandle = SoftHSM.hsm_importMLDSAPublicKey(
+        M,
+        session,
+        MLDSA_VARIANT[paramSet],
+        hexToBytes(tv.pk)
+      )
+      const isValid = SoftHSM.hsm_verifyBytesMLDSA(
+        M,
+        session,
+        pubHandle,
+        hexToBytes(tv.message),
+        hexToBytes(tv.signature),
+        { context: hexToBytes(tv.context) }
+      )
+      expect(isValid).toBe(true)
+    })
+  })
+
+  describe.each(Object.keys(mldsaExtendedTestVectors.preHash))(
+    'ML-DSA pre-hash: %s',
+    (paramSet) => {
+      it('verifies the NIST HashML-DSA vector', () => {
+        const tv = (
+          mldsaExtendedTestVectors.preHash as Record<
+            string,
+            (typeof mldsaExtendedTestVectors.preHash)['ML-DSA-44']
+          >
+        )[paramSet]
+        const pubHandle = SoftHSM.hsm_importMLDSAPublicKey(
+          M,
+          session,
+          MLDSA_VARIANT[paramSet],
+          hexToBytes(tv.pk)
+        )
+        const isValid = SoftHSM.hsm_verifyBytesMLDSA(
+          M,
+          session,
+          pubHandle,
+          hexToBytes(tv.message),
+          hexToBytes(tv.signature),
+          {
+            context: tv.context ? hexToBytes(tv.context) : undefined,
+            preHash: tv.hashAlg as SoftHSM.MLDSAPreHash,
+          }
+        )
+        expect(isValid).toBe(true)
+      })
+    }
+  )
 
   describe.each(Object.keys(SLH_DSA_CKP))('%s', (paramSet) => {
     it('verifies the NIST-derived signature (sigVer)', () => {

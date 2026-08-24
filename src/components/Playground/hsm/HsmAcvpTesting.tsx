@@ -13,6 +13,7 @@ import {
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
+import mldsaExtendedTestVectors from '../../../data/acvp/mldsa_extended_test.json'
 import aesGcmTestVectors from '../../../data/acvp/aesgcm_test.json'
 import hmacTestVectors from '../../../data/acvp/hmac_test.json'
 import rsaPssTestVectors from '../../../data/acvp/rsapss_test.json'
@@ -48,6 +49,8 @@ import {
   hsm_extractKeyValue,
   hsm_importMLDSAPublicKey,
   hsm_verifyBytes,
+  hsm_verifyBytesMLDSA,
+  type MLDSAPreHash,
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
@@ -676,6 +679,118 @@ export const HsmAcvpTesting = () => {
               details: errorMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id5}] ${algo} SigVer Error: ${errorMessage}`)
+          }
+        }
+
+        // ── 5b. ML-DSA extended-mode SigVer KAT (FIPS 204 §5.2/§5.4, PKCS#11
+        // v3.2 HashML-DSA) — context string + pre-hash, NIST ACVP tr1 vectors.
+        // Until 2026-08-24 no KAT here exercised a non-empty context string or
+        // any HashML-DSA pre-hash mechanism — every ML-DSA case above used
+        // context="" and CKM_ML_DSA only. Deterministic-mode and External-Mu
+        // remain open — see mldsa_extended_test.json's own _provenance block
+        // for exactly why (both need engine-side work beyond a wasm binding).
+        for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.context)) {
+          const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
+          const id5b = `mldsa-ctx-sigver-${paramSet}-${eName}`
+          addLog(
+            `[${eName}] Testing ${paramSet} SigVer with context (FIPS 204 §5.2, tcId=${tv.tcId})...`
+          )
+          try {
+            const pubHandle = hsm_importMLDSAPublicKey(M, hSession, variantNum, hexToBytes(tv.pk))
+            regKey({
+              handle: pubHandle,
+              family: 'ml-dsa',
+              role: 'public',
+              label: `ACVP ${paramSet} Context KAT Public (${eName})`,
+              variant: String(variantNum),
+              engine: engineId,
+            })
+            const isValid = hsm_verifyBytesMLDSA(
+              M,
+              hSession,
+              pubHandle,
+              hexToBytes(tv.message),
+              hexToBytes(tv.signature),
+              { context: hexToBytes(tv.context) }
+            )
+            await pushResult({
+              id: id5b,
+              algorithm: `${paramSet} (${eName})`,
+              testCase: `SigVer KAT (context, ${tv.context.length / 2}B)`,
+              referenceUrl: REF.mldsa,
+              status: isValid ? 'pass' : 'fail',
+              details: isValid ? 'NIST vector verified with non-empty context' : 'verify=false',
+            })
+            addLog(
+              `[${eName}] [id:${id5b}] ${paramSet} context SigVer: ${isValid ? 'PASS' : 'FAIL'}`
+            )
+          } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+            await pushResult({
+              id: `mldsa-ctx-err-${paramSet}-${eName}`,
+              algorithm: `${paramSet} (${eName})`,
+              testCase: 'SigVer KAT (context)',
+              referenceUrl: REF.mldsa,
+              status: 'fail',
+              details: errorMessage,
+            })
+            addLog(
+              `[DISCREPANCY] [${eName}] [id:${id5b}] ${paramSet} context SigVer: ${errorMessage}`
+            )
+          }
+        }
+
+        for (const [paramSet, tv] of Object.entries(mldsaExtendedTestVectors.preHash)) {
+          const variantNum = parseInt(paramSet.split('-')[2]) as 44 | 65 | 87
+          const id5c = `mldsa-prehash-sigver-${paramSet}-${eName}`
+          addLog(
+            `[${eName}] Testing ${paramSet} HashML-DSA SigVer (${tv.hashAlg}, tcId=${tv.tcId})...`
+          )
+          try {
+            const pubHandle = hsm_importMLDSAPublicKey(M, hSession, variantNum, hexToBytes(tv.pk))
+            regKey({
+              handle: pubHandle,
+              family: 'ml-dsa',
+              role: 'public',
+              label: `ACVP ${paramSet} HashML-DSA KAT Public (${eName})`,
+              variant: String(variantNum),
+              engine: engineId,
+            })
+            const isValid = hsm_verifyBytesMLDSA(
+              M,
+              hSession,
+              pubHandle,
+              hexToBytes(tv.message),
+              hexToBytes(tv.signature),
+              {
+                context: tv.context ? hexToBytes(tv.context) : undefined,
+                preHash: tv.hashAlg as MLDSAPreHash,
+              }
+            )
+            await pushResult({
+              id: id5c,
+              algorithm: `${paramSet} (${eName})`,
+              testCase: `HashML-DSA SigVer KAT (${tv.hashAlg})`,
+              referenceUrl: REF.mldsa,
+              status: isValid ? 'pass' : 'fail',
+              details: isValid ? `NIST HashML-DSA/${tv.hashAlg} vector verified` : 'verify=false',
+            })
+            addLog(
+              `[${eName}] [id:${id5c}] ${paramSet} HashML-DSA/${tv.hashAlg} SigVer: ${isValid ? 'PASS' : 'FAIL'}`
+            )
+          } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+            await pushResult({
+              id: `mldsa-prehash-err-${paramSet}-${eName}`,
+              algorithm: `${paramSet} (${eName})`,
+              testCase: 'HashML-DSA SigVer KAT',
+              referenceUrl: REF.mldsa,
+              status: 'fail',
+              details: errorMessage,
+            })
+            addLog(
+              `[DISCREPANCY] [${eName}] [id:${id5c}] ${paramSet} HashML-DSA SigVer: ${errorMessage}`
+            )
           }
         }
 
