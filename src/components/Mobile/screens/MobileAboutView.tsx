@@ -29,22 +29,9 @@ import {
   CRYPTO_BUFF_SITES,
   CRYPTO_BUFF_BOOKS,
 } from '@/components/About/aboutData'
+import { SBOM_CATEGORIES } from '@/data/sbomCategories'
 
 declare const __BUILD_TIMESTAMP__: string
-
-const SBOM_CATEGORIES = [
-  'UI Frameworks & Libraries',
-  'Utilities',
-  'Cryptography & PQC',
-  'Rust WASM Bindings',
-  'Rust Crypto Crates',
-  'Local AI & Embeddings',
-  'State Management',
-  'Analytics',
-  'Notifications',
-  'Build & Development',
-  'Testing',
-]
 
 type GroupId = 'vision' | 'trust' | 'data' | 'opensource' | 'assistant'
 
