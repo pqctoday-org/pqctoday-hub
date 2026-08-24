@@ -17,13 +17,20 @@ export interface MobileBadgeProps {
 }
 
 export function MobileBadge({ count, tone = 'danger', className, testId }: MobileBadgeProps) {
-  const toneClass = tone === 'danger' ? 'bg-destructive' : 'bg-primary'
+  const toneClass =
+    tone === 'danger'
+      ? 'bg-destructive text-destructive-foreground'
+      : 'bg-primary text-primary-foreground'
   if (count === undefined) {
     return (
       <span
         aria-hidden="true"
         data-testid={testId}
-        className={cn('absolute right-0 top-0 h-1.5 w-1.5 rounded-full', toneClass, className)}
+        className={cn(
+          'absolute right-0 top-0 h-1.5 w-1.5 rounded-full',
+          tone === 'danger' ? 'bg-destructive' : 'bg-primary',
+          className
+        )}
       />
     )
   }
@@ -31,7 +38,7 @@ export function MobileBadge({ count, tone = 'danger', className, testId }: Mobil
     <span
       data-testid={testId}
       className={cn(
-        'absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white',
+        'absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold',
         toneClass,
         className
       )}

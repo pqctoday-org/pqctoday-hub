@@ -62,7 +62,7 @@ export const mobileNavTab = cva(
  * sheet already uses (a screen-darkening scrim reads correctly in both
  * themes without varying by theme, unlike foreground/background colors).
  */
-export const mobileSheetOverlay = 'fixed inset-0 z-overlay bg-black/35'
+export const mobileSheetOverlay = 'fixed inset-0 z-overlay bg-black/60'
 
 /** Sheet panel chrome, shared by every sheet in the mobile layer. */
 export const mobileSheetPanel =
