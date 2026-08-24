@@ -11,6 +11,7 @@ function renderSheet(initialPath: string, onClose = vi.fn()) {
       <Routes>
         <Route path="*" element={<MobilePageActionsSheet open onClose={onClose} />} />
         <Route path="/revisions" element={<div>Revisions page</div>} />
+        <Route path="/about" element={<div>About page</div>} />
       </Routes>
     </MemoryRouter>
   )
@@ -21,11 +22,19 @@ afterEach(() => {
 })
 
 describe('MobilePageActionsSheet', () => {
-  it("always shows Assistant, Journey, FAQ, Glossary and What's new", () => {
+  it("always shows Assistant, Journey, FAQ, Glossary, What's new and About", () => {
     renderSheet('/assess')
-    for (const label of ['Assistant', 'Journey', 'FAQ', 'Glossary', "What's new"]) {
+    for (const label of ['Assistant', 'Journey', 'FAQ', 'Glossary', "What's new", 'About']) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
+  })
+
+  it('closes and navigates to /about when About is tapped — real bug fix 2026-08-23: this was the only nav path to MobileAboutView.tsx', () => {
+    const onClose = vi.fn()
+    renderSheet('/assess', onClose)
+    fireEvent.click(screen.getByText('About'))
+    expect(onClose).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('About page')).toBeInTheDocument()
   })
 
   it('shows Sources on a route with a registered ViewType', () => {

@@ -197,6 +197,14 @@ export default defineConfig([
                 '!@/components/Patents/redesign',
                 '@/components/Patents/redesign/*',
                 '!@/components/Patents/redesign/usePatentKpis',
+                // aboutData.ts (About) — pure data, no JSX: DISCUSSIONS/
+                // DISCUSSIONS_BASE/CRYPTO_BUFF_SITES/CRYPTO_BUFF_BOOKS, the
+                // same real arrays CommunitySection/CryptoBuffSection read,
+                // so the mobile About screen's counts and links can never
+                // drift from desktop's.
+                '!@/components/About',
+                '@/components/About/*',
+                '!@/components/About/aboutData',
                 // RoleHomeView.tsx (RoleHome) — the "Who's asking?" first-run
                 // picker, already self-contained and reused by LandingView;
                 // its per-role copy must not be duplicated (see comment above).

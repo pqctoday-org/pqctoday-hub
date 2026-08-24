@@ -3,12 +3,17 @@ import { describe, it, expect } from 'vitest'
 import { getMobilePageActions, pageIdForMobileRoute } from './getMobilePageActions'
 
 describe('getMobilePageActions', () => {
-  it("always includes Assistant, Journey, FAQ, Glossary and What's new", () => {
+  it("always includes Assistant, Journey, FAQ, Glossary, What's new and About", () => {
     const { actions } = getMobilePageActions('/some-route-with-no-gates')
     const ids = actions.map((a) => a.id)
     expect(ids).toEqual(
-      expect.arrayContaining(['assistant', 'journey', 'faq', 'glossary', 'whatsNew'])
+      expect.arrayContaining(['assistant', 'journey', 'faq', 'glossary', 'whatsNew', 'about'])
     )
+  })
+
+  it('always includes About, even on /about itself — real bug found 2026-08-23: without this, isMobileShell readers had zero nav path to MobileAboutView.tsx', () => {
+    const { actions } = getMobilePageActions('/about')
+    expect(actions.map((a) => a.id)).toContain('about')
   })
 
   it('includes Sources for a route with a registered ViewType', () => {

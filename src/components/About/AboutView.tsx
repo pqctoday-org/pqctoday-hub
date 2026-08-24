@@ -21,8 +21,11 @@ import { ExecutiveAboutSummary } from './ExecutiveAboutSummary'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logAboutOutboundLink } from '@/utils/analytics'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileAboutView } from '@/components/Mobile/screens/MobileAboutView'
 
 export function AboutView() {
+  const isMobileShell = useIsMobileShell()
   const isEmbedded = useIsEmbedded()
   const isExecutive = usePersonaStore((s) => s.selectedPersona) === 'executive'
   const containerRef = useRef<HTMLDivElement>(null)
@@ -51,6 +54,15 @@ export function AboutView() {
     node.addEventListener('click', handler)
     return () => node.removeEventListener('click', handler)
   }, [])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). AboutView is never
+  // simulation-embedded (no widget under shared/widgets imports it), so
+  // unlike Threats/Library this needs no simEmbed-equivalent guard.
+  if (isMobileShell) {
+    return <MobileAboutView />
+  }
 
   return (
     <div ref={containerRef} className="max-w-6xl mx-auto space-y-6 md:space-y-8">

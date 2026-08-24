@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { AboutView } from './AboutView'
@@ -10,6 +10,11 @@ vi.mock('../../hooks/useTheme', () => ({
     theme: 'dark',
     setTheme: vi.fn(),
   }),
+}))
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
 }))
 
 // Mock Framer Motion
@@ -129,5 +134,25 @@ describe('AboutView', () => {
 
     const repoLink = screen.getByRole('link', { name: /View GitHub Repository/i })
     expect(repoLink).toHaveAttribute('href', 'https://github.com/pqctoday-org/pqctoday-hub')
+  })
+
+  // Mobile UX layer (Phase 7). AboutView is never sim-embedded (no widget
+  // under shared/widgets imports it), so unlike Threats/Library this needs
+  // no simEmbed comparison — just confirm the branch fires.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <AboutView />
+        </MemoryRouter>
+      )
+      expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument()
+      expect(screen.queryByText('Transparency & Disclaimer')).not.toBeInTheDocument()
+    })
   })
 })

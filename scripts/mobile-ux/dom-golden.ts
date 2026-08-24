@@ -37,6 +37,7 @@ const ROUTES = [
   '/business',
   '/playground',
   '/timeline',
+  '/about',
 ]
 
 const SUPPRESS_OVERLAYS = () => {

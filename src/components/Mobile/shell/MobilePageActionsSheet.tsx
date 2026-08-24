@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { Bot, Map, HelpCircle, BookOpen, BookOpenText, Sparkles, ChevronRight } from 'lucide-react'
+import {
+  Bot,
+  Map,
+  HelpCircle,
+  BookOpen,
+  BookOpenText,
+  Sparkles,
+  ChevronRight,
+  Info,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SourcesModal } from '@/components/ui/SourcesModal'
 import { Glossary } from '@/components/common/Glossary'
@@ -18,6 +27,7 @@ const ICONS: Record<MobilePageActionId, typeof Bot> = {
   sources: BookOpen,
   glossary: BookOpenText,
   whatsNew: Sparkles,
+  about: Info,
 }
 
 export interface MobilePageActionsSheetProps {
@@ -34,8 +44,8 @@ export interface MobilePageActionsSheetProps {
  * Assistant/Journey reuse the existing, already-mobile-responsive RightPanel
  * (w-full below the sm breakpoint) via the same store the desktop top bar's
  * Ask/Journey buttons already write to — no new panel built. Sources and
- * Glossary reuse their real desktop content components directly. FAQ and
- * What's new navigate to their real pages.
+ * Glossary reuse their real desktop content components directly. FAQ,
+ * What's new and About navigate to their real pages.
  *
  * What's new's sub-label ("N since your last visit", handoff: "'What's new'
  * carries its unread count") overrides getMobilePageActions' static "Recent
@@ -87,6 +97,10 @@ export function MobilePageActionsSheet({ open, onClose }: MobilePageActionsSheet
       case 'glossary':
         onClose()
         setGlossaryOpen(true)
+        return
+      case 'about':
+        onClose()
+        navigate('/about')
         return
     }
   }

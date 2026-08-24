@@ -10,6 +10,7 @@ export type MobilePageActionId =
   | 'sources'
   | 'glossary'
   | 'whatsNew'
+  | 'about'
 
 export interface MobilePageAction {
   id: MobilePageActionId
@@ -36,6 +37,17 @@ export interface MobilePageActionsResult {
  * This selector still exposes `pageIdForRoute` isn't needed by callers
  * outside MobileHeader, so it's computed there directly from the same
  * exported table rather than duplicated here.
+ *
+ * About ('/about') is appended last, always available — real bug found
+ * 2026-08-23 (Phase 7, About screen): the legacy mobile "More" sheet in
+ * MainLayout.tsx explicitly appends '/about' (its own comment cites an
+ * identical bug found there on 2026-08-07 — "no reachable nav entry point
+ * on mobile at all"), but that sheet only renders for `!isMobileShell`. The
+ * new shell's own nav data (mobileNavGroups.ts, the bottom bar's Workflow/
+ * Practice/Reference tabs) never carried '/about' over, so isMobileShell
+ * readers had zero path to it despite MobileAboutView.tsx existing. Mirrors
+ * desktop rail nav (railNav.ts RAIL_ALWAYS_VISIBLE_PATHS), which self-places
+ * '/about' as its own always-visible last row for the same reason.
  */
 export function getMobilePageActions(pathname: string): MobilePageActionsResult {
   const viewType = ROUTE_VIEW_TYPE[pathname]
@@ -49,6 +61,7 @@ export function getMobilePageActions(pathname: string): MobilePageActionsResult 
   }
   actions.push({ id: 'glossary', label: 'Glossary', sub: 'Search PQC terms' })
   actions.push({ id: 'whatsNew', label: "What's new", sub: 'Recent changes to this site' })
+  actions.push({ id: 'about', label: 'About', sub: 'Vision, trust, data & open source' })
   return { actions, sourcesViewType: viewType }
 }
 
