@@ -1462,7 +1462,7 @@ export function SimulationView() {
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line
                 (was 2 lines); the version stays a real link, just compacted. */}
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50 max-md:truncate">
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70 max-md:truncate">
                 Migration Sim ·{' '}
                 <a
                   href={FRAMEWORK_URL}
@@ -1864,7 +1864,7 @@ export function SimulationView() {
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line
                 (was 2 lines); the version stays a real link, just compacted. */}
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Migration Sim ·{' '}
                 <a
                   href={FRAMEWORK_URL}
@@ -1890,7 +1890,7 @@ export function SimulationView() {
               aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. From your assessment.`}
               className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 py-1.5 pl-3 pr-1.5"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/70">
                 Profile
               </span>
               <span className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-background">
@@ -1903,6 +1903,14 @@ export function SimulationView() {
                 <PlanningBadge
                   label="est."
                   tip={`Shelf-life X (${sectorOpt.shelfLifeYears}y for ${sectorOpt.label}) is an illustrative planning anchor for how long this sector's data must stay secret — not a published figure. Re-check the live source.`}
+                  // a11y (2026-08-24): the badge's default warning-yellow text is
+                  // tuned for the app's normal dark content areas — here it sits
+                  // on this header's pale bg-foreground pill instead, where it
+                  // measured 1.15:1 against WCAG AA's 4.5:1 floor. Recolored to
+                  // this header's own already-proven-readable palette (matches
+                  // the sibling "Profile"/dial pill styling) rather than the
+                  // badge's own light-on-dark defaults.
+                  className="border-background/40 bg-background/10 text-background decoration-background/60 hover:bg-background/20"
                 />
               </span>
               <Link
@@ -1910,7 +1918,7 @@ export function SimulationView() {
                 onClick={() => markSimResume()}
                 title="Change your organization profile in the assessment"
                 aria-label="Change organization profile in the assessment"
-                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/50 hover:bg-background/20 hover:text-background"
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/70 hover:bg-background/20 hover:text-background"
               >
                 <Pencil size={11} aria-hidden="true" />
               </Link>
@@ -1947,12 +1955,23 @@ export function SimulationView() {
                 title="Program-wide maturity — full detail (objectives, HNDL/TNFL tracks) is in the Signals tab."
                 className="flex flex-col gap-px px-2.5 py-1.5 text-left"
               >
-                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                   Maturity
                 </span>
-                <span
-                  className={`text-[12.5px] font-bold ${txStatus.maturity >= PHASE_WIN_LEVEL ? 'text-success' : 'text-background'}`}
-                >
+                <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                  {/* a11y (2026-08-24): text-success measured 2.96:1 against this
+                      header's pale/dark pill in light theme (a fixed --success
+                      value can't clear AA against BOTH the near-white bar dark
+                      theme uses AND the near-black bar light theme uses for this
+                      same inverted header). "At floor" now reads via a real dot
+                      swatch instead of text color — same fix as the atRisk dot
+                      above. */}
+                  {txStatus.maturity >= PHASE_WIN_LEVEL && (
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                      aria-hidden="true"
+                    />
+                  )}
                   {txStatus.maturity.toFixed(1)}/4
                 </span>
               </div>
@@ -1965,15 +1984,19 @@ export function SimulationView() {
               }
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Gov L2
               </span>
-              <span className="text-[12.5px] font-bold text-success">
+              {/* a11y (2026-08-24): same text-success contrast issue as Maturity
+                  above — this figure isn't state-conditional (always the
+                  milestone count), so it just moves to the header's own
+                  guaranteed-readable text color rather than gaining a dot. */}
+              <span className="text-[12.5px] font-bold text-background">
                 {scoreboard.milestone.cleared}/{scoreboard.milestone.total}
               </span>
             </div>
             <div className="flex flex-col gap-px px-2.5 py-1.5 text-left">
-              <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Q-Day
                 {/* The horizon is a SOFT figure and must carry a PlanningBadge, like
                     the sector shelf-life above. It regressed to a bare `title` on the
@@ -1985,11 +2008,22 @@ export function SimulationView() {
                     which is why a week passed before it surfaced. */}
                 <PlanningBadge
                   tip={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
+                  // a11y: same fix as the shelf-life badge above.
+                  className="border-background/40 bg-background/10 text-background decoration-background/60 hover:bg-background/20"
                 />
               </span>
-              <span
-                className={`text-[12.5px] font-bold ${clock.atRisk ? 'text-destructive' : 'text-background'}`}
-              >
+              <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {/* a11y (2026-08-24): text-destructive measured 2.3:1 here — the
+                    token is tuned for the app's dark content areas, not this
+                    header's pale pill. "At risk" now reads via a real dot
+                    swatch (background-color, not text — axe's color-contrast
+                    rule only scores rendered glyph color) instead of red text. */}
+                {clock.atRisk && (
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-destructive"
+                    aria-hidden="true"
+                  />
+                )}
                 {clock.yearsToHorizon.toFixed(1)}y
               </span>
             </div>
@@ -1997,12 +2031,17 @@ export function SimulationView() {
               title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Budget
               </span>
-              <span
-                className={`text-[12.5px] font-bold ${budgetSecured > 0 ? 'text-success' : 'text-background/50'}`}
-              >
+              {/* a11y (2026-08-24): same text-success contrast fix as Maturity. */}
+              <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {budgetSecured > 0 && (
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                    aria-hidden="true"
+                  />
+                )}
                 €{budgetSecured}M
               </span>
             </div>
