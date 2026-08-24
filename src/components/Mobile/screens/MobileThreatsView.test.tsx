@@ -108,7 +108,19 @@ describe('MobileThreatsView', () => {
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/Protocol lens, trust-tier filter, the CRQC capability strip/i)
+      screen.getByText(/Protocol lens, trust-tier filter, and the CRQC capability strip/i)
     ).toBeInTheDocument()
+  })
+
+  it('tapping a threat card opens the real detail sheet with its related modules, and Close dismisses it', () => {
+    renderView()
+    const first = threatsData[0]
+    fireEvent.click(screen.getAllByText(first.description)[0].closest('button')!)
+    expect(screen.getByTestId('threat-detail-sheet')).toBeInTheDocument()
+    if (first.relatedModules.length > 0) {
+      expect(screen.getByText(first.relatedModules.join(', '))).toBeInTheDocument()
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByTestId('threat-detail-sheet')).not.toBeInTheDocument()
   })
 })

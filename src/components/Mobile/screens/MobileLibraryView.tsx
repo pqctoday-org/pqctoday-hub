@@ -8,15 +8,17 @@ import {
   GraduationCap,
   BookMarked,
   Route,
+  ExternalLink,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import type { LibraryPurpose } from '@/data/libraryData'
+import type { LibraryItem, LibraryPurpose } from '@/data/libraryData'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
 import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
 import { cn } from '@/lib/utils'
+import { MobileSheet } from '../primitives/Sheet'
 
 type PurposeSelection = LibraryPurpose | 'all'
 type QuickView = 'all' | 'new' | 'cert' | 'bookmarked'
@@ -75,6 +77,7 @@ export function MobileLibraryView() {
   const [purpose, setPurpose] = useState<PurposeSelection>('all')
   const [quickView, setQuickView] = useState<QuickView>('all')
   const [searchText, setSearchText] = useState('')
+  const [selected, setSelected] = useState<LibraryItem | null>(null)
 
   const certRelevantIdSet = useMemo(() => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)), [])
 
@@ -191,8 +194,32 @@ export function MobileLibraryView() {
               ? `updated ${formatLibDate(item.lastUpdateDate)}`
               : formatLibDate(item.initialPublicationDate)
           return (
-            <article key={item.referenceId} className="glass-panel flex flex-col gap-1 p-3.5">
-              <div className="flex items-start justify-between gap-2">
+            <article key={item.referenceId} className="glass-panel relative flex flex-col p-3.5">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleLibraryBookmark(item.referenceId)
+                }}
+                aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this document'}
+                className={cn(
+                  'absolute right-2.5 top-2.5 h-auto shrink-0 rounded p-1',
+                  bookmarked ? 'text-warning' : 'text-muted-foreground/50'
+                )}
+              >
+                {bookmarked ? (
+                  <BookmarkCheck size={15} aria-hidden="true" />
+                ) : (
+                  <Bookmark size={15} aria-hidden="true" />
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setSelected(item)}
+                className="h-auto w-full flex-col items-start gap-1 rounded-none p-0 pr-8 text-left font-normal"
+              >
                 <div className="min-w-0 flex-1">
                   <p className="font-mono text-[10.5px] text-muted-foreground">
                     {item.referenceId}
@@ -201,39 +228,23 @@ export function MobileLibraryView() {
                     {item.documentTitle}
                   </h2>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => toggleLibraryBookmark(item.referenceId)}
-                  aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark this document'}
-                  className={cn(
-                    'h-auto shrink-0 rounded p-1',
-                    bookmarked ? 'text-warning' : 'text-muted-foreground/50'
+                <p className="text-[10.5px] text-muted-foreground">
+                  {lifecycleLabel(item.documentStatusBucket)}
+                  {dateLabel && ` · ${dateLabel}`}
+                  {item.status && (
+                    <span
+                      className={cn(
+                        'ml-1.5 rounded px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wide',
+                        item.status === 'New'
+                          ? 'bg-success/15 text-success'
+                          : 'bg-primary/15 text-primary'
+                      )}
+                    >
+                      {item.status}
+                    </span>
                   )}
-                >
-                  {bookmarked ? (
-                    <BookmarkCheck size={15} aria-hidden="true" />
-                  ) : (
-                    <Bookmark size={15} aria-hidden="true" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-[10.5px] text-muted-foreground">
-                {lifecycleLabel(item.documentStatusBucket)}
-                {dateLabel && ` · ${dateLabel}`}
-                {item.status && (
-                  <span
-                    className={cn(
-                      'ml-1.5 rounded px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wide',
-                      item.status === 'New'
-                        ? 'bg-success/15 text-success'
-                        : 'bg-primary/15 text-primary'
-                    )}
-                  >
-                    {item.status}
-                  </span>
-                )}
-              </p>
+                </p>
+              </Button>
             </article>
           )
         })}
@@ -243,6 +254,109 @@ export function MobileLibraryView() {
         Category, organization, geography, trust-tier, and algorithm-family filters, sort options,
         and full-text semantic search are on a laptop.
       </p>
+
+      <MobileSheet
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.referenceId}
+        large
+        testId="library-detail-sheet"
+      >
+        {selected && (
+          <div className="flex flex-col gap-3">
+            <div>
+              <h2 className="text-[15px] font-bold leading-snug text-foreground">
+                {selected.documentTitle}
+              </h2>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {selected.authorsOrOrganization || 'Unknown'}
+                {' · '}
+                {lifecycleLabel(selected.documentStatusBucket)}
+                {selected.initialPublicationDate &&
+                  ` · ${formatLibDate(selected.initialPublicationDate)}`}
+              </p>
+            </div>
+            {selected.shortDescription && (
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                {selected.shortDescription}
+              </p>
+            )}
+            <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3">
+              {[
+                ['Type', selected.documentType],
+                ['Algorithm family', selected.algorithmFamily],
+                ['Security levels', selected.securityLevels],
+                ['Region', selected.regionScope],
+                ['Migration urgency', selected.migrationUrgency],
+                [
+                  'Citations',
+                  selected.citationCount != null ? String(selected.citationCount) : undefined,
+                ],
+              ]
+                .filter(([, v]) => v && v !== '—')
+                .map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                      {label}
+                    </dt>
+                    <dd className="mt-0.5 text-[11.5px] text-foreground">{value}</dd>
+                  </div>
+                ))}
+            </dl>
+            {selected.categories?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 border-t border-border pt-3">
+                {selected.categories.map((c) => (
+                  <span
+                    key={c}
+                    className="rounded-md bg-muted/60 px-2 py-0.5 text-[11px] text-foreground"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2 border-t border-border pt-3">
+              {selected.downloadUrl ? (
+                <a
+                  href={selected.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary text-[12.5px] font-bold text-primary-foreground"
+                >
+                  Open document
+                  <ExternalLink size={13} aria-hidden="true" />
+                </a>
+              ) : (
+                <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-border bg-muted/50 text-[12px] font-semibold text-muted-foreground">
+                  Source not available
+                </span>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => toggleLibraryBookmark(selected.referenceId)}
+                aria-pressed={libraryBookmarks.includes(selected.referenceId)}
+                className="h-10 gap-1.5 px-3 text-[12.5px]"
+              >
+                <Bookmark
+                  size={14}
+                  className={
+                    libraryBookmarks.includes(selected.referenceId)
+                      ? 'fill-primary text-primary'
+                      : ''
+                  }
+                  aria-hidden="true"
+                />
+                {libraryBookmarks.includes(selected.referenceId) ? 'Bookmarked' : 'Bookmark'}
+              </Button>
+            </div>
+            <p className="text-[10px] leading-relaxed text-muted-foreground">
+              CSWP-39 requirements, trust/evidence detail, prior revisions and endorse/flag are on a
+              laptop.
+            </p>
+          </div>
+        )}
+      </MobileSheet>
     </div>
   )
 }

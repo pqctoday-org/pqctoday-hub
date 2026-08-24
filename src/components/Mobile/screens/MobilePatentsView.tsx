@@ -8,6 +8,7 @@ import { isPqcPatent } from '@/components/Patents/patentColumns'
 import { usePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/PatentTypes'
 import { cn } from '@/lib/utils'
+import { MobileSheet } from '../primitives/Sheet'
 
 // Same labels PatentsTable.tsx's own AGILITY_LABELS map uses — replicated
 // rather than imported (a 5-entry literal, not worth a third ESLint
@@ -66,6 +67,7 @@ export function MobilePatentsView() {
   const [highImpactOnly, setHighImpactOnly] = useState(false)
   const [agilityFilter, setAgilityFilter] = useState<CryptoAgilityMode | null>(null)
   const [searchText, setSearchText] = useState('')
+  const [selected, setSelected] = useState<PatentItem | null>(null)
 
   const scoped = useMemo(() => (readPqcOnly() ? patentsData.filter(isPqcPatent) : patentsData), [])
   const kpis = usePatentKpis(scoped)
@@ -186,7 +188,13 @@ export function MobilePatentsView() {
         {filtered.map((p) => {
           const fipsAlgos = fipsMappedAlgorithms(p)
           return (
-            <article key={p.patentNumber} className="glass-panel flex flex-col gap-1.5 p-3.5">
+            <Button
+              type="button"
+              variant="ghost"
+              key={p.patentNumber}
+              onClick={() => setSelected(p)}
+              className="glass-panel h-auto w-full flex-col items-start gap-1.5 p-3.5 text-left font-normal"
+            >
               <div className="flex flex-wrap items-center gap-1.5">
                 <h2 className="text-[13px] font-bold leading-snug text-foreground">{p.title}</h2>
               </div>
@@ -216,7 +224,7 @@ export function MobilePatentsView() {
                 {fipsAlgos.length > 0 && `Maps to ${fipsAlgos.join(', ')} · `}
                 {p.assignee} · issued {p.issueDate}
               </p>
-            </article>
+            </Button>
           )
         })}
       </div>
@@ -225,6 +233,96 @@ export function MobilePatentsView() {
         The full 25-dimension table/grid, the all-crypto scope toggle, and citation graphs are on a
         laptop. Patent data sourced from USPTO. For research — not legal or IP advice.
       </p>
+
+      <MobileSheet
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.patentNumber}
+        large
+        testId="patent-detail-sheet"
+      >
+        {selected && (
+          <div className="flex flex-col gap-3">
+            <div>
+              <h2 className="text-[15px] font-bold leading-snug text-foreground">
+                {selected.title}
+              </h2>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {selected.assignee} · issued {selected.issueDate}
+              </p>
+            </div>
+            {selected.summary && (
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                {selected.summary}
+              </p>
+            )}
+            <div className="flex flex-wrap items-center gap-1.5 border-t border-border pt-3">
+              <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                {AGILITY_LABELS[selected.cryptoAgilityMode]}
+              </span>
+              {selected.quantumRelevance !== 'none' && (
+                <span className="rounded bg-muted/50 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  {RELEVANCE_LABELS[selected.quantumRelevance]}
+                </span>
+              )}
+            </div>
+            {selected.classicalAlgorithms.length > 0 && (
+              <div className="border-t border-border pt-3">
+                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Classical algorithms
+                </p>
+                <p className="mt-0.5 text-[11.5px] text-foreground">
+                  {selected.classicalAlgorithms.join(', ')}
+                </p>
+              </div>
+            )}
+            {selected.pqcAlgorithms.length > 0 && (
+              <div>
+                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  PQC algorithms
+                </p>
+                <p className="mt-0.5 text-[11.5px] text-foreground">
+                  {selected.pqcAlgorithms.join(', ')}
+                </p>
+              </div>
+            )}
+            {selected.protocols.length > 0 && (
+              <div>
+                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Protocols
+                </p>
+                <p className="mt-0.5 text-[11.5px] text-foreground">
+                  {selected.protocols.join(', ')}
+                </p>
+              </div>
+            )}
+            <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3">
+              <div>
+                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Priority date
+                </dt>
+                <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.priorityDate}</dd>
+              </div>
+              <div>
+                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Filing date
+                </dt>
+                <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.filingDate}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Inventors
+                </dt>
+                <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.inventors}</dd>
+              </div>
+            </dl>
+            <p className="text-[10px] leading-relaxed text-muted-foreground">
+              The full independent claim text, CPC codes and remaining 20+ extraction dimensions are
+              on a laptop.
+            </p>
+          </div>
+        )}
+      </MobileSheet>
     </div>
   )
 }

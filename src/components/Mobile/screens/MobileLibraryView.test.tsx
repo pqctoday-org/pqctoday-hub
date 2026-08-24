@@ -99,4 +99,16 @@ describe('MobileLibraryView', () => {
     renderView()
     expect(screen.getByText(/Category, organization, geography, trust-tier/i)).toBeInTheDocument()
   })
+
+  it('tapping a document card opens the real detail sheet, and Close dismisses it', () => {
+    renderView()
+    const firstTitle = document.querySelector('article h2')
+    expect(firstTitle).toBeTruthy()
+    const titleText = firstTitle!.textContent!
+    fireEvent.click(firstTitle!.closest('button')!)
+    expect(screen.getByTestId('library-detail-sheet')).toBeInTheDocument()
+    expect(screen.getAllByText(titleText).length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByTestId('library-detail-sheet')).not.toBeInTheDocument()
+  })
 })

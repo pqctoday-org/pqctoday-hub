@@ -79,4 +79,17 @@ describe('MobilePatentsView', () => {
       screen.getByText(/The full 25-dimension table\/grid, the all-crypto scope toggle/i)
     ).toBeInTheDocument()
   })
+
+  it('tapping a patent card opens the real detail sheet with its summary, and Close dismisses it', () => {
+    renderView()
+    const scoped = patentsData.filter(isPqcPatent)
+    const first = scoped[0]
+    fireEvent.click(screen.getByText(first.title).closest('button')!)
+    expect(screen.getByTestId('patent-detail-sheet')).toBeInTheDocument()
+    if (first.summary) {
+      expect(screen.getByText(first.summary)).toBeInTheDocument()
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByTestId('patent-detail-sheet')).not.toBeInTheDocument()
+  })
 })

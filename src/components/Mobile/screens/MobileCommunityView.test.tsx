@@ -65,7 +65,7 @@ describe('MobileCommunityView', () => {
     renderView()
     const both = CURATED.find((l) => l.peerReviewed === 'yes' && l.verifiedDate)
     if (both) {
-      const card = screen.getByText(both.name).closest('article')
+      const card = screen.getByText(both.name).closest('button')
       expect(card).not.toBeNull()
       expect(card!.textContent).toMatch(/verified/i)
       expect(card!.textContent).toMatch(/peer reviewed/i)
@@ -74,8 +74,18 @@ describe('MobileCommunityView', () => {
 
   it('states what was cut rather than silently dropping it', () => {
     renderView()
-    expect(
-      screen.getByText(/document-contributor stubs, patent and open-source cross-references/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/document-contributor stubs/i)).toBeInTheDocument()
+  })
+
+  it('tapping a leader card opens the real detail sheet with their bio, and Close dismisses it', () => {
+    renderView()
+    const first = CURATED[0]
+    fireEvent.click(screen.getAllByText(first.name)[0].closest('button')!)
+    expect(screen.getByTestId('leader-detail-sheet')).toBeInTheDocument()
+    if (first.bio) {
+      expect(screen.getByText(first.bio)).toBeInTheDocument()
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByTestId('leader-detail-sheet')).not.toBeInTheDocument()
   })
 })

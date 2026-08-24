@@ -99,4 +99,15 @@ describe('MobileAlgorithmsView', () => {
       screen.getByText(/Family, region \(NIST\/BSI\/ANSSI\), and security-level filters/i)
     ).toBeInTheDocument()
   })
+
+  it('tapping a byte-bar row opens the real per-algorithm detail sheet, and Close dismisses it', () => {
+    renderView()
+    fireEvent.click(screen.getByText('RSA-2048').closest('button')!)
+    expect(screen.getByTestId('algorithm-detail-sheet')).toBeInTheDocument()
+    expect(
+      screen.getByText(ALGORITHM_REGISTRY['RSA-2048'].fipsStandard ?? 'None')
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByTestId('algorithm-detail-sheet')).not.toBeInTheDocument()
+  })
 })

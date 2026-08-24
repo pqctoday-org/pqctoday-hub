@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { ShieldCheck, Building2 } from 'lucide-react'
+import { ShieldCheck, Building2, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { leadersData } from '@/data/leadersData'
+import { leadersData, type Leader } from '@/data/leadersData'
 import { LEADER_CATEGORIES } from '@/components/Leaders/LeaderCategorySidebar'
 import { cn } from '@/lib/utils'
+import { MobileSheet } from '../primitives/Sheet'
 
 const TYPE_STYLE: Record<string, string> = {
   Public: 'bg-status-info/15 text-status-info border-status-info/30',
@@ -57,6 +58,7 @@ function humanizeDate(iso: string): string {
  */
 export function MobileCommunityView() {
   const [category, setCategory] = useState<string | null>(null)
+  const [selected, setSelected] = useState<Leader | null>(null)
 
   const curated = useMemo(() => leadersData.filter((l) => l.sourceKind === 'curated'), [])
   const filtered = useMemo(
@@ -117,7 +119,13 @@ export function MobileCommunityView() {
           <p className="text-[12.5px] text-muted-foreground">No one matches this category.</p>
         )}
         {filtered.map((leader) => (
-          <article key={leader.id} className="glass-panel flex flex-col gap-1.5 p-3.5">
+          <Button
+            type="button"
+            variant="ghost"
+            key={leader.id}
+            onClick={() => setSelected(leader)}
+            className="glass-panel h-auto w-full flex-col items-start gap-1.5 p-3.5 text-left font-normal"
+          >
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-[14px] font-bold text-foreground">{leader.name}</h2>
               <span
@@ -177,14 +185,99 @@ export function MobileCommunityView() {
                 </>
               )}
             </p>
-          </article>
+          </Button>
         ))}
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Sort options, the {leadersData.length - curated.length} document-contributor stubs, patent
-        and open-source cross-references, and the consent/removal request flow are on a laptop.
+        Sort options, the {leadersData.length - curated.length} document-contributor stubs, and the
+        consent/removal request flow are on a laptop.
       </p>
+
+      <MobileSheet
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.name}
+        large
+        testId="leader-detail-sheet"
+      >
+        {selected && (
+          <div className="flex flex-col gap-3">
+            <div>
+              <h2 className="text-[15px] font-bold leading-snug text-foreground">
+                {selected.name}
+              </h2>
+              <p className="mt-0.5 text-[11.5px] text-muted-foreground">{selected.title}</p>
+            </div>
+            {selected.bio && (
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">{selected.bio}</p>
+            )}
+            {selected.organizations.length > 0 && (
+              <div className="flex flex-col gap-1 border-t border-border pt-3">
+                {selected.organizations.map((org) => (
+                  <p
+                    key={org}
+                    className="flex items-center gap-1.5 text-[11.5px] font-semibold text-primary"
+                  >
+                    <Building2 size={12} className="shrink-0" aria-hidden="true" />
+                    {org}
+                  </p>
+                ))}
+              </div>
+            )}
+            {(selected.websiteUrl || selected.linkedinUrl) && (
+              <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
+                {selected.websiteUrl && (
+                  <a
+                    href={selected.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[11.5px] font-semibold text-primary"
+                  >
+                    <ExternalLink size={12} aria-hidden="true" />
+                    Website
+                  </a>
+                )}
+                {selected.linkedinUrl && (
+                  <a
+                    href={selected.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-[11.5px] font-semibold text-primary"
+                  >
+                    <ExternalLink size={12} aria-hidden="true" />
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+            )}
+            {selected.vettingBody && selected.vettingBody.length > 0 && (
+              <div className="border-t border-border pt-3">
+                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Vetted by
+                </p>
+                <p className="mt-0.5 text-[11.5px] text-foreground">
+                  {selected.vettingBody.join(', ')}
+                </p>
+              </div>
+            )}
+            <p className="flex flex-wrap items-center gap-x-1.5 border-t border-border pt-3 text-[10.5px] text-muted-foreground">
+              <span>{selected.category}</span>
+              <span>·</span>
+              <span>{selected.country}</span>
+              {selected.verifiedDate && (
+                <>
+                  <span>·</span>
+                  <span className="flex items-center gap-1 text-success">
+                    <ShieldCheck size={11} aria-hidden="true" />
+                    verified {humanizeDate(selected.verifiedDate)}
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        )}
+      </MobileSheet>
     </div>
   )
 }

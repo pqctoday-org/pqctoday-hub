@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { Minus, Plus, Bookmark, BookmarkCheck } from 'lucide-react'
+import { Minus, Plus, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { threatsData, type ThreatItem } from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
@@ -15,6 +15,7 @@ import {
   type ThreatClass,
 } from '@/components/Threats/threatClassification'
 import { cn } from '@/lib/utils'
+import { MobileSheet } from '../primitives/Sheet'
 
 const CURRENT_YEAR = new Date().getFullYear()
 const CRQC_YEAR_MIN = 2030
@@ -115,6 +116,7 @@ export function MobileThreatsView() {
   const [crqcYear, setCrqcYear] = useState(consensus.zEstimate)
   const [criticality, setCriticality] = useState<string | null>(null)
   const [classFilter, setClassFilter] = useState<ThreatClass | null>(null)
+  const [selected, setSelected] = useState<ThreatItem | null>(null)
 
   const hndlDeadline = crqcYear - DATA_LIFETIME - MIGRATION_TIME
   const hnflDeadline = crqcYear - CREDENTIAL_VALIDITY - MIGRATION_TIME
@@ -294,14 +296,78 @@ export function MobileThreatsView() {
             threat={threat}
             bookmarked={myThreats.includes(threat.threatId)}
             onToggleBookmark={() => toggleMyThreat(threat.threatId)}
+            onSelect={() => setSelected(threat)}
           />
         ))}
       </div>
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Protocol lens, trust-tier filter, the CRQC capability strip and trajectory chart, and each
-        threat&apos;s full dossier (sources, related modules) are on a laptop.
+        Protocol lens, trust-tier filter, and the CRQC capability strip and trajectory chart are on
+        a laptop.
       </p>
+
+      <MobileSheet
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.threatId}
+        large
+        testId="threat-detail-sheet"
+      >
+        {selected && (
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                {selected.industry}
+              </p>
+              <p className="mt-1 text-[13px] leading-relaxed text-foreground">
+                {selected.description}
+              </p>
+            </div>
+            <div className="border-t border-border pt-3 text-[12px] text-muted-foreground">
+              <span className="font-semibold text-foreground/80">At risk:</span>{' '}
+              {selected.cryptoAtRisk}
+              {' → '}
+              <span className="font-semibold text-foreground/80">{selected.pqcReplacement}</span>
+            </div>
+            <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+              {SHOR_TIER_DEFS[getShorTier(selected)].blurb}
+            </p>
+            {selected.relatedModules.length > 0 && (
+              <div className="border-t border-border pt-3">
+                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Related modules
+                </p>
+                <p className="mt-0.5 text-[11.5px] text-foreground">
+                  {selected.relatedModules.join(', ')}
+                </p>
+              </div>
+            )}
+            <div className="border-t border-border pt-3">
+              <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Source
+              </p>
+              {selected.sourceUrl ? (
+                <a
+                  href={selected.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-0.5 flex items-center gap-1 text-[11.5px] font-semibold text-primary"
+                >
+                  {selected.mainSource}
+                  <ExternalLink size={11} aria-hidden="true" />
+                </a>
+              ) : (
+                <p className="mt-0.5 text-[11.5px] text-foreground">{selected.mainSource}</p>
+              )}
+              {selected.lastVerified && (
+                <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+                  Verified {selected.lastVerified}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </MobileSheet>
     </div>
   )
 }
@@ -310,10 +376,12 @@ function ThreatCardMobile({
   threat,
   bookmarked,
   onToggleBookmark,
+  onSelect,
 }: {
   threat: ThreatItem
   bookmarked: boolean
   onToggleBookmark: () => void
+  onSelect: () => void
 }) {
   const tier = getShorTier(threat)
   const tierDef = SHOR_TIER_DEFS[tier]
@@ -339,7 +407,10 @@ function ThreatCardMobile({
         <Button
           type="button"
           variant="ghost"
-          onClick={onToggleBookmark}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleBookmark()
+          }}
           aria-label={bookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
           className={cn(
             'ml-auto h-auto shrink-0 rounded p-1',
@@ -354,15 +425,22 @@ function ThreatCardMobile({
         </Button>
       </div>
 
-      <p className="text-[12.5px] leading-snug text-foreground/90">{threat.description}</p>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onSelect}
+        className="h-auto w-full flex-col items-start gap-2 rounded-none p-0 text-left font-normal"
+      >
+        <p className="text-[12.5px] leading-snug text-foreground/90">{threat.description}</p>
 
-      <p className="text-[10.5px] leading-relaxed text-muted-foreground">{tierDef.blurb}</p>
+        <p className="text-[10.5px] leading-relaxed text-muted-foreground">{tierDef.blurb}</p>
 
-      <p className="text-[11px] text-muted-foreground">
-        <span className="font-semibold text-foreground/80">At risk:</span> {threat.cryptoAtRisk}
-        {' → '}
-        <span className="font-semibold text-foreground/80">{threat.pqcReplacement}</span>
-      </p>
+        <p className="text-[11px] text-muted-foreground">
+          <span className="font-semibold text-foreground/80">At risk:</span> {threat.cryptoAtRisk}
+          {' → '}
+          <span className="font-semibold text-foreground/80">{threat.pqcReplacement}</span>
+        </p>
+      </Button>
     </article>
   )
 }

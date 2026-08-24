@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ChevronRight, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { ALGORITHM_REGISTRY } from '@/data/algorithmProperties'
+import { ALGORITHM_REGISTRY, type AlgorithmProps } from '@/data/algorithmProperties'
 import { transitionConsequence } from '@/data/algorithmConsequence'
 import {
   INTENTS,
@@ -11,6 +12,7 @@ import {
   EU_EXECUTIVE_INTENTS,
   type Intent,
 } from '@/data/algorithmEntryIntents'
+import { MobileSheet } from '../primitives/Sheet'
 
 function intentHref(params: Intent['params']): string {
   const query = Object.entries(params)
@@ -24,13 +26,27 @@ interface ByteRow {
   label: string
   bytes: number
   highlight?: boolean
+  algo: AlgorithmProps
 }
 
-function ByteBar({ row, maxBytes }: { row: ByteRow; maxBytes: number }) {
+function ByteBar({
+  row,
+  maxBytes,
+  onSelect,
+}: {
+  row: ByteRow
+  maxBytes: number
+  onSelect: (algo: AlgorithmProps) => void
+}) {
   const pct = Math.max(4, Math.round((row.bytes / maxBytes) * 100))
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-[104px] shrink-0 truncate text-[11px] font-medium text-foreground">
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={() => onSelect(row.algo)}
+      className="flex h-auto w-full items-center justify-start gap-2 rounded-md p-0 font-normal"
+    >
+      <span className="w-[104px] shrink-0 truncate text-left text-[11px] font-medium text-foreground">
         {row.label}
       </span>
       <div className="h-4 flex-1 overflow-hidden rounded bg-muted/30">
@@ -44,7 +60,7 @@ function ByteBar({ row, maxBytes }: { row: ByteRow; maxBytes: number }) {
       <span className="w-[52px] shrink-0 text-right font-mono text-[10.5px] text-muted-foreground">
         {row.bytes.toLocaleString()} B
       </span>
-    </div>
+    </Button>
   )
 }
 
@@ -89,25 +105,38 @@ export function MobileAlgorithmsView() {
         ? [PERSONA_INTENTS[selectedPersona]]
         : undefined
 
+  const [selected, setSelected] = useState<AlgorithmProps | null>(null)
+
   const publicKeyRows: ByteRow[] = [
-    { label: 'RSA-2048', bytes: ALGORITHM_REGISTRY['RSA-2048'].publicKeyBytes },
+    {
+      label: 'RSA-2048',
+      bytes: ALGORITHM_REGISTRY['RSA-2048'].publicKeyBytes,
+      algo: ALGORITHM_REGISTRY['RSA-2048'],
+    },
     {
       label: 'ML-KEM-768',
       bytes: ALGORITHM_REGISTRY['ML-KEM-768'].publicKeyBytes,
       highlight: true,
+      algo: ALGORITHM_REGISTRY['ML-KEM-768'],
     },
   ]
   const signatureRows: ByteRow[] = [
-    { label: 'Ed25519', bytes: ALGORITHM_REGISTRY['Ed25519'].signatureOrCiphertextBytes },
+    {
+      label: 'Ed25519',
+      bytes: ALGORITHM_REGISTRY['Ed25519'].signatureOrCiphertextBytes,
+      algo: ALGORITHM_REGISTRY['Ed25519'],
+    },
     {
       label: 'ML-DSA-65',
       bytes: ALGORITHM_REGISTRY['ML-DSA-65'].signatureOrCiphertextBytes,
       highlight: true,
+      algo: ALGORITHM_REGISTRY['ML-DSA-65'],
     },
     {
       label: 'SLH-DSA-128s',
       bytes: ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'].signatureOrCiphertextBytes,
       highlight: true,
+      algo: ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'],
     },
   ]
   const maxBytes = Math.max(
@@ -181,7 +210,7 @@ export function MobileAlgorithmsView() {
         </p>
         <div className="mb-3 flex flex-col gap-1.5">
           {publicKeyRows.map((row) => (
-            <ByteBar key={row.label} row={row} maxBytes={maxBytes} />
+            <ByteBar key={row.label} row={row} maxBytes={maxBytes} onSelect={setSelected} />
           ))}
         </div>
 
@@ -190,7 +219,7 @@ export function MobileAlgorithmsView() {
         </p>
         <div className="mb-3 flex flex-col gap-1.5">
           {signatureRows.map((row) => (
-            <ByteBar key={row.label} row={row} maxBytes={maxBytes} />
+            <ByteBar key={row.label} row={row} maxBytes={maxBytes} onSelect={setSelected} />
           ))}
         </div>
 
@@ -209,6 +238,74 @@ export function MobileAlgorithmsView() {
         Family, region (NIST/BSI/ANSSI), and security-level filters, the full transition table, and
         KAT WASM validation are reached through the options above, or on a laptop.
       </p>
+
+      <MobileSheet
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.name}
+        testId="algorithm-detail-sheet"
+      >
+        {selected && (
+          <dl className="grid grid-cols-2 gap-x-3 gap-y-3">
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Family
+              </dt>
+              <dd className="mt-0.5 text-[12px] text-foreground">{selected.family}</dd>
+            </div>
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                FIPS standard
+              </dt>
+              <dd className="mt-0.5 text-[12px] text-foreground">
+                {selected.fipsStandard ?? 'None'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Security level
+              </dt>
+              <dd className="mt-0.5 text-[12px] text-foreground">
+                {selected.securityLevel ?? '—'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Public key
+              </dt>
+              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                {selected.publicKeyBytes.toLocaleString()} B
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Private key
+              </dt>
+              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                {selected.privateKeyBytes.toLocaleString()} B
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                Signature / ciphertext
+              </dt>
+              <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                {selected.signatureOrCiphertextBytes.toLocaleString()} B
+              </dd>
+            </div>
+            {selected.sharedSecretBytes != null && (
+              <div>
+                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Shared secret
+                </dt>
+                <dd className="mt-0.5 font-mono text-[12px] text-foreground">
+                  {selected.sharedSecretBytes.toLocaleString()} B
+                </dd>
+              </div>
+            )}
+          </dl>
+        )}
+      </MobileSheet>
     </div>
   )
 }
