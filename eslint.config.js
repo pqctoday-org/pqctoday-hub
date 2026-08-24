@@ -226,6 +226,16 @@ export default defineConfig([
                 '!@/components/BusinessCenter/sections',
                 '@/components/BusinessCenter/sections/*',
                 '!@/components/BusinessCenter/sections/ActionItemsSection',
+                // Cswp39SectionBadge.tsx (widgets) — explicitly generic
+                // (own doc comment: a "hover-popover badge" with no
+                // baked-in desktop-only layout; its optional hover/focus
+                // tooltip just won't trigger on touch — the required
+                // §-ref text always renders). Imported directly so a
+                // business tool's CSWP.39 provenance chip can never
+                // drift from desktop's.
+                '!@/components/BusinessCenter/widgets',
+                '@/components/BusinessCenter/widgets/*',
+                '!@/components/BusinessCenter/widgets/Cswp39SectionBadge',
                 // ReportUpgradeNudge.tsx (Report/redesign) — explicitly
                 // generic, no baked-in desktop-only layout (already
                 // grid-cols-1/flex-wrap below md). reportContentActions.ts
