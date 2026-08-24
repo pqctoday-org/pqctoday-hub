@@ -164,14 +164,53 @@ test('should navigate to playground', async ({ page }) => {
 
 ### CI Pipeline
 
-The `.github/workflows/ci.yml` runs:
+E2E is split into two tiers — a fast **smoke** tier that gates every PR, and
+a **nightly** tier that runs the full suite once a day. This split was
+introduced 2026-04-02 (E2E had been dropped from CI entirely for being too
+slow; the smoke tier re-gates a lean, curated subset rather than the whole
+suite).
+
+The required PR check, `.github/workflows/ci.yml`'s `checks` job (the only
+job branch protection requires), runs:
 
 - ✅ Security audit
 - ✅ Formatting checks
 - ✅ Linting
+- ✅ ~20 data-integrity audits (`npm run audit:*`, `npm run validate:data`, etc.)
 - ✅ Build verification
-- ✅ Unit tests
-- ✅ E2E tests (Playwright, sharded across 2 workers, Chromium only)
+- ✅ Unit tests (Vitest)
+- ✅ **E2E smoke tier** (`npm run test:e2e:ci-smoke` = `playwright test --project=smoke`)
+  — the explicit allowlist in `playwright.config.ts`'s `SMOKE_SPECS`: routing/title,
+  accessibility, timeline freshness badge, trust-tier filtering, the compliance
+  persona deep-link, and the ACVP Validation Suite (`e2e/acvp-validator.spec.ts`,
+  the only WASM/crypto spec in the allowlist — promoted 2026-08-23 because it
+  measured cheap enough to gate every PR rather than wait for nightly).
+
+Two other jobs in the same workflow (`kat-node24`, `gate-cacp`) run targeted
+Vitest suites (cross-impl KATs, the CACP/KMIP playground gate) on their own
+toolchains, but — unlike `checks` — branch protection does not require them
+to pass before merge.
+
+The **nightly** tier, `.github/workflows/e2e-nightly.yml` (cron `0 7 * * *`
+UTC + manual `workflow_dispatch`, sharded 2-way), runs the full `chromium`
+project — every `e2e/*.spec.ts` except `*.local.spec.ts` — including the
+heavy WASM/crypto specs (ML-KEM/ML-DSA, softhsm, OpenSSL, SSH/IKE handshakes)
+that would make the per-PR gate flaky or slow at full breadth. **This is not
+a required/branch-protected check** — a failure shows up in the Actions run
+history (and the uploaded Playwright report artifact), not on the PR itself,
+and it cannot block a merge. A regression confined to a nightly-only spec
+(anything except `acvp-validator.spec.ts`, which is now also in smoke) can
+land on `main` and only surface up to 24h later.
+
+The `local`-only tier (`*.local.spec.ts`) never runs in CI at all — see
+`npm run test:e2e:cacp-visual` / `test:e2e:cacp-local` — and the
+`mobile-smoke` project (same `SMOKE_SPECS` allowlist, iPhone 14 viewport) is
+wired up but **not yet added to `ci.yml`**; run it locally via
+`npx playwright test --project=mobile-smoke`.
+
+See `npm run gate:data` / `npm run gate:local` above for checks that run
+locally (pre-push) but not in CI at all — a red local gate can and should
+block a push even when this CI pipeline would be green.
 
 ## Test File Naming Conventions
 

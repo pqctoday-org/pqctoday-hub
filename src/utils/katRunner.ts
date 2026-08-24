@@ -10,7 +10,12 @@
  * Test vector sources:
  *   ML-KEM: src/data/acvp/mlkem_test.json (NIST ACVP vsId=1, encapDecap)
  *   ML-DSA: src/data/acvp/mldsa_test.json (NIST ACVP vsId=2, sigGen)
- *   SLH-DSA: functional round-trip (FIPS 205 — NIST ACVP vectors too large to embed)
+ *   SLH-DSA: functional round-trip here. Real NIST ACVP vectors for all 12
+ *     parameter sets DO exist (src/data/acvp/slhdsa_ctx_test.json) and are
+ *     wired into the SigVer KAT in HsmAcvpTesting.tsx, not this file — this
+ *     comment previously said the vectors were "too large to embed", which
+ *     stopped being true once they were reduced to one case per parameter set
+ *     (2026-08-24 WS-6/H-4 remediation).
  */
 import mlkemTestVectors from '../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../data/acvp/mldsa_test.json'

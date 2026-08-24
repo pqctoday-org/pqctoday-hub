@@ -1,9 +1,15 @@
 {
-  "vsId": 8,
   "algorithm": "SHA3-512",
   "mode": "hash",
-  "revision": "1.0",
-  "isSample": true,
+  "revision": "2.0",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-512-2.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-23",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "b0521468a178f7fd362d63319aa69b708885d08f0c71cee99ac70729f5bdf64b",
+    "note": "Replaces a prior file whose msg/md pairs, while presumably mathematically correct outputs, did not byte-match any real NIST ACVP-Server sample case and carried no source annotation (2026-08-24 WS-6 remediation, H-3). Now real, byte-verified NIST-sourced vectors, restricted to byte-aligned AFT cases (this file format has no bit-length field, and some ACVP hash cases test non-byte-aligned messages padded to a byte boundary \u2014 excluded to avoid silently hashing padding bits beyond the NIST-intended message)."
+  },
   "testGroups": [
     {
       "tgId": 1,
@@ -11,18 +17,21 @@
       "tests": [
         {
           "tcId": 1,
+          "comment": "NIST ACVP-Server SHA3-512-2.0, tcId=384",
           "msg": "",
           "md": "A69F73CCA23A9AC5C8B567DC185A756E97C982164FE25859E0D1DCC1475C80A615B2123AF1F5F94C11E3E9402C3AC558F500199D95B6D3E301758586281DCD26"
         },
         {
           "tcId": 2,
-          "msg": "616263",
-          "md": "B751850B1A57168A5693CD924B6B096E08F621827444F70D884F5D0240D2712E10E116E9192AF3C91A7EC57647E3934057340B4CF408D5A56592F8274EEC53F0"
+          "comment": "NIST ACVP-Server SHA3-512-2.0, tcId=118",
+          "msg": "6F",
+          "md": "BB4E922D85066E5EF0A215D59FAADE03F55728F59A552FC742065D41F189E17DEA56A9338764F84BD714F043C2DA71D157712921B69A4F23ADAEBD9366878371"
         },
         {
           "tcId": 3,
-          "msg": "6162636462636465636465666465666765666768666768696768696A68696A6B696A6B6C6A6B6C6D6B6C6D6E6C6D6E6F6D6E6F706E6F7071",
-          "md": "04A371E84ECFB5B8B77CB48610FCA8182DD457CE6F326A0FD3D7EC2F1E91636DEE691FBE0C985302BA1B0D8DC78C086346B533B49C030D99A27DAF1139D6E75E"
+          "comment": "NIST ACVP-Server SHA3-512-2.0, tcId=333",
+          "msg": "08CCEA88A58800667DC17ED122175894464EC5C2E28221610C6881C6FE9358DF673B9F94170E3580E4DC941BFBDA90AE",
+          "md": "8966D3635313DD0C9630287EF754F1A5507F7BB76388696EF40C3EF836F58314FA6B0F5FB2FAF06B671D70FF520C60A697034CC35CDA34C0AE247224881696CA"
         }
       ]
     }
