@@ -350,8 +350,10 @@ export const MyPathView = ({ personaId, onOpenCatalog }: MyPathViewProps) => {
           }}
           isModuleRelevant={() => true}
           isModuleAboveLevel={() => false}
-          onTakeCheckpointQuiz={(categories) =>
-            navigate(`/learn/quiz?category=${categories.join(',')}`)
+          onTakeCheckpointQuiz={(categories, label) =>
+            navigate(`/learn/quiz?category=${categories.join(',')}`, {
+              state: { checkpointLabel: `Checkpoint quiz — ${label}` },
+            })
           }
           onShowEverything={onOpenCatalog}
         />

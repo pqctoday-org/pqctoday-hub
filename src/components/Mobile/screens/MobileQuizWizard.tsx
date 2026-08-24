@@ -15,9 +15,16 @@ export interface MobileQuizCompletionData {
 
 export interface MobileQuizWizardProps {
   questions: QuizQuestion[]
-  /** "Checkpoint quiz — Foundations", the capstone's persona label, etc. —
-   *  shown above the question, matching the handoff ("Source module named
-   *  above each question"). */
+  /** Screen-level title — "Checkpoint quiz — Foundations", the capstone's
+   *  persona label, etc. Previously fell back to the persona label for
+   *  every phase checkpoint (2026-08-24 audit R4.1 — the caller wasn't
+   *  passing `state: { checkpointLabel }` on navigate, so a Foundations
+   *  checkpoint quiz opened headed "CISO"); fixed at both real navigate
+   *  call sites (MobileMyPathView.tsx, desktop's MyPathView.tsx). The
+   *  handoff's separate "Source module named above each question" is a
+   *  PER-QUESTION requirement this screen-level title never satisfied —
+   *  QuestionCard.tsx now renders the question's own real category label
+   *  for that, not this prop. */
   title: string
   onComplete: (data: MobileQuizCompletionData) => void
   onExit: () => void

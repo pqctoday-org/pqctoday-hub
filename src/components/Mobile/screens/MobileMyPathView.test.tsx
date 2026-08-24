@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router'
 import { MobileMyPathView } from './MobileMyPathView'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useLearnStore } from '@/store/useLearnStore'
@@ -113,5 +113,34 @@ describe('MobileMyPathView — Full track (phased, with checkpoint locking)', ()
     renderPath('executive')
     fireEvent.click(screen.getByRole('tab', { name: /Full track/ }))
     expect(screen.getByRole('button', { name: 'Review quiz' })).toBeEnabled()
+  })
+
+  // 2026-08-24 audit R4.1: tapping "Take quiz" navigated with no location
+  // state at all, so Quiz/index.tsx's `checkpointState?.checkpointLabel ??
+  // persona?.label` fell through to the PERSONA label — a Foundations
+  // checkpoint quiz opened headed "CISO"/"Executive" instead of the phase
+  // it actually gates. Renders a probe at the real destination route to
+  // prove the navigation itself carries the right state, not just that the
+  // button text says the right phase name.
+  it('"Take quiz" navigates with the real phase title as checkpointLabel, not the persona label', () => {
+    const phase = firstPhase('executive')
+    markComplete(phase.moduleIds)
+    function LocationProbe() {
+      const location = useLocation()
+      const state = location.state as { checkpointLabel?: string } | null
+      return <div data-testid="probe">{state?.checkpointLabel ?? 'NO STATE'}</div>
+    }
+    render(
+      <MemoryRouter initialEntries={['/learn']}>
+        <Routes>
+          <Route path="/learn" element={<MobileMyPathView persona="executive" />} />
+          <Route path="/learn/quiz" element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>
+    )
+    fireEvent.click(screen.getByRole('tab', { name: /Full track/ }))
+    fireEvent.click(screen.getByText(phase.title))
+    fireEvent.click(screen.getByRole('button', { name: 'Take quiz' }))
+    expect(screen.getByTestId('probe')).toHaveTextContent(`Checkpoint quiz — ${phase.title}`)
   })
 })

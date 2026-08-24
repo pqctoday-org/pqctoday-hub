@@ -294,7 +294,9 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                           variant={isPassed ? 'outline' : 'gradient'}
                           disabled={isLocked}
                           onClick={() =>
-                            navigate(`/learn/quiz?category=${phase.categories.join(',')}`)
+                            navigate(`/learn/quiz?category=${phase.categories.join(',')}`, {
+                              state: { checkpointLabel: `Checkpoint quiz — ${phase.title}` },
+                            })
                           }
                           className="h-8 shrink-0 rounded-lg px-2.5 text-[11px] font-bold"
                         >
