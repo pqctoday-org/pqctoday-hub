@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle, Laptop } from 'lucide-react'
+import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
@@ -95,19 +96,84 @@ const MIGRATION_STATUSES: { value: MigrationStatusValue; label: string; descript
  * track's own step (Step11Infrastructure.tsx, 597 lines of multi-select
  * matrices) is a real, honest desktop-only cut, correctly stated below with
  * the corrected 13-step count.
+ *
+ * Mode-switch guard (2026-08-24 audit fix): useAssessFlow resolves
+ * store.currentStep against the `mode` it's given via keyAtStoreIndex — if a
+ * desktop user left a comprehensive run in progress and this screen mounted
+ * the hook straight at mode:'quick', the comprehensive currentStep wouldn't
+ * resolve in quick's renderOrder, and the hook's own snap-to-first-step
+ * effect would silently zero their resume position the instant this
+ * component rendered. So the hook is kept mounted against the store's own
+ * (already in-progress) mode until the user explicitly picks a track here —
+ * matching desktop's handleSwitchTrack, which never changes mode without an
+ * explicit user action either.
  */
 export function MobileAssessView() {
+  const navigate = useNavigate()
   const store = useAssessmentStore()
   const [showWhy, setShowWhy] = useState(false)
   const [done, setDone] = useState(store.assessmentStatus === 'complete')
 
+  const [pendingResumeChoice] = useState(
+    () => store.assessmentMode === 'comprehensive' && store.industry !== ''
+  )
+  const [resumeResolved, setResumeResolved] = useState(!pendingResumeChoice)
+
   const flow = useAssessFlow({
-    mode: 'quick',
+    mode: resumeResolved ? 'quick' : (store.assessmentMode ?? 'quick'),
     onLastStep: () => {
       store.markComplete()
       setDone(true)
     },
   })
+
+  // Only takes effect once the user has resolved (or never had) a
+  // comprehensive-in-progress conflict — never fires during the interstitial.
+  useEffect(() => {
+    if (resumeResolved && store.assessmentMode !== 'quick') {
+      store.setAssessmentMode('quick')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeResolved])
+
+  if (pendingResumeChoice && !resumeResolved) {
+    return (
+      <div className="flex flex-col items-center gap-3 px-4 pb-24 pt-12 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <Laptop size={20} className="text-primary" aria-hidden="true" />
+        </div>
+        <h1 className="text-[16px] font-extrabold text-foreground">
+          Comprehensive assessment in progress
+        </h1>
+        <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
+          You have a comprehensive assessment underway — that track is best finished on a laptop.
+          Restarting here switches to the shorter quick track and clears the comprehensive-only
+          answers so they don&apos;t affect your score.
+        </p>
+        <Button
+          type="button"
+          variant="gradient"
+          onClick={() => {
+            store.setAssessmentMode('quick')
+            store.setStep(0)
+            setResumeResolved(true)
+          }}
+          className="mt-2 h-10 w-full max-w-xs text-[12.5px] font-bold"
+        >
+          Restart as quick assessment
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="text-[11px] text-muted-foreground"
+        >
+          Continue later — leave it as is
+        </Button>
+      </div>
+    )
+  }
 
   if (done) {
     return (

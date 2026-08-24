@@ -109,4 +109,64 @@ describe('MobileAssessView', () => {
     renderView()
     expect(screen.getByText(/The 13-step comprehensive assessment/i)).toBeInTheDocument()
   })
+
+  describe('comprehensive-in-progress guard (2026-08-24 audit fix)', () => {
+    it('shows an interstitial instead of the wizard when a comprehensive run is in progress', () => {
+      useAssessmentFormStore.setState({
+        assessmentMode: 'comprehensive',
+        industry: 'Technology',
+        currentStep: 9,
+      })
+      renderView()
+      expect(screen.getByText('Comprehensive assessment in progress')).toBeInTheDocument()
+      expect(screen.queryByText(STEP_META.industry.question)).not.toBeInTheDocument()
+    })
+
+    it('does not touch the persisted mode or step while the interstitial is showing', () => {
+      useAssessmentFormStore.setState({
+        assessmentMode: 'comprehensive',
+        industry: 'Technology',
+        currentStep: 9,
+      })
+      renderView()
+      expect(useAssessmentFormStore.getState().assessmentMode).toBe('comprehensive')
+      expect(useAssessmentFormStore.getState().currentStep).toBe(9)
+    })
+
+    it('"Continue later" leaves the comprehensive run untouched', () => {
+      useAssessmentFormStore.setState({
+        assessmentMode: 'comprehensive',
+        industry: 'Technology',
+        currentStep: 9,
+      })
+      renderView()
+      fireEvent.click(screen.getByText('Continue later — leave it as is'))
+      expect(useAssessmentFormStore.getState().assessmentMode).toBe('comprehensive')
+      expect(useAssessmentFormStore.getState().currentStep).toBe(9)
+    })
+
+    it('"Restart as quick" switches mode, resets to step 0, and clears comprehensive-only fields', () => {
+      useAssessmentFormStore.setState({
+        assessmentMode: 'comprehensive',
+        industry: 'Technology',
+        currentStep: 9,
+        systemCount: '200-plus',
+        cryptoAgility: 'hardcoded',
+      })
+      renderView()
+      fireEvent.click(screen.getByText('Restart as quick assessment'))
+      expect(useAssessmentFormStore.getState().assessmentMode).toBe('quick')
+      expect(useAssessmentFormStore.getState().currentStep).toBe(0)
+      expect(useAssessmentFormStore.getState().systemCount).toBe('')
+      expect(useAssessmentFormStore.getState().cryptoAgility).toBe('')
+      expect(screen.getByText(STEP_META.industry.question)).toBeInTheDocument()
+    })
+
+    it('does not show the interstitial for a fresh (no-progress) store, even if mode leaked to comprehensive', () => {
+      useAssessmentFormStore.setState({ assessmentMode: 'comprehensive', industry: '' })
+      renderView()
+      expect(screen.queryByText('Comprehensive assessment in progress')).not.toBeInTheDocument()
+      expect(screen.getByText(STEP_META.industry.question)).toBeInTheDocument()
+    })
+  })
 })
