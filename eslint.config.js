@@ -238,6 +238,14 @@ export default defineConfig([
                 '@/components/Library/redesign/*',
                 '!@/components/Library/redesign/useLibraryPipeline',
                 '!@/components/Library/redesign/libraryPills',
+                // LeaderCategorySidebar.tsx — imported only for its exported
+                // LEADER_CATEGORIES array (a plain literal, no JSX reused).
+                // The mobile Community screen's category filter reads the
+                // same real 8-value taxonomy desktop's sidebar does, so the
+                // two can never silently diverge.
+                '!@/components/Leaders',
+                '@/components/Leaders/*',
+                '!@/components/Leaders/LeaderCategorySidebar',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board

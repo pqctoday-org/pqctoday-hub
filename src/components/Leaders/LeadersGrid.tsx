@@ -32,6 +32,8 @@ import { PERSONAS } from '@/data/learningPersonas'
 import { LeadersExecutivePanel } from './LeadersExecutivePanel'
 import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES, leaderMatchesCategory } from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileCommunityView } from '@/components/Mobile/screens/MobileCommunityView'
 import type { LeadersViewMode } from './LeadersViewToggle'
 import { SectorStack } from './SectorStack'
 import { SortControl } from '../Library/SortControl'
@@ -169,6 +171,8 @@ const EXEC_CATEGORY_PRIORITY: Record<string, number> = {
 }
 
 export const LeadersGrid = () => {
+  // Mobile UX layer (Phase 7).
+  const isMobileShell = useIsMobileShell()
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = useLeaderFilters(searchParams, setSearchParams)
   const { set: setFilters } = filters
@@ -649,6 +653,15 @@ export const LeadersGrid = () => {
     })
     return () => clearPageActions()
   }, [handleExportCsv])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). LeadersGrid is never
+  // embedded in the simulation (no widget imports it), so unlike Threats/
+  // Library this needs no simEmbed-equivalent guard.
+  if (isMobileShell) {
+    return <MobileCommunityView />
+  }
 
   return (
     <div className="space-y-6">
