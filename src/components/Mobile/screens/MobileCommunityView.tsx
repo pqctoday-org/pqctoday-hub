@@ -251,6 +251,44 @@ export function MobileCommunityView() {
                 )}
               </div>
             )}
+            {selected.keyResourceRefs && selected.keyResourceRefs.length > 0 && (
+              <div className="border-t border-border pt-3">
+                <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Cite:
+                </span>
+                {/* keyResourceRefs[i] pairs positionally with keyResourceUrl[i]
+                    (leadersData.ts's own documented convention) — guard the
+                    index rather than assume the two arrays are the same
+                    length, then link only where a real URL exists at that
+                    position. Was dropped from this sheet entirely (2026-08-24
+                    audit R4.2): the card shows these chips, but tapping
+                    through to the detail sheet lost them — "the point of the
+                    page" (a claim with a name behind it) had no reachable
+                    reference. */}
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                  {selected.keyResourceRefs.map((ref, i) => {
+                    const url = selected.keyResourceUrl?.[i]
+                    const chipClass =
+                      'rounded border border-primary/25 bg-primary/5 px-1.5 py-px font-mono text-[10px] text-primary'
+                    return url ? (
+                      <a
+                        key={ref}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(chipClass, 'underline decoration-dotted underline-offset-2')}
+                      >
+                        {ref}
+                      </a>
+                    ) : (
+                      <span key={ref} className={chipClass}>
+                        {ref}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
             {selected.vettingBody && selected.vettingBody.length > 0 && (
               <div className="border-t border-border pt-3">
                 <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
