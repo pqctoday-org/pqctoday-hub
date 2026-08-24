@@ -225,6 +225,19 @@ export default defineConfig([
                 '!@/components/Threats',
                 '@/components/Threats/*',
                 '!@/components/Threats/threatClassification',
+                // useLibraryPipeline.ts / libraryPills.ts (Library/redesign)
+                // — the real filter/sort pipeline and pill-formatting
+                // helpers every desktop Library surface already reads (no
+                // JSX in either). The mobile screen calls the identical
+                // hook with fixed defaults for the filters it doesn't
+                // expose UI for, rather than re-deriving search/purpose/
+                // quick-view matching a second time.
+                '!@/components/Library',
+                '@/components/Library/*',
+                '!@/components/Library/redesign',
+                '@/components/Library/redesign/*',
+                '!@/components/Library/redesign/useLibraryPipeline',
+                '!@/components/Library/redesign/libraryPills',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board
