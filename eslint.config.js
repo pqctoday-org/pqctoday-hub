@@ -205,6 +205,24 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // ReportUpgradeNudge.tsx (Report/redesign) — explicitly
+                // generic, no baked-in desktop-only layout (already
+                // grid-cols-1/flex-wrap below md). reportContentActions.ts
+                // (Report/sections) — pure logic, no JSX: the real
+                // share-token/navigator.share mechanism. Imported directly
+                // so the mobile Report screen's share link and copy can
+                // never drift from desktop's. (TopThreeActions.tsx's own
+                // exception lives in the pre-existing common/ block below —
+                // same reasoning: "so dense pages... can offer a 'do this
+                // now' hero".)
+                '!@/components/Report',
+                '@/components/Report/*',
+                '!@/components/Report/redesign',
+                '@/components/Report/redesign/*',
+                '!@/components/Report/redesign/ReportUpgradeNudge',
+                '!@/components/Report/sections',
+                '@/components/Report/sections/*',
+                '!@/components/Report/sections/reportContentActions',
                 // assessFlowModel.ts / useAssessFlow.ts (Assess/redesign) —
                 // pure data/logic + a pure hook, no JSX. The identical
                 // question copy, validators and step-navigation hook every
@@ -268,6 +286,13 @@ export default defineConfig([
                 '@/components/common/*',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
+                // TopThreeActions.tsx (common) — same category: explicitly
+                // generic ("so dense pages... can offer a 'do this now'
+                // hero"), no baked-in desktop-only layout (grid-cols-1
+                // below md already). Reused verbatim by Report's mobile
+                // screen rather than rebuilt, so its 3-card cap/derivation
+                // can never drift from desktop's.
+                '!@/components/common/TopThreeActions',
                 // WhenDoesThisReachMe.tsx / MobileTimelineList.tsx (Timeline)
                 // — Phase 7's mobile Timeline screen reuses both verbatim
                 // rather than rebuilding them. WhenDoesThisReachMe is
