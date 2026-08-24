@@ -205,6 +205,18 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // assessFlowModel.ts / useAssessFlow.ts (Assess/redesign) —
+                // pure data/logic + a pure hook, no JSX. The identical
+                // question copy, validators and step-navigation hook every
+                // desktop Assess step already reads, so mobile's step
+                // indexing can never disagree with desktop's (both read/
+                // write the same persisted currentStep).
+                '!@/components/Assess',
+                '@/components/Assess/*',
+                '!@/components/Assess/redesign',
+                '@/components/Assess/redesign/*',
+                '!@/components/Assess/redesign/assessFlowModel',
+                '!@/components/Assess/redesign/useAssessFlow',
                 // workbenchCatalog.ts / productStatus.ts / proofFreshness.ts /
                 // useMigrationPlan.ts / waves.ts / cbomExport.ts
                 // (Migrate/Workbench) — pure logic/data/hooks, no JSX. The
