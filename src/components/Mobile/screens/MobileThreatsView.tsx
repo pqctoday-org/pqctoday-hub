@@ -325,9 +325,14 @@ export function MobileThreatsView() {
         {selected && (
           <div className="flex flex-col gap-3">
             <div>
-              <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
-                {selected.industry}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[10.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                  {selected.industry}
+                </p>
+                <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+                  {selected.criticality}
+                </span>
+              </div>
               <p className="mt-1 text-[13px] leading-relaxed text-foreground">
                 {selected.description}
               </p>
@@ -412,6 +417,13 @@ function ThreatCardMobile({
         </span>
         <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
           {clsDef.label}
+        </span>
+        {/* Criticality was filterable (2 rows of filter chips) but never
+            shown on the row itself (2026-08-24 audit R4.7) — a reader who
+            filtered to "Critical" couldn't see any row's level without
+            opening the detail sheet. */}
+        <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
+          {threat.criticality}
         </span>
         <Button
           type="button"

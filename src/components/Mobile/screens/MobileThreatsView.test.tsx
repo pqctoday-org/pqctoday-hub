@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -94,6 +94,24 @@ describe('MobileThreatsView', () => {
     }
     const nonMatch = threatsData.find((t) => t.criticality !== 'Critical')
     if (nonMatch) expect(screen.queryByText(nonMatch.threatId)).not.toBeInTheDocument()
+  })
+
+  // 2026-08-24 audit R4.7: criticality was filterable (2 chip rows) but
+  // never shown on the row or the sheet — a reader who filtered to
+  // "Critical" couldn't see any row's level without opening it.
+  it("shows each threat's real criticality level on its card row", () => {
+    renderView()
+    const first = threatsData[0]
+    const card = screen.getByText(first.threatId).closest('article')!
+    expect(within(card).getByText(first.criticality)).toBeInTheDocument()
+  })
+
+  it('shows the real criticality level in the detail sheet', () => {
+    renderView()
+    const first = threatsData[0]
+    fireEvent.click(screen.getAllByText(first.description)[0].closest('button')!)
+    const sheet = screen.getByTestId('threat-detail-sheet')
+    expect(within(sheet).getByText(first.criticality)).toBeInTheDocument()
   })
 
   it('tapping an active filter chip again clears it', () => {
