@@ -1,9 +1,15 @@
 {
-  "vsId": 5,
   "algorithm": "SHA2-384",
   "mode": "hash",
   "revision": "1.0",
-  "isSample": true,
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA2-384-1.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-23",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "b22d80da99444af78feecaaae49493ee6189f1e6675e49db8764fb77bf16e847",
+    "note": "Replaces a prior file whose msg/md pairs, while presumably mathematically correct outputs, did not byte-match any real NIST ACVP-Server sample case and carried no source annotation (2026-08-24 WS-6 remediation, H-3). Now real, byte-verified NIST-sourced vectors, restricted to byte-aligned AFT cases (this file format has no bit-length field, and some ACVP hash cases test non-byte-aligned messages padded to a byte boundary \u2014 excluded to avoid silently hashing padding bits beyond the NIST-intended message)."
+  },
   "testGroups": [
     {
       "tgId": 1,
@@ -11,18 +17,21 @@
       "tests": [
         {
           "tcId": 1,
+          "comment": "NIST ACVP-Server SHA2-384-1.0, tcId=134",
           "msg": "",
           "md": "38B060A751AC96384CD9327EB1B1E36A21FDB71114BE07434C0CC7BF63F6E1DA274EDEBFE76F65FBD51AD2F14898B95B"
         },
         {
           "tcId": 2,
-          "msg": "616263",
-          "md": "CB00753F45A35E8BB5A03D699AC65007272C32AB0EDED1631A8B605A43FF5BED8086072BA1E7CC2358BAECA134C825A7"
+          "comment": "NIST ACVP-Server SHA2-384-1.0, tcId=886",
+          "msg": "80",
+          "md": "8DB630B3036F40E29AA4C95E3C0156F55A593BF005FC425936D2134A4FC0B855BB4AB4767DD4B0B1DD261CD111598D3D"
         },
         {
           "tcId": 3,
-          "msg": "6162636462636465636465666465666765666768666768696768696A68696A6B696A6B6C6A6B6C6D6B6C6D6E6C6D6E6F6D6E6F706E6F7071",
-          "md": "3391FDDDFC8DC7393707A65B1B4709397CF8B1D162AF05ABFE8F450DE5F36BC6B0455A8520BC4E6F5FE95B1FE3C8452B"
+          "comment": "NIST ACVP-Server SHA2-384-1.0, tcId=498",
+          "msg": "E0B47C3ACCCF49E669BBB9226F58EEE6534CBD7899A1170C8C1AC71FB4EEC706087A66435BAD8123D2EA0FEA04960A3D04",
+          "md": "32200152255B59C718BF9735F804C22D7FC1FCAC71FA897D0E7C616DBE9535FFC1F5A02D73657690F3AD88C9DD8C83DF"
         }
       ]
     }

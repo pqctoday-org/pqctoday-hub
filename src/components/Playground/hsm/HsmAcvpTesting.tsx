@@ -987,14 +987,35 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 9b. SLH-DSA SigVer KAT (FIPS 205) — NIST ACVP vector ────────
+        // ── 9b. SLH-DSA SigVer KAT (FIPS 205) — NIST ACVP vectors, all 12 sets ──
         // True known-answer test: import the NIST public key and verify the
         // embedded signature over the binary message+context, asserting the
         // result matches the vector's testPassed. (The functional test above
         // only proves self-consistency; this proves FIPS-205 conformance.)
-        {
-          const tv = slhdsaCtxTestVectors.sigVer
-          const id9b = `slhdsa-sigver-kat-${eName}`
+        // Until 2026-08-24 this only covered SLH-DSA-SHA2-128f (1 of 12 sets);
+        // the other 11 had no vector-backed check at all, only the functional
+        // round-trip above — see WS-6/H-4 remediation.
+        for (const slhParam of [
+          { ckp: CKP_SLH_DSA_SHA2_128S, name: 'SLH-DSA-SHA2-128s' },
+          { ckp: CKP_SLH_DSA_SHA2_128F, name: 'SLH-DSA-SHA2-128f' },
+          { ckp: CKP_SLH_DSA_SHA2_192S, name: 'SLH-DSA-SHA2-192s' },
+          { ckp: CKP_SLH_DSA_SHA2_192F, name: 'SLH-DSA-SHA2-192f' },
+          { ckp: CKP_SLH_DSA_SHA2_256S, name: 'SLH-DSA-SHA2-256s' },
+          { ckp: CKP_SLH_DSA_SHA2_256F, name: 'SLH-DSA-SHA2-256f' },
+          { ckp: CKP_SLH_DSA_SHAKE_128S, name: 'SLH-DSA-SHAKE-128s' },
+          { ckp: CKP_SLH_DSA_SHAKE_128F, name: 'SLH-DSA-SHAKE-128f' },
+          { ckp: CKP_SLH_DSA_SHAKE_192S, name: 'SLH-DSA-SHAKE-192s' },
+          { ckp: CKP_SLH_DSA_SHAKE_192F, name: 'SLH-DSA-SHAKE-192f' },
+          { ckp: CKP_SLH_DSA_SHAKE_256S, name: 'SLH-DSA-SHAKE-256s' },
+          { ckp: CKP_SLH_DSA_SHAKE_256F, name: 'SLH-DSA-SHAKE-256f' },
+        ]) {
+          const tv = (
+            slhdsaCtxTestVectors.sigVer as Record<
+              string,
+              (typeof slhdsaCtxTestVectors.sigVer)['SLH-DSA-SHA2-128f']
+            >
+          )[slhParam.name]
+          const id9b = `slhdsa-sigver-kat-${slhParam.name}-${eName}`
           addLog(
             `[${eName}] Testing ${tv.parameterSet} SigVer KAT (FIPS 205, NIST ACVP tcId=${tv.tcId})...`
           )
@@ -1007,7 +1028,7 @@ export const HsmAcvpTesting = () => {
             const ctxBytes = hexToBytes(tv.context)
             const sigBytes = hexToBytes(tv.signature)
 
-            const pubHandle = hsm_importSLHDSAPublicKey(M, hSession, CKP_SLH_DSA_SHA2_128F, pkBytes)
+            const pubHandle = hsm_importSLHDSAPublicKey(M, hSession, slhParam.ckp, pkBytes)
             regKey({
               handle: pubHandle,
               family: 'slh-dsa',
@@ -1036,7 +1057,7 @@ export const HsmAcvpTesting = () => {
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
-              id: `slhdsa-sigver-kat-err-${eName}`,
+              id: `slhdsa-sigver-kat-err-${slhParam.name}-${eName}`,
               algorithm: `${tv.parameterSet} (${eName})`,
               testCase: 'SigVer KAT (NIST ACVP)',
               referenceUrl: REF.slhdsa,
