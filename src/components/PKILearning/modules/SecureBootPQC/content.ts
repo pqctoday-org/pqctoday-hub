@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'secure-boot-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   // DECLARED 2026-08-22. This module renders <LibRef> links — clickable, reader-facing
   // citations into the library — for eleven documents while declaring three, so eight of
@@ -41,6 +42,25 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-208'),
     getStandard('RFC 8017'),
     getStandard('RFC 9881'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names SP 800-161 as the supply-chain risk framework and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
+    getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 11889" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M'),
+    // DECLARED 2026-08-23: this module names "RFC 9909" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9909'),
   ],
 
   algorithms: [

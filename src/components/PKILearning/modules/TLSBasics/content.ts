@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'tls-basics',
   version: '1.1.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -38,6 +39,11 @@ export const content: ModuleContent = {
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('FIPS 205'),
     getStandard('RFC 8879'),
+    // DECLARED 2026-08-23: this module names "RFC 9162" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9162'),
   ],
 
   algorithms: [

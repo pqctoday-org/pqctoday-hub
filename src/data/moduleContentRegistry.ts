@@ -14,12 +14,40 @@ const modules = import.meta.glob<{ content: ModuleContent }>(
   { eager: true }
 )
 
-/** moduleId → ISO `lastReviewed` date, for every module that has a content.ts. */
+/**
+ * moduleId → ISO `lastReviewed` date, for every module a human has actually checked.
+ *
+ * A module with no entry here has NEVER been reviewed — the key is absent rather than
+ * holding a placeholder, and ModuleReferencesTab renders nothing for it. Three modules
+ * are in that state as of 2026-08-23 (sbom, soc-implementation-pqc,
+ * verification-closure); they postdate the 2026-03-28 baseline review.
+ *
+ * Until 2026-08-23 this map was not what it said it was: `apply_approved` bumped
+ * `lastReviewed` on every applied edit, so 55 of 64 dates overstated the real review
+ * (median 13 days, max 148) and the tab showed those numbers to readers. See
+ * ModuleContentTypes.ts for the split into `lastReviewed` / `lastEdited`.
+ */
 export const MODULE_LAST_REVIEWED: Record<string, string> = Object.fromEntries(
   Object.values(modules)
     .map((m) => m.content)
-    .filter((c): c is ModuleContent => Boolean(c?.moduleId && c?.lastReviewed))
+    .filter((c): c is ModuleContent & { lastReviewed: string } =>
+      Boolean(c?.moduleId && c?.lastReviewed)
+    )
     .map((c) => [c.moduleId, c.lastReviewed])
+)
+
+/**
+ * moduleId → ISO `lastEdited` date. Separate from the map above on purpose: this one
+ * answers "when did this file last change", which is not evidence that anything was
+ * checked. Absent for a module that has not been edited since the fields were split.
+ */
+export const MODULE_LAST_EDITED: Record<string, string> = Object.fromEntries(
+  Object.values(modules)
+    .map((m) => m.content)
+    .filter((c): c is ModuleContent & { lastEdited: string } =>
+      Boolean(c?.moduleId && c?.lastEdited)
+    )
+    .map((c) => [c.moduleId, c.lastEdited])
 )
 
 /**

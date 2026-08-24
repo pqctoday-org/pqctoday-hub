@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'research-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,4: SP 800-208 (stateful hash-based signatures) and SP 800-90A
@@ -32,6 +33,26 @@ export const content: ModuleContent = {
     getStandard('NIST IR 8105'),
     getStandard('NIST IR 8309'),
     getStandard('NIST IR 8413'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names "SP 800-227" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST SP 800-227'),
+    // DECLARED 2026-08-23: this module names "SP 800-90B" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90B'),
+    // DECLARED 2026-08-23: this module names "SP 800-90C" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90C'),
   ],
 
   algorithms: [

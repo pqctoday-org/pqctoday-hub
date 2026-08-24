@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'digital-assets',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('RFC-8032'),
@@ -31,6 +32,16 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('IETF RFC 6979'),
     getStandard('RFC 9370'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module names "SP 800-132" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-132'),
   ],
 
   algorithms: [

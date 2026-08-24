@@ -9,14 +9,20 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'verification-closure',
-  version: '1.1.0',
   lastReviewed: '2026-08-23',
+  version: '1.1.0',
+  lastEdited: '2026-08-23',
 
-  // NCSC-UK's 2028/2031/2035 targets, the AIVD/CWI/TNO Handbook, and ISO/IEC
-  // 27001 are still practitioner guidance / have no ACTIVE library row to
-  // cite (both current ISO 27001 rows are deprecated with no successor) —
-  // left as prose-only in the narratives below rather than a dangling or
-  // deprecated getStandard() call.
+  // CORRECTED 2026-08-23. This read that NCSC-UK's 2028/2031/2035 targets and ISO/IEC
+  // 27001 "have no ACTIVE library row to cite". Both halves were wrong by the time it was
+  // acted on: UK-NCSC-Migration-Timelines-2025 has been active all along and its cached PDF
+  // carries the targets verbatim ("By 2028 ... Carry out a full discovery exercise", "By 2031
+  // Carry out your early, highest-priority PQC migration activities", "By 2035 Complete
+  // migration to PQC of all your systems"), and ISO-IEC-27001-2022 was reactivated the same
+  // day — it had been hidden under a no-record-without-proof policy that a standard ISO sells
+  // can never satisfy. A note explaining why something is uncitable goes stale silently; the
+  // spot-check flagged the NCSC claim as resting on no sampled evidence, which is what
+  // surfaced it. The AIVD/CWI/TNO Handbook genuinely has no row and stays prose-only.
   standards: [
     getStandard('NIST IR 8547'),
     getStandard('ETSI TR 103 619'),
@@ -28,6 +34,18 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('NIST SP 800-53'),
+    // DECLARED 2026-08-23: this module names SP 800-131A for algorithm transition guidance and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
+    getStandard('NIST-SP-800-131A-Rev3'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 27001" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-27001-2022'),
+    // DECLARED 2026-08-23: the module states NCSC-UK's 2028/2031/2035 phased targets to a
+    // reader. Verified against this row's own cached PDF before declaring.
+    getStandard('UK-NCSC-Migration-Timelines-2025'),
   ],
 
   algorithms: [

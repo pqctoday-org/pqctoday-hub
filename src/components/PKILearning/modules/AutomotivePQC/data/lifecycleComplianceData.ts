@@ -143,7 +143,12 @@ export const AUTOMOTIVE_HSM_TIERS: AutomotiveHSMTier[] = [
     location: 'Regional V2X PKI infrastructure',
     standard: 'IEEE 1609.2 / ETSI TS 102 941',
     fipsLevel: 'Level 3',
-    pqcSupport: 'IEEE 1609.2 PQC amendment in progress (ML-DSA + ML-KEM)',
+    // CORRECTED 2026-08-23: read "IEEE 1609.2 PQC amendment in progress (ML-DSA + ML-KEM)".
+    // No such project exists. IEEE's own page for 1609.2 contains zero occurrences of
+    // "post-quantum", "quantum", "ML-DSA", "ML-KEM" or "P1609.2", which matches the
+    // library row's determination of 2026-07-31.
+    pqcSupport:
+      'No IEEE PQC amendment project; 1609.2-2025 specifies ECC. PQC for V2X is research literature',
     typicalVendors: ['Qualcomm / Autotalks SCMS', 'CAMP LLC (US V2X PKI)', 'C-ITS (EU V2X PKI)'],
     keyTypes: ['Root CA', 'Enrollment CA', 'Pseudonym CA', 'Linkage Authority keys'],
     operationsPerSecond: '50,000+ ECDSA pseudonym certs/sec',
@@ -278,7 +283,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     year: 2025,
     quarter: 'Q4',
     description:
-      'V2X security standard adds ML-KEM and ML-DSA support for post-quantum readiness. Amendment P1609.2/D1.2 in development; ratification expected Q4 2025–Q2 2026.',
+      'V2X security standard. IEEE 1609.2-2025 specifies ECC-based security services; no IEEE post-quantum amendment project exists, and the previously stated "Amendment P1609.2/D1.2" and its Q4 2025-Q2 2026 ratification window were unsupported. Post-quantum V2X remains research literature.',
     pqcRelevance: 'direct',
     confidence: 'in-development',
     affectedSystems: ['V2X module', 'V2X PKI/SCMS', 'Roadside units'],

@@ -758,11 +758,18 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
               <strong className="text-foreground">HSM dependency:</strong> Payment HSMs must support
               PQC key wrapping before any downstream migration can begin
             </li>
+            {/* NARROWED 2026-08-23. This read "v4.0.1 is the current standard — there is no
+                v5.0. PCI SSC opened a six-week request for comments on it on 3 June 2026".
+                Neither half was sourceable: nothing in the library supports the negative or the
+                date, PCI SSC's own page is JS-rendered so no version string is retrievable, and
+                the only "v5.0" in our evidence is PCI PTS HSM v5.0 — a DIFFERENT standard, which
+                is a plausible origin for the confusion. What remains is checkable: the library
+                holds PCI DSS v4.0.1, and that 794,273-character document contains zero
+                occurrences of "post-quantum", "quantum", "ML-KEM", "ML-DSA" or "FIPS 203". */}
             <li>
-              <strong className="text-foreground">PCI DSS alignment:</strong> v4.0.1 is the current
-              standard — there is no v5.0. PCI SSC opened a six-week request for comments on it on 3
-              June 2026, explicitly to shape the next version; that is where PQC requirements would
-              first appear
+              <strong className="text-foreground">PCI DSS alignment:</strong> this module works
+              against PCI DSS v4.0.1, the version in the standards library. It carries no
+              post-quantum requirements; a future revision is where they would first appear
             </li>
           </ul>
         </div>

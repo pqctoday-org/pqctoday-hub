@@ -44,7 +44,7 @@ export const MLS_CIPHERSUITES: MLSCiphersuite[] = [
     kdf: 'HKDF-SHA256',
     aead: 'AES-128-GCM',
     signature: 'ML-DSA-65',
-    referenceId: 'draft-ietf-mls-pq-ciphersuites-04',
+    referenceId: 'draft-ietf-mls-pq-ciphersuites-06',
   },
   {
     id: 'mls_hybrid_x25519_mlkem768',
@@ -61,7 +61,7 @@ export const MLS_CIPHERSUITES: MLSCiphersuite[] = [
 export const MLS_LIBRARY_REFS = [
   'RFC 9420',
   'RFC 9180',
-  'draft-ietf-mls-pq-ciphersuites-04',
+  'draft-ietf-mls-pq-ciphersuites-06',
   'draft-ietf-mls-combiner-02',
   'draft-ietf-mls-extensions-09',
 ]

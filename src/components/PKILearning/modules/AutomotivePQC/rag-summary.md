@@ -37,7 +37,7 @@ Advanced-level module (80 min, 6 workshop steps) covering post-quantum cryptogra
 - V2X BSM: ~300-byte payload broadcast at 10 Hz per vehicle (~3 KB/s). PQC signature overhead (2,420 bytes ML-DSA-44) dwarfs the payload; constraint is signature + cert chain size, not payload budget.
 - CCC Digital Key 3.0 UWB ranging precision: ±10 cm — PQC key exchange must complete within 500 ms for passive entry user experience
 - UNECE R155 compliance: mandatory for new type approvals in 54 UNECE member states since July 2024; retroactive for existing types by July 2027
-- **Regulatory confidence**: UNECE R155/R156, ISO/SAE 21434, CNSA 2.0 are published. IEEE 1609.2 PQC amendment is in development. China GB/T, Japan NISC, TISAX v7 PQC dates are projected (no official timelines published).
+- **Regulatory confidence**: UNECE R155/R156, ISO/SAE 21434, CNSA 2.0 are published. IEEE 1609.2-2025 specifies ECC and has no post-quantum amendment project. China GB/T, Japan NISC, TISAX v7 PQC dates are projected (no official timelines published).
 - ISO/SAE 21434 TARA (Threat Analysis and Risk Assessment): cryptographic asset inventory and risk classification required; ML-DSA/ML-KEM migration must be captured as cybersecurity goals
 
 ## Standards Referenced

@@ -7,19 +7,19 @@ The PKI Enrollment Protocols module covers EST (Enrollment over Secure Transport
 ## Key Concepts
 
 - **EST (RFC 7030, October 2013)** — Enrollment over Secure Transport; HTTPS-based; client POSTs a base64-encoded PKCS#10 CSR to `/.well-known/est/simpleenroll`; server returns base64-encoded PKCS#7 SignedData containing the issued cert; transport is TLS (originally 1.2+); proof-of-possession is the signed CSR itself (works for ML-DSA, does not work for ML-KEM)
-- **CMP (RFC 4210, originally 2005)** — Certificate Management Protocol; HTTP-based with `application/pkixcmp` content type (RFC 6712); richer state machine with Initial Request (`ir`), Cert Request (`cr`), Key Update Request (`kur`), Revocation Request (`rr`), General Message (`genm`)
+- **CMP (RFC 4210, 2005 — obsoleted by RFC 9810 in July 2025)** — Certificate Management Protocol; HTTP-based with `application/pkixcmp` content type (RFC 6712); richer state machine with Initial Request (`ir`), Cert Request (`cr`), Key Update Request (`kur`), Revocation Request (`rr`), General Message (`genm`)
 - **CMP message structure** — PKIMessage = PKIHeader + PKIBody + PKIProtection; PKIHeader carries sender/recipient DN, transaction ID, sender/recip nonces, senderKID; PKIBody carries the actual request (CRMF for cert requests); protection is either PBM-MAC (shared secret) or signature
 - **CRMF (Certificate Request Message Format, RFC 4211)** — the payload inside a CMP cert-request body; carries the CertTemplate (subject, publicKey, validity, extensions) plus proof-of-possession field
 - **Proof-of-possession (POP)** — proves the requester actually holds the private key matching the public key in the request; three modes: `signature` (sign the request), `encrCert` (CA encapsulates new cert under requester's pubkey, requester must decapsulate), `raVerified` (Registration Authority vouches)
-- **RFC 9810 (July 2025) — CMP Updates for KEM** — adds KEM-aware proof-of-possession via encrCert mode; obsoletes RFC 4210; enables CMP enrollment of ML-KEM and other KEM keys that cannot sign
+- **RFC 9810 (July 2025) — Internet X.509 PKI: Certificate Management Protocol (CMP)** — adds KEM-aware proof-of-possession via encrCert mode; obsoletes RFC 4210; enables CMP enrollment of ML-KEM and other KEM keys that cannot sign
 - **RFC 9881** — Algorithm Identifiers for ML-DSA in X.509 PKI; defines the OIDs the CA uses in its signatureAlgorithm field when signing certs with ML-DSA
 - **RFC 9935** — Algorithm Identifiers for ML-KEM in X.509 PKI; defines OIDs for ML-KEM-512/768/1024 in subjectPublicKeyInfo; makes pure ML-KEM certs spec-conformant
 - **RFC 9909** — Algorithm Identifiers for SLH-DSA in X.509 PKI; companion to RFC 9881 for stateless hash-based signatures
 - **RFC 9936** — Use of ML-KEM in CMS; downstream consumer of ML-KEM certs in S/MIME
 - **RFC 9629** — KEM algorithms in CMS (KEMRecipientInfo); upstream of RFC 9936
 - **Composite signatures (draft-ietf-lamps-pq-composite-sigs)** and **composite KEMs (draft-ietf-lamps-pq-composite-kem)** — IETF drafts defining one certificate carrying both classical and PQC public keys under composite OIDs; OpenSSL 3.6 does not yet ship these; production deployments use parallel certs instead
-- **PBM-MAC protection (RFC 4210 §5.1.3.1)** — Password-Based Message Authentication Code; shared-secret protection mode where the requester and CA share a one-time secret; HMAC over the PKIMessage header + body
-- **Signature-based protection (RFC 4210 §5.1.3.3)** — protected by a signing key; requires both sides to have certificates and signing keys
+- **PBM-MAC protection (RFC 9810 §5.1.3.1)** — Password-Based Message Authentication Code; shared-secret protection mode where the requester and CA share a one-time secret; HMAC over the PKIMessage header + body
+- **Signature-based protection (RFC 9810 §5.1.3.3)** — protected by a signing key; requires both sides to have certificates and signing keys
 - **Implicit confirm vs explicit certConf** — CMP normally requires a second round trip where the EE confirms it received the cert; if both sides agree, this can be skipped via the `implicitConfirm` extension in the IR header
 - **In-process server (workshop architecture)** — the workshop's `cmp_simulation.c` shim connects a real `OSSL_CMP_CTX` client to a real `OSSL_CMP_SRV_CTX` server via `OSSL_CMP_CTX_set_transfer_cb`; both ends run in the same WASM process exchanging real PKIMessages without sockets, mirroring how `tls_simulation.c` connects TLS client and server via memory BIOs
 - **Mock CA root** — generated once per browser via `generate_mock_ca_root` C shim: `EVP_PKEY_Q_keygen` for the ML-DSA-65 keypair, then `X509_sign(cert, key, NULL)` for self-signing (NULL md because ML-DSA refuses hash-then-sign); the result is cached in IndexedDB
@@ -40,12 +40,12 @@ The workshop has 6 steps:
 ## Related Standards
 
 - RFC 7030 (EST)
-- RFC 4210 (CMP)
-- RFC 9810 (CMP Updates for KEM)
-- RFC 9480 (CMP Algorithms)
+- RFC 9810 (CMP — the current Certificate Management Protocol specification, July 2025)
+- RFC 4210 (CMP, 2005 — obsoleted by RFC 9810)
+- RFC 9480 (CMP Algorithms — obsoleted by RFC 9810 together with RFC 9811)
 - RFC 9811 (CMP HSM Profile)
 - RFC 4211 (CRMF)
-- RFC 6712 (CMP over HTTP)
+- RFC 9811 (CMP over HTTP — obsoletes RFC 6712 and, with RFC 9810, RFC 9480)
 - RFC 9881 (ML-DSA in X.509)
 - RFC 9935 (ML-KEM in X.509)
 - RFC 9909 (SLH-DSA in X.509)

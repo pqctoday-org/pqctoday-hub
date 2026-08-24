@@ -10,6 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'web-gateway-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-24',
 
   standards: [
     getStandard('FIPS 203'),
@@ -24,6 +25,16 @@ export const content: ModuleContent = {
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
     getStandard('RFC 8879'),
     getStandard('RFC-9162'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module labels an AES-GCM mechanism it describes as conforming to SP 800-38D
+    // and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
+    getStandard('NIST-SP-800-38D'),
   ],
 
   algorithms: [

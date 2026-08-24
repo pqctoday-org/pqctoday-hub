@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'standards-bodies',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -44,6 +45,16 @@ export const content: ModuleContent = {
     getStandard('NSA CNSA 2.0'),
     getStandard('NSA CNSA 2.0 FAQ'),
     getStandard('NSA CSfC PQC Guidance Addendum'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 15408" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 20085" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca'),
   ],
 
   algorithms: [

@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's
@@ -32,6 +33,11 @@ export const content: ModuleContent = {
     getStandard('NIST CSWP 39'),
     getStandard('NIST SP 800-208'),
     getStandard('NIST SP 800-88'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
   ],
 
   algorithms: [

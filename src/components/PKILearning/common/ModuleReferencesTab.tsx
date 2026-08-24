@@ -2,20 +2,38 @@
 import { ExternalLink, BookOpen, CalendarCheck, Quote } from 'lucide-react'
 import { Link } from 'react-router'
 import { getLibraryItemsForModule } from '@/data/libraryData'
-import { MODULE_LAST_REVIEWED, MODULE_CITED_STANDARDS } from '@/data/moduleContentRegistry'
+import {
+  MODULE_LAST_REVIEWED,
+  MODULE_LAST_EDITED,
+  MODULE_CITED_STANDARDS,
+} from '@/data/moduleContentRegistry'
 import { EmptyState } from '@/components/ui/empty-state'
 
 interface ModuleReferencesTabProps {
   moduleId: string
 }
 
+/**
+ * Two dates, never conflated. "Reviewed" means a human checked the claims against
+ * evidence and left a signed revisions.jsonl record; "updated" means the files
+ * changed. Until 2026-08-23 one field carried both meanings, so this line reported
+ * edits as reviews — 55 of 64 modules overstated their review date here, by a median
+ * of 13 days and up to 148.
+ *
+ * A module with no review shows the updated date alone rather than a fabricated one.
+ * Showing nothing where nothing is known is the point of the split.
+ */
 function LastReviewedNote({ moduleId }: { moduleId: string }) {
   const lastReviewed = MODULE_LAST_REVIEWED[moduleId] // eslint-disable-line security/detect-object-injection
-  if (!lastReviewed) return null
+  const lastEdited = MODULE_LAST_EDITED[moduleId] // eslint-disable-line security/detect-object-injection
+  if (!lastReviewed && !lastEdited) return null
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
       <CalendarCheck size={13} aria-hidden="true" />
-      <span>Content last reviewed {lastReviewed}</span>
+      <span>
+        {lastReviewed ? `Content last reviewed ${lastReviewed}` : 'Not yet fact-checked'}
+        {lastEdited && lastEdited !== lastReviewed ? ` · last updated ${lastEdited}` : ''}
+      </span>
     </div>
   )
 }

@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'network-security-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (deprecation-timeline claim). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -26,6 +27,25 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('NSM-10'),
     getStandard('RFC 9370'),
+    // DECLARED 2026-08-23: this module names FIPS 198-1 (the keyed-hash MAC standard) for a mechanism it describes and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "FIPS 198-1" against a row filed as FIPS-198-1.
+    getStandard('FIPS-198-1'),
+    // DECLARED 2026-08-23: this module names "RFC 9846" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // DECLARED 2026-08-23: this module names "SP 800-207A" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-207A-A-Zero-Trust-Architecture-Model-for-Access'),
+    // DECLARED 2026-08-23: this module names "SP 800-38A" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-38A-Recommendation-for-Block-Cipher-Modes-of-Ope'),
   ],
 
   algorithms: [
