@@ -238,7 +238,7 @@ export function MobileAssessView() {
                   <p className="mt-0.5 text-[11px] text-muted-foreground">{summary.text}</p>
                 </div>
                 {summary.isDefault && (
-                  <span className="mt-0.5 shrink-0 rounded-full bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold text-secondary">
+                  <span className="mt-0.5 shrink-0 rounded-full bg-secondary/15 px-1.5 py-0.5 text-sim-chip font-bold text-secondary">
                     Recommended
                   </span>
                 )}
