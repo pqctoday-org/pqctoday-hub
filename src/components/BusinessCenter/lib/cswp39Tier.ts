@@ -21,7 +21,7 @@ export interface StepTierResult {
 
 // ── Tunable thresholds ────────────────────────────────────────────────────
 
-const T = {
+export const T = {
   inventoryAssessedLayersForRepeatable: 6,
   inventoryProductsForRepeatable: 5,
   inventoryAssessedLayersForAdaptive: 8,
@@ -328,4 +328,208 @@ export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepT
     out[zoneId] = { tier, reasons }
   }
   return out
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// "Missing for next tier" — the mobile Command Center's own feature (2026-08-23,
+// desktop's TierBadge only ever renders reasons FOR the tier already achieved,
+// never an absence/next-tier message). Originally built as a parallel copy in
+// MobileCommandCenterView.tsx; moved here (2026-08-24 audit R1.4) so it reads
+// the SAME `T` thresholds and per-step boolean gates the tier functions above
+// use, rather than a hand-copied shadow of them. The move also restored two
+// real gates the copy had silently dropped: inventoryTier's and
+// implementTier's FIPS-validation conditions — a user could satisfy every
+// item this function listed, stay capped below Tier 4, and the "for the next
+// tier" hint would still say nothing was missing.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MISSING_LABEL: Record<string, string> = {
+  'policy-draft': 'a policy draft',
+  'raci-matrix': 'a RACI matrix',
+  'audit-checklist': 'an audit checklist',
+  'compliance-checklist': 'a compliance checklist',
+  'contract-clause': 'a contract clause',
+  'supply-chain-matrix': 'a supply-chain matrix',
+  'risk-register': 'a risk register',
+  'vendor-scorecard': 'a vendor scorecard',
+  'compliance-timeline': 'a compliance timeline',
+  'kpi-dashboard': 'a KPI dashboard',
+  'kpi-tracker': 'a KPI tracker',
+  'crqc-scenario': 'a CRQC scenario',
+  'migration-roadmap': 'a migration roadmap',
+  'risk-treatment-plan': 'a risk treatment plan',
+  'deployment-playbook': 'a deployment playbook',
+}
+
+export function missingForNextTier(
+  stepId: CSWP39StepId,
+  metrics: BusinessMetrics,
+  tier: MaturityTier
+): string | null {
+  if (tier >= 4) return null
+  const policy = hasArtifact(metrics, 'policy-draft')
+  const raci = hasArtifact(metrics, 'raci-matrix')
+  const checklist = hasAnyArtifact(metrics, ['audit-checklist', 'compliance-checklist'])
+  const contract = hasArtifact(metrics, 'contract-clause')
+  const allGovDone =
+    metrics.governanceModules.length > 0 &&
+    metrics.governanceModules.every((m) => m.status === 'completed')
+  const exceptionsDocumented = artifactContainsSection(metrics, 'audit-checklist', 'Exceptions')
+
+  const assessedLayers = metrics.infraLayerCoverage.filter((l) => l.assessed).length
+  const products = metrics.bookmarkedProducts.length
+  const supplyMatrix = hasArtifact(metrics, 'supply-chain-matrix')
+  const cbomDocumented = artifactContainsSection(metrics, 'supply-chain-matrix', 'CBOM')
+  const pipelineDocumented = artifactContainsSection(
+    metrics,
+    'supply-chain-matrix',
+    'Pipeline Sources'
+  )
+  const fipsValidatedForInventory =
+    metrics.fipsBreakdown.validated >= metrics.fipsBreakdown.none &&
+    metrics.fipsBreakdown.validated > 0
+
+  const register = hasArtifact(metrics, 'risk-register')
+  const scorecard = hasArtifact(metrics, 'vendor-scorecard')
+  const tracked = metrics.trackedFrameworks.length >= 1
+  const observabilityDocumented = artifactContainsSection(
+    metrics,
+    'vendor-scorecard',
+    'Observability Tooling Notes'
+  )
+
+  const timeline = hasArtifact(metrics, 'compliance-timeline')
+  const anyKpi = hasAnyArtifact(metrics, ['kpi-dashboard', 'kpi-tracker'])
+  const crqc = hasArtifact(metrics, 'crqc-scenario')
+  const methodologyDocumented = artifactContainsSection(
+    metrics,
+    'kpi-dashboard',
+    'How this score is computed'
+  )
+
+  const roadmap = hasArtifact(metrics, 'migration-roadmap')
+  const treatment = hasArtifact(metrics, 'risk-treatment-plan')
+  const playbook = hasArtifact(metrics, 'deployment-playbook')
+  const mitigationDocumented = artifactContainsSection(
+    metrics,
+    'migration-roadmap',
+    'Mitigation Gateway'
+  )
+  const decommissionDocumented = artifactContainsSection(
+    metrics,
+    'deployment-playbook',
+    'Decommission'
+  )
+  const evidenceDocumented = artifactContainsSection(metrics, 'audit-checklist', 'Evidence')
+
+  switch (stepId) {
+    case 'govern':
+      if (tier === 1)
+        return `Add ${MISSING_LABEL['policy-draft']}, ${MISSING_LABEL['raci-matrix']}, or track a compliance framework.`
+      if (tier === 2) {
+        const need = [
+          !policy && MISSING_LABEL['policy-draft'],
+          !raci && MISSING_LABEL['raci-matrix'],
+          !checklist && MISSING_LABEL['audit-checklist'],
+        ].filter(Boolean)
+        return need.length ? `Still need: ${need.join(', ')}.` : null
+      }
+      return (
+        [
+          !allGovDone && 'complete every governance learning module',
+          !contract && MISSING_LABEL['contract-clause'],
+          !exceptionsDocumented && 'document exceptions in your audit checklist',
+        ]
+          .filter(Boolean)
+          .join(', ') || null
+      )
+    case 'inventory':
+      if (tier === 1)
+        return `Bookmark a product, complete your risk assessment, or add ${MISSING_LABEL['supply-chain-matrix']}.`
+      if (tier === 2) {
+        const need: string[] = []
+        if (assessedLayers < T.inventoryAssessedLayersForRepeatable)
+          need.push(
+            `assess ${T.inventoryAssessedLayersForRepeatable - assessedLayers} more infra layer${T.inventoryAssessedLayersForRepeatable - assessedLayers === 1 ? '' : 's'}`
+          )
+        if (products < T.inventoryProductsForRepeatable)
+          need.push(
+            `bookmark ${T.inventoryProductsForRepeatable - products} more product${T.inventoryProductsForRepeatable - products === 1 ? '' : 's'}`
+          )
+        return need.length ? `Still need: ${need.join(', ')}.` : null
+      }
+      return (
+        [
+          assessedLayers < T.inventoryAssessedLayersForAdaptive &&
+            `assess ${T.inventoryAssessedLayersForAdaptive - assessedLayers} more infra layer(s)`,
+          !supplyMatrix && MISSING_LABEL['supply-chain-matrix'],
+          !cbomDocumented && 'document CBOM asset classes',
+          !pipelineDocumented && 'document pipeline sources',
+          !fipsValidatedForInventory && 'get at least 1 FIPS-validated product on file',
+        ]
+          .filter(Boolean)
+          .join(', ') || null
+      )
+    case 'identify-gaps':
+      if (tier === 1)
+        return `Add ${MISSING_LABEL['risk-register']} or complete your risk assessment.`
+      if (tier === 2) {
+        const need = [
+          !register && MISSING_LABEL['risk-register'],
+          !scorecard && MISSING_LABEL['vendor-scorecard'],
+          !tracked && 'track a compliance framework',
+        ].filter(Boolean)
+        return need.length ? `Still need: ${need.join(', ')}.` : null
+      }
+      return (
+        [
+          metrics.assessmentHistory.length < T.identifyAssessmentHistoryForAdaptive &&
+            'complete a second assessment',
+          !observabilityDocumented && 'document observability tooling notes',
+        ]
+          .filter(Boolean)
+          .join(', ') || null
+      )
+    case 'prioritise':
+      if (tier === 1) return `Add ${MISSING_LABEL['compliance-timeline']} or a KPI dashboard.`
+      if (tier === 2)
+        return !anyKpi
+          ? 'Still need: a KPI dashboard or tracker.'
+          : !timeline
+            ? `Still need: ${MISSING_LABEL['compliance-timeline']}.`
+            : null
+      return (
+        [
+          !crqc && MISSING_LABEL['crqc-scenario'],
+          metrics.assessmentHistory.length < T.prioritiseAssessmentHistoryForAdaptive &&
+            'complete a third assessment',
+          !methodologyDocumented && 'document your KPI scoring methodology',
+        ]
+          .filter(Boolean)
+          .join(', ') || null
+      )
+    case 'implement':
+      if (tier === 1) return `Add ${MISSING_LABEL['migration-roadmap']} or start a migration.`
+      if (tier === 2) {
+        const need = [
+          !roadmap && MISSING_LABEL['migration-roadmap'],
+          !treatment && MISSING_LABEL['risk-treatment-plan'],
+          !playbook && MISSING_LABEL['deployment-playbook'],
+        ].filter(Boolean)
+        return need.length ? `Still need: ${need.join(', ')}.` : null
+      }
+      return (
+        [
+          !metrics.workflowActive && 'start an active migration workflow',
+          metrics.completedPhases.length < T.implementCompletedPhasesForAdaptive &&
+            'complete 3+ migration phases',
+          metrics.fipsBreakdown.validated < 1 && 'get at least 1 product FIPS-validated',
+          !mitigationDocumented && 'document your mitigation gateway',
+          !decommissionDocumented && 'document a decommission plan',
+          !evidenceDocumented && 'document evidence (CMVP/ACVP/ESV/CVE-scan)',
+        ]
+          .filter(Boolean)
+          .join(', ') || null
+      )
+  }
 }

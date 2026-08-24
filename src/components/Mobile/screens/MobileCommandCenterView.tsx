@@ -4,22 +4,18 @@ import { Link } from 'react-router'
 import { ChevronDown, LayoutDashboard, PlayCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import {
-  useBusinessMetrics,
-  type BusinessMetrics,
-} from '@/components/BusinessCenter/hooks/useBusinessMetrics'
+import { useBusinessMetrics } from '@/components/BusinessCenter/hooks/useBusinessMetrics'
 import { ActionItemsSection } from '@/components/BusinessCenter/sections/ActionItemsSection'
 import { BUSINESS_TOOLS } from '@/components/BusinessCenter/businessToolsRegistry'
 import {
   computeZoneTiers,
   computeStepTiers,
+  missingForNextTier,
   TIER_LABELS,
   primaryStepForZone,
-  type CSWP39StepId,
   type MaturityTier,
 } from '@/components/BusinessCenter/lib/cswp39Tier'
 import { CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
-import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 const TIER_STYLES: Record<MaturityTier, string> = {
   1: 'bg-muted text-muted-foreground border-border',
@@ -60,198 +56,9 @@ const BOARD_QUESTIONS: { q: string; desc: string; to: string; cta: string }[] = 
 ]
 const TOP_TOOL_IDS = ['roi-calculator', 'board-pitch', 'risk-register']
 
-// ── "Missing for next tier" — README §13 claims this exists on desktop; it
-// doesn't (verified: TierBadge.tsx only ever renders reasons FOR the tier
-// already achieved, never an absence/next-tier message — confirmed via grep,
-// zero hits). Built here as genuinely new UI, per the user's explicit
-// decision, from the SAME real threshold constants and boolean gates
-// cswp39Tier.ts's own governTier/inventoryTier/identifyGapsTier/
-// prioritiseTier/implementTier use — copied verbatim from that file's real
-// conditions (2026-08-23), not invented. hasArtifact/hasSection below
-// replicate that file's own private (non-exported) helpers of the same
-// name, over the same public metrics.artifactsByPillar field.
-function allArtifacts(metrics: BusinessMetrics): ExecutiveDocument[] {
-  const { risk, compliance, governance, vendor, inventory, architecture } =
-    metrics.artifactsByPillar
-  return [...risk, ...compliance, ...governance, ...vendor, ...inventory, ...architecture]
-}
-function hasArtifact(metrics: BusinessMetrics, type: ExecutiveDocumentType): boolean {
-  return allArtifacts(metrics).some((d) => d.type === type)
-}
-function hasSection(
-  metrics: BusinessMetrics,
-  type: ExecutiveDocumentType,
-  heading: string
-): boolean {
-  const needle = `## ${heading.toLowerCase()}`
-  return allArtifacts(metrics).some(
-    (d) => d.type === type && (d.data || '').toLowerCase().includes(needle)
-  )
-}
-
-const LABEL: Record<string, string> = {
-  'policy-draft': 'a policy draft',
-  'raci-matrix': 'a RACI matrix',
-  'audit-checklist': 'an audit checklist',
-  'compliance-checklist': 'a compliance checklist',
-  'contract-clause': 'a contract clause',
-  'supply-chain-matrix': 'a supply-chain matrix',
-  'risk-register': 'a risk register',
-  'vendor-scorecard': 'a vendor scorecard',
-  'compliance-timeline': 'a compliance timeline',
-  'kpi-dashboard': 'a KPI dashboard',
-  'kpi-tracker': 'a KPI tracker',
-  'crqc-scenario': 'a CRQC scenario',
-  'migration-roadmap': 'a migration roadmap',
-  'risk-treatment-plan': 'a risk treatment plan',
-  'deployment-playbook': 'a deployment playbook',
-}
-
-function missingForNextTier(
-  stepId: CSWP39StepId,
-  metrics: BusinessMetrics,
-  tier: MaturityTier
-): string | null {
-  if (tier >= 4) return null
-  const policy = hasArtifact(metrics, 'policy-draft')
-  const raci = hasArtifact(metrics, 'raci-matrix')
-  const checklist =
-    hasArtifact(metrics, 'audit-checklist') || hasArtifact(metrics, 'compliance-checklist')
-  const contract = hasArtifact(metrics, 'contract-clause')
-  const allGovDone =
-    metrics.governanceModules.length > 0 &&
-    metrics.governanceModules.every((m) => m.status === 'completed')
-  const exceptionsDocumented = hasSection(metrics, 'audit-checklist', 'Exceptions')
-
-  const assessedLayers = metrics.infraLayerCoverage.filter((l) => l.assessed).length
-  const products = metrics.bookmarkedProducts.length
-  const supplyMatrix = hasArtifact(metrics, 'supply-chain-matrix')
-  const cbomDocumented = hasSection(metrics, 'supply-chain-matrix', 'CBOM')
-  const pipelineDocumented = hasSection(metrics, 'supply-chain-matrix', 'Pipeline Sources')
-
-  const register = hasArtifact(metrics, 'risk-register')
-  const scorecard = hasArtifact(metrics, 'vendor-scorecard')
-  const tracked = metrics.trackedFrameworks.length >= 1
-  const observabilityDocumented = hasSection(
-    metrics,
-    'vendor-scorecard',
-    'Observability Tooling Notes'
-  )
-
-  const timeline = hasArtifact(metrics, 'compliance-timeline')
-  const anyKpi = hasArtifact(metrics, 'kpi-dashboard') || hasArtifact(metrics, 'kpi-tracker')
-  const crqc = hasArtifact(metrics, 'crqc-scenario')
-  const methodologyDocumented = hasSection(metrics, 'kpi-dashboard', 'How this score is computed')
-
-  const roadmap = hasArtifact(metrics, 'migration-roadmap')
-  const treatment = hasArtifact(metrics, 'risk-treatment-plan')
-  const playbook = hasArtifact(metrics, 'deployment-playbook')
-  const mitigationDocumented = hasSection(metrics, 'migration-roadmap', 'Mitigation Gateway')
-  const decommissionDocumented = hasSection(metrics, 'deployment-playbook', 'Decommission')
-  const evidenceDocumented = hasSection(metrics, 'audit-checklist', 'Evidence')
-
-  switch (stepId) {
-    case 'govern':
-      if (tier === 1)
-        return `Add ${LABEL['policy-draft']}, ${LABEL['raci-matrix']}, or track a compliance framework.`
-      if (tier === 2) {
-        const need = [
-          !policy && LABEL['policy-draft'],
-          !raci && LABEL['raci-matrix'],
-          !checklist && LABEL['audit-checklist'],
-        ].filter(Boolean)
-        return need.length ? `Still need: ${need.join(', ')}.` : null
-      }
-      return (
-        [
-          !allGovDone && 'complete every governance learning module',
-          !contract && LABEL['contract-clause'],
-          !exceptionsDocumented && 'document exceptions in your audit checklist',
-        ]
-          .filter(Boolean)
-          .join(', ') || null
-      )
-    case 'inventory':
-      if (tier === 1)
-        return `Bookmark a product, complete your risk assessment, or add ${LABEL['supply-chain-matrix']}.`
-      if (tier === 2) {
-        const need: string[] = []
-        if (assessedLayers < 6)
-          need.push(
-            `assess ${6 - assessedLayers} more infra layer${6 - assessedLayers === 1 ? '' : 's'}`
-          )
-        if (products < 5)
-          need.push(`bookmark ${5 - products} more product${5 - products === 1 ? '' : 's'}`)
-        return need.length ? `Still need: ${need.join(', ')}.` : null
-      }
-      return (
-        [
-          assessedLayers < 8 && `assess ${8 - assessedLayers} more infra layer(s)`,
-          !supplyMatrix && LABEL['supply-chain-matrix'],
-          !cbomDocumented && 'document CBOM asset classes',
-          !pipelineDocumented && 'document pipeline sources',
-        ]
-          .filter(Boolean)
-          .join(', ') || null
-      )
-    case 'identify-gaps':
-      if (tier === 1) return `Add ${LABEL['risk-register']} or complete your risk assessment.`
-      if (tier === 2) {
-        const need = [
-          !register && LABEL['risk-register'],
-          !scorecard && LABEL['vendor-scorecard'],
-          !tracked && 'track a compliance framework',
-        ].filter(Boolean)
-        return need.length ? `Still need: ${need.join(', ')}.` : null
-      }
-      return (
-        [
-          metrics.assessmentHistory.length < 2 && 'complete a second assessment',
-          !observabilityDocumented && 'document observability tooling notes',
-        ]
-          .filter(Boolean)
-          .join(', ') || null
-      )
-    case 'prioritise':
-      if (tier === 1) return `Add ${LABEL['compliance-timeline']} or a KPI dashboard.`
-      if (tier === 2)
-        return !anyKpi
-          ? 'Still need: a KPI dashboard or tracker.'
-          : !timeline
-            ? `Still need: ${LABEL['compliance-timeline']}.`
-            : null
-      return (
-        [
-          !crqc && LABEL['crqc-scenario'],
-          metrics.assessmentHistory.length < 3 && 'complete a third assessment',
-          !methodologyDocumented && 'document your KPI scoring methodology',
-        ]
-          .filter(Boolean)
-          .join(', ') || null
-      )
-    case 'implement':
-      if (tier === 1) return `Add ${LABEL['migration-roadmap']} or start a migration.`
-      if (tier === 2) {
-        const need = [
-          !roadmap && LABEL['migration-roadmap'],
-          !treatment && LABEL['risk-treatment-plan'],
-          !playbook && LABEL['deployment-playbook'],
-        ].filter(Boolean)
-        return need.length ? `Still need: ${need.join(', ')}.` : null
-      }
-      return (
-        [
-          !metrics.workflowActive && 'start an active migration workflow',
-          metrics.completedPhases.length < 3 && 'complete 3+ migration phases',
-          !mitigationDocumented && 'document your mitigation gateway',
-          !decommissionDocumented && 'document a decommission plan',
-          !evidenceDocumented && 'document evidence (CMVP/ACVP/ESV/CVE-scan)',
-        ]
-          .filter(Boolean)
-          .join(', ') || null
-      )
-  }
-}
+// "Missing for next tier" text is missingForNextTier() (cswp39Tier.ts) — moved
+// there 2026-08-24 (audit R1.4) so it reads the same T thresholds and boolean
+// gates the tier functions above it use, instead of a parallel copy.
 
 const ZONE_ORDER: ZoneId[] = [
   'governance',

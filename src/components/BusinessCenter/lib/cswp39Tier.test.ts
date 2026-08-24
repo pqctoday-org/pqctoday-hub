@@ -7,6 +7,7 @@ import {
   identifyGapsTier,
   prioritiseTier,
   implementTier,
+  missingForNextTier,
 } from './cswp39Tier'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
@@ -333,5 +334,84 @@ describe('computeStepTiers', () => {
     m.artifactsByPillar.governance = [doc('policy-draft')]
     const t = computeStepTiers(m)
     expect(t.govern.reasons.length).toBeGreaterThan(0)
+  })
+})
+
+// 2026-08-24 audit R1.4: missingForNextTier (the mobile Command Center's
+// "for the next tier" hint) is now colocated here rather than a parallel
+// copy in MobileCommandCenterView.tsx — the move restored two real FIPS
+// gates the copy had silently dropped. These tests pin both: at tier 3 with
+// every OTHER tier-4 condition satisfied, the FIPS gap must still show up
+// as missing, and the same metrics with fipsBreakdown fixed must return
+// null (mirroring inventoryTier/implementTier's own tier===4 fixtures
+// above, so a threshold edit that desyncs the two is caught here).
+describe('missingForNextTier — inventory (FIPS gate)', () => {
+  function tier3ExceptFips() {
+    const m = emptyMetrics()
+    m.bookmarkedProducts = Array.from({ length: 5 }, (_, i) => ({ id: `p${i}` }) as never)
+    m.infraLayerCoverage = Array.from({ length: 8 }, (_, i) => ({
+      layer: `L${i}`,
+      assessed: true,
+      productCount: 1,
+      status: 'covered' as const,
+    }))
+    m.artifactsByPillar.vendor = [
+      doc(
+        'supply-chain-matrix',
+        0,
+        '## CBOM (CSWP.39 §5.2 — 6 asset classes)\n\n## Pipeline Sources (CSWP.39 §5.2)\nfoo\n'
+      ),
+    ]
+    // fipsBreakdown deliberately left at emptyMetrics' 0/0/0 — the one gate
+    // under test.
+    return m
+  }
+
+  it('still flags a FIPS gap at tier 3 when every other tier-4 condition is met', () => {
+    const m = tier3ExceptFips()
+    expect(inventoryTier(m).tier).toBe(3) // sanity: real tier fn agrees this isn't 4 yet
+    const missing = missingForNextTier('inventory', m, 3)
+    expect(missing).not.toBeNull()
+    expect(missing).toMatch(/FIPS/i)
+  })
+
+  it('returns null once FIPS is also satisfied, matching inventoryTier promoting to 4', () => {
+    const m = tier3ExceptFips()
+    m.fipsBreakdown = { validated: 5, partial: 0, none: 0 }
+    expect(inventoryTier(m).tier).toBe(4)
+    expect(missingForNextTier('inventory', m, 3)).toBeNull()
+  })
+})
+
+describe('missingForNextTier — implement (FIPS gate)', () => {
+  function tier3ExceptFips() {
+    const m = emptyMetrics()
+    m.artifactsByPillar.vendor = [
+      doc('migration-roadmap', 0, '## Mitigation Gateway (CSWP.39 §4.6)\n'),
+      doc('deployment-playbook', 0, '## Decommission Plan (CSWP.39 §4.6)\n'),
+    ]
+    m.artifactsByPillar.risk = [doc('risk-treatment-plan')]
+    m.artifactsByPillar.compliance = [
+      doc('audit-checklist', 0, '## Evidence (CSWP.39 §5.5 — CMVP / ACVP / ESV / CVE-scan)\n'),
+    ]
+    m.workflowActive = true
+    m.completedPhases = ['p1', 'p2', 'p3']
+    // fipsBreakdown deliberately left at 0/0/0 — the one gate under test.
+    return m
+  }
+
+  it('still flags a FIPS gap at tier 3 when every other tier-4 condition is met', () => {
+    const m = tier3ExceptFips()
+    expect(implementTier(m).tier).toBe(3)
+    const missing = missingForNextTier('implement', m, 3)
+    expect(missing).not.toBeNull()
+    expect(missing).toMatch(/FIPS/i)
+  })
+
+  it('returns null once FIPS is also satisfied, matching implementTier promoting to 4', () => {
+    const m = tier3ExceptFips()
+    m.fipsBreakdown = { validated: 1, partial: 0, none: 0 }
+    expect(implementTier(m).tier).toBe(4)
+    expect(missingForNextTier('implement', m, 3)).toBeNull()
   })
 })
