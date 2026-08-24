@@ -16,13 +16,17 @@ export const content: ModuleContent = {
   // was addressing this module by a name the catalogue does not know.
   moduleId: 'pqc-testing-validation',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 186-5'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('RFC 9794'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 202'),
   ],
 
   algorithms: [

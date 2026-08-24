@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'api-security-jwt',
   version: '1.0.0',
-  lastReviewed: '2026-08-12',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -20,6 +20,10 @@ export const content: ModuleContent = {
     getStandard('RFC 7518'),
     getStandard('RFC 7519'),
     getStandard('RFC 9449'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('draft-ietf-jose-pq-composite-sigs'),
   ],
 
   algorithms: [

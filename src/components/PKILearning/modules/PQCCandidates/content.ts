@@ -8,7 +8,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
@@ -37,6 +37,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST IR 8413'), // Round 3 history
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 206'),
   ],
 
   algorithms: [],

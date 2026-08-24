@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'platform-eng-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -19,6 +19,11 @@ export const content: ModuleContent = {
     getStandard('RFC 8879'),
     getStandard('RFC 9580'),
     getStandard('NIST SP 800-227'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 186-5'),
+    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

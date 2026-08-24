@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'ops-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. RFC 4253 leads because SSH host-key
@@ -22,6 +22,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('NIST SP 800-227'),
     getStandard('FIPS 204'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-65'), getAlgorithm('ML-KEM-768')],

@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'kms-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -32,6 +32,14 @@ export const content: ModuleContent = {
     // HKDF — derives the wrapping key from the KEM shared secret and combines
     // classical + PQC secrets in the hybrid combiner modes.
     getStandard('RFC 5869'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('CSA-PQC-Guide-2025'),
+    getStandard('KMIP-V2-1-OASIS'),
+    getStandard('NIST IR 8547'),
+    getStandard('NIST-SP-800-210-General-Access-Control-Guidance-for-Cloud-Sy'),
+    getStandard('RFC 8017'),
   ],
 
   algorithms: [

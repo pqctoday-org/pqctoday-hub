@@ -21,6 +21,14 @@ export const content: ModuleContent = {
     getStandard('3GPP TS 33.501 Rel-19'),
     getStandard('3GPP-PQC-Study-2025'),
     getStandard('NIST-CSWP-36A'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ANSI X9.63'),
+    getStandard('NIST SP 800-227'),
+    getStandard('NIST SP 800-56A'),
+    getStandard('RFC 7748'),
+    getStandard('SEC 1'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('X25519')],

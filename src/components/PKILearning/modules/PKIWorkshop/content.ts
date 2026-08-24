@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pki-workshop',
   version: '1.1.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 204'),
@@ -20,6 +20,11 @@ export const content: ModuleContent = {
     getStandard('IETF RFC 8555'),
     getStandard('RFC 9881'),
     getStandard('RFC-9763'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST IR 8547'),
+    getStandard('RFC 8017'),
   ],
 
   algorithms: [

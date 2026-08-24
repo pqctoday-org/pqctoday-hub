@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'qkd',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -27,6 +27,14 @@ export const content: ModuleContent = {
     // In-module prose still cites RFC 8446 sections where it discusses the original,
     // which stays accurate: TLS 1.3 the protocol is unchanged; the specification moved.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ETSI-GS-QKD-014'),
+    getStandard('NIST IR 8547'),
+    getStandard('PKCS11-V32-OS-OASIS'),
+    getStandard('RFC 5869'),
+    getStandard('RFC-9258'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768')],

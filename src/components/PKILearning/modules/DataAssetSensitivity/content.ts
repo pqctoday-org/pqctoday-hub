@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'data-asset-sensitivity',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 199'),
@@ -21,6 +21,12 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-37'),
     getStandard('NIST SP 800-53'),
     getStandard('NIST SP 800-66'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS-140-3'),
+    getStandard('NIST IR 8547'),
+    getStandard('NSM-10'),
   ],
 
   algorithms: [

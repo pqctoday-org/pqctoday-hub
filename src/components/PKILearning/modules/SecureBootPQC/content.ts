@@ -34,6 +34,13 @@ export const content: ModuleContent = {
     getStandard('RFC 9019'),
     getStandard('UEFI-SPEC-2.10-SecureBoot'),
     getStandard('PKCS11-V32-OS-OASIS'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ANSI X9.62'),
+    getStandard('NIST SP 800-208'),
+    getStandard('RFC 8017'),
+    getStandard('RFC 9881'),
   ],
 
   algorithms: [

@@ -23,12 +23,28 @@ import { MANIFESTS } from '@/components/PKILearning/manifest/registry'
 
 /** Mirrors `_stride_sample()` in accuracy_spotcheck.py — keep the two in step. */
 function strideSample<T>(items: T[], n: number): T[] {
-  if (n >= items.length) return items
+  if (n <= 0 || n >= items.length) return items
   const stride = items.length / n
   return Array.from({ length: n }, (_, i) => items[Math.floor(i * stride)])
 }
 
-const MAX_EVIDENCE_DOCS = 4
+/**
+ * Mirrors `_MAX_EVIDENCE_DOCS` in pqctoday-priv/maintenance/accuracy_spotcheck.py.
+ * 0 means NO CAP — every declared standard is opened.
+ *
+ * DUPLICATED ON PURPOSE, AND THE FIRST ATTEMPT PROVED WHY. This briefly read the value
+ * straight out of accuracy_spotcheck.py, to avoid the stale-copy trap that had just bitten
+ * audit_module_citation_coverage.py. That works locally and CANNOT work in CI: the hub's
+ * workflow checks out the hub alone, pqctoday-priv is a separate private repo, and the read
+ * died with ENOENT in a simulated CI checkout. Several scripts in ci.yml already no-op for
+ * exactly this reason.
+ *
+ * The dependency only runs one way — priv can see the hub, the hub can never see priv — so
+ * the constant lives here and pqctoday-priv/maintenance/test_hub_stride_constant_agrees.py
+ * asserts the two agree. Keep them in step by changing accuracy_spotcheck.py and letting
+ * that test fail; do not re-introduce a cross-repo read.
+ */
+const MAX_EVIDENCE_DOCS = 0
 const POLICY_TRACKS = new Set(['Executive', 'Role Guides'])
 
 /**
@@ -75,6 +91,19 @@ describe('standards[] ordering on policy-track modules', () => {
   }
 
   it('no NEW policy module has its subject crowded out by generic PQC specs', () => {
+    // THE PREMISE IS CONDITIONAL, and as of 2026-08-22 it does not hold. This guard
+    // exists because the spot-check opened only four documents per module by even
+    // stride, so declaration ORDER decided what was ever verified. That cap was lifted
+    // the same day: every declared standard is now read, and ordering cannot crowd
+    // anything out of the evidence.
+    //
+    // Kept rather than deleted because the cap is still settable by
+    // LEARN_MAX_EVIDENCE_DOCS and MAX_EVIDENCE_DOCS is read from that file — if the cap
+    // ever returns, this guards again on its own.
+    //
+    // NOT addressed here: whether ordering still matters to a READER scanning the
+    // References tab. That is a real question and a different one.
+    if (MAX_EVIDENCE_DOCS <= 0) return
     expect(offenders.filter((id) => !KNOWN_UNORDERED.has(id))).toEqual([])
   })
 
