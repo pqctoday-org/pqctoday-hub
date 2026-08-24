@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
 import { MigrationWorkbench } from './MigrationWorkbench'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { productsForDomain } from './workbenchCatalog'
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 function renderWorkbench() {
   return render(
@@ -196,5 +201,37 @@ describe('MigrationWorkbench (integration)', () => {
     // finding it with the right value proves both the tab switch and the
     // filter pre-fill happened.
     expect(screen.getByLabelText(/Filter products/i)).toHaveValue(sample.softwareName)
+  })
+
+  // Mobile UX layer (Phase 8). MigrateWorkbenchEmbed.tsx renders this same
+  // component inside the simulation at whatever viewport the player is on
+  // (embedded prop — this page's own equivalent of simEmbed) — embedded
+  // must win over isMobileShell regardless of viewport width, same as
+  // Threats/Library/Compliance.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true and not embedded', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <MigrationWorkbench />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('Migrate')).toBeInTheDocument()
+      expect(screen.queryByText('What you run — pick to see replacements')).not.toBeInTheDocument()
+    })
+
+    it('still renders the full desktop view when embedded is true, even if isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <MigrationWorkbench embedded />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('What you run — pick to see replacements')).toBeInTheDocument()
+    })
   })
 })

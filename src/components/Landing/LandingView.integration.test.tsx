@@ -133,6 +133,7 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
   afterEach(() => {
     usePersonaStore.setState({ selectedPersona: null, hasSkippedPersonalization: false })
     vi.unstubAllGlobals()
+    localStorage.removeItem('pqc-feature-mobile-shell')
   })
 
   it('no persona, not skipped: renders Role Home, and the rail still covers every FOR YOU route', () => {
@@ -180,7 +181,16 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expectDesktopRailCoversForYou('curious')
   })
 
-  it("curious below the `lg` breakpoint on '/' gets CuriousMobileBoard, with MainLayout's own header/footer suppressed", () => {
+  it("curious below the `lg` breakpoint on '/' gets CuriousMobileBoard, with MainLayout's own header/footer suppressed, WHEN the new mobile UX layer is explicitly opted out", () => {
+    // The mobile-shell flag defaults ON as of 2026-08-23 (a deliberate
+    // go-live decision — see featureFlags.ts), and LandingView's own
+    // isMobileShell branch supersedes this legacy CuriousMobileBoard
+    // treatment by priority ordering (Phase 4). CuriousMobileBoard itself
+    // hasn't been deleted (physical removal is a later phase) and should
+    // still work correctly for anyone who explicitly opts back out — that's
+    // what this test verifies now; the new-default supersession case has
+    // its own test right below.
+    localStorage.setItem('pqc-feature-mobile-shell', '0')
     mockViewport(true)
     usePersonaStore.setState({ selectedPersona: 'curious' })
     renderApp()
@@ -203,6 +213,19 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     // too — it would otherwise render underneath CuriousMobileBoard's fixed
     // bottom nav.
     expect(screen.queryByText(/© 2025 PQC Today/)).not.toBeInTheDocument()
+  })
+
+  it("curious below the `lg` breakpoint on '/' gets the new mobile UX layer (default), NOT the legacy CuriousMobileBoard", async () => {
+    // No localStorage set at all — exercises the real 2026-08-23 default.
+    mockViewport(true)
+    usePersonaStore.setState({ selectedPersona: 'curious' })
+    renderApp()
+
+    // The new mobile shell's bottom nav (MobileBottomBar) is React.lazy —
+    // findBy* (async) is required for it to resolve, unlike the legacy
+    // CuriousMobileBoard path other tests in this file exercise.
+    expect(await screen.findByRole('navigation', { name: /main navigation/i })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Curious mobile navigation')).not.toBeInTheDocument()
   })
 
   it("curious below `lg` on a DIFFERENT route keeps MainLayout's normal chrome (takeover is '/'-only)", () => {

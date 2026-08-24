@@ -47,6 +47,8 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { personaPracticesModulePhase } from '@/data/personaConfig'
 import { FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileModuleShell } from '@/components/Mobile/screens/MobileModuleShell'
 
 /** "Phase 4 · Execute" style label for the header context rail (P2.1). Spanning
  *  modules (frameworkPhase is an array) show their first/primary phase. */
@@ -284,6 +286,7 @@ export const ModuleShell = ({
   onReset,
   children,
 }: ModuleShellProps) => {
+  const isMobileShell = useIsMobileShell()
   const parts = workshopParts ?? []
   const {
     activeTab,
@@ -458,6 +461,23 @@ export const ModuleShell = ({
   // Custom modules (Quiz) own their entire body; the hook still tracks time.
   if (manifest.custom) {
     return <div className="space-y-6">{children}</div>
+  }
+
+  if (isMobileShell) {
+    const learnContent =
+      learnRaw !== undefined ? (
+        resolve(learnRaw)
+      ) : (
+        <GlossaryAutoWrap>{resolve(learn)}</GlossaryAutoWrap>
+      )
+    return (
+      <MobileModuleShell
+        manifest={manifest}
+        title={title}
+        description={headerDescription}
+        learnContent={learnContent}
+      />
+    )
   }
 
   const tabs = manifest.tabs ?? STANDARD_TABS

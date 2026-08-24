@@ -12,7 +12,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Papa from 'papaparse'
-import { INTENTS, PERSONA_INTENTS, EU_EXECUTIVE_INTENTS } from './AlgorithmEntryStrip'
+import { INTENTS, PERSONA_INTENTS, EU_EXECUTIVE_INTENTS } from '@/data/algorithmEntryIntents'
 import { STATUS_ITEMS } from './AlgorithmFilters'
 
 const dataDir = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'data')

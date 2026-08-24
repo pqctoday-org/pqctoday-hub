@@ -41,6 +41,29 @@ const SMOKE_SPECS = [
 // in the nightly full suite. Promote one into smoke only after it proves reliably
 // fast in CI.
 
+// mobile-smoke-only exclusions (2026-08-24, Phase 10 hardening): both specs
+// below test content/routing that is desktop-only by design, not a mobile
+// regression. `useIsMobileShell()` gates a pure early return to a distilled
+// mobile screen before either spec's own deep-link mechanism ever runs:
+//   - timeline-freshness-badge.spec.ts: its `?country=` param drives a
+//     desktop-only Gantt→DocumentTable selection (TimelineView.tsx);
+//     MobileTimelineView.tsx has no URL-driven country selection at all
+//     (region comes from the persona store) and shows freshness as plain
+//     "Verified {date}" text (Phase 8.4), not the timeline-freshness-badge
+//     testid/state pill this spec checks for.
+//   - compliance-foryou-executive.spec.ts: tests the desktop "For You" tab
+//     (ExecutiveTimelineView / ApplicabilityPanel via ?tab=foryou).
+//     MobileComplianceView.tsx explicitly drops Progress/Products/For You
+//     from its real 5-of-8-tab scope — confirmed with the user 2026-08-23,
+//     named in the component's own doc comment and on-screen cut notice.
+// Verified via a real mobile-smoke run (2026-08-24): 23 passed / 5 failed
+// before this exclusion, all 5 failures from these 2 specs.
+const MOBILE_SMOKE_EXCLUDE = new Set([
+  'timeline-freshness-badge.spec.ts',
+  'compliance-foryou-executive.spec.ts',
+])
+const MOBILE_SMOKE_SPECS = SMOKE_SPECS.filter((f) => !MOBILE_SMOKE_EXCLUDE.has(f))
+
 const useDev = process.env.E2E_SERVER === 'dev' && !process.env.CI
 const serverCommand = useDev
   ? `npm run dev -- --port ${PORT} --strictPort`
@@ -100,10 +123,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: ['**/*.local.spec.ts'],
     },
-    // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the same
-    // SMOKE_SPECS allowlist as `smoke` above, but at an iPhone 14 viewport —
-    // this product had literally zero mobile-viewport E2E coverage despite
-    // mobile being its worst-scoring UX dimension. Run locally via
+    // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the
+    // SMOKE_SPECS allowlist minus MOBILE_SMOKE_EXCLUDE (desktop-only specs,
+    // see comment above) at an iPhone 14 viewport — this product had
+    // literally zero mobile-viewport E2E coverage despite mobile being its
+    // worst-scoring UX dimension. Run locally via
     // `npx playwright test --project=mobile-smoke` (build first, e.g.
     // `npm run build`). Deliberately NOT added to `ci.yml`'s PR gate yet —
     // that's a separate decision about CI time/cost budget; wire it in only
@@ -111,7 +135,7 @@ export default defineConfig({
     {
       name: 'mobile-smoke',
       use: { ...devices['iPhone 14'] },
-      testMatch: SMOKE_SPECS.map((f) => `**/${f}`),
+      testMatch: MOBILE_SMOKE_SPECS.map((f) => `**/${f}`),
     },
   ],
   webServer: {

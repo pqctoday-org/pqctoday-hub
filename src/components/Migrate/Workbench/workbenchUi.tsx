@@ -12,18 +12,9 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { Button, type ButtonProps } from '../../ui/button'
+import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
 
-export type Tone = 'success' | 'primary' | 'info' | 'warning' | 'destructive' | 'muted'
-
-/** tone → (text, bg, border) token classes. */
-export const TONE_CLASS: Record<Tone, string> = {
-  success: 'text-status-success bg-status-success/10 border-status-success/30',
-  primary: 'text-primary bg-primary/10 border-primary/30',
-  info: 'text-status-info bg-status-info/10 border-status-info/30',
-  warning: 'text-status-warning bg-status-warning/10 border-status-warning/30',
-  destructive: 'text-status-error bg-status-error/10 border-status-error/30',
-  muted: 'text-muted-foreground bg-muted border-border',
-}
+export type { Tone }
 
 /** tone → solid dot color (decision indicator). */
 export const TONE_DOT: Record<Tone, string> = {

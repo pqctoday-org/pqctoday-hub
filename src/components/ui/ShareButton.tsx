@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Share2, Check, Link2 } from 'lucide-react'
 import { Button } from './button'
+import { cn } from '../../lib/utils'
 import { logEvent } from '../../utils/analytics'
 import { isNativeApp } from '../../embed/platform'
 import { shareContent } from '../../embed/share'
@@ -11,6 +12,17 @@ interface ShareButtonProps {
   text?: string
   url?: string
   className?: string
+  /**
+   * Extra classes for the inner interactive <Button>, not the outer
+   * positioning wrapper. `className` alone lands on the wrapper div — for a
+   * caller whose sizing IS the tappable button itself (e.g. the mobile
+   * header's 32×44 icon-button row, where the default `size="icon"` square
+   * doesn't match its Search/Guide/⋯ siblings), this is the one that
+   * actually changes the rendered button. Merged via cn/twMerge, so it wins
+   * over the variant's default sizing without touching existing callers that
+   * don't pass it.
+   */
+  buttonClassName?: string
   variant?: 'icon' | 'full'
 }
 
@@ -19,6 +31,7 @@ export const ShareButton = ({
   text,
   url,
   className = '',
+  buttonClassName,
   variant = 'icon',
 }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false)
@@ -80,11 +93,12 @@ export const ShareButton = ({
         size={variant === 'icon' ? 'icon' : 'sm'}
         onClick={handleNativeShare}
         aria-label={`Share ${title}`}
-        className={
+        className={cn(
           variant === 'full'
             ? 'flex items-center gap-1 px-2 py-1.5 h-auto rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors'
-            : 'text-muted-foreground hover:text-foreground'
-        }
+            : 'text-muted-foreground hover:text-foreground',
+          buttonClassName
+        )}
       >
         <Share2 size={variant === 'full' ? 13 : 16} aria-hidden="true" />
         {variant === 'full' && <span>Share</span>}

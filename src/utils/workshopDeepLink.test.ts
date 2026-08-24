@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { buildUrl, buildStepUrl, isOnStepRoute } from './workshopDeepLink'
+import { buildUrl, buildStepUrl, isOnStepRoute, personaRegionToWorkshop } from './workshopDeepLink'
 import type { WorkshopStep } from '@/types/Workshop'
 
 describe('workshopDeepLink', () => {
@@ -46,5 +46,14 @@ describe('workshopDeepLink', () => {
     expect(isOnStepRoute(step, '/business')).toBe(true)
     expect(isOnStepRoute(step, '/business/governance')).toBe(true)
     expect(isOnStepRoute(step, '/threats')).toBe(false)
+  })
+
+  it('personaRegionToWorkshop maps the real persona-region blocs to a default workshop region', () => {
+    expect(personaRegionToWorkshop('americas')).toBe('US')
+    expect(personaRegionToWorkshop('apac')).toBe('AU')
+    expect(personaRegionToWorkshop('eu')).toBe('EU')
+    expect(personaRegionToWorkshop('mena')).toBeNull()
+    expect(personaRegionToWorkshop('global')).toBeNull()
+    expect(personaRegionToWorkshop(null)).toBeNull()
   })
 })

@@ -18,6 +18,8 @@ import {
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileReportView } from '@/components/Mobile/screens/MobileReportView'
 import {
   REGION_COUNTRIES_MAP,
   getReportSectionConfig,
@@ -230,6 +232,7 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // simEmbed: rendered headless inside the simulation — the page chrome
   // (breadcrumb + PageHeader) is hidden so the sim's own header stays on top.
   // ReportView only reads searchParams (no writes), so no URL isolation is needed.
+  const isMobileShell = useIsMobileShell()
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
   const input = getInput()
@@ -510,6 +513,20 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
     })
     return () => clearPageActions()
   }, [simEmbed, result, isShared])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before ALL desktop JSX — including the
+  // loading and empty states below, both of which this screen replaces with
+  // its own (its own computeAssessment() call is synchronous, so the
+  // desktop-only progress-log loading UI is decoration this screen skips
+  // entirely) — a pure early return with zero risk to the flag-off path
+  // (Rule 1). ReportEmbed.tsx renders this same component inside the
+  // simulation via simEmbed, so simEmbed must win over isMobileShell
+  // regardless of viewport width, same as Threats/Library/Compliance/
+  // Migrate/Assess.
+  if (isMobileShell && !simEmbed) {
+    return <MobileReportView />
+  }
 
   // Active compute state: assessment exists, result still pending. Show
   // the progress log so users see the 10-stage pipeline grinding rather

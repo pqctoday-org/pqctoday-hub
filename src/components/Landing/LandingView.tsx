@@ -25,6 +25,9 @@ import { PersonaBoardView } from '@/components/PersonaJourney/PersonaBoardView'
 import { CuriousMobileBoard } from '@/components/PersonaJourney/CuriousMobileBoard'
 import { ResearcherFieldWatchCard } from '@/components/PersonaJourney/ResearcherFieldWatchCard'
 import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileHomeBoard } from '@/components/Mobile/screens/MobileHomeBoard'
+import { MobileRoleSelection } from '@/components/Mobile/shell/MobileRoleSelection'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -239,6 +242,8 @@ export const LandingView = () => {
   // (`hidden lg:flex` / `lg:hidden`) so the two components can never disagree
   // about which viewport width means "mobile" here — see the hook's own docs.
   const isBelowLg = useIsBelowLgViewport()
+  const isMobileShell = useIsMobileShell()
+  const [homeRoleSwitchOpen, setHomeRoleSwitchOpen] = useState(false)
 
   const moduleModules = useModuleStore((s) => s.modules)
 
@@ -321,6 +326,39 @@ export const LandingView = () => {
       }
     })
   }, [])
+
+  // Mobile UX layer (design_handoff_pqc_mobile_ux/IMPLEMENTATION-PLAN.md
+  // Phase 4) — supersedes CuriousMobileBoard for ALL SIX personas, not just
+  // curious. Placed before every branch below so it wins whenever the flag
+  // is on; every branch below is completely unchanged for the flag-off path
+  // (Rule 1). The first-run case (no persona, not skipped) returns null
+  // here rather than <RoleHomeView> — MainLayout.tsx already renders that
+  // exact component full-screen for isMobileShell + isMobileFirstRun, and
+  // rendering it a second time here would mount two elements sharing
+  // RoleHomeView's own "role-home-heading" id.
+  //
+  // CuriousMobileBoard's branch below is intentionally NOT deleted — only
+  // made unreachable while the flag is on. Physical removal is Phase 11
+  // (go-live cleanup), the same treatment Phase 3 gave the legacy mobile nav
+  // row in MainLayout.tsx.
+  if (isMobileShell) {
+    if (!selectedPersona && !hasSkippedPersonalization) return null
+    return (
+      <>
+        <MobileHomeBoard
+          persona={selectedPersona}
+          variantId={activeVariantId}
+          onSelectVariant={handleSelectVariant}
+          onOpenRoleSwitch={() => setHomeRoleSwitchOpen(true)}
+        />
+        <MobileRoleSelection
+          variant="switch"
+          open={homeRoleSwitchOpen}
+          onClose={() => setHomeRoleSwitchOpen(false)}
+        />
+      </>
+    )
+  }
 
   // ── Persona-journeys A-grade redesign (2026-08-01) ─────────────────────────
   // Role Home is the new pre-personalization front door

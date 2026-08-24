@@ -32,7 +32,7 @@ import { labelForRegion } from '@/utils/workshopRegion'
 import { WorkshopStepCard } from './WorkshopStepCard'
 import { useWorkshopAutoComplete } from '@/hooks/useWorkshopAutoComplete'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
-import { buildStepUrl } from '@/utils/workshopDeepLink'
+import { buildStepUrl, personaRegionToWorkshop } from '@/utils/workshopDeepLink'
 
 export const WorkshopPanel: React.FC = () => {
   useWorkshopAutoComplete()
@@ -548,26 +548,6 @@ export const WorkshopPanel: React.FC = () => {
       </p>
     </div>
   )
-}
-
-/**
- * Map the persona store's coarse region (americas | eu | apac | global) to the
- * workshop's finer-grained region. Picks a sensible default for each bloc:
- * americas → US, apac → AU, eu → EU. Global / null → null (user picks manually).
- */
-function personaRegionToWorkshop(
-  r: import('@/store/usePersonaStore').Region | null
-): WorkshopRegion | null {
-  switch (r) {
-    case 'americas':
-      return 'US'
-    case 'apac':
-      return 'AU'
-    case 'eu':
-      return 'EU'
-    default:
-      return null
-  }
 }
 
 function formatMatchSummary(match: import('@/types/Workshop').FlowMatch): string {

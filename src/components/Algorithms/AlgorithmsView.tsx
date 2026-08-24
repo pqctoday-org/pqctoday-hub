@@ -24,6 +24,8 @@ import { Button } from '../ui/button'
 import { getAlgorithmDefaults } from '../../data/personaConfig'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorithmsView'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -104,6 +106,18 @@ export function AlgorithmsView() {
     totalAlgoCount,
     filteredCount,
   } = useAlgorithmExplorer(personaDefaults)
+
+  // Mobile UX layer (Phase 7). Only the bare landing state (no explicit
+  // ?tab=/?highlight=) gets the distilled mobile screen — every entry-strip
+  // intent (including "Replace a classical algorithm", whose params target
+  // the same tab a bare visit would resolve to by default) sets one of these
+  // explicitly, so tapping any of them intentionally falls through to the
+  // real desktop tab in mobile chrome, same as every other not-yet-distilled
+  // sub-view. This is a 5-tab explorer, not a single-tab route like Timeline/
+  // Threats — one new mobile screen for all 5 tabs isn't in scope; the entry
+  // strip is how a mobile reader still reaches each real tab.
+  const isMobileShell =
+    useIsMobileShell() && !searchParams.get('tab') && !searchParams.get('highlight')
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [hintDismissed, setHintDismissed] = useState(false)
@@ -213,6 +227,16 @@ export function AlgorithmsView() {
     })
     return () => clearPageActions()
   }, [handleExportCsv, metadata, transitionMetadata])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). AlgorithmsView is never
+  // embedded in the simulation (AlgorithmTransitionEmbed/ProtocolMatrixEmbed
+  // both bypass it, reading useAlgorithmExplorer/PQCProtocolMatrix directly),
+  // so unlike ThreatsDashboard this needs no simEmbed-equivalent guard.
+  if (isMobileShell) {
+    return <MobileAlgorithmsView />
+  }
 
   return (
     <div>

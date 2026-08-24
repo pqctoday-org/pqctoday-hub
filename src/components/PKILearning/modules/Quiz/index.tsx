@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
-import { useLocation, useSearchParams } from 'react-router'
+import { useLocation, useNavigate, useSearchParams } from 'react-router'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
@@ -12,6 +12,9 @@ import type { QuizCompletionData } from './QuizWizard'
 import { QuizResults } from './QuizResults'
 import type { QuizCategory, QuizMode, QuizQuestion } from './types'
 import { logQuizSession } from '@/utils/analytics'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileQuizWizard } from '@/components/Mobile/screens/MobileQuizWizard'
+import { MobileQuizResults } from '@/components/Mobile/screens/MobileQuizResults'
 
 const MODULE_ID = 'quiz'
 const SECONDS_PER_QUESTION = 45
@@ -93,6 +96,8 @@ function parseCategoryParam(param: string | null): QuizCategory[] | null {
 
 export const QuizModule: React.FC = () => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const isMobileShell = useIsMobileShell()
   const [searchParams] = useSearchParams()
   const checkpointState = location.state as {
     checkpointCategories?: QuizCategory[]
@@ -181,6 +186,16 @@ export const QuizModule: React.FC = () => {
     return moduleData?.quizScores ?? undefined
   }, [modules])
 
+  const initialCategories = useMemo(
+    () =>
+      urlCategories ??
+      checkpointState?.checkpointCategories ??
+      (persona && persona.quizCategories.length > 0
+        ? (persona.quizCategories as QuizCategory[])
+        : undefined),
+    [urlCategories, checkpointState?.checkpointCategories, persona]
+  )
+
   const handleStart = useCallback(
     (mode: QuizMode, categories: QuizCategory[], timeMinutes?: number) => {
       setLastMode(mode)
@@ -251,6 +266,62 @@ export const QuizModule: React.FC = () => {
     setView('intro')
   }, [])
 
+  // Mobile checkpoint quiz — the handoff's quiz screen has no topic/mode/
+  // difficulty picker at all ("One question per screen"), so this skips
+  // QuizIntro entirely and auto-starts in category mode the moment real
+  // categories resolve (the same ?category=/checkpointState/persona
+  // priority QuizIntro's own initialCategories prop already uses). A bare
+  // /learn/quiz visit with no resolvable categories has no real mobile
+  // entry point today (every mobile CTA — MobileMyPathView's checkpoint and
+  // capstone buttons — always passes ?category=), so that case renders a
+  // stated placeholder below rather than a mobile topic picker nobody can
+  // reach without deep-linking manually.
+  const mobileAutoStarted = useRef(false)
+  useEffect(() => {
+    if (
+      isMobileShell &&
+      view === 'intro' &&
+      !mobileAutoStarted.current &&
+      initialCategories &&
+      initialCategories.length > 0
+    ) {
+      mobileAutoStarted.current = true
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: the mobile checkpoint quiz has no intro/Start button to click, so this is the one-time auto-start in place of that user action, guarded by the ref above
+      handleStart('category', initialCategories)
+    }
+  }, [isMobileShell, view, initialCategories, handleStart])
+
+  if (isMobileShell) {
+    const title = checkpointState?.checkpointLabel ?? persona?.label ?? 'Quiz'
+    if (view === 'quiz') {
+      return (
+        <MobileQuizWizard
+          questions={quizQuestions}
+          title={title}
+          onComplete={handleComplete}
+          onExit={() => navigate(-1)}
+        />
+      )
+    }
+    if (view === 'results' && completionData) {
+      return (
+        <MobileQuizResults
+          summary={completionData.summary}
+          onRetake={handleRetake}
+          onExit={() => navigate(-1)}
+        />
+      )
+    }
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-muted/20 px-4 py-6 text-center">
+        <p className="text-[12.5px] font-semibold text-foreground">Nothing to quiz here yet</p>
+        <p className="text-[11.5px] leading-relaxed text-muted-foreground">
+          Open a checkpoint from a phase in Learn to take its quiz.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full">
       {view === 'intro' && (
@@ -263,13 +334,7 @@ export const QuizModule: React.FC = () => {
             filteredQuestions.filter((q) => q.quizMode === 'quick' || q.quizMode === 'both').length
           }
           categories={filteredCategories}
-          initialCategories={
-            urlCategories ??
-            checkpointState?.checkpointCategories ??
-            (persona && persona.quizCategories.length > 0
-              ? (persona.quizCategories as QuizCategory[])
-              : undefined)
-          }
+          initialCategories={initialCategories}
           personaLabel={checkpointState?.checkpointLabel ?? persona?.label}
           industryFilter={industryFilter}
           onClearIndustryFilter={() => {
