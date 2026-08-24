@@ -431,6 +431,25 @@ export default defineConfig([
                 '!@/components/PKILearning/modules/Quiz/components/QuestionCard',
                 '!@/components/PKILearning/modules/Quiz/components/FeedbackPanel',
                 '!@/components/PKILearning/modules/Quiz/components/QuizProgress',
+                // workshopRegistry.tsx — WORKSHOP_TOOLS/CATEGORIES + types
+                // (WorkshopTool/WorkshopCategory/ToolDifficulty/
+                // ToolRuntimeRequirement), pure data + types; the file's only
+                // JSX lives inside TOOL_COMPONENTS's lazy-load wrappers,
+                // which this mobile screen never imports (it opens a tool via
+                // a real Link to /playground/:id, letting PlaygroundToolRoute
+                // — not Mobile — do that lookup). cryptoLabMeta.ts —
+                // CATEGORY_META/SIDEBAR_CATEGORIES/PERSONA_CHIP_LABEL, pure
+                // data, no JSX. cryptoLabTaxonomy.ts — expandSearchQuery(),
+                // pure logic, no JSX. The same real tool registry, category
+                // metadata and search-synonym expansion every desktop
+                // Playground surface already reads, so the mobile catalogue's
+                // tool list, categories and search results can never drift
+                // from desktop's.
+                '!@/components/Playground',
+                '@/components/Playground/*',
+                '!@/components/Playground/workshopRegistry',
+                '!@/components/Playground/cryptoLabMeta',
+                '!@/components/Playground/cryptoLabTaxonomy',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',
