@@ -29,17 +29,10 @@ import {
 } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { relevantAlgorithmFamilies, patentTouchesPersonaAlgorithms } from './PatentsRoleLens'
+import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
 
 export type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
 export type SortDir = 'asc' | 'desc'
-
-const AGILITY_LABELS: Record<CryptoAgilityMode, string> = {
-  classical_only: 'Classical only',
-  hybrid: 'Hybrid',
-  pqc_only: 'PQC only',
-  negotiated: 'Negotiated',
-  unclear: 'Unclear',
-}
 
 const AGILITY_BADGE: Record<CryptoAgilityMode, string> = {
   classical_only: 'border-status-error/40 text-status-error bg-status-error/10',

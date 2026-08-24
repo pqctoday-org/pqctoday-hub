@@ -1,34 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import {
-  Search,
-  Bookmark,
-  BookmarkCheck,
-  LayoutGrid,
-  GraduationCap,
-  BookMarked,
-  Route,
-  ExternalLink,
-} from 'lucide-react'
+import { Search, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import type { LibraryItem, LibraryPurpose } from '@/data/libraryData'
+import type { LibraryItem } from '@/data/libraryData'
+import {
+  LIBRARY_DOORS as DOORS,
+  type LibraryPurposeSelection as PurposeSelection,
+} from '@/data/libraryPurposeDoors'
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
 import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 
-type PurposeSelection = LibraryPurpose | 'all'
 type QuickView = 'all' | 'new' | 'cert' | 'bookmarked'
-
-const DOORS: { id: PurposeSelection; label: string; hint: string; icon: typeof LayoutGrid }[] = [
-  { id: 'all', label: 'Everything', hint: 'The full catalog', icon: LayoutGrid },
-  { id: 'education', label: 'Learn', hint: 'Research, analysis & explainers', icon: GraduationCap },
-  { id: 'reference', label: 'Reference', hint: 'Standards, specs & policy', icon: BookMarked },
-  { id: 'planning', label: 'Plan migration', hint: 'Guidance & report picks', icon: Route },
-]
 
 const QUICK_VIEWS: { id: QuickView; label: string }[] = [
   { id: 'all', label: 'All documents' },

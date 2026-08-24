@@ -39,6 +39,19 @@ export type DeadlineKind = 'fixed' | 'phased' | 'ongoing' | 'none' | 'unknown'
  */
 export type PQCRequirement = 'yes' | 'no' | 'partial' | 'guidance' | 'expected'
 
+// Display label for each PQCRequirement value. Pure-moved out of
+// ObligationsTab.tsx (2026-08-24 audit R3.5) — that file also exports the
+// real desktop obligations-tab JSX, so MobileComplianceView.tsx previously
+// carried its own byte-identical copy of this 5-entry map rather than
+// importing a desktop view component into the mobile boundary.
+export const PQC_REQUIREMENT_LABEL: Record<PQCRequirement, string> = {
+  yes: 'Mandated',
+  partial: 'Partial',
+  expected: 'Expected',
+  guidance: 'Guidance',
+  no: 'None',
+}
+
 export interface ComplianceFramework {
   id: string
   label: string

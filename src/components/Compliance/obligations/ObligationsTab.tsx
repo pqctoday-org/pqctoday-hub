@@ -20,7 +20,11 @@ import { ChevronDown, ChevronRight, ExternalLink, Info, ShieldCheck } from 'luci
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
-import type { ComplianceFramework, PQCRequirement } from '@/data/complianceData'
+import {
+  PQC_REQUIREMENT_LABEL as PQC_LABEL,
+  type ComplianceFramework,
+  type PQCRequirement,
+} from '@/data/complianceData'
 import {
   TIER_META,
   TIER_ORDER,
@@ -46,14 +50,6 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
   advisory: 'text-status-info',
   derived: 'text-muted-foreground',
   informational: 'text-muted-foreground',
-}
-
-const PQC_LABEL: Record<PQCRequirement, string> = {
-  yes: 'Mandated',
-  partial: 'Partial',
-  expected: 'Expected',
-  guidance: 'Guidance',
-  no: 'None',
 }
 
 const PQC_TONE: Record<PQCRequirement, string> = {

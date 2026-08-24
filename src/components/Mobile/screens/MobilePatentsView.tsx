@@ -9,17 +9,8 @@ import { usePatentKpis } from '@/components/Patents/redesign/usePatentKpis'
 import type { CryptoAgilityMode, QuantumRelevance, PatentItem } from '@/types/PatentTypes'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
+import { AGILITY_LABELS } from '@/data/patentAgilityLabels'
 
-// Same labels PatentsTable.tsx's own AGILITY_LABELS map uses — replicated
-// rather than imported (a 5-entry literal, not worth a third ESLint
-// exception on this screen) so the wording can never drift.
-const AGILITY_LABELS: Record<CryptoAgilityMode, string> = {
-  classical_only: 'Classical only',
-  hybrid: 'Hybrid',
-  pqc_only: 'PQC only',
-  negotiated: 'Negotiated',
-  unclear: 'Unclear',
-}
 const AGILITY_ORDER: CryptoAgilityMode[] = [
   'classical_only',
   'hybrid',
@@ -28,6 +19,11 @@ const AGILITY_ORDER: CryptoAgilityMode[] = [
   'unclear',
 ]
 
+// Deliberately NOT the same strings as PatentsTable.tsx's own terser
+// RELEVANCE_LABELS ('Core'/'Dependent'/'Background') — this is real, already-
+// diverged mobile copy (not a byte-identical duplicate the 2026-08-24 audit
+// R3.5 pass should force back together), kept more descriptive for a reader
+// who won't have the surrounding desktop table's column header for context.
 const RELEVANCE_LABELS: Record<QuantumRelevance, string> = {
   core_invention: 'Core invention',
   dependent_claim_only: 'Dependent claim',

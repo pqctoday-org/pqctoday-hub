@@ -12,35 +12,7 @@ import { ReportUpgradeNudge } from '@/components/Report/redesign/ReportUpgradeNu
 import { shareReport } from '@/components/Report/sections/reportContentActions'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
-
-// Same 4-tier map RiskGauge.tsx's own `riskConfig` carries — that file also
-// exports the real gauge JSX component, so this is replicated rather than
-// imported (matching this session's precedent for small literals living
-// alongside desktop JSX) — the file's own comment says this map is "kept in
-// one place so the Report and Command Center can never drift"; this literal
-// keeps the same 4 tone/label pairs, not a third divergent copy of the
-// wording.
-const RISK_TIER: Record<string, { color: string; bg: string; border: string; label: string }> = {
-  low: { color: 'text-success', bg: 'bg-success/10', border: 'border-success', label: 'Low Risk' },
-  medium: {
-    color: 'text-warning',
-    bg: 'bg-warning/10',
-    border: 'border-warning',
-    label: 'Medium Risk',
-  },
-  high: {
-    color: 'text-destructive',
-    bg: 'bg-destructive/10',
-    border: 'border-destructive',
-    label: 'High Risk',
-  },
-  critical: {
-    color: 'text-critical',
-    bg: 'bg-critical/10',
-    border: 'border-critical',
-    label: 'Critical Risk',
-  },
-}
+import { riskConfig as RISK_TIER } from '@/data/riskConfig'
 
 /**
  * Mobile Report (handoff Phase 8 — Workflow set, design handoff §12).

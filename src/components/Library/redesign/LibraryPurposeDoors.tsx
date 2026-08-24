@@ -6,25 +6,10 @@
  * before the topical category rail refines within it. Purpose is a heuristic over
  * manual_category (see `detectPurpose`) — no CSV column backs it yet.
  */
-import { GraduationCap, BookMarked, Route, LayoutGrid, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { LibraryPurpose } from '@/data/libraryData'
+import { LIBRARY_DOORS as DOORS, type LibraryPurposeSelection } from '@/data/libraryPurposeDoors'
 
-export type LibraryPurposeSelection = LibraryPurpose | 'all'
-
-interface Door {
-  id: LibraryPurposeSelection
-  label: string
-  hint: string
-  icon: LucideIcon
-}
-
-const DOORS: Door[] = [
-  { id: 'all', label: 'Everything', hint: 'The full catalog', icon: LayoutGrid },
-  { id: 'education', label: 'Learn', hint: 'Research, analysis & explainers', icon: GraduationCap },
-  { id: 'reference', label: 'Reference', hint: 'Standards, specs & policy', icon: BookMarked },
-  { id: 'planning', label: 'Plan migration', hint: 'Guidance & report picks', icon: Route },
-]
+export type { LibraryPurposeSelection }
 
 interface LibraryPurposeDoorsProps {
   active: LibraryPurposeSelection

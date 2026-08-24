@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useApplicability } from '@/hooks/useApplicability'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { complianceFrameworks, type PQCRequirement } from '@/data/complianceData'
+import { complianceFrameworks, PQC_REQUIREMENT_LABEL as PQC_LABEL } from '@/data/complianceData'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { RECORDS_GLOSSARY } from '@/data/recordsGlossary'
 import { TIER_META, type ApplicabilityTier } from '@/utils/applicabilityEngine'
@@ -49,14 +49,6 @@ const TIER_TONE: Record<ApplicabilityTier, string> = {
 // Same 5-value labels ObligationsTab.tsx's own PQC_LABEL map uses —
 // replicated rather than imported (a 5-entry literal, not worth an ESLint
 // exception) so the wording can never drift.
-const PQC_LABEL: Record<PQCRequirement, string> = {
-  yes: 'Mandated',
-  partial: 'Partial',
-  expected: 'Expected',
-  guidance: 'Guidance',
-  no: 'None',
-}
-
 /**
  * Mobile Compliance (handoff Phase 8 — Workflow set, design handoff §8).
  *
