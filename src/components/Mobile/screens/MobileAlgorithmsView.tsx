@@ -29,6 +29,28 @@ interface ByteRow {
   algo: AlgorithmProps
 }
 
+/**
+ * 2026-08-24 audit R5: the 5 registry keys below used to be indexed
+ * directly (`ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'].signatureOrCiphertextBytes`)
+ * with no existence check — a future rename/removal in the registry's
+ * source CSV would throw reading `.signatureOrCiphertextBytes` off
+ * `undefined`, crashing the whole screen. `transitionConsequence()` below
+ * already degrades gracefully (returns null, its callers already guard on
+ * that) — this mirrors the same pattern: a row whose algorithm no longer
+ * resolves is dropped, not a hard crash.
+ */
+function byteRow(
+  label: string,
+  key: string,
+  field: 'publicKeyBytes' | 'signatureOrCiphertextBytes',
+  highlight?: boolean
+): ByteRow | null {
+  // eslint-disable-next-line security/detect-object-injection -- key is one of a fixed set of literal string constants below, not user input
+  const algo = ALGORITHM_REGISTRY[key]
+  if (!algo) return null
+  return { label, bytes: algo[field], highlight, algo }
+}
+
 function ByteBar({
   row,
   maxBytes,
@@ -108,38 +130,16 @@ export function MobileAlgorithmsView() {
   const [selected, setSelected] = useState<AlgorithmProps | null>(null)
 
   const publicKeyRows: ByteRow[] = [
-    {
-      label: 'RSA-2048',
-      bytes: ALGORITHM_REGISTRY['RSA-2048'].publicKeyBytes,
-      algo: ALGORITHM_REGISTRY['RSA-2048'],
-    },
-    {
-      label: 'ML-KEM-768',
-      bytes: ALGORITHM_REGISTRY['ML-KEM-768'].publicKeyBytes,
-      highlight: true,
-      algo: ALGORITHM_REGISTRY['ML-KEM-768'],
-    },
-  ]
+    byteRow('RSA-2048', 'RSA-2048', 'publicKeyBytes'),
+    byteRow('ML-KEM-768', 'ML-KEM-768', 'publicKeyBytes', true),
+  ].filter((r): r is ByteRow => r !== null)
   const signatureRows: ByteRow[] = [
-    {
-      label: 'Ed25519',
-      bytes: ALGORITHM_REGISTRY['Ed25519'].signatureOrCiphertextBytes,
-      algo: ALGORITHM_REGISTRY['Ed25519'],
-    },
-    {
-      label: 'ML-DSA-65',
-      bytes: ALGORITHM_REGISTRY['ML-DSA-65'].signatureOrCiphertextBytes,
-      highlight: true,
-      algo: ALGORITHM_REGISTRY['ML-DSA-65'],
-    },
-    {
-      label: 'SLH-DSA-128s',
-      bytes: ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'].signatureOrCiphertextBytes,
-      highlight: true,
-      algo: ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'],
-    },
-  ]
+    byteRow('Ed25519', 'Ed25519', 'signatureOrCiphertextBytes'),
+    byteRow('ML-DSA-65', 'ML-DSA-65', 'signatureOrCiphertextBytes', true),
+    byteRow('SLH-DSA-128s', 'SLH-DSA-SHA2-128s', 'signatureOrCiphertextBytes', true),
+  ].filter((r): r is ByteRow => r !== null)
   const maxBytes = Math.max(
+    1,
     ...publicKeyRows.map((r) => r.bytes),
     ...signatureRows.map((r) => r.bytes)
   )

@@ -86,6 +86,26 @@ describe('MobileAlgorithmsView', () => {
     expect(screen.queryByText('ECDSA')).not.toBeInTheDocument()
   })
 
+  // 2026-08-24 audit R5: the byte-comparison rows used to index
+  // ALGORITHM_REGISTRY directly with no existence check — a renamed/removed
+  // key would throw reading a property off undefined, crashing the whole
+  // screen. Mutating the real registry (not a mock) to simulate exactly
+  // that data-drift scenario against the real component.
+  it('drops a byte-comparison row instead of crashing when its registry entry is missing', () => {
+    const saved = ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s']
+    delete ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s']
+    try {
+      expect(() => renderView()).not.toThrow()
+      expect(screen.queryByText('SLH-DSA-128s')).not.toBeInTheDocument()
+      // The rest of the screen still renders — not a full crash.
+      expect(
+        screen.getByText(`${ALGORITHM_REGISTRY['RSA-2048'].publicKeyBytes.toLocaleString()} B`)
+      ).toBeInTheDocument()
+    } finally {
+      ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'] = saved
+    }
+  })
+
   it('the growth-factor sentence is the real computed transitionConsequence(), not a typed multiplier', () => {
     renderView()
     const real = transitionConsequence('Ed25519', 'ML-DSA-65')
