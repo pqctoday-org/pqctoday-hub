@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-23
 category: Technical Standards
-document_count: 31
-requirement_count: 134
+document_count: 42
+requirement_count: 182
 ---
 
 ## BSI-AIS-20-31
@@ -139,6 +139,13 @@ requirement_count: 134
     - _T3 Repeatable · software_: Implement automated detection and abort mechanisms when mandatory PPK usage is configured but the peer does not support or configure the required PPK.
     - _T3 Repeatable · software_: Automatically detect and fail negotiations if the responder does not recognize the PPK_ID provided by the initiator, ensuring immediate visibility into key mismatch errors.
 
+## IETF RFC 9180
+- **Source**: Hybrid Public Key Encryption
+- **URL**: https://www.rfc-editor.org/rfc/rfc9180
+- **Requirement count**: 1
+- **Assurance / FIPS**:
+    - _T3 Repeatable · keys_: Implementations MUST validate KEM inputs and outputs to ensure cryptographic correctness and prevent malformed data processing.
+
 ## IETF-MTC-Draft-09
 - **Source**: Merkle Tree Certificates (draft-ietf-plants-merkle-tree-certs-04)
 - **URL**: https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/04/
@@ -149,6 +156,105 @@ requirement_count: 134
     - _T3 Repeatable · certificates_: Implement automated log pruning to remove long-expired entries, ensuring log size scales by retention policy rather than log lifetime.
 - **Observability**:
     - _T3 Repeatable · certificates_: Maintain public issuance logs where CAs sign views of their logs to assert issuance, enabling verification of correct operation via cosignatures.
+
+## NIST CSWP 48
+- **Source**: Mappings of Migration to PQC Project Capabilities to Risk Framework Documents
+- **URL**: https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.48.ipd.pdf
+- **Requirement count**: 6
+- **Governance**:
+    - _T2 Risk-Informed · all_: Adhere to security objectives and controls identified in risk framework documents to ensure responsible implementation of PQC migration capabilities.
+    - _T2 Risk-Informed · all_: Use cryptographic inventories to support risk management and prioritization decisions for implementing post-quantum cryptographic technologies.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Use cryptographic discovery and inventory tools to identify where and how cryptography protects data and systems to support risk management and prioritization.
+    - _T2 Risk-Informed · all_: Correlate cryptographic discovery outputs with previously inventoried hardware, software, and services to maintain a comprehensive asset inventory.
+    - _T2 Risk-Informed · certificates_: Implement certificate discovery and management tools as part of the logical architecture for cryptographic inventory.
+    - _T2 Risk-Informed · software_: Discover quantum-vulnerable cryptographic algorithms in code development pipelines, software development lifecycles, and repository components.
+
+## NIST IR 8105
+- **Source**: Report on Post-Quantum Cryptography
+- **URL**: https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8105.pdf
+- **Requirement count**: 2
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish organizational focus and planning for crypto agility to prepare for the transition to post-quantum cryptographic systems.
+    - _T2 Risk-Informed · all_: Initiate preparation of information security systems to resist quantum computing threats, regardless of the estimated timeline for quantum computer arrival.
+
+## NIST NCCoE SP 1800-38A
+- **Source**: Migration to Post-Quantum Cryptography: Preparation for Considering the Implementation and Adoption of Quantum Safe Cryptography
+- **URL**: https://www.nccoe.nist.gov/sites/default/files/2023-04/pqc-migration-nist-sp-1800-38a-preliminary-draft.pdf
+- **Requirement count**: 5
+- **Governance**:
+    - _T2 Risk-Informed · all_: Develop a risk-based playbook for migration involving people, processes, and technology to mitigate enterprise risk.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Maintain a complete inventory of cryptographic usage, including partners, locations, and associated data, to prioritize migration efforts.
+    - _T3 Repeatable · software_: Use discovery tools to detect and report the presence of quantum-vulnerable cryptography in systems, services, and development pipelines.
+- **Observability**:
+    - _T3 Repeatable · libraries_: Detect vulnerable algorithms in cryptographic code or dependencies during continuous integration/continuous delivery pipelines.
+    - _T3 Repeatable · software_: Implement active scanning and traffic capture analysis to trace vulnerable algorithms to specific systems and network protocols.
+
+## NIST SP 800-207
+- **Source**: Zero Trust Architecture
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf
+- **Requirement count**: 3
+- **Governance**:
+    - _T2 Risk-Informed · all_: Formulate and document specific security policies for Zero Trust Architecture candidates based on identified risks and business processes.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Identify and catalog all actors, assets, and key processes within the enterprise to establish a baseline for Zero Trust policy formulation.
+- **Observability**:
+    - _T2 Risk-Informed · all_: Implement monitoring capabilities during initial deployment to observe system behavior and detect anomalies in the Zero Trust environment.
+
+## NIST SP 800-56A
+- **Source**: Recommendation for Pair-Wise Key-Establishment Schemes Using Discrete Logarithm Cryptography
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar3.pdf
+- **Requirement count**: 6
+- **Assurance / FIPS**:
+    - _T3 Repeatable · keys_: Entities using, implementing, installing, or configuring applications shall be responsible for requirements that are out-of-scope for CAVP or CMVP validation testing.
+    - _T3 Repeatable · keys_: The key pair owner shall provide assurances of correct generation, private-key validity, public-key validity, pair-wise consistency, and possession of the private key.
+    - _T3 Repeatable · keys_: The public key recipient shall provide assurances of static and ephemeral public-key validity and the owner’s possession of the corresponding private key.
+    - _T3 Repeatable · libraries_: Conduct conformance testing for implementations within the framework of the Cryptographic Algorithm Validation Program (CAVP) and the Cryptographic Module Validation Program (CMVP).
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Manage key pairs according to common requirements for static and ephemeral pairs, and specific requirements for static and ephemeral key pairs.
+    - _T3 Repeatable · keys_: Manage domain parameters including selection/generation, assurances of validity, and ongoing management.
+
+## NIST SP 800-90
+- **Source**: Recommendation for Random Number Generation Using Deterministic Random Bit Generators
+- **URL**: https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T3 Repeatable · libraries_: Perform implementation validation testing, including known answer tests, to verify the DRBG mechanism functions correctly before deployment.
+    - _T3 Repeatable · libraries_: Implement health testing for Instantiate, Generate, Reseed, and Uninstantiate functions to detect operational errors.
+    - _T3 Repeatable · libraries_: Define and implement error handling procedures for errors encountered during normal operation and health testing.
+- **Governance**:
+    - _T2 Risk-Informed · libraries_: Maintain minimal documentation for the DRBG implementation as required by the standard.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Automate reseeding of the DRBG at the end of the seedlife to ensure continuous entropy supply.
+    - _T3 Repeatable · keys_: Implement mechanisms to handle prediction resistance requests by reseeding the DRBG.
+    - _T3 Repeatable · keys_: Securely remove DRBG instantiations and internal state when no longer needed.
+
+## NIST SP 800-90A
+- **Source**: Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1
+- **URL**: https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final
+- **Requirement count**: 7
+- **Assurance / FIPS**:
+    - _T3 Repeatable · libraries_: Perform implementation validation testing, including known answer tests, to verify the DRBG mechanism functions correctly before deployment.
+    - _T3 Repeatable · libraries_: Implement health testing for Instantiate, Generate, Reseed, and Uninstantiate functions to detect operational errors.
+    - _T3 Repeatable · libraries_: Define and implement error handling procedures for errors encountered during normal operation and health testing.
+- **Governance**:
+    - _T2 Risk-Informed · libraries_: Maintain minimal documentation for the DRBG implementation to support assurance and operational management.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Automate reseeding of the DRBG at the end of the seedlife to ensure continuous entropy and state freshness.
+    - _T3 Repeatable · keys_: Implement mechanisms to handle prediction resistance requests by reseeding the DRBG state.
+    - _T3 Repeatable · keys_: Securely remove DRBG instantiations and internal states when no longer needed to prevent state compromise.
+
+## NIST SP 800-90B
+- **Source**: Recommendation for the Entropy Sources Used for Random Bit Generation
+- **URL**: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90B.pdf
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T3 Repeatable · software_: Validate entropy sources using approved statistical tests and estimation methods to prove min-entropy compliance before deployment.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · software_: Define and document the entropy source model, including noise source and conditioning component, to manage the RBG lifecycle.
+- **Observability**:
+    - _T3 Repeatable · software_: Implement continuous health tests (e.g., Repetition Count, Adaptive Proportion) to detect entropy source failures in real-time.
 
 ## NIST-SP-800-56C-R2
 - **Source**: Recommendation for Key-Derivation Methods in Key-Establishment Schemes (Revision 2)
@@ -288,6 +394,17 @@ requirement_count: 134
     - _T3 Repeatable · keys_: Validate the signature of the DPoP proof JWT to confirm possession of the corresponding private key before processing the request.
     - _T3 Repeatable · keys_: Verify that the access token hash within the DPoP proof matches the access token presented in the request to ensure integrity.
 
+## RFC 9847
+- **Source**: IANA Registry Updates for TLS and DTLS
+- **URL**: https://www.rfc-editor.org/rfc/rfc9847.html
+- **Requirement count**: 5
+- **Governance**:
+    - _T2 Risk-Informed · all_: Consult IANA registry 'Recommended' column and linked references to determine if a TLS/DTLS mechanism is discouraged (D) and must not be used.
+    - _T2 Risk-Informed · all_: Prohibit the use of cipher suites marked as discouraged (D) in the TLS Cipher Suites registry, including those using NULL encryption, EXPORT, anon, RC4, DES, IDEA, MD5, or SHA-1.
+    - _T2 Risk-Informed · all_: Prohibit the use of hash algorithms marked as discouraged (D) in the TLS HashAlgorithm registry, specifically MD5 and SHA-1.
+    - _T2 Risk-Informed · all_: Prohibit the use of elliptic curve groups marked as discouraged (D) in the TLS Supported Groups registry, such as sect163k1, secp160k1, etc.
+    - _T2 Risk-Informed · all_: Prohibit the use of TLS extensions marked as discouraged (D) in the TLS ExtensionType Values registry, such as truncated_hmac and connection_id (deprecated).
+
 ## RFC-9162
 - **Source**: Certificate Transparency Version 2.0
 - **URL**: https://www.rfc-editor.org/rfc/rfc9162
@@ -311,6 +428,16 @@ requirement_count: 134
     - _T3 Repeatable · keys_: Include channel binding and context information in ImportedIdentity to mitigate reflection attacks and ensure proper key context.
     - _T3 Repeatable · keys_: Provision ALPN, QUIC transport parameters, and other early data settings alongside EPSKs when importing for early data use.
     - _T3 Repeatable · keys_: Deprecate hash functions by removing corresponding KDFs from the set of target KDFs used for importing keys.
+
+## RFC-9964
+- **Source**: RFC 9964 — ML-DSA for JOSE and COSE
+- **URL**: https://www.rfc-editor.org/rfc/rfc9964.html
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · keys_: Treat the ML-DSA seed with the same safeguards as a private key, as it can be used to compute the private key and is sensitive data.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Validate all algorithm-related key parameters, including seed length, before using AKP keys to ensure integrity and prevent compromise.
+    - _T3 Repeatable · keys_: Enforce that the ML-DSA private key seed parameter is exactly 32 bytes and validate it using skDecode algorithms from trusted sources.
 
 ## Rosenpass-Protocol
 - **Source**: Rosenpass: Formally Verified Post-Quantum Protocol for WireGuard
