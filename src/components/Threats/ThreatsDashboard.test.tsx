@@ -121,6 +121,11 @@ vi.mock(
   async () => (await import('../../test/mocks/framer-motion')).framerMotionMock
 )
 
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
+
 describe('ThreatsDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -334,6 +339,38 @@ describe('ThreatsDashboard', () => {
           /known quantum-era threats — each one is a place where today's encryption could be broken/
         )
       ).not.toBeInTheDocument()
+    })
+  })
+
+  // Mobile UX layer (Phase 7). ThreatsEmbed.tsx renders this same component
+  // inside the simulation at whatever viewport the player is on (simEmbed
+  // prop) — O-3 (IMPLEMENTATION-PLAN.md) keeps /simulation entirely outside
+  // the mobile shell, so simEmbed must win over isMobileShell regardless of
+  // viewport width.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true and not sim-embedded', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('PQC threats')).toBeInTheDocument()
+      expect(screen.queryByText('Quantum Threats')).not.toBeInTheDocument()
+    })
+
+    it('still renders the full desktop dashboard when simEmbed is true, even if isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard simEmbed />
+        </MemoryRouter>
+      )
+      expect(screen.queryByText('PQC threats')).not.toBeInTheDocument()
     })
   })
 })

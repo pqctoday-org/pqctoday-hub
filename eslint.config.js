@@ -215,6 +215,16 @@ export default defineConfig([
                 '@/components/Timeline/*',
                 '!@/components/Timeline/WhenDoesThisReachMe',
                 '!@/components/Timeline/MobileTimelineList',
+                // threatClassification.ts (Threats) — pure derivation, no
+                // JSX. getShorTier()/getThreatClass() plus the SHOR_TIER_DEFS/
+                // THREAT_CLASS_DEFS blurb text are the exact same per-threat
+                // classification every desktop Threats badge/dialog reads;
+                // the mobile screen needs the identical functions so a
+                // threat's tier/class can never differ between desktop and
+                // mobile.
+                '!@/components/Threats',
+                '@/components/Threats/*',
+                '!@/components/Threats/threatClassification',
                 // PersonaBoardView.tsx (PersonaJourney) — imported only for
                 // its exported PROVENANCE_LABEL map (Phase 4's Home board
                 // reads the same three provenance strings the desktop board
@@ -267,6 +277,17 @@ export default defineConfig([
                 // desktop-shaped view components.
                 '!@/components/PKILearning/modules',
                 '@/components/PKILearning/modules/*',
+                // quantumConstants.ts (QuantumThreats/data) — pure data/logic,
+                // no JSX. getCrqcConsensus() reduces the same six real
+                // CRQC_ESTIMATES rows every desktop Threats-page component
+                // reads for its Q-Day figure; the mobile Threats screen needs
+                // the identical function so its headline number can never
+                // drift from desktop's.
+                '!@/components/PKILearning/modules/QuantumThreats',
+                '@/components/PKILearning/modules/QuantumThreats/*',
+                '!@/components/PKILearning/modules/QuantumThreats/data',
+                '@/components/PKILearning/modules/QuantumThreats/data/*',
+                '!@/components/PKILearning/modules/QuantumThreats/data/quantumConstants',
                 '!@/components/PKILearning/modules/Quiz',
                 '@/components/PKILearning/modules/Quiz/*',
                 '!@/components/PKILearning/modules/Quiz/types',
