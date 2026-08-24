@@ -2,9 +2,8 @@
 import { CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { QuizScoreSummary } from '@/components/PKILearning/modules/Quiz/types'
+import { CHECKPOINT_PASS_THRESHOLD as PASS_THRESHOLD } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import { cn } from '@/lib/utils'
-
-const PASS_THRESHOLD = 80
 
 export interface MobileQuizResultsProps {
   summary: QuizScoreSummary

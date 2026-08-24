@@ -16,6 +16,7 @@ import { ScoreBreakdown } from './components/ScoreBreakdown'
 import { FeedbackPanel } from './components/FeedbackPanel'
 import { QuestionCard } from './components/QuestionCard'
 import type { QuizScoreSummary, QuizQuestion, CategoryScore } from './types'
+import { CHECKPOINT_PASS_THRESHOLD } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import clsx from 'clsx'
 
 interface QuizResultsProps {
@@ -65,7 +66,7 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
   const reduced = usePrefersReducedMotion()
 
   const scoreColor =
-    summary.overall.percentage >= 80
+    summary.overall.percentage >= CHECKPOINT_PASS_THRESHOLD
       ? 'text-success'
       : summary.overall.percentage >= 60
         ? 'text-warning'
@@ -88,8 +89,8 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
           {summary.overall.percentage}%
         </div>
 
-        {/* Pass / Fail badge — 80% passing grade */}
-        {summary.overall.percentage >= 80 ? (
+        {/* Pass / Fail badge — CHECKPOINT_PASS_THRESHOLD% passing grade */}
+        {summary.overall.percentage >= CHECKPOINT_PASS_THRESHOLD ? (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-status-success/15 border border-status-success/30 mb-3">
             <CheckCircle size={14} className="text-status-success" />
             <span className="text-sm font-bold text-status-success">PASSED</span>
@@ -100,7 +101,9 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
             <span className="text-sm font-bold text-status-error">NOT PASSED</span>
           </div>
         )}
-        <p className="text-[11px] text-muted-foreground mb-3">Passing grade: 80%</p>
+        <p className="text-[11px] text-muted-foreground mb-3">
+          Passing grade: {CHECKPOINT_PASS_THRESHOLD}%
+        </p>
 
         <p className="text-lg text-muted-foreground mb-1">
           {summary.overall.correct} of {summary.overall.total} correct
