@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
-import { Play, CheckCircle, XCircle, ExternalLink, Copy, Check, Loader2 } from 'lucide-react'
+import {
+  Play,
+  CheckCircle,
+  XCircle,
+  MinusCircle,
+  ExternalLink,
+  Copy,
+  Check,
+  Loader2,
+} from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
@@ -129,7 +138,11 @@ interface TestResult {
   algorithm: string
   testCase: string
   referenceUrl: string
-  status: 'pass' | 'fail' | 'pending'
+  // 'skip' = the engine doesn't advertise the mechanism this check needs, so no
+  // PKCS#11 call was made. It is deliberately distinct from 'pass'/'fail': a
+  // skip proves nothing about conformance and must never count as either — see
+  // the summary counters below, where it has its own bucket.
+  status: 'pass' | 'fail' | 'pending' | 'skip'
   details: string
 }
 
@@ -307,9 +320,38 @@ export const HsmAcvpTesting = () => {
         const regKey = (key: Omit<HsmKey, 'generatedAt'>) =>
           addHsmKey({ ...key, generatedAt: ts() })
 
+        // Record a visible 'skip' row when a mechanism this engine doesn't
+        // advertise would otherwise silently drop a whole test category from
+        // the Results table with nothing but a line in the Execution Log pane
+        // (H-1 remediation — a real regression that removed a mechanism from
+        // an engine's advertised list used to vanish with zero visible trace).
+        const pushSkip = async (
+          id: string,
+          algorithm: string,
+          testCase: string,
+          referenceUrl: string,
+          reason: string
+        ) => {
+          addLog(`[${eName}] [SKIP] ${reason}`)
+          await pushResult({
+            id,
+            algorithm,
+            testCase,
+            referenceUrl,
+            status: 'skip',
+            details: `Skipped — ${reason}`,
+          })
+        }
+
         // ── 1. AES-GCM-256 Decrypt KAT (SP 800-38D) ────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_GCM)) {
-          addLog(`[${eName}] [SKIP] AES-GCM-256: mechanism not supported`)
+          await pushSkip(
+            `aes-skip-${eName}`,
+            `AES-GCM-256 (${eName})`,
+            'Decrypt KAT',
+            REF.aesgcm,
+            'AES-GCM-256: mechanism not supported'
+          )
         } else {
           const tv = aesGcmTestVectors.testGroups[0].tests[0]
           const id1 = `aes-acvp-${eName}`
@@ -386,7 +428,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 2. HMAC-SHA256 Verify KAT (RFC 4231) ────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_HMAC)) {
-          addLog(`[${eName}] [SKIP] HMAC-SHA256: mechanism not supported`)
+          await pushSkip(
+            `hmac-skip-${eName}`,
+            `HMAC-SHA256 (${eName})`,
+            'Verify KAT',
+            REF.hmac,
+            'HMAC-SHA256: mechanism not supported'
+          )
         } else {
           const tv = hmacTestVectors.testGroups[0].tests[0]
           const id2 = `hmac-acvp-${eName}`
@@ -441,7 +489,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 3. RSA-PSS-2048 SigVer KAT (FIPS 186-5) ────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_RSA_PKCS_PSS)) {
-          addLog(`[${eName}] [SKIP] RSA-PSS-2048: mechanism not supported`)
+          await pushSkip(
+            `rsa-skip-${eName}`,
+            `RSA-PSS-2048 (${eName})`,
+            'SigVer KAT',
+            REF.rsapss,
+            'RSA-PSS-2048: mechanism not supported'
+          )
         } else {
           const tv = rsaPssTestVectors.testGroups[0].tests[0]
           const id3 = `rsa-acvp-${eName}`
@@ -504,7 +558,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 4. ECDSA P-256 SigVer KAT (FIPS 186-5) ─────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {
-          addLog(`[${eName}] [SKIP] ECDSA P-256: mechanism not supported`)
+          await pushSkip(
+            `ecdsa-skip-${eName}`,
+            `ECDSA P-256 (${eName})`,
+            'SigVer KAT',
+            REF.ecdsa,
+            'ECDSA P-256: mechanism not supported'
+          )
         } else {
           const tv = ecdsaTestVectors.testGroups[0].tests[0]
           const id4 = `ecdsa-acvp-${eName}`
@@ -989,7 +1049,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256)) {
-          addLog(`[${eName}] [SKIP] SHA-256 Digest: mechanism not supported`)
+          await pushSkip(
+            `sha256-skip-${eName}`,
+            `SHA-256 (${eName})`,
+            'Digest KAT',
+            REF.sha256,
+            'SHA-256 Digest: mechanism not supported'
+          )
         } else {
           for (const test of sha256TestVectors.testGroups[0].tests) {
             const id10 = `sha256-tc${test.tcId}-${eName}`
@@ -1038,7 +1104,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 11. AES-CBC-256 Decrypt KAT (SP 800-38A) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CBC_PAD)) {
-          addLog(`[${eName}] [SKIP] AES-CBC-256: mechanism not supported`)
+          await pushSkip(
+            `aescbc-skip-${eName}`,
+            `AES-CBC-256 (${eName})`,
+            'Decrypt KAT',
+            REF.aescbc,
+            'AES-CBC-256: mechanism not supported'
+          )
         } else {
           const tv = aesCbcTestVectors.testGroups[0].tests[0]
           const id11 = `aescbc-acvp-${eName}`
@@ -1104,7 +1176,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 12. AES-CTR-256 Decrypt KAT (SP 800-38A) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CTR)) {
-          addLog(`[${eName}] [SKIP] AES-CTR-256: mechanism not supported`)
+          await pushSkip(
+            `aesctr-skip-${eName}`,
+            `AES-CTR-256 (${eName})`,
+            'Decrypt KAT',
+            REF.aesctr,
+            'AES-CTR-256: mechanism not supported'
+          )
         } else {
           const tv = aesCtrTestVectors.testGroups[0].tests[0]
           const counterBits = aesCtrTestVectors.testGroups[0].counterBits
@@ -1178,7 +1256,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 13. HMAC-SHA384 Verify KAT ─────────────────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA384_HMAC)) {
-          addLog(`[${eName}] [SKIP] HMAC-SHA384: mechanism not supported`)
+          await pushSkip(
+            `hmac384-skip-${eName}`,
+            `HMAC-SHA384 (${eName})`,
+            'Verify KAT',
+            REF.hmac,
+            'HMAC-SHA384: mechanism not supported'
+          )
         } else {
           const tv = hmac384TestVectors.testGroups[0].tests[0]
           const id13 = `hmac384-acvp-${eName}`
@@ -1236,7 +1320,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 14. HMAC-SHA512 Verify KAT ─────────────────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA512_HMAC)) {
-          addLog(`[${eName}] [SKIP] HMAC-SHA512: mechanism not supported`)
+          await pushSkip(
+            `hmac512-skip-${eName}`,
+            `HMAC-SHA512 (${eName})`,
+            'Verify KAT',
+            REF.hmac,
+            'HMAC-SHA512: mechanism not supported'
+          )
         } else {
           const tv = hmac512TestVectors.testGroups[0].tests[0]
           const id14 = `hmac512-acvp-${eName}`
@@ -1294,7 +1384,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 15. ECDSA P-384 SigVer KAT (FIPS 186-5) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA384)) {
-          addLog(`[${eName}] [SKIP] ECDSA P-384: mechanism not supported`)
+          await pushSkip(
+            `ecdsa384-skip-${eName}`,
+            `ECDSA P-384 (${eName})`,
+            'SigVer KAT',
+            REF.ecdsa,
+            'ECDSA P-384: mechanism not supported'
+          )
         } else {
           const tv = ecdsaP384TestVectors.testGroups[0].tests[0]
           const id15 = `ecdsa384-acvp-${eName}`
@@ -1357,7 +1453,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 16. EdDSA Ed25519 SigVer KAT (RFC 8032) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EDDSA)) {
-          addLog(`[${eName}] [SKIP] EdDSA Ed25519: mechanism not supported`)
+          await pushSkip(
+            `eddsa-sigver-skip-${eName}`,
+            `EdDSA Ed25519 (${eName})`,
+            'SigVer KAT',
+            REF.eddsa,
+            'EdDSA Ed25519: mechanism not supported'
+          )
         } else {
           const edTv = eddsaTestVectors.testGroups[0].tests[0]
           const id16 = `eddsa-sigver-${eName}`
@@ -1409,7 +1511,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 17. PBKDF2 Functional Derivation (PKCS#5 v2.1) ────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_PKCS5_PBKD2)) {
-          addLog(`[${eName}] [SKIP] PBKDF2: mechanism not supported`)
+          await pushSkip(
+            `pbkdf2-skip-${eName}`,
+            `PBKDF2-HMAC-SHA256 (${eName})`,
+            'KAT (c=4096)',
+            REF.pbkdf2,
+            'PBKDF2: mechanism not supported'
+          )
         } else {
           const id17 = `pbkdf2-kat-${eName}`
           addLog(`[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (RFC 6070-style, c=4096)...`)
@@ -1471,7 +1579,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 18. HKDF Functional Derivation (RFC 5869) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HKDF_DERIVE)) {
-          addLog(`[${eName}] [SKIP] HKDF: mechanism not supported`)
+          await pushSkip(
+            `hkdf-skip-${eName}`,
+            `HKDF-SHA256 (${eName})`,
+            'KAT (RFC 5869 A.1)',
+            REF.hkdf,
+            'HKDF: mechanism not supported'
+          )
         } else {
           const id18 = `hkdf-kat-${eName}`
           addLog(`[${eName}] Testing HKDF-SHA256 KAT (RFC 5869 Appendix A.1)...`)
@@ -1528,7 +1642,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_KEY_WRAP)) {
-          addLog(`[${eName}] [SKIP] AES-KW: mechanism not supported`)
+          await pushSkip(
+            `aeskw-skip-${eName}`,
+            `AES-KW-256 (${eName})`,
+            'Wrap KAT',
+            REF.aeskw,
+            'AES-KW: mechanism not supported'
+          )
         } else {
           const tv = aesKwTestVectors.testGroups[0].tests[0]
           const id19 = `aeskw-acvp-${eName}`
@@ -1611,7 +1731,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 20. AES-KWP Wrap+Unwrap Round-Trip (RFC 5649) ─────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_KEY_WRAP_KWP)) {
-          addLog(`[${eName}] [SKIP] AES-KWP: mechanism not supported`)
+          await pushSkip(
+            `aeskwp-skip-${eName}`,
+            `AES-KWP-256 (${eName})`,
+            'Wrap+Unwrap Round-Trip',
+            REF.aeskwp,
+            'AES-KWP: mechanism not supported'
+          )
         } else {
           const id20 = `aeskwp-func-${eName}`
           addLog(`[${eName}] Testing AES-KWP Wrap+Unwrap Round-Trip (RFC 5649)...`)
@@ -1884,7 +2010,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 23. X25519 ECDH Round-Trip (RFC 7748) ─────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
-          addLog(`[${eName}] [SKIP] X25519: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list`)
+          await pushSkip(
+            `x25519-skip-${eName}`,
+            `X25519 ECDH (${eName})`,
+            'RFC 7748 §6.1 Round-Trip',
+            REF.x25519,
+            'X25519: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list'
+          )
         } else {
           const id23 = `x25519-ecdh-${eName}`
           addLog(`[${eName}] Testing X25519 ECDH Round-Trip (RFC 7748)...`)
@@ -2007,7 +2139,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 24. X448 ECDH Round-Trip (RFC 7748) ───────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
-          addLog(`[${eName}] [SKIP] X448: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list`)
+          await pushSkip(
+            `x448-skip-${eName}`,
+            `X448 ECDH (${eName})`,
+            'RFC 7748 §6.2 Round-Trip',
+            REF.x448,
+            'X448: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list'
+          )
         } else {
           const id24 = `x448-ecdh-${eName}`
           addLog(`[${eName}] Testing X448 ECDH Round-Trip (RFC 7748)...`)
@@ -2130,7 +2268,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 25. X9.63 KDF with SHA3-256 / SHA3-512 (PKCS#11 v3.2 §5.2.12) ──
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
-          addLog(`[${eName}] [SKIP] X9.63-SHA3: requires X25519 keygen`)
+          await pushSkip(
+            `x963-sha3-kdf-skip-${eName}`,
+            `X9.63-KDF (${eName})`,
+            'PKCS#11 v3.2 §5.2.12 — SHA3-256 + SHA3-512 bilateral agreement',
+            REF.x963kdf,
+            'X9.63-SHA3: requires X25519 keygen'
+          )
         } else {
           const id25 = `x963-sha3-kdf-${eName}`
           addLog(`[${eName}] Testing X9.63 KDF SHA3-256/SHA3-512 (PKCS#11 v3.2 §5.2.12)...`)
@@ -2255,7 +2399,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 26. ChaCha20-Poly1305 AEAD Encrypt/Decrypt Round-Trip ────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_CHACHA20_POLY1305)) {
-          addLog(`[${eName}] [SKIP] ChaCha20-Poly1305: mechanism not supported`)
+          await pushSkip(
+            `chacha20-skip-${eName}`,
+            `ChaCha20-Poly1305 (${eName})`,
+            'AEAD Encrypt/Decrypt Round-Trip',
+            'https://datatracker.ietf.org/doc/html/rfc8439',
+            'ChaCha20-Poly1305: mechanism not supported'
+          )
         } else {
           const id26 = `chacha20-rt-${eName}`
           addLog(`[${eName}] Testing ChaCha20-Poly1305 AEAD Round-Trip...`)
@@ -2324,7 +2474,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 27. SP 800-108 KBKDF Derivation (Counter Mode) ────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SP800_108_COUNTER_KDF)) {
-          addLog(`[${eName}] [SKIP] SP800-108 KBKDF: mechanism not supported`)
+          await pushSkip(
+            `sp800-108-skip-${eName}`,
+            `SP 800-108 KBKDF (${eName})`,
+            'Counter Mode Derivation',
+            'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+            'SP800-108 KBKDF: mechanism not supported'
+          )
         } else {
           const id27 = `sp800-108-kdf-${eName}`
           addLog(`[${eName}] Testing SP800-108 KBKDF (Counter Mode, SHA-256)...`)
@@ -2422,7 +2578,13 @@ export const HsmAcvpTesting = () => {
         }
         // ── 29. SP 800-108 KBKDF Derivation (Feedback Mode) ────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SP800_108_FEEDBACK_KDF)) {
-          addLog(`[${eName}] [SKIP] SP800-108 KBKDF Feedback: mechanism not supported`)
+          await pushSkip(
+            `sp800-108-feedback-skip-${eName}`,
+            `SP 800-108 KBKDF (${eName})`,
+            'Feedback Mode Derivation',
+            'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+            'SP800-108 KBKDF Feedback: mechanism not supported'
+          )
         } else {
           const id29 = `sp800-108-kdf-feedback-${eName}`
           addLog(`[${eName}] Testing SP800-108 KBKDF (Feedback Mode, SHA-256)...`)
@@ -2481,7 +2643,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 30. XMSS Stateful Sign+Verify ────────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_XMSS)) {
-          addLog(`[${eName}] [SKIP] XMSS: mechanism not supported`)
+          await pushSkip(
+            `xmss-skip-${eName}`,
+            `XMSS (${eName})`,
+            'Stateful Sign+Verify',
+            'https://csrc.nist.gov/pubs/sp/800/208/final',
+            'XMSS: mechanism not supported'
+          )
         } else {
           const id30 = `xmss-sig-${eName}`
           addLog(`[${eName}] Testing XMSS Stateful Sign+Verify...`)
@@ -2524,7 +2692,13 @@ export const HsmAcvpTesting = () => {
         // gated on a vendor CKM_LMS=0x80000002 the engines never advertise, so the
         // row was silently skipped. NULL keygen params → single-level LMS default.
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HSS)) {
-          addLog(`[${eName}] [SKIP] HSS/LMS: mechanism not supported`)
+          await pushSkip(
+            `hss-skip-${eName}`,
+            `HSS/LMS (${eName})`,
+            'Stateful Sign+Verify',
+            'https://csrc.nist.gov/pubs/sp/800/208/final',
+            'HSS/LMS: mechanism not supported'
+          )
         } else {
           const id31 = `hss-sig-${eName}`
           addLog(`[${eName}] Testing HSS/LMS Stateful Sign+Verify...`)
@@ -2563,7 +2737,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 32. ECDSA secp256k1 Functional Sign+Verify (SEC 2) ────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {
-          addLog(`[${eName}] [SKIP] ECDSA secp256k1: mechanism not supported`)
+          await pushSkip(
+            `ecdsa-k1-skip-${eName}`,
+            `ECDSA secp256k1 (${eName})`,
+            'Functional Sign+Verify',
+            REF.ecdsa,
+            'ECDSA secp256k1: mechanism not supported'
+          )
         } else {
           const id32 = `ecdsa-k1-func-${eName}`
           addLog(`[${eName}] Testing ECDSA secp256k1 Functional Sign+Verify (SEC 2)...`)
@@ -2617,7 +2797,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 33. ECDSA P-521 Functional Sign+Verify (FIPS 186-5) ───────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA512)) {
-          addLog(`[${eName}] [SKIP] ECDSA P-521: mechanism not supported`)
+          await pushSkip(
+            `ecdsa521-skip-${eName}`,
+            `ECDSA P-521 (${eName})`,
+            'Functional Sign+Verify',
+            REF.ecdsa,
+            'ECDSA P-521: mechanism not supported'
+          )
         } else {
           const id33 = `ecdsa521-func-${eName}`
           addLog(`[${eName}] Testing ECDSA P-521 Functional Sign+Verify (FIPS 186-5)...`)
@@ -2671,7 +2857,13 @@ export const HsmAcvpTesting = () => {
 
         // ── 34. ECDH P-521 Key Agreement Round-Trip (SP 800-56A) ─────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA512)) {
-          addLog(`[${eName}] [SKIP] ECDH P-521: mechanism not supported`)
+          await pushSkip(
+            `ecdh521-skip-${eName}`,
+            `ECDH P-521 (${eName})`,
+            'Key Agreement Round-Trip',
+            REF.ecdsa,
+            'ECDH P-521: mechanism not supported'
+          )
         } else {
           const id34 = `ecdh521-rt-${eName}`
           addLog(`[${eName}] Testing ECDH P-521 Key Agreement Round-Trip (SP 800-56A)...`)
@@ -2796,6 +2988,11 @@ export const HsmAcvpTesting = () => {
   const totalChecks = results.length
   const passed = results.filter((r) => r.status === 'pass').length
   const failed = results.filter((r) => r.status === 'fail').length
+  // Rows where the engine didn't advertise the mechanism, so no PKCS#11 call was
+  // made. Counted separately from pass/fail everywhere below — a skip proves
+  // nothing about conformance and must never be folded into either bucket.
+  const skipped = results.filter((r) => r.status === 'skip').length
+  const executed = totalChecks - skipped
 
   return (
     <div className="flex flex-col h-full space-y-4">
@@ -2859,12 +3056,19 @@ export const HsmAcvpTesting = () => {
               )}
             </span>
             <span className="tabular-nums text-muted-foreground">
-              {totalChecks} {totalChecks === 1 ? 'check' : 'checks'} ·{' '}
+              {totalChecks} {totalChecks === 1 ? 'row' : 'rows'}
+              {skipped > 0 && ` (${executed} executed, ${skipped} skipped)`} ·{' '}
               <span className="text-success">{passed} passed</span>
               {failed > 0 && (
                 <>
                   {' '}
                   · <span className="text-destructive">{failed} failed</span>
+                </>
+              )}
+              {skipped > 0 && (
+                <>
+                  {' '}
+                  · <span className="text-warning">{skipped} skipped</span>
                 </>
               )}
             </span>
@@ -2877,7 +3081,9 @@ export const HsmAcvpTesting = () => {
                   ? 'w-full animate-pulse bg-primary'
                   : failed > 0
                     ? 'w-full bg-destructive'
-                    : 'w-full bg-success'
+                    : skipped > 0
+                      ? 'w-full bg-warning'
+                      : 'w-full bg-success'
               )}
             />
           </div>
@@ -2920,11 +3126,15 @@ export const HsmAcvpTesting = () => {
                               'px-2 py-0.5 rounded text-[10px] uppercase font-bold flex items-center gap-1 w-fit',
                               res.status === 'pass'
                                 ? 'bg-success/20 text-success'
-                                : 'bg-destructive/20 text-destructive'
+                                : res.status === 'skip'
+                                  ? 'bg-warning/20 text-warning'
+                                  : 'bg-destructive/20 text-destructive'
                             )}
                           >
                             {res.status === 'pass' ? (
                               <CheckCircle size={12} />
+                            ) : res.status === 'skip' ? (
+                              <MinusCircle size={12} />
                             ) : (
                               <XCircle size={12} />
                             )}
