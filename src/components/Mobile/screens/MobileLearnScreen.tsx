@@ -61,7 +61,7 @@ export function MobileLearnScreen() {
   ]
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div
         className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto rounded-none bg-transparent px-4 pb-1"
         role="tablist"

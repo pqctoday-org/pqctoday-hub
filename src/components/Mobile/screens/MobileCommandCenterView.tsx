@@ -113,10 +113,10 @@ export function MobileCommandCenterView() {
       (t): t is (typeof BUSINESS_TOOLS)[number] => Boolean(t)
     )
     return (
-      <div className="px-4 pb-24 pt-4">
-        <h1 className="mb-1 text-[17px] font-extrabold leading-tight text-foreground">
-          Command Center
-        </h1>
+      <div className="px-4 pb-4 pt-4">
+        <div className="mb-1">
+          <h1 className="sr-only">Command Center</h1>
+        </div>
         <div className="mt-3 glass-panel p-4 text-center">
           <LayoutDashboard
             size={32}
@@ -175,10 +175,10 @@ export function MobileCommandCenterView() {
   }
 
   return (
-    <div className="px-4 pb-24 pt-4">
-      <h1 className="mb-3 text-[17px] font-extrabold leading-tight text-foreground">
-        Command Center
-      </h1>
+    <div className="px-4 pb-4 pt-4">
+      <div className="mb-3">
+        <h1 className="sr-only">Command Center</h1>
+      </div>
 
       <ActionItemsSection metrics={metrics} cap={3} />
 

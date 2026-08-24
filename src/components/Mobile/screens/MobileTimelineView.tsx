@@ -112,7 +112,7 @@ export function MobileTimelineView() {
   ).length
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4 flex items-center gap-2">
         <Globe size={18} className="shrink-0 text-primary" aria-hidden="true" />
         <div>

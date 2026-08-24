@@ -107,7 +107,7 @@ export function MobileHomeBoard({
   const roleContext = [regionLabel, industryLabel].filter(Boolean).join(' · ')
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4 flex items-center justify-between">
         <span className="text-[13px] font-semibold text-foreground">
           {PERSONAS[persona].label}
@@ -339,7 +339,7 @@ export function MobileHomeBoard({
  */
 function MobileHomeSkipped({ onOpenRoleSwitch }: { onOpenRoleSwitch: () => void }) {
   return (
-    <div className="flex flex-col items-center gap-4 px-4 pb-24 pt-16 text-center">
+    <div className="flex flex-col items-center gap-4 px-4 pb-4 pt-16 text-center">
       <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
         Post-quantum cryptography, explained and provable
       </p>

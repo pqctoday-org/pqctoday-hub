@@ -150,9 +150,12 @@ export function MobileThreatsView() {
   const urgencyStyle = URGENCY_CONFIG[urgency]
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">PQC threats</h1>
+        {/* sr-only + "Threats" (2026-08-24 audit R2.2): matches the sticky
+            header's real NAV_PATH_LABELS title for this route — "PQC
+            threats" was a second, disagreeing name for the same page. */}
+        <h1 className="sr-only">Threats</h1>
         <p className="text-[11.5px] text-muted-foreground">
           {threatsData.length} tracked
           {personaIndustries && ` · ${scopedData.length} in your focus areas`}

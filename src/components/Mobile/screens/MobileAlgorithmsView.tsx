@@ -148,11 +148,11 @@ export function MobileAlgorithmsView() {
   const keyConsequence = transitionConsequence('RSA-2048', 'ML-KEM-768')
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4 flex items-center gap-2">
         <Shield size={18} className="shrink-0 text-primary" aria-hidden="true" />
         <div>
-          <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Algorithms</h1>
+          <h1 className="sr-only">Algorithms</h1>
           <p className="text-[11.5px] text-muted-foreground">
             {Object.keys(ALGORITHM_REGISTRY).length} tracked
           </p>

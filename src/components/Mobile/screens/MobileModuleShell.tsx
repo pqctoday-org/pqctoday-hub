@@ -66,7 +66,7 @@ export function MobileModuleShell({
   const checkedCount = sections.filter((s) => checks[s.id]).length
 
   return (
-    <div className="flex flex-col gap-4 px-4 pb-24 pt-4">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-4">
       <div>
         <div className="mb-2 flex flex-wrap items-center gap-1.5">
           {track && <span className={mobileChip}>{track}</span>}

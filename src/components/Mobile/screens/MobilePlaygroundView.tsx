@@ -126,9 +126,12 @@ export function MobilePlaygroundView() {
   const gatedCount = useMemo(() => MOBILE_TOOLS.filter((t) => t.requires.length > 0).length, [])
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Crypto Lab</h1>
+        {/* sr-only + "Playground" (2026-08-24 audit R2.2): matches the sticky
+            header's real NAV_PATH_LABELS title for this route — "Crypto Lab"
+            was a second, disagreeing name for the same page. */}
+        <h1 className="sr-only">Playground</h1>
         <p className="text-[11.5px] text-muted-foreground">
           {MOBILE_TOOLS.length} tools · runs in-browser
         </p>

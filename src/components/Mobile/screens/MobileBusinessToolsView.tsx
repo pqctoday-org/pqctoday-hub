@@ -85,9 +85,9 @@ export function MobileBusinessToolsView() {
   }, [category, search])
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-4">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Business Tools</h1>
+        <h1 className="sr-only">Business Tools</h1>
         <p className="text-[11.5px] text-muted-foreground">{MOBILE_TOOLS.length} tools</p>
       </div>
 

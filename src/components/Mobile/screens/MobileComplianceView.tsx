@@ -167,9 +167,9 @@ export function MobileComplianceView() {
     expandedTier[tier] ?? !COLLAPSED_BY_DEFAULT.has(tier)
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Compliance</h1>
+        <h1 className="sr-only">Compliance</h1>
       </div>
 
       <div className="-mx-4 mb-4 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1">
@@ -246,7 +246,7 @@ export function MobileComplianceView() {
                               {row.framework.label}
                             </span>
                             {row.framework.pqcRequirement !== 'no' && (
-                              <span className="rounded bg-muted/50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
+                              <span className="rounded bg-muted/50 px-1.5 py-0.5 text-sim-chip font-bold uppercase text-muted-foreground">
                                 PQC {PQC_LABEL[row.framework.pqcRequirement]}
                               </span>
                             )}

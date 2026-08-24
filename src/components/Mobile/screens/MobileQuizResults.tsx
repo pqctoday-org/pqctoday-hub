@@ -31,7 +31,7 @@ export function MobileQuizResults({ summary, onRetake, onExit }: MobileQuizResul
   const passed = summary.overall.percentage >= PASS_THRESHOLD
 
   return (
-    <div className="flex flex-col items-center gap-4 px-4 pb-24 pt-8 text-center">
+    <div className="flex flex-col items-center gap-4 px-4 pb-4 pt-8 text-center">
       <div
         className={cn(
           'flex h-14 w-14 items-center justify-center rounded-full',

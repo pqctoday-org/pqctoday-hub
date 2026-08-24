@@ -111,9 +111,9 @@ export function MobileAboutView() {
   const toggle = (id: GroupId) => setOpenGroup((cur) => (cur === id ? null : id))
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">About</h1>
+        <h1 className="sr-only">About</h1>
       </div>
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         v{version} · PQCToday exists to close the gap between the coming quantum-cryptographic
@@ -365,7 +365,7 @@ function Row({ title, badge, children }: { title: string; badge?: string; childr
       <div className="flex items-center gap-1.5">
         <h2 className="text-[12px] font-bold text-foreground">{title}</h2>
         {badge && (
-          <span className="rounded-full border border-status-warning/40 bg-status-warning/15 px-1.5 py-0.5 text-[8.5px] font-bold text-status-warning">
+          <span className="rounded-full border border-status-warning/40 bg-status-warning/15 px-1.5 py-0.5 text-sim-chip font-bold text-status-warning">
             {badge}
           </span>
         )}

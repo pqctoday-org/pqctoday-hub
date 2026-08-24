@@ -132,9 +132,9 @@ export function MobileMigrateView() {
   const posture = useMigrationPlan()
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Migrate</h1>
+        <h1 className="sr-only">Migrate</h1>
       </div>
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         Pick the cryptography you run to get a sequenced, quantum-safe plan aligned to NIST IR 8547
@@ -158,7 +158,7 @@ export function MobileMigrateView() {
           >
             {t.label}
             {t.id === 'plan' && posture.plannedAssets.length > 0 && (
-              <span className="ml-1 rounded-full bg-primary-foreground/25 px-1.5 text-[9px]">
+              <span className="ml-1 rounded-full bg-primary-foreground/25 px-1.5 text-sim-chip">
                 {posture.plannedAssets.length}
               </span>
             )}
@@ -190,7 +190,7 @@ export function MobileMigrateView() {
                 )}
               >
                 {a.label}
-                {a.hndl && <span className="ml-1 text-[9px] text-status-error">HNDL</span>}
+                {a.hndl && <span className="ml-1 text-sim-chip text-status-error">HNDL</span>}
               </Button>
             ))}
           </div>

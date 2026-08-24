@@ -359,7 +359,12 @@ describe('ThreatsDashboard', () => {
           <ThreatsDashboard />
         </MemoryRouter>
       )
-      expect(screen.getByText('PQC threats')).toBeInTheDocument()
+      // The mobile screen's own <h1> is sr-only (2026-08-24 audit R2.2 — it
+      // matches the sticky header's title instead of duplicating it as
+      // visible "PQC threats" text), but it's still a real, findable DOM
+      // node — this remains a valid fingerprint that the mobile branch, not
+      // the desktop dashboard, rendered.
+      expect(screen.getByRole('heading', { level: 1, name: 'Threats' })).toBeInTheDocument()
       expect(screen.queryByText('Quantum Threats')).not.toBeInTheDocument()
     })
 
@@ -370,7 +375,7 @@ describe('ThreatsDashboard', () => {
           <ThreatsDashboard simEmbed />
         </MemoryRouter>
       )
-      expect(screen.queryByText('PQC threats')).not.toBeInTheDocument()
+      expect(screen.queryByRole('heading', { level: 1, name: 'Threats' })).not.toBeInTheDocument()
     })
   })
 })

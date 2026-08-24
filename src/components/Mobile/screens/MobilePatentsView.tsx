@@ -98,9 +98,9 @@ export function MobilePatentsView() {
   }, [scoped, highImpactOnly, agilityFilter, searchText])
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Patents</h1>
+        <h1 className="sr-only">Patents</h1>
       </div>
       <p className="mb-4 text-[11.5px] leading-relaxed text-muted-foreground">
         Three figures worth carrying. Tap High migration impact to narrow the list below.

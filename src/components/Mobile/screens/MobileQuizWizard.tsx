@@ -68,7 +68,7 @@ export function MobileQuizWizard({ questions, title, onComplete, onExit }: Mobil
   const questionIds = state.questions.map((q) => q.id)
 
   return (
-    <div className="flex flex-col gap-4 px-4 pb-24 pt-4">
+    <div className="flex flex-col gap-4 px-4 pb-4 pt-4">
       <div className="flex items-center justify-between">
         <Button
           type="button"

@@ -138,7 +138,7 @@ export function MobileAssessView() {
 
   if (pendingResumeChoice && !resumeResolved) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 pb-24 pt-12 text-center">
+      <div className="flex flex-col items-center gap-3 px-4 pb-4 pt-12 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
           <Laptop size={20} className="text-primary" aria-hidden="true" />
         </div>
@@ -177,7 +177,7 @@ export function MobileAssessView() {
 
   if (done) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 pb-24 pt-12 text-center">
+      <div className="flex flex-col items-center gap-3 px-4 pb-4 pt-12 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-success/15">
           <Check size={22} className="text-status-success" aria-hidden="true" />
         </div>
@@ -212,7 +212,7 @@ export function MobileAssessView() {
   const meta = STEP_META[key]
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
         <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Assess</h1>
       </div>

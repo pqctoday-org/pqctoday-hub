@@ -95,7 +95,7 @@ export function MobileReportView() {
   if (!result) {
     const isCurious = selectedPersona === 'curious'
     return (
-      <div className="flex flex-col items-center gap-3 px-4 pb-24 pt-12 text-center">
+      <div className="flex flex-col items-center gap-3 px-4 pb-4 pt-12 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
           <FileBarChart size={22} className="text-muted-foreground" aria-hidden="true" />
         </div>
@@ -134,9 +134,9 @@ export function MobileReportView() {
   const tier = RISK_TIER[result.riskLevel]
 
   return (
-    <div className="px-4 pb-24 pt-4">
+    <div className="px-4 pb-4 pt-4">
       <div className="mb-1">
-        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">Report</h1>
+        <h1 className="sr-only">Report</h1>
       </div>
       <p className="mb-4 text-[10.5px] font-bold uppercase tracking-wide text-primary">
         {isComprehensive ? 'Comprehensive Assessment' : 'Quick Assessment'}
