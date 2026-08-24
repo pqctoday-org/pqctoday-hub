@@ -272,14 +272,14 @@ export function MobileComplianceView() {
                   <div key={doc.refId} className="glass-panel p-3">
                     <div className="flex flex-wrap items-baseline gap-x-1.5">
                       <h3 className="text-[12px] font-bold text-foreground">{doc.sourceName}</h3>
-                      <span className="font-mono text-[9.5px] text-muted-foreground">
+                      <span className="font-mono text-sim-chip text-muted-foreground">
                         {doc.refId}
                       </span>
                       <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
                         {doc.total}
                       </span>
                     </div>
-                    <p className="mt-1 font-mono text-[9.5px] text-muted-foreground">
+                    <p className="mt-1 font-mono text-sim-chip text-muted-foreground">
                       extracted by {doc.extractionModel || 'unknown model'}
                       {doc.extractionDate ? ` · ${doc.extractionDate}` : ''} · confidence{' '}
                       {doc.confidence}
@@ -394,7 +394,7 @@ export function MobileComplianceView() {
                 </Button>
                 {open && (
                   <div className="flex flex-col gap-1.5 border-t border-border px-3.5 pb-3 pt-2.5">
-                    <p className="font-mono text-[9.5px] text-muted-foreground">
+                    <p className="font-mono text-sim-chip text-muted-foreground">
                       {step.sectionRef}
                     </p>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">

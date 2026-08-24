@@ -248,13 +248,13 @@ export function MobileAlgorithmsView() {
         {selected && (
           <dl className="grid grid-cols-2 gap-x-3 gap-y-3">
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Family
               </dt>
               <dd className="mt-0.5 text-[12px] text-foreground">{selected.family}</dd>
             </div>
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 FIPS standard
               </dt>
               <dd className="mt-0.5 text-[12px] text-foreground">
@@ -262,7 +262,7 @@ export function MobileAlgorithmsView() {
               </dd>
             </div>
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Security level
               </dt>
               <dd className="mt-0.5 text-[12px] text-foreground">
@@ -270,7 +270,7 @@ export function MobileAlgorithmsView() {
               </dd>
             </div>
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Public key
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
@@ -278,7 +278,7 @@ export function MobileAlgorithmsView() {
               </dd>
             </div>
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Private key
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
@@ -286,7 +286,7 @@ export function MobileAlgorithmsView() {
               </dd>
             </div>
             <div>
-              <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Signature / ciphertext
               </dt>
               <dd className="mt-0.5 font-mono text-[12px] text-foreground">
@@ -295,7 +295,7 @@ export function MobileAlgorithmsView() {
             </div>
             {selected.sharedSecretBytes != null && (
               <div>
-                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Shared secret
                 </dt>
                 <dd className="mt-0.5 font-mono text-[12px] text-foreground">

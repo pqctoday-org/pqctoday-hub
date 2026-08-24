@@ -366,7 +366,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-2 text-center">
       <div className="text-[15px] font-extrabold text-gradient">{value.toLocaleString()}</div>
-      <div className="text-[9.5px] text-muted-foreground">{label}</div>
+      <div className="text-sim-chip text-muted-foreground">{label}</div>
     </div>
   )
 }

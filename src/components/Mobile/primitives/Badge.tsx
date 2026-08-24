@@ -38,7 +38,7 @@ export function MobileBadge({ count, tone = 'danger', className, testId }: Mobil
     <span
       data-testid={testId}
       className={cn(
-        'absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold',
+        'absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-sim-chip font-bold',
         toneClass,
         className
       )}

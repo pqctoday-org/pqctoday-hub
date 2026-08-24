@@ -207,7 +207,7 @@ export function MobileCommandCenterView() {
                 <span className="flex-1 text-[12.5px] font-bold text-foreground">{zone.title}</span>
                 <span
                   className={cn(
-                    'rounded border px-1.5 py-0.5 text-[9.5px] font-semibold',
+                    'rounded border px-1.5 py-0.5 text-sim-chip font-semibold',
                     TIER_STYLES[result.tier]
                   )}
                 >
@@ -238,7 +238,7 @@ export function MobileCommandCenterView() {
                       {missing}
                     </p>
                   )}
-                  <p className="font-mono text-[9.5px] text-muted-foreground">{zone.cswpRef}</p>
+                  <p className="font-mono text-sim-chip text-muted-foreground">{zone.cswpRef}</p>
                 </div>
               )}
             </div>

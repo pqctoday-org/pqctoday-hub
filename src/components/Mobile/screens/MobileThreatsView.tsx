@@ -343,7 +343,7 @@ export function MobileThreatsView() {
             </p>
             {selected.relatedModules.length > 0 && (
               <div className="border-t border-border pt-3">
-                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Related modules
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">
@@ -352,7 +352,7 @@ export function MobileThreatsView() {
               </div>
             )}
             <div className="border-t border-border pt-3">
-              <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 Source
               </p>
               {selected.sourceUrl ? (
@@ -403,14 +403,14 @@ function ThreatCardMobile({
         <span className="font-mono text-[10.5px] text-muted-foreground">{threat.threatId}</span>
         <span
           className={cn(
-            'rounded border px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
+            'rounded border px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide',
             tierDef.bg,
             tierDef.color
           )}
         >
           {tierDef.label}
         </span>
-        <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+        <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
           {clsDef.label}
         </span>
         <Button

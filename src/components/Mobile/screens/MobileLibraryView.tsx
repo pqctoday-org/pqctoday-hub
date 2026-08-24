@@ -221,7 +221,7 @@ export function MobileLibraryView() {
                   {item.status && (
                     <span
                       className={cn(
-                        'ml-1.5 rounded px-1.5 py-px text-[9.5px] font-bold uppercase tracking-wide',
+                        'ml-1.5 rounded px-1.5 py-px text-sim-chip font-bold uppercase tracking-wide',
                         item.status === 'New'
                           ? 'bg-success/15 text-success'
                           : 'bg-primary/15 text-primary'
@@ -283,7 +283,7 @@ export function MobileLibraryView() {
                 .filter(([, v]) => v && v !== '—')
                 .map(([label, value]) => (
                   <div key={label}>
-                    <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                    <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                       {label}
                     </dt>
                     <dd className="mt-0.5 text-[11.5px] text-foreground">{value}</dd>

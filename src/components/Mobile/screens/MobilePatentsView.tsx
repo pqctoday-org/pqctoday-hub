@@ -104,7 +104,7 @@ export function MobilePatentsView() {
 
       <div className="mb-3 grid grid-cols-2 gap-2.5">
         <div className="glass-panel p-3">
-          <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
             Patents in scope
           </p>
           <p className="text-[20px] font-extrabold text-foreground">{kpis.inScope}</p>
@@ -120,7 +120,7 @@ export function MobilePatentsView() {
             highImpactOnly && 'border-primary bg-primary/5'
           )}
         >
-          <p className="text-[9.5px] font-bold uppercase tracking-wide text-destructive">
+          <p className="text-sim-chip font-bold uppercase tracking-wide text-destructive">
             High migration impact
           </p>
           <p className="text-[20px] font-extrabold text-foreground">{kpis.highImpact.count}</p>
@@ -132,7 +132,7 @@ export function MobilePatentsView() {
 
       {kpis.topAssignee && (
         <div className="mb-4 rounded-xl border border-primary/25 bg-primary/5 p-3">
-          <p className="text-[9.5px] font-bold uppercase tracking-wide text-primary">
+          <p className="text-sim-chip font-bold uppercase tracking-wide text-primary">
             Top assignee
           </p>
           <p className="text-[13px] font-bold text-foreground">
@@ -195,13 +195,13 @@ export function MobilePatentsView() {
                 <h2 className="text-[13px] font-bold leading-snug text-foreground">{p.title}</h2>
               </div>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   {AGILITY_LABELS[p.cryptoAgilityMode]}
                 </span>
                 {p.quantumRelevance !== 'none' && (
                   <span
                     className={cn(
-                      'rounded px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide',
+                      'rounded px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide',
                       p.quantumRelevance === 'core_invention'
                         ? 'bg-destructive/15 text-destructive'
                         : 'bg-muted/50 text-muted-foreground'
@@ -211,7 +211,7 @@ export function MobilePatentsView() {
                   </span>
                 )}
                 {p.impactLevel === 'High' && (
-                  <span className="rounded bg-warning/15 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-warning">
+                  <span className="rounded bg-warning/15 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-warning">
                     high impact
                   </span>
                 )}
@@ -253,18 +253,18 @@ export function MobilePatentsView() {
               </p>
             )}
             <div className="flex flex-wrap items-center gap-1.5 border-t border-border pt-3">
-              <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+              <span className="rounded border border-border bg-muted/30 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                 {AGILITY_LABELS[selected.cryptoAgilityMode]}
               </span>
               {selected.quantumRelevance !== 'none' && (
-                <span className="rounded bg-muted/50 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <span className="rounded bg-muted/50 px-1.5 py-0.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   {RELEVANCE_LABELS[selected.quantumRelevance]}
                 </span>
               )}
             </div>
             {selected.classicalAlgorithms.length > 0 && (
               <div className="border-t border-border pt-3">
-                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Classical algorithms
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">
@@ -274,7 +274,7 @@ export function MobilePatentsView() {
             )}
             {selected.pqcAlgorithms.length > 0 && (
               <div>
-                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   PQC algorithms
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">
@@ -284,7 +284,7 @@ export function MobilePatentsView() {
             )}
             {selected.protocols.length > 0 && (
               <div>
-                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Protocols
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">
@@ -294,19 +294,19 @@ export function MobilePatentsView() {
             )}
             <dl className="grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3">
               <div>
-                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Priority date
                 </dt>
                 <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.priorityDate}</dd>
               </div>
               <div>
-                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Filing date
                 </dt>
                 <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.filingDate}</dd>
               </div>
               <div className="col-span-2">
-                <dt className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Inventors
                 </dt>
                 <dd className="mt-0.5 text-[11.5px] text-foreground">{selected.inventors}</dd>

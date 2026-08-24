@@ -36,7 +36,7 @@ import { MobileSheet } from '../primitives/Sheet'
 //   and file manager" — a first-party admission the 3-in-1 command-builder/
 //   file-manager/terminal workspace isn't a real mobile experience, even
 //   though it technically stacks.
-const DROPPED_TOOL_IDS = new Set(['vpn-sim', 'mls-group-messaging', 'openssl-studio'])
+export const DROPPED_TOOL_IDS = new Set(['vpn-sim', 'mls-group-messaging', 'openssl-studio'])
 
 // The real 34 hand-authored tools, minus the 24 Docker-backed sandbox
 // scenarios workshopRegistry.tsx appends (cut from mobile entirely per user
@@ -306,21 +306,21 @@ function ToolCardMobile({
           <span className="font-mono text-[10px] text-muted-foreground">{tool.pt_id}</span>
           <span
             className={cn(
-              'inline-block rounded px-1.5 py-0.5 text-[9.5px] font-semibold capitalize leading-none',
+              'inline-block rounded px-1.5 py-0.5 text-sim-chip font-semibold capitalize leading-none',
               DIFFICULTY_BADGE[tool.difficulty]
             )}
           >
             {tool.difficulty}
           </span>
           {tool.wip && (
-            <span className="inline-flex items-center gap-1 rounded border border-status-warning/30 bg-status-warning/15 px-1.5 py-0.5 text-[9.5px] font-semibold leading-none text-status-warning">
+            <span className="inline-flex items-center gap-1 rounded border border-status-warning/30 bg-status-warning/15 px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-status-warning">
               <Wrench className="h-2.5 w-2.5" aria-hidden="true" />
               WIP
             </span>
           )}
           {unmet.length > 0 && (
             <span
-              className="inline-flex items-center gap-1 rounded border border-border bg-muted px-1.5 py-0.5 text-[9.5px] font-semibold leading-none text-muted-foreground"
+              className="inline-flex items-center gap-1 rounded border border-border bg-muted px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-muted-foreground"
               title={`Needs ${unmet.map((r) => REQUIREMENT_LABELS[r]).join(' and ')}`}
             >
               <Monitor className="h-2.5 w-2.5" aria-hidden="true" />
@@ -362,7 +362,7 @@ function ToolDetailSheetBody({
         <p className="mt-1 text-[13px] leading-relaxed text-foreground">{tool.description}</p>
       </div>
 
-      <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
         Algorithms
       </p>
       <div className="flex flex-wrap gap-1.5">
@@ -383,7 +383,7 @@ function ToolDetailSheetBody({
         >
           <GraduationCap className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
           <span className="min-w-0">
-            <span className="block text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+            <span className="block text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
               Related module
             </span>
             <span className="block truncate text-[12px] font-medium text-foreground">
@@ -395,7 +395,7 @@ function ToolDetailSheetBody({
 
       {tool.recommendedPersonas.length > 0 && (
         <div>
-          <p className="mb-1.5 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-1.5 text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
             Recommended for
           </p>
           <div className="flex flex-wrap gap-1.5">

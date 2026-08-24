@@ -130,7 +130,7 @@ export function MobileCommunityView() {
               <h2 className="text-[14px] font-bold text-foreground">{leader.name}</h2>
               <span
                 className={cn(
-                  'shrink-0 rounded-full border px-2 py-0.5 text-[9.5px] font-bold',
+                  'shrink-0 rounded-full border px-2 py-0.5 text-sim-chip font-bold',
                   TYPE_STYLE[leader.type]
                 )}
               >
@@ -253,7 +253,7 @@ export function MobileCommunityView() {
             )}
             {selected.vettingBody && selected.vettingBody.length > 0 && (
               <div className="border-t border-border pt-3">
-                <p className="text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                <p className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
                   Vetted by
                 </p>
                 <p className="mt-0.5 text-[11.5px] text-foreground">

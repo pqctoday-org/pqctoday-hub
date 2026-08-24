@@ -19,7 +19,7 @@ import { MobileSheet } from '../primitives/Sheet'
 // plus a 4-input-per-row dense entry table. Neither survives a 375px
 // viewport even though nothing technically breaks. Matches the mobile
 // Playground catalogue's precedent: dropped, not linked to a degraded tool.
-const DROPPED_TOOL_IDS = new Set(['crypto-architecture-diagram'])
+export const DROPPED_TOOL_IDS = new Set(['crypto-architecture-diagram'])
 
 const MOBILE_TOOLS: BusinessTool[] = BUSINESS_TOOLS.filter((t) => !DROPPED_TOOL_IDS.has(t.id))
 
@@ -181,7 +181,7 @@ function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () =
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {tool.audience && tool.audience !== 'business' && (
-            <span className="rounded bg-secondary/10 px-1.5 py-0.5 text-[9.5px] font-semibold leading-none text-secondary">
+            <span className="rounded bg-secondary/10 px-1.5 py-0.5 text-sim-chip font-semibold leading-none text-secondary">
               {AUDIENCE_BADGE[tool.audience]}
             </span>
           )}
