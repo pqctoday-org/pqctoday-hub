@@ -205,6 +205,23 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // obligationsModel.ts / roleLens.ts (Compliance/obligations)
+                // and requirementsModel.ts (Compliance/requirements) — pure
+                // logic, no JSX. cswp39Data.ts (Compliance root) — pure data.
+                // The same register/role-lens/reading-room model and CSWP.39
+                // step data every desktop Compliance tab already reads, so
+                // the mobile screen's obligations, requirements and CSWP.39
+                // content can never drift from desktop's.
+                '!@/components/Compliance',
+                '@/components/Compliance/*',
+                '!@/components/Compliance/cswp39Data',
+                '!@/components/Compliance/obligations',
+                '@/components/Compliance/obligations/*',
+                '!@/components/Compliance/obligations/obligationsModel',
+                '!@/components/Compliance/obligations/roleLens',
+                '!@/components/Compliance/requirements',
+                '@/components/Compliance/requirements/*',
+                '!@/components/Compliance/requirements/requirementsModel',
                 // RoleHomeView.tsx (RoleHome) — the "Who's asking?" first-run
                 // picker, already self-contained and reused by LandingView;
                 // its per-role copy must not be duplicated (see comment above).

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ComplianceView } from './ComplianceView'
@@ -9,6 +9,11 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { logComplianceFilter } from '@/utils/analytics'
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 // Mock the services module
 vi.mock('./services', () => ({
@@ -306,4 +311,37 @@ describe('ComplianceView', () => {
   // onboarding stack, and PersonaHintCta.tsx is deleted. Re-enabling it would
   // mean rebuilding the feature first, so it is removed rather than left as a
   // skipped test that reads like debt someone should pay down.
+
+  // Mobile UX layer (Phase 8). ComplianceEmbed.tsx renders this same
+  // component inside the simulation at whatever viewport the player is on
+  // (simEmbed prop) — simEmbed must win over isMobileShell regardless of
+  // viewport width, same as Threats/Library.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true and not sim-embedded', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <ComplianceView />
+        </MemoryRouter>
+      )
+      expect(screen.getByText('Compliance')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Standardization, Certification & Compliance')
+      ).not.toBeInTheDocument()
+    })
+
+    it('still renders the full desktop view when simEmbed is true, even if isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <ComplianceView simEmbed />
+        </MemoryRouter>
+      )
+      expect(screen.queryByText('Compliance')).not.toBeInTheDocument()
+    })
+  })
 })

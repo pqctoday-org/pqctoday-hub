@@ -20,6 +20,8 @@ import {
   X,
 } from 'lucide-react'
 import { STABLE_TABS, type StableTab } from '@/data/complianceStableTabs'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileComplianceView } from '@/components/Mobile/screens/MobileComplianceView'
 // TrustTierFilter (the control) is no longer rendered here — see the note at
 // its old render site. The hook and matcher stay: `?tier=` deep links still
 // filter the page, they just have no second on-screen control.
@@ -256,6 +258,7 @@ export const ComplianceView = ({
   // simEmbed: rendered headless inside the simulation — PageHeader + the URL-writing
   // tier filters are hidden, and the URL-synced filter/tab state (useComplianceUrlState)
   // is backed by local state so it never corrupts /simulation's route.
+  const isMobileShell = useIsMobileShell()
   useWorkflowPhaseTracker('comply')
 
   // Drawer state — selected framework + the pillar it was opened from (drives
@@ -585,6 +588,16 @@ export const ComplianceView = ({
     })
     return () => clearPageActions()
   }, [simEmbed, handleExportCsv])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). ComplianceEmbed.tsx renders
+  // this same component inside the simulation via simEmbed, so simEmbed must
+  // win over isMobileShell regardless of viewport width, same as Threats/
+  // Library.
+  if (isMobileShell && !simEmbed) {
+    return <MobileComplianceView />
+  }
 
   return (
     <div className="animate-fade-in space-y-6">
