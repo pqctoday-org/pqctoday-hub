@@ -22,6 +22,7 @@ import { MobileSheet } from '../primitives/Sheet'
 export const DROPPED_TOOL_IDS = new Set(['crypto-architecture-diagram'])
 
 const MOBILE_TOOLS: BusinessTool[] = BUSINESS_TOOLS.filter((t) => !DROPPED_TOOL_IDS.has(t.id))
+const DROPPED_TOOLS: BusinessTool[] = BUSINESS_TOOLS.filter((t) => DROPPED_TOOL_IDS.has(t.id))
 
 const AUDIENCE_BADGE: Record<string, string> = {
   architect: 'For architects',
@@ -142,6 +143,29 @@ export function MobileBusinessToolsView() {
           <ToolCardMobile key={tool.id} tool={tool} onSelect={() => setSelected(tool)} />
         ))}
       </div>
+
+      {/* §15 spec: "Dropped tools keep their goodAnswer line on the page —
+          that sentence is the teaching and survives a phone even where the
+          tool doesn't." Was a bare name in the fine print below (2026-08-24
+          audit R4.3) — the mechanism itself was never actually built. Real
+          goodAnswer + CSWP badge, no link. */}
+      {DROPPED_TOOLS.map((tool) => (
+        <div key={tool.id} className="mt-2.5 rounded-xl border border-dashed border-border p-3.5">
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] font-bold text-foreground">{tool.name}</span>
+            <Cswp39SectionBadge
+              sectionRef={tool.cswp39SectionRef}
+              subSection={tool.cswp39SubSection}
+            />
+          </div>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            {tool.goodAnswer}
+          </p>
+          <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Needs a laptop — the tool doesn&apos;t fit a phone, but the answer does
+          </p>
+        </div>
+      ))}
 
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
         The Zone, Phase and Audience filters, "Group by", and the "Start here" suggested sequence

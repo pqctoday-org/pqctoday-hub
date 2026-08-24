@@ -32,9 +32,35 @@ describe('MobileBusinessToolsView', () => {
     expect(MOBILE_TOOLS.length).toBeGreaterThan(30)
   })
 
-  it('never shows the dropped tool — its own UI does not distill to a phone screen', () => {
+  it('never shows the dropped tool as an openable catalogue card — its own UI does not distill to a phone screen', () => {
     renderView()
-    expect(screen.queryByText('Crypto Architecture Diagram')).not.toBeInTheDocument()
+    // The tool's own opening interactive card (a <Button>, matching every
+    // real MOBILE_TOOLS entry) must not exist — this is the actual "dropped
+    // from the catalogue" invariant. Its name/goodAnswer legitimately
+    // appears elsewhere on the page now (R4.3, see the goodAnswer test
+    // below) — that's the spec's own "keeps teaching without linking".
+    expect(
+      screen.queryByRole('button', { name: /Crypto Architecture Diagram/ })
+    ).not.toBeInTheDocument()
+  })
+
+  // 2026-08-24 audit R4.3: §15 promises "Dropped tools keep their goodAnswer
+  // line on the page — that sentence is the teaching and survives a phone
+  // even where the tool doesn't." The dropped tool previously appeared only
+  // as a bare name in fine print, with no goodAnswer at all — the mechanism
+  // was never actually built.
+  it('shows the dropped tool\'s real goodAnswer sentence and a "needs a laptop" line, with no link to open it', () => {
+    const dropped = BUSINESS_TOOLS.find((t) => DROPPED.has(t.id))
+    expect(
+      dropped,
+      'fixture assumption: crypto-architecture-diagram exists in the registry'
+    ).toBeDefined()
+    renderView()
+    expect(screen.getByText(dropped!.goodAnswer)).toBeInTheDocument()
+    expect(screen.getByText(/needs a laptop/i)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: /Crypto Architecture Diagram/ })
+    ).not.toBeInTheDocument()
   })
 
   it('renders every real category as a filter chip with a live, non-invented count', () => {
