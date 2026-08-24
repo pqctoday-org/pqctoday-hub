@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'migration-program',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-039',
   title: 'Migration Program Mgmt',
   description:

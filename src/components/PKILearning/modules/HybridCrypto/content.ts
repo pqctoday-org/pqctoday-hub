@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.0',
-  lastReviewed: '2026-08-18',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -24,7 +24,19 @@ export const content: ModuleContent = {
     getStandard('draft-ietf-lamps-pq-composite-sigs-19'), // Composite ML-DSA
     getStandard('draft-ietf-lamps-pq-composite-kem-19'), // Composite ML-KEM
     getStandard('RFC-9763'), // Related Certificates
-    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates
+    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates,
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 186-5'),
+    getStandard('FIPS 205'),
+    getStandard('FIPS 206'),
+    getStandard('NIST SP 800-56A'),
+    getStandard('RFC 5869'),
+    getStandard('RFC 8017'),
+    getStandard('RFC 9180'),
+    getStandard('draft-ietf-pquip-hybrid-signature-spectrums'),
+    getStandard('draft-sheffer-tls-pqc-continuity'),
   ],
 
   algorithms: [

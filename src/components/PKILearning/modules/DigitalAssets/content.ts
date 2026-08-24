@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'digital-assets',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('RFC-8032'),
@@ -20,6 +20,17 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 206'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('BIP-141'),
+    getStandard('BIP-341'),
+    getStandard('EIP-155'),
+    getStandard('EIP-2'),
+    getStandard('EIP-55'),
+    getStandard('FIPS 205'),
+    getStandard('IETF RFC 6979'),
+    getStandard('RFC 9370'),
   ],
 
   algorithms: [

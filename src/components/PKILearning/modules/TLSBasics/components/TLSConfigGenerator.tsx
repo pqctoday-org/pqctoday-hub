@@ -12,14 +12,14 @@ const TLS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'tls-kem-handshake',
     useCase: 'TLS 1.3 key exchange (ML-KEM-768)',
-    standard: 'RFC 8446 + FIPS 203',
+    standard: 'RFC 9846 + FIPS 203',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
   },
   {
     id: 'tls-cert-sigver',
     useCase: 'Server certificate verification (ML-DSA-65)',
-    standard: 'RFC 8446 + FIPS 204 ACVP',
+    standard: 'RFC 9846 + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
@@ -27,7 +27,7 @@ const TLS_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'tls-auth-sign',
     useCase: 'TLS CertificateVerify (ML-DSA-65)',
-    standard: 'RFC 8446 + FIPS 204',
+    standard: 'RFC 9846 + FIPS 204',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
     kind: { type: 'mldsa-functional', variant: 65 },
     message: 'TLS 1.3 ClientHello: supported_groups=[x25519_ml_kem_768],sig_algs=[ml_dsa_65]',
@@ -480,7 +480,7 @@ export const TLSConfigGenerator: React.FC = () => {
       <KatValidationPanel
         specs={TLS_KAT_SPECS}
         label="TLS Basics Known Answer Tests"
-        authorityNote="RFC 8446 · FIPS 203 · FIPS 204"
+        authorityNote="RFC 9846 · FIPS 203 · FIPS 204"
       />
     </>
   )

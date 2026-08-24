@@ -10,13 +10,18 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'database-encryption-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST SP 800-111'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NSM-10'),
+    getStandard('RFC 3394'),
   ],
 
   algorithms: [

@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'research-quantum-impact',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Sampled at 0,1,3,4: SP 800-208 (stateful hash-based signatures) and SP 800-90A
@@ -26,6 +26,12 @@ export const content: ModuleContent = {
     getStandard('NIST IR 8547'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST IR 8105'),
+    getStandard('NIST IR 8309'),
+    getStandard('NIST IR 8413'),
   ],
 
   algorithms: [

@@ -10,13 +10,20 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'stateful-signatures',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 205'), // SLH-DSA (Step 4 live demo)
     getStandard('RFC 8554'), // LMS/HSS
     getStandard('RFC 8391'), // XMSS/XMSS^MT
-    getStandard('NIST SP 800-208'), // Stateful HBS Recommendation
+    getStandard('NIST SP 800-208'), // Stateful HBS Recommendation,
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 204'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('RFC 9858'),
+    getStandard('draft-ietf-pquip-hbs-state'),
   ],
 
   algorithms: [

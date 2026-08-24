@@ -10,13 +10,18 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'automotive-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST SP 800-88'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NSM-10'),
   ],
 
   algorithms: [

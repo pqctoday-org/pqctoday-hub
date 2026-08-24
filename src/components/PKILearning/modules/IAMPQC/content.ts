@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'iam-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-10',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -19,6 +19,13 @@ export const content: ModuleContent = {
     getStandard('FIPS-198-1'),
     getStandard('NIST-SP-800-132'),
     getStandard('OASIS-SAML-2-0-Core'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('Enhancing-Security-in-EAP-AKA-prime-with-Hybrid-Post-Quantum'),
+    getStandard('NIST IR 8547'),
+    getStandard('Post-Quantum-Key-Encapsulation-Mechanisms-PQ-KEMs-in-EAP-AKA'),
+    getStandard('RFC 9052'),
   ],
 
   algorithms: [

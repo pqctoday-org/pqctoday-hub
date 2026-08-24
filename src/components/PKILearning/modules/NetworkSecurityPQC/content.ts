@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'network-security-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (deprecation-timeline claim). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -20,6 +20,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('NIST SP 800-207'),
     getStandard('NIST SP 800-227'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 204'),
+    getStandard('NSM-10'),
+    getStandard('RFC 9370'),
   ],
 
   algorithms: [

@@ -6,11 +6,16 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 export const content: ModuleContent = {
   moduleId: 'crypto-registry',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('CycloneDX-Cryptography-Registry'),
     getStandard('OWASP-CycloneDX-CBOM-Guide'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ANSI X9.62'),
+    getStandard('RFC 9881'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('ML-DSA-65'), getAlgorithm('ECDSA P-256')],

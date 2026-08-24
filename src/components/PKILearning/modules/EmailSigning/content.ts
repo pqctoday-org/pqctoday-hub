@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'email-signing',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -23,6 +23,11 @@ export const content: ModuleContent = {
     getStandard('RFC 9882'),
     getStandard('RFC-9935'),
     getStandard('RFC-9936'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('RFC 5754'),
+    getStandard('draft-ietf-lamps-pq-composite-sigs-19'),
   ],
 
   algorithms: [
