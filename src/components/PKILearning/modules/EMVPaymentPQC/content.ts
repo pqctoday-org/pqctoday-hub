@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'emv-payment-pqc',
   version: '2.1.1',
-  lastReviewed: '2026-03-28',
+  lastReviewed: '2026-08-23',
   lastEdited: '2026-08-22',
 
   standards: [
@@ -68,6 +68,20 @@ export const content: ModuleContent = {
     // (retained EU law) instead — see the library rows' data_quality_notes.
     getStandard('PSD2-Directive-EU-2015-2366'),
     getStandard('EBA-RTS-SCA-2018-389'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module labels an AES-GCM mechanism it describes as conforming to SP 800-38D
+    // and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
+    getStandard('NIST-SP-800-38D'),
+    // DECLARED 2026-08-23: this module names SP 800-38B as the CMAC specification and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-38B" against a row filed as NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope.
+    getStandard('NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope'),
   ],
 
   algorithms: [

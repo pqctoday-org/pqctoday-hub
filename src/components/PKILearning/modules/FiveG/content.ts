@@ -30,6 +30,11 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-56A'),
     getStandard('RFC 7748'),
     getStandard('SEC 1'),
+    // DECLARED 2026-08-23: this module names "SP 800-56C" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-56C-R2'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('X25519')],

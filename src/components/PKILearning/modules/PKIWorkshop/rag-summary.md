@@ -23,6 +23,6 @@ The PKI Workshop is a hands-on learning module that teaches Public Key Infrastru
 
 ## Related Standards
 
-- RFC 5280 (X.509v3 certificates and CRL profile), RFC 2986 (PKCS#10 CSR), RFC 6960 (OCSP), RFC 4210 (CMP enrollment)
+- RFC 5280 (X.509v3 certificates and CRL profile), RFC 2986 (PKCS#10 CSR), RFC 6960 (OCSP), RFC 9810 (CMP, obsoletes RFC 4210) (CMP enrollment)
 - FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), NIST IR 8547 (PQC transition guidance), NIST SP 800-131A Rev 2 (algorithm deprecation)
 - CNSA 2.0 (NSA PQC timeline), IETF draft-davidben-tls-merkle-tree-certs (Merkle Tree Certificates)

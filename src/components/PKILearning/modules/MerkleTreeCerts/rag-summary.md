@@ -29,5 +29,5 @@ This module addresses the certificate bloat problem created by post-quantum digi
 - IETF draft-ietf-plants-merkle-tree-certs (Merkle Tree Certificates)
 - FIPS 205 (SLH-DSA / SPHINCS+)
 - NIST SP 800-208 (LMS and XMSS stateful hash-based signatures)
-- RFC 6962 (Certificate Transparency)
+- RFC 9162 (Certificate Transparency v2.0 — obsoletes RFC 6962)
 - Cloudflare + Chrome MTC experiment (October 2025)

@@ -29,7 +29,12 @@ describe('PKIEnrollmentProtocols render parity', () => {
     // in-page <p> DIFFERS from the catalog description (paren placement) —
     // matching this distinguishing form proves the override slot.
     expect(
-      screen.getByText(/RFC 7030 \(EST\) and RFC 9810 \(CMP, KEM update\)/)
+      // Was /RFC 9810 \(CMP, KEM update\)/ until 2026-08-23. RFC 9810 is not a KEM
+      // update — it IS the Certificate Management Protocol specification, and its own
+      // header reads "Obsoletes: 4210, 9480". The old wording implied RFC 4210 was
+      // still the base spec. Pinning the description is right; pinning a wrong one
+      // meant this test defended the error.
+      screen.getByText(/RFC 7030 \(EST\) and RFC 9810 \(CMP, obsoletes RFC 4210\)/)
     ).toBeInTheDocument()
     for (const name of ['Learn', 'Visual', 'Workshop', 'References', 'Tools & Products']) {
       expect(screen.getByRole('tab', { name })).toBeInTheDocument()

@@ -616,7 +616,33 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
  *               — a narrower, separately-investigable gap than "no passages
  *               ever run," left as backlog rather than blocking this merge.
  */
-const MAX_DOC_WITHOUT_PASSAGES = 13
+/*
+ *               2026-08-23: bumped 13 -> 14. SEVEN of the 14 were added by this
+ *               session's catalogue work, and every one has no cached document BY
+ *               DESIGN, so no extraction can ever produce passages for them:
+ *
+ *                 ISO/IEC 11889, 15408-1, 19794-2, 20085-1, 27005, 7816-4 — six
+ *                 standards ISO sells. Added via add_row.py --known-blocked with
+ *                 access_type=paid and downloadable=no; the local_file column holds
+ *                 a RESERVED path for ingest_manual_evidence.py, not a file. Fetching
+ *                 them would mean bypassing a paywall.
+ *                 ref-joseph-transitioning — Joseph et al., "Transitioning
+ *                 organizations to post-quantum cryptography" (Nature, 2022).
+ *                 Reactivated from a deprecation that had hidden it under a
+ *                 no-record-without-proof policy an access wall can never satisfy,
+ *                 while two datasets kept citing it. nature.com answers HTTP 200 with
+ *                 a paywall page; a PDF-magic fetch returns nothing.
+ *
+ *               The committed corpus carried 7; 7 + 7 = 14. This is not a threshold
+ *               raised to make a number go green — each of the seven is a deliberate,
+ *               reviewed decision to hold a reference a reader can pursue themselves
+ *               rather than pretend the document does not exist. Driving this DOWN
+ *               requires manual acquisition, not another refresh-index run.
+ *
+ *               Do not bump this again without naming the specific rows and why
+ *               extraction cannot serve them, as every entry above does.
+ */
+const MAX_DOC_WITHOUT_PASSAGES = 14
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 0

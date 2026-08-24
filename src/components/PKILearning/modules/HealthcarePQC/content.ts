@@ -22,6 +22,16 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-23: this module labels an AES-GCM mechanism it describes as conforming to SP 800-38D
+    // and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
+    getStandard('NIST-SP-800-38D'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 19794" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part'),
   ],
 
   algorithms: [

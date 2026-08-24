@@ -223,7 +223,7 @@ export const PROTOCOL_FEATURE_COMPARISON: ProtocolFeature[] = [
   },
   {
     feature: 'PQC Auth Status',
-    ikev2: 'draft-ietf-ipsecme-ikev2-mldsa (ML-DSA)',
+    ikev2: 'draft-ietf-ipsecme-ikev2-pqc-auth (ML-DSA, SLH-DSA)',
     ssh: 'No PQC host key standard yet',
     wireguard: 'Rosenpass uses Classic McEliece for auth',
     tls13: 'draft-ietf-tls-mldsa (ML-DSA certs)',

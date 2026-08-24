@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'migration-program',
   version: '1.1.0',
-  lastReviewed: '2026-04-12',
+  lastReviewed: '2026-08-23',
   lastEdited: '2026-08-23',
 
   standards: [
@@ -32,6 +32,10 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('NIST CSWP 39'),
+    // DECLARED 2026-08-23: this module names OMB M-23-02 as the source of the federal cryptographic-inventory duty and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
+    getStandard('OMB-M-23-02'),
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],

@@ -34,6 +34,16 @@ export const content: ModuleContent = {
     getStandard('FIPS 186-5'),
     getStandard('FIPS 206'),
     getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-23: this module names "IR 8545" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST IR 8545'),
+    // DECLARED 2026-08-23: this module names "SP 800-227" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST SP 800-227'),
   ],
 
   algorithms: [

@@ -25,6 +25,20 @@ export const content: ModuleContent = {
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
     getStandard('draft-ietf-jose-pq-composite-sigs'),
+    // DECLARED 2026-08-23: this module names FIPS 198-1 (the keyed-hash MAC standard) for a mechanism it describes and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "FIPS 198-1" against a row filed as FIPS-198-1.
+    getStandard('FIPS-198-1'),
+    // DECLARED 2026-08-23: this module names "RFC 7662" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF RFC 7662'),
+    // DECLARED 2026-08-23: this module names "RFC 9964" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9964'),
   ],
 
   algorithms: [

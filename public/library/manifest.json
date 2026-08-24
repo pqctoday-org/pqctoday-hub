@@ -11147,6 +11147,246 @@
       "sizeBytes": 502632,
       "contentType": "application/pdf",
       "sha256": "823e72795f0ef3ab17ef346d4ebc0b9ec9275d0b672e98a029d1e94c8d39f493"
+    },
+    {
+      "refId": "RFC-2986-PKCS-10-Certification-Request-Syntax-Specification",
+      "title": "RFC 2986 \u2014 PKCS #10: Certification Request Syntax Specification Version 1.7",
+      "url": "https://www.rfc-editor.org/rfc/rfc2986.html",
+      "status": "downloaded",
+      "filename": "RFC-2986-PKCS-10-Certification-Request-Syntax-Specification.html",
+      "sizeBytes": 33081,
+      "contentType": "text/html",
+      "sha256": "6cdb5d404d14c68ac82a50f6f0500ab2c1d371b85b679c401db984912abcee72"
+    },
+    {
+      "refId": "RFC-3526-More-Modular-Exponential-MODP-Diffie-Hellman-groups",
+      "title": "RFC 3526 \u2014 More Modular Exponential (MODP) Diffie-Hellman groups for IKE",
+      "url": "https://www.rfc-editor.org/rfc/rfc3526.html",
+      "status": "downloaded",
+      "filename": "RFC-3526-More-Modular-Exponential-MODP-Diffie-Hellman-groups.html",
+      "sizeBytes": 23850,
+      "contentType": "text/html",
+      "sha256": "d561734e6bfd21bae587b9bf50e89475ee3b6e60014ce1be3e7ded7627382f07"
+    },
+    {
+      "refId": "RFC-4211-Internet-X-509-PKI-Certificate-Request-Message-Form",
+      "title": "RFC 4211 \u2014 Internet X.509 PKI Certificate Request Message Format (CRMF)",
+      "url": "https://www.rfc-editor.org/rfc/rfc4211.html",
+      "status": "downloaded",
+      "filename": "RFC-4211-Internet-X-509-PKI-Certificate-Request-Message-Form.html",
+      "sizeBytes": 102488,
+      "contentType": "text/html",
+      "sha256": "94b0c1becd613cd39232c1c0422087a6b83b6a2d75e61d8baa1bf73c69c87a74"
+    },
+    {
+      "refId": "RFC-5816-ESSCertIDv2-Update-for-RFC-3161",
+      "title": "RFC 5816 \u2014 ESSCertIDv2 Update for RFC 3161",
+      "url": "https://www.rfc-editor.org/rfc/rfc5816.html",
+      "status": "downloaded",
+      "filename": "RFC-5816-ESSCertIDv2-Update-for-RFC-3161.html",
+      "sizeBytes": 15267,
+      "contentType": "text/html",
+      "sha256": "1a310d6417f673988421276c20c19ad0ee0fb2f0faa23b5ce148096a3fc8d3f1"
+    },
+    {
+      "refId": "RFC-6066-Transport-Layer-Security-TLS-Extensions-Extension-D",
+      "title": "RFC 6066 \u2014 Transport Layer Security (TLS) Extensions: Extension Definitions",
+      "url": "https://www.rfc-editor.org/rfc/rfc6066.html",
+      "status": "downloaded",
+      "filename": "RFC-6066-Transport-Layer-Security-TLS-Extensions-Extension-D.html",
+      "sizeBytes": 67360,
+      "contentType": "text/html",
+      "sha256": "b402c07d6804284d65b8dd7cc2c91c429ed486be06531665b0cf2c0980ff50d4"
+    },
+    {
+      "refId": "RFC-7512-The-PKCS-11-URI-Scheme",
+      "title": "RFC 7512 \u2014 The PKCS #11 URI Scheme",
+      "url": "https://www.rfc-editor.org/rfc/rfc7512.html",
+      "status": "downloaded",
+      "filename": "RFC-7512-The-PKCS-11-URI-Scheme.html",
+      "sizeBytes": 58674,
+      "contentType": "text/html",
+      "sha256": "4038be18e5bdc74ab895af5f651e8ee69d521cd76a0c848cdab8814f97957da4"
+    },
+    {
+      "refId": "RFC-9360-CBOR-Object-Signing-and-Encryption-COSE-Header-Para",
+      "title": "RFC 9360 \u2014 CBOR Object Signing and Encryption (COSE): Header Parameters for Carrying and Referencing X.509 Certificates",
+      "url": "https://www.rfc-editor.org/rfc/rfc9360.html",
+      "status": "downloaded",
+      "filename": "RFC-9360-CBOR-Object-Signing-and-Encryption-COSE-Header-Para.html",
+      "sizeBytes": 83595,
+      "contentType": "text/html",
+      "sha256": "ccce5d998d823ce8fa01f219c97af14759880623f23ace6460deaf76dd41cbff"
+    },
+    {
+      "refId": "NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope",
+      "title": "NIST SP 800-38B \u2014 Recommendation for Block Cipher Modes of Operation: the CMAC Mode for Authentication",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38B.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-38B-Recommendation-for-Block-Cipher-Modes-of-Ope.pdf",
+      "sizeBytes": 253317,
+      "contentType": "application/pdf",
+      "sha256": "da9dc0f1e1f08af917caf4a831a7497cf18997b8046353af89570a812f1ec5a2"
+    },
+    {
+      "refId": "NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope",
+      "title": "NIST SP 800-38F \u2014 Recommendation for Block Cipher Modes of Operation: Methods for Key Wrapping",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-38F.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope.pdf",
+      "sizeBytes": 289262,
+      "contentType": "application/pdf",
+      "sha256": "b8b1052755448e5ff3913ea09dc9b5ae47a97886752525a0cccfa024fb072fa8"
+    },
+    {
+      "refId": "NIST-SP-800-38A-Recommendation-for-Block-Cipher-Modes-of-Ope",
+      "title": "NIST SP 800-38A \u2014 Recommendation for Block Cipher Modes of Operation: Methods and Techniques",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38a.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-38A-Recommendation-for-Block-Cipher-Modes-of-Ope.pdf",
+      "sizeBytes": 378266,
+      "contentType": "application/pdf",
+      "sha256": "66821162de1e7130c5fb5eedb22140d8d6d013ec51af4550bb095c2a9481a00e"
+    },
+    {
+      "refId": "NIST-SP-800-207A-A-Zero-Trust-Architecture-Model-for-Access",
+      "title": "NIST SP 800-207A \u2014 A Zero Trust Architecture Model for Access Control in Cloud-Native Applications in Multi-Location Environments",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207A.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-207A-A-Zero-Trust-Architecture-Model-for-Access.pdf",
+      "sizeBytes": 1380107,
+      "contentType": "application/pdf",
+      "sha256": "bb1af3bab70d8589e71e9fce4a99d3e714a82dd7b2bc7a931c7458a6ab60bb52"
+    },
+    {
+      "refId": "NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D",
+      "title": "NIST SP 800-89 \u2014 Recommendation for Obtaining Assurances for Digital Signature Applications",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-89.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D.pdf",
+      "sizeBytes": 226272,
+      "contentType": "application/pdf",
+      "sha256": "5fe82a3a38701547d96f3f0e810b7df5637d5c6723b7c30e17bc9caf4b613810"
+    },
+    {
+      "refId": "NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform",
+      "title": "NIST SP 800-60 Vol. 1 Rev. 1 \u2014 Guide for Mapping Types of Information and Information Systems to Security Categories",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-60v1r1.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform.pdf",
+      "sizeBytes": 338329,
+      "contentType": "application/pdf",
+      "sha256": "6f13f57f11697efcba694d0c9935c99168512f737cc76f2c432f248550128460"
+    },
+    {
+      "refId": "NIST-SP-800-128-Guide-for-Security-Focused-Configuration-Man",
+      "title": "NIST SP 800-128 \u2014 Guide for Security-Focused Configuration Management of Information Systems",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-128.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-128-Guide-for-Security-Focused-Configuration-Man.pdf",
+      "sizeBytes": 1528767,
+      "contentType": "application/pdf",
+      "sha256": "bbf7a9f12a9e1a9ed6e63cd70120085f98ef6a771efb379beef5b5391c5dd4bb"
+    },
+    {
+      "refId": "FIPS-200-Minimum-Security-Requirements-for-Federal-Informati",
+      "title": "FIPS 200 \u2014 Minimum Security Requirements for Federal Information and Information Systems",
+      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.200.pdf",
+      "status": "downloaded",
+      "filename": "FIPS-200-Minimum-Security-Requirements-for-Federal-Informati.pdf",
+      "sizeBytes": 218892,
+      "contentType": "application/pdf",
+      "sha256": "107a9b9cdc8eccf37386aec28bbaf2dfaef5cfece17151ceabc3960423243a57"
+    },
+    {
+      "refId": "NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag",
+      "title": "NIST SP 800-161r1-upd1 \u2014 Cybersecurity Supply Chain Risk Management Practices for Systems and Organizations",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-161r1-upd1.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.pdf",
+      "sizeBytes": 3511556,
+      "contentType": "application/pdf",
+      "sha256": "d2bacbf4053adbbe11628f74f071077d8fd59ba99754a3aab34d7813c1cb3d40"
+    },
+    {
+      "refId": "NSM-8",
+      "title": "NSM-8 \u2014 Improving the Cybersecurity of National Security, DoD, and IC Systems",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/01/19/memorandum-on-improving-the-cybersecurity-of-national-security-department-of-defense-and-intelligence-community-systems/",
+      "status": "",
+      "filename": "NSM-8.html",
+      "sizeBytes": "",
+      "contentType": "",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M",
+      "title": "ISO/IEC 11889:2015 \u2014 Information technology \u2014 Trusted Platform Module Library",
+      "url": "https://www.iso.org/standard/66510.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-11889-2015-Information-technology-Trusted-Platform-M.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-27005-2022-Guidance-on-managing-information-security",
+      "title": "ISO/IEC 27005:2022 \u2014 Guidance on managing information security risks",
+      "url": "https://www.iso.org/standard/72892.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-27005-2022-Guidance-on-managing-information-security.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com",
+      "title": "ISO/IEC 15408-1:2022 \u2014 Evaluation criteria for IT security (Common Criteria) \u2014 Part 1: Introduction and general model",
+      "url": "https://www.iso.org/standard/72891.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part",
+      "title": "ISO/IEC 19794-2:2011 \u2014 Biometric data interchange formats \u2014 Part 2: Finger minutiae data",
+      "url": "https://www.iso.org/standard/50864.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-19794-2-2011-Biometric-data-interchange-formats-Part.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca",
+      "title": "ISO/IEC 20085-1:2019 \u2014 Test tool requirements and test tool calibration methods for use in testing non-invasive attack mitigation techniques in cryptographic modules",
+      "url": "https://www.iso.org/standard/70826.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit",
+      "title": "ISO/IEC 7816-4:2020 \u2014 Identification cards \u2014 Integrated circuit cards \u2014 Part 4: Organization, security and commands for interchange",
+      "url": "https://www.iso.org/standard/54550.html",
+      "status": "pending-manual",
+      "filename": "ISO-IEC-7816-4-2020-Identification-cards-Integrated-circuit.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security",
+      "title": "RFC 9700 \u2014 Best Current Practice for OAuth 2.0 Security",
+      "url": "https://www.rfc-editor.org/rfc/rfc9700.html",
+      "status": "downloaded",
+      "filename": "RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security.html",
+      "sizeBytes": 261599,
+      "contentType": "text/html",
+      "sha256": "c00e2234fcd79581bc29669c60d693afaa42f67d9205bddee848f757ae975419"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
