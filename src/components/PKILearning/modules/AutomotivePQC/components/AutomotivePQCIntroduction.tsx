@@ -1320,7 +1320,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
                 <li>FIPS 203 (ML-KEM) &mdash; Key encapsulation</li>
                 <li>FIPS 204 (ML-DSA) &mdash; Digital signatures</li>
                 <li>FIPS 205 (SLH-DSA) &mdash; Stateless hash-based signatures</li>
-                <li>IEEE 1609.2 &mdash; V2X Security Services (PQC amendment in development)</li>
+                <li>
+                  IEEE 1609.2 &mdash; V2X Security Services. The current edition (1609.2-2025)
+                  specifies ECC; there is no IEEE post-quantum amendment project
+                </li>
                 <li>CCC Digital Key 3.0 &mdash; Car Connectivity Consortium</li>
                 <li>ISO 14443 &mdash; NFC proximity card standard (car key transport)</li>
               </ul>

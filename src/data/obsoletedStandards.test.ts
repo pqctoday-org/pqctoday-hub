@@ -114,15 +114,20 @@ function searchKeys(id: string): string[] {
   )
 }
 
-/** Raw .ts/.tsx source of a module, tests excluded. Used only to find <LibRef id="...">
- *  attributes, which are markup rather than prose, so comment-stripping is irrelevant. */
+/** .ts/.tsx source of a module, tests excluded, COMMENTS STRIPPED. Used to find
+ *  <LibRef id="..."> attributes.
+ *
+ *  This used to read raw source, on the reasoning that attributes are "markup rather
+ *  than prose, so comment-stripping is irrelevant". That reasoning was wrong: a
+ *  commented-out <LibRef> renders nothing, so counting it reports a citation no reader
+ *  can see. Corrected 2026-08-23 alongside the same flaw in the getStandard() scan. */
 function readerFacingSource(dir: string): string {
   let out = ''
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name)
     if (entry.isDirectory()) out += readerFacingSource(full)
     else if (/\.tsx?$/.test(entry.name) && !entry.name.includes('.test.'))
-      out += readFileSync(full, 'utf-8')
+      out += stripComments(readFileSync(full, 'utf-8'))
   }
   return out
 }
@@ -230,8 +235,15 @@ describe('modules that declare a superseded standard must say so', () => {
       // secure-boot-pqc linked to PKCS11-V32-OASIS, a deprecated Committee Specification
       // DRAFT, while the ratified PKCS11-V32-OS-OASIS existed. An inline link is if
       // anything the more direct citation — the reader clicks it.
+      // COMMENTS STRIPPED FIRST. A getStandard() call inside a comment is not a
+      // citation — nothing renders it — and on 2026-08-23 a repoint note reading
+      // "was getStandard('FIPS-140-3')" made this test report a live declaration of a
+      // row that no longer had one. Same root cause as the reader-facing text rule
+      // below, on the other half of the same check.
       const declared = [
-        ...readFileSync(content, 'utf-8').matchAll(/getStandard\(\s*'([^']+)'\s*\)/g),
+        ...stripComments(readFileSync(content, 'utf-8')).matchAll(
+          /getStandard\(\s*'([^']+)'\s*\)/g
+        ),
       ].map((m) => m[1])
       const dir = join(MODULES, dirEntry)
       const libRefs = [...readerFacingSource(dir).matchAll(/<LibRef\s+id=["']([^"']+)["']/g)].map(

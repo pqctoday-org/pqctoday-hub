@@ -13,7 +13,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -21,6 +22,28 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     // The deadlines below are IR 8547's; cite it so they are traceable.
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-23: this module states the EO 14412 deadlines to a reader
+    // (key establishment 2030, digital signatures 2031) and cited no document for
+    // them. audit_module_undeclared_citations.py could not see it — the row's
+    // reference_id is EO-2026-06-22-Securing-the-Nation and the module writes
+    // "Executive Order 14412", so the literal-id match never fired.
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 186-5'),
+    getStandard('FIPS 206'),
+    getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-23: this module names "IR 8545" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST IR 8545'),
+    // DECLARED 2026-08-23: this module names "SP 800-227" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST SP 800-227'),
   ],
 
   algorithms: [

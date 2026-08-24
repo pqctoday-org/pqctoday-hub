@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'data-asset-sensitivity',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 199'),
@@ -21,6 +22,49 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-37'),
     getStandard('NIST SP 800-53'),
     getStandard('NIST SP 800-66'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
+    getStandard('NIST IR 8547'),
+    getStandard('NSM-10'),
+    // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
+    // (the Secure Hash Standard) and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 180-4" against a row filed as FIPS-180-4.
+    getStandard('FIPS-180-4'),
+    // DECLARED 2026-08-23: this module names SP 800-57 Part 1 for key-management guidance. Cites REVISION 5, which is the
+    // Final publication — Rev 6 exists in the catalogue but its own cover page reads
+    // "Initial Public Draft" and cited nothing for it.
+    getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "FIPS 200" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('FIPS-200-Minimum-Security-Requirements-for-Federal-Informati'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 27001" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-27001-2022'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 27005" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-27005-2022-Guidance-on-managing-information-security'),
+    // DECLARED 2026-08-23: this module names "SP 800-60" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform'),
+    // DECLARED 2026-08-23: this module names "SP 800-82" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST SP 800-82 Rev. 3'),
   ],
 
   algorithms: [

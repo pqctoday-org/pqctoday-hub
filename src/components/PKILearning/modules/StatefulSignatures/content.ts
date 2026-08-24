@@ -11,12 +11,33 @@ export const content: ModuleContent = {
   moduleId: 'stateful-signatures',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 205'), // SLH-DSA (Step 4 live demo)
     getStandard('RFC 8554'), // LMS/HSS
     getStandard('RFC 8391'), // XMSS/XMSS^MT
-    getStandard('NIST SP 800-208'), // Stateful HBS Recommendation
+    getStandard('NIST SP 800-208'), // Stateful HBS Recommendation,
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 204'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('RFC 9858'),
+    getStandard('draft-ietf-pquip-hbs-state'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
+    // (the Secure Hash Standard) and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 180-4" against a row filed as FIPS-180-4.
+    getStandard('FIPS-180-4'),
+    // DECLARED 2026-08-23: this module names RFC 3161 as the timestamping protocol behind a mechanism it describes. RFC 5816
+    // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
+    getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
   ],
 
   algorithms: [

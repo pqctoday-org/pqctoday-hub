@@ -9,9 +9,28 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
-  standards: [getStandard('NIST IR 8547'), getStandard('NSA CNSA 2.0')],
+  standards: [
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    // DECLARED 2026-08-23: this module states the EO 14412 deadlines to a reader
+    // (key establishment 2030, digital signatures 2031) and cited no document for
+    // them. audit_module_undeclared_citations.py could not see it — the row's
+    // reference_id is EO-2026-06-22-Securing-the-Nation and the module writes
+    // "Executive Order 14412", so the literal-id match never fired.
+    getStandard('EO-2026-06-22-Securing-the-Nation'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('Cyentia IRIS 2025'),
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
+    getStandard('NIST CSWP 39'),
+  ],
 
   algorithms: [
     // No algorithm references detected — add manually if needed

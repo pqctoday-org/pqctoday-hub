@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'compliance-strategy',
   version: '1.0.1',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
   // IR 8547 added 2026-08-22: relatedStandards asserts a date or version for it, so
   // nothing could check that deprecation-timeline claim without it being declared.
 
@@ -24,6 +25,63 @@ export const content: ModuleContent = {
     getStandard('NIST IR 8547'),
     getStandard('EO-2026-06-22-Securing-the-Nation'),
     getStandard('OMB-M-26-15'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ETSI TR 103 619'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('FIPS 199'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+    // REPOINTED 2026-08-23: was getStandard('FIPS-140-3'), which captured only the
+    // CSRC landing page. FIPS-140-3-STANDARD is the same document's actual PDF and is
+    // now the surviving row; the landing-page row is deprecated with superseded_by.
+    getStandard('FIPS-140-3-STANDARD'),
+    getStandard('NIST CSWP 39'),
+    getStandard('NIST SP 800-30'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NSM-10'),
+    // DECLARED 2026-08-23: this module names SP 800-131A for algorithm transition guidance and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
+    getStandard('NIST-SP-800-131A-Rev3'),
+    // DECLARED 2026-08-23: this module names OMB M-23-02 as the source of the federal cryptographic-inventory duty and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "OMB M-23-02" against a row filed as OMB-M-23-02.
+    getStandard('OMB-M-23-02'),
+    // DECLARED 2026-08-23: this module names SP 800-161 as the supply-chain risk framework and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-161" against a row filed as NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag.
+    getStandard('NIST-SP-800-161r1-upd1-Cybersecurity-Supply-Chain-Risk-Manag'),
+    // DECLARED 2026-08-23: this module names SP 800-57 Part 1 for key-management guidance. Cites REVISION 5, which is the
+    // Final publication — Rev 6 exists in the catalogue but its own cover page reads
+    // "Initial Public Draft" and cited nothing for it.
+    getStandard('NIST-SP-800-57-Pt1-R5'),
+    // DECLARED 2026-08-23: this module names "EO 14028" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('EO-14028'),
+    // DECLARED 2026-08-23: this module names "EO 14306" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('EO-14306'),
+    // DECLARED 2026-08-23: this module names "SP 800-128" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-128-Guide-for-Security-Focused-Configuration-Man'),
+    // DECLARED 2026-08-23: this module names "SP 800-60" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-60-Vol-1-Rev-1-Guide-for-Mapping-Types-of-Inform'),
+    // DECLARED 2026-08-23: this module names "SP 800-90B" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-90B'),
   ],
 
   algorithms: [getAlgorithm('ML-DSA-87'), getAlgorithm('ML-KEM-1024')],

@@ -58,7 +58,7 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
     id: 'pure-pqc',
     label: 'Pure PQC (ML-KEM-768)',
     description:
-      'Pure post-quantum IKEv2 using ML-KEM-768 in the primary KE slot — no classical DH. Specified in draft-ietf-ipsecme-ikev2-mlkem (IANA Key Exchange Method 36). HNDL-safe: session key material is fully quantum-resistant from the first exchange. Auth uses ML-DSA-65 (draft-sfluhrer-ipsecme-ikev2-mldsa) — awaiting IANA AUTH method assignment.',
+      'Pure post-quantum IKEv2 using ML-KEM-768 in the primary KE slot — no classical DH. Specified in draft-ietf-ipsecme-ikev2-mlkem (IANA Key Exchange Method 36). HNDL-safe: session key material is fully quantum-resistant from the first exchange. Auth uses ML-DSA-65 per draft-ietf-ipsecme-ikev2-pqc-auth ("Post-Quantum Authentication in IKEv2 using ML-DSA and SLH-DSA", WG document, publication requested) — awaiting IANA AUTH method assignment.',
     dhGroup: 'ML-KEM-768 (primary KE slot, Key Exchange Method 36)',
     encAlgorithm: 'AES-256-CBC',
     integrityAlgorithm: 'HMAC-SHA-384',

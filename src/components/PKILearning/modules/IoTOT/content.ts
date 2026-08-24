@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
@@ -40,6 +41,12 @@ export const content: ModuleContent = {
     getStandard('RFC 8879'),
     getStandard('RFC 9019'),
     getStandard('RFC 9147'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ETSI-TS-103-764-Rail-Telecommunications-RT-FRMCS-System-Arch'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('UNISIG-SUBSET-137-ERTMS-ETCS-On-line-Key-Management-FFFIS'),
   ],
 
   algorithms: [

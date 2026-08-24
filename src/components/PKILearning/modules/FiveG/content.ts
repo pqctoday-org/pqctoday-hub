@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: '5g-security',
   version: '1.0.0',
-  lastReviewed: '2026-08-23',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -21,6 +22,19 @@ export const content: ModuleContent = {
     getStandard('3GPP TS 33.501 Rel-19'),
     getStandard('3GPP-PQC-Study-2025'),
     getStandard('NIST-CSWP-36A'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ANSI X9.63'),
+    getStandard('NIST SP 800-227'),
+    getStandard('NIST SP 800-56A'),
+    getStandard('RFC 7748'),
+    getStandard('SEC 1'),
+    // DECLARED 2026-08-23: this module names "SP 800-56C" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-56C-R2'),
   ],
 
   algorithms: [getAlgorithm('ML-KEM-768'), getAlgorithm('X25519')],

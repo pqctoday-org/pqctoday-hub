@@ -3,6 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'digital-assets',
+  contentVersion: 2,
   lm_id: 'LM-045',
   title: 'Digital Assets',
   description:

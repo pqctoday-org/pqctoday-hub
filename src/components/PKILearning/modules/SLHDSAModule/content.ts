@@ -7,8 +7,19 @@ export const content: ModuleContent = {
   moduleId: 'slh-dsa',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
-  standards: [getStandard('FIPS 205')],
+  standards: [
+    getStandard('FIPS 205'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('BSI TR-02102-1'),
+    getStandard('FIPS 204'),
+    getStandard('NIST SP 800-208'),
+    getStandard('RFC 8391'),
+    getStandard('RFC 8554'),
+  ],
   algorithms: [getAlgorithm('SLH-DSA-SHA2-128s'), getAlgorithm('SLH-DSA-SHAKE-256f')],
   deadlines: [],
 

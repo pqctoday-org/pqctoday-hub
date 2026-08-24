@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'digital-id',
   version: '1.0.0',
-  lastReviewed: '2026-08-01',
+  lastReviewed: '2026-08-23',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('eIDAS-2-Regulation'),
@@ -33,6 +34,11 @@ export const content: ModuleContent = {
     getStandard('EU PQC Recommendation'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('BSI TR-02102-1'),
+    getStandard('FIPS 203'),
   ],
 
   algorithms: [

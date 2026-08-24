@@ -9,6 +9,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-candidates',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     // ORDERED FOR THE SAMPLER, and this module is the clearest case for why.
@@ -37,6 +38,25 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST IR 8413'), // Round 3 history
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 206'),
+    // DECLARED 2026-08-23: this module names "IR 8528" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-IR-8528'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 14888" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO/IEC 14888-4:2024'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 18033" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur'),
   ],
 
   algorithms: [],

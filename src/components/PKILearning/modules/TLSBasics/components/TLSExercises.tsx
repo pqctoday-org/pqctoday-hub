@@ -441,7 +441,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
             </div>
             <div className="rounded-lg border border-border overflow-hidden">
               <div className="bg-muted px-3 py-1.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                Key Exchange Groups (FIPS 203, RFC 8446)
+                Key Exchange Groups (FIPS 203, RFC 9846)
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-[10px]">

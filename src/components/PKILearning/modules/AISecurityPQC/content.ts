@@ -9,7 +9,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-24',
 
   standards: [
     getStandard('FIPS 203'),
@@ -19,6 +20,21 @@ export const content: ModuleContent = {
     // 2026-08-22; the library row for 8446 already carried 9846 as its
     // supersession pointer.
     getStandard('RFC-9846-The-Transport-Layer-Security-TLS-Protocol-Version-1'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
+    // (the Secure Hash Standard) and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 180-4" against a row filed as FIPS-180-4.
+    getStandard('FIPS-180-4'),
+    // DECLARED 2026-08-23: this module labels an AES-GCM mechanism it describes as conforming to SP 800-38D
+    // and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
+    getStandard('NIST-SP-800-38D'),
   ],
 
   algorithms: [

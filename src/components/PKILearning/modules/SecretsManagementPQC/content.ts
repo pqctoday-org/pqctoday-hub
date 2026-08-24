@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'secrets-management-pqc',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
   // Added 2026-08-22: relatedStandards asserts a date or version for this document,
   // so nothing could check the claim without it (the Final revision the prose names). The list stays short enough
   // that accuracy_spotcheck.py's four-document stride still opens every entry.
@@ -20,6 +21,36 @@ export const content: ModuleContent = {
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('NIST SP 800-227'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('BIP-32'),
+    getStandard('BIP-39'),
+    getStandard('RFC 9180'),
+    // DECLARED 2026-08-23: this module tells a reader that keys live in a FIPS 140-3
+    // validated module and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 140-3" against a row filed as FIPS-140-3-STANDARD.
+    getStandard('FIPS-140-3-STANDARD'),
+    // DECLARED 2026-08-23: this module labels an AES-GCM mechanism it describes as conforming to SP 800-38D
+    // and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
+    getStandard('NIST-SP-800-38D'),
+    // DECLARED 2026-08-23: this module names FIPS 198-1 (the keyed-hash MAC standard) for a mechanism it describes and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "FIPS 198-1" against a row filed as FIPS-198-1.
+    getStandard('FIPS-198-1'),
+    // DECLARED 2026-08-23: this module names "RFC 9700" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9700-Best-Current-Practice-for-OAuth-2-0-Security'),
+    // DECLARED 2026-08-23: this module names "SP 800-132" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-132'),
   ],
 
   algorithms: [

@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'code-signing',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-24',
 
   standards: [
     // Added 2026-08-22. This module states "CNSA 2.0 mandates LMS/XMSS for firmware
@@ -28,6 +29,19 @@ export const content: ModuleContent = {
     getStandard('RFC 8391'),
     getStandard('RFC 9580'),
     getStandard('RFC 5280'),
+    // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
+    // (the Secure Hash Standard) and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match the
+    // prose "FIPS 180-4" against a row filed as FIPS-180-4.
+    getStandard('FIPS-180-4'),
+    // DECLARED 2026-08-23: this module names RFC 3161 as the timestamping protocol behind a mechanism it describes. RFC 5816
+    // updates but does not obsolete it, so the protocol spec is the citation and cited nothing for it.
+    getStandard('RFC-3161-Internet-X-509-Public-Key-Infrastructure-Time-Stamp'),
+    // DECLARED 2026-08-23: this module names "SP 800-89" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('NIST-SP-800-89-Recommendation-for-Obtaining-Assurances-for-D'),
   ],
 
   algorithms: [

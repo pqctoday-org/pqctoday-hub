@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'quantum-threats',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     // Resource-estimate papers first — every qubit figure in this module comes
@@ -23,6 +24,13 @@ export const content: ModuleContent = {
     getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Factoring'),
     getStandard('Reducing-the-Number-of-Qubits-in-Quantum-Discrete-Logarithms'),
     getStandard('NIST IR 8547'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('FIPS 186-5'),
+    getStandard('FIPS 204'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NSM-10'),
   ],
 
   algorithms: [

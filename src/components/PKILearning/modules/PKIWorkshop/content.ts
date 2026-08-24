@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pki-workshop',
   version: '1.1.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 204'),
@@ -20,6 +21,35 @@ export const content: ModuleContent = {
     getStandard('IETF RFC 8555'),
     getStandard('RFC 9881'),
     getStandard('RFC-9763'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('NIST IR 8547'),
+    getStandard('RFC 8017'),
+    // DECLARED 2026-08-23: this module names SP 800-131A for algorithm transition guidance and cited nothing for it. Found by
+    // audit_module_designation_aliases.py — the literal-id check could not match
+    // the prose "SP 800-131A" against a row filed as NIST-SP-800-131A-Rev3.
+    getStandard('NIST-SP-800-131A-Rev3'),
+    // DECLARED 2026-08-23: this module names "RFC 2986" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-2986-PKCS-10-Certification-Request-Syntax-Specification'),
+    // DECLARED 2026-08-23: this module names "RFC 5480" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('IETF RFC 5480'),
+    // DECLARED 2026-08-23: this module names "RFC 6066" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-6066-Transport-Layer-Security-TLS-Extensions-Extension-D'),
+    // DECLARED 2026-08-23: this module names "RFC 9909" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('RFC-9909'),
   ],
 
   algorithms: [

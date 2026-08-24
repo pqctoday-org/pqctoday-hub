@@ -19,7 +19,8 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
           the CA — the request is wrapped in a structured <strong>enrollment protocol</strong>
           that carries the public key, attribute requests, proof-of-possession, and authentication.
           Two enrollment protocols matter for post-quantum PKI: <strong>EST</strong> (RFC 7030) and{' '}
-          <strong>CMP</strong> (RFC 4210, updated by RFC 9810 in 2025 for KEM transport).
+          <strong>CMP</strong> (RFC 9810, July 2025, which obsoleted RFC 4210 and added certificate
+          management for KEM keys).
         </p>
       </section>
 
@@ -51,7 +52,7 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             though they can't sign.
           </p>
           <ul className="text-xs text-muted-foreground space-y-1 list-disc ml-4">
-            <li>Transport: HTTP (application/pkixcmp, RFC 6712)</li>
+            <li>Transport: HTTP (application/pkixcmp, RFC 9811, obsoletes RFC 6712)</li>
             <li>Request: CMP PKIMessage (CRMF inside)</li>
             <li>Response: PKIMessage with CertResponse</li>
             <li>POP: signature, encrCert (RFC 9810), or RA-verified</li>
@@ -126,7 +127,7 @@ export const EnrollmentIntroduction: React.FC<EnrollmentIntroductionProps> = ({
             rel="noopener noreferrer"
           >
             <Button variant="outline" size="sm" className="gap-1">
-              <FileText size={12} /> RFC 4210 CMP <ExternalLink size={12} />
+              <FileText size={12} /> RFC 4210 CMP (obsoleted) <ExternalLink size={12} />
             </Button>
           </a>
           <a

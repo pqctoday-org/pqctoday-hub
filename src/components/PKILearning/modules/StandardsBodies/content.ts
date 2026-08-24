@@ -11,6 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'standards-bodies',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
+  lastEdited: '2026-08-23',
 
   standards: [
     getStandard('FIPS 203'),
@@ -21,6 +22,39 @@ export const content: ModuleContent = {
     getStandard('RFC 9629'),
     getStandard('RFC 9814'),
     getStandard('RFC 9882'),
+    // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
+    // module already names to a reader. Mechanical since the four-document
+    // sampler cap was lifted the same day — declaring no longer costs coverage.
+    getStandard('ANSSI PQC Follow-up Paper'),
+    getStandard('ANSSI PQC Position Paper'),
+    getStandard('BSI TR-02102-1'),
+    getStandard('BSI TR-02102-2'),
+    getStandard('BSI TR-02102-3'),
+    getStandard('BSI TR-02102-4'),
+    getStandard('ENISA PQC Guidelines'),
+    getStandard('ETSI TR 103 619'),
+    getStandard('ETSI TS 103 744'),
+    getStandard('EUCC v2.0 ACM'),
+    getStandard('ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur'),
+    getStandard('ISO/IEC 14888-4:2024'),
+    getStandard('ISO/IEC 18033-2:2006'),
+    getStandard('KpqC-Competition-Results'),
+    getStandard('NIAP'),
+    getStandard('NIST IR 8547'),
+    getStandard('NIST-FIPS140-3-IG-PQC'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('NSA CNSA 2.0 FAQ'),
+    getStandard('NSA CSfC PQC Guidance Addendum'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 15408" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-15408-1-2022-Evaluation-criteria-for-IT-security-Com'),
+    // DECLARED 2026-08-23: this module names "ISO/IEC 20085" to a reader and cited
+    // nothing for it. Capture verified clean (no Obsoleted-by / Withdrawn header)
+    // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
+    // and a misnamed RFC 9700 row earlier the same day.
+    getStandard('ISO-IEC-20085-1-2019-Test-tool-requirements-and-test-tool-ca'),
   ],
 
   algorithms: [

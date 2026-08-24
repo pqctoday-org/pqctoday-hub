@@ -29,7 +29,13 @@ interface KurResult {
 }
 
 /**
- * RFC 9810 — CMP Updates for KEM (July 2025).
+ * RFC 9810 — Internet X.509 PKI: Certificate Management Protocol (CMP), July 2025.
+ *
+ * NOT an "updates" document, despite what this comment said until 2026-08-23: RFC 9810
+ * IS the CMP specification. Its own header reads "Obsoletes: 4210, 9480", and its
+ * abstract says it "adds support for management of certificates containing a Key
+ * Encapsulation Mechanism (KEM) public key and uses EnvelopedData instead of
+ * EncryptedValue". Calling it a KEM update implied RFC 4210 was still the base spec.
  *
  * KEM keys can't sign, so signature-based POP isn't an option. RFC 9810
  * introduces "encrCert POP": the CA encapsulates the new EE cert under the

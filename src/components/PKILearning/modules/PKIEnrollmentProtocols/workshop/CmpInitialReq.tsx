@@ -231,7 +231,7 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
         </div>
         <div className="space-y-1 md:col-span-2">
           <label htmlFor="cmp-ir-secret" className="text-sm font-medium text-foreground">
-            Shared secret (PBM-MAC protection, RFC 4210 §5.1.3.1)
+            Shared secret (PBM-MAC protection, RFC 9810 §5.1.3.1)
           </label>
           <Input
             id="cmp-ir-secret"
