@@ -178,6 +178,40 @@ describe('MobileWorkshopDock', () => {
     expect(useWorkshopStore.getState().currentStepId).toBe('p-compliance')
   })
 
+  // 2026-08-24 audit R5: the collapsed bar's "Next" used to be a
+  // role="button" span nested inside the outer <Button> — invalid HTML (a
+  // button inside a button). Now two real sibling <button>s: tapping Next
+  // must advance WITHOUT also opening the sheet (the old nested-span
+  // version relied on stopPropagation to fake that; a real sibling doesn't
+  // need it — this proves the outer "open" button never fires).
+  it('Next in the collapsed bar is a real button that advances without opening the sheet', async () => {
+    useWorkshopStore.getState().start('fixture-flow', 'intro-01', 'US')
+    renderDock()
+    await screen.findByText('Step intro-01')
+    const next = screen.getByRole('button', { name: 'Next' })
+    expect(next.tagName).toBe('BUTTON')
+    fireEvent.click(next)
+    expect(useWorkshopStore.getState().currentStepId).toBe('p-compliance')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  // 2026-08-24 audit R5: restores the spec's "n of N tasks · tap to open"
+  // sub-line (README §Workshop dock) — previously bare "tap to open".
+  // Completion is tracked per STEP (completedStepIds), not per task, so n
+  // is honestly 0 or the full task count — never invented partial progress.
+  it('collapsed bar sub-line shows the real task count, 0 of N before completion', async () => {
+    useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
+    renderDock()
+    expect(await screen.findByText(/0 of 1 tasks · tap to open/i)).toBeInTheDocument()
+  })
+
+  it('collapsed bar sub-line shows the full count once the step is marked complete', async () => {
+    useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
+    useWorkshopStore.getState().markStepComplete('p-compliance')
+    renderDock()
+    expect(await screen.findByText(/1 of 1 tasks · tap to open/i)).toBeInTheDocument()
+  })
+
   it('pauses (not exits) on "Leave the workshop", preserving progress and hiding the dock', async () => {
     useWorkshopStore.getState().start('fixture-flow', 'p-compliance', 'US')
     useWorkshopStore.getState().markStepComplete('p-compliance')

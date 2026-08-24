@@ -163,46 +163,55 @@ export function MobileWorkshopDock() {
   return (
     <>
       {!expanded && (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => setExpanded(true)}
-          aria-expanded={expanded}
+        // 2026-08-24 audit R5: was a single <Button> with a second
+        // role="button" span nested inside it for "Next" — invalid HTML
+        // (a button inside a button) and unpredictable for screen readers/
+        // keyboard nav. Now two real sibling <button>s in a non-interactive
+        // row, matching the spec's own "Next" as a distinct control. Also
+        // restores the spec's "n of N tasks · tap to open" sub-line
+        // (README §Workshop dock) — n/N derive from the real per-step
+        // `tasks[]` list and the same `isPassed` signal the task checklist
+        // itself uses; completion is tracked per STEP not per task, so n is
+        // honestly 0 or the full count, not invented partial progress.
+        <div
           className={cn(
             mobileDockPanel,
-            'h-auto w-full items-center justify-between gap-3 rounded-t-2xl px-4 py-2.5 text-left font-normal'
+            'flex w-full items-center justify-between gap-3 rounded-t-2xl px-4 py-2.5'
           )}
           style={{ bottom: 'var(--mobile-nav-height)' }}
         >
-          <span className="min-w-0 flex-1">
-            <span className="block text-[10px] font-extrabold uppercase tracking-wide text-primary-foreground/70">
-              Workshop · Step {currentIndex + 1} of {steps.length}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setExpanded(true)}
+            aria-expanded={expanded}
+            className="h-auto min-w-0 flex-1 justify-start px-0 py-0 text-left font-normal hover:bg-transparent"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-[10px] font-extrabold uppercase tracking-wide text-primary-foreground/70">
+                Workshop · Step {currentIndex + 1} of {steps.length}
+              </span>
+              <span className="block truncate text-[13px] font-bold text-primary-foreground">
+                {currentStep.title}
+              </span>
+              <span className="block text-[10.5px] text-primary-foreground/80">
+                {currentStep.tasks.length > 0 &&
+                  `${isPassed ? currentStep.tasks.length : 0} of ${currentStep.tasks.length} tasks · `}
+                tap to open
+              </span>
             </span>
-            <span className="block truncate text-[13px] font-bold text-primary-foreground">
-              {currentStep.title}
-            </span>
-            <span className="block text-[10.5px] text-primary-foreground/80">tap to open</span>
-          </span>
+          </Button>
           {nextStep && (
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={(e) => {
-                e.stopPropagation()
-                goToStep(nextStep)
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.stopPropagation()
-                  goToStep(nextStep)
-                }
-              }}
-              className="shrink-0 rounded-[8px] bg-card px-3 py-2 text-[11.5px] font-bold text-primary"
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => goToStep(nextStep)}
+              className="h-auto shrink-0 rounded-[8px] bg-card px-3 py-2 text-[11.5px] font-bold text-primary hover:bg-card/90"
             >
               Next
-            </span>
+            </Button>
           )}
-        </Button>
+        </div>
       )}
 
       <MobileSheet
