@@ -13,6 +13,8 @@ import {
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileCommandCenterView } from '@/components/Mobile/screens/MobileCommandCenterView'
 import { PreviewBanner } from '@/components/common/PreviewBanner'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -300,6 +302,7 @@ function PhaseToolsView({ onClearPhase }: { onClearPhase: () => void }) {
 }
 
 export function BusinessCenterView() {
+  const isMobileShell = useIsMobileShell()
   useSeedFrameworksFromCountry()
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
@@ -530,6 +533,16 @@ export function BusinessCenterView() {
 
   // ?zone=<id> deep-link wins over user selection.
   const effectiveOpenZone: ZoneId | null = zoneFromQuery ?? openZone
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). BusinessCenterView takes
+  // no simEmbed-style prop and is never rendered inside the simulation (no
+  // widget under shared/widgets imports it), so unlike Threats/Library/
+  // Compliance/Migrate/Assess/Report this needs no second guard.
+  if (isMobileShell) {
+    return <MobileCommandCenterView />
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">

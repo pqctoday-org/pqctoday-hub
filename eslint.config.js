@@ -205,6 +205,27 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // useBusinessMetrics.ts (hooks) / cswp39Tier.ts (lib) — pure
+                // hook + pure logic, no JSX: the real metrics hook and tier
+                // computation every desktop Command Center panel reads, so
+                // a zone's maturity tier can never drift from desktop's.
+                // businessToolsRegistry.tsx — pure data (icon type refs, no
+                // JSX). ActionItemsSection.tsx (sections) — explicitly
+                // generic, already `max-md:flex-col`, no baked-in desktop-
+                // only layout; imported directly so "Your next steps" can
+                // never drift from desktop's.
+                '!@/components/BusinessCenter',
+                '@/components/BusinessCenter/*',
+                '!@/components/BusinessCenter/businessToolsRegistry',
+                '!@/components/BusinessCenter/hooks',
+                '@/components/BusinessCenter/hooks/*',
+                '!@/components/BusinessCenter/hooks/useBusinessMetrics',
+                '!@/components/BusinessCenter/lib',
+                '@/components/BusinessCenter/lib/*',
+                '!@/components/BusinessCenter/lib/cswp39Tier',
+                '!@/components/BusinessCenter/sections',
+                '@/components/BusinessCenter/sections/*',
+                '!@/components/BusinessCenter/sections/ActionItemsSection',
                 // ReportUpgradeNudge.tsx (Report/redesign) — explicitly
                 // generic, no baked-in desktop-only layout (already
                 // grid-cols-1/flex-wrap below md). reportContentActions.ts
