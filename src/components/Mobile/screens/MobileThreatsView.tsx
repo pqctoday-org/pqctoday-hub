@@ -6,7 +6,10 @@ import { threatsData, type ThreatItem } from '@/data/threatsData'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { getCrqcConsensus } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import {
+  getCrqcConsensus,
+  CRQC_ESTIMATES,
+} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import {
   getShorTier,
   getThreatClass,
@@ -18,8 +21,6 @@ import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 
 const CURRENT_YEAR = new Date().getFullYear()
-const CRQC_YEAR_MIN = 2030
-const CRQC_YEAR_MAX = 2036
 // Same fixed defaults ThreatEconomicsHeader.tsx's own mini-calculator starts
 // from (dataLifetime/credentialValidity/migrationTime) — only the CRQC year
 // is a working control here (design handoff §18), the plan's own distillation
@@ -90,10 +91,14 @@ const CLASS_FILTERS: { id: ThreatClass; label: string }[] = [
  * §18 spec, confirmed against real code before building:
  * - Mosca urgency band, one combined deadline (the more urgent of HNDL/HNFL)
  *   rather than desktop's two separate rows — a real simplification, stated.
- * - CRQC year as a *working* control, 2030–2036, "median of 6 tracked
- *   sources" (`getCrqcConsensus()` — the exact function every desktop
- *   Threats component reads for its Q-Day figure), re-scoring the urgency
- *   band and both deadlines live.
+ * - CRQC year as a *working* control, bounded to the live
+ *   `getCrqcConsensus()` window (currently 2030-2036) and "median of N
+ *   tracked sources" from `CRQC_ESTIMATES.length` (2026-08-24 audit R3.1 —
+ *   both were hardcoded literals that would have silently disagreed with
+ *   this same screen's own live consensus caption on the next CSV update;
+ *   `getCrqcConsensus()` is the exact function every desktop Threats
+ *   component reads for its Q-Day figure), re-scoring the urgency band and
+ *   both deadlines live.
  * - HNDL vs HNFL in one line — new distillation chrome matching the design's
  *   own compressed phrasing, since desktop's real paragraph-length framing
  *   (ThreatEconomicsHeader's atRiskPhrase sentences) assumes the full
@@ -187,8 +192,8 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear <= CRQC_YEAR_MIN}
-            onClick={() => setCrqcYear((y) => Math.max(CRQC_YEAR_MIN, y - 1))}
+            disabled={crqcYear <= consensus.qdayLow}
+            onClick={() => setCrqcYear((y) => Math.max(consensus.qdayLow, y - 1))}
             aria-label="Earlier CRQC year"
             className="h-9 w-9 rounded-full"
           >
@@ -201,8 +206,8 @@ export function MobileThreatsView() {
             type="button"
             variant="outline"
             size="icon"
-            disabled={crqcYear >= CRQC_YEAR_MAX}
-            onClick={() => setCrqcYear((y) => Math.min(CRQC_YEAR_MAX, y + 1))}
+            disabled={crqcYear >= consensus.qdayHigh}
+            onClick={() => setCrqcYear((y) => Math.min(consensus.qdayHigh, y + 1))}
             aria-label="Later CRQC year"
             className="h-9 w-9 rounded-full"
           >
@@ -210,7 +215,8 @@ export function MobileThreatsView() {
           </Button>
         </div>
         <p className="mt-2 text-center text-[10.5px] text-muted-foreground">
-          consensus {consensus.qdayLow}–{consensus.qdayHigh} · median of 6 tracked sources
+          consensus {consensus.qdayLow}–{consensus.qdayHigh} · median of {CRQC_ESTIMATES.length}{' '}
+          tracked sources
         </p>
       </section>
 

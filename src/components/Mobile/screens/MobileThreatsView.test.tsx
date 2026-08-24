@@ -5,7 +5,10 @@ import { MobileThreatsView } from './MobileThreatsView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { threatsData } from '@/data/threatsData'
-import { getCrqcConsensus } from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import {
+  getCrqcConsensus,
+  CRQC_ESTIMATES,
+} from '@/components/PKILearning/modules/QuantumThreats/data/quantumConstants'
 import { PERSONA_THREATS_DEFAULT_INDUSTRIES, INDUSTRY_TO_THREATS_MAP } from '@/data/personaConfig'
 
 // Real data throughout — threatsData is parsed synchronously from a bundled
@@ -40,7 +43,7 @@ describe('MobileThreatsView', () => {
     ).toBeInTheDocument()
   })
 
-  it('the CRQC year stepper starts at the real consensus estimate and is bounded 2030–2036', () => {
+  it('the CRQC year stepper starts at the real consensus estimate and shows the real consensus window', () => {
     renderView()
     const consensus = getCrqcConsensus()
     expect(screen.getByText(String(consensus.zEstimate))).toBeInTheDocument()
@@ -57,17 +60,29 @@ describe('MobileThreatsView', () => {
     expect(after).not.toBe(before)
   })
 
-  it('the stepper cannot go below 2030 or above 2036', () => {
+  // 2026-08-24 audit R3.1: bounds derive from the live getCrqcConsensus()
+  // window, not a hand-typed 2030/2036 — a hardcoded pair here would keep
+  // passing after a CSV update shifted the real consensus, silently
+  // certifying stale bounds as correct.
+  it('the stepper cannot go below or above the live consensus window', () => {
     renderView()
+    const { qdayLow, qdayHigh } = getCrqcConsensus()
     const earlier = screen.getByRole('button', { name: 'Earlier CRQC year' })
     for (let i = 0; i < 15; i++) fireEvent.click(earlier)
-    expect(screen.getByText('2030')).toBeInTheDocument()
+    expect(screen.getByText(String(qdayLow))).toBeInTheDocument()
     expect(earlier).toBeDisabled()
 
     const later = screen.getByRole('button', { name: 'Later CRQC year' })
     for (let i = 0; i < 15; i++) fireEvent.click(later)
-    expect(screen.getByText('2036')).toBeInTheDocument()
+    expect(screen.getByText(String(qdayHigh))).toBeInTheDocument()
     expect(later).toBeDisabled()
+  })
+
+  it('"median of N tracked sources" derives from the real CRQC_ESTIMATES length', () => {
+    renderView()
+    expect(
+      screen.getByText(`median of ${CRQC_ESTIMATES.length} tracked sources`, { exact: false })
+    ).toBeInTheDocument()
   })
 
   it('a criticality filter chip narrows the list to exactly that criticality', () => {
