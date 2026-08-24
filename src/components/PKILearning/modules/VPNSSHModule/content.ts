@@ -10,6 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'vpn-ssh-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-24',
 
   // Expanded from a single line 2026-08-23. The one-line form is why the five
   // declarations below first landed in algorithms[] — an applier that looked for the

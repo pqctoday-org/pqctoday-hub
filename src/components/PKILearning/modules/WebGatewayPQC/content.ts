@@ -10,6 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'web-gateway-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
+  lastEdited: '2026-08-24',
 
   standards: [
     getStandard('FIPS 203'),
