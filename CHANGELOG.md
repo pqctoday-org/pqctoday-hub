@@ -29,6 +29,22 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.57.0] - 2026-08-24
+
+A real mobile experience across the whole app, an ACVP validator that now runs and checks against genuine NIST test vectors, and an accuracy pass across Learn's home boards, MLS/EO 14412 citations, and the compliance maturity catalogue.
+
+### Added
+
+- **A real, phone-native version of every screen** [view:/] [persona:curious] [persona:developer] [persona:architect] [persona:executive] [persona:researcher] [persona:ops]: navigation, Home, Learn, Workshop, Timeline, Threats, Algorithms, Library, Community, Patents, About, Compliance, Migrate, Assess, Report, Command Center, and interactive Simulation play now all have a distilled mobile layout, on by default. Playground's 31-tool catalogue and Business Tools' 36-tool catalogue were individually checked for phone usability rather than just resized. Five Reference-set screens that looked tappable but had no click handlers now open real detail views. Desktop is unaffected — every touched screen was checked to render identically at desktop width with the mobile layout off.
+
+### Fixed
+
+- **The ACVP validator claimed a "real execution / FIPS 140-3 proof" it wasn't actually running** [view:/playground] [persona:developer] [persona:architect] [persona:ops]: it now points at the validator that genuinely performs it. Its stored test vectors turned out to be self-generated rather than sourced from NIST — every ML-KEM, ML-DSA, SLH-DSA, and SHA vector is now byte-exact NIST data (SLH-DSA coverage went from 1 of 12 parameter sets to all 12). 26 checks that were silently skipping now show up as skipped instead of disappearing, and the tool's own documentation no longer understates its algorithm-family coverage.
+- **Four retired EU eIDAS requirements were loading as active** [view:/compliance] [persona:architect] [persona:researcher]: a sort bug in how the maturity-requirements catalogue merges its correction files let an older file outrank the newer one that superseded it, silently reviving rows that had already been deprecated.
+- **40 accuracy defects corrected across all 36 role-based home boards** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious].
+- **A module cited an old MLS draft while its own text described the current one, and four modules stated EO 14412 deadlines without citing where those dates come from** [view:/learn] [persona:developer] [persona:architect] [persona:ops]: both corrected. Editing a module was also incorrectly marking it as freshly reviewed for readers — fixed.
+- **FIPS 140-3 and SP 800-230 were each listed twice in the Library** [view:/library] [persona:researcher] [persona:architect]: deduplicated.
+
 ## [4.56.0] - 2026-08-23
 
 A large accuracy pass across the Learn modules — dozens of citations now point at the standard that is actually current — plus a References tab showing what each module cites, working autosave in the business tools, and a keyboard-navigable, higher-contrast interface.
