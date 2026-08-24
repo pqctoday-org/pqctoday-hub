@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { getSourcesForView, authoritativeSources } from './authoritativeSourcesData'
 import { getSourcesForView as trustedForView, trustedSources } from './trustedSourcesData'
-import { ROUTE_VIEW_TYPE } from '../components/Layout/MainLayout'
+import { ROUTE_VIEW_TYPE } from './routePageMeta'
 
 /**
  * /patents provenance (2026-08-07).

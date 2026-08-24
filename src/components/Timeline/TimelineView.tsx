@@ -45,6 +45,8 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { phasesToIcs, downloadIcs } from '../../utils/timelineIcs'
 import { WhenDoesThisReachMe } from './WhenDoesThisReachMe'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileTimelineView } from '@/components/Mobile/screens/MobileTimelineView'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -91,6 +93,7 @@ export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
 }
 
 export const TimelineView = () => {
+  const isMobileShell = useIsMobileShell()
   useWorkflowPhaseTracker('timeline')
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
@@ -475,6 +478,17 @@ export const TimelineView = () => {
       </div>
     )
   }
+
+  // Mobile UX layer (Phase 7). Placed after the data-integrity guard above
+  // (so a broken bundle shows the same EmptyState to every visitor) but
+  // before every desktop-only filter/export computation below — nothing
+  // between here and the end of the function has behavior that could differ
+  // for mobile, so this is a pure early return with zero risk to the
+  // flag-off path (Rule 1).
+  if (isMobileShell) {
+    return <MobileTimelineView />
+  }
+
   const ganttDataEmpty = ganttData.length === 0
 
   const activeFilterLabels: string[] = []

@@ -54,6 +54,8 @@ import { LibraryRecentlyChanged } from './LibraryRecentlyChanged'
 import { LibraryStartHere } from './LibraryStartHere'
 import { LibraryDocumentCard } from './LibraryDocumentCard'
 import { LibraryDetailDrawer } from './LibraryDetailDrawer'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileLibraryView } from '@/components/Mobile/screens/MobileLibraryView'
 
 const FILTER_PARAMS = [
   'purpose',
@@ -137,6 +139,12 @@ export function LibraryViewRedesign({
   simEmbed = false,
   simEmbedQuery,
 }: { simEmbed?: boolean; simEmbedQuery?: string } = {}) {
+  // Mobile UX layer (Phase 7). `!simEmbed` matters here specifically —
+  // LibraryEmbed.tsx renders this same component inside the simulation at
+  // whatever viewport the player is on, and O-3 (IMPLEMENTATION-PLAN.md)
+  // keeps /simulation entirely outside the mobile shell (its own separate
+  // phone handling). Same guard as ThreatsDashboard.tsx.
+  const isMobileShell = useIsMobileShell() && !simEmbed
   // When embedded in the sim, the library must NOT read/write the page URL (it
   // would corrupt /simulation's route) and can't nest its own <Router>. So its
   // filter URL state is backed by local state, kept API-compatible with
@@ -458,6 +466,13 @@ export function LibraryViewRedesign({
     })
     return () => clearPageActions()
   }, [simEmbed, handleExportCsv])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off/simEmbed path (Rule 1).
+  if (isMobileShell) {
+    return <MobileLibraryView />
+  }
 
   return (
     <div className="animate-fade-in space-y-4 pb-24">

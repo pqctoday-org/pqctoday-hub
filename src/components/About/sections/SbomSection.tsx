@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Info, Link2, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SBOM_CATEGORIES } from '@/data/sbomCategories'
 
 export function SbomSection() {
   const [isSbomOpen, setIsSbomOpen] = useState(false)
@@ -41,9 +42,7 @@ export function SbomSection() {
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-3 md:p-6 mt-6 items-start">
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">
-                  UI Frameworks & Libraries
-                </h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[0]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">React</span>
@@ -146,7 +145,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Utilities</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[1]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">localforage</span>
@@ -258,7 +257,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Cryptography & PQC</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[2]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">OpenSSL WASM</span>
@@ -435,7 +434,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Local AI & Embeddings</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[5]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">
@@ -465,7 +464,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">State Management</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[6]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">Zustand</span>
@@ -477,7 +476,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Analytics</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[7]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">React GA4</span>
@@ -489,7 +488,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Notifications</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[8]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">React Hot Toast</span>
@@ -501,7 +500,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Build & Development</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[9]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">Vite</span>
@@ -555,7 +554,7 @@ export function SbomSection() {
                 </ul>
               </div>
               <div className="break-inside-avoid">
-                <h3 className="text-lg font-semibold text-primary mb-3">Testing</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">{SBOM_CATEGORIES[10]}</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">Vitest</span>
@@ -589,7 +588,7 @@ export function SbomSection() {
               </div>
               <div className="break-inside-avoid">
                 <h3 className="text-lg font-semibold text-primary mb-3">
-                  Rust WASM Bindings{' '}
+                  {SBOM_CATEGORIES[3]}{' '}
                   <span className="text-xs font-normal text-muted-foreground">
                     (softhsmrustv3 v0.4.23)
                   </span>
@@ -644,7 +643,7 @@ export function SbomSection() {
               </div>
               <div className="break-inside-avoid">
                 <h3 className="text-lg font-semibold text-primary mb-3">
-                  Rust Crypto Crates{' '}
+                  {SBOM_CATEGORIES[4]}{' '}
                   <span className="text-xs font-normal text-muted-foreground">
                     (softhsmrustv3 v0.4.23)
                   </span>

@@ -16,6 +16,8 @@ import { CSWP39_ZONE_ORDER, CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp
 import { PHASE_ORDER, FRAMEWORK_PHASES, type PhaseId } from '@/data/frameworkPhases'
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
 import { logBusinessToolsSearch, logBusinessToolsFilter } from '@/utils/analytics'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileBusinessToolsView } from '@/components/Mobile/screens/MobileBusinessToolsView'
 
 // Badge shown only for the non-default (technical) audiences, so an executive can
 // tell at a glance which tools are meant for architects/developers. Business/GRC
@@ -77,6 +79,7 @@ const GROUP_MODE_ITEMS: { id: GroupMode; label: string }[] = [
 ]
 
 export const BusinessToolsGrid = () => {
+  const isMobileShell = useIsMobileShell()
   // WS6b (2026-08-02) — all five facets live in the URL. They were local
   // useState, so no filtered view of the Command Center was linkable,
   // shareable, or reachable from another surface: the grid filtered correctly
@@ -178,6 +181,15 @@ export const BusinessToolsGrid = () => {
   for (const section of groupSections) {
     const tools = filteredTools.filter((t) => groupKeyFor(t) === section.key)
     if (tools.length > 0) groupedTools[section.key] = tools
+  }
+
+  // mobile-ux-layer Phase 9: placed after every hook above (React rules; the
+  // desktop-only ones just run and are discarded) but before the desktop
+  // JSX — a pure early return with zero risk to the flag-off path (Rule 1).
+  // BusinessToolsGrid takes no simEmbed-style prop and is never rendered
+  // inside the simulation, so this needs no second guard.
+  if (isMobileShell) {
+    return <MobileBusinessToolsView />
   }
 
   return (

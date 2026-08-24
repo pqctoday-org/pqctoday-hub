@@ -76,6 +76,8 @@ import { CrqcTrajectoryChart } from './CrqcTrajectoryChart'
 import { SectorExposureHero } from './SectorExposureHero'
 import { THREAT_CLASS_DEFS, threatMatchesClass, type ThreatClass } from './threatClassification'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileThreatsView } from '@/components/Mobile/screens/MobileThreatsView'
 import {
   LENS_PROTOCOLS,
   protocolsForThreat,
@@ -91,6 +93,14 @@ export const ThreatsDashboard: React.FC<{
   /** Which tab to open on mount. The real page also seeds this from ?view=. */
   initialTab?: ThreatsTab
 }> = ({ simEmbed = false, initialTab = 'list' }) => {
+  // Mobile UX layer (Phase 7). `!simEmbed` matters here specifically —
+  // ThreatsEmbed.tsx renders this same component inside the simulation at
+  // whatever viewport the player is on, and O-3 (IMPLEMENTATION-PLAN.md)
+  // keeps /simulation entirely outside the mobile shell (its own separate
+  // phone handling). Without this guard a narrow-viewport sim player would
+  // get the distilled mobile screen instead of the sim-embedded dashboard,
+  // which has no simEmbed support of its own.
+  const isMobileShell = useIsMobileShell() && !simEmbed
   // When embedded in the sim, the dashboard must NOT read/write the page URL (it
   // would corrupt /simulation's route) and can't nest its own <Router>. So its
   // filter URL state is backed by local state, kept API-compatible with
@@ -587,6 +597,13 @@ export const ThreatsDashboard: React.FC<{
     })
     return () => clearPageActions()
   }, [simEmbed])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off/simEmbed path (Rule 1).
+  if (isMobileShell) {
+    return <MobileThreatsView />
+  }
 
   return (
     <div>

@@ -3,6 +3,9 @@ import React from 'react'
 import clsx from 'clsx'
 import type { QuizQuestion } from '../types'
 import { Button } from '@/components/ui/button'
+import { quizCategories } from '@/data/quizDataLoader'
+
+const CATEGORY_LABEL = new Map(quizCategories.map((c) => [c.id, c.label]))
 
 interface QuestionCardProps {
   question: QuizQuestion
@@ -83,6 +86,21 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         )}
       </div>
 
+      {/* Source category, named above the question (design handoff §5 —
+          "Source module named above each question"). Neither desktop's nor
+          mobile's quiz wizard previously showed this at all (2026-08-24
+          audit R4.1): a question's real `category` field maps to a real
+          quizCategories label — this is the closest honest source context
+          available. A specific per-question lm_id/module title (the
+          handoff's literal "PQC 101 · LM-001" example) has no such mapping
+          in the data model; showing that would mean inventing an
+          association, not distilling a real one. */}
+      <p
+        data-testid="question-source-category"
+        className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+      >
+        {CATEGORY_LABEL.get(question.category) ?? question.category}
+      </p>
       <h3 className="text-lg font-bold text-foreground leading-relaxed">{question.question}</h3>
 
       <div

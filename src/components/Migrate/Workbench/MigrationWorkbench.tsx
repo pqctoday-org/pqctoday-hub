@@ -38,6 +38,8 @@ import { SupplyChainRiskMatrix } from '../../PKILearning/modules/VendorRisk/comp
 import { VendorConcentrationRiskPanel } from './VendorConcentrationRiskPanel'
 import { WhoHasMovedPanel } from './WhoHasMovedPanel'
 import { VendorCommitmentPanel, ClaimsAndEvidencePanel } from './VendorCommitmentPanel'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileMigrateView } from '@/components/Mobile/screens/MobileMigrateView'
 
 interface MigrationWorkbenchProps {
   /** When embedded in the Simulation, hide the PageHeader and don't touch the URL. */
@@ -52,6 +54,7 @@ const isTab = (v: string | null): v is MigrateTab =>
   v === 'replace' || v === 'plan' || v === 'roadmaps' || v === 'vendorrisk'
 
 export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkbenchProps) {
+  const isMobileShell = useIsMobileShell()
   const persona = usePersonaStore((s) => s.selectedPersona)
   const posture = useMigrationPlan()
 
@@ -252,6 +255,17 @@ export function MigrationWorkbench({ embedded = false, focus }: MigrationWorkben
     })
     return () => clearPageActions()
   }, [embedded, hasSelection, shareUrl])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). MigrateWorkbenchEmbed.tsx
+  // renders this same component inside the simulation via `embedded` (this
+  // page's own equivalent of Threats/Library/Compliance's `simEmbed` prop —
+  // a different name, same real risk), so `embedded` must win over
+  // isMobileShell regardless of viewport width.
+  if (isMobileShell && !embedded) {
+    return <MobileMigrateView />
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-4 sm:px-6">

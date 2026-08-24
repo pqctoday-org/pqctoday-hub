@@ -49,9 +49,30 @@ export function Cswp39SectionBadge({ sectionRef, subSection }: Cswp39SectionBadg
       onFocus={() => setOpen(true)}
       onBlur={() => setOpen(false)}
     >
+      {/* Tap-toggle (2026-08-24 audit R4.8): hover/focus alone leaves the
+          popover unreachable on touch — a phone reader could see the bare
+          §-ref but never the section summary the badge exists to surface.
+          role="button" + tabIndex since this needs to be its own tap
+          target, not just inherit the parent span's hover handlers.
+          stopPropagation matches this file's own stated intent (a tap must
+          not fall through to a surrounding create-on-click handler). */}
       <span
+        role="button"
+        tabIndex={0}
         aria-label={tooltipText}
+        aria-expanded={open}
         title={tooltipText}
+        onClick={(e) => {
+          e.stopPropagation()
+          setOpen((o) => !o)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            e.stopPropagation()
+            setOpen((o) => !o)
+          }
+        }}
         className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border cursor-help hover:bg-muted/80"
       >
         {sectionRef}

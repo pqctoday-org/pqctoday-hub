@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
@@ -9,6 +9,16 @@ import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
+
+// mobile-ux-layer: SimulationView is one of the two sanctioned isMobileShell
+// call sites (useIsMobileShell.ts). Defaults false so every existing test
+// above exercises the real desktop board unchanged; the mobile-play describe
+// block below flips it per test, matching MigrationWorkbench.test.tsx's
+// established pattern for the same hook.
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 const renderPage = (initialEntries: string[] = ['/simulation']) =>
   render(
@@ -438,5 +448,161 @@ describe('SimulationView — unified PLAY modal', () => {
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /start a different path/i }))
     expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer Phase 9 — real interactive play for p0/p1. jsdom has no real
+// CSS engine, so the desktop board (`hidden md:flex`) and whichever phone-block
+// branch is active both stay in the DOM at once (same reason the existing
+// "Budget secured" assertion above already uses getAllByText) — every query
+// here scopes into the `sim-mobile-decide` testid to avoid matching the
+// always-mounted desktop board's own, separate DecisionSection instance.
+describe('SimulationView — mobile-ux-layer real play (p0/p1)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('offers a real "Play" CTA on the read-only overview for p0, the default phase', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    expect(screen.getByRole('button', { name: /Play Executive Mandate now/i })).toBeInTheDocument()
+  })
+
+  it('tapping Play opens a real interactive Decide view wired to the same real store as desktop', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+    expect(within(mobileBoard).getByText('Executive Mandate')).toBeInTheDocument()
+    expect(within(mobileBoard).getByText('Next move — pick the right play')).toBeInTheDocument()
+    fireEvent.click(
+      within(mobileBoard).getByRole('button', { name: /Option [A-C]: Build the business case/ })
+    )
+    expect(within(mobileBoard).getByText(/Right call/)).toBeInTheDocument()
+  })
+
+  it('a wrong pick applies the same real quarter setback the desktop board would apply', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+    const correctBtn = within(mobileBoard).getByRole('button', {
+      name: /Option [A-C]: Build the business case/,
+    })
+    const grid = correctBtn.parentElement as HTMLElement
+    const wrong = within(grid)
+      .getAllByRole('button')
+      .find((b) => !/Build the business case/.test(b.textContent ?? ''))
+    const before = useSimulationStore.getState().q
+    fireEvent.click(wrong!)
+    expect(within(mobileBoard).getByText('✕ Common failure')).toBeInTheDocument()
+    // p0's real cost is 1 quarter (only p1 is 2 — see wrongPickCostQuarters in
+    // SimulationView.tsx); confirms the SAME store mutation desktop applies,
+    // not a mobile-only stub.
+    expect(within(mobileBoard).getByText(/cost you 1 quarter/)).toBeInTheDocument()
+    expect(useSimulationStore.getState().q).not.toBe(before)
+  })
+
+  it('the back control returns to the read-only overview without losing the run', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Overview/i }))
+    expect(screen.queryByTestId('sim-mobile-decide')).not.toBeInTheDocument()
+    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+  })
+
+  it('a phase beyond p0/p1 has no Play CTA — falls back to the existing read-only overview', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
+    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+  })
+
+  it('with the mobile shell off, the read-only overview never offers a Play CTA', () => {
+    renderPage()
+    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer (2026-08-24 audit R1.3): before this fix, the only way to
+// reach p0/p1 on a phone was the desktop-only phase ladder or "Watch the
+// Executive Overview" — which walks the shared, persisted `sel` through all
+// 9 phases with no way back, permanently hiding the Play CTA on that device
+// after one watch. These tests cover the two-part fix: a mobile phase
+// switcher reachable from both the playable and read-only fallback states,
+// and a snapshot/restore of `sel` around a mobile-triggered watch run.
+describe('SimulationView — mobile-ux-layer phase switcher + sel restore (audit R1.3)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('offers a p0/p1 switcher on the read-only overview even past p1', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    expect(within(group).getByText('Executive Mandate')).toBeInTheDocument()
+    expect(within(group).getByText('Discovery & Inventory')).toBeInTheDocument()
+  })
+
+  it('tapping p1 in the switcher makes the p1 Play CTA reachable again', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    fireEvent.click(within(group).getByText('Discovery & Inventory'))
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    expect(
+      screen.getByRole('button', { name: /Play Discovery & Inventory now/i })
+    ).toBeInTheDocument()
+  })
+
+  it('the switcher marks the active phase via aria-pressed', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage() // default sel is p0
+    const group = screen.getByRole('group', { name: /choose a playable phase/i })
+    expect(within(group).getByText('Executive Mandate')).toHaveAttribute('aria-pressed', 'true')
+    expect(within(group).getByText('Discovery & Inventory')).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+  })
+
+  it('watching the Executive Overview restores sel once the run stops, so Play stays reachable', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p1' })
+    renderPage()
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    fireEvent.click(screen.getByRole('button', { name: /Watch the Executive Overview/i }))
+    // The real autorun queue moves sel to its first phase's beat after a real
+    // (uncontrolled) short delay — waiting for that proves the snapshot was
+    // taken before start(), not after (a too-late snapshot would just
+    // re-capture the moved value and the "restore" below would be a no-op).
+    await waitFor(() => expect(useSimulationStore.getState().sel).not.toBe('p1'))
+    // The real "■ Stop" control (SimAutoRunOverlay) calls the same
+    // player.stop() that a natural run completion also calls internally —
+    // the one place `running` transitions back to false either way. jsdom
+    // has no CSS engine, so both the desktop board and the mobile fallback
+    // stay mounted at once (each with its own overlay instance sharing the
+    // same underlying player) — click the first, matching this file's
+    // established getAllByText pattern for the same reason.
+    fireEvent.click(screen.getAllByRole('button', { name: /■ Stop/i })[0])
+    expect(useSimulationStore.getState().sel).toBe('p1')
+    expect(
+      screen.getByRole('button', { name: /Play Discovery & Inventory now/i })
+    ).toBeInTheDocument()
+  })
+
+  it('does not touch sel on desktop (isMobileShell false) — watch is left to autoRunPlayer alone', () => {
+    useSimulationStore.setState({ sel: 'p1' })
+    renderPage()
+    // With the mobile shell off, the switcher itself must not render — the
+    // snapshot/restore effect has nothing to gate without it, and desktop's
+    // own free phase ladder makes it unnecessary.
+    expect(
+      screen.queryByRole('group', { name: /choose a playable phase/i })
+    ).not.toBeInTheDocument()
   })
 })

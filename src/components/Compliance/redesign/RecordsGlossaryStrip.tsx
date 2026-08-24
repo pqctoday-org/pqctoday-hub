@@ -4,45 +4,7 @@
 // hidden "Glossary" toggle — these six terms gate comprehension of the whole
 // page, so they stay on-screen. Each chip carries its full definition in a
 // title tooltip.
-
-interface GlossaryTerm {
-  term: string
-  short: string
-  def: string
-}
-
-const TERMS: GlossaryTerm[] = [
-  {
-    term: 'FIPS 140-3',
-    short: 'module validation',
-    def: 'NIST cryptographic module validation standard (supersedes 140-2). CMVP certifies the whole module. Required for US federal procurement.',
-  },
-  {
-    term: 'ACVP',
-    short: 'algorithm testing',
-    def: 'Automated Cryptographic Validation Protocol — CAVP algorithm-level testing. Prerequisite for a FIPS 140-3 module cert.',
-  },
-  {
-    term: 'CC',
-    short: 'product evaluation',
-    def: 'Common Criteria (ISO/IEC 15408). Issued under national schemes, mutually recognised under CCRA up to EAL2/EAL4.',
-  },
-  {
-    term: 'EUCC',
-    short: 'EU CC scheme',
-    def: 'European Union Common Criteria scheme, operative 2024 under the Cybersecurity Act. Supersedes SOG-IS inside the EU.',
-  },
-  {
-    term: 'CNSA 2.0',
-    short: 'NSS mandate',
-    def: 'NSA Commercial National Security Algorithm suite v2.0 — binding PQC requirements for US National Security Systems, full transition by 2035.',
-  },
-  {
-    term: 'HNDL',
-    short: 'harvest-now-decrypt-later',
-    def: 'Adversaries collect ciphertext today and decrypt once a quantum computer exists — the threat driving near-term migration of long-lived data.',
-  },
-]
+import { RECORDS_GLOSSARY } from '@/data/recordsGlossary'
 
 export function RecordsGlossaryStrip() {
   return (
@@ -50,7 +12,7 @@ export function RecordsGlossaryStrip() {
       <span className="text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
         Glossary
       </span>
-      {TERMS.map((t) => (
+      {RECORDS_GLOSSARY.map((t) => (
         <span
           key={t.term}
           title={t.def}
