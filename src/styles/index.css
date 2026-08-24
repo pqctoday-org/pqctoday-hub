@@ -134,7 +134,14 @@
      --z-index-dialog, same as every other modal in the app — the plan's
      "one sheet at a time" rule means no separate stacking range is needed. */
   --z-index-mobile-dock: 72;
-  --mobile-nav-height: 77px;
+  /* 2026-08-24 audit R5: was a flat 77px (only correct for exactly a 22px
+     safe-area inset). MobileBottomBar's own height + padding-bottom already
+     summed to this formula in practice, but the fixed constant squeezed the
+     bar's actual tab content on any device with a taller home-indicator
+     inset. Single source of truth — MobileWorkshopDock's two `bottom:
+     var(--mobile-nav-height)` offsets and MainLayout's scroll clearance
+     both read this same var, so fixing it here keeps all three in sync. */
+  --mobile-nav-height: calc(55px + max(22px, env(safe-area-inset-bottom)));
 }
 
 @layer base {

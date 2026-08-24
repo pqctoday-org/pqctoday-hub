@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import type { ForYouGroupId } from '@/components/Layout/railNav'
 import { mobileNavTab } from '../mobileTokens'
 import { MobileGroupPanel } from './MobileGroupPanel'
+import { mobileGroupIdForPath } from './mobileNavGroups'
 
 const GROUP_TABS: { id: ForYouGroupId; label: string; icon: typeof ArrowRightLeft }[] = [
   { id: 'workflow', label: 'Workflow', icon: ArrowRightLeft },
@@ -31,6 +32,12 @@ export function MobileBottomBar({ persona }: MobileBottomBarProps) {
 
   const isActive = (path: string) =>
     path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
+  // 2026-08-24 audit R5: a tab only lit up while its own sheet was open —
+  // navigating to a group's page some other way (a card tap, a deep link)
+  // left every tab dark, even though the current route genuinely belongs
+  // to one of the three groups. Same real resolver MobileHeader's crumb
+  // already reads, not a new gate.
+  const currentGroupId = mobileGroupIdForPath(location.pathname)
 
   return (
     <>
@@ -69,7 +76,7 @@ export function MobileBottomBar({ persona }: MobileBottomBarProps) {
             type="button"
             variant="ghost"
             onClick={() => setOpenGroup(id)}
-            className={mobileNavTab({ active: openGroup === id })}
+            className={mobileNavTab({ active: openGroup === id || currentGroupId === id })}
             aria-expanded={openGroup === id}
             aria-haspopup="dialog"
           >

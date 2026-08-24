@@ -1335,9 +1335,13 @@ export const MainLayout = () => {
             // scroll containers") — only when it's actually rendered. Now
             // rendered during first run too (see MobileHeader comment above),
             // so this only excludes the Curious-mobile takeover.
-            isMobileShell &&
-              !isCuriousMobileTakeover &&
-              'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom))]'
+            //
+            // 2026-08-24 audit R5: --mobile-nav-height already resolves to
+            // `55px + max(22px, env(safe-area-inset-bottom))` (index.css) —
+            // it already includes the safe-area inset. Adding a second
+            // `+env(safe-area-inset-bottom)` here double-counted it,
+            // over-padding the scroll area by up to the full inset again.
+            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]'
           )}
         >
           {isCuriousMobileTakeover ? (
