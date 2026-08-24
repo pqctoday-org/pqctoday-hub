@@ -182,8 +182,18 @@ export default defineConfig([
                 '!@/components/Layout',
                 '@/components/Layout/*',
                 '!@/components/Layout/railNav',
-                // usePatentKpis.ts (Patents/redesign) — pure KPI derivation hook, no JSX.
+                // usePatentKpis.ts (Patents/redesign) / patentColumns.ts
+                // (isPqcPatent) — pure logic, no JSX. Real bug found and
+                // fixed 2026-08-23 (Phase 7, Patents screen): this block was
+                // missing the `@/components/Patents/*` re-block line the
+                // doc comment above mandates — `!@/components/Patents` alone
+                // silently allowed the WHOLE Patents directory through
+                // (PatentsTable.tsx, PatentsViewRedesign.tsx, real desktop
+                // views), not just usePatentKpis. Verified against the
+                // `ignore` package before and after this fix.
                 '!@/components/Patents',
+                '@/components/Patents/*',
+                '!@/components/Patents/patentColumns',
                 '!@/components/Patents/redesign',
                 '@/components/Patents/redesign/*',
                 '!@/components/Patents/redesign/usePatentKpis',

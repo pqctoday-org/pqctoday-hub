@@ -43,6 +43,8 @@ import { PatentDetailDrawer } from './PatentDetailDrawer'
 import { PatentsRecentlyAdded } from './PatentsRecentlyAdded'
 import { PatentsRoleLens } from '../PatentsRoleLens'
 import { PQC_ONLY_LS_KEY, SCOPE_PARAM, readPqcOnly, readScopeParam } from '@/data/patentsScope'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobilePatentsView } from '@/components/Mobile/screens/MobilePatentsView'
 
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
@@ -130,6 +132,8 @@ function readSavedSort(): { key: SortKey; dir: SortDir } {
 }
 
 export function PatentsViewRedesign() {
+  // Mobile UX layer (Phase 7).
+  const isMobileShell = useIsMobileShell()
   const [params, setParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const activeTab = params.get('tab') ?? 'insights'
@@ -383,6 +387,15 @@ export function PatentsViewRedesign() {
     })
     return () => clearPageActions()
   }, [dataSource, handleExport])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). PatentsViewRedesign takes
+  // no props and is never embedded in the simulation, so unlike Threats/
+  // Library this needs no simEmbed-equivalent guard.
+  if (isMobileShell) {
+    return <MobilePatentsView />
+  }
 
   return (
     <div className="animate-fade-in space-y-4 pb-24">
