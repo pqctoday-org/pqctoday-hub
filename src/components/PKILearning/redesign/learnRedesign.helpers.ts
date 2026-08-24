@@ -144,3 +144,18 @@ export function computePathProgress(
     capstoneUnlocked: essentialsComplete,
   }
 }
+
+/**
+ * 2026-08-24 audit R5: was duplicated verbatim in MyPathView.tsx (desktop)
+ * and MobileMyPathView.tsx, and rounded to the nearest hour — 190 minutes
+ * read as "~3h", silently dropping 10 real minutes. Now shared, and keeps
+ * the real minutes instead of rounding them away.
+ */
+export function formatHours(minutes: number): string {
+  const total = Math.max(1, Math.round(minutes))
+  const h = Math.floor(total / 60)
+  const m = total % 60
+  if (h === 0) return `${m}m`
+  if (m === 0) return `${h}h`
+  return `${h}h ${m}m`
+}

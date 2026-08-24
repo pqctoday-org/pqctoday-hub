@@ -23,7 +23,11 @@ import { MODULE_CATALOG, MODULE_STEP_COUNTS } from '../moduleData'
 import { usePersonaPathItems } from '../usePersonaPathItems'
 import { PersonaPathView, computeNextIncompleteModuleId } from '../PersonaPathView'
 import { ProgressDial } from './ProgressDial'
-import { computePathProgress, CHECKPOINT_PASS_THRESHOLD } from './learnRedesign.helpers'
+import {
+  computePathProgress,
+  CHECKPOINT_PASS_THRESHOLD,
+  formatHours,
+} from './learnRedesign.helpers'
 
 interface MyPathViewProps {
   personaId: PersonaId
@@ -33,8 +37,6 @@ interface MyPathViewProps {
 
 /** Essentials vs Full track. Persisted in the URL (?tier=full); Essentials is the default. */
 type Tier = 'essentials' | 'full'
-
-const formatHours = (minutes: number): string => `~${Math.max(1, Math.round(minutes / 60))}h`
 
 /**
  * "My Path" — answers "what should I do next?". A persona-driven journey:

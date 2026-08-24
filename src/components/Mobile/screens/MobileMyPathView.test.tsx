@@ -100,7 +100,10 @@ describe('MobileMyPathView — Full track (phased, with checkpoint locking)', ()
     // incomplete phase (matches desktop's own defaultExpanded=containsNext
     // behavior) — expand this one explicitly to see its now-unlocked row.
     fireEvent.click(screen.getByText(phase.title))
-    expect(screen.getByRole('button', { name: 'Take quiz' })).toBeEnabled()
+    const takeQuiz = screen.getByRole('button', { name: 'Take quiz' })
+    expect(takeQuiz).toBeEnabled()
+    // 2026-08-24 audit R5: was h-8 (32px), under the 44px touch-target floor.
+    expect(takeQuiz).toHaveClass('h-11')
   })
 
   it('shows "Review quiz", not locked, once the checkpoint is already passed — even without literal module completion', () => {

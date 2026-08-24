@@ -11,6 +11,7 @@ import { usePersonaPathItems } from '@/components/PKILearning/usePersonaPathItem
 import {
   computePathProgress,
   isCheckpointPassed,
+  formatHours,
 } from '@/components/PKILearning/redesign/learnRedesign.helpers'
 import { MobileProgress } from '../primitives/Progress'
 import { cn } from '@/lib/utils'
@@ -18,8 +19,6 @@ import { cn } from '@/lib/utils'
 export interface MobileMyPathViewProps {
   persona: PersonaId
 }
-
-const formatHours = (minutes: number): string => `~${Math.max(1, Math.round(minutes / 60))}h`
 
 /**
  * "My Path" body (handoff screen 2, Journey view — the plan's own §Phase 5
@@ -298,7 +297,7 @@ export function MobileMyPathView({ persona }: MobileMyPathViewProps) {
                               state: { checkpointLabel: `Checkpoint quiz — ${phase.title}` },
                             })
                           }
-                          className="h-8 shrink-0 rounded-lg px-2.5 text-[11px] font-bold"
+                          className="h-11 shrink-0 rounded-lg px-2.5 text-[11px] font-bold"
                         >
                           {isPassed ? 'Review quiz' : isLocked ? 'Locked' : 'Take quiz'}
                         </Button>

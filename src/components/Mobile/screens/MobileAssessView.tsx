@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle, Laptop } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
@@ -187,12 +187,12 @@ export function MobileAssessView() {
         <p className="max-w-xs text-[11.5px] leading-relaxed text-muted-foreground">
           Your answers are saved. Open the report for your risk score, deadlines and roadmap.
         </p>
-        <a
-          href="/report"
+        <Link
+          to="/report"
           className="mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-gradient-to-r from-secondary to-primary px-5 text-[12.5px] font-bold text-primary-foreground"
         >
           View report
-        </a>
+        </Link>
         <Button
           type="button"
           variant="ghost"

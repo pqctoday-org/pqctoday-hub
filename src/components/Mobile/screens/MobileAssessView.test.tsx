@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter, Routes, Route } from 'react-router'
 import { MobileAssessView } from './MobileAssessView'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
@@ -109,6 +109,41 @@ describe('MobileAssessView', () => {
     fireEvent.click(screen.getByRole('button', { name: /Generate my report/ }))
     expect(screen.getByText('Assessment complete')).toBeInTheDocument()
     expect(useAssessmentFormStore.getState().assessmentStatus).toBe('complete')
+  })
+
+  // 2026-08-24 audit R5: "View report" used to be a raw <a href="/report">,
+  // which forces a full page reload instead of client-side SPA navigation.
+  // Rendering a real /report stub alongside MobileAssessView and clicking
+  // through proves react-router's Link actually navigated client-side —
+  // a raw <a> would leave jsdom on the assess route (or throw "Not
+  // implemented: navigation" for a real full-page nav attempt).
+  it('"View report" navigates client-side via a real router Link, not a full page reload', () => {
+    useAssessmentFormStore.setState({
+      industry: 'Technology',
+      country: 'United States',
+      currentCryptoCategories: ['Key Exchange'],
+      dataSensitivity: ['medium'],
+      migrationStatus: 'planning',
+    })
+    render(
+      <MemoryRouter initialEntries={['/assess']}>
+        <Routes>
+          <Route path="/assess" element={<MobileAssessView />} />
+          <Route path="/report" element={<p>Report stub</p>} />
+        </Routes>
+      </MemoryRouter>
+    )
+    for (let i = 0; i < 6; i++) {
+      const finishOrNext = screen.getByRole('button', { name: /Next|Finish/ })
+      if (finishOrNext.textContent?.includes('Finish')) break
+      fireEvent.click(finishOrNext)
+    }
+    fireEvent.click(screen.getByRole('button', { name: /Finish/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Generate my report/ }))
+    const viewReport = screen.getByRole('link', { name: 'View report' })
+    expect(viewReport).toHaveAttribute('href', '/report')
+    fireEvent.click(viewReport)
+    expect(screen.getByText('Report stub')).toBeInTheDocument()
   })
 
   it("states the real corrected comprehensive-track step count (13, not the mockup's 14)", () => {
