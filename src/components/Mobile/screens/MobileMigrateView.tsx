@@ -18,6 +18,7 @@ import { proofFreshness } from '@/components/Migrate/Workbench/proofFreshness'
 import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPlan'
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
+import { useVendorConcentrationRisks } from '@/components/Migrate/Workbench/vendorConcentrationRisk'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 type Tab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
@@ -83,14 +84,17 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * export, byte-identical output to desktop's).
  *
  * The Vendor risk tab's 4 real risk signals (single-source domains, vendor
- * concentration, certification gap, geographic concentration) are
- * recomputed here from the same real primitives VendorConcentrationRiskPanel
- * uses — that panel's own computation isn't exported, so this is a parallel
- * computation over the identical real data (REPLACE_ASSETS, productsForDomain,
- * productPqcStatus, softwareData, vendorMap, productFipsBadge), not a
- * reimplementation with invented numbers. `SupplyChainRiskMatrix` (that
- * tab's other real sub-view, per its own comment "a different-shaped view of
- * the SAME tab") is dropped, stated below.
+ * concentration, certification gap, geographic concentration) reuse
+ * useVendorConcentrationRisks() verbatim — the same hook
+ * VendorConcentrationRiskPanel renders on desktop, extracted to a pure
+ * module (2026-08-24 audit fix) so both surfaces compute identical numbers
+ * AND identical severity thresholds from the same catalog data. A prior
+ * version of this file carried a hand-copied severity computation with
+ * different thresholds (25/50/40 vs desktop's 40/30/50) — the same vendor
+ * data could read "severe" on a phone and calm on a laptop; that's the bug
+ * this reuse closes. `SupplyChainRiskMatrix` (that tab's other real
+ * sub-view, per its own comment "a different-shaped view of the SAME tab")
+ * is dropped, stated below.
  *
  * Stated cuts: foundation-domain browsing (8 secondary domains beyond the 10
  * "what you run" assets), full `ProductDetail` expansion (certifications/
@@ -636,84 +640,11 @@ function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorN
 }
 
 function MobileVendorRiskTab() {
-  const cards = useMemo(() => {
-    const singleSource = REPLACE_ASSETS.filter((asset) => {
-      const gaCount = productsForDomain(asset.id).filter(
-        (p) => productPqcStatus(p).status === 'ga'
-      ).length
-      return gaCount === 1
-    })
-
-    const gaProducts = softwareData.filter((p) => productPqcStatus(p).status === 'ga')
-    const gaByVendor = new Map<string, number>()
-    for (const p of gaProducts) {
-      if (!p.vendorId) continue
-      gaByVendor.set(p.vendorId, (gaByVendor.get(p.vendorId) ?? 0) + 1)
-    }
-    const topVendorEntry = [...gaByVendor.entries()].sort((a, b) => b[1] - a[1])[0]
-    const topVendor = topVendorEntry ? vendorMap.get(topVendorEntry[0]) : undefined
-    const topVendorShare =
-      topVendorEntry && gaProducts.length > 0
-        ? Math.round((topVendorEntry[1] / gaProducts.length) * 100)
-        : 0
-
-    const gaWithoutFips = gaProducts.filter((p) => productFipsBadge(p) === null)
-    const certGapPct =
-      gaProducts.length > 0 ? Math.round((gaWithoutFips.length / gaProducts.length) * 100) : 0
-
-    const usedVendors = [...vendorMap.values()].filter((v) => (v.productCount ?? 0) > 0)
-    const byCountry = new Map<string, number>()
-    for (const v of usedVendors) {
-      byCountry.set(v.hqCountry, (byCountry.get(v.hqCountry) ?? 0) + 1)
-    }
-    const topCountryEntry = [...byCountry.entries()].sort((a, b) => b[1] - a[1])[0]
-    const topCountryShare =
-      topCountryEntry && usedVendors.length > 0
-        ? Math.round((topCountryEntry[1] / usedVendors.length) * 100)
-        : 0
-
-    return [
-      {
-        key: 'single-source',
-        title: 'Single-source domains',
-        headline: `${singleSource.length} of ${REPLACE_ASSETS.length}`,
-        detail:
-          singleSource.length > 0
-            ? `${singleSource.map((a) => a.label).join(', ')} — exactly one GA product covers each.`
-            : 'No domain depends on exactly one GA product.',
-        severe: singleSource.length > 0,
-      },
-      {
-        key: 'vendor-concentration',
-        title: 'Vendor concentration',
-        headline: topVendor ? `${topVendorShare}%` : 'n/a',
-        detail: topVendor
-          ? `${topVendor.vendorDisplayName || topVendor.vendorName} supplies ${topVendorShare}% of GA quantum-safe products in the catalog.`
-          : 'No GA products with a recorded vendor yet.',
-        severe: topVendorShare >= 25,
-      },
-      {
-        key: 'cert-gap',
-        title: 'Certification gap',
-        headline: `${certGapPct}%`,
-        detail: `${certGapPct}% of GA quantum-safe products have no FIPS validation on record.`,
-        severe: certGapPct >= 50,
-      },
-      {
-        key: 'geographic',
-        title: 'Geographic concentration',
-        headline: topCountryEntry ? `${topCountryShare}%` : 'n/a',
-        detail: topCountryEntry
-          ? `${topCountryShare}% of catalog vendors are headquartered in ${topCountryEntry[0]}.`
-          : 'No vendor HQ data yet.',
-        severe: topCountryShare >= 40,
-      },
-    ]
-  }, [])
+  const risks = useVendorConcentrationRisks()
 
   return (
     <div className="flex flex-col gap-2.5">
-      {cards.map((c) => (
+      {risks.map((c) => (
         <div key={c.key} className="glass-panel p-3.5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-[12px] font-bold text-foreground">{c.title}</p>

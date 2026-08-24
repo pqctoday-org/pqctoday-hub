@@ -284,6 +284,7 @@ export default defineConfig([
                 '!@/components/Migrate/Workbench/useMigrationPlan',
                 '!@/components/Migrate/Workbench/waves',
                 '!@/components/Migrate/Workbench/cbomExport',
+                '!@/components/Migrate/Workbench/vendorConcentrationRisk',
                 // obligationsModel.ts / roleLens.ts (Compliance/obligations)
                 // and requirementsModel.ts (Compliance/requirements) — pure
                 // logic, no JSX. cswp39Data.ts (Compliance root) — pure data.
