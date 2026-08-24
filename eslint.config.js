@@ -205,6 +205,24 @@ export default defineConfig([
                 '!@/components/About',
                 '@/components/About/*',
                 '!@/components/About/aboutData',
+                // workbenchCatalog.ts / productStatus.ts / proofFreshness.ts /
+                // useMigrationPlan.ts / waves.ts / cbomExport.ts
+                // (Migrate/Workbench) — pure logic/data/hooks, no JSX. The
+                // same product-domain lookup, PQC/FIPS badge logic, proof-
+                // freshness labeling, plan/wave posture, wave copy and CBOM
+                // export every desktop Migrate tab already reads, so the
+                // mobile screen's numbers and export output can never drift
+                // from desktop's.
+                '!@/components/Migrate',
+                '@/components/Migrate/*',
+                '!@/components/Migrate/Workbench',
+                '@/components/Migrate/Workbench/*',
+                '!@/components/Migrate/Workbench/workbenchCatalog',
+                '!@/components/Migrate/Workbench/productStatus',
+                '!@/components/Migrate/Workbench/proofFreshness',
+                '!@/components/Migrate/Workbench/useMigrationPlan',
+                '!@/components/Migrate/Workbench/waves',
+                '!@/components/Migrate/Workbench/cbomExport',
                 // obligationsModel.ts / roleLens.ts (Compliance/obligations)
                 // and requirementsModel.ts (Compliance/requirements) — pure
                 // logic, no JSX. cswp39Data.ts (Compliance root) — pure data.
