@@ -189,4 +189,42 @@ describe('MobileWorkshopDock', () => {
     expect(useWorkshopStore.getState().completedStepIds).toContain('p-compliance')
     await waitFor(() => expect(container).toBeEmptyDOMElement())
   })
+
+  // 2026-08-24 audit R4.5: flattenFlow is recomputed live from
+  // persona/industry/experience — if a reader changes any of those
+  // mid-workshop, the remembered currentStepId can stop resolving in the
+  // newly-flattened list. Previously this made both the dock (`mode !==
+  // 'running'` check never fires — it's still 'running') AND
+  // MobileWorkshopEntry (only shows for idle/paused) return null: the
+  // workshop simply vanished, with running mode stuck and no way back.
+  // 'nonexistent-step' is not a real step in FIXTURE_FLOW — the same
+  // structural situation a context change produces, reached directly.
+  describe('stranded running state (audit R4.5)', () => {
+    it('shows a recovery bar instead of vanishing when currentStepId no longer resolves', async () => {
+      useWorkshopStore.getState().start('fixture-flow', 'nonexistent-step', 'US')
+      renderDock()
+      expect(await screen.findByText('Workshop paused')).toBeInTheDocument()
+      expect(screen.getByText(/your context changed/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Resume from start' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument()
+    })
+
+    it('"Resume from start" sets currentStepId to the real first step of the live-flattened flow', async () => {
+      useWorkshopStore.getState().start('fixture-flow', 'nonexistent-step', 'US')
+      renderDock()
+      fireEvent.click(await screen.findByRole('button', { name: 'Resume from start' }))
+      // Flattened order: intro-01, p-compliance, a1, a2, close-01.
+      expect(useWorkshopStore.getState().currentStepId).toBe('intro-01')
+      expect(useWorkshopStore.getState().mode).toBe('running')
+    })
+
+    it('"Leave" fully exits (not pauses) — there is no valid step to keep a place at', async () => {
+      useWorkshopStore.getState().start('fixture-flow', 'nonexistent-step', 'US')
+      const { container } = renderDock()
+      fireEvent.click(await screen.findByRole('button', { name: 'Leave' }))
+      expect(useWorkshopStore.getState().mode).toBe('idle')
+      expect(useWorkshopStore.getState().currentFlowId).toBeNull()
+      await waitFor(() => expect(container).toBeEmptyDOMElement())
+    })
+  })
 })

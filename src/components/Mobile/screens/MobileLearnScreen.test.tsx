@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { MobileLearnScreen } from './MobileLearnScreen'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { PERSONAS } from '@/data/learningPersonas'
+
+// MobileWorkshopEntry has its own dedicated, thoroughly-fixtured test suite
+// (MobileWorkshopEntry.test.tsx) covering its internal idle/paused/running
+// gating — mocked here to a simple marker so this file only asserts on what
+// R4.5 actually changed: WHERE it renders, not its own internal logic.
+vi.mock('../shell/MobileWorkshopEntry', () => ({
+  MobileWorkshopEntry: () => <div data-testid="workshop-entry-marker" />,
+}))
 
 function renderScreen(initialPath = '/learn') {
   return render(
@@ -50,5 +58,27 @@ describe('MobileLearnScreen', () => {
   it('honors a real ?mode= deep link, mirroring desktop’s convention', () => {
     renderScreen('/learn?mode=browse')
     expect(screen.getByRole('tab', { name: 'Browse all', selected: true })).toBeInTheDocument()
+  })
+
+  // 2026-08-24 audit R4.5: the guided workshop was reachable only from Home
+  // — invisible from the education hub itself. MobileWorkshopEntry already
+  // self-gates (renders nothing idle-with-no-flow/running/video); this only
+  // asserts on placement, not on that internal logic (covered separately).
+  it('does not render the workshop entry with no persona picked yet', () => {
+    renderScreen()
+    expect(screen.queryByTestId('workshop-entry-marker')).not.toBeInTheDocument()
+  })
+
+  it('renders the workshop entry on the My Path tab once a persona is picked', () => {
+    usePersonaStore.getState().setPersona('executive')
+    renderScreen()
+    expect(screen.getByTestId('workshop-entry-marker')).toBeInTheDocument()
+  })
+
+  it('does not render the workshop entry on Browse all or Guided routing', () => {
+    usePersonaStore.getState().setPersona('executive')
+    renderScreen()
+    fireEvent.click(screen.getByRole('tab', { name: 'Browse all' }))
+    expect(screen.queryByTestId('workshop-entry-marker')).not.toBeInTheDocument()
   })
 })

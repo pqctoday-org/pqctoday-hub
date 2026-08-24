@@ -73,6 +73,7 @@ export function MobileWorkshopDock() {
   const setStep = useWorkshopStore((s) => s.setStep)
   const markStepComplete = useWorkshopStore((s) => s.markStepComplete)
   const pause = useWorkshopStore((s) => s.pause)
+  const exit = useWorkshopStore((s) => s.exit)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedIndustry = usePersonaStore((s) => s.selectedIndustry)
@@ -97,7 +98,50 @@ export function MobileWorkshopDock() {
   )
   const currentIndex = findStepIndex(steps, currentStepId)
   const currentStep: WorkshopStep | null = currentIndex >= 0 ? steps[currentIndex] : null
-  if (!currentStep) return null
+
+  // Stranded state (2026-08-24 audit R4.5): flattenFlow is recomputed above
+  // from the LIVE persona/industry/experience — if the reader changes any of
+  // those mid-workshop, the remembered currentStepId may no longer exist in
+  // the newly-flattened step list. Previously this just returned null: both
+  // the dock AND MobileWorkshopEntry (which only shows for idle/paused, not
+  // 'running') vanished with no way to resume or leave — the workshop was
+  // simply gone. Surface a real recovery bar instead.
+  if (!currentStep) {
+    return (
+      <div
+        className={cn(mobileDockPanel, 'w-full px-4 py-3 text-center')}
+        style={{ bottom: 'var(--mobile-nav-height)' }}
+        role="alert"
+      >
+        <p className="text-[12px] font-bold text-primary-foreground">Workshop paused</p>
+        <p className="mt-0.5 text-[10.5px] text-primary-foreground/80">
+          Your context changed, so this step no longer applies.
+        </p>
+        <div className="mt-2.5 flex items-center justify-center gap-2">
+          {steps.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setStep(steps[0].id)}
+              className="h-9 border-primary-foreground/30 text-[11.5px] font-bold text-primary-foreground"
+            >
+              Resume from start
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={exit}
+            className="h-9 text-[11.5px] font-bold text-primary-foreground/80"
+          >
+            Leave
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   const isPassed = completedStepIds.includes(currentStep.id)
   const onDestination = isOnStepRoute(currentStep, location.pathname)

@@ -8,6 +8,7 @@ import type { PersonaId } from '@/data/learningPersonas'
 import { cn } from '@/lib/utils'
 import { MobileMyPathView } from './MobileMyPathView'
 import { MobileRoleSelection } from '../shell/MobileRoleSelection'
+import { MobileWorkshopEntry } from '../shell/MobileWorkshopEntry'
 
 type Mode = 'path' | 'browse' | 'guided'
 
@@ -91,7 +92,16 @@ export function MobileLearnScreen() {
 
       {mode === 'path' &&
         (selectedPersona ? (
-          <MobileMyPathView persona={selectedPersona as PersonaId} />
+          <>
+            <MobileMyPathView persona={selectedPersona as PersonaId} />
+            {/* Guided workshop was reachable only from Home (2026-08-24 audit
+                R4.5) — invisible from the education hub itself. Same
+                self-gating entry Home already renders (idle/paused states
+                only; nothing while running, since the dock owns that). */}
+            <div className="mt-4 border-t border-border pt-4">
+              <MobileWorkshopEntry />
+            </div>
+          </>
         ) : (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-4 py-6 text-center">
             <p className="text-[12.5px] text-muted-foreground">
