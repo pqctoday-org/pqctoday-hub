@@ -75,4 +75,29 @@ describe('MainLayout — mobile UX layer isolation (Rule 1)', () => {
     expect(await screen.findByRole('button', { name: 'Search' })).toBeInTheDocument()
     expect(screen.queryByText("Who's asking?")).not.toBeInTheDocument()
   })
+
+  // 2026-08-24 audit R2.1: `.container` (index.css) carries its own
+  // `px-4 md:px-8`, so this element's classes were stacking with every
+  // Mobile/* screen's own `px-4` — 32px of side padding on a 402px viewport
+  // instead of the handoff's 16px. <main> must contribute zero padding on
+  // mobile (screens own it) while staying byte-identical on desktop.
+  it('flag off: <main> keeps its container/padding classes (desktop untouched)', async () => {
+    mockUseIsMobileShell.mockReturnValue(false)
+    usePersonaStore.getState().setPersona('executive')
+    renderLayout('/timeline')
+    const main = await screen.findByRole('main')
+    expect(main.className).toContain('container')
+    expect(main.className).toContain('px-4')
+    expect(main.className).toContain('py-4')
+  })
+
+  it('flag on: <main> contributes no container/padding classes — screens own their own spacing', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    usePersonaStore.getState().skipPersonalization()
+    renderLayout('/timeline')
+    const main = await screen.findByRole('main')
+    expect(main.className).not.toContain('container')
+    expect(main.className).not.toContain('px-4')
+    expect(main.className).not.toContain('py-4')
+  })
 })

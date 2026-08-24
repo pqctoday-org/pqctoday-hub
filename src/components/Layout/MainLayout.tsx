@@ -1383,7 +1383,21 @@ export const MainLayout = () => {
           ) : (
             <>
               {/* Main Content Area */}
-              <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+              <main
+                id="main-content"
+                className={cn(
+                  // mobile-ux-layer (2026-08-24 audit R2.1): the `.container`
+                  // utility itself carries `px-4 md:px-8` (index.css), so this
+                  // element's classes and every Mobile/* screen's own
+                  // `px-4 pt-4` were stacking — 32px of side padding on a
+                  // 402px viewport (~9% of the width, double the handoff's
+                  // specified 16px) plus doubled top padding. Screens already
+                  // own their spacing; on mobile this element contributes
+                  // none, rather than trimming 19 screen roots individually.
+                  !isMobileShell && 'container py-4 px-4 md:py-8 md:px-8'
+                )}
+                role="main"
+              >
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
 
