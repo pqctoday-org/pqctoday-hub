@@ -802,9 +802,12 @@ export const MainLayout = () => {
             // relative order, appended after the prioritized ones.
             // '/explore' visually moved from Practice to Workflow, first
             // position (2026-08-01 follow-up: "Explore goes first in
-            // workflow section") — still classified 'practice' in
-            // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
-            // reassignment, not a reachability change.
+            // workflow section", reaffirmed 2026-08-23 after a same-day
+            // "explore after learn" experiment was reverted: "move back
+            // explore into workflow for both mobile ux and full page ux") —
+            // still classified 'practice' in FOR_YOU_PATH_GROUP (railNav.ts),
+            // this is purely a rendering reassignment, not a reachability
+            // change.
             // '/compliance' placed right before '/migrate' (2026-08-02
             // follow-up: "compliance should be first in workflow section
             // before migrate") — it was previously omitted from this

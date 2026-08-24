@@ -147,7 +147,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   'openssl-studio': {
     title: 'OpenSSL Studio',
     summary:
-      'Interactive OpenSSL v3.6.2 environment running entirely in your browser via WebAssembly. Build and execute real OpenSSL commands with a visual workbench.',
+      'Interactive OpenSSL v3.6.3 environment running entirely in your browser via WebAssembly. Build and execute real OpenSSL commands with a visual workbench.',
     sections: [
       {
         heading: 'Command Categories',
