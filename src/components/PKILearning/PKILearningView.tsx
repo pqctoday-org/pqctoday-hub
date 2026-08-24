@@ -7,7 +7,6 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
-import { ModuleProgressHeader } from './ModuleProgressHeader'
 import { ModuleCompletionWatcher } from './ModuleCompletionWatcher'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
@@ -173,19 +172,6 @@ export const PKILearningView: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
         {/* Main module content */}
         <div ref={contentRef} className="flex-1 min-w-0 w-full">
-          {/* Dual progress header bar — mobile only slim header. Fully opaque
-              (no backdrop-blur translucency) so scrolling content reads as
-              cleanly underneath the bar rather than merging into it, and a
-              larger bottom margin (was mb-4) gives the section/buttons that
-              follow real extra clearance below the bar's reserved space for
-              the full scroll range, not just at rest. Entire wrapper stays
-              lg:hidden so none of this affects lg:+ layout. */}
-          {showSidebar && !isCuriousMode && (
-            <div className="lg:hidden sticky top-[60px] z-30 -mx-4 px-4 bg-background pb-2 pt-2 mb-8 border-b border-border/50">
-              <ModuleProgressHeader moduleId={moduleId} />
-            </div>
-          )}
-
           {/* A4 — the completion-card moment (fires once when this module hits
               'completed'; not in the embedded sim). Keyed so each module watches
               only itself. */}
