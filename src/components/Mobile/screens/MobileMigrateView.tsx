@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState, type ReactNode } from 'react'
-import { ArrowRight, Check, FileText, Plus, Search, X } from 'lucide-react'
+import { ArrowRight, Calendar, Check, FileText, Plus, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -354,6 +354,9 @@ function MobilePlanTab({
   const foundationItems = posture.foundations.flatMap((f) =>
     (choice[f.id] ?? []).map((product) => ({ id: f.id, product }))
   )
+  const foundationDomainCount = posture.foundations.filter(
+    (f) => (choice[f.id] ?? []).length > 0
+  ).length
 
   if (posture.plannedAssets.length === 0 && foundationItems.length === 0) {
     return (
@@ -385,6 +388,20 @@ function MobilePlanTab({
           Clear all
         </Button>
       </div>
+
+      {/* 2026-08-24 audit R4.8: foundationItems was computed for the
+          empty-state gate but never rendered — a reader with only
+          foundation selections (no planned assets) could tap "Clear all"
+          with zero visibility into what it removes. Desktop renders a full
+          per-domain section (PlanTab.tsx:276-321); mobile surfaces just the
+          count + where to see the rest, matching the confirmed scope. */}
+      {foundationItems.length > 0 && (
+        <p className="text-[10.5px] text-muted-foreground">
+          Clearing also removes {foundationDomainCount} foundation domain
+          {foundationDomainCount > 1 ? 's' : ''} ({foundationItems.length} selection
+          {foundationItems.length > 1 ? 's' : ''}) not shown here — see them on a laptop.
+        </p>
+      )}
 
       {posture.gaps.length > 0 && (
         <div className="rounded-xl border border-status-error/25 bg-status-error/[0.07] p-3">
@@ -616,6 +633,10 @@ function MobileRoadmapsTab({
 function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorName: string }) {
   const hasRoadmap = roadmapByVendorId.has(vendorId)
   const productCount = useMemo(() => productsForVendor(vendorId).length, [vendorId])
+  // 2026-08-24 audit R4.8: same real field + "None detected" sentinel guard
+  // as VendorRoadmapPanel.tsx:136 (desktop) — a per-vendor dated milestone,
+  // not invented, was the one concrete fact these cards were missing.
+  const targetDates = enrichmentByVendorId.get(vendorId)?.targetMigrationDates
   return (
     <div className="rounded-xl border border-border bg-card p-3">
       <div className="flex items-center justify-between gap-2">
@@ -627,6 +648,12 @@ function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorN
       <p className="mt-1 text-[10.5px] text-muted-foreground">
         {productCount} {productCount === 1 ? 'product' : 'products'} in catalog
       </p>
+      {targetDates && targetDates !== 'None detected' && (
+        <p className="mt-1.5 flex items-start gap-1.5 text-[10.5px] text-muted-foreground">
+          <Calendar size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
+          {targetDates}
+        </p>
+      )}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
 import { getMobilePageActions, pageIdForMobileRoute } from './getMobilePageActions'
+import { FAQ_DATA } from '@/components/FAQ/faqData'
 
 describe('getMobilePageActions', () => {
   it("always includes Assistant, Journey, FAQ, Glossary, What's new and About", () => {
@@ -31,6 +32,16 @@ describe('getMobilePageActions', () => {
   it('omits Sources for a route with no registered ViewType at all', () => {
     const { actions } = getMobilePageActions('/assess')
     expect(actions.map((a) => a.id)).not.toContain('sources')
+  })
+
+  // 2026-08-24 audit R4.8: the FAQ row's sub-label used to hardcode "Four
+  // real questions" — a stale number that would silently drift from the
+  // real FAQ_DATA catalogue every time a question was added or removed.
+  it("the FAQ row's sub-label count matches the real FAQ_DATA question count", () => {
+    const { actions } = getMobilePageActions('/some-route-with-no-gates')
+    const faq = actions.find((a) => a.id === 'faq')!
+    const realCount = FAQ_DATA.reduce((sum, cat) => sum + cat.items.length, 0)
+    expect(faq.sub).toContain(`${realCount} real questions`)
   })
 })
 

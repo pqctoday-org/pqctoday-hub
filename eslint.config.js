@@ -246,6 +246,12 @@ export default defineConfig([
                 // exception lives in the pre-existing common/ block below —
                 // same reasoning: "so dense pages... can offer a 'do this
                 // now' hero".)
+                // faqData.ts (FAQ) — pure data, no JSX. The real FAQ_DATA
+                // catalogue every desktop FAQ view reads, so the ⋯ sheet's
+                // FAQ row count can never drift from the real question count.
+                '!@/components/FAQ',
+                '@/components/FAQ/*',
+                '!@/components/FAQ/faqData',
                 '!@/components/Report',
                 '@/components/Report/*',
                 '!@/components/Report/redesign',

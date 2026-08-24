@@ -427,10 +427,14 @@ function ToolDetailSheetBody({
       )}
 
       <div className="mt-1 flex gap-2.5">
+        {/* Demoted when this device can't run it (2026-08-24 audit R4.8) —
+            it was a full-weight gradient CTA directly under a "will not run
+            on this device" warning, on the one platform (iOS is never
+            Chromium) where that warning fires far more often than desktop. */}
         <Link
           to={`/playground/${tool.id}`}
           className={cn(
-            buttonVariants({ variant: 'gradient' }),
+            buttonVariants({ variant: unmet.length > 0 ? 'outline' : 'gradient' }),
             'h-auto flex-1 rounded-lg py-2.5 font-bold'
           )}
         >

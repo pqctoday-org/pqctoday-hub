@@ -8,6 +8,7 @@ import { softwareData, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { productsForDomain } from '@/components/Migrate/Workbench/workbenchCatalog'
 import { productPqcStatus } from '@/components/Migrate/Workbench/productStatus'
+import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
 
 // Real data throughout. The README's own §9 prose describes a different,
 // already-deleted legacy page — every assertion below is derived from the
@@ -108,5 +109,37 @@ describe('MobileMigrateView', () => {
   it('states what was cut rather than silently dropping it', () => {
     render(<MobileMigrateView />)
     expect(screen.getByText(/The 8 foundation\/infrastructure domains/i)).toBeInTheDocument()
+  })
+
+  // 2026-08-24 audit R4.8: foundationItems was computed for the empty-state
+  // gate but never rendered — a real "Clear all" tap could silently drop
+  // foundation selections a reader never saw. Real domain: 'identity' is
+  // kind:'foundation' in DOMAINS (migrationAssets.ts).
+  it('Plan tab surfaces foundation selections before "Clear all" removes them invisibly', () => {
+    const products = productsForDomain('identity')
+    if (products.length === 0) return
+    useMigrateSelectionStore.setState({ plan: [], choice: {} })
+    useMigrateSelectionStore.getState().chooseProduct('identity', products[0].softwareName)
+    render(<MobileMigrateView />)
+    fireEvent.click(screen.getByText('Plan').closest('button')!)
+    expect(screen.getByText(/Clearing also removes 1 foundation domain/i)).toBeInTheDocument()
+  })
+
+  it('Plan tab shows no foundation-visibility row when nothing but replace assets are planned', () => {
+    useMigrateSelectionStore.setState({ plan: ['tls'], choice: {} })
+    render(<MobileMigrateView />)
+    fireEvent.click(screen.getByText('Plan').closest('button')!)
+    expect(screen.queryByText(/Clearing also removes/i)).not.toBeInTheDocument()
+  })
+
+  it('Vendors tab shows a real dated roadmap milestone line when the vendor has one', () => {
+    render(<MobileMigrateView />)
+    fireEvent.click(screen.getByText('Vendors').closest('button')!)
+    const withDates = [...enrichmentByVendorId.entries()].find(
+      ([, e]) => e.targetMigrationDates && e.targetMigrationDates !== 'None detected'
+    )
+    if (!withDates) return
+    const [, enrichment] = withDates
+    expect(screen.getAllByText(enrichment.targetMigrationDates).length).toBeGreaterThan(0)
   })
 })

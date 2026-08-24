@@ -2,6 +2,9 @@
 import { ROUTE_VIEW_TYPE, ROUTE_PAGE_ID, pageIdForNestedRoute } from '@/data/routePageMeta'
 import type { ViewType } from '@/data/authoritativeSourcesData'
 import type { PageId } from '@/data/userManualData'
+import { FAQ_DATA } from '@/components/FAQ/faqData'
+
+const FAQ_QUESTION_COUNT = FAQ_DATA.reduce((sum, cat) => sum + cat.items.length, 0)
 
 export type MobilePageActionId =
   | 'assistant'
@@ -54,7 +57,11 @@ export function getMobilePageActions(pathname: string): MobilePageActionsResult 
   const actions: MobilePageAction[] = [
     { id: 'assistant', label: 'Assistant', sub: 'Ask a question about this page' },
     { id: 'journey', label: 'Journey', sub: 'Your recent activity, in order' },
-    { id: 'faq', label: 'FAQ', sub: 'Four real questions, including "is this advice?"' },
+    {
+      id: 'faq',
+      label: 'FAQ',
+      sub: `${FAQ_QUESTION_COUNT} real questions, including "is this advice?"`,
+    },
   ]
   if (viewType) {
     actions.push({ id: 'sources', label: 'Sources', sub: "Where this page's data comes from" })
