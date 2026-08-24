@@ -38,6 +38,15 @@ const ROUTES = [
   '/playground',
   '/timeline',
   '/about',
+  // Added 2026-08-24 alongside the Simulation mobile work (Phase 9) — it was
+  // never tracked before, so `compare` has no pre-branch golden for it yet
+  // and will report SKIPPED until a `capture` is run against a clean
+  // origin/main checkout (deliberately not done from this feature branch,
+  // which already carries its own cumulative desktop changes — capturing
+  // here would bake those in as a false "golden" instead of the real
+  // pre-branch baseline). Like /playground, it may also need networkidle
+  // tolerance investigated — both have timed out under this script's wait.
+  '/simulation',
 ]
 
 const SUPPRESS_OVERLAYS = () => {

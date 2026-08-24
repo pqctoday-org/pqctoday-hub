@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { SimulationView } from './SimulationView'
@@ -9,6 +9,16 @@ import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SIM_TREES, flattenTree } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
+
+// mobile-ux-layer: SimulationView is one of the two sanctioned isMobileShell
+// call sites (useIsMobileShell.ts). Defaults false so every existing test
+// above exercises the real desktop board unchanged; the mobile-play describe
+// block below flips it per test, matching MigrationWorkbench.test.tsx's
+// established pattern for the same hook.
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 const renderPage = (initialEntries: string[] = ['/simulation']) =>
   render(
@@ -438,5 +448,80 @@ describe('SimulationView — unified PLAY modal', () => {
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /start a different path/i }))
     expect(screen.getByRole('dialog', { name: /choose how to play/i })).toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer Phase 9 — real interactive play for p0/p1. jsdom has no real
+// CSS engine, so the desktop board (`hidden md:flex`) and whichever phone-block
+// branch is active both stay in the DOM at once (same reason the existing
+// "Budget secured" assertion above already uses getAllByText) — every query
+// here scopes into the `sim-mobile-decide` testid to avoid matching the
+// always-mounted desktop board's own, separate DecisionSection instance.
+describe('SimulationView — mobile-ux-layer real play (p0/p1)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('offers a real "Play" CTA on the read-only overview for p0, the default phase', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    expect(screen.getByRole('button', { name: /Play Executive Mandate now/i })).toBeInTheDocument()
+  })
+
+  it('tapping Play opens a real interactive Decide view wired to the same real store as desktop', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+    expect(within(mobileBoard).getByText('Executive Mandate')).toBeInTheDocument()
+    expect(within(mobileBoard).getByText('Next move — pick the right play')).toBeInTheDocument()
+    fireEvent.click(
+      within(mobileBoard).getByRole('button', { name: /Option [A-C]: Build the business case/ })
+    )
+    expect(within(mobileBoard).getByText(/Right call/)).toBeInTheDocument()
+  })
+
+  it('a wrong pick applies the same real quarter setback the desktop board would apply', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+    const correctBtn = within(mobileBoard).getByRole('button', {
+      name: /Option [A-C]: Build the business case/,
+    })
+    const grid = correctBtn.parentElement as HTMLElement
+    const wrong = within(grid)
+      .getAllByRole('button')
+      .find((b) => !/Build the business case/.test(b.textContent ?? ''))
+    const before = useSimulationStore.getState().q
+    fireEvent.click(wrong!)
+    expect(within(mobileBoard).getByText('✕ Common failure')).toBeInTheDocument()
+    // p0's real cost is 1 quarter (only p1 is 2 — see wrongPickCostQuarters in
+    // SimulationView.tsx); confirms the SAME store mutation desktop applies,
+    // not a mobile-only stub.
+    expect(within(mobileBoard).getByText(/cost you 1 quarter/)).toBeInTheDocument()
+    expect(useSimulationStore.getState().q).not.toBe(before)
+  })
+
+  it('the back control returns to the read-only overview without losing the run', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Overview/i }))
+    expect(screen.queryByTestId('sim-mobile-decide')).not.toBeInTheDocument()
+    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+  })
+
+  it('a phase beyond p0/p1 has no Play CTA — falls back to the existing read-only overview', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p3' })
+    renderPage()
+    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
+    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+  })
+
+  it('with the mobile shell off, the read-only overview never offers a Play CTA', () => {
+    renderPage()
+    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
   })
 })
