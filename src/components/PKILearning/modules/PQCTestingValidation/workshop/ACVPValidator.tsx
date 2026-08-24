@@ -216,14 +216,18 @@ export const ACVPValidator: React.FC = () => {
         <FileBadge size={16} className="text-primary mt-0.5 shrink-0" />
         <div className="text-xs text-muted-foreground space-y-2">
           <p>
-            <span className="font-semibold text-foreground">Simulating:</span> NIST Automated
-            Cryptographic Validation Protocol (ACVP). Running real Known Answer Test (KAT) vectors
-            from{' '}
+            <span className="font-semibold text-foreground">Illustrative simulation:</span> the
+            console below plays back a scripted animation of a NIST Automated Cryptographic
+            Validation Protocol (ACVP) run over the Known Answer Test (KAT) vectors bundled in{' '}
             <code className="text-[10px] bg-background px-1 rounded border border-border">
               /src/data/acvp/
-            </code>{' '}
-            against the internal SoftHSMv3 WebAssembly engine to prove FIPS 140-3 functional
-            correctness.
+            </code>
+            . No cryptography executes here and every entry is marked PASS regardless of content —
+            it shows what an ACVP run looks like, but it is not a real test and proves nothing about
+            FIPS 140-3 correctness. For a genuine pass/fail run against the real SoftHSMv3
+            WebAssembly engine, use the &quot;Run NIST KAT&quot; panel further below, which performs
+            real PKCS#11 operations and compares results byte-for-byte against NIST reference
+            vectors.
           </p>
           <a
             href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/"
@@ -287,11 +291,12 @@ export const ACVPValidator: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              SoftHSMv3 Vector Processing Engine
+              Simulated Vector Processing Console
             </h3>
             <p className="text-xs text-muted-foreground">
-              Target library:{' '}
-              <code className="font-mono text-primary">softhsm_wasm32_module.wasm</code>
+              Illustrative animation only — no{' '}
+              <code className="font-mono text-primary">softhsm_wasm32_module.wasm</code> calls are
+              made here.
             </p>
           </div>
           {status === 'idle' || status === 'done' ? (
@@ -301,12 +306,12 @@ export const ACVPValidator: React.FC = () => {
               className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-xs"
             >
               {status === 'done' ? <RefreshCcw size={14} /> : <Code size={14} />}
-              {status === 'done' ? 'Reset Engine' : `Execute ${activeAlg.vectorCount} Vectors`}
+              {status === 'done' ? 'Reset Simulation' : `Simulate ${activeAlg.vectorCount} Vectors`}
             </Button>
           ) : (
             <div className="flex items-center gap-2 px-4 py-2 bg-muted text-muted-foreground font-bold rounded-lg text-xs border border-border">
               <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              Processing...
+              Simulating...
             </div>
           )}
         </div>
@@ -318,23 +323,24 @@ export const ACVPValidator: React.FC = () => {
         >
           {status === 'idle' && (
             <div className="text-muted-foreground">
-              [SYSTEM] Ready. Select an algorithm and click Execute to start ACVP testing.
+              [SYSTEM] Ready. Select an algorithm and click Simulate to play the illustrative ACVP
+              walkthrough.
             </div>
           )}
           {status !== 'idle' && (
             <>
               <div className="text-primary/80">
-                [system] Loading JSON test vectors {selectedAlg}_test.json
+                [simulation] Loading JSON test vectors {selectedAlg}_test.json
               </div>
               <div>
-                [acvp-parser] Found algorithm definition: {activeAlg.name} ({activeAlg.fips})
+                [simulation] Found algorithm definition: {activeAlg.name} ({activeAlg.fips})
               </div>
               <div>
-                [acvp-parser] Extracted {activeAlg.vectorCount} Known Answer Test vectors from
-                schema.
+                [simulation] Listing {activeAlg.vectorCount} Known Answer Test vectors from schema
+                (no cryptography executes).
               </div>
               <div className="text-primary">
-                [wasm-bridge] Initializing rust_crypto_backend::ACVPHarness...
+                [simulation] Rendering scripted ACVP walkthrough animation...
               </div>
               <div className="border-b border-border my-2 w-full" />
             </>
@@ -351,7 +357,7 @@ export const ACVPValidator: React.FC = () => {
               ))}
               <div className="border-t border-border mt-2 mb-2 w-full" />
               <div className="flex items-center justify-between text-foreground/80">
-                <span>[runner] Executing KAT vectors...</span>
+                <span>[simulation] Playing KAT vector animation...</span>
                 <span>
                   {Math.floor(progress)}% [{Math.floor((progress / 100) * activeAlg.vectorCount)} /{' '}
                   {activeAlg.vectorCount}]
@@ -368,21 +374,23 @@ export const ACVPValidator: React.FC = () => {
           {(status === 'generating' || status === 'done') && (
             <>
               <div className="mt-4 text-status-info font-bold">
-                [acvp-parser] Complete. All {activeAlg.vectorCount} vectors verified successfully.
+                [simulation] Complete. All {activeAlg.vectorCount} entries displayed — no
+                cryptography was executed or verified.
               </div>
-              <div>[acvp-parser] Formatting response syntax to NIST ACVP specifications...</div>
+              <div>[simulation] Formatting illustrative response layout...</div>
             </>
           )}
           {status === 'done' && (
             <>
               <div className="flex items-center gap-2 text-status-success font-bold mt-2">
                 <CheckCircle size={14} />
-                SUCCESS: SoftHSMv3 ({activeAlg.name}) achieved FIPS 140-3 100% vector parity.
+                SIMULATION COMPLETE ({activeAlg.name}) — walkthrough finished. This is not a FIPS
+                140-3 validation result.
               </div>
               <div className="text-muted-foreground mt-1 bg-muted/50 p-2 rounded">
-                Generated response file:{' '}
-                <span className="text-foreground">{selectedAlg}_test.rsp</span> written to virtual
-                FS.
+                Illustrative filename:{' '}
+                <span className="text-foreground">{selectedAlg}_test.rsp</span> — no file is
+                actually written.
               </div>
             </>
           )}
@@ -413,10 +421,10 @@ export const ACVPValidator: React.FC = () => {
             </div>
             <div>
               <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
-                Compliance
+                Result
               </div>
               <div className="text-sm font-semibold flex items-center gap-1 text-status-success">
-                <CheckCircle size={14} /> PASSED
+                <CheckCircle size={14} /> SIMULATED
               </div>
             </div>
           </div>
