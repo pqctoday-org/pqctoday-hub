@@ -15,12 +15,14 @@ import type { GanttCountryData } from '@/types/timeline'
 import { WhenDoesThisReachMe } from '@/components/Timeline/WhenDoesThisReachMe'
 import { MobileTimelineList } from '@/components/Timeline/MobileTimelineList'
 
-// Same editorial definition CoverageByRegion.tsx uses for its per-region "at
-// Migration+" stat — the two real execution stages on the technical-readiness
-// track (Discovery → Testing → POC → Migration → Standardization). Not
-// re-exported from there (that file is desktop-only chrome, none of the rest
-// of it is reusable), so the definition is copied verbatim rather than routed
-// through a shared import, to keep this one number honestly sourced.
+// ACCEPTED duplication (2026-08-24 audit R3.7 — extraction ruled
+// disproportionate for a 2-value Set): verified copy of
+// CoverageByRegion.tsx's own MIGRATION_PLUS_PHASES, the two real execution
+// stages on the technical-readiness track (Discovery → Testing → POC →
+// Migration → Standardization). That file is desktop-only chrome with
+// nothing else reusable, so a whole module for one Set felt like more
+// surface than the 2 literals it would replace. Checked by the
+// mobile.driftguard test (R3.4) — flag here first if that test ever moves.
 const MIGRATION_PLUS_PHASES = new Set(['Migration', 'Standardization'])
 
 /**

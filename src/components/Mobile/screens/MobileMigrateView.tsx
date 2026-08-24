@@ -19,6 +19,7 @@ import { useMigrationPlan } from '@/components/Migrate/Workbench/useMigrationPla
 import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
 import { useVendorConcentrationRisks } from '@/components/Migrate/Workbench/vendorConcentrationRisk'
+import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 type Tab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
@@ -30,25 +31,16 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'vendorrisk', label: 'Risk' },
 ]
 
-// Same tone→class mapping DECISIONS/Pill's TONE_CLASS carries — replicated
-// (a small literal, not worth an ESLint exception on workbenchUi.tsx, which
-// has JSX) so decision/status badges match desktop's real semantic tokens.
-const TONE_CLASS: Record<string, string> = {
-  success: 'text-status-success bg-status-success/10 border-status-success/30',
-  primary: 'text-primary bg-primary/10 border-primary/30',
-  info: 'text-status-info bg-status-info/10 border-status-info/30',
-  warning: 'text-status-warning bg-status-warning/10 border-status-warning/30',
-  destructive: 'text-status-error bg-status-error/10 border-status-error/30',
-  muted: 'text-muted-foreground bg-muted border-border',
-}
-
 function Badge({ tone, children, title }: { tone: string; children: ReactNode; title?: string }) {
   return (
     <span
       title={title}
       className={cn(
         'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold',
-        TONE_CLASS[tone] ?? TONE_CLASS.muted
+        // tone is real desktop status-derived text (DECISIONS/productPqcStatus/
+        // productFipsBadge/proofFreshness), not typed as Tone this far
+        // upstream — same loose-string prop this Badge always had.
+        TONE_CLASS[tone as Tone] ?? TONE_CLASS.muted
       )}
     >
       {children}
