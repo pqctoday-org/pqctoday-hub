@@ -38,7 +38,23 @@ function readStoredViewMode(fallback: MobileViewMode): MobileViewMode {
   return fallback
 }
 
+// Design handoff §17: "each milestone a row with ... a proximity marker
+// ('passed', 'in 1 year', 'in 4 years')" — the compact view's core teaching
+// mechanic (at-a-glance urgency), never built (2026-08-24 audit R4.4). The
+// spec's proportional-length rule stays a stated cut; this is the marker
+// only. Derived from the phase's own real startYear vs the real current
+// year, same comparison WhenDoesThisReachMe.tsx's trackFor() makes for its
+// "already passed"/"next" badges — just phrased per §17's own examples.
+function proximityLabel(startYear: number, currentYear: number): string {
+  const delta = startYear - currentYear
+  if (delta < 0) return 'passed'
+  if (delta === 0) return 'this year'
+  if (delta === 1) return 'in 1 year'
+  return `in ${delta} years`
+}
+
 export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimelineListProps) => {
+  const currentYear = new Date().getFullYear()
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
@@ -201,8 +217,19 @@ export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimeli
                           {phase.title}
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground font-mono flex-shrink-0">
-                        {phase.startYear}–{phase.endYear === 2035 ? '2035+' : phase.endYear}
+                      <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          {phase.startYear}–{phase.endYear === 2035 ? '2035+' : phase.endYear}
+                        </span>
+                        <span
+                          className={`text-[9px] font-semibold uppercase tracking-wide ${
+                            phase.startYear < currentYear
+                              ? 'text-muted-foreground/70'
+                              : 'text-primary'
+                          }`}
+                        >
+                          {proximityLabel(phase.startYear, currentYear)}
+                        </span>
                       </span>
                     </Button>
                   ))
