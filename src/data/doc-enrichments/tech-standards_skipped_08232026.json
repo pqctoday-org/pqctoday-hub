@@ -90,5 +90,17 @@
   {
     "ref_id": "RFC 9420",
     "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "Bernstein-Lange-PQC-Survey",
+    "reason": "Probable landing page, not the document (269,009 bytes of markup, only 6,668 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IEEE-P1931-1-ROSA",
+    "reason": "Probable landing page, not the document (94,755 bytes of markup, only 1,788 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "NIST-PQC-Workshop-Yassir-2020",
+    "reason": "local_file missing"
   }
 ]

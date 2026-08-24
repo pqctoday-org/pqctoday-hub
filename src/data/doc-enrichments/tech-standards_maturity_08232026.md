@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-23
 category: Technical Standards
-document_count: 42
-requirement_count: 182
+document_count: 44
+requirement_count: 188
 ---
 
 ## BSI-AIS-20-31
@@ -76,6 +76,16 @@ requirement_count: 182
     - _T2 Risk-Informed · keys_: Assign a responsible authority to ensure the overall implementation provides an acceptable level of security.
     - _T2 Risk-Informed · keys_: Prohibit the use of digital signature key pairs for purposes other than digital signatures.
     - _T2 Risk-Informed · keys_: Guard against the disclosure of private keys to maintain the security of the digital signature system.
+
+## FIPS-180-4
+- **Source**: Secure Hash Standard (SHS) — SHA-1, SHA-224, SHA-256, SHA-384, SHA-512
+- **URL**: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T3 Repeatable · software_: Only use NIST-validated implementations of the specified hash algorithms to ensure compliance with the standard.
+- **Governance**:
+    - _T2 Risk-Informed · all_: The responsible authority in each agency must assure that the overall implementation provides an acceptable level of security.
+    - _T2 Risk-Informed · all_: Implement either this Standard or FIPS 202 wherever a secure hash algorithm is required for Federal applications.
 
 ## GSMA PQ.03 PQC Guidelines
 - **Source**: Post-Quantum Cryptography Guidelines for Telecom Use Cases
@@ -428,6 +438,16 @@ requirement_count: 182
     - _T3 Repeatable · keys_: Include channel binding and context information in ImportedIdentity to mitigate reflection attacks and ensure proper key context.
     - _T3 Repeatable · keys_: Provision ALPN, QUIC transport parameters, and other early data settings alongside EPSKs when importing for early data use.
     - _T3 Repeatable · keys_: Deprecate hash functions by removing corresponding KDFs from the set of target KDFs used for importing keys.
+
+## RFC-9935
+- **Source**: Internet X.509 PKI — Algorithm Identifiers for ML-KEM
+- **URL**: https://www.rfc-editor.org/rfc/rfc9935
+- **Requirement count**: 3
+- **Assurance / FIPS**:
+    - _T3 Repeatable · keys_: Reject private keys where seed and expanded key are inconsistent; perform hash checks on expanded keys before use.
+- **Lifecycle / CLM**:
+    - _T3 Repeatable · keys_: Enforce that ML-KEM certificates use only the 'keyEncipherment' key usage bit in the keyUsage extension.
+    - _T3 Repeatable · keys_: Ensure the parameters field is absent in the Algorithm Identifier for ML-KEM public keys.
 
 ## RFC-9964
 - **Source**: RFC 9964 — ML-DSA for JOSE and COSE
