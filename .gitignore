@@ -366,6 +366,13 @@ scripts/*
 # committed package.json script.
 !scripts/audit-role-board-content.ts
 
+# Role-board literal-drift gate — npm run audit:role-board-literals, added
+# 2026-08-23 (checked with `git check-ignore -v` per the habit two entries
+# above, before adding this line — it printed a match). Referenced by a
+# committed package.json script; without this line every checkout but the
+# one that wrote it gets file-not-found.
+!scripts/audit-role-board-literals.ts
+
 # Data-filename generator — runs in `npm run build` and `predev`
 # (npm run generate:data-filenames) and emits src/data/generated/
 # dataFilenames.generated.ts, which useVersionStore.ts imports. Same trap as
