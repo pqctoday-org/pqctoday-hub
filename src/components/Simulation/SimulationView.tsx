@@ -321,6 +321,8 @@ export function SimulationView() {
     sector,
     seat,
     sel,
+    mobilePlayOpen,
+    setMobilePlayOpen,
     edgeDecisions,
     year,
     q,
@@ -921,9 +923,14 @@ export function SimulationView() {
   // separate from isMobileViewport above, which is flag-independent and drives
   // the pre-existing read-only phone block. Only p0/p1 get real play for now
   // (IMPLEMENTATION-PLAN.md Phase 9); every other phase keeps the read-only
-  // block. A reader taps in deliberately — it never auto-opens.
+  // block. A reader taps in deliberately — it never auto-opens on a genuinely
+  // fresh visit. It IS store-backed rather than local state (2026-08-24, real
+  // production feedback), specifically so it survives navigating away and
+  // back: `/simulation` renders outside MainLayout, so any other route fully
+  // remounts this component, and a reader who was mid-play landed back on
+  // the overview looking like their progress had reset — sel/decisions/
+  // budget never did, only this open/closed flag did.
   const isMobileShell = useIsMobileShell()
-  const [mobilePlayOpen, setMobilePlayOpen] = useState(false)
   // mobile-ux-layer (2026-08-24 audit R1.3): "Watch the Executive Overview"
   // walks the shared `sel` through all 9 phases via autoRunPlayer, and `sel`
   // is persisted — so on a phone, watching once could leave `sel` past p1
@@ -1832,8 +1839,14 @@ export function SimulationView() {
             </div>
           )}
           {/* mobile-ux-layer: real interactive play, p0/p1 only — a deliberate tap,
-            never auto-opened. Everything else on this screen (the stats above,
-            Watch the Executive Overview below) is untouched. */}
+            never auto-opened on a genuinely fresh phase. Everything else on this
+            screen (the stats above, Watch the Executive Overview below) is
+            untouched. Label reflects real progress (level > 0, the same
+            already-computed signal phaseCleared uses) rather than always
+            reading "now" — a reader backing out via ← Overview, or landing
+            here on a fresh /simulation visit after playing earlier, deserves
+            to see this is a real phase in progress, not a start-over prompt
+            (2026-08-24, real production feedback). */}
           {isMobileShell &&
             (sel === 'p0' || sel === 'p1') &&
             !(isMobileViewport && playModalOpen) &&
@@ -1846,7 +1859,7 @@ export function SimulationView() {
                 className="gap-1.5"
                 onClick={() => setMobilePlayOpen(true)}
               >
-                ▶ Play {phase.name} now
+                {level > 0 ? `▶ Resume ${phase.name}` : `▶ Play ${phase.name} now`}
               </Button>
             )}
           {!(isMobileViewport && playModalOpen) &&

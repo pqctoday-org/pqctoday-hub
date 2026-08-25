@@ -87,12 +87,10 @@ export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGrou
                 type="button"
                 variant="ghost"
                 onClick={() => handleSelect(path)}
-                className="flex h-auto min-h-[76px] flex-col items-center gap-1.5 whitespace-normal rounded-xl border border-border bg-muted/30 p-3 text-center hover:bg-muted/50"
+                className="flex h-auto min-h-[76px] flex-col items-center gap-1.5 whitespace-normal rounded-[11px] border border-border bg-muted/30 p-3 text-center hover:bg-muted/50"
               >
                 {Icon && <Icon size={20} aria-hidden="true" className="text-foreground" />}
-                <span className="text-[11px] font-semibold leading-tight text-foreground">
-                  {label}
-                </span>
+                <span className="text-[10px] font-bold leading-tight text-foreground">{label}</span>
               </Button>
             )
           })}

@@ -5,6 +5,7 @@ import {
   type AlgorithmDetail,
   getPerformanceCategory,
   getPerformanceColor,
+  getPerformanceMultiplier,
   getSecurityLevelColor,
   getFunctionGroup,
   RESEARCH_NEEDED,
@@ -52,13 +53,6 @@ const RAM_CAVEAT =
 
 type SortField = 'name' | 'type' | 'pubkey' | 'sig' | 'keygen' | 'sign' | 'verify' | 'ram'
 type SortDir = 'asc' | 'desc'
-
-function getPerformanceMultiplier(cycles: string): number {
-  if (cycles === 'Baseline' || cycles.includes('Baseline')) return 1
-  // eslint-disable-next-line security/detect-unsafe-regex
-  const match = cycles.match(/(\d+(?:\.\d+)?)x/)
-  return match ? parseFloat(match[1]) : 1
-}
 
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
