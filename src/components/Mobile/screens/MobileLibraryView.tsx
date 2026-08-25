@@ -205,7 +205,12 @@ export function MobileLibraryView() {
                 type="button"
                 variant="ghost"
                 onClick={() => setSelected(item)}
-                className="h-auto w-full flex-col items-start gap-1 rounded-none p-0 pr-8 text-left font-normal"
+                // Button's own base classes hard-code whitespace-nowrap; this
+                // button wraps item.documentTitle (a real document title),
+                // which inherited nowrap and would run off the right edge
+                // instead of wrapping (2026-08-24, same defect class found
+                // and fixed on Threats/Patents).
+                className="h-auto w-full flex-col items-start gap-1 whitespace-normal rounded-none p-0 pr-8 text-left font-normal"
               >
                 <div className="min-w-0 flex-1">
                   <p className="font-mono text-[10.5px] text-muted-foreground">

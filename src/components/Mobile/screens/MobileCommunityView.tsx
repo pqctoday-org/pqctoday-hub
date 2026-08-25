@@ -124,7 +124,12 @@ export function MobileCommunityView() {
             variant="ghost"
             key={leader.id}
             onClick={() => setSelected(leader)}
-            className="glass-panel h-auto w-full flex-col items-start gap-1.5 p-3.5 text-left font-normal"
+            // Button's own base classes hard-code whitespace-nowrap; this
+            // button wraps leader.title (a real, potentially long job
+            // title), which inherited nowrap and would run off the right
+            // edge instead of wrapping (2026-08-24, same defect class found
+            // and fixed on Threats/Patents).
+            className="glass-panel h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
           >
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-[14px] font-bold text-foreground">{leader.name}</h2>
