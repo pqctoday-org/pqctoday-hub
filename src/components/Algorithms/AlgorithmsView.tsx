@@ -26,6 +26,8 @@ import type { PersonaId } from '../../data/learningPersonas'
 import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorithmsView'
+import { MobileProtocolMatrixView } from '@/components/Mobile/screens/MobileProtocolMatrixView'
+import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATValidationView'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -116,8 +118,19 @@ export function AlgorithmsView() {
   // sub-view. This is a 5-tab explorer, not a single-tab route like Timeline/
   // Threats — one new mobile screen for all 5 tabs isn't in scope; the entry
   // strip is how a mobile reader still reaches each real tab.
-  const isMobileShell =
-    useIsMobileShell() && !searchParams.get('tab') && !searchParams.get('highlight')
+  //
+  // 2026-08-24 audit: `tab=support` ("Understand PQC protocols") and
+  // `tab=validation` ("Run a live test") were exactly this fall-through —
+  // real bugs, not an intentional desktop-only cut like the rest of this
+  // comment describes; investigated and confirmed neither screen's real
+  // filters are what the (still-uncut) family/region/security-level tabs
+  // use. Both now get their own distilled mobile screens instead of falling
+  // through. `transition`/`detailed`/`landscape` remain out of scope.
+  const isMobile = useIsMobileShell()
+  const tabParam = searchParams.get('tab')
+  const isMobileShell = isMobile && !tabParam && !searchParams.get('highlight')
+  const isMobileProtocolMatrix = isMobile && tabParam === 'support'
+  const isMobileValidation = isMobile && tabParam === 'validation'
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [hintDismissed, setHintDismissed] = useState(false)
@@ -236,6 +249,12 @@ export function AlgorithmsView() {
   // so unlike ThreatsDashboard this needs no simEmbed-equivalent guard.
   if (isMobileShell) {
     return <MobileAlgorithmsView />
+  }
+  if (isMobileProtocolMatrix) {
+    return <MobileProtocolMatrixView />
+  }
+  if (isMobileValidation) {
+    return <MobileKATValidationView />
   }
 
   return (

@@ -75,7 +75,27 @@ export function MobileTransitionWizard({
   const [selectedClassical, setSelectedClassical] = useState<string | null>(null)
   const [priority, setPriority] = useState<Priority | null>(null)
 
-  // Derive unique classical algos, grouped by function
+  // 2026-08-24 (live phone testing): the real CSV carries 17 distinct KEM
+  // classical_algorithm values and 21 Signature ones — Step 1 rendered all
+  // 38 as a flat, unsorted chip wrap, "2 full pages of options" per the
+  // report. Every value is real (verified against algorithms_transitions_*
+  // .csv), so nothing here is invented — the cut is presentation only: each
+  // group is capped to its 6 highest-value entries by default (single,
+  // widely-recognized algorithm names first — RSA/ECDH/DH/X25519 etc.),
+  // with the long tail (context-only rows like "(classical, high-risk
+  // systems)" with no algorithm name of their own, and already-hybrid rows
+  // like "ECDH + ML-KEM") ranked last and reachable via "N more" rather than
+  // dropped — every real row stays selectable, nothing loses functionality.
+  function classicalPriority(name: string): number {
+    // Context-only catch-all, no algorithm name of its own — appears both as
+    // the whole value ("(classical only)") and as a qualifier suffix
+    // ("RSA/DH/ECDH (classical only)").
+    if (name.startsWith('(') || /\(classical[,)]/i.test(name)) return 2
+    if (name.includes('+')) return 2 // already-hybrid row, not a pure classical swap
+    return 0
+  }
+
+  // Derive unique classical algos, grouped by function, ranked highest-value first
   const classicalGroups = useMemo(() => {
     const seen = new Set<string>()
     const groups: Record<
@@ -94,8 +114,18 @@ export function MobileTransitionWizard({
       if (!groups[group]) groups[group] = []
       groups[group].push({ classical: row.classical, fn: row.function })
     }
+    for (const items of Object.values(groups)) {
+      items.sort(
+        (a, b) =>
+          classicalPriority(a.classical) - classicalPriority(b.classical) ||
+          a.classical.localeCompare(b.classical)
+      )
+    }
     return groups
   }, [data])
+
+  const GROUP_CAP = 6
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
 
   // Candidates for the selected classical algo
   const candidates = useMemo(() => {
@@ -129,30 +159,45 @@ export function MobileTransitionWizard({
       {step === 1 && (
         <div className="glass-panel p-4 space-y-3">
           <p className="text-sm font-medium text-foreground">What are you replacing?</p>
-          {Object.entries(classicalGroups).map(([group, items]) => (
-            <div key={group}>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                {group}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {items.map(({ classical, fn }) => (
-                  <Button
-                    key={`${classical}-${fn}`}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedClassical(classical)
-                      setStep(2)
-                    }}
-                    className="flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2.5 py-1.5 text-xs font-medium text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors h-auto"
-                  >
-                    <span className="text-muted-foreground">{functionIcon(fn)}</span>
-                    {classical}
-                  </Button>
-                ))}
+          {Object.entries(classicalGroups).map(([group, items]) => {
+            const expanded = expandedGroups.has(group)
+            const visible = expanded ? items : items.slice(0, GROUP_CAP)
+            const hiddenCount = items.length - visible.length
+            return (
+              <div key={group}>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                  {group}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {visible.map(({ classical, fn }) => (
+                    <Button
+                      key={`${classical}-${fn}`}
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedClassical(classical)
+                        setStep(2)
+                      }}
+                      className="flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2.5 py-1.5 text-xs font-medium text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors h-auto"
+                    >
+                      <span className="text-muted-foreground">{functionIcon(fn)}</span>
+                      {classical}
+                    </Button>
+                  ))}
+                  {hiddenCount > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setExpandedGroups((prev) => new Set(prev).add(group))}
+                      className="rounded-md border border-dashed border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors h-auto"
+                    >
+                      +{hiddenCount} more
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 
