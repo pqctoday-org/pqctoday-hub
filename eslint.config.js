@@ -338,6 +338,14 @@ export default defineConfig([
                 '!@/components/RoleHome',
                 '@/components/RoleHome/*',
                 '!@/components/RoleHome/RoleHomeView',
+                // libraryRef.ts (Algorithms) — pure spec-id -> Library
+                // deep-link resolution, no JSX. Same real alias table/index
+                // PQCProtocolMatrix.tsx's own detail modal uses, so a mobile
+                // Protocol Matrix reader gets the exact same Library link
+                // desktop's would, not a re-derived one that could drift.
+                '!@/components/Algorithms',
+                '@/components/Algorithms/*',
+                '!@/components/Algorithms/libraryRef',
                 // Glossary.tsx / UserManualPanel.tsx (common) — same category
                 // as RoleHomeView: self-contained isOpen/onClose content
                 // panels already responsive (w-full with a max-w cap), reused
