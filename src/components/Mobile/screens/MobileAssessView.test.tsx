@@ -7,6 +7,8 @@ import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { STEP_META } from '@/components/Assess/redesign/assessFlowModel'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
+import { applicableFrameworks } from '@/utils/applicabilityEngine'
+import { complianceFrameworks } from '@/data/complianceData'
 
 // Real data throughout. The screenshot and its own README prose disagree
 // with each other on step count ("1 of 6" vs "1 of 8"), and both are wrong
@@ -262,6 +264,44 @@ describe('MobileAssessView', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Back' }))
       expect(screen.queryByText('Review your answers')).not.toBeInTheDocument()
       expect(useAssessmentFormStore.getState().assessmentStatus).not.toBe('complete')
+    })
+  })
+
+  // 2026-08-24 Assess-step audit: the compliance step rendered a flat,
+  // unfiltered 215-label list (34 of them deprecated/obsolete in the source
+  // CSV) with no industry/country relevance at all. It now uses the same
+  // real applicabilityEngine.applicableFrameworks() Step5Compliance.tsx
+  // computes from, grouped by real tier.
+  describe('compliance step uses the real applicability engine (2026-08-24 fix)', () => {
+    function goToCompliance() {
+      useAssessmentFormStore.setState({ industry: 'Technology', country: 'United States' })
+      renderView()
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // industry -> country
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // country -> crypto
+      fireEvent.click(screen.getByText("I'm not sure — help me choose").closest('button')!)
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // crypto -> sensitivity
+      fireEvent.click(screen.getByText("I'm not sure — help me choose").closest('button')!)
+      fireEvent.click(screen.getByRole('button', { name: /Next/ })) // sensitivity -> compliance
+    }
+
+    it('shows real, profile-relevant frameworks grouped by real tier — not a flat unfiltered list', () => {
+      goToCompliance()
+      expect(screen.getByText(STEP_META.compliance.question)).toBeInTheDocument()
+
+      const results = applicableFrameworks({
+        industry: 'Technology',
+        country: 'United States',
+        region: null,
+      }).filter((r) => r.tier !== 'informational')
+      expect(results.length).toBeGreaterThan(0)
+      // Proves real filtering happened, not a dump of the whole catalog.
+      expect(results.length).toBeLessThan(complianceFrameworks.length)
+
+      const first = results[0]
+      expect(screen.getByText(first.item.label)).toBeInTheDocument()
+      // Several frameworks can share the same deadline text (e.g. "Ongoing"),
+      // so assert presence, not uniqueness.
+      expect(screen.getAllByText(`Deadline: ${first.item.deadline}`).length).toBeGreaterThan(0)
     })
   })
 
