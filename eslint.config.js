@@ -286,8 +286,17 @@ export default defineConfig([
                 // export every desktop Migrate tab already reads, so the
                 // mobile screen's numbers and export output can never drift
                 // from desktop's.
+                // vendorRoadmapDisplay.ts (Migrate root) — pure extraction
+                // (2026-08-24, real production feedback), no JSX: every
+                // derived/filtered value desktop's VendorRoadmapPanel.tsx
+                // computes (GA status, scope chip, hybrid-mode text
+                // cleanup, "None detected" guards), so the mobile Vendors
+                // tab's roadmap sheet reads the same facts as desktop —
+                // desktop's own .tsx was refactored to consume this same
+                // file rather than keep a second, driftable copy.
                 '!@/components/Migrate',
                 '@/components/Migrate/*',
+                '!@/components/Migrate/vendorRoadmapDisplay',
                 '!@/components/Migrate/Workbench',
                 '@/components/Migrate/Workbench/*',
                 '!@/components/Migrate/Workbench/workbenchCatalog',
