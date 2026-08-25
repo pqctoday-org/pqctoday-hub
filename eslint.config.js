@@ -314,6 +314,15 @@ export default defineConfig([
                 '!@/components/Compliance/requirements',
                 '@/components/Compliance/requirements/*',
                 '!@/components/Compliance/requirements/requirementsModel',
+                // pillarModel.ts (traceability-chain/deadline-phases/dossier
+                // derivation for the "about this standard" detail view) and
+                // tones.ts (Tone -> Tailwind-class mapping) — both pure logic,
+                // no JSX. Same real ComplianceDetailDrawer.tsx data the
+                // desktop redesign's Landscape drawer renders from.
+                '!@/components/Compliance/redesign',
+                '@/components/Compliance/redesign/*',
+                '!@/components/Compliance/redesign/pillarModel',
+                '!@/components/Compliance/redesign/tones',
                 // RoleHomeView.tsx (RoleHome) — the "Who's asking?" first-run
                 // picker, already self-contained and reused by LandingView;
                 // its per-role copy must not be duplicated (see comment above).

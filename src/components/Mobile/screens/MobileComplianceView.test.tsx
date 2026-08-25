@@ -54,7 +54,24 @@ describe('MobileComplianceView', () => {
     }
   })
 
-  it('tapping an obligation switches to Requirements with that framework selected', () => {
+  it('tapping an obligation opens its real "about this standard" detail sheet', () => {
+    seedScope()
+    render(<MobileComplianceView />)
+    const rows = buildObligations({
+      country: 'United States',
+      industry: 'Finance & Banking',
+      region: null,
+    })
+    const target = rows.find((r) => r.framework.description)
+    expect(target).toBeTruthy()
+    fireEvent.click(screen.getByText(target!.framework.label).closest('button')!)
+    // The sheet shows the framework's real description — not a filtered
+    // requirements jump.
+    expect(screen.getByText(target!.framework.description)).toBeInTheDocument()
+    expect(screen.getByText('What an auditor checks')).toBeInTheDocument()
+  })
+
+  it('the detail sheet\'s "View extracted requirements" jumps to Requirements with that framework selected', () => {
     seedScope()
     render(<MobileComplianceView />)
     const rows = buildObligations({
@@ -65,6 +82,7 @@ describe('MobileComplianceView', () => {
     const target = rows.find((r) => r.framework.label)
     expect(target).toBeTruthy()
     fireEvent.click(screen.getByText(target!.framework.label).closest('button')!)
+    fireEvent.click(screen.getByText('View extracted requirements'))
     // Requirements section is now active — the framework's own reason text
     // (verbatim from the applicability engine) appears in the reading pane.
     expect(screen.getAllByText(target!.reason).length).toBeGreaterThan(0)
@@ -97,6 +115,18 @@ describe('MobileComplianceView', () => {
     expect(
       screen.getByText(new RegExp(`Showing the ${emphasisCount} frameworks`))
     ).toBeInTheDocument()
+  })
+
+  it('Landscape tiles are tappable and open the real detail sheet, not a dead end', () => {
+    seedScope()
+    render(<MobileComplianceView />)
+    fireEvent.click(screen.getByText('Landscape'))
+    const emphasisSet = complianceFrameworks.filter((f) =>
+      isComplianceFrameworkEmphasized('executive', f.id)
+    )
+    expect(emphasisSet.length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByText(emphasisSet[0].label).closest('button')!)
+    expect(screen.getByText('What an auditor checks')).toBeInTheDocument()
   })
 
   it('Landscape explains the cut rather than dumping the full catalogue when no role is set', () => {
