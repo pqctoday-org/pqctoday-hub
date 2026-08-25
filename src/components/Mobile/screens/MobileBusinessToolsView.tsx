@@ -195,7 +195,9 @@ function ToolCardMobile({ tool, onSelect }: { tool: BusinessTool; onSelect: () =
         type="button"
         variant="ghost"
         onClick={onSelect}
-        className="h-auto w-full flex-col items-start gap-1.5 rounded-none p-0 text-left font-normal"
+        // Button's own base classes hard-code whitespace-nowrap; same defect
+        // class found and fixed on Threats/Patents/Compliance/Library (2026-08-24).
+        className="h-auto w-full flex-col items-start gap-1.5 whitespace-normal rounded-none p-0 text-left font-normal"
       >
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-primary">
