@@ -189,7 +189,13 @@ export function MobilePatentsView() {
               variant="ghost"
               key={p.patentNumber}
               onClick={() => setSelected(p)}
-              className="glass-panel h-auto w-full flex-col items-start gap-1.5 p-3.5 text-left font-normal"
+              // Button's own base classes hard-code whitespace-nowrap for
+              // typical short labels; this button wraps a real patent title
+              // instead. white-space is CSS-inherited, so without overriding
+              // it here the title <h2> below inherited nowrap and ran off
+              // the right edge uncut rather than wrapping (2026-08-24, real
+              // production feedback).
+              className="glass-panel h-auto w-full flex-col items-start gap-1.5 whitespace-normal p-3.5 text-left font-normal"
             >
               <div className="flex flex-wrap items-center gap-1.5">
                 <h2 className="text-[13px] font-bold leading-snug text-foreground">{p.title}</h2>

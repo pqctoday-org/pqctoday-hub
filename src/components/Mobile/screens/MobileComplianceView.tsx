@@ -195,7 +195,12 @@ export function MobileComplianceView() {
                           type="button"
                           variant="ghost"
                           onClick={() => openObligation(row)}
-                          className="h-auto flex-col items-start gap-1 rounded-lg border border-border bg-card p-2.5 text-left"
+                          // Button's own base classes hard-code whitespace-nowrap;
+                          // this button wraps row.reason (a real sentence), which
+                          // inherited nowrap and would run off the right edge
+                          // instead of wrapping (2026-08-24, same defect class
+                          // found and fixed on Threats/Patents).
+                          className="h-auto flex-col items-start gap-1 whitespace-normal rounded-lg border border-border bg-card p-2.5 text-left"
                         >
                           <div className="flex w-full flex-wrap items-center gap-1.5">
                             <span className="text-[12.5px] font-bold text-foreground">
