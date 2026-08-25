@@ -394,6 +394,16 @@ export function isClassical(algo: AlgorithmDetail): boolean {
   )
 }
 
+/** "Baseline" → 1, "Nx" / "Nx Sign" / "Nx Verify" → N. Non-multiplier forms
+ * (an absolute cycle count, "Research needed") fall back to 1 — same
+ * simplification the desktop comparison table has always used for this. */
+export function getPerformanceMultiplier(cycles: string): number {
+  if (cycles === 'Baseline' || cycles.includes('Baseline')) return 1
+  // eslint-disable-next-line security/detect-unsafe-regex
+  const match = cycles.match(/(\d+(?:\.\d+)?)x/)
+  return match ? parseFloat(match[1]) : 1
+}
+
 export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'Slow' | 'Unknown' {
   if (isResearchNeeded(cycles)) return 'Unknown'
   if (cycles === 'Baseline' || cycles.includes('Baseline')) return 'Moderate'

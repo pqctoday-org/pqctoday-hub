@@ -450,7 +450,14 @@ function ThreatCardMobile({
         type="button"
         variant="ghost"
         onClick={onSelect}
-        className="h-auto w-full flex-col items-start gap-2 rounded-none p-0 text-left font-normal"
+        // Button's own base classes hard-code whitespace-nowrap for typical
+        // short labels; this button wraps paragraph-length threat text
+        // instead. white-space is CSS-inherited, so without overriding it
+        // here every descendant <p> below inherited nowrap and ran off the
+        // right edge uncut rather than wrapping (2026-08-24, real production
+        // feedback -- reproduced: a description <p> laid out with its right
+        // edge past 3000px on a 390px viewport).
+        className="h-auto w-full flex-col items-start gap-2 whitespace-normal rounded-none p-0 text-left font-normal"
       >
         <p className="text-[12.5px] leading-snug text-foreground/90">{threat.description}</p>
 

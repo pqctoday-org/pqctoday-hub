@@ -7,6 +7,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { ALGORITHM_REGISTRY } from '@/data/algorithmProperties'
 import { transitionConsequence } from '@/data/algorithmConsequence'
 import { INTENTS, PERSONA_INTENTS, EU_EXECUTIVE_INTENTS } from '@/data/algorithmEntryIntents'
+import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 
 const mockNavigate = vi.hoisted(() => vi.fn())
 vi.mock('react-router', async () => {
@@ -49,20 +50,17 @@ describe('MobileAlgorithmsView', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/algorithms?tab=validation&section=kat')
   })
 
-  it('shows the persona-specific intent when a persona with one is set', () => {
-    usePersonaStore.getState().setPersona('executive')
-    renderView()
-    expect(screen.getByText(PERSONA_INTENTS.executive!.label)).toBeInTheDocument()
-  })
-
-  it('shows both EU_EXECUTIVE_INTENTS entries for executive+eu instead of the single persona intent', () => {
+  it('never shows a persona-specific intent, even when a persona is set (2026-08-24: cut to the 3 global intents only)', () => {
     usePersonaStore.getState().setPersona('executive')
     usePersonaStore.getState().setRegion('eu')
     renderView()
     for (const intent of EU_EXECUTIVE_INTENTS) {
-      expect(screen.getByText(intent.label)).toBeInTheDocument()
+      expect(screen.queryByText(intent.label)).not.toBeInTheDocument()
     }
     expect(screen.queryByText(PERSONA_INTENTS.executive!.label)).not.toBeInTheDocument()
+    for (const intent of INTENTS) {
+      expect(screen.getByText(intent.label)).toBeInTheDocument()
+    }
   })
 
   it('the byte comparison uses real registry values, correctly labeled (public key vs signature)', () => {
@@ -116,8 +114,38 @@ describe('MobileAlgorithmsView', () => {
   it('states what was cut rather than silently dropping it', () => {
     renderView()
     expect(
-      screen.getByText(/Family, region \(NIST\/BSI\/ANSSI\), and security-level filters/i)
+      screen.getByText(/Family, region \(NIST\/BSI\/ANSSI\) filters, keygen\/verify performance/i)
     ).toBeInTheDocument()
+  })
+
+  it('the security-level chart compares the 3 PQC algorithms already featured, real registry values', () => {
+    renderView()
+    expect(screen.getByText('What actually changes: security margin')).toBeInTheDocument()
+    // ML-KEM-768 and ML-DSA-65 are both level 3 in the real registry, so
+    // "Level 3" legitimately appears twice; SLH-DSA-128s (level 1) is the
+    // one asserted uniquely, since that's the real finding this chart exists
+    // to surface — a lower level despite a much bigger signature.
+    expect(
+      screen.getByText(`Level ${ALGORITHM_REGISTRY['SLH-DSA-SHA2-128s'].securityLevel}`)
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText(`Level ${ALGORITHM_REGISTRY['ML-KEM-768'].securityLevel}`)
+    ).toHaveLength(2)
+  })
+
+  it('never shows a security-level row for a classical algorithm (securityLevel is null for all of them)', () => {
+    renderView()
+    expect(ALGORITHM_REGISTRY['RSA-2048'].securityLevel).toBeNull()
+    expect(ALGORITHM_REGISTRY['Ed25519'].securityLevel).toBeNull()
+  })
+
+  it('the performance chart loads real relative-cycle data async and renders all 5 featured algorithms', async () => {
+    renderView()
+    expect(
+      await screen.findByText('What actually changes: signing/encapsulation speed')
+    ).toBeInTheDocument()
+    const detail = (await loadPQCAlgorithmsData()).find((d) => d.name === 'SLH-DSA-SHA2-128s')!
+    expect(await screen.findByText(detail.signEncapsCycles)).toBeInTheDocument()
   })
 
   it('tapping a byte-bar row opens the real per-algorithm detail sheet, and Close dismisses it', () => {
