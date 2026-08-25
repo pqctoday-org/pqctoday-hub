@@ -38,6 +38,17 @@ export interface SimulationState {
   /** Auto-run playhead position to RESUME from (the queue index where the last
    *  playthrough was interrupted). 0 = no run in progress / start from the top.
    *  Transient run-control state (not part of saveSlice); cleared by reset(). */
+  /** Whether the mobile shell's full-screen interactive play view (p0/p1
+   *  Decide) is open, vs. the read-only overview. Store-backed (not local
+   *  component state) specifically so it survives `/simulation` remounting —
+   *  that route renders outside MainLayout, so navigating to any other page
+   *  and back fully remounts SimulationView. Without this living in the
+   *  store, a reader mid-play would land back on the overview on return,
+   *  looking like their progress reset even though sel/decisions/budget
+   *  (all store-backed already) never did. Transient run-control state (not
+   *  part of saveSlice, not part of partialize — a UI toggle has no place in
+   *  an exported save or surviving a browser restart); cleared by reset(). */
+  mobilePlayOpen: boolean
   autoRunResumeIndex: number
   /** The RunMode string of the last-started climb-family run (`'climb'` or
    *  `'climb-deep'` — walkthrough never resumes, so it's never stored here).
@@ -178,6 +189,8 @@ export interface SimulationState {
   markTourSeen: () => void
   /** Mark a concept peek (WP2.3) as seen — idempotent, never shows it again. */
   markConceptPeekSeen: (id: string) => void
+  /** Open/close the mobile shell's full-screen interactive play view. */
+  setMobilePlayOpen: (open: boolean) => void
   reset: () => void
   /** Serialize the current run to a portable JSON save string (WS-08). */
   exportSave: () => string
@@ -214,6 +227,7 @@ const SEED = {
     },
     { sev: 'info', t: 'Q2 2026', txt: 'Your TLS stack ships hardware-accelerated ML-DSA' },
   ] as SimEvent[],
+  mobilePlayOpen: false,
   autoRunResumeIndex: 0,
   autoRunLastMode: null as string | null,
   visitedRefs: [] as string[],
@@ -487,6 +501,7 @@ export const useSimulationStore = create<SimulationState>()(
         set((s) =>
           s.seenConceptPeeks.includes(id) ? s : { seenConceptPeeks: [...s.seenConceptPeeks, id] }
         ),
+      setMobilePlayOpen: (mobilePlayOpen) => set({ mobilePlayOpen }),
       // RESET clears the run but NOT the onboarding / guidance prefs, NOR the
       // lifetime achievement counters (WP4.5) — a fresh run must not erase them.
       reset: () =>
