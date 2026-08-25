@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle, Laptop } from 'lucide-react'
 import { useNavigate, Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   STEP_META,
   TRACK_INFO,
@@ -12,13 +13,29 @@ import {
 } from '@/components/Assess/redesign/assessFlowModel'
 import { useAssessFlow } from '@/components/Assess/redesign/useAssessFlow'
 import { summarizeAnswer } from '@/components/Assess/redesign/reviewModel'
-import {
-  AVAILABLE_INDUSTRIES,
-  AVAILABLE_COMPLIANCE,
-  COMPLIANCE_DESCRIPTIONS,
-  DATA_SENSITIVITY_SCORES,
-} from '@/hooks/assessmentData'
+import { AVAILABLE_INDUSTRIES, DATA_SENSITIVITY_SCORES } from '@/hooks/assessmentData'
 import { ALL_JURISDICTIONS } from '@/data/jurisdictionsData'
+import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
+import {
+  applicableFrameworks,
+  isProfileEmpty,
+  TIER_META,
+  type ApplicabilityTier,
+  type ApplicabilityResult,
+} from '@/utils/applicabilityEngine'
+
+// Same tier order + informational-omitted filter Step5Compliance.tsx's own
+// groupedByTier memo uses — real applicability engine, not a flat unfiltered
+// list. Fixes a real bug found in the 2026-08-24 Assess step audit: the
+// prior AVAILABLE_COMPLIANCE list was the UNFILTERED 219-row CSV (34 of
+// those labels deprecated/obsolete) with no industry/country relevance at
+// all, so mobile could offer frameworks desktop's own step would never show.
+const COMPLIANCE_TIER_ORDER: ApplicabilityTier[] = [
+  'mandatory',
+  'recognized',
+  'cross-border',
+  'advisory',
+]
 
 const CRYPTO_CATEGORIES = ['Key Exchange', 'Signatures', 'Symmetric Encryption', 'Hash & MAC']
 
@@ -86,8 +103,13 @@ const MIGRATION_STATUSES: { value: MigrationStatusValue; label: string; descript
  * matched here), useAssessmentStore() (the same persisted, resumable
  * industry/country/crypto/sensitivity/compliance/migration fields and
  * setters every desktop step writes — Rule 2), and the real option data
- * (AVAILABLE_INDUSTRIES, ALL_JURISDICTIONS, AVAILABLE_COMPLIANCE +
- * COMPLIANCE_DESCRIPTIONS, DATA_SENSITIVITY_SCORES). Crypto categories (4)
+ * (AVAILABLE_INDUSTRIES, ALL_JURISDICTIONS, DATA_SENSITIVITY_SCORES).
+ * Compliance uses the real applicabilityEngine (applicableFrameworks/
+ * TIER_META) instead of a flat list — same tiered, profile-relevant set
+ * Step5Compliance.tsx computes, fixing a real bug the 2026-08-24 audit
+ * found: the prior flat list was the unfiltered 219-row CSV, 34 of those
+ * labels deprecated/obsolete, with no relevance filtering at all. Crypto
+ * categories (4)
  * and migration-status options (3, with default descriptions) are small
  * real literals replicated from their step components rather than imported,
  * matching this session's established precedent for tiny non-worth-an-
@@ -112,6 +134,21 @@ const MIGRATION_STATUSES: { value: MigrationStatusValue; label: string; descript
 export function MobileAssessView() {
   const navigate = useNavigate()
   const store = useAssessmentStore()
+  const selectedRegion = usePersonaStore((s) => s.selectedRegion)
+  const complianceGroups = useMemo(() => {
+    const profile = { industry: store.industry, country: store.country, region: selectedRegion }
+    const results: ApplicabilityResult<ComplianceFramework>[] = isProfileEmpty(profile)
+      ? complianceFrameworks.map((fw) => ({ item: fw, tier: 'advisory' as const, reason: '' }))
+      : applicableFrameworks(profile).filter((r) => r.tier !== 'informational')
+    const groups = new Map<ApplicabilityTier, ComplianceFramework[]>()
+    for (const r of results) {
+      const tier: ApplicabilityTier = COMPLIANCE_TIER_ORDER.includes(r.tier) ? r.tier : 'advisory'
+      const list = groups.get(tier)
+      if (list) list.push(r.item)
+      else groups.set(tier, [r.item])
+    }
+    return groups
+  }, [store.industry, store.country, selectedRegion])
   const [showWhy, setShowWhy] = useState(false)
   const [done, setDone] = useState(store.assessmentStatus === 'complete')
   // Restores the "no silent jump to the report" review moment desktop's own
@@ -367,31 +404,39 @@ export function MobileAssessView() {
 
         {key === 'compliance' && (
           <>
-            <div className="flex flex-col gap-1.5">
-              {AVAILABLE_COMPLIANCE.map((fw) => {
-                const selected = store.complianceRequirements.includes(fw)
-                const desc = COMPLIANCE_DESCRIPTIONS[fw]
-                return (
-                  <Button
-                    key={fw}
-                    type="button"
-                    variant="ghost"
-                    onClick={() => store.toggleCompliance(fw)}
-                    aria-pressed={selected}
-                    className={cn(
-                      'h-auto flex-col items-start gap-0.5 rounded-lg border p-2.5 text-left',
-                      selected ? 'border-primary bg-primary/10' : 'border-border bg-card'
-                    )}
-                  >
-                    <span className="text-[12px] font-semibold text-foreground">{fw}</span>
-                    {desc && (
-                      <span className="text-[10px] text-muted-foreground">
-                        Deadline: {desc.deadline}
-                      </span>
-                    )}
-                  </Button>
-                )
-              })}
+            <div className="flex flex-col gap-3">
+              {COMPLIANCE_TIER_ORDER.filter(
+                (tier) => (complianceGroups.get(tier)?.length ?? 0) > 0
+              ).map((tier) => (
+                <div key={tier} className="flex flex-col gap-1.5">
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                    {TIER_META[tier].label}
+                  </p>
+                  {complianceGroups.get(tier)!.map((fw) => {
+                    const selected = store.complianceRequirements.includes(fw.label)
+                    return (
+                      <Button
+                        key={fw.id}
+                        type="button"
+                        variant="ghost"
+                        onClick={() => store.toggleCompliance(fw.label)}
+                        aria-pressed={selected}
+                        className={cn(
+                          'h-auto flex-col items-start gap-0.5 whitespace-normal rounded-lg border p-2.5 text-left',
+                          selected ? 'border-primary bg-primary/10' : 'border-border bg-card'
+                        )}
+                      >
+                        <span className="text-[12px] font-semibold text-foreground">
+                          {fw.label}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          Deadline: {fw.deadline}
+                        </span>
+                      </Button>
+                    )
+                  })}
+                </div>
+              ))}
             </div>
             <UnknownToggle
               checked={store.complianceUnknown}
