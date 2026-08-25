@@ -112,9 +112,16 @@ describe('MobileAlgorithmsView', () => {
   })
 
   it('states what was cut rather than silently dropping it', () => {
+    // 2026-08-24 audit (part 2): superseded by a footer accuracy fix — the
+    // generic 3-card entry strip (the one every unrecognized-persona reader
+    // sees) never links to Detailed Comparison, so claiming keygen/verify
+    // performance is "reached through the options above" was true only for
+    // the executive-persona card, not the reader this footer addresses.
     renderView()
     expect(
-      screen.getByText(/Family, region \(NIST\/BSI\/ANSSI\) filters, keygen\/verify performance/i)
+      screen.getByText(
+        /Family, region \(NIST\/BSI\/ANSSI\), and security-level filters and the full transition table/i
+      )
     ).toBeInTheDocument()
   })
 

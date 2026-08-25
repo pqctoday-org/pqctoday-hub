@@ -286,8 +286,17 @@ export default defineConfig([
                 // export every desktop Migrate tab already reads, so the
                 // mobile screen's numbers and export output can never drift
                 // from desktop's.
+                // vendorRoadmapDisplay.ts (Migrate root) — pure extraction
+                // (2026-08-24, real production feedback), no JSX: every
+                // derived/filtered value desktop's VendorRoadmapPanel.tsx
+                // computes (GA status, scope chip, hybrid-mode text
+                // cleanup, "None detected" guards), so the mobile Vendors
+                // tab's roadmap sheet reads the same facts as desktop —
+                // desktop's own .tsx was refactored to consume this same
+                // file rather than keep a second, driftable copy.
                 '!@/components/Migrate',
                 '@/components/Migrate/*',
+                '!@/components/Migrate/vendorRoadmapDisplay',
                 '!@/components/Migrate/Workbench',
                 '@/components/Migrate/Workbench/*',
                 '!@/components/Migrate/Workbench/workbenchCatalog',
@@ -314,12 +323,29 @@ export default defineConfig([
                 '!@/components/Compliance/requirements',
                 '@/components/Compliance/requirements/*',
                 '!@/components/Compliance/requirements/requirementsModel',
+                // pillarModel.ts (traceability-chain/deadline-phases/dossier
+                // derivation for the "about this standard" detail view) and
+                // tones.ts (Tone -> Tailwind-class mapping) — both pure logic,
+                // no JSX. Same real ComplianceDetailDrawer.tsx data the
+                // desktop redesign's Landscape drawer renders from.
+                '!@/components/Compliance/redesign',
+                '@/components/Compliance/redesign/*',
+                '!@/components/Compliance/redesign/pillarModel',
+                '!@/components/Compliance/redesign/tones',
                 // RoleHomeView.tsx (RoleHome) — the "Who's asking?" first-run
                 // picker, already self-contained and reused by LandingView;
                 // its per-role copy must not be duplicated (see comment above).
                 '!@/components/RoleHome',
                 '@/components/RoleHome/*',
                 '!@/components/RoleHome/RoleHomeView',
+                // libraryRef.ts (Algorithms) — pure spec-id -> Library
+                // deep-link resolution, no JSX. Same real alias table/index
+                // PQCProtocolMatrix.tsx's own detail modal uses, so a mobile
+                // Protocol Matrix reader gets the exact same Library link
+                // desktop's would, not a re-derived one that could drift.
+                '!@/components/Algorithms',
+                '@/components/Algorithms/*',
+                '!@/components/Algorithms/libraryRef',
                 // Glossary.tsx / UserManualPanel.tsx (common) — same category
                 // as RoleHomeView: self-contained isOpen/onClose content
                 // panels already responsive (w-full with a max-w cap), reused

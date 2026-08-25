@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState, type ReactNode } from 'react'
-import { ArrowRight, Calendar, Check, FileText, Plus, Search, X } from 'lucide-react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  ArrowRight,
+  Calendar,
+  Check,
+  ExternalLink,
+  FileText,
+  Newspaper,
+  BookText,
+  Plus,
+  Search,
+  X,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -9,6 +20,7 @@ import { REPLACE_ASSETS, DECISIONS, type DomainId, type ReplaceAsset } from '@/d
 import { softwareData, vendorMap } from '@/data/migrateData'
 import { roadmapByVendorId } from '@/data/vendorRoadmapData'
 import { enrichmentByVendorId } from '@/data/vendorRoadmapEnrichmentData'
+import { getCertsForProduct } from '@/data/certificationXrefData'
 import {
   productsForDomain,
   productsForVendor,
@@ -20,7 +32,21 @@ import { WAVES_FALLBACK } from '@/components/Migrate/Workbench/waves'
 import { downloadPlanCbom } from '@/components/Migrate/Workbench/cbomExport'
 import { useVendorConcentrationRisks } from '@/components/Migrate/Workbench/vendorConcentrationRisk'
 import { TONE_CLASS, type Tone } from '@/data/migrateToneClass'
-import type { SoftwareItem } from '@/types/MigrateTypes'
+import type {
+  SoftwareItem,
+  CertificationXref,
+  VendorRoadmap,
+  VendorRoadmapEnrichment,
+} from '@/types/MigrateTypes'
+import { deriveVendorRoadmapDisplay } from '@/components/Migrate/vendorRoadmapDisplay'
+import { MobileSheet } from '../primitives/Sheet'
+
+const CERT_TYPE_ORDER: CertificationXref['certType'][] = [
+  'FIPS 140-3',
+  'ACVP',
+  'Common Criteria',
+  'PSA Certified',
+]
 
 type Tab = 'replace' | 'plan' | 'roadmaps' | 'vendorrisk'
 
@@ -89,14 +115,31 @@ function canonicalOrder(list: ReplaceAsset[]): ReplaceAsset[] {
  * is dropped, stated below.
  *
  * Stated cuts: foundation-domain browsing (8 secondary domains beyond the 10
- * "what you run" assets), full `ProductDetail` expansion (certifications/
- * roadmap drill-down), full `VendorRoadmapPanel` content, and
- * `SupplyChainRiskMatrix`.
+ * "what you run" assets), and `SupplyChainRiskMatrix`.
+ *
+ * 2026-08-24 (real production feedback): certifications (ACVP/FIPS 140-3/
+ * Common Criteria, via the same `getCertsForProduct` desktop reads) and the
+ * real `VendorRoadmapPanel` were the two pieces of the originally-cut
+ * `ProductDetail` expansion a reader actually asked for. Both are now real,
+ * not stated cuts: a product row opens a detail sheet (certifications + PQC
+ * capabilities + validation/brief/manual links; proof.detail moved here too,
+ * off the row where it used to render unconditionally on every card), and
+ * the Vendors tab's roadmap cards open the genuine `VendorRoadmapPanel` --
+ * kept there rather than duplicated into the product sheet (confirmed with
+ * the user), with a "View {vendor}'s roadmap" button in the product sheet
+ * crossing over to it directly.
  */
 export function MobileMigrateView() {
   const [tab, setTab] = useState<Tab>('replace')
   const [selectedDomain, setSelectedDomain] = useState<DomainId>('tls')
   const [roadmapQuery, setRoadmapQuery] = useState('')
+  const [selectedProduct, setSelectedProduct] = useState<SoftwareItem | null>(null)
+  // Cross-nav from a product's detail sheet ("View {vendor}'s roadmap") into
+  // the Vendors tab, opening that vendor's own roadmap sheet directly rather
+  // than leaving the reader to find it again in the list (2026-08-24, real
+  // production feedback + follow-up: roadmap detail lives in the Vendors tab
+  // only, not duplicated into the product sheet).
+  const [pendingVendorId, setPendingVendorId] = useState<string | null>(null)
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const plan = useMigrateSelectionStore((s) => s.plan)
@@ -245,6 +288,7 @@ export function MobileMigrateView() {
                   product={p}
                   chosen={(choice[selectedDomain] ?? []).includes(p.softwareName)}
                   onChoose={() => chooseProduct(selectedDomain, p.softwareName)}
+                  onSelect={() => setSelectedProduct(p)}
                 />
               ))
             )}
@@ -264,14 +308,28 @@ export function MobileMigrateView() {
       )}
 
       {tab === 'roadmaps' && (
-        <MobileRoadmapsTab query={roadmapQuery} onQueryChange={setRoadmapQuery} />
+        <MobileRoadmapsTab
+          query={roadmapQuery}
+          onQueryChange={setRoadmapQuery}
+          openVendorId={pendingVendorId}
+          onOpenedVendor={() => setPendingVendorId(null)}
+        />
       )}
 
       {tab === 'vendorrisk' && <MobileVendorRiskTab />}
 
+      <MobileProductDetailSheet
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onViewVendorRoadmap={(vendorId) => {
+          setSelectedProduct(null)
+          setPendingVendorId(vendorId)
+          setTab('roadmaps')
+        }}
+      />
+
       <p className="mt-4 border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        The 8 foundation/infrastructure domains, full certification and roadmap drill-down per
-        product, and the Supply Chain Risk Matrix are on a laptop.
+        The 8 foundation/infrastructure domains and the Supply Chain Risk Matrix are on a laptop.
       </p>
     </div>
   )
@@ -281,14 +339,22 @@ function MobileProductRow({
   product,
   chosen,
   onChoose,
+  onSelect,
 }: {
   product: SoftwareItem
   chosen: boolean
   onChoose: () => void
+  onSelect: () => void
 }) {
   const pqc = productPqcStatus(product)
   const fips = productFipsBadge(product)
   const proof = proofFreshness(product)
+  // ADDED (real production feedback, 2026-08-24): proof.detail used to render
+  // here unconditionally, on every row, taking real vertical space for a
+  // sentence most readers never asked to see up front. It's still real
+  // content -- just moved behind a tap, in the detail sheet below, same as
+  // the certifications that were previously not reachable on mobile at all.
+  const certCount = getCertsForProduct(product.productId, product.softwareName).length
   return (
     <div
       className={cn(
@@ -297,7 +363,12 @@ function MobileProductRow({
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onSelect}
+          className="h-auto min-w-0 flex-1 flex-col items-start whitespace-normal rounded-none p-0 text-left font-normal"
+        >
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[12.5px] font-bold text-foreground">{product.softwareName}</span>
             {product.vendorId && (
@@ -310,10 +381,14 @@ function MobileProductRow({
             <Badge tone={proof.tone} title={proof.detail}>
               {proof.label}
             </Badge>
+            {certCount > 0 && (
+              <Badge tone="success">
+                {certCount} cert{certCount === 1 ? '' : 's'}
+              </Badge>
+            )}
           </div>
           <p className="mt-1 font-mono text-[10px] text-muted-foreground">{product.categoryName}</p>
-          <p className="mt-0.5 text-[10.5px] leading-snug text-muted-foreground">{proof.detail}</p>
-        </div>
+        </Button>
         <Button
           type="button"
           variant={chosen ? 'secondary' : 'outline'}
@@ -333,6 +408,156 @@ function MobileProductRow({
         </Button>
       </div>
     </div>
+  )
+}
+
+function MobileProductDetailSheet({
+  product,
+  onClose,
+  onViewVendorRoadmap,
+}: {
+  product: SoftwareItem | null
+  onClose: () => void
+  onViewVendorRoadmap: (vendorId: string) => void
+}) {
+  const certsByType = useMemo(() => {
+    const certs = product ? getCertsForProduct(product.productId, product.softwareName) : []
+    const map = new Map<CertificationXref['certType'], CertificationXref[]>()
+    for (const c of certs) {
+      const list = map.get(c.certType)
+      if (list) list.push(c)
+      else map.set(c.certType, [c])
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) => (a.certDate < b.certDate ? 1 : a.certDate > b.certDate ? -1 : 0))
+    }
+    return map
+  }, [product])
+
+  const supportDetail = (product?.pqcSupport || '')
+    .replace(/^\s*(yes|no|partial)\b[\s:,-]*/i, '')
+    .replace(/^\(|\)$/g, '')
+    .trim()
+
+  const hasVendorRoadmap =
+    !!product?.vendorId &&
+    (roadmapByVendorId.has(product.vendorId) || enrichmentByVendorId.has(product.vendorId))
+
+  return (
+    <MobileSheet
+      open={!!product}
+      onClose={onClose}
+      title={product?.softwareName}
+      large
+      testId="migrate-product-detail-sheet"
+    >
+      {product && (
+        <div className="flex flex-col gap-3">
+          {certsByType.size > 0 && (
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Certifications
+              </p>
+              <div className="flex flex-col gap-2">
+                {CERT_TYPE_ORDER.filter((t) => certsByType.has(t)).map((type) => (
+                  <div key={type} className="rounded-lg border border-border bg-card p-2.5">
+                    <p className="text-[11.5px] font-bold text-foreground">{type}</p>
+                    <div className="mt-1 flex flex-col gap-1.5">
+                      {certsByType.get(type)!.map((c) => (
+                        <a
+                          key={c.certId}
+                          href={c.certLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-start justify-between gap-2 rounded border border-border/60 bg-muted/20 px-2 py-1.5 text-[10.5px] text-foreground/90 hover:bg-muted/40"
+                        >
+                          <span>
+                            <span className="font-mono">{c.certId}</span>
+                            {c.certificationLevel && <> · {c.certificationLevel}</>}
+                            {c.pqcAlgorithms && !c.pqcAlgorithms.startsWith('No ') && (
+                              <span className="block text-muted-foreground">{c.pqcAlgorithms}</span>
+                            )}
+                          </span>
+                          <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-muted-foreground">
+                            {c.certDate}
+                            <ExternalLink size={10} aria-hidden="true" />
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(supportDetail || product.pqcCapabilityDescription) && (
+            <div>
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                PQC capabilities
+              </p>
+              {supportDetail && (
+                <p className="text-[12px] font-medium text-foreground">{supportDetail}</p>
+              )}
+              {product.pqcCapabilityDescription && (
+                <p className="mt-0.5 text-[11.5px] leading-relaxed text-foreground/80">
+                  {product.pqcCapabilityDescription}
+                </p>
+              )}
+            </div>
+          )}
+
+          {(product.proofUrl || product.productBriefUrl || product.userManualUrl) && (
+            <div className="flex flex-wrap items-center gap-3">
+              {product.proofUrl && (
+                <a
+                  href={product.proofUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-status-success hover:underline"
+                >
+                  <FileText size={12} aria-hidden="true" /> Validation proof
+                </a>
+              )}
+              {product.productBriefUrl && (
+                <a
+                  href={product.productBriefUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-primary hover:underline"
+                >
+                  <Newspaper size={12} aria-hidden="true" /> Product brief
+                </a>
+              )}
+              {product.userManualUrl && (
+                <a
+                  href={product.userManualUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-primary hover:underline"
+                >
+                  <BookText size={12} aria-hidden="true" /> User manual
+                </a>
+              )}
+            </div>
+          )}
+
+          {hasVendorRoadmap && product.vendorId && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onViewVendorRoadmap(product.vendorId!)}
+              className="h-9 justify-between text-[11.5px]"
+            >
+              View {vendorMap.get(product.vendorId)?.vendorDisplayName || product.vendorId}'s
+              roadmap
+              <ArrowRight size={13} aria-hidden="true" />
+            </Button>
+          )}
+        </div>
+      )}
+    </MobileSheet>
   )
 }
 
@@ -520,11 +745,28 @@ function MobilePlanTab({
 function MobileRoadmapsTab({
   query,
   onQueryChange,
+  openVendorId,
+  onOpenedVendor,
 }: {
   query: string
   onQueryChange: (q: string) => void
+  /** Set when a product's detail sheet asked to jump here for a specific
+   *  vendor (2026-08-24, real production feedback) — opens that vendor's
+   *  roadmap sheet immediately rather than leaving the reader to find it
+   *  again in the list below. */
+  openVendorId: string | null
+  onOpenedVendor: () => void
 }) {
   const selectedProductIds = useSelectedProductIds()
+  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (openVendorId) {
+      setSelectedVendorId(openVendorId)
+      onOpenedVendor()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per incoming openVendorId, not on every render
+  }, [openVendorId])
 
   const vendorIdByProductId = useMemo(() => {
     const map = new Map<string, string>()
@@ -604,7 +846,12 @@ function MobileRoadmapsTab({
           </p>
           <div className="flex flex-col gap-2">
             {myVendors.map((v) => (
-              <RoadmapVendorCard key={v.vendorId} vendorId={v.vendorId} vendorName={v.vendorName} />
+              <RoadmapVendorCard
+                key={v.vendorId}
+                vendorId={v.vendorId}
+                vendorName={v.vendorName}
+                onSelect={() => setSelectedVendorId(v.vendorId)}
+              />
             ))}
           </div>
         </div>
@@ -617,7 +864,12 @@ function MobileRoadmapsTab({
         )}
         <div className="flex flex-col gap-2">
           {otherVendors.map((v) => (
-            <RoadmapVendorCard key={v.vendorId} vendorId={v.vendorId} vendorName={v.vendorName} />
+            <RoadmapVendorCard
+              key={v.vendorId}
+              vendorId={v.vendorId}
+              vendorName={v.vendorName}
+              onSelect={() => setSelectedVendorId(v.vendorId)}
+            />
           ))}
         </div>
       </div>
@@ -626,11 +878,40 @@ function MobileRoadmapsTab({
           No vendors match "{query}".
         </p>
       )}
+
+      <MobileSheet
+        open={!!selectedVendorId}
+        onClose={() => setSelectedVendorId(null)}
+        title={
+          selectedVendorId
+            ? roadmapByVendorId.get(selectedVendorId)?.vendorName ||
+              vendorMap.get(selectedVendorId)?.vendorDisplayName ||
+              selectedVendorId
+            : undefined
+        }
+        large
+        testId="vendor-roadmap-sheet"
+      >
+        {selectedVendorId && (
+          <MobileVendorRoadmapPanel
+            roadmap={roadmapByVendorId.get(selectedVendorId)}
+            enrichment={enrichmentByVendorId.get(selectedVendorId)}
+          />
+        )}
+      </MobileSheet>
     </div>
   )
 }
 
-function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorName: string }) {
+function RoadmapVendorCard({
+  vendorId,
+  vendorName,
+  onSelect,
+}: {
+  vendorId: string
+  vendorName: string
+  onSelect: () => void
+}) {
   const hasRoadmap = roadmapByVendorId.has(vendorId)
   const productCount = useMemo(() => productsForVendor(vendorId).length, [vendorId])
   // 2026-08-24 audit R4.8: same real field + "None detected" sentinel guard
@@ -638,7 +919,17 @@ function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorN
   // not invented, was the one concrete fact these cards were missing.
   const targetDates = enrichmentByVendorId.get(vendorId)?.targetMigrationDates
   return (
-    <div className="rounded-xl border border-border bg-card p-3">
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={onSelect}
+      // 2026-08-24, real production feedback + follow-up: this card used to
+      // be a dead, unTappable summary. It's now the one place mobile reaches
+      // the real VendorRoadmapPanel (GA status, algorithm coverage, dated
+      // milestones) — a product's own detail sheet links here rather than
+      // duplicating roadmap content.
+      className="h-auto w-full flex-col items-stretch whitespace-normal rounded-xl border border-border bg-card p-3 text-left font-normal"
+    >
       <div className="flex items-center justify-between gap-2">
         <p className="text-[12.5px] font-bold text-foreground">{vendorName}</p>
         <Badge tone={hasRoadmap ? 'success' : 'info'}>
@@ -652,6 +943,115 @@ function RoadmapVendorCard({ vendorId, vendorName }: { vendorId: string; vendorN
         <p className="mt-1.5 flex items-start gap-1.5 text-[10.5px] text-muted-foreground">
           <Calendar size={11} className="mt-0.5 shrink-0" aria-hidden="true" />
           {targetDates}
+        </p>
+      )}
+    </Button>
+  )
+}
+
+const GA_STATUS_TONE: Record<string, Tone> = {
+  ga: 'success',
+  preview: 'warning',
+  beta: 'warning',
+  planned: 'muted',
+}
+
+/** Distilled, not resized: desktop's VendorRoadmapPanel treats every field
+ * (scope chip, roadmap-status badge, hybrid mode, compliance frameworks,
+ * quote) as equally prominent in one dense row + list. Here GA status,
+ * algorithms, and migration dates lead -- the 3 facts that actually answer
+ * "is this vendor ready and when" -- with the rest kept real but visually
+ * secondary, using this screen's own Badge/Tone system rather than porting
+ * desktop's inline color classes (2026-08-24, real production feedback).
+ * Same derived data as desktop (deriveVendorRoadmapDisplay) -- only the
+ * layout and hierarchy differ per platform. */
+function MobileVendorRoadmapPanel({
+  roadmap,
+  enrichment,
+}: {
+  roadmap: VendorRoadmap | undefined
+  enrichment: VendorRoadmapEnrichment | undefined
+}) {
+  const display = deriveVendorRoadmapDisplay(roadmap, enrichment)
+  if (!display) return null
+  const { title, roadmapUrl, gaStatus, dateLine, isEmpty } = display
+
+  if (isEmpty) {
+    return <p className="text-[12.5px] text-muted-foreground">No roadmap published.</p>
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[13px] font-bold text-foreground">{title}</span>
+          {gaStatus && <Badge tone={GA_STATUS_TONE[gaStatus.kind]}>{gaStatus.label}</Badge>}
+        </div>
+        {dateLine && (
+          <p className="mt-0.5 flex items-center gap-1 text-[10.5px] text-muted-foreground">
+            <Calendar size={10} className="shrink-0" aria-hidden="true" />
+            {dateLine.label === 'verified' ? 'Last verified' : 'Published'} {dateLine.date}
+          </p>
+        )}
+        {roadmapUrl && (
+          <a
+            href={roadmapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1.5 inline-flex h-9 items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/5 px-3 text-[12px] font-semibold text-primary"
+          >
+            <ExternalLink size={13} aria-hidden="true" /> Open the real roadmap
+          </a>
+        )}
+      </div>
+
+      {display.pqcAlgorithms.length > 0 && (
+        <div>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+            Algorithms
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {display.pqcAlgorithms.map((alg) => (
+              <span
+                key={alg}
+                className="rounded border border-primary/20 bg-primary/8 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-primary"
+              >
+                {alg}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {display.migrationDates && (
+        <div>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+            Target dates
+          </p>
+          <p className="text-[11.5px] text-foreground/90">{display.migrationDates}</p>
+        </div>
+      )}
+
+      {(display.hybridModeText || display.complianceFrameworks.length > 0) && (
+        <div className="flex flex-col gap-1 border-t border-border pt-2.5 text-[10.5px] text-muted-foreground">
+          {display.hybridModeText && (
+            <p>
+              <span className="font-semibold text-foreground/80">Hybrid:</span>{' '}
+              {display.hybridModeText}
+            </p>
+          )}
+          {display.complianceFrameworks.length > 0 && (
+            <p>
+              <span className="font-semibold text-foreground/80">Compliance:</span>{' '}
+              {display.complianceFrameworks.join(' · ')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {display.firstQuote && (
+        <p className="border-l-2 border-border pl-2.5 text-[11px] italic leading-relaxed text-muted-foreground">
+          &ldquo;{display.firstQuote}&rdquo;
         </p>
       )}
     </div>

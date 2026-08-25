@@ -1,11 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { ChevronDown, ExternalLink, Users } from 'lucide-react'
+import {
+  ArrowRight,
+  ChevronDown,
+  ExternalLink,
+  Globe,
+  ListChecks,
+  ShieldCheck,
+  Users,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useApplicability } from '@/hooks/useApplicability'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { complianceFrameworks, PQC_REQUIREMENT_LABEL as PQC_LABEL } from '@/data/complianceData'
+import {
+  complianceFrameworks,
+  PQC_REQUIREMENT_LABEL as PQC_LABEL,
+  type ComplianceFramework,
+} from '@/data/complianceData'
 import { isComplianceFrameworkEmphasized } from '@/data/personaConfig'
 import { RECORDS_GLOSSARY } from '@/data/recordsGlossary'
 import { TIER_META, type ApplicabilityTier } from '@/utils/applicabilityEngine'
@@ -13,7 +25,6 @@ import {
   buildObligations,
   groupObligations,
   COLLAPSED_BY_DEFAULT,
-  type ObligationRow,
 } from '@/components/Compliance/obligations/obligationsModel'
 import {
   applyRoleOrder,
@@ -26,6 +37,18 @@ import {
   totalFor,
 } from '@/components/Compliance/requirements/requirementsModel'
 import { CSWP39_STEPS, CSWP39_SOURCE_METADATA } from '@/components/Compliance/cswp39Data'
+import { buildDrawerDetail, pillarForBodyType } from '@/components/Compliance/redesign/pillarModel'
+import { pillClasses, TONES } from '@/components/Compliance/redesign/tones'
+import { MobileSheet } from '../primitives/Sheet'
+
+/** Never let a malformed URL crash the sheet — falls back to the raw string. */
+function safeHostname(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+}
 
 type Section = 'obligations' | 'requirements' | 'landscape' | 'records' | 'cswp39'
 
@@ -85,6 +108,7 @@ export function MobileComplianceView() {
   const [requirementsFrameworkId, setRequirementsFrameworkId] = useState<string | null>(null)
   const [expandedTier, setExpandedTier] = useState<Record<string, boolean>>({})
   const [openStep, setOpenStep] = useState<string | null>(null)
+  const [detailFramework, setDetailFramework] = useState<ComplianceFramework | null>(null)
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const { profile, isEmpty } = useApplicability()
@@ -114,9 +138,10 @@ export function MobileComplianceView() {
   const roleReductionActive =
     emphasisSet.length > 0 && emphasisSet.length < complianceFrameworks.length
 
-  const openObligation = (row: ObligationRow) => {
-    setRequirementsFrameworkId(row.framework.id)
+  const jumpToRequirements = (frameworkId: string) => {
+    setRequirementsFrameworkId(frameworkId)
     setSection('requirements')
+    setDetailFramework(null)
   }
 
   const isTierOpen = (tier: ApplicabilityTier) =>
@@ -194,7 +219,7 @@ export function MobileComplianceView() {
                           key={row.framework.id}
                           type="button"
                           variant="ghost"
-                          onClick={() => openObligation(row)}
+                          onClick={() => setDetailFramework(row.framework)}
                           // Button's own base classes hard-code whitespace-nowrap;
                           // this button wraps row.reason (a real sentence), which
                           // inherited nowrap and would run off the right edge
@@ -329,12 +354,18 @@ export function MobileComplianceView() {
                 more are tracked and still searchable on a laptop.
               </p>
               {emphasisSet.map((fw) => (
-                <div key={fw.id} className="glass-panel p-3">
+                <Button
+                  key={fw.id}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setDetailFramework(fw)}
+                  className="glass-panel h-auto w-full flex-col items-start gap-0 whitespace-normal rounded-xl p-3 text-left"
+                >
                   <h3 className="text-[12.5px] font-bold text-foreground">{fw.label}</h3>
                   <p className="mt-0.5 text-[10.5px] text-muted-foreground">
                     {fw.bodyType.replace(/_/g, ' ')} · {fw.deadline}
                   </p>
-                </div>
+                </Button>
               ))}
             </>
           ) : (
@@ -422,6 +453,212 @@ export function MobileComplianceView() {
         Progress tracking, the full Products catalogue, the For You validation Gantt, and the IR
         8477 concept graph are on a laptop.
       </p>
+
+      <MobileFrameworkDetailSheet
+        framework={detailFramework}
+        onClose={() => setDetailFramework(null)}
+        onViewRequirements={jumpToRequirements}
+      />
     </div>
+  )
+}
+
+/**
+ * "About this standard" — what the user could not get to before (2026-08-24
+ * report: "compliance page does not allow the user to access to details
+ * about the compliance standards" / "i cannot access to the acvp records ;
+ * fips records nor cc records" led to this + the Migrate cert sheet).
+ * Tapping a Rules & Standards row used to jump straight to a filtered
+ * Requirements list; tapping a Landscape tile did nothing at all. Both now
+ * open this sheet first.
+ *
+ * Every derived field (chain/phases/dossier) comes from buildDrawerDetail —
+ * the exact same pure model the desktop redesign's ComplianceDetailDrawer
+ * renders from, so this can never drift into a different, invented story
+ * about a framework. Deliberately dropped vs. the desktop drawer: the Learn
+ * backlink (mobile has its own Learn tab), Track/Endorse/Flag actions, the
+ * CSWP.39 crosswalk button (mobile already has a CSWP.39 section), and the
+ * revision drilldown — desktop power-user affordances, not "what is this
+ * standard" essentials.
+ */
+function MobileFrameworkDetailSheet({
+  framework,
+  onClose,
+  onViewRequirements,
+}: {
+  framework: ComplianceFramework | null
+  onClose: () => void
+  onViewRequirements: (frameworkId: string) => void
+}) {
+  const detail = useMemo(
+    () => (framework ? buildDrawerDetail(framework, pillarForBodyType(framework.bodyType)) : null),
+    [framework]
+  )
+
+  return (
+    <MobileSheet
+      open={!!framework}
+      onClose={onClose}
+      title={framework?.label}
+      large
+      testId="compliance-framework-detail-sheet"
+    >
+      {framework && detail && (
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={pillClasses('muted')}>{detail.pillarLabel}</span>
+            <span className={pillClasses(detail.pqcTone)}>{detail.pqcLabel}</span>
+          </div>
+          <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <Globe size={12} className="shrink-0" aria-hidden="true" />
+            {detail.juris}
+          </p>
+
+          {framework.description && (
+            <p className="text-[12px] leading-relaxed text-foreground/90">
+              {framework.description}
+            </p>
+          )}
+
+          {(framework.website || framework.enforcementBody || framework.lastVerified) && (
+            <div className="rounded-lg border border-border bg-muted/20 p-2.5">
+              <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                <ShieldCheck size={12} aria-hidden="true" />
+                Source &amp; trust
+              </p>
+              <dl className="flex flex-col gap-1 text-[11px]">
+                {framework.website && (
+                  <div className="flex items-start justify-between gap-2">
+                    <dt className="shrink-0 text-muted-foreground">Official source</dt>
+                    <dd className="min-w-0 text-right">
+                      <a
+                        href={framework.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-semibold text-primary"
+                      >
+                        <span className="truncate">{safeHostname(framework.website)}</span>
+                        <ExternalLink size={10} className="shrink-0" aria-hidden="true" />
+                      </a>
+                    </dd>
+                  </div>
+                )}
+                {framework.enforcementBody && (
+                  <div className="flex items-start justify-between gap-2">
+                    <dt className="shrink-0 text-muted-foreground">Enforcement body</dt>
+                    <dd className="min-w-0 text-right font-semibold text-foreground">
+                      {framework.enforcementBody}
+                    </dd>
+                  </div>
+                )}
+                {framework.lastVerified && (
+                  <div className="flex items-start justify-between gap-2">
+                    <dt className="shrink-0 text-muted-foreground">Last verified</dt>
+                    <dd className="min-w-0 text-right font-semibold text-foreground">
+                      {framework.lastVerified}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          )}
+
+          {detail.chain.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Traceability
+              </p>
+              <div className="flex flex-col gap-1">
+                {detail.chain.map((node, i) => (
+                  <div
+                    key={`${node.kind}-${i}`}
+                    className={cn(
+                      'rounded-lg border p-2',
+                      TONES[node.tone].border,
+                      TONES[node.tone].softBg
+                    )}
+                  >
+                    <p
+                      className={cn(
+                        'text-[10px] font-bold uppercase tracking-wide',
+                        TONES[node.tone].text
+                      )}
+                    >
+                      {node.kind}
+                    </p>
+                    <p className="text-[12px] font-bold text-foreground">{node.value}</p>
+                    {node.sub && <p className="text-[10px] text-muted-foreground">{node.sub}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {detail.phases.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                Deadline phases
+              </p>
+              <div className="flex items-start justify-between gap-1">
+                {detail.phases.map((ph, i) => {
+                  const tone =
+                    ph.state === 'done'
+                      ? TONES.success
+                      : ph.state === 'active'
+                        ? TONES.warning
+                        : TONES.muted
+                  return (
+                    <div
+                      key={`${ph.year}-${i}`}
+                      className="flex flex-1 flex-col items-center gap-1 text-center"
+                    >
+                      <span
+                        className={cn('h-2 w-2 rounded-full', tone.solidBg)}
+                        aria-hidden="true"
+                      />
+                      <span className="font-mono text-[10px] text-foreground">{ph.year}</span>
+                      <span className="text-[10px] leading-tight text-muted-foreground">
+                        {ph.label}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {detail.dossierItems.length > 0 && (
+            <div className="rounded-lg border border-status-success/30 bg-status-success/5 p-2.5">
+              <p className="mb-1 flex items-center gap-1.5 text-[10px] font-bold text-status-success">
+                <ListChecks size={12} aria-hidden="true" />
+                What an auditor checks
+              </p>
+              <ul className="flex flex-col gap-1">
+                {detail.dossierItems.map((item, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-[11px] text-foreground/90">
+                    <span
+                      className="mt-1 h-1 w-1 shrink-0 rounded-sm bg-status-success"
+                      aria-hidden="true"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onViewRequirements(framework.id)}
+            className="h-9 justify-between whitespace-normal text-[11.5px]"
+          >
+            View extracted requirements
+            <ArrowRight size={13} aria-hidden="true" />
+          </Button>
+        </div>
+      )}
+    </MobileSheet>
   )
 }

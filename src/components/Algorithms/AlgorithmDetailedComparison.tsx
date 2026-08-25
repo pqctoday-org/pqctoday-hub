@@ -68,6 +68,13 @@ interface AlgorithmDetailedComparisonProps {
   /** Resolved algorithms + baseline for Compare mode (from the explorer hook). */
   comparisonAlgos: AlgorithmDetail[]
   baselineAlgo: AlgorithmDetail | null
+  /**
+   * Hides the Browse/Compare mode switch entirely (Browse-only). Compare
+   * mode's transposed matrix (AlgorithmComparisonPanel) has no mobile
+   * layout — confirmed 2026-08-24 — so the mobile-shell caller sets this
+   * rather than exposing a toggle that leads to an unusable view.
+   */
+  hideCompareToggle?: boolean
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
@@ -82,6 +89,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   onDetailModeChange,
   comparisonAlgos,
   baselineAlgo,
+  hideCompareToggle,
 }) => {
   const selectedCount = compareSet.size
 
@@ -89,39 +97,41 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
     <div className="space-y-3">
       {/* Mode switch + About */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div
-          className="inline-flex rounded-md border border-border bg-card p-0.5"
-          role="group"
-          aria-label="Detailed comparison view mode"
-        >
-          <Button
-            type="button"
-            variant={detailMode === 'browse' ? 'gradient' : 'ghost'}
-            size="sm"
-            onClick={() => onDetailModeChange('browse')}
-            aria-pressed={detailMode === 'browse'}
-            className="h-8 gap-1.5 px-3 text-xs"
+        {!hideCompareToggle && (
+          <div
+            className="inline-flex rounded-md border border-border bg-card p-0.5"
+            role="group"
+            aria-label="Detailed comparison view mode"
           >
-            <LayoutList size={14} />
-            Browse all
-          </Button>
-          <Button
-            type="button"
-            variant={detailMode === 'compare' ? 'gradient' : 'ghost'}
-            size="sm"
-            onClick={() => onDetailModeChange('compare')}
-            aria-pressed={detailMode === 'compare'}
-            className="h-8 gap-1.5 px-3 text-xs"
-          >
-            <GitCompare size={14} />
-            Compare side-by-side
-            {selectedCount > 0 && (
-              <span className="rounded-full bg-background/30 px-1.5 text-[10px] font-bold">
-                {selectedCount}
-              </span>
-            )}
-          </Button>
-        </div>
+            <Button
+              type="button"
+              variant={detailMode === 'browse' ? 'gradient' : 'ghost'}
+              size="sm"
+              onClick={() => onDetailModeChange('browse')}
+              aria-pressed={detailMode === 'browse'}
+              className="h-8 gap-1.5 px-3 text-xs"
+            >
+              <LayoutList size={14} />
+              Browse all
+            </Button>
+            <Button
+              type="button"
+              variant={detailMode === 'compare' ? 'gradient' : 'ghost'}
+              size="sm"
+              onClick={() => onDetailModeChange('compare')}
+              aria-pressed={detailMode === 'compare'}
+              className="h-8 gap-1.5 px-3 text-xs"
+            >
+              <GitCompare size={14} />
+              Compare side-by-side
+              {selectedCount > 0 && (
+                <span className="rounded-full bg-background/30 px-1.5 text-[10px] font-bold">
+                  {selectedCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <span className="hidden sm:inline text-xs text-muted-foreground">

@@ -26,6 +26,8 @@ import type { PersonaId } from '../../data/learningPersonas'
 import { useAlgorithmExplorer, MAX_COMPARE } from './useAlgorithmExplorer'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { MobileAlgorithmsView } from '@/components/Mobile/screens/MobileAlgorithmsView'
+import { MobileProtocolMatrixView } from '@/components/Mobile/screens/MobileProtocolMatrixView'
+import { MobileKATValidationView } from '@/components/Mobile/screens/MobileKATValidationView'
 
 const ALGO_PERSONA_HINTS: Record<PersonaId, string> = {
   executive:
@@ -116,8 +118,35 @@ export function AlgorithmsView() {
   // sub-view. This is a 5-tab explorer, not a single-tab route like Timeline/
   // Threats — one new mobile screen for all 5 tabs isn't in scope; the entry
   // strip is how a mobile reader still reaches each real tab.
-  const isMobileShell =
-    useIsMobileShell() && !searchParams.get('tab') && !searchParams.get('highlight')
+  //
+  // 2026-08-24 audit: `tab=support` ("Understand PQC protocols") and
+  // `tab=validation` ("Run a live test") were exactly this fall-through —
+  // real bugs, not an intentional desktop-only cut like the rest of this
+  // comment describes; investigated and confirmed neither screen's real
+  // filters are what the (still-uncut) family/region/security-level tabs
+  // use. Both now get their own distilled mobile screens instead of falling
+  // through.
+  //
+  // 2026-08-24 audit part 2: `tab=transition` and `tab=detailed` had the
+  // SAME fall-through — the entry-strip cards that reach them ("Replace a
+  // classical algorithm", "Find a drop-in replacement", "View top
+  // compliance picks", BSI/ANSSI) landed on the full desktop hero
+  // (AlgorithmEntryStrip shown a second time), the executive-mandate box,
+  // the AlgorithmFilters control deck, and the full 5-tab TabsList, all
+  // squeezed to phone width, with only the tab's own inner content actually
+  // mobile-shaped. Confirmed via user scope-check (2026-08-24): strip that
+  // chrome for both, same as support/validation above; Detailed
+  // Comparison's Compare-side-by-side mode (AlgorithmComparisonPanel) has no
+  // mobile layout, so mobile is Browse-only there — desktop keeps both.
+  // `tab=landscape` remains out of scope: confirmed unreachable from any
+  // mobile entry-strip intent, so no real phone user hits it.
+  const isMobile = useIsMobileShell()
+  const tabParam = searchParams.get('tab')
+  const isMobileShell = isMobile && !tabParam && !searchParams.get('highlight')
+  const isMobileProtocolMatrix = isMobile && tabParam === 'support'
+  const isMobileValidation = isMobile && tabParam === 'validation'
+  const isMobileTransition = isMobile && tabParam === 'transition'
+  const isMobileDetailed = isMobile && tabParam === 'detailed'
 
   const [infoOpen, setInfoOpen] = useState(false)
   const [hintDismissed, setHintDismissed] = useState(false)
@@ -236,6 +265,55 @@ export function AlgorithmsView() {
   // so unlike ThreatsDashboard this needs no simEmbed-equivalent guard.
   if (isMobileShell) {
     return <MobileAlgorithmsView />
+  }
+  if (isMobileProtocolMatrix) {
+    return <MobileProtocolMatrixView />
+  }
+  if (isMobileValidation) {
+    return <MobileKATValidationView />
+  }
+  if (isMobileTransition) {
+    return (
+      <div className="px-4 pb-4 pt-4">
+        <AlgorithmComparison
+          highlightAlgorithms={highlightAlgorithms}
+          filteredData={filteredTransitions}
+          compareSet={compareSet}
+          compareType={compareType}
+          maxCompareReached={compareKeys.length >= MAX_COMPARE - 1}
+          onToggleTransitionRow={handleToggleTransitionRow}
+        />
+      </div>
+    )
+  }
+  if (isMobileDetailed) {
+    return (
+      <div className="px-4 pb-4 pt-4">
+        <h1 className="text-[17px] font-extrabold leading-tight text-foreground">
+          Detailed Comparison
+        </h1>
+        <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">
+          Key sizes, performance, and standardization status for every algorithm.
+        </p>
+        <div className="mt-3">
+          <AlgorithmDetailedComparison
+            highlightAlgorithms={highlightAlgorithms}
+            onInfoOpen={() => setInfoOpen(true)}
+            filteredAlgorithms={filteredAlgorithms}
+            compareSet={compareSet}
+            compareType={compareType}
+            maxCompareReached={compareKeys.length >= MAX_COMPARE}
+            onToggleCompare={handleToggleCompare}
+            detailMode="browse"
+            onDetailModeChange={() => {}}
+            comparisonAlgos={comparisonAlgos}
+            baselineAlgo={baselineAlgo}
+            hideCompareToggle
+          />
+        </div>
+        <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
+      </div>
+    )
   }
 
   return (

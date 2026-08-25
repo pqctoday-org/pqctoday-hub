@@ -335,7 +335,7 @@ export function MobileAlgorithmsView() {
             type="button"
             variant="ghost"
             onClick={() => navigate(intentHref(intent.params))}
-            className="h-auto items-center justify-start gap-3 rounded-[11px] border border-border bg-card p-3 text-left font-normal"
+            className="h-auto items-center justify-start gap-3 whitespace-normal rounded-[11px] border border-border bg-card p-3 text-left font-normal"
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[13px] font-bold text-foreground">{intent.label}</span>
@@ -424,8 +424,9 @@ export function MobileAlgorithmsView() {
       )}
 
       <p className="border-t border-border pt-3 text-[10.5px] leading-relaxed text-muted-foreground">
-        Family, region (NIST/BSI/ANSSI) filters, keygen/verify performance, the full transition
-        table, and KAT WASM validation are reached through the options above, or on a laptop.
+        Family, region (NIST/BSI/ANSSI), and security-level filters and the full transition table
+        are on a laptop. Protocol readiness and live KAT validation are reached through the options
+        above.
       </p>
 
       <MobileSheet
