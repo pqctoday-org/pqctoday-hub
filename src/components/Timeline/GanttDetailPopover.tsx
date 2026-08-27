@@ -21,6 +21,7 @@ import {
   getTimelineEnrichmentKey,
 } from '../../data/timelineEnrichmentData'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
+import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
@@ -182,6 +183,12 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 </p>
               </div>
 
+              {/* Document Analysis — same collapsible enrichment panel
+                  TimelineDocumentDetailPopover already renders; this popover
+                  never had it, so mobile (which only ever reaches this
+                  popover via MobileTimelineList) had no way to open it. */}
+              {isEnriched && enrichment && <DocumentAnalysis enrichment={enrichment} />}
+
               {/* Enrichment section — renders directly, no extra click (Phase 8.5:
                   matches TimelineDocumentDetailPopover's zero-extra-click depth). */}
               {isEnriched && enrichment && <TimelineAnalysisPanel enrichment={enrichment} />}
@@ -201,11 +208,15 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                     </span>
                     <span className="font-mono text-foreground">{phase.endYear}</span>
                   </div>
-                  <div>
-                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
-                      Source
-                    </span>
-                    {sourceUrl ? (
+                  {/* Source/Date cells are dropped entirely rather than shown as
+                      "-" placeholders when absent — a row that says nothing costs
+                      space this grid can't spare, especially at the 2-col mobile
+                      width. */}
+                  {sourceUrl && (
+                    <div>
+                      <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                        Source
+                      </span>
                       <a
                         href={sourceUrl}
                         target="_blank"
@@ -216,19 +227,19 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                         <ExternalLink className="w-3 h-3 shrink-0" />
                         <span>View</span>
                       </a>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </div>
-                  <div>
-                    <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
-                      Date
-                    </span>
-                    <div className="flex items-center gap-1.5 text-foreground">
-                      <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                      <span className="truncate">{sourceDate || '-'}</span>
                     </div>
-                  </div>
+                  )}
+                  {sourceDate && (
+                    <div>
+                      <span className="block text-muted-foreground uppercase tracking-wider font-medium text-xs">
+                        Date
+                      </span>
+                      <div className="flex items-center gap-1.5 text-foreground">
+                        <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
+                        <span className="truncate">{sourceDate}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

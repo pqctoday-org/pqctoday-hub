@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import type { TimelinePhase } from '../../types/timeline'
 
@@ -101,10 +102,22 @@ describe('GanttDetailPopover — enrichment analysis click depth (Phase 8.5)', (
   const onClose = vi.fn()
 
   it('renders the enrichment analysis immediately, with no expand/Analysis button required', () => {
-    render(<GanttDetailPopover isOpen={true} onClose={onClose} phase={mockPhase} />)
+    // MemoryRouter added 2026-08-26: this mock enrichment has a `mainTopic`,
+    // so DocumentAnalysis now also renders here, and its "Explore on PQC
+    // Today" links call useNavigate().
+    render(
+      <MemoryRouter>
+        <GanttDetailPopover isOpen={true} onClose={onClose} phase={mockPhase} />
+      </MemoryRouter>
+    )
 
-    // No collapse toggle should exist anymore.
-    expect(screen.queryByRole('button', { name: /analysis/i })).not.toBeInTheDocument()
+    // No collapse toggle gating the 8-dimension panel specifically should
+    // exist anymore (scoped to "8-dimension" rather than a blanket /analysis/i
+    // match, 2026-08-26: this popover now also renders the separate, still-
+    // legitimately-collapsible "Document Analysis" panel — see
+    // DocumentAnalysis.tsx — added the same day this test's own mock
+    // enrichment gained a `mainTopic`, which is what makes it render).
+    expect(screen.queryByRole('button', { name: /8.dimension/i })).not.toBeInTheDocument()
     expect(screen.queryByText('expand')).not.toBeInTheDocument()
     expect(screen.queryByText('collapse')).not.toBeInTheDocument()
 

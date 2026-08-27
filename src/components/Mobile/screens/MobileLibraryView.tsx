@@ -12,6 +12,8 @@ import {
 import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 import { useLibraryPipeline } from '@/components/Library/redesign/useLibraryPipeline'
 import { lifecycleLabel, formatLibDate } from '@/components/Library/redesign/libraryPills'
+import { libraryEnrichments } from '@/data/libraryEnrichmentData'
+import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { cn } from '@/lib/utils'
 import { MobileSheet } from '../primitives/Sheet'
 
@@ -280,12 +282,13 @@ export function MobileLibraryView() {
                 ['Security levels', selected.securityLevels],
                 ['Region', selected.regionScope],
                 ['Migration urgency', selected.migrationUrgency],
-                [
-                  'Citations',
-                  selected.citationCount != null ? String(selected.citationCount) : undefined,
-                ],
+                ['Citations', selected.citationCount ? String(selected.citationCount) : undefined],
               ]
-                .filter(([, v]) => v && v !== '—')
+                // Screen real estate is scarce here — a row that only says "N/A" or
+                // "0" costs a line without telling the reader anything, so it's
+                // dropped rather than shown as a placeholder (unlike desktop, which
+                // has room to list every field for completeness).
+                .filter(([, v]) => v && v !== '—' && v.trim().toUpperCase() !== 'N/A')
                 .map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-sim-chip font-bold uppercase tracking-wide text-muted-foreground">
@@ -305,6 +308,11 @@ export function MobileLibraryView() {
                     {c}
                   </span>
                 ))}
+              </div>
+            )}
+            {libraryEnrichments[selected.referenceId] && (
+              <div className="border-t border-border pt-3">
+                <DocumentAnalysis enrichment={libraryEnrichments[selected.referenceId]} />
               </div>
             )}
             <div className="flex items-center gap-2 border-t border-border pt-3">

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { MobileLibraryView } from './MobileLibraryView'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -10,8 +11,17 @@ import { LIBRARY_OPS_PICKS } from '@/data/libraryOpsPicks'
 // Real data throughout — libraryData is parsed synchronously from a bundled
 // CSV at module load. Assertions are structural (derived at test time), not
 // hardcoded counts, since the underlying CSV changes over time.
+//
+// MemoryRouter wrapper added 2026-08-26: the detail sheet now renders the
+// shared DocumentAnalysis panel (mobile-ux remediation), whose "Explore on
+// PQC Today" links call useNavigate() — this view previously had no
+// react-router dependency of its own.
 function renderView() {
-  return render(<MobileLibraryView />)
+  return render(
+    <MemoryRouter>
+      <MobileLibraryView />
+    </MemoryRouter>
+  )
 }
 
 describe('MobileLibraryView', () => {

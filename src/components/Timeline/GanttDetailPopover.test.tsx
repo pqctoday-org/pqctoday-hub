@@ -122,10 +122,12 @@ describe('GanttDetailPopover', () => {
 
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={phaseWithoutSource} />)
 
+      // 2026-08-26: the Source cell is dropped entirely when there's no real
+      // URL, rather than shown as a "-" placeholder (mobile-ux space
+      // optimization — a row that says nothing costs space this grid can't
+      // spare on a narrow screen).
       expect(screen.queryByRole('link', { name: 'View' })).not.toBeInTheDocument()
-      // Check for dash "-" which is used when sourceUrl is missing
-      const sourceCell = screen.getAllByText('-')[0]
-      expect(sourceCell).toBeInTheDocument()
+      expect(screen.queryByText('Source')).not.toBeInTheDocument()
     })
 
     it('handles missing source date', () => {
@@ -141,9 +143,10 @@ describe('GanttDetailPopover', () => {
 
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={phaseWithoutDate} />)
 
-      // Check for dash "-" which is used when sourceDate is missing (second dash in table)
-      const dashes = screen.getAllByText('-')
-      expect(dashes.length).toBeGreaterThanOrEqual(1)
+      // 2026-08-26: the Date cell is dropped entirely when there's no real
+      // date, rather than shown as a "-" placeholder — see the Source test
+      // above for the same change.
+      expect(screen.queryByText('Date')).not.toBeInTheDocument()
     })
   })
 
