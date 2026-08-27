@@ -34,7 +34,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '938 sources, trust-tiered',
+          '937 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'How we verify',
         ],
@@ -187,7 +187,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '938 sources, trust-tiered',
+          '937 sources, trust-tiered',
           'Regulatory data verified 16 Jul 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
@@ -341,7 +341,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '938 sources, trust-tiered',
+          '937 sources, trust-tiered',
           'Every correction logged and dated',
           'Authoritative / High / Moderate / Low source tiers',
         ],
@@ -2148,7 +2148,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Counter-claims dataset · CVE snapshots',
           'Authoritative / High / Moderate / Low source tiers',
-          '938 sources, trust-tiered',
+          '937 sources, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {

@@ -1,0 +1,166 @@
+[
+  {
+    "ref_id": "ISO-18013-5-mDL",
+    "reason": "Probable landing page, not the document (93,424 bytes of markup, only 3,939 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "QCCPA-2022",
+    "reason": "Probable landing page, not the document (362,134 bytes of markup, only 3,969 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "EO-14144",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "HKMA-Fintech-Blueprint-2026",
+    "reason": "Probable landing page, not the document (81,742 bytes of markup, only 5,002 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Singapore-NQSN-Plus",
+    "reason": "Probable landing page, not the document (290,181 bytes of markup, only 5,659 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "UK-DSIT-CNI-PQC-Perspectives-2025",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "SG-MAS-QKD-Sandbox-Report-2025",
+    "reason": "Probable landing page, not the document (253,950 bytes of markup, only 4,167 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "NATO-Quantum-Strategy-2024",
+    "reason": "Probable landing page, not the document (313,593 bytes of markup, only 6,777 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "CISA-Bad-Practices-PQC-2025",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST SP 800-37",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST SP 800-218",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "TNO-PQC-Migration-WP-2025",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "EPC-342-08-Crypto-Guidelines-v16",
+    "reason": "Probable landing page, not the document (60,139 bytes of markup, only 2,395 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ANSSI-BSI-QKD-Position-Paper",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "HKMA-Fintech-Adoption-Report-2025",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "IETF-RFC-4210-CMP",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST-FIPS-140-3-IG-Sep-2025-PQC",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "ETSI-TS-119-312",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "AUSTRAC-AML-CTF-Act",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "ISO/IEC 18033-2:2006/AMD1:2017",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "CNSSP 11",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "EO-14028",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NSM-8",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "ISO/IEC 18033-2:2006",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "NIAP",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "China CACR PQC Competition Results",
+    "reason": "Probable landing page, not the document (29,918 bytes of markup, only 772 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "China ICCS PQC Call for Proposals",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "NSA-QKD-Advisory-2023",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "UAE-CSC-Encryption-Policy",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "Gartner-CryptoCOE-Mahdi",
+    "reason": "Probable landing page, not the document (219,611 bytes of markup, only 4,977 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "EU-NIS-CG-Security-Measures-2026",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "ISO-26262-Road-vehicles-Functional-safety",
+    "reason": "Probable landing page, not the document (70,976 bytes of markup, only 4,386 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ISO-IEC-17799-2000",
+    "reason": "Probable landing page, not the document (76,341 bytes of markup, only 1,539 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ISO-IEC-18033-2-2006-Amd-2-2026-Information-technology-Secur",
+    "reason": "Probable landing page, not the document (83,950 bytes of markup, only 2,303 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ETSI-TS-119-312-V2-1-1-Electronic-Signatures-and-Trust-Infra",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CCN-STIC-221-Spain-Guia-de-Mecanismos-Criptograficos-autoriz",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "eIDAS-Regulation-EU-No-910-2014",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "FDA-Drug-Supply-Chain-Security-Act-DSCSA",
+    "reason": "Probable landing page, not the document (47,142 bytes of markup, only 1,507 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "EPA-Cybersecurity-for-the-Water-Sector",
+    "reason": "Probable landing page, not the document (58,728 bytes of markup, only 4,002 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]

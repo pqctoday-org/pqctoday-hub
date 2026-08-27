@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "CC-2022-PART3",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CC-2022-CEM",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  }
+]

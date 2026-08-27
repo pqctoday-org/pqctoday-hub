@@ -1,0 +1,62 @@
+[
+  {
+    "ref_id": "BIP-39",
+    "reason": "Probable landing page, not the document (315,621 bytes of markup, only 7,614 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "BIP-44",
+    "reason": "Probable landing page, not the document (324,574 bytes of markup, only 7,297 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ASC-X9-Financial-PKI",
+    "reason": "Probable landing page, not the document (219,701 bytes of markup, only 6,070 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "CIRCL-Cloudflare",
+    "reason": "Probable landing page, not the document (405,974 bytes of markup, only 6,962 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Lattice-Estimator",
+    "reason": "Probable landing page, not the document (375,672 bytes of markup, only 7,939 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "VIAVI-PQC-Migration-WP-2026",
+    "reason": "Probable landing page, not the document (65,688 bytes of markup, only 5,084 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ref-obrien-chrome-hybrid",
+    "reason": "Probable landing page, not the document (178,653 bytes of markup, only 4,505 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "QCReport-QDay-Accelerated-Timeline-2026",
+    "reason": "Probable landing page, not the document (134,627 bytes of markup, only 4,507 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ArsTechnica-Ransomware-Quantum-Safe-2026",
+    "reason": "Probable landing page, not the document (147,021 bytes of markup, only 4,793 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "QuantumInsider-QuantumXChange-PhioTX-2026",
+    "reason": "Probable landing page, not the document (217,996 bytes of markup, only 7,238 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "QCReport-QSE-Enterprise-PQC-Platform-2026",
+    "reason": "Probable landing page, not the document (137,213 bytes of markup, only 5,050 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "BIP-43",
+    "reason": "Probable landing page, not the document (284,455 bytes of markup, only 3,226 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-016-V2",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "Westerbaan-PQCrypto2025-Slides",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "CSA-Crypto-News-June-2026",
+    "reason": "Probable landing page, not the document (116,371 bytes of markup, only 6,282 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]

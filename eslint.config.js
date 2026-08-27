@@ -356,6 +356,15 @@ export default defineConfig([
                 '@/components/common/*',
                 '!@/components/common/Glossary',
                 '!@/components/common/UserManualPanel',
+                // DocumentAnalysis.tsx (common, pure-moved from Library
+                // 2026-08-26) — same category: a self-contained collapsed-
+                // by-default enrichment panel with no fixed-width/desktop-only
+                // layout, already reused verbatim by four desktop popovers/
+                // drawers. Mobile Library and Timeline had no equivalent to
+                // the "Document Analysis" section those give desktop, so this
+                // lets the mobile screens render the exact same component
+                // rather than a re-derived one that could drift.
+                '!@/components/common/DocumentAnalysis',
                 // TopThreeActions.tsx (common) — same category: explicitly
                 // generic ("so dense pages... can offer a 'do this now'
                 // hero"), no baked-in desktop-only layout (grid-cols-1

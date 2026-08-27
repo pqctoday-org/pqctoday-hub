@@ -29,6 +29,28 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.59.0] - 2026-08-26
+
+The compliance requirements catalogue grows by a third and every requirement in it is now traceable to a quote that really appears in the document it cites, 126 Library documents say which Learn modules teach them, and mobile Library and Timeline gain the Document Analysis panel desktop already had.
+
+### Added
+
+- **Document Analysis now opens from Library and Timeline detail views on your phone** [view:/library] [view:/timeline] [persona:researcher] [persona:architect] [persona:developer] [persona:curious]: the collapsible panel that explains what a document covers, who it affects, and which parts of the site it connects to was desktop-only — it was never built for mobile. It now opens from both detail sheets. It also stays hidden entirely when a document has nothing to show, instead of opening onto an empty panel, and detail grids no longer spend scarce phone width on rows that just said "N/A" or "Citations: 0".
+
+- **687 more compliance requirements, drawn from 65 more sources** [view:/compliance] [persona:architect] [persona:executive] [persona:ops]: the requirements catalogue behind the compliance drawer, the maturity tiles, and the agility explorer goes from 2,022 requirements across 229 sources to 2,708 across 294. New coverage includes Saudi Arabia's NCS-1:2020, New Zealand's NZISM, Australian ASD/ACSC guidance, US sector rules (NRC 10 CFR 73.54, FRA Positive Train Control), APRA CPS 234, and 5G Americas.
+
+### Changed
+
+- **126 Library documents now tell you which Learn modules teach them** [view:/library] [view:/learn] [persona:curious] [persona:researcher] [persona:architect]: a document's entry links onward to the modules that cite it, so a standard you land on is no longer a dead end. 35 more documents gained the algorithm family or the protocol/tool impact they were missing.
+
+### Fixed
+
+- **83 compliance requirements quoted text that is not in the document they cite** [view:/compliance] [persona:architect] [persona:researcher] [persona:ops]: every requirement was re-checked against its actual source document, and those that could not be traced to real text were retired rather than left standing. Several were quoting a site's landing page instead of the standard itself — Saudi Arabia's NCS-1:2020 requirements, for example, now cite the standard's PDF rather than nca.gov.sa's front page. The catalogue is now fully grounded.
+
+- **Learn module pages ran flush against both edges of the screen on phones** [view:/learn] [persona:curious]: this affected every module page whenever the active persona is Curious.
+
+- **The SBOM module cited CISA's 2026 revision twice and the 2021 original not at all** [view:/learn] [persona:developer] [persona:architect]: an automated citation sweep repointed the module's reference to the current standard without noticing the module already cited it separately, in the section that compares the two documents side by side. Its "Minimum Elements" section describes the 2021 original in detail, so the duplicate is now removed.
+
 ## [4.58.0] - 2026-08-25
 
 A round of fixes to the mobile layer shipped in 4.57.0, found by testing it live on a phone: Assess, Compliance, Migrate, and Algorithms each had a screen that still fell through to the desktop layout, plus assorted overflow and state bugs.
