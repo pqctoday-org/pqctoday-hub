@@ -15,7 +15,7 @@ import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { PILLAR_TO_ZONE } from '@/data/cswp39ZoneData'
 import { libraryEnrichments } from '@/data/libraryEnrichmentData'
 import { getTrustScore } from '@/data/trustScore'
-import { DocumentAnalysis } from '@/components/Library/DocumentAnalysis'
+import { DocumentAnalysis } from '@/components/common/DocumentAnalysis'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import {

@@ -10,7 +10,7 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { DocumentAnalysis } from '../Library/DocumentAnalysis'
+import { DocumentAnalysis } from '../common/DocumentAnalysis'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import {
   timelineEnrichments,

@@ -326,12 +326,28 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
 
   const hasFeatures = enrichment.relevantFeatures.length > 0
 
+  const hasAnyDimension =
+    hasCoreAnalysis ||
+    hasAlgorithmsSecurity ||
+    hasMigration ||
+    hasEcosystem ||
+    hasSecurityDeployment ||
+    hasExecutiveContext ||
+    hasFeatures
+
+  // Some enrichment records (e.g. Timeline entries whose data only populates
+  // the timeline-specific dimensions TimelineAnalysisPanel reads) leave every
+  // dimension here empty. Rendering a live toggle to a panel with nothing
+  // inside it is worse than not rendering at all — confirmed live via mobile
+  // emulation, 2026-08-26 remediation G4.
+  if (!hasAnyDimension) return null
+
   return (
     <div className="glass-panel p-3">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full h-auto items-center justify-between px-1 py-1.5"
+        className="flex w-full h-auto min-h-[44px] md:min-h-0 items-center justify-between px-1 py-1.5"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2 font-semibold text-foreground text-sm">

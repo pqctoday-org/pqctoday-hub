@@ -248,4 +248,29 @@ describe('DocumentAnalysis', () => {
     fireEvent.click(toggle)
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
   })
+
+  it('renders nothing when no dimension has any content', () => {
+    // Real case: Timeline enrichment records can populate only the
+    // timeline-specific fields TimelineAnalysisPanel reads (phaseClassification,
+    // mandateLevel, etc.), leaving every field this component itself checks
+    // empty. Confirmed live via mobile emulation, 2026-08-26 — a Timeline
+    // phase opened this toggle to an empty panel before this guard existed.
+    const NO_DIMENSIONS: LibraryEnrichment = {
+      mainTopic: '',
+      pqcAlgorithms: [],
+      quantumThreats: [],
+      migrationTimeline: null,
+      regionsAndBodies: null,
+      leadersContributions: [],
+      pqcProducts: [],
+      protocols: [],
+      infrastructureLayers: [],
+      standardizationBodies: [],
+      complianceFrameworks: [],
+      ...EMPTY_V2,
+    }
+    const { container } = renderWithRouter(<DocumentAnalysis enrichment={NO_DIMENSIONS} />)
+    expect(screen.queryByRole('button', { name: /document analysis/i })).not.toBeInTheDocument()
+    expect(container).toBeEmptyDOMElement()
+  })
 })
