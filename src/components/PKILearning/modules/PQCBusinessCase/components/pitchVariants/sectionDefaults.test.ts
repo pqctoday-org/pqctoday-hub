@@ -25,6 +25,7 @@ function makeData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     criticalThreatCount: 12,
     totalThreatCount: 40,
     industryThreats: [],
+    vendorsByDomain: new Map(),
     vendorsByLayer: new Map(),
     fipsValidatedCount: 4,
     pqcReadyCount: 6,

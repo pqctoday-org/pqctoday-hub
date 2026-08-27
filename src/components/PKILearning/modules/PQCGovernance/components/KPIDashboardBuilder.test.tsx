@@ -18,6 +18,7 @@ const mockData: ExecutiveModuleData = {
   criticalThreatCount: 2,
   totalThreatCount: 5,
   industryThreats: [],
+  vendorsByDomain: new Map(),
   vendorsByLayer: new Map(),
   fipsValidatedCount: 3,
   pqcReadyCount: 4,

@@ -38,6 +38,7 @@ const baseMockData: ExecutiveModuleData = {
   criticalThreatCount: 0,
   totalThreatCount: 0,
   industryThreats: [],
+  vendorsByDomain: new Map(),
   vendorsByLayer: new Map(),
   fipsValidatedCount: 0,
   pqcReadyCount: 0,

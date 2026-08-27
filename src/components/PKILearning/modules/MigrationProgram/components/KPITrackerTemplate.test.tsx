@@ -35,6 +35,7 @@ function baseData(riskScore: number | null): ExecutiveModuleData {
     criticalThreatCount: 1,
     totalThreatCount: 4,
     industryThreats: [],
+    vendorsByDomain: new Map(),
     vendorsByLayer: new Map(),
     fipsValidatedCount: 2,
     pqcReadyCount: 5,

@@ -139,4 +139,36 @@ describe('useVendorConcentrationRisks — threshold boundaries', () => {
     const { result } = renderHook(() => hookSingle())
     expect(severeOf('single-source', result.current)).toBe(true)
   })
+
+  // Selection awareness (2026-08-27, decision D4): with a Replace-tab
+  // selection, the cards score ONLY the selected products — previously they
+  // always scored the full catalog while claiming "your" products.
+  it('scores only the selected products when a selection exists', async () => {
+    vi.resetModules()
+    const items = [
+      softwareItem('mine', 'v1', 'Yes'),
+      softwareItem('other-a', 'v2', 'No'),
+      softwareItem('other-b', 'v3', 'No'),
+    ]
+    vi.doMock('@/data/migrateData', () => ({
+      softwareData: items,
+      vendorMap: new Map([
+        ['v1', vendor('v1', 'Switzerland', 1)],
+        ['v2', vendor('v2', 'US', 1)],
+        ['v3', vendor('v3', 'US', 1)],
+      ]),
+    }))
+    vi.doMock('@/store/useMigrateSelectionStore', () => ({
+      useSelectedProductIds: () => ['mine'],
+    }))
+    const { useVendorConcentrationRisks: hookSelected } = await import('./vendorConcentrationRisk')
+    const { result } = renderHook(() => hookSelected())
+    // Concentration: v1 supplies 1 of the 1 selected GA products = 100%.
+    expect(result.current.find((c) => c.key === 'vendor-concentration')?.headline).toBe('100%')
+    // Cert gap: the selected product is FIPS-validated → 0%, not the
+    // catalog-wide 67% the unselected view would report.
+    expect(result.current.find((c) => c.key === 'cert-gap')?.headline).toBe('0%')
+    // Geographic: only the selection's vendor counts → 100% Switzerland.
+    expect(result.current.find((c) => c.key === 'geographic')?.detail).toContain('Switzerland')
+  })
 })
