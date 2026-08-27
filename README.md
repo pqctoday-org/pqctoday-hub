@@ -93,13 +93,19 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
-  - **ACVP Testing**: validates 14 algorithm families against NIST test vectors — AES-GCM-256
-    (SP 800-38D), AES-CBC, AES-CTR, AES Key Wrap, HMAC-SHA-256/384/512 (FIPS 198-1),
-    SHA-256, RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256, ECDSA P-384, EdDSA (Ed25519),
-    ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS 204); runs on both
-    C++ and Rust engines in Dual Mode simultaneously; **XMSS-SHA2_10_256 KAT** (RFC 8391 / NIST SP 800-208):
-    deterministic keygen self-test via `_set_kat_seed` seed injection hook — zero-seed produces a
-    known public key on every run, proving XMSS keygen is reproducible
+  - **ACVP Testing**: validates 34 test categories against NIST/RFC/PKCS#11 reference vectors —
+    symmetric (AES-GCM-256, AES-CBC-256, AES-CTR-256, AES Key Wrap/KWP, ChaCha20-Poly1305),
+    hashing/MAC (SHA-256, HMAC-SHA-256/384/512), KDFs (PBKDF2, HKDF, SP 800-108 KBKDF counter +
+    feedback mode, X9.63-KDF w/ SHA3-256/512), classical asymmetric (RSA-PSS-2048, ECDSA
+    P-256/P-384/P-521/secp256k1, EdDSA Ed25519, ECDH P-521, X25519/X448), and PQC
+    (ML-KEM-512/768/1024 decapsulation + encap/decap round-trip, ML-DSA-44/65/87 SigVer +
+    functional sign/verify + pre-hash Hash-ML-DSA, SLH-DSA — all 12 parameter sets, plus SigVer
+    KAT, context-binding, and deterministic-mode checks — XMSS and HSS/LMS stateful signatures);
+    ML-DSA-65 signature verification (FIPS 204) runs against a real NIST ACVP vector — ML-DSA
+    SigGen and the other functional sign/verify categories are self-consistency checks (sign with
+    a freshly generated key, verify with the same key), not independently vector-proven; runs on
+    both C++ and Rust engines in Dual Mode simultaneously; a mechanism the running engine doesn't
+    advertise renders as a visible `skip` row with the reason, not a silently dropped test
   - **Key size display**: Software Key Store and HSM Key Registry both show per-key material
     sizes (B/KB) with sortable Size column and aggregate totals in the header
   - **Persona-aware simplification**: Curious and Executive personas see a streamlined Playground
@@ -871,7 +877,8 @@ The application is structured into several key components:
 │   │   │                    #   CuriousSummaryBanner, WorkshopStepHeader, GuidedTour, etc.)
 │   │   └── ui/              # Reusable UI components (Button, Card, EndorseButton, FlagButton, etc.)
 │   ├── data/                # Static data (timelines, test vectors, profiles, personaConfig)
-│   │   ├── acvp/            # NIST ACVP test vectors (14 algorithm families)
+│   │   ├── acvp/            # NIST/RFC reference test vectors — ACVP Testing (HSM Playground)
+│   │   │                    #   + JOSE/COSE PQC KAT tests (PKILearning APISecurityJWT module)
 │   │   ├── doc-enrichments/ # Enriched document metadata for RAG corpus
 │   │   └── x509_profiles/   # CSV-based certificate profiles (3GPP, CAB Forum, ETSI)
 │   ├── hooks/               # Custom React hooks

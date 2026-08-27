@@ -87,6 +87,30 @@ function applyEmbedTheme(theme: VendorTheme | undefined, isDarkMode?: boolean): 
   }
 }
 
+// Mobile UX layer testing convenience — `?mobileUx=1` sets the real feature
+// flag in localStorage (permanently, until `?mobileUx=0`) and strips itself
+// from the URL, so a device/Simulator with no console access (or a fresh
+// Safari profile with no persisted localStorage — the iOS Simulator's own
+// default state) only ever needs one visit with the param, not a
+// Develop-menu session repeated on every reset. `readFlag()` in
+// featureFlags.ts still only reads the env var / localStorage — this is
+// purely a one-time bootstrap write, not a second flag-reading path.
+if (typeof window !== 'undefined') {
+  const params = new URLSearchParams(window.location.search)
+  const mobileUxParam = params.get('mobileUx')
+  if (mobileUxParam === '1' || mobileUxParam === '0') {
+    if (mobileUxParam === '1') {
+      localStorage.setItem('pqc-feature-mobile-shell', '1')
+    } else {
+      localStorage.removeItem('pqc-feature-mobile-shell')
+    }
+    params.delete('mobileUx')
+    const rest = params.toString()
+    const newUrl = window.location.pathname + (rest ? `?${rest}` : '') + window.location.hash
+    window.history.replaceState(null, '', newUrl)
+  }
+}
+
 // Initialize Google Analytics
 initGA()
 

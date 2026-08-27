@@ -272,4 +272,37 @@ describe('MobileTimelineList', () => {
       expect(screen.getByText('Verified 2026-07-16')).toBeInTheDocument()
     })
   })
+
+  // 2026-08-24 audit R4.4: §17's compact-view teaching mechanic — a
+  // proximity marker per row ("passed" / "in N years") — was never built.
+  // Computed against the real current year (not a hardcoded literal), same
+  // way the fixture's own real startYear values are, so this stays correct
+  // as time passes.
+  describe('proximity marker (audit R4.4)', () => {
+    it('marks a past phase "passed" and derives future phases from the real year gap', () => {
+      const now = new Date().getFullYear()
+      render(<MobileTimelineList data={mockData} />)
+      fireEvent.click(screen.getByRole('button', { name: /All phases/i }))
+
+      // mockData: Research startYear 2024, Testing startYear 2026 — assert
+      // relative to the REAL current year, not those literals, since a
+      // year that has since passed must read "passed" regardless of when
+      // the fixture was written.
+      const researchDelta = 2024 - now
+      const testingDelta = 2026 - now
+      const expectedLabel = (delta: number) =>
+        delta < 0
+          ? 'passed'
+          : delta === 0
+            ? 'this year'
+            : delta === 1
+              ? 'in 1 year'
+              : `in ${delta} years`
+
+      const researchRow = screen.getByText('Research').closest('button')!
+      expect(within(researchRow).getByText(expectedLabel(researchDelta))).toBeInTheDocument()
+      const testingRow = screen.getByText('Testing').closest('button')!
+      expect(within(testingRow).getByText(expectedLabel(testingDelta))).toBeInTheDocument()
+    })
+  })
 })

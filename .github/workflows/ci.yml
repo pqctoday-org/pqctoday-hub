@@ -346,8 +346,13 @@ jobs:
       # E2E smoke tier — the critical user journeys, gated on every PR. Runs the
       # @smoke-tagged specs against the production build (`vite preview`, served
       # from the dist/ produced by the Build step above) with bounded workers, so
-      # it stays fast and reliable. The heavy/WASM full suite runs nightly
-      # (.github/workflows/e2e-nightly.yml), off the per-PR critical path.
+      # it stays fast and reliable. Most of the heavy/WASM suite runs nightly only
+      # (.github/workflows/e2e-nightly.yml), off the per-PR critical path — the
+      # exception is e2e/acvp-validator.spec.ts (real WASM/liboqs crypto,
+      # promoted into SMOKE_SPECS in playwright.config.ts on 2026-08-23): it
+      # measured ~21s and mostly overlaps idle worker time here, and it's the
+      # only spec asserting zero-fail across the full ACVP results table, so a
+      # crypto-engine regression no longer waits for the nightly run to surface.
       # (E2E was removed from CI 2026-04-02 for being "too slow"; this re-gates a
       # lean subset rather than the whole 240-test suite.)
       - name: E2E smoke (Chromium, against the build)

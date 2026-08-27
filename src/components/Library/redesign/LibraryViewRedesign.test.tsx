@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, act, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { LibraryViewRedesign } from './LibraryViewRedesign'
@@ -14,6 +14,11 @@ function renderView(initial = '/library') {
 }
 
 beforeEach(() => usePersonaStore.getState().setPersona(null))
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 describe('LibraryViewRedesign', () => {
   it('renders a populated results grid and does not render its own persona picker', () => {
@@ -65,4 +70,32 @@ describe('LibraryViewRedesign', () => {
     // Architect has a non-empty preferred-category set, so the grid changes.
     expect(narrowedCount).not.toBe(allCount)
   }, 30_000)
+
+  // Mobile UX layer (Phase 7). LibraryEmbed.tsx renders this same component
+  // inside the simulation at whatever viewport the player is on (simEmbed
+  // prop) — O-3 (IMPLEMENTATION-PLAN.md) keeps /simulation entirely outside
+  // the mobile shell, so simEmbed must win over isMobileShell regardless of
+  // viewport width.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true and not sim-embedded', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderView()
+      expect(screen.getByText('Library')).toBeInTheDocument()
+      expect(screen.queryByText('PQC Library')).not.toBeInTheDocument()
+    })
+
+    it('still renders the full desktop view when simEmbed is true, even if isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      render(
+        <MemoryRouter>
+          <LibraryViewRedesign simEmbed />
+        </MemoryRouter>
+      )
+      expect(screen.queryByText('Library')).not.toBeInTheDocument()
+    })
+  })
 })

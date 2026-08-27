@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { BusinessCenterView } from './BusinessCenterView'
 import '@testing-library/jest-dom'
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 // Mock framer-motion
 vi.mock(
@@ -354,5 +359,26 @@ describe('BusinessCenterView', () => {
 
     // When fully empty, welcome state shows (not the §3-§6 section stack).
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
+  })
+
+  // Mobile UX layer (Phase 8). BusinessCenterView takes no simEmbed-style
+  // prop and is never rendered inside the simulation, so unlike Threats/
+  // Library/Compliance/Migrate/Assess/Report this needs only the
+  // isMobileShell check, no second guard.
+  describe('mobile shell guard', () => {
+    afterEach(() => {
+      mockUseIsMobileShell.mockReturnValue(false)
+    })
+
+    it('renders the mobile screen when isMobileShell is true', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderView()
+      // "bc-dashboard-ready" wraps desktop's entire return (both the
+      // welcome state and the tiered dashboard) — its absence is the real
+      // discriminator, since both branches otherwise share real copy
+      // ("Welcome to your PQC Command Center") with the mobile screen's own
+      // empty state.
+      expect(screen.queryByTestId('bc-dashboard-ready')).not.toBeInTheDocument()
+    })
   })
 })

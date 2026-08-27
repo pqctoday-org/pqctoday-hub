@@ -84,7 +84,12 @@ function moduleTitle(id: string): string {
 
 // ── Changelog helpers ───────────────────────────────────────────────────────
 
-function getUnseenChangelogSections(
+/**
+ * Exported for reuse by the mobile shell's ⋯ unread indicator
+ * (src/components/Mobile/shell/mobileWhatsNew.ts) — same real unseen-entry
+ * computation this modal already does, not a second implementation.
+ */
+export function getUnseenChangelogSections(
   lastSeenVersion: string | null,
   personaId: PersonaId | null
 ): ChangelogSection[] {

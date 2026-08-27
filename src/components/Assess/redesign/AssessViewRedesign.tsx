@@ -28,6 +28,8 @@ import { useComplianceSelectionStore } from '../../../store/useComplianceSelecti
 import { complianceFrameworks } from '../../../data/complianceData'
 import { isSimResumePending } from '../../Simulation/simChrome'
 import { metadata } from '../../../data/industryAssessConfig'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobileAssessView } from '@/components/Mobile/screens/MobileAssessView'
 import { usePhaseFilter } from '../../../hooks/usePhaseFilter'
 import { FRAMEWORK_PHASES } from '../../../data/frameworkPhases'
 import { ASSESS_STEP_MAPPINGS } from '../../../data/assessStepToCswp39'
@@ -81,6 +83,7 @@ export const AssessViewRedesign: React.FC<{
   simEmbed?: boolean
   onComplete?: () => void
 }> = ({ simEmbed = false, onComplete }) => {
+  const isMobileShell = useIsMobileShell()
   const navigate = useNavigate()
   // In the sim embed, back the deep-link params with LOCAL state so the wizard
   // never reads/writes the /simulation route (it can't nest its own Router).
@@ -345,6 +348,17 @@ export const AssessViewRedesign: React.FC<{
     })
     return () => clearPageActions()
   }, [simEmbed])
+
+  // Placed after every hook above (React rules; the desktop-only ones just
+  // run and are discarded) but before the desktop JSX — a pure early return
+  // with zero risk to the flag-off path (Rule 1). AssessViewRedesign is
+  // rendered directly inside the simulation via simEmbed (SimulationView.tsx
+  // passes it inline, no separate AssessEmbed.tsx wrapper), so simEmbed must
+  // win over isMobileShell regardless of viewport width, same as Threats/
+  // Library/Compliance/Migrate.
+  if (isMobileShell && !simEmbed) {
+    return <MobileAssessView />
+  }
 
   return (
     <div className="animate-fade-in">

@@ -24,12 +24,45 @@ const SMOKE_SPECS = [
   'timeline-freshness-badge.spec.ts', // timeline page + data freshness
   'trust-tier-filter.spec.ts', // data filtering across views (library/migrate/compliance/threats/timeline)
   'compliance-foryou-executive.spec.ts', // compliance persona deep-link
+  // ACVP Validation Suite (real WASM/liboqs crypto, all ~34 test categories
+  // asserted zero-fail — see the spec's own comment on that assertion). Promoted
+  // 2026-08-23: it was previously nightly-only, so a regression anywhere
+  // outside the 2 categories the old narrow assertion checked could ship on
+  // a PR undetected. Measured cost of promoting it is small — ~21s test
+  // time that mostly overlaps idle worker time under CI's workers:2 (smoke
+  // alone: 55.5s wall; smoke + this spec: 58.4s wall, workers=2, local
+  // measurement 2026-08-23). Remove from this list only if it stops being
+  // reliably fast/green in CI, and prefer fixing the flake first.
+  'acvp-validator.spec.ts',
 ]
 // Deliberately EXCLUDED from smoke (verified slow / load-sensitive — they hit the
 // 45s timeout on a saturated machine, so they'd make the gate flaky): onboarding,
 // resume-banner, sim-start-over, sim-assess-return, learn-pqc-candidates. They run
 // in the nightly full suite. Promote one into smoke only after it proves reliably
 // fast in CI.
+
+// mobile-smoke-only exclusions (2026-08-24, Phase 10 hardening): both specs
+// below test content/routing that is desktop-only by design, not a mobile
+// regression. `useIsMobileShell()` gates a pure early return to a distilled
+// mobile screen before either spec's own deep-link mechanism ever runs:
+//   - timeline-freshness-badge.spec.ts: its `?country=` param drives a
+//     desktop-only Gantt→DocumentTable selection (TimelineView.tsx);
+//     MobileTimelineView.tsx has no URL-driven country selection at all
+//     (region comes from the persona store) and shows freshness as plain
+//     "Verified {date}" text (Phase 8.4), not the timeline-freshness-badge
+//     testid/state pill this spec checks for.
+//   - compliance-foryou-executive.spec.ts: tests the desktop "For You" tab
+//     (ExecutiveTimelineView / ApplicabilityPanel via ?tab=foryou).
+//     MobileComplianceView.tsx explicitly drops Progress/Products/For You
+//     from its real 5-of-8-tab scope — confirmed with the user 2026-08-23,
+//     named in the component's own doc comment and on-screen cut notice.
+// Verified via a real mobile-smoke run (2026-08-24): 23 passed / 5 failed
+// before this exclusion, all 5 failures from these 2 specs.
+const MOBILE_SMOKE_EXCLUDE = new Set([
+  'timeline-freshness-badge.spec.ts',
+  'compliance-foryou-executive.spec.ts',
+])
+const MOBILE_SMOKE_SPECS = SMOKE_SPECS.filter((f) => !MOBILE_SMOKE_EXCLUDE.has(f))
 
 const useDev = process.env.E2E_SERVER === 'dev' && !process.env.CI
 const serverCommand = useDev
@@ -90,10 +123,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: ['**/*.local.spec.ts'],
     },
-    // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the same
-    // SMOKE_SPECS allowlist as `smoke` above, but at an iPhone 14 viewport —
-    // this product had literally zero mobile-viewport E2E coverage despite
-    // mobile being its worst-scoring UX dimension. Run locally via
+    // MOBILE-SMOKE tier — NEW (2026-08-02), NOT yet CI-gated. Runs the
+    // SMOKE_SPECS allowlist minus MOBILE_SMOKE_EXCLUDE (desktop-only specs,
+    // see comment above) at an iPhone 14 viewport — this product had
+    // literally zero mobile-viewport E2E coverage despite mobile being its
+    // worst-scoring UX dimension. Run locally via
     // `npx playwright test --project=mobile-smoke` (build first, e.g.
     // `npm run build`). Deliberately NOT added to `ci.yml`'s PR gate yet —
     // that's a separate decision about CI time/cost budget; wire it in only
@@ -101,7 +135,7 @@ export default defineConfig({
     {
       name: 'mobile-smoke',
       use: { ...devices['iPhone 14'] },
-      testMatch: SMOKE_SPECS.map((f) => `**/${f}`),
+      testMatch: MOBILE_SMOKE_SPECS.map((f) => `**/${f}`),
     },
   ],
   webServer: {

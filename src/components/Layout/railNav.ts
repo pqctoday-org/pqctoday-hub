@@ -82,34 +82,54 @@ export interface RailSections {
  * see railNav.test.ts. The last term is what keeps the coverage invariant true
  * while still letting a route render no row at all for a given role.
  */
+// Paths MainLayout places itself, outside the FOR YOU group mechanism:
+// '/' renders at the very top of the rail and '/about' as the very last row;
+// '/learn', '/timeline' and '/threats' are appended to the Reference group
+// and '/business/tools' to Practice, both unconditionally and by path
+// literal (see MainLayout's `displayPaths`). Including any of them in
+// researcher's FOR YOU would render them TWICE — once from group.paths and
+// once from that render-only append.
+// '/revisions' is excluded for the same reason it was dropped from every
+// persona's PERSONA_NAV_PATHS on 2026-08-01 ("remove more and revisions from
+// the left bar"). Researcher takes the whole nav universe, so without this it
+// would silently reappear inside the Reference group — invisible today only
+// because Reference is collapsed by default, which is not a guarantee.
+//
+// Hoisted to module scope (2026-08-23, mobile UX layer) so
+// `getUngatedGroupablePaths` below can reuse it without duplicating the
+// list — purely a refactor, `getRailSections`'s own behavior is unchanged.
+export const RAIL_SELF_PLACED_PATHS = [
+  '/',
+  '/about',
+  '/learn',
+  '/timeline',
+  '/threats',
+  '/business/tools',
+  '/revisions',
+]
+
+/**
+ * Every path `getForYouGroups` can meaningfully bucket, with no persona
+ * gating applied — the same "whole nav universe" computation
+ * `getRailSections` already does for researcher, generalized. Needed because
+ * `getForYouGroups(forYou)` returns an empty array for `forYou: null` (no
+ * persona selected) — the desktop rail's no-persona state shows a flat
+ * "Everything, unfiltered" list instead of grouped tiles, but the mobile
+ * shell's Workflow/Practice/Reference tabs are fixed UI slots that need
+ * *something* to show even with no persona chosen yet. This keeps that
+ * "everything, unfiltered" behavior consistent rather than inventing a
+ * second, ungated taxonomy.
+ */
+export function getUngatedGroupablePaths(): string[] {
+  return Object.keys(NAV_PATH_LABELS).filter(
+    (path) => !RAIL_SELF_PLACED_PATHS.includes(path) && !RAIL_HIDDEN_PATHS.includes(path)
+  )
+}
+
 export function getRailSections(persona: PersonaId | null): RailSections {
   // eslint-disable-next-line security/detect-object-injection
   const allowed = persona ? PERSONA_NAV_PATHS[persona] : null
-  // Paths MainLayout places itself, outside the FOR YOU group mechanism:
-  // '/' renders at the very top of the rail and '/about' as the very last row;
-  // '/learn', '/timeline' and '/threats' are appended to the Reference group
-  // and '/business/tools' to Practice, both unconditionally and by path
-  // literal (see MainLayout's `displayPaths`). Including any of them in
-  // researcher's FOR YOU would render them TWICE — once from group.paths and
-  // once from that render-only append.
-  // '/revisions' is excluded for the same reason it was dropped from every
-  // persona's PERSONA_NAV_PATHS on 2026-08-01 ("remove more and revisions from
-  // the left bar"). Researcher takes the whole nav universe, so without this it
-  // would silently reappear inside the Reference group — invisible today only
-  // because Reference is collapsed by default, which is not a guarantee.
-  const RAIL_SELF_PLACED_PATHS = [
-    '/',
-    '/about',
-    '/learn',
-    '/timeline',
-    '/threats',
-    '/business/tools',
-    '/revisions',
-  ]
-  const researcherSeesAll =
-    persona === 'researcher'
-      ? Object.keys(NAV_PATH_LABELS).filter((path) => !RAIL_SELF_PLACED_PATHS.includes(path))
-      : null
+  const researcherSeesAll = persona === 'researcher' ? getUngatedGroupablePaths() : null
   const forYou = (researcherSeesAll ?? allowed ?? []).filter(
     (path) => !RAIL_HIDDEN_PATHS.includes(path)
   )
@@ -296,6 +316,63 @@ export function getForYouGroups(forYou: string[]): ForYouGroup[] {
   const other = forYou.filter((path) => !grouped.has(path))
   if (other.length > 0) groups.push({ id: 'other', label: 'More for you', paths: other })
   return groups.filter((g) => g.paths.length > 0)
+}
+
+// Workflow's visual display order (2026-08-01 follow-up: "reorder workflow:
+// migrate; assess; report; command center", then 2026-08-02: "compliance
+// should be first ... before migrate") — independent of PERSONA_NAV_PATHS'
+// own array order. '/explore' no longer belongs here (2026-08-23: "explore
+// should be after learn and not into workflow", reversing the 2026-08-01
+// "Explore goes first in workflow section" call) — it's now promoted to
+// RAIL_ALWAYS_VISIBLE_PATHS and renders as its own row/tab directly under
+// Learn instead, on both the desktop rail and the mobile shell. Anything not
+// in this list keeps its original relative order, appended after the
+// prioritized ones. '/explore' moved back into Workflow, first slot
+// (2026-08-23 follow-up: "move back explore into workflow for both mobile ux
+// and full page ux" — reversing the same day's earlier "explore after learn"
+// promotion). Still classified 'practice' in FOR_YOU_PATH_GROUP above; this
+// is purely a rendering reassignment, not a reachability change.
+const WORKFLOW_DISPLAY_ORDER = [
+  '/explore',
+  '/compliance',
+  '/migrate',
+  '/assess',
+  '/report',
+  '/business',
+]
+
+/**
+ * The real display-position adjustments MainLayout's desktop rail applies on
+ * top of getForYouGroups' plain FOR_YOU_PATH_GROUP bucketing — reordering
+ * Workflow (including pulling '/explore' into its first slot), adding
+ * '/business/tools' to Practice (reached via an in-page tab bar before
+ * 2026-08-01, now a real rail row, never added to FOR_YOU_PATH_GROUP itself),
+ * and adding '/timeline'/'/threats' to Reference (RAIL_ALWAYS_VISIBLE_PATHS,
+ * never persona-gated). Pure-moved out of MainLayout.tsx's inline JSX
+ * (2026-08-23) so the mobile Practice/Workflow/Reference group panels use
+ * this exact same real logic instead of the raw, unadjusted group.paths —
+ * confirmed via a real usage report that mobile's Practice panel was missing
+ * Business Tools entirely because of that gap.
+ */
+export function computeGroupDisplayPaths(
+  group: Pick<ForYouGroup, 'id' | 'paths'>,
+  forYou: string[]
+): string[] {
+  if (group.id === 'workflow') {
+    return [
+      ...WORKFLOW_DISPLAY_ORDER.filter(
+        (p) => group.paths.includes(p) || (p === '/explore' && forYou.includes(p))
+      ),
+      ...group.paths.filter((p) => !WORKFLOW_DISPLAY_ORDER.includes(p)),
+    ]
+  }
+  if (group.id === 'practice') {
+    return [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+  }
+  if (group.id === 'reference') {
+    return [...group.paths, '/timeline', '/threats']
+  }
+  return group.paths
 }
 
 /**

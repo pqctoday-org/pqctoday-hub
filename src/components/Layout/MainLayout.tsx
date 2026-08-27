@@ -47,6 +47,34 @@ import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 import { ScrollFadeContainer } from '../ui/ScrollFadeContainer'
 import { useIsBelowLgViewport } from '../../hooks/useIsBelowLgViewport'
+import { useIsMobileShell } from '../../hooks/useIsMobileShell'
+
+// Lazy — same reasoning as RightPanel/VideoOverlay/WorkshopOverlayHost below:
+// MainLayout is mounted on every route, so a static import here would put
+// the whole mobile shell (and everything it pulls in — RoleHomeView,
+// SourcesModal, Glossary, UserManualPanel) into every desktop visitor's
+// eager bundle even though useIsMobileShell() is false for nearly all of
+// them. Found via the precache budget: a static import measurably grew the
+// eager payload (19.64 -> 19.66 MB) for a feature that render-guards itself
+// off. `!isMobileShell` bails before React ever needs these — the
+// `<Suspense fallback={null}>` around each usage never has anything to show.
+const MobileHeader = React.lazy(() =>
+  import('../Mobile/shell/MobileHeader').then((m) => ({ default: m.MobileHeader }))
+)
+const MobileBottomBar = React.lazy(() =>
+  import('../Mobile/shell/MobileBottomBar').then((m) => ({ default: m.MobileBottomBar }))
+)
+const MobilePageActionsSheet = React.lazy(() =>
+  import('../Mobile/shell/MobilePageActionsSheet').then((m) => ({
+    default: m.MobilePageActionsSheet,
+  }))
+)
+const MobileRoleSelection = React.lazy(() =>
+  import('../Mobile/shell/MobileRoleSelection').then((m) => ({ default: m.MobileRoleSelection }))
+)
+const MobileWorkshopDock = React.lazy(() =>
+  import('../Mobile/shell/MobileWorkshopDock').then((m) => ({ default: m.MobileWorkshopDock }))
+)
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -71,14 +99,19 @@ import {
 } from '../../data/personaConfig'
 import { REGION_LABELS } from '../../data/regionIndustryOptions'
 import { PERSONAS } from '../../data/learningPersonas'
-import type { ViewType } from '../../data/authoritativeSourcesData'
-import type { PageId } from '../../data/userManualData'
+import {
+  ROUTE_VIEW_TYPE,
+  ROUTE_PAGE_ID,
+  pageIdForNestedRoute,
+  ROUTE_SHARE,
+} from '../../data/routePageMeta'
 import {
   getRailSections,
   getRowTreatment,
   getMobileVisiblePaths,
   getForYouGroups,
   getGroupAbsences,
+  computeGroupDisplayPaths,
   FOR_YOU_GROUP_BLURBS,
   RAIL_ICON_MAP,
   type RailRowTreatment,
@@ -89,145 +122,11 @@ import {
 // every January).
 const COPYRIGHT_YEAR = new Date().getFullYear()
 
-// ── Route → shared-component-id lookups for the top bar's icon cluster ──────
-// Both SourcesButton and UserManualButton require a page-specific id; only the
-// routes below have a registered ViewType / PageId (see authoritativeSourcesData.ts
-// / userManualData.ts). Routes without an entry simply omit that button, same
-// as PageHeader.tsx's own `showSources = !!viewType` conditional.
-// '/compliance' is deliberately ABSENT here — final self-review finding
-// (2026-08-01, this fixup session's verification pass): ux-standard.md P10
-// has a MUST NOT rule ("Do not render SourcesButton on this page — provenance
-// is surfaced inline via TrustPathPopover on framework tiles and a
-// ContentUpdatesFeed in PageHeader"), and ComplianceView.tsx's own
-// (now-removed) PageHeader call enforced it with an explicit `suppressSources`
-// prop alongside `viewType="Compliance"`. The nav-rebuild commit (857b8219b)
-// that introduced this global top-bar Sources button copied every page's
-// viewType into this map WITHOUT carrying over that suppression, so the top
-// bar had already been silently violating the MUST NOT since before this
-// session started (the header-dedup commit, f5421407c, then preserved that
-// pre-existing gap rather than introducing it fresh — it never modeled
-// `suppressSources` at all). Caught auditing Sources coverage for this
-// review; fixed by omission rather than adding a suppression mechanism, since
-// '/compliance' is the only route that ever needed one.
-export const ROUTE_VIEW_TYPE: Partial<Record<string, ViewType>> = {
-  '/timeline': 'Timeline',
-  '/library': 'Library',
-  '/threats': 'Threats',
-  '/leaders': 'Leaders',
-  '/algorithms': 'Algorithms',
-  '/migrate': 'Migrate',
-  // ADDED 2026-08-07. /patents had no Sources button since the page shipped.
-  // The cause was not a missing route entry: NEITHER source registry
-  // contained a single patent authority, so a 'Patents' ViewType would have
-  // filtered to zero rows. USPTO (issuing authority for all 1,185 active
-  // patent rows) and Google Patents (the index harvest_google_patents.py
-  // actually queries) are now registered in both registries with
-  // patents_csv=Yes, so this finally resolves to real sources.
-  '/patents': 'Patents',
-  // OpenSSL Studio's own (now-removed) PageHeader call passed viewType="Library"
-  // (it reuses the Library authoritative-sources list — there is no distinct
-  // "OpenSSL" ViewType) — preserved here so /openssl keeps its Sources button.
-  '/openssl': 'Library',
-}
-
-const ROUTE_PAGE_ID: Partial<Record<string, PageId>> = {
-  '/timeline': 'timeline',
-  '/algorithms': 'algorithms',
-  '/library': 'library',
-  '/playground': 'playground',
-  '/openssl': 'openssl-studio',
-  '/threats': 'threats',
-  '/leaders': 'leaders',
-  '/compliance': 'compliance',
-  '/migrate': 'migrate',
-  '/assess': 'assess',
-  '/report': 'report',
-  '/business': 'business-center',
-  // BusinessToolsGrid ('/business/tools') is a separate nested route from
-  // BusinessCenterView ('/business' index) but shares the same pageId — its
-  // own (now-removed) PageHeader call passed pageId="business-center" too.
-  '/business/tools': 'business-center',
-  '/learn': 'learn',
-}
-
-/**
- * Prefix fallback for `ROUTE_PAGE_ID`, which is an exact-path table. Nested
- * routes inherit their section's user-manual page — `/learn/pqc-101` and
- * `/learn/quiz` both document under `learn`. Deliberately a small explicit
- * list, not a generic "first path segment" rule: only sections whose nested
- * routes genuinely share one manual entry belong here.
- */
-const NESTED_ROUTE_PAGE_ID: ReadonlyArray<readonly [string, PageId]> = [['/learn/', 'learn']]
-
-const pageIdForNestedRoute = (pathname: string): PageId | undefined =>
-  NESTED_ROUTE_PAGE_ID.find(([prefix]) => pathname.startsWith(prefix))?.[1]
-
-// Bespoke Share title/text per route — preserved from each page's own
-// (now-removed) `<PageHeader shareTitle=... shareText=...>` call so the
-// global top bar's ShareButton keeps the same copy instead of falling back to
-// the generic `"{route label} — PQC Today"` title for every route. Routes
-// absent here (e.g. /learn, /migrate) never had a bespoke shareTitle on their
-// PageHeader either — they keep the generic fallback, same as before.
-//
-// Two of these intentionally approximate rather than reproduce a dynamic
-// shareText (see IMPLEMENTATION-PLAN follow-up, 2026-08-01 PageHeader
-// consolidation):
-//  - /algorithms used `${algorithmData.length || 'dozens of'}` — reusing the
-//    same page's own "no data yet" fallback copy ("dozens of") rather than
-//    duplicating its data-loading hook here.
-//  - /business/tools used `${BUSINESS_TOOLS.length}` — reusing the page's own
-//    static `description` copy instead of importing the tools registry (a
-//    sizeable data+icon module) into the always-loaded MainLayout shell.
-const ROUTE_SHARE: Partial<Record<string, { title: string; text?: string }>> = {
-  '/algorithms': {
-    title: 'PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More',
-    text: 'Compare dozens of cryptographic algorithms side-by-side — security levels, key sizes, and performance.',
-  },
-  '/assess': {
-    title: 'PQC Risk Assessment — Post-Quantum Cryptography Migration Tool',
-    text: 'Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization.',
-  },
-  '/business': {
-    title: 'PQC Command Center — Quantum Readiness Workspace',
-    text: 'Your PQC readiness command center — risk, compliance, governance, and actionable next steps.',
-  },
-  '/business/tools': {
-    title: 'PQC Business Tools — Planning & Governance Toolkit',
-    text: 'Interactive planning and governance tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, and more.',
-  },
-  '/compliance': {
-    title: 'PQC Compliance Tracker — Standards, Certifications, Frameworks',
-    text: 'Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks.',
-  },
-  '/leaders': {
-    title: 'PQC Community — People Contributing to the Advances of Post-Quantum Cryptography',
-    text: 'Meet the people contributing to the advances of post-quantum cryptography.',
-  },
-  '/library': {
-    title: 'PQC Library — NIST, IETF, ETSI & More',
-    text: 'Explore post-quantum cryptography standards, drafts, and key documents.',
-  },
-  '/openssl': {
-    title: 'OpenSSL Studio — Interactive OpenSSL v3.6.3 in Your Browser',
-    text: 'Run real OpenSSL 3.6.3 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly.',
-  },
-  '/patents': {
-    title: 'PQC Patents — Post-Quantum Migration Patent Corpus',
-    text: 'Cryptographic patents relevant to post-quantum migration, enriched across 25 technical dimensions.',
-  },
-  '/report': {
-    title: 'PQC Assessment Report — Post-Quantum Cryptography Risk Analysis',
-    text: 'View your personalized PQC risk score, migration priorities, and actionable recommendations.',
-  },
-  '/threats': {
-    title: 'Quantum Threats Dashboard — Industry Risk Analysis',
-    text: 'Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements.',
-  },
-  '/timeline': {
-    title: 'PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap',
-    text: 'Compare PQC migration timelines across nations — track phases from discovery to full migration.',
-  },
-}
+// Route -> shared-component-id lookups (ROUTE_VIEW_TYPE, ROUTE_PAGE_ID,
+// NESTED_ROUTE_PAGE_ID, pageIdForNestedRoute, ROUTE_SHARE) moved to
+// '@/data/routePageMeta' (pure-move extraction E-5, IMPLEMENTATION-PLAN.md
+// §5.4) so the mobile shell's page-actions selector can read the same
+// tables this top bar reads.
 
 // Left-border + tint per FOR YOU row treatment. MORE rows never use these —
 // they get a fixed, smaller/muted style regardless of treatment (see RailRow).
@@ -499,8 +398,28 @@ export const MainLayout = () => {
   // `/library`) must keep this file's normal header/nav so they aren't
   // stranded with no way to navigate away.
   const isBelowLg = useIsBelowLgViewport()
+
+  // Mobile UX layer (design_handoff_pqc_mobile_ux/IMPLEMENTATION-PLAN.md).
+  // On by default as of 2026-08-23 — see featureFlags.ts. Computed before
+  // isCuriousMobileTakeover below, which needs to know about it.
+  const isMobileShell = useIsMobileShell()
+
+  // `!isMobileShell` added 2026-08-23 — real bug, found by a test exercising
+  // the REAL useIsMobileShell/useIsBelowLgViewport hooks together for the
+  // first time (LandingView.integration.test.tsx; every earlier test of this
+  // interaction mocked useIsMobileShell directly, which bypasses this
+  // computation entirely). Without it: once the flag defaults on,
+  // LandingView's OWN isMobileShell check (placed first, see LandingView.tsx)
+  // already wins and renders the new MobileHomeBoard for curious — but this
+  // flag stayed true regardless, so MainLayout suppressed its OWN header and
+  // bottom-bar anyway, assuming the legacy CuriousMobileBoard (which supplies
+  // its own chrome) was what actually rendered. Net result: real content, no
+  // chrome at all. CuriousMobileBoard's branch in LandingView.tsx is
+  // intentionally NOT deleted (only reachable with the flag explicitly
+  // opted out via '0') — this just makes the takeover-suppression agree with
+  // which board is actually rendering.
   const isCuriousMobileTakeover =
-    selectedPersona === 'curious' && isBelowLg && location.pathname === '/'
+    selectedPersona === 'curious' && isBelowLg && location.pathname === '/' && !isMobileShell
 
   const isPathActive = React.useCallback(
     (path: string) =>
@@ -511,9 +430,17 @@ export const MainLayout = () => {
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
   const [personaSwitchOpen, setPersonaSwitchOpen] = React.useState(false)
 
-  // Close the More menu on route changes (e.g., browser back button)
+  const [mobilePageActionsOpen, setMobilePageActionsOpen] = React.useState(false)
+  const [mobileRoleSwitchOpen, setMobileRoleSwitchOpen] = React.useState(false)
+  // Same condition LandingView.tsx already uses for the identical no-persona
+  // state (Rule 2 — one source of truth for "has this user chosen or
+  // explicitly skipped personalization yet").
+  const isMobileFirstRun = !selectedPersona && !hasSkippedPersonalization
+
+  // Close the More menu / mobile page-actions sheet on route changes (e.g., browser back button)
   React.useEffect(() => {
     setMoreMenuOpen(false)
+    setMobilePageActionsOpen(false)
   }, [location.pathname])
 
   // ── Desktop rail's collapsible MORE section (2026-08-01 declutter follow-up) ──
@@ -795,57 +722,11 @@ export const MainLayout = () => {
             </>
           )}
           {forYouGroups.map((group) => {
-            // Workflow's visual order (2026-08-01 follow-up: "reorder workflow:
-            // migrate; assess; report; command center") — a fixed display
-            // priority, independent of PERSONA_NAV_PATHS's own array order.
-            // Anything not in this list (e.g. compliance) keeps its original
-            // relative order, appended after the prioritized ones.
-            // '/explore' visually moved from Practice to Workflow, first
-            // position (2026-08-01 follow-up: "Explore goes first in
-            // workflow section") — still classified 'practice' in
-            // FOR_YOU_PATH_GROUP (railNav.ts), this is purely a rendering
-            // reassignment, not a reachability change.
-            // '/compliance' placed right before '/migrate' (2026-08-02
-            // follow-up: "compliance should be first in workflow section
-            // before migrate") — it was previously omitted from this
-            // priority list entirely, so it always fell to the end.
-            const WORKFLOW_ORDER = [
-              '/explore',
-              '/compliance',
-              '/migrate',
-              '/assess',
-              '/report',
-              '/business',
-            ]
-            // Reference visually includes Timeline + Threats (2026-08-01
-            // follow-up) even though they're globally always-visible, not
-            // persona-gated — purely a rendering position, not a reachability
-            // change (they render ONLY here, nowhere else, so there's no
-            // duplicate row). Learn was here too until 2026-08-02, when it was
+            // Learn was in this list too until 2026-08-02, when it was
             // promoted to its own row directly under Home; it is deliberately
-            // absent from this list now, since it renders unconditionally
-            // above and a second entry here would duplicate it.
-            const displayPaths =
-              group.id === 'workflow'
-                ? [
-                    ...WORKFLOW_ORDER.filter(
-                      (p) => group.paths.includes(p) || (p === '/explore' && forYou.includes(p))
-                    ),
-                    ...group.paths.filter((p) => !WORKFLOW_ORDER.includes(p)),
-                  ]
-                : group.id === 'practice'
-                  ? // '/business/tools' visually added to Practice (2026-08-01
-                    // follow-up: "add tool into practices section") — was
-                    // reached via an in-page Dashboard/Tools tab bar on
-                    // /business, now a real rail row instead. Not in
-                    // FOR_YOU_PATH_GROUP/PERSONA_NAV_PATHS at all (same
-                    // render-only-addition pattern as Reference's Learn/
-                    // Timeline/Threats above), so it renders here for every
-                    // persona that has a Practice group, unconditionally.
-                    [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
-                  : group.id === 'reference'
-                    ? [...group.paths, '/timeline', '/threats']
-                    : group.paths
+            // absent now, since it renders unconditionally above and a second
+            // entry here would duplicate it.
+            const displayPaths = computeGroupDisplayPaths(group, forYou)
             const groupHasActiveRoute = displayPaths.some((path) => isPathActive(path))
             const groupExpanded = groupHasActiveRoute || !collapsedForYouGroups.has(group.id)
             const groupContentId = `for-you-group-${group.id}`
@@ -977,8 +858,20 @@ export const MainLayout = () => {
 
         {/* Suppressed for the Curious-mobile-board takeover (see
             `isCuriousMobileTakeover` above) — that screen renders its own
-            header; this one would only double up underneath it. */}
-        {!isCuriousMobileTakeover && (
+            header; this one would only double up underneath it. Renders
+            during first run too (real gap found by the user: the header
+            disappeared entirely on the "Who's asking?" screen) — the target
+            design keeps header/nav visible there. */}
+        {!isCuriousMobileTakeover && isMobileShell && (
+          <React.Suspense fallback={null}>
+            <MobileHeader
+              persona={selectedPersona}
+              onOpenPageActions={() => setMobilePageActionsOpen(true)}
+              onOpenRoleSwitch={() => setMobileRoleSwitchOpen(true)}
+            />
+          </React.Suspense>
+        )}
+        {!isCuriousMobileTakeover && !isMobileShell && (
           <header
             className="m-4 sticky top-[max(1rem,env(safe-area-inset-top))] z-50 transition-all duration-300 print:hidden"
             role="banner"
@@ -1207,10 +1100,37 @@ export const MainLayout = () => {
           </header>
         )}
 
+        {/* Mobile UX layer — bottom bar + its group panels/sheets, replacing
+            the legacy "More" sheet below for isMobileShell. Renders during
+            first run too, same as MobileHeader above — see that comment.
+            Suppressed only for the Curious-mobile takeover, which renders
+            its own chrome. */}
+        {!isCuriousMobileTakeover && isMobileShell && (
+          <React.Suspense fallback={null}>
+            <MobileBottomBar persona={selectedPersona} />
+            <MobilePageActionsSheet
+              open={mobilePageActionsOpen}
+              onClose={() => setMobilePageActionsOpen(false)}
+            />
+            <MobileRoleSelection
+              variant="switch"
+              open={mobileRoleSwitchOpen}
+              onClose={() => setMobileRoleSwitchOpen(false)}
+            />
+            {/* Phase 6 — mounted unconditionally, not gated on route or
+                first-run: it renders null internally unless a workshop is
+                actually mode:'running' (see MobileWorkshopDock's own early
+                return), so there is nothing to gate here. Sits above
+                MobileBottomBar via its own `bottom: var(--mobile-nav-height)`
+                offset and z-mobile-dock. */}
+            <MobileWorkshopDock />
+          </React.Suspense>
+        )}
+
         {/* Mobile "More" bottom sheet — unreachable in the Curious-mobile
             takeover state anyway (its trigger button lives inside the
             suppressed header above), gated explicitly for clarity/safety. */}
-        {!isCuriousMobileTakeover && moreMenuOpen && (
+        {!isCuriousMobileTakeover && !isMobileShell && moreMenuOpen && (
           <>
             {/* Backdrop */}
             <div
@@ -1407,7 +1327,23 @@ export const MainLayout = () => {
         {personaSwitchOpen && <PersonaSwitchModal onClose={() => setPersonaSwitchOpen(false)} />}
 
         {/* Scrollable content area */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
+        <div
+          ref={scrollContainerRef}
+          className={cn(
+            'flex-1 overflow-y-auto overflow-x-hidden min-h-0',
+            // Clears the fixed bottom bar (handoff: "96px bottom pad on
+            // scroll containers") — only when it's actually rendered. Now
+            // rendered during first run too (see MobileHeader comment above),
+            // so this only excludes the Curious-mobile takeover.
+            //
+            // 2026-08-24 audit R5: --mobile-nav-height already resolves to
+            // `55px + max(22px, env(safe-area-inset-bottom))` (index.css) —
+            // it already includes the safe-area inset. Adding a second
+            // `+env(safe-area-inset-bottom)` here double-counted it,
+            // over-padding the scroll area by up to the full inset again.
+            isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]'
+          )}
+        >
           {isCuriousMobileTakeover ? (
             /* Curious-mobile takeover: bare Outlet, no container padding, no
                banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
@@ -1435,10 +1371,37 @@ export const MainLayout = () => {
                 <Outlet />
               </React.Suspense>
             </div>
+          ) : isMobileShell && isMobileFirstRun ? (
+            /* Mobile first run — the "Who's asking?" role picker renders as
+               normal in-flow content here, inside the same header/content/
+               bottom-nav column every other mobile screen uses, rather than
+               a fixed full-viewport overlay. The earlier fixed-overlay
+               version visually covered the header and bottom nav even once
+               they were made to render during first run (see the comment on
+               MobileHeader above) — real gap the user found directly. */
+            <div id="main-content" role="main">
+              <React.Suspense fallback={null}>
+                <MobileRoleSelection variant="firstRun" />
+              </React.Suspense>
+            </div>
           ) : (
             <>
               {/* Main Content Area */}
-              <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+              <main
+                id="main-content"
+                className={cn(
+                  // mobile-ux-layer (2026-08-24 audit R2.1): the `.container`
+                  // utility itself carries `px-4 md:px-8` (index.css), so this
+                  // element's classes and every Mobile/* screen's own
+                  // `px-4 pt-4` were stacking — 32px of side padding on a
+                  // 402px viewport (~9% of the width, double the handoff's
+                  // specified 16px) plus doubled top padding. Screens already
+                  // own their spacing; on mobile this element contributes
+                  // none, rather than trimming 19 screen roots individually.
+                  !isMobileShell && 'container py-4 px-4 md:py-8 md:px-8'
+                )}
+                role="main"
+              >
                 {/* Offline mode info banner */}
                 <AirplaneModeBanner />
 

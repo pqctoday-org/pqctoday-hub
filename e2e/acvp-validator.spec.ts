@@ -114,19 +114,46 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
       await expect(mldsaRow).toContainText('pass')
     }
 
-    // Assert the primary FIPS-203/204 algorithms have no failures.
-    // XMSS(Rust) CKR_ARGUMENTS_BAD and ECDSA P-521(Rust) CKR_BUFFER_TOO_SMALL
-    // are pre-existing Rust-engine WASM bugs tracked separately — excluded here.
-    const mlkemFailedRows = page
-      .locator('tr')
-      .filter({ hasText: /ML-KEM/i })
-      .filter({ has: page.locator('td', { hasText: /^fail$/i }) })
-    expect(await mlkemFailedRows.count(), 'ML-KEM rows must not have fail status').toBe(0)
+    // Assert ZERO failures across the WHOLE results table — all ~34 test
+    // categories (ML-KEM, ML-DSA, SLH-DSA, AES, HMAC, RSA-PSS, ECDSA
+    // variants, EdDSA, X25519/X448, ChaCha20, KBKDF, XMSS, HSS/LMS, PreHash,
+    // context binding, etc.), not just the two families spot-checked above.
+    // Narrowing this to ML-KEM/ML-DSA only (the pre-2026-08-23 behavior) let
+    // a regression in any of the other ~30 categories run in the browser and
+    // pass the spec silently — this is the actual regression detector.
+    //
+    // 2026-08-23: re-verified (4 consecutive local runs against the
+    // production build, engine=rust) that "XMSS(Rust) CKR_ARGUMENTS_BAD" and
+    // "ECDSA P-521(Rust) CKR_BUFFER_TOO_SMALL" — the two Rust-engine WASM
+    // bugs this spec used to hard-exclude — are BOTH now passing. The fix
+    // most likely landed in 9c6f9aba9 (2026-08-02, "rebuild softhsmrustv3
+    // engine (26 commits stale)") or 437510a92 (2026-08-14, PKCS#11 v3.2
+    // conformance), both well after the exclusion comment was written
+    // (74d975c8a, 2026-07-08). No exclusions remain; if a Rust-engine
+    // regression reintroduces a known-red row, re-add it here BY NAME with
+    // the CKR error and a tracking link, not by re-narrowing the filter
+    // above to a subset of algorithms.
+    const KNOWN_RED_ALGORITHMS: string[] = []
 
-    const mldsaFailedRows = page
-      .locator('tr')
-      .filter({ hasText: /ML-DSA/i })
-      .filter({ has: page.locator('td', { hasText: /^fail$/i }) })
-    expect(await mldsaFailedRows.count(), 'ML-DSA rows must not have fail status').toBe(0)
+    const resultRows = page.locator('table tbody tr')
+    const rowCount = await resultRows.count()
+    // Sanity floor: catches the WASM engine silently running only a fraction
+    // of the suite (e.g. an early throw that aborts the loop) even though
+    // every row that DID run passed. 58 categories/variants ran as of
+    // 2026-08-23; floor set well below that with headroom for legitimate
+    // future skips (unsupported mechanism on a given build).
+    expect(rowCount, 'ACVP results table looks incomplete').toBeGreaterThanOrEqual(40)
+
+    const failingRows: string[] = []
+    for (let i = 0; i < rowCount; i++) {
+      const row = resultRows.nth(i)
+      const rowText = (await row.innerText()).replace(/\s+/g, ' ').trim()
+      if (KNOWN_RED_ALGORITHMS.some((algo) => rowText.startsWith(algo))) continue
+      const failCell = row.locator('td', { hasText: /^fail$/i })
+      if ((await failCell.count()) > 0) {
+        failingRows.push(rowText)
+      }
+    }
+    expect(failingRows, `Unexpected failing ACVP rows:\n${failingRows.join('\n')}`).toEqual([])
   })
 })

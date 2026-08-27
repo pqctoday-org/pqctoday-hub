@@ -75,6 +75,8 @@ import {
   REQUIREMENT_LABELS,
 } from '@/hooks/useDeviceCapabilities'
 import { useIsBelowLgViewport } from '@/hooks/useIsBelowLgViewport'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { MobilePlaygroundView } from '@/components/Mobile/screens/MobilePlaygroundView'
 import { useSandboxStore, isSandboxAvailable } from '@/store/useSandboxStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { logEvent, personaLabel } from '@/utils/analytics'
@@ -794,6 +796,7 @@ const SandboxRuntimeToggle: React.FC = () => {
 
 export const PlaygroundWorkshop = () => {
   const navigate = useNavigate()
+  const isMobileShell = useIsMobileShell()
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Role — backed by the shared persona store (mirrors Learn). Read-only here:
@@ -1526,6 +1529,16 @@ export const PlaygroundWorkshop = () => {
         </Link>
       </section>
     )
+  }
+
+  // mobile-ux-layer Phase 9: placed after every hook above (React rules; the
+  // desktop-only ones just run and are discarded) but before the desktop
+  // JSX — a pure early return with zero risk to the flag-off path (Rule 1).
+  // PlaygroundWorkshop takes no simEmbed-style prop and is never rendered
+  // inside the simulation, so — like BusinessCenterView — this needs no
+  // second guard.
+  if (isMobileShell) {
+    return <MobilePlaygroundView />
   }
 
   return (

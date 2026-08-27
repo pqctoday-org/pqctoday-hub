@@ -109,6 +109,7 @@ import { deriveSimClock } from './hooks/useSimClock'
 import { JURISDICTION_RULES } from '@/data/jurisdiction'
 import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
 import { useArchetypeChangeNotice } from '@/hooks/useArchetypeChangeNotice'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 import { ROLE_CROSSWALK, personaToRoles } from '@/data/roleCrosswalk'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
@@ -320,6 +321,8 @@ export function SimulationView() {
     sector,
     seat,
     sel,
+    mobilePlayOpen,
+    setMobilePlayOpen,
     edgeDecisions,
     year,
     q,
@@ -916,6 +919,34 @@ export function SimulationView() {
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
+  // mobile-ux-layer: the real, isMobileShell-gated interactive Decide view —
+  // separate from isMobileViewport above, which is flag-independent and drives
+  // the pre-existing read-only phone block. Only p0/p1 get real play for now
+  // (IMPLEMENTATION-PLAN.md Phase 9); every other phase keeps the read-only
+  // block. A reader taps in deliberately — it never auto-opens on a genuinely
+  // fresh visit. It IS store-backed rather than local state (2026-08-24, real
+  // production feedback), specifically so it survives navigating away and
+  // back: `/simulation` renders outside MainLayout, so any other route fully
+  // remounts this component, and a reader who was mid-play landed back on
+  // the overview looking like their progress had reset — sel/decisions/
+  // budget never did, only this open/closed flag did.
+  const isMobileShell = useIsMobileShell()
+  // mobile-ux-layer (2026-08-24 audit R1.3): "Watch the Executive Overview"
+  // walks the shared `sel` through all 9 phases via autoRunPlayer, and `sel`
+  // is persisted — so on a phone, watching once could leave `sel` past p1
+  // with the p0/p1 Play button gone for good on that device. Snapshot `sel`
+  // when a mobile watch starts and restore it the moment the run stops
+  // (autoRunPlayer.running's only false-transition, whether the run finished
+  // naturally or was closed early) — desktop's own free phase-ladder makes
+  // this unnecessary there, so it's gated to isMobileShell only.
+  const mobileWatchSelSnapshot = useRef<PhaseId | null>(null)
+  useEffect(() => {
+    if (!autoRunPlayer.running && mobileWatchSelSnapshot.current) {
+      setSel(mobileWatchSelSnapshot.current)
+      mobileWatchSelSnapshot.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRunPlayer.running])
   const [termsOpen, setTermsOpen] = useState(false)
   const [pendingModeSwitch, setPendingModeSwitch] = useState<RunMode | null>(null)
   const businessPersona = selectedPersona === 'executive' || selectedPersona === 'curious'
@@ -1454,7 +1485,7 @@ export function SimulationView() {
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line
                 (was 2 lines); the version stays a real link, just compacted. */}
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50 max-md:truncate">
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70 max-md:truncate">
                 Migration Sim ·{' '}
                 <a
                   href={FRAMEWORK_URL}
@@ -1565,152 +1596,320 @@ export function SimulationView() {
 
   return (
     <>
-      {/* Phone block — shown below md. The board is desktop/tablet-only to play,
-          but a mobile reader still gets a read-only headline of where the run
-          stands (so a CISO on a phone isn't sent to a dead end). */}
-      <div className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5">
-        <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
-        <div className="space-y-1">
-          <h2 className="text-lg font-bold">Your migration at a glance</h2>
-          <p className="text-xs text-muted-foreground max-w-[300px]">
-            The playable board needs a wider screen — open it on a tablet or desktop. Here&apos;s
-            where your run stands today.
+      {/* mobile-ux-layer Phase 9: real interactive play for p0/p1, reusing the
+          same DecisionSection + store wiring the desktop board uses (all the
+          props below are the exact real values the board computes — nothing
+          re-derived). canEmbed is forced false here: the real embed pane
+          (learnEmbed/etc.) renders inside the desktop-only `hidden md:flex`
+          wrapper below, so it would be invisible on a phone — resources open
+          via the real Link/deep-link path instead. Reached only by a
+          deliberate tap (setMobilePlayOpen(true)) from the read-only block
+          below; every other phase, and a reader who hasn't tapped in, keeps
+          that unchanged read-only block. */}
+      {isMobileShell && (sel === 'p0' || sel === 'p1') && mobilePlayOpen ? (
+        <div
+          className="flex md:hidden fixed inset-0 z-50 flex-col overflow-auto bg-background px-4 py-6 text-foreground"
+          data-testid="sim-mobile-decide"
+        >
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setMobilePlayOpen(false)}
+              className="h-auto gap-1 p-0 text-[11px] font-bold text-muted-foreground hover:bg-transparent"
+            >
+              ← Overview
+            </Button>
+            <span className="font-mono text-sim-micro font-bold text-muted-foreground">
+              Turn · Q{q} {year}
+            </span>
+          </div>
+          <div className="mb-3">
+            <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
+              Phase {phase.number} {phaseCleared ? '· cleared' : '· active'}
+            </span>
+            <h1 className="text-lg font-extrabold text-foreground">{phase.name}</h1>
+            {phaseTree?.gate && (
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                Gate {phaseTree.gate.id}: {phaseTree.gate.criterion}
+              </p>
+            )}
+          </div>
+          <DecisionSection
+            phaseId={sel}
+            ctx={moveCtx}
+            nextMove={nextMove}
+            level={level}
+            stepsDone={stepsDone}
+            stepsTotal={stepsTotal}
+            gate={phaseTree?.gate}
+            pitfalls={phaseTree?.pitfalls ?? []}
+            onVisitRef={markRefVisited}
+            canEmbed={() => false}
+            onOpenStep={() => {}}
+            assessRec={nextMoveRec}
+            onTrapPicked={incrementTrapsThisRun}
+            allowRetry={balance.decisions.freeRetryOnWrongPick}
+            wrongPickCostQuarters={sel === 'p1' ? 2 : 1}
+            onWrongPick={(label) => {
+              // Same real setback the desktop board applies — WP4.4 uniform
+              // stakes, 2 quarters on p1 (Discovery), 1 on p0. The p5-only
+              // edge-decision rollback never applies here — this branch is
+              // only ever reached for sel === 'p0' | 'p1'.
+              const quarters = sel === 'p1' ? 2 : 1
+              applyDecisionSetback(
+                quarters,
+                `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}`,
+                undefined
+              )
+            }}
+          />
+          <TrapInsightsPanel />
+          {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
+            <div
+              className={`mb-4 rounded-lg border p-3 ${
+                phaseAutoActive
+                  ? 'border-warning/30 bg-warning/5'
+                  : 'border-success/30 bg-success/5'
+              }`}
+            >
+              {phaseAutoActive ? (
+                <Eyebrow className="text-warning">⚠ Run by your AI team — study to verify</Eyebrow>
+              ) : (
+                <Eyebrow className="text-success">✓ Phase cleared — recommended study</Eyebrow>
+              )}
+              <p className="mt-1 mb-2 text-[11px] text-muted-foreground">
+                {phaseAutoActive
+                  ? `Your AI team cleared this phase. You haven't completed ${recommendedStudy.length} of its module${recommendedStudy.length !== 1 ? 's' : ''} — study to actually understand what was done:`
+                  : `You advanced past ${recommendedStudy.length} module${recommendedStudy.length !== 1 ? 's' : ''} without completing them. Study to deepen your understanding:`}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {recommendedStudy.map((s) => (
+                  <Link
+                    key={s.moduleId}
+                    to={s.to}
+                    className="h-auto rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
+                  >
+                    {s.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+          <p className="mt-1 text-[10.5px] leading-snug text-muted-foreground">
+            Delegating a phase to your AI team, the Progress/Resources/Signals tabs, and in-sim
+            resource embedding are on a laptop — resources here open in a new page instead.
           </p>
         </div>
-        <dl className="w-full max-w-[320px] space-y-2 text-left">
-          {[
-            {
-              label: 'Migration phases (L2 floor)',
-              value: `${scoreboard.milestone.cleared} of ${scoreboard.milestone.total} cleared`,
-            },
-            {
-              label: 'Program maturity',
-              value: `Level ${Math.round(scoreboard.maturity)} of ${MAX_LEVEL}`,
-            },
-            { label: 'Program complete', value: scoreboard.complete ? 'Yes ✓' : 'Not yet' },
-            {
-              label: 'Quantum-exposed value',
-              value: `€${Math.round(exposedValueM)}M (€${Math.round(uninsuredM)}M uninsured)`,
-            },
-            { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
-            {
-              label: 'Budget secured',
-              value: `€${budgetSecured}M of €${budgetTarget}M`,
-            },
-          ].map((row) => (
+      ) : (
+        <div className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5">
+          <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
+          <div className="space-y-1">
+            <h2 className="text-lg font-bold">Your migration at a glance</h2>
+            <p className="text-xs text-muted-foreground max-w-[300px]">
+              The playable board needs a wider screen — open it on a tablet or desktop. Here&apos;s
+              where your run stands today.
+            </p>
+          </div>
+          {/* mobile-ux-layer (2026-08-24 audit R1.3): the only way to reach p0/p1
+              play was the phase ladder (desktop-only) or the "Watch" auto-run,
+              which walks `sel` through all 9 phases with no way back — a reader
+              past p1 (or one who just watched the overview) had no on-screen path
+              to the two playable phases. Visible here in BOTH the playable state
+              (sel already p0/p1) and this same read-only p2+ fallback, so it
+              doubles as the recovery path. */}
+          {isMobileShell && (
             <div
-              key={row.label}
-              className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2"
+              className="flex w-full max-w-[320px] rounded-lg border border-border bg-muted/40 p-1"
+              role="group"
+              aria-label="Choose a playable phase"
             >
-              <dt className="text-xs text-muted-foreground">{row.label}</dt>
-              <dd className="text-sm font-semibold text-foreground">{row.value}</dd>
+              {(['p0', 'p1'] as const).map((p) => (
+                <Button
+                  key={p}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSel(p)}
+                  aria-pressed={sel === p}
+                  className={`h-9 flex-1 text-[11.5px] font-bold ${
+                    sel === p
+                      ? 'bg-background text-primary shadow-sm'
+                      : 'text-muted-foreground hover:bg-transparent'
+                  }`}
+                >
+                  {FRAMEWORK_PHASES[p].name}
+                </Button>
+              ))}
             </div>
-          ))}
-        </dl>
-        {/* Narrated Executive Overview is passive, so it works on a phone
+          )}
+          <dl className="w-full max-w-[320px] space-y-2 text-left">
+            {[
+              {
+                label: 'Migration phases (L2 floor)',
+                value: `${scoreboard.milestone.cleared} of ${scoreboard.milestone.total} cleared`,
+              },
+              {
+                label: 'Program maturity',
+                value: `Level ${Math.round(scoreboard.maturity)} of ${MAX_LEVEL}`,
+              },
+              { label: 'Program complete', value: scoreboard.complete ? 'Yes ✓' : 'Not yet' },
+              {
+                label: 'Quantum-exposed value',
+                value: `€${Math.round(exposedValueM)}M (€${Math.round(uninsuredM)}M uninsured)`,
+              },
+              { label: 'Years to act (Mosca)', value: `${clock.yearsToHorizon.toFixed(1)}y` },
+              {
+                label: 'Budget secured',
+                value: `€${budgetSecured}M of €${budgetTarget}M`,
+              },
+            ].map((row) => (
+              <div
+                key={row.label}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2"
+              >
+                <dt className="text-xs text-muted-foreground">{row.label}</dt>
+                <dd className="text-sm font-semibold text-foreground">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {/* Narrated Executive Overview is passive, so it works on a phone
             (07-29 review U-M2, option a): transport bar + captions + intro
             modals are all fixed-position and responsive. The playable board
             stays tablet/desktop-only. */}
-        {/* NEW-playchoice-modal-hidden-mobile: the real SimPlayChoiceModal
+          {/* NEW-playchoice-modal-hidden-mobile: the real SimPlayChoiceModal
             (rendered below, inside the desktop-only board) never becomes
             visible on a phone. When the locked screen's "Watch the full
             migration (sample org)" button has set playModalOpen, offer the
             same 3 scopes here — a lightweight stand-in, not the full modal —
             instead of silently collapsing to a single "Watch the Executive
             Overview" choice. */}
-        {isMobileViewport && playModalOpen && !autoRunPlayer.running && !autoRunPlayer.done && (
-          <div className="w-full max-w-[320px] space-y-2 text-left">
-            <p className="text-center font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
-              Choose how to play
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="tile"
-              onClick={() => startFromModal('walkthrough')}
-              className="border-primary/50 bg-primary/5"
-            >
-              <div className="text-sm font-bold text-foreground">Executive Overview</div>
-              <p className="text-[11px] leading-snug text-muted-foreground">
-                8 curated highlights across all 9 phases — board / exec audience, no technical
-                detail.
+          {isMobileViewport && playModalOpen && !autoRunPlayer.running && !autoRunPlayer.done && (
+            <div className="w-full max-w-[320px] space-y-2 text-left">
+              <p className="text-center font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
+                Choose how to play
               </p>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="tile"
-              onClick={() => startFromModal('climb')}
-            >
-              <div className="text-sm font-bold text-foreground">Full Migration Journey</div>
-              <p className="text-[11px] leading-snug text-muted-foreground">
-                Every required step, all 9 phases, genuinely completed — for practitioners and
-                technical evaluators.
-              </p>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="tile"
-              onClick={() => startFromModal('phase', defaultPhase)}
-            >
-              <div className="text-sm font-bold text-foreground">
-                Play This Phase — {FRAMEWORK_PHASES[defaultPhase].name}
-              </div>
-              <p className="text-[11px] leading-snug text-muted-foreground">
-                Just this phase's required steps, narrated and auto-advanced.
-              </p>
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setPlayModalOpen(false)}
-              className="w-full text-muted-foreground"
-            >
-              Cancel
-            </Button>
-          </div>
-        )}
-        {!(isMobileViewport && playModalOpen) && !autoRunPlayer.running && !autoRunPlayer.done && (
-          <Button
-            type="button"
-            variant="gradient"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => autoRunPlayer.start({ mode: 'walkthrough' })}
-          >
-            ▶ Watch the Executive Overview
-          </Button>
-        )}
-        {(autoRunPlayer.running || autoRunPlayer.done) && (
-          <>
-            <SimAutoRunOverlay player={autoRunPlayer} />
-            {autoRunPlayer.scenarioIntro && (
-              <SimScenarioIntroCard
-                scenario={autoRunPlayer.scenarioIntro}
-                onBegin={autoRunPlayer.beginScenario}
-              />
+              <Button
+                type="button"
+                variant="outline"
+                size="tile"
+                onClick={() => startFromModal('walkthrough')}
+                className="border-primary/50 bg-primary/5"
+              >
+                <div className="text-sm font-bold text-foreground">Executive Overview</div>
+                <p className="text-[11px] leading-snug text-muted-foreground">
+                  8 curated highlights across all 9 phases — board / exec audience, no technical
+                  detail.
+                </p>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="tile"
+                onClick={() => startFromModal('climb')}
+              >
+                <div className="text-sm font-bold text-foreground">Full Migration Journey</div>
+                <p className="text-[11px] leading-snug text-muted-foreground">
+                  Every required step, all 9 phases, genuinely completed — for practitioners and
+                  technical evaluators.
+                </p>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="tile"
+                onClick={() => startFromModal('phase', defaultPhase)}
+              >
+                <div className="text-sm font-bold text-foreground">
+                  Play This Phase — {FRAMEWORK_PHASES[defaultPhase].name}
+                </div>
+                <p className="text-[11px] leading-snug text-muted-foreground">
+                  Just this phase's required steps, narrated and auto-advanced.
+                </p>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setPlayModalOpen(false)}
+                className="w-full text-muted-foreground"
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+          {/* mobile-ux-layer: real interactive play, p0/p1 only — a deliberate tap,
+            never auto-opened on a genuinely fresh phase. Everything else on this
+            screen (the stats above, Watch the Executive Overview below) is
+            untouched. Label reflects real progress (level > 0, the same
+            already-computed signal phaseCleared uses) rather than always
+            reading "now" — a reader backing out via ← Overview, or landing
+            here on a fresh /simulation visit after playing earlier, deserves
+            to see this is a real phase in progress, not a start-over prompt
+            (2026-08-24, real production feedback). */}
+          {isMobileShell &&
+            (sel === 'p0' || sel === 'p1') &&
+            !(isMobileViewport && playModalOpen) &&
+            !autoRunPlayer.running &&
+            !autoRunPlayer.done && (
+              <Button
+                type="button"
+                variant="gradient"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => setMobilePlayOpen(true)}
+              >
+                {level > 0 ? `▶ Resume ${phase.name}` : `▶ Play ${phase.name} now`}
+              </Button>
             )}
-            {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
-              <SimPassIntroModal pass={autoRunPlayer.passIntro} onBegin={autoRunPlayer.beginPass} />
+          {!(isMobileViewport && playModalOpen) &&
+            !autoRunPlayer.running &&
+            !autoRunPlayer.done && (
+              <Button
+                type="button"
+                variant={isMobileShell && (sel === 'p0' || sel === 'p1') ? 'outline' : 'gradient'}
+                size="sm"
+                className="gap-1.5"
+                onClick={() => {
+                  if (isMobileShell) mobileWatchSelSnapshot.current = sel
+                  autoRunPlayer.start({ mode: 'walkthrough' })
+                }}
+              >
+                ▶ Watch the Executive Overview
+              </Button>
             )}
-            {autoRunPlayer.phaseIntro && (
-              <SimPhaseIntroModal
-                phase={autoRunPlayer.phaseIntro.phase}
-                onBegin={autoRunPlayer.beginPhase}
-              />
-            )}
-            <SimArtifactReveal type={autoRunPlayer.reveal} />
-          </>
-        )}
-        {walkthroughDoneOpen && (
-          <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
-        )}
-        <Link to="/" className="text-sm text-primary underline underline-offset-4">
-          Back to hub
-        </Link>
-      </div>
+          {(autoRunPlayer.running || autoRunPlayer.done) && (
+            <>
+              <SimAutoRunOverlay player={autoRunPlayer} />
+              {autoRunPlayer.scenarioIntro && (
+                <SimScenarioIntroCard
+                  scenario={autoRunPlayer.scenarioIntro}
+                  onBegin={autoRunPlayer.beginScenario}
+                />
+              )}
+              {autoRunPlayer.passIntro && !autoRunPlayer.scenarioIntro && (
+                <SimPassIntroModal
+                  pass={autoRunPlayer.passIntro}
+                  onBegin={autoRunPlayer.beginPass}
+                />
+              )}
+              {autoRunPlayer.phaseIntro && (
+                <SimPhaseIntroModal
+                  phase={autoRunPlayer.phaseIntro.phase}
+                  onBegin={autoRunPlayer.beginPhase}
+                />
+              )}
+              <SimArtifactReveal type={autoRunPlayer.reveal} />
+            </>
+          )}
+          {walkthroughDoneOpen && (
+            <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+          )}
+          <Link to="/" className="text-sm text-primary underline underline-offset-4">
+            Back to hub
+          </Link>
+        </div>
+      )}
 
       {/* Full simulation — hidden on phones, shown on tablet+ */}
       <div className="hidden md:flex flex-col fixed inset-0 bg-background text-foreground">
@@ -1729,7 +1928,7 @@ export function SimulationView() {
               <div className="whitespace-nowrap text-[13.5px] font-extrabold">PQC Today Sim</div>
               {/* 2026-08-02 — subtitle + framework attribution merged into one line
                 (was 2 lines); the version stays a real link, just compacted. */}
-              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <div className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Migration Sim ·{' '}
                 <a
                   href={FRAMEWORK_URL}
@@ -1755,7 +1954,7 @@ export function SimulationView() {
               aria-label={`Profile: ${sizeOpt.label}, ${assessJurisdiction?.displayName ?? country}, ${sectorOpt.label}. From your assessment.`}
               className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 py-1.5 pl-3 pr-1.5"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/70">
                 Profile
               </span>
               <span className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-background">
@@ -1768,6 +1967,14 @@ export function SimulationView() {
                 <PlanningBadge
                   label="est."
                   tip={`Shelf-life X (${sectorOpt.shelfLifeYears}y for ${sectorOpt.label}) is an illustrative planning anchor for how long this sector's data must stay secret — not a published figure. Re-check the live source.`}
+                  // a11y (2026-08-24): the badge's default warning-yellow text is
+                  // tuned for the app's normal dark content areas — here it sits
+                  // on this header's pale bg-foreground pill instead, where it
+                  // measured 1.15:1 against WCAG AA's 4.5:1 floor. Recolored to
+                  // this header's own already-proven-readable palette (matches
+                  // the sibling "Profile"/dial pill styling) rather than the
+                  // badge's own light-on-dark defaults.
+                  className="border-background/40 bg-background/10 text-background decoration-background/60 hover:bg-background/20"
                 />
               </span>
               <Link
@@ -1775,7 +1982,7 @@ export function SimulationView() {
                 onClick={() => markSimResume()}
                 title="Change your organization profile in the assessment"
                 aria-label="Change organization profile in the assessment"
-                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/50 hover:bg-background/20 hover:text-background"
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-background/70 hover:bg-background/20 hover:text-background"
               >
                 <Pencil size={11} aria-hidden="true" />
               </Link>
@@ -1812,12 +2019,23 @@ export function SimulationView() {
                 title="Program-wide maturity — full detail (objectives, HNDL/TNFL tracks) is in the Signals tab."
                 className="flex flex-col gap-px px-2.5 py-1.5 text-left"
               >
-                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+                <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                   Maturity
                 </span>
-                <span
-                  className={`text-[12.5px] font-bold ${txStatus.maturity >= PHASE_WIN_LEVEL ? 'text-success' : 'text-background'}`}
-                >
+                <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                  {/* a11y (2026-08-24): text-success measured 2.96:1 against this
+                      header's pale/dark pill in light theme (a fixed --success
+                      value can't clear AA against BOTH the near-white bar dark
+                      theme uses AND the near-black bar light theme uses for this
+                      same inverted header). "At floor" now reads via a real dot
+                      swatch instead of text color — same fix as the atRisk dot
+                      above. */}
+                  {txStatus.maturity >= PHASE_WIN_LEVEL && (
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                      aria-hidden="true"
+                    />
+                  )}
                   {txStatus.maturity.toFixed(1)}/4
                 </span>
               </div>
@@ -1830,15 +2048,19 @@ export function SimulationView() {
               }
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Gov L2
               </span>
-              <span className="text-[12.5px] font-bold text-success">
+              {/* a11y (2026-08-24): same text-success contrast issue as Maturity
+                  above — this figure isn't state-conditional (always the
+                  milestone count), so it just moves to the header's own
+                  guaranteed-readable text color rather than gaining a dot. */}
+              <span className="text-[12.5px] font-bold text-background">
                 {scoreboard.milestone.cleared}/{scoreboard.milestone.total}
               </span>
             </div>
             <div className="flex flex-col gap-px px-2.5 py-1.5 text-left">
-              <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="flex items-center gap-1 font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Q-Day
                 {/* The horizon is a SOFT figure and must carry a PlanningBadge, like
                     the sector shelf-life above. It regressed to a bare `title` on the
@@ -1850,11 +2072,22 @@ export function SimulationView() {
                     which is why a week passed before it surfaced. */}
                 <PlanningBadge
                   tip={`Years to Q-Day — horizon ≈ ${horizonYear} · X+Y>Z. The Q-Day horizon is an illustrative planning anchor, not a published date.`}
+                  // a11y: same fix as the shelf-life badge above.
+                  className="border-background/40 bg-background/10 text-background decoration-background/60 hover:bg-background/20"
                 />
               </span>
-              <span
-                className={`text-[12.5px] font-bold ${clock.atRisk ? 'text-destructive' : 'text-background'}`}
-              >
+              <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {/* a11y (2026-08-24): text-destructive measured 2.3:1 here — the
+                    token is tuned for the app's dark content areas, not this
+                    header's pale pill. "At risk" now reads via a real dot
+                    swatch (background-color, not text — axe's color-contrast
+                    rule only scores rendered glyph color) instead of red text. */}
+                {clock.atRisk && (
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-destructive"
+                    aria-hidden="true"
+                  />
+                )}
                 {clock.yearsToHorizon.toFixed(1)}y
               </span>
             </div>
@@ -1862,12 +2095,17 @@ export function SimulationView() {
               title={`Budget secured — of €${budgetTarget}M target (P0 level ${p0Level})`}
               className="flex flex-col gap-px px-2.5 py-1.5 text-left"
             >
-              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/50">
+              <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-background/70">
                 Budget
               </span>
-              <span
-                className={`text-[12.5px] font-bold ${budgetSecured > 0 ? 'text-success' : 'text-background/50'}`}
-              >
+              {/* a11y (2026-08-24): same text-success contrast fix as Maturity. */}
+              <span className="flex items-center gap-1.5 text-[12.5px] font-bold text-background">
+                {budgetSecured > 0 && (
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-success"
+                    aria-hidden="true"
+                  />
+                )}
                 €{budgetSecured}M
               </span>
             </div>

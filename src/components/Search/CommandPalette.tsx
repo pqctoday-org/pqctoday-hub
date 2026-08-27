@@ -14,6 +14,7 @@ import {
 } from '@/data/searchRoutes'
 import { useSearchHistoryStore } from '@/store/useSearchHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
 
 interface CommandPaletteProps {
   isOpen: boolean
@@ -93,6 +94,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate()
   const { recentQueries, pushQuery } = useSearchHistoryStore()
   const { selectedPersona, viewAccess } = usePersonaStore()
+  const isMobileShell = useIsMobileShell()
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -279,7 +281,17 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     placeholder="Search algorithms, standards, timelines…"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm focus:outline-none"
+                    // Real bug, mobile Simulator (2026-08-23): the desktop
+                    // `text-sm` (14px) input triggers iOS Safari's automatic
+                    // page-zoom-on-focus (any focused input/textarea under
+                    // 16px does this) — the whole page zooms in and pans to
+                    // the input, and stays that way while the results list
+                    // renders underneath, reading as a broken, shifted-left
+                    // layout rather than a zoom. 16px is the documented
+                    // threshold; bumping only for isMobileShell keeps
+                    // desktop's rendered output untouched (Rule 1) since this
+                    // is a shared component, not one under Mobile/.
+                    className={`flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none ${isMobileShell ? 'text-base' : 'text-sm'}`}
                   />
                   {loading && (
                     <div

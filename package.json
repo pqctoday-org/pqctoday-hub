@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.56.0",
+  "version": "4.58.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -64,6 +64,7 @@
     "audit:role-board-ctas": "tsx scripts/audit-role-board-ctas.ts",
     "audit:role-board-coverage": "tsx scripts/audit-role-board-coverage.ts",
     "audit:role-board-content": "tsx scripts/audit-role-board-content.ts",
+    "audit:role-board-literals": "tsx scripts/audit-role-board-literals.ts",
     "audit:sbom-versions": "tsx scripts/audit-sbom-versions.ts",
     "audit:vendor-refs": "tsx scripts/audit-vendor-refs.ts",
     "audit:capture-integrity": "tsx scripts/audit-capture-integrity.ts",

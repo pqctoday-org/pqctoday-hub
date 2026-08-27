@@ -13,6 +13,12 @@ import { Button } from '@/components/ui/button'
 
 interface MobileTimelineListProps {
   data: GanttCountryData[]
+  /** Initial view when the reader has no stored preference yet. Defaults to
+   *  'swipe' (unchanged existing behavior) — the mobile UX layer's Timeline
+   *  screen (design handoff §17: "Compact is the default view") passes
+   *  'compact' explicitly. A reader's own past choice, once made, still wins
+   *  either way — this only affects the very first render. */
+  defaultMode?: MobileViewMode
 }
 
 // Alongside the existing one-phase-at-a-time swipe carousel, "compact" shows every
@@ -26,16 +32,35 @@ type MobileViewMode = 'swipe' | 'compact'
 
 const VIEW_MODE_STORAGE_KEY = 'timeline-mobile-view-mode'
 
-function readStoredViewMode(): MobileViewMode {
+function readStoredViewMode(fallback: MobileViewMode): MobileViewMode {
   const stored = localStorage.getItem(VIEW_MODE_STORAGE_KEY)
-  return stored === 'compact' ? 'compact' : 'swipe'
+  if (stored === 'compact' || stored === 'swipe') return stored
+  return fallback
 }
 
-export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
+// Design handoff §17: "each milestone a row with ... a proximity marker
+// ('passed', 'in 1 year', 'in 4 years')" — the compact view's core teaching
+// mechanic (at-a-glance urgency), never built (2026-08-24 audit R4.4). The
+// spec's proportional-length rule stays a stated cut; this is the marker
+// only. Derived from the phase's own real startYear vs the real current
+// year, same comparison WhenDoesThisReachMe.tsx's trackFor() makes for its
+// "already passed"/"next" badges — just phrased per §17's own examples.
+function proximityLabel(startYear: number, currentYear: number): string {
+  const delta = startYear - currentYear
+  if (delta < 0) return 'passed'
+  if (delta === 0) return 'this year'
+  if (delta === 1) return 'in 1 year'
+  return `in ${delta} years`
+}
+
+export const MobileTimelineList = ({ data, defaultMode = 'swipe' }: MobileTimelineListProps) => {
+  const currentYear = new Date().getFullYear()
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
-  const [viewMode, setViewModeState] = useState<MobileViewMode>(readStoredViewMode)
+  const [viewMode, setViewModeState] = useState<MobileViewMode>(() =>
+    readStoredViewMode(defaultMode)
+  )
 
   const setViewMode = (mode: MobileViewMode) => {
     setViewModeState(mode)
@@ -192,8 +217,19 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           {phase.title}
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground font-mono flex-shrink-0">
-                        {phase.startYear}–{phase.endYear === 2035 ? '2035+' : phase.endYear}
+                      <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          {phase.startYear}–{phase.endYear === 2035 ? '2035+' : phase.endYear}
+                        </span>
+                        <span
+                          className={`text-[9px] font-semibold uppercase tracking-wide ${
+                            phase.startYear < currentYear
+                              ? 'text-muted-foreground/70'
+                              : 'text-primary'
+                          }`}
+                        >
+                          {proximityLabel(phase.startYear, currentYear)}
+                        </span>
                       </span>
                     </Button>
                   ))

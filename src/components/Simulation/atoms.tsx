@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { PHASE_WIN_LEVEL } from '@/data/phaseMaturity'
 import { TIMELINE_COUNTRY_DEADLINE_MANDATE_BY_NAME } from '@/data/timelineFacts.generated'
+import { cn } from '@/lib/utils'
 
 export const eyebrow =
   'font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-muted-foreground'
@@ -43,7 +44,10 @@ export function PlanningBadge({
       title={tip}
       aria-label={`${label}: ${tip}`}
       data-testid="planning-badge"
-      className={`inline-flex h-auto cursor-help items-center rounded-sm border border-warning/40 bg-warning/10 px-1 py-0 font-mono text-sim-chip font-semibold uppercase leading-tight tracking-[0.06em] text-warning underline decoration-dotted decoration-warning/60 underline-offset-2 hover:bg-warning/20 ${className}`}
+      className={cn(
+        'inline-flex h-auto cursor-help items-center rounded-sm border border-warning/40 bg-warning/10 px-1 py-0 font-mono text-sim-chip font-semibold uppercase leading-tight tracking-[0.06em] text-warning underline decoration-dotted decoration-warning/60 underline-offset-2 hover:bg-warning/20',
+        className
+      )}
     >
       {label}
     </Button>
@@ -229,7 +233,7 @@ export function Dial({
       aria-label={`${label}: ${value}. ${hint}. Activate to change.`}
       className="h-auto flex-row items-center gap-1.5 whitespace-nowrap rounded-full border border-background/20 bg-background/10 px-3 py-1.5 hover:bg-background/20"
     >
-      <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/50">
+      <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.1em] text-background/70">
         {label}
       </span>
       <span aria-hidden="true" className="text-background/40">

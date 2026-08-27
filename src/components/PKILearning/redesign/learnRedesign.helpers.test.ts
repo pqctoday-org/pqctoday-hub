@@ -8,6 +8,7 @@ import {
   TRACK_COUNT,
   PERSONA_ORDER,
   NICE_AFFINITY_PERSONAS,
+  formatHours,
 } from './learnRedesign.helpers'
 import type { PersonaPathPhase } from '../usePersonaPathItems'
 
@@ -151,5 +152,26 @@ describe('catalog-derived constants', () => {
     expect(NICE_AFFINITY_PERSONAS.has('executive')).toBe(true)
     expect(NICE_AFFINITY_PERSONAS.has('researcher')).toBe(true)
     expect(NICE_AFFINITY_PERSONAS.has('curious')).toBe(false)
+  })
+})
+
+// 2026-08-24 audit R5: was duplicated in both MyPathView.tsx and
+// MobileMyPathView.tsx as `~${Math.round(minutes / 60)}h` — 190 minutes
+// rounded to "~3h", silently dropping 10 real minutes.
+describe('formatHours', () => {
+  it('keeps the real minutes instead of rounding them away', () => {
+    expect(formatHours(190)).toBe('3h 10m')
+  })
+
+  it('omits a zero minute remainder', () => {
+    expect(formatHours(120)).toBe('2h')
+  })
+
+  it('shows bare minutes under an hour', () => {
+    expect(formatHours(45)).toBe('45m')
+  })
+
+  it('floors at 1 minute rather than showing 0', () => {
+    expect(formatHours(0)).toBe('1m')
   })
 })

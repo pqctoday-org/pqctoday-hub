@@ -6,7 +6,7 @@
 // already is. (Supersedes the older ACCURACY-0705 fix, which only blocked
 // the overwrite when the recipient already had an assessment — leaving the
 // no-prior-assessment case still mutating their store on every open.)
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import '@testing-library/jest-dom'
@@ -42,6 +42,11 @@ vi.mock('@/hooks/useAwarenessScore', () => ({
   useAwarenessScore: () => ({ score: 0, tier: 'novice' }),
 }))
 vi.mock('@/hooks/useWorkflowPhaseTracker', () => ({ useWorkflowPhaseTracker: () => {} }))
+
+const mockUseIsMobileShell = vi.hoisted(() => vi.fn(() => false))
+vi.mock('@/hooks/useIsMobileShell', () => ({
+  useIsMobileShell: mockUseIsMobileShell,
+}))
 
 const SAMPLE_INPUT: AssessmentInput = {
   industry: 'Finance & Banking',
@@ -248,5 +253,47 @@ describe('ReportView registers the top-bar Share URL (Grade-A remediation Phase 
 
     unmount()
     expect(usePageActionsStore.getState().current).toBeNull()
+  })
+})
+
+// Mobile UX layer (Phase 8). ReportEmbed.tsx renders this same component
+// inside the simulation via simEmbed — simEmbed must win over isMobileShell
+// regardless of viewport width, same as Threats/Library/Compliance/Migrate/
+// Assess.
+describe('mobile shell guard', () => {
+  beforeEach(() => {
+    useAssessmentStore.getState().reset()
+    usePersonaStore.getState().clearPersona()
+    useAssessmentFormStore.setState({
+      industry: SAMPLE_INPUT.industry,
+      dataSensitivity: SAMPLE_INPUT.dataSensitivity,
+      migrationStatus: SAMPLE_INPUT.migrationStatus,
+      assessmentStatus: 'complete',
+    })
+  })
+
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('renders the mobile screen when isMobileShell is true and not sim-embedded', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    render(
+      <MemoryRouter initialEntries={['/report']}>
+        <ReportView />
+      </MemoryRouter>
+    )
+    expect(await screen.findByText('Report')).toBeInTheDocument()
+    expect(screen.queryByTestId('report-content')).not.toBeInTheDocument()
+  })
+
+  it('still renders the full desktop view when simEmbed is true, even if isMobileShell is true', async () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    render(
+      <MemoryRouter initialEntries={['/report']}>
+        <ReportView simEmbed />
+      </MemoryRouter>
+    )
+    expect(await screen.findByTestId('report-content')).toBeInTheDocument()
   })
 })

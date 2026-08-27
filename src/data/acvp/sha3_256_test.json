@@ -1,9 +1,15 @@
 {
-  "vsId": 7,
   "algorithm": "SHA3-256",
   "mode": "hash",
-  "revision": "1.0",
-  "isSample": true,
+  "revision": "2.0",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/SHA3-256-2.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-23",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "dba4689436c7e440e61dc517210def3e8e09e50c0e9eff29ea66d89bdd0f2c63",
+    "note": "Replaces a prior file whose msg/md pairs, while presumably mathematically correct outputs, did not byte-match any real NIST ACVP-Server sample case and carried no source annotation (2026-08-24 WS-6 remediation, H-3). Now real, byte-verified NIST-sourced vectors, restricted to byte-aligned AFT cases (this file format has no bit-length field, and some ACVP hash cases test non-byte-aligned messages padded to a byte boundary \u2014 excluded to avoid silently hashing padding bits beyond the NIST-intended message)."
+  },
   "testGroups": [
     {
       "tgId": 1,
@@ -11,18 +17,21 @@
       "tests": [
         {
           "tcId": 1,
+          "comment": "NIST ACVP-Server SHA3-256-2.0, tcId=221",
           "msg": "",
           "md": "A7FFC6F8BF1ED76651C14756A061D662F580FF4DE43B49FA82D80A4B80F8434A"
         },
         {
           "tcId": 2,
-          "msg": "616263",
-          "md": "3A985DA74FE225B2045C172D6BD390BD855F086E3E9D525B46BFE24511431532"
+          "comment": "NIST ACVP-Server SHA3-256-2.0, tcId=87",
+          "msg": "08",
+          "md": "04058B18052FD86B2A3032BCC55C823C48BF5810A3726F538A1D01EBB42584C5"
         },
         {
           "tcId": 3,
-          "msg": "6162636462636465636465666465666765666768666768696768696A68696A6B696A6B6C6A6B6C6D6B6C6D6E6C6D6E6F6D6E6F706E6F7071",
-          "md": "41C0DBA2A9D6240849100376A8235E2C82E1B9998A999E21DB32DD97496D3376"
+          "comment": "NIST ACVP-Server SHA3-256-2.0, tcId=1068",
+          "msg": "0E370C9590098590554DF8BA6F14629959F271157AE5811FC190F0AE37716EFAC62EC52BC751123788733F4F23F3606A",
+          "md": "3F8D86746D5B78EEDDDA12FF00307953628678706E0316B11AE57C5B9DEA8BA6"
         }
       ]
     }
