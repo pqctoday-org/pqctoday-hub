@@ -8,6 +8,8 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
 import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useIsMobileShell } from '@/hooks/useIsMobileShell'
+import { cn } from '@/lib/utils'
 
 interface CuriousModuleViewProps {
   moduleId: string
@@ -19,6 +21,11 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
   const { updateModuleProgress, modules } = useModuleStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isCompleted = modules[moduleId]?.status === 'completed'
+  // MainLayout deliberately contributes no horizontal padding when isMobileShell
+  // (mobile-ux-layer, 2026-08-24) — every Mobile/* screen owns its own px-4
+  // instead. This view predates that rollout and was never updated, so curious
+  // mode rendered every module's text flush against the screen edges on mobile.
+  const isMobileShell = useIsMobileShell()
 
   // Mark the module as reviewed — curious mode is intentionally low-friction, so
   // "I read the summary" is fine to credit on a click. Workshop-step credit is
@@ -66,7 +73,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
   if (!moduleMeta) return null
 
   return (
-    <div className="space-y-6 animate-fade-in w-full pb-12 mt-4">
+    <div className={cn('space-y-6 animate-fade-in w-full pb-12 mt-4', isMobileShell && 'px-4')}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="w-full">
           {/* Back link (2026-08-02): PKILearningView's utility row above every
