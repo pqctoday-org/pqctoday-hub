@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.58.0] - 2026-08-25
+
+A round of fixes to the mobile layer shipped in 4.57.0, found by testing it live on a phone: Assess, Compliance, Migrate, and Algorithms each had a screen that still fell through to the desktop layout, plus assorted overflow and state bugs.
+
+### Added
+
+- **Assess now covers the same 13 steps on mobile as on desktop, with a quick/comprehensive track picker** [view:/assess] [persona:executive] [persona:architect] [persona:ops] [persona:developer]: mobile previously stopped after 6 steps. Retention, credential lifetime, deployment scale, crypto-agility, infrastructure layers, and your compliance timeline pressure are now all part of the mobile flow, matching desktop.
+- **Compliance and Migrate: tapping a framework or a vendor's roadmap entry now opens a real detail view** [view:/compliance] [view:/migrate] [persona:architect] [persona:executive] [persona:ops]: these rows looked tappable on mobile but previously did nothing. Compliance shows the same "about this standard" detail as desktop; Migrate shows certification lookups and vendor roadmap detail, with supporting proof collapsed by default rather than shown upfront.
+- **Algorithms: a real Protocol Support screen and a real KAT validation screen on mobile** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: both used to fall through to the full desktop layout squeezed onto a phone. KAT validation now runs genuine WASM-executed test vectors against ML-KEM, ML-DSA, and SLH-DSA directly on the device.
+
+### Fixed
+
+- **Assess's compliance step showed an incomplete, unranked list of frameworks instead of what actually applies to you** [view:/assess] [persona:architect] [persona:executive]: it now uses the same applicability engine as desktop, correctly tiered (mandatory, recognized, cross-border, advisory).
+- **"Replace a classical algorithm" dumped up to 38 options onto one flat, unsorted screen** [view:/algorithms] [persona:developer] [persona:architect]: real data, unusable presentation. Options are now grouped by function and capped to the 6 most relevant, with the rest one tap away.
+- **The Algorithms Transition and Detailed Comparison screens showed the full desktop search bar, filter deck, and 5-tab switcher squeezed onto a phone** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher]: both now render a distilled, phone-native layout. Detailed Comparison's side-by-side compare mode has no mobile layout yet, so mobile shows the browse view only; desktop is unaffected.
+- **Text ran off the right edge of the screen instead of wrapping on 7 mobile screens** [view:/threats] [view:/patents] [view:/leaders] [view:/library] [view:/playground] [view:/business] [view:/compliance] [persona:curious] [persona:researcher] [persona:ops]: Threats, Patents, Community, Library, Playground, Business Tools, and Compliance cards all had the same inherited-`nowrap` defect.
+- **Interactive simulation play on mobile lost your progress if you navigated away and came back** [view:/simulation] [persona:developer] [persona:architect]: state now survives the round trip.
+- **A card on the Algorithms landing screen ran its description text off the edge of the phone** [view:/algorithms] [persona:curious].
+
 ## [4.57.0] - 2026-08-24
 
 A real mobile experience across the whole app, an ACVP validator that now runs and checks against genuine NIST test vectors, and an accuracy pass across Learn's home boards, MLS/EO 14412 citations, and the compliance maturity catalogue.
