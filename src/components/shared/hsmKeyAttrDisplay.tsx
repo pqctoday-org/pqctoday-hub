@@ -13,13 +13,40 @@
  * correctly. CKK_NAMES itself stays canonical in discoverHsmObjects.ts
  * (object-discovery's classification table); this module re-exports it
  * rather than holding a second copy.
+ *
+ * The modal shows every attribute both real PKCS#11 engines return (verified
+ * live, not assumed) in four collapsible sections — Identity, Capabilities,
+ * Policy & lifecycle, Key material — plus a collapsible Raw attributes table.
+ * A field that came back null is rendered as one of three distinct states
+ * (not present on this object / sensitive — withheld / read error) driven by
+ * KeyAttributeSet.unavailable, never collapsed to an ambiguous "—" the way it
+ * was before that field existed.
  */
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AppWindow, Globe, Key as KeyIcon, ShieldCheck, X } from 'lucide-react'
+import {
+  AppWindow,
+  ChevronDown,
+  ChevronRight,
+  Globe,
+  Key as KeyIcon,
+  ShieldCheck,
+  X,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { HsmKey, HsmKeyPurpose } from '@/components/Playground/hsm/HsmContext'
 import { CKK_NAMES } from '@/components/Playground/keystore/discoverHsmObjects'
-import { SLH_DSA_PUB_BYTES, type KeyAttributeSet } from '@/wasm/softhsm'
+import { bytesToHex } from '@/utils/dataInputUtils'
+import {
+  CKK_EC,
+  CKK_EC_EDWARDS,
+  CKK_EC_MONTGOMERY,
+  CKK_RSA,
+  ecCurveNameFromOID,
+  SLH_DSA_PUB_BYTES,
+  type AttrUnavailableReason,
+  type KeyAttributeSet,
+} from '@/wasm/softhsm'
 
 export { CKK_NAMES }
 
@@ -58,6 +85,19 @@ const ML_DSA_SIZES: Record<number, { pub: number; priv: number }> = {
   0x3: { pub: 2592, priv: 4896 }, // ML-DSA-87
 }
 
+// Curve → field size in bits, for RSA-style "N-bit key" display of EC/EdDSA/
+// Montgomery keys.
+const EC_CURVE_BITS: Record<string, number> = {
+  'P-256': 256,
+  'P-384': 384,
+  'P-521': 521,
+  secp256k1: 256,
+  X25519: 256,
+  X448: 448,
+  Ed25519: 256,
+  Ed448: 448,
+}
+
 /** Estimate key material size from PKCS#11 attributes. Returns null if unknown. */
 export const estimateKeySize = (attrs: KeyAttributeSet): number | null => {
   // Symmetric: CKA_VALUE_LEN is authoritative
@@ -66,6 +106,23 @@ export const estimateKeySize = (attrs: KeyAttributeSet): number | null => {
   const cls = attrs.ckClass // 2=pub, 3=priv
   const ps = attrs.ckParameterSet
   const kt = attrs.ckKeyType
+
+  // RSA: CKA_MODULUS_BITS on the public key; CKA_MODULUS byte length on the
+  // private key (which doesn't carry CKA_MODULUS_BITS — see hsm_getKeyAttributes).
+  if (kt === CKK_RSA) {
+    if (attrs.ckModulusBits !== null) return Math.ceil(attrs.ckModulusBits / 8)
+    if (attrs.ckModulus) return attrs.ckModulus.length
+  }
+
+  // EC / EdDSA / Montgomery: decode the curve from CKA_EC_PARAMS, independent
+  // of class (present on both public and private per hsm_getKeyAttributes).
+  if (kt === CKK_EC || kt === CKK_EC_EDWARDS || kt === CKK_EC_MONTGOMERY) {
+    if (attrs.ckEcParams) {
+      const curve = ecCurveNameFromOID(attrs.ckEcParams)
+      const bits = curve ? EC_CURVE_BITS[curve] : undefined
+      if (bits) return Math.ceil(bits / 8)
+    }
+  }
 
   if (ps === null || cls === null) return null
 
@@ -168,6 +225,306 @@ export const PurposeBadge = ({ purpose }: { purpose?: HsmKeyPurpose }) => {
   )
 }
 
+// ── Tri-state attribute rendering ─────────────────────────────────────────────
+// Distinguishes: a real value; a field never probed at all (client-side class
+// gating — e.g. CKA_SENSITIVE on a public key); and the three probed-and-failed
+// outcomes KeyAttributeSet.unavailable classifies (absent / sensitive / error).
+
+type AttrKind = 'value' | 'not-probed' | AttrUnavailableReason
+
+const UNAVAILABLE_TEXT: Record<Exclude<AttrKind, 'value'>, string> = {
+  'not-probed': '—',
+  absent: 'not present on this object',
+  sensitive: 'sensitive — withheld by the token',
+  error: 'read error',
+}
+
+const attrKind = (
+  attrs: KeyAttributeSet,
+  key: keyof KeyAttributeSet,
+  hasValue: boolean
+): AttrKind => {
+  if (hasValue) return 'value'
+  const reason = attrs.unavailable?.[key]
+  return reason ?? 'not-probed'
+}
+
+const StatusText = ({ kind }: { kind: Exclude<AttrKind, 'value'> }) => (
+  <span
+    className={
+      kind === 'error' ? 'text-xs text-status-error' : 'text-xs text-muted-foreground italic'
+    }
+  >
+    {UNAVAILABLE_TEXT[kind]}
+  </span>
+)
+
+const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <tr className="border-b border-border/40 align-top">
+    <td className="py-1.5 pr-4 text-muted-foreground w-44 shrink-0">{label}</td>
+    <td className="py-1.5 text-foreground break-all">{children}</td>
+  </tr>
+)
+
+const UlongRow = ({
+  label,
+  attrs,
+  field,
+  names,
+}: {
+  label: string
+  attrs: KeyAttributeSet
+  field: keyof KeyAttributeSet
+  names?: Record<number, string>
+}) => {
+  const v = attrs[field] as number | null
+  const kind = attrKind(attrs, field, v !== null)
+  return (
+    <Row label={label}>
+      {kind === 'value' ? (
+        names ? (
+          fmtUlong(v, names)
+        ) : (
+          `0x${(v as number).toString(16).padStart(8, '0')}`
+        )
+      ) : (
+        <StatusText kind={kind} />
+      )}
+    </Row>
+  )
+}
+
+const BoolRow = ({
+  label,
+  attrs,
+  field,
+}: {
+  label: string
+  attrs: KeyAttributeSet
+  field: keyof KeyAttributeSet
+}) => {
+  const v = attrs[field] as boolean | null
+  const kind = attrKind(attrs, field, v !== null)
+  return (
+    <Row label={label}>
+      {kind === 'value' ? <BoolCell value={v} /> : <StatusText kind={kind} />}
+    </Row>
+  )
+}
+
+const StrRow = ({
+  label,
+  attrs,
+  field,
+}: {
+  label: string
+  attrs: KeyAttributeSet
+  field: keyof KeyAttributeSet
+}) => {
+  const v = attrs[field] as string | null
+  const kind = attrKind(attrs, field, v !== null)
+  if (kind !== 'value') return <Row label={label}>{<StatusText kind={kind} />}</Row>
+  return (
+    <Row label={label}>
+      {v!.length > 0 ? v : <span className="text-muted-foreground italic">(empty)</span>}
+    </Row>
+  )
+}
+
+/** Byte-array attribute row: decoded value by default, raw hex behind a toggle. */
+const BytesRow = ({
+  label,
+  attrs,
+  field,
+  decode,
+}: {
+  label: string
+  attrs: KeyAttributeSet
+  field: keyof KeyAttributeSet
+  decode?: (bytes: Uint8Array, attrs: KeyAttributeSet) => string
+}) => {
+  const [showHex, setShowHex] = useState(false)
+  const v = attrs[field] as Uint8Array | null
+  const kind = attrKind(attrs, field, v !== null)
+  if (kind !== 'value') return <Row label={label}>{<StatusText kind={kind} />}</Row>
+  const bytes = v as Uint8Array
+  if (bytes.length === 0) {
+    return (
+      <Row label={label}>
+        <span className="text-muted-foreground italic">(empty)</span>
+      </Row>
+    )
+  }
+  const decoded = decode ? decode(bytes, attrs) : `${bytes.length} bytes`
+  return (
+    <Row label={label}>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span>{decoded}</span>
+        <Button
+          variant="ghost"
+          onClick={() => setShowHex((s) => !s)}
+          className="h-auto p-0 text-[10px] text-primary hover:underline shrink-0"
+        >
+          {showHex ? 'hide hex' : 'hex'}
+        </Button>
+      </div>
+      {showHex && (
+        <div className="mt-1 text-[10px] text-muted-foreground break-all">{bytesToHex(bytes)}</div>
+      )}
+    </Row>
+  )
+}
+
+// ── Byte-array decoders (D-2: decoded by default, raw hex behind a toggle) ──
+
+const decodeEcParams = (bytes: Uint8Array): string => {
+  const curve = ecCurveNameFromOID(bytes)
+  return curve ? curve : `unrecognised curve OID (${bytes.length} bytes)`
+}
+
+/** DER OCTET STRING wrapping an uncompressed/compressed SEC1 point:
+ *  0x04 [len | 0x81 len2] <point-form-byte> … Best-effort; degrades to a
+ *  byte count if the encoding doesn't match this common shape. */
+const decodeEcPoint = (bytes: Uint8Array): string => {
+  if (bytes[0] !== 0x04) return `${bytes.length} bytes`
+  const len = bytes[1]
+  if (len === undefined) return `${bytes.length} bytes`
+  const i = len & 0x80 ? 2 + (len & 0x7f) : 2
+  const form = bytes[i]
+  const formName =
+    form === 0x04
+      ? 'uncompressed point'
+      : form === 0x02 || form === 0x03
+        ? 'compressed point'
+        : 'point'
+  return `${formName}, ${bytes.length} bytes`
+}
+
+const decodeModulus = (bytes: Uint8Array): string =>
+  `${bytes.length * 8}-bit modulus (${bytes.length} B)`
+
+const decodePublicExponent = (bytes: Uint8Array): string => {
+  if (bytes.length > 8) return `${bytes.length}-byte exponent`
+  let v = 0n
+  for (const b of bytes) v = (v << 8n) | BigInt(b)
+  return `${v.toString()} (0x${v.toString(16)})`
+}
+
+const decodePublicKeyInfo = (bytes: Uint8Array, attrs: KeyAttributeSet): string => {
+  const kt =
+    attrs.ckKeyType !== null
+      ? (CKK_NAMES[attrs.ckKeyType] ?? 'unknown algorithm')
+      : 'unknown algorithm'
+  return `SPKI for ${kt}, ${bytes.length} bytes`
+}
+
+// ── Collapsible section ────────────────────────────────────────────────────
+
+const CollapsibleSection = ({
+  title,
+  defaultOpen = true,
+  children,
+}: {
+  title: string
+  defaultOpen?: boolean
+  children: React.ReactNode
+}) => {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="space-y-1">
+      <Button
+        variant="ghost"
+        onClick={() => setOpen((o) => !o)}
+        className="h-auto p-0 flex items-center gap-1.5 w-full justify-start text-left text-xs font-medium text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
+        aria-expanded={open}
+      >
+        {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+        {title}
+      </Button>
+      {open && <div className="overflow-x-auto">{children}</div>}
+    </div>
+  )
+}
+
+// ── Raw attributes table ──────────────────────────────────────────────────
+// Every field hsm_getKeyAttributes can populate, one row each, compact —
+// the fallback view for anything the grouped sections above don't surface.
+
+const RAW_FIELDS: Array<{
+  label: string
+  key: keyof KeyAttributeSet
+  kind: 'bool' | 'ulong' | 'bytes' | 'str'
+}> = [
+  { label: 'CKA_UNIQUE_ID', key: 'ckUniqueId', kind: 'str' },
+  { label: 'CKA_LABEL', key: 'ckLabel', kind: 'str' },
+  { label: 'CKA_CLASS', key: 'ckClass', kind: 'ulong' },
+  { label: 'CKA_KEY_TYPE', key: 'ckKeyType', kind: 'ulong' },
+  { label: 'CKA_ID', key: 'ckId', kind: 'bytes' },
+  { label: 'CKA_PARAMETER_SET', key: 'ckParameterSet', kind: 'ulong' },
+  { label: 'CKA_KEY_GEN_MECHANISM', key: 'ckKeyGenMechanism', kind: 'ulong' },
+  { label: 'CKA_MODIFIABLE', key: 'ckModifiable', kind: 'bool' },
+  { label: 'CKA_COPYABLE', key: 'ckCopyable', kind: 'bool' },
+  { label: 'CKA_DESTROYABLE', key: 'ckDestroyable', kind: 'bool' },
+  { label: 'CKA_TOKEN', key: 'ckToken', kind: 'bool' },
+  { label: 'CKA_PRIVATE', key: 'ckPrivate', kind: 'bool' },
+  { label: 'CKA_LOCAL', key: 'ckLocal', kind: 'bool' },
+  { label: 'CKA_DERIVE', key: 'ckDerive', kind: 'bool' },
+  { label: 'CKA_SENSITIVE', key: 'ckSensitive', kind: 'bool' },
+  { label: 'CKA_EXTRACTABLE', key: 'ckExtractable', kind: 'bool' },
+  { label: 'CKA_ALWAYS_SENSITIVE', key: 'ckAlwaysSensitive', kind: 'bool' },
+  { label: 'CKA_NEVER_EXTRACTABLE', key: 'ckNeverExtractable', kind: 'bool' },
+  { label: 'CKA_ENCRYPT', key: 'ckEncrypt', kind: 'bool' },
+  { label: 'CKA_DECRYPT', key: 'ckDecrypt', kind: 'bool' },
+  { label: 'CKA_SIGN', key: 'ckSign', kind: 'bool' },
+  { label: 'CKA_VERIFY', key: 'ckVerify', kind: 'bool' },
+  { label: 'CKA_WRAP', key: 'ckWrap', kind: 'bool' },
+  { label: 'CKA_UNWRAP', key: 'ckUnwrap', kind: 'bool' },
+  { label: 'CKA_ENCAPSULATE', key: 'ckEncapsulate', kind: 'bool' },
+  { label: 'CKA_DECAPSULATE', key: 'ckDecapsulate', kind: 'bool' },
+  { label: 'CKA_TRUSTED', key: 'ckTrusted', kind: 'bool' },
+  { label: 'CKA_WRAP_WITH_TRUSTED', key: 'ckWrapWithTrusted', kind: 'bool' },
+  { label: 'CKA_ALWAYS_AUTHENTICATE', key: 'ckAlwaysAuthenticate', kind: 'bool' },
+  { label: 'CKA_START_DATE', key: 'ckStartDate', kind: 'bytes' },
+  { label: 'CKA_END_DATE', key: 'ckEndDate', kind: 'bytes' },
+  { label: 'CKA_ALLOWED_MECHANISMS', key: 'ckAllowedMechanisms', kind: 'bytes' },
+  { label: 'CKA_VALUE_LEN', key: 'ckValueLen', kind: 'ulong' },
+  { label: 'CKA_CHECK_VALUE', key: 'ckCheckValue', kind: 'bytes' },
+  { label: 'CKA_HSS_KEYS_REMAINING', key: 'ckHssKeysRemaining', kind: 'ulong' },
+  { label: 'CKA_XMSS_KEYS_REMAINING', key: 'ckXmssKeysRemaining', kind: 'ulong' },
+  { label: 'CKA_EC_PARAMS', key: 'ckEcParams', kind: 'bytes' },
+  { label: 'CKA_EC_POINT', key: 'ckEcPoint', kind: 'bytes' },
+  { label: 'CKA_MODULUS_BITS', key: 'ckModulusBits', kind: 'ulong' },
+  { label: 'CKA_MODULUS', key: 'ckModulus', kind: 'bytes' },
+  { label: 'CKA_PUBLIC_EXPONENT', key: 'ckPublicExponent', kind: 'bytes' },
+  { label: 'CKA_PUBLIC_KEY_INFO', key: 'ckPublicKeyInfo', kind: 'bytes' },
+]
+
+const RawAttrRow = ({
+  field,
+  attrs,
+}: {
+  field: (typeof RAW_FIELDS)[number]
+  attrs: KeyAttributeSet
+}) => {
+  const { label, key, kind } = field
+  const raw = attrs[key]
+  const hasValue = raw !== null && raw !== undefined
+  const stateKind = attrKind(attrs, key, hasValue)
+  if (stateKind !== 'value') return <Row label={label}>{<StatusText kind={stateKind} />}</Row>
+  switch (kind) {
+    case 'bool':
+      return <Row label={label}>{(raw as boolean) ? 'CK_TRUE' : 'CK_FALSE'}</Row>
+    case 'ulong':
+      return <Row label={label}>{`0x${(raw as number).toString(16).padStart(8, '0')}`}</Row>
+    case 'str':
+      return <Row label={label}>{(raw as string).length ? (raw as string) : '(empty)'}</Row>
+    case 'bytes': {
+      const bytes = raw as Uint8Array
+      return <Row label={label}>{bytes.length ? bytesToHex(bytes) : '(empty)'}</Row>
+    }
+  }
+}
+
 // ── Key attribute inspect modal ───────────────────────────────────────────────
 
 export const KeyAttrModal = ({
@@ -179,6 +536,13 @@ export const KeyAttrModal = ({
   attrs: KeyAttributeSet
   onClose: () => void
 }) => {
+  const isEcFamily =
+    attrs.ckKeyType === CKK_EC ||
+    attrs.ckKeyType === CKK_EC_EDWARDS ||
+    attrs.ckKeyType === CKK_EC_MONTGOMERY
+  const isRsa = attrs.ckKeyType === CKK_RSA
+  const hasKeyMaterial = isEcFamily || isRsa || attrs.ckPublicKeyInfo !== null
+
   return createPortal(
     <div
       role="presentation"
@@ -186,7 +550,7 @@ export const KeyAttrModal = ({
       onClick={(e) => e.target === e.currentTarget && onClose()}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
     >
-      <div className="glass-panel w-full max-w-md p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
+      <div className="glass-panel w-full max-w-lg max-h-[85vh] overflow-y-auto p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -217,100 +581,169 @@ export const KeyAttrModal = ({
           </div>
         )}
 
-        {/* Identity attributes */}
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Identity
-          </p>
-          <div className="overflow-x-auto">
+        {/* Identity */}
+        <CollapsibleSection title="Identity" defaultOpen>
+          <table className="w-full table-fixed text-xs font-mono border-collapse">
+            <tbody>
+              <StrRow label="CKA_UNIQUE_ID" attrs={attrs} field="ckUniqueId" />
+              <StrRow label="CKA_LABEL" attrs={attrs} field="ckLabel" />
+              <UlongRow label="CKA_CLASS" attrs={attrs} field="ckClass" names={CKO_NAMES} />
+              <UlongRow label="CKA_KEY_TYPE" attrs={attrs} field="ckKeyType" names={CKK_NAMES} />
+              <BytesRow label="CKA_ID" attrs={attrs} field="ckId" />
+              {attrs.ckKeyGenMechanism !== null && (
+                <UlongRow
+                  label="CKA_KEY_GEN_MECHANISM"
+                  attrs={attrs}
+                  field="ckKeyGenMechanism"
+                  names={CKM_KEYGEN_NAMES}
+                />
+              )}
+              {attrs.ckParameterSet !== null && (
+                <Row label="CKA_PARAMETER_SET">
+                  {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                </Row>
+              )}
+              {attrs.ckValueLen !== null && (
+                <Row label="CKA_VALUE_LEN">{attrs.ckValueLen} bytes</Row>
+              )}
+              {attrs.ckCheckValue && (
+                <Row label="CKA_CHECK_VALUE (KCV)">
+                  <span className="text-status-success font-bold">
+                    {Array.from(attrs.ckCheckValue.slice(0, 3))
+                      .map((b) => b.toString(16).padStart(2, '0'))
+                      .join('')
+                      .toUpperCase()}
+                  </span>
+                </Row>
+              )}
+              {attrs.ckHssKeysRemaining !== null && (
+                <Row label="CKA_HSS_KEYS_REMAINING">
+                  <span className="tabular-nums">
+                    {attrs.ckHssKeysRemaining.toLocaleString()} remaining
+                  </span>
+                </Row>
+              )}
+              {attrs.ckXmssKeysRemaining !== null && (
+                <Row label="CKA_XMSS_KEYS_REMAINING">
+                  <span className="tabular-nums">
+                    {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
+                  </span>
+                </Row>
+              )}
+            </tbody>
+          </table>
+        </CollapsibleSection>
+
+        {/* Capabilities */}
+        <CollapsibleSection title="Capabilities" defaultOpen>
+          <table className="w-full text-xs font-mono border-collapse">
+            <tbody>
+              {BOOL_ATTRS.map(({ label, key }) => (
+                <BoolRow key={key} label={label} attrs={attrs} field={key} />
+              ))}
+            </tbody>
+          </table>
+        </CollapsibleSection>
+
+        {/* Policy & lifecycle */}
+        <CollapsibleSection title="Policy & lifecycle" defaultOpen={false}>
+          <table className="w-full table-fixed text-xs font-mono border-collapse">
+            <tbody>
+              <BoolRow label="CKA_MODIFIABLE" attrs={attrs} field="ckModifiable" />
+              <BoolRow label="CKA_COPYABLE" attrs={attrs} field="ckCopyable" />
+              <BoolRow label="CKA_DESTROYABLE" attrs={attrs} field="ckDestroyable" />
+              <BoolRow label="CKA_TRUSTED" attrs={attrs} field="ckTrusted" />
+              <BoolRow label="CKA_WRAP_WITH_TRUSTED" attrs={attrs} field="ckWrapWithTrusted" />
+              <BoolRow label="CKA_ALWAYS_AUTHENTICATE" attrs={attrs} field="ckAlwaysAuthenticate" />
+              <BytesRow
+                label="CKA_ALLOWED_MECHANISMS"
+                attrs={attrs}
+                field="ckAllowedMechanisms"
+                decode={(b) => `${b.length / 4} mechanism(s) pinned`}
+              />
+              <BytesRow
+                label="CKA_START_DATE"
+                attrs={attrs}
+                field="ckStartDate"
+                decode={(b) =>
+                  b.length === 8
+                    ? `${String.fromCharCode(...b.slice(0, 4))}-${String.fromCharCode(...b.slice(4, 6))}-${String.fromCharCode(...b.slice(6, 8))}`
+                    : `${b.length} bytes`
+                }
+              />
+              <BytesRow
+                label="CKA_END_DATE"
+                attrs={attrs}
+                field="ckEndDate"
+                decode={(b) =>
+                  b.length === 8
+                    ? `${String.fromCharCode(...b.slice(0, 4))}-${String.fromCharCode(...b.slice(4, 6))}-${String.fromCharCode(...b.slice(6, 8))}`
+                    : `${b.length} bytes`
+                }
+              />
+            </tbody>
+          </table>
+        </CollapsibleSection>
+
+        {/* Key material — EC/EdDSA/Montgomery curve, RSA modulus/exponent, SPKI */}
+        {hasKeyMaterial && (
+          <CollapsibleSection title="Key material" defaultOpen>
             <table className="w-full table-fixed text-xs font-mono border-collapse">
               <tbody>
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
-                  <td className="py-1.5 text-foreground break-all">
-                    {fmtUlong(attrs.ckClass, CKO_NAMES)}
-                  </td>
-                </tr>
-                <tr className="border-b border-border/40">
-                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
-                  <td className="py-1.5 text-foreground break-all">
-                    {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
-                  </td>
-                </tr>
-                {attrs.ckKeyGenMechanism !== null && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
-                    <td className="py-1.5 text-foreground break-all">
-                      {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
-                    </td>
-                  </tr>
+                {isEcFamily && (
+                  <>
+                    <BytesRow
+                      label="CKA_EC_PARAMS"
+                      attrs={attrs}
+                      field="ckEcParams"
+                      decode={decodeEcParams}
+                    />
+                    <BytesRow
+                      label="CKA_EC_POINT"
+                      attrs={attrs}
+                      field="ckEcPoint"
+                      decode={decodeEcPoint}
+                    />
+                  </>
                 )}
-                {attrs.ckParameterSet !== null && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
-                    <td className="py-1.5 text-foreground break-all">
-                      {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
-                    </td>
-                  </tr>
+                {isRsa && (
+                  <>
+                    <UlongRow label="CKA_MODULUS_BITS" attrs={attrs} field="ckModulusBits" />
+                    <BytesRow
+                      label="CKA_MODULUS"
+                      attrs={attrs}
+                      field="ckModulus"
+                      decode={decodeModulus}
+                    />
+                    <BytesRow
+                      label="CKA_PUBLIC_EXPONENT"
+                      attrs={attrs}
+                      field="ckPublicExponent"
+                      decode={decodePublicExponent}
+                    />
+                  </>
                 )}
-                {attrs.ckValueLen !== null && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>
-                    <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
-                  </tr>
-                )}
-                {attrs.ckCheckValue && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
-                    <td className="py-1.5 text-status-success font-bold font-mono break-all">
-                      {Array.from(attrs.ckCheckValue.slice(0, 3))
-                        .map((b) => b.toString(16).padStart(2, '0'))
-                        .join('')
-                        .toUpperCase()}
-                    </td>
-                  </tr>
-                )}
-                {attrs.ckHssKeysRemaining !== null && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_HSS_KEYS_REMAINING</td>
-                    <td className="py-1.5 text-foreground tabular-nums">
-                      {attrs.ckHssKeysRemaining.toLocaleString()} remaining
-                    </td>
-                  </tr>
-                )}
-                {attrs.ckXmssKeysRemaining !== null && (
-                  <tr className="border-b border-border/40">
-                    <td className="py-1.5 pr-4 text-muted-foreground">CKA_XMSS_KEYS_REMAINING</td>
-                    <td className="py-1.5 text-foreground tabular-nums">
-                      {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
-                    </td>
-                  </tr>
-                )}
+                <BytesRow
+                  label="CKA_PUBLIC_KEY_INFO"
+                  attrs={attrs}
+                  field="ckPublicKeyInfo"
+                  decode={decodePublicKeyInfo}
+                />
               </tbody>
             </table>
-          </div>
-        </div>
+          </CollapsibleSection>
+        )}
 
-        {/* Boolean capabilities */}
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Capabilities
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs font-mono border-collapse">
-              <tbody>
-                {BOOL_ATTRS.map(({ label, key }) => (
-                  <tr key={key} className="border-b border-border/40">
-                    <td className="py-1 pr-4 text-muted-foreground w-40">{label}</td>
-                    <td className="py-1">
-                      <BoolCell value={attrs[key] as boolean | null} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* Raw attributes — every field, compact, collapsed by default */}
+        <CollapsibleSection title="Raw attributes" defaultOpen={false}>
+          <table className="w-full table-fixed text-xs font-mono border-collapse">
+            <tbody>
+              {RAW_FIELDS.map((f) => (
+                <RawAttrRow key={f.key} field={f} attrs={attrs} />
+              ))}
+            </tbody>
+          </table>
+        </CollapsibleSection>
 
         <p className="text-xs text-muted-foreground">
           Session object · read via C_GetAttributeValue

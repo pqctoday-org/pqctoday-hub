@@ -677,6 +677,17 @@ export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
 export const CKA_HSS_KEYS_REMAINING = 0x0000061c // PKCS#11 v3.2 §6.14
 export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
+// Storage-object attributes (v3.2 Table 23) — mandatory for every object,
+// default TRUE. Values verified against pqctoday-hsm/rust/src/constants.rs.
+export const CKA_UNIQUE_ID = 0x00000004
+export const CKA_MODIFIABLE = 0x00000170
+export const CKA_COPYABLE = 0x00000171
+export const CKA_DESTROYABLE = 0x00000172
+// Common key attributes (v3.2 Table 26), default empty.
+export const CKA_START_DATE = 0x00000110
+export const CKA_END_DATE = 0x00000111
+// v3.2 §4.2 Table 13 footnote 10 — private keys only, default FALSE.
+export const CKA_ALWAYS_AUTHENTICATE = 0x00000202
 
 // PKCS#11 Profiles v3.2 §3 — a token exposes one CKO_PROFILE object per
 // conformance profile it claims, each with a fixed CKA_PROFILE_ID (e.g.
@@ -1699,7 +1710,8 @@ export const hsm_generateMLDSAKeyPair = (
   variant: 44 | 65 | 87,
   extractable = false,
   token = false,
-  keyId?: Uint8Array
+  keyId?: Uint8Array,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
@@ -1707,6 +1719,8 @@ export const hsm_generateMLDSAKeyPair = (
   M.setValue(mech + 8, 0, 'i32')
 
   const keyIdPtr = keyId && keyId.length ? writeBytes(M, keyId) : 0
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
 
   const ps = dsaParamSet(variant)
   const pubDefs = [
@@ -1716,6 +1730,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelBytes && labelPtr
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
   // The mechanism infers the parameter set for the private key from the public key template.
@@ -1728,6 +1745,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelBytes && labelPtr
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   const pubTpl = buildTemplate(M, pubDefs)
   const prvTpl = buildTemplate(M, prvDefs)
@@ -1756,6 +1776,7 @@ export const hsm_generateMLDSAKeyPair = (
     M._free(pubHPtr)
     M._free(prvHPtr)
     if (keyIdPtr) M._free(keyIdPtr)
+    if (labelPtr) M._free(labelPtr)
   }
 }
 
@@ -3033,6 +3054,29 @@ const ecCurveOID = (curve: string): Uint8Array => {
   }
 }
 
+const bytesEqual = (a: Uint8Array, b: Uint8Array): boolean =>
+  a.length === b.length && a.every((v, i) => v === b[i])
+
+/** Inverse of ecCurveOID + the Ed25519/Ed448 OIDs hsm_generateEdDSAKeyPair uses
+ *  directly. Decodes a raw CKA_EC_PARAMS reading back into a curve name for
+ *  display — null if the bytes don't match any curve this engine generates. */
+export const ecCurveNameFromOID = (params: Uint8Array): string | null => {
+  const table: Array<[Uint8Array, string]> = [
+    [EC_OID_P256, 'P-256'],
+    [EC_OID_P384, 'P-384'],
+    [EC_OID_P521, 'P-521'],
+    [EC_OID_SECP256K1, 'secp256k1'],
+    [EC_OID_X25519, 'X25519'],
+    [EC_OID_X448, 'X448'],
+    [EC_OID_ED25519, 'Ed25519'],
+    [EC_OID_ED448, 'Ed448'],
+  ]
+  for (const [oid, name] of table) {
+    if (bytesEqual(params, oid)) return name
+  }
+  return null
+}
+
 /**
  * OID bytes for SEC1 / Weierstrass curves only (P-256 / P-384 / P-521).
  * Throws CKR_CURVE_NOT_SUPPORTED if a Montgomery curve (X25519 / X448) is supplied —
@@ -3088,6 +3132,10 @@ export const hsm_generateECKeyPair = (
 
   const labelBytes = label ? new TextEncoder().encode(label) : null
   const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+  if (labelBytes && labelPtr) {
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+  }
 
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -4892,7 +4940,8 @@ export const hsm_generateSLHDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   paramSet: number = CKP_SLH_DSA_SHA2_128S,
-  extractable = false
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
 
@@ -4914,6 +4963,13 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_SIGN, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ]
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+  if (labelBytes && labelPtr) {
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+  }
 
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -4941,6 +4997,7 @@ export const hsm_generateSLHDSAKeyPair = (
     freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
+    if (labelPtr) M._free(labelPtr)
   }
 }
 
@@ -5212,6 +5269,52 @@ export interface KeyAttributeSet {
   ckHssKeysRemaining: number | null
   /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
   ckXmssKeysRemaining: number | null
+  // ── Storage object (v3.2 Table 23) — every object ─────────────────────────
+  /** CKA_UNIQUE_ID: token-assigned unique identifier string */
+  ckUniqueId: string | null
+  /** CKA_LABEL: human-readable label, RFC2279 string (default empty) */
+  ckLabel: string | null
+  /** CKA_MODIFIABLE: object may be modified after creation (default TRUE) */
+  ckModifiable: boolean | null
+  /** CKA_COPYABLE: object may be copied via C_CopyObject (default TRUE) */
+  ckCopyable: boolean | null
+  /** CKA_DESTROYABLE: object may be destroyed (default TRUE) */
+  ckDestroyable: boolean | null
+  // ── Common key (v3.2 Table 26) — every key ────────────────────────────────
+  /** CKA_ID: key identifier bytes, distinguishes multiple pairs (default empty) */
+  ckId: Uint8Array | null
+  /** CKA_START_DATE: CK_DATE bytes, reference-only (default empty) */
+  ckStartDate: Uint8Array | null
+  /** CKA_END_DATE: CK_DATE bytes, reference-only (default empty) */
+  ckEndDate: Uint8Array | null
+  /** CKA_ALLOWED_MECHANISMS: packed CK_MECHANISM_TYPE[] this key is pinned to */
+  ckAllowedMechanisms: Uint8Array | null
+  // ── Policy (v3.2 §4.2/§4.8) ────────────────────────────────────────────────
+  /** CKA_TRUSTED: public/secret keys only — §4.2 Table 13 footnote 10, SO-only to set */
+  ckTrusted: boolean | null
+  /** CKA_WRAP_WITH_TRUSTED: private/secret keys — pins wrapping to a CKA_TRUSTED key */
+  ckWrapWithTrusted: boolean | null
+  /** CKA_ALWAYS_AUTHENTICATE: private keys only — re-authenticate before every use */
+  ckAlwaysAuthenticate: boolean | null
+  // ── EC / EdDSA / Montgomery key material ──────────────────────────────────
+  /** CKA_EC_PARAMS: DER-encoded curve OID/params (public + private) */
+  ckEcParams: Uint8Array | null
+  /** CKA_EC_POINT: DER-wrapped uncompressed curve point (public only) */
+  ckEcPoint: Uint8Array | null
+  // ── RSA key material ───────────────────────────────────────────────────────
+  /** CKA_MODULUS_BITS: modulus size in bits (public only) */
+  ckModulusBits: number | null
+  /** CKA_MODULUS: modulus bytes (public + private) */
+  ckModulus: Uint8Array | null
+  /** CKA_PUBLIC_EXPONENT: exponent bytes (public + private) */
+  ckPublicExponent: Uint8Array | null
+  // ── SPKI (v3.2 §4.14) ──────────────────────────────────────────────────────
+  /** CKA_PUBLIC_KEY_INFO: SPKI-encoded public key. Mandatory on public keys;
+   *  on private keys the spec makes it SHOULD/MAY, not MUST (§4.10 lines
+   *  2520-2530 for the general rule, §RSA line 7923 for RSA specifically) —
+   *  read opportunistically, 'absent' on an engine/class that omits it is
+   *  expected, not a bug. */
+  ckPublicKeyInfo: Uint8Array | null
   /**
    * Why each null field above came back null, for fields that were actually
    * probed and failed (as opposed to attributes this object's class doesn't
@@ -5249,6 +5352,16 @@ export const hsm_getKeyAttributes = (
     if (reason) unavailable[key] = reason
     return value
   }
+  const bytes = (key: keyof KeyAttributeSet, t: number): Uint8Array | null => {
+    const { rv, value } = readBytesAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
+  const str = (key: keyof KeyAttributeSet, t: number): string | null => {
+    const raw = bytes(key, t)
+    return raw ? new TextDecoder().decode(raw) : null
+  }
 
   // Read class + type first — these are on every key object (Table 26 common attrs)
   const ckClass = u('ckClass', CKA_CLASS)
@@ -5257,6 +5370,9 @@ export const hsm_getKeyAttributes = (
   const isPublic = ckClass === CKO_PUBLIC_KEY
   const isPrivate = ckClass === CKO_PRIVATE_KEY
   const isSecret = ckClass === CKO_SECRET_KEY
+  const isEcFamily =
+    ckKeyType === CKK_EC || ckKeyType === CKK_EC_EDWARDS || ckKeyType === CKK_EC_MONTGOMERY
+  const isRsa = ckKeyType === CKK_RSA
 
   return {
     ckClass,
@@ -5304,6 +5420,33 @@ export const hsm_getKeyAttributes = (
       ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
         ? u('ckXmssKeysRemaining', CKA_XMSS_KEYS_REMAINING)
         : null,
+    // Storage object (Table 23) — every object
+    ckUniqueId: str('ckUniqueId', CKA_UNIQUE_ID),
+    ckLabel: str('ckLabel', CKA_LABEL),
+    ckModifiable: b('ckModifiable', CKA_MODIFIABLE),
+    ckCopyable: b('ckCopyable', CKA_COPYABLE),
+    ckDestroyable: b('ckDestroyable', CKA_DESTROYABLE),
+    // Common key (Table 26) — every key
+    ckId: bytes('ckId', CKA_ID),
+    ckStartDate: bytes('ckStartDate', CKA_START_DATE),
+    ckEndDate: bytes('ckEndDate', CKA_END_DATE),
+    ckAllowedMechanisms: bytes('ckAllowedMechanisms', CKA_ALLOWED_MECHANISMS),
+    // Policy — CKA_TRUSTED on public+secret, CKA_WRAP_WITH_TRUSTED on private+secret,
+    // CKA_ALWAYS_AUTHENTICATE on private only (§4.2 Table 13 footnote 10)
+    ckTrusted: isPublic || isSecret ? b('ckTrusted', CKA_TRUSTED) : null,
+    ckWrapWithTrusted: isPrivate || isSecret ? b('ckWrapWithTrusted', CKA_WRAP_WITH_TRUSTED) : null,
+    ckAlwaysAuthenticate: isPrivate ? b('ckAlwaysAuthenticate', CKA_ALWAYS_AUTHENTICATE) : null,
+    // EC / EdDSA / Montgomery key material — public + private
+    ckEcParams: (isPublic || isPrivate) && isEcFamily ? bytes('ckEcParams', CKA_EC_PARAMS) : null,
+    ckEcPoint: isPublic && isEcFamily ? bytes('ckEcPoint', CKA_EC_POINT) : null,
+    // RSA key material — public + private
+    ckModulusBits: isPublic && isRsa ? u('ckModulusBits', CKA_MODULUS_BITS) : null,
+    ckModulus: (isPublic || isPrivate) && isRsa ? bytes('ckModulus', CKA_MODULUS) : null,
+    ckPublicExponent:
+      (isPublic || isPrivate) && isRsa ? bytes('ckPublicExponent', CKA_PUBLIC_EXPONENT) : null,
+    // SPKI — mandatory on public keys; read opportunistically on private keys too
+    // (spec: SHOULD/MAY there, not MUST — an engine/class omitting it is expected).
+    ckPublicKeyInfo: isPublic || isPrivate ? bytes('ckPublicKeyInfo', CKA_PUBLIC_KEY_INFO) : null,
     unavailable,
   }
 }
