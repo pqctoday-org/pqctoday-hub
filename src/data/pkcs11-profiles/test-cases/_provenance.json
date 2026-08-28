@@ -1,0 +1,33 @@
+{
+  "source_url": "https://docs.oasis-open.org/pkcs11/pkcs11-profiles/v3.2/os/test-cases/pkcs11-v3.2/mandatory/",
+  "source_release": "PKCS #11 Profiles Version 3.2, OASIS Standard, 03 June 2026",
+  "retrieved": "2026-08-28",
+  "producer": "OASIS PKCS11 TC (official mandatory conformance test cases)",
+  "note": "WS-11 Phase 1 (2026-08-28): the four machine-readable XML test cases OASIS publishes for the Profiles v3.2 mandatory test-case clauses (§5.1.1 Baseline, §5.3.1 Extended, §5.4.1 Authentication Token, §5.5.1 Public Certificates Token). Vendored verbatim, byte-for-byte, no re-formatting. Each file's sha256 below was computed on the exact bytes as fetched; re-fetching and re-hashing is the way to confirm this vendored copy hasn't drifted from the publisher.",
+  "files": {
+    "BL-M-1-32.xml": {
+      "profile": "Baseline Provider",
+      "clause": "PKCS #11 Profiles v3.2 §5.1.1",
+      "size_bytes": 3181,
+      "sha256": "2940efd182466707e195f5a6220fd48cd2c156eb509cf1e973e0daa2fc77dc6e"
+    },
+    "EXT-M-1-32.xml": {
+      "profile": "Extended Provider",
+      "clause": "PKCS #11 Profiles v3.2 §5.3.1",
+      "size_bytes": 4961,
+      "sha256": "209646066cb9c9d9af75d51f49fbd0c4546b5154ff5bb81c5072b1a0959c95c6"
+    },
+    "AUTH-M-1-32.xml": {
+      "profile": "Authentication Token",
+      "clause": "PKCS #11 Profiles v3.2 §5.4.1",
+      "size_bytes": 5403,
+      "sha256": "0cad0935a8d49e5215e8d8da2da23fc3381c926cfa23a3447be76f119ecac6e5"
+    },
+    "CERT-M-1-32.xml": {
+      "profile": "Public Certificates Token",
+      "clause": "PKCS #11 Profiles v3.2 §5.5.1",
+      "size_bytes": 5113,
+      "sha256": "496dc6acf7c827c6007f29dffd19916ea455d7b1cbf91beb40ecb70b82aae6d1"
+    }
+  }
+}
