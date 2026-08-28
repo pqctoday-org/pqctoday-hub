@@ -29,6 +29,7 @@ export const PALETTE_META: Record<string, PaletteMeta> = {
   'ml-kem-1024': { family: 'KEM', pq: true, hex: '0x17' },
   'slh-dsa': { family: 'Signature', pq: true, hex: '0x2e' },
   'hss-lms': { family: 'Signature', pq: true, hex: '0x4033' },
+  'hss-lms-h10': { family: 'Signature', pq: true, hex: '0x4033' },
   'rsa-2048': { family: 'Signature', pq: false, hex: '0x40' },
   'rsa-pss': { family: 'Signature', pq: false, hex: '0x43' },
   'ecdsa-p256': { family: 'Signature', pq: false, hex: '0x1044' },

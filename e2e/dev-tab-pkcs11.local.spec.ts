@@ -195,3 +195,67 @@ test('runs green on the Rust engine (?engine=rust) — the existing default lane
   await expect(page.getByText('✓ ran').first()).toBeVisible()
   await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
+
+test('HSS/LMS-H10 generates, signs, and verifies live (G9/W3a)', async ({ page }) => {
+  // Real gap found+fixed live: p11/__init__.py hardcoded only
+  // CKP_LMS_SHA256_M32_H5 as a module constant, so this palette entry's
+  // generated code (p11.CKP_LMS_SHA256_M32_H10) raised AttributeError at
+  // run time before the fix landed.
+  //
+  // H15/H20/H25 were tried and deliberately NOT shipped: a raw shim call
+  // to generate_hss completes fast at those heights in isolation, but the
+  // real generated-script path hangs indefinitely, reproduced on both
+  // engines — the plan's own rule is that an untimed/unverified parameter
+  // set stays out of the palette rather than shipping broken.
+  await page.addInitScript(() => {
+    const id = 'hss-lms-h10'
+    const store = {
+      [id]: {
+        steps: [
+          {
+            id: 'g1',
+            primId: id,
+            op: 'generate',
+            params: { keyLabel: { bind: 'literal', value: id } },
+            status: 'idle',
+            output: null,
+          },
+          {
+            id: 's1',
+            primId: id,
+            op: 'sign',
+            params: {
+              privKey: { bind: 'key', step: 'g1', part: 'priv' },
+              input: { bind: 'ref', step: '__input__' },
+            },
+            status: 'idle',
+            output: null,
+          },
+          {
+            id: 'v1',
+            primId: id,
+            op: 'verify',
+            params: {
+              pubKey: { bind: 'key', step: 'g1', part: 'pub' },
+              input: { bind: 'ref', step: '__input__' },
+              signature: { bind: 'ref', step: 's1' },
+            },
+            status: 'idle',
+            output: null,
+          },
+        ],
+        input: 'e2e H10 payload',
+      },
+    }
+    localStorage.setItem('pqctoday-hub-pkcs11-pipelines-v1', JSON.stringify(store))
+  })
+
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  await page.getByRole('button', { name: 'hss-lms-h10', exact: true }).click()
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran')).toHaveCount(3)
+  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+})

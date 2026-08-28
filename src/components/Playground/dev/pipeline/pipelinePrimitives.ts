@@ -52,6 +52,7 @@ const {
   CKP_ML_KEM_1024,
   CKP_SLH_DSA_SHA2_128S,
   CKP_LMS_SHA256_M32_H5,
+  CKP_LMS_SHA256_M32_H10,
   CKP_LMOTS_SHA256_N32_W8,
 } = ALL_CONSTANTS
 
@@ -187,7 +188,22 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     ops: signOps(CKM_SLH_DSA),
   },
 
-  // ── HSS/LMS: stateful. H5 tree ⇒ 2^5 = 32 signatures, then the key is spent ───
+  // ── HSS/LMS: stateful. Height H ⇒ 2^H signatures, then the key is spent ───
+  // One more height added (dev-tabs-pkcs11-kmip plan G9, W3a) — same pattern
+  // this file already uses for every other multi-variant primitive
+  // (ML-DSA-44/65/87, ML-KEM-512/768/1024 are separate palette entries too,
+  // not one entry with a runtime picker), so no codegen/param-model changes
+  // were needed. H10 is confirmed live through the real generated-script
+  // path (parseRun step markers, both engines — not just "didn't crash").
+  // H15/H20/H25 were tried and DROPPED: a raw shim call to generate_hss at
+  // those heights completes in under a second in isolation, but the SAME
+  // heights run through the real builder-generated script (the `with
+  // Module() as hsm:` / step-marker wrapper every generated pipeline uses)
+  // hang indefinitely — reproduced consistently on both engines. Root cause
+  // not yet found; shipping them anyway is exactly the "shipped and broken"
+  // outcome this plan's own rule exists to prevent. LM-OTS width/hash stay
+  // fixed at the H5 entry's existing choice (W8/SHA256) — height is the
+  // dimension the plan named as the actual gap.
   'hss-lms': {
     label: 'HSS/LMS-H5',
     keygen: {
@@ -200,6 +216,19 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     ops: signOps(CKM_HSS),
     stateful: true,
     maxSignatures: 32,
+  },
+  'hss-lms-h10': {
+    label: 'HSS/LMS-H10',
+    keygen: {
+      kind: 'hss',
+      lmsType: CKP_LMS_SHA256_M32_H10,
+      lmotsType: CKP_LMOTS_SHA256_N32_W8,
+      lmsName: 'CKP_LMS_SHA256_M32_H10',
+      lmotsName: 'CKP_LMOTS_SHA256_N32_W8',
+    },
+    ops: signOps(CKM_HSS),
+    stateful: true,
+    maxSignatures: 1024,
   },
 
   // ── Classical signatures ─────────────────────────────────────────────────────

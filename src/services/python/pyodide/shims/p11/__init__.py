@@ -45,6 +45,19 @@ CKP_SLH_DSA_SHA2_128F = 0x03
 CKP_SLH_DSA_SHA2_192S = 0x05
 CKP_SLH_DSA_SHA2_256S = 0x09
 CKP_LMS_SHA256_M32_H5 = 5
+# Real gap found+fixed live (dev-tabs-pkcs11-kmip plan G9, W3a): the new
+# hss-lms-h10 palette entry generates code calling p11.CKP_LMS_SHA256_M32_H10,
+# but only H5 had ever been hand-added here — nothing needed it until this
+# entry existed. AttributeError at run time, confirmed live before this fix
+# landed. Value matches pkcs11Constants.generated.ts (the TS-side source of
+# truth) exactly. H15/H20/H25 are deliberately NOT added here: a raw shim
+# call to generate_hss at those heights completes fast in isolation, but the
+# real generated-script path (the `with Module() as hsm:` wrapper every
+# pipeline uses) hangs indefinitely at those heights — reproduced on both
+# engines, root cause not yet found. Adding the constants without shipping a
+# working palette entry would just invite a hand-edited script to hit the
+# same hang with no explanation.
+CKP_LMS_SHA256_M32_H10 = 6
 CKP_LMOTS_SHA256_N32_W8 = 4
 
 DEFAULT_MODULE = '<in-browser softhsmv3 wasm engine>'
