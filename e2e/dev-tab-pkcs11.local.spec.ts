@@ -162,3 +162,36 @@ test('Monaco mounts with a real web worker, no console noise or page errors (G8)
   expect(consoleMessages.some((m) => /Could not create web worker/i.test(m))).toBe(false)
   expect(pageErrors).toEqual([])
 })
+
+test('runs green on the C++ engine (?engine=cpp) — real bug found+fixed in G9/W1', async ({
+  page,
+}) => {
+  // Regression guard for a real bug: devSlot.ts used to treat
+  // C_GetSlotList's `tokenPresent` parameter as "token initialized", which
+  // the C++ engine reports true for EVERY slot the instant it exists (even
+  // one that has never been through C_InitToken) — so the Developer tab's
+  // own dedicated token slot could never be provisioned on this engine,
+  // confirmed live in both dev and a real production build. Fixed by
+  // checking CK_TOKEN_INFO's actual CKF_TOKEN_INITIALIZED flag instead.
+  await page.goto('/playground/hsm?engine=cpp&tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  await expect(page.getByText(/softhsmv3 · C\+\+/)).toBeVisible()
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran').first()).toBeVisible()
+  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+})
+
+test('runs green on the Rust engine (?engine=rust) — the existing default lane', async ({
+  page,
+}) => {
+  await page.goto('/playground/hsm?engine=rust&tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  await expect(page.getByText(/softhsmv3 · Rust/)).toBeVisible()
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran').first()).toBeVisible()
+  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+})

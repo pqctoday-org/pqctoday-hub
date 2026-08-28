@@ -21,6 +21,21 @@
  * every slot's real CK_TOKEN_INFO.label — never by array position. A slot
  * already carrying a DIFFERENT label (e.g. HsmContext's 'SoftHSM3') is never
  * touched, initialized or not otherwise.
+ *
+ * "FREE" MEANS `!(flags & CKF_TOKEN_INITIALIZED)`, NOT `C_GetSlotList`'s
+ * `tokenPresent` PARAMETER (dev-tabs-pkcs11-kmip plan G9, W1 — a real bug
+ * found live). `tokenPresent` is about whether a token is PHYSICALLY
+ * present in the slot (relevant for removable smart-card-style devices);
+ * confirmed live that this hub's C++ SoftHSMv3 WASM build reports EVERY
+ * slot as `tokenPresent=1` the moment it exists, including a slot that has
+ * never had `C_InitToken` called on it — so the previous
+ * `listAllSlots(M, true)` "initialized" set was actually just "all slots",
+ * identical to the "all" set, and `free = all.find(s => !initialized.has(s))`
+ * could never find anything. `CKF_TOKEN_INITIALIZED` (the actual PKCS#11
+ * flag for "has this token been through C_InitToken") is unambiguous and
+ * portable across engines — the Rust engine happened to make
+ * `tokenPresent` behave the way this code assumed, which is why this was
+ * never caught until the C++ lane was tested for the first time.
  */
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
@@ -35,17 +50,18 @@ import { hsm_getTokenInfo } from '../../../../wasm/softhsm/pqc'
 export const DEV_SLOT_LABEL = 'DevSequences'
 const DEV_SLOT_SO_PIN = '12345678'
 const DEV_SLOT_USER_PIN = '1234'
+const CKF_TOKEN_INITIALIZED = 0x00000400
 
-function listAllSlots(M: SoftHSMModule, tokenPresent: boolean): number[] {
+function listAllSlots(M: SoftHSMModule): number[] {
   const countPtr = allocUlong(M)
   try {
-    checkRV(M._C_GetSlotList(tokenPresent ? 1 : 0, 0, countPtr), 'C_GetSlotList(count)')
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(count)')
     const count = readUlong(M, countPtr)
     if (count === 0) return []
     const listPtr = M._malloc(count * 4)
     writeUlong(M, countPtr, count)
     try {
-      checkRV(M._C_GetSlotList(tokenPresent ? 1 : 0, listPtr, countPtr), 'C_GetSlotList')
+      checkRV(M._C_GetSlotList(0, listPtr, countPtr), 'C_GetSlotList')
       const n = readUlong(M, countPtr)
       const out: number[] = []
       for (let i = 0; i < n; i++) out.push(M.getValue(listPtr + i * 4, 'i32') >>> 0)
@@ -58,9 +74,21 @@ function listAllSlots(M: SoftHSMModule, tokenPresent: boolean): number[] {
   }
 }
 
+/** True if `slot` has genuinely been through C_InitToken — see this file's
+ *  header for why that is NOT the same question as `C_GetSlotList`'s
+ *  `tokenPresent` parameter answers. */
+function isTokenInitialized(M: SoftHSMModule, slot: number): boolean {
+  try {
+    return (hsm_getTokenInfo(M, slot).flags & CKF_TOKEN_INITIALIZED) !== 0
+  } catch {
+    /* CKR_TOKEN_NOT_PRESENT race, or a slot with no token concept at all — not initialized. */
+    return false
+  }
+}
+
 /** Find the slot already labeled DEV_SLOT_LABEL, if one exists. */
 function findLabeledSlot(M: SoftHSMModule): number | null {
-  for (const slot of listAllSlots(M, true)) {
+  for (const slot of listAllSlots(M)) {
     try {
       if (hsm_getTokenInfo(M, slot).label === DEV_SLOT_LABEL) return slot
     } catch {
@@ -70,14 +98,12 @@ function findLabeledSlot(M: SoftHSMModule): number | null {
   return null
 }
 
-/** Init a fresh Developer token on the first slot that has NO token at all
- *  yet (present in the all-slots list but absent from the initialized-slots
- *  list) — never a slot that is already initialized under a different
- *  label. Returns the slot id it just initialized. */
+/** Init a fresh Developer token on the first slot that is NOT yet
+ *  initialized — never a slot that already carries a token under a
+ *  different label. Returns the slot id it just initialized. */
 function initFreshDevSlot(M: SoftHSMModule): number {
-  const all = listAllSlots(M, false)
-  const initialized = new Set(listAllSlots(M, true))
-  const free = all.find((s) => !initialized.has(s))
+  const all = listAllSlots(M)
+  const free = all.find((s) => !isTokenInitialized(M, s))
   if (free === undefined) {
     throw new Error(
       'No free PKCS#11 slot available for the Developer token — every physical ' +

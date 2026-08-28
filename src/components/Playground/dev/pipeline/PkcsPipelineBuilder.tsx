@@ -22,7 +22,7 @@ import Editor from '@monaco-editor/react'
 import { Play, Loader2, Download, Save, Upload, Trash2, X } from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
-import { useHsmContext } from '../../hsm/HsmContext'
+import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
 import { ensureDevSlot, DEV_SLOT_LABEL } from './devSlot'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from '../monacoSelfHost'
@@ -48,6 +48,18 @@ import {
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
 import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
 import { createP11Bridge } from '../../../../services/python/pyodide/p11Bridge'
+
+// W1.3: name the real engine — this used to just say "softhsmv3 (browser)"
+// regardless of which one actually ran the pipeline, which mattered once G9
+// proved both lanes genuinely work. 'dual' runs the pipeline on the primary
+// (C++) module — the Rust module in dual mode is HsmContext's cross-check
+// lane, not the execution lane moduleRef points at.
+const ENGINE_LABEL: Record<EngineMode, string> = {
+  cpp: 'C++',
+  rust: 'Rust',
+  dual: 'C++ (dual parity)',
+  software: 'software',
+}
 
 const OP_LABEL: Record<Op, string> = {
   generate: 'gen key',
@@ -96,7 +108,7 @@ const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export const PkcsPipelineBuilder: React.FC = () => {
-  const { moduleRef, isReady, autoInit } = useHsmContext()
+  const { moduleRef, isReady, autoInit, engineMode } = useHsmContext()
 
   // G7: called from a `useEffect` (not module top level — see
   // monacoSelfHost.ts's header for why that broke a real production build),
@@ -559,7 +571,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
 
         <DevSandboxDiffNote
           points={[
-            'Module() resolves to the same softhsmv3 engine, compiled to WebAssembly and running in this browser tab — not the real libsofthsmv3.so shared library the dev sandbox loads.',
+            `Module() resolves to the ${ENGINE_LABEL[engineMode]} build of softhsmv3, compiled to WebAssembly and running in this browser tab — not the real libsofthsmv3.so shared library the dev sandbox loads. Switch the Engine selector on this playground's other tabs to run your sequence on either build; the Engine row on the right names which one actually ran it.`,
             `Your own token is used, on a dedicated slot labeled "${DEV_SLOT_LABEL}" — the rest of the HSM playground shares a different one, so scripts here never disturb it (and vice versa).`,
             'One accommodation: CKA_PARAMETER_SET values from real sandbox samples arrive 8-byte-packed (native Linux convention); the shim narrows them to the 4 bytes this WASM build needs, for that one attribute only.',
             "finalize() is a deliberate no-op here (a real C_Finalize would tear down every other open Developer-tab session) — the real package's finalize() does call it.",
@@ -717,7 +729,10 @@ export const PkcsPipelineBuilder: React.FC = () => {
               k="Last run"
               v={elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
             />
-            <SummaryRow k="Engine" v={isReady ? 'softhsmv3 (browser)' : 'initializing…'} />
+            <SummaryRow
+              k="Engine"
+              v={isReady ? `softhsmv3 · ${ENGINE_LABEL[engineMode]} (browser)` : 'initializing…'}
+            />
             <SummaryRow
               k="Token slot"
               v={
