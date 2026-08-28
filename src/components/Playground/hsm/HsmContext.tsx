@@ -159,6 +159,15 @@ export interface HsmContextValue {
    * @returns true on success, false if any step fails
    */
   autoInit: (engine?: EngineMode) => Promise<boolean>
+  /**
+   * The error message from the most recent `autoInit` failure, or null if
+   * the last call succeeded (or none has run yet). `autoInit`'s own return
+   * value stays a plain boolean for every existing caller — this is an
+   * additive diagnostic for callers that need to know *why* init failed
+   * (e.g. a conformance runner surfacing a real init failure instead of a
+   * bare false).
+   */
+  lastInitErrorRef: React.MutableRefObject<string | null>
 }
 
 // ── Context ────────────────────────────────────────────────────────────────
@@ -179,6 +188,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
+  const lastInitErrorRef = useRef<string | null>(null)
 
   const [engineMode, setEngineMode] = useState<EngineMode>('rust')
   const [phase, setPhase] = useState<HsmPhase>('idle')
@@ -258,6 +268,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     async (engine?: EngineMode): Promise<boolean> => {
       const mode = engine ?? engineMode
       if (engine) setEngineMode(mode)
+      lastInitErrorRef.current = null
       try {
         // Step 1: load WASM module(s) and call C_Initialize
         let M: SoftHSMModule | null = null
@@ -304,7 +315,8 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         hSessionRef.current = hSession
         setPhase('session_open')
         return true
-      } catch {
+      } catch (err) {
+        lastInitErrorRef.current = err instanceof Error ? err.message : String(err)
         moduleRef.current = null
         rawModuleRef.current = null
         crossCheckModuleRef.current = null
@@ -332,6 +344,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       crossCheckModuleRef,
       hSessionRef,
       slotRef,
+      lastInitErrorRef,
       engineMode,
       setEngineMode,
       phase,

@@ -132,40 +132,46 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         rustShim as unknown as { __wbg_get_memory: () => WebAssembly.Memory }
       ).__wbg_get_memory()
 
-      // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
-      // operations not yet implemented in the Rust binary.
-      const CKR_NOT_IMPL = 0x70
-
       return {
         // ── Session management ────────────────────────────────────────────
         _C_Initialize: rustShim._C_Initialize,
         _C_Finalize: rustShim._C_Finalize,
-        _C_GetInfo: () => 0,
+        _C_GetInfo: rustShim._C_GetInfo,
+        // C_GetFunctionList is genuinely unimplemented on the Rust side (no
+        // `_C_GetFunctionList` export exists in softhsmrustv3_bg.js at all —
+        // verified 2026-08-28, not a stale JS-glue stub like the 29 entries
+        // fixed alongside this comment). The C++ engine DOES implement it
+        // (src/lib/main.cpp:439, exported in its WASM build) — this is a
+        // real Baseline Provider §5.1 condition-5a gap for the Rust engine
+        // specifically (Profiles v3.2 lists C_GetFunctionList alongside
+        // C_GetInterfaceList/C_GetInterface as jointly mandatory), left
+        // open for WS-11 Tier B to surface rather than silently patched
+        // here with a fake success return.
         _C_GetFunctionList: () => 0,
         _C_GetSlotList: rustShim._C_GetSlotList,
-        _C_GetSlotInfo: () => 0,
+        _C_GetSlotInfo: rustShim._C_GetSlotInfo,
         _C_GetTokenInfo: rustShim._C_GetTokenInfo,
         _C_GetMechanismList: rustShim._C_GetMechanismList,
         _C_GetMechanismInfo: rustShim._C_GetMechanismInfo,
         _C_InitToken: rustShim._C_InitToken,
         _C_InitPIN: rustShim._C_InitPIN,
-        _C_SetPIN: () => 0,
+        _C_SetPIN: rustShim._C_SetPIN,
         _C_OpenSession: rustShim._C_OpenSession,
         _C_CloseSession: rustShim._C_CloseSession,
-        _C_CloseAllSessions: () => 0,
+        _C_CloseAllSessions: rustShim._C_CloseAllSessions,
         _C_GetSessionInfo: rustShim._C_GetSessionInfo,
-        _C_GetOperationState: () => CKR_NOT_IMPL,
-        _C_SetOperationState: () => CKR_NOT_IMPL,
+        _C_GetOperationState: rustShim._C_GetOperationState,
+        _C_SetOperationState: rustShim._C_SetOperationState,
         _C_Login: rustShim._C_Login,
         _C_Logout: rustShim._C_Logout,
-        _C_LoginUser: () => 0,
-        _C_SessionCancel: () => 0,
+        _C_LoginUser: rustShim._C_LoginUser,
+        _C_SessionCancel: rustShim._C_SessionCancel,
 
         // ── Object management ─────────────────────────────────────────────
         _C_CreateObject: rustShim._C_CreateObject,
-        _C_CopyObject: () => CKR_NOT_IMPL,
+        _C_CopyObject: rustShim._C_CopyObject,
         _C_DestroyObject: rustShim._C_DestroyObject,
-        _C_GetObjectSize: () => CKR_NOT_IMPL,
+        _C_GetObjectSize: rustShim._C_GetObjectSize,
         _C_GetAttributeValue: rustShim._C_GetAttributeValue,
         _C_SetAttributeValue: rustShim._C_SetAttributeValue,
         _C_FindObjectsInit: rustShim._C_FindObjectsInit,
@@ -183,18 +189,18 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         // ── Encrypt/decrypt (AES, RSA OAEP) ──────────────────────────────
         _C_EncryptInit: rustShim._C_EncryptInit,
         _C_Encrypt: rustShim._C_Encrypt,
-        _C_EncryptUpdate: () => CKR_NOT_IMPL,
-        _C_EncryptFinal: () => CKR_NOT_IMPL,
+        _C_EncryptUpdate: rustShim._C_EncryptUpdate,
+        _C_EncryptFinal: rustShim._C_EncryptFinal,
         _C_DecryptInit: rustShim._C_DecryptInit,
         _C_Decrypt: rustShim._C_Decrypt,
-        _C_DecryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptFinal: () => CKR_NOT_IMPL,
+        _C_DecryptUpdate: rustShim._C_DecryptUpdate,
+        _C_DecryptFinal: rustShim._C_DecryptFinal,
 
         // ── Sign/verify (ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA, HMAC) ─────
         _C_SignInit: rustShim._C_SignInit,
         _C_Sign: rustShim._C_Sign,
-        _C_SignUpdate: () => CKR_NOT_IMPL,
-        _C_SignFinal: () => CKR_NOT_IMPL,
+        _C_SignUpdate: rustShim._C_SignUpdate,
+        _C_SignFinal: rustShim._C_SignFinal,
         // RSA sign/verify-with-recovery (PKCS#11 v3.2 §5.13). The engine really
         // implements these (rust/src/ffi.rs, added 2026-07-25) — delegate rather
         // than hardcoding CKR_NOT_IMPL, which masked the working implementation.
@@ -202,8 +208,8 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_SignRecover: rustShim._C_SignRecover,
         _C_VerifyInit: rustShim._C_VerifyInit,
         _C_Verify: rustShim._C_Verify,
-        _C_VerifyUpdate: () => CKR_NOT_IMPL,
-        _C_VerifyFinal: () => CKR_NOT_IMPL,
+        _C_VerifyUpdate: rustShim._C_VerifyUpdate,
+        _C_VerifyFinal: rustShim._C_VerifyFinal,
         _C_VerifyRecoverInit: rustShim._C_VerifyRecoverInit,
         _C_VerifyRecover: rustShim._C_VerifyRecover,
 
@@ -235,14 +241,14 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DigestInit: rustShim._C_DigestInit,
         _C_Digest: rustShim._C_Digest,
         _C_DigestUpdate: rustShim._C_DigestUpdate,
-        _C_DigestKey: () => CKR_NOT_IMPL,
+        _C_DigestKey: rustShim._C_DigestKey,
         _C_DigestFinal: rustShim._C_DigestFinal,
 
         // ── Dual-function (stubs) ─────────────────────────────────────────
-        _C_DigestEncryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptDigestUpdate: () => CKR_NOT_IMPL,
-        _C_SignEncryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptVerifyUpdate: () => CKR_NOT_IMPL,
+        _C_DigestEncryptUpdate: rustShim._C_DigestEncryptUpdate,
+        _C_DecryptDigestUpdate: rustShim._C_DecryptDigestUpdate,
+        _C_SignEncryptUpdate: rustShim._C_SignEncryptUpdate,
+        _C_DecryptVerifyUpdate: rustShim._C_DecryptVerifyUpdate,
 
         // ── Key wrapping/unwrapping/derivation ───────────────────────────
         _C_WrapKey: rustShim._C_WrapKey,
@@ -252,7 +258,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_UnwrapKeyAuthenticated: rustShim._C_UnwrapKeyAuthenticated,
 
         // ── Random ───────────────────────────────────────────────────────
-        _C_SeedRandom: () => 0,
+        _C_SeedRandom: rustShim._C_SeedRandom,
         _C_GenerateRandom: rustShim._C_GenerateRandom,
 
         // ── KAT testing hook (Rust-only) ──────────────────────────────────
@@ -260,11 +266,11 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
           ._set_kat_seed,
 
         // ── Misc (stubs) ──────────────────────────────────────────────────
-        _C_GetFunctionStatus: () => CKR_NOT_IMPL,
-        _C_CancelFunction: () => CKR_NOT_IMPL,
-        _C_WaitForSlotEvent: () => CKR_NOT_IMPL,
-        _C_GetInterfaceList: () => CKR_NOT_IMPL,
-        _C_GetInterface: () => CKR_NOT_IMPL,
+        _C_GetFunctionStatus: rustShim._C_GetFunctionStatus,
+        _C_CancelFunction: rustShim._C_CancelFunction,
+        _C_WaitForSlotEvent: rustShim._C_WaitForSlotEvent,
+        _C_GetInterfaceList: rustShim._C_GetInterfaceList,
+        _C_GetInterface: rustShim._C_GetInterface,
         _C_VerifySignatureInit: rustShim._C_VerifySignatureInit,
         _C_VerifySignature: rustShim._C_VerifySignature,
         _C_VerifySignatureUpdate: rustShim._C_VerifySignatureUpdate,
@@ -337,7 +343,7 @@ export interface Pkcs11LogEntry {
 
 let _logId = 0
 
-const RV_NAMES: Record<number, string> = {
+export const RV_NAMES: Record<number, string> = {
   0x00000000: 'CKR_OK',
   0x00000001: 'CKR_CANCEL',
   0x00000002: 'CKR_HOST_MEMORY',
@@ -390,7 +396,8 @@ const RV_NAMES: Record<number, string> = {
   0x00000201: 'CKR_TOKEN_RESOURCE_EXCEEDED',
 }
 
-const rvName = (rv: number): string => RV_NAMES[rv] ?? `0x${rv.toString(16).padStart(8, '0')}`
+export const rvName = (rv: number): string =>
+  RV_NAMES[rv] ?? `0x${rv.toString(16).padStart(8, '0')}`
 
 const fmtTime = (): string => {
   const d = new Date()
@@ -956,9 +963,27 @@ const writeStr = (M: SoftHSMModule, s: string): number => {
   return ptr
 }
 
-const checkRV = (rv: number, fn: string): void => {
+/**
+ * Thrown by checkRV/checkInitRV. `message` is unchanged from the plain
+ * Error this replaces — every existing `err.message.includes('CKR_…')`
+ * caller keeps working — but callers that need the raw code (e.g. a
+ * conformance runner asserting a specific expected CKR_*) can now read
+ * `.rv`/`.fn` instead of re-parsing the message string.
+ */
+export class Pkcs11Error extends Error {
+  readonly rv: number
+  readonly fn: string
+  constructor(rv: number, fn: string) {
+    super(`${fn} → ${rvName(rv)} (0x${rv.toString(16).padStart(8, '0')})`)
+    this.name = 'Pkcs11Error'
+    this.rv = rv
+    this.fn = fn
+  }
+}
+
+export const checkRV = (rv: number, fn: string): void => {
   const u = rv >>> 0
-  if (u !== 0) throw new Error(`${fn} → ${rvName(u)} (0x${u.toString(16).padStart(8, '0')})`)
+  if (u !== 0) throw new Pkcs11Error(u, fn)
 }
 
 // Build a CK_ATTRIBUTE array in WASM memory.
