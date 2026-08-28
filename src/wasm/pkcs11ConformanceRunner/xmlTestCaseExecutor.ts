@@ -18,7 +18,7 @@
 // are stripped in a pre-pass before DOMParser sees the text.
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import { RV_NAMES, buildTemplate, freeTemplate, type AttrDef } from '../softhsm'
+import { RV_NAMES, buildTemplate, freeTemplate, buildMech, type AttrDef } from '../softhsm'
 
 // ── §3.1.1 permitted variations — provider-identity fields the spec says
 // MAY legitimately differ from the example XML. Everything else in a
@@ -93,9 +93,43 @@ const ATTR_TYPE_NAMES: Record<string, number> = {
   PRIVATE: 0x00000002,
   LABEL: 0x00000003,
   VALUE: 0x00000011,
+  KEY_TYPE: 0x00000100,
   ID: 0x00000102,
+  SUBJECT: 0x00000101,
+  ISSUER: 0x00000081,
+  SERIAL_NUMBER: 0x00000082,
+  CERTIFICATE_TYPE: 0x00000080,
   MODULUS: 0x00000120,
   PUBLIC_EXPONENT: 0x00000122,
+}
+
+// Attribute values the vendored test cases' Templates encode as UTF-8 text
+// (e.g. LABEL="testrsa-pub") rather than hex — everything else that isn't
+// TRUE/FALSE or an object-class name is hex (ID, VALUE, MODULUS,
+// PUBLIC_EXPONENT, SUBJECT, ISSUER, SERIAL_NUMBER).
+const TEXT_ATTR_NAMES = new Set(['LABEL'])
+
+const hexToBytes = (hex: string): Uint8Array => {
+  const clean = hex.trim()
+  const out = new Uint8Array(Math.floor(clean.length / 2))
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.substr(i * 2, 2), 16)
+  return out
+}
+
+const bytesToHex = (bytes: Uint8Array): string =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+// WS-11 Phase 4 (2026-08-28) fixture provisioning — "Mozilla Builtin Roots"
+// is 21 ASCII characters, but the OASIS example this executor replays
+// (CERT-M-1-32) expects `length="22"`: the NSS module OASIS captured it
+// from stores the label NUL-terminated on disk. The fixture stores the
+// same 22 bytes; this strips exactly one trailing NUL before a text
+// compare so the *value* check still reads the human label, not the NUL.
+const decodeAttrText = (bytes: Uint8Array): string => {
+  const s = new TextDecoder().decode(bytes)
+  return s.endsWith('\u0000') ? s.slice(0, -1) : s
 }
 
 const OBJECT_CLASS_NAMES: Record<string, number> = {
@@ -104,6 +138,58 @@ const OBJECT_CLASS_NAMES: Record<string, number> = {
   PUBLIC_KEY: 0x00000002,
   PRIVATE_KEY: 0x00000003,
   SECRET_KEY: 0x00000004,
+}
+
+// ── D1 independent verification (AUTH-M-1-32's Signature) ─────────────────
+// OASIS publishes AUTH-M-1-32's expected MODULUS/Signature bytes but never
+// the private key that produced them — unreproducible by any implementation
+// (see the WS-11 plan's decision D1). Rather than byte-compare against the
+// unreproducible example, or silently skip the check, this executor
+// provisions its own RSA-2048 fixture key and verifies the *real* signature
+// cryptographically against that key's *real* public modulus, using an
+// engine-independent verifier (WebCrypto, not either PKCS#11 engine).
+const hexToBase64Url = (hex: string): string => {
+  const bytes = hexToBytes(hex)
+  let bin = ''
+  bytes.forEach((b) => (bin += String.fromCharCode(b)))
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+// Copies into a fresh Uint8Array — WASM heap views (M.HEAPU8.slice(...))
+// type as Uint8Array<ArrayBufferLike>, which lib.dom's BufferSource
+// rejects at the TYPE level only (ArrayBufferLike also admits
+// SharedArrayBuffer, which Uint8Array.from's return type still carries in
+// this TS lib version even after copying). At the VALUE level a plain
+// Uint8Array view is always correct — pass the view itself, never
+// `.buffer`/`new ArrayBuffer()`: under Vitest's jsdom pool (a separate
+// vm.Context) Node's webidl BufferSource converter rejects an ArrayBuffer
+// constructed in that context even though `instanceof ArrayBuffer`
+// reports true, while a plain Uint8Array view is accepted there and in a
+// real browser alike.
+const toUint8Array = (bytes: Uint8Array): Uint8Array<ArrayBuffer> =>
+  Uint8Array.from(bytes) as Uint8Array<ArrayBuffer>
+
+const verifyRsaPkcs1Sha256 = async (
+  nHex: string,
+  eHex: string,
+  data: Uint8Array,
+  signature: Uint8Array
+): Promise<boolean> => {
+  const jwk: JsonWebKey = {
+    kty: 'RSA',
+    n: hexToBase64Url(nHex),
+    e: hexToBase64Url(eHex),
+    alg: 'RS256',
+    ext: true,
+  }
+  const key = await crypto.subtle.importKey(
+    'jwk',
+    jwk,
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['verify']
+  )
+  return crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, toUint8Array(signature), toUint8Array(data))
 }
 
 // ── XML text pre-processing ────────────────────────────────────────────────
@@ -158,6 +244,14 @@ class BindingStore {
     const val = this.map.get(m[1])
     if (val === undefined) throw new Error(`unbound reference: \${${raw}}`)
     return String(val)
+  }
+
+  /** Look up a binding by its raw path (no `${...}` unwrapping), returning
+   * `undefined` if unbound — used where a caller needs to know whether a
+   * value was supplied at all (e.g. a fixture's binding) rather than
+   * throwing. */
+  get(path: string): BindingValue | undefined {
+    return this.map.get(path)
   }
 }
 
@@ -341,7 +435,7 @@ type StepHandler = (
   bindings: BindingStore,
   findings: ComparisonFinding[],
   engineName: string
-) => number
+) => number | Promise<number>
 
 const childText = (el: Element, tag: string, attr = 'value'): string | undefined =>
   el.querySelector(`:scope > ${tag}`)?.getAttribute(attr) ?? undefined
@@ -544,32 +638,59 @@ const HANDLERS: Record<string, StepHandler> = {
     const hSession = bindings.resolveNumber(childText(req, 'Session')!)
     const tmplEl = req.querySelector(':scope > Template')
     const attrEls = tmplEl ? Array.from(tmplEl.querySelectorAll(':scope > Attribute')) : []
+    const auxPtrs: number[] = []
     const defs: AttrDef[] = attrEls.map((a) => {
-      const type = ATTR_TYPE_NAMES[a.getAttribute('type')!]
+      const attrName = a.getAttribute('type')!
+      const type = ATTR_TYPE_NAMES[attrName]
       const value = a.getAttribute('value')!
       if (value === 'TRUE' || value === 'FALSE') return { type, boolVal: value === 'TRUE' }
       if (value in OBJECT_CLASS_NAMES) return { type, ulongVal: OBJECT_CLASS_NAMES[value] }
-      // String/byte attribute values aren't needed by the vendored test
-      // cases' FindObjectsInit calls (only TOKEN=bool appears) — extend
-      // here if a later test case's Template needs one.
-      throw new Error(`C_FindObjectsInit: unhandled Attribute value "${value}"`)
+      const bytes = TEXT_ATTR_NAMES.has(attrName)
+        ? new TextEncoder().encode(value)
+        : hexToBytes(value)
+      const ptr = M._malloc(Math.max(bytes.length, 1))
+      M.HEAPU8.set(bytes, ptr)
+      auxPtrs.push(ptr)
+      return { type, bytesPtr: ptr, bytesLen: bytes.length }
     })
     const tmpl = buildTemplate(M, defs)
     try {
       return M._C_FindObjectsInit(hSession, tmpl.ptr, defs.length) >>> 0
     } finally {
       freeTemplate(M, tmpl, defs.length)
+      auxPtrs.forEach((p) => M._free(p))
     }
   },
 
-  C_FindObjects: (M, req, _res, bindings) => {
+  C_FindObjects: (M, req, res, bindings, findings) => {
     const hSession = bindings.resolveNumber(childText(req, 'Session')!)
     const maxCount = Number(req.querySelector(':scope > Object')?.getAttribute('length') ?? '1')
     const objPtr = M._malloc(4 * Math.max(maxCount, 1))
     const countPtr = M._malloc(4)
     try {
       const rv = M._C_FindObjects(hSession, objPtr, maxCount, countPtr) >>> 0
-      if (rv === 0) bindings.set('Object.count', readU32(M, countPtr))
+      if (rv === 0) {
+        const count = readU32(M, countPtr)
+        const handles: number[] = []
+        for (let i = 0; i < count; i++) handles.push(readU32(M, objPtr + i * 4))
+        bindings.set('Object.count', count)
+        bindings.set('Object.Object', handles)
+        // §3: "may reference array or list items by index number" — bind
+        // the whole handle array so `${Object.Object[i]}` resolves
+        // positionally in later steps, not just the count.
+        const expectedWrapperEl = res.querySelector(':scope > Object')
+        const expectedCount = expectedWrapperEl
+          ? expectedWrapperEl.querySelectorAll(':scope > Object').length
+          : 0
+        if (expectedCount > 0 && count < expectedCount) {
+          findings.push({
+            field: 'Object.count',
+            expected: `>=${expectedCount}`,
+            actual: String(count),
+            exempt: false,
+          })
+        }
+      }
       return rv
     } finally {
       M._free(objPtr)
@@ -606,7 +727,7 @@ const HANDLERS: Record<string, StepHandler> = {
   C_Logout: (M, req, _res, bindings) =>
     M._C_Logout(bindings.resolveNumber(childText(req, 'Session')!)) >>> 0,
 
-  C_GetMechanismList: (M, req, _res, bindings, findings) => {
+  C_GetMechanismList: (M, req, res, bindings, findings) => {
     const slotId = bindings.resolveNumber(childText(req, 'SlotID')!)
     const countPtr = M._malloc(4)
     try {
@@ -619,13 +740,28 @@ const HANDLERS: Record<string, StepHandler> = {
         if (rv === 0) {
           const actualCount = readU32(M, countPtr)
           bindings.set('MechanismList.length', actualCount)
-          if (actualCount === 0) {
-            findings.push({
-              field: 'MechanismList',
-              expected: '>=0 mechanisms',
-              actual: '0 (list empty)',
-              exempt: true,
-            })
+          const actualTypes = new Set<number>()
+          for (let i = 0; i < actualCount; i++) actualTypes.add(readU32(M, listPtr + i * 4))
+          // Every mechanism named in the response's expected list must
+          // actually be present — stricter than §3.1.2(3)'s "at least one
+          // entry" minimum, and what the test's later C_GetMechanismInfo
+          // calls then rely on.
+          const listEl = res.querySelector(':scope > MechanismList')
+          const expectedTypeEls = listEl ? Array.from(listEl.querySelectorAll(':scope > Type')) : []
+          for (const typeEl of expectedTypeEls) {
+            const typeName = typeEl.getAttribute('value')!
+            const type = MECHANISM_TYPE_NAMES[typeName]
+            if (type === undefined || !actualTypes.has(type)) {
+              findings.push({
+                field: 'MechanismList.Type',
+                expected: typeName,
+                actual:
+                  type === undefined
+                    ? '(unknown mechanism name — extend MECHANISM_TYPE_NAMES)'
+                    : 'not present in list',
+                exempt: false,
+              })
+            }
           }
         }
         return rv
@@ -684,6 +820,178 @@ const HANDLERS: Record<string, StepHandler> = {
       M._free(ptr)
     }
   },
+
+  // §4.3 two-phase attribute protocol: `<Attribute type="X"/>` (no
+  // length/value) is a size query — pValue=NULL, compare the response's
+  // `length`; `<Attribute type="X" length="n"/>` is a fetch into an
+  // n-byte buffer — compare the response's `value`. MODULUS gets D1
+  // treatment: OASIS's static example modulus is unreproducible (the
+  // signing key that goes with it was never published), so its *value* is
+  // checked against the fixture's own real generated key
+  // (`Fixture.Modulus`, supplied via initialBindings) instead of the XML,
+  // with an exempt ledger entry recording that substitution — never a
+  // silent skip, and a real mismatch against the fixture is still a hard
+  // failure.
+  C_GetAttributeValue: (M, req, res, bindings, findings) => {
+    const hSession = bindings.resolveNumber(childText(req, 'Session')!)
+    const hObject = bindings.resolveNumber(childText(req, 'Object')!)
+    const reqTmplEl = req.querySelector(':scope > Template')
+    const reqAttrEls = reqTmplEl ? Array.from(reqTmplEl.querySelectorAll(':scope > Attribute')) : []
+    const resTmplEl = res.querySelector(':scope > Template')
+    const resAttrEls = resTmplEl ? Array.from(resTmplEl.querySelectorAll(':scope > Attribute')) : []
+    const auxPtrs: number[] = []
+    const defs: AttrDef[] = reqAttrEls.map((a) => {
+      const attrName = a.getAttribute('type')!
+      const type = ATTR_TYPE_NAMES[attrName]
+      const lengthAttr = a.getAttribute('length')
+      if (lengthAttr === null) return { type } // size query: pValue=NULL, ulValueLen=0
+      const bufLen = Number(lengthAttr)
+      const ptr = M._malloc(Math.max(bufLen, 1))
+      auxPtrs.push(ptr)
+      return { type, bytesPtr: ptr, bytesLen: bufLen }
+    })
+    const tmpl = buildTemplate(M, defs)
+    try {
+      const rv = M._C_GetAttributeValue(hSession, hObject, tmpl.ptr, defs.length) >>> 0
+      if (rv === 0) {
+        reqAttrEls.forEach((a, i) => {
+          const attrName = a.getAttribute('type')!
+          const base = tmpl.ptr + i * 12
+          const actualLen = readU32(M, base + 8)
+          const resAttrEl = resAttrEls.find((e) => e.getAttribute('type') === attrName)
+          if (!resAttrEl) return
+          const expLenAttr = resAttrEl.getAttribute('length')
+          const expValAttr = resAttrEl.getAttribute('value')
+          if (expValAttr === null) {
+            // size-query response: only a length is expected
+            if (expLenAttr !== null) {
+              compareField(findings, 'Template', `${attrName}.length`, expLenAttr, actualLen)
+            }
+            return
+          }
+          // fetch response: a concrete value is expected
+          const bytesPtr = defs[i].bytesPtr!
+          const actualBytes = M.HEAPU8.slice(bytesPtr, bytesPtr + actualLen)
+          const isText = TEXT_ATTR_NAMES.has(attrName)
+          const actualStr = isText ? decodeAttrText(actualBytes) : bytesToHex(actualBytes)
+          if (attrName === 'MODULUS') {
+            compareField(findings, 'Template', 'MODULUS.length', expValAttr.length / 2, actualLen)
+            const fixtureModulus = bindings.get('Fixture.Modulus') as string | undefined
+            if (fixtureModulus === undefined) {
+              findings.push({
+                field: 'Template.MODULUS.value',
+                expected: '(a provisioned fixture key — see Phase 4 fixture provisioning)',
+                actual: '(no Fixture.Modulus binding supplied)',
+                exempt: false,
+              })
+            } else if (actualStr === fixtureModulus) {
+              findings.push({
+                field: 'Template.MODULUS.value',
+                expected: fixtureModulus,
+                actual:
+                  "matches — verified against the provisioned key's real modulus, not the OASIS static example (D1)",
+                exempt: true,
+              })
+            } else {
+              findings.push({
+                field: 'Template.MODULUS.value',
+                expected: fixtureModulus,
+                actual: actualStr,
+                exempt: false,
+              })
+            }
+          } else {
+            compareField(findings, 'Template', `${attrName}.value`, expValAttr, actualStr)
+          }
+        })
+      }
+      return rv
+    } finally {
+      freeTemplate(M, tmpl, defs.length)
+      auxPtrs.forEach((p) => M._free(p))
+    }
+  },
+
+  C_SignInit: (M, req, _res, bindings) => {
+    const hSession = bindings.resolveNumber(childText(req, 'Session')!)
+    const mechEl = req.querySelector(':scope > Mechanism')
+    const typeName = mechEl ? childText(mechEl, 'Type') : undefined
+    if (!typeName) throw new Error('C_SignInit: missing Mechanism/Type')
+    const type = MECHANISM_TYPE_NAMES[typeName]
+    if (type === undefined) throw new Error(`C_SignInit: unknown mechanism "${typeName}"`)
+    const hKey = bindings.resolveNumber(childText(req, 'Key')!)
+    const mech = buildMech(M, type)
+    try {
+      return M._C_SignInit(hSession, mech, hKey) >>> 0
+    } finally {
+      M._free(mech)
+    }
+  },
+
+  // D1: the OASIS example's expected Signature bytes are unreproducible
+  // (no published private key), so this handler never byte-compares them.
+  // It checks the returned length, then independently verifies the real
+  // signature with WebCrypto against the fixture's real public key — an
+  // engine-independent verifier, not either PKCS#11 engine under test. A
+  // verification failure is always a hard, non-exempt finding.
+  C_Sign: async (M, req, res, bindings, findings) => {
+    const hSession = bindings.resolveNumber(childText(req, 'Session')!)
+    const dataBytes = hexToBytes(childText(req, 'Data')!)
+    const dataPtr = M._malloc(Math.max(dataBytes.length, 1))
+    M.HEAPU8.set(dataBytes, dataPtr)
+    const sigLenPtr = M._malloc(4)
+    let sigPtr = 0
+    try {
+      let rv = M._C_Sign(hSession, dataPtr, dataBytes.length, 0, sigLenPtr) >>> 0
+      if (rv !== 0) return rv
+      const sigLen = readU32(M, sigLenPtr)
+      sigPtr = M._malloc(Math.max(sigLen, 1))
+      M.setValue(sigLenPtr, sigLen, 'i32')
+      rv = M._C_Sign(hSession, dataPtr, dataBytes.length, sigPtr, sigLenPtr) >>> 0
+      if (rv === 0) {
+        const actualLen = readU32(M, sigLenPtr)
+        const sigBytes = M.HEAPU8.slice(sigPtr, sigPtr + actualLen)
+        const sigEl = res.querySelector(':scope > Signature')
+        const expLenAttr = sigEl?.getAttribute('length')
+        if (expLenAttr !== null && expLenAttr !== undefined) {
+          compareField(findings, 'Signature', 'length', expLenAttr, actualLen)
+        }
+        const nHex = bindings.get('Fixture.Modulus') as string | undefined
+        const eHex = bindings.get('Fixture.PublicExponent') as string | undefined
+        if (!nHex || !eHex) {
+          findings.push({
+            field: 'Signature.verify',
+            expected: 'a provisioned public key to verify against',
+            actual: '(no Fixture.Modulus/Fixture.PublicExponent binding supplied)',
+            exempt: false,
+          })
+        } else {
+          const ok = await verifyRsaPkcs1Sha256(nHex, eHex, dataBytes, sigBytes)
+          if (ok) {
+            findings.push({
+              field: 'Signature.value',
+              expected: '(unreproducible — OASIS publishes no private key for AUTH-M-1-32)',
+              actual:
+                'verified with WebCrypto RSASSA-PKCS1-v1_5/SHA-256 against the provisioned public key (D1)',
+              exempt: true,
+            })
+          } else {
+            findings.push({
+              field: 'Signature.value',
+              expected: 'a signature verifiable under the provisioned public key',
+              actual: 'WebCrypto verification FAILED',
+              exempt: false,
+            })
+          }
+        }
+      }
+      return rv
+    } finally {
+      M._free(dataPtr)
+      M._free(sigLenPtr)
+      if (sigPtr) M._free(sigPtr)
+    }
+  },
 }
 
 // A handful of TokenInfo.Flags macro names appear across the vendored test
@@ -698,7 +1006,7 @@ const TOKEN_INFO_FLAG_NAMES: Record<string, number> = {
 
 // ── Orchestrator ─────────────────────────────────────────────────────────
 
-export const runXmlTestCase = (
+export const runXmlTestCase = async (
   M: SoftHSMModule,
   testCaseName: string,
   rawXml: string,
@@ -708,10 +1016,11 @@ export const runXmlTestCase = (
    * supply (e.g. `${Pin}`) — not derived from any prior response, so
    * they can't be discovered by the executor itself. The caller knows
    * them because it set the token up (e.g. the user PIN it called
-   * hsm_openUserSession with).
+   * hsm_openUserSession with, or a fixture's provisioned key's real
+   * `Fixture.Modulus`/`Fixture.PublicExponent`).
    */
   initialBindings: Record<string, string | number> = {}
-): TestCaseExecutionResult => {
+): Promise<TestCaseExecutionResult> => {
   const cleaned = stripHashComments(rawXml)
   const doc = new DOMParser().parseFromString(cleaned, 'text/xml')
   const parserError = doc.querySelector('parsererror')
@@ -746,7 +1055,7 @@ export const runXmlTestCase = (
     }
     const findings: ComparisonFinding[] = []
     try {
-      const rvActual = handler(M, req, res, bindings, findings, engineName)
+      const rvActual = await handler(M, req, res, bindings, findings, engineName)
       const rvActualName = (RV_NAMES[rvActual] ?? `0x${rvActual.toString(16)}`).replace(/^CKR_/, '')
       steps.push({
         fn,

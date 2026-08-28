@@ -137,17 +137,10 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_Initialize: rustShim._C_Initialize,
         _C_Finalize: rustShim._C_Finalize,
         _C_GetInfo: rustShim._C_GetInfo,
-        // C_GetFunctionList is genuinely unimplemented on the Rust side (no
-        // `_C_GetFunctionList` export exists in softhsmrustv3_bg.js at all —
-        // verified 2026-08-28, not a stale JS-glue stub like the 29 entries
-        // fixed alongside this comment). The C++ engine DOES implement it
-        // (src/lib/main.cpp:439, exported in its WASM build) — this is a
-        // real Baseline Provider §5.1 condition-5a gap for the Rust engine
-        // specifically (Profiles v3.2 lists C_GetFunctionList alongside
-        // C_GetInterfaceList/C_GetInterface as jointly mandatory), left
-        // open for WS-11 Tier B to surface rather than silently patched
-        // here with a fake success return.
-        _C_GetFunctionList: () => 0,
+        // Implemented for real in pqctoday-hsm@e6d9668 (WS-11 Tier A fix):
+        // a 68-entry CK_FUNCTION_LIST backed by live WASM indirect-call-
+        // table indices, matching the C++ engine's own implementation.
+        _C_GetFunctionList: rustShim._C_GetFunctionList,
         _C_GetSlotList: rustShim._C_GetSlotList,
         _C_GetSlotInfo: rustShim._C_GetSlotInfo,
         _C_GetTokenInfo: rustShim._C_GetTokenInfo,
@@ -649,7 +642,7 @@ const CKF_RW_SESSION = 0x0002
 const CKF_SERIAL_SESSION = 0x0004
 const CKU_SO = 0
 const CKU_USER = 1
-const CKO_PUBLIC_KEY = 0x02
+export const CKO_PUBLIC_KEY = 0x02
 export const CKO_PRIVATE_KEY = 0x03
 export const CKO_SECRET_KEY = 0x04
 export const CKK_HSS = 0x00000046 // PKCS#11 v3.2 §6.14 — HSS/LMS
@@ -703,10 +696,27 @@ export const CKA_ALWAYS_AUTHENTICATE = 0x00000202
 export const CKO_PROFILE = 0x00000009
 export const CKA_PROFILE_ID = 0x00000601
 export const CKP_BASELINE_PROVIDER = 0x00000001
+// WS-11 Phases 1-2 (2026-08-28) — the 3 additional Profiles v3.2 §3 profile
+// ids both engines now claim (CKA_PROFILE_ID values, canonical header).
+export const CKP_EXTENDED_PROVIDER = 0x00000002
+export const CKP_AUTHENTICATION_TOKEN = 0x00000003
+export const CKP_PUBLIC_CERTIFICATES_TOKEN = 0x00000004
 // PKCS#11 v3.2 §4.8 Table 13 — pins a key to an allow-list of mechanisms;
 // any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID.
 // CKF_ARRAY_ATTRIBUTE (0x40000000) | 0x0600, per constants.rs.
 export const CKA_ALLOWED_MECHANISMS = 0x40000600
+
+// §4.6 Table 19/20 — X.509 certificate object class + attributes, needed by
+// the Public Certificates Token (CERT-M-1-32) fixture. Values from
+// pkcs11t-canonical-v3.2.h.
+export const CKO_DATA = 0x00000000
+export const CKO_CERTIFICATE = 0x00000001
+export const CKC_X_509 = 0x00000000
+export const CKA_CERTIFICATE_TYPE = 0x00000080
+export const CKA_ISSUER = 0x00000081
+export const CKA_SERIAL_NUMBER = 0x00000082
+export const CKA_URL = 0x00000089
+export const CKA_SUBJECT = 0x00000101
 
 /** Find every CKO_PROFILE object on the token, with its CKA_PROFILE_ID
  * resolved (-1 if unreadable). PKCS#11 Profiles v3.2 §3 — a token exposes
@@ -2648,7 +2658,7 @@ const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0
 // ── Additional WASM memory helpers ───────────────────────────────────────────
 
 /** Allocate and fill a CK_MECHANISM struct (12 bytes) in WASM heap. */
-const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): number => {
+export const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): number => {
   const mech = M._malloc(12)
   M.setValue(mech, type, 'i32')
   M.setValue(mech + 4, paramPtr, 'i32')

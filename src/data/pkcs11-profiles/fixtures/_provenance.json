@@ -1,0 +1,18 @@
+{
+  "_comment": "WS-11 Phase 4 (2026-08-28) fixture bytes for the CERT-M-1-32 provisioner. These are NOT independently fetched \u2014 both files are byte-for-byte EXTRACTS from the already-vendored src/data/pkcs11-profiles/test-cases/CERT-M-1-32.xml (see that directory's own _provenance.json for CERT-M-1-32.xml's own OASIS source). globalsign-root-ca-r1.der is the exact 889-byte CKA_VALUE the XML's Object[1] carries; globalsign-root-ca-r1.subject.der is that certificate's Subject Name DER (== Issuer Name DER, self-signed), derived by parsing the cert with python cryptography==49.0.0 and taking .subject.public_bytes() (not hand-encoded).",
+  "derived": "2026-08-28",
+  "files": {
+    "globalsign-root-ca-r1.der": {
+      "size_bytes": 889,
+      "sha256": "ebd41040e4bb3ec742c9e381d31ef2a41a48b6685c96e7cef3c1df6cd4331c99",
+      "source": "CERT-M-1-32.xml Object[1] CKA_VALUE (extracted, not re-encoded)"
+    },
+    "globalsign-root-ca-r1.subject.der": {
+      "size_bytes": 89,
+      "sha256": "05deda1f2359a53a1c4c5f58f72517d6e18d95d8092f9e62ea6527953a9ea986",
+      "source": "Subject Name (RDNSequence) DER of globalsign-root-ca-r1.der, extracted via python cryptography x509.Certificate.subject.public_bytes(); identical to the Issuer Name DER (self-signed root)",
+      "subject_dn": "CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE",
+      "serial_number_hex": "040000000001154b5ac394"
+    }
+  }
+}
