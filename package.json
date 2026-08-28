@@ -16,10 +16,11 @@
     "!(**/archive/**)*.csv": "perl -pi -e 's/\\r$//'"
   },
   "scripts": {
+    "sync:pyodide-shims": "mkdir -p public/pyodide-shims/p11 && cp src/wasm/pyodide/shims/p11/__init__.py src/wasm/pyodide/shims/p11/_constants.py public/pyodide-shims/p11/",
     "gen:timeline-facts": "node scripts/gen-timeline-facts.mjs",
     "gen:timeline-facts:check": "node scripts/gen-timeline-facts.mjs --check",
-    "predev": "npm run gen:timeline-facts && npm run generate:role-board-content && npm run generate:data-filenames && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
-    "prebuild": "npm run gen:timeline-facts",
+    "predev": "npm run gen:timeline-facts && npm run generate:role-board-content && npm run generate:data-filenames && npm run sync:pyodide-shims && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
+    "prebuild": "npm run gen:timeline-facts && npm run sync:pyodide-shims",
     "dev": "vite",
     "build": "npm run build:sdk && rm -rf public/dist && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && npm run generate:sitemap && npm run generate:role-board-content && npm run generate:data-filenames && tsc -b && NODE_OPTIONS=--max-old-space-size=6144 vite build && NODE_OPTIONS=--max-old-space-size=6144 npm run prerender && cp dist/index.html dist/404.html && npm run gate:precache",
     "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
@@ -186,6 +187,7 @@
     "micro-eth-signer": "^0.18.1",
     "minisearch": "^7.2.0",
     "papaparse": "^5.5.3",
+    "pyodide": "^0.28.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-focus-lock": "^2.13.7",

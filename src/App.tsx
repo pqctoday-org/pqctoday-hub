@@ -18,6 +18,14 @@ import { EmbedNavigationGuard } from './embed/EmbedNavigationGuard'
 import { LibraryViewSkeleton } from './components/Library/redesign/LibraryViewSkeleton'
 import { MigrationWorkbenchSkeleton } from './components/Migrate/Workbench/MigrationWorkbenchSkeleton'
 
+// dev-tabs-pkcs11-kmip plan, P1 proof harness ONLY — not product UI. Excluded
+// from production entirely via import.meta.env.DEV below, so `import.meta.glob`
+// with eager:false plus the DEV guard keeps it out of the prod bundle graph.
+console.log('[dev-gate] import.meta.env.DEV =', import.meta.env.DEV, import.meta.env.MODE)
+const P11ShimGate = import.meta.env.DEV
+  ? lazyWithRetry(() => import('./dev-gate/P11ShimGate'))
+  : null
+
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
   import('./components/Timeline/TimelineView').then((module) => ({ default: module.TimelineView }))
@@ -296,6 +304,7 @@ function App() {
         <Route path="docker" element={<DockerPlaygroundView />} />
         <Route path=":toolId" element={<PlaygroundToolRoute />} />
       </Route>
+      {P11ShimGate && <Route path="dev-gate/p11-shim" element={<P11ShimGate />} />}
       <Route
         path="openssl"
         element={
