@@ -25,7 +25,7 @@ import { Card } from '../../../ui/card'
 import { useHsmContext } from '../../hsm/HsmContext'
 import { ensureDevSlot, DEV_SLOT_LABEL } from './devSlot'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
-import { installMonacoSelfHost } from './monacoSelfHost'
+import { installMonacoSelfHost } from '../monacoSelfHost'
 
 installMonacoSelfHost()
 import { PRIMITIVES, opsFor, defaultOpFor, type Op } from './pipelinePrimitives'

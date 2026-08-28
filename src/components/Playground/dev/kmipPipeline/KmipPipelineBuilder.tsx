@@ -24,6 +24,9 @@ import Editor from '@monaco-editor/react'
 import { Play, Loader2, Download, Save, Upload, X } from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
+import { installMonacoSelfHost } from '../monacoSelfHost'
+
+installMonacoSelfHost()
 import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'

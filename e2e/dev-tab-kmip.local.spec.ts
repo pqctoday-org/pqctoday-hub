@@ -43,7 +43,12 @@ test('runs the Governed-lifecycle template and every step passes, including the 
 
   const okBadges = page.getByText('✓ ran')
   await expect(okBadges).toHaveCount(9, { timeout: 5000 })
-  await expect(page.getByText('Expect deny: sign-early')).toBeVisible()
+  // Scoped to the step list, not the whole page: the generated Python shown
+  // in the Monaco panel on the right also contains this exact string, in a
+  // `# ── deny-early · Expect deny: sign-early ──` comment (found live once
+  // G8's fix made Monaco actually render its content — see the dedicated
+  // G8 regression test below).
+  await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('Expect deny: sign-early')).toBeVisible()
 })
 
 test('the ML-KEM round trip template runs and completes', async ({ page }) => {
@@ -123,8 +128,31 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   // Step 4 (last): spotlights the expect-deny card — the CACP teaching moment.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('The refusal IS the lesson')).toBeVisible()
-  await expect(page.getByText('Expect deny: sign-early')).toBeVisible()
+  // Scoped to the step list — the generated Python in the Monaco panel also
+  // contains this exact string in a comment (see the note on the identical
+  // scoping above, and the dedicated G8 regression test below).
+  await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('Expect deny: sign-early')).toBeVisible()
 
   await page.getByRole('button', { name: 'Done' }).click()
   await expect(page.getByText('The refusal IS the lesson')).not.toBeVisible()
+})
+
+test('Monaco genuinely loads on a fresh session — this tab alone, no prior PKCS#11 tab visit (G8)', async ({ page }) => {
+  // Regression guard for a real bug found while verifying G8: Monaco's
+  // self-host install (monacoSelfHost.ts) used to be wired ONLY from
+  // PkcsPipelineBuilder.tsx's module top level, so a session that opened
+  // this tab WITHOUT ever loading the PKCS#11 Developer tab first hit
+  // Monaco's default CDN loader — CSP-blocked in this app — and the code
+  // panel silently rendered zero lines. Both builders now call
+  // installMonacoSelfHost() (idempotent) independently.
+  const pageErrors: string[] = []
+  page.on('pageerror', (err) => pageErrors.push(err.message))
+
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({ timeout: 30000 })
+
+  const viewLines = page.locator('.monaco-editor .view-lines').first()
+  await expect(viewLines).toBeVisible({ timeout: 30000 })
+  await expect(viewLines).toContainText('pqctoday_kmip')
+  expect(pageErrors).toEqual([])
 })

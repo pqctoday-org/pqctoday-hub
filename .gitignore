@@ -12,6 +12,10 @@ node_modules
 dist
 dist-ssr
 public/dist/
+# esbuild-bundled Monaco worker (npm run build:monaco-worker, wired into
+# predev/prebuild) — regenerated from node_modules/monaco-editor on every
+# install, not source.
+public/monaco/
 
 # Generated NotebookLM package (run: npm run notebooklm)
 notebooklm/

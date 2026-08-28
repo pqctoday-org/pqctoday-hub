@@ -139,3 +139,20 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   await page.getByRole('button', { name: 'Done' }).click()
   await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
 })
+
+test('Monaco mounts with a real web worker, no console noise or page errors (G8)', async ({ page }) => {
+  const consoleMessages: string[] = []
+  const pageErrors: string[] = []
+  page.on('console', (msg) => consoleMessages.push(msg.text()))
+  page.on('pageerror', (err) => pageErrors.push(err.message))
+
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  const editor = page.locator('.monaco-editor .view-lines').first()
+  await expect(editor).toBeVisible({ timeout: 10000 })
+  // Give the worker a beat to (fail to) spin up before asserting silence.
+  await page.waitForTimeout(1000)
+
+  expect(consoleMessages.some((m) => /Could not create web worker/i.test(m))).toBe(false)
+  expect(pageErrors).toEqual([])
+})
