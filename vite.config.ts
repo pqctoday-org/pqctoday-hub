@@ -219,6 +219,14 @@ export default defineConfig({
           // precache. A blanket removal of `json` would silently break them offline.
           'data/**/*.json',
           'dist/**/*.json',
+          // pyodide-lock.json (dev-tabs-pkcs11-kmip plan P1, G7) — the same
+          // blanket `json` glob swept this in too, missed until G7 first ran
+          // gate:precache against a build containing it. pyRuntime.ts's own
+          // header comment already documents the intent this closes the gap
+          // on: the Developer tabs are online-only by design, so Pyodide's
+          // non-.wasm assets (this lockfile included) belong on the
+          // network-fallback path, not precached at install.
+          'pyodide/**/*.json',
           // migrate-proofs are archived vendor evidence documents — 161 files,
           // 55 MB — reachable only by following a proof link. They are the
           // entire reason this budget blew from the 2026-08-07 baseline of

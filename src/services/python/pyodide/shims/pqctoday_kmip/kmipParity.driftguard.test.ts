@@ -25,13 +25,32 @@ const SHIM_SOURCE = readFileSync(join(__dirname, '__init__.py'), 'utf-8')
  * signature, so `request` is deliberately excluded from this manifest
  * rather than asserted as a required method name. */
 const REAL_KMIP_CLIENT_PUBLIC_METHODS = [
-  'openssl_is_hybrid_capable', 'negotiated_group', 'assert_quantum_safe_channel',
+  'openssl_is_hybrid_capable',
+  'negotiated_group',
+  'assert_quantum_safe_channel',
   'serve_as_endpoint',
-  'create_symmetric', 'create_key_pair', 'activate', 'get', 'encrypt',
-  'sign', 'signature_verify', 'validity',
-  'register', 'encapsulate', 'decapsulate', 'destroy', 'revoke', 'locate',
-  'get_attributes', 'get_usage_allocation', 'get_constraints',
-  'set_endpoint_role', 'set_defaults', 'derive_key', 'rekey', 'rekey_key_pair',
+  'create_symmetric',
+  'create_key_pair',
+  'activate',
+  'get',
+  'encrypt',
+  'sign',
+  'signature_verify',
+  'validity',
+  'register',
+  'encapsulate',
+  'decapsulate',
+  'destroy',
+  'revoke',
+  'locate',
+  'get_attributes',
+  'get_usage_allocation',
+  'get_constraints',
+  'set_endpoint_role',
+  'set_defaults',
+  'derive_key',
+  'rekey',
+  'rekey_key_pair',
 ] as const
 
 function shimDefinesMethod(name: string): boolean {
@@ -42,7 +61,10 @@ function shimDefinesMethod(name: string): boolean {
 describe('pqctoday_kmip shim parity — every real KmipClient method exists (functionally, or as a documented NotImplementedError)', () => {
   for (const name of REAL_KMIP_CLIENT_PUBLIC_METHODS) {
     it(`defines ${name}()`, () => {
-      expect(shimDefinesMethod(name), `pqctoday_kmip shim is missing ${name}() — the real KmipClient has it`).toBe(true)
+      expect(
+        shimDefinesMethod(name),
+        `pqctoday_kmip shim is missing ${name}() — the real KmipClient has it`
+      ).toBe(true)
     })
   }
 })

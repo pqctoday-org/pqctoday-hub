@@ -76,11 +76,7 @@ async function fetchShimSource(relPath: string): Promise<string> {
   return res.text()
 }
 
-const SHIM_FILES = [
-  'p11/__init__.py',
-  'p11/_constants.py',
-  'pqctoday_kmip/__init__.py',
-] as const
+const SHIM_FILES = ['p11/__init__.py', 'p11/_constants.py', 'pqctoday_kmip/__init__.py'] as const
 
 async function installShims(py: PyodideInterface): Promise<void> {
   py.FS.mkdirTree('/hub_shims/p11')
@@ -142,11 +138,22 @@ export async function runPython(code: string): Promise<PyRunResult> {
   const t0 = performance.now()
   let out = ''
   let err = ''
-  py.setStdout({ batched: (s: string) => { out += s + '\n' } })
-  py.setStderr({ batched: (s: string) => { err += s + '\n' } })
+  py.setStdout({
+    batched: (s: string) => {
+      out += s + '\n'
+    },
+  })
+  py.setStderr({
+    batched: (s: string) => {
+      err += s + '\n'
+    },
+  })
   try {
     const timeoutGuard = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`Script exceeded ${RUN_TIMEOUT_MS / 1000}s`)), RUN_TIMEOUT_MS)
+      setTimeout(
+        () => reject(new Error(`Script exceeded ${RUN_TIMEOUT_MS / 1000}s`)),
+        RUN_TIMEOUT_MS
+      )
     })
     // runPythonAsync (not runPython): supports top-level `await` in the
     // generated script — needed for the KMIP tab's Load-policy step, which
@@ -163,7 +170,13 @@ export async function runPython(code: string): Promise<PyRunResult> {
     return { ok: true, stdout: out, stderr: err, error: null, elapsedMs: performance.now() - t0 }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
-    return { ok: false, stdout: out, stderr: err, error: message, elapsedMs: performance.now() - t0 }
+    return {
+      ok: false,
+      stdout: out,
+      stderr: err,
+      error: message,
+      elapsedMs: performance.now() - t0,
+    }
   } finally {
     runInFlight = false
     py.setStdout({})

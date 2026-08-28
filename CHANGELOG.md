@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.60.0] - 2026-08-28
+
+Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one.
+
+### Added
+
+- **A PKCS#11 v3.2 Developer tab, with a drag-and-drop sequence builder** [view:/playground] [persona:developer]: drag key generation, sign/verify, encrypt/decrypt, and key-agreement primitives onto a canvas, bind each step's inputs to an earlier step's outputs, and run the whole sequence for real against the same in-browser HSM engine the rest of the PKCS#11 playground uses — on your own dedicated token slot, so it never disturbs what you're doing elsewhere on the page. The generated Python is the real PKCS#11 v3.2 classic API (`C_SignInit`/`C_Sign`, not a simplified wrapper), and downloads unmodified as a script you can run in the separately distributed dev sandbox.
+- **A KMIP 3.0 + crypto-agility Developer tab** [view:/playground] [persona:developer] [persona:architect]: pick a template — a full governed key lifecycle, an ML-KEM round trip, a policy dry-run comparison — see its real ordered steps, and run them against the same KMIP + crypto-agility policy engine the rest of the KMIP playground uses. The governed-lifecycle template ends on a policy refusal that's graded as a pass, not a failure: signing with a key before it's been activated is denied by design, and that honest "no" is the point.
+- **Guided lessons for both new tabs** [view:/playground] [persona:developer]: a short, real walkthrough — drag a primitive, bind it, run it, read the result — that drives the actual controls rather than narrating a static tour.
+- **Every generated script exports as real Python you can take to the sandbox** [view:/playground] [persona:developer]: both tabs' Export button downloads a file with a short provenance header (hub version, date, and a note that it runs unmodified in the dev sandbox) prepended to the same code shown in the editor.
+
+### Fixed
+
+- **The precache manifest was 108 KB heavier than it needed to be** [view:/playground] [persona:developer]: a Pyodide lockfile the Developer tabs' Python runtime uses at runtime, not at install, was being swept into the installable app shell by a blanket JSON pattern.
+
 ## [4.59.0] - 2026-08-26
 
 The compliance requirements catalogue grows by a third and every requirement in it is now traceable to a quote that really appears in the document it cites, 126 Library documents say which Learn modules teach them, and mobile Library and Timeline gain the Document Analysis panel desktop already had.

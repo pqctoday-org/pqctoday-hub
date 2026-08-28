@@ -32,7 +32,9 @@ export const DevSandboxDiffNote: React.FC<DevSandboxDiffNoteProps> = ({ points }
       {open && (
         <div className="px-4 pb-3">
           <ul className="text-xs text-muted-foreground list-disc pl-5 space-y-1">
-            {points.map((p, i) => <li key={i}>{p}</li>)}
+            {points.map((p, i) => (
+              <li key={i}>{p}</li>
+            ))}
           </ul>
         </div>
       )}

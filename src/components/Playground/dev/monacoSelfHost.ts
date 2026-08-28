@@ -30,22 +30,39 @@
  * workers doing real background computation (ts.worker.js/json.worker.js
  * etc. are deliberately not bundled).
  *
- * Call `installMonacoSelfHost()` once, before the first <Editor> mounts.
+ * Call `installMonacoSelfHost()` from INSIDE the component that renders
+ * <Editor>, and DO NOT RENDER <Editor> until the returned promise resolves
+ * — @monaco-editor/react's `loader` is a one-shot state machine: once
+ * `<Editor>`'s own mount effect has called `loader.init()`, a `loader.
+ * config({ monaco })` that lands after that point has no effect, and
+ * `<Editor>` falls back to `loader`'s untouched default (the CDN AMD
+ * loader — CSP-blocked here, see above). `config()` racing `<Editor>`'s
+ * mount was fine when this ran at module top level (module evaluation
+ * finishes well before React gets around to rendering a lazy-loaded route),
+ * but got materially LESS lead time once G7 moved the call into the
+ * component body (to dodge a real production chunk-splitting bug — see
+ * git history) and started losing that race in practice, both in dev and
+ * in production. Gating the render on the returned promise removes the
+ * race entirely: it no longer matters how much lead time the call gets,
+ * only that `<Editor>` never mounts before `loader.config()` has already
+ * run. Both call sites (PkcsPipelineBuilder.tsx, KmipPipelineBuilder.tsx)
+ * share this one promise, so only the FIRST one to mount actually waits;
+ * `monaco-editor` is fetched exactly once.
  */
 import { loader } from '@monaco-editor/react'
 
-let installed = false
+let readyPromise: Promise<void> | null = null
 
-export function installMonacoSelfHost(): void {
-  if (installed) return
-  installed = true
+export function installMonacoSelfHost(): Promise<void> {
+  if (readyPromise) return readyPromise
 
   self.MonacoEnvironment = {
     getWorker: () => new Worker('/monaco/editor.worker.js'),
   }
 
   // Local ESM import instead of loader's default CDN fetch.
-  void import('monaco-editor').then((monaco) => {
+  readyPromise = import('monaco-editor').then((monaco) => {
     loader.config({ monaco })
   })
+  return readyPromise
 }

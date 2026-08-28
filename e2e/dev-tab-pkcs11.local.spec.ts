@@ -31,7 +31,9 @@ test.beforeEach(async ({ page }) => {
 test('loads with the default template and a labeled Developer token slot', async ({ page }) => {
   await page.goto('/playground/hsm?tab=developer')
 
-  await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
+    timeout: 30000,
+  })
   await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
 })
 
@@ -100,11 +102,13 @@ test('Export .py downloads a file carrying the provenance header', async ({ page
   const path = await download.path()
   const fs = await import('node:fs')
   const content = fs.readFileSync(path!, 'utf-8')
-  expect(content).toContain("PKCS#11 v3.2 Developer tab")
+  expect(content).toContain('PKCS#11 v3.2 Developer tab')
   expect(content).toContain('import p11')
 })
 
-test('the guided lesson drives the real Developer tab end to end, including a live run', async ({ page }) => {
+test('the guided lesson drives the real Developer tab end to end, including a live run', async ({
+  page,
+}) => {
   await page.goto('/playground/hsm')
   await page.getByRole('button', { name: /Lessons/i }).click()
   await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
@@ -140,7 +144,9 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
 })
 
-test('Monaco mounts with a real web worker, no console noise or page errors (G8)', async ({ page }) => {
+test('Monaco mounts with a real web worker, no console noise or page errors (G8)', async ({
+  page,
+}) => {
   const consoleMessages: string[] = []
   const pageErrors: string[] = []
   page.on('console', (msg) => consoleMessages.push(msg.text()))

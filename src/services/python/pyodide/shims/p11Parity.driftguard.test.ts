@@ -27,16 +27,45 @@ const SHIM_SOURCE = readFileSync(join(__dirname, 'p11/__init__.py'), 'utf-8')
  * the real package's entire public surface (Module + Session, dunders and
  * private `_`-prefixed helpers excluded). */
 const REAL_P11_PUBLIC_METHODS = [
-  'login', 'logout', 'close',
-  'generate_keypair', 'generate_secret_key', 'generate_ml_kem', 'generate_ml_dsa',
-  'generate_slh_dsa', 'generate_hss', 'hss_keys_remaining', 'generate_rsa',
-  'generate_ec_p256', 'generate_ed25519', 'generate_aes256',
-  'oaep_params', 'pss_params',
-  'sign', 'verify',
-  'encapsulate', 'decapsulate', 'derive_key', 'ecdh_derive', 'ec_point',
-  'encrypt', 'encrypt_gcm', 'decrypt', 'decrypt_gcm', 'digest',
-  'create_object', 'import_secret', 'value', 'get_attribute', 'find_objects', 'destroy',
-  'slots', 'info', 'token_info', 'open_session', 'finalize',
+  'login',
+  'logout',
+  'close',
+  'generate_keypair',
+  'generate_secret_key',
+  'generate_ml_kem',
+  'generate_ml_dsa',
+  'generate_slh_dsa',
+  'generate_hss',
+  'hss_keys_remaining',
+  'generate_rsa',
+  'generate_ec_p256',
+  'generate_ed25519',
+  'generate_aes256',
+  'oaep_params',
+  'pss_params',
+  'sign',
+  'verify',
+  'encapsulate',
+  'decapsulate',
+  'derive_key',
+  'ecdh_derive',
+  'ec_point',
+  'encrypt',
+  'encrypt_gcm',
+  'decrypt',
+  'decrypt_gcm',
+  'digest',
+  'create_object',
+  'import_secret',
+  'value',
+  'get_attribute',
+  'find_objects',
+  'destroy',
+  'slots',
+  'info',
+  'token_info',
+  'open_session',
+  'finalize',
 ] as const
 
 function shimDefinesMethod(name: string): boolean {
@@ -60,7 +89,10 @@ describe('p11 shim parity — every real sandbox method exists (or is a document
   for (const name of REAL_P11_PUBLIC_METHODS) {
     if (DELIBERATELY_UNIMPLEMENTED.includes(name)) continue
     it(`defines ${name}()`, () => {
-      expect(shimDefinesMethod(name), `p11 shim is missing ${name}() — real sandbox p11 package has it`).toBe(true)
+      expect(
+        shimDefinesMethod(name),
+        `p11 shim is missing ${name}() — real sandbox p11 package has it`
+      ).toBe(true)
     })
   }
 })

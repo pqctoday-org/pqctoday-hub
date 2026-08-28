@@ -31,27 +31,61 @@ import { PKCS11 } from './pkcs11Constants.generated'
 const ALL_CONSTANTS: Record<string, number> = PKCS11
 
 const {
-  CKM_ML_DSA, CKM_ML_KEM, CKM_SLH_DSA, CKM_HSS, CKM_EDDSA, CKM_ECDSA_SHA256,
-  CKM_ECDH1_DERIVE, CKM_AES_GCM, CKM_RSA_PKCS_OAEP,
-  CKM_SHA256_RSA_PKCS, CKM_SHA256_RSA_PKCS_PSS,
-  CKM_SHA3_256, CKM_SHA256,
-  CKP_ML_DSA_44, CKP_ML_DSA_65, CKP_ML_DSA_87,
-  CKP_ML_KEM_512, CKP_ML_KEM_768, CKP_ML_KEM_1024,
+  CKM_ML_DSA,
+  CKM_ML_KEM,
+  CKM_SLH_DSA,
+  CKM_HSS,
+  CKM_EDDSA,
+  CKM_ECDSA_SHA256,
+  CKM_ECDH1_DERIVE,
+  CKM_AES_GCM,
+  CKM_RSA_PKCS_OAEP,
+  CKM_SHA256_RSA_PKCS,
+  CKM_SHA256_RSA_PKCS_PSS,
+  CKM_SHA3_256,
+  CKM_SHA256,
+  CKP_ML_DSA_44,
+  CKP_ML_DSA_65,
+  CKP_ML_DSA_87,
+  CKP_ML_KEM_512,
+  CKP_ML_KEM_768,
+  CKP_ML_KEM_1024,
   CKP_SLH_DSA_SHA2_128S,
-  CKP_LMS_SHA256_M32_H5, CKP_LMOTS_SHA256_N32_W8,
+  CKP_LMS_SHA256_M32_H5,
+  CKP_LMOTS_SHA256_N32_W8,
 } = ALL_CONSTANTS
 
 export type Op =
-  | 'generate' | 'sign' | 'verify' | 'encrypt' | 'decrypt'
-  | 'encapsulate' | 'decapsulate' | 'derive' | 'digest'
+  | 'generate'
+  | 'sign'
+  | 'verify'
+  | 'encrypt'
+  | 'decrypt'
+  | 'encapsulate'
+  | 'decapsulate'
+  | 'derive'
+  | 'digest'
 
 /** What a parameter slot accepts. Drives the binding dropdown and validation. */
 export type ParamKind =
-  | 'bytes' | 'pubKey' | 'privKey' | 'secretKey'
-  | 'ciphertext' | 'signature' | 'peerPoint' | 'label'
+  | 'bytes'
+  | 'pubKey'
+  | 'privKey'
+  | 'secretKey'
+  | 'ciphertext'
+  | 'signature'
+  | 'peerPoint'
+  | 'label'
 
 /** What a step leaves behind for later steps to bind to. */
-export type OutputKind = 'none' | 'keypair' | 'secretKey' | 'bytes' | 'ciphertext' | 'signature' | 'bool'
+export type OutputKind =
+  | 'none'
+  | 'keypair'
+  | 'secretKey'
+  | 'bytes'
+  | 'ciphertext'
+  | 'signature'
+  | 'bool'
 
 /**
  * Parameter sets carry their CKP_ name explicitly rather than being reverse-looked-up
@@ -90,52 +124,105 @@ export interface PrimSpec {
 const signOps = (mech: number): Partial<Record<Op, OpSpec>> => ({
   generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
   sign: { requires: { privKey: 'privKey', input: 'bytes' }, produces: 'signature', mech },
-  verify: { requires: { pubKey: 'pubKey', input: 'bytes', signature: 'signature' }, produces: 'bool', mech },
+  verify: {
+    requires: { pubKey: 'pubKey', input: 'bytes', signature: 'signature' },
+    produces: 'bool',
+    mech,
+  },
 })
 
 const kemOps = (): Partial<Record<Op, OpSpec>> => ({
   generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
   encapsulate: { requires: { pubKey: 'pubKey' }, produces: 'ciphertext', mech: CKM_ML_KEM },
-  decapsulate: { requires: { privKey: 'privKey', ciphertext: 'ciphertext' }, produces: 'secretKey', mech: CKM_ML_KEM },
+  decapsulate: {
+    requires: { privKey: 'privKey', ciphertext: 'ciphertext' },
+    produces: 'secretKey',
+    mech: CKM_ML_KEM,
+  },
 })
 
 export const PRIMITIVES: Record<string, PrimSpec> = {
   // ── ML-DSA: one entry per parameter set, each carrying its own CKP_* ──────────
-  'ml-dsa-44': { label: 'ML-DSA-44', keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_44, paramSetName: 'CKP_ML_DSA_44' }, ops: signOps(CKM_ML_DSA) },
-  'ml-dsa-65': { label: 'ML-DSA-65', keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_65, paramSetName: 'CKP_ML_DSA_65' }, ops: signOps(CKM_ML_DSA) },
-  'ml-dsa-87': { label: 'ML-DSA-87', keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_87, paramSetName: 'CKP_ML_DSA_87' }, ops: signOps(CKM_ML_DSA) },
+  'ml-dsa-44': {
+    label: 'ML-DSA-44',
+    keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_44, paramSetName: 'CKP_ML_DSA_44' },
+    ops: signOps(CKM_ML_DSA),
+  },
+  'ml-dsa-65': {
+    label: 'ML-DSA-65',
+    keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_65, paramSetName: 'CKP_ML_DSA_65' },
+    ops: signOps(CKM_ML_DSA),
+  },
+  'ml-dsa-87': {
+    label: 'ML-DSA-87',
+    keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_87, paramSetName: 'CKP_ML_DSA_87' },
+    ops: signOps(CKM_ML_DSA),
+  },
 
   // ── ML-KEM: real C_EncapsulateKey / C_DecapsulateKey via the v3.2 interface ───
-  'ml-kem-512': { label: 'ML-KEM-512', keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_512, paramSetName: 'CKP_ML_KEM_512' }, ops: kemOps() },
-  'ml-kem-768': { label: 'ML-KEM-768', keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_768, paramSetName: 'CKP_ML_KEM_768' }, ops: kemOps() },
-  'ml-kem-1024': { label: 'ML-KEM-1024', keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_1024, paramSetName: 'CKP_ML_KEM_1024' }, ops: kemOps() },
+  'ml-kem-512': {
+    label: 'ML-KEM-512',
+    keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_512, paramSetName: 'CKP_ML_KEM_512' },
+    ops: kemOps(),
+  },
+  'ml-kem-768': {
+    label: 'ML-KEM-768',
+    keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_768, paramSetName: 'CKP_ML_KEM_768' },
+    ops: kemOps(),
+  },
+  'ml-kem-1024': {
+    label: 'ML-KEM-1024',
+    keygen: { kind: 'ml-kem', paramSet: CKP_ML_KEM_1024, paramSetName: 'CKP_ML_KEM_1024' },
+    ops: kemOps(),
+  },
 
   // ── SLH-DSA: its own parameter-set namespace, not ML-DSA's ───────────────────
   'slh-dsa': {
     label: 'SLH-DSA-128s',
-    keygen: { kind: 'slh-dsa', paramSet: CKP_SLH_DSA_SHA2_128S, paramSetName: 'CKP_SLH_DSA_SHA2_128S' },
+    keygen: {
+      kind: 'slh-dsa',
+      paramSet: CKP_SLH_DSA_SHA2_128S,
+      paramSetName: 'CKP_SLH_DSA_SHA2_128S',
+    },
     ops: signOps(CKM_SLH_DSA),
   },
 
   // ── HSS/LMS: stateful. H5 tree ⇒ 2^5 = 32 signatures, then the key is spent ───
   'hss-lms': {
     label: 'HSS/LMS-H5',
-    keygen: { kind: 'hss', lmsType: CKP_LMS_SHA256_M32_H5, lmotsType: CKP_LMOTS_SHA256_N32_W8,
-              lmsName: 'CKP_LMS_SHA256_M32_H5', lmotsName: 'CKP_LMOTS_SHA256_N32_W8' },
+    keygen: {
+      kind: 'hss',
+      lmsType: CKP_LMS_SHA256_M32_H5,
+      lmotsType: CKP_LMOTS_SHA256_N32_W8,
+      lmsName: 'CKP_LMS_SHA256_M32_H5',
+      lmotsName: 'CKP_LMOTS_SHA256_N32_W8',
+    },
     ops: signOps(CKM_HSS),
     stateful: true,
     maxSignatures: 32,
   },
 
   // ── Classical signatures ─────────────────────────────────────────────────────
-  'rsa-2048': { label: 'RSA-2048 PKCS#1', keygen: { kind: 'rsa', bits: 2048 }, ops: signOps(CKM_SHA256_RSA_PKCS) },
-  'rsa-pss': { label: 'RSA-PSS-2048', keygen: { kind: 'rsa', bits: 2048 }, ops: signOps(CKM_SHA256_RSA_PKCS_PSS) },
+  'rsa-2048': {
+    label: 'RSA-2048 PKCS#1',
+    keygen: { kind: 'rsa', bits: 2048 },
+    ops: signOps(CKM_SHA256_RSA_PKCS),
+  },
+  'rsa-pss': {
+    label: 'RSA-PSS-2048',
+    keygen: { kind: 'rsa', bits: 2048 },
+    ops: signOps(CKM_SHA256_RSA_PKCS_PSS),
+  },
   // CKM_ECDSA_SHA256 (hash-and-sign in one call), not raw CKM_ECDSA: this is what the
   // catalog card advertises (0x1044) and what the reference snippet prefers. The old
   // generator used raw CKM_ECDSA over a digest it computed itself, so the card and the
   // executed mechanism disagreed.
-  'ecdsa-p256': { label: 'ECDSA P-256', keygen: { kind: 'ec-p256' }, ops: signOps(CKM_ECDSA_SHA256) },
-  'ed25519': { label: 'Ed25519', keygen: { kind: 'ed25519' }, ops: signOps(CKM_EDDSA) },
+  'ecdsa-p256': {
+    label: 'ECDSA P-256',
+    keygen: { kind: 'ec-p256' },
+    ops: signOps(CKM_ECDSA_SHA256),
+  },
+  ed25519: { label: 'Ed25519', keygen: { kind: 'ed25519' }, ops: signOps(CKM_EDDSA) },
 
   // ── RSA-OAEP is asymmetric ENCRYPTION, not a KEM. No encapsulate here. ────────
   'rsa-oaep': {
@@ -143,8 +230,16 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     keygen: { kind: 'rsa', bits: 2048 },
     ops: {
       generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
-      encrypt: { requires: { pubKey: 'pubKey', input: 'bytes' }, produces: 'ciphertext', mech: CKM_RSA_PKCS_OAEP },
-      decrypt: { requires: { privKey: 'privKey', input: 'ciphertext' }, produces: 'bytes', mech: CKM_RSA_PKCS_OAEP },
+      encrypt: {
+        requires: { pubKey: 'pubKey', input: 'bytes' },
+        produces: 'ciphertext',
+        mech: CKM_RSA_PKCS_OAEP,
+      },
+      decrypt: {
+        requires: { privKey: 'privKey', input: 'ciphertext' },
+        produces: 'bytes',
+        mech: CKM_RSA_PKCS_OAEP,
+      },
     },
   },
 
@@ -154,7 +249,11 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     keygen: { kind: 'ec-p256' },
     ops: {
       generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
-      derive: { requires: { privKey: 'privKey', peer: 'peerPoint' }, produces: 'secretKey', mech: CKM_ECDH1_DERIVE },
+      derive: {
+        requires: { privKey: 'privKey', peer: 'peerPoint' },
+        produces: 'secretKey',
+        mech: CKM_ECDH1_DERIVE,
+      },
     },
   },
 
@@ -164,8 +263,16 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     keygen: { kind: 'aes256' },
     ops: {
       generate: { requires: { keyLabel: 'label' }, produces: 'secretKey' },
-      encrypt: { requires: { key: 'secretKey', input: 'bytes' }, produces: 'ciphertext', mech: CKM_AES_GCM },
-      decrypt: { requires: { key: 'secretKey', input: 'ciphertext' }, produces: 'bytes', mech: CKM_AES_GCM },
+      encrypt: {
+        requires: { key: 'secretKey', input: 'bytes' },
+        produces: 'ciphertext',
+        mech: CKM_AES_GCM,
+      },
+      decrypt: {
+        requires: { key: 'secretKey', input: 'ciphertext' },
+        produces: 'bytes',
+        mech: CKM_AES_GCM,
+      },
     },
   },
 
@@ -188,14 +295,13 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
 const MECH_NAMES: Record<number, string> = Object.fromEntries(
   Object.entries(ALL_CONSTANTS)
     .filter(([k, v]) => k.startsWith('CKM_') && typeof v === 'number')
-    .map(([k, v]) => [v, k]),
+    .map(([k, v]) => [v, k])
 )
 
 export const mechName = (value: number): string => MECH_NAMES[value] ?? `0x${value.toString(16)}`
 
 /** Ops a primitive actually supports — replaces the family-wide FAMILY_OPS table. */
-export const opsFor = (primId: string): Op[] =>
-  Object.keys(PRIMITIVES[primId]?.ops ?? {}) as Op[]
+export const opsFor = (primId: string): Op[] => Object.keys(PRIMITIVES[primId]?.ops ?? {}) as Op[]
 
 export const specFor = (primId: string): PrimSpec | undefined => PRIMITIVES[primId]
 

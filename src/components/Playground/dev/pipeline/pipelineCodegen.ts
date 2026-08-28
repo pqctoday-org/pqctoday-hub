@@ -67,7 +67,8 @@ export interface EmitOptions {
 /* ── identifiers ─────────────────────────────────────────────────────────────── */
 
 const sym = (id: string) => id.replace(/[^A-Za-z0-9_]/g, '_')
-const resultVar = (id: string) => (id === PIPELINE_INPUT_ID ? 'pipeline_input' : `result_${sym(id)}`)
+const resultVar = (id: string) =>
+  id === PIPELINE_INPUT_ID ? 'pipeline_input' : `result_${sym(id)}`
 const pubVar = (id: string) => `pub_${sym(id)}`
 const privVar = (id: string) => `priv_${sym(id)}`
 const secretVar = (id: string) => `key_${sym(id)}`
@@ -81,12 +82,17 @@ const pyBytes = (s: string) => `b${pyStr(s)}`
 function render(pv: ParamValue | undefined, fallback = 'None'): string {
   if (!pv) return fallback
   switch (pv.bind) {
-    case 'literal': return pyStr(pv.value)
-    case 'bytes': return pyBytes(pv.value)
-    case 'ref': return resultVar(pv.step)
+    case 'literal':
+      return pyStr(pv.value)
+    case 'bytes':
+      return pyBytes(pv.value)
+    case 'ref':
+      return resultVar(pv.step)
     case 'key':
-      return pv.part === 'pub' ? pubVar(pv.step)
-        : pv.part === 'priv' ? privVar(pv.step)
+      return pv.part === 'pub'
+        ? pubVar(pv.step)
+        : pv.part === 'priv'
+          ? privVar(pv.step)
           : secretVar(pv.step)
   }
 }
@@ -99,37 +105,52 @@ const mechConst = (n: number) => `p11.${mechName(n)}`
 function emitGenerate(step: PipelineStep, spec: PrimSpec): string[] {
   const kg = spec.keygen
   if (!kg) return [`raise RuntimeError(${pyStr(`${spec.label} has no key generation`)})`]
-  const pub = pubVar(step.id), priv = privVar(step.id), key = secretVar(step.id)
+  const pub = pubVar(step.id),
+    priv = privVar(step.id),
+    key = secretVar(step.id)
   const L = pyStr(spec.label)
 
   switch (kg.kind) {
     case 'ml-dsa':
-      return [`${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName})`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName})`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'ml-kem':
-      return [`${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName})`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName})`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'slh-dsa':
-      return [`${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName})`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName})`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'hss':
       // Stateful: the token tracks CKA_HSS_KEYS_REMAINING and the key is spent when it hits 0.
-      return [`# CKA_HSS_KEYS_REMAINING decrements on every signature (PKCS#11 v3.2 §6.65)`,
-              `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName})`,
-              `print('%s keypair · pub=%d priv=%d · %d signatures available'`,
-              `      % (${L}, ${pub}, ${priv}, s.hss_keys_remaining(${priv})))`]
+      return [
+        `# CKA_HSS_KEYS_REMAINING decrements on every signature (PKCS#11 v3.2 §6.65)`,
+        `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName})`,
+        `print('%s keypair · pub=%d priv=%d · %d signatures available'`,
+        `      % (${L}, ${pub}, ${priv}, s.hss_keys_remaining(${priv})))`,
+      ]
     case 'rsa':
-      return [`${pub}, ${priv} = s.generate_rsa(${kg.bits})`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_rsa(${kg.bits})`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'ec-p256':
-      return [`${pub}, ${priv} = s.generate_ec_p256()`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_ec_p256()`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'ed25519':
-      return [`${pub}, ${priv} = s.generate_ed25519()`,
-              `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`]
+      return [
+        `${pub}, ${priv} = s.generate_ed25519()`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'aes256':
-      return [`${key} = s.generate_aes256()`,
-              `print('%s key · handle=%d' % (${L}, ${key}))`]
+      return [`${key} = s.generate_aes256()`, `print('%s key · handle=%d' % (${L}, ${key}))`]
   }
 }
 
@@ -159,7 +180,8 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
       if (spec.stateful) {
         lines.push(
           `print('%s signature · %d B · %d signatures remaining'`,
-          `      % (${L}, len(${out}), s.hss_keys_remaining(${render(p.privKey)})))`)
+          `      % (${L}, len(${out}), s.hss_keys_remaining(${render(p.privKey)})))`
+        )
       } else {
         lines.push(`print('%s signature · %d B' % (${L}, len(${out})))`)
       }
@@ -272,7 +294,9 @@ export function emitPipeline(steps: PipelineStep[], opts: EmitOptions = {}): str
     lines.push(`        # ── ${step.id} · ${spec?.label ?? step.primId} · ${step.op} ──`)
     lines.push('        try:')
     if (!spec || !spec.ops[step.op]) {
-      lines.push(`            raise RuntimeError(${pyStr(`${step.primId} does not support ${step.op}`)})`)
+      lines.push(
+        `            raise RuntimeError(${pyStr(`${step.primId} does not support ${step.op}`)})`
+      )
     } else {
       for (const l of emitOp(step, spec)) lines.push(`            ${l}`)
     }

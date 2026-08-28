@@ -22,11 +22,7 @@ const sameValue = (a: ParamValue | undefined, b: ParamValue): boolean =>
  * Options for one parameter slot, drawn only from steps BEFORE this one — a step can
  * never bind forward, so the pipeline stays a straight line by construction.
  */
-export function optionsFor(
-  kind: ParamKind,
-  steps: PipelineStep[],
-  index: number,
-): BindingOption[] {
+export function optionsFor(kind: ParamKind, steps: PipelineStep[], index: number): BindingOption[] {
   const out: BindingOption[] = []
 
   if (kind === 'bytes') {
@@ -43,23 +39,42 @@ export function optionsFor(
     switch (kind) {
       case 'pubKey':
       case 'peerPoint':
-        if (produces === 'keypair') out.push({ label: `${tag} · public key`, value: { bind: 'key', step: st.id, part: 'pub' } })
+        if (produces === 'keypair')
+          out.push({
+            label: `${tag} · public key`,
+            value: { bind: 'key', step: st.id, part: 'pub' },
+          })
         break
       case 'privKey':
-        if (produces === 'keypair') out.push({ label: `${tag} · private key`, value: { bind: 'key', step: st.id, part: 'priv' } })
+        if (produces === 'keypair')
+          out.push({
+            label: `${tag} · private key`,
+            value: { bind: 'key', step: st.id, part: 'priv' },
+          })
         break
       case 'secretKey':
-        if (produces === 'secretKey') out.push({ label: `${tag} · secret key`, value: { bind: 'key', step: st.id, part: 'secret' } })
+        if (produces === 'secretKey')
+          out.push({
+            label: `${tag} · secret key`,
+            value: { bind: 'key', step: st.id, part: 'secret' },
+          })
         break
       case 'ciphertext':
-        if (produces === 'ciphertext') out.push({ label: `${tag} · ciphertext`, value: { bind: 'ref', step: st.id } })
+        if (produces === 'ciphertext')
+          out.push({ label: `${tag} · ciphertext`, value: { bind: 'ref', step: st.id } })
         break
       case 'signature':
-        if (produces === 'signature') out.push({ label: `${tag} · signature`, value: { bind: 'ref', step: st.id } })
+        if (produces === 'signature')
+          out.push({ label: `${tag} · signature`, value: { bind: 'ref', step: st.id } })
         break
       case 'bytes':
         // Anything with a byte-shaped value can feed a data input.
-        if (produces === 'bytes' || produces === 'ciphertext' || produces === 'signature' || produces === 'secretKey') {
+        if (
+          produces === 'bytes' ||
+          produces === 'ciphertext' ||
+          produces === 'signature' ||
+          produces === 'secretKey'
+        ) {
           out.push({ label: `${tag} · ${st.op} output`, value: { bind: 'ref', step: st.id } })
         }
         break
@@ -95,7 +110,11 @@ export function validate(steps: PipelineStep[]): Finding[] {
     }
     const opSpec = spec.ops[st.op as Op]
     if (!opSpec) {
-      findings.push({ stepIndex: i, text: `${spec.label} does not support "${st.op}"`, severity: 'error' })
+      findings.push({
+        stepIndex: i,
+        text: `${spec.label} does not support "${st.op}"`,
+        severity: 'error',
+      })
       return
     }
 
@@ -104,12 +123,20 @@ export function validate(steps: PipelineStep[]): Finding[] {
       const bound = st.params[name]
       if (kind === 'label') {
         if (!bound || bound.bind !== 'literal' || !bound.value.trim()) {
-          findings.push({ stepIndex: i, text: `Step ${i + 1} · ${spec.label}: "${name}" is empty`, severity: 'error' })
+          findings.push({
+            stepIndex: i,
+            text: `Step ${i + 1} · ${spec.label}: "${name}" is empty`,
+            severity: 'error',
+          })
         }
         continue
       }
       if (!bound) {
-        findings.push({ stepIndex: i, text: `Step ${i + 1} · ${spec.label}: "${name}" is not bound`, severity: 'error' })
+        findings.push({
+          stepIndex: i,
+          text: `Step ${i + 1} · ${spec.label}: "${name}" is not bound`,
+          severity: 'error',
+        })
         continue
       }
       // A binding must still resolve to a step that exists and comes earlier.
@@ -117,11 +144,23 @@ export function validate(steps: PipelineStep[]): Finding[] {
       if (targetId && targetId !== PIPELINE_INPUT_ID) {
         const at = steps.findIndex((x) => x.id === targetId)
         if (at < 0) {
-          findings.push({ stepIndex: i, text: `Step ${i + 1} · ${spec.label}: "${name}" points at a deleted step`, severity: 'error' })
+          findings.push({
+            stepIndex: i,
+            text: `Step ${i + 1} · ${spec.label}: "${name}" points at a deleted step`,
+            severity: 'error',
+          })
         } else if (at >= i) {
-          findings.push({ stepIndex: i, text: `Step ${i + 1} · ${spec.label}: "${name}" points at a later step`, severity: 'error' })
+          findings.push({
+            stepIndex: i,
+            text: `Step ${i + 1} · ${spec.label}: "${name}" points at a later step`,
+            severity: 'error',
+          })
         } else if (!optionsFor(kind, steps, i).some((o) => sameValue(bound, o.value))) {
-          findings.push({ stepIndex: i, text: `Step ${i + 1} · ${spec.label}: "${name}" is bound to an incompatible output`, severity: 'error' })
+          findings.push({
+            stepIndex: i,
+            text: `Step ${i + 1} · ${spec.label}: "${name}" is bound to an incompatible output`,
+            severity: 'error',
+          })
         }
       }
     }
@@ -129,9 +168,15 @@ export function validate(steps: PipelineStep[]): Finding[] {
     // AES-GCM decrypt needs the IV from the encrypt step that produced its ciphertext.
     if (st.primId === 'aes-256-gcm' && st.op === 'decrypt') {
       const src = st.params.input
-      const ok = src?.bind === 'ref' && steps.some((x) => x.id === src.step && x.primId === 'aes-256-gcm' && x.op === 'encrypt')
+      const ok =
+        src?.bind === 'ref' &&
+        steps.some((x) => x.id === src.step && x.primId === 'aes-256-gcm' && x.op === 'encrypt')
       if (!ok) {
-        findings.push({ stepIndex: i, text: `Step ${i + 1} · AES-256-GCM decrypt must take its input from an AES-256-GCM encrypt step (the IV comes with it)`, severity: 'error' })
+        findings.push({
+          stepIndex: i,
+          text: `Step ${i + 1} · AES-256-GCM decrypt must take its input from an AES-256-GCM encrypt step (the IV comes with it)`,
+          severity: 'error',
+        })
       }
     }
 

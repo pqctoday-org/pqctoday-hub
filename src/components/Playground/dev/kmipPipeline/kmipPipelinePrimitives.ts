@@ -14,16 +14,29 @@
  */
 
 export type KmipOp =
-  | 'createKeyPair' | 'create'
-  | 'activate' | 'sign' | 'encapsulate' | 'decapsulate'
-  | 'getAttributes' | 'locate' | 'revoke' | 'destroy'
+  | 'createKeyPair'
+  | 'create'
+  | 'activate'
+  | 'sign'
+  | 'encapsulate'
+  | 'decapsulate'
+  | 'getAttributes'
+  | 'locate'
+  | 'revoke'
+  | 'destroy'
 
 /** What a parameter slot accepts — mirrors the PKCS#11 side's ParamKind,
  *  narrowed to what KMIP steps actually bind: a prior step's produced
  *  UID(s), or free text (the message to sign, ciphertext hex, ...). */
 export type KmipParamKind = 'uid' | 'pubUid' | 'privUid' | 'text' | 'ciphertextHex'
 
-export type KmipOutputKind = 'none' | 'keypairUids' | 'uid' | 'signatureHex' | 'ciphertextAndUid' | 'bool'
+export type KmipOutputKind =
+  | 'none'
+  | 'keypairUids'
+  | 'uid'
+  | 'signatureHex'
+  | 'ciphertextAndUid'
+  | 'bool'
 
 export interface KmipOpSpec {
   requires: Partial<Record<string, KmipParamKind>>
@@ -40,7 +53,9 @@ export interface KmipPrimSpec {
   ops: Partial<Record<KmipOp, KmipOpSpec>>
 }
 
-const lifecycleOps = (extra: Partial<Record<KmipOp, KmipOpSpec>>): Partial<Record<KmipOp, KmipOpSpec>> => ({
+const lifecycleOps = (
+  extra: Partial<Record<KmipOp, KmipOpSpec>>
+): Partial<Record<KmipOp, KmipOpSpec>> => ({
   getAttributes: { requires: { uid: 'uid' }, produces: 'bool' },
   locate: { requires: {}, produces: 'bool' },
   revoke: { requires: { uid: 'uid' }, produces: 'bool' },
@@ -50,7 +65,9 @@ const lifecycleOps = (extra: Partial<Record<KmipOp, KmipOpSpec>>): Partial<Recor
 
 export const KMIP_PRIMITIVES: Record<string, KmipPrimSpec> = {
   'ml-dsa-65': {
-    label: 'ML-DSA-65', algorithm: 'ML_DSA_65', keyKind: 'keypair',
+    label: 'ML-DSA-65',
+    algorithm: 'ML_DSA_65',
+    keyKind: 'keypair',
     ops: lifecycleOps({
       createKeyPair: { requires: {}, produces: 'keypairUids' },
       activate: { requires: { uid: 'uid' }, produces: 'bool' },
@@ -58,16 +75,23 @@ export const KMIP_PRIMITIVES: Record<string, KmipPrimSpec> = {
     }),
   },
   'ml-kem-768': {
-    label: 'ML-KEM-768', algorithm: 'ML_KEM_768', keyKind: 'keypair',
+    label: 'ML-KEM-768',
+    algorithm: 'ML_KEM_768',
+    keyKind: 'keypair',
     ops: lifecycleOps({
       createKeyPair: { requires: {}, produces: 'keypairUids' },
       activate: { requires: { uid: 'uid' }, produces: 'bool' },
       encapsulate: { requires: { pubUid: 'pubUid' }, produces: 'ciphertextAndUid' },
-      decapsulate: { requires: { privUid: 'privUid', ciphertext: 'ciphertextHex' }, produces: 'uid' },
+      decapsulate: {
+        requires: { privUid: 'privUid', ciphertext: 'ciphertextHex' },
+        produces: 'uid',
+      },
     }),
   },
   'aes-256': {
-    label: 'AES-256', algorithm: 'AES', keyKind: 'symmetric',
+    label: 'AES-256',
+    algorithm: 'AES',
+    keyKind: 'symmetric',
     ops: lifecycleOps({
       create: { requires: {}, produces: 'uid' },
       activate: { requires: { uid: 'uid' }, produces: 'bool' },

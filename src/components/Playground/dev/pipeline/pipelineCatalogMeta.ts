@@ -32,7 +32,7 @@ export const PALETTE_META: Record<string, PaletteMeta> = {
   'rsa-2048': { family: 'Signature', pq: false, hex: '0x40' },
   'rsa-pss': { family: 'Signature', pq: false, hex: '0x43' },
   'ecdsa-p256': { family: 'Signature', pq: false, hex: '0x1044' },
-  'ed25519': { family: 'Signature', pq: false, hex: '0x1057' },
+  ed25519: { family: 'Signature', pq: false, hex: '0x1057' },
   'rsa-oaep': { family: 'KEM', pq: false, hex: '0x09' },
   'ecdh-p256': { family: 'KEM', pq: false, hex: '0x1050' },
   'aes-256-gcm': { family: 'Symmetric', hex: '0x1087' },

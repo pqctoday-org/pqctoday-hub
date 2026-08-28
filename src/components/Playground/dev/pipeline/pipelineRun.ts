@@ -61,7 +61,10 @@ export function parseRun(
 
   for (const line of output.split('\n')) {
     const m = MARKER.exec(line)
-    if (!m) { buffer.push(line); continue }
+    if (!m) {
+      buffer.push(line)
+      continue
+    }
     const [, id, verdict, detail] = m
     status[id] = verdict === 'ok' ? 'ok' : 'error'
     text[id] = buffer.join('\n').trim()
@@ -111,16 +114,21 @@ export function loadStore<TStep = PipelineStep>(storeKey: string): PipelineStore
   try {
     const raw = localStorage.getItem(storeKey)
     if (raw) return JSON.parse(raw) as PipelineStore<TStep>
-  } catch { /* private window, cleared site data, or corrupt value */ }
+  } catch {
+    /* private window, cleared site data, or corrupt value */
+  }
   return {}
 }
 
-export function saveStore<TStep = PipelineStep>(storeKey: string, store: PipelineStore<TStep>): boolean {
+export function saveStore<TStep = PipelineStep>(
+  storeKey: string,
+  store: PipelineStore<TStep>
+): boolean {
   try {
     localStorage.setItem(storeKey, JSON.stringify(store))
     return true
   } catch {
-    return false   // quota — the caller surfaces this rather than failing silently
+    return false // quota — the caller surfaces this rather than failing silently
   }
 }
 
@@ -163,7 +171,8 @@ export function importPipelineJson<TStep = PipelineStep>(
     return null
   }
   if (
-    typeof parsed !== 'object' || parsed === null ||
+    typeof parsed !== 'object' ||
+    parsed === null ||
     (parsed as Partial<ExportedPipelineFile<TStep>>).schema !== expectedSchema
   ) {
     return null
@@ -171,7 +180,8 @@ export function importPipelineJson<TStep = PipelineStep>(
   const file = parsed as ExportedPipelineFile<TStep>
   if (
     typeof file.name !== 'string' ||
-    !file.pipeline || !Array.isArray(file.pipeline.steps) ||
+    !file.pipeline ||
+    !Array.isArray(file.pipeline.steps) ||
     typeof file.pipeline.input !== 'string'
   ) {
     return null

@@ -23,7 +23,13 @@
  * touched, initialized or not otherwise.
  */
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import { allocUlong, readUlong, writeUlong, checkRV, writeStr } from '../../../../wasm/softhsm/helpers'
+import {
+  allocUlong,
+  readUlong,
+  writeUlong,
+  checkRV,
+  writeStr,
+} from '../../../../wasm/softhsm/helpers'
 import { hsm_getTokenInfo } from '../../../../wasm/softhsm/pqc'
 
 export const DEV_SLOT_LABEL = 'DevSequences'
@@ -57,7 +63,9 @@ function findLabeledSlot(M: SoftHSMModule): number | null {
   for (const slot of listAllSlots(M, true)) {
     try {
       if (hsm_getTokenInfo(M, slot).label === DEV_SLOT_LABEL) return slot
-    } catch { /* CKR_TOKEN_NOT_PRESENT race between enumerate and read — skip */ }
+    } catch {
+      /* CKR_TOKEN_NOT_PRESENT race between enumerate and read — skip */
+    }
   }
   return null
 }
@@ -73,8 +81,8 @@ function initFreshDevSlot(M: SoftHSMModule): number {
   if (free === undefined) {
     throw new Error(
       'No free PKCS#11 slot available for the Developer token — every physical ' +
-      'slot in this browser session is already initialized (e.g. by the HSM ' +
-      'playground tabs). Reload the page to reset the WASM engine\'s slot pool.'
+        'slot in this browser session is already initialized (e.g. by the HSM ' +
+        "playground tabs). Reload the page to reset the WASM engine's slot pool."
     )
   }
   const labelPtr = M._malloc(32)
@@ -92,7 +100,9 @@ function initFreshDevSlot(M: SoftHSMModule): number {
   // identical comment). Find it back by LABEL, not by assuming `free`.
   const found = findLabeledSlot(M)
   if (found === null) {
-    throw new Error('C_InitToken succeeded but the DevSequences token could not be found afterward.')
+    throw new Error(
+      'C_InitToken succeeded but the DevSequences token could not be found afterward.'
+    )
   }
   return found
 }

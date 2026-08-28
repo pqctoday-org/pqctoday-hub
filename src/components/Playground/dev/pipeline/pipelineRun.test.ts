@@ -8,7 +8,11 @@
 // share this one module instead of each carrying its own copy.
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  loadStore, saveStore, exportPipelineJson, importPipelineJson, pipelineProvenanceHeader,
+  loadStore,
+  saveStore,
+  exportPipelineJson,
+  importPipelineJson,
+  pipelineProvenanceHeader,
   type SavedPipeline,
 } from './pipelineRun'
 
@@ -17,7 +21,10 @@ const KMIP_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
 const PKCS11_STORE_KEY = 'test-pqctoday-hub-pkcs11-pipelines'
 const KMIP_STORE_KEY = 'test-pqctoday-hub-kmip-pipelines'
 
-interface FakeStep { id: string; note: string }
+interface FakeStep {
+  id: string
+  note: string
+}
 
 beforeEach(() => {
   localStorage.clear()
@@ -25,7 +32,10 @@ beforeEach(() => {
 
 describe('pipelineRun — localStorage save/load round trip', () => {
   it('saves and reloads a pipeline unchanged', () => {
-    const pipeline: SavedPipeline<FakeStep> = { steps: [{ id: 's1', note: 'hello' }], input: 'payload' }
+    const pipeline: SavedPipeline<FakeStep> = {
+      steps: [{ id: 's1', note: 'hello' }],
+      input: 'payload',
+    }
     const store = { 'My Pipeline': pipeline }
     expect(saveStore(PKCS11_STORE_KEY, store)).toBe(true)
 
@@ -52,7 +62,10 @@ describe('pipelineRun — localStorage save/load round trip', () => {
 
 describe('pipelineRun — export/import round trip', () => {
   it('a pipeline exported and re-imported comes back identical', () => {
-    const pipeline: SavedPipeline<FakeStep> = { steps: [{ id: 's1', note: 'round trip' }], input: 'in' }
+    const pipeline: SavedPipeline<FakeStep> = {
+      steps: [{ id: 's1', note: 'round trip' }],
+      input: 'in',
+    }
     const json = exportPipelineJson(PKCS11_SCHEMA, 'RT Test', pipeline)
     const result = importPipelineJson<FakeStep>(PKCS11_SCHEMA, json)
     expect(result).not.toBeNull()
@@ -65,19 +78,27 @@ describe('pipelineRun — export/import round trip', () => {
   })
 
   it('rejects well-formed JSON missing the expected fields', () => {
-    expect(importPipelineJson(PKCS11_SCHEMA, JSON.stringify({ schema: PKCS11_SCHEMA, name: 'x' }))).toBeNull()
+    expect(
+      importPipelineJson(PKCS11_SCHEMA, JSON.stringify({ schema: PKCS11_SCHEMA, name: 'x' }))
+    ).toBeNull()
   })
 })
 
 describe('pipelineRun — cross-lane schema rejection (the actual seam this generalization exists for)', () => {
   it('a KMIP export is refused by the PKCS#11 importer', () => {
-    const kmipPipeline: SavedPipeline<FakeStep> = { steps: [{ id: 'k1', note: 'kmip step' }], input: 'msg' }
+    const kmipPipeline: SavedPipeline<FakeStep> = {
+      steps: [{ id: 'k1', note: 'kmip step' }],
+      input: 'msg',
+    }
     const kmipExport = exportPipelineJson(KMIP_SCHEMA, 'KMIP Flow', kmipPipeline)
     expect(importPipelineJson<FakeStep>(PKCS11_SCHEMA, kmipExport)).toBeNull()
   })
 
   it('a PKCS#11 export is refused by the KMIP importer', () => {
-    const pkcs11Pipeline: SavedPipeline<FakeStep> = { steps: [{ id: 'p1', note: 'pkcs11 step' }], input: 'in' }
+    const pkcs11Pipeline: SavedPipeline<FakeStep> = {
+      steps: [{ id: 'p1', note: 'pkcs11 step' }],
+      input: 'in',
+    }
     const pkcs11Export = exportPipelineJson(PKCS11_SCHEMA, 'PKCS11 Flow', pkcs11Pipeline)
     expect(importPipelineJson<FakeStep>(KMIP_SCHEMA, pkcs11Export)).toBeNull()
   })

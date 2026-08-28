@@ -12,12 +12,19 @@ import { PIPELINE_INPUT_ID } from './pipelineCodegen'
 const ref = (step: string): PipelineStep['params'][string] => ({ bind: 'ref', step })
 const pub = (step: string): PipelineStep['params'][string] => ({ bind: 'key', step, part: 'pub' })
 const priv = (step: string): PipelineStep['params'][string] => ({ bind: 'key', step, part: 'priv' })
-const secret = (step: string): PipelineStep['params'][string] => ({ bind: 'key', step, part: 'secret' })
+const secret = (step: string): PipelineStep['params'][string] => ({
+  bind: 'key',
+  step,
+  part: 'secret',
+})
 const input = (): PipelineStep['params'][string] => ({ bind: 'ref', step: PIPELINE_INPUT_ID })
 const lit = (value: string): PipelineStep['params'][string] => ({ bind: 'literal', value })
 
 const step = (
-  id: string, primId: string, op: PipelineStep['op'], params: PipelineStep['params'],
+  id: string,
+  primId: string,
+  op: PipelineStep['op'],
+  params: PipelineStep['params']
 ): PipelineStep => ({ id, primId, op, params, status: 'idle', output: null })
 
 export const TEMPLATES: Record<string, PipelineStep[]> = {

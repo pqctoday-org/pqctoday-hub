@@ -42,7 +42,9 @@ describe('emitKmipPipeline — deniable-step raise suppression (real bug, P3b)',
   it('every other lifecycle step in the template still raises on failure (only the deniable one is special-cased)', () => {
     for (const id of ['create', 'activate', 'attrs', 'locate', 'revoke', 'destroy']) {
       const block = stepBlock(id)
-      expect(block, `step ${id} should still raise on failure`).toMatch(/if not r_\w+\.ok: raise RuntimeError/)
+      expect(block, `step ${id} should still raise on failure`).toMatch(
+        /if not r_\w+\.ok: raise RuntimeError/
+      )
     }
   })
 
@@ -64,6 +66,8 @@ describe('emitKmipPipeline — algorithm normalization', () => {
     const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], {})
     expect(code).toContain("c.create_key_pair('ML_DSA_65'")
     expect(code).not.toContain("c.create_key_pair('ML-DSA-65'")
-    expect(code).not.toContain("c.sign(priv_create, b'pqctoday KMIP Developer tab payload', 'ML-DSA-65')")
+    expect(code).not.toContain(
+      "c.sign(priv_create, b'pqctoday KMIP Developer tab payload', 'ML-DSA-65')"
+    )
   })
 })

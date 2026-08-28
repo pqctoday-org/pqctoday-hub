@@ -802,7 +802,7 @@ export function KmipPlaygroundView() {
         {
           title: 'The refusal IS the lesson',
           target: '[data-tour="kmip-dev-step-deny"]',
-          body: "Signing with a key before it's Activated is refused by the engine — and that refusal is graded as a PASS, not a failure. This is the crypto-agility control plane doing its job: an honest \"no\" instead of a silent allow.",
+          body: 'Signing with a key before it\'s Activated is refused by the engine — and that refusal is graded as a PASS, not a failure. This is the crypto-agility control plane doing its job: an honest "no" instead of a silent allow.',
         },
       ],
     },

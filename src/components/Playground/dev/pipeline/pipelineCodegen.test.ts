@@ -21,20 +21,20 @@ describe('emitPipeline — template snapshots', () => {
 describe('emitPipeline — D6 dedicated-slot threading', () => {
   const steps = TEMPLATES['ML-KEM round trip']
 
-  it('omits an explicit slot when none is given (matches the sandbox\'s own emitted code)', () => {
+  it("omits an explicit slot when none is given (matches the sandbox's own emitted code)", () => {
     const code = emitPipeline(steps, {})
-    expect(code).toContain("hsm.open_session(pin=PIN)")
+    expect(code).toContain('hsm.open_session(pin=PIN)')
     expect(code).not.toContain('slot=')
   })
 
-  it('threads an explicit slot into open_session when one is given (D6: the Developer tab\'s own labeled token, never the shared playground one)', () => {
+  it("threads an explicit slot into open_session when one is given (D6: the Developer tab's own labeled token, never the shared playground one)", () => {
     const code = emitPipeline(steps, { slot: 7 })
     expect(code).toContain('hsm.open_session(slot=7, pin=PIN)')
   })
 })
 
 describe('emitPipeline — no-numeric-literal / no-unquoted-string invariants (pipelinePrimitives.ts / pipelineCodegen.ts headers)', () => {
-  it('a sign step\'s mechanism is a named p11.CKM_* constant, never a bare hex/int literal', () => {
+  it("a sign step's mechanism is a named p11.CKM_* constant, never a bare hex/int literal", () => {
     // "Encrypt + sign (PQ)" contains an ml-dsa-65 sign step — the mechanism
     // there is `mechConst(CKM_ML_DSA)`, which must render as the p11.CKM_ML_DSA
     // NAME (mechName() in pipelinePrimitives.ts), never the raw 0x1d value —
@@ -50,12 +50,15 @@ describe('emitPipeline — no-numeric-literal / no-unquoted-string invariants (p
     // own keyLabel param is UI-display-only and never reaches codegen at all,
     // confirmed by reading emitGenerate directly (not assumed).
     const step = {
-      id: 's1', primId: 'ml-dsa-65', op: 'sign' as const,
+      id: 's1',
+      primId: 'ml-dsa-65',
+      op: 'sign' as const,
       params: {
         privKey: { bind: 'key' as const, step: 't4', part: 'priv' as const },
         input: { bind: 'literal' as const, value: "o'brien" },
       },
-      status: 'idle' as const, output: null,
+      status: 'idle' as const,
+      output: null,
     }
     const code = emitPipeline([...TEMPLATES['Encrypt + sign (PQ)'].slice(0, 4), step], {})
     // The real defect class this guards against: an earlier generator

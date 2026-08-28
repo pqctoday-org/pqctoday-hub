@@ -89,3 +89,9 @@ public/kmip-policies/
 # Local pytest cache — git ignores its contents via a nested .gitignore, but
 # prettier walks in anyway and reports it on every local format:check run.
 .pytest_cache/
+
+# Pinned Pyodide 0.28.0 core release assets (dev-tabs-pkcs11-kmip plan P1) —
+# vendored upstream, not hand-formatted; same class as the wasm-pack/
+# wasm-bindgen glue above. Missed when P1 added these because `format:check`
+# had never been run against the whole repo until G7.
+public/pyodide/

@@ -49,10 +49,5 @@ export function LessonsHub(props: {
   onStart: (id: string) => void
   onClose: () => void
 }) {
-  return (
-    <LessonsHubGeneric<Plane>
-      {...props}
-      planeBadge={(p) => PLANE_BADGE[p]}
-    />
-  )
+  return <LessonsHubGeneric<Plane> {...props} planeBadge={(p) => PLANE_BADGE[p]} />
 }
