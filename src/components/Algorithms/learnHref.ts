@@ -22,8 +22,8 @@ import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
  */
 const INDUSTRY_TO_PATH: Record<string, string> = {
   'Payment Card Industry': 'cards',
-  'Financial Services / Banking': 'banking',
-  'Retail / E-Commerce': 'retail',
+  'Finance & Banking': 'banking',
+  'Retail & E-Commerce': 'retail',
 }
 
 export const learnHref = (moduleId: string, industry: string): string => {

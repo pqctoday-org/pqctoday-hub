@@ -776,12 +776,12 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
 
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   'Finance & Banking': [
-    'Financial Services / Banking',
+    'Finance & Banking',
     'Insurance',
     'Payment Card Industry',
     'Cryptocurrency / Blockchain',
   ],
-  'Government & Defense': ['Government / Defense', 'Legal / Notary / eSignature'],
+  'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
   Healthcare: ['Healthcare / Pharmaceutical'],
   Telecommunications: ['Telecommunications'],
   Technology: [
@@ -801,7 +801,7 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation'],
-  'Retail & E-Commerce': ['Retail / E-Commerce'],
+  'Retail & E-Commerce': ['Retail & E-Commerce'],
   'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
   Other: [],
 }

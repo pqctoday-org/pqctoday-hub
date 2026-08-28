@@ -763,19 +763,19 @@ const CYBER_OPPORTUNITY: Record<
     confidence: 'Moderate',
     basis: 'ENISA Health sector (parent-level) x US CMS NHE baseline',
   },
-  'Financial Services / Banking': {
+  'Finance & Banking': {
     lo: 14.0e9,
     hi: 14.46e9,
     confidence: 'High',
     basis: 'ENISA Banking sector',
   },
-  'Government / Defense': {
+  'Government & Defense': {
     lo: 10.56e9,
     hi: 11.43e9,
     confidence: 'Moderate',
     basis: 'ENISA Public Administration sector',
   },
-  'Retail / E-Commerce': {
+  'Retail & E-Commerce': {
     lo: 7.03e9,
     hi: 9.25e9,
     confidence: 'Moderate',

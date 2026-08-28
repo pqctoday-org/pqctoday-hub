@@ -567,7 +567,7 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
  *  rows they gate render as the tool's real "locked — no data" state, and the
  *  sample supplies manual scores for the rest, an exemplary mid-flight fill. */
 function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
-  const industry = sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare'
+  const industry = sector === 'financial' ? 'Finance & Banking' : 'Healthcare'
   const industryThreats = threatsData.filter((t) => t.industry === industry)
   const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
   const fipsValidatedCount = softwareData.filter((i) => isFips1403Validated(i.fipsValidated)).length
@@ -880,7 +880,7 @@ export const REAL_DOC_GENERATORS: Partial<
         crqcYear,
         currentYear,
         urgencyLevel,
-        industry: sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare',
+        industry: sector === 'financial' ? 'Finance & Banking' : 'Healthcare',
       }),
     }
   },

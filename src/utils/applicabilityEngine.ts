@@ -481,7 +481,7 @@ export function applicableThreats(
 ): ApplicabilityResult<ThreatData>[] {
   if (isProfileEmpty(profile)) return []
   // Expand the user's canonical industry into the threat-table industry vocabulary
-  // (e.g. 'Government & Defense' → ['Government / Defense', 'Legal / Notary / eSignature']).
+  // (e.g. 'Government & Defense' → ['Government & Defense', 'Legal / Notary / eSignature']).
   // Profiles only emit a directIndustryMatch when the threat's row industry
   // appears in this expanded set.
   const profileForThreats: UserProfile =
