@@ -71,3 +71,31 @@ describe('emitKmipPipeline — algorithm normalization', () => {
     )
   })
 })
+
+describe('emitKmipPipeline — messageMode (G9, W3b: genuinely binary payloads)', () => {
+  it('text mode (default) is unchanged: a plain bytes literal', () => {
+    const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], { message: 'hello' })
+    expect(code).toContain("c.sign(priv_create, b'hello', ")
+    expect(code).not.toContain('fromhex')
+  })
+
+  it('hex mode emits bytes.fromhex(...), not a text literal', () => {
+    const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], {
+      message: 'ff00fe0180deadbeef',
+      messageMode: 'hex',
+    })
+    expect(code).toContain("c.sign(priv_create, bytes.fromhex('ff00fe0180deadbeef'), ")
+    expect(code).not.toContain("b'ff00fe0180deadbeef'")
+  })
+
+  it('hex mode applies to every sign step the template has, not just the first', () => {
+    const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], {
+      message: 'deadbeef',
+      messageMode: 'hex',
+    })
+    const signCalls = code.match(/c\.sign\(/g) ?? []
+    const hexCalls = code.match(/bytes\.fromhex\('deadbeef'\)/g) ?? []
+    expect(signCalls.length).toBeGreaterThan(1)
+    expect(hexCalls).toHaveLength(signCalls.length)
+  })
+})

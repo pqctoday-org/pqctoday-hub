@@ -190,3 +190,48 @@ test('Monaco genuinely loads on a fresh session — this tab alone, no prior PKC
   await expect(viewLines).toContainText('pqctoday_kmip')
   expect(pageErrors).toEqual([])
 })
+
+test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', async ({ page }) => {
+  // Real capability found+fixed live: the shim's own doc comment claimed
+  // the engine had no hex Data field for Sign/Encrypt and could only take
+  // UTF-8 text — checked directly against the engine's Rust source
+  // (wasm/src/lib.rs, spec_bytes(spec, "data", "text")) and that was
+  // already wrong; `data` (hex) is preferred over `text` and always was.
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: 'hex', exact: true }).click()
+  // ff/fe/80 are not valid UTF-8 lead bytes in this arrangement — genuinely
+  // undecodable, not merely "looks like hex".
+  const hexPayload = 'ff00fe0180deadbeef'
+  await page.getByLabel('Message to sign').fill(hexPayload)
+
+  const genCode = page.locator('.monaco-editor .view-lines').first()
+  await expect(genCode).toContainText(`bytes.fromhex('${hexPayload}')`)
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('✓ ran')).toHaveCount(9, {
+    timeout: 5000,
+  })
+})
+
+test('hex mode with invalid hex blocks Run with a clear error', async ({ page }) => {
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: 'hex', exact: true }).click()
+  await page.getByLabel('Message to sign').fill('not-valid-hex!!')
+  await expect(page.getByText(/Hex mode needs an even number of hex digits/).first()).toBeVisible()
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  // The Run click surfaces the SAME message a second time, as the run-error
+  // banner — both are legitimate (a proactive field hint, and confirmation
+  // the click was actually blocked), so this asserts count 2, not .first().
+  await expect(page.getByText(/Hex mode needs an even number of hex digits/)).toHaveCount(2)
+  await expect(page.getByText(/\d+\.\d\ds/)).not.toBeVisible()
+})

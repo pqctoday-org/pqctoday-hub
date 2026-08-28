@@ -327,7 +327,7 @@ class KmipClient:
         return KmipResult(operation='GetAttributes', status=RESULT_SUCCESS, fields=fields)
 
     def encrypt(self, uid, data, *, block_cipher_mode=None, iv=None):
-        spec = {'op': 'Encrypt', 'uid': uid, 'text': _bytes_to_text(data)}
+        spec = {'op': 'Encrypt', 'uid': uid, **_bytes_to_spec_field(data)}
         if iv is not None:
             spec['ivHex'] = iv.hex() if isinstance(iv, (bytes, bytearray)) else iv
         return self._run(spec)
@@ -335,13 +335,13 @@ class KmipClient:
     def sign(self, uid, data, algorithm):
         return self._run({
             'op': 'Sign', 'uid': uid,
-            'text': _bytes_to_text(data),
+            **_bytes_to_spec_field(data),
             'algorithm': _normalize_algorithm(algorithm),
         })
 
     def signature_verify(self, uid, data, signature, algorithm=None):
         sig_hex = signature.hex() if isinstance(signature, (bytes, bytearray)) else signature
-        spec = {'op': 'SignatureVerify', 'uid': uid, 'text': _bytes_to_text(data), 'signature': sig_hex}
+        spec = {'op': 'SignatureVerify', 'uid': uid, **_bytes_to_spec_field(data), 'signature': sig_hex}
         if algorithm is not None:
             spec['algorithm'] = _normalize_algorithm(algorithm)
         return self._run(spec)
@@ -422,22 +422,23 @@ class KmipClient:
         )
 
 
-def _bytes_to_text(data):
-    """The hub engine's Sign/Encrypt ops take a `text` field (a JSON
-    string), not a hex ByteString field like the real wire protocol's Data
-    element — confirmed from KmipPlaygroundView.tsx's own calls
-    (`{op:'Sign', uid, text: message}`). Real sample payloads
-    (17-kmip-cacp.py's b"too early" etc.) are all plain ASCII, so UTF-8
-    decoding is safe for every real sample this shim targets; a genuinely
-    binary payload would need the engine to grow a hex Data field for Sign/
-    Encrypt, which it does not have today — documented limitation, not a
-    silent truncation (this raises, it does not mangle the bytes)."""
+def _bytes_to_spec_field(data):
+    """Real gap closed 2026-08-28 (dev-tabs-pkcs11-kmip plan G9, W3b): the
+    comment this replaced said the engine had no hex Data field for Sign/
+    Encrypt and could only take UTF-8 `text` — checked directly against the
+    engine's own Rust source (wasm/src/lib.rs, `spec_bytes(spec, "data",
+    "text")`, used identically for both Sign and Encrypt) and that was
+    already wrong: `data` (hex) is read in PREFERENCE to `text`, has been
+    since before this shim existed. Returns the one spec field to set:
+    `{'text': ...}` for genuinely UTF-8 content (keeps generated scripts and
+    engine logs human-readable — no behavior change from before), `{'data':
+    ...}` (hex) for anything that isn't, which the engine already accepts
+    for Sign and Encrypt exactly like it already did for Decapsulate/
+    Decrypt's ciphertext. No more NotImplementedError — there was nothing to
+    implement, the capability already existed."""
     if isinstance(data, str):
-        return data
+        return {'text': data}
     try:
-        return data.decode('utf-8')
-    except UnicodeDecodeError as e:
-        raise NotImplementedError(
-            'This hub engine\'s Sign/Encrypt take a text field, not raw bytes — '
-            'binary (non-UTF-8) payloads are not supported here. Use the dev sandbox.'
-        ) from e
+        return {'text': data.decode('utf-8')}
+    except UnicodeDecodeError:
+        return {'data': data.hex()}

@@ -33,6 +33,7 @@ import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
 import {
   emitKmipPipeline,
   DEFAULT_KMIP_MESSAGE,
+  type KmipMessageMode,
   type KmipStep,
   type KmipStepStatus,
 } from './kmipPipelineCodegen'
@@ -94,6 +95,19 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const [pipelineName, setPipelineName] = useState('Governed lifecycle')
   const [steps, setSteps] = useState<KmipStep[]>(() => KMIP_TEMPLATES['Governed lifecycle'] ?? [])
   const [message, setMessage] = useState(DEFAULT_KMIP_MESSAGE)
+  // W3b: 'hex' lets the message field carry a genuinely binary (non-UTF-8)
+  // payload — see kmipPipelineCodegen.ts's KmipMessageMode doc and the
+  // pqctoday_kmip shim's _bytes_to_spec_field for why the engine already
+  // accepts this on Sign. Switching mode does NOT convert the current
+  // text — it changes what the SAME characters mean (literal bytes vs
+  // hex digits), so the field is cleared to avoid emitting whichever
+  // reading of the old value the learner didn't intend.
+  const [messageMode, setMessageMode] = useState<KmipMessageMode>('text')
+  const isValidHex = /^[0-9a-fA-F]*$/.test(message) && message.length % 2 === 0
+  const messageError =
+    messageMode === 'hex' && message !== '' && !isValidHex
+      ? 'Hex mode needs an even number of hex digits (0-9, a-f)'
+      : null
   const [store, setStore] = useState<PipelineStore<KmipStep>>(() => loadStore<KmipStep>(STORE_KEY))
   const [notice, setNotice] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
@@ -105,7 +119,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const [detached, setDetached] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const generatedPy = useMemo(() => emitKmipPipeline(steps, { message }), [steps, message])
+  const generatedPy = useMemo(
+    () => emitKmipPipeline(steps, { message, messageMode }),
+    [steps, message, messageMode]
+  )
   const activeCode = detached ?? generatedPy
 
   const flash = (msg: string) => {
@@ -127,6 +144,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       setRunError('KMIP engine not ready yet — try again in a moment.')
       return
     }
+    if (!detached && messageError) {
+      setRunError(messageError)
+      return
+    }
     setRunning(true)
     setRunError(null)
     if (!detached) {
@@ -136,7 +157,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
         )
       )
     }
-    const code = detached ?? emitKmipPipeline(steps, { message })
+    const code = detached ?? emitKmipPipeline(steps, { message, messageMode })
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
@@ -173,7 +194,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     } finally {
       setRunning(false)
     }
-  }, [steps, message, detached, engine])
+  }, [steps, message, messageMode, messageError, detached, engine])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -358,7 +379,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
             'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
             "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
-            'Sign/Encrypt take a text payload here, not an arbitrary byte string — binary (non-UTF-8) message payloads are not supported in this browser build.',
+            "The Sign step's message can be text or hex (toggle below the input) — hex mode emits a genuinely binary Python bytes literal, not text encoded as hex. Encrypt/Decrypt steps aren't in this builder's vocabulary yet, so that half of the same capability isn't reachable here.",
           ]}
         />
 
@@ -383,15 +404,43 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
         )}
 
         <div className="p-4 border-b">
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-1">
-            Message to sign
+          <div className="flex items-center justify-between mb-1">
+            <div className="text-xs font-semibold uppercase text-muted-foreground">
+              Message to sign
+            </div>
+            <div className="flex gap-1">
+              {(['text', 'hex'] as const).map((m) => (
+                <Button
+                  key={m}
+                  variant={messageMode === m ? 'secondary' : 'outline'}
+                  size="sm"
+                  className="h-6 px-2 text-[10px] uppercase"
+                  onClick={() => {
+                    setMessageMode(m)
+                    setMessage('')
+                  }}
+                >
+                  {m}
+                </Button>
+              ))}
+            </div>
           </div>
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             aria-label="Message to sign"
-            className="w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none"
+            placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
+            className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-red-500/60' : ''}`}
           />
+          {messageError && (
+            <p className="mt-1 text-[10.5px] text-red-500 font-mono">{messageError}</p>
+          )}
+          {messageMode === 'hex' && !messageError && (
+            <p className="mt-1 text-[10.5px] text-muted-foreground">
+              Sign steps below emit <code>bytes.fromhex(...)</code> — a genuinely binary payload,
+              not text encoded as hex.
+            </p>
+          )}
         </div>
 
         <div className="p-4 flex-1 overflow-auto" data-tour="kmip-dev-steps">
