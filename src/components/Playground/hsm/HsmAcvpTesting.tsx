@@ -35,6 +35,10 @@ import eddsaTestVectors from '../../../data/acvp/eddsa_test.json'
 import eddsaEd448TestVectors from '../../../data/acvp/eddsa_ed448_test.json'
 import slhdsaCtxTestVectors from '../../../data/acvp/slhdsa_ctx_test.json'
 import pbkdf2TestVectors from '../../../data/acvp/pbkdf2_test.json'
+import sha384TestVectors from '../../../data/acvp/sha384_test.json'
+import sha512TestVectors from '../../../data/acvp/sha512_test.json'
+import sha3_256TestVectors from '../../../data/acvp/sha3_256_test.json'
+import sha3_512TestVectors from '../../../data/acvp/sha3_512_test.json'
 import { hexToBytes } from '../../../utils/dataInputUtils'
 import {
   hsm_initialize,
@@ -106,6 +110,10 @@ import {
   CKP_SLH_DSA_SHAKE_256S,
   CKP_SLH_DSA_SHAKE_256F,
   CKM_SHA256,
+  CKM_SHA384,
+  CKM_SHA512,
+  CKM_SHA3_256,
+  CKM_SHA3_512,
   CKM_AES_GCM,
   CKM_AES_CBC,
   CKM_AES_CTR,
@@ -310,6 +318,10 @@ export const HsmAcvpTesting = () => {
       mldsa: 'https://csrc.nist.gov/pubs/fips/204/final',
       mlkem: 'https://csrc.nist.gov/pubs/fips/203/final',
       sha256: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha384: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha512: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha3_256: 'https://csrc.nist.gov/publications/detail/fips/202/final',
+      sha3_512: 'https://csrc.nist.gov/publications/detail/fips/202/final',
       aescbc: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
       aesctr: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
       eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
@@ -1321,6 +1333,97 @@ export const HsmAcvpTesting = () => {
                 details: errMessage,
               })
               addLog(`[DISCREPANCY] [${eName}] [id:${id10}] SHA-256 tc=${test.tcId}: ${errMessage}`)
+            }
+          }
+        }
+
+        // ── 10b–10e. SHA-384/512, SHA3-256/512 Digest KAT (NIST ACVP) ──────
+        // WS-12 (2026-08-28): these 4 vector files already carried a real
+        // NIST ACVP _provenance block but were never imported anywhere
+        // (dead files, found while wiring WS-8's evidence tier) — wired in
+        // now, mirroring item 10's SHA-256 pattern exactly.
+        for (const { name, mech, ref, vectors, prefix } of [
+          {
+            name: 'SHA-384',
+            mech: CKM_SHA384,
+            ref: REF.sha384,
+            vectors: sha384TestVectors,
+            prefix: 'sha384',
+          },
+          {
+            name: 'SHA-512',
+            mech: CKM_SHA512,
+            ref: REF.sha512,
+            vectors: sha512TestVectors,
+            prefix: 'sha512',
+          },
+          {
+            name: 'SHA3-256',
+            mech: CKM_SHA3_256,
+            ref: REF.sha3_256,
+            vectors: sha3_256TestVectors,
+            prefix: 'sha3-256',
+          },
+          {
+            name: 'SHA3-512',
+            mech: CKM_SHA3_512,
+            ref: REF.sha3_512,
+            vectors: sha3_512TestVectors,
+            prefix: 'sha3-512',
+          },
+        ] as const) {
+          if (engine.mechs.size > 0 && !engine.mechs.has(mech)) {
+            await pushSkip(
+              `${prefix}-skip-${eName}`,
+              `${name} (${eName})`,
+              'Digest KAT (NIST ACVP)',
+              ref,
+              `${name} Digest: mechanism not supported`
+            )
+            continue
+          }
+          for (const test of vectors.testGroups[0].tests) {
+            const idDigest = `${prefix}-tc${test.tcId}-${eName}`
+            addLog(`[${eName}] Testing ${name} Digest KAT tc=${test.tcId} (NIST ACVP)...`)
+            try {
+              const msgBytes = hexToBytes(test.msg)
+              const expectedMd = hexToBytes(test.md)
+              const digest = hsm_digest(M, hSession, msgBytes, mech)
+
+              const matches =
+                digest.length === expectedMd.length &&
+                // eslint-disable-next-line security/detect-object-injection
+                digest.every((b: number, i: number) => b === expectedMd[i])
+
+              const mdHex = toHex(digest)
+              await pushResult({
+                id: idDigest,
+                algorithm: `${name} (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: ref,
+                evidenceTier: deriveEvidenceTier(vectors._provenance),
+                status: matches ? 'pass' : 'fail',
+                details: matches
+                  ? `MD[${digest.length}B]: ${mdHex}`
+                  : `MD mismatch: got ${toHex(digest, 8)}… expected ${toHex(expectedMd, 8)}…`,
+              })
+              addLog(
+                `[${eName}] [id:${idDigest}] ${name} tc=${test.tcId}: ${matches ? 'PASS' : 'FAIL'} | MD: ${mdHex}`
+              )
+            } catch (e: unknown) {
+              const errMessage = e instanceof Error ? e.message : String(e)
+              await pushResult({
+                id: `${prefix}-tc${test.tcId}-err-${eName}`,
+                algorithm: `${name} (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: ref,
+                evidenceTier: deriveEvidenceTier(vectors._provenance),
+                status: 'fail',
+                details: errMessage,
+              })
+              addLog(
+                `[DISCREPANCY] [${eName}] [id:${idDigest}] ${name} tc=${test.tcId}: ${errMessage}`
+              )
             }
           }
         }
