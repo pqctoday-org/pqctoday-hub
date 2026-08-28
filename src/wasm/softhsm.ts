@@ -2444,6 +2444,7 @@ export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
 export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §6.10.4 — MILENAGE f1–f5
 export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §6.11 — SUCI MSIN encryption (TS 33.501)
+export const CKM_AES_CBC = 0x1082 // raw block-cipher CBC, no PKCS#7 — what NIST's ACVP-AES-CBC KATs test
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -2452,6 +2453,12 @@ export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
 export const CKM_SHA512_HMAC = 0x271
+// _GENERAL variants (CK_MAC_GENERAL_PARAMS — truncated MAC length in bytes),
+// used to verify NIST ACVP-HMAC reference vectors, which test SP 800-107
+// truncation lengths shorter than the full digest.
+export const CKM_SHA256_HMAC_GENERAL = 0x252
+export const CKM_SHA384_HMAC_GENERAL = 0x262
+export const CKM_SHA512_HMAC_GENERAL = 0x272
 export const CKM_SHA3_256_HMAC = 0x2b1
 export const CKM_SHA3_512_HMAC = 0x2d1
 export const CKM_SHA256 = 0x250
@@ -2507,6 +2514,14 @@ export const CKP_SLH_DSA_SHAKE_256F = 0x0c
 export const CKA_MODULUS = 0x120
 export const CKA_MODULUS_BITS = 0x121
 export const CKA_PUBLIC_EXPONENT = 0x122
+// RSA private-key CRT components (v3.2 Table 39). Values verified against
+// pqctoday-hsm/rust/src/constants.rs / the vendored canonical pkcs11t.h.
+export const CKA_PRIVATE_EXPONENT = 0x00000123
+export const CKA_PRIME_1 = 0x00000124
+export const CKA_PRIME_2 = 0x00000125
+export const CKA_EXPONENT_1 = 0x00000126
+export const CKA_EXPONENT_2 = 0x00000127
+export const CKA_COEFFICIENT = 0x00000128
 export const CKA_ENCRYPT = 0x104
 export const CKA_DECRYPT = 0x105
 export const CKA_WRAP = 0x106
@@ -2953,6 +2968,41 @@ export const hsm_rsaVerify = (
   }
 }
 
+/**
+ * RSA verify taking the message as raw bytes rather than a UTF-8 string —
+ * see hsm_ecdsaVerifyBytes for why: a real NIST ACVP message is arbitrary
+ * binary, hex-encoded, and TextEncoder/TextDecoder round-tripping it as a
+ * JS string is not guaranteed to preserve the exact bytes that were signed.
+ */
+export const hsm_rsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_SHA256_RSA_PKCS
+): boolean => {
+  const isPSS =
+    mechType === CKM_SHA256_RSA_PKCS_PSS ||
+    mechType === CKM_SHA384_RSA_PKCS_PSS ||
+    mechType === CKM_SHA512_RSA_PKCS_PSS
+  let pssParams: { ptr: number; len: number } | null = null
+  if (isPSS) pssParams = buildPSSParams(M, mechType)
+  const mech = buildMech(M, mechType, pssParams?.ptr ?? 0, pssParams?.len ?? 0)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(RSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+    if (pssParams) M._free(pssParams.ptr)
+  }
+}
+
 /** RSA-OAEP encrypt via C_EncryptInit + C_Encrypt. */
 export const hsm_rsaEncrypt = (
   M: SoftHSMModule,
@@ -3212,6 +3262,35 @@ export const hsm_ecdsaVerify = (
   try {
     checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+/**
+ * ECDSA verify taking the message as raw bytes rather than a UTF-8 string.
+ * hsm_ecdsaVerify's `message: string` param round-trips correctly only for
+ * genuinely textual messages (e.g. RFC 6979's fixed "sample" test) — a real
+ * NIST ACVP SigVer message field is arbitrary binary, hex-encoded, and would
+ * be silently corrupted by TextEncoder if forced through the string path.
+ */
+export const hsm_ecdsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_ECDSA_SHA256
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
     return rv === 0
   } finally {
     M._free(mech)
@@ -3883,6 +3962,34 @@ export const hsm_eddsaVerify = (
 }
 
 /**
+ * EdDSA verify taking the message as raw bytes rather than a UTF-8 string —
+ * see hsm_ecdsaVerifyBytes for why: a real NIST ACVP message is arbitrary
+ * binary, hex-encoded, and TextEncoder/TextDecoder round-tripping it as a
+ * JS string is not guaranteed to preserve the exact bytes that were signed.
+ */
+export const hsm_eddsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_EDDSA
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(EdDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+/**
  * Multi-part sign via C_SignInit + C_SignUpdate × N + C_SignFinal.
  * Works with RSA-PKCS, RSA-PSS, ECDSA, EdDSA, or any mechanism that supports streaming.
  */
@@ -4176,6 +4283,114 @@ export const hsm_importRSAPublicKey = (
     M._free(modPtr)
     M._free(expPtr)
     M._free(valPtr)
+  }
+}
+
+const toBase64Url = (bytes: Uint8Array): string => {
+  let binary = ''
+  for (const b of bytes) binary += String.fromCharCode(b)
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+/**
+ * Import an RSA private key from its full CRT component set (PKCS#11 v3.2
+ * Table 39: MODULUS, PUBLIC_EXPONENT, PRIVATE_EXPONENT, PRIME_1/2,
+ * EXPONENT_1/2, COEFFICIENT). Returns CKO_PRIVATE_KEY handle.
+ *
+ * Async: builds a PKCS#8 DER blob via the browser's native SubtleCrypto
+ * (JWK import → PKCS#8 export) for the Rust engine, which reads CKA_VALUE as
+ * PKCS#8 on RSA private-key import (rsa::RsaPrivateKey::from_pkcs8_der) —
+ * state.rs's CreateObject validity check requires CKA_VALUE on any private
+ * key that isn't RSA/EC *public* (the only two exceptions). Deliberately not
+ * a hand-rolled ASN.1/DER encoder: @peculiar/asn1-rsa's decorator-registered
+ * schema doesn't survive this project's bundler (see the comment on
+ * parseRsaPublicKey in compositeVerifier.ts for the same finding), so this
+ * uses the platform's own PKCS#8 encoder instead of re-deriving one.
+ */
+export const hsm_importRSAPrivateKey = async (
+  M: SoftHSMModule,
+  hSession: number,
+  parts: {
+    n: Uint8Array
+    e: Uint8Array
+    d: Uint8Array
+    p: Uint8Array
+    q: Uint8Array
+    dp: Uint8Array
+    dq: Uint8Array
+    qi: Uint8Array
+  },
+  decrypt = true
+): Promise<number> => {
+  const cryptoKey = await crypto.subtle.importKey(
+    'jwk',
+    {
+      kty: 'RSA',
+      n: toBase64Url(parts.n),
+      e: toBase64Url(parts.e),
+      d: toBase64Url(parts.d),
+      p: toBase64Url(parts.p),
+      q: toBase64Url(parts.q),
+      dp: toBase64Url(parts.dp),
+      dq: toBase64Url(parts.dq),
+      qi: toBase64Url(parts.qi),
+    },
+    { name: 'RSA-OAEP', hash: 'SHA-256' },
+    true,
+    ['decrypt']
+  )
+  const pkcs8 = new Uint8Array(await crypto.subtle.exportKey('pkcs8', cryptoKey))
+
+  const ptrs = Object.fromEntries(
+    Object.entries(parts).map(([k, v]) => [k, writeBytes(M, v)])
+  ) as Record<keyof typeof parts, number>
+  const valPtr = writeBytes(M, pkcs8)
+
+  const baseAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: decrypt },
+    { type: CKA_MODULUS, bytesPtr: ptrs.n, bytesLen: parts.n.length },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: ptrs.e, bytesLen: parts.e.length },
+    { type: CKA_PRIVATE_EXPONENT, bytesPtr: ptrs.d, bytesLen: parts.d.length },
+    { type: CKA_PRIME_1, bytesPtr: ptrs.p, bytesLen: parts.p.length },
+    { type: CKA_PRIME_2, bytesPtr: ptrs.q, bytesLen: parts.q.length },
+    { type: CKA_EXPONENT_1, bytesPtr: ptrs.dp, bytesLen: parts.dp.length },
+    { type: CKA_EXPONENT_2, bytesPtr: ptrs.dq, bytesLen: parts.dq.length },
+    { type: CKA_COEFFICIENT, bytesPtr: ptrs.qi, bytesLen: parts.qi.length },
+  ]
+  const hKeyPtr = allocUlong(M)
+  try {
+    // Try with CKA_VALUE (Rust engine needs it); fall back without it
+    // (C++ reconstructs from the CRT components alone and rejects an
+    // unrecognized CKA_VALUE on this class) — same shape as
+    // hsm_importRSAPublicKey above.
+    const tplFull = buildTemplate(M, [
+      ...baseAttrs,
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pkcs8.length },
+    ])
+    const rv = M._C_CreateObject(hSession, tplFull.ptr, baseAttrs.length + 1, hKeyPtr) >>> 0
+    freeTemplate(M, tplFull, baseAttrs.length + 1)
+    if (rv === 0x12) {
+      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
+      const tplStd = buildTemplate(M, baseAttrs)
+      checkRV(
+        M._C_CreateObject(hSession, tplStd.ptr, baseAttrs.length, hKeyPtr),
+        'C_CreateObject(Import RSA PrivKey)'
+      )
+      freeTemplate(M, tplStd, baseAttrs.length)
+    } else {
+      checkRV(rv, 'C_CreateObject(Import RSA PrivKey)')
+    }
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(valPtr)
+    Object.values(ptrs).forEach((p) => M._free(p))
   }
 }
 
@@ -4599,9 +4814,13 @@ export const hsm_aesEncrypt = (
 }
 
 /**
- * AES decrypt (CTR, GCM, or CBC-PAD).
+ * AES decrypt (CTR, GCM, CBC-PAD, or raw CBC).
  * CTR: iv is the 16-byte counter block used during encryption (CTR is its own inverse).
  * GCM: ciphertext must include the 16-byte auth tag at the end (as returned by hsm_aesEncrypt).
+ * 'cbc-raw': CKM_AES_CBC, no PKCS#7 padding — ciphertext must already be block-aligned.
+ * This is the mechanism NIST's ACVP-AES-CBC KATs actually test; 'cbc' (CKM_AES_CBC_PAD)
+ * is kept unchanged for its existing callers rather than repurposed, since padding
+ * behavior is a different mechanism, not a parameter of the same one.
  */
 export const hsm_aesDecrypt = (
   M: SoftHSMModule,
@@ -4609,7 +4828,7 @@ export const hsm_aesDecrypt = (
   keyHandle: number,
   ciphertext: Uint8Array,
   iv: Uint8Array,
-  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm',
+  mode: 'ctr' | 'gcm' | 'cbc' | 'cbc-raw' = 'gcm',
   aad?: Uint8Array
 ): Uint8Array => {
   let mech: number
@@ -4622,6 +4841,10 @@ export const hsm_aesDecrypt = (
     const gcmP = buildGCMParams(M, iv, aad)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  } else if (mode === 'cbc-raw') {
+    const ivPtr = writeBytes(M, iv)
+    allocPtrs.push(ivPtr)
+    mech = buildMech(M, CKM_AES_CBC, ivPtr, 16)
   } else {
     const ivPtr = writeBytes(M, iv)
     allocPtrs.push(ivPtr)
@@ -4858,6 +5081,40 @@ export const hsm_hmacVerify = (
     M._free(mech)
     M._free(dataPtr)
     M._free(macPtr)
+  }
+}
+
+/**
+ * Verify a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 §6.31/§2.5.2 —
+ * CK_MAC_GENERAL_PARAMS, a single CK_ULONG giving the desired MAC length in
+ * bytes). NIST's ACVP-HMAC reference vectors deliberately test SP 800-107
+ * truncation lengths shorter than the full digest, which the non-GENERAL
+ * mechanism's C_Verify (exact-length match only) can't exercise — this is
+ * the mechanism those vectors are actually for. `mac.length` supplies the
+ * truncation length; `mechType` must be the `_GENERAL` variant.
+ */
+export const hsm_hmacVerifyGeneral = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mac: Uint8Array,
+  mechType: number
+): boolean => {
+  const paramPtr = allocUlong(M)
+  writeUlong(M, paramPtr, mac.length)
+  const mech = buildMech(M, mechType, paramPtr, 4)
+  const dataPtr = writeBytes(M, data)
+  const macPtr = writeBytes(M, mac)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, keyHandle), 'C_VerifyInit(HMAC_GENERAL)')
+    const rv = M._C_Verify(hSession, dataPtr, data.length, macPtr, mac.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macPtr)
+    M._free(paramPtr)
   }
 }
 

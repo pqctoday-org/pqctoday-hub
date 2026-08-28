@@ -1,19 +1,25 @@
 {
   "algorithm": "HMAC-SHA2-384",
-  "source": "Generated via Node.js crypto (OpenSSL backend), HMAC-SHA384 with 48-byte random key",
+  "mode": "AFT",
+  "revision": "2.0",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-384-2.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-28",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "0ffa9332b9430ae94cfac0f23b3843293903fa34a3ac9c11a8af2bfdf7276ed3",
+    "note": "tgId 1, tcId 5, the group's largest macLen case (160 bits / 20 bytes). Independently re-verified against Node's crypto (OpenSSL) oracle before use. Replaces a self-generated (Node-oracle) vector — WS-7 of the 2026-08-28 continuation plan. See hmac_test.json's note on why this uses CKM_SHA384_HMAC_GENERAL (hsm_hmacVerifyGeneral) rather than the exact-length-only CKM_SHA384_HMAC — same reasoning applies to every width."
+  },
   "testGroups": [
     {
-      "macLen": 384,
+      "tgId": 1,
       "tests": [
         {
-          "key": "b713f840ff9bdde5707b98b9ef733c7a8e667da33c502e800e7eb6791ac94b147142fedd3990ec59872c85480d0c7edb",
-          "msg": "484d41432d5348413338342041435650204b6e6f776e20416e73776572205465737420666f7220504b4353233131",
-          "mac": "a5cd1a7737d0fe37c58d575007a8f50ab74e14a7c49e38f7eb073e8e970c89a0a897b6f6396119457fac7164a1251bd5"
-        },
-        {
-          "key": "e19c59fd9809bfd1ceafcefa15bd51786ab66bec3bf111e814e8c78ba23fd4423c1bb6c4ef9b93e760c50acf650d4eb8",
-          "msg": "484d41432d5348412d3338342041435650206578747261207465737420766563746f7220666f72206d6f64756c65204b415420646966666572656e74696174696f6e",
-          "mac": "8b452c793940fc821ced37b02a56c9a20b75a95a13935d2808329ac36fccdd74e0967bd2afe54a8aa9d5cfc8b6211d55"
+          "tcId": 5,
+          "key": "EC0B0EA8FC35268D6ACC9CB67022911578059E29EB5114C7989F",
+          "msg": "02A7F4680436FC68112100634A5ED4C7C272A58F102604E845DD8A8FF222C3125E3D469871A0B4B9A514B6491B7D053B3EB2A7E749C71048406509B9F0A27CC76A1CE04F99127A6A5AEE56216F444E4E967A326FEA2D2E3E8DE0AA",
+          "mac": "0BC44CFF7B562E5D1C09BCB8B813CE3CB19D5A8A",
+          "macLen": 160
         }
       ]
     }

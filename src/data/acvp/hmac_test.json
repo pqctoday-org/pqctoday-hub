@@ -1,19 +1,25 @@
 {
   "algorithm": "HMAC-SHA2-256",
-  "source": "Generated via Node.js crypto (OpenSSL backend), HMAC-SHA256 with 32-byte random key",
+  "mode": "AFT",
+  "revision": "2.0",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/HMAC-SHA2-256-2.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-28",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "a9d0734b93aee71bc6f30b47daab782fd96b39688afe4fbddb009e99402ec989",
+    "note": "tgId 1, tcId 3, the group's largest macLen case (160 bits / 20 bytes). Independently re-verified against Node's crypto (OpenSSL) oracle before use. Replaces a self-generated (Node-oracle) vector — WS-7 of the 2026-08-28 continuation plan. NIST's ACVP-HMAC reference set deliberately covers SP 800-107 truncation lengths (80-160 bits in this sample; no full-256-bit case exists in the reference/demo set), so the wiring now uses CKM_SHA256_HMAC_GENERAL (hsm_hmacVerifyGeneral) instead of the exact-length-only CKM_SHA256_HMAC, to test the mechanism the vector is actually for."
+  },
   "testGroups": [
     {
-      "macLen": 256,
+      "tgId": 1,
       "tests": [
         {
-          "key": "69646aece8c561d1276ed06ec239492d8a611a4be416597d1f0c971494dc07c2",
-          "msg": "4143565020484d41432d534841323536204b4154207465737420776974682033322d62797465206b6579",
-          "mac": "6eb8359fb18f2b34c8d82fafdf960b095bc32782cf6819f5a09c17ca8913406e"
-        },
-        {
-          "key": "4eae6b1616fbe691c4e003779ce23e53b55a5423e6744fcc522089ba7b942d67",
-          "msg": "484d41432d5348412d3235362041435650206578747261207465737420766563746f7220666f72206d6f64756c65204b415420646966666572656e74696174696f6e",
-          "mac": "de685427e6fd149425a721cc574d20c0b2fe5a7d14b1b18546a77f2c25d3d359"
+          "tcId": 3,
+          "key": "A4448A64603828BC19A477D1685241EE295CB9108E72F1B024053CEE1A1D4F77146AD40ECBA7854C11A96A3DABE8BF35040AFA01808D577852560CE584396683E123BA278846F9235D399EE6EB430731EBC02780A1319BCE915D54C4CBE286AF905681B21AAAF62C8B9B321B5CE9D6A71BD7C80AE9F6DA63D6D4D27F7284BF9055FAD0C2EB2208B3CB11777B9471A264DCC7498A72DBAA61186CD5225EC13D0317C78CFF4EB26F65623AE59358F2D0ACF73040B087D657E2FA1E745A886AEEB1A4CF6E641D99941D78D161CABDA4808DC75D8D4C73E2D2852CAA99E3D0E736C305A338D8",
+          "msg": "28A121587C0DAE592AFE4DAAB097A1CEAC25C0A404C55E04AA00430182CCDD7D2892001BF74CFBC4B9F916F0DCB10879ED",
+          "mac": "A124F6333A561C3D62DFCF81E5165316E0FAB906",
+          "macLen": 160
         }
       ]
     }
