@@ -3,7 +3,7 @@ pqctoday_kmip — in-browser KMIP 3.0 + CACP shim, API-mirror of
 pqctoday-hsm/kmip/python-client's real pqctoday_kmip package.
 
 WHY THIS FILE MUST STAY A MIRROR, NOT A REWRITE: same rule as the p11 shim
-(see src/wasm/pyodide/shims/p11/__init__.py's docstring) — a script written
+(see the sibling ../p11/__init__.py's docstring) — a script written
 here should also run, with only its import/constructor resolving
 differently, against the real pqc-kmip server via the real client. Every
 public class/method/property name and behavior below is taken from reading

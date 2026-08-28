@@ -10,7 +10,7 @@
  */
 import { useEffect, useRef } from 'react'
 import { getKmipEngine } from '../wasm/kmip/kmipEngine'
-import { createKmipBridge } from '../wasm/pyodide/kmipBridge'
+import { createKmipBridge } from '../services/python/pyodide/kmipBridge'
 import { bootPyRuntime, runPython } from '../services/python/pyRuntime'
 
 declare global {

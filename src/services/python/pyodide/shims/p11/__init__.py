@@ -672,6 +672,36 @@ class Module:
         finally:
             alloc.free_all()
 
+    def info(self):
+        """C_GetInfo's manufacturer/library identity (CK_INFO). Real gap
+        found+fixed 2026-08-28 (dev-tabs-pkcs11-kmip plan G6): missing
+        entirely until the shim-parity driftguard test caught it against
+        the real package's public method list.
+
+        Layout EMPIRICALLY VERIFIED against this WASM32 build (not derived
+        from the real package's LP64 offsets, which differ): cryptokiVersion
+        (2) + manufacturerID[32] (offset 2, ends 34) + 2 bytes padding to
+        4-byte alignment + flags (CK_ULONG = 4 bytes on this build, offset
+        36-40) + libraryDescription[32] (offset 40, ends 72) +
+        libraryVersion(2). The real package's own offset for
+        libraryDescription is 48 — that assumes an 8-byte-aligned LP64
+        CK_ULONG flags field; this WASM32 build's 4-byte CK_ULONG needs only
+        4-byte alignment, landing libraryDescription 8 bytes earlier. Probed
+        live (raw C_GetInfo buffer dump) rather than assumed, the same
+        lesson the real package's own docstring names ("an earlier
+        1-byte-packed assumption... read as 6 leading NUL bytes")."""
+        b = self._b
+        alloc = _Alloc(b)
+        try:
+            buf = alloc.malloc(128)
+            _check(b.call('C_GetInfo', [buf]), 'C_GetInfo')
+            raw = bytes(b.readBytes(buf, 128))
+            manufacturer_id = raw[2:34].decode('utf-8', 'replace').strip()
+            library_description = raw[40:72].decode('utf-8', 'replace').strip()
+            return {'manufacturer_id': manufacturer_id, 'library_description': library_description}
+        finally:
+            alloc.free_all()
+
     def token_info(self, slot):
         b = self._b
         alloc = _Alloc(b)

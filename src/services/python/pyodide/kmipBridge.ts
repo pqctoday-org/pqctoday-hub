@@ -18,7 +18,7 @@
  * `JSON.parse(this.pg.run_op(JSON.stringify(spec)))`. This bridge mirrors
  * that shape one layer up instead of introducing a different one.
  */
-import type { KmipEngine, OpSpec, DryRunSpec } from '../kmip/kmipEngine'
+import type { KmipEngine, OpSpec, DryRunSpec } from '../../../wasm/kmip/kmipEngine'
 
 export interface KmipBridgeHandle {
   /** specJson: a JSON-encoded OpSpec. Returns a JSON-encoded OpResult. */

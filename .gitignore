@@ -665,8 +665,12 @@ src/**/*.py
 # imports. Found missing from git history 2026-08-28 after `git add` on this
 # directory silently no-op'd against the blanket rule above (only the
 # public/ synced COPY had been committed, never the real source) — same
-# class of trap as the documented scripts/* gitignore gotcha.
-!src/wasm/pyodide/shims/**/*.py
+# class of trap as the documented scripts/* gitignore gotcha. Path updated
+# same day when the whole directory moved out from under src/wasm/ (that
+# directory is eslint-excluded repo-wide, which had been silently exempting
+# this hand-written code from lint too) — update this path again if it
+# ever moves again, or the trap recurs silently.
+!src/services/python/pyodide/shims/**/*.py
 
 # macOS clippings
 *.textClipping

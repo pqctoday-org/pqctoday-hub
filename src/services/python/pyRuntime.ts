@@ -56,8 +56,16 @@ export function getPyBootState(): PyBootState {
 }
 
 /** Fetch a shim source file shipped as a static asset and return its text.
- *  Shims live under /pyodide-shims/ (copied at build time from
- *  src/wasm/pyodide/shims/ — see vite.config.ts's dev-tabs-shims plugin). */
+ *  Shims live under /pyodide-shims/ (copied by `npm run sync:pyodide-shims`
+ *  — wired into `predev`/`prebuild` — from
+ *  src/services/python/pyodide/shims/). That source directory moved here
+ *  2026-08-28 (G6) from src/wasm/pyodide/: `src/wasm` is entirely excluded
+ *  from eslint (a pre-existing repo-wide rule for generated/vendored glue,
+ *  confirmed via git history on src/wasm/softhsm.ts predating this
+ *  feature), which had been silently exempting this hand-written
+ *  bridge/shim code from lint the whole session — found only because a new
+ *  driftguard test file under the old path came back "ignored" instead of
+ *  passing. */
 async function fetchShimSource(relPath: string): Promise<string> {
   const res = await fetch(`/pyodide-shims/${relPath}`)
   if (!res.ok) {

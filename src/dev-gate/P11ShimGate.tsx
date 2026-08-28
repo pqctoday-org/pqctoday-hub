@@ -22,7 +22,7 @@ import {
 } from '../wasm/softhsm'
 import { hsm_initialize, hsm_getFirstSlot, hsm_initToken, hsm_openUserSession } from '../wasm/softhsm/session'
 import { hsm_finalize } from '../wasm/softhsm/pqc'
-import { createP11Bridge } from '../wasm/pyodide/p11Bridge'
+import { createP11Bridge } from '../services/python/pyodide/p11Bridge'
 import { bootPyRuntime, runPython } from '../services/python/pyRuntime'
 
 declare global {

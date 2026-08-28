@@ -38,7 +38,7 @@ import { TEMPLATES, TEMPLATE_NAMES, TEMPLATE_OUTCOMES } from './pipelineTemplate
 import { parseRun, loadStore, saveStore, exportPipelineJson, importPipelineJson, pipelineProvenanceHeader, type PipelineStore } from './pipelineRun'
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
 import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
-import { createP11Bridge } from '../../../../wasm/pyodide/p11Bridge'
+import { createP11Bridge } from '../../../../services/python/pyodide/p11Bridge'
 
 const OP_LABEL: Record<Op, string> = {
   generate: 'gen key', encrypt: 'encrypt', decrypt: 'decrypt',
