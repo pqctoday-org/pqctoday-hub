@@ -28,9 +28,10 @@ import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
 import { createKmipBridge } from '../../../../wasm/pyodide/kmipBridge'
 import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES } from './kmipPipelinePrimitives'
+import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
 import { emitKmipPipeline, DEFAULT_KMIP_MESSAGE, type KmipStep, type KmipStepStatus } from './kmipPipelineCodegen'
 import { KMIP_TEMPLATES, KMIP_TEMPLATE_NAMES, KMIP_TEMPLATE_OUTCOMES } from './kmipPipelineTemplates'
-import { parseRun, loadStore, saveStore, exportPipelineJson, importPipelineJson, type PipelineStore } from '../pipeline/pipelineRun'
+import { parseRun, loadStore, saveStore, exportPipelineJson, importPipelineJson, pipelineProvenanceHeader, type PipelineStore } from '../pipeline/pipelineRun'
 
 const STORE_KEY = 'pqctoday-hub-kmip-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
@@ -136,7 +137,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     URL.revokeObjectURL(url)
   }
   const slug = pipelineName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'kmip-pipeline'
-  const exportPy = () => downloadFile(activeCode, `${slug}.py`, 'text/x-python')
+  const exportPy = () => downloadFile(pipelineProvenanceHeader('KMIP 3.0 + CACP') + activeCode, `${slug}.py`, 'text/x-python')
   const exportJson = () => downloadFile(
     exportPipelineJson<KmipStep>(EXPORT_SCHEMA, pipelineName, { steps, input: message }),
     `${slug}.json`, 'application/json',
@@ -239,6 +240,13 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             </Button>
           </div>
         </header>
+
+        <DevSandboxDiffNote points={[
+          'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
+          'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
+          "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
+          'Sign/Encrypt take a text payload here, not an arbitrary byte string — binary (non-UTF-8) message payloads are not supported in this browser build.',
+        ]} />
 
         {notice && <div className="px-4 py-2 text-xs font-mono text-blue-500 border-b">{notice}</div>}
         {runError && (

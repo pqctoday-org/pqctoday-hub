@@ -24,6 +24,7 @@ import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { useHsmContext } from '../../hsm/HsmContext'
 import { ensureDevSlot, DEV_SLOT_LABEL } from './devSlot'
+import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from './monacoSelfHost'
 
 installMonacoSelfHost()
@@ -34,7 +35,7 @@ import {
 } from './pipelineCodegen'
 import { optionsFor, validate, type Finding } from './pipelineBindings'
 import { TEMPLATES, TEMPLATE_NAMES, TEMPLATE_OUTCOMES } from './pipelineTemplates'
-import { parseRun, loadStore, saveStore, exportPipelineJson, importPipelineJson, type PipelineStore } from './pipelineRun'
+import { parseRun, loadStore, saveStore, exportPipelineJson, importPipelineJson, pipelineProvenanceHeader, type PipelineStore } from './pipelineRun'
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
 import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
 import { createP11Bridge } from '../../../../wasm/pyodide/p11Bridge'
@@ -289,7 +290,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
     URL.revokeObjectURL(url)
   }
   const slug = pipelineName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'pipeline'
-  const exportPy = () => downloadFile(activeCode, `${slug}.py`, 'text/x-python')
+  const exportPy = () => downloadFile(pipelineProvenanceHeader('PKCS#11 v3.2') + activeCode, `${slug}.py`, 'text/x-python')
   const exportJson = () => downloadFile(
     exportPipelineJson(EXPORT_SCHEMA, pipelineName, { steps: pipeline, input: pipelineInput }),
     `${slug}.json`, 'application/json',
@@ -419,6 +420,13 @@ export const PkcsPipelineBuilder: React.FC = () => {
             </Button>
           </div>
         </header>
+
+        <DevSandboxDiffNote points={[
+          'Module() resolves to the same softhsmv3 engine, compiled to WebAssembly and running in this browser tab — not the real libsofthsmv3.so shared library the dev sandbox loads.',
+          `Your own token is used, on a dedicated slot labeled "${DEV_SLOT_LABEL}" — the rest of the HSM playground shares a different one, so scripts here never disturb it (and vice versa).`,
+          'One accommodation: CKA_PARAMETER_SET values from real sandbox samples arrive 8-byte-packed (native Linux convention); the shim narrows them to the 4 bytes this WASM build needs, for that one attribute only.',
+          "finalize() is a deliberate no-op here (a real C_Finalize would tear down every other open Developer-tab session) — the real package's finalize() does call it.",
+        ]} />
 
         {notice && (
           <div className="px-4 py-2 text-xs font-mono text-blue-500 border-b">{notice}</div>
