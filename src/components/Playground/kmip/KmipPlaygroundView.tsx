@@ -256,7 +256,8 @@ export function KmipPlaygroundView() {
     return requested === 'agility' ||
       requested === 'policy' ||
       requested === 'kmip3' ||
-      requested === 'migration'
+      requested === 'migration' ||
+      requested === 'developer'
       ? requested
       : 'agility'
   })

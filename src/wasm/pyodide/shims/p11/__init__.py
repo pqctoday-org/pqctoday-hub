@@ -297,6 +297,41 @@ class Session:
                 (C['CKA_SIGN'], True), (C['CKA_SENSITIVE'], True), (C['CKA_TOKEN'], token)]
         return self.generate_keypair(C['CKM_EC_EDWARDS_KEY_PAIR_GEN'], pub, priv)
 
+    def generate_hss(self, lms_type=CKP_LMS_SHA256_M32_H5,
+                      lmots_type=CKP_LMOTS_SHA256_N32_W8, levels=1, token=False):
+        """HSS/LMS keypair. STATEFUL: the key holds 2^height one-time
+        signatures and is spent when they run out — see
+        hss_keys_remaining(). Real gap found+fixed 2026-08-27
+        (dev-tabs-pkcs11-kmip plan G1): this method and
+        hss_keys_remaining() were missing entirely — the ported pipeline
+        codegen (pipelineCodegen.ts) emits calls to both for the
+        'hss-lms' palette primitive, but neither existed on the shim, so
+        dragging that primitive into a pipeline and running it raised
+        AttributeError. Never caught by P2's live verification because
+        neither template it exercised used HSS.
+
+        CK_HSS_KEY_PAIR_GEN_PARAMS on this WASM32 build: ulLevels (u32) +
+        ulLmsParamSet[8] (u32 each) + ulLmotsParamSet[8] (u32 each) =
+        17 x 4 = 68 bytes (HSS_MAX_LEVELS=8, from the real sandbox
+        package's own source) — NOT the real package's LP64 136 bytes.
+        Only index 0 of each array is set here, matching the real
+        package's own generate_hss() exactly (level 0's params are what
+        `levels=1` actually uses; the rest default to 0)."""
+        C = CONSTANTS
+        HSS_MAX_LEVELS = 8
+        lms_arr = [lms_type] + [0] * (HSS_MAX_LEVELS - 1)
+        lmots_arr = [lmots_type] + [0] * (HSS_MAX_LEVELS - 1)
+        params = struct.pack('<I' + 'I' * HSS_MAX_LEVELS + 'I' * HSS_MAX_LEVELS,
+                              levels, *lms_arr, *lmots_arr)
+        pub = [(C['CKA_VERIFY'], True), (C['CKA_TOKEN'], token)]
+        priv = [(C['CKA_SIGN'], True), (C['CKA_TOKEN'], token)]
+        return self.generate_keypair(C['CKM_HSS_KEY_PAIR_GEN'], pub, priv, params)
+
+    def hss_keys_remaining(self, handle):
+        """CKA_HSS_KEYS_REMAINING — one-time signatures left on an HSS key."""
+        raw = self.get_attribute(handle, CONSTANTS['CKA_HSS_KEYS_REMAINING'])
+        return int.from_bytes(raw, 'little')
+
     def generate_aes256(self, token=False):
         C = CONSTANTS
         return self.generate_secret_key(C['CKM_AES_KEY_GEN'], [
