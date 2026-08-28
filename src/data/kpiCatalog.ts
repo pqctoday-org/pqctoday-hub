@@ -18,6 +18,7 @@ import type { PersonaId } from './learningPersonas'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { ScorecardDimension } from '@/components/PKILearning/common/executive'
 import { getKpiTarget } from './kpiTargets'
+import { DOMAINS } from './migrationAssets'
 import { getFrameworkMaxFine } from './frameworkFines'
 
 // ── Persona scope ────────────────────────────────────────────────────────
@@ -266,14 +267,15 @@ const boardReadyCompositeAuto: KpiAutoScoreFn = (data) => {
 }
 
 // Hybrid deployment coverage — % of catalog products reporting hybrid PQC.
+// Iterates `vendorsByDomain`: unlike the old per-layer grouping (which split
+// a multi-layer product across several buckets and needed a `seen` Set to
+// avoid double-counting), classifyProductDomain assigns each product to
+// exactly one domain, so the flattened list has no duplicates by construction.
 const hybridCoverageAuto: KpiAutoScoreFn = (data) => {
   if (data.totalProducts === 0) return null
-  const hybrid = data.vendorsByLayer ? Array.from(data.vendorsByLayer.values()).flat() : []
-  const seen = new Set<string>()
+  const products = data.vendorsByDomain ? Array.from(data.vendorsByDomain.values()).flat() : []
   let hybridCount = 0
-  for (const p of hybrid) {
-    if (seen.has(p.productId)) continue
-    seen.add(p.productId)
+  for (const p of products) {
     const s = (p.pqcSupport || '').toLowerCase()
     if (s.includes('hybrid')) hybridCount++
   }
@@ -349,7 +351,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Tiered PQC-ready share of the product catalog (Full=1.0, Hybrid=0.7, Pilot=0.4, Roadmap=0.2, None=0).',
     category: 'vendor',
     surfaces: ['governance', 'migration'],
-    // Architect gets per-layer rows instead (see vendor-readiness-by-layer).
+    // Architect gets per-domain rows instead (see vendor-readiness-by-domain).
     weights: { executive: 0.1, ops: 0.2, researcher: 0.05, developer: 0.05 },
     autoScore: vendorReadinessAuto,
     userOverride: true,
@@ -357,19 +359,21 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     defaultTarget: 60,
   },
   {
-    // Meta-KPI: expands in `buildDimensions` into one row per infrastructure
-    // layer for the architect view (D9). Gives architects accountability at
-    // the layer they actually own (Network, Identity, Data-at-Rest, …) rather
-    // than a single organisation-wide number.
-    id: 'vendor-readiness-by-layer',
-    label: 'Vendor Readiness by Layer',
+    // Meta-KPI: expands in `buildDimensions` into one row per migration
+    // domain for the architect view (D9). Gives architects accountability at
+    // the domain they actually own (Network, Identity, Data-at-rest, …)
+    // rather than a single organisation-wide number. Domain-keyed since
+    // 2026-08-27 (vendor-risk remediation, WS-6) — was infrastructure-layer
+    // keyed, which scattered e.g. HSM products across 5 stray CSV spellings.
+    id: 'vendor-readiness-by-domain',
+    label: 'Vendor Readiness by Domain',
     description:
-      'Tiered PQC-ready share per infrastructure layer. Each layer scored independently using the same tier map.',
+      'Tiered PQC-ready share per migration domain. Each domain scored independently using the same tier map.',
     category: 'vendor',
     surfaces: ['governance', 'migration'],
     weights: { architect: 0.2 },
     userOverride: false,
-    disabledReason: 'Product catalog empty or no layer tagging.',
+    disabledReason: 'Product catalog empty or no domain tagging.',
     mappings: { csf2: 'ID.SC-1', iso27001: 'A.5.19' },
     defaultTarget: 60,
   },
@@ -624,14 +628,14 @@ export function buildDimensions(
     const rawWeight = k.weights[persona] ?? 0
     const weight = rawWeight / rawSum
 
-    // Meta-KPI: expand `vendor-readiness-by-layer` into one row per
-    // infrastructure layer. Splits the meta weight evenly across layers so
+    // Meta-KPI: expand `vendor-readiness-by-domain` into one row per
+    // migration domain. Splits the meta weight evenly across domains so
     // total architect weight contribution is preserved.
-    if (k.id === 'vendor-readiness-by-layer') {
-      const layers = Array.from(data.vendorReadinessByLayer?.entries() ?? []).filter(
+    if (k.id === 'vendor-readiness-by-domain') {
+      const domains = Array.from(data.vendorReadinessByDomain?.entries() ?? []).filter(
         ([, v]) => v.count > 0
       )
-      if (layers.length === 0) {
+      if (domains.length === 0) {
         const target = getKpiTarget(persona, country, k.id, k.defaultTarget)
         rows.push({
           id: k.id,
@@ -647,15 +651,16 @@ export function buildDimensions(
         })
         continue
       }
-      const perLayerWeight = weight / layers.length
-      for (const [layer, stats] of layers) {
+      const perDomainWeight = weight / domains.length
+      for (const [domainId, stats] of domains) {
         const score = Math.round(stats.weighted * 100)
         const target = getKpiTarget(persona, country, k.id, k.defaultTarget)
+        const domainLabel = DOMAINS[domainId]?.label ?? domainId
         rows.push({
-          id: `${k.id}:${layer}`,
-          label: `Vendor Readiness — ${layer}`,
-          description: `Tiered PQC-ready share of ${stats.count} ${stats.count === 1 ? 'product' : 'products'} in the ${layer} layer.`,
-          weight: perLayerWeight,
+          id: `${k.id}:${domainId}`,
+          label: `Vendor Readiness — ${domainLabel}`,
+          description: `Tiered PQC-ready share of ${stats.count} ${stats.count === 1 ? 'product' : 'products'} in the ${domainLabel} domain.`,
+          weight: perDomainWeight,
           autoScore: score,
           userOverride: true,
           target,

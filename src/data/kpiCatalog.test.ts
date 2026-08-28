@@ -92,11 +92,10 @@ describe('KPI_CATALOG integrity', () => {
       totalThreatCount: 0,
       industryThreats: [],
       vendorsByDomain: new Map(),
-      vendorsByLayer: new Map(),
       fipsValidatedCount: 0,
       pqcReadyCount: 0,
       vendorReadinessWeighted: 0,
-      vendorReadinessByLayer: new Map(),
+      vendorReadinessByDomain: new Map(),
       totalProducts: 1,
       frameworks: [],
       frameworksByIndustry: [],
@@ -221,11 +220,10 @@ function mockData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     totalThreatCount: 10,
     industryThreats: [],
     vendorsByDomain: new Map(),
-    vendorsByLayer: new Map(),
     fipsValidatedCount: 5,
     pqcReadyCount: 7,
     vendorReadinessWeighted: 0.5,
-    vendorReadinessByLayer: new Map(),
+    vendorReadinessByDomain: new Map(),
     totalProducts: 10,
     frameworks: [],
     frameworksByIndustry: [],
@@ -376,64 +374,68 @@ describe('board-ready-composite (E4)', () => {
   })
 })
 
-// ── D9: Per-layer architect vendor readiness ───────────────────────────────
+// ── D9: Per-domain architect vendor readiness ──────────────────────────────
+// Domain-keyed since 2026-08-27 (vendor-risk remediation, WS-6) — was
+// infrastructure-layer keyed. Uses real DomainId values ('network',
+// 'identity', 'atrest') so DOMAINS[domainId] resolves to a real label,
+// matching what buildDimensions does against live data.
 
-describe('vendor-readiness-by-layer (D9)', () => {
-  it('expands into one dimension per non-empty infrastructure layer', () => {
-    const layers = new Map([
-      ['Network', { weighted: 0.6, count: 5 }],
-      ['Identity', { weighted: 0.3, count: 3 }],
-      ['Data-at-Rest', { weighted: 0.9, count: 2 }],
-    ])
+describe('vendor-readiness-by-domain (D9)', () => {
+  it('expands into one dimension per non-empty migration domain', () => {
+    const domains = new Map([
+      ['network', { weighted: 0.6, count: 5 }],
+      ['identity', { weighted: 0.3, count: 3 }],
+      ['atrest', { weighted: 0.9, count: 2 }],
+    ] as const)
     const dims = buildDimensions(
       'architect',
       'governance',
-      mockData({ vendorReadinessByLayer: layers })
+      mockData({ vendorReadinessByDomain: new Map(domains) })
     )
-    const layerRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-layer:'))
-    expect(layerRows).toHaveLength(3)
-    const networkRow = layerRows.find((d) => d.label.includes('Network'))
+    const domainRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-domain:'))
+    expect(domainRows).toHaveLength(3)
+    const networkRow = domainRows.find((d) => d.label.includes('Network'))
     expect(networkRow?.autoScore).toBe(60)
-    const identityRow = layerRows.find((d) => d.label.includes('Identity'))
+    const identityRow = domainRows.find((d) => d.label.includes('Identity'))
     expect(identityRow?.autoScore).toBe(30)
-    const dataRow = layerRows.find((d) => d.label.includes('Data-at-Rest'))
+    const dataRow = domainRows.find((d) => d.label.includes('Data-at-rest'))
     expect(dataRow?.autoScore).toBe(90)
   })
 
-  it('falls back to disabled meta row when no layers are populated', () => {
+  it('falls back to disabled meta row when no domains are populated', () => {
     const dims = buildDimensions(
       'architect',
       'governance',
-      mockData({ vendorReadinessByLayer: new Map() })
+      mockData({ vendorReadinessByDomain: new Map() })
     )
-    const meta = dims.find((d) => d.id === 'vendor-readiness-by-layer')
+    const meta = dims.find((d) => d.id === 'vendor-readiness-by-domain')
     expect(meta?.disabled).toBe(true)
   })
 
   it('splits the meta weight evenly across expanded rows', () => {
-    const layers = new Map([
-      ['Network', { weighted: 0.5, count: 4 }],
-      ['Identity', { weighted: 0.5, count: 2 }],
-    ])
+    const domains = new Map([
+      ['network', { weighted: 0.5, count: 4 }],
+      ['identity', { weighted: 0.5, count: 2 }],
+    ] as const)
     const dims = buildDimensions(
       'architect',
       'governance',
-      mockData({ vendorReadinessByLayer: layers })
+      mockData({ vendorReadinessByDomain: new Map(domains) })
     )
-    const layerRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-layer:'))
-    const totalLayerWeight = layerRows.reduce((acc, d) => acc + d.weight, 0)
-    // Both layer rows share the original meta weight; sum across all rows still normalises to 1.
+    const domainRows = dims.filter((d) => d.id.startsWith('vendor-readiness-by-domain:'))
+    const totalDomainWeight = domainRows.reduce((acc, d) => acc + d.weight, 0)
+    // Both domain rows share the original meta weight; sum across all rows still normalises to 1.
     const sum = dims.reduce((acc, d) => acc + d.weight, 0)
     expect(sum).toBeGreaterThan(0.99)
     expect(sum).toBeLessThan(1.01)
-    expect(layerRows[0].weight).toBeCloseTo(totalLayerWeight / 2, 6)
+    expect(domainRows[0].weight).toBeCloseTo(totalDomainWeight / 2, 6)
   })
 
   it('does not appear in executive or ops sets', () => {
     const execIds = getKpiSet('executive', 'governance').map((k) => k.id)
     const opsIds = getKpiSet('ops', 'migration').map((k) => k.id)
-    expect(execIds).not.toContain('vendor-readiness-by-layer')
-    expect(opsIds).not.toContain('vendor-readiness-by-layer')
+    expect(execIds).not.toContain('vendor-readiness-by-domain')
+    expect(opsIds).not.toContain('vendor-readiness-by-domain')
   })
 })
 

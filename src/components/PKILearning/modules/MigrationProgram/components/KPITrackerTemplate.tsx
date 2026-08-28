@@ -43,9 +43,9 @@ function trendSummary(history: { ts: number; score: number }[]): string {
 // every KPI_CATALOG entry but previously never surfaced past the catalog.
 const KPI_MAPPINGS_BY_ID = new Map(KPI_CATALOG.map((k) => [k.id, k.mappings]))
 
-/** Per-layer rows expand a meta-KPI id to `${id}:${layer}` (see
- *  `buildDimensions`'s vendor-readiness-by-layer handling) — fall back to the
- *  meta-KPI's own mappings for those synthetic ids. */
+/** Per-domain rows expand a meta-KPI id to `${id}:${domainId}` (see
+ *  `buildDimensions`'s vendor-readiness-by-domain handling) — fall back to
+ *  the meta-KPI's own mappings for those synthetic ids. */
 function mappingsFor(dimId: string): KpiDefinition['mappings'] {
   return KPI_MAPPINGS_BY_ID.get(dimId) ?? KPI_MAPPINGS_BY_ID.get(dimId.split(':')[0])
 }
