@@ -4,7 +4,6 @@ import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { ShareButton } from '../../ui/ShareButton'
 import {
   CKP_PKCS5_PBKD2_HMAC_SHA256,
   CKP_PKCS5_PBKD2_HMAC_SHA384,
@@ -968,7 +967,6 @@ export const HsmKdfPanel = ({
           <Filter size={18} className="text-primary" />
           <h3 className="font-semibold text-foreground">Key Derivation Functions</h3>
           <div className="ml-auto flex items-center gap-1">
-            <ShareButton title="HSM Key Derivation" variant="icon" />
             <span className="text-xs text-muted-foreground">{currentMode.spec}</span>
           </div>
         </div>

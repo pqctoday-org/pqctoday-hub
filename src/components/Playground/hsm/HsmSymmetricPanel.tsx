@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { Lock, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
-import { ShareButton } from '../../ui/ShareButton'
 import {
   CKM_SHA256_HMAC,
   CKM_SHA384_HMAC,
@@ -1352,9 +1351,6 @@ export const HsmSymmetricPanel = ({
         <div className="flex items-center gap-2">
           <Lock size={18} className="text-primary" />
           <h3 className="font-semibold text-base">HSM Symmetric Crypto — AES &amp; HMAC</h3>
-          <div className="ml-auto">
-            <ShareButton title="HSM Symmetric Crypto" variant="icon" />
-          </div>
         </div>
 
         {/* Mode selector */}

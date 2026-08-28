@@ -1073,23 +1073,12 @@ export interface ReportCTA {
   label: string
   path: string
   /** lucide-react icon name (resolved in the component) */
-  icon:
-    | 'Share2'
-    | 'Calendar'
-    | 'BookOpen'
-    | 'FlaskConical'
-    | 'Package'
-    | 'BarChart3'
-    | 'Terminal'
-    | 'Layers'
-  /** If true, triggers the share handler instead of navigating */
-  isShareAction?: boolean
+  icon: 'Calendar' | 'BookOpen' | 'FlaskConical' | 'Package' | 'BarChart3' | 'Terminal' | 'Layers'
 }
 
 export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   executive: [
     { label: 'Open Command Center', path: '/business', icon: 'BarChart3' },
-    { label: 'Share with your board', path: '', icon: 'Share2', isShareAction: true },
     { label: 'View compliance deadlines', path: '/compliance', icon: 'Calendar' },
   ],
   developer: [
@@ -1113,7 +1102,6 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
   curious: [
-    { label: 'Share report', path: '', icon: 'Share2', isShareAction: true },
     { label: 'Explore the timeline', path: '/timeline', icon: 'Calendar' },
     { label: 'Continue learning', path: '/learn', icon: 'BookOpen' },
   ],

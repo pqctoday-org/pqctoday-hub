@@ -38,7 +38,7 @@ import {
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
-import { ShareButton } from '@/components/ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
@@ -311,6 +311,18 @@ export function KmipPlaygroundView() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [guideOpen])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // page's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: 'KMIP Control Plane — PQC Today',
+      shareText: 'A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser',
+    })
+    return () => clearPageActions()
+  }, [])
 
   /** Governance x-attributes attached at Create/CreateKeyPair, as free text
    * "name=value, name=value" (x- prefix optional). Policies like cnsa-2.0 /
@@ -858,11 +870,6 @@ export function KmipPlaygroundView() {
         </div>
         {/* VIEW · Guided / Expert progressive-disclosure toggle */}
         <div className="shrink-0 flex items-center gap-2">
-          <ShareButton
-            title="KMIP Control Plane — PQC Today"
-            text="A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser"
-            variant="icon"
-          />
           <Button
             variant="ghost"
             size="sm"

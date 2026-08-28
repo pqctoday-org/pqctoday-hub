@@ -128,12 +128,6 @@ describe('MobileReportView', () => {
     }
   })
 
-  it('renders a real Share button', () => {
-    completeQuick()
-    renderView()
-    expect(screen.getByRole('button', { name: /Share/i })).toBeInTheDocument()
-  })
-
   it('states what was cut rather than silently dropping it', () => {
     completeQuick()
     renderView()

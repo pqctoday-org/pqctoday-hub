@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar, X, ChevronDown, ListChecks } from 'lucide-react'
 import { Link } from 'react-router'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
@@ -127,6 +127,22 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
       document.body.style.overflow = ''
     }
   }, [isOpen])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // document's title/deep-link while the popover is open so the global
+  // ShareButton (MainLayout.tsx) shares the right document instead of the
+  // bare Library page. `?ref=` is already synced into the address bar by
+  // LibraryViewRedesign's openDetail, so this mirrors — not overrides — what
+  // `window.location.href` already resolves to.
+  useEffect(() => {
+    if (!isOpen || !item) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: item.documentTitle,
+      url: `${window.location.origin}/library?ref=${item.referenceId}`,
+    })
+    return () => clearPageActions()
+  }, [isOpen, item])
 
   if (!isOpen || !item) return null
 
@@ -256,10 +272,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   flagUrl={buildLibraryFlagUrl(item, true)}
                   resourceLabel={item.referenceId}
                   resourceType="Library"
-                />
-                <ShareButton
-                  title={item.documentTitle}
-                  url={`${window.location.origin}/library?ref=${item.referenceId}`}
                 />
               </div>
             </div>
@@ -608,10 +620,6 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   endorseUrl={buildLibraryEndorsementUrl(item, true)}
                   resourceLabel={item.referenceId}
                   resourceType="Library"
-                />
-                <ShareButton
-                  title={item.documentTitle}
-                  url={`${window.location.origin}/library?ref=${item.referenceId}`}
                 />
               </div>
             </div>

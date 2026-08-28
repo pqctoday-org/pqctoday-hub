@@ -173,10 +173,13 @@ describe('ReportView share-link hydration (ACCURACY-0708-2)', () => {
 // `url`, so it fell back to `window.location.href` — the bare `/report`
 // path when a report is only in local store, not the URL — while the
 // SENDER still got a success toast implying the share worked. A recipient
-// opening that bare link landed on "No Report Yet". ReportView must now
-// register the SAME real, token-minting mechanism the in-page Share button
-// uses (`buildReportShareUrl`) with `usePageActionsStore`, so the top bar
-// produces an identical, self-contained, fully decodable link.
+// opening that bare link landed on "No Report Yet". ReportView must
+// register the real, token-minting mechanism (`buildReportShareUrl`) with
+// `usePageActionsStore`, so the top bar produces a self-contained, fully
+// decodable link. (2026-08-27: the report page's own in-page Share button
+// was removed in favor of this top-bar-only registration — these tests now
+// assert on the registration directly rather than on parity between two
+// affordances.)
 //
 // Renders the RECIPIENT's own live/completed report (not a `?share=` link) —
 // `buildReportShareUrl`'s non-shared branch mints a brand-new token from
@@ -231,16 +234,13 @@ describe('ReportView registers the top-bar Share URL (Grade-A remediation Phase 
     expect(decoded).toEqual({ v: 2, result: JSON.parse(JSON.stringify(SAMPLE_RESULT)) })
   })
 
-  it("uses the SAME mechanism as the in-page Share button — the token embeds the sender's exact result, matching encodeShareToken's own output shape", async () => {
+  it("embeds the sender's exact result, matching encodeShareToken's own output shape", async () => {
     renderOwnReport()
 
     await screen.findByTestId('report-content')
     const registeredUrl = usePageActionsStore.getState().current?.url
     const registeredToken = new URL(registeredUrl!).searchParams.get('share')!
 
-    // encodeShareToken is the exact function `shareReport` (ReportContent's
-    // in-page "Share" button) calls — building the expected token the same
-    // way confirms both affordances go through one shared mechanism, not two.
     const expectedToken = encodeShareToken({ result: SAMPLE_RESULT, persona: null })
     expect(decodeShareToken(registeredToken)).toEqual(decodeShareToken(expectedToken))
   })

@@ -6,7 +6,6 @@
 // from here rather than from ReportContent.tsx directly.
 import React, { useState } from 'react'
 import {
-  Share2,
   Calendar,
   BookOpen,
   FlaskConical,
@@ -25,7 +24,6 @@ import type { HNDLRiskWindow, TNFLRiskWindow } from '../../../hooks/assessmentTy
 
 /** Resolves icon name string to LucideIcon component for report CTAs. */
 export const CTA_ICONS: Record<string, LucideIcon> = {
-  Share2,
   Calendar,
   BookOpen,
   FlaskConical,

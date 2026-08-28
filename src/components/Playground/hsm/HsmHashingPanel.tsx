@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { Hash, Loader2, Plus, X, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
-import { ShareButton } from '../../ui/ShareButton'
 import {
   CKM_SHA256,
   CKM_SHA384,
@@ -110,9 +109,6 @@ export const HsmHashingPanel = ({
           <h3 className="font-semibold text-base">
             HSM Hashing — C_DigestInit / C_Digest{multiPart ? 'Update' : ''}
           </h3>
-          <div className="ml-auto">
-            <ShareButton title="HSM Hashing" variant="icon" />
-          </div>
         </div>
 
         {/* Algorithm selector + multi-part toggle */}
