@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page, type Locator } from '@playwright/test'
 
 /**
  * KMIP/CACP Developer tab — /playground/cacp?plane=developer
@@ -234,4 +234,147 @@ test('hex mode with invalid hex blocks Run with a clear error', async ({ page })
   // the click was actually blocked), so this asserts count 2, not .first().
   await expect(page.getByText(/Hex mode needs an even number of hex digits/)).toHaveCount(2)
   await expect(page.getByText(/\d+\.\d\ds/)).not.toBeVisible()
+})
+
+/**
+ * G9/W2 — the drag/drop canvas. HTML5 DnD via Locator.dragTo() proved
+ * unreliable across the palette (aside) and canvas (main) independently-
+ * scrolling containers — a manual DataTransfer dispatch, driven entirely by
+ * element handles already resolved on the Node side, is what actually
+ * exercises the real onDragStart/onDragOver/onDrop handlers reliably.
+ */
+async function html5Drop(
+  page: Page,
+  source: Locator,
+  target: Locator,
+  type: string,
+  value: string
+) {
+  const src = await source.elementHandle()
+  const tgt = await target.elementHandle()
+  await page.evaluate(
+    ({ src, tgt, type, value }) => {
+      const dt = new DataTransfer()
+      dt.setData(type, value)
+      dt.setData('text/plain', value)
+      src!.dispatchEvent(
+        new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt })
+      )
+      tgt!.dispatchEvent(
+        new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt })
+      )
+      tgt!.dispatchEvent(
+        new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt })
+      )
+    },
+    { src, tgt, type, value }
+  )
+}
+
+function appendZone(page: Page) {
+  return page
+    .getByText('Drop here to append')
+    .or(page.getByText('Drop a primitive or step here'))
+    .first()
+}
+async function dragPrimToAppend(page: Page, primId = 'ml-dsa-65') {
+  const src = page.locator('div[draggable="true"]', { hasText: 'ML-DSA-65' }).first()
+  await html5Drop(page, src, appendZone(page), 'application/x-kmip-primitive', primId)
+}
+async function dragSpecialToAppend(page: Page, label: string, kind: string) {
+  const src = page.locator('div[draggable="true"]', { hasText: label }).first()
+  await html5Drop(page, src, appendZone(page), 'application/x-kmip-special', kind)
+}
+
+test('drag/drop assembles the Governed lifecycle from an empty canvas and runs it green (G9/W2)', async ({
+  page,
+}) => {
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+  await page.getByRole('button', { name: 'Empty', exact: true }).click()
+  await expect(page.getByText('Drop a primitive or step here')).toBeVisible()
+
+  // step 1: create (createKeyPair is the default op for a fresh drop)
+  await dragPrimToAppend(page)
+
+  // step 2: sign-early — the deliberately-too-early Sign the deny step targets
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 2').selectOption('sign')
+  await page.getByLabel('privUid for step 2').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  // step 3: expect-deny targeting step 2
+  await dragSpecialToAppend(page, 'Expect deny', 'expect-deny')
+  await page.getByLabel('Target step for step 3').selectOption({ label: '2. ML-DSA-65 · sign' })
+
+  // step 4: activate
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 4').selectOption('activate')
+  await page.getByLabel('uid for step 4').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  // step 5: sign (real, post-activate)
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 5').selectOption('sign')
+  await page.getByLabel('privUid for step 5').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  // step 6: getAttributes
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 6').selectOption('getAttributes')
+  await page.getByLabel('uid for step 6').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  // step 7: locate (no inputs)
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 7').selectOption('locate')
+
+  // step 8: revoke
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 8').selectOption('revoke')
+  await page.getByLabel('uid for step 8').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  // step 9: destroy
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 9').selectOption('destroy')
+  await page.getByLabel('uid for step 9').selectOption({ label: '1. ML-DSA-65 · private key' })
+
+  await expect(page.getByText('Every step input is bound')).toBeVisible()
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran')).toHaveCount(9)
+  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+})
+
+test('drag/drop: reorder, delete, and rebind are all live (G9/W2)', async ({ page }) => {
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+  await page.getByRole('button', { name: 'Empty', exact: true }).click()
+
+  // Build: [1] createKeyPair, [2] activate — rebind step 2's uid to step 1's priv.
+  await dragPrimToAppend(page)
+  await dragPrimToAppend(page)
+  await page.getByLabel('Operation for step 2').selectOption('activate')
+  await page.getByLabel('uid for step 2').selectOption({ label: '1. ML-DSA-65 · private key' })
+  await expect(page.getByText('Every step input is bound')).toBeVisible()
+
+  // reorder: drag step 2's card onto step 1's card (native reorder carries
+  // the source index over 'application/x-kmip-step').
+  const step1Card = page
+    .locator('div[draggable="true"]')
+    .filter({ hasText: 'ML-DSA-65 · createKeyPair' })
+  const step2Card = page
+    .locator('div[draggable="true"]')
+    .filter({ hasText: 'ML-DSA-65 · activate' })
+  await html5Drop(page, step2Card, step1Card, 'application/x-kmip-step', '1')
+
+  // Reordered: activate is now step 1, createKeyPair step 2 — activate's own
+  // uid binding (unchanged) now points FORWARD. Validation must catch this
+  // live, proving reorder actually re-evaluates bindings, not just order.
+  await expect(page.getByText(/points at a later step/).first()).toBeVisible()
+
+  // delete: remove the now-broken step; the finding clears.
+  await page.getByRole('button', { name: /Remove step 1/ }).click()
+  await expect(page.getByText('Every step input is bound')).toBeVisible()
 })
