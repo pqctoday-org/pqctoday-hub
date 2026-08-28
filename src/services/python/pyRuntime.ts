@@ -138,10 +138,18 @@ export async function runPython(code: string): Promise<PyRunResult> {
     const timeoutGuard = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error(`Script exceeded ${RUN_TIMEOUT_MS / 1000}s`)), RUN_TIMEOUT_MS)
     })
-    // Pyodide's runPython is synchronous; racing it against a timer only
-    // catches the case where the AWAIT before it never resolves (module
-    // import, etc.) — not a true mid-execution abort. Documented above.
-    await Promise.race([Promise.resolve(py.runPython(code)), timeoutGuard])
+    // runPythonAsync (not runPython): supports top-level `await` in the
+    // generated script — needed for the KMIP tab's Load-policy step, which
+    // fetches a real policy YAML file via Pyodide's pyfetch (the browser's
+    // real fetch(), which resolves a relative URL like /kmip-policies/x.yaml
+    // against the page's own origin — plain urllib.request has no browser
+    // context and rejects a relative URL outright, confirmed live). A
+    // strict superset of runPython: every already-proven synchronous
+    // script (P1/P2/P3's PKCS#11 and KMIP-lifecycle samples) still runs
+    // unchanged under it. Racing it against a timer only catches the case
+    // where the AWAIT before it never resolves (module import, a stalled
+    // fetch, etc.) — not a true mid-execution abort. Documented above.
+    await Promise.race([py.runPythonAsync(code), timeoutGuard])
     return { ok: true, stdout: out, stderr: err, error: null, elapsedMs: performance.now() - t0 }
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)

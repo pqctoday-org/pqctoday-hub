@@ -35,9 +35,11 @@ import {
   Clock,
   BookOpen,
   X,
+  Code2,
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
+import { KmipPipelineBuilder } from '../dev/kmipPipeline/KmipPipelineBuilder'
 import { ShareButton } from '@/components/ui/ShareButton'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -94,7 +96,7 @@ function Term({ t }: { t: keyof typeof GLOSSARY }) {
 }
 
 /** Top-level surface of the CACP playground. */
-type Plane = 'agility' | 'policy' | 'kmip3' | 'migration'
+type Plane = 'agility' | 'policy' | 'kmip3' | 'migration' | 'developer'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -951,6 +953,7 @@ export function KmipPlaygroundView() {
               { id: 'policy', label: 'Policy', icon: ShieldCheck },
               { id: 'kmip3', label: 'KMIP3.0', icon: Layers },
               { id: 'migration', label: 'Migration', icon: ArrowRight },
+              { id: 'developer', label: 'Developer', icon: Code2 },
             ] as const
           ).map((t) => {
             const on = plane === t.id
@@ -1335,6 +1338,8 @@ export function KmipPlaygroundView() {
       {/* Migration runs its OWN engine instance on a dedicated slot — the
           estate keystore is hermetic beside the workbench's slot-0 engine. */}
       {plane === 'migration' && <MigrationView />}
+
+      {plane === 'developer' && <KmipPipelineBuilder engine={engine} />}
 
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}

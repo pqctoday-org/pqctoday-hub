@@ -18,7 +18,18 @@ export interface RunOutcome {
 
 const MARKER = /###STEP (\S+) (ok|error)###\s*(.*)/
 
-export function parseRun(output: string, steps: PipelineStep[], returncode: number): RunOutcome {
+/**
+ * `steps` is typed structurally ({id: string}[], not the concrete
+ * PipelineStep[]) so the KMIP Developer tab's own step type (kmipPipeline/
+ * kmipPipelineCodegen.ts's KmipStep — a different shape, same `id` field
+ * and the same ###STEP marker contract) can reuse this parser instead of a
+ * second copy of it. Only `s.id` is ever read off an entry.
+ */
+export function parseRun(
+  output: string,
+  steps: ReadonlyArray<{ id: string }>,
+  returncode: number
+): RunOutcome {
   const status: Record<string, StepStatus> = {}
   const text: Record<string, string> = {}
   for (const s of steps) status[s.id] = 'skipped'
@@ -60,27 +71,31 @@ export function parseRun(output: string, steps: PipelineStep[], returncode: numb
 }
 
 /* ── persistence (dev-tabs-pkcs11-kmip plan, WS-H / D2) ──────────────────────── */
+/* Generic over the step type: the KMIP Developer tab's own step shape
+ * (kmipPipeline/kmipPipelineCodegen.ts's KmipStep — a different structure,
+ * same `id`-addressed, ###STEP-marker-run contract) reuses this rather
+ * than a second copy of the storage/export machinery. Each lane passes its
+ * own localStorage key and export schema string so a PKCS#11 export can
+ * never be mistaken for — or silently accepted as — a KMIP one. */
 
-const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
-
-export interface SavedPipeline {
-  steps: PipelineStep[]
+export interface SavedPipeline<TStep = PipelineStep> {
+  steps: TStep[]
   input: string
 }
 
-export type PipelineStore = Record<string, SavedPipeline>
+export type PipelineStore<TStep = PipelineStep> = Record<string, SavedPipeline<TStep>>
 
-export function loadStore(): PipelineStore {
+export function loadStore<TStep = PipelineStep>(storeKey: string): PipelineStore<TStep> {
   try {
-    const raw = localStorage.getItem(STORE_KEY)
-    if (raw) return JSON.parse(raw) as PipelineStore
+    const raw = localStorage.getItem(storeKey)
+    if (raw) return JSON.parse(raw) as PipelineStore<TStep>
   } catch { /* private window, cleared site data, or corrupt value */ }
   return {}
 }
 
-export function saveStore(store: PipelineStore): boolean {
+export function saveStore<TStep = PipelineStep>(storeKey: string, store: PipelineStore<TStep>): boolean {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify(store))
+    localStorage.setItem(storeKey, JSON.stringify(store))
     return true
   } catch {
     return false   // quota — the caller surfaces this rather than failing silently
@@ -89,16 +104,20 @@ export function saveStore(store: PipelineStore): boolean {
 
 /** D2: export a single saved pipeline as a JSON file, portable across browsers/
  *  machines and re-importable via importPipelineJson below. */
-export interface ExportedPipelineFile {
-  schema: 'pqctoday-hub-pkcs11-pipeline-v1'
+export interface ExportedPipelineFile<TStep = PipelineStep> {
+  schema: string
   name: string
   exportedAt: string
-  pipeline: SavedPipeline
+  pipeline: SavedPipeline<TStep>
 }
 
-export function exportPipelineJson(name: string, pipeline: SavedPipeline): string {
-  const file: ExportedPipelineFile = {
-    schema: 'pqctoday-hub-pkcs11-pipeline-v1',
+export function exportPipelineJson<TStep = PipelineStep>(
+  schema: string,
+  name: string,
+  pipeline: SavedPipeline<TStep>
+): string {
+  const file: ExportedPipelineFile<TStep> = {
+    schema,
     name,
     exportedAt: new Date().toISOString(),
     pipeline,
@@ -107,8 +126,14 @@ export function exportPipelineJson(name: string, pipeline: SavedPipeline): strin
 }
 
 /** Validates the imported shape before it ever reaches setState — a malformed
- *  or foreign JSON file must fail loudly here, not corrupt the canvas. */
-export function importPipelineJson(raw: string): { name: string; pipeline: SavedPipeline } | null {
+ *  or foreign JSON file must fail loudly here, not corrupt the canvas.
+ *  `expectedSchema` rejects a file exported from the OTHER lane outright
+ *  (a KMIP pipeline is not a valid PKCS#11 one, and vice versa) rather than
+ *  accepting it and failing confusingly later on a step-shape mismatch. */
+export function importPipelineJson<TStep = PipelineStep>(
+  expectedSchema: string,
+  raw: string
+): { name: string; pipeline: SavedPipeline<TStep> } | null {
   let parsed: unknown
   try {
     parsed = JSON.parse(raw)
@@ -117,11 +142,11 @@ export function importPipelineJson(raw: string): { name: string; pipeline: Saved
   }
   if (
     typeof parsed !== 'object' || parsed === null ||
-    (parsed as Partial<ExportedPipelineFile>).schema !== 'pqctoday-hub-pkcs11-pipeline-v1'
+    (parsed as Partial<ExportedPipelineFile<TStep>>).schema !== expectedSchema
   ) {
     return null
   }
-  const file = parsed as ExportedPipelineFile
+  const file = parsed as ExportedPipelineFile<TStep>
   if (
     typeof file.name !== 'string' ||
     !file.pipeline || !Array.isArray(file.pipeline.steps) ||

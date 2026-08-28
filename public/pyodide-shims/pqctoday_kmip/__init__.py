@@ -205,6 +205,54 @@ class KmipClient:
             'assert_quantum_safe_channel() needs a real TLS handshake — use the dev sandbox.'
         )
 
+    # ── HUB-ONLY policy-plane convenience (dev-tabs-pkcs11-kmip plan D3) ────
+    # NOT part of the real pqctoday_kmip.KmipClient. On the real system,
+    # loading/dry-running a policy is a separate REST/mTLS AdminClient call
+    # (pqctoday-hsm/kmip/python-client's admin.py) — a different connection
+    # to a different port than the KMIP data-plane calls above. Collapsed
+    # onto this one object here purely for the Developer tab's pipeline
+    # builder, which teaches the crypto-agility POLICY PLANE as first-class
+    # steps (D3) without asking a learner to juggle two client objects for
+    # what is, in the browser, one and the same in-page engine anyway.
+    def load_policy(self, yaml_text):
+        raw = self._bridge.loadPolicyJson(yaml_text)
+        r = json.loads(raw)
+        status = RESULT_SUCCESS if r.get('ok') else RESULT_OP_FAILED
+        fields = {}
+        if r.get('warnings'):
+            fields['Warnings'] = r['warnings']
+        return KmipResult(operation='LoadPolicy', status=status,
+                           message=r.get('error'), fields=fields)
+
+    def dry_run(self, op, algorithm=None, **kwargs):
+        spec = {'op': op}
+        if algorithm is not None:
+            spec['algorithm'] = _normalize_algorithm(algorithm)
+        spec.update(kwargs)
+        raw = self._bridge.dryRunJson(json.dumps(spec))
+        r = json.loads(raw)
+        fields = {
+            'Kind': r.get('kind'),
+            'Algorithm': r.get('algorithm'),
+            'Reason': r.get('reason') or r.get('denyReason'),
+            'Rule': r.get('rule'),
+        }
+        # dry_run has no ok/fail concept on the real system either way — it
+        # always "succeeds" at telling you what WOULD happen (Allow/Deny/Rekey
+        # are all valid answers, not error states).
+        return KmipResult(operation='DryRun', status=RESULT_SUCCESS, fields=fields)
+
+    def policy_status(self):
+        raw = self._bridge.policyStatusJson()
+        r = json.loads(raw)
+        fields = {
+            'Active': r.get('active'),
+            'Name': r.get('name'),
+            'Fingerprint': r.get('fingerprint'),
+            'Rules': r.get('rules'),
+        }
+        return KmipResult(operation='PolicyStatus', status=RESULT_SUCCESS, fields=fields)
+
     def serve_as_endpoint(self, on_message=None, *, max_messages=64,
                            speaks_versions=((3, 0),),
                            handles_operations=('Notify', 'Put'),

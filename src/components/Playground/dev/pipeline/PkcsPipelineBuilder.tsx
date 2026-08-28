@@ -76,6 +76,8 @@ function instantiate(steps: PipelineStep[]): PipelineStep[] {
 }
 
 const FAMILIES: PrimitiveFamily[] = ['Signature', 'KEM', 'Symmetric', 'Hash']
+const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
+const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export const PkcsPipelineBuilder: React.FC = () => {
   const { moduleRef, isReady, autoInit } = useHsmContext()
@@ -83,7 +85,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() => instantiate(TEMPLATES['Encrypt + sign (PQ)'] ?? []))
   const [pipelineInput, setPipelineInput] = useState(DEFAULT_PIPELINE_INPUT)
-  const [store, setStore] = useState<PipelineStore>(() => loadStore())
+  const [store, setStore] = useState<PipelineStore>(() => loadStore(STORE_KEY))
   const [notice, setNotice] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
@@ -289,12 +291,12 @@ export const PkcsPipelineBuilder: React.FC = () => {
   const slug = pipelineName.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'pipeline'
   const exportPy = () => downloadFile(activeCode, `${slug}.py`, 'text/x-python')
   const exportJson = () => downloadFile(
-    exportPipelineJson(pipelineName, { steps: pipeline, input: pipelineInput }),
+    exportPipelineJson(EXPORT_SCHEMA, pipelineName, { steps: pipeline, input: pipelineInput }),
     `${slug}.json`, 'application/json',
   )
   const importJson = async (file: File) => {
     const text = await file.text()
-    const parsed = importPipelineJson(text)
+    const parsed = importPipelineJson<PipelineStep>(EXPORT_SCHEMA, text)
     if (!parsed) { flash('Not a valid pipeline export file'); return }
     setPipelineName(parsed.name)
     setPipeline(instantiate(parsed.pipeline.steps))
@@ -306,7 +308,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
 
   const savePipeline = () => {
     const next = { ...store, [pipelineName]: { steps: pipeline, input: pipelineInput } }
-    if (saveStore(next)) { setStore(next); flash(`Saved "${pipelineName}"`) }
+    if (saveStore(STORE_KEY, next)) { setStore(next); flash(`Saved "${pipelineName}"`) }
     else flash('Could not save — browser storage is full')
   }
   const loadPipeline = (name: string) => {
@@ -321,7 +323,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
   const deleteSaved = (name: string) => {
     const next = { ...store }
     delete next[name]
-    if (saveStore(next)) setStore(next)
+    if (saveStore(STORE_KEY, next)) setStore(next)
   }
 
   const palette: Record<PrimitiveFamily, PaletteEntry[]> = {

@@ -18,7 +18,7 @@
  * `JSON.parse(this.pg.run_op(JSON.stringify(spec)))`. This bridge mirrors
  * that shape one layer up instead of introducing a different one.
  */
-import type { KmipEngine, OpSpec } from '../kmip/kmipEngine'
+import type { KmipEngine, OpSpec, DryRunSpec } from '../kmip/kmipEngine'
 
 export interface KmipBridgeHandle {
   /** specJson: a JSON-encoded OpSpec. Returns a JSON-encoded OpResult. */
@@ -33,6 +33,18 @@ export interface KmipBridgeHandle {
    *  at all. listObjects() is the metadata-only surface that actually
    *  matches GetAttributes' real semantics. */
   listObjectsJson: () => string
+  /** Policy-plane surface (dev-tabs-pkcs11-kmip plan D3/WS-E "policy
+   *  steps"). NOT part of the real KmipClient at all — on the real system
+   *  policy load/dry-run is a SEPARATE REST/mTLS AdminClient, a different
+   *  connection to a different port (confirmed from the real
+   *  pqctoday_kmip package's source: admin.py's AdminClient, distinct from
+   *  kmip.py's KmipClient). The plan's own D3 decision already anticipated
+   *  and authorized collapsing that split into hub-only convenience
+   *  methods on the shim's single KmipClient object for teaching
+   *  purposes — see the shim's load_policy/dry_run docstrings. */
+  loadPolicyJson: (yaml: string) => string
+  dryRunJson: (specJson: string) => string
+  policyStatusJson: () => string
 }
 
 export function createKmipBridge(engine: KmipEngine): KmipBridgeHandle {
@@ -42,5 +54,11 @@ export function createKmipBridge(engine: KmipEngine): KmipBridgeHandle {
       return JSON.stringify(engine.runOp(spec))
     },
     listObjectsJson: () => JSON.stringify(engine.listObjects()),
+    loadPolicyJson: (yaml: string) => JSON.stringify(engine.loadPolicy(yaml)),
+    dryRunJson: (specJson: string) => {
+      const spec = JSON.parse(specJson) as DryRunSpec
+      return JSON.stringify(engine.dryRun(spec))
+    },
+    policyStatusJson: () => JSON.stringify(engine.policyStatus()),
   }
 }
