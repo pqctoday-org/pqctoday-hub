@@ -71,7 +71,10 @@ describe('validate:data:without-priv exclude-checks stays in sync with ci.yml', 
       pkg.scripts['validate:data:without-priv'],
       /--exclude-checks\s+([\w,-]+)/
     )
-    const ciList = parseExcludeList(read('.github/workflows/ci.yml'), /--exclude-checks\s+([\w,-]+)/)
+    const ciList = parseExcludeList(
+      read('.github/workflows/ci.yml'),
+      /--exclude-checks\s+([\w,-]+)/
+    )
     expect(localList).toEqual(ciList)
   })
 })

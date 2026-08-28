@@ -395,7 +395,9 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('Control+A')
-  await page.keyboard.type('while True: pass', { delay: 15 })
+  // delay: 35 — see dev-tab-pkcs11.local.spec.ts's twin test for why this
+  // script needs a wider margin than most typed content in this suite.
+  await page.keyboard.type('while True: pass', { delay: 35 })
   await expect(page.getByText('you edited the generated code')).toBeVisible()
 
   const t0 = Date.now()

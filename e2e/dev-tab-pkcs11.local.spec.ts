@@ -280,7 +280,10 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('Control+A')
-  await page.keyboard.type('while True: pass', { delay: 15 })
+  // delay: 35, not 15 — this exact script can't tolerate a single dropped
+  // keystroke (found live: under load, 15ms once typed "while Tre: pass",
+  // a NameError with nothing to do with the interrupt this test proves).
+  await page.keyboard.type('while True: pass', { delay: 35 })
   await expect(page.getByText('you edited the generated code')).toBeVisible()
 
   const t0 = Date.now()

@@ -9,6 +9,14 @@ import { test, expect } from '@playwright/test'
  * Mandatory, FIPS-140-3 as Recognized with Five Eyes affinity, AUS-GOV-001
  * threat). This is the URL the presenter projects during the AU exec
  * workshop.
+ *
+ * First-render `timeout: 25_000` (was 10_000, root-caused during a G9/W6
+ * gate sweep): the underlying data and applicability logic were confirmed
+ * correct — a standalone script isolated from the rest of the smoke suite
+ * consistently renders the expected content in ~5s. The 10s budget only
+ * broke under this suite's real parallel-worker contention (multiple heavy
+ * specs, including full-page axe scans, running concurrently), not from
+ * anything wrong with this page's data or logic.
  */
 test.beforeEach(async ({ page }) => {
   // 1. Suppress WhatsNew alertdialog so it doesn't intercept clicks.
@@ -51,7 +59,7 @@ test('AU exec workshop deep-link renders ExecutiveTimelineView', async ({ page }
       .getByText(/ASD ISM cutover/i)
       .locator('visible=true')
       .first()
-  ).toBeVisible({ timeout: 10_000 })
+  ).toBeVisible({ timeout: 25_000 })
 
   // Mandatory framework section — ASD-ISM lives here.
   await expect(page.getByText('ASD ISM').locator('visible=true').first()).toBeVisible()
@@ -124,7 +132,7 @@ test('the architect persona gets the architect For You view, not the exec one', 
       .getByText(/Jurisdiction map/i)
       .locator('visible=true')
       .first()
-  ).toBeVisible({ timeout: 10_000 })
+  ).toBeVisible({ timeout: 25_000 })
   // Decision card is exec-only; should NOT be visible to architects.
   await expect(page.getByText(/Decision this quarter/i).locator('visible=true')).toHaveCount(0)
 })
@@ -145,5 +153,5 @@ test('a visitor with no persona gets the generic ApplicabilityPanel', async ({ p
       .getByText(/Compliance Frameworks/i)
       .locator('visible=true')
       .first()
-  ).toBeVisible({ timeout: 10_000 })
+  ).toBeVisible({ timeout: 25_000 })
 })
