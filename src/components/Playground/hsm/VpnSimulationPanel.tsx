@@ -819,6 +819,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       ckEncapsulate: null,
       ckDecapsulate: null,
       ckValueLen: null,
+      // All-null fallback: none of these fields were actually probed, so
+      // there's no CKR_* to classify — the empty map correctly says "unknown
+      // reason" rather than fabricating one.
+      unavailable: {},
       ckHssKeysRemaining: null,
       ckXmssKeysRemaining: null,
       ckCheckValue: null,

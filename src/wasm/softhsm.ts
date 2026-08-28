@@ -5093,37 +5093,90 @@ export const hsm_slhdsaVerifyBytes = (
 
 // ── Key attribute inspection ──────────────────────────────────────────────────
 
-/** Safe single-attribute boolean read — returns null if attribute doesn't exist on this key type. */
+// PKCS#11 v3.2 §5.4/§5.12 result codes this module classifies specially — an
+// attribute read failing with one of these is a normal, meaningful outcome
+// (not present on this object vs. deliberately withheld), not an error.
+const CKR_ATTRIBUTE_SENSITIVE = 0x11
+const CKR_ATTRIBUTE_TYPE_INVALID = 0x12
+
+/** Why a KeyAttributeSet field came back null despite being probed — distinct
+ *  from a field that was never probed at all (client-side class gating, e.g.
+ *  CKA_SENSITIVE on a public key, which stays plain `null` with no entry here). */
+export type AttrUnavailableReason =
+  | 'absent' // CKR_ATTRIBUTE_TYPE_INVALID — the token has no such attribute on this object
+  | 'sensitive' // CKR_ATTRIBUTE_SENSITIVE — exists, withheld by design
+  | 'error' // any other non-OK rv (stale handle, closed session, …)
+
+const classifyRv = (rv: number): AttrUnavailableReason | null => {
+  if (rv === 0) return null
+  if (rv === CKR_ATTRIBUTE_TYPE_INVALID) return 'absent'
+  if (rv === CKR_ATTRIBUTE_SENSITIVE) return 'sensitive'
+  return 'error'
+}
+
+/** Single-attribute boolean read. rv is the raw C_GetAttributeValue result;
+ *  value is null whenever rv !== 0 (CKR_OK). */
 const readBoolAttr = (
   M: SoftHSMModule,
   hSession: number,
   handle: number,
   attrType: number
-): boolean | null => {
+): { rv: number; value: boolean | null } => {
   const bPtr = M._malloc(1)
   M.HEAPU8[bPtr] = 0
   const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: bPtr, bytesLen: 1 }])
   const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
   freeTemplate(M, tpl, 1)
-  const val = rv === 0 ? M.HEAPU8[bPtr] !== 0 : null
+  const value = rv === 0 ? M.HEAPU8[bPtr] !== 0 : null
   M._free(bPtr)
-  return val
+  return { rv, value }
 }
 
-/** Safe single-attribute ulong read — returns null if attribute doesn't exist. */
+/** Single-attribute ulong read. rv is the raw C_GetAttributeValue result;
+ *  value is null whenever rv !== 0 (CKR_OK). */
 const readUlongAttr = (
   M: SoftHSMModule,
   hSession: number,
   handle: number,
   attrType: number
-): number | null => {
+): { rv: number; value: number | null } => {
   const uPtr = M._malloc(4)
   const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: uPtr, bytesLen: 4 }])
   const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
   freeTemplate(M, tpl, 1)
-  const val = rv === 0 ? readUlong(M, uPtr) : null
+  const value = rv === 0 ? readUlong(M, uPtr) : null
   M._free(uPtr)
-  return val
+  return { rv, value }
+}
+
+/** Single-attribute variable-length byte read (two-call: length, then value).
+ *  rv is the failing call's raw result when either call fails; value is null
+ *  whenever rv !== 0. For byte-array attributes (CKA_EC_PARAMS, CKA_EC_POINT,
+ *  CKA_MODULUS, CKA_PUBLIC_EXPONENT, CKA_PUBLIC_KEY_INFO, …) that
+ *  hsm_getKeyAttributes doesn't read today — exported for a caller that reads
+ *  one directly, the way hsm_getPublicKeyInfo already does by hand. */
+export const readBytesAttr = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number,
+  attrType: number
+): { rv: number; value: Uint8Array | null } => {
+  const lenTpl = buildTemplate(M, [{ type: attrType }])
+  const lenRv = M._C_GetAttributeValue(hSession, handle, lenTpl.ptr, 1) >>> 0
+  if (lenRv !== 0) {
+    freeTemplate(M, lenTpl, 1)
+    return { rv: lenRv, value: null }
+  }
+  const len = readUlong(M, lenTpl.ptr + 8)
+  freeTemplate(M, lenTpl, 1)
+
+  const valPtr = M._malloc(len)
+  const valTpl = buildTemplate(M, [{ type: attrType, bytesPtr: valPtr, bytesLen: len }])
+  const valRv = M._C_GetAttributeValue(hSession, handle, valTpl.ptr, 1) >>> 0
+  const value = valRv === 0 ? M.HEAPU8.slice(valPtr, valPtr + len) : null
+  freeTemplate(M, valTpl, 1)
+  M._free(valPtr)
+  return { rv: valRv, value }
 }
 
 export interface KeyAttributeSet {
@@ -5159,6 +5212,19 @@ export interface KeyAttributeSet {
   ckHssKeysRemaining: number | null
   /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
   ckXmssKeysRemaining: number | null
+  /**
+   * Why each null field above came back null, for fields that were actually
+   * probed and failed (as opposed to attributes this object's class doesn't
+   * define at all, which are set to `null` locally without a C_GetAttributeValue
+   * call and have no entry here — e.g. CKA_SENSITIVE on a public key). A field
+   * with no entry here and a non-null value read successfully; a field with no
+   * entry here and a null value was either not probed (class-gated) or, for
+   * the two class/type reads that gate everything else, genuinely absent.
+   * Consult with `attrs.unavailable?.[key]`, not `attrs.unavailable[key]` —
+   * callers that build a KeyAttributeSet by other means (worker RPC bridges)
+   * may omit it entirely.
+   */
+  unavailable: Partial<Record<keyof KeyAttributeSet, AttrUnavailableReason>>
 }
 
 /** Read common PKCS#11 attributes for any key object in the current session.
@@ -5170,12 +5236,23 @@ export const hsm_getKeyAttributes = (
   hSession: number,
   handle: number
 ): KeyAttributeSet => {
-  const b = (t: number) => readBoolAttr(M, hSession, handle, t)
-  const u = (t: number) => readUlongAttr(M, hSession, handle, t)
+  const unavailable: Partial<Record<keyof KeyAttributeSet, AttrUnavailableReason>> = {}
+  const b = (key: keyof KeyAttributeSet, t: number): boolean | null => {
+    const { rv, value } = readBoolAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
+  const u = (key: keyof KeyAttributeSet, t: number): number | null => {
+    const { rv, value } = readUlongAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
 
   // Read class + type first — these are on every key object (Table 26 common attrs)
-  const ckClass = u(CKA_CLASS)
-  const ckKeyType = u(CKA_KEY_TYPE)
+  const ckClass = u('ckClass', CKA_CLASS)
+  const ckKeyType = u('ckKeyType', CKA_KEY_TYPE)
 
   const isPublic = ckClass === CKO_PUBLIC_KEY
   const isPrivate = ckClass === CKO_PRIVATE_KEY
@@ -5185,31 +5262,32 @@ export const hsm_getKeyAttributes = (
     ckClass,
     ckKeyType,
     // Common to all key classes (Table 26): DERIVE, LOCAL, KEY_GEN_MECHANISM
-    ckParameterSet: u(CKA_PARAMETER_SET),
-    ckKeyGenMechanism: u(CKA_KEY_GEN_MECHANISM),
-    ckToken: b(CKA_TOKEN),
-    ckPrivate: b(CKA_PRIVATE),
-    ckLocal: b(CKA_LOCAL),
-    ckDerive: b(CKA_DERIVE),
+    ckParameterSet: u('ckParameterSet', CKA_PARAMETER_SET),
+    ckKeyGenMechanism: u('ckKeyGenMechanism', CKA_KEY_GEN_MECHANISM),
+    ckToken: b('ckToken', CKA_TOKEN),
+    ckPrivate: b('ckPrivate', CKA_PRIVATE),
+    ckLocal: b('ckLocal', CKA_LOCAL),
+    ckDerive: b('ckDerive', CKA_DERIVE),
     // Sensitivity / extractability — private and secret keys only (Tables 29/30)
-    ckSensitive: isPrivate || isSecret ? b(CKA_SENSITIVE) : null,
-    ckExtractable: isPrivate || isSecret ? b(CKA_EXTRACTABLE) : null,
-    ckAlwaysSensitive: isPrivate || isSecret ? b(CKA_ALWAYS_SENSITIVE) : null,
-    ckNeverExtractable: isPrivate || isSecret ? b(CKA_NEVER_EXTRACTABLE) : null,
+    ckSensitive: isPrivate || isSecret ? b('ckSensitive', CKA_SENSITIVE) : null,
+    ckExtractable: isPrivate || isSecret ? b('ckExtractable', CKA_EXTRACTABLE) : null,
+    ckAlwaysSensitive: isPrivate || isSecret ? b('ckAlwaysSensitive', CKA_ALWAYS_SENSITIVE) : null,
+    ckNeverExtractable:
+      isPrivate || isSecret ? b('ckNeverExtractable', CKA_NEVER_EXTRACTABLE) : null,
     // Encryption / decryption — public+secret can encrypt, private+secret can decrypt
-    ckEncrypt: isPublic || isSecret ? b(CKA_ENCRYPT) : null,
-    ckDecrypt: isPrivate || isSecret ? b(CKA_DECRYPT) : null,
+    ckEncrypt: isPublic || isSecret ? b('ckEncrypt', CKA_ENCRYPT) : null,
+    ckDecrypt: isPrivate || isSecret ? b('ckDecrypt', CKA_DECRYPT) : null,
     // Signing — private keys sign, public keys verify; secret keys can do both (MAC)
-    ckSign: isPrivate || isSecret ? b(CKA_SIGN) : null,
-    ckVerify: isPublic || isSecret ? b(CKA_VERIFY) : null,
+    ckSign: isPrivate || isSecret ? b('ckSign', CKA_SIGN) : null,
+    ckVerify: isPublic || isSecret ? b('ckVerify', CKA_VERIFY) : null,
     // Wrapping — public+secret can wrap, private+secret can unwrap
-    ckWrap: isPublic || isSecret ? b(CKA_WRAP) : null,
-    ckUnwrap: isPrivate || isSecret ? b(CKA_UNWRAP) : null,
+    ckWrap: isPublic || isSecret ? b('ckWrap', CKA_WRAP) : null,
+    ckUnwrap: isPrivate || isSecret ? b('ckUnwrap', CKA_UNWRAP) : null,
     // KEM encap/decap — public key encapsulates, private key decapsulates (Table 27/29)
-    ckEncapsulate: isPublic ? b(CKA_ENCAPSULATE) : null,
-    ckDecapsulate: isPrivate ? b(CKA_DECAPSULATE) : null,
+    ckEncapsulate: isPublic ? b('ckEncapsulate', CKA_ENCAPSULATE) : null,
+    ckDecapsulate: isPrivate ? b('ckDecapsulate', CKA_DECAPSULATE) : null,
     // Secret-key-only attributes (Table 30)
-    ckValueLen: isSecret ? u(CKA_VALUE_LEN) : null,
+    ckValueLen: isSecret ? u('ckValueLen', CKA_VALUE_LEN) : null,
     ckCheckValue: isSecret
       ? (() => {
           try {
@@ -5220,9 +5298,13 @@ export const hsm_getKeyAttributes = (
           }
         })()
       : null,
-    ckHssKeysRemaining: ckKeyType === CKK_HSS ? u(CKA_HSS_KEYS_REMAINING) : null,
+    ckHssKeysRemaining:
+      ckKeyType === CKK_HSS ? u('ckHssKeysRemaining', CKA_HSS_KEYS_REMAINING) : null,
     ckXmssKeysRemaining:
-      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT ? u(CKA_XMSS_KEYS_REMAINING) : null,
+      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
+        ? u('ckXmssKeysRemaining', CKA_XMSS_KEYS_REMAINING)
+        : null,
+    unavailable,
   }
 }
 
