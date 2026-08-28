@@ -5,10 +5,11 @@
 // whichever profiles an engine actually claims (Tier B) live in the
 // browser, against both the C++ and Rust engines' identical raw WASM ABI.
 //
-// See pkcs11-hsm-playground-ws11-conformance-runner-plan-08282026.md for
-// the full design. This component is Phase 4 — the executor (Tier A) and
-// probe table (Tier B) it calls were built and independently browser-
-// verified in Phases 1 and 2.
+// See pkcs11-hsm-playground-ws11-conformance-runner-plan-08282026.md and
+// pkcs11-conformance-remaining-gaps-plan-08282026.md for the full design.
+// Phases 1-2 built the executor/probe table; Phase 3 wired
+// AUTH-M-1-32/CERT-M-1-32 into the executor; this Phase 4 wiring runs all
+// four Tier A cases and provisions the fixtures those two need.
 import { useState } from 'react'
 import { CheckCircle, XCircle, MinusCircle, Copy, ShieldCheck, ListChecks } from 'lucide-react'
 import { useHsmContext } from './HsmContext'
@@ -21,6 +22,9 @@ import {
   hsm_openUserSession,
   hsm_findProfileObjects,
   CKP_BASELINE_PROVIDER,
+  CKP_EXTENDED_PROVIDER,
+  CKP_AUTHENTICATION_TOKEN,
+  CKP_PUBLIC_CERTIFICATES_TOKEN,
   type SoftHSMModule,
 } from '../../../wasm/softhsm'
 import {
@@ -31,10 +35,14 @@ import {
   runProfileConditionProbes,
   type ProfileClaim,
 } from '../../../wasm/pkcs11ConformanceRunner/profileConditions'
+import {
+  provisionAuthFixture,
+  provisionCertFixture,
+} from '../../../wasm/pkcs11ConformanceRunner/profileFixtures'
 import blM132Xml from '../../../data/pkcs11-profiles/test-cases/BL-M-1-32.xml?raw'
 import extM132Xml from '../../../data/pkcs11-profiles/test-cases/EXT-M-1-32.xml?raw'
-
-const CKP_EXTENDED_PROVIDER = 0x00000002
+import authM132Xml from '../../../data/pkcs11-profiles/test-cases/AUTH-M-1-32.xml?raw'
+import certM132Xml from '../../../data/pkcs11-profiles/test-cases/CERT-M-1-32.xml?raw'
 
 type RowStatus = 'pass' | 'fail' | 'not-claimed'
 
@@ -48,7 +56,19 @@ interface RunnerRow {
   detail: string
 }
 
-const TIER_A_CASES: { id: string; xml: string; profile: ProfileClaim; citation: string }[] = [
+interface TierACase {
+  id: string
+  xml: string
+  profile: ProfileClaim
+  citation: string
+  /** Provisions the token objects this test case's XML assumes pre-exist
+   * (OASIS's example never creates them itself) and returns any extra
+   * ${...} bindings the executor needs — real PKCS#11 calls, run on the
+   * SAME freshly-initialized token the XML then replays against. */
+  fixture?: (M: SoftHSMModule, hSession: number) => Record<string, string | number>
+}
+
+const TIER_A_CASES: TierACase[] = [
   {
     id: 'BL-M-1-32',
     xml: blM132Xml,
@@ -61,16 +81,23 @@ const TIER_A_CASES: { id: string; xml: string; profile: ProfileClaim; citation: 
     profile: 'extended',
     citation: 'Profiles v3.2 §5.3.1 (Extended Provider mandatory test case)',
   },
-]
-
-/** Test cases OASIS publishes whose profile neither engine claims, and
- * whose executor handlers aren't wired yet (AUTH-M-1-32/CERT-M-1-32 need
- * C_SignInit/C_Sign/C_GetAttributeValue support beyond what BL/EXT need).
- * Rendered as informative not-claimed rows per the plan's own design —
- * never counted as failures — rather than silently omitted. */
-const UNCLAIMED_TIER_A_CASES = [
-  { id: 'AUTH-M-1-32', citation: 'Profiles v3.2 §5.4.1 (Authentication Token — not claimed)' },
-  { id: 'CERT-M-1-32', citation: 'Profiles v3.2 §5.5.1 (Public Certificates Token — not claimed)' },
+  {
+    id: 'AUTH-M-1-32',
+    xml: authM132Xml,
+    profile: 'authentication',
+    citation: 'Profiles v3.2 §5.4.1 (Authentication Token mandatory test case)',
+    fixture: (M, hSession) => provisionAuthFixture(M, hSession),
+  },
+  {
+    id: 'CERT-M-1-32',
+    xml: certM132Xml,
+    profile: 'certificates',
+    citation: 'Profiles v3.2 §5.5.1 (Public Certificates Token mandatory test case)',
+    fixture: (M, hSession) => {
+      provisionCertFixture(M, hSession, certM132Xml)
+      return {}
+    },
+  },
 ]
 
 const summarizeTestCase = (id: string, result: TestCaseExecutionResult): string => {
@@ -143,9 +170,17 @@ export const Pkcs11ConformanceRunner = () => {
           claims.add('baseline')
         if (profileObjects.some((p) => p.profileId === CKP_EXTENDED_PROVIDER))
           claims.add('extended')
+        if (profileObjects.some((p) => p.profileId === CKP_AUTHENTICATION_TOKEN))
+          claims.add('authentication')
+        if (profileObjects.some((p) => p.profileId === CKP_PUBLIC_CERTIFICATES_TOKEN))
+          claims.add('certificates')
 
-        // Tier A — must Finalize/Initialize once per test case, since
-        // BL-M-1-32/EXT-M-1-32 each start from their own fresh C_Initialize.
+        // Tier A — a FRESH C_InitToken before every case, not just a
+        // Finalize/Initialize: CERT-M-1-32's unauthenticated find expects
+        // its own fixture objects at index 0/1, which only holds if no
+        // earlier case's token objects (e.g. AUTH-M-1-32's public key) are
+        // still on the token. C_InitToken wipes the slot's prior token
+        // outright, so each case starts from a genuinely clean token.
         for (const tc of TIER_A_CASES) {
           if (!claims.has(tc.profile)) {
             newRows.push({
@@ -162,10 +197,17 @@ export const Pkcs11ConformanceRunner = () => {
           try {
             hsm_finalize(M, hSession)
           } catch {
-            // expected the second time through this loop
+            // expected from the second case onward
           }
+          hsm_initialize(M)
+          const caseSlot = hsm_getFirstSlot(M)
+          const caseInitSlot = hsm_initToken(M, caseSlot, '12345678', 'SoftHSM3')
+          const caseSession = hsm_openUserSession(M, caseInitSlot, '12345678', 'user1234')
+          const fixtureBindings = tc.fixture ? tc.fixture(M, caseSession) : {}
+          hsm_finalize(M, caseSession)
           const result = await runXmlTestCase(M, tc.id, tc.xml, eName === 'C++' ? 'cpp' : 'rust', {
             Pin: 'user1234',
+            ...fixtureBindings,
           })
           newRows.push({
             id: `${tc.id}-${eName}`,
@@ -175,17 +217,6 @@ export const Pkcs11ConformanceRunner = () => {
             citation: tc.citation,
             status: result.pass ? 'pass' : 'fail',
             detail: summarizeTestCase(tc.id, result),
-          })
-        }
-        for (const tc of UNCLAIMED_TIER_A_CASES) {
-          newRows.push({
-            id: `${tc.id}-${eName}`,
-            engine: eName,
-            tier: 'A',
-            name: tc.id,
-            citation: tc.citation,
-            status: 'not-claimed',
-            detail: `Neither engine publishes a CKO_PROFILE claiming this profile`,
           })
         }
 
@@ -337,12 +368,14 @@ export const Pkcs11ConformanceRunner = () => {
         </p>
         <p>
           Tier A: {TIER_A_CASES.length} OASIS mandatory test cases wired (
-          {TIER_A_CASES.map((t) => t.id).join(', ')}); AUTH-M-1-32/CERT-M-1-32 render as not-claimed
-          (neither engine publishes those profiles).
+          {TIER_A_CASES.map((t) => t.id).join(', ')}) — AUTH-M-1-32 and CERT-M-1-32 each provision
+          the token objects their own XML assumes pre-exist (a real RSA key pair; a data object plus
+          a certificate) before running. A row renders as not-claimed only for a profile the engine
+          genuinely doesn&apos;t publish a CKO_PROFILE for.
         </p>
         <p>
-          Tier B: up to 28 Baseline + 6 Extended condition probes per engine, gated on each
-          engine&apos;s own claimed profiles.
+          Tier B: up to 28 Baseline + 6 Extended + 8 Authentication Token + 5 Public Certificates
+          Token condition probes per engine, gated on each engine&apos;s own claimed profiles.
         </p>
         <p>
           Not run in-browser: the C++ engine&apos;s native 815-row conformance suite

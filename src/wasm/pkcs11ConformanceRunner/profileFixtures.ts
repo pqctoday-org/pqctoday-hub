@@ -104,6 +104,10 @@ const getAttrBytes = (
 export interface AuthFixtureBindings {
   'Fixture.Modulus': string
   'Fixture.PublicExponent': string
+  // Structurally compatible with runXmlTestCase's initialBindings
+  // (Record<string, string | number>) — TS won't treat an interface with
+  // only named properties as assignable to a Record without this.
+  [key: string]: string | number
 }
 
 /**

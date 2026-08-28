@@ -15,6 +15,9 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   buildTemplate,
   freeTemplate,
+  buildMech,
+  writeBytes,
+  checkRV,
   hsm_findAllObjects,
   hsm_findProfileObjects,
   hsm_getMechanismList,
@@ -31,16 +34,32 @@ import {
   CKA_KEY_TYPE,
   CKA_SENSITIVE,
   CKA_EXTRACTABLE,
+  CKA_SIGN,
+  CKA_VERIFY,
+  CKA_MODULUS_BITS,
+  CKA_PUBLIC_EXPONENT,
+  CKA_CERTIFICATE_TYPE,
+  CKA_SUBJECT,
   CKO_SECRET_KEY,
+  CKO_PUBLIC_KEY,
+  CKO_PRIVATE_KEY,
+  CKO_CERTIFICATE,
   CKK_GENERIC_SECRET,
+  CKK_RSA,
+  CKC_X_509,
+  CKM_RSA_PKCS_KEY_PAIR_GEN,
   CKP_BASELINE_PROVIDER,
+  CKP_EXTENDED_PROVIDER,
+  CKP_AUTHENTICATION_TOKEN,
+  CKP_PUBLIC_CERTIFICATES_TOKEN,
 } from '../softhsm'
 
 const CKO_DATA = 0x00000000
-const CKP_EXTENDED_PROVIDER = 0x00000002
+const CKF_SERIAL_SESSION = 0x00000004
+const CKM_SHA256_RSA_PKCS = 0x00000040
 const CKR_FUNCTION_NOT_SUPPORTED = 0x00000054
 
-export type ProfileClaim = 'baseline' | 'extended'
+export type ProfileClaim = 'baseline' | 'extended' | 'authentication' | 'certificates'
 
 export interface ProbeContext {
   M: SoftHSMModule
@@ -60,6 +79,14 @@ export interface ProbeContext {
   keyObjectHandle: number
   /** Every CKO_PROFILE object found on the token, with its CKA_PROFILE_ID. */
   profileObjects: { handle: number; profileId: number }[]
+  /** An RSA-2048 key pair created fresh for this probe run, present only
+   * when 'authentication' is claimed — the Authentication Token probes'
+   * own object/function checks. */
+  authKeys?: { pubHandle: number; privHandle: number; idBytes: Uint8Array }
+  /** An X.509 CKO_CERTIFICATE object created fresh for this probe run,
+   * sharing authKeys' CKA_ID, present only when 'certificates' is
+   * claimed. */
+  certHandle?: number
 }
 
 export interface ConditionProbe {
@@ -474,6 +501,379 @@ const EXTENDED_PROBES: Omit<ConditionProbe, 'profile'>[] = [
   },
 ]
 
+// ── Authentication Token — Profiles v3.2 §5.4 ──────────────────────────────
+
+const AUTH_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+  {
+    id: 'auth-obj-privatekey',
+    category: 'object',
+    name: 'CKO_PRIVATE_KEY',
+    citation: 'Profiles v3.2 §5.4 condition 5.a',
+    run: ({ authKeys }) => {
+      if (!authKeys) throw new Error('no CKO_PRIVATE_KEY object was provisioned for this probe run')
+      return `CKO_PRIVATE_KEY handle=${authKeys.privHandle}`
+    },
+  },
+  {
+    id: 'auth-obj-publickey',
+    category: 'object',
+    name: 'CKO_PUBLIC_KEY',
+    citation: 'Profiles v3.2 §5.4 condition 5.b',
+    run: ({ authKeys }) => {
+      if (!authKeys) throw new Error('no CKO_PUBLIC_KEY object was provisioned for this probe run')
+      return `CKO_PUBLIC_KEY handle=${authKeys.pubHandle}`
+    },
+  },
+  {
+    id: 'auth-obj-profile',
+    category: 'object',
+    name: 'CKO_PROFILE with CKP_AUTHENTICATION_TOKEN',
+    citation: 'Profiles v3.2 §5.4 condition 5.c',
+    run: ({ profileObjects }) => {
+      const match = profileObjects.find((p) => p.profileId === CKP_AUTHENTICATION_TOKEN)
+      if (!match) {
+        throw new Error(
+          `no CKO_PROFILE object with CKA_PROFILE_ID=CKP_AUTHENTICATION_TOKEN found (saw: ${profileObjects.map((p) => p.profileId).join(', ') || 'none'})`
+        )
+      }
+      return `found CKO_PROFILE handle=${match.handle} with CKP_AUTHENTICATION_TOKEN`
+    },
+  },
+  // auth-fn-signinit/auth-fn-sign run BEFORE the login/logout probes below,
+  // deliberately: both engines invalidate previously-resolved object
+  // handles across a C_Logout/C_Login cycle (proven empirically — moving
+  // these after auth-fn-logout made C_SignInit fail with
+  // CKR_KEY_HANDLE_INVALID/CKR_OBJECT_HANDLE_INVALID on Rust/C++
+  // respectively, using the exact same authKeys.privHandle that was valid
+  // moments earlier). §5.4 doesn't mandate an execution order across its
+  // own condition list, so probing 6.d/6.e first and 6.a-6.c after is
+  // conformant either way — this order is the one that doesn't invalidate
+  // its own fixture.
+  {
+    id: 'auth-fn-signinit',
+    category: 'function',
+    name: 'C_SignInit',
+    citation: 'Profiles v3.2 §5.4 condition 6.d',
+    run: ({ M, hSession, authKeys }) => {
+      if (!authKeys) throw new Error('no private key was provisioned for this probe run')
+      const mech = buildMech(M, CKM_SHA256_RSA_PKCS)
+      try {
+        const rv = M._C_SignInit(hSession, mech, authKeys.privHandle) >>> 0
+        if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+          throw new Error('C_SignInit → CKR_FUNCTION_NOT_SUPPORTED')
+        if (rv !== 0) throw new Error(`C_SignInit → rv=0x${rv.toString(16)}`)
+        return 'C_SignInit(SHA256_RSA_PKCS) → OK'
+      } finally {
+        M._free(mech)
+      }
+    },
+  },
+  {
+    id: 'auth-fn-sign',
+    category: 'function',
+    name: 'C_Sign',
+    citation: 'Profiles v3.2 §5.4 condition 6.e',
+    // A real sign + the engine's own C_Verify — independent, engine-side
+    // proof this isn't a stub. Tier A's AUTH-M-1-32 run separately proves
+    // the signature verifies with an engine-independent verifier
+    // (WebCrypto); duplicating that here would only re-test the same path.
+    run: ({ M, hSession, authKeys }) => {
+      if (!authKeys) throw new Error('no key pair was provisioned for this probe run')
+      const data = new TextEncoder().encode('WS-11 Tier B auth-fn-sign probe')
+      const dataPtr = M._malloc(data.length)
+      M.HEAPU8.set(data, dataPtr)
+      const sigLenPtr = M._malloc(4)
+      let sigPtr = 0
+      try {
+        let rv = M._C_Sign(hSession, dataPtr, data.length, 0, sigLenPtr) >>> 0
+        if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+          throw new Error('C_Sign → CKR_FUNCTION_NOT_SUPPORTED')
+        if (rv !== 0) throw new Error(`C_Sign(len) → rv=0x${rv.toString(16)}`)
+        const sigLen = M.getValue(sigLenPtr, 'i32') >>> 0
+        sigPtr = M._malloc(Math.max(sigLen, 1))
+        M.setValue(sigLenPtr, sigLen, 'i32')
+        rv = M._C_Sign(hSession, dataPtr, data.length, sigPtr, sigLenPtr) >>> 0
+        if (rv !== 0) throw new Error(`C_Sign(fetch) → rv=0x${rv.toString(16)}`)
+
+        const verifyMech = buildMech(M, CKM_SHA256_RSA_PKCS)
+        try {
+          checkRV(M._C_VerifyInit(hSession, verifyMech, authKeys.pubHandle), 'C_VerifyInit (probe)')
+          const actualLen = M.getValue(sigLenPtr, 'i32') >>> 0
+          checkRV(
+            M._C_Verify(hSession, dataPtr, data.length, sigPtr, actualLen),
+            'C_Verify (probe)'
+          )
+        } finally {
+          M._free(verifyMech)
+        }
+        return `C_Sign → ${M.getValue(sigLenPtr, 'i32') >>> 0} bytes, engine C_Verify confirms it`
+      } finally {
+        M._free(dataPtr)
+        M._free(sigLenPtr)
+        if (sigPtr) M._free(sigPtr)
+      }
+    },
+  },
+  {
+    id: 'auth-fn-login',
+    category: 'function',
+    name: 'C_Login',
+    citation: 'Profiles v3.2 §5.4 condition 6.a',
+    run: () => 'the probe session is already logged in — C_Login was already exercised by setup',
+  },
+  {
+    id: 'auth-fn-loginuser',
+    category: 'function',
+    name: 'C_LoginUser',
+    citation: 'Profiles v3.2 §5.4 condition 6.b',
+    run: ({ M, hSession }) => {
+      const pinBytes = new TextEncoder().encode('user1234')
+      const pinPtr = M._malloc(pinBytes.length)
+      M.HEAPU8.set(pinBytes, pinPtr)
+      try {
+        const rv = M._C_LoginUser(hSession, 1, pinPtr, pinBytes.length, 0, 0) >>> 0
+        if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+          throw new Error('C_LoginUser → CKR_FUNCTION_NOT_SUPPORTED')
+        return `C_LoginUser → rv=0x${rv.toString(16)} (not CKR_FUNCTION_NOT_SUPPORTED)`
+      } finally {
+        M._free(pinPtr)
+      }
+    },
+  },
+  {
+    id: 'auth-fn-logout',
+    category: 'function',
+    name: 'C_Logout',
+    citation: 'Profiles v3.2 §5.4 condition 6.c',
+    // Last on purpose — see the comment above auth-fn-signinit.
+    run: ({ M, hSession }) => {
+      const rv = M._C_Logout(hSession) >>> 0
+      if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+        throw new Error('C_Logout → CKR_FUNCTION_NOT_SUPPORTED')
+      if (rv !== 0) throw new Error(`C_Logout → rv=0x${rv.toString(16)}`)
+      const pinBytes = new TextEncoder().encode('user1234')
+      const pinPtr = M._malloc(pinBytes.length)
+      M.HEAPU8.set(pinBytes, pinPtr)
+      try {
+        M._C_Login(hSession, 1, pinPtr, pinBytes.length)
+      } finally {
+        M._free(pinPtr)
+      }
+      return 'C_Logout → OK (re-logged in immediately after)'
+    },
+  },
+]
+
+// ── Public Certificates Token — Profiles v3.2 §5.5 ─────────────────────────
+
+const CERT_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+  {
+    id: 'cert-obj-certificate',
+    category: 'object',
+    name: 'CKO_CERTIFICATE',
+    citation: 'Profiles v3.2 §5.5 condition 5.a',
+    run: ({ certHandle }) => {
+      if (certHandle === undefined)
+        throw new Error('no CKO_CERTIFICATE object was provisioned for this probe run')
+      return `CKO_CERTIFICATE handle=${certHandle}`
+    },
+  },
+  {
+    id: 'cert-obj-profile',
+    category: 'object',
+    name: 'CKO_PROFILE with CKP_PUBLIC_CERTIFICATES_TOKEN',
+    citation: 'Profiles v3.2 §5.5 condition 5.b',
+    run: ({ profileObjects }) => {
+      const match = profileObjects.find((p) => p.profileId === CKP_PUBLIC_CERTIFICATES_TOKEN)
+      if (!match) {
+        throw new Error(
+          `no CKO_PROFILE object with CKA_PROFILE_ID=CKP_PUBLIC_CERTIFICATES_TOKEN found (saw: ${profileObjects.map((p) => p.profileId).join(', ') || 'none'})`
+        )
+      }
+      return `found CKO_PROFILE handle=${match.handle} with CKP_PUBLIC_CERTIFICATES_TOKEN`
+    },
+  },
+  {
+    id: 'cert-loc-public',
+    category: 'object',
+    name: 'certificate findable without login',
+    citation: 'Profiles v3.2 §5.5 condition 8.a',
+    run: ({ M, slotId, certHandle }) => {
+      if (certHandle === undefined)
+        throw new Error('no certificate was provisioned for this probe run')
+      const hPtr = M._malloc(4)
+      try {
+        checkRV(
+          M._C_OpenSession(slotId, CKF_SERIAL_SESSION, 0, 0, hPtr),
+          'C_OpenSession (unauth probe)'
+        )
+        const hUnauth = M.getValue(hPtr, 'i32') >>> 0
+        try {
+          const tpl = buildTemplate(M, [{ type: CKA_CLASS, ulongVal: CKO_CERTIFICATE }])
+          try {
+            checkRV(M._C_FindObjectsInit(hUnauth, tpl.ptr, 1), 'C_FindObjectsInit (unauth probe)')
+          } finally {
+            freeTemplate(M, tpl, 1)
+          }
+          const objPtr = M._malloc(4)
+          const countPtr = M._malloc(4)
+          let found: number[] = []
+          try {
+            checkRV(
+              M._C_FindObjects(hUnauth, objPtr, 1, countPtr) >>> 0,
+              'C_FindObjects (unauth probe)'
+            )
+            const count = M.getValue(countPtr, 'i32') >>> 0
+            if (count > 0) found = [M.getValue(objPtr, 'i32') >>> 0]
+          } finally {
+            M._free(objPtr)
+            M._free(countPtr)
+            M._C_FindObjectsFinal(hUnauth)
+          }
+          if (found.length === 0)
+            throw new Error('an unauthenticated session found no CKO_CERTIFICATE object')
+          return `unauthenticated session found handle=${found[0]}`
+        } finally {
+          M._C_CloseSession(hUnauth)
+        }
+      } finally {
+        M._free(hPtr)
+      }
+    },
+  },
+  {
+    id: 'cert-loc-id-match',
+    category: 'attribute',
+    name: 'certificate CKA_ID matches its key pair',
+    citation: 'Profiles v3.2 §5.5 condition 8.b',
+    run: ({ M, hSession, certHandle, authKeys }) => {
+      if (certHandle === undefined || !authKeys)
+        throw new Error('no certificate + key pair was provisioned for this probe run')
+      const readId = (handle: number): string => {
+        const lenTpl = buildTemplate(M, [{ type: CKA_ID }])
+        try {
+          checkRV(
+            M._C_GetAttributeValue(hSession, handle, lenTpl.ptr, 1),
+            'C_GetAttributeValue(ID len)'
+          )
+          const len = M.getValue(lenTpl.ptr + 8, 'i32') >>> 0
+          const ptr = M._malloc(Math.max(len, 1))
+          try {
+            const tpl = buildTemplate(M, [{ type: CKA_ID, bytesPtr: ptr, bytesLen: len }])
+            try {
+              checkRV(
+                M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1),
+                'C_GetAttributeValue(ID)'
+              )
+              return Array.from(M.HEAPU8.slice(ptr, ptr + len))
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+            } finally {
+              freeTemplate(M, tpl, 1)
+            }
+          } finally {
+            M._free(ptr)
+          }
+        } finally {
+          freeTemplate(M, lenTpl, 1)
+        }
+      }
+      const certId = readId(certHandle)
+      const keyId = readId(authKeys.privHandle)
+      if (certId !== keyId) throw new Error(`CKA_ID mismatch: cert=${certId} key=${keyId}`)
+      return `CKA_ID matches: ${certId}`
+    },
+  },
+  {
+    id: 'cert-loc-key-by-id',
+    category: 'object',
+    name: 'matching public key findable by CKA_ID without login',
+    citation: 'Profiles v3.2 §5.5 condition 8.c.ii',
+    run: ({ M, hSession, slotId, authKeys }) => {
+      if (!authKeys) throw new Error('no key pair was provisioned for this probe run')
+      // Read the public key's own CKA_ID via the already-authenticated
+      // probe session, then search for that exact ID from a second,
+      // unauthenticated session — 8.c.ii, the public-key half of the
+      // "one or more of the following" clause.
+      const lenTpl = buildTemplate(M, [{ type: CKA_ID }])
+      let idBytes: Uint8Array
+      try {
+        checkRV(
+          M._C_GetAttributeValue(hSession, authKeys.pubHandle, lenTpl.ptr, 1),
+          'C_GetAttributeValue(ID len)'
+        )
+        const len = M.getValue(lenTpl.ptr + 8, 'i32') >>> 0
+        const ptr = M._malloc(Math.max(len, 1))
+        try {
+          const valTpl = buildTemplate(M, [{ type: CKA_ID, bytesPtr: ptr, bytesLen: len }])
+          try {
+            checkRV(
+              M._C_GetAttributeValue(hSession, authKeys.pubHandle, valTpl.ptr, 1),
+              'C_GetAttributeValue(ID)'
+            )
+            idBytes = M.HEAPU8.slice(ptr, ptr + len)
+          } finally {
+            freeTemplate(M, valTpl, 1)
+          }
+        } finally {
+          M._free(ptr)
+        }
+      } finally {
+        freeTemplate(M, lenTpl, 1)
+      }
+
+      const hPtr = M._malloc(4)
+      try {
+        checkRV(
+          M._C_OpenSession(slotId, CKF_SERIAL_SESSION, 0, 0, hPtr),
+          'C_OpenSession (unauth probe)'
+        )
+        const hUnauth = M.getValue(hPtr, 'i32') >>> 0
+        try {
+          const idPtr = M._malloc(Math.max(idBytes.length, 1))
+          M.HEAPU8.set(idBytes, idPtr)
+          const findTpl = buildTemplate(M, [
+            { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+            { type: CKA_ID, bytesPtr: idPtr, bytesLen: idBytes.length },
+          ])
+          try {
+            checkRV(
+              M._C_FindObjectsInit(hUnauth, findTpl.ptr, 2),
+              'C_FindObjectsInit (unauth probe)'
+            )
+          } finally {
+            freeTemplate(M, findTpl, 2)
+            M._free(idPtr)
+          }
+          const objPtr = M._malloc(4)
+          const countPtr = M._malloc(4)
+          let found = 0
+          try {
+            checkRV(
+              M._C_FindObjects(hUnauth, objPtr, 1, countPtr) >>> 0,
+              'C_FindObjects (unauth probe)'
+            )
+            found = M.getValue(countPtr, 'i32') >>> 0
+          } finally {
+            M._free(objPtr)
+            M._free(countPtr)
+            M._C_FindObjectsFinal(hUnauth)
+          }
+          if (found === 0)
+            throw new Error(
+              'an unauthenticated session found no CKO_PUBLIC_KEY object with the matching CKA_ID'
+            )
+          return 'unauthenticated session found the public key by its matching CKA_ID'
+        } finally {
+          M._C_CloseSession(hUnauth)
+        }
+      } finally {
+        M._free(hPtr)
+      }
+    },
+  },
+]
+
 // ── Orchestrator ─────────────────────────────────────────────────────────
 
 /**
@@ -494,6 +894,15 @@ export const runProfileConditionProbes = (
   const keyObjectHandle = createProbeKeyObject(M, hSession)
 
   const results: ProbeResult[] = []
+  // Mutable — authKeys/certHandle are populated lazily, right before
+  // CERT_PROBES/AUTH_PROBES run (not upfront alongside dataObjectHandle).
+  // EXTENDED_PROBES' own ext-fn-logout probe cycles C_Logout/C_Login before
+  // either of those blocks runs, and both engines invalidate previously-
+  // resolved object handles across that cycle (proven empirically: with
+  // authKeys created upfront, C_SignInit still failed with
+  // CKR_KEY_HANDLE_INVALID/CKR_OBJECT_HANDLE_INVALID even after moving
+  // auth-fn-signinit before AUTH_PROBES' OWN logout probe — the
+  // invalidating cycle was Extended's, which runs earlier still).
   const ctx: ProbeContext = {
     M,
     hSession,
@@ -519,10 +928,148 @@ export const runProfileConditionProbes = (
   if (claims.has('extended') && claims.has('baseline')) {
     for (const p of EXTENDED_PROBES) run(p, 'extended')
   }
+  // CERT_PROBES before AUTH_PROBES: CERT_PROBES also reuses authKeys
+  // (cert-loc-id-match/cert-loc-key-by-id read its CKA_ID), and
+  // AUTH_PROBES' own auth-fn-logout probe would invalidate it again.
+  if (claims.has('certificates') && claims.has('baseline')) {
+    ctx.authKeys = createProbeAuthKeyPair(M, hSession)
+    ctx.certHandle = createProbeCertificate(M, hSession, ctx.authKeys.idBytes)
+    for (const p of CERT_PROBES) run(p, 'certificates')
+  }
+  if (claims.has('authentication') && claims.has('baseline')) {
+    if (!ctx.authKeys) ctx.authKeys = createProbeAuthKeyPair(M, hSession)
+    for (const p of AUTH_PROBES) run(p, 'authentication')
+  }
+  const authKeys = ctx.authKeys
+  const certHandle = ctx.certHandle
 
   M._C_DestroyObject(hSession, dataObjectHandle)
   M._C_DestroyObject(hSession, keyObjectHandle)
+  if (certHandle !== undefined) M._C_DestroyObject(hSession, certHandle)
+  if (authKeys) {
+    M._C_DestroyObject(hSession, authKeys.pubHandle)
+    M._C_DestroyObject(hSession, authKeys.privHandle)
+  }
   return results
+}
+
+/** An RSA-2048 key pair for the Authentication Token probes — SIGN on the
+ * private half, VERIFY on the public half (§5.4 condition 6.d/6.e need a
+ * key that can actually do both). Returns the CKA_ID it was minted with so
+ * createProbeCertificate can share it (§5.5 condition 8.b/8.c). */
+const createProbeAuthKeyPair = (
+  M: SoftHSMModule,
+  hSession: number
+): { pubHandle: number; privHandle: number; idBytes: Uint8Array } => {
+  const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
+  const expBytes = new Uint8Array([0x01, 0x00, 0x01])
+  const expPtr = writeBytes(M, expBytes)
+  const idBytes = new TextEncoder().encode('tier-b-probe-key')
+  const idPtr = writeBytes(M, idBytes)
+  // CKA_TOKEN=true on both: cert-loc-public/cert-loc-key-by-id (§5.5
+  // cond. 8.a/8.c) open a SECOND session and search for these objects —
+  // session objects (CKA_TOKEN=false) are only visible to the session
+  // that created them, so a location probe against a fresh session would
+  // find nothing regardless of whether the engine actually supports
+  // unauthenticated lookup. Destroyed at the end of the probe run either way.
+  const pubAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: true },
+    { type: CKA_PRIVATE, boolVal: false },
+    { type: CKA_ID, bytesPtr: idPtr, bytesLen: idBytes.length },
+    { type: CKA_MODULUS_BITS, ulongVal: 2048 },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
+    { type: CKA_VERIFY, boolVal: true },
+  ]
+  const prvAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: true },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_ID, bytesPtr: idPtr, bytesLen: idBytes.length },
+    { type: CKA_SENSITIVE, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SIGN, boolVal: true },
+  ]
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+  const pubHPtr = M._malloc(4)
+  const prvHPtr = M._malloc(4)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
+      'C_GenerateKeyPair (Tier B auth probe fixture)'
+    )
+    return {
+      pubHandle: M.getValue(pubHPtr, 'i32') >>> 0,
+      privHandle: M.getValue(prvHPtr, 'i32') >>> 0,
+      idBytes,
+    }
+  } finally {
+    M._free(mech)
+    M._free(expPtr)
+    M._free(idPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** A minimal but structurally valid X.509 CKO_CERTIFICATE for the Public
+ * Certificates Token probes — Tier B only needs to prove object/attribute/
+ * location support, not replay OASIS's real cert (that is Tier A's job),
+ * so a small synthetic DER/Subject satisfies both engines' §4.6 Table 19/20
+ * validation (CKA_CERTIFICATE_TYPE, CKA_SUBJECT, non-empty CKA_VALUE) without
+ * needing a real ASN.1 encoder here. Shares `sharedId` (the auth key pair's
+ * CKA_ID) when provided, so cert-loc-id-match/cert-loc-key-by-id have a real
+ * match to find. */
+const createProbeCertificate = (
+  M: SoftHSMModule,
+  hSession: number,
+  sharedId?: Uint8Array
+): number => {
+  const idBytes = sharedId ?? new TextEncoder().encode('tier-b-probe-cert')
+  const subjectBytes = new TextEncoder().encode('CN=WS-11 Tier B probe')
+  const valueBytes = new Uint8Array(64).fill(0x30) // synthetic, not a real DER cert
+  const idPtr = writeBytes(M, idBytes)
+  const subjectPtr = writeBytes(M, subjectBytes)
+  const valuePtr = writeBytes(M, valueBytes)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_CERTIFICATE },
+    { type: CKA_CERTIFICATE_TYPE, ulongVal: CKC_X_509 },
+    // CKA_TOKEN=true: cert-loc-public/cert-loc-key-by-id search from a
+    // second session — see the comment on createProbeAuthKeyPair.
+    { type: CKA_TOKEN, boolVal: true },
+    { type: CKA_PRIVATE, boolVal: false },
+    { type: CKA_SUBJECT, bytesPtr: subjectPtr, bytesLen: subjectBytes.length },
+    { type: CKA_VALUE, bytesPtr: valuePtr, bytesLen: valueBytes.length },
+    { type: CKA_ID, bytesPtr: idPtr, bytesLen: idBytes.length },
+  ])
+  const hPtr = M._malloc(4)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, 7, hPtr),
+      'C_CreateObject (Tier B cert probe fixture)'
+    )
+    return M.getValue(hPtr, 'i32') >>> 0
+  } finally {
+    freeTemplate(M, tpl, 7)
+    M._free(idPtr)
+    M._free(subjectPtr)
+    M._free(valuePtr)
+    M._free(hPtr)
+  }
 }
 
 /** A CKO_SECRET_KEY object, imported directly (no key-generation mechanism
