@@ -481,6 +481,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+              evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id1}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
@@ -492,6 +493,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
               referenceUrl: REF.aesgcm,
+              evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -627,6 +629,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${rsaSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id3}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
@@ -638,6 +641,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.rsapss,
+              evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -694,6 +698,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id4}] ECDSA P-256 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${ecSigHex}…`
@@ -705,6 +710,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1571,6 +1577,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+              evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id12}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
@@ -1582,6 +1589,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
               referenceUrl: REF.aesctr,
+              evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1776,6 +1784,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id15}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
@@ -1787,6 +1796,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1836,6 +1846,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`
                 : 'Signature verification failed against RFC 8032 vector',
+              evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
             })
             addLog(`[${eName}] [id:${id16}] EdDSA Ed25519 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'}`)
           } catch (e: unknown) {
@@ -1845,6 +1856,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `EdDSA Ed25519 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.eddsa,
+              evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -2134,6 +2146,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `Wrapped[${wrapped.length}B]: ${wrappedHex}`
                 : `Mismatch: got ${toHex(wrapped, 8)}… expected ${toHex(expectedWrapped, 8)}…`,
+              evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id19}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
@@ -2145,6 +2158,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
               referenceUrl: REF.aeskw,
+              evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })

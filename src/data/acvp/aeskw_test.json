@@ -1,6 +1,6 @@
 {
   "algorithm": "AES-KW",
-  "source": "RFC 3394 Section 4.6 — AES-256 Key Wrap, 256-bit key data",
+  "source": "RFC 3394 Section 4.6 \u2014 AES-256 Key Wrap, 256-bit key data",
   "testGroups": [
     {
       "keyLen": 256,
@@ -12,5 +12,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": "https://www.rfc-editor.org/rfc/rfc3394",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "RFC 3394 Section 4.6 (published KAT sample, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. AES-256 Key Wrap of 256-bit key data is RFC 3394's own published test vector, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified against the OpenSSL CLI (aes256-wrap, RFC 3394 default IV A6A6A6A6A6A6A6A6) oracle before backfill."
+  }
 }
