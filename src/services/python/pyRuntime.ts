@@ -66,12 +66,15 @@ async function fetchShimSource(relPath: string): Promise<string> {
   return res.text()
 }
 
-// WS-C (KMIP shim) adds 'pqctoday_kmip/__init__.py' + 'pqctoday_kmip/_constants.py'
-// to this list once written — same install pattern, not yet present in P1.
-const SHIM_FILES = ['p11/__init__.py', 'p11/_constants.py'] as const
+const SHIM_FILES = [
+  'p11/__init__.py',
+  'p11/_constants.py',
+  'pqctoday_kmip/__init__.py',
+] as const
 
 async function installShims(py: PyodideInterface): Promise<void> {
   py.FS.mkdirTree('/hub_shims/p11')
+  py.FS.mkdirTree('/hub_shims/pqctoday_kmip')
 
   const sources = await Promise.all(SHIM_FILES.map(fetchShimSource))
   SHIM_FILES.forEach((relPath, i) => {

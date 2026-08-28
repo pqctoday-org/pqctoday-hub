@@ -658,6 +658,15 @@ check_compliance_sources.ts
 
 # Private Python scripts inside src/
 src/**/*.py
+# EXCEPT the Developer tabs' Pyodide shim sources (dev-tabs-pkcs11-kmip plan)
+# — these are product source, not private tooling: they ship into Pyodide's
+# filesystem at runtime (via public/pyodide-shims/, synced from these by
+# `npm run sync:pyodide-shims`) and are what a learner's script actually
+# imports. Found missing from git history 2026-08-28 after `git add` on this
+# directory silently no-op'd against the blanket rule above (only the
+# public/ synced COPY had been committed, never the real source) — same
+# class of trap as the documented scripts/* gitignore gotcha.
+!src/wasm/pyodide/shims/**/*.py
 
 # macOS clippings
 *.textClipping

@@ -24,6 +24,9 @@ import { MigrationWorkbenchSkeleton } from './components/Migrate/Workbench/Migra
 const P11ShimGate = import.meta.env.DEV
   ? lazyWithRetry(() => import('./dev-gate/P11ShimGate'))
   : null
+const KmipShimGate = import.meta.env.DEV
+  ? lazyWithRetry(() => import('./dev-gate/KmipShimGate'))
+  : null
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -304,6 +307,7 @@ function App() {
         <Route path=":toolId" element={<PlaygroundToolRoute />} />
       </Route>
       {P11ShimGate && <Route path="dev-gate/p11-shim" element={<P11ShimGate />} />}
+      {KmipShimGate && <Route path="dev-gate/kmip-shim" element={<KmipShimGate />} />}
       <Route
         path="openssl"
         element={
