@@ -14,7 +14,7 @@
  * yet built): P1's job is to prove the runtime seam works before any tab
  * chrome is built on top of it.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   getSoftHSMCppModule,
   createLoggingProxy,
@@ -86,11 +86,11 @@ async function runGate(): Promise<void> {
 }
 
 export default function P11ShimGate() {
-  const [ran, setRan] = useState(false)
+  const ran = useRef(false)
   useEffect(() => {
-    if (ran) return
-    setRan(true)
+    if (ran.current) return
+    ran.current = true
     void runGate()
-  }, [ran])
+  }, [])
   return <pre id="p11-gate-status">P1 gate running — see window.__p11GateResult</pre>
 }

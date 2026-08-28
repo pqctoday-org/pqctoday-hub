@@ -21,7 +21,6 @@ import { MigrationWorkbenchSkeleton } from './components/Migrate/Workbench/Migra
 // dev-tabs-pkcs11-kmip plan, P1 proof harness ONLY — not product UI. Excluded
 // from production entirely via import.meta.env.DEV below, so `import.meta.glob`
 // with eager:false plus the DEV guard keeps it out of the prod bundle graph.
-console.log('[dev-gate] import.meta.env.DEV =', import.meta.env.DEV, import.meta.env.MODE)
 const P11ShimGate = import.meta.env.DEV
   ? lazyWithRetry(() => import('./dev-gate/P11ShimGate'))
   : null

@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Construction,
   FlaskConical,
+  Code2,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -47,6 +48,7 @@ import {
   hsm_generateECKeyPair,
   hsm_generateAESKey,
 } from '../../wasm/softhsm'
+import { PkcsPipelineBuilder } from './dev/pipeline/PkcsPipelineBuilder'
 
 type HsmTab =
   | 'learn'
@@ -61,6 +63,7 @@ type HsmTab =
   | 'mechanisms'
   | 'acvp'
   | 'logs'
+  | 'developer'
 
 /** First-time visitors land on the guided Learn tab (matching the KMIP
  * playground's own Learn-first default), not the bare workbench. */
@@ -524,6 +527,16 @@ export const HsmPlayground = () => {
               </span>
             </>
           )}
+          {tabBtn(
+            'developer',
+            <>
+              <Code2 size={16} className="shrink-0" aria-hidden="true" />
+              <span className="text-xs ml-1">
+                <span className="sm:hidden">Dev</span>
+                <span className="hidden sm:inline">Developer</span>
+              </span>
+            </>
+          )}
         </div>
         <div
           className={clsx(
@@ -574,6 +587,7 @@ export const HsmPlayground = () => {
         {activeTab === 'logs' && (
           <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen={true} />
         )}
+        {activeTab === 'developer' && <PkcsPipelineBuilder />}
       </div>
 
       {error && (
