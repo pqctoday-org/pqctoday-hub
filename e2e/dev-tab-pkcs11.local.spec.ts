@@ -259,3 +259,42 @@ test('HSS/LMS-H10 generates, signs, and verifies live (G9/W3a)', async ({ page }
   await expect(page.getByText('✓ ran')).toHaveCount(3)
   await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
+
+test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt (G9/W4)', async ({
+  page,
+}) => {
+  // Regression guard for the W4 true-timeout, root cause and all: the
+  // watchdog worker MUST be pre-warmed (created + handshaken while the event
+  // loop is free) — a worker created immediately before a blocking run never
+  // starts, because worker startup is serviced by the parent's event loop
+  // (proven identically on Chromium and WebKit during W4). Layer 2's
+  // Promise.race can never catch this case (its setTimeout needs the event
+  // loop too), so the KeyboardInterrupt below is proof of layer 1 alone.
+  test.setTimeout(90000)
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  // Local dev/preview servers set COOP/COEP directly (vite.config.ts), so
+  // the summary rail must report the preemptive lane, not the fallback.
+  await expect(page.getByText(/preemptive kill/)).toBeVisible()
+
+  const editor = page.locator('.monaco-editor .view-lines').first()
+  await editor.click()
+  await page.keyboard.press('Control+A')
+  await page.keyboard.type('while True: pass', { delay: 15 })
+  await expect(page.getByText('you edited the generated code')).toBeVisible()
+
+  const t0 = Date.now()
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  const errorBanner = page.locator('.bg-red-500\\/5.border-b.border-red-500\\/25')
+  await expect(errorBanner).toBeVisible({ timeout: 25000 })
+  const elapsed = Date.now() - t0
+  expect(await errorBanner.textContent()).toMatch(/KeyboardInterrupt/)
+  expect(elapsed).toBeGreaterThan(14000)
+  expect(elapsed).toBeLessThan(20000)
+
+  // The tab must be fully alive again: revert and run the default template green.
+  await page.getByRole('button', { name: 'Revert to builder' }).click()
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran').first()).toBeVisible()
+})

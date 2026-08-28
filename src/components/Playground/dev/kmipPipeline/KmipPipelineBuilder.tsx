@@ -27,7 +27,7 @@ import { installMonacoSelfHost } from '../monacoSelfHost'
 import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
 import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
-import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
+import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
 import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
@@ -81,6 +81,12 @@ const KMIP_DRY_RUN_OPS = [
   'Destroy',
 ]
 const KMIP_DRY_RUN_ALGORITHMS = Object.values(KMIP_PRIMITIVES).map((p) => p.algorithm)
+
+// G9/W4: static for the session — see PkcsPipelineBuilder.tsx's identical row.
+const TIMEOUT_LABEL: Record<ReturnType<typeof getInterruptMode>, string> = {
+  preemptive: 'preemptive kill (15s)',
+  'best-effort': 'best-effort only (15s)',
+}
 const KMIP_PRIM_IDS = Object.keys(KMIP_PRIMITIVES)
 const SPECIAL_STEP_KINDS: { kind: 'load-policy' | 'dry-run' | 'expect-deny'; label: string }[] = [
   { kind: 'load-policy', label: 'Load policy' },
@@ -743,6 +749,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             <div className="flex justify-between">
               <span className="text-muted-foreground">Engine</span>
               <span className="font-mono">{engine ? 'KMIP/CACP (browser)' : 'initializing…'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Timeout</span>
+              <span className="font-mono">{TIMEOUT_LABEL[getInterruptMode()]}</span>
             </div>
           </div>
         </Card>

@@ -46,7 +46,7 @@ import {
   type PipelineStore,
 } from './pipelineRun'
 import { PALETTE_ENTRIES, type PaletteEntry, type PrimitiveFamily } from './pipelineCatalogMeta'
-import { bootPyRuntime, runPython } from '../../../../services/python/pyRuntime'
+import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { createP11Bridge } from '../../../../services/python/pyodide/p11Bridge'
 
 // W1.3: name the real engine — this used to just say "softhsmv3 (browser)"
@@ -59,6 +59,15 @@ const ENGINE_LABEL: Record<EngineMode, string> = {
   rust: 'Rust',
   dual: 'C++ (dual parity)',
   software: 'software',
+}
+
+// G9/W4: static for the session (crossOriginIsolated doesn't change mid-load) —
+// tells a learner whether a runaway script's 15s deadline can actually kill it
+// (preemptive, via pyRuntime's SharedArrayBuffer watchdog) or only report
+// failure around it while the script keeps running in the background.
+const TIMEOUT_LABEL: Record<ReturnType<typeof getInterruptMode>, string> = {
+  preemptive: 'preemptive kill (15s)',
+  'best-effort': 'best-effort only (15s)',
 }
 
 const OP_LABEL: Record<Op, string> = {
@@ -733,6 +742,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
               k="Engine"
               v={isReady ? `softhsmv3 · ${ENGINE_LABEL[engineMode]} (browser)` : 'initializing…'}
             />
+            <SummaryRow k="Timeout" v={TIMEOUT_LABEL[getInterruptMode()]} />
             <SummaryRow
               k="Token slot"
               v={

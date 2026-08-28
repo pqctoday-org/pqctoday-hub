@@ -378,3 +378,38 @@ test('drag/drop: reorder, delete, and rebind are all live (G9/W2)', async ({ pag
   await page.getByRole('button', { name: /Remove step 1/ }).click()
   await expect(page.getByText('Every step input is bound')).toBeVisible()
 })
+
+test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt (G9/W4)', async ({
+  page,
+}) => {
+  // Same layer-1 true-timeout as the PKCS#11 tab (one shared pyRuntime +
+  // watchdog worker — see that spec's twin test for the root-cause note).
+  // Proven separately here because the plan's W4 gate names BOTH tabs.
+  test.setTimeout(90000)
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+  await expect(page.getByText(/preemptive kill/)).toBeVisible()
+
+  const editor = page.locator('.monaco-editor .view-lines').first()
+  await editor.click()
+  await page.keyboard.press('Control+A')
+  await page.keyboard.type('while True: pass', { delay: 15 })
+  await expect(page.getByText('you edited the generated code')).toBeVisible()
+
+  const t0 = Date.now()
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  const errorBanner = page.locator('.bg-red-500\\/5.border-b.border-red-500\\/25')
+  await expect(errorBanner).toBeVisible({ timeout: 25000 })
+  const elapsed = Date.now() - t0
+  expect(await errorBanner.textContent()).toMatch(/KeyboardInterrupt/)
+  expect(elapsed).toBeGreaterThan(14000)
+  expect(elapsed).toBeLessThan(20000)
+
+  // The tab must be fully alive again: revert and run the template green.
+  await page.getByRole('button', { name: 'Revert to template' }).click()
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('✓ ran')).toHaveCount(9, { timeout: 5000 })
+})
