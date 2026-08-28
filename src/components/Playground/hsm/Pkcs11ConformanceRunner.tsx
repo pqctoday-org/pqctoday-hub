@@ -334,6 +334,7 @@ export const Pkcs11ConformanceRunner = () => {
               key={r.id}
               className="flex items-start gap-2 px-3 py-2"
               data-testid="pkcs11-conformance-row"
+              data-status={r.status}
             >
               <StatusIcon status={r.status} />
               <div className="min-w-0 flex-1">
