@@ -299,6 +299,12 @@ scripts/*
 # rule — a real gap, found 2026-07-10 adding a new test file here).
 !scripts/validators/
 !scripts/validate-data-integrity.ts
+# Keeps validate:data:without-priv's --exclude-checks list honest against
+# ci.yml's own copy (dev-tabs-pkcs11-kmip plan G9, W5) — same "every new
+# scripts/ file needs its own re-include line, on the same commit" gap this
+# whole section exists to prevent, caught here before the file was ever
+# committed rather than after.
+!scripts/validate-data-priv-exclusions.driftguard.test.ts
 
 # Role-board CTA gate — runs in the local gate (npm run audit:role-board-ctas)
 # and is referenced by a committed package.json script, so it MUST be tracked
