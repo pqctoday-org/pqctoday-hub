@@ -112,6 +112,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
+    '/navigate',
     // Persona-journeys A-grade redesign (2026-08-01): the Executive Overview
     // guided tour already exists (EXEC_TOUR_STAGES, SimulationView.tsx) but
     // /simulation was never nav-linked for this persona — it's the featured
@@ -131,6 +132,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/patents',
+    '/navigate',
     // Persona-journeys A-grade redesign (2026-08-01): /openssl dropped as a
     // standalone nav path — OpenSSL Studio is reachable via the Playground
     // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
@@ -153,6 +155,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
+    '/navigate',
     // Same redesign notes as developer above: /openssl folded into
     // Playground's own card; /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -175,6 +178,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/playground',
+    '/navigate',
     // /openssl folded into Playground's own card (see developer's note above).
     // /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -191,6 +195,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
+    '/navigate',
     // B+ remediation 2.2 (2026-08-10). Two changes to this list:
     //  - '/patents' removed entirely — it now carries a PERSONA_ABSENT_PATHS
     //    entry instead, so the rail says "not offered, and why" rather than
@@ -445,6 +450,7 @@ export const NAV_PATH_LABELS: Record<string, string> = {
   '/library': 'Library',
   '/leaders': 'Community',
   '/patents': 'Patents',
+  '/navigate': 'Navigate',
   '/openssl': 'OpenSSL Studio',
   '/revisions': 'Revisions',
   '/about': 'About',
