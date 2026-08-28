@@ -103,3 +103,39 @@ test('Export .py downloads a file carrying the provenance header', async ({ page
   expect(content).toContain("PKCS#11 v3.2 Developer tab")
   expect(content).toContain('import p11')
 })
+
+test('the guided lesson drives the real Developer tab end to end, including a live run', async ({ page }) => {
+  await page.goto('/playground/hsm')
+  await page.getByRole('button', { name: /Lessons/i }).click()
+  await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
+
+  // Step 1 (tourStep 0): no act — spotlights the real palette.
+  await expect(page.getByText('The palette')).toBeVisible({ timeout: 30000 })
+
+  // Step 2: act() clicks the real "Encrypt + sign (PQ)" template button —
+  // lands on the Developer tab with it applied and a labeled token slot live.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Or start from a template')).toBeVisible()
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+  // Step 3: no act — spotlights the Sign step's bound input.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText("Every step's inputs are bound")).toBeVisible()
+
+  // Step 4: act() fires the real Run click — wait for the genuine
+  // completion signal, not the tour's own step-advance timing.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Run it for real')).toBeVisible()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  // Step 5: no act — spotlights the real per-step result.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Read the result')).toBeVisible()
+
+  // Step 6 (last): spotlights the export panel.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Take it to the sandbox')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Done' }).click()
+  await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
+})

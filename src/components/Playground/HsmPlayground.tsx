@@ -17,6 +17,7 @@ import {
   Construction,
   FlaskConical,
   Code2,
+  Route,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -49,6 +50,13 @@ import {
   hsm_generateAESKey,
 } from '../../wasm/softhsm'
 import { PkcsPipelineBuilder } from './dev/pipeline/PkcsPipelineBuilder'
+import {
+  useLessonsTour,
+  LessonsHub,
+  TourOverlay,
+  clickByText,
+  type Lesson,
+} from './learnkit/TourEngine'
 
 type HsmTab =
   | 'learn'
@@ -290,6 +298,63 @@ export const HsmPlayground = () => {
     </Button>
   )
 
+  // ── Guided lessons (dev-tabs-pkcs11-kmip plan G5) ──────────────────────
+  // One tour, driving the real Developer-tab builder: `handleTabChange` is
+  // the exact same handler a real tab-button click calls (see `tabBtn`
+  // above), and `clickByText` below fires real clicks on the builder's own
+  // template/Run buttons — mirrors the KMIP playground's LessonsTour
+  // discipline of never simulating an outcome the real UI didn't produce.
+  // Deliberately does NOT script the palette→canvas HTML5 drag/drop itself
+  // (synthetic DragEvents with a real DataTransfer are unreliable to
+  // fabricate correctly): the drag step is left as a "try it yourself"
+  // narration, and the tour continues via the "Start from a template"
+  // button — a real click loading a real, already-bound pipeline.
+  type DevPlane = 'developer'
+  const devLessons: Lesson<DevPlane>[] = [
+    {
+      id: 'pkcs-dev-builder',
+      title: 'Build a PKCS#11 v3.2 sequence',
+      icon: Code2,
+      plane: 'developer',
+      blurb: 'The Developer tab: drag, bind, run — real p11 v3.2 calls.',
+      steps: [
+        {
+          title: 'The palette',
+          target: '[data-tour="pkcs-dev-palette"]',
+          body: 'Every primitive here is a real PKCS#11 v3.2 mechanism — try dragging one onto the canvas on the right. When you’re ready, click Next and we’ll load a complete worked example together.',
+        },
+        {
+          title: 'Or start from a template',
+          target: '[data-tour="pkcs-dev-templates"]',
+          act: () => clickByText('[data-tour="pkcs-dev-templates"] button', 'Encrypt + sign (PQ)'),
+          body: 'Templates are real, already-bound pipelines — AES-GCM encrypt, hash the ciphertext, then ML-DSA-65 sign it. Same primitives, same p11 v3.2 calls, wired up for you.',
+        },
+        {
+          title: "Every step's inputs are bound",
+          target: '[data-tour="pkcs-dev-step-sign"]',
+          body: 'The arrow above this Sign step reads "↓ from step 3" — its input is bound to the previous step’s output, not typed in by hand. That binding is what the generated Python’s variable references actually encode.',
+        },
+        {
+          title: 'Run it for real',
+          target: '[data-tour="pkcs-dev-run"]',
+          act: () => clickByText('[data-tour="pkcs-dev-run"]', 'Run'),
+          body: 'This runs the generated Python against the real softhsmv3 engine, compiled to WebAssembly, on your own dedicated "DevSequences" token slot.',
+        },
+        {
+          title: 'Read the result',
+          target: '[data-tour="pkcs-dev-output"]',
+          body: 'Every step above now shows a ✓ or ✗ with its real PKCS#11 return value. "What this proved" explains what a green run across all five steps actually demonstrates.',
+        },
+        {
+          title: 'Take it to the sandbox',
+          target: '[data-tour="pkcs-dev-export"]',
+          body: 'This is real, unmodified PKCS#11 v3.2 Python — download it and it runs the same way in the separately distributed pqctoday dev sandbox, no changes needed.',
+        },
+      ],
+    },
+  ]
+  const tour = useLessonsTour<DevPlane>(devLessons, (p) => handleTabChange(p))
+
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
       {role === 'executive' && (
@@ -317,6 +382,14 @@ export const HsmPlayground = () => {
             text="Drive a real PKCS#11 HSM in your browser"
             variant="icon"
           />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={tour.openHub}
+            className="flex items-center gap-1.5 text-xs"
+          >
+            <Route size={13} /> Lessons
+          </Button>
           {/* Engine mode selector — an engineering-workbench control, gated
               for curious/executive same as the ACVP tab; they run on the
               'rust' default without needing to choose. */}
@@ -376,6 +449,27 @@ export const HsmPlayground = () => {
 
       {showMethodologyModal && (
         <HsmTestMethodologyModal onClose={() => setShowMethodologyModal(false)} />
+      )}
+      {tour.hubOpen && (
+        <LessonsHub<DevPlane>
+          lessons={devLessons}
+          done={tour.doneLessons}
+          onStart={tour.startLesson}
+          onClose={tour.closeHub}
+          planeBadge={() => ({ label: 'Developer', className: 'bg-purple-500/10 text-purple-500' })}
+        />
+      )}
+      {tour.activeLesson && tour.tourStep >= 0 && (
+        <TourOverlay
+          lessonTitle={tour.activeLesson.title}
+          step={tour.activeLesson.steps[tour.tourStep]}
+          stepIndex={tour.tourStep}
+          stepCount={tour.activeLesson.steps.length}
+          rect={tour.tourRect}
+          onNext={tour.nextStep}
+          onBack={tour.backStep}
+          onEnd={tour.endTour}
+        />
       )}
 
       {/* Inline PKCS#11 jargon reference — hover any term for a definition, no modal needed. */}

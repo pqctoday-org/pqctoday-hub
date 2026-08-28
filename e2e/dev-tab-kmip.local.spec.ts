@@ -99,3 +99,32 @@ test('Export .py downloads a file carrying the provenance header and pqctoday_km
   expect(content).toContain('KMIP 3.0 + CACP Developer tab')
   expect(content).toContain('from pqctoday_kmip import KmipClient')
 })
+
+test('the guided lesson drives the real Developer tab end to end, including a live run and the expect-deny card', async ({ page }) => {
+  await page.goto('/playground/cacp')
+  await page.getByRole('button', { name: /Lessons/i }).click()
+  await page.getByRole('button', { name: /Build a governed KMIP sequence/ }).click()
+
+  // Step 1 (tourStep 0): act() clicked the real "Governed lifecycle"
+  // template button — lands on the Developer plane with it applied.
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByText('Start from a template')).toBeVisible()
+
+  // Step 2: no act, just narration over the real step list.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Four kinds of step')).toBeVisible()
+
+  // Step 3: act() fires the real Run click — wait for the genuine
+  // completion signal, not the tour's own step-advance timing.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Run it for real')).toBeVisible()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  // Step 4 (last): spotlights the expect-deny card — the CACP teaching moment.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('The refusal IS the lesson')).toBeVisible()
+  await expect(page.getByText('Expect deny: sign-early')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Done' }).click()
+  await expect(page.getByText('The refusal IS the lesson')).not.toBeVisible()
+})

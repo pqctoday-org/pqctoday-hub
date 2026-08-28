@@ -178,7 +178,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     <div className="grid grid-cols-[240px_1fr_340px] gap-0 min-h-[70vh] border rounded-lg overflow-hidden bg-background text-sm">
       {/* LEFT: templates + saved */}
       <aside className="border-r p-3 overflow-auto flex flex-col gap-4">
-        <div>
+        <div data-tour="kmip-dev-templates">
           <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Start from</div>
           <div className="flex flex-col gap-1">
             {KMIP_TEMPLATE_NAMES.map((t) => (
@@ -234,7 +234,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             <Button variant="outline" size="sm" onClick={savePipeline}>
               <Save className="h-3.5 w-3.5 mr-1" /> Save
             </Button>
-            <Button size="sm" disabled={running} onClick={() => { void runAll() }} title="Run (⌘/Ctrl+Enter)">
+            <Button data-tour="kmip-dev-run" size="sm" disabled={running} onClick={() => { void runAll() }} title="Run (⌘/Ctrl+Enter)">
               {running ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Play className="h-3.5 w-3.5 mr-1" />}
               {running ? 'Running…' : 'Run'}
             </Button>
@@ -271,14 +271,14 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           />
         </div>
 
-        <div className="p-4 flex-1 overflow-auto">
+        <div className="p-4 flex-1 overflow-auto" data-tour="kmip-dev-steps">
           <div className="max-w-2xl mx-auto flex flex-col gap-2">
             {steps.length === 0 && <div className="text-xs text-muted-foreground text-center py-8">Empty pipeline — pick a template.</div>}
             {steps.map((step, i) => {
               const st = stepState[step.id]
               const statusStyle = st ? STATUS_STYLE[st.status] : null
               return (
-                <div key={step.id} className="rounded-lg border bg-card p-3">
+                <div key={step.id} className="rounded-lg border bg-card p-3" data-tour={step.kind === 'expect-deny' ? 'kmip-dev-step-deny' : undefined}>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded bg-muted grid place-items-center text-xs font-semibold font-mono flex-shrink-0">{i + 1}</div>
                     <span className="font-mono text-xs">{stepLabel(step)}</span>

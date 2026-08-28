@@ -15,9 +15,11 @@
  * and the KMIP WASM engine are main-thread-synchronous already, so a worker
  * would require an RPC rewrite of the shims for no v1 benefit (plan §4).
  * That means there is no way to hard-abort a runaway script mid-execution in
- * v1 (Pyodide's interrupt buffer needs a cross-thread SharedArrayBuffer
- * write, which requires the interrupting code to run on a different
- * thread) — RUN_TIMEOUT_MS below is enforced BEFORE a run starts (refusing
+ * v1 (Pyodide's interrupt buffer needs a write to cross-thread shared
+ * memory — a capability this app deliberately does not declare or request,
+ * see workshopRequirements.driftguard.test.ts's `sab` marker — from the
+ * interrupting code, which would have to run on a different thread) —
+ * RUN_TIMEOUT_MS below is enforced BEFORE a run starts (refusing
  * to start a new run while one is still in flight) and via Python-level
  * cooperative checks a script can observe, not a true preemptive kill. A
  * true timeout is a recorded follow-on once/if execution moves to a worker.

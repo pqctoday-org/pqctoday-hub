@@ -340,7 +340,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
   return (
     <div className="grid grid-cols-[280px_1fr_320px] gap-0 min-h-[70vh] border rounded-lg overflow-hidden bg-background text-sm">
       {/* LEFT PALETTE */}
-      <aside className="border-r p-3 overflow-auto flex flex-col gap-4">
+      <aside className="border-r p-3 overflow-auto flex flex-col gap-4" data-tour="pkcs-dev-palette">
         <div>
           <div className="text-xs font-semibold uppercase text-muted-foreground mb-1">Palette</div>
           <div className="text-xs text-muted-foreground">Drag primitives onto the canvas →</div>
@@ -358,7 +358,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
             </div>
           </div>
         ))}
-        <div className="mt-auto pt-3 border-t">
+        <div className="mt-auto pt-3 border-t" data-tour="pkcs-dev-templates">
           <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">Start from</div>
           <div className="flex flex-col gap-1">
             {TEMPLATE_NAMES.map((t) => (
@@ -413,7 +413,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
             <Button variant="outline" size="sm" onClick={savePipeline}>
               <Save className="h-3.5 w-3.5 mr-1" /> Save
             </Button>
-            <Button size="sm" disabled={running} onClick={() => { void runAll() }}
+            <Button data-tour="pkcs-dev-run" size="sm" disabled={running} onClick={() => { void runAll() }}
               title={!detached && blocking.length ? `${blocking.length} problem(s) to fix first` : 'Run (⌘/Ctrl+Enter)'}>
               {running ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Play className="h-3.5 w-3.5 mr-1" />}
               {running ? 'Running…' : 'Run'}
@@ -452,7 +452,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
           </div>
         )}
 
-        <div className={`p-6 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}>
+        <div className={`p-6 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`} data-tour="pkcs-dev-canvas">
           <div className="max-w-3xl mx-auto flex flex-col items-center">
             <div className="px-4 py-3 bg-muted/40 border border-dashed rounded text-center min-w-[340px]">
               <div className="text-xs font-semibold uppercase text-muted-foreground">Pipeline input</div>
@@ -501,7 +501,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
             )}
 
             <FlowArrow />
-            <div className="px-4 py-3 bg-emerald-500/5 border border-dashed border-emerald-500/40 rounded text-center min-w-[280px]">
+            <div className="px-4 py-3 bg-emerald-500/5 border border-dashed border-emerald-500/40 rounded text-center min-w-[280px]" data-tour="pkcs-dev-output">
               <div className="text-xs font-semibold uppercase text-emerald-600 dark:text-emerald-400">Output bundle</div>
               <div className="font-mono text-xs mt-1">
                 {pipeline.length ? `${lastSpec?.label ?? lastStep?.primId} · ${lastStep?.op}` : 'empty pipeline'}
@@ -548,7 +548,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="p-3.5 min-h-0 flex-1 flex flex-col">
+        <Card className="p-3.5 min-h-0 flex-1 flex flex-col" data-tour="pkcs-dev-export">
           <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
             {detached ? 'Your script' : 'Generated Python'}
           </div>
@@ -631,7 +631,8 @@ const StepCard: React.FC<StepCardProps> = ({ step, index, steps, findings, onDel
   const borderColor = findings.length ? 'border-red-500/45' : isPq ? 'border-purple-500/30' : meta?.pq === false ? 'border-amber-500/30' : 'border-border'
 
   return (
-    <div draggable onDragStart={onDragStart} className={`w-full max-w-xl overflow-hidden rounded-lg border bg-card ${borderColor}`}>
+    <div draggable onDragStart={onDragStart} className={`w-full max-w-xl overflow-hidden rounded-lg border bg-card ${borderColor}`}
+      data-tour={step.op === 'sign' ? 'pkcs-dev-step-sign' : undefined}>
       <div className={`h-0.5 ${isPq ? 'bg-purple-500' : meta?.pq === false ? 'bg-amber-500' : 'bg-blue-500'}`} />
       <div className="p-3.5 flex items-start gap-3">
         <div className="w-6.5 h-6.5 rounded bg-muted grid place-items-center text-xs font-semibold font-mono flex-shrink-0 cursor-grab">{index + 1}</div>
