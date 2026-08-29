@@ -181,6 +181,7 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
+        aria-label={`Checklist progress: ${checkedCount} of ${totalItems} items complete`}
       >
         <div
           className="bg-primary h-2 rounded-full transition-all duration-300"

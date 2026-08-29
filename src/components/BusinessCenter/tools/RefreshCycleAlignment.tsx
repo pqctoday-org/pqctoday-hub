@@ -232,7 +232,10 @@ export const RefreshCycleAlignment: React.FC = () => {
               href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              // `underline`, not `hover:underline`: this link sits inside a
+              // paragraph, so colour alone is not a sufficient affordance
+              // (axe link-in-text-block / WCAG 1.4.1).
+              className="text-primary underline"
             >
               Read §5
             </a>
