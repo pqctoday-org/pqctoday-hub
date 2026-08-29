@@ -14,6 +14,7 @@
 export {
   BUSINESS_TOOLS,
   ARTIFACT_TYPE_TO_TOOL_ID,
+  TOOL_LABELS_BY_ARTIFACT_TYPE,
 } from '@/components/BusinessCenter/businessToolsRegistry'
 export { BUSINESS_TOOL_COMPONENTS } from '@/components/BusinessCenter/businessToolComponents'
 

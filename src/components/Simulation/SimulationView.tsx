@@ -32,6 +32,7 @@ import {
   isEmbeddableModule,
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
+  TOOL_LABELS_BY_ARTIFACT_TYPE,
 } from './resourceContract'
 import {
   canEmbedStep,
@@ -63,6 +64,11 @@ import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
 import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
 import { SimPhaseRunComplete } from './autorun/SimPhaseRunComplete'
+import { SimBriefSheet } from './autorun/SimBriefSheet'
+import { WorkshopResultCard } from './autorun/WorkshopResultCard'
+import { docFor } from './autorun/simAutoRun'
+import { MarkdownView } from '@/components/ui/MarkdownView'
+import { edgeKey } from '@/data/simArchitecture'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -106,7 +112,7 @@ import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/ph
 import { SIM_MISSIONS } from '@/data/simMissions'
 import { SECTORS } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
-import { JURISDICTION_RULES } from '@/data/jurisdiction'
+import { JURISDICTION_RULES, checkChoice } from '@/data/jurisdiction'
 import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
 import { useArchetypeChangeNotice } from '@/hooks/useArchetypeChangeNotice'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -120,8 +126,10 @@ import {
   achievedTreeLevel,
   isGatingStep,
   type TreeStep,
+  type TreeActivity,
 } from '@/simulation'
 import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
+import { pickBriefCheckQuestion } from '@/simulation/briefCheck'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
 import { buildScoreboard } from '@/simulation/scoreboard'
@@ -324,6 +332,7 @@ export function SimulationView() {
     mobilePlayOpen,
     setMobilePlayOpen,
     edgeDecisions,
+    setEdgeDecision,
     year,
     q,
     crqcShift,
@@ -449,6 +458,13 @@ export function SimulationView() {
     title: string
     question: QuizQuestion
   } | null>(null)
+  // mobile-ux-layer (WS-2/WS-3): the phone "Brief + check" sheet — an
+  // `activity` step's generated document, or a `workshop` step's pre-computed
+  // result card, each with a comprehension check drawn from a sibling learn
+  // module. Captured at OPEN time (not re-derived from the live `nextMove`
+  // while the sheet is showing) so the sheet's content can't shift under the
+  // player if a store update advances `nextMove` mid-interaction.
+  const [sheetFor, setSheetFor] = useState<{ step: TreeStep; act: TreeActivity } | null>(null)
   // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
   // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
   // so they never block a maturity band either — see isGatingStep).
@@ -1356,16 +1372,6 @@ export function SimulationView() {
     }
     moveReceiptRef.current = { sel, stepsDone, level, budgetSecured }
   }, [sel, stepsDone, level, budgetSecured, stepsTotal, clock.yearsToHorizon])
-  // mobile-ux-layer (WS-A2): activity steps produce their artifact through a
-  // Business tool (out of mobile scope for now — BusinessToolRoute has no
-  // mobile gate of its own), so they can only ever be credited from a wider
-  // screen. Every other kind (learn/reference/catalog) genuinely completes on
-  // a phone now (WS-A1). Split so the mobile UI can say that honestly instead
-  // of showing one count that can never reach its total on a phone alone.
-  const phoneSteps = flatSteps.filter((s) => s.kind !== 'activity')
-  const phoneStepsDone = phoneSteps.filter((s) => stepDone(s, sel)).length
-  const laptopSteps = flatSteps.filter((s) => s.kind === 'activity')
-  const laptopStepsDone = laptopSteps.filter((s) => stepDone(s, sel)).length
   // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
   // DecisionSection's "recommended" next move — it is NOT the only way to act:
   // the active band's steps are all openable (any order) in the ladder below.
@@ -1684,24 +1690,16 @@ export function SimulationView() {
           </div>
           <div className="mb-3">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
-              Phase {phase.number} {phaseCleared ? '· cleared' : '· active'}
+              {/* WS-1: Foundations has no number (FRAMEWORK_PHASES.foundations.number
+                  is null, a spanning band, not a lifecycle phase) — this was never
+                  exercised while mobile play was p0/p1-only. */}
+              {phase.number !== null ? `Phase ${phase.number}` : 'Foundations'}{' '}
+              {phaseCleared ? '· cleared' : '· active'}
             </span>
             <h1 className="text-lg font-extrabold text-foreground">{phase.name}</h1>
             {phaseTree?.gate && (
               <p className="mt-0.5 text-[11px] text-muted-foreground">
                 Gate {phaseTree.gate.id}: {phaseTree.gate.criterion}
-              </p>
-            )}
-            {/* mobile-ux-layer (WS-A2): honest split — phoneSteps is what can
-                actually finish here; laptopSteps needs a Business tool this
-                page can't offer yet. Only shown when this phase actually has
-                laptop-only steps, so p0/p1 read identically to today if that
-                ever changes. */}
-            {laptopSteps.length > 0 && (
-              <p className="mt-1 font-mono text-[10.5px] text-muted-foreground">
-                {phoneStepsDone}/{phoneSteps.length} phone steps · {laptopStepsDone}/
-                {laptopSteps.length} laptop steps
-                {laptopStepsDone > 0 ? ` (${laptopStepsDone} credited)` : ''}
               </p>
             )}
           </div>
@@ -1771,17 +1769,111 @@ export function SimulationView() {
               }
               if (step.kind === 'activity') {
                 const done = !!step.artifactType && artifactDone(step.artifactType)
+                if (done) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ Artifact on file — this step is credited.
+                    </div>
+                  )
+                }
+                const toolLabel = step.artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
+                  : undefined
                 return (
-                  <div
-                    className={`mt-2 rounded-md border px-3 py-2 text-[11px] leading-snug ${
-                      done
-                        ? 'border-success/40 bg-success/5 font-bold text-success'
-                        : 'border-dashed border-muted-foreground/40 bg-muted/30 text-muted-foreground'
-                    }`}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
+                    className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
                   >
-                    {done
-                      ? '✓ Artifact on file — this step is credited.'
-                      : 'Laptop step — this step is credited once its artifact is built on a wider screen.'}
+                    Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
+                  </Button>
+                )
+              }
+              if (step.kind === 'workshop' && step.workshopId) {
+                const workshopId = step.workshopId
+                const done = visitedWorkshops.includes(workshopId)
+                if (done) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ Result reviewed — this step is credited.
+                    </div>
+                  )
+                }
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
+                    className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
+                  >
+                    See the result
+                  </Button>
+                )
+              }
+              if (step.kind === 'architecture' && step.minDecisions) {
+                // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
+                // needed. Same judging logic as desktop's ArchitecturePanel
+                // (checkChoice against jurisdiction) and the same store action
+                // (setEdgeDecision); completion is the cumulative decision
+                // count vs this step's threshold (embedContract.ts), exactly
+                // like the desktop instance below.
+                const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+                const migratable = arch.edges.filter(
+                  (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+                )
+                const decidedCount = Object.keys(edgeDecisions).length
+                const target = Math.min(step.minDecisions, migratable.length)
+                if (decidedCount >= target) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ {decidedCount}/{target} migration decisions made — this step is credited.
+                    </div>
+                  )
+                }
+                const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
+                return (
+                  <div className="mt-2 space-y-1.5">
+                    <div className="text-[10.5px] font-bold text-muted-foreground">
+                      {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
+                    </div>
+                    {undecided.slice(0, 4).map((e) => {
+                      const key = edgeKey(e)
+                      return (
+                        <div
+                          key={key}
+                          className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
+                        >
+                          <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
+                            {e.from} → {e.to} ({e.protocol})
+                          </span>
+                          <div className="flex shrink-0 gap-1">
+                            {(['hybrid', 'pure'] as const).map((choice) => {
+                              const verdict = checkChoice(country, choice)
+                              return (
+                                <Button
+                                  key={choice}
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  title={verdict.reason}
+                                  onClick={() => setEdgeDecision(key, choice)}
+                                  className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
+                                    verdict.level === 'fail'
+                                      ? 'border-destructive/40 text-destructive'
+                                      : verdict.level === 'warn'
+                                        ? 'border-warning/40 text-warning'
+                                        : 'border-success/40 text-success'
+                                  }`}
+                                >
+                                  {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
+                                </Button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 )
               }
@@ -1839,6 +1931,83 @@ export function SimulationView() {
                 setQuizGate(null)
               }}
             />
+          )}
+          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
+              reads the SAME generated document the narrated auto-run files
+              (autorun/simAutoRun.ts docFor), answers one check drawn from a
+              sibling learn module, then credits through the exact same
+              addExecutiveDocument call the auto-run uses (no parallel
+              completion mechanism). Labeled "(Generated brief)" in the
+              artifact title — the 08-27 honesty rule: a desktop user can
+              later replace it by building the real one in the tool. */}
+          {sheetFor && sheetFor.step.kind === 'activity' && (
+            <>
+              {(() => {
+                const artifactType = sheetFor.step.artifactType
+                const doc = artifactType ? docFor(artifactType, sector) : undefined
+                const toolLabel = artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
+                  : undefined
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
+                      toolLabel
+                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
+                        : ''
+                    }`}
+                    title={doc?.title ?? sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="File this brief"
+                    onFile={() => {
+                      if (doc && artifactType) {
+                        addExecutiveDocument({
+                          id: `sim-mobile-brief-${artifactType}`,
+                          moduleId: 'sim-mobile-brief',
+                          type: artifactType,
+                          title: `${doc.title} (Generated brief)`,
+                          data: doc.data,
+                          createdAt: nowMs(),
+                        })
+                      }
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <MarkdownView content={doc?.data ?? '_No content available._'} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
+          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
+              a pre-computed, cited result card (the live playground tool
+              can't run on a phone), same check-then-credit shape, credited
+              via the same markWorkshopVisited() the desktop embed uses. */}
+          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
+            <>
+              {(() => {
+                const workshopId = sheetFor.step.workshopId!
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker="Workshop result — practice on a laptop for the interactive version"
+                    title={sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="Log this result"
+                    onFile={() => {
+                      markWorkshopVisited(workshopId)
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <WorkshopResultCard workshopId={workshopId} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
           )}
           {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
             <div
