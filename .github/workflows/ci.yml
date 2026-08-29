@@ -585,17 +585,17 @@ jobs:
       # A true sibling of the hub checkout (../pqctoday-hsm relative to
       # $GITHUB_WORKSPACE, i.e. /home/runner/work/pqctoday-hub/pqctoday-hsm) —
       # exactly where the *.local.test.ts drift guards above look for it.
-      # Sparse + shallow: this job only ever reads kmip/src/policy/rule.rs and
-      # kmip/policies/*.yaml.
+      # actions/checkout@v7's `path` refuses to place a checkout outside
+      # $GITHUB_WORKSPACE ("Repository path ... is not under ...") — found
+      # 2026-08-29, the first version of this fix used `path: ../pqctoday-hsm`
+      # and failed before even running the gate. A plain `git clone` has no
+      # such restriction. Sparse + shallow: this job only ever reads
+      # kmip/src/policy/rule.rs and kmip/policies/*.yaml.
       - name: Checkout sibling pqctoday-hsm (sparse — drift-guard sources only)
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: pqctoday-org/pqctoday-hsm
-          path: ../pqctoday-hsm
-          sparse-checkout: |
-            kmip/src/policy/rule.rs
-            kmip/policies
-          sparse-checkout-cone-mode: false
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse \
+            https://github.com/pqctoday-org/pqctoday-hsm.git ../pqctoday-hsm
+          git -C ../pqctoday-hsm sparse-checkout set kmip/src/policy kmip/policies
 
       - name: Use Node.js 22
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
