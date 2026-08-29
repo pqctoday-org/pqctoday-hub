@@ -25,5 +25,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": null,
+    "source_release": null,
+    "retrieved": "2026-08-28",
+    "producer": "self-generated, oracle=OpenSSL (Node crypto)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. No NIST ACVP-RSA-SigVer PSS reference vector matches this engine's supported hash families (NIST's set uses SHA-1/SHA2-224/SHA3-256/SHAKE; this engine's CKM_RSA_PKCS_PSS dispatches SHA-256/384/512/SHA3-384 only \u2014 checked 2026-08-28, same blocker documented for pbkdf2_test.json). Values independently computed with Node's crypto (OpenSSL) module and re-verified before this backfill. Self-consistency tier, not NIST ACVP or a published standard's own KAT."
+  }
 }

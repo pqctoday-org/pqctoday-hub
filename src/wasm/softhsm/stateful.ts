@@ -25,6 +25,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_CLASS,
   CKA_KEY_TYPE,
+  CKA_LABEL,
   CKA_PARAMETER_SET,
   CKA_PRIVATE,
   CKA_SIGN,
@@ -160,7 +161,8 @@ export const hsm_generateStatefulKeyPair = (
   paramSet: number,
   lmotsParamSet: number = CKP_LMOTS_SHA256_N32_W4,
   lmsParamsAll?: number[], // per-level LMS type ids (length = levels); overrides paramSet
-  lmotsParamsAll?: number[] // per-level LMOTS type ids (length = levels); overrides lmotsParamSet
+  lmotsParamsAll?: number[], // per-level LMOTS type ids (length = levels); overrides lmotsParamSet
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const isXmssFamily = mechType === CKM_XMSS_KEY_PAIR_GEN || mechType === CKM_XMSSMT_KEY_PAIR_GEN
 
@@ -216,6 +218,13 @@ export const hsm_generateStatefulKeyPair = (
     prvAttrs.push({ type: CKA_PARAMETER_SET, ulongVal: paramSet })
   }
 
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+  if (labelBytes && labelPtr) {
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+  }
+
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
   const pubHPtr = allocUlong(M)
@@ -239,6 +248,7 @@ export const hsm_generateStatefulKeyPair = (
   } finally {
     M._free(mech)
     if (paramPtr) M._free(paramPtr)
+    if (labelPtr) M._free(labelPtr)
     freeTemplate(M, pubTpl, pubAttrs.length)
     freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
@@ -258,7 +268,8 @@ export const hsm_generateHSSKeyPair = (
   hSession: number,
   levels: number,
   lmsTypes: number[],
-  lmotsTypes: number[]
+  lmotsTypes: number[],
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   if (levels < 1 || levels > HSS_MAX_LEVELS)
     throw new Error(`HSS levels must be 1–${HSS_MAX_LEVELS}, got ${levels}`)
@@ -272,7 +283,8 @@ export const hsm_generateHSSKeyPair = (
     lmsTypes[0],
     lmotsTypes[0],
     lmsTypes,
-    lmotsTypes
+    lmotsTypes,
+    label
   )
 }
 
@@ -284,9 +296,10 @@ export const hsm_generateHSSKeyPair = (
  */
 export const hsm_generateLMSKeyPair = (
   M: SoftHSMModule,
-  hSession: number
+  hSession: number,
+  label?: string
 ): { pubHandle: number; privHandle: number } =>
-  hsm_generateStatefulKeyPair(M, hSession, CKM_HSS_KEY_PAIR_GEN, CKK_HSS, 0, 0, [], [])
+  hsm_generateStatefulKeyPair(M, hSession, CKM_HSS_KEY_PAIR_GEN, CKK_HSS, 0, 0, [], [], label)
 
 /**
  * Generate an XMSS key pair. `paramSet` is the RFC 8391 §5.3 oid integer and
@@ -295,17 +308,39 @@ export const hsm_generateLMSKeyPair = (
 export const hsm_generateXMSSKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  paramSet: number = CKP_XMSS_SHA2_10_256
+  paramSet: number = CKP_XMSS_SHA2_10_256,
+  label?: string
 ): { pubHandle: number; privHandle: number } =>
-  hsm_generateStatefulKeyPair(M, hSession, CKM_XMSS_KEY_PAIR_GEN, CKK_XMSS, paramSet)
+  hsm_generateStatefulKeyPair(
+    M,
+    hSession,
+    CKM_XMSS_KEY_PAIR_GEN,
+    CKK_XMSS,
+    paramSet,
+    undefined,
+    undefined,
+    undefined,
+    label
+  )
 
 /** Generate an XMSS-MT key pair. Default: CKP_XMSSMT_SHA2_20_2_256 = 0x01. */
 export const hsm_generateXMSSMTKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  paramSet: number = CKP_XMSSMT_SHA2_20_2_256
+  paramSet: number = CKP_XMSSMT_SHA2_20_2_256,
+  label?: string
 ): { pubHandle: number; privHandle: number } =>
-  hsm_generateStatefulKeyPair(M, hSession, CKM_XMSSMT_KEY_PAIR_GEN, CKK_XMSSMT, paramSet)
+  hsm_generateStatefulKeyPair(
+    M,
+    hSession,
+    CKM_XMSSMT_KEY_PAIR_GEN,
+    CKK_XMSSMT,
+    paramSet,
+    undefined,
+    undefined,
+    undefined,
+    label
+  )
 
 // ── Stateful sign / verify (the single implementation) ───────────────────────
 

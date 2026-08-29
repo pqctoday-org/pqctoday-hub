@@ -17,5 +17,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": "https://www.rfc-editor.org/rfc/rfc6979",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "RFC 6979 Appendix A.2.5 (published KAT sample, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. ECDSA P-256/SHA-256 deterministic-signature test vector is RFC 6979's own published Appendix A test vector, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified (DER-encoded r,s over msg \"sample\") against the Node crypto (OpenSSL) oracle before backfill."
+  }
 }

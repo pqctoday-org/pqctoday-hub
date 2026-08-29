@@ -2,6 +2,11 @@
   "algorithm": "RSA",
   "mode": "OAEP",
   "source": "Generated via Node.js crypto (OpenSSL backend), RSA-2048 OAEP with SHA-256",
+  "_provenance": {
+    "producer": "self-generated, oracle=OpenSSL",
+    "evidenceTier": "self-consistency",
+    "note": "RSA-OAEP has no NIST ACVP algorithm registration — confirmed 2026-08-27 against the ACVP-Server repository's own gen-val/json-files directory listing at the pinned release used elsewhere in this directory (975de31e…): no RSA-OAEP entry exists at all (RSA-KeyGen/SigGen/SigVer and RSA-decryptionPrimitive/signaturePrimitive exist; OAEP does not). Per WS-4/D-8's fallback rule, this vector is kept and honestly tiered self-consistency rather than replaced or mislabeled: the ACVP tab decrypts this file's own known ciphertext with an imported CRT private key and checks it against this file's own known plaintext, proving the engine's C_Decrypt agrees with the value this fixture was generated against — not correctness against an external oracle. Previously a dead file with zero importers (gap report G13/H-6); wired as a new test category."
+  },
   "testGroups": [
     {
       "modLen": 2048,

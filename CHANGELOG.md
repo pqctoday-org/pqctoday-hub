@@ -42,6 +42,16 @@ The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy s
 
 - **The in-browser KMIP engine was 2 commits behind the server engine** [persona:developer]: rebuilt from the current engine, including the ACVP test-vector resync and the modular policy-engine hardening; the corpus manifest and engine bundle now agree on which commit they were built from (a mismatch here would have silently masked drift going forward).
 
+## [4.63.0] - 2026-08-28
+
+The Simulation now works honestly on a phone: learn and catalog steps can actually be marked complete there, and the artifact-reveal card no longer hides behind the run controls.
+
+### Fixed
+
+- **On mobile, Simulation steps had no way to finish — a correct pick only ever linked away** [view:/simulation] [persona:executive] [persona:curious]: the mobile Decide view now has a real completion control for learn steps (the same quiz gate desktop uses) and catalog steps (the same save action). Steps whose artifact comes from a Business tool — out of mobile's scope for now — are labeled "laptop steps" and auto-credited from the same signal desktop uses, instead of either faking them done or leaving their count permanently stuck below total. Each phase now shows a plain "X phone steps · Y laptop steps" split so that distinction is visible, not just backend logic.
+- **The mobile run-progress card could land underneath the run-control bar at the bottom of the screen, with no way to scroll to the hidden part** [view:/simulation] [persona:executive] [persona:curious]: the card now measures the run-control bar's real height and sits above it, and gains a scrollable max-height so a longer artifact description is fully readable. On mobile the run-control bar itself now starts collapsed to its title (still one tap to expand) instead of covering roughly a quarter of the screen by default.
+- **Leaving the Simulation phase overview and returning, or reloading the page on a phone, could silently reset an in-progress mobile run back to the overview** [view:/simulation] [persona:executive] [persona:curious]: the mobile play-panel's open/closed state now survives a reload, matching how the rest of a run's progress was already preserved.
+
 ## [4.62.0] - 2026-08-28
 
 A new /navigate page renders the whole PQC knowledge hub as an explorable 3D graph, the Migrate vendor-risk tab's numbers are now trustworthy, and Share moves out of every page and into one place.
@@ -59,6 +69,20 @@ A new /navigate page renders the whole PQC knowledge hub as an explorable 3D gra
 ### Changed
 
 - **Share moved out of every individual page and into the top bar, everywhere** [persona:executive] [persona:architect] [persona:developer] [persona:researcher] [persona:ops] [persona:curious]: 19 duplicate in-page Share buttons across the Playground, business tools, Library, and Report page are gone; the top bar's Share now produces the same specific deep link each of those used to.
+
+## [4.60.0] - 2026-08-28
+
+The HSM Playground gets a real PKCS#11 v3.2 conformance checker, the key attribute inspector stops mislabeling post-quantum stateful-signature keys, and ACVP testing gains 8 more real NIST vector categories with visible evidence tiers.
+
+### Added
+
+- **A new Conformance tab in the HSM Playground runs OASIS's own published PKCS#11 v3.2 test cases** [view:/playground/hsm] [persona:developer] [persona:architect] [persona:ops]: both the C++ and Rust engines are now checked against OASIS's Baseline, Extended, Authentication Token, and Public Certificates Token mandatory test cases, run verbatim over the engines' real PKCS#11 calls rather than a paraphrase of the spec. Building this surfaced and fixed two genuine engine conformance gaps: object handles that stayed valid across a login/logout cycle when the spec says they shouldn't, and objects returned in a different order after a session reset.
+
+- **ACVP testing gains 8 more categories backed by real NIST test vectors** [view:/playground/hsm] [persona:developer] [persona:ops]: ECDSA P-521, EdDSA Ed448, KMAC128, AES-CBC-256, and HMAC-SHA256/384/512 now check against published NIST ACVP vectors instead of internally-generated ones. Every ACVP result now shows which evidence tier it relies on — a real NIST vector, a published-standard sample, or a self-consistency check — as a badge on the result.
+
+### Fixed
+
+- **Post-quantum stateful-signature keys (HSS, XMSS, XMSS^MT) showed up as unlabeled hex instead of their key type** [view:/playground/hsm] [persona:developer]: the shared key-attribute inspector used by 30+ surfaces (SSH, VPN, 5G, PKI Workshop, HD wallet, and more) had its own copy of the key-type name table that had drifted out of sync with the Playground's HSM Keys tab. The three separate copies are now one inspector, which also reads 17 attributes (CKA_EC_PARAMS, CKA_MODULUS_BITS, CKA_TRUSTED, and others) that both engines already supported but the inspector never asked for, and correctly distinguishes an attribute that's absent from one that's present but access-restricted.
 
 ## [4.59.0] - 2026-08-26
 

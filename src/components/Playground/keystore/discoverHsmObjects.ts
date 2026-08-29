@@ -79,11 +79,16 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
       const family: HsmFamily = a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
       const role: HsmKeyRole = a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
       const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
+      // Prefer the object's real CKA_LABEL — set by most generators, and now
+      // by hsm_generateECKeyPair too (previously silently dropped). Fall back
+      // to a synthetic label only when the object genuinely has none (empty
+      // string, e.g. imported without one) or the read failed.
+      const label = a.ckLabel && a.ckLabel.length > 0 ? a.ckLabel : `${typeName} (discovered)`
       hsm.addHsmKey({
         handle: h,
         family,
         role,
-        label: `${typeName} (discovered)`,
+        label,
         generatedAt: new Date().toLocaleTimeString(),
       })
       added++

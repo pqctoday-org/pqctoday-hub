@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Construction,
   FlaskConical,
+  ListChecks,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -29,6 +30,7 @@ import { HsmKemPanel } from './hsm/HsmKemPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
 import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
+import { Pkcs11ConformanceRunner } from './hsm/Pkcs11ConformanceRunner'
 import { HsmTestMethodologyModal } from './hsm/HsmTestMethodologyModal'
 import { TokenSetupPanel } from './components/TokenSetupPanel'
 import { HsmKeyTable } from './keystore/HsmKeyTable'
@@ -60,6 +62,7 @@ type HsmTab =
   | 'key_derive'
   | 'mechanisms'
   | 'acvp'
+  | 'conformance'
   | 'logs'
 
 /** First-time visitors land on the guided Learn tab (matching the KMIP
@@ -187,10 +190,14 @@ export const HsmPlayground = () => {
     if (engine) setEngineMode(engine)
     if (!tab || tab === DEFAULT_TAB) {
       // No explicit tab, or it matches the default — nothing extra to do.
-    } else if (tab === 'acvp' && (role === 'curious' || role === 'executive')) {
-      // ACVP is an engineering-workbench surface, gated for curious/executive
-      // (matches the ExecutiveRedirectBanner above) — don't honor a stale or
-      // hand-crafted ?tab=acvp deep link for these personas.
+    } else if (
+      (tab === 'acvp' || tab === 'conformance') &&
+      (role === 'curious' || role === 'executive')
+    ) {
+      // ACVP and Conformance are engineering-workbench surfaces, gated for
+      // curious/executive (matches the ExecutiveRedirectBanner above) —
+      // don't honor a stale or hand-crafted ?tab= deep link for these
+      // personas.
     } else if (tab === 'keystore') {
       // Manual 3-step walkthrough tab, on purpose — switch to it without
       // eagerly auto-initing the engine in the background.
@@ -246,11 +253,14 @@ export const HsmPlayground = () => {
   }, [])
 
   // Safety net: if a persona switch lands a curious/executive user on the
-  // gated ACVP tab mid-session (they were on it as another persona, then
-  // switched role), fall back to the default tab rather than leaving them on
-  // a surface whose tab button is now hidden.
+  // gated ACVP/Conformance tab mid-session (they were on it as another
+  // persona, then switched role), fall back to the default tab rather than
+  // leaving them on a surface whose tab button is now hidden.
   useEffect(() => {
-    if (activeTab === 'acvp' && (role === 'curious' || role === 'executive')) {
+    if (
+      (activeTab === 'acvp' || activeTab === 'conformance') &&
+      (role === 'curious' || role === 'executive')
+    ) {
       setActiveTab(DEFAULT_TAB)
     }
   }, [role, activeTab])
@@ -522,6 +532,18 @@ export const HsmPlayground = () => {
                 <span className="text-xs ml-1">ACVP</span>
               </>
             )}
+          {role !== 'curious' &&
+            role !== 'executive' &&
+            tabBtn(
+              'conformance',
+              <>
+                <ListChecks size={16} className="shrink-0" aria-hidden="true" />
+                <span className="text-xs ml-1">
+                  <span className="sm:hidden">Conf.</span>
+                  <span className="hidden sm:inline">Conformance</span>
+                </span>
+              </>
+            )}
           {tabBtn(
             'logs',
             <>
@@ -579,6 +601,7 @@ export const HsmPlayground = () => {
         )}
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
         {activeTab === 'acvp' && <HsmAcvpTesting />}
+        {activeTab === 'conformance' && <Pkcs11ConformanceRunner />}
         {activeTab === 'logs' && (
           <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen={true} />
         )}
