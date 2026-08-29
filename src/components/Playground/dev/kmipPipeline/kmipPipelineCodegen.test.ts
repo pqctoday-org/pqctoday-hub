@@ -8,7 +8,12 @@
 // every OTHER step, wrong for a step a later expect-deny step is meant to
 // judge. This test is what stops that regressing silently.
 import { describe, expect, it } from 'vitest'
-import { emitKmipPipeline } from './kmipPipelineCodegen'
+import {
+  emitKmipPipeline,
+  tryParsePipelineFromEditedCode,
+  type KmipOpStep,
+  type KmipStep,
+} from './kmipPipelineCodegen'
 import { KMIP_TEMPLATES, KMIP_TEMPLATE_NAMES } from './kmipPipelineTemplates'
 
 describe('emitKmipPipeline — template snapshots', () => {
@@ -97,5 +102,154 @@ describe('emitKmipPipeline — messageMode (G9, W3b: genuinely binary payloads)'
     const hexCalls = code.match(/bytes\.fromhex\('deadbeef'\)/g) ?? []
     expect(signCalls.length).toBeGreaterThan(1)
     expect(hexCalls).toHaveLength(signCalls.length)
+  })
+})
+
+describe('tryParsePipelineFromEditedCode — reverse-parsing the Code tab back to KMIP steps', () => {
+  const markerLine = (lines: string[], id: string) =>
+    lines.findIndex((l) => l.includes(`# ── ${id} ·`))
+
+  it('(a) no edits round-trips to the identical steps', () => {
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const code = emitKmipPipeline(steps, {})
+    const result = tryParsePipelineFromEditedCode(code, steps)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.steps).toEqual(steps)
+  })
+
+  it('(b) an edited literal string value is correctly extracted', () => {
+    // No shipped template binds an op param literally (the builder always binds
+    // via 'ref') — build one by hand, since a literal IS a legal KmipParamValue
+    // and renderRef's 'literal' branch does render it as a quoted string.
+    const steps: KmipStep[] = [
+      {
+        kind: 'op',
+        id: 'k1',
+        primId: 'ml-dsa-65',
+        op: 'getAttributes',
+        params: { uid: { bind: 'literal', value: 'some-uid-1' } },
+      },
+    ]
+    const generated = emitKmipPipeline(steps, {})
+    expect(generated).toContain("c.get_attributes('some-uid-1')")
+    const edited = generated.replace("'some-uid-1'", "'some-uid-2'")
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      const k1 = result.steps[0] as KmipOpStep
+      expect(k1.params.uid).toEqual({ bind: 'literal', value: 'some-uid-2' })
+    }
+  })
+
+  it('(c) an edited literal "bytes" (hex-mode Sign message) value is correctly extracted', () => {
+    // KMIP has no separate bytes-bind ParamValue — the structurally equivalent
+    // binary-literal surface is a Sign step's message in hex mode, which emits
+    // `bytes.fromhex('...')` instead of a plain b'...' literal (see
+    // kmipPipelineCodegen.ts's KmipMessageMode doc). Both shipped Sign steps
+    // ('sign-early' and 'sign') use the pipeline-wide message by default, so
+    // edit only the 'sign' step's occurrence.
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const generated = emitKmipPipeline(steps, { message: 'deadbeef', messageMode: 'hex' })
+    const lines = generated.split('\n')
+    const signStart = markerLine(lines, 'sign')
+    const attrsStart = markerLine(lines, 'attrs')
+    for (let i = signStart; i < attrsStart; i++) {
+      if (lines[i].includes("bytes.fromhex('deadbeef')")) {
+        lines[i] = lines[i].replace("bytes.fromhex('deadbeef')", "bytes.fromhex('cafebabe')")
+      }
+    }
+    const edited = lines.join('\n')
+    const result = tryParsePipelineFromEditedCode(edited, steps, {
+      message: 'deadbeef',
+      messageMode: 'hex',
+    })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      const signStep = result.steps.find((s) => s.id === 'sign') as KmipOpStep
+      expect(signStep.params.text).toEqual({ bind: 'literal', value: 'cafebabe' })
+      // sign-early is untouched — still no params.text of its own, still using
+      // the pipeline-wide message.
+      const earlyStep = result.steps.find((s) => s.id === 'sign-early') as KmipOpStep
+      expect(earlyStep.params.text).toBeUndefined()
+      expect(earlyStep).toBe(steps.find((s) => s.id === 'sign-early'))
+    }
+  })
+
+  it('(d) a deleted step is correctly dropped', () => {
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const generated = emitKmipPipeline(steps, {})
+    const lines = generated.split('\n')
+    const attrs = markerLine(lines, 'attrs')
+    const locate = markerLine(lines, 'locate')
+    const edited = [...lines.slice(0, attrs), ...lines.slice(locate)].join('\n')
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.steps.map((s) => s.id)).not.toContain('attrs')
+  })
+
+  it('(e) two reordered steps are correctly reordered', () => {
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const generated = emitKmipPipeline(steps, {})
+    const lines = generated.split('\n')
+    const locate = markerLine(lines, 'locate')
+    const revoke = markerLine(lines, 'revoke')
+    const destroy = markerLine(lines, 'destroy')
+    const blockLocate = lines.slice(locate, revoke)
+    const blockRevoke = lines.slice(revoke, destroy)
+    const edited = [
+      ...lines.slice(0, locate),
+      ...blockRevoke,
+      ...blockLocate,
+      ...lines.slice(destroy),
+    ].join('\n')
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      const ids = result.steps.map((s) => s.id)
+      expect(ids.indexOf('revoke')).toBeLessThan(ids.indexOf('locate'))
+    }
+  })
+
+  it('(f) an unrecognizable edit FAILS with a reason naming the right step, and does not silently produce wrong steps (sabotage case)', () => {
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const generated = emitKmipPipeline(steps, {})
+    const lines = generated.split('\n')
+    const sign = markerLine(lines, 'sign')
+    lines.splice(sign + 2, 0, "    print('SABOTAGE — extra logic inserted')")
+    const edited = lines.join('\n')
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toContain('`sign`')
+  })
+
+  it('a ref identifier changed to something else FAILS rather than silently accepting it', () => {
+    const steps = KMIP_TEMPLATES['Governed lifecycle']
+    const generated = emitKmipPipeline(steps, {})
+    // 'activate' binds uid to priv_create (a ref) — swap it for a different
+    // identifier entirely, the exact "guessed wrong" failure mode this feature
+    // exists to prevent.
+    const edited = generated.replace('c.activate(priv_create)', 'c.activate(pub_create)')
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toContain('`activate`')
+  })
+
+  it('a marker for a step id not present in originalSteps fails, naming that id', () => {
+    const steps = KMIP_TEMPLATES['ML-KEM round trip']
+    const generated = emitKmipPipeline(steps, {})
+    const lines = generated.split('\n')
+    const create = markerLine(lines, 'create')
+    const injected = [
+      '# ── new-step · Extra step ──',
+      'try:',
+      '    pass',
+      'except Exception as _e:',
+      '    raise',
+      '',
+    ]
+    const edited = [...lines.slice(0, create), ...injected, ...lines.slice(create)].join('\n')
+    const result = tryParsePipelineFromEditedCode(edited, steps)
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toContain('`new-step`')
   })
 })

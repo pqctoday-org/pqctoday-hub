@@ -215,6 +215,72 @@ function emitOpStep(
   return lines
 }
 
+/** The delimiter comment written ahead of every step's block — its own function so
+ *  `tryParsePipelineFromEditedCode` below shares the exact format with the emitter
+ *  instead of re-deriving it. */
+function emitStepMarker(step: KmipStep): string {
+  return `# ── ${step.id} · ${describeStep(step)} ──`
+}
+
+/**
+ * Everything for one step AFTER its marker: the try/except wrapper plus whatever
+ * that step kind emits. Factored out of `emitKmipPipeline`'s loop so
+ * `tryParsePipelineFromEditedCode` can regenerate this exact text — with an op
+ * step's literal params (and a Sign step's effective message) swapped for unique
+ * placeholder tokens — and use it as a matching template against edited code.
+ */
+function emitStepBody(
+  step: KmipStep,
+  message: string,
+  messageMode: KmipMessageMode,
+  mayBeDenied: boolean
+): string[] {
+  const lines: string[] = ['try:']
+  if (step.kind === 'op') {
+    const spec = KMIP_PRIMITIVES[step.primId]
+    if (!spec || !spec.ops[step.op]) {
+      lines.push(`    raise RuntimeError(${pyStr(`${step.primId} does not support ${step.op}`)})`)
+    } else {
+      for (const l of emitOpStep(step, spec, message, messageMode, mayBeDenied))
+        lines.push(`    ${l}`)
+    }
+  } else if (step.kind === 'load-policy') {
+    lines.push(`    from pyodide.http import pyfetch`)
+    lines.push(`    _resp = await pyfetch(${pyStr(`/kmip-policies/${step.policyFile}`)})`)
+    lines.push(`    _yaml = await _resp.string()`)
+    lines.push(`    ${resultVar(step.id)} = c.load_policy(_yaml)`)
+    lines.push(
+      `    if not ${resultVar(step.id)}.ok: raise RuntimeError(${resultVar(step.id)}.message or 'LoadPolicy failed')`
+    )
+    lines.push(`    print(${pyStr(`  policy loaded: ${step.policyFile}`)})`)
+  } else if (step.kind === 'dry-run') {
+    lines.push(
+      `    ${resultVar(step.id)} = c.dry_run(${pyStr(step.op)}${step.algorithm ? `, algorithm=${pyStr(step.algorithm)}` : ''})`
+    )
+    lines.push(
+      `    print(f'  dry-run: {${resultVar(step.id)}.get("Kind")} ({${resultVar(step.id)}.get("Reason")})')`
+    )
+  } else if (step.kind === 'expect-deny') {
+    const targetRv = resultVar(step.targetStepId)
+    lines.push(`    _denied = not ${targetRv}.ok`)
+    lines.push(
+      `    _reason = ${targetRv}.get('ResultReason') or ${targetRv}.get('ResultMessage') or 'denied'`
+    )
+    lines.push(
+      `    print(f'  expect-deny: {"refused (" + str(_reason) + ")" if _denied else "UNEXPECTEDLY ALLOWED — governance hole"}')`
+    )
+    lines.push(
+      `    if not _denied: raise RuntimeError('governance hole: operation was allowed when it should have been denied')`
+    )
+  }
+  lines.push(`    print('###STEP ${step.id} ok###')`)
+  lines.push('except Exception as _e:')
+  lines.push(`    print('###STEP ${step.id} error### %s: %s' % (type(_e).__name__, _e))`)
+  lines.push('    raise')
+  lines.push('')
+  return lines
+}
+
 export function emitKmipPipeline(steps: KmipStep[], opts: KmipEmitOptions = {}): string {
   const message = opts.message ?? DEFAULT_KMIP_MESSAGE
   const messageMode = opts.messageMode ?? 'text'
@@ -242,50 +308,8 @@ export function emitKmipPipeline(steps: KmipStep[], opts: KmipEmitOptions = {}):
   )
 
   for (const step of steps) {
-    lines.push(`# ── ${step.id} · ${describeStep(step)} ──`)
-    lines.push('try:')
-    if (step.kind === 'op') {
-      const spec = KMIP_PRIMITIVES[step.primId]
-      if (!spec || !spec.ops[step.op]) {
-        lines.push(`    raise RuntimeError(${pyStr(`${step.primId} does not support ${step.op}`)})`)
-      } else {
-        for (const l of emitOpStep(step, spec, message, messageMode, deniableStepIds.has(step.id)))
-          lines.push(`    ${l}`)
-      }
-    } else if (step.kind === 'load-policy') {
-      lines.push(`    from pyodide.http import pyfetch`)
-      lines.push(`    _resp = await pyfetch(${pyStr(`/kmip-policies/${step.policyFile}`)})`)
-      lines.push(`    _yaml = await _resp.string()`)
-      lines.push(`    ${resultVar(step.id)} = c.load_policy(_yaml)`)
-      lines.push(
-        `    if not ${resultVar(step.id)}.ok: raise RuntimeError(${resultVar(step.id)}.message or 'LoadPolicy failed')`
-      )
-      lines.push(`    print(${pyStr(`  policy loaded: ${step.policyFile}`)})`)
-    } else if (step.kind === 'dry-run') {
-      lines.push(
-        `    ${resultVar(step.id)} = c.dry_run(${pyStr(step.op)}${step.algorithm ? `, algorithm=${pyStr(step.algorithm)}` : ''})`
-      )
-      lines.push(
-        `    print(f'  dry-run: {${resultVar(step.id)}.get("Kind")} ({${resultVar(step.id)}.get("Reason")})')`
-      )
-    } else if (step.kind === 'expect-deny') {
-      const targetRv = resultVar(step.targetStepId)
-      lines.push(`    _denied = not ${targetRv}.ok`)
-      lines.push(
-        `    _reason = ${targetRv}.get('ResultReason') or ${targetRv}.get('ResultMessage') or 'denied'`
-      )
-      lines.push(
-        `    print(f'  expect-deny: {"refused (" + str(_reason) + ")" if _denied else "UNEXPECTEDLY ALLOWED — governance hole"}')`
-      )
-      lines.push(
-        `    if not _denied: raise RuntimeError('governance hole: operation was allowed when it should have been denied')`
-      )
-    }
-    lines.push(`    print('###STEP ${step.id} ok###')`)
-    lines.push('except Exception as _e:')
-    lines.push(`    print('###STEP ${step.id} error### %s: %s' % (type(_e).__name__, _e))`)
-    lines.push('    raise')
-    lines.push('')
+    lines.push(emitStepMarker(step))
+    lines.push(...emitStepBody(step, message, messageMode, deniableStepIds.has(step.id)))
   }
 
   return lines.join('\n')
@@ -297,4 +321,233 @@ function describeStep(step: KmipStep): string {
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run') return `Dry-run: ${step.op}`
   return `Expect deny: ${step.targetStepId}`
+}
+
+/* ── reverse-parse: edited Code-tab text → KMIP steps (Change 3) ────────────────
+ *
+ * Same scope and mechanism as the PKCS#11 side's tryParsePipelineFromEditedCode
+ * in ../pipeline/pipelineCodegen.ts — read that module's header comment for the
+ * full rationale. The one structural difference worth calling out: KMIP steps
+ * come in four different KINDS (op/load-policy/dry-run/expect-deny), and only
+ * 'op' steps ever render a literal/bytes-bound ParamValue through `renderRef`'s
+ * 'literal' branch. `load-policy`'s policyFile and `dry-run`'s op/algorithm are
+ * plain string fields, not ParamValues — never rendered through renderRef — so
+ * editing THOSE is correctly treated as "changes beyond literal inputs" (a safe,
+ * honest failure) rather than a recognized literal edit, even though a human
+ * reading the generated code might expect it to "just" be a literal. A Sign
+ * step's message is a second, KMIP-specific wrinkle: by default it comes from
+ * the pipeline-wide `message`/`messageMode`, not a per-step param at all, so a
+ * synthetic literal slot is added for the SIGN op specifically (only when the
+ * step has no explicit `params.text` of its own) so editing the signed message
+ * in generated code is still recognized — decoding it back onto that one step's
+ * `params.text` as an explicit literal, which the existing renderer already
+ * prefers over the pipeline-wide message.
+ */
+
+export interface KmipParseSuccess {
+  ok: true
+  steps: KmipStep[]
+}
+export interface KmipParseFailure {
+  ok: false
+  reason: string
+}
+export type KmipParseResult = KmipParseSuccess | KmipParseFailure
+
+const STEP_MARKER_LINE_RE = /^[ \t]*#[ \t]*──[ \t]*([^\s·]+)[ \t]*·/
+
+function normalizeBody(s: string): string {
+  return s
+    .split('\n')
+    .map((l) => l.replace(/[ \t]+$/, ''))
+    .join('\n')
+    .replace(/^\n+/, '')
+    .replace(/\s+$/, '')
+}
+
+function regexEscapeLiteral(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/** Reverses pyStr's escaping — see the PKCS#11 side's identical helper for why
+ *  this is a char scan rather than chained global replaces. */
+function unpyStr(inner: string): string {
+  let out = ''
+  for (let i = 0; i < inner.length; i++) {
+    const c = inner[i]
+    if (c === '\\' && i + 1 < inner.length) {
+      const n = inner[i + 1]
+      if (n === '\\') {
+        out += '\\'
+        i++
+      } else if (n === "'") {
+        out += "'"
+        i++
+      } else if (n === 'n') {
+        out += '\n'
+        i++
+      } else if (n === 'r') {
+        out += '\r'
+        i++
+      } else {
+        out += c
+      }
+    } else {
+      out += c
+    }
+  }
+  return out
+}
+
+interface KmipLiteralSlot {
+  name: string
+  token: string
+  /** The value this slot rendered as BEFORE any edit — for a declared literal
+   *  param this is its own value; for the synthetic Sign-message slot it's the
+   *  pipeline-wide `message`, since that step had no param of its own yet. */
+  originalValue: string
+}
+
+/** Same template-then-regex technique as the PKCS#11 side's buildStepPattern:
+ *  regenerate emitStepBody's exact text with every literal-bearing slot swapped
+ *  for a unique token, then turn the fixed surrounding text into an escaped
+ *  regex with each token's quoted form replaced by a capture group. */
+function buildKmipStepPattern(
+  step: KmipStep,
+  message: string,
+  messageMode: KmipMessageMode,
+  mayBeDenied: boolean
+): { pattern: RegExp; slots: KmipLiteralSlot[] } {
+  const candidates: KmipLiteralSlot[] = []
+  let templated: KmipStep = step
+
+  if (step.kind === 'op') {
+    const params: Record<string, KmipParamValue> = { ...step.params }
+    let i = 0
+    for (const [name, v] of Object.entries(step.params)) {
+      if (v.bind !== 'literal') continue
+      const token = `PQCLITTOKEN${i}`
+      candidates.push({ name, token, originalValue: v.value })
+      params[name] = { bind: 'literal', value: token }
+      i++
+    }
+    if (step.op === 'sign' && !step.params.text) {
+      const token = `PQCLITTOKEN${i}`
+      candidates.push({ name: 'text', token, originalValue: message })
+      params.text = { bind: 'literal', value: token }
+      i++
+    }
+    templated = { ...step, params }
+  }
+
+  const templatedBody = normalizeBody(
+    emitStepBody(templated, message, messageMode, mayBeDenied).join('\n')
+  )
+
+  // See the PKCS#11 side's identical filter/sort in buildStepPattern: a
+  // candidate whose token never made it into the rendered text (not currently
+  // possible for KMIP's op vocabulary, but kept for the same safety reason)
+  // must not claim a capture group, and survivors are ordered by where they
+  // actually occur in the text rather than by param object key order.
+  const slots = candidates
+    .filter((c) => templatedBody.includes(`'${c.token}'`))
+    .sort((a, b) => templatedBody.indexOf(`'${a.token}'`) - templatedBody.indexOf(`'${b.token}'`))
+
+  let source = regexEscapeLiteral(templatedBody)
+  for (const slot of slots) {
+    const marker = `'${slot.token}'`
+    source = source.split(marker).join(`'((?:[^'\\\\]|\\\\.)*)'`)
+  }
+  return { pattern: new RegExp(`^${source}$`), slots }
+}
+
+/**
+ * Reverse-parses edited Code-tab text back into KMIP steps. See this module's
+ * header comment above for scope. `originalSteps` must be the steps the edited
+ * code was generated FROM, and `opts` must be the SAME message/messageMode that
+ * generated it — both are needed to know what a Sign step's message looked like
+ * before any edit.
+ */
+export function tryParsePipelineFromEditedCode(
+  editedCode: string,
+  originalSteps: KmipStep[],
+  opts: KmipEmitOptions = {}
+): KmipParseResult {
+  const message = opts.message ?? DEFAULT_KMIP_MESSAGE
+  const messageMode = opts.messageMode ?? 'text'
+
+  const deniableStepIds = new Set(
+    originalSteps
+      .filter((s): s is Extract<KmipStep, { kind: 'expect-deny' }> => s.kind === 'expect-deny')
+      .map((s) => s.targetStepId)
+  )
+
+  const lines = editedCode.replace(/\r\n/g, '\n').split('\n')
+  const markers: { id: string; lineIndex: number }[] = []
+  lines.forEach((line, idx) => {
+    const m = line.match(STEP_MARKER_LINE_RE)
+    if (m) markers.push({ id: m[1], lineIndex: idx })
+  })
+
+  const originalById = new Map(originalSteps.map((s) => [s.id, s]))
+  const seen = new Set<string>()
+  for (const m of markers) {
+    if (!originalById.has(m.id)) {
+      return {
+        ok: false,
+        reason: `Step \`${m.id}\` looks new — added steps aren't recognized from code yet. Add it via the Builder, then edit code again.`,
+      }
+    }
+    if (seen.has(m.id)) {
+      return {
+        ok: false,
+        reason: `Step \`${m.id}\` appears more than once in the edited code — can't tell which block is which.`,
+      }
+    }
+    seen.add(m.id)
+  }
+
+  const resultSteps: KmipStep[] = []
+  for (let i = 0; i < markers.length; i++) {
+    const { id, lineIndex } = markers[i]
+    const original = originalById.get(id) as KmipStep
+    const bodyStart = lineIndex + 1
+    const bodyEnd = i + 1 < markers.length ? markers[i + 1].lineIndex : lines.length
+    const body = normalizeBody(lines.slice(bodyStart, bodyEnd).join('\n'))
+
+    const { pattern, slots } = buildKmipStepPattern(
+      original,
+      message,
+      messageMode,
+      deniableStepIds.has(id)
+    )
+    const match = pattern.exec(body)
+    if (!match) {
+      return {
+        ok: false,
+        reason: `Step \`${id}\` (${describeStep(original)}) has changes beyond its literal inputs — kept as a custom script.`,
+      }
+    }
+
+    if (slots.length === 0) {
+      resultSteps.push(original)
+      continue
+    }
+
+    let changed = false
+    const nextParams: Record<string, KmipParamValue> =
+      original.kind === 'op' ? { ...original.params } : {}
+    slots.forEach((slot, idx) => {
+      const decoded = unpyStr(match[idx + 1])
+      if (decoded !== slot.originalValue) {
+        changed = true
+        nextParams[slot.name] = { bind: 'literal', value: decoded }
+      }
+    })
+    resultSteps.push(
+      changed && original.kind === 'op' ? { ...original, params: nextParams } : original
+    )
+  }
+
+  return { ok: true, steps: resultSteps }
 }

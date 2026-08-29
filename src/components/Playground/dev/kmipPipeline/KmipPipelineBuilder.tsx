@@ -20,9 +20,10 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, Loader2, Download, Save, Upload, Trash2, X } from 'lucide-react'
+import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { installMonacoSelfHost } from '../monacoSelfHost'
 import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
 import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
@@ -33,6 +34,7 @@ import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
 import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
 import {
   emitKmipPipeline,
+  tryParsePipelineFromEditedCode,
   DEFAULT_KMIP_MESSAGE,
   type KmipMessageMode,
   type KmipParamValue,
@@ -163,6 +165,16 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   >({})
   const [detached, setDetached] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // Change 1: which pane of the Builder/Code switch is showing.
+  const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
+  // Change 2: the Code tab's editor opens read-only whenever it's showing
+  // generated (synced) code — independent of `detached`, which only becomes
+  // true once real edited text diverges.
+  const [editUnlocked, setEditUnlocked] = useState(false)
+  // Change 3: last "Try to apply to Builder" outcome, shown inline near its
+  // button until the next edit or another apply attempt replaces it.
+  const [applyMsg, setApplyMsg] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   /* ── palette + canvas drag/drop (W2, ported from PkcsPipelineBuilder) ── */
@@ -307,13 +319,42 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     window.setTimeout(() => setNotice(null), 2600)
   }
 
+  // Change 2: the one place that both clears a custom script AND re-locks the
+  // editor back to read-only-synced — see PkcsPipelineBuilder.tsx's identical
+  // helper for why the Monaco onChange handler's own exact-match auto-resync
+  // below deliberately does NOT go through this (it fires mid-typing).
+  const resyncToGenerated = useCallback(() => {
+    setDetached(null)
+    setEditUnlocked(false)
+    setApplyMsg(null)
+  }, [])
+
+  // Change 3: the honest "Try to apply to Builder" action.
+  const handleTryApply = useCallback(() => {
+    if (detached == null) return
+    const result = tryParsePipelineFromEditedCode(detached, steps, { message, messageMode })
+    if (result.ok) {
+      setSteps(result.steps)
+      setDetached(null)
+      setEditUnlocked(false)
+      setActiveView('builder')
+      setApplyMsg({
+        kind: 'ok',
+        text: `Recognized ${result.steps.length} step${result.steps.length === 1 ? '' : 's'} — synced back to the Builder.`,
+      })
+      window.setTimeout(() => setApplyMsg(null), 3200)
+    } else {
+      setApplyMsg({ kind: 'error', text: result.reason })
+    }
+  }, [detached, steps, message, messageMode])
+
   const applyTemplate = (name: string) => {
     setPipelineName(name)
     setSteps(KMIP_TEMPLATES[name] ?? [])
     setStepState({})
     setRunError(null)
     setElapsedMs(null)
-    setDetached(null)
+    resyncToGenerated()
   }
 
   const runAll = useCallback(async () => {
@@ -420,7 +461,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     setPipelineName(parsed.name)
     setSteps(parsed.pipeline.steps)
     setMessage(parsed.pipeline.input)
-    setDetached(null)
+    resyncToGenerated()
     setStepState({})
     flash(`Imported "${parsed.name}"`)
   }
@@ -437,7 +478,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     setPipelineName(name)
     setSteps(saved.steps)
     setMessage(saved.input)
-    setDetached(null)
+    resyncToGenerated()
     setStepState({})
   }
   const deleteSaved = (name: string) => {
@@ -446,163 +487,349 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     if (saveStore(STORE_KEY, next)) setStore(next)
   }
   const savedKmipNames = Object.keys(store)
+  const readOnly = !detached && !editUnlocked
+  // See PkcsPipelineBuilder.tsx's identical readOnlyRef for the full
+  // explanation: @monaco-editor/react's value-sync effect takes an unguarded
+  // `setValue()` path while readOnly, and effect ordering can invoke a STALE
+  // onChange closure comparing against an old `generatedPy` on any
+  // programmatic value change made while read-only (import, discard,
+  // successful "Try to apply") — wrongly flipping into detached state with
+  // zero real keystrokes. A ref assigned synchronously during render is
+  // always current regardless of which render's closure fires.
+  const readOnlyRef = useRef(readOnly)
+  readOnlyRef.current = readOnly
 
   return (
-    <div className="grid grid-cols-[280px_1fr_340px] gap-0 min-h-[70vh] border rounded-lg overflow-hidden bg-background text-sm">
-      {/* LEFT: palette + templates + saved */}
-      <aside
-        className="border-r p-3 overflow-auto flex flex-col gap-4"
-        data-tour="kmip-dev-palette"
-      >
-        <div>
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-1">Palette</div>
-          <div className="text-xs text-muted-foreground">Drag onto the canvas →</div>
+    <Tabs
+      value={activeView}
+      onValueChange={(v) => setActiveView(v as 'builder' | 'code')}
+      className="flex flex-col h-[70vh] border rounded-lg overflow-hidden bg-background text-sm"
+    >
+      <div className="p-4 border-b flex justify-between items-center gap-4 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <input
+            value={pipelineName}
+            onChange={(e) => setPipelineName(e.target.value)}
+            aria-label="Pipeline name"
+            className="text-lg font-semibold bg-transparent border border-transparent focus:border-input rounded px-1.5 py-0.5 w-full max-w-md outline-none"
+          />
         </div>
-        <div>
-          <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
-            Lifecycle primitives
-          </div>
-          <div className="flex flex-col gap-1">
-            {KMIP_PRIM_IDS.map((id) => (
-              <KmipPaletteRow
-                key={id}
-                primId={id}
-                onDragStart={(e) => onPalettePrimDragStart(e, id)}
-              />
-            ))}
-          </div>
+        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (f) void importJson(f)
+              e.target.value = ''
+            }}
+          />
+          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+            <Upload className="h-3.5 w-3.5 mr-1" /> Import
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportJson}>
+            <Download className="h-3.5 w-3.5 mr-1" /> Export JSON
+          </Button>
+          <Button variant="outline" size="sm" onClick={exportPy}>
+            <Download className="h-3.5 w-3.5 mr-1" /> Export .py
+          </Button>
+          <Button variant="outline" size="sm" onClick={savePipeline}>
+            <Save className="h-3.5 w-3.5 mr-1" /> Save
+          </Button>
+          <Button
+            data-tour="kmip-dev-run"
+            size="sm"
+            disabled={running}
+            onClick={() => {
+              void runAll()
+            }}
+            title={
+              !detached && blocking.length
+                ? `${blocking.length} problem(s) to fix first`
+                : 'Run (⌘/Ctrl+Enter)'
+            }
+          >
+            {running ? (
+              <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+            ) : (
+              <Play className="h-3.5 w-3.5 mr-1" />
+            )}
+            {running ? 'Running…' : 'Run'}
+          </Button>
+          <KmipSyncStatusChip detached={!!detached} />
+          {/* data-tour scopes a guided-lesson `clickByText` to THIS tablist,
+              distinct from any other `role="tab"` bar on the page. */}
+          <TabsList data-tour="kmip-dev-view-tabs">
+            <TabsTrigger value="builder">
+              Builder · {steps.length} step{steps.length === 1 ? '' : 's'}
+            </TabsTrigger>
+            <TabsTrigger value="code">Code</TabsTrigger>
+          </TabsList>
         </div>
-        <div>
-          <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
-            Policy &amp; governance
-          </div>
-          <div className="flex flex-col gap-1">
-            {SPECIAL_STEP_KINDS.map(({ kind, label }) => (
-              <KmipSpecialPaletteRow
-                key={kind}
-                label={label}
-                onDragStart={(e) => onPaletteSpecialDragStart(e, kind)}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="mt-auto pt-3 border-t" data-tour="kmip-dev-templates">
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
-            Start from
-          </div>
-          <div className="flex flex-col gap-1">
-            {KMIP_TEMPLATE_NAMES.map((t) => (
-              <Button
-                key={t}
-                variant={t === pipelineName ? 'secondary' : 'outline'}
-                size="sm"
-                onClick={() => applyTemplate(t)}
-                className="justify-start font-normal"
-              >
-                {t}
-              </Button>
-            ))}
-          </div>
-          {savedKmipNames.length > 0 && (
-            <>
-              <div className="text-xs font-semibold uppercase text-muted-foreground mt-3 mb-1.5">
-                Saved
+      </div>
+
+      {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
+      <TabsContent value="builder" className="mt-0 flex-1 min-h-0">
+        <div className="grid grid-cols-[280px_1fr_340px] gap-0 h-full overflow-hidden">
+          {/* LEFT: palette + templates + saved */}
+          <aside
+            className="border-r p-3 overflow-auto flex flex-col gap-4"
+            data-tour="kmip-dev-palette"
+          >
+            <div>
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1">
+                Palette
+              </div>
+              <div className="text-xs text-muted-foreground">Drag onto the canvas →</div>
+            </div>
+            <div>
+              <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
+                Lifecycle primitives
               </div>
               <div className="flex flex-col gap-1">
-                {savedKmipNames.map((name) => (
-                  <div key={name} className="flex gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => loadPipeline(name)}
-                      className="flex-1 min-w-0 truncate justify-start font-normal"
-                    >
-                      {name}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteSaved(name)}
-                      className="px-1.5 text-status-error hover:opacity-80"
-                      aria-label={`Delete saved pipeline ${name}`}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
+                {KMIP_PRIM_IDS.map((id) => (
+                  <KmipPaletteRow
+                    key={id}
+                    primId={id}
+                    onDragStart={(e) => onPalettePrimDragStart(e, id)}
+                  />
                 ))}
               </div>
-            </>
-          )}
-        </div>
-      </aside>
-
-      {/* CENTER: canvas */}
-      <main className="flex flex-col overflow-auto">
-        <header className="p-4 border-b flex justify-between items-center gap-4">
-          <div className="min-w-0 flex-1">
-            <input
-              value={pipelineName}
-              onChange={(e) => setPipelineName(e.target.value)}
-              aria-label="Pipeline name"
-              className="text-lg font-semibold bg-transparent border border-transparent focus:border-input rounded px-1.5 py-0.5 w-full max-w-md outline-none"
-            />
-          </div>
-          <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0]
-                if (f) void importJson(f)
-                e.target.value = ''
-              }}
-            />
-            <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5 mr-1" /> Import
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportJson}>
-              <Download className="h-3.5 w-3.5 mr-1" /> Export JSON
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportPy}>
-              <Download className="h-3.5 w-3.5 mr-1" /> Export .py
-            </Button>
-            <Button variant="outline" size="sm" onClick={savePipeline}>
-              <Save className="h-3.5 w-3.5 mr-1" /> Save
-            </Button>
-            <Button
-              data-tour="kmip-dev-run"
-              size="sm"
-              disabled={running}
-              onClick={() => {
-                void runAll()
-              }}
-              title={
-                !detached && blocking.length
-                  ? `${blocking.length} problem(s) to fix first`
-                  : 'Run (⌘/Ctrl+Enter)'
-              }
-            >
-              {running ? (
-                <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
-              ) : (
-                <Play className="h-3.5 w-3.5 mr-1" />
+            </div>
+            <div>
+              <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
+                Policy &amp; governance
+              </div>
+              <div className="flex flex-col gap-1">
+                {SPECIAL_STEP_KINDS.map(({ kind, label }) => (
+                  <KmipSpecialPaletteRow
+                    key={kind}
+                    label={label}
+                    onDragStart={(e) => onPaletteSpecialDragStart(e, kind)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mt-auto pt-3 border-t" data-tour="kmip-dev-templates">
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
+                Start from
+              </div>
+              <div className="flex flex-col gap-1">
+                {KMIP_TEMPLATE_NAMES.map((t) => (
+                  <Button
+                    key={t}
+                    variant={t === pipelineName ? 'secondary' : 'outline'}
+                    size="sm"
+                    onClick={() => applyTemplate(t)}
+                    className="justify-start font-normal"
+                  >
+                    {t}
+                  </Button>
+                ))}
+              </div>
+              {savedKmipNames.length > 0 && (
+                <>
+                  <div className="text-xs font-semibold uppercase text-muted-foreground mt-3 mb-1.5">
+                    Saved
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {savedKmipNames.map((name) => (
+                      <div key={name} className="flex gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadPipeline(name)}
+                          className="flex-1 min-w-0 truncate justify-start font-normal"
+                        >
+                          {name}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteSaved(name)}
+                          className="px-1.5 text-status-error hover:opacity-80"
+                          aria-label={`Delete saved pipeline ${name}`}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
-              {running ? 'Running…' : 'Run'}
-            </Button>
-          </div>
-        </header>
+            </div>
+          </aside>
 
-        <DevSandboxDiffNote
-          points={[
-            'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
-            'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
-            "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
-            "The Sign step's message can be text or hex (toggle below the input) — hex mode emits a genuinely binary Python bytes literal, not text encoded as hex. Encrypt/Decrypt steps aren't in this builder's vocabulary yet, so that half of the same capability isn't reachable here.",
-          ]}
-        />
+          {/* CENTER: canvas */}
+          <main className="flex flex-col overflow-auto">
+            <DevSandboxDiffNote
+              points={[
+                'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
+                'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
+                "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
+                "The Sign step's message can be text or hex (toggle below the input) — hex mode emits a genuinely binary Python bytes literal, not text encoded as hex. Encrypt/Decrypt steps aren't in this builder's vocabulary yet, so that half of the same capability isn't reachable here.",
+              ]}
+            />
 
+            <div className="p-4 border-b">
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-xs font-semibold uppercase text-muted-foreground">
+                  Message to sign
+                </div>
+                <div className="flex gap-1">
+                  {(['text', 'hex'] as const).map((m) => (
+                    <Button
+                      key={m}
+                      variant={messageMode === m ? 'secondary' : 'outline'}
+                      size="sm"
+                      className="h-6 px-2 text-[10px] uppercase"
+                      onClick={() => {
+                        setMessageMode(m)
+                        setMessage('')
+                      }}
+                    >
+                      {m}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                aria-label="Message to sign"
+                placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
+                className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-destructive/60' : ''}`}
+              />
+              {messageError && (
+                <p className="mt-1 text-[10.5px] text-status-error font-mono">{messageError}</p>
+              )}
+              {messageMode === 'hex' && !messageError && (
+                <p className="mt-1 text-[10.5px] text-muted-foreground">
+                  Sign steps below emit <code>bytes.fromhex(...)</code> — a genuinely binary
+                  payload, not text encoded as hex.
+                </p>
+              )}
+            </div>
+
+            <div
+              className={`p-4 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
+              data-tour="kmip-dev-steps"
+            >
+              <div className="max-w-2xl mx-auto flex flex-col items-center gap-0">
+                {steps.length === 0 && (
+                  <KmipDropZone
+                    active={dragOverIndex === 0}
+                    label="Drop a primitive or step here"
+                    onDragOver={(e) => onDragOver(e, 0)}
+                    onDrop={(e) => dropAt(e, 0)}
+                  />
+                )}
+                {steps.map((step, i) => (
+                  <div
+                    key={step.id}
+                    className="w-full flex flex-col items-center"
+                    onDragOver={(e) => onDragOver(e, i)}
+                    onDrop={(e) => dropAt(e, i)}
+                  >
+                    {dragOverIndex === i && <KmipInsertBar />}
+                    <KmipStepCard
+                      step={step}
+                      index={i}
+                      steps={steps}
+                      stepState={stepState[step.id]}
+                      findings={findings.filter((f) => f.stepIndex === i)}
+                      onDelete={() => deleteStep(step.id)}
+                      onDragStart={(e) => onStepDragStart(e, i)}
+                      onOpChange={(op) => setStepOp(step.id, op)}
+                      onParam={(name, v) => setParam(step.id, name, v)}
+                      onPolicyFile={(f) => setPolicyFile(step.id, f)}
+                      onDryRunOp={(op) => setDryRunOp(step.id, op)}
+                      onDryRunAlgorithm={(a) => setDryRunAlgorithm(step.id, a)}
+                      onDenyTarget={(t) => setDenyTarget(step.id, t)}
+                    />
+                  </div>
+                ))}
+                {steps.length > 0 && (
+                  <div
+                    className="w-full flex flex-col items-center"
+                    onDragOver={(e) => onDragOver(e, steps.length)}
+                    onDrop={(e) => dropAt(e, steps.length)}
+                  >
+                    {dragOverIndex === steps.length && <KmipInsertBar />}
+                    <KmipDropZone
+                      active={dragOverIndex === steps.length}
+                      label="Drop here to append"
+                      subtle
+                    />
+                  </div>
+                )}
+              </div>
+              {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
+                <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
+                  <span className="text-status-success">What this proved: </span>
+                  {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
+                </p>
+              )}
+            </div>
+          </main>
+
+          {/* RIGHT: run panel — summary + validation only, the editor lives in Code now */}
+          <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
+            <Card className="p-3.5">
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                Pipeline summary
+              </div>
+              <div className="flex flex-col gap-1.5 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Steps</span>
+                  <span className="font-mono">{steps.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Language</span>
+                  <span className="font-mono">Python · pqctoday_kmip</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Last run</span>
+                  <span className="font-mono">
+                    {elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Engine</span>
+                  <span className="font-mono">
+                    {engine ? 'KMIP/CACP (browser)' : 'initializing…'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Timeout</span>
+                  <span className="font-mono">{TIMEOUT_LABEL[getInterruptMode()]}</span>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-3.5">
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                Validation
+              </div>
+              <div className="flex flex-col gap-1.5 text-xs">
+                {!detached && findings.length === 0 && (
+                  <KmipValRow ok text="Every step input is bound" />
+                )}
+                {!detached &&
+                  findings.map((f, i) => <KmipValRow key={i} ok={false} text={f.text} />)}
+                {detached && <KmipValRow ok text="Custom script — builder validation skipped" />}
+              </div>
+            </Card>
+          </aside>
+        </div>
+      </TabsContent>
+
+      {/* ── CODE TAB: the editor at full width/height. Import/Export/Save/Run and
+          the sync-status chip live in the persistent header above (visible from
+          both tabs) since Change 1 — see the file-scope note there. ── */}
+      <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
         {notice && (
           <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
         )}
@@ -611,170 +838,47 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             ✗ {runError}
           </div>
         )}
-        {detached && (
-          <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex items-center gap-3 flex-wrap">
-            <span className="text-status-warning">
-              ⚠ Custom script — you edited the generated code, so the step list below is just a
-              reference; the edited script is what actually runs.
+
+        {/* Change 2: explicit "edit as custom script" gate — shown only while the
+            editor is read-only-and-synced. */}
+        {readOnly && (
+          <div className="px-4 py-2 text-xs border-b flex items-center justify-between gap-3 flex-wrap">
+            <span className="text-muted-foreground">
+              Read-only — this is the code generated from the Builder.
             </span>
-            <Button variant="outline" size="sm" onClick={() => setDetached(null)}>
-              Revert to template
+            <Button variant="outline" size="sm" onClick={() => setEditUnlocked(true)}>
+              <Pencil className="h-3.5 w-3.5 mr-1" /> Edit as custom script
             </Button>
           </div>
         )}
 
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between mb-1">
-            <div className="text-xs font-semibold uppercase text-muted-foreground">
-              Message to sign
+        {/* Change 2 (banner) + Change 3 (the "Try to apply" action) */}
+        {detached && (
+          <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex flex-col gap-2">
+            <span className="text-status-warning">
+              ⚠ Custom script — edits won't appear in the Builder until resolved.
+            </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" size="sm" onClick={resyncToGenerated}>
+                Discard edits, resync
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleTryApply}>
+                Try to apply to Builder
+              </Button>
             </div>
-            <div className="flex gap-1">
-              {(['text', 'hex'] as const).map((m) => (
-                <Button
-                  key={m}
-                  variant={messageMode === m ? 'secondary' : 'outline'}
-                  size="sm"
-                  className="h-6 px-2 text-[10px] uppercase"
-                  onClick={() => {
-                    setMessageMode(m)
-                    setMessage('')
-                  }}
-                >
-                  {m}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            aria-label="Message to sign"
-            placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
-            className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-destructive/60' : ''}`}
-          />
-          {messageError && (
-            <p className="mt-1 text-[10.5px] text-status-error font-mono">{messageError}</p>
-          )}
-          {messageMode === 'hex' && !messageError && (
-            <p className="mt-1 text-[10.5px] text-muted-foreground">
-              Sign steps below emit <code>bytes.fromhex(...)</code> — a genuinely binary payload,
-              not text encoded as hex.
-            </p>
-          )}
-        </div>
-
-        <div
-          className={`p-4 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
-          data-tour="kmip-dev-steps"
-        >
-          <div className="max-w-2xl mx-auto flex flex-col items-center gap-0">
-            {steps.length === 0 && (
-              <KmipDropZone
-                active={dragOverIndex === 0}
-                label="Drop a primitive or step here"
-                onDragOver={(e) => onDragOver(e, 0)}
-                onDrop={(e) => dropAt(e, 0)}
-              />
-            )}
-            {steps.map((step, i) => (
+            {applyMsg && (
               <div
-                key={step.id}
-                className="w-full flex flex-col items-center"
-                onDragOver={(e) => onDragOver(e, i)}
-                onDrop={(e) => dropAt(e, i)}
+                className={`font-mono text-[11px] ${applyMsg.kind === 'ok' ? 'text-status-success' : 'text-status-error'}`}
               >
-                {dragOverIndex === i && <KmipInsertBar />}
-                <KmipStepCard
-                  step={step}
-                  index={i}
-                  steps={steps}
-                  stepState={stepState[step.id]}
-                  findings={findings.filter((f) => f.stepIndex === i)}
-                  onDelete={() => deleteStep(step.id)}
-                  onDragStart={(e) => onStepDragStart(e, i)}
-                  onOpChange={(op) => setStepOp(step.id, op)}
-                  onParam={(name, v) => setParam(step.id, name, v)}
-                  onPolicyFile={(f) => setPolicyFile(step.id, f)}
-                  onDryRunOp={(op) => setDryRunOp(step.id, op)}
-                  onDryRunAlgorithm={(a) => setDryRunAlgorithm(step.id, a)}
-                  onDenyTarget={(t) => setDenyTarget(step.id, t)}
-                />
-              </div>
-            ))}
-            {steps.length > 0 && (
-              <div
-                className="w-full flex flex-col items-center"
-                onDragOver={(e) => onDragOver(e, steps.length)}
-                onDrop={(e) => dropAt(e, steps.length)}
-              >
-                {dragOverIndex === steps.length && <KmipInsertBar />}
-                <KmipDropZone
-                  active={dragOverIndex === steps.length}
-                  label="Drop here to append"
-                  subtle
-                />
+                {applyMsg.kind === 'ok' ? '✓ ' : '✗ '}
+                {applyMsg.text}
               </div>
             )}
           </div>
-          {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
-            <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
-              <span className="text-status-success">What this proved: </span>
-              {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
-            </p>
-          )}
-        </div>
-      </main>
+        )}
 
-      {/* RIGHT: summary + validation + editor */}
-      <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
-        <Card className="p-3.5">
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-            Pipeline summary
-          </div>
-          <div className="flex flex-col gap-1.5 text-xs">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Steps</span>
-              <span className="font-mono">{steps.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Language</span>
-              <span className="font-mono">Python · pqctoday_kmip</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Last run</span>
-              <span className="font-mono">
-                {elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Engine</span>
-              <span className="font-mono">{engine ? 'KMIP/CACP (browser)' : 'initializing…'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Timeout</span>
-              <span className="font-mono">{TIMEOUT_LABEL[getInterruptMode()]}</span>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-3.5">
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-            Validation
-          </div>
-          <div className="flex flex-col gap-1.5 text-xs">
-            {!detached && findings.length === 0 && (
-              <KmipValRow ok text="Every step input is bound" />
-            )}
-            {!detached && findings.map((f, i) => <KmipValRow key={i} ok={false} text={f.text} />)}
-            {detached && <KmipValRow ok text="Custom script — builder validation skipped" />}
-          </div>
-        </Card>
-
-        <Card className="p-3.5 min-h-0 flex-1 flex flex-col">
-          <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-            {detached ? 'Your script' : 'Generated Python'}
-          </div>
-          <div className="flex-1 min-h-[280px] border rounded overflow-hidden">
+        <div className="flex-1 min-h-0 p-4">
+          <div className="h-full border rounded overflow-hidden">
             {monacoReady ? (
               <Editor
                 height="100%"
@@ -782,10 +886,19 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                 value={activeCode}
                 theme="vs-dark"
                 onChange={(val) => {
+                  // Never trust a change reported while read-only — see
+                  // readOnlyRef's comment above for why this must be a ref.
+                  if (readOnlyRef.current) return
+                  setApplyMsg(null)
                   if (val !== generatedPy) setDetached(val ?? '')
                   else setDetached(null)
                 }}
-                options={{ fontSize: 11, minimap: { enabled: false }, scrollBeyondLastLine: false }}
+                options={{
+                  fontSize: 12,
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  readOnly,
+                }}
               />
             ) : (
               <div className="h-full grid place-items-center text-xs text-muted-foreground font-mono">
@@ -793,16 +906,32 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               </div>
             )}
           </div>
-          <Button variant="outline" size="sm" className="mt-2 w-full" onClick={exportPy}>
+        </div>
+        <div className="p-3 border-t">
+          <Button variant="outline" size="sm" className="w-full" onClick={exportPy}>
             <Download className="h-3.5 w-3.5 mr-1" /> Download as .py
           </Button>
-        </Card>
-      </aside>
-    </div>
+        </div>
+      </TabsContent>
+    </Tabs>
   )
 }
 
 /* ─── helpers ─── */
+
+/** Change 2: see PkcsPipelineBuilder.tsx's identical SyncStatusChip — a small
+ *  always-visible chip naming whether the Code tab is showing generated (synced)
+ *  code or a hand-edited custom script, placed next to the Builder/Code switch. */
+const KmipSyncStatusChip: React.FC<{ detached: boolean }> = ({ detached }) =>
+  detached ? (
+    <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-status-warning/5 px-2 py-0.5 font-mono text-[10.5px] text-status-warning">
+      ● custom script
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10.5px] text-muted-foreground">
+      ✓ synced
+    </span>
+  )
 
 const KmipInsertBar: React.FC = () => (
   <div className="w-full max-w-xl h-1 bg-status-info rounded-full mb-1" />
