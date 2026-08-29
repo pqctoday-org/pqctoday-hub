@@ -23,7 +23,7 @@
  * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Monitor, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -1319,6 +1319,43 @@ export function SimulationView() {
   const flatSteps = (phaseTree ? flattenTree(phaseTree) : []).filter(isGatingStep)
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
+  // mobile-ux-layer (WS-1): "move receipt" — a one-line summary of what the
+  // last decision on the ACTIVE phase actually changed (step count, level,
+  // budget), shown under the phone Decide view right after a correct pick.
+  // Computed purely from store deltas around the action (no new model,
+  // matching the plan's own constraint): snapshot the previous render's
+  // values in a ref and diff against the current render's; reset whenever
+  // `sel` changes so switching phases never manufactures a fake "move".
+  const [moveReceipt, setMoveReceipt] = useState<string | null>(null)
+  const moveReceiptRef = useRef({ sel, stepsDone, level, budgetSecured })
+  // A wrong pick's clock setback lands in the store synchronously but only
+  // shows up in `clock.yearsToHorizon` on the NEXT render — this records the
+  // pre-setback value + the exact quarters just charged (the same value
+  // handed to applyDecisionSetback below) so the effect can build the
+  // "−N quarters · Years to act X → Y" receipt off real before/after clock
+  // reads once that render lands, instead of re-deriving the arithmetic.
+  const pendingWrongPickRef = useRef<{ quarters: number; yearsBefore: number } | null>(null)
+  useEffect(() => {
+    const prev = moveReceiptRef.current
+    if (prev.sel === sel && prev.stepsDone !== stepsDone) {
+      const parts = [`Step ${stepsDone}/${stepsTotal} done`]
+      if (level !== prev.level) parts.push(`L${prev.level} → L${level}`)
+      const budgetDelta = Math.round((budgetSecured - prev.budgetSecured) * 10) / 10
+      if (budgetDelta !== 0) parts.push(`Budget ${budgetDelta > 0 ? '+' : ''}€${budgetDelta}M`)
+      setMoveReceipt(parts.join(' · '))
+      pendingWrongPickRef.current = null
+    } else if (pendingWrongPickRef.current && prev.sel === sel) {
+      const { quarters, yearsBefore } = pendingWrongPickRef.current
+      setMoveReceipt(
+        `−${quarters} quarter${quarters > 1 ? 's' : ''} · Years to act ${yearsBefore.toFixed(1)}y → ${clock.yearsToHorizon.toFixed(1)}y`
+      )
+      pendingWrongPickRef.current = null
+    } else if (prev.sel !== sel) {
+      setMoveReceipt(null)
+      pendingWrongPickRef.current = null
+    }
+    moveReceiptRef.current = { sel, stepsDone, level, budgetSecured }
+  }, [sel, stepsDone, level, budgetSecured, stepsTotal, clock.yearsToHorizon])
   // mobile-ux-layer (WS-A2): activity steps produce their artifact through a
   // Business tool (out of mobile scope for now — BusinessToolRoute has no
   // mobile gate of its own), so they can only ever be credited from a wider
@@ -1615,17 +1652,19 @@ export function SimulationView() {
 
   return (
     <>
-      {/* mobile-ux-layer Phase 9: real interactive play for p0/p1, reusing the
-          same DecisionSection + store wiring the desktop board uses (all the
-          props below are the exact real values the board computes — nothing
-          re-derived). canEmbed is forced false here: the real embed pane
-          (learnEmbed/etc.) renders inside the desktop-only `hidden md:flex`
-          wrapper below, so it would be invisible on a phone — resources open
-          via the real Link/deep-link path instead. Reached only by a
-          deliberate tap (setMobilePlayOpen(true)) from the read-only block
-          below; every other phase, and a reader who hasn't tapped in, keeps
-          that unchanged read-only block. */}
-      {isMobileShell && (sel === 'p0' || sel === 'p1') && mobilePlayOpen ? (
+      {/* mobile-ux-layer (WS-1, sim-mobile-full-play): real interactive play
+          for EVERY phase (+ Foundations) — reusing the same DecisionSection +
+          store wiring the desktop board uses (all the props below are the
+          exact real values the board computes — nothing re-derived). Until
+          this plan, this was p0/p1-only (Phase 9); every phase has a real
+          framework tree (SIM_TREES), so the restriction was never a content
+          gap, just an unimplemented guard. canEmbed is forced false here: the
+          real embed pane (learnEmbed/etc.) renders inside the desktop-only
+          `hidden md:flex` wrapper below, so it would be invisible on a phone —
+          resources open via the real Link/deep-link path instead. Reached by
+          a deliberate tap (setMobilePlayOpen(true)) from the run-home screen
+          below. */}
+      {isMobileShell && mobilePlayOpen ? (
         <div
           className="flex md:hidden fixed inset-0 z-50 flex-col overflow-auto bg-background px-4 py-6 text-foreground"
           data-testid="sim-mobile-decide"
@@ -1751,20 +1790,38 @@ export function SimulationView() {
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
-            wrongPickCostQuarters={sel === 'p1' ? 2 : 1}
+            // WS-1: mirrors the desktop DecisionSection instance exactly (incl.
+            // the p5 edge-decision rollback) — this used to hard-code p0/p1's
+            // formula only, which was correct while mobile play was p0/p1-only
+            // but would have silently under-charged a wrong pick on p1/p5 once
+            // every phase became playable here.
+            wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
             onWrongPick={(label) => {
               // Same real setback the desktop board applies — WP4.4 uniform
-              // stakes, 2 quarters on p1 (Discovery), 1 on p0. The p5-only
-              // edge-decision rollback never applies here — this branch is
-              // only ever reached for sel === 'p0' | 'p1'.
-              const quarters = sel === 'p1' ? 2 : 1
+              // stakes, 2 quarters on Inventory (p1) / Pilots (p5), 1 elsewhere.
+              const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
+              // On Pilots (p5) a wrong call also rolls back a migrated estate
+              // link, exactly like the desktop instance.
+              const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+              const extra = revertId ? ` — rolled back link ${revertId}` : ''
+              pendingWrongPickRef.current = { quarters, yearsBefore: clock.yearsToHorizon }
               applyDecisionSetback(
                 quarters,
-                `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}`,
-                undefined
+                `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
+                revertId
               )
             }}
           />
+          {/* mobile-ux-layer (WS-1): the move receipt — what THIS decision
+              actually changed, computed from real store deltas (§3.3). */}
+          {moveReceipt && (
+            <div
+              className="mb-3 rounded-md border border-border bg-muted/40 px-3 py-1.5 font-mono text-[10.5px] font-bold text-foreground"
+              data-testid="sim-move-receipt"
+            >
+              {moveReceipt}
+            </div>
+          )}
           <TrapInsightsPanel />
           {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
               above can open. A second instance of the same quizGate/setQuizGate
@@ -1831,29 +1888,37 @@ export function SimulationView() {
           // way to reach the last ~325px of content.
           style={{ paddingBottom: 'calc(var(--sim-transport-h, 0px) + 2.5rem)' }}
         >
-          <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
           <div className="space-y-1">
-            <h2 className="text-lg font-bold">Your migration at a glance</h2>
+            <h2 className="text-lg font-bold">Your migration</h2>
+            {/* WS-1 (sim-mobile-full-play): the board itself stays a
+                tablet/desktop layout, but every phase is genuinely playable
+                from here now — this no longer says "needs a wider screen". */}
             <p className="text-xs text-muted-foreground max-w-[300px]">
-              The playable board needs a wider screen — open it on a tablet or desktop. Here&apos;s
-              where your run stands today.
+              Pick a phase below and play it — every phase, right here on your phone.
             </p>
           </div>
-          {/* mobile-ux-layer (2026-08-24 audit R1.3): the only way to reach p0/p1
-              play was the phase ladder (desktop-only) or the "Watch" auto-run,
-              which walks `sel` through all 9 phases with no way back — a reader
-              past p1 (or one who just watched the overview) had no on-screen path
-              to the two playable phases. Visible here in BOTH the playable state
-              (sel already p0/p1) and this same read-only p2+ fallback, so it
-              doubles as the recovery path. */}
+          {/* mobile-ux-layer (WS-1): phase strip — ALL lifecycle phases +
+              Foundations, not just p0/p1 (2026-08-24 audit R1.3's p0/p1-only
+              switcher). Every chip is tappable regardless of "cleared/active/
+              available" state, exactly like the desktop phase ladder just
+              below in the `hidden md:flex` board (`onClick={() => setSel(p)}`,
+              no gate check there either) — phases are NOT sequentially locked
+              in this engine (SIM_MOVES/achievedTreeLevel gate LEVELS within a
+              phase, never phase selection itself), so this strip doesn't
+              invent a lock the desktop board doesn't have. A phase not yet
+              cleared still shows which framework gate it's working toward
+              (title tooltip + the Decide view's own header once opened). */}
           {isMobileShell && (
             <div
-              className="flex w-full max-w-[320px] rounded-lg border border-border bg-muted/40 p-1"
+              className="flex w-full max-w-[340px] gap-1.5 overflow-x-auto pb-1"
               role="group"
               aria-label="Choose a playable phase"
             >
-              {(['p0', 'p1'] as const).map((p) => {
+              {[...LIFECYCLE, 'foundations' as const].map((p) => {
                 const stats = phaseStepStats(p)
+                const fpName = p === 'foundations' ? 'Foundations' : FRAMEWORK_PHASES[p].name
+                const cleared = levelOf(p) >= PHASE_WIN_LEVEL
+                const gate = SIM_TREES[p]?.gate
                 return (
                   <Button
                     key={p}
@@ -1862,16 +1927,23 @@ export function SimulationView() {
                     size="sm"
                     onClick={() => setSel(p)}
                     aria-pressed={sel === p}
-                    className={`h-auto flex-1 flex-col gap-0 py-1.5 text-[11.5px] font-bold ${
+                    title={
+                      !cleared && gate
+                        ? `Gate ${gate.id}: ${gate.criterion}`
+                        : cleared
+                          ? 'Cleared'
+                          : undefined
+                    }
+                    className={`h-auto shrink-0 flex-col gap-0 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-[11.5px] font-bold ${
                       sel === p
-                        ? 'bg-background text-primary shadow-sm'
-                        : 'text-muted-foreground hover:bg-transparent'
+                        ? 'border-primary bg-background text-primary shadow-sm'
+                        : 'border-border text-muted-foreground hover:bg-muted'
                     }`}
                   >
-                    <span>{FRAMEWORK_PHASES[p].name}</span>
-                    {/* mobile-ux-layer (WS-A3) */}
+                    <span>{fpName}</span>
                     <span className="font-mono text-sim-chip font-normal opacity-70">
                       {stats.done}/{stats.total} · L{levelOf(p)}
+                      {cleared ? ' · cleared' : sel === p ? ' · active' : ''}
                     </span>
                   </Button>
                 )
@@ -1898,6 +1970,10 @@ export function SimulationView() {
                 label: 'Budget secured',
                 value: `€${budgetSecured}M of €${budgetTarget}M`,
               },
+              // WS-4 (sim-mobile-full-play): the phone run card had no clock
+              // readout at all — a player had no idea what quarter/year the
+              // run was on until they tapped into a phase's Decide header.
+              { label: 'Turn', value: `Q${q} ${year}` },
             ].map((row) => (
               <div
                 key={row.label}
@@ -1990,17 +2066,15 @@ export function SimulationView() {
               </Button>
             </div>
           )}
-          {/* mobile-ux-layer: real interactive play, p0/p1 only — a deliberate tap,
-            never auto-opened on a genuinely fresh phase. Everything else on this
-            screen (the stats above, Watch the Executive Overview below) is
-            untouched. Label reflects real progress (level > 0, the same
-            already-computed signal phaseCleared uses) rather than always
-            reading "now" — a reader backing out via ← Overview, or landing
-            here on a fresh /simulation visit after playing earlier, deserves
-            to see this is a real phase in progress, not a start-over prompt
-            (2026-08-24, real production feedback). */}
+          {/* mobile-ux-layer (WS-1): real interactive play for EVERY phase now
+            (was p0/p1 only) — a deliberate tap, never auto-opened on a
+            genuinely fresh phase. Label reflects real progress (level > 0,
+            the same already-computed signal phaseCleared uses) rather than
+            always reading "now" — a reader backing out via ← Overview, or
+            landing here on a fresh /simulation visit after playing earlier,
+            deserves to see this is a real phase in progress, not a
+            start-over prompt (2026-08-24, real production feedback). */}
           {isMobileShell &&
-            (sel === 'p0' || sel === 'p1') &&
             !(isMobileViewport && playModalOpen) &&
             !autoRunPlayer.running &&
             !autoRunPlayer.done && (
@@ -2019,7 +2093,7 @@ export function SimulationView() {
             !autoRunPlayer.done && (
               <Button
                 type="button"
-                variant={isMobileShell && (sel === 'p0' || sel === 'p1') ? 'outline' : 'gradient'}
+                variant={isMobileShell ? 'outline' : 'gradient'}
                 size="sm"
                 className="gap-1.5"
                 onClick={() => {

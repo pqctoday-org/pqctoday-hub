@@ -503,21 +503,25 @@ describe('SimulationView — mobile-ux-layer real play (p0/p1)', () => {
     expect(useSimulationStore.getState().q).not.toBe(before)
   })
 
-  it('the back control returns to the read-only overview without losing the run', () => {
+  it('the back control returns to the run-home overview without losing the run', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
     fireEvent.click(screen.getByRole('button', { name: /Overview/i }))
     expect(screen.queryByTestId('sim-mobile-decide')).not.toBeInTheDocument()
-    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+    expect(screen.getByText('Your migration')).toBeInTheDocument()
   })
 
-  it('a phase beyond p0/p1 has no Play CTA — falls back to the existing read-only overview', () => {
+  // WS-1 (sim-mobile-full-play): every phase is playable now, not just p0/p1
+  // — the p0/p1-only guard this test used to assert is exactly the gap the
+  // plan closes (audit: "a phone player reaches a real decision engine for
+  // 2 of 9 phases").
+  it('a phase beyond p0/p1 ALSO has a real Play CTA (WS-1: all phases play)', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     useSimulationStore.setState({ sel: 'p3' })
     renderPage()
-    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
-    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Play .* now/i })).toBeInTheDocument()
+    expect(screen.getByText('Your migration')).toBeInTheDocument()
   })
 
   it('with the mobile shell off, the read-only overview never offers a Play CTA', () => {
