@@ -5,7 +5,7 @@
  * columns, the "next move" decision card, and the End-Quarter report modal.
  * No store access — everything arrives via props.
  */
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
@@ -187,6 +187,7 @@ export function DecisionSection({
   onVisitRef,
   canEmbed,
   onOpenStep,
+  renderCompletion,
   assessRec,
   onWrongPick,
   onTrapPicked,
@@ -204,6 +205,14 @@ export function DecisionSection({
   onVisitRef: (id: string) => void
   canEmbed: (s: TreeStep) => boolean
   onOpenStep: (s: TreeStep) => void
+  /** mobile-ux-layer (WS-A1): an optional in-place completion affordance for the
+   *  correct step, rendered alongside the open/deep-link control below. Desktop
+   *  never passes this — its own embed pane already exposes step completion
+   *  (learn's quiz-gated Mark-complete, CompleteStepAction for review kinds), so
+   *  it stays exactly as it was. The mobile Decide view (canEmbed always false,
+   *  no embed pane to show a completion control) passes one so a correct pick
+   *  can actually finish the step instead of only linking away from it. */
+  renderCompletion?: (step: TreeStep) => ReactNode
   assessRec?: AssessRec
   /** I1 / WP4.4: called with the wrong move's label when the player picks a trap —
    *  every phase now wires this (uniform stakes), not just p1/p5. */
@@ -409,6 +418,7 @@ export function DecisionSection({
               <span className="shrink-0 font-mono text-sim-micro text-warning">resource moved</span>
             </div>
           )}
+          {renderCompletion?.(step)}
         </div>
       )}
       {chosenCard && !chosenCard.correct && (

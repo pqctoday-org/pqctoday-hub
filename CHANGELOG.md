@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.63.0] - 2026-08-28
+
+The Simulation now works honestly on a phone: learn and catalog steps can actually be marked complete there, and the artifact-reveal card no longer hides behind the run controls.
+
+### Fixed
+
+- **On mobile, Simulation steps had no way to finish — a correct pick only ever linked away** [view:/simulation] [persona:executive] [persona:curious]: the mobile Decide view now has a real completion control for learn steps (the same quiz gate desktop uses) and catalog steps (the same save action). Steps whose artifact comes from a Business tool — out of mobile's scope for now — are labeled "laptop steps" and auto-credited from the same signal desktop uses, instead of either faking them done or leaving their count permanently stuck below total. Each phase now shows a plain "X phone steps · Y laptop steps" split so that distinction is visible, not just backend logic.
+- **The mobile run-progress card could land underneath the run-control bar at the bottom of the screen, with no way to scroll to the hidden part** [view:/simulation] [persona:executive] [persona:curious]: the card now measures the run-control bar's real height and sits above it, and gains a scrollable max-height so a longer artifact description is fully readable. On mobile the run-control bar itself now starts collapsed to its title (still one tap to expand) instead of covering roughly a quarter of the screen by default.
+- **Leaving the Simulation phase overview and returning, or reloading the page on a phone, could silently reset an in-progress mobile run back to the overview** [view:/simulation] [persona:executive] [persona:curious]: the mobile play-panel's open/closed state now survives a reload, matching how the rest of a run's progress was already preserved.
+
 ## [4.60.0] - 2026-08-28
 
 The HSM Playground gets a real PKCS#11 v3.2 conformance checker, the key attribute inspector stops mislabeling post-quantum stateful-signature keys, and ACVP testing gains 8 more real NIST vector categories with visible evidence tiers.

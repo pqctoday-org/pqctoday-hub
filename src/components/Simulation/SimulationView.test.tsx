@@ -563,8 +563,11 @@ describe('SimulationView — mobile-ux-layer phase switcher + sel restore (audit
     mockUseIsMobileShell.mockReturnValue(true)
     renderPage() // default sel is p0
     const group = screen.getByRole('group', { name: /choose a playable phase/i })
-    expect(within(group).getByText('Executive Mandate')).toHaveAttribute('aria-pressed', 'true')
-    expect(within(group).getByText('Discovery & Inventory')).toHaveAttribute(
+    expect(within(group).getByText('Executive Mandate').closest('button')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(within(group).getByText('Discovery & Inventory').closest('button')).toHaveAttribute(
       'aria-pressed',
       'false'
     )
