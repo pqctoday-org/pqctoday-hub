@@ -16,11 +16,37 @@ const btn =
 
 const EXPAND_MS = 10000
 
-export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
+export function SimAutoRunOverlay({
+  player,
+  defaultCollapsed = false,
+  publishHeightVar = false,
+}: {
+  player: SimAutoRunPlayer
+  /** mobile-ux-layer (WS-B3): the mobile call site passes true so the caption
+   *  region starts (and re-starts, on every phase change) collapsed instead of
+   *  eating ~26vh of a phone screen by default — still one tap away via the
+   *  existing expand/collapse toggle below. Desktop's own call site never
+   *  passes this, so its always-expand-then-auto-collapse behavior (07-29
+   *  review U10) is unchanged. */
+  defaultCollapsed?: boolean
+  /** mobile-ux-layer (WS-B1): the mobile call site passes true so this, the
+   *  ONLY visible instance at <768px (the desktop call site's own instance is
+   *  invisible there — inside `hidden md:flex`, see SimulationView.tsx), is
+   *  the one that publishes this bar's real measured height as the
+   *  `--sim-transport-h` CSS var. SimArtifactReveal's mobile variant reads it
+   *  to sit above the bar instead of underneath it (previously covered:
+   *  z-[55] card under this bar's z-[60], with zero scroll clearance below
+   *  it either). Deliberately opt-in per call site, not viewport-detected
+   *  internally — the invisible desktop-branch instance would otherwise also
+   *  fire (mounted, just display:none) and report a bogus 0px height,
+   *  fighting the visible instance's real one for the same global property. */
+  publishHeightVar?: boolean
+}) {
   const focus = player.phaseFocus
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(!defaultCollapsed)
   const [prevPhase, setPrevPhase] = useState(focus?.name)
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
   // NEW-overlay-40pct-viewport-clipped-text (mobile-only): the expanded text
   // block below gets a real max-height + overflow-y-auto scroll region on
   // narrow viewports (max-md:), so it can genuinely be scrolled rather than
@@ -37,7 +63,7 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   // setState inside an effect, which can trigger cascading renders.
   if (focus?.name !== prevPhase) {
     setPrevPhase(focus?.name)
-    setExpanded(true)
+    setExpanded(!defaultCollapsed)
   }
 
   // After re-opening, auto-collapse to just the title after ~10s. The collapse
@@ -73,6 +99,36 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
     }
   }, [expanded, focus?.summary, focus?.gate])
 
+  // mobile-ux-layer (WS-B1): publishes this bar's real rendered height (only
+  // when publishHeightVar is set — see the prop doc above) as a CSS var on the
+  // document root, so a sibling fixed-position element (SimArtifactReveal's
+  // mobile variant) can sit above it instead of guessing a fixed offset that
+  // drifts every time this bar's own content/height changes (expanded vs
+  // collapsed, one-line vs wrapped phase name, safe-area inset). Cleared
+  // whenever this instance isn't actually rendering the bar (early-returns
+  // null below), so nothing stale lingers once a run ends.
+  useEffect(() => {
+    if (!publishHeightVar) return
+    const el = rootRef.current
+    if (!el) {
+      document.documentElement.style.removeProperty('--sim-transport-h')
+      return
+    }
+    const update = () => {
+      document.documentElement.style.setProperty(
+        '--sim-transport-h',
+        `${Math.ceil(el.getBoundingClientRect().height)}px`
+      )
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+      document.documentElement.style.removeProperty('--sim-transport-h')
+    }
+  }, [publishHeightVar, player.running, player.done, expanded])
+
   // Manual toggle cancels the auto-collapse so it stays where the user put it.
   const toggle = () => {
     if (collapseTimer.current) {
@@ -86,7 +142,10 @@ export function SimAutoRunOverlay({ player }: { player: SimAutoRunPlayer }) {
   const pct = player.total ? Math.round((player.index / player.total) * 100) : 0
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] border-t border-background/20 bg-foreground px-5 py-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom,0px))] text-background shadow-2xl">
+    <div
+      ref={rootRef}
+      className="fixed inset-x-0 bottom-0 z-[60] border-t border-background/20 bg-foreground px-5 py-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom,0px))] text-background shadow-2xl"
+    >
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
         {focus && (
           <div>
