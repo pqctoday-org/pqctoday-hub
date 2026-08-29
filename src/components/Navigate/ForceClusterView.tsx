@@ -531,6 +531,7 @@ export function ForceClusterView() {
   const [enabledTypes, setEnabledTypes] = useState<ReadonlySet<ForceClusterNodeType>>(
     () => new Set(NODE_TYPES)
   )
+  const [listOpen, setListOpen] = useState(false)
   const applyFiltersRef = useRef<
     ((enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => void) | null
   >(null)
@@ -562,6 +563,19 @@ export function ForceClusterView() {
   }, [graph])
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
+
+  // Keyboard/screen-reader path to node selection — raycast-on-canvas-click
+  // (the only other way in) is reachable by pointer alone. Mirrors
+  // applyFilters' own type + top-percent-by-degree logic (buildScene above)
+  // so the list matches what's actually rendered, without touching the
+  // imperative three.js scene-building code to get there.
+  const visibleNodeList = useMemo(() => {
+    if (!graph) return []
+    const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
+    const sortedDesc = [...typeFiltered].sort((a, b) => b.degree - a.degree)
+    const keepCount = Math.max(1, Math.ceil((visiblePercent / 100) * sortedDesc.length))
+    return sortedDesc.slice(0, keepCount)
+  }, [graph, enabledTypes, visiblePercent])
 
   const connections = useMemo(() => {
     if (!graph || !selectedNodeId) return []
@@ -663,14 +677,22 @@ export function ForceClusterView() {
         }
       }
 
+      const prefersReducedMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
       const timer = new THREE.Timer()
       renderer.setAnimationLoop(() => {
         timer.update()
         const delta = timer.getDelta()
         // Paused while a node is selected — orbiting the scene away from
         // under a reader mid-inspection is a real usability problem, not a
-        // cosmetic one.
-        if (rotatingGroup && !selectedNodeIdRef.current) rotatingGroup.rotation.y += delta * 0.02
+        // cosmetic one. Also paused outright under prefers-reduced-motion:
+        // this is a direct three.js animation-loop call, so it sits outside
+        // the CSS-keyframe reduced-motion block the rest of the product uses.
+        if (rotatingGroup && !selectedNodeIdRef.current && !prefersReducedMotion) {
+          rotatingGroup.rotation.y += delta * 0.02
+        }
         controls?.update()
         updateLod()
         renderer?.render(scene, camera)
@@ -762,6 +784,19 @@ export function ForceClusterView() {
       )}
       {!loading && !error && (
         <div className="glass-panel absolute bottom-4 left-4 max-w-[360px] space-y-3 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Filter</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto gap-1.5 px-2 py-1 text-xs"
+              aria-expanded={listOpen}
+              aria-controls="navigate-node-list"
+              onClick={() => setListOpen((v) => !v)}
+            >
+              {listOpen ? 'Hide list view' : 'List view (keyboard)'}
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {NODE_TYPES.map((type) => {
               const on = enabledTypes.has(type)
@@ -803,6 +838,29 @@ export function ForceClusterView() {
               aria-label="Percentage of nodes shown, ranked by connection count"
             />
           </label>
+          {listOpen && (
+            <ul
+              id="navigate-node-list"
+              aria-label={`${visibleNodeList.length} visible nodes, ranked by connection count`}
+              className="max-h-64 space-y-0.5 overflow-y-auto border-t border-border pt-2"
+            >
+              {visibleNodeList.map((node) => (
+                <li key={node.id}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedNodeId(node.id)}
+                    aria-current={node.id === selectedNodeId ? 'true' : undefined}
+                    className="h-auto w-full justify-start truncate rounded px-1.5 py-1 text-left text-xs font-normal"
+                  >
+                    <span className="text-muted-foreground">{TYPE_LABEL[node.type]}:</span>{' '}
+                    {node.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
     </div>
