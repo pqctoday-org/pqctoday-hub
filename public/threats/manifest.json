@@ -1862,6 +1862,19 @@
       "contentType": "text/html",
       "sha256": "152028af9fd8f61a8947fb9ff2b791836df02ae91adb0d73af66fd6d9a7b24df",
       "regeneratedAt": "2026-08-22T12:50:13.000Z"
+    },
+    {
+      "threatId": "CROS-007",
+      "refId": "CROS-007",
+      "title": "Post-Quantum Cryptography Key Management",
+      "url": "https://cloudsecurityalliance.org/artifacts/post-quantum-cryptography-key-management",
+      "status": "downloaded",
+      "file": "threats/CROS-007.html",
+      "filename": "CROS-007.html",
+      "sizeBytes": 165031,
+      "contentType": "text/html",
+      "sha256": "b47bb3a4b591aad7ecb1aa2490764589c05d6602b75fc1e56239204af1122629",
+      "downloadedAt": "2026-08-29T22:00:25.185538+00:00"
     }
   ]
 }

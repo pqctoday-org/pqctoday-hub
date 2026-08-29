@@ -359,7 +359,8 @@ export const CRQC_ESTIMATES: CRQCEstimate[] = [
     source: 'Global Risk Institute (2025)',
     yearLow: 2030,
     yearHigh: 2041,
-    confidence: '28-49% by 2036, 51-70% by 2041',
+    confidence:
+      'quite possible (28-49%) within the next 10 years, likely (51-70%) in the next 15 (GRI 2025 survey, published March 2026)',
     notes:
       '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
     url: 'https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/',
