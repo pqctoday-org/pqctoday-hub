@@ -544,6 +544,41 @@ export function splitComma(val: string | undefined): string[] {
     .filter(Boolean)
 }
 
+// Classical algorithms legitimately cited alongside PQC ones (quantum-safe by
+// key size, or the symmetric/hash primitive a PQC transition still relies
+// on) — not present in the PQC algorithm reference CSV, so an exact-name
+// lookup against it always misses them. Shared by every check that resolves
+// an algorithm reference against that CSV (originally local to N10 in
+// cross-ref-checks.ts; centralized 2026-08-29 after QA-C3 in
+// qa-consistency-checks.ts was found doing the same resolution without this
+// allowlist or the prefix-match fallback below, false-flagging real
+// citations like "AES-256").
+export const CLASSICAL_QUANTUM_SAFE_ALGORITHMS = new Set([
+  'AES-256',
+  'AES-128',
+  'SHA3-256',
+  'SHA3-512',
+  'SHA-256',
+  'SHA-384',
+  'SHA-512',
+  'HMAC-SHA256',
+  'HMAC-SHA384',
+  'HMAC-SHA512',
+])
+
+/**
+ * Whether `name` resolves against the PQC algorithm reference CSV's known
+ * names (`algorithmNames`) — exact match, a classical-but-quantum-safe
+ * allowlist hit, or a family-prefix match (a bare family name like
+ * "SLH-DSA" matching a specific parameter set like "SLH-DSA-SHA2-128s" —
+ * the CSV only ever carries the specific rows, never the bare family name).
+ */
+export function isKnownAlgorithmName(name: string, algorithmNames: Set<string>): boolean {
+  if (algorithmNames.has(name)) return true
+  if (CLASSICAL_QUANTUM_SAFE_ALGORITHMS.has(name)) return true
+  return [...algorithmNames].some((known) => known.startsWith(name))
+}
+
 export function isValidUrl(s: string): boolean {
   try {
     new URL(s)
