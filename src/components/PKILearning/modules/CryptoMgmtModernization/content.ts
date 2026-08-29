@@ -10,7 +10,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'crypto-mgmt-modernization',
   version: '1.1.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-29',
   lastEdited: '2026-08-23',
 
   // ORDERED FOR A READER. It used to be ordered for the SAMPLER, and that constraint is

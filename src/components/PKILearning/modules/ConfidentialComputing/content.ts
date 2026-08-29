@@ -9,7 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 export const content: ModuleContent = {
   moduleId: 'confidential-computing',
   version: '1.0.0',
-  lastReviewed: '2026-08-22',
+  lastReviewed: '2026-08-29',
   lastEdited: '2026-08-23',
 
   standards: [
@@ -51,6 +51,11 @@ export const content: ModuleContent = {
     // defines, and the module cited only vendor material. Active library
     // row, directly on topic — no new reference needed.
     getStandard('NIST IR 8320E'),
+    // DECLARED 2026-08-29 (user-directed): the module's attestation and
+    // sealing-key-derivation content draws on TCG's own hardware-root-of-
+    // trust model (four-hierarchy TPM architecture, EK/SRK/AIK/IDevID key
+    // roles) and cited no TCG standard. Active library row.
+    getStandard('TCG-TPM-V185-Part1'),
   ],
 
   algorithms: [
@@ -76,7 +81,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'TEE Architecture Explorer — Compare 7 TEE platforms by isolation, encryption, attestation, and PQC readiness. Attestation Workshop — Interactive remote attestation flow simulator with quantum vulnerability highlighting. Encryption Mechanisms — Memory encryption engine comparison, sealing key derivation, Grover impact calculator. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM.',
     relatedStandards:
-      'NIST IR 8320E (Hardware-Enabled Security: Confidential Computing of Data in Cloud Workloads — Initial Public Draft) defines the TEE + remote-attestation + key-release workflow this module teaches. FIPS 203/204 (ML-KEM, ML-DSA for attestation key migration). Intel SGX/TDX SDK, DCAP attestation. ARM CCA (Confidential Compute Architecture). AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging). AWS Nitro Enclaves attestation framework. PKCS#11 v3.2 (TEE-HSM integration)',
+      'NIST IR 8320E (Hardware-Enabled Security: Confidential Computing of Data in Cloud Workloads — Initial Public Draft) defines the TEE + remote-attestation + key-release workflow this module teaches. TCG TPM 2.0 Library Specification v1.85, Part 1: Architecture — the hardware root-of-trust model (four-hierarchy TPM architecture; EK/SRK/AIK/IDevID key roles) underlying remote attestation and sealing key derivation. FIPS 203/204 (ML-KEM, ML-DSA for attestation key migration). Intel SGX/TDX SDK, DCAP attestation. ARM CCA (Confidential Compute Architecture). AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging). AWS Nitro Enclaves attestation framework. PKCS#11 v3.2 (TEE-HSM integration)',
   },
 }
 
