@@ -1,27 +1,28 @@
 {
   "algorithm": "ECDSA",
   "mode": "sigVer",
-  "source": "Generated via Node.js crypto (OpenSSL backend), ECDSA P-521 with SHA-512",
+  "revision": "FIPS186-5",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/ECDSA-SigVer-FIPS186-5/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-27",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "45f9e9425e68b099d9c029e0e75ec04e9cc5943b60fa24cdb4d5af778f350b63",
+    "note": "tgId 23 (curve=P-521, hashAlg=SHA2-512), tcId 156, the group's only testPassed=true case. Independently re-verified against Node's crypto (OpenSSL) oracle before use, same as every other vector in this directory. Replaces the prior self-consistency-only Functional Sign+Verify test (WS-4/D-3): that test proved the engine's own sign+verify agree with each other, not that verify accepts an externally-signed, NIST-known-good signature — exactly the blind spot the gap report's H-4 finding named."
+  },
   "testGroups": [
     {
       "curve": "P-521",
       "hashAlg": "SHA-512",
       "tests": [
         {
-          "qx": "0168a9b6eacaa3bc1026626f00d291ee82579fbbb8845a4b4934139a6e4c58b9fbc349bc0f88cfb6e3c96a3a0c371893000c57624653ac3e60b2bc4d1bfff2f1ec77",
-          "qy": "016fd6d55459e5d8028d7030ef42c766bed7c5d206eb65daae9f8d7345216440f94dedf9e1b2b6fea7725b71ccb50f047f1517501901962dde717a4b038f589aae5f",
-          "msg": "ACVP ECDSA P-521 SigVer test vector",
-          "r": "00cb30a0844ec945dbc0ad98026d93f3f149f697aa2e3e76bf44eb251af93adcea9c6a8724136ad9f93f5ae5d6f8c8fdbb89db9664cd18e7c399f3ff67f5fc0df1f6",
-          "s": "01a45389340df164754708b6597df1d88adb3cf4ac00fd95a3929ce1a80a874d0b7218cfa34bc676baf1e6a4d309d63a41ed41e176a0a82f56d4c6e8cf5856059ecf",
-          "testPassed": true
-        },
-        {
-          "qx": "0168a9b6eacaa3bc1026626f00d291ee82579fbbb8845a4b4934139a6e4c58b9fbc349bc0f88cfb6e3c96a3a0c371893000c57624653ac3e60b2bc4d1bfff2f1ec77",
-          "qy": "016fd6d55459e5d8028d7030ef42c766bed7c5d206eb65daae9f8d7345216440f94dedf9e1b2b6fea7725b71ccb50f047f1517501901962dde717a4b038f589aae5f",
-          "msg": "454344534120502d3532312041435650206578747261207465737420766563746f7220666f722073696756657220646966666572656e74696174696f6e",
-          "r": "01989f3f7ee0d7dbfce18fbee48648f4a417d1f58efba05aab60e07b272e6a5b44d156f873d70101d482cc6725563cdab06173eb30425ca907b0b616887d51044c06",
-          "s": "00882ca929be445c4769f98f5e469dda2a855fdeca03b1d041c3e5ba6b4082c4014e327c775f682771ec700e9259f6d6c34e8112e92ce8311266b1af82878e2ac218",
-          "testPassed": true
+          "qx": "00b6d8e1bf57041690bbf8029f5cff95942abb39d33cd6f033fd9b2d2aca8bcd8bfca21c4a2c4321d9c51702b7ddbd5ce45ce8618a80ab420cd5b4399f6390b070f8",
+          "qy": "00fec2cb9f014166aece1d92cdfbd0e285873202822bfb0d02635d9a58ee9ba0d25bdbd776b5fb6d467c51006ae3e159738208bc3621d5934601b5abec313c82254f",
+          "message": "455e95a9cefece7a48b7ee471138b35d17913fef6b59ee22c96b063507bd49530ec751f1207fd3f401a6d2abb936778525d2df53e2c48f974fb529a1f2d0201a63a77e89bed82ff6e422b4faf03ed7f30df90527d8acfb8c510fc95076b817b5a1c3e99129857f2afab700dd50e0a619059f5a0985c1de4c39a70e3d032aaee5",
+          "r": "00e9cdac23167602f30787bfeb087788e2f3426551cea49425e6018827eccc9b70d03c497d8c1d7fe567856b89448d56bca36801e20117a61fad5b555a03e1c4629e",
+          "s": "0034dfda1159871c4dc7d06c176f0325b9c535fcf33830d9a9e7613ae7701423f30dcd85ab1ebc4a65e3ebeab9651bd6b95534035417d738a45982cabcaefc186afc",
+          "testPassed": true,
+          "tcId": 156
         }
       ]
     }

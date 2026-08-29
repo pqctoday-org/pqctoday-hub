@@ -53,9 +53,10 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
           {/* Intro */}
           <p className="text-muted-foreground leading-relaxed">
             This playground hosts a browser-native PKCS#11 v3.2 emulator (SoftHSMv3 compiled to
-            WebAssembly via Emscripten). The emulator is validated through three independent layers
-            before being exposed in the UI. The PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA,
-            CKM_SLH_DSA) are defined in{' '}
+            WebAssembly via Emscripten). The emulator is validated through four independent layers
+            before being exposed in the UI — the fourth (self-consistency) is disclosed separately
+            below rather than folded into the NIST-backed layers, since it rests on weaker evidence.
+            The PQC mechanisms it emulates (CKM_ML_KEM, CKM_ML_DSA, CKM_SLH_DSA) are defined in{' '}
             <span className="font-semibold text-foreground">
               OASIS PKCS#11 v3.2, an OASIS Standard since 3 June 2026
             </span>
@@ -218,6 +219,57 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                   </span>
                 </div>
               </div>
+            </div>
+          </section>
+
+          {/* Layer 4: Self-consistency checks */}
+          <section>
+            <div className="flex items-center gap-2 mb-3">
+              <FlaskConical size={15} className="text-muted-foreground shrink-0" />
+              <h3 className="font-semibold text-foreground">Layer 4 — Self-Consistency Checks</h3>
+            </div>
+            <div className="pl-5 space-y-2 text-muted-foreground">
+              <p className="leading-relaxed">
+                A small number of tests have no matching NIST ACVP reference vector or published
+                standard KAT to check against — either the algorithm has no ACVP registration at
+                all, or the specific parameters this emulator implements (a hash width, a PRF)
+                aren&apos;t among the ones NIST&apos;s reference vector sample covers. For these,
+                the expected value is instead computed independently with Node&apos;s{' '}
+                <span className="font-mono text-xs">crypto</span> module (OpenSSL) and checked for
+                agreement — a real assertion (the emulator and an independent implementation must
+                still produce the same answer), but a weaker one than a citable published vector,
+                since both share the same underlying primitive rather than being cross-validated
+                against a third-party reference.
+              </p>
+              <ul className="space-y-1.5 mt-2">
+                {[
+                  {
+                    algo: 'RSA-OAEP',
+                    detail: 'No ACVP registration exists for RSA-OAEP decryption at all',
+                  },
+                  {
+                    algo: 'RSA-PSS',
+                    detail:
+                      "NIST's reference PSS vectors only cover SHA-1/SHA2-224/SHA3-256/SHAKE — none of which this emulator's PSS path implements (SHA-256/384/512, SHA3-384)",
+                  },
+                  {
+                    algo: 'PBKDF2',
+                    detail:
+                      "NIST's reference PBKDF2 vectors are SHA2-224-only — this emulator implements SHA-256/384/512 PRFs, which the reference sample doesn't cover",
+                  },
+                ].map(({ algo, detail }) => (
+                  <li key={algo} className="flex gap-2">
+                    <span className="text-xs font-mono font-bold text-muted-foreground shrink-0 mt-0.5 w-20">
+                      {algo}
+                    </span>
+                    <span className="text-xs leading-relaxed">{detail}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs leading-relaxed pt-1">
+                The results table marks every test with its evidence tier (hover the status badge) —
+                self-consistency rows carry the same flask icon used above.
+              </p>
             </div>
           </section>
 

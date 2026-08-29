@@ -31,5 +31,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": "https://csrc.nist.gov/pubs/sp/800/38/d/final",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "SP 800-38D + McGrew/Viega \"The Galois/Counter Mode of Operation\" Test Case 16 (AES-256) (published KAT sample, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. Key/IV/tag are the widely-cited McGrew-Viega AES-256-GCM test case referenced by SP 800-38D's design rationale, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified (all 3 sub-cases) against the Node crypto (OpenSSL) oracle before backfill."
+  }
 }

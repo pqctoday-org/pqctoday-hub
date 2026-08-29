@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.61.0] - 2026-08-28
+## [4.64.0] - 2026-08-28
 
 Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one.
 
@@ -49,6 +49,30 @@ Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run
 - **The mobile "unread updates" indicator could get permanently stuck on, for every visitor** [persona:curious] [persona:developer]: once a changelog entry for a not-yet-released version landed in this file — which happens routinely, ahead of the actual version bump — there was no way to ever mark it "seen": the red dot on the ⋯ menu stayed on for everyone until the version number caught up. The unread check is now capped at the version actually running.
 - **The PKCS#11 Developer tab's C++ engine could never provision its own practice token** [view:/playground] [persona:developer]: switching the engine selector to C++ silently broke this tab specifically, because that engine reports every slot as having a token present the instant it exists, not just once one has actually been set up — so its dedicated token slot could never be created. Both engines now work, and the summary rail names which one ran your sequence.
 - **A runaway script in either Developer tab could hang the browser tab indefinitely** [view:/playground] [persona:developer]: the 15-second timeout used to just give up and report failure while the script kept running unseen in the background — for a tight loop with no natural pause point, it couldn't even manage that much, since the timeout's own clock could never get a turn to run either. A dedicated background watchdog now delivers a real interrupt, the same way pressing Ctrl-C would, so the script actually stops.
+
+## [4.63.0] - 2026-08-28
+
+The Simulation now works honestly on a phone: learn and catalog steps can actually be marked complete there, and the artifact-reveal card no longer hides behind the run controls.
+
+### Fixed
+
+- **On mobile, Simulation steps had no way to finish — a correct pick only ever linked away** [view:/simulation] [persona:executive] [persona:curious]: the mobile Decide view now has a real completion control for learn steps (the same quiz gate desktop uses) and catalog steps (the same save action). Steps whose artifact comes from a Business tool — out of mobile's scope for now — are labeled "laptop steps" and auto-credited from the same signal desktop uses, instead of either faking them done or leaving their count permanently stuck below total. Each phase now shows a plain "X phone steps · Y laptop steps" split so that distinction is visible, not just backend logic.
+- **The mobile run-progress card could land underneath the run-control bar at the bottom of the screen, with no way to scroll to the hidden part** [view:/simulation] [persona:executive] [persona:curious]: the card now measures the run-control bar's real height and sits above it, and gains a scrollable max-height so a longer artifact description is fully readable. On mobile the run-control bar itself now starts collapsed to its title (still one tap to expand) instead of covering roughly a quarter of the screen by default.
+- **Leaving the Simulation phase overview and returning, or reloading the page on a phone, could silently reset an in-progress mobile run back to the overview** [view:/simulation] [persona:executive] [persona:curious]: the mobile play-panel's open/closed state now survives a reload, matching how the rest of a run's progress was already preserved.
+
+## [4.60.0] - 2026-08-28
+
+The HSM Playground gets a real PKCS#11 v3.2 conformance checker, the key attribute inspector stops mislabeling post-quantum stateful-signature keys, and ACVP testing gains 8 more real NIST vector categories with visible evidence tiers.
+
+### Added
+
+- **A new Conformance tab in the HSM Playground runs OASIS's own published PKCS#11 v3.2 test cases** [view:/playground/hsm] [persona:developer] [persona:architect] [persona:ops]: both the C++ and Rust engines are now checked against OASIS's Baseline, Extended, Authentication Token, and Public Certificates Token mandatory test cases, run verbatim over the engines' real PKCS#11 calls rather than a paraphrase of the spec. Building this surfaced and fixed two genuine engine conformance gaps: object handles that stayed valid across a login/logout cycle when the spec says they shouldn't, and objects returned in a different order after a session reset.
+
+- **ACVP testing gains 8 more categories backed by real NIST test vectors** [view:/playground/hsm] [persona:developer] [persona:ops]: ECDSA P-521, EdDSA Ed448, KMAC128, AES-CBC-256, and HMAC-SHA256/384/512 now check against published NIST ACVP vectors instead of internally-generated ones. Every ACVP result now shows which evidence tier it relies on — a real NIST vector, a published-standard sample, or a self-consistency check — as a badge on the result.
+
+### Fixed
+
+- **Post-quantum stateful-signature keys (HSS, XMSS, XMSS^MT) showed up as unlabeled hex instead of their key type** [view:/playground/hsm] [persona:developer]: the shared key-attribute inspector used by 30+ surfaces (SSH, VPN, 5G, PKI Workshop, HD wallet, and more) had its own copy of the key-type name table that had drifted out of sync with the Playground's HSM Keys tab. The three separate copies are now one inspector, which also reads 17 attributes (CKA_EC_PARAMS, CKA_MODULUS_BITS, CKA_TRUSTED, and others) that both engines already supported but the inspector never asked for, and correctly distinguishes an attribute that's absent from one that's present but access-restricted.
 
 ## [4.59.0] - 2026-08-26
 

@@ -45,9 +45,16 @@ export interface SimulationState {
    *  and back fully remounts SimulationView. Without this living in the
    *  store, a reader mid-play would land back on the overview on return,
    *  looking like their progress reset even though sel/decisions/budget
-   *  (all store-backed already) never did. Transient run-control state (not
-   *  part of saveSlice, not part of partialize — a UI toggle has no place in
-   *  an exported save or surviving a browser restart); cleared by reset(). */
+   *  (all store-backed already) never did. mobile-ux-layer (WS-A4, 08-27):
+   *  the same reasoning extends to a full page reload / iOS tab discard —
+   *  both routine on a phone, and both used to silently drop this flag back
+   *  to `false` because it lived in neither saveSlice nor partialize. Now
+   *  part of `partialize` (browser-local persistence) alongside tourSeen
+   *  below, so it survives a reload — but deliberately still NOT part of
+   *  `saveSlice`, so it never travels in a portable run export/import (that
+   *  file may be opened on a desktop, where this flag is meaningless); a
+   *  fresh run always starts on the read-only overview regardless. Cleared
+   *  by reset(). */
   mobilePlayOpen: boolean
   autoRunResumeIndex: number
   /** The RunMode string of the last-started climb-family run (`'climb'` or
@@ -546,6 +553,10 @@ export const useSimulationStore = create<SimulationState>()(
       // export / app snapshot.
       partialize: (s) => ({
         ...saveSlice(s),
+        // mobile-ux-layer (WS-A4): browser-local only, same reasoning as
+        // tourSeen below — never part of saveSlice (see the field's own
+        // comment in the state interface above).
+        mobilePlayOpen: s.mobilePlayOpen,
         tourSeen: s.tourSeen,
         seenConceptPeeks: s.seenConceptPeeks,
         simRunsCompleted: s.simRunsCompleted,

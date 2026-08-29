@@ -1063,6 +1063,15 @@ export function SimulationView() {
   // the gate of every level below it (completing those levels' activities). No
   // manual/seed bypass. Every phase is tree-backed; evidence is a defensive fallback.
   const levelOf = (p: string) => (SIM_TREES[p as PhaseId] ? treeLevel(p) : evidenceLevel(p))
+  // mobile-ux-layer (WS-A3): step-done/total for an ARBITRARY phase (not just
+  // `sel`) — the mobile overview's phase-switcher tabs show both p0 and p1 at
+  // once regardless of which one is currently selected, unlike flatSteps
+  // above which is sel-scoped.
+  const phaseStepStats = (p: PhaseId) => {
+    const tree = SIM_TREES[p]
+    const steps = (tree ? flattenTree(tree) : []).filter(isGatingStep)
+    return { done: steps.filter((s) => stepDone(s, p)).length, total: steps.length }
+  }
 
   // The TOP maturity band a phase actually ships (its tree's highest level). The
   // framework caps several phases below L4 BY DESIGN — no framework activity sits
@@ -1310,6 +1319,16 @@ export function SimulationView() {
   const flatSteps = (phaseTree ? flattenTree(phaseTree) : []).filter(isGatingStep)
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
+  // mobile-ux-layer (WS-A2): activity steps produce their artifact through a
+  // Business tool (out of mobile scope for now — BusinessToolRoute has no
+  // mobile gate of its own), so they can only ever be credited from a wider
+  // screen. Every other kind (learn/reference/catalog) genuinely completes on
+  // a phone now (WS-A1). Split so the mobile UI can say that honestly instead
+  // of showing one count that can never reach its total on a phone alone.
+  const phoneSteps = flatSteps.filter((s) => s.kind !== 'activity')
+  const phoneStepsDone = phoneSteps.filter((s) => stepDone(s, sel)).length
+  const laptopSteps = flatSteps.filter((s) => s.kind === 'activity')
+  const laptopStepsDone = laptopSteps.filter((s) => stepDone(s, sel)).length
   // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
   // DecisionSection's "recommended" next move — it is NOT the only way to act:
   // the active band's steps are all openable (any order) in the ladder below.
@@ -1634,6 +1653,18 @@ export function SimulationView() {
                 Gate {phaseTree.gate.id}: {phaseTree.gate.criterion}
               </p>
             )}
+            {/* mobile-ux-layer (WS-A2): honest split — phoneSteps is what can
+                actually finish here; laptopSteps needs a Business tool this
+                page can't offer yet. Only shown when this phase actually has
+                laptop-only steps, so p0/p1 read identically to today if that
+                ever changes. */}
+            {laptopSteps.length > 0 && (
+              <p className="mt-1 font-mono text-[10.5px] text-muted-foreground">
+                {phoneStepsDone}/{phoneSteps.length} phone steps · {laptopStepsDone}/
+                {laptopSteps.length} laptop steps
+                {laptopStepsDone > 0 ? ` (${laptopStepsDone} credited)` : ''}
+              </p>
+            )}
           </div>
           <DecisionSection
             phaseId={sel}
@@ -1647,6 +1678,76 @@ export function SimulationView() {
             onVisitRef={markRefVisited}
             canEmbed={() => false}
             onOpenStep={() => {}}
+            // mobile-ux-layer (WS-A1): canEmbed is forced false above (no embed
+            // pane on a phone), so this is the ONLY completion path a mobile
+            // player has — without it, a correct pick only ever links away and
+            // the step can never finish. Mirrors the desktop embed header's
+            // per-kind completion exactly (SimulationView's learnEmbed
+            // Mark-complete + the review-kind CompleteStepAction block above):
+            // learn is quiz-gated same as desktop, catalog uses the same
+            // CompleteStepAction, reference already self-completes via the
+            // deep-link's own onClick. activity is display-only — its artifact
+            // comes from a Business tool (out of mobile scope for now), so it
+            // auto-credits from the same artifactDone() signal desktop uses
+            // and is labeled a "laptop step" rather than faked done.
+            renderCompletion={(step) => {
+              if (step.kind === 'learn' && step.moduleId) {
+                const moduleId = step.moduleId
+                if (moduleDone(moduleId)) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ Module completed
+                    </div>
+                  )
+                }
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      const q = pickQuizQuestion(moduleId, seed)
+                      if (q) {
+                        setQuizGate({ moduleId, title: step.label, question: q })
+                      } else {
+                        updateModuleProgress(moduleId, { status: 'completed' })
+                      }
+                    }}
+                    className="mt-2 h-auto w-full rounded-md border border-success/50 bg-success/10 px-3 py-2 text-[11px] font-bold text-success hover:bg-success/20"
+                  >
+                    Mark complete
+                  </Button>
+                )
+              }
+              if (step.kind === 'catalog' && step.catalogId) {
+                const catalogId = step.catalogId
+                return (
+                  <div className="mt-2">
+                    <CompleteStepAction
+                      recordsArtifact={false}
+                      saved={catalogCompleted.includes(catalogId)}
+                      onClick={() => markCatalogStepDone(catalogId)}
+                    />
+                  </div>
+                )
+              }
+              if (step.kind === 'activity') {
+                const done = !!step.artifactType && artifactDone(step.artifactType)
+                return (
+                  <div
+                    className={`mt-2 rounded-md border px-3 py-2 text-[11px] leading-snug ${
+                      done
+                        ? 'border-success/40 bg-success/5 font-bold text-success'
+                        : 'border-dashed border-muted-foreground/40 bg-muted/30 text-muted-foreground'
+                    }`}
+                  >
+                    {done
+                      ? '✓ Artifact on file — this step is credited.'
+                      : 'Laptop step — this step is credited once its artifact is built on a wider screen.'}
+                  </div>
+                )
+              }
+              return null
+            }}
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
@@ -1665,6 +1766,23 @@ export function SimulationView() {
             }}
           />
           <TrapInsightsPanel />
+          {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
+              above can open. A second instance of the same quizGate/setQuizGate
+              state the desktop embed header uses — that one is unreachable here
+              (inside the `hidden md:flex` wrapper, now guarded !isMobileShell to
+              avoid a double mount). This is a plain fixed-position overlay with
+              its own z-[80], so it renders correctly regardless of viewport. */}
+          {quizGate && (
+            <QuizGateModal
+              question={quizGate.question}
+              moduleTitle={quizGate.title}
+              onCancel={() => setQuizGate(null)}
+              onPass={() => {
+                updateModuleProgress(quizGate.moduleId, { status: 'completed' })
+                setQuizGate(null)
+              }}
+            />
+          )}
           {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
             <div
               className={`mb-4 rounded-lg border p-3 ${
@@ -1702,7 +1820,17 @@ export function SimulationView() {
           </p>
         </div>
       ) : (
-        <div className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5">
+        <div
+          className="flex md:hidden fixed inset-0 z-50 flex-col items-center justify-center overflow-auto bg-background px-6 py-10 text-center gap-5"
+          // mobile-ux-layer (WS-B2): the +2.5rem baseline matches this
+          // container's own py-10 bottom padding exactly (so idle state, no
+          // run active, --sim-transport-h unset, is pixel-identical to
+          // before) — the transport bar's real published height is added on
+          // top only while a run is active, so the stats/CTAs below can
+          // always scroll fully clear of it instead of being covered with no
+          // way to reach the last ~325px of content.
+          style={{ paddingBottom: 'calc(var(--sim-transport-h, 0px) + 2.5rem)' }}
+        >
           <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
           <div className="space-y-1">
             <h2 className="text-lg font-bold">Your migration at a glance</h2>
@@ -1724,23 +1852,30 @@ export function SimulationView() {
               role="group"
               aria-label="Choose a playable phase"
             >
-              {(['p0', 'p1'] as const).map((p) => (
-                <Button
-                  key={p}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSel(p)}
-                  aria-pressed={sel === p}
-                  className={`h-9 flex-1 text-[11.5px] font-bold ${
-                    sel === p
-                      ? 'bg-background text-primary shadow-sm'
-                      : 'text-muted-foreground hover:bg-transparent'
-                  }`}
-                >
-                  {FRAMEWORK_PHASES[p].name}
-                </Button>
-              ))}
+              {(['p0', 'p1'] as const).map((p) => {
+                const stats = phaseStepStats(p)
+                return (
+                  <Button
+                    key={p}
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSel(p)}
+                    aria-pressed={sel === p}
+                    className={`h-auto flex-1 flex-col gap-0 py-1.5 text-[11.5px] font-bold ${
+                      sel === p
+                        ? 'bg-background text-primary shadow-sm'
+                        : 'text-muted-foreground hover:bg-transparent'
+                    }`}
+                  >
+                    <span>{FRAMEWORK_PHASES[p].name}</span>
+                    {/* mobile-ux-layer (WS-A3) */}
+                    <span className="font-mono text-sim-chip font-normal opacity-70">
+                      {stats.done}/{stats.total} · L{levelOf(p)}
+                    </span>
+                  </Button>
+                )
+              })}
             </div>
           )}
           <dl className="w-full max-w-[320px] space-y-2 text-left">
@@ -1880,7 +2015,12 @@ export function SimulationView() {
             )}
           {(autoRunPlayer.running || autoRunPlayer.done) && (
             <>
-              <SimAutoRunOverlay player={autoRunPlayer} />
+              {/* mobile-ux-layer (WS-B1/B3): defaultCollapsed + publishHeightVar
+                  are opt-in props only this (the visible-at-<768px) instance
+                  passes — see their doc comments in SimAutoRunOverlay for why
+                  the desktop instance below (line ~2240, invisible here but
+                  still mounted) must NOT also pass publishHeightVar. */}
+              <SimAutoRunOverlay player={autoRunPlayer} defaultCollapsed publishHeightVar />
               {autoRunPlayer.scenarioIntro && (
                 <SimScenarioIntroCard
                   scenario={autoRunPlayer.scenarioIntro}
@@ -1899,7 +2039,7 @@ export function SimulationView() {
                   onBegin={autoRunPlayer.beginPhase}
                 />
               )}
-              <SimArtifactReveal type={autoRunPlayer.reveal} />
+              <SimArtifactReveal type={autoRunPlayer.reveal} variant="mobile" />
             </>
           )}
           {walkthroughDoneOpen && (
@@ -4086,15 +4226,25 @@ export function SimulationView() {
             before `running` flips) — but tourSeen is never force-set here, so a user who
             enters via auto-run and never organically saw the tour is offered it once the
             run ends, instead of it being silently burned forever. */}
-        {((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
-          tourOpen) && (
-          <SimTour
-            onClose={() => {
-              markTourSeen()
-              setTourOpen(false)
-            }}
-          />
-        )}
+        {/* mobile-ux-layer (WS-C1, 08-27): this whole block lives inside the
+            desktop-only wrapper, so it's already invisible below 768px — but
+            it still MOUNTED there (React doesn't skip effects for a
+            display:none subtree), holding a permanent focus trap + document
+            keydown listener with no way to dismiss it, since tourSeen can
+            never become true on a phone (its own onClose is what sets it).
+            !isMobileShell is a no-op at real desktop widths (always false
+            there), so this changes nothing for desktop; it only stops the
+            invisible mobile mount. */}
+        {!isMobileShell &&
+          ((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
+            tourOpen) && (
+            <SimTour
+              onClose={() => {
+                markTourSeen()
+                setTourOpen(false)
+              }}
+            />
+          )}
         {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
         {runCompleteOpen && !suppressWinUI && (
           <SimRunComplete
@@ -4121,7 +4271,13 @@ export function SimulationView() {
             onClose={() => setRunCompleteOpen(false)}
           />
         )}
-        {quizGate && (
+        {/* mobile-ux-layer (WS-A1): this instance lives inside the desktop-only
+            `hidden md:flex` wrapper, so it's invisible below 768px. isMobileShell
+            is always false at real desktop widths, so this guard is a no-op there
+            — it exists only to avoid double-mounting alongside the mobile Decide
+            view's own QuizGateModal instance below (same quizGate/setQuizGate
+            state; only one should ever be on screen). */}
+        {quizGate && !isMobileShell && (
           <QuizGateModal
             question={quizGate.question}
             moduleTitle={quizGate.title}

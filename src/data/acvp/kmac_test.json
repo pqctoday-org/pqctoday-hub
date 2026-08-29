@@ -1,5 +1,13 @@
 {
   "algorithm": "KMAC",
+  "_provenance": {
+    "source_url": "https://csrc.nist.gov/pubs/sp/800/185/final",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "NIST SP 800-185 (published KAT samples, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-8 (2026-08-28): backfilled provenance for evidence-tier derivation. Samples #1/#4 are NIST's own published KMAC test vectors from SP 800-185, not ACVP-Server-generated — a published-standard KAT, distinct from both the nist-acvp and self-consistency tiers."
+  },
   "source": "NIST SP 800-185 KMAC test vectors (Samples #1 and #4)",
   "testGroups": [
     {

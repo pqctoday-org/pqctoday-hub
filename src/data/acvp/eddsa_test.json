@@ -1,7 +1,7 @@
 {
   "algorithm": "EdDSA",
   "mode": "sigVer",
-  "source": "RFC 8032 Section 7.1 (Ed25519) published test vectors — tests[0]=Test 2, tests[1]=Test 1; verified with the node crypto (OpenSSL) oracle",
+  "source": "RFC 8032 Section 7.1 (Ed25519) published test vectors \u2014 tests[0]=Test 2, tests[1]=Test 1; verified with the node crypto (OpenSSL) oracle",
   "testGroups": [
     {
       "curve": "Ed25519",
@@ -20,5 +20,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": "https://www.rfc-editor.org/rfc/rfc8032",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "RFC 8032 Section 7.1 (published KAT samples, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. Ed25519 Test 1 and Test 2 are RFC 8032's own published Section 7.1 test vectors, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified (both sub-cases, raw Ed25519 verify) against the Node crypto (OpenSSL) oracle before backfill."
+  }
 }
