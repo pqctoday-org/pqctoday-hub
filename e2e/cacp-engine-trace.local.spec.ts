@@ -26,6 +26,7 @@ test('engine dry_run returns a per-rule trace consistent with its verdict', asyn
     const eng = await import('/src/wasm/kmip/kmipEngine.ts')
     const model = await import('/src/components/Playground/kmip/visual/policyEditModel.ts')
     const scen = await import('/src/components/Playground/kmip/policyScenarios.ts')
+    const sim = await import('/src/components/Playground/kmip/visual/policySim.ts')
     const engine = await eng.getKmipEngine()
 
     const yamlCache: Record<string, string> = {}
@@ -45,6 +46,7 @@ test('engine dry_run returns a per-rule trace consistent with its verdict', asyn
       ruleCount: number
       denyIndices: number[]
       effects: string[]
+      policyInert: boolean
     }[] = []
     for (const s of scen.POLICY_SCENARIOS) {
       const yaml = await loadYaml(s.policyFile)
@@ -64,14 +66,24 @@ test('engine dry_run returns a per-rule trace consistent with its verdict', asyn
         mechanism: r.mechanism,
       })
       const trace = dr.trace ?? []
+      const editable = model.toEditable(yaml)
+      // engine.rs::policy_is_live (A2, 2026-08-28): a request outside the
+      // policy's own [metadata.effective, metadata.expires] window is
+      // fail-closed denied WITHOUT evaluating any rule — same posture as no
+      // policy loaded at all. That's a genuinely empty, zero-rule trace by
+      // design, not a gap — sim's evaluatePolicy implements the identical
+      // pre-check (policySim.ts:290) and every scenario here already round-
+      // trips through cacp-sim-fidelity's engine<->sim parity check.
+      const policyInert = !sim.metadataWindowActive(editable, sim.parseDate(r.date))
       out.push({
         id: s.id,
         kind: dr.kind,
         rule: dr.rule ?? null,
         traceLen: trace.length,
-        ruleCount: model.toEditable(yaml).rules.length,
+        ruleCount: editable.rules.length,
         denyIndices: trace.filter((t) => t.effect === 'deny').map((t) => t.index),
         effects: trace.map((t) => t.effect),
+        policyInert,
       })
     }
     return out
@@ -79,6 +91,19 @@ test('engine dry_run returns a per-rule trace consistent with its verdict', asyn
 
   const problems: string[] = []
   for (const r of rows) {
+    if (r.policyInert) {
+      // The fail-closed-before-any-rule-runs path: a genuinely empty trace
+      // IS the correct shape here, not a gap. Still worth asserting the
+      // engine agrees with itself: no rules run means no deny-trace entry
+      // to point at either.
+      if (r.traceLen !== 0)
+        problems.push(`${r.id}: policy-inert scenario expected an empty trace, got ${r.traceLen}`)
+      if (r.kind !== 'Deny')
+        problems.push(`${r.id}: policy-inert scenario expected Deny, got ${r.kind}`)
+      if (r.denyIndices.length !== 0)
+        problems.push(`${r.id}: policy-inert scenario has deny-trace entries ${r.denyIndices}`)
+      continue
+    }
     // 1. A trace exists, one entry per enabled rule (shipped policies enable all).
     if (r.traceLen === 0 && r.ruleCount > 0)
       problems.push(`${r.id}: empty trace (expected ${r.ruleCount})`)
