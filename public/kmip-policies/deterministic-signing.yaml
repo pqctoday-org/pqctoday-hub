@@ -7,7 +7,7 @@
 # that the dispatcher merges into the request — the application's Sign is
 # signed deterministically regardless of what it asked for, with no code change.
 
-schema_version: 1
+schema_version: 3
 
 metadata:
   name: deterministic-signing
@@ -16,12 +16,17 @@ metadata:
     policy on EVERY Sign, overriding the client's choice. The flag is
     meaningful only for the lattice/hash PQC signature schemes (FIPS 204
     ML-DSA §3.4: rnd ← 0^32; FIPS 205 SLH-DSA: addrnd ← PK.seed); for
-    classical algorithms the dispatcher carries it harmlessly. Applied
-    unscoped because mechanism_parameter_default takes a single algorithm
-    scalar and the strict loader lint rejects family names — enumerating all
-    15 PQC parameter sets as separate rules would add no behaviour.
+    classical algorithms the dispatcher carries it harmlessly. `scopes:
+    [global]` (modular-policy plan, 2026-08-28) rather than `[signing]` —
+    this rule forces a mechanism PARAMETER, it never picks an algorithm, so
+    it composes with whichever signing module (pqc-signing, classical-signing,
+    ...) is actually active rather than competing with it for the signing
+    scope. mechanism_parameter_default also takes a single algorithm scalar
+    and the strict loader lint rejects family names, so enumerating all 15
+    PQC parameter sets as separate rules would add no behaviour either way.
   authority: pqctoday-hsm/training
   effective: "always"
+  scopes: [global]
 
 rules:
   - type: mechanism_parameter_default

@@ -1,0 +1,35 @@
+# FIPS-only policy — signing share (modular-policy plan, 2026-08-28). Split
+# from `fips-only.yaml`. Pair with `fips-only-global` (the bulk of the
+# suite) and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: fips-only-signing
+  description: |
+    Weak digests banned via the MECHANISM dimension: FIPS 180-4 / FIPS 202
+    hash allowlist on Sign (SHA-1 denied by omission; SignatureVerify stays
+    open for legacy artefacts).
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "FIPS 140-3", level: 3 }
+    - { framework: "FIPS 180-4", status: required }
+    - { framework: "FIPS 202",   status: required }
+
+rules:
+  - type: hash_algorithm_allowlist
+    ops: [Sign]
+    hashing_algorithms:
+      - SHA-224
+      - SHA-256
+      - SHA-384
+      - SHA-512
+      - SHA-512/224
+      - SHA-512/256
+      - SHA3-224
+      - SHA3-256
+      - SHA3-384
+      - SHA3-512
+    reason: "Only FIPS 180-4 / FIPS 202 hashes may sign (SHA-1/MD5 excluded)"

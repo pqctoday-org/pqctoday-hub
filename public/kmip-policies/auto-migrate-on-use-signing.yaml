@@ -1,0 +1,89 @@
+# Transparent auto-migration — signing share (modular-policy plan,
+# 2026-08-28). Split from `auto-migrate-on-use.yaml`. Pair with
+# `-key-establishment`, `-encryption`, and `-global` (new-key denylist,
+# which used a bare/cross-domain CreateKeyPair and moved unchanged).
+
+schema_version: 3
+
+metadata:
+  name: auto-migrate-on-use-signing
+  description: |
+    Lazy, transparent signing migration. New signing keys default to
+    ML-DSA-65. Every classical signing algorithm this stack can instantiate
+    has an explicit rekey target (2026-08-28 audit finding B2); a
+    class-based backstop denies any classical Sign that somehow still isn't
+    covered, so a coverage gap fails loud instead of failing open.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "FIPS 204 ML-DSA", status: required }
+    - { framework: "NIST IR 8547",    status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-65
+    reason: "New signing keys default to ML-DSA-65 (FIPS 204)"
+
+  # Existing signing keys auto-rekey at first Sign. Engine emits
+  # Decision::RekeyAndProceed — dispatcher generates a fresh PQC key,
+  # deactivates+supersedes the classical one, re-issues the Sign.
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P256
+    to: ML-DSA-65
+    reason: "Rekey legacy ECDSA-P256 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P384
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P384 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P521
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P521 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-2048
+    to: ML-DSA-65
+    reason: "Rekey legacy RSA-2048 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-3072
+    to: ML-DSA-65
+    reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-4096
+    to: ML-DSA-87
+    reason: "Rekey legacy RSA-4096 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: Ed25519
+    to: ML-DSA-65
+    reason: "Rekey legacy Ed25519 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: Ed448
+    to: ML-DSA-87
+    reason: "Rekey legacy Ed448 signing key to ML-DSA-87 at first use"
+
+  # Backstop: any classical Sign not covered above must fail loud, not run
+  # classically forever (2026-08-28 audit finding B2). Pass 1 (resolution,
+  # including the substitutions above) runs before Pass 2 (gating), so a
+  # key whose algorithm WAS successfully substituted to PQC is gated
+  # against its NEW algorithm here and never matches `algorithm_class:
+  # classical` — only a genuinely uncovered classical algorithm reaches
+  # this deny.
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: classical
+    after: "always"
+    reason: "No classical signing algorithm reaches this policy without an explicit PQC rekey target"
+
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "Sign only with Active keys (no Deactivated/Compromised re-use)"

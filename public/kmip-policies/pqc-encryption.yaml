@@ -1,0 +1,43 @@
+# PQC crypto policy — encryption share (modular-policy plan, 2026-08-28).
+# Split from the single-file `pqc.yaml`. Pair with `pqc-signing` and
+# `pqc-key-establishment`.
+
+schema_version: 3
+
+metadata:
+  name: pqc-encryption
+  description: |
+    Post-PQC asymmetric-encryption default: ML-KEM-1024 (key delivery) +
+    AES-256 (bulk). RSA key-TRANSPORT (the Encrypt/Decrypt path) → ML-KEM
+    rekey remains deferred — a cross-primitive migration (encrypt →
+    encapsulate) the Encrypt op cannot execute in one call (see
+    `encrypt.rs`'s own honest RekeyAndProceed failure); legacy classical
+    keys can still Verify/Decrypt during the transition. Do NOT add an
+    `ops: [Encrypt]` substitution to a KEM target until that separate path
+    is built.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM",  status: required }
+    - { framework: "FIPS 197 AES-256", status: required }
+    - { framework: "NSA CNSA-2.0",     status: aligned }
+
+rules:
+  # ML-KEM delivers the AES bulk key.
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Encrypt"]
+    default_algorithm: ML-KEM-1024
+    reason: "PQC asymmetric encryption: ML-KEM key delivery + AES-256 bulk"
+
+  # Unchanged from classical — AES-256 is PQC-safe (Grover halves the
+  # security level; AES-256 → 128-bit post-quantum security, still safe).
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "AES-256 — PQC-safe symmetric (Grover-resistant)"
+
+  # No NEW classical asymmetric-encrypt keys once flipped to PQC — moved to
+  # `pqc-global.yaml` 2026-08-28 (WS-1a parity guard): a per-scope partial
+  # denylist here covered fewer algorithms than the monolithic form's bare
+  # `CreateKeyPair` entry, a real behavioral gap the guard caught.

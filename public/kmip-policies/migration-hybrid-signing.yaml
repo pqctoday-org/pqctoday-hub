@@ -1,0 +1,51 @@
+# Migration tab — hybrid target state, signing share (modular-policy plan,
+# 2026-08-28). Split from `migration-hybrid.yaml`. Pair with
+# `-key-establishment`, `-encryption`, and `-global`.
+#
+# `ReKeyKeyPair` refined to `ReKeyKeyPair:Sign` — see
+# `migration-pqc-signing.yaml`'s header for the reasoning (dispatcher wave 3
+# of this plan makes the refinement available; the explicit suffix is also
+# more precise than the old bare form).
+#
+# Note: the hybrid target state signs with pure ML-DSA-44, not a
+# classical+PQC composite — hybrid applies to key-establishment only here
+# (matching the demo estate's actual composite KEM groups).
+
+schema_version: 3
+
+metadata:
+  name: migration-hybrid-signing
+  description: |
+    New signing keys default to ML-DSA-44 (FIPS 204). Existing classical
+    signing keys (RSA-2048, ECDSA-P256, Ed25519) auto-rekey to ML-DSA-44 at
+    first use (Sign) or via the migration sweep (ReKeyKeyPair) — identical
+    signing behavior to the full-PQC target state.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "FIPS 204 ML-DSA", status: required }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-44
+    reason: "PQC signing default (FIPS 204, ML-DSA-44)"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: RSA-2048
+    to: ML-DSA-44
+    reason: "FIPS 204 — RSA-2048 signing to ML-DSA-44"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: ECDSA-P256
+    to: ML-DSA-44
+    reason: "FIPS 204 — ECDSA-P256 to ML-DSA-44"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: Ed25519
+    to: ML-DSA-44
+    reason: "FIPS 204 — Ed25519 to ML-DSA-44"

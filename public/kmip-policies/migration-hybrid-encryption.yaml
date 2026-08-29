@@ -1,0 +1,36 @@
+# Migration tab — hybrid target state, encryption share (modular-policy
+# plan, 2026-08-28). Split from `migration-hybrid.yaml`. Pair with
+# `-signing`, `-key-establishment`, and `-global`. Identical to
+# `migration-pqc-encryption.yaml` — the hybrid target state doesn't change
+# symmetric handling.
+
+schema_version: 3
+
+metadata:
+  name: migration-hybrid-encryption
+  description: |
+    Symmetric keys default to AES-256 (Grover-resistant). Any remaining
+    AES-128 keys auto-rekey to AES-256 at first use or via the migration
+    sweep.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "NIST SP 800-131A", status: representative }
+
+rules:
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "Symmetric default (AES-256, Grover-resistant)"
+
+  - type: algorithm_substitution
+    ops: [Encrypt, ReKey]
+    from: AES-128
+    to: AES-256
+    reason: "AES-128 to AES-256 (Grover-resistant margin)"
+
+  - type: algorithm_denylist
+    ops: [Create]
+    algorithms: [AES-128]
+    reason: "AES-128 no longer provisioned under the hybrid target state"

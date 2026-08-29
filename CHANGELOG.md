@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.64.0] - 2026-08-29
+
+The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy set the server does, with a real module-status view and a scope-conflict warning when two policies disagree.
+
+### Added
+
+- **The Playground's crypto-agility policy engine now shows which modules are active and warns about conflicts** [view:/playground] [persona:architect] [persona:developer]: a new module-status panel lists every loaded policy module by scope, and a scope-conflict check flags when two active modules make contradictory rules for the same operation instead of silently picking one.
+- **The Playground's policy graph and simulator now reflect the real, modular policy set** [view:/playground] [persona:architect] [persona:developer]: previously built against a single combined policy file; now mirrors the server engine's 40 per-scenario YAML modules (encryption, signing, key-establishment, and global scope, across CNSA 2.0, BSI TR-02102, FIPS-only, classical, and migration-window presets), so what you see in the browser matches what the server actually enforces.
+
+### Fixed
+
+- **The in-browser KMIP engine was 2 commits behind the server engine** [persona:developer]: rebuilt from the current engine, including the ACVP test-vector resync and the modular policy-engine hardening; the corpus manifest and engine bundle now agree on which commit they were built from (a mismatch here would have silently masked drift going forward).
+
 ## [4.62.0] - 2026-08-28
 
 A new /navigate page renders the whole PQC knowledge hub as an explorable 3D graph, the Migrate vendor-risk tab's numbers are now trustworthy, and Share moves out of every page and into one place.

@@ -1,0 +1,31 @@
+# Classical crypto policy — signing share (modular-policy plan, 2026-08-28).
+# Split from the single-file `classical.yaml`. Pair with
+# `classical-key-establishment`, `classical-encryption`, and
+# `classical-global` (the "deny PQC — prove the boundary" cutoffs, which
+# moved there unchanged since several of them used bare/cross-domain ops).
+#
+# Application code is unchanged between this module set and the
+# `pqc-*` module set — flipping from classical-* to pqc-* migrates the
+# same application to PQC with zero code change.
+
+schema_version: 3
+
+metadata:
+  name: classical-signing
+  description: |
+    Pre-PQC signing baseline: new signing keys default to ECDSA-P256. The
+    `pqc-signing` module's substitution rules use `from: ECDSA-P256` (among
+    others), so flipping from this module to `pqc-signing` triggers rekey
+    of existing keys at first Sign.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ECDSA-P256
+    reason: "Classical signing default (ECDSA-P256)"

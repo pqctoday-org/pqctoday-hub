@@ -929,13 +929,14 @@ export const POLICY_SCENARIOS: PolicyTestScenario[] = [
     expect: 'Allow',
   },
   {
-    id: 'hybrid-allow-legacy-pre',
+    id: 'hybrid-deny-legacy-pre',
     policyFile: 'hybrid-migration-window.yaml',
-    title: 'Classical Sign before the window opens',
-    description: 'Before 2026, classical-only signing is permitted (legacy).',
-    path: 'positive',
+    title: 'Classical Sign before the policy takes effect',
+    description:
+      'A policy is inert before its own effective date — fail-closed denies by default rather than falling through to some other implicit allow (2026-08-28 audit, A2).',
+    path: 'negative',
     request: { op: 'Sign', algorithm: 'ECDSA-P256', state: 'Active', date: '2025-06-01' },
-    expect: 'Allow',
+    expect: 'Deny',
   },
   {
     id: 'hybrid-deny-classical-post',

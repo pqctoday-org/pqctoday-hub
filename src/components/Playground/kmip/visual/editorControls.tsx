@@ -97,10 +97,12 @@ export function ChipToggleGroup({
   value,
   options,
   onChange,
+  disabled,
 }: {
   value: string[]
   options: readonly string[]
   onChange: (next: string[]) => void
+  disabled?: boolean
 }) {
   const toggle = (o: string) =>
     onChange(value.includes(o) ? value.filter((x) => x !== o) : [...value, o])
@@ -114,9 +116,10 @@ export function ChipToggleGroup({
             variant="ghost"
             type="button"
             aria-pressed={on}
+            disabled={disabled}
             onClick={() => toggle(o)}
             className={cn(
-              'h-auto rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-normal transition-colors',
+              'h-auto rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-normal transition-colors disabled:cursor-not-allowed disabled:opacity-50',
               on
                 ? 'border-primary bg-primary/15 text-primary'
                 : 'border-border bg-background/40 text-muted-foreground hover:border-primary/40'
@@ -167,17 +170,23 @@ export function TextField({
   onChange,
   placeholder,
   mono,
+  disabled,
+  ariaLabel,
 }: {
   value: string
   onChange: (next: string) => void
   placeholder?: string
   mono?: boolean
+  disabled?: boolean
+  ariaLabel?: string
 }) {
   return (
     <Input
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      aria-label={ariaLabel}
       placeholder={placeholder}
+      disabled={disabled}
       className={cn('h-8 bg-background/40 text-[12px]', mono && 'font-mono')}
     />
   )
@@ -203,37 +212,49 @@ export function NumberField({
   )
 }
 
-/** TimeBound editor: an "always" toggle beside a date input. */
+/** TimeBound editor: an unset-sentinel toggle ("always"/"never" depending on
+ * which end of the window this is) beside a date input. `effective`'s unset
+ * value is `always`/`''`; `expires`'s (WS-6, 2026-08-28 gaps-remediation
+ * plan) is `never`/`''` — both share the same shape, just a different
+ * sentinel and label, so one control covers both ends of the window. */
 export function TimeBoundField({
   value,
   onChange,
+  unsetValue = 'always',
+  unsetLabel = 'always',
+  disabled,
 }: {
   value: string
   onChange: (next: string) => void
+  unsetValue?: string
+  unsetLabel?: string
+  disabled?: boolean
 }) {
-  const isAlways = value === 'always' || value === ''
+  const isUnset = value === unsetValue || value === ''
   return (
     <div className="flex items-center gap-2">
       <Button
         variant="ghost"
         type="button"
-        aria-pressed={isAlways}
-        onClick={() => onChange(isAlways ? '2030-01-01' : 'always')}
+        aria-pressed={isUnset}
+        disabled={disabled}
+        onClick={() => onChange(isUnset ? '2030-01-01' : unsetValue)}
         className={cn(
-          'h-auto rounded border px-2 py-1 text-[11px] font-normal transition-colors',
-          isAlways
+          'h-auto rounded border px-2 py-1 text-[11px] font-normal transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+          isUnset
             ? 'border-primary bg-primary/15 text-primary'
             : 'border-border bg-background/40 text-muted-foreground hover:border-primary/40'
         )}
       >
-        always
+        {unsetLabel}
       </Button>
-      {!isAlways && (
+      {!isUnset && (
         <input
           type="date"
+          disabled={disabled}
           value={/^\d{4}-\d{2}-\d{2}$/.test(value) ? value : ''}
-          onChange={(e) => onChange(e.target.value || 'always')}
-          className="rounded-lg border border-input bg-background/40 px-2 py-1 font-mono text-[12px] text-foreground outline-none focus:border-primary"
+          onChange={(e) => onChange(e.target.value || unsetValue)}
+          className="rounded-lg border border-input bg-background/40 px-2 py-1 font-mono text-[12px] text-foreground outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
         />
       )}
     </div>

@@ -11,13 +11,29 @@ const POLICY_DIR = join(__dirname, '../../../../public/kmip-policies')
 const read = (file: string) => readFileSync(join(POLICY_DIR, file), 'utf8')
 
 // Rule counts as reported by the real engine's policy loader (the source of truth).
+//
+// 2026-08-28 (gaps-remediation plan WS-10): this table hadn't been touched
+// since 2026-07-05 (`git log`), so it had drifted silently through every
+// modular-policy-plan wave and this program's own WS-1/WS-2/WS-3 fixes —
+// this file's own `npm run test` (the CI-visible, non-`.local.` suite) was
+// never run as part of any of that work, only the `*.local.test.ts` local
+// gate, so nothing caught it. Reconciled to the four files that had
+// drifted (`auto-migrate-on-use.yaml`, `migration-classical.yaml`,
+// `pqc-migration-2030.yaml`, `pqc.yaml`) by counting each file's real
+// `- type:` rule declarations directly, independent of `parsePolicyModel`,
+// and confirming the two counts agree — not by re-deriving the per-change
+// history the way earlier comments in this table do, since that history
+// spans commits well outside this fix's scope to audit. If this drifts
+// again, `gate:cacp` (now wired into `.husky/pre-push`) is the backstop.
 const EXPECTED_RULES: Record<string, number> = {
   'aead-only.yaml': 2,
   // Y5: encrypt-side KEM substitutions removed (deferred to Phase 5) → 9→7.
   // 2026-07-02: symmetric AES-256 Create default added → 8.
   // 2026-07-05: classical-KEM merge adds ECDH-P256/P384 → ML-KEM-768
   // Encapsulate-rekey substitutions → 10.
-  'auto-migrate-on-use.yaml': 10,
+  // 2026-08-28: reconciled to actual file content (drifted since 2026-07-05,
+  // see table header) → 20.
+  'auto-migrate-on-use.yaml': 20,
   // 2026-07-04 gap-audit remediation: signature allowlist + opt-in composite
   // + 2036 cutoffs + RSA PSS/OAEP constraints → 7→12.
   'bsi-tr-02102.yaml': 12,
@@ -37,7 +53,9 @@ const EXPECTED_RULES: Record<string, number> = {
   'hybrid-migration-window.yaml': 8,
   // Migration tab estate (2026-07-05): 9 label-pattern/generic defaults + the
   // PQC boundary denylist → 10.
-  'migration-classical.yaml': 10,
+  // 2026-08-28: reconciled to actual file content (drifted since 2026-07-05,
+  // see table header) → 14.
+  'migration-classical.yaml': 14,
   // Migration full-PQC target: 4 defaults + 6 substitutions + 2 denylists → 12.
   'migration-pqc.yaml': 12,
   // Migration hybrid transition: 3 defaults + 6 substitutions + 2 denylists → 11.
@@ -46,11 +64,15 @@ const EXPECTED_RULES: Record<string, number> = {
   // 2026-07-04: mechanism-dimension weak-crypto rules + DES/3DES denylist +
   // class-based 2027 cutoff + post-2030 creation cutoff → 11→14; +ML-KEM-512
   // usage-mask rule (rule 7 was missing the smallest KEM size) → 15.
-  'pqc-migration-2030.yaml': 15,
+  // 2026-08-28: +1 severity:warn temporal_cutoff (WS-3 deprecation worked
+  // example) + reconciled other drift since 2026-07-05 (see table header) → 17.
+  'pqc-migration-2030.yaml': 17,
   // 2026-07-04: Sign-path rekey extended to P-384/P-521/RSA-3072 → 6→9.
   // 2026-07-05: classical-KEM merge adds ECDH-P256/P384 + RSA-3072
   // Encapsulate-rekey substitutions to ML-KEM-1024 → 12.
-  'pqc.yaml': 12,
+  // 2026-08-28: reconciled to actual file content (drifted since 2026-07-05,
+  // see table header) → 14.
+  'pqc.yaml': 14,
   'training-permissive.yaml': 0,
 }
 

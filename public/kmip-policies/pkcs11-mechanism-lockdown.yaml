@@ -5,7 +5,7 @@
 # the dimension that says "you may use AES — but only AES-GCM, never AES-ECB",
 # and "MAC only with HMAC-SHA-2", expressed in PKCS#11's own vocabulary.
 
-schema_version: 1
+schema_version: 3
 
 metadata:
   name: pkcs11-mechanism-lockdown
@@ -14,9 +14,14 @@ metadata:
     quantum-safe mechanisms are allowlisted; legacy/unauthenticated mechanisms
     (PKCS#1 v1.5, AES-ECB/CBC, single-DES/3DES, MD5, SHA-1) are denied; MAC is
     restricted to the HMAC-SHA-2 family. Gating on the canonical CKM_* means a
-    request cannot dodge the rule by choosing a different KMIP op.
+    request cannot dodge the rule by choosing a different KMIP op. `scopes:
+    [global]` (modular-policy plan, 2026-08-28) — it gates across every
+    domain (Create/CreateKeyPair/Sign/Encrypt/Encapsulate/MAC), by design;
+    it is meant to compose with whichever domain modules are active, not
+    replace them.
   authority: pqctoday-hsm/training
   effective: "always"
+  scopes: [global]
   compliance_mapping:
     - { framework: "PKCS#11 v3.2",  status: aligned }
     - { framework: "FIPS 140-3",    level: 3 }
@@ -25,7 +30,14 @@ rules:
 
   # ── Allowlist: only vetted CKM_* mechanisms may be used ───────────────
   - type: mechanism_allowlist
-    ops: [Create, CreateKeyPair, Sign, SignatureVerify, Encrypt, Decrypt, Encapsulate, Decapsulate, MAC]
+    # DeriveKey + MACVerify added 2026-08-28 (audit finding B9): the KDF
+    # mechanism surface (CKM_HKDF_DERIVE etc.) was entirely ungated by a
+    # policy named "lockdown", and MACVerify was covered only by the
+    # separate mac_mechanism_policy rule below, not by this CKM_*-level
+    # allowlist — inconsistent with this file's own stated principle
+    # ("gating on the canonical CKM_* means a request cannot dodge the rule
+    # by choosing a different KMIP op").
+    ops: [Create, CreateKeyPair, Sign, SignatureVerify, Encrypt, Decrypt, Encapsulate, Decapsulate, MAC, MACVerify, DeriveKey]
     mechanisms:
       - CKM_ML_DSA
       - CKM_ML_DSA_KEY_PAIR_GEN
@@ -42,6 +54,17 @@ rules:
       - CKM_SHA256_HMAC
       - CKM_SHA384_HMAC
       - CKM_SHA512_HMAC
+      # KDFs, added 2026-08-28 (audit finding B9). HKDF (RFC 5869) and both
+      # NIST SP 800-108 modes are vetted, non-password key-derivation
+      # primitives — the only kind of DeriveKey this HSM's use cases need
+      # (deriving a working key from existing HSM key material, not
+      # stretching a human password). CKM_PKCS5_PBKD2 (PBKDF2) is
+      # deliberately NOT allowlisted here: it is a password-stretching
+      # KDF, a different threat model than key-to-key derivation, and this
+      # lockdown's vetted set intentionally stays to the former.
+      - CKM_HKDF_DERIVE
+      - CKM_SP800_108_COUNTER_KDF
+      - CKM_SP800_108_FEEDBACK_KDF
     reason: "Mechanism not on the vetted PKCS#11 allowlist"
 
   # ── Denylist: explicitly reject legacy / unauthenticated mechanisms ───
@@ -68,8 +91,13 @@ rules:
     reason: "MAC restricted to HMAC-SHA-2 (no HMAC-SHA1 / CMAC-DES)"
 
   # ── AES must use an authenticated mode (belt-and-braces with the CKM denylist) ──
+  # CCM removed 2026-08-28 (audit finding B8) — not implemented by
+  # `ops/helpers.rs::aes_mechanism_for` (only CBC/CBC_PAD/ECB/CTR/GCM); a
+  # request asking for it fails downstream with an unrelated-looking
+  # "unsupported cryptographic parameters" engine error instead of a clean
+  # policy denial, so advertising it here as an allowed choice was fiction.
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: AES
-    allowed_block_cipher_modes: [GCM, CCM]
-    reason: "AES must use an authenticated mode (GCM or CCM)"
+    allowed_block_cipher_modes: [GCM]
+    reason: "AES must use an authenticated mode (GCM — CCM is not implemented by this engine)"

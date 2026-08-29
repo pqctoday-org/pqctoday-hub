@@ -8,15 +8,28 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { EditorIssue } from './policyEditModel'
 
+/** One `PolicyLintFinding` pre-mapped to a graph `ruleId` (C3, 2026-08-28
+ * gaps-remediation plan) — the engine's own strict-mode value lint (unknown
+ * algorithm/mechanism/hash/op names), authoritative and independent of the
+ * client-side heuristics `issues` above catches. Rendered as errors
+ * regardless of `fatal`, matching the native loader's strict-mode
+ * promotion: in an authoring context, an advisory here IS the thing to fix. */
+export interface StrictFinding {
+  ruleId: string
+  fatal: boolean
+  message: string
+}
+
 interface Props {
   issues: EditorIssue[]
   /** Warnings returned by the last engine.loadPolicy of the edited policy. */
   engineWarnings: string[]
+  strictFindings: StrictFinding[]
   onSelect: (ruleId: string) => void
 }
 
-export function PolicyValidation({ issues, engineWarnings, onSelect }: Props) {
-  const total = issues.length + engineWarnings.length
+export function PolicyValidation({ issues, engineWarnings, strictFindings, onSelect }: Props) {
+  const total = issues.length + engineWarnings.length + strictFindings.length
   return (
     <div className="p-3.5">
       <div className="mb-2.5 flex items-center gap-2">
@@ -66,6 +79,21 @@ export function PolicyValidation({ issues, engineWarnings, onSelect }: Props) {
             </Button>
           )
         })}
+
+        {strictFindings.map((f, i) => (
+          <Button
+            key={`s${i}`}
+            variant="ghost"
+            type="button"
+            onClick={() => f.ruleId && onSelect(f.ruleId)}
+            className="flex h-auto w-full items-start justify-start gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-2 text-left font-normal transition-colors hover:bg-destructive/10"
+          >
+            <AlertTriangle size={13} className="mt-0.5 shrink-0 text-destructive" />
+            <span className="whitespace-normal text-[11.5px] leading-snug text-foreground">
+              <span className="font-semibold">Engine lint:</span> {f.message}
+            </span>
+          </Button>
+        ))}
 
         {engineWarnings.map((w, i) => (
           <div

@@ -1,0 +1,51 @@
+# Migration tab — full-PQC target state, signing share (modular-policy
+# plan, 2026-08-28). Split from `migration-pqc.yaml`. Pair with
+# `-key-establishment`, `-encryption`, and `-global`.
+#
+# `ReKeyKeyPair` refined to `ReKeyKeyPair:Sign` (was bare — ambiguous in a
+# scoped file; the dispatcher now derives the refinement from the stored
+# key's usage mask, see `dispatcher::purpose_suffix_from_mask`, wave 3 of
+# this plan). More precise than the old bare form too: it no longer
+# incidentally matches a KeyAgreement/Encrypt rekey this rule was never
+# meant for.
+
+schema_version: 3
+
+metadata:
+  name: migration-pqc-signing
+  description: |
+    New signing keys default to ML-DSA-44 (FIPS 204). Existing classical
+    signing keys (RSA-2048, ECDSA-P256, Ed25519) auto-rekey to ML-DSA-44 at
+    first use (Sign) OR via the "Migrate all remaining" sweep (ReKeyKeyPair).
+    Mappings follow the Hub algorithm-transitions dataset
+    (algorithms_transitions_06252026.csv, rows 22/24/35). Legacy keys stay
+    usable for Verify until migrated.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "FIPS 204 ML-DSA", status: required }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-44
+    reason: "PQC signing default (FIPS 204, ML-DSA-44)"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: RSA-2048
+    to: ML-DSA-44
+    reason: "FIPS 204 — RSA-2048 signing to ML-DSA-44 (CSV row 22)"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: ECDSA-P256
+    to: ML-DSA-44
+    reason: "FIPS 204 — ECDSA-P256 to ML-DSA-44 (CSV row 24)"
+
+  - type: algorithm_substitution
+    ops: [Sign, "ReKeyKeyPair:Sign"]
+    from: Ed25519
+    to: ML-DSA-44
+    reason: "FIPS 204 — Ed25519 to ML-DSA-44 (CSV row 35)"

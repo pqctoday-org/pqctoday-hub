@@ -162,6 +162,28 @@ export const USAGE_FLAGS = [
 
 export const ALGORITHM_CLASSES = ['classical', 'pqc', 'symmetric']
 
+export interface ScopeMeta {
+  /** Wire form — `Scope`'s `#[serde(rename_all = "kebab-case")]` tag, e.g.
+   * `key-establishment` (see any split policy's `scopes:` list). */
+  id: string
+  label: string
+}
+
+/** The 7 `Scope` values (`pqctoday-hsm/kmip/src/policy/rule.rs::Scope::ALL`),
+ * in the engine's own display order. Guarded against drift by
+ * `ruleCatalog.local.test.ts` (WS-6, 2026-08-28 gaps-remediation plan) —
+ * the same sibling-checkout live-read `known_fields_for_rule_type` already
+ * uses, extended to also cover this enum. */
+export const SCOPES: ScopeMeta[] = [
+  { id: 'signing', label: 'Signing' },
+  { id: 'key-establishment', label: 'Key establishment' },
+  { id: 'encryption', label: 'Encryption' },
+  { id: 'mac-hash', label: 'MAC / hash' },
+  { id: 'ingress', label: 'Ingress' },
+  { id: 'lifecycle', label: 'Lifecycle' },
+  { id: 'global', label: 'Global' },
+]
+
 // Request-simulator vocabularies — mirror the engine's name tables in
 // `pqctoday-hsm/kmip/src/policy/rule.rs` (hash_name_to_code,
 // block_cipher_mode_name_to_code, padding_method_name_to_code,

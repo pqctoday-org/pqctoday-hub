@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:878389a9-ca29-4d1d-b6a0-24237db6f77f",
+  "serialNumber": "urn:uuid:40a76911-2fb1-4c3c-849e-7978b4c9ee9e",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-18T00:00:00.000Z",
+    "timestamp": "2026-08-27T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -16431,7 +16431,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16515,7 +16515,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16562,7 +16562,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16608,7 +16608,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16655,7 +16655,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16744,7 +16744,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16875,7 +16875,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -16921,7 +16921,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17183,7 +17183,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17314,7 +17314,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17402,7 +17402,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "OS"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17491,7 +17491,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17622,7 +17622,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Cloud"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17706,7 +17706,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -17924,7 +17924,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18058,7 +18058,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18100,7 +18100,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18193,7 +18193,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18235,7 +18235,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18282,7 +18282,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18328,7 +18328,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18370,7 +18370,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Standard"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18416,7 +18416,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18462,7 +18462,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18509,7 +18509,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18639,7 +18639,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18817,7 +18817,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -18910,7 +18910,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19086,7 +19086,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19133,7 +19133,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19217,7 +19217,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19352,7 +19352,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "OS"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19399,7 +19399,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19446,7 +19446,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19577,7 +19577,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Cloud"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19666,7 +19666,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19750,7 +19750,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19792,7 +19792,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19834,7 +19834,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -19973,7 +19973,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20020,7 +20020,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20066,7 +20066,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20113,7 +20113,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20155,7 +20155,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20202,7 +20202,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20513,7 +20513,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20605,7 +20605,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20651,7 +20651,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "OS"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20698,7 +20698,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20740,7 +20740,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20786,7 +20786,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20828,7 +20828,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "SecSoftware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -20917,7 +20917,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -21051,7 +21051,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -21413,7 +21413,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -21460,7 +21460,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -21633,7 +21633,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22201,7 +22201,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22243,7 +22243,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22327,7 +22327,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22369,7 +22369,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22457,7 +22457,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22541,7 +22541,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Standard"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22583,7 +22583,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22667,7 +22667,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22709,7 +22709,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Standard"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22751,7 +22751,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -22919,7 +22919,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Standard"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -23343,7 +23343,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Cloud,Security Stack,On-Premises"
+          "value": "Cloud,Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -24356,7 +24356,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Crypto"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27098,7 +27098,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27152,7 +27152,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27289,7 +27289,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Cloud"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27632,7 +27632,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27678,7 +27678,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27731,7 +27731,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27777,7 +27777,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27832,7 +27832,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "CI/CD"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27887,7 +27887,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Platform"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -27996,7 +27996,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "DevSecOps"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28049,7 +28049,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Research & Simulation"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28102,7 +28102,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Research & Simulation"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28213,7 +28213,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "DevSecOps"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28271,7 +28271,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "DevSecOps"
+          "value": "Cloud"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28324,7 +28324,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "DevSecOps"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -28556,7 +28556,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Infrastructure"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -31629,7 +31629,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -31745,7 +31745,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32184,7 +32184,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Applications"
+          "value": "Application"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32286,7 +32286,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Applications"
+          "value": "Application"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32373,7 +32373,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32419,7 +32419,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Application"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32547,7 +32547,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security Module (HSM)"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -32799,7 +32799,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Firmware"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33107,7 +33107,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Libraries,Hardware Security Module (HSM)"
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33151,7 +33151,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security Module (HSM)"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33190,7 +33190,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Network,Managed Service"
+          "value": "Network"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33233,7 +33233,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware,Secure Element"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33278,7 +33278,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Software"
+          "value": "AppServers"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -33407,7 +33407,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Research & Simulation"
+          "value": ""
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34500,7 +34500,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34545,7 +34545,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34589,7 +34589,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34633,7 +34633,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34673,7 +34673,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34713,7 +34713,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34753,7 +34753,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34793,7 +34793,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34833,7 +34833,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34877,7 +34877,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34922,7 +34922,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -34965,7 +34965,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -35234,7 +35234,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "Hardware Security"
+          "value": "Hardware"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -35280,7 +35280,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": "DevSecOps"
+          "value": "Security Stack"
         },
         {
           "name": "pqctoday:fips_validated",
@@ -35425,7 +35425,7 @@
         },
         {
           "name": "pqctoday:layer",
-          "value": ""
+          "value": "Libraries"
         },
         {
           "name": "pqctoday:fips_validated",

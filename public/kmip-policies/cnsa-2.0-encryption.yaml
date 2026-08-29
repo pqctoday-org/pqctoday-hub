@@ -1,0 +1,28 @@
+# CNSA 2.0 — encryption share (modular-policy plan, 2026-08-28). Split
+# from `cnsa-2.0.yaml`. Pair with `cnsa-2.0-global` (the bulk of the
+# suite), `-signing`, and `-key-establishment`.
+
+schema_version: 3
+
+metadata:
+  name: cnsa-2.0-encryption
+  description: |
+    AES below 256 bits banned (CNSA 2.0 requires AES-256). Only Active
+    CNSA keys may encrypt.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "NSA CNSA-2.0", status: aligned }
+    - { framework: "FIPS 140-3",   level: 3 }
+
+rules:
+  - type: algorithm_denylist
+    ops: [Create, Encrypt]
+    algorithms: [AES-128, AES-192]
+    reason: "CNSA 2.0 requires AES-256"
+
+  - type: lifecycle_state_gate
+    op: Encrypt
+    allowed_states: [Active]
+    reason: "CNSA encryption only with Active keys"

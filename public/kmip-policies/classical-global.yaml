@@ -1,0 +1,52 @@
+# Classical crypto policy — cross-cutting share (modular-policy plan,
+# 2026-08-28). Split from the single-file `classical.yaml`: "deny PQC —
+# prove the boundary" gates on every op, including the symmetric `Create`
+# op and the bare `CreateKeyPair` (all three purposes). `Scope::Global` can
+# gate any op, so these move here UNCHANGED rather than being split five
+# ways into per-domain refinements. Pair with `classical-signing`,
+# `classical-key-establishment`, and `classical-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: classical-global
+  description: |
+    If the application directly asks for any PQC algorithm while the
+    classical-* module set is active, deny — this set is the "before"
+    state of the classical → PQC agility demo. Class-based (2026-07-04):
+    `algorithm_class: pqc` covers every PQC and hybrid-KEM name, present
+    and future; `after: "always"` makes the cutoff unconditional. One rule
+    per op family (Create/CreateKeyPair/Sign/Encrypt/Encapsulate).
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
+
+rules:
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc-* to enable"
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc-* to enable"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc-* to enable"
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc-* to enable"
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical policy — flip to pqc-* to enable"

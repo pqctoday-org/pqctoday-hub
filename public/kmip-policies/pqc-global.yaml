@@ -1,0 +1,59 @@
+# PQC crypto policy — cross-cutting share (modular-policy plan, 2026-08-28;
+# gaps-remediation plan WS-1a, 2026-08-28 — see below). Split from the
+# single-file `pqc.yaml`: the classical-asymmetric-Create denylist uses
+# bare `CreateKeyPair` (plus redundant explicit refinements), cross-domain,
+# same pattern as `classical-global.yaml`'s identical block. Pair with
+# `pqc-signing`, `pqc-key-establishment`, and `pqc-encryption`.
+#
+# CORRECTED 2026-08-28 (WS-1a's monolithic↔split parity guard,
+# `tests/policy_dual_form_parity.rs`, caught this on its first real run):
+# this rule was originally split BY OP into per-scope PARTIAL denylists
+# instead of moving here unchanged — `pqc-signing.yaml` only denied
+# signing-purpose algorithms, `pqc-key-establishment.yaml` only
+# key-agreement-purpose ones, `pqc-encryption.yaml` only `RSA`. The
+# monolithic form's bare `CreateKeyPair` entry is less discriminating than
+# that (it matches EVERY refinement via the op-prefix rule) and lists every
+# classical algorithm regardless of purpose, so it also denies a
+# mismatched-but-well-formed combination the per-scope split let through —
+# e.g. `CreateKeyPair:KeyAgreement` requesting `Ed25519`, or
+# `CreateKeyPair:Sign` requesting `X25519`. The per-scope files' own
+# narrower denylists (now redundant given this file) were removed rather
+# than kept alongside — two denylist mechanisms doing overlapping-but-
+# inconsistent things is exactly how this kind of gap gets reintroduced.
+
+schema_version: 3
+
+metadata:
+  name: pqc-global
+  description: |
+    Once flipped to PQC, no new classical asymmetric key of any purpose may
+    be created. Bare `CreateKeyPair` covers every purpose; the explicit
+    `CreateKeyPair:KeyAgreement`/`:Sign`/`:Encrypt` entries are redundant
+    with it and kept only for readability. Existing classical keys can
+    still be Verify'd/Decrypt'd until rekey completes.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "FIPS 203/204 target state", status: required }
+
+rules:
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+    algorithms:
+      - RSA
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - ECDH-P521
+      - Ed25519
+      - Ed448
+      - X25519
+      - X448
+    reason: "Classical asymmetric Create denied under PQC policy — use defaults or migrate"

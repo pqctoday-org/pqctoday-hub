@@ -41,8 +41,18 @@ export interface EditablePolicy {
     /** Multi-line; serialized as a `description: |` block. */
     description: string
     authority: string
-    /** TimeBound scalar: `always` or `YYYY-MM-DD`. */
+    /** TimeBound scalar: `always`/`immediate` or `YYYY-MM-DD`. */
     effective: string
+    /** Schema v2+. TimeBound scalar: `never` (default, omitted) or
+     * `YYYY-MM-DD`. Empty string means "not set" (schema v1 file, or v2+
+     * that never declared it) — serializes to nothing, matching the
+     * loader's default of `never`. */
+    expires: string
+    /** `Metadata::scopes` — kebab-case `Scope` wire values (see
+     * `ruleCatalog.ts`'s `SCOPES`). Empty means "not declared" (schema v1/v2
+     * file, or a v3 file that only gates — a scopeless file may never
+     * resolve an algorithm; enforced at load time, not by the editor). */
+    scopes: string[]
     /** Ordered key→value rows of `compliance_mapping` (framework first). */
     complianceMapping: Record<string, string>[]
   }
@@ -111,7 +121,15 @@ export function toEditable(yaml: string): EditablePolicy {
   const lines = yaml.split('\n')
   const policy: EditablePolicy = {
     schemaVersion: '1',
-    metadata: { name: '', description: '', authority: '', effective: '', complianceMapping: [] },
+    metadata: {
+      name: '',
+      description: '',
+      authority: '',
+      effective: '',
+      expires: '',
+      scopes: [],
+      complianceMapping: [],
+    },
     rules: [],
   }
 
@@ -155,6 +173,8 @@ export function toEditable(yaml: string): EditablePolicy {
       } else if (key === 'name') policy.metadata.name = unquote(rest)
       else if (key === 'authority') policy.metadata.authority = unquote(rest)
       else if (key === 'effective') policy.metadata.effective = unquote(rest)
+      else if (key === 'expires') policy.metadata.expires = unquote(rest)
+      else if (key === 'scopes') policy.metadata.scopes = splitInlineList(rest)
     }
   }
 
@@ -265,6 +285,8 @@ export function serialize(policy: EditablePolicy): string {
   }
   if (policy.metadata.authority) L.push(`  authority: ${q(policy.metadata.authority)}`)
   if (policy.metadata.effective) L.push(`  effective: "${policy.metadata.effective}"`)
+  if (policy.metadata.expires) L.push(`  expires: "${policy.metadata.expires}"`)
+  if (policy.metadata.scopes.length) L.push(`  scopes: [${policy.metadata.scopes.join(', ')}]`)
   if (policy.metadata.complianceMapping.length) {
     L.push('  compliance_mapping:')
     for (const row of policy.metadata.complianceMapping) {
@@ -367,6 +389,17 @@ const GATING_TYPES = new Set([
   'mechanism_parameter_constraint',
 ])
 const isUnconditional = (r: EditableRule): boolean => !r.maps.triggered_by_custom_attribute?.name
+
+/** `true` if `r` can actually terminate Pass 2 for a request it matches.
+ * `severity: warn` (A1, 2026-08-28 gaps-remediation plan) never denies — it
+ * attaches a warning and Pass 2 keeps walking — so a warn-severity rule can
+ * never make a LATER rule unreachable, no matter how unconditional or
+ * early it is. The raw scalar is read directly (not a catalog field) since
+ * `toEditable`'s generic parser captures any scalar key regardless of
+ * whether `ruleCatalog.ts` declares it — same "survives in its shape
+ * bucket" treatment every other grammar field the editor doesn't have a
+ * dedicated control for gets. */
+const canTerminateEvaluation = (r: EditableRule): boolean => r.scalars.severity !== 'warn'
 
 /** `true` when two same-type gating rules can be PROVEN to target disjoint
  * algorithms — e.g. `aead-only.yaml`'s AES-mode rule and RSA-padding rule are
@@ -493,6 +526,7 @@ export function validate(policy: EditablePolicy): EditorIssue[] {
     for (let k = 0; k < j; k++) {
       const earlier = enabled[k]
       if (earlier.type !== later.type || !isUnconditional(earlier)) continue
+      if (!canTerminateEvaluation(earlier)) continue
       if (!opsFullySubsumedBy(opsOf(later), opsOf(earlier))) continue
       if (algorithmScopesDisjoint(earlier, later)) continue
       const earlierIdx = rules.indexOf(earlier) + 1

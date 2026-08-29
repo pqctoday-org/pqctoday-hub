@@ -10,11 +10,20 @@
 // WP2: the centre column is an ordered rule list (placeholder). WP3 replaces it
 // with the pan/zoom decision-pipeline canvas behind the same props.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Code2, ChevronRight, Grip, FlaskConical, ShieldAlert, RotateCcw } from 'lucide-react'
+import {
+  Code2,
+  ChevronRight,
+  Grip,
+  FlaskConical,
+  ShieldAlert,
+  RotateCcw,
+  FileText,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { KmipEngine, DryRunResult } from '@/wasm/kmip/kmipEngine'
+import type { KmipEngine, DryRunResult, PolicyLintFinding } from '@/wasm/kmip/kmipEngine'
 import { POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
+import { saveCacpDraft, clearCacpDraft } from '../cacpSessionStorage'
 import {
   toEditable,
   serialize,
@@ -24,7 +33,8 @@ import {
   type EditablePolicy,
   type EditableRule,
 } from './policyEditModel'
-import { RULE_CATALOG, type RuleTypeId } from './ruleCatalog'
+import { RULE_CATALOG, SCOPES, type RuleTypeId } from './ruleCatalog'
+import { TextField, TimeBoundField, ChipToggleGroup } from './editorControls'
 import { RulePalette } from './RulePalette'
 import { RuleInspector } from './RuleInspector'
 import { RequestSimulator } from './RequestSimulator'
@@ -62,6 +72,16 @@ interface Props {
   onLoadPreset: (preset: PolicyPreset) => void
   /** Apply edited YAML to the engine + surface it site-wide; returns warnings. */
   onApplyYaml: (yaml: string) => { ok: boolean; warnings?: string[]; error?: string } | undefined
+  /** True for a preset split into multiple scoped module files (modular-policy
+   * plan, 2026-08-28) — `initialYaml` is then a concatenation of all of them
+   * for DISPLAY only. The graph still renders (merging every module's rules,
+   * since the parser just scans for `- type:` lines regardless of file
+   * boundary), but editing is disabled: re-serializing the merge as ONE
+   * policy would declare only the first module's `scopes:` while keeping
+   * every other module's rules, which the engine's scope-containment check
+   * correctly rejects. Fixing that needs multi-file-aware editing, not
+   * built yet — see the modular-policy plan's wave 5. */
+  readOnly?: boolean
 }
 
 const EMPTY_POLICY: EditablePolicy = {
@@ -71,6 +91,8 @@ const EMPTY_POLICY: EditablePolicy = {
     description: '',
     authority: '',
     effective: 'always',
+    expires: '',
+    scopes: [],
     complianceMapping: [],
   },
   rules: [],
@@ -125,6 +147,38 @@ function engineTraceToSim(policy: EditablePolicy, dr: DryRunResult | null): SimR
   return { verdict, trace, deciderId }
 }
 
+/**
+ * WS-5c (2026-08-28 gaps-remediation plan) — for a multi-module preset
+ * (`readOnly`), `dr.trace`'s rule index is local to whichever module fired
+ * in the engine's own modular evaluation; `engineTraceToSim`'s
+ * `enabledIds[step.index - 1]` assumes one flat file's numbering, so reusing
+ * it here would silently highlight the wrong node. Show the engine's real
+ * verdict (still authoritative) with an inert, clearly-labeled trace instead
+ * of a mismapped one.
+ */
+function engineVerdictOnlyMultiModule(
+  policy: EditablePolicy,
+  dr: DryRunResult | null
+): SimResult | null {
+  if (!dr) return null
+  const trace: TraceStep[] = policy.rules.map((r) => ({
+    ruleId: r.id,
+    matched: false,
+    effect: r.enabled ? 'skip' : 'off',
+    note: r.enabled ? 'per-rule trace unavailable for multi-module presets' : 'disabled',
+  }))
+  const kind: SimVerdict['kind'] =
+    dr.kind === 'Allow' ? 'allow' : dr.kind === 'Rekey' ? 'rekey' : 'deny'
+  const verdict: SimVerdict = {
+    kind,
+    algorithm: dr.algorithm ?? undefined,
+    from: dr.from,
+    to: dr.to,
+    reason: dr.reason ?? dr.denyReason,
+  }
+  return { verdict, trace, deciderId: null }
+}
+
 type RightTab = 'inspect' | 'simulate' | 'check'
 
 export function PolicyGraphView({
@@ -134,6 +188,7 @@ export function PolicyGraphView({
   guided,
   onLoadPreset,
   onApplyYaml,
+  readOnly = false,
 }: Props) {
   // State initialises from the seeded policy; the parent gives this component a
   // `key` of the preset file, so switching preset remounts with a fresh seed
@@ -153,6 +208,7 @@ export function PolicyGraphView({
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [rightTab, setRightTab] = useState<RightTab>('simulate')
   const [yamlOpen, setYamlOpen] = useState(false)
+  const [metaOpen, setMetaOpen] = useState(false)
   // A-grade review item #13 — the YAML drawer is editable + importable, round-
   // tripping back to the graph. `null` = mirror the graph's generated `yaml`;
   // once the user types, this holds their draft until they Apply or discard it.
@@ -177,6 +233,7 @@ export function PolicyGraphView({
   const [engineVerdict, setEngineVerdict] = useState<DryRunResult | null>(null)
   const [running, setRunning] = useState(false)
   const [engineWarnings, setEngineWarnings] = useState<string[]>([])
+  const [strictFindings, setStrictFindings] = useState<PolicyLintFinding[]>([])
 
   const yaml = useMemo(() => serialize(policy), [policy])
   const issues = useMemo(() => validate(policy), [policy])
@@ -210,8 +267,17 @@ export function PolicyGraphView({
   const discardYamlDraft = () => setYamlDraft(null)
 
   // Debounced apply of the edited policy to the engine (graph = source of truth).
+  // Skipped entirely in `readOnly` mode (a multi-file preset) — see the prop's
+  // doc comment for why re-serializing the merge would be actively wrong, not
+  // just unsupported.
   const applyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
+    if (readOnly) {
+      setEngineWarnings([
+        'This policy is split into multiple module files — editing the merged view here is not supported yet. Load an individual module from the Policy catalog to edit it.',
+      ])
+      return
+    }
     if (!modified) return
     if (applyTimer.current) clearTimeout(applyTimer.current)
     applyTimer.current = setTimeout(() => {
@@ -220,11 +286,33 @@ export function PolicyGraphView({
       else setEngineWarnings(res?.warnings ?? [])
       setSim(null) // last sim is stale after an edit
       setToken(null)
+      // WS-4c — the one global draft slot tracks what's in the EDITOR, not
+      // just what the engine accepted, so a syntax error mid-fix is still
+      // there to resume on reload.
+      saveCacpDraft(presetFile, yaml)
     }, 400)
     return () => {
       if (applyTimer.current) clearTimeout(applyTimer.current)
     }
-  }, [yaml, modified, onApplyYaml])
+  }, [yaml, modified, onApplyYaml, readOnly, presetFile])
+
+  // C3 (2026-08-28 gaps-remediation plan) — every strict-lint finding, not
+  // just the first fatal one `onApplyYaml`'s `ok:false` surfaces. Runs
+  // independently of the apply effect above (pure read, no engine mutation,
+  // so it's safe in `readOnly` mode too — a multi-file preset's merged YAML
+  // isn't valid single-document YAML, and seeing that as a structural
+  // finding here is more informative than staying silent about it).
+  const lintTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    if (lintTimer.current) clearTimeout(lintTimer.current)
+    lintTimer.current = setTimeout(() => {
+      const res = engine.lintPolicyDraft(yaml)
+      setStrictFindings(res.ok ? (res.findings ?? []) : [])
+    }, 400)
+    return () => {
+      if (lintTimer.current) clearTimeout(lintTimer.current)
+    }
+  }, [engine, yaml])
 
   // ── mutations ──
   const patchRule = (id: string, mutate: (r: EditableRule) => EditableRule) =>
@@ -236,6 +324,13 @@ export function PolicyGraphView({
   const patchMap = (id: string, key: string, value: { name: string; value: string }) =>
     patchRule(id, (r) => ({ ...r, maps: { ...r.maps, [key]: value } }))
   const toggleRule = (id: string) => patchRule(id, (r) => ({ ...r, enabled: !r.enabled }))
+
+  // WS-6 (2026-08-28 gaps-remediation plan) — metadata form mutations. No
+  // relayout needed: metadata never affects the rule graph's node positions.
+  const patchMetadata = <K extends keyof EditablePolicy['metadata']>(
+    key: K,
+    value: EditablePolicy['metadata'][K]
+  ) => setPolicy((p) => ({ ...p, metadata: { ...p.metadata, [key]: value } }))
 
   // Rebuild layout after a structural change (add/delete/reorder), preserving
   // manual drag positions for surviving nodes. Kept in the event handler (not an
@@ -294,6 +389,7 @@ export function PolicyGraphView({
     setYamlDraft(null)
     onApplyYaml(baseline)
     setEngineWarnings([])
+    clearCacpDraft() // WS-4c — back to the pristine preset, nothing unsaved left to restore
   }
 
   const select = (id: string | null) => {
@@ -345,7 +441,12 @@ export function PolicyGraphView({
 
       // Drive the graph from the ENGINE's own trace when available; fall back to
       // the illustrative evaluatePolicy only if the wasm predates trace support.
-      const result = engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, activeReq)
+      // Multi-module presets (WS-5c) skip the trace mapping entirely — see
+      // `engineVerdictOnlyMultiModule`'s doc comment — but still prefer the
+      // engine's own verdict over the illustrative one.
+      const result = readOnly
+        ? (engineVerdictOnlyMultiModule(policy, engineDR) ?? evaluatePolicy(policy, activeReq))
+        : (engineTraceToSim(policy, engineDR) ?? evaluatePolicy(policy, activeReq))
       setSim(result)
 
       // Build the flow path points (request → matched nodes → terminal) and the
@@ -435,7 +536,7 @@ export function PolicyGraphView({
       }
       rafRef.current = requestAnimationFrame(tick)
     },
-    [engine, policy, req, dir, layout]
+    [engine, policy, req, dir, layout, readOnly]
   )
 
   useEffect(
@@ -578,10 +679,110 @@ export function PolicyGraphView({
               />
             )}
             {rightTab === 'check' && (
-              <PolicyValidation issues={issues} engineWarnings={engineWarnings} onSelect={select} />
+              <PolicyValidation
+                issues={issues}
+                engineWarnings={engineWarnings}
+                strictFindings={strictFindings.map((f) => ({
+                  ruleId: policy.rules[f.ruleIndex - 1]?.id ?? '',
+                  fatal: f.fatal,
+                  message: f.message,
+                }))}
+                onSelect={select}
+              />
             )}
           </div>
         </aside>
+      </div>
+
+      {/* Metadata drawer (WS-6, 2026-08-28 gaps-remediation plan) — real
+          inputs for the fields `serialize`/`toEditable` have always round-
+          tripped but the graph never let anyone see or edit. Disabled (not
+          hidden) in `readOnly` mode: a multi-module preset has no single
+          coherent metadata block to edit — same reasoning as rule editing. */}
+      <div className="border-t border-border bg-card">
+        <Button
+          variant="ghost"
+          onClick={() => setMetaOpen((o) => !o)}
+          className="flex h-auto w-full items-center justify-start gap-2 rounded-none px-4 py-2 text-left font-normal hover:bg-muted/20"
+        >
+          <FileText size={14} className="text-primary" />
+          <span className="text-[12px] font-semibold text-foreground">policy metadata</span>
+          <span className="text-[10.5px] text-muted-foreground">
+            · name, authority, validity window, scopes
+          </span>
+          <ChevronRight
+            size={14}
+            className={cn(
+              'ml-auto text-muted-foreground transition-transform',
+              metaOpen && 'rotate-90'
+            )}
+          />
+        </Button>
+        {metaOpen && (
+          <div className="grid gap-3 border-t border-border bg-muted/40 px-4 py-3 sm:grid-cols-2">
+            {readOnly && (
+              <p className="col-span-full text-[10.5px] text-status-warning">
+                Multi-module preset — metadata is per-module; editing here is disabled.
+              </p>
+            )}
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">name</span>
+              <TextField
+                value={policy.metadata.name}
+                onChange={(v) => patchMetadata('name', v)}
+                disabled={readOnly}
+                ariaLabel="Policy name"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">authority</span>
+              <TextField
+                value={policy.metadata.authority}
+                onChange={(v) => patchMetadata('authority', v)}
+                disabled={readOnly}
+                ariaLabel="Policy authority"
+              />
+            </div>
+            <label className="col-span-full flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">description</span>
+              <textarea
+                value={policy.metadata.description}
+                onChange={(e) => patchMetadata('description', e.target.value)}
+                disabled={readOnly}
+                aria-label="Policy description"
+                rows={2}
+                className="w-full resize-y rounded-lg border border-input bg-background/40 px-2 py-1.5 text-[12px] text-foreground outline-none focus:border-primary disabled:opacity-50"
+              />
+            </label>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">effective</span>
+              <TimeBoundField
+                value={policy.metadata.effective}
+                onChange={(v) => patchMetadata('effective', v)}
+                disabled={readOnly}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">expires</span>
+              <TimeBoundField
+                value={policy.metadata.expires}
+                onChange={(v) => patchMetadata('expires', v)}
+                unsetValue="never"
+                unsetLabel="never"
+                disabled={readOnly}
+              />
+            </div>
+            <div className="col-span-full flex flex-col gap-1">
+              <span className="text-[10.5px] font-medium text-muted-foreground">scopes</span>
+              <ChipToggleGroup
+                value={policy.metadata.scopes}
+                options={SCOPES.map((s) => s.id)}
+                onChange={(next) => patchMetadata('scopes', next)}
+                disabled={readOnly}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* YAML drawer — editable + importable (A-grade review item #13) */}

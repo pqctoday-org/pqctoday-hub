@@ -15,19 +15,30 @@ const HSM_SRC = join(__dirname, '../../../../../pqctoday-hsm/kmip/policies')
 const shippedYamls = () => readdirSync(POLICY_DIR).filter((f) => f.endsWith('.yaml'))
 
 describe('policy catalog ↔ files sync', () => {
-  // Forward: every preset the UI shows must have a real YAML file behind it.
+  // Forward: every preset the UI shows must have a real YAML file behind it —
+  // both its canonical `file` and every module in its `files` split, if any.
   it('every POLICY_PRESETS entry has a shipped YAML file', () => {
     const files = new Set(shippedYamls())
     for (const p of POLICY_PRESETS) {
       expect(files.has(p.file), `preset ${p.name} → missing file ${p.file}`).toBe(true)
+      for (const f of p.files ?? []) {
+        expect(files.has(f), `preset ${p.name} → missing module file ${f}`).toBe(true)
+      }
     }
   })
 
   // Reverse: every shipped YAML must have a preset — otherwise a policy added to
   // public/kmip-policies/ would be INVISIBLE in the UI (the direction the
   // existing policyModel test lacked — report gaps Y24/H5).
+  //
+  // Modular-policy plan (2026-08-28): a split policy's per-scope module
+  // files are visible via their preset's `files: [...]` list, not as their
+  // own top-level `file` — they activate as a set (`activateModulePreset`),
+  // not as an individually-selectable catalog card. Counting only `p.file`
+  // here made every one of the 40 split files register as "invisible" the
+  // moment they shipped; count both.
   it('every shipped policy YAML has a POLICY_PRESETS entry', () => {
-    const presetFiles = new Set(POLICY_PRESETS.map((p) => p.file))
+    const presetFiles = new Set(POLICY_PRESETS.flatMap((p) => [p.file, ...(p.files ?? [])]))
     for (const f of shippedYamls()) {
       expect(presetFiles.has(f), `${f} has no POLICY_PRESETS entry (invisible in UI)`).toBe(true)
     }
