@@ -102,6 +102,99 @@ export async function checkWebGPUSupport(): Promise<boolean> {
 }
 
 /**
+ * UI-only mobile-OS detection — deliberately NOT used to gate
+ * initializeEngine() itself (checkWebGPUBufferCapability + the crash guard
+ * below handle that with real per-device data, not a UA guess). This exists
+ * only so ProviderSetup.tsx can tell phone/tablet users upfront that Local
+ * AI isn't a realistic option, instead of letting them discover it by
+ * hitting a failed load. Confirmed via github.com/mlc-ai/web-llm/issues/753:
+ * even a 3B model (roughly half this catalog's VRAM need) reliably crashes
+ * the tab on iOS 26 Safari after downloading, closed upstream as "not
+ * planned" — this is a known, unresolved platform limitation, not something
+ * specific to this app's implementation.
+ */
+export function isMobileBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent || ''
+  const isIOS =
+    /iPhone|iPod|iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+  const isAndroid = /Android/.test(ua)
+  return isIOS || isAndroid
+}
+
+export interface GPUBufferCapability {
+  ok: boolean
+  /** Bytes, as reported by this device's actual WebGPU adapter — not estimated. */
+  maxStorageBufferBindingSize: number
+  maxBufferSize: number
+}
+
+// @mlc-ai/web-llm's own engine init always requests 1GB for both
+// maxBufferSize and maxStorageBufferBindingSize, falling back to the WebGPU
+// spec's baseline minimums (256MB / 128MB) if the adapter can't grant 1GB,
+// and throwing if even those aren't available (see detectGPUDevice() in
+// @mlc-ai/web-llm/lib/index.js). Below this floor, engine init fails on
+// EVERY device, not just mobile — so checking it ourselves first, before a
+// multi-GB download starts, gives an honest per-device answer instead of a
+// blanket "mobile is blocked" guess. This matters because it's genuinely
+// device-dependent: cheap Android GPUs (ARM Mali/Qualcomm Adreno) often sit
+// at this 128MB floor, but Apple's own GPUs (iPhone/iPad share the same
+// Metal-backed WebKit implementation macOS uses) have been reported well
+// above it — a UA sniff can't tell those apart, a real adapter query can.
+const WEBLLM_MIN_STORAGE_BUFFER_BYTES = 128 * 1024 * 1024
+
+/**
+ * Query what this device's WebGPU adapter actually reports for the two
+ * limits web-llm's engine requires. Does NOT rule out every failure mode —
+ * Safari additionally enforces an unrelated, undocumented cap on a tab's
+ * TOTAL memory (covers the download + decompression + GPU-resident weights
+ * together) that isn't queryable in advance from a webpage. Passing this
+ * check means the GPU itself can address the required buffer sizes; it does
+ * not guarantee the full multi-GB load will fit in that ceiling too — see
+ * the session-scoped crash guard in initializeEngine() for how a load that
+ * dies mid-flight from THAT limit is handled without looping.
+ */
+export async function checkWebGPUBufferCapability(): Promise<GPUBufferCapability | null> {
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) return null
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const adapter = await (navigator as any).gpu?.requestAdapter()
+    if (!adapter) return null
+    const maxStorageBufferBindingSize: number = adapter.limits.maxStorageBufferBindingSize
+    const maxBufferSize: number = adapter.limits.maxBufferSize
+    return {
+      ok: maxStorageBufferBindingSize >= WEBLLM_MIN_STORAGE_BUFFER_BYTES,
+      maxStorageBufferBindingSize,
+      maxBufferSize,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Session-scoped guard against the auto-restart loop: if a load starts and
+ * this same tab session still shows it "in progress" on the NEXT call, the
+ * page was reloaded before the previous attempt reached success or a clean
+ * catch — i.e. the tab was killed mid-load (most plausibly Safari's
+ * unqueryable total-memory ceiling, see checkWebGPUBufferCapability) rather
+ * than navigated away from. sessionStorage specifically (not localStorage)
+ * survives exactly this kind of same-tab reload/restore while still
+ * resetting on a genuinely fresh tab, so a real crash is distinguishable
+ * from a normal new visit.
+ */
+const CRASH_GUARD_KEY = 'webllm-load-in-progress'
+
+function clearCrashGuard(): void {
+  try {
+    sessionStorage.removeItem(CRASH_GUARD_KEY)
+  } catch {
+    // sessionStorage unavailable (private browsing, etc.) — guard is a
+    // best-effort safety net, not a hard requirement.
+  }
+}
+
+/**
  * Load the WebLLM engine with the specified model.
  * Downloads model weights on first call (size varies by model);
  * subsequent calls use the browser Cache API.
@@ -129,6 +222,30 @@ export async function initializeEngine(
     await unloadEngine()
   }
 
+  // See the crash-guard doc comment above: a stuck flag means the PREVIOUS
+  // call for this model never reached success or a clean catch, i.e. this
+  // tab was reloaded mid-load. Require an explicit retry rather than
+  // silently repeating whatever killed it.
+  let priorAttemptStuck = false
+  try {
+    priorAttemptStuck = sessionStorage.getItem(CRASH_GUARD_KEY) === modelId
+    if (priorAttemptStuck) {
+      sessionStorage.removeItem(CRASH_GUARD_KEY)
+    } else {
+      sessionStorage.setItem(CRASH_GUARD_KEY, modelId)
+    }
+  } catch {
+    // sessionStorage unavailable (private browsing, etc.) — proceed without the guard.
+  }
+  if (priorAttemptStuck) {
+    onProgress({ status: 'error', text: 'Previous load did not finish.', progress: 0 })
+    throw new Error(
+      'The previous attempt to load this model did not finish — most likely the browser ran ' +
+        'out of memory partway through and reloaded the page. Click Retry to try again, or ' +
+        'switch to Cloud (Gemini).'
+    )
+  }
+
   isInitializing = true
 
   const doInit = async () => {
@@ -143,6 +260,21 @@ export async function initializeEngine(
       })
       throw new Error(
         'WebGPU is not supported in this browser. Please use Chrome 113+, Edge 113+, or Safari 18+.'
+      )
+    }
+
+    const capability = await checkWebGPUBufferCapability()
+    if (capability && !capability.ok) {
+      const reportedMB = Math.round(capability.maxStorageBufferBindingSize / (1024 * 1024))
+      onProgress({
+        status: 'unsupported',
+        text: `This device's GPU only supports ${reportedMB}MB buffers (128MB+ required).`,
+        progress: 0,
+      })
+      throw new Error(
+        `Your device's WebGPU driver reports a maximum buffer size of ${reportedMB}MB, but this ` +
+          'model needs at least 128MB — a limit common on lower-end mobile GPUs. Please switch to ' +
+          'Cloud (Gemini) instead.'
       )
     }
 
@@ -239,10 +371,16 @@ export async function initializeEngine(
     onProgress({ status: 'ready', text: 'Model ready', progress: 1 })
   }
 
-  activeInitPromise = doInit().finally(() => {
-    isInitializing = false
-    activeInitPromise = null
-  })
+  activeInitPromise = doInit()
+    .then(() => clearCrashGuard())
+    .catch((err) => {
+      clearCrashGuard()
+      throw err
+    })
+    .finally(() => {
+      isInitializing = false
+      activeInitPromise = null
+    })
 
   return activeInitPromise
 }
