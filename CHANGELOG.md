@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.67.1] - 2026-08-29
+
+### Fixed
+
+- **The new /navigate 3D knowledge-graph page failed to open, flashing "Loading..." on a repeating cycle** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: a production-build-only bundling defect made the page's graph engine crash the instant it loaded, and the app's own recovery step — reloading the page to fetch a fresh copy — hit the same crash every time, so it never got past the loading screen. The page's 3D library now builds in isolation from the rest of the app, which avoids the defect entirely.
+
 ## [4.67.0] - 2026-08-29
 
 Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one — and now you can switch freely between the drag-and-drop builder and the real Python it generates.
