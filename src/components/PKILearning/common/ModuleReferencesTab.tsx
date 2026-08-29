@@ -49,8 +49,17 @@ function LastReviewedNote({ moduleId }: { moduleId: string }) {
  * shown anywhere in the product before 2026-08-21.
  */
 function CitedStandards({ moduleId }: { moduleId: string }) {
-  const cited = MODULE_CITED_STANDARDS[moduleId] // eslint-disable-line security/detect-object-injection
-  if (!cited || cited.length === 0) return null
+  const raw = MODULE_CITED_STANDARDS[moduleId] // eslint-disable-line security/detect-object-injection
+  if (!raw || raw.length === 0) return null
+  // A module's content.ts can call getStandard() more than once for the same
+  // id (soc-implementation-pqc cited RFC 9846 and NIST IR 8547 twice each) —
+  // de-dup by id so a duplicate source call never renders a visible duplicate.
+  const seen = new Set<string>()
+  const cited = raw.filter((std) => {
+    if (seen.has(std.id)) return false
+    seen.add(std.id)
+    return true
+  })
   return (
     <section className="mb-6">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5 mb-1">
