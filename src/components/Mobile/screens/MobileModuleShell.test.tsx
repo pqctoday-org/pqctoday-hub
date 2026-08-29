@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 import { MobileModuleShell } from './MobileModuleShell'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
@@ -60,5 +61,35 @@ describe('MobileModuleShell', () => {
       />
     )
     expect(screen.getByText(/guided workshop/)).toBeInTheDocument()
+  })
+
+  // Wave B2 (2026-08-29) — the "Practice on your phone" card takes over the
+  // spot the honest banner sits in, and only one of the two ever renders.
+  it('renders a "Practice on your phone" card linking the twin tool when practiceTool is set, instead of the honest banner', () => {
+    render(
+      <MemoryRouter>
+        <MobileModuleShell
+          manifest={{ ...minimal, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          learnContent={<div />}
+          practiceTool="slh-dsa"
+        />
+      </MemoryRouter>
+    )
+    const link = screen.getByRole('link', { name: /practice on your phone/i })
+    expect(link).toHaveAttribute('href', '/playground/slh-dsa')
+    expect(screen.queryByText(/guided workshop/)).not.toBeInTheDocument()
+  })
+
+  it('falls back to the honest banner when there is no practiceTool, even with workshop steps present', () => {
+    render(
+      <MemoryRouter>
+        <MobileModuleShell
+          manifest={{ ...minimal, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          learnContent={<div />}
+        />
+      </MemoryRouter>
+    )
+    expect(screen.getByText(/guided workshop/)).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /practice on your phone/i })).not.toBeInTheDocument()
   })
 })

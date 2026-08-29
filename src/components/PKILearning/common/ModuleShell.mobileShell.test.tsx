@@ -3,6 +3,7 @@ import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { EmbedProvider } from '@/embed/EmbedProvider'
+import { Button } from '@/components/ui/button'
 import { ModuleShell } from './ModuleShell'
 import type { ModuleManifest } from '../manifest/types'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -12,8 +13,15 @@ vi.mock('@/hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
+const mockNavigate = vi.hoisted(() => vi.fn())
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>()
+  return { ...actual, useNavigate: () => mockNavigate }
+})
+
 afterEach(() => {
   mockUseIsMobileShell.mockReturnValue(false)
+  mockNavigate.mockClear()
   useModuleStore.setState({ modules: {} })
 })
 
@@ -76,5 +84,41 @@ describe('ModuleShell — mobile UX layer wiring', () => {
     )
     expect(screen.getByText('RAW BODY')).toBeInTheDocument()
     expect(screen.queryByText('WRONG')).not.toBeInTheDocument()
+  })
+
+  // Wave B1 (2026-08-29) — the in-prose "Start Workshop" CTA (api.goToWorkshop,
+  // wired by every module's index.tsx as onNavigateToWorkshop) used to be a
+  // dead click on mobile: it called navigateToTab('workshop'), a tab
+  // MobileModuleShell never mounts. It must now route to a real destination.
+  describe('flag on: api.goToWorkshop (the in-prose CTA) never dead-clicks', () => {
+    it('navigates straight to the playground twin when the module has one (B2 shortlist)', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      renderShell(
+        <ModuleShell
+          manifest={{ ...base, id: 'slh-dsa' }}
+          learn={(api) => <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Start Workshop' }))
+      expect(mockNavigate).toHaveBeenCalledWith('/playground/slh-dsa')
+    })
+
+    it('scrolls to the honest banner instead of a no-op when the module has no twin', () => {
+      mockUseIsMobileShell.mockReturnValue(true)
+      const scrollIntoView = vi.fn()
+      Element.prototype.scrollIntoView = scrollIntoView
+      renderShell(
+        <ModuleShell
+          // base.id === 'hsm-pqc': a real module, confirmed to have no
+          // mobilePracticeTool (see moduleToolLinks.test.ts) — the "no twin"
+          // case, not a synthetic id.
+          manifest={{ ...base, workshopSteps: [{ id: 'a', label: 'A' }] }}
+          learn={(api) => <Button onClick={() => api.goToWorkshop()}>Start Workshop</Button>}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Start Workshop' }))
+      expect(mockNavigate).not.toHaveBeenCalled()
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
+    })
   })
 })

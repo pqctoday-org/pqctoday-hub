@@ -16,7 +16,7 @@
  * because a module's in-page header often differs from its catalog description.
  */
 import { useState, type ReactNode } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
 import {
   Trash2,
@@ -42,7 +42,7 @@ import { STANDARD_TABS, type ModuleManifest } from '../manifest/types'
 import { QUIZ_CATEGORIES } from '../modules/Quiz/types'
 import { MODULE_TO_TRACK, TRACK_COLORS, MODULE_TRACKS } from '../moduleData'
 import { RelatedModulesPanel } from './RelatedModulesPanel'
-import { resolveModuleTool } from '@/data/moduleToolLinks'
+import { resolveModuleTool, mobilePracticeTool } from '@/data/moduleToolLinks'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { personaPracticesModulePhase } from '@/data/personaConfig'
@@ -287,6 +287,11 @@ export const ModuleShell = ({
   children,
 }: ModuleShellProps) => {
   const isMobileShell = useIsMobileShell()
+  const navigate = useNavigate()
+  // Wave B1/B2 (2026-08-29) — the mobile shell's own real destination for the
+  // in-prose "Start Workshop" CTA (see slotApi.goToWorkshop below and
+  // MobileModuleShell's "Practice on your phone" card).
+  const practiceTool = mobilePracticeTool(manifest)
   const parts = workshopParts ?? []
   const {
     activeTab,
@@ -328,6 +333,24 @@ export const ModuleShell = ({
     })
   const slotApi: ModuleSlotApi = {
     goToWorkshop: (step) => {
+      // Wave B1 (2026-08-29): MobileModuleShell never mounts a Workshop tab,
+      // so navigateToTab('workshop') below is a dead click there — confirmed
+      // on pqc-101/healthcare-pqc/the industry batch, every module whose
+      // Learn content calls this. On mobile the shell owns the intent
+      // instead: a real playground twin (B2's signed-off shortlist) if one
+      // exists, else scroll to the honest "not built for mobile yet" banner
+      // MobileModuleShell renders — never a no-op.
+      if (isMobileShell) {
+        if (practiceTool) {
+          navigate(`/playground/${practiceTool}`)
+        } else {
+          document.getElementById('mobile-workshop-banner')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          })
+        }
+        return
+      }
       navigateToTab('workshop')
       // honor an optional target step; `typeof` guards against a stray event arg
       if (typeof step === 'number') setCurrentPart(step)
@@ -476,6 +499,7 @@ export const ModuleShell = ({
         title={title}
         description={headerDescription}
         learnContent={learnContent}
+        practiceTool={practiceTool}
       />
     )
   }

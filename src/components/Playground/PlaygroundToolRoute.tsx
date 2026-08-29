@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect, useState } from 'react'
 import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router'
-import { ArrowLeft, Wrench, ArrowRight } from 'lucide-react'
+import { ArrowLeft, Wrench, ArrowRight, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
@@ -13,6 +13,8 @@ import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
+import { moduleIdFromToolLink } from '@/data/moduleToolLinks'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -58,6 +60,18 @@ export const PlaygroundToolRoute = () => {
 
   const handleBack = () => navigate('/playground')
 
+  // Wave B2 (2026-08-29) — the reverse of ModuleShell's "Related tool"
+  // footer link, on the page a mobile module's "Practice on your phone"
+  // card (or a desktop deep link) actually lands on. `ToolDetailModal`
+  // already derives this same pair for its pre-open preview card; this is
+  // the same derivation for the tool's real page, which had no such link at
+  // all — a visitor who arrived from a module had no way back to it.
+  const relatedModuleId = tool.moduleLink.startsWith('/learn/')
+    ? moduleIdFromToolLink(tool.moduleLink)
+    : null
+  // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
+  const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
+
   const isOnBack = toolId ? toolId in ONBACK_COMPONENTS : false
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Comp: React.ComponentType<any> | undefined = isOnBack
@@ -73,6 +87,12 @@ export const PlaygroundToolRoute = () => {
           <ArrowLeft className="w-4 h-4 mr-1" />
           All Tools
         </Button>
+        {relatedModuleId && relatedModuleTitle && (
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/learn/${relatedModuleId}`)}>
+            <GraduationCap className="w-4 h-4 mr-1" />
+            Back to {relatedModuleTitle}
+          </Button>
+        )}
         {/*
           The tool name is this page's <h1>. 33 of the 34 tool pages previously
           had no h1 at all (only tpm-playground shipped one), so every tool page
