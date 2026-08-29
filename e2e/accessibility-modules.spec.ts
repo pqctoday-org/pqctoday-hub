@@ -247,6 +247,47 @@ for (const id of TAB_PATTERN_MODULES) {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
+ * B3 (bplus-remediation-plan-08292026.md) — 8 modules whose Learn content
+ * carries a wide comparison table in a bare `overflow-x-auto` div. None of
+ * these 8 are in MODULES/TAB_PATTERN_MODULES above, so nothing previously
+ * scanned them at a narrow viewport — the table only becomes an actual
+ * scrollable region (and so only trips axe's `scrollable-region-focusable`)
+ * once its content is wider than a 390px container; at desktop widths there
+ * is room to spare and the rule never fires, which is exactly why this was
+ * a mobile-only finding. Fixed 2026-08-29 by adding tabIndex={0}/role=
+ * "region"/aria-label to each table's wrapper, the same pattern
+ * VpnSimulationPanel.tsx and QKDIntroduction.tsx already use for the same
+ * rule. Scoped to the one rule (not assertNoNewViolations' full serious/
+ * critical set) since these 8 modules have no KNOWN_PREEXISTING entry above
+ * to filter unrelated pre-existing failures against.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const B3_SCROLLABLE_TABLE_MODULES = [
+  'web-gateway-pqc',
+  'network-security-pqc',
+  'api-security-jwt',
+  'kms-pqc',
+  'stateful-signatures',
+  'slh-dsa',
+  'secure-boot-pqc',
+  'digital-assets',
+]
+
+for (const id of B3_SCROLLABLE_TABLE_MODULES) {
+  test(`module: /learn/${id} — mobile table is a keyboard-reachable scroll region (B3)`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto(`/learn/${id}`)
+    await settle(page)
+
+    await injectAxe(page)
+    await checkA11y(page, undefined, {
+      axeOptions: { runOnly: { type: 'rule' as const, values: ['scrollable-region-focusable'] } },
+    })
+  })
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
  * WS7 — the two named CRITICAL defects, asserted where they live.
  * ─────────────────────────────────────────────────────────────────────────── */
 
