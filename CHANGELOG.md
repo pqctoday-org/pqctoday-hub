@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.60.0] - 2026-08-28
+
+The HSM Playground gets a real PKCS#11 v3.2 conformance checker, the key attribute inspector stops mislabeling post-quantum stateful-signature keys, and ACVP testing gains 8 more real NIST vector categories with visible evidence tiers.
+
+### Added
+
+- **A new Conformance tab in the HSM Playground runs OASIS's own published PKCS#11 v3.2 test cases** [view:/playground/hsm] [persona:developer] [persona:architect] [persona:ops]: both the C++ and Rust engines are now checked against OASIS's Baseline, Extended, Authentication Token, and Public Certificates Token mandatory test cases, run verbatim over the engines' real PKCS#11 calls rather than a paraphrase of the spec. Building this surfaced and fixed two genuine engine conformance gaps: object handles that stayed valid across a login/logout cycle when the spec says they shouldn't, and objects returned in a different order after a session reset.
+
+- **ACVP testing gains 8 more categories backed by real NIST test vectors** [view:/playground/hsm] [persona:developer] [persona:ops]: ECDSA P-521, EdDSA Ed448, KMAC128, AES-CBC-256, and HMAC-SHA256/384/512 now check against published NIST ACVP vectors instead of internally-generated ones. Every ACVP result now shows which evidence tier it relies on — a real NIST vector, a published-standard sample, or a self-consistency check — as a badge on the result.
+
+### Fixed
+
+- **Post-quantum stateful-signature keys (HSS, XMSS, XMSS^MT) showed up as unlabeled hex instead of their key type** [view:/playground/hsm] [persona:developer]: the shared key-attribute inspector used by 30+ surfaces (SSH, VPN, 5G, PKI Workshop, HD wallet, and more) had its own copy of the key-type name table that had drifted out of sync with the Playground's HSM Keys tab. The three separate copies are now one inspector, which also reads 17 attributes (CKA_EC_PARAMS, CKA_MODULUS_BITS, CKA_TRUSTED, and others) that both engines already supported but the inspector never asked for, and correctly distinguishes an attribute that's absent from one that's present but access-restricted.
+
 ## [4.59.0] - 2026-08-26
 
 The compliance requirements catalogue grows by a third and every requirement in it is now traceable to a quote that really appears in the document it cites, 126 Library documents say which Learn modules teach them, and mobile Library and Timeline gain the Document Analysis panel desktop already had.

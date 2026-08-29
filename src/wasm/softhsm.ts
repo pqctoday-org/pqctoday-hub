@@ -132,40 +132,39 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         rustShim as unknown as { __wbg_get_memory: () => WebAssembly.Memory }
       ).__wbg_get_memory()
 
-      // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
-      // operations not yet implemented in the Rust binary.
-      const CKR_NOT_IMPL = 0x70
-
       return {
         // ── Session management ────────────────────────────────────────────
         _C_Initialize: rustShim._C_Initialize,
         _C_Finalize: rustShim._C_Finalize,
-        _C_GetInfo: () => 0,
-        _C_GetFunctionList: () => 0,
+        _C_GetInfo: rustShim._C_GetInfo,
+        // Implemented for real in pqctoday-hsm@e6d9668 (WS-11 Tier A fix):
+        // a 68-entry CK_FUNCTION_LIST backed by live WASM indirect-call-
+        // table indices, matching the C++ engine's own implementation.
+        _C_GetFunctionList: rustShim._C_GetFunctionList,
         _C_GetSlotList: rustShim._C_GetSlotList,
-        _C_GetSlotInfo: () => 0,
+        _C_GetSlotInfo: rustShim._C_GetSlotInfo,
         _C_GetTokenInfo: rustShim._C_GetTokenInfo,
         _C_GetMechanismList: rustShim._C_GetMechanismList,
         _C_GetMechanismInfo: rustShim._C_GetMechanismInfo,
         _C_InitToken: rustShim._C_InitToken,
         _C_InitPIN: rustShim._C_InitPIN,
-        _C_SetPIN: () => 0,
+        _C_SetPIN: rustShim._C_SetPIN,
         _C_OpenSession: rustShim._C_OpenSession,
         _C_CloseSession: rustShim._C_CloseSession,
-        _C_CloseAllSessions: () => 0,
+        _C_CloseAllSessions: rustShim._C_CloseAllSessions,
         _C_GetSessionInfo: rustShim._C_GetSessionInfo,
-        _C_GetOperationState: () => CKR_NOT_IMPL,
-        _C_SetOperationState: () => CKR_NOT_IMPL,
+        _C_GetOperationState: rustShim._C_GetOperationState,
+        _C_SetOperationState: rustShim._C_SetOperationState,
         _C_Login: rustShim._C_Login,
         _C_Logout: rustShim._C_Logout,
-        _C_LoginUser: () => 0,
-        _C_SessionCancel: () => 0,
+        _C_LoginUser: rustShim._C_LoginUser,
+        _C_SessionCancel: rustShim._C_SessionCancel,
 
         // ── Object management ─────────────────────────────────────────────
         _C_CreateObject: rustShim._C_CreateObject,
-        _C_CopyObject: () => CKR_NOT_IMPL,
+        _C_CopyObject: rustShim._C_CopyObject,
         _C_DestroyObject: rustShim._C_DestroyObject,
-        _C_GetObjectSize: () => CKR_NOT_IMPL,
+        _C_GetObjectSize: rustShim._C_GetObjectSize,
         _C_GetAttributeValue: rustShim._C_GetAttributeValue,
         _C_SetAttributeValue: rustShim._C_SetAttributeValue,
         _C_FindObjectsInit: rustShim._C_FindObjectsInit,
@@ -183,18 +182,18 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         // ── Encrypt/decrypt (AES, RSA OAEP) ──────────────────────────────
         _C_EncryptInit: rustShim._C_EncryptInit,
         _C_Encrypt: rustShim._C_Encrypt,
-        _C_EncryptUpdate: () => CKR_NOT_IMPL,
-        _C_EncryptFinal: () => CKR_NOT_IMPL,
+        _C_EncryptUpdate: rustShim._C_EncryptUpdate,
+        _C_EncryptFinal: rustShim._C_EncryptFinal,
         _C_DecryptInit: rustShim._C_DecryptInit,
         _C_Decrypt: rustShim._C_Decrypt,
-        _C_DecryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptFinal: () => CKR_NOT_IMPL,
+        _C_DecryptUpdate: rustShim._C_DecryptUpdate,
+        _C_DecryptFinal: rustShim._C_DecryptFinal,
 
         // ── Sign/verify (ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA, HMAC) ─────
         _C_SignInit: rustShim._C_SignInit,
         _C_Sign: rustShim._C_Sign,
-        _C_SignUpdate: () => CKR_NOT_IMPL,
-        _C_SignFinal: () => CKR_NOT_IMPL,
+        _C_SignUpdate: rustShim._C_SignUpdate,
+        _C_SignFinal: rustShim._C_SignFinal,
         // RSA sign/verify-with-recovery (PKCS#11 v3.2 §5.13). The engine really
         // implements these (rust/src/ffi.rs, added 2026-07-25) — delegate rather
         // than hardcoding CKR_NOT_IMPL, which masked the working implementation.
@@ -202,8 +201,8 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_SignRecover: rustShim._C_SignRecover,
         _C_VerifyInit: rustShim._C_VerifyInit,
         _C_Verify: rustShim._C_Verify,
-        _C_VerifyUpdate: () => CKR_NOT_IMPL,
-        _C_VerifyFinal: () => CKR_NOT_IMPL,
+        _C_VerifyUpdate: rustShim._C_VerifyUpdate,
+        _C_VerifyFinal: rustShim._C_VerifyFinal,
         _C_VerifyRecoverInit: rustShim._C_VerifyRecoverInit,
         _C_VerifyRecover: rustShim._C_VerifyRecover,
 
@@ -235,14 +234,14 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DigestInit: rustShim._C_DigestInit,
         _C_Digest: rustShim._C_Digest,
         _C_DigestUpdate: rustShim._C_DigestUpdate,
-        _C_DigestKey: () => CKR_NOT_IMPL,
+        _C_DigestKey: rustShim._C_DigestKey,
         _C_DigestFinal: rustShim._C_DigestFinal,
 
         // ── Dual-function (stubs) ─────────────────────────────────────────
-        _C_DigestEncryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptDigestUpdate: () => CKR_NOT_IMPL,
-        _C_SignEncryptUpdate: () => CKR_NOT_IMPL,
-        _C_DecryptVerifyUpdate: () => CKR_NOT_IMPL,
+        _C_DigestEncryptUpdate: rustShim._C_DigestEncryptUpdate,
+        _C_DecryptDigestUpdate: rustShim._C_DecryptDigestUpdate,
+        _C_SignEncryptUpdate: rustShim._C_SignEncryptUpdate,
+        _C_DecryptVerifyUpdate: rustShim._C_DecryptVerifyUpdate,
 
         // ── Key wrapping/unwrapping/derivation ───────────────────────────
         _C_WrapKey: rustShim._C_WrapKey,
@@ -252,7 +251,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_UnwrapKeyAuthenticated: rustShim._C_UnwrapKeyAuthenticated,
 
         // ── Random ───────────────────────────────────────────────────────
-        _C_SeedRandom: () => 0,
+        _C_SeedRandom: rustShim._C_SeedRandom,
         _C_GenerateRandom: rustShim._C_GenerateRandom,
 
         // ── KAT testing hook (Rust-only) ──────────────────────────────────
@@ -260,11 +259,11 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
           ._set_kat_seed,
 
         // ── Misc (stubs) ──────────────────────────────────────────────────
-        _C_GetFunctionStatus: () => CKR_NOT_IMPL,
-        _C_CancelFunction: () => CKR_NOT_IMPL,
-        _C_WaitForSlotEvent: () => CKR_NOT_IMPL,
-        _C_GetInterfaceList: () => CKR_NOT_IMPL,
-        _C_GetInterface: () => CKR_NOT_IMPL,
+        _C_GetFunctionStatus: rustShim._C_GetFunctionStatus,
+        _C_CancelFunction: rustShim._C_CancelFunction,
+        _C_WaitForSlotEvent: rustShim._C_WaitForSlotEvent,
+        _C_GetInterfaceList: rustShim._C_GetInterfaceList,
+        _C_GetInterface: rustShim._C_GetInterface,
         _C_VerifySignatureInit: rustShim._C_VerifySignatureInit,
         _C_VerifySignature: rustShim._C_VerifySignature,
         _C_VerifySignatureUpdate: rustShim._C_VerifySignatureUpdate,
@@ -337,7 +336,7 @@ export interface Pkcs11LogEntry {
 
 let _logId = 0
 
-const RV_NAMES: Record<number, string> = {
+export const RV_NAMES: Record<number, string> = {
   0x00000000: 'CKR_OK',
   0x00000001: 'CKR_CANCEL',
   0x00000002: 'CKR_HOST_MEMORY',
@@ -390,7 +389,8 @@ const RV_NAMES: Record<number, string> = {
   0x00000201: 'CKR_TOKEN_RESOURCE_EXCEEDED',
 }
 
-const rvName = (rv: number): string => RV_NAMES[rv] ?? `0x${rv.toString(16).padStart(8, '0')}`
+export const rvName = (rv: number): string =>
+  RV_NAMES[rv] ?? `0x${rv.toString(16).padStart(8, '0')}`
 
 const fmtTime = (): string => {
   const d = new Date()
@@ -642,7 +642,7 @@ const CKF_RW_SESSION = 0x0002
 const CKF_SERIAL_SESSION = 0x0004
 const CKU_SO = 0
 const CKU_USER = 1
-const CKO_PUBLIC_KEY = 0x02
+export const CKO_PUBLIC_KEY = 0x02
 export const CKO_PRIVATE_KEY = 0x03
 export const CKO_SECRET_KEY = 0x04
 export const CKK_HSS = 0x00000046 // PKCS#11 v3.2 §6.14 — HSS/LMS
@@ -677,6 +677,17 @@ export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
 export const CKA_HSS_KEYS_REMAINING = 0x0000061c // PKCS#11 v3.2 §6.14
 export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
+// Storage-object attributes (v3.2 Table 23) — mandatory for every object,
+// default TRUE. Values verified against pqctoday-hsm/rust/src/constants.rs.
+export const CKA_UNIQUE_ID = 0x00000004
+export const CKA_MODIFIABLE = 0x00000170
+export const CKA_COPYABLE = 0x00000171
+export const CKA_DESTROYABLE = 0x00000172
+// Common key attributes (v3.2 Table 26), default empty.
+export const CKA_START_DATE = 0x00000110
+export const CKA_END_DATE = 0x00000111
+// v3.2 §4.2 Table 13 footnote 10 — private keys only, default FALSE.
+export const CKA_ALWAYS_AUTHENTICATE = 0x00000202
 
 // PKCS#11 Profiles v3.2 §3 — a token exposes one CKO_PROFILE object per
 // conformance profile it claims, each with a fixed CKA_PROFILE_ID (e.g.
@@ -685,10 +696,27 @@ export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
 export const CKO_PROFILE = 0x00000009
 export const CKA_PROFILE_ID = 0x00000601
 export const CKP_BASELINE_PROVIDER = 0x00000001
+// WS-11 Phases 1-2 (2026-08-28) — the 3 additional Profiles v3.2 §3 profile
+// ids both engines now claim (CKA_PROFILE_ID values, canonical header).
+export const CKP_EXTENDED_PROVIDER = 0x00000002
+export const CKP_AUTHENTICATION_TOKEN = 0x00000003
+export const CKP_PUBLIC_CERTIFICATES_TOKEN = 0x00000004
 // PKCS#11 v3.2 §4.8 Table 13 — pins a key to an allow-list of mechanisms;
 // any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID.
 // CKF_ARRAY_ATTRIBUTE (0x40000000) | 0x0600, per constants.rs.
 export const CKA_ALLOWED_MECHANISMS = 0x40000600
+
+// §4.6 Table 19/20 — X.509 certificate object class + attributes, needed by
+// the Public Certificates Token (CERT-M-1-32) fixture. Values from
+// pkcs11t-canonical-v3.2.h.
+export const CKO_DATA = 0x00000000
+export const CKO_CERTIFICATE = 0x00000001
+export const CKC_X_509 = 0x00000000
+export const CKA_CERTIFICATE_TYPE = 0x00000080
+export const CKA_ISSUER = 0x00000081
+export const CKA_SERIAL_NUMBER = 0x00000082
+export const CKA_URL = 0x00000089
+export const CKA_SUBJECT = 0x00000101
 
 /** Find every CKO_PROFILE object on the token, with its CKA_PROFILE_ID
  * resolved (-1 if unreadable). PKCS#11 Profiles v3.2 §3 — a token exposes
@@ -945,9 +973,27 @@ const writeStr = (M: SoftHSMModule, s: string): number => {
   return ptr
 }
 
-const checkRV = (rv: number, fn: string): void => {
+/**
+ * Thrown by checkRV/checkInitRV. `message` is unchanged from the plain
+ * Error this replaces — every existing `err.message.includes('CKR_…')`
+ * caller keeps working — but callers that need the raw code (e.g. a
+ * conformance runner asserting a specific expected CKR_*) can now read
+ * `.rv`/`.fn` instead of re-parsing the message string.
+ */
+export class Pkcs11Error extends Error {
+  readonly rv: number
+  readonly fn: string
+  constructor(rv: number, fn: string) {
+    super(`${fn} → ${rvName(rv)} (0x${rv.toString(16).padStart(8, '0')})`)
+    this.name = 'Pkcs11Error'
+    this.rv = rv
+    this.fn = fn
+  }
+}
+
+export const checkRV = (rv: number, fn: string): void => {
   const u = rv >>> 0
-  if (u !== 0) throw new Error(`${fn} → ${rvName(u)} (0x${u.toString(16).padStart(8, '0')})`)
+  if (u !== 0) throw new Pkcs11Error(u, fn)
 }
 
 // Build a CK_ATTRIBUTE array in WASM memory.
@@ -1699,7 +1745,8 @@ export const hsm_generateMLDSAKeyPair = (
   variant: 44 | 65 | 87,
   extractable = false,
   token = false,
-  keyId?: Uint8Array
+  keyId?: Uint8Array,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
@@ -1707,6 +1754,8 @@ export const hsm_generateMLDSAKeyPair = (
   M.setValue(mech + 8, 0, 'i32')
 
   const keyIdPtr = keyId && keyId.length ? writeBytes(M, keyId) : 0
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
 
   const ps = dsaParamSet(variant)
   const pubDefs = [
@@ -1716,6 +1765,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelBytes && labelPtr
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
   // The mechanism infers the parameter set for the private key from the public key template.
@@ -1728,6 +1780,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelBytes && labelPtr
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   const pubTpl = buildTemplate(M, pubDefs)
   const prvTpl = buildTemplate(M, prvDefs)
@@ -1756,6 +1811,7 @@ export const hsm_generateMLDSAKeyPair = (
     M._free(pubHPtr)
     M._free(prvHPtr)
     if (keyIdPtr) M._free(keyIdPtr)
+    if (labelPtr) M._free(labelPtr)
   }
 }
 
@@ -2423,6 +2479,7 @@ export const CKM_GENERIC_SECRET_KEY_GEN = 0x350
 export const CKM_AES_KEY_GEN = 0x1080
 export const CKM_AES_ECB = 0x1081 // PKCS#11 v3.2 §6.10.4 — MILENAGE f1–f5
 export const CKM_AES_CTR = 0x1086 // PKCS#11 v3.2 §6.11 — SUCI MSIN encryption (TS 33.501)
+export const CKM_AES_CBC = 0x1082 // raw block-cipher CBC, no PKCS#7 — what NIST's ACVP-AES-CBC KATs test
 export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
@@ -2431,6 +2488,12 @@ export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
 export const CKM_SHA512_HMAC = 0x271
+// _GENERAL variants (CK_MAC_GENERAL_PARAMS — truncated MAC length in bytes),
+// used to verify NIST ACVP-HMAC reference vectors, which test SP 800-107
+// truncation lengths shorter than the full digest.
+export const CKM_SHA256_HMAC_GENERAL = 0x252
+export const CKM_SHA384_HMAC_GENERAL = 0x262
+export const CKM_SHA512_HMAC_GENERAL = 0x272
 export const CKM_SHA3_256_HMAC = 0x2b1
 export const CKM_SHA3_512_HMAC = 0x2d1
 export const CKM_SHA256 = 0x250
@@ -2486,6 +2549,14 @@ export const CKP_SLH_DSA_SHAKE_256F = 0x0c
 export const CKA_MODULUS = 0x120
 export const CKA_MODULUS_BITS = 0x121
 export const CKA_PUBLIC_EXPONENT = 0x122
+// RSA private-key CRT components (v3.2 Table 39). Values verified against
+// pqctoday-hsm/rust/src/constants.rs / the vendored canonical pkcs11t.h.
+export const CKA_PRIVATE_EXPONENT = 0x00000123
+export const CKA_PRIME_1 = 0x00000124
+export const CKA_PRIME_2 = 0x00000125
+export const CKA_EXPONENT_1 = 0x00000126
+export const CKA_EXPONENT_2 = 0x00000127
+export const CKA_COEFFICIENT = 0x00000128
 export const CKA_ENCRYPT = 0x104
 export const CKA_DECRYPT = 0x105
 export const CKA_WRAP = 0x106
@@ -2587,7 +2658,7 @@ const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0
 // ── Additional WASM memory helpers ───────────────────────────────────────────
 
 /** Allocate and fill a CK_MECHANISM struct (12 bytes) in WASM heap. */
-const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): number => {
+export const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): number => {
   const mech = M._malloc(12)
   M.setValue(mech, type, 'i32')
   M.setValue(mech + 4, paramPtr, 'i32')
@@ -2932,6 +3003,41 @@ export const hsm_rsaVerify = (
   }
 }
 
+/**
+ * RSA verify taking the message as raw bytes rather than a UTF-8 string —
+ * see hsm_ecdsaVerifyBytes for why: a real NIST ACVP message is arbitrary
+ * binary, hex-encoded, and TextEncoder/TextDecoder round-tripping it as a
+ * JS string is not guaranteed to preserve the exact bytes that were signed.
+ */
+export const hsm_rsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_SHA256_RSA_PKCS
+): boolean => {
+  const isPSS =
+    mechType === CKM_SHA256_RSA_PKCS_PSS ||
+    mechType === CKM_SHA384_RSA_PKCS_PSS ||
+    mechType === CKM_SHA512_RSA_PKCS_PSS
+  let pssParams: { ptr: number; len: number } | null = null
+  if (isPSS) pssParams = buildPSSParams(M, mechType)
+  const mech = buildMech(M, mechType, pssParams?.ptr ?? 0, pssParams?.len ?? 0)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(RSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+    if (pssParams) M._free(pssParams.ptr)
+  }
+}
+
 /** RSA-OAEP encrypt via C_EncryptInit + C_Encrypt. */
 export const hsm_rsaEncrypt = (
   M: SoftHSMModule,
@@ -3033,6 +3139,29 @@ const ecCurveOID = (curve: string): Uint8Array => {
   }
 }
 
+const bytesEqual = (a: Uint8Array, b: Uint8Array): boolean =>
+  a.length === b.length && a.every((v, i) => v === b[i])
+
+/** Inverse of ecCurveOID + the Ed25519/Ed448 OIDs hsm_generateEdDSAKeyPair uses
+ *  directly. Decodes a raw CKA_EC_PARAMS reading back into a curve name for
+ *  display — null if the bytes don't match any curve this engine generates. */
+export const ecCurveNameFromOID = (params: Uint8Array): string | null => {
+  const table: Array<[Uint8Array, string]> = [
+    [EC_OID_P256, 'P-256'],
+    [EC_OID_P384, 'P-384'],
+    [EC_OID_P521, 'P-521'],
+    [EC_OID_SECP256K1, 'secp256k1'],
+    [EC_OID_X25519, 'X25519'],
+    [EC_OID_X448, 'X448'],
+    [EC_OID_ED25519, 'Ed25519'],
+    [EC_OID_ED448, 'Ed448'],
+  ]
+  for (const [oid, name] of table) {
+    if (bytesEqual(params, oid)) return name
+  }
+  return null
+}
+
 /**
  * OID bytes for SEC1 / Weierstrass curves only (P-256 / P-384 / P-521).
  * Throws CKR_CURVE_NOT_SUPPORTED if a Montgomery curve (X25519 / X448) is supplied —
@@ -3088,6 +3217,10 @@ export const hsm_generateECKeyPair = (
 
   const labelBytes = label ? new TextEncoder().encode(label) : null
   const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+  if (labelBytes && labelPtr) {
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+  }
 
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -3164,6 +3297,35 @@ export const hsm_ecdsaVerify = (
   try {
     checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+/**
+ * ECDSA verify taking the message as raw bytes rather than a UTF-8 string.
+ * hsm_ecdsaVerify's `message: string` param round-trips correctly only for
+ * genuinely textual messages (e.g. RFC 6979's fixed "sample" test) — a real
+ * NIST ACVP SigVer message field is arbitrary binary, hex-encoded, and would
+ * be silently corrupted by TextEncoder if forced through the string path.
+ */
+export const hsm_ecdsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_ECDSA_SHA256
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(ECDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
     return rv === 0
   } finally {
     M._free(mech)
@@ -3835,6 +3997,34 @@ export const hsm_eddsaVerify = (
 }
 
 /**
+ * EdDSA verify taking the message as raw bytes rather than a UTF-8 string —
+ * see hsm_ecdsaVerifyBytes for why: a real NIST ACVP message is arbitrary
+ * binary, hex-encoded, and TextEncoder/TextDecoder round-tripping it as a
+ * JS string is not guaranteed to preserve the exact bytes that were signed.
+ */
+export const hsm_eddsaVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  messageBytes: Uint8Array,
+  sigBytes: Uint8Array,
+  mechType: number = CKM_EDDSA
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, messageBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(EdDSA)')
+    const rv = M._C_Verify(hSession, msgPtr, messageBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
+  }
+}
+
+/**
  * Multi-part sign via C_SignInit + C_SignUpdate × N + C_SignFinal.
  * Works with RSA-PKCS, RSA-PSS, ECDSA, EdDSA, or any mechanism that supports streaming.
  */
@@ -4128,6 +4318,114 @@ export const hsm_importRSAPublicKey = (
     M._free(modPtr)
     M._free(expPtr)
     M._free(valPtr)
+  }
+}
+
+const toBase64Url = (bytes: Uint8Array): string => {
+  let binary = ''
+  for (const b of bytes) binary += String.fromCharCode(b)
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+/**
+ * Import an RSA private key from its full CRT component set (PKCS#11 v3.2
+ * Table 39: MODULUS, PUBLIC_EXPONENT, PRIVATE_EXPONENT, PRIME_1/2,
+ * EXPONENT_1/2, COEFFICIENT). Returns CKO_PRIVATE_KEY handle.
+ *
+ * Async: builds a PKCS#8 DER blob via the browser's native SubtleCrypto
+ * (JWK import → PKCS#8 export) for the Rust engine, which reads CKA_VALUE as
+ * PKCS#8 on RSA private-key import (rsa::RsaPrivateKey::from_pkcs8_der) —
+ * state.rs's CreateObject validity check requires CKA_VALUE on any private
+ * key that isn't RSA/EC *public* (the only two exceptions). Deliberately not
+ * a hand-rolled ASN.1/DER encoder: @peculiar/asn1-rsa's decorator-registered
+ * schema doesn't survive this project's bundler (see the comment on
+ * parseRsaPublicKey in compositeVerifier.ts for the same finding), so this
+ * uses the platform's own PKCS#8 encoder instead of re-deriving one.
+ */
+export const hsm_importRSAPrivateKey = async (
+  M: SoftHSMModule,
+  hSession: number,
+  parts: {
+    n: Uint8Array
+    e: Uint8Array
+    d: Uint8Array
+    p: Uint8Array
+    q: Uint8Array
+    dp: Uint8Array
+    dq: Uint8Array
+    qi: Uint8Array
+  },
+  decrypt = true
+): Promise<number> => {
+  const cryptoKey = await crypto.subtle.importKey(
+    'jwk',
+    {
+      kty: 'RSA',
+      n: toBase64Url(parts.n),
+      e: toBase64Url(parts.e),
+      d: toBase64Url(parts.d),
+      p: toBase64Url(parts.p),
+      q: toBase64Url(parts.q),
+      dp: toBase64Url(parts.dp),
+      dq: toBase64Url(parts.dq),
+      qi: toBase64Url(parts.qi),
+    },
+    { name: 'RSA-OAEP', hash: 'SHA-256' },
+    true,
+    ['decrypt']
+  )
+  const pkcs8 = new Uint8Array(await crypto.subtle.exportKey('pkcs8', cryptoKey))
+
+  const ptrs = Object.fromEntries(
+    Object.entries(parts).map(([k, v]) => [k, writeBytes(M, v)])
+  ) as Record<keyof typeof parts, number>
+  const valPtr = writeBytes(M, pkcs8)
+
+  const baseAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: decrypt },
+    { type: CKA_MODULUS, bytesPtr: ptrs.n, bytesLen: parts.n.length },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: ptrs.e, bytesLen: parts.e.length },
+    { type: CKA_PRIVATE_EXPONENT, bytesPtr: ptrs.d, bytesLen: parts.d.length },
+    { type: CKA_PRIME_1, bytesPtr: ptrs.p, bytesLen: parts.p.length },
+    { type: CKA_PRIME_2, bytesPtr: ptrs.q, bytesLen: parts.q.length },
+    { type: CKA_EXPONENT_1, bytesPtr: ptrs.dp, bytesLen: parts.dp.length },
+    { type: CKA_EXPONENT_2, bytesPtr: ptrs.dq, bytesLen: parts.dq.length },
+    { type: CKA_COEFFICIENT, bytesPtr: ptrs.qi, bytesLen: parts.qi.length },
+  ]
+  const hKeyPtr = allocUlong(M)
+  try {
+    // Try with CKA_VALUE (Rust engine needs it); fall back without it
+    // (C++ reconstructs from the CRT components alone and rejects an
+    // unrecognized CKA_VALUE on this class) — same shape as
+    // hsm_importRSAPublicKey above.
+    const tplFull = buildTemplate(M, [
+      ...baseAttrs,
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pkcs8.length },
+    ])
+    const rv = M._C_CreateObject(hSession, tplFull.ptr, baseAttrs.length + 1, hKeyPtr) >>> 0
+    freeTemplate(M, tplFull, baseAttrs.length + 1)
+    if (rv === 0x12) {
+      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
+      const tplStd = buildTemplate(M, baseAttrs)
+      checkRV(
+        M._C_CreateObject(hSession, tplStd.ptr, baseAttrs.length, hKeyPtr),
+        'C_CreateObject(Import RSA PrivKey)'
+      )
+      freeTemplate(M, tplStd, baseAttrs.length)
+    } else {
+      checkRV(rv, 'C_CreateObject(Import RSA PrivKey)')
+    }
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(valPtr)
+    Object.values(ptrs).forEach((p) => M._free(p))
   }
 }
 
@@ -4551,9 +4849,13 @@ export const hsm_aesEncrypt = (
 }
 
 /**
- * AES decrypt (CTR, GCM, or CBC-PAD).
+ * AES decrypt (CTR, GCM, CBC-PAD, or raw CBC).
  * CTR: iv is the 16-byte counter block used during encryption (CTR is its own inverse).
  * GCM: ciphertext must include the 16-byte auth tag at the end (as returned by hsm_aesEncrypt).
+ * 'cbc-raw': CKM_AES_CBC, no PKCS#7 padding — ciphertext must already be block-aligned.
+ * This is the mechanism NIST's ACVP-AES-CBC KATs actually test; 'cbc' (CKM_AES_CBC_PAD)
+ * is kept unchanged for its existing callers rather than repurposed, since padding
+ * behavior is a different mechanism, not a parameter of the same one.
  */
 export const hsm_aesDecrypt = (
   M: SoftHSMModule,
@@ -4561,7 +4863,7 @@ export const hsm_aesDecrypt = (
   keyHandle: number,
   ciphertext: Uint8Array,
   iv: Uint8Array,
-  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm',
+  mode: 'ctr' | 'gcm' | 'cbc' | 'cbc-raw' = 'gcm',
   aad?: Uint8Array
 ): Uint8Array => {
   let mech: number
@@ -4574,6 +4876,10 @@ export const hsm_aesDecrypt = (
     const gcmP = buildGCMParams(M, iv, aad)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
+  } else if (mode === 'cbc-raw') {
+    const ivPtr = writeBytes(M, iv)
+    allocPtrs.push(ivPtr)
+    mech = buildMech(M, CKM_AES_CBC, ivPtr, 16)
   } else {
     const ivPtr = writeBytes(M, iv)
     allocPtrs.push(ivPtr)
@@ -4813,6 +5119,40 @@ export const hsm_hmacVerify = (
   }
 }
 
+/**
+ * Verify a truncated HMAC via CKM_*_HMAC_GENERAL (PKCS#11 §6.31/§2.5.2 —
+ * CK_MAC_GENERAL_PARAMS, a single CK_ULONG giving the desired MAC length in
+ * bytes). NIST's ACVP-HMAC reference vectors deliberately test SP 800-107
+ * truncation lengths shorter than the full digest, which the non-GENERAL
+ * mechanism's C_Verify (exact-length match only) can't exercise — this is
+ * the mechanism those vectors are actually for. `mac.length` supplies the
+ * truncation length; `mechType` must be the `_GENERAL` variant.
+ */
+export const hsm_hmacVerifyGeneral = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mac: Uint8Array,
+  mechType: number
+): boolean => {
+  const paramPtr = allocUlong(M)
+  writeUlong(M, paramPtr, mac.length)
+  const mech = buildMech(M, mechType, paramPtr, 4)
+  const dataPtr = writeBytes(M, data)
+  const macPtr = writeBytes(M, mac)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, keyHandle), 'C_VerifyInit(HMAC_GENERAL)')
+    const rv = M._C_Verify(hSession, dataPtr, data.length, macPtr, mac.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macPtr)
+    M._free(paramPtr)
+  }
+}
+
 // ── SHA digest helper ─────────────────────────────────────────────────────────
 
 /**
@@ -4892,7 +5232,8 @@ export const hsm_generateSLHDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   paramSet: number = CKP_SLH_DSA_SHA2_128S,
-  extractable = false
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
 
@@ -4914,6 +5255,13 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_SIGN, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ]
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+  if (labelBytes && labelPtr) {
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+  }
 
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -4941,6 +5289,7 @@ export const hsm_generateSLHDSAKeyPair = (
     freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
+    if (labelPtr) M._free(labelPtr)
   }
 }
 
@@ -5093,37 +5442,90 @@ export const hsm_slhdsaVerifyBytes = (
 
 // ── Key attribute inspection ──────────────────────────────────────────────────
 
-/** Safe single-attribute boolean read — returns null if attribute doesn't exist on this key type. */
+// PKCS#11 v3.2 §5.4/§5.12 result codes this module classifies specially — an
+// attribute read failing with one of these is a normal, meaningful outcome
+// (not present on this object vs. deliberately withheld), not an error.
+const CKR_ATTRIBUTE_SENSITIVE = 0x11
+const CKR_ATTRIBUTE_TYPE_INVALID = 0x12
+
+/** Why a KeyAttributeSet field came back null despite being probed — distinct
+ *  from a field that was never probed at all (client-side class gating, e.g.
+ *  CKA_SENSITIVE on a public key, which stays plain `null` with no entry here). */
+export type AttrUnavailableReason =
+  | 'absent' // CKR_ATTRIBUTE_TYPE_INVALID — the token has no such attribute on this object
+  | 'sensitive' // CKR_ATTRIBUTE_SENSITIVE — exists, withheld by design
+  | 'error' // any other non-OK rv (stale handle, closed session, …)
+
+const classifyRv = (rv: number): AttrUnavailableReason | null => {
+  if (rv === 0) return null
+  if (rv === CKR_ATTRIBUTE_TYPE_INVALID) return 'absent'
+  if (rv === CKR_ATTRIBUTE_SENSITIVE) return 'sensitive'
+  return 'error'
+}
+
+/** Single-attribute boolean read. rv is the raw C_GetAttributeValue result;
+ *  value is null whenever rv !== 0 (CKR_OK). */
 const readBoolAttr = (
   M: SoftHSMModule,
   hSession: number,
   handle: number,
   attrType: number
-): boolean | null => {
+): { rv: number; value: boolean | null } => {
   const bPtr = M._malloc(1)
   M.HEAPU8[bPtr] = 0
   const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: bPtr, bytesLen: 1 }])
   const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
   freeTemplate(M, tpl, 1)
-  const val = rv === 0 ? M.HEAPU8[bPtr] !== 0 : null
+  const value = rv === 0 ? M.HEAPU8[bPtr] !== 0 : null
   M._free(bPtr)
-  return val
+  return { rv, value }
 }
 
-/** Safe single-attribute ulong read — returns null if attribute doesn't exist. */
+/** Single-attribute ulong read. rv is the raw C_GetAttributeValue result;
+ *  value is null whenever rv !== 0 (CKR_OK). */
 const readUlongAttr = (
   M: SoftHSMModule,
   hSession: number,
   handle: number,
   attrType: number
-): number | null => {
+): { rv: number; value: number | null } => {
   const uPtr = M._malloc(4)
   const tpl = buildTemplate(M, [{ type: attrType, bytesPtr: uPtr, bytesLen: 4 }])
   const rv = M._C_GetAttributeValue(hSession, handle, tpl.ptr, 1) >>> 0
   freeTemplate(M, tpl, 1)
-  const val = rv === 0 ? readUlong(M, uPtr) : null
+  const value = rv === 0 ? readUlong(M, uPtr) : null
   M._free(uPtr)
-  return val
+  return { rv, value }
+}
+
+/** Single-attribute variable-length byte read (two-call: length, then value).
+ *  rv is the failing call's raw result when either call fails; value is null
+ *  whenever rv !== 0. For byte-array attributes (CKA_EC_PARAMS, CKA_EC_POINT,
+ *  CKA_MODULUS, CKA_PUBLIC_EXPONENT, CKA_PUBLIC_KEY_INFO, …) that
+ *  hsm_getKeyAttributes doesn't read today — exported for a caller that reads
+ *  one directly, the way hsm_getPublicKeyInfo already does by hand. */
+export const readBytesAttr = (
+  M: SoftHSMModule,
+  hSession: number,
+  handle: number,
+  attrType: number
+): { rv: number; value: Uint8Array | null } => {
+  const lenTpl = buildTemplate(M, [{ type: attrType }])
+  const lenRv = M._C_GetAttributeValue(hSession, handle, lenTpl.ptr, 1) >>> 0
+  if (lenRv !== 0) {
+    freeTemplate(M, lenTpl, 1)
+    return { rv: lenRv, value: null }
+  }
+  const len = readUlong(M, lenTpl.ptr + 8)
+  freeTemplate(M, lenTpl, 1)
+
+  const valPtr = M._malloc(len)
+  const valTpl = buildTemplate(M, [{ type: attrType, bytesPtr: valPtr, bytesLen: len }])
+  const valRv = M._C_GetAttributeValue(hSession, handle, valTpl.ptr, 1) >>> 0
+  const value = valRv === 0 ? M.HEAPU8.slice(valPtr, valPtr + len) : null
+  freeTemplate(M, valTpl, 1)
+  M._free(valPtr)
+  return { rv: valRv, value }
 }
 
 export interface KeyAttributeSet {
@@ -5159,6 +5561,65 @@ export interface KeyAttributeSet {
   ckHssKeysRemaining: number | null
   /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
   ckXmssKeysRemaining: number | null
+  // ── Storage object (v3.2 Table 23) — every object ─────────────────────────
+  /** CKA_UNIQUE_ID: token-assigned unique identifier string */
+  ckUniqueId: string | null
+  /** CKA_LABEL: human-readable label, RFC2279 string (default empty) */
+  ckLabel: string | null
+  /** CKA_MODIFIABLE: object may be modified after creation (default TRUE) */
+  ckModifiable: boolean | null
+  /** CKA_COPYABLE: object may be copied via C_CopyObject (default TRUE) */
+  ckCopyable: boolean | null
+  /** CKA_DESTROYABLE: object may be destroyed (default TRUE) */
+  ckDestroyable: boolean | null
+  // ── Common key (v3.2 Table 26) — every key ────────────────────────────────
+  /** CKA_ID: key identifier bytes, distinguishes multiple pairs (default empty) */
+  ckId: Uint8Array | null
+  /** CKA_START_DATE: CK_DATE bytes, reference-only (default empty) */
+  ckStartDate: Uint8Array | null
+  /** CKA_END_DATE: CK_DATE bytes, reference-only (default empty) */
+  ckEndDate: Uint8Array | null
+  /** CKA_ALLOWED_MECHANISMS: packed CK_MECHANISM_TYPE[] this key is pinned to */
+  ckAllowedMechanisms: Uint8Array | null
+  // ── Policy (v3.2 §4.2/§4.8) ────────────────────────────────────────────────
+  /** CKA_TRUSTED: public/secret keys only — §4.2 Table 13 footnote 10, SO-only to set */
+  ckTrusted: boolean | null
+  /** CKA_WRAP_WITH_TRUSTED: private/secret keys — pins wrapping to a CKA_TRUSTED key */
+  ckWrapWithTrusted: boolean | null
+  /** CKA_ALWAYS_AUTHENTICATE: private keys only — re-authenticate before every use */
+  ckAlwaysAuthenticate: boolean | null
+  // ── EC / EdDSA / Montgomery key material ──────────────────────────────────
+  /** CKA_EC_PARAMS: DER-encoded curve OID/params (public + private) */
+  ckEcParams: Uint8Array | null
+  /** CKA_EC_POINT: DER-wrapped uncompressed curve point (public only) */
+  ckEcPoint: Uint8Array | null
+  // ── RSA key material ───────────────────────────────────────────────────────
+  /** CKA_MODULUS_BITS: modulus size in bits (public only) */
+  ckModulusBits: number | null
+  /** CKA_MODULUS: modulus bytes (public + private) */
+  ckModulus: Uint8Array | null
+  /** CKA_PUBLIC_EXPONENT: exponent bytes (public + private) */
+  ckPublicExponent: Uint8Array | null
+  // ── SPKI (v3.2 §4.14) ──────────────────────────────────────────────────────
+  /** CKA_PUBLIC_KEY_INFO: SPKI-encoded public key. Mandatory on public keys;
+   *  on private keys the spec makes it SHOULD/MAY, not MUST (§4.10 lines
+   *  2520-2530 for the general rule, §RSA line 7923 for RSA specifically) —
+   *  read opportunistically, 'absent' on an engine/class that omits it is
+   *  expected, not a bug. */
+  ckPublicKeyInfo: Uint8Array | null
+  /**
+   * Why each null field above came back null, for fields that were actually
+   * probed and failed (as opposed to attributes this object's class doesn't
+   * define at all, which are set to `null` locally without a C_GetAttributeValue
+   * call and have no entry here — e.g. CKA_SENSITIVE on a public key). A field
+   * with no entry here and a non-null value read successfully; a field with no
+   * entry here and a null value was either not probed (class-gated) or, for
+   * the two class/type reads that gate everything else, genuinely absent.
+   * Consult with `attrs.unavailable?.[key]`, not `attrs.unavailable[key]` —
+   * callers that build a KeyAttributeSet by other means (worker RPC bridges)
+   * may omit it entirely.
+   */
+  unavailable: Partial<Record<keyof KeyAttributeSet, AttrUnavailableReason>>
 }
 
 /** Read common PKCS#11 attributes for any key object in the current session.
@@ -5170,46 +5631,71 @@ export const hsm_getKeyAttributes = (
   hSession: number,
   handle: number
 ): KeyAttributeSet => {
-  const b = (t: number) => readBoolAttr(M, hSession, handle, t)
-  const u = (t: number) => readUlongAttr(M, hSession, handle, t)
+  const unavailable: Partial<Record<keyof KeyAttributeSet, AttrUnavailableReason>> = {}
+  const b = (key: keyof KeyAttributeSet, t: number): boolean | null => {
+    const { rv, value } = readBoolAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
+  const u = (key: keyof KeyAttributeSet, t: number): number | null => {
+    const { rv, value } = readUlongAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
+  const bytes = (key: keyof KeyAttributeSet, t: number): Uint8Array | null => {
+    const { rv, value } = readBytesAttr(M, hSession, handle, t)
+    const reason = classifyRv(rv)
+    if (reason) unavailable[key] = reason
+    return value
+  }
+  const str = (key: keyof KeyAttributeSet, t: number): string | null => {
+    const raw = bytes(key, t)
+    return raw ? new TextDecoder().decode(raw) : null
+  }
 
   // Read class + type first — these are on every key object (Table 26 common attrs)
-  const ckClass = u(CKA_CLASS)
-  const ckKeyType = u(CKA_KEY_TYPE)
+  const ckClass = u('ckClass', CKA_CLASS)
+  const ckKeyType = u('ckKeyType', CKA_KEY_TYPE)
 
   const isPublic = ckClass === CKO_PUBLIC_KEY
   const isPrivate = ckClass === CKO_PRIVATE_KEY
   const isSecret = ckClass === CKO_SECRET_KEY
+  const isEcFamily =
+    ckKeyType === CKK_EC || ckKeyType === CKK_EC_EDWARDS || ckKeyType === CKK_EC_MONTGOMERY
+  const isRsa = ckKeyType === CKK_RSA
 
   return {
     ckClass,
     ckKeyType,
     // Common to all key classes (Table 26): DERIVE, LOCAL, KEY_GEN_MECHANISM
-    ckParameterSet: u(CKA_PARAMETER_SET),
-    ckKeyGenMechanism: u(CKA_KEY_GEN_MECHANISM),
-    ckToken: b(CKA_TOKEN),
-    ckPrivate: b(CKA_PRIVATE),
-    ckLocal: b(CKA_LOCAL),
-    ckDerive: b(CKA_DERIVE),
+    ckParameterSet: u('ckParameterSet', CKA_PARAMETER_SET),
+    ckKeyGenMechanism: u('ckKeyGenMechanism', CKA_KEY_GEN_MECHANISM),
+    ckToken: b('ckToken', CKA_TOKEN),
+    ckPrivate: b('ckPrivate', CKA_PRIVATE),
+    ckLocal: b('ckLocal', CKA_LOCAL),
+    ckDerive: b('ckDerive', CKA_DERIVE),
     // Sensitivity / extractability — private and secret keys only (Tables 29/30)
-    ckSensitive: isPrivate || isSecret ? b(CKA_SENSITIVE) : null,
-    ckExtractable: isPrivate || isSecret ? b(CKA_EXTRACTABLE) : null,
-    ckAlwaysSensitive: isPrivate || isSecret ? b(CKA_ALWAYS_SENSITIVE) : null,
-    ckNeverExtractable: isPrivate || isSecret ? b(CKA_NEVER_EXTRACTABLE) : null,
+    ckSensitive: isPrivate || isSecret ? b('ckSensitive', CKA_SENSITIVE) : null,
+    ckExtractable: isPrivate || isSecret ? b('ckExtractable', CKA_EXTRACTABLE) : null,
+    ckAlwaysSensitive: isPrivate || isSecret ? b('ckAlwaysSensitive', CKA_ALWAYS_SENSITIVE) : null,
+    ckNeverExtractable:
+      isPrivate || isSecret ? b('ckNeverExtractable', CKA_NEVER_EXTRACTABLE) : null,
     // Encryption / decryption — public+secret can encrypt, private+secret can decrypt
-    ckEncrypt: isPublic || isSecret ? b(CKA_ENCRYPT) : null,
-    ckDecrypt: isPrivate || isSecret ? b(CKA_DECRYPT) : null,
+    ckEncrypt: isPublic || isSecret ? b('ckEncrypt', CKA_ENCRYPT) : null,
+    ckDecrypt: isPrivate || isSecret ? b('ckDecrypt', CKA_DECRYPT) : null,
     // Signing — private keys sign, public keys verify; secret keys can do both (MAC)
-    ckSign: isPrivate || isSecret ? b(CKA_SIGN) : null,
-    ckVerify: isPublic || isSecret ? b(CKA_VERIFY) : null,
+    ckSign: isPrivate || isSecret ? b('ckSign', CKA_SIGN) : null,
+    ckVerify: isPublic || isSecret ? b('ckVerify', CKA_VERIFY) : null,
     // Wrapping — public+secret can wrap, private+secret can unwrap
-    ckWrap: isPublic || isSecret ? b(CKA_WRAP) : null,
-    ckUnwrap: isPrivate || isSecret ? b(CKA_UNWRAP) : null,
+    ckWrap: isPublic || isSecret ? b('ckWrap', CKA_WRAP) : null,
+    ckUnwrap: isPrivate || isSecret ? b('ckUnwrap', CKA_UNWRAP) : null,
     // KEM encap/decap — public key encapsulates, private key decapsulates (Table 27/29)
-    ckEncapsulate: isPublic ? b(CKA_ENCAPSULATE) : null,
-    ckDecapsulate: isPrivate ? b(CKA_DECAPSULATE) : null,
+    ckEncapsulate: isPublic ? b('ckEncapsulate', CKA_ENCAPSULATE) : null,
+    ckDecapsulate: isPrivate ? b('ckDecapsulate', CKA_DECAPSULATE) : null,
     // Secret-key-only attributes (Table 30)
-    ckValueLen: isSecret ? u(CKA_VALUE_LEN) : null,
+    ckValueLen: isSecret ? u('ckValueLen', CKA_VALUE_LEN) : null,
     ckCheckValue: isSecret
       ? (() => {
           try {
@@ -5220,9 +5706,40 @@ export const hsm_getKeyAttributes = (
           }
         })()
       : null,
-    ckHssKeysRemaining: ckKeyType === CKK_HSS ? u(CKA_HSS_KEYS_REMAINING) : null,
+    ckHssKeysRemaining:
+      ckKeyType === CKK_HSS ? u('ckHssKeysRemaining', CKA_HSS_KEYS_REMAINING) : null,
     ckXmssKeysRemaining:
-      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT ? u(CKA_XMSS_KEYS_REMAINING) : null,
+      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT
+        ? u('ckXmssKeysRemaining', CKA_XMSS_KEYS_REMAINING)
+        : null,
+    // Storage object (Table 23) — every object
+    ckUniqueId: str('ckUniqueId', CKA_UNIQUE_ID),
+    ckLabel: str('ckLabel', CKA_LABEL),
+    ckModifiable: b('ckModifiable', CKA_MODIFIABLE),
+    ckCopyable: b('ckCopyable', CKA_COPYABLE),
+    ckDestroyable: b('ckDestroyable', CKA_DESTROYABLE),
+    // Common key (Table 26) — every key
+    ckId: bytes('ckId', CKA_ID),
+    ckStartDate: bytes('ckStartDate', CKA_START_DATE),
+    ckEndDate: bytes('ckEndDate', CKA_END_DATE),
+    ckAllowedMechanisms: bytes('ckAllowedMechanisms', CKA_ALLOWED_MECHANISMS),
+    // Policy — CKA_TRUSTED on public+secret, CKA_WRAP_WITH_TRUSTED on private+secret,
+    // CKA_ALWAYS_AUTHENTICATE on private only (§4.2 Table 13 footnote 10)
+    ckTrusted: isPublic || isSecret ? b('ckTrusted', CKA_TRUSTED) : null,
+    ckWrapWithTrusted: isPrivate || isSecret ? b('ckWrapWithTrusted', CKA_WRAP_WITH_TRUSTED) : null,
+    ckAlwaysAuthenticate: isPrivate ? b('ckAlwaysAuthenticate', CKA_ALWAYS_AUTHENTICATE) : null,
+    // EC / EdDSA / Montgomery key material — public + private
+    ckEcParams: (isPublic || isPrivate) && isEcFamily ? bytes('ckEcParams', CKA_EC_PARAMS) : null,
+    ckEcPoint: isPublic && isEcFamily ? bytes('ckEcPoint', CKA_EC_POINT) : null,
+    // RSA key material — public + private
+    ckModulusBits: isPublic && isRsa ? u('ckModulusBits', CKA_MODULUS_BITS) : null,
+    ckModulus: (isPublic || isPrivate) && isRsa ? bytes('ckModulus', CKA_MODULUS) : null,
+    ckPublicExponent:
+      (isPublic || isPrivate) && isRsa ? bytes('ckPublicExponent', CKA_PUBLIC_EXPONENT) : null,
+    // SPKI — mandatory on public keys; read opportunistically on private keys too
+    // (spec: SHOULD/MAY there, not MUST — an engine/class omitting it is expected).
+    ckPublicKeyInfo: isPublic || isPrivate ? bytes('ckPublicKeyInfo', CKA_PUBLIC_KEY_INFO) : null,
+    unavailable,
   }
 }
 

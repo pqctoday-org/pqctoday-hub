@@ -1,22 +1,25 @@
 {
-  "algorithm": "EdDSA",
+  "algorithm": "EDDSA",
   "mode": "sigVer",
-  "source": "Generated via Node.js crypto (OpenSSL backend), Ed448 (RFC 8032)",
+  "revision": "1.0",
+  "_provenance": {
+    "source_url": "https://raw.githubusercontent.com/usnistgov/ACVP-Server/975de31eb83d87039ec88934fdc47d8c312b892d/gen-val/json-files/EDDSA-SigVer-1.0/internalProjection.json",
+    "source_release": "975de31eb83d87039ec88934fdc47d8c312b892d",
+    "retrieved": "2026-08-27",
+    "producer": "NIST ACVP-Server (reference/generator-validated sample vectors)",
+    "source_sha256": "8556b9c48ef7ff209a9f866ed83e3c3881cfdd3c4c1ee1abe2602da69c1e97b0",
+    "note": "tgId 3 (curve=ED-448, pure mode, i.e. preHash=False), tcId 14, the group's first testPassed=true case. Independently re-verified against Node's crypto (OpenSSL) oracle before use (Node supports Ed448 natively since v12). Previously a dead file with zero importers (gap report G13/H-6) — this vector file existed but nothing read it, and no Ed448 signature test of any kind ran in the ACVP tab (only X448 ECDH is tested). Wired as a new test category, not a replacement (D-3)."
+  },
   "testGroups": [
     {
       "curve": "Ed448",
       "tests": [
         {
-          "pk": "6c45a75f358388b3d178635ba96466eed63a0b6a65cecdb5038502a32ee3190afba8b7dc52de68be7be5ef1b0178108662e8e0a5da653fc980",
-          "msg": "45644453412045643434382041435650205369675665722074657374",
-          "signature": "eb886855f43715286c1401b584369a38bbf4aea184649d18f2c4b52f4b437c0e7be7694928c90eaea96f7736b862553ce80702f5f2701f1e80d465fb0efd28da43b3c714bddbf052fad3eb428dcc00ad201eed47d3cbe8ded1c876172b04feecdd50444a6a6ecc73865ac8269a6be3443500",
-          "testPassed": true
-        },
-        {
-          "pk": "6c45a75f358388b3d178635ba96466eed63a0b6a65cecdb5038502a32ee3190afba8b7dc52de68be7be5ef1b0178108662e8e0a5da653fc980",
-          "msg": "45644453412045643434382041435650206578747261207465737420766563746f7220666f72206d6f64756c65204b415420646966666572656e74696174696f6e",
-          "signature": "de15658a43bb96af48a07aed6190562e91f8f278bbc1d342cfd39c96818b561ddc9a846791bf68dafa4804bed441316db654c19e330039dd00646e3030578356822c0ec224a504c95244d370b179503ba0a142b589c2a1bff6a441085d21676e1b78650fed9b0d7ae881c7732925d2e51100",
-          "testPassed": true
+          "pk": "bb7ea666fa9a7df1fb16f661fadd4376714fd8c01d978119d77f6bcebad5a4555c1cfe8d7ba443bb30adae979d0dff9a76bf116c21325c7280",
+          "message": "f61a8343a32f9bede12aa3553b08050b8c83ba7528d6696b39efc1f65d2f179db58d5706f3b20eef9c071341283b5e05166e00cfaed48b4d2176f6b21e37f5f46ccc90990d1b7a8c53684ab3248be22fa2e02d52238469462664226d3f6158e6bb37cc0b6a00e543c12453171bb2b243e43514761db02b39d7fb99f25e3bb1a6",
+          "signature": "98355b77d2f5ca16fe3170745551897da0fdc79fba19d617e2e88a962343cd5b8e0d3dcda63bd28ec9c9becd7df669db07229a0388891a6900f5e1300e9eebda3b583eea9fd92f604f4368cedd51db30711fe2e46ea457fc707bdd582cecbe984d3be071daa4c91fe8de5ce4ac1379e23a00",
+          "testPassed": true,
+          "tcId": 14
         }
       ]
     }

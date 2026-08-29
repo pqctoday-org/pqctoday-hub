@@ -1,5 +1,13 @@
 {
   "algorithm": "PBKDF2",
+  "_provenance": {
+    "source_url": null,
+    "source_release": null,
+    "retrieved": "2026-08-28",
+    "producer": "self-generated, oracle=OpenSSL (Node crypto)",
+    "source_sha256": null,
+    "note": "No NIST ACVP reference vector exists for PBKDF2-HMAC-SHA256/SHA512 (checked 2026-08-28, WS-7: the NIST reference set at gen-val/json-files/PBKDF-1.0 only covers SHA2-224, which this engine's CKM_PKCS5_PBKD2 does not implement — only SHA256/384/512 PRFs are dispatched). Values independently computed with Node's crypto (OpenSSL) module; the same oracle reproduces RFC 6070's SHA-1 vectors exactly (RFC 6070 itself is SHA-1-only, not cross-engine-verifiable here). Self-consistency tier, not NIST ACVP or a published standard's own KAT."
+  },
   "source": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512",
   "testGroups": [
     {

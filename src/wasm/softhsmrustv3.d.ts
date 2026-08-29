@@ -103,6 +103,11 @@ export function _C_GenerateRandom(_h_session: number, p_random_data: number, ul_
 export function _C_GetAttributeValue(h_session: number, h_object: number, p_template: number, count: number): number;
 
 /**
+ * §5.5.1 — writes a CK_FUNCTION_LIST_PTR to *pp_function_list.
+ */
+export function _C_GetFunctionList(pp_function_list: number): number;
+
+/**
  * §5.21 (legacy) — always CKR_FUNCTION_NOT_PARALLEL per spec.
  */
 export function _C_GetFunctionStatus(_h_session: number): number;

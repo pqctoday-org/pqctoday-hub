@@ -14,5 +14,13 @@
         }
       ]
     }
-  ]
+  ],
+  "_provenance": {
+    "source_url": "https://csrc.nist.gov/pubs/sp/800/38/a/final",
+    "source_release": null,
+    "retrieved": null,
+    "producer": "NIST SP 800-38A Appendix F.5.6 (published KAT sample, not from ACVP)",
+    "source_sha256": null,
+    "note": "WS-10(c) (2026-08-28): backfilled provenance for evidence-tier derivation. CTR-AES256.Decrypt is NIST's own published Appendix F test vector, not ACVP-Server-generated \u2014 a published-standard KAT. Independently re-verified against the Node crypto (OpenSSL) oracle before backfill."
+  }
 }

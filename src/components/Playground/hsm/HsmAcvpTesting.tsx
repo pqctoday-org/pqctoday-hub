@@ -9,6 +9,9 @@ import {
   Copy,
   Check,
   Loader2,
+  ShieldCheck,
+  BookMarked,
+  FlaskConical,
 } from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
@@ -16,6 +19,8 @@ import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
 import mldsaExtendedTestVectors from '../../../data/acvp/mldsa_extended_test.json'
 import aesGcmTestVectors from '../../../data/acvp/aesgcm_test.json'
 import hmacTestVectors from '../../../data/acvp/hmac_test.json'
+import kmacTestVectors from '../../../data/acvp/kmac_test.json'
+import rsaOaepTestVectors from '../../../data/acvp/rsa_oaep_test.json'
 import rsaPssTestVectors from '../../../data/acvp/rsapss_test.json'
 import ecdsaTestVectors from '../../../data/acvp/ecdsa_test.json'
 import sha256TestVectors from '../../../data/acvp/sha256_test.json'
@@ -24,9 +29,16 @@ import aesCtrTestVectors from '../../../data/acvp/aesctr_test.json'
 import hmac384TestVectors from '../../../data/acvp/hmac_sha384_test.json'
 import hmac512TestVectors from '../../../data/acvp/hmac_sha512_test.json'
 import ecdsaP384TestVectors from '../../../data/acvp/ecdsa_p384_test.json'
+import ecdsaP521TestVectors from '../../../data/acvp/ecdsa_p521_test.json'
 import aesKwTestVectors from '../../../data/acvp/aeskw_test.json'
 import eddsaTestVectors from '../../../data/acvp/eddsa_test.json'
+import eddsaEd448TestVectors from '../../../data/acvp/eddsa_ed448_test.json'
 import slhdsaCtxTestVectors from '../../../data/acvp/slhdsa_ctx_test.json'
+import pbkdf2TestVectors from '../../../data/acvp/pbkdf2_test.json'
+import sha384TestVectors from '../../../data/acvp/sha384_test.json'
+import sha512TestVectors from '../../../data/acvp/sha512_test.json'
+import sha3_256TestVectors from '../../../data/acvp/sha3_256_test.json'
+import sha3_512TestVectors from '../../../data/acvp/sha3_512_test.json'
 import { hexToBytes } from '../../../utils/dataInputUtils'
 import {
   hsm_initialize,
@@ -37,13 +49,17 @@ import {
   hsm_importAESKey,
   hsm_aesDecrypt,
   hsm_importHMACKey,
-  hsm_hmacVerify,
+  hsm_hmacVerifyGeneral,
+  hsm_kmacVerify,
   hsm_importRSAPublicKey,
+  hsm_importRSAPrivateKey,
   hsm_rsaVerify,
+  hsm_rsaDecrypt,
   CKM_SHA256_RSA_PKCS_PSS,
   hsm_importECPublicKey,
   hsm_ecdsaSign,
   hsm_ecdsaVerify,
+  hsm_ecdsaVerifyBytes,
   hsm_importMLKEMPrivateKey,
   hsm_decapsulate,
   hsm_extractKeyValue,
@@ -66,6 +82,7 @@ import {
   hsm_aesCtrDecrypt,
   hsm_importEdDSAPublicKey,
   hsm_eddsaVerify,
+  hsm_eddsaVerifyBytes,
   hsm_generateAESKey,
   hsm_wrapKeyMech,
   hsm_unwrapKeyMech,
@@ -93,14 +110,21 @@ import {
   CKP_SLH_DSA_SHAKE_256S,
   CKP_SLH_DSA_SHAKE_256F,
   CKM_SHA256,
+  CKM_SHA384,
+  CKM_SHA512,
+  CKM_SHA3_256,
+  CKM_SHA3_512,
   CKM_AES_GCM,
-  CKM_AES_CBC_PAD,
+  CKM_AES_CBC,
   CKM_AES_CTR,
   CKM_AES_KEY_WRAP,
   CKM_AES_KEY_WRAP_KWP,
   CKM_SHA256_HMAC,
-  CKM_SHA384_HMAC,
-  CKM_SHA512_HMAC,
+  CKM_SHA256_HMAC_GENERAL,
+  CKM_SHA384_HMAC_GENERAL,
+  CKM_SHA512_HMAC_GENERAL,
+  CKM_KMAC_128,
+  CKM_RSA_PKCS_OAEP,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
   CKM_ECDSA_SHA512,
@@ -136,6 +160,45 @@ import { useHsmContext } from './HsmContext'
 import type { HsmKey } from './HsmContext'
 import { Button } from '@/components/ui/button'
 
+// WS-8 (2026-08-28) — what kind of evidence backs a test's expected value:
+//  - 'nist-acvp': from a NIST ACVP-Server reference vector
+//  - 'published-standard': from a cited public standard's own KAT (e.g. an
+//    RFC), not NIST ACVP specifically — reserved for a future producer this
+//    file doesn't currently have (every vector today is either nist-acvp or
+//    self-consistency)
+//  - 'self-consistency': computed by an independent oracle (Node crypto /
+//    OpenSSL), not sourced from any published KAT — still a real assertion
+//    (the two engines and the oracle must agree), just a weaker one
+type EvidenceTier = 'nist-acvp' | 'published-standard' | 'self-consistency'
+
+/**
+ * Derives the evidence tier from a vector file's own `_provenance.producer`
+ * string, rather than each of the ~80 pushResult call sites asserting its
+ * own tier by hand — the provenance block is the single source of truth
+ * (see D-8/WS-4's "provenance data drives behavior" precedent). Returns
+ * undefined for vector files with no `_provenance` block at all (most of
+ * the pre-WS-4 test files) — the UI shows no tier badge in that case rather
+ * than guessing one.
+ */
+const deriveEvidenceTier = (
+  provenance: { producer?: string } | null | undefined
+): EvidenceTier | undefined => {
+  const producer = provenance?.producer
+  if (!producer) return undefined
+  if (producer.startsWith('NIST ACVP-Server')) return 'nist-acvp'
+  if (producer.startsWith('self-generated')) return 'self-consistency'
+  return 'published-standard'
+}
+
+const EVIDENCE_TIER_META: Record<EvidenceTier, { icon: typeof ShieldCheck; label: string }> = {
+  'nist-acvp': { icon: ShieldCheck, label: 'NIST ACVP reference vector' },
+  'published-standard': { icon: BookMarked, label: "Published standard's own KAT" },
+  'self-consistency': {
+    icon: FlaskConical,
+    label: 'Self-consistency (independent oracle, not a published KAT)',
+  },
+}
+
 interface TestResult {
   id: string
   algorithm: string
@@ -147,6 +210,7 @@ interface TestResult {
   // the summary counters below, where it has its own bucket.
   status: 'pass' | 'fail' | 'pending' | 'skip'
   details: string
+  evidenceTier?: EvidenceTier
 }
 
 export const HsmAcvpTesting = () => {
@@ -254,6 +318,10 @@ export const HsmAcvpTesting = () => {
       mldsa: 'https://csrc.nist.gov/pubs/fips/204/final',
       mlkem: 'https://csrc.nist.gov/pubs/fips/203/final',
       sha256: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha384: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha512: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      sha3_256: 'https://csrc.nist.gov/publications/detail/fips/202/final',
+      sha3_512: 'https://csrc.nist.gov/publications/detail/fips/202/final',
       aescbc: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
       aesctr: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
       eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
@@ -265,6 +333,8 @@ export const HsmAcvpTesting = () => {
       x25519: 'https://www.rfc-editor.org/rfc/rfc7748',
       x448: 'https://www.rfc-editor.org/rfc/rfc7748',
       x963kdf: 'https://www.rfc-editor.org/rfc/rfc6637',
+      kmac: 'https://csrc.nist.gov/pubs/sp/800/185/final',
+      rsaoaep: 'https://csrc.nist.gov/pubs/sp/800/56/b/r2/final',
     } as const
 
     const engines: Array<{
@@ -411,6 +481,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+              evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id1}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
@@ -422,6 +493,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
               referenceUrl: REF.aesgcm,
+              evidenceTier: deriveEvidenceTier(aesGcmTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -429,19 +501,26 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 2. HMAC-SHA256 Verify KAT (RFC 4231) ────────────────────────
-        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_HMAC)) {
+        // ── 2. HMAC-SHA256 Verify KAT (NIST ACVP, truncated) ───────────────
+        // WS-7 (2026-08-28): replaced a self-generated (Node-oracle,
+        // full-length) vector with a real NIST ACVP-HMAC-SHA2-256 vector.
+        // NIST's ACVP-HMAC reference set tests SP 800-107 truncation
+        // lengths (this sample tops out at 160 bits, no full 256-bit case
+        // exists in it), so this now exercises CKM_SHA256_HMAC_GENERAL
+        // (hsm_hmacVerifyGeneral) instead of the exact-length-only
+        // CKM_SHA256_HMAC — testing the mechanism the vector is for.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_HMAC_GENERAL)) {
           await pushSkip(
             `hmac-skip-${eName}`,
             `HMAC-SHA256 (${eName})`,
-            'Verify KAT',
+            'Verify KAT (NIST ACVP, truncated)',
             REF.hmac,
-            'HMAC-SHA256: mechanism not supported'
+            'HMAC-SHA256-GENERAL: mechanism not supported'
           )
         } else {
           const tv = hmacTestVectors.testGroups[0].tests[0]
           const id2 = `hmac-acvp-${eName}`
-          addLog(`[${eName}] Testing HMAC-SHA256 Verify KAT (RFC 4231)...`)
+          addLog(`[${eName}] Testing HMAC-SHA256 Verify KAT (NIST ACVP tcId=${tv.tcId})...`)
           addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | Msg: ${tv.msg.slice(0, 32)}…`)
           addLog(`  ACVP Expected MAC: ${tv.mac}`)
           try {
@@ -459,19 +538,27 @@ export const HsmAcvpTesting = () => {
               engine: engineId,
             })
 
-            // Verify known MAC against reference
-            const isValid = hsm_hmacVerify(M, hSession, hmacHandle, msgBytes, macBytes)
+            // Verify known MAC against reference (truncated to tv.macLen bits)
+            const isValid = hsm_hmacVerifyGeneral(
+              M,
+              hSession,
+              hmacHandle,
+              msgBytes,
+              macBytes,
+              CKM_SHA256_HMAC_GENERAL
+            )
 
             const macHex = toHex(macBytes)
             await pushResult({
               id: id2,
               algorithm: `HMAC-SHA256 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmacTestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid
-                ? `MAC[${macBytes.length}B] verified: ${macHex}`
-                : 'MAC verification failed against RFC 4231 vector',
+                ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
+                : 'MAC verification failed against NIST ACVP vector',
             })
             addLog(
               `[${eName}] [id:${id2}] HMAC-SHA256 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
@@ -481,8 +568,9 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: `hmac-err-${eName}`,
               algorithm: `HMAC-SHA256 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmacTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -541,6 +629,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${rsaSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id3}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
@@ -552,6 +641,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.rsapss,
+              evidenceTier: deriveEvidenceTier(rsaPssTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -608,6 +698,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id4}] ECDSA P-256 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${ecSigHex}…`
@@ -619,6 +710,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -660,6 +752,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
@@ -675,6 +768,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaTestVectors._provenance),
               status: 'fail',
               details: errorMessage,
             })
@@ -718,6 +812,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${paramSet} (${eName})`,
               testCase: `SigVer KAT (context, ${tv.context.length / 2}B)`,
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid ? 'NIST vector verified with non-empty context' : 'verify=false',
             })
@@ -731,6 +826,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${paramSet} (${eName})`,
               testCase: 'SigVer KAT (context)',
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
               status: 'fail',
               details: errorMessage,
             })
@@ -772,6 +868,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${paramSet} (${eName})`,
               testCase: `HashML-DSA SigVer KAT (${tv.hashAlg})`,
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid ? `NIST HashML-DSA/${tv.hashAlg} vector verified` : 'verify=false',
             })
@@ -785,6 +882,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${paramSet} (${eName})`,
               testCase: 'HashML-DSA SigVer KAT',
               referenceUrl: REF.mldsa,
+              evidenceTier: deriveEvidenceTier(mldsaExtendedTestVectors._provenance),
               status: 'fail',
               details: errorMessage,
             })
@@ -894,6 +992,7 @@ export const HsmAcvpTesting = () => {
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
                 referenceUrl: REF.mlkem,
+                evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                 status: 'pass',
                 details: `SS[${recoveredSs.length}B]: ${ssHex}`,
               })
@@ -910,6 +1009,7 @@ export const HsmAcvpTesting = () => {
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
                 referenceUrl: REF.mlkem,
+                evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
                 status: 'fail',
                 details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
               })
@@ -932,6 +1032,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${algo} (${eName})`,
               testCase: 'Decapsulate KAT',
               referenceUrl: REF.mlkem,
+              evidenceTier: deriveEvidenceTier(mlkemTestVectors._provenance),
               status: 'fail',
               details: errorMessage,
             })
@@ -1161,6 +1262,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${tv.parameterSet} (${eName})`,
               testCase: 'SigVer KAT (NIST ACVP)',
               referenceUrl: REF.slhdsa,
+              evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
               status: pass ? 'pass' : 'fail',
               details: pass
                 ? `NIST vector: verify=${isValid} matches testPassed=${tv.testPassed} ✓`
@@ -1176,6 +1278,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `${tv.parameterSet} (${eName})`,
               testCase: 'SigVer KAT (NIST ACVP)',
               referenceUrl: REF.slhdsa,
+              evidenceTier: deriveEvidenceTier(slhdsaCtxTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1215,6 +1318,7 @@ export const HsmAcvpTesting = () => {
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
                 referenceUrl: REF.sha256,
+                evidenceTier: deriveEvidenceTier(sha256TestVectors._provenance),
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `MD[${digest.length}B]: ${mdHex}`
@@ -1230,6 +1334,7 @@ export const HsmAcvpTesting = () => {
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
                 referenceUrl: REF.sha256,
+                evidenceTier: deriveEvidenceTier(sha256TestVectors._provenance),
                 status: 'fail',
                 details: errMessage,
               })
@@ -1238,19 +1343,117 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 11. AES-CBC-256 Decrypt KAT (SP 800-38A) ──────────────────────
-        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CBC_PAD)) {
+        // ── 10b–10e. SHA-384/512, SHA3-256/512 Digest KAT (NIST ACVP) ──────
+        // WS-12 (2026-08-28): these 4 vector files already carried a real
+        // NIST ACVP _provenance block but were never imported anywhere
+        // (dead files, found while wiring WS-8's evidence tier) — wired in
+        // now, mirroring item 10's SHA-256 pattern exactly.
+        for (const { name, mech, ref, vectors, prefix } of [
+          {
+            name: 'SHA-384',
+            mech: CKM_SHA384,
+            ref: REF.sha384,
+            vectors: sha384TestVectors,
+            prefix: 'sha384',
+          },
+          {
+            name: 'SHA-512',
+            mech: CKM_SHA512,
+            ref: REF.sha512,
+            vectors: sha512TestVectors,
+            prefix: 'sha512',
+          },
+          {
+            name: 'SHA3-256',
+            mech: CKM_SHA3_256,
+            ref: REF.sha3_256,
+            vectors: sha3_256TestVectors,
+            prefix: 'sha3-256',
+          },
+          {
+            name: 'SHA3-512',
+            mech: CKM_SHA3_512,
+            ref: REF.sha3_512,
+            vectors: sha3_512TestVectors,
+            prefix: 'sha3-512',
+          },
+        ] as const) {
+          if (engine.mechs.size > 0 && !engine.mechs.has(mech)) {
+            await pushSkip(
+              `${prefix}-skip-${eName}`,
+              `${name} (${eName})`,
+              'Digest KAT (NIST ACVP)',
+              ref,
+              `${name} Digest: mechanism not supported`
+            )
+            continue
+          }
+          for (const test of vectors.testGroups[0].tests) {
+            const idDigest = `${prefix}-tc${test.tcId}-${eName}`
+            addLog(`[${eName}] Testing ${name} Digest KAT tc=${test.tcId} (NIST ACVP)...`)
+            try {
+              const msgBytes = hexToBytes(test.msg)
+              const expectedMd = hexToBytes(test.md)
+              const digest = hsm_digest(M, hSession, msgBytes, mech)
+
+              const matches =
+                digest.length === expectedMd.length &&
+                // eslint-disable-next-line security/detect-object-injection
+                digest.every((b: number, i: number) => b === expectedMd[i])
+
+              const mdHex = toHex(digest)
+              await pushResult({
+                id: idDigest,
+                algorithm: `${name} (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: ref,
+                evidenceTier: deriveEvidenceTier(vectors._provenance),
+                status: matches ? 'pass' : 'fail',
+                details: matches
+                  ? `MD[${digest.length}B]: ${mdHex}`
+                  : `MD mismatch: got ${toHex(digest, 8)}… expected ${toHex(expectedMd, 8)}…`,
+              })
+              addLog(
+                `[${eName}] [id:${idDigest}] ${name} tc=${test.tcId}: ${matches ? 'PASS' : 'FAIL'} | MD: ${mdHex}`
+              )
+            } catch (e: unknown) {
+              const errMessage = e instanceof Error ? e.message : String(e)
+              await pushResult({
+                id: `${prefix}-tc${test.tcId}-err-${eName}`,
+                algorithm: `${name} (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: ref,
+                evidenceTier: deriveEvidenceTier(vectors._provenance),
+                status: 'fail',
+                details: errMessage,
+              })
+              addLog(
+                `[DISCREPANCY] [${eName}] [id:${idDigest}] ${name} tc=${test.tcId}: ${errMessage}`
+              )
+            }
+          }
+        }
+
+        // ── 11. AES-CBC-256 Decrypt KAT (NIST ACVP-AES-CBC) ────────────────
+        // WS-7 (2026-08-28): replaced a self-generated (Node-oracle,
+        // PKCS#7-padded) vector with a real NIST ACVP-AES-CBC-256 MMT vector
+        // (tgId 30, tcId 2129). NIST's ACVP-AES-CBC algorithm is a raw
+        // block-cipher KAT with no padding, so this now exercises
+        // CKM_AES_CBC (hsm_aesDecrypt's 'cbc-raw' mode) rather than
+        // CKM_AES_CBC_PAD — testing the actual mechanism the vector is for,
+        // not re-padding the vector to fit the previously-tested mechanism.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CBC)) {
           await pushSkip(
             `aescbc-skip-${eName}`,
             `AES-CBC-256 (${eName})`,
-            'Decrypt KAT',
+            'Decrypt KAT (NIST ACVP)',
             REF.aescbc,
             'AES-CBC-256: mechanism not supported'
           )
         } else {
           const tv = aesCbcTestVectors.testGroups[0].tests[0]
           const id11 = `aescbc-acvp-${eName}`
-          addLog(`[${eName}] Testing AES-CBC-256 Decrypt KAT (SP 800-38A)...`)
+          addLog(`[${eName}] Testing AES-CBC-256 Decrypt KAT (NIST ACVP tcId=${tv.tcId})...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… IV: ${tv.iv}`)
           try {
             const keyBytes = hexToBytes(tv.key)
@@ -1276,7 +1479,7 @@ export const HsmAcvpTesting = () => {
               engine: engineId,
             })
 
-            const recoveredPt = hsm_aesDecrypt(M, hSession, aesHandle, ctBytes, ivBytes, 'cbc')
+            const recoveredPt = hsm_aesDecrypt(M, hSession, aesHandle, ctBytes, ivBytes, 'cbc-raw')
             const matches =
               recoveredPt.length === expectedPt.length &&
               // eslint-disable-next-line security/detect-object-injection
@@ -1286,8 +1489,9 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: id11,
               algorithm: `AES-CBC-256 (${eName})`,
-              testCase: 'Decrypt KAT',
+              testCase: 'Decrypt KAT (NIST ACVP)',
               referenceUrl: REF.aescbc,
+              evidenceTier: deriveEvidenceTier(aesCbcTestVectors._provenance),
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
@@ -1301,8 +1505,9 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: `aescbc-err-${eName}`,
               algorithm: `AES-CBC-256 (${eName})`,
-              testCase: 'Decrypt KAT',
+              testCase: 'Decrypt KAT (NIST ACVP)',
               referenceUrl: REF.aescbc,
+              evidenceTier: deriveEvidenceTier(aesCbcTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1372,6 +1577,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+              evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id12}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
@@ -1383,6 +1589,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
               referenceUrl: REF.aesctr,
+              evidenceTier: deriveEvidenceTier(aesCtrTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1390,19 +1597,21 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 13. HMAC-SHA384 Verify KAT ─────────────────────────────────────
-        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA384_HMAC)) {
+        // ── 13. HMAC-SHA384 Verify KAT (NIST ACVP, truncated) ──────────────
+        // WS-7 (2026-08-28): see the HMAC-SHA256 block's comment above for
+        // why this uses CKM_SHA384_HMAC_GENERAL rather than CKM_SHA384_HMAC.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA384_HMAC_GENERAL)) {
           await pushSkip(
             `hmac384-skip-${eName}`,
             `HMAC-SHA384 (${eName})`,
-            'Verify KAT',
+            'Verify KAT (NIST ACVP, truncated)',
             REF.hmac,
-            'HMAC-SHA384: mechanism not supported'
+            'HMAC-SHA384-GENERAL: mechanism not supported'
           )
         } else {
           const tv = hmac384TestVectors.testGroups[0].tests[0]
           const id13 = `hmac384-acvp-${eName}`
-          addLog(`[${eName}] Testing HMAC-SHA384 Verify KAT...`)
+          addLog(`[${eName}] Testing HMAC-SHA384 Verify KAT (NIST ACVP tcId=${tv.tcId})...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
           try {
             const keyBytes = hexToBytes(tv.key)
@@ -1418,24 +1627,25 @@ export const HsmAcvpTesting = () => {
               engine: engineId,
             })
 
-            const isValid = hsm_hmacVerify(
+            const isValid = hsm_hmacVerifyGeneral(
               M,
               hSession,
               hmacHandle,
               msgBytes,
               macBytes,
-              CKM_SHA384_HMAC
+              CKM_SHA384_HMAC_GENERAL
             )
             const macHex = toHex(macBytes)
             await pushResult({
               id: id13,
               algorithm: `HMAC-SHA384 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmac384TestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid
-                ? `MAC[${macBytes.length}B] verified: ${macHex}`
-                : 'MAC verification failed',
+                ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
+                : 'MAC verification failed against NIST ACVP vector',
             })
             addLog(
               `[${eName}] [id:${id13}] HMAC-SHA384 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
@@ -1445,8 +1655,9 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: `hmac384-err-${eName}`,
               algorithm: `HMAC-SHA384 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmac384TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1454,19 +1665,21 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 14. HMAC-SHA512 Verify KAT ─────────────────────────────────────
-        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA512_HMAC)) {
+        // ── 14. HMAC-SHA512 Verify KAT (NIST ACVP, truncated) ──────────────
+        // WS-7 (2026-08-28): see the HMAC-SHA256 block's comment above for
+        // why this uses CKM_SHA512_HMAC_GENERAL rather than CKM_SHA512_HMAC.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA512_HMAC_GENERAL)) {
           await pushSkip(
             `hmac512-skip-${eName}`,
             `HMAC-SHA512 (${eName})`,
-            'Verify KAT',
+            'Verify KAT (NIST ACVP, truncated)',
             REF.hmac,
-            'HMAC-SHA512: mechanism not supported'
+            'HMAC-SHA512-GENERAL: mechanism not supported'
           )
         } else {
           const tv = hmac512TestVectors.testGroups[0].tests[0]
           const id14 = `hmac512-acvp-${eName}`
-          addLog(`[${eName}] Testing HMAC-SHA512 Verify KAT...`)
+          addLog(`[${eName}] Testing HMAC-SHA512 Verify KAT (NIST ACVP tcId=${tv.tcId})...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
           try {
             const keyBytes = hexToBytes(tv.key)
@@ -1482,24 +1695,25 @@ export const HsmAcvpTesting = () => {
               engine: engineId,
             })
 
-            const isValid = hsm_hmacVerify(
+            const isValid = hsm_hmacVerifyGeneral(
               M,
               hSession,
               hmacHandle,
               msgBytes,
               macBytes,
-              CKM_SHA512_HMAC
+              CKM_SHA512_HMAC_GENERAL
             )
             const macHex = toHex(macBytes)
             await pushResult({
               id: id14,
               algorithm: `HMAC-SHA512 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmac512TestVectors._provenance),
               status: isValid ? 'pass' : 'fail',
               details: isValid
-                ? `MAC[${macBytes.length}B] verified: ${macHex}`
-                : 'MAC verification failed',
+                ? `MAC[${macBytes.length}B, ${tv.macLen}-bit truncated] verified: ${macHex}`
+                : 'MAC verification failed against NIST ACVP vector',
             })
             addLog(
               `[${eName}] [id:${id14}] HMAC-SHA512 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
@@ -1509,8 +1723,9 @@ export const HsmAcvpTesting = () => {
             await pushResult({
               id: `hmac512-err-${eName}`,
               algorithm: `HMAC-SHA512 (${eName})`,
-              testCase: 'Verify KAT',
+              testCase: 'Verify KAT (NIST ACVP, truncated)',
               referenceUrl: REF.hmac,
+              evidenceTier: deriveEvidenceTier(hmac512TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1569,6 +1784,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
+              evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id15}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
@@ -1580,6 +1796,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaP384TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1629,6 +1846,7 @@ export const HsmAcvpTesting = () => {
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`
                 : 'Signature verification failed against RFC 8032 vector',
+              evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
             })
             addLog(`[${eName}] [id:${id16}] EdDSA Ed25519 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'}`)
           } catch (e: unknown) {
@@ -1638,10 +1856,88 @@ export const HsmAcvpTesting = () => {
               algorithm: `EdDSA Ed25519 (${eName})`,
               testCase: 'SigVer KAT',
               referenceUrl: REF.eddsa,
+              evidenceTier: deriveEvidenceTier(eddsaTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id16}] EdDSA Ed25519: ${errMessage}`)
+          }
+        }
+
+        // ── 16b. EdDSA Ed448 SigVer KAT (RFC 8032, NIST ACVP) ─────────────
+        // New category (D-3): eddsa_ed448_test.json was a dead file with zero
+        // importers (G-13/H-6) — no Ed448 signature test existed at all before
+        // this, only X448 (Montgomery ECDH) further below.
+        //
+        // Both engines now implement Ed448 (2026-08-28, pqctoday-hsm PR #185):
+        // the Rust engine was Ed25519-only end to end — CKM_EC_EDWARDS_KEY_PAIR_GEN
+        // rejected Ed448 with CKR_CURVE_NOT_SUPPORTED, and CKM_EDDSA/_PH hardcoded
+        // Ed25519's 32-byte key / 64-byte signature sizes — and this exact test
+        // wiring is what surfaced that gap live (the vector itself was already
+        // confirmed valid against an independent Node WebCrypto oracle and the
+        // C++ engine before the Rust failure was investigated). See
+        // rust/CHANGELOG.md's Ed448 entry for the fix.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EDDSA)) {
+          await pushSkip(
+            `eddsa448-sigver-skip-${eName}`,
+            `EdDSA Ed448 (${eName})`,
+            'SigVer KAT',
+            REF.eddsa,
+            'EdDSA Ed448: mechanism not supported'
+          )
+        } else {
+          const edTv448 = eddsaEd448TestVectors.testGroups[0].tests[0]
+          const id16b = `eddsa448-sigver-${eName}`
+          addLog(`[${eName}] Testing EdDSA Ed448 SigVer KAT (NIST ACVP tcId=${edTv448.tcId})...`)
+          addLog(`  ACVP PK: ${edTv448.pk} | Sig: ${edTv448.signature.slice(0, 32)}…`)
+          try {
+            const pkBytes448 = hexToBytes(edTv448.pk)
+            const msgBytes448 = hexToBytes(edTv448.message)
+            const sigBytes448 = hexToBytes(edTv448.signature)
+
+            const pubHandle448 = hsm_importEdDSAPublicKey(M, hSession, pkBytes448, 'Ed448')
+            regKey({
+              handle: pubHandle448,
+              family: 'eddsa',
+              role: 'public',
+              label: `ACVP EdDSA Ed448 Public (${eName})`,
+              engine: engineId,
+            })
+
+            const isValid448 = hsm_eddsaVerifyBytes(
+              M,
+              hSession,
+              pubHandle448,
+              msgBytes448,
+              sigBytes448
+            )
+
+            await pushResult({
+              id: id16b,
+              algorithm: `EdDSA Ed448 (${eName})`,
+              testCase: 'SigVer KAT (NIST ACVP)',
+              referenceUrl: REF.eddsa,
+              evidenceTier: deriveEvidenceTier(eddsaEd448TestVectors._provenance),
+              status: isValid448 ? 'pass' : 'fail',
+              details: isValid448
+                ? `Verified sig[${sigBytes448.length}B]: ${toHex(sigBytes448, 16)}…`
+                : `Signature verification failed against NIST ACVP Ed448 vector on ${eName}.`,
+            })
+            addLog(
+              `[${eName}] [id:${id16b}] EdDSA Ed448 SigVer KAT: ${isValid448 ? 'PASS' : 'FAIL'}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            await pushResult({
+              id: `eddsa448-sigver-err-${eName}`,
+              algorithm: `EdDSA Ed448 (${eName})`,
+              testCase: 'SigVer KAT',
+              referenceUrl: REF.eddsa,
+              evidenceTier: deriveEvidenceTier(eddsaEd448TestVectors._provenance),
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id16b}] EdDSA Ed448: ${errMessage}`)
           }
         }
 
@@ -1656,20 +1952,21 @@ export const HsmAcvpTesting = () => {
           )
         } else {
           const id17 = `pbkdf2-kat-${eName}`
-          addLog(`[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (RFC 6070-style, c=4096)...`)
+          // WS-7 (2026-08-28): previously hardcoded inline with pbkdf2_test.json
+          // sitting unread alongside it (dead file, G-13/H-6-style gap). Now
+          // reads from the file — same self-consistency vector (tcId 2,
+          // P="password" S="salt" c=4096 dkLen=32), see the file's own
+          // _provenance note for why no NIST ACVP vector exists for this PRF.
+          const pbkdf2Tv = pbkdf2TestVectors.testGroups[0].tests[1]
+          addLog(
+            `[${eName}] Testing PBKDF2-HMAC-SHA256 KAT (self-consistency tcId=${pbkdf2Tv.tcId}, c=${pbkdf2Tv.iterations})...`
+          )
           try {
-            // PBKDF2-HMAC-SHA256, P="password" S="salt" c=4096 dkLen=32. Expected DK
-            // independently computed with node crypto, cross-validated: the same
-            // oracle reproduces RFC 6070's SHA-1 vectors exactly. (RFC 6070 itself is
-            // SHA-1-only; the Rust engine implements SHA-256/384/512, so a true RFC
-            // vector is not cross-engine — SHA-256 with an oracle value is.)
-            const password = new TextEncoder().encode('password')
-            const salt = new TextEncoder().encode('salt')
-            const iterations = 4096
-            const keyLen = 32
-            const expectedDk = hexToBytes(
-              'c5e478d59288c841aa530db6845c4c8d962893a001ce4e11a4963873aa98134a'
-            )
+            const password = hexToBytes(pbkdf2Tv.password)
+            const salt = hexToBytes(pbkdf2Tv.salt)
+            const iterations = pbkdf2Tv.iterations
+            const keyLen = pbkdf2Tv.dkLen
+            const expectedDk = hexToBytes(pbkdf2Tv.dk)
 
             const derived = hsm_pbkdf2(
               M,
@@ -1691,6 +1988,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
               testCase: 'KAT (c=4096)',
               referenceUrl: REF.pbkdf2,
+              evidenceTier: deriveEvidenceTier(pbkdf2TestVectors._provenance),
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `DK[${derived.length}B] matches vector ✓: ${dkHex}`
@@ -1706,6 +2004,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `PBKDF2-HMAC-SHA256 (${eName})`,
               testCase: 'KAT (c=4096)',
               referenceUrl: REF.pbkdf2,
+              evidenceTier: deriveEvidenceTier(pbkdf2TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -1847,6 +2146,7 @@ export const HsmAcvpTesting = () => {
               details: matches
                 ? `Wrapped[${wrapped.length}B]: ${wrappedHex}`
                 : `Mismatch: got ${toHex(wrapped, 8)}… expected ${toHex(expectedWrapped, 8)}…`,
+              evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
             })
             addLog(
               `[${eName}] [id:${id19}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
@@ -1858,6 +2158,7 @@ export const HsmAcvpTesting = () => {
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
               referenceUrl: REF.aeskw,
+              evidenceTier: deriveEvidenceTier(aesKwTestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -2931,59 +3232,73 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 33. ECDSA P-521 Functional Sign+Verify (FIPS 186-5) ───────────
+        // ── 33. ECDSA P-521 SigVer KAT (FIPS 186-5, NIST ACVP) ───────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA512)) {
           await pushSkip(
             `ecdsa521-skip-${eName}`,
             `ECDSA P-521 (${eName})`,
-            'Functional Sign+Verify',
+            'SigVer KAT',
             REF.ecdsa,
             'ECDSA P-521: mechanism not supported'
           )
         } else {
-          const id33 = `ecdsa521-func-${eName}`
-          addLog(`[${eName}] Testing ECDSA P-521 Functional Sign+Verify (FIPS 186-5)...`)
+          const tv33 = ecdsaP521TestVectors.testGroups[0].tests[0]
+          const id33 = `ecdsa521-acvp-${eName}`
+          addLog(
+            `[${eName}] Testing ECDSA P-521 SigVer KAT (FIPS 186-5, NIST ACVP tcId=${tv33.tcId})...`
+          )
+          addLog(`[${eName}]   Qx: ${tv33.qx.slice(0, 32)}… R: ${tv33.r.slice(0, 32)}…`)
           try {
-            const kp = hsm_generateECKeyPair(M, hSession, 'P-521', false)
+            const qx = hexToBytes(tv33.qx)
+            const qy = hexToBytes(tv33.qy)
+            const msgBytes = hexToBytes(tv33.message)
+            const rBytes = hexToBytes(tv33.r)
+            const sBytes = hexToBytes(tv33.s)
+            const sigBytes = new Uint8Array(rBytes.length + sBytes.length)
+            sigBytes.set(rBytes)
+            sigBytes.set(sBytes, rBytes.length)
+
+            const ecPubHandle = hsm_importECPublicKey(M, hSession, qx, qy, 'P-521')
             regKey({
-              handle: kp.pubHandle,
+              handle: ecPubHandle,
               family: 'ecdsa',
               role: 'public',
               label: `ACVP ECDSA P-521 Public (${eName})`,
               variant: 'P-521',
               engine: engineId,
             })
-            regKey({
-              handle: kp.privHandle,
-              family: 'ecdsa',
-              role: 'private',
-              label: `ACVP ECDSA P-521 Private (${eName})`,
-              variant: 'P-521',
-              engine: engineId,
+
+            const isValid = hsm_ecdsaVerifyBytes(
+              M,
+              hSession,
+              ecPubHandle,
+              msgBytes,
+              sigBytes,
+              CKM_ECDSA_SHA512
+            )
+            const ecSigHex = toHex(sigBytes, 16)
+            await pushResult({
+              id: id33,
+              algorithm: `ECDSA P-521 (${eName})`,
+              testCase: 'SigVer KAT (NIST ACVP)',
+              referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaP521TestVectors._provenance),
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
+                : 'Signature verification failed against FIPS 186-5 NIST ACVP vector',
             })
-            const msg = 'ACVP P-521 ECDSA-SHA512 round-trip'
-            const sig = hsm_ecdsaSign(M, hSession, kp.privHandle, msg, CKM_ECDSA_SHA512)
-            const isValid = hsm_ecdsaVerify(M, hSession, kp.pubHandle, msg, sig, CKM_ECDSA_SHA512)
-            if (isValid) {
-              await pushResult({
-                id: id33,
-                algorithm: `ECDSA P-521 (${eName})`,
-                testCase: 'Functional Sign+Verify',
-                referenceUrl: REF.ecdsa,
-                status: 'pass',
-                details: `sig[${sig.length}B]: ${toHex(sig, 16)}…`,
-              })
-              addLog(`[${eName}] [id:${id33}] ECDSA P-521: PASS | sig[${sig.length}B]`)
-            } else {
-              throw new Error('P-521 signature verification failed on own signature')
-            }
+            addLog(
+              `[${eName}] [id:${id33}] ECDSA P-521 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
+            )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             await pushResult({
               id: `ecdsa521-err-${eName}`,
               algorithm: `ECDSA P-521 (${eName})`,
-              testCase: 'Functional Sign+Verify',
+              testCase: 'SigVer KAT',
               referenceUrl: REF.ecdsa,
+              evidenceTier: deriveEvidenceTier(ecdsaP521TestVectors._provenance),
               status: 'fail',
               details: errMessage,
             })
@@ -3096,6 +3411,150 @@ export const HsmAcvpTesting = () => {
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id34}] ECDH P-521: ${errMessage}`)
+          }
+        }
+
+        // ── 35. KMAC128 KAT (NIST SP 800-185) ─────────────────────────────
+        // New category (D-3): kmac_test.json was a dead file with zero
+        // importers (G-13/H-6). Wires the KMAC128 sample (empty
+        // customization string) — the KMAC256 sample in the same file has a
+        // non-empty customization string that hsm_kmac/hsm_kmacVerify have
+        // no parameter for, so it is intentionally left unused rather than
+        // silently fed through a path that would mis-verify it.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_KMAC_128)) {
+          await pushSkip(
+            `kmac128-skip-${eName}`,
+            `KMAC128 (${eName})`,
+            'KAT',
+            REF.kmac,
+            'KMAC128: mechanism not supported'
+          )
+        } else {
+          const kmacTv = kmacTestVectors.testGroups[1].tests[0] // variant: KMAC128
+          const id35 = `kmac128-kat-${eName}`
+          addLog(`[${eName}] Testing KMAC128 KAT (NIST SP 800-185 Sample #4)...`)
+          addLog(`  Key: ${kmacTv.key.slice(0, 32)}… | Msg: ${kmacTv.msg}`)
+          try {
+            const keyBytes = hexToBytes(kmacTv.key)
+            const msgBytes = hexToBytes(kmacTv.msg)
+            const macBytes = hexToBytes(kmacTv.mac)
+
+            const kmacHandle = hsm_importHMACKey(M, hSession, keyBytes, false, true)
+            regKey({
+              handle: kmacHandle,
+              family: 'hmac',
+              role: 'secret',
+              label: `ACVP KMAC128 (${eName})`,
+              engine: engineId,
+            })
+
+            const isValid = hsm_kmacVerify(
+              M,
+              hSession,
+              kmacHandle,
+              msgBytes,
+              macBytes,
+              CKM_KMAC_128
+            )
+
+            await pushResult({
+              id: id35,
+              algorithm: `KMAC128 (${eName})`,
+              testCase: 'KAT (SP 800-185 Sample #4)',
+              referenceUrl: REF.kmac,
+              evidenceTier: deriveEvidenceTier(kmacTestVectors._provenance),
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `Verified mac[${macBytes.length}B]: ${toHex(macBytes, 8)}…`
+                : 'MAC verification failed against SP 800-185 vector',
+            })
+            addLog(`[${eName}] [id:${id35}] KMAC128 KAT: ${isValid ? 'PASS' : 'FAIL'}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            await pushResult({
+              id: `kmac128-err-${eName}`,
+              algorithm: `KMAC128 (${eName})`,
+              testCase: 'KAT',
+              referenceUrl: REF.kmac,
+              evidenceTier: deriveEvidenceTier(kmacTestVectors._provenance),
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id35}] KMAC128: ${errMessage}`)
+          }
+        }
+
+        // ── 36. RSA-OAEP Decrypt Self-Consistency (no ACVP registration) ──
+        // New category (D-3/D-8): rsa_oaep_test.json was a dead file with
+        // zero importers (G-13/H-6) AND self-generated (H-3/H-4) — checked
+        // NIST's ACVP-Server directory listing directly (2026-08-27): RSA-OAEP
+        // has no ACVP algorithm registration at all, so there is no external
+        // vector to replace this with. Per D-8's fallback, the vector stays
+        // and is tiered honestly as self-consistency: this decrypts the
+        // file's own known ciphertext with an imported CRT private key and
+        // checks it against the file's own known plaintext — proving the
+        // engine's decrypt agrees with the value the fixture was generated
+        // against, not correctness against an external oracle.
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_RSA_PKCS_OAEP)) {
+          await pushSkip(
+            `rsaoaep-skip-${eName}`,
+            `RSA-OAEP (${eName})`,
+            'Decrypt Self-Consistency',
+            REF.rsaoaep,
+            'RSA-OAEP: mechanism not supported'
+          )
+        } else {
+          const oaepTv = rsaOaepTestVectors.testGroups[0].tests[0]
+          const id36 = `rsaoaep-selfcheck-${eName}`
+          addLog(`[${eName}] Testing RSA-OAEP Decrypt Self-Consistency (no ACVP registration)...`)
+          try {
+            const privHandle = await hsm_importRSAPrivateKey(M, hSession, {
+              n: hexToBytes(oaepTv.n),
+              e: hexToBytes(oaepTv.e),
+              d: hexToBytes(oaepTv.d),
+              p: hexToBytes(oaepTv.p),
+              q: hexToBytes(oaepTv.q),
+              dp: hexToBytes(oaepTv.dp),
+              dq: hexToBytes(oaepTv.dq),
+              qi: hexToBytes(oaepTv.qi),
+            })
+            regKey({
+              handle: privHandle,
+              family: 'rsa',
+              role: 'private',
+              label: `ACVP RSA-OAEP Private (${eName})`,
+              engine: engineId,
+            })
+
+            const ciphertext = hexToBytes(oaepTv.ct)
+            const decrypted = hsm_rsaDecrypt(M, hSession, privHandle, ciphertext, 'sha256')
+            const decryptedHex = toHex(decrypted, decrypted.length)
+            const matches = decryptedHex === oaepTv.pt
+
+            await pushResult({
+              id: id36,
+              algorithm: `RSA-OAEP (${eName})`,
+              testCase: 'Decrypt Self-Consistency',
+              referenceUrl: REF.rsaoaep,
+              evidenceTier: deriveEvidenceTier(rsaOaepTestVectors._provenance),
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `Decrypted ${decrypted.length}B matches known plaintext ✓`
+                : `Decrypted ${decryptedHex.slice(0, 32)}… ≠ expected ${oaepTv.pt.slice(0, 32)}…`,
+            })
+            addLog(`[${eName}] [id:${id36}] RSA-OAEP: ${matches ? 'PASS' : 'FAIL'}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            await pushResult({
+              id: `rsaoaep-err-${eName}`,
+              algorithm: `RSA-OAEP (${eName})`,
+              testCase: 'Decrypt Self-Consistency',
+              referenceUrl: REF.rsaoaep,
+              evidenceTier: deriveEvidenceTier(rsaOaepTestVectors._provenance),
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id36}] RSA-OAEP: ${errMessage}`)
           }
         }
       }
@@ -3266,6 +3725,11 @@ export const HsmAcvpTesting = () => {
                                   ? 'bg-warning/20 text-warning'
                                   : 'bg-destructive/20 text-destructive'
                             )}
+                            title={
+                              res.evidenceTier
+                                ? EVIDENCE_TIER_META[res.evidenceTier].label
+                                : undefined
+                            }
                           >
                             {res.status === 'pass' ? (
                               <CheckCircle size={12} />
@@ -3275,6 +3739,13 @@ export const HsmAcvpTesting = () => {
                               <XCircle size={12} />
                             )}
                             {res.status}
+                            {res.evidenceTier &&
+                              (() => {
+                                const TierIcon = EVIDENCE_TIER_META[res.evidenceTier].icon
+                                return (
+                                  <TierIcon size={11} className="opacity-70" aria-hidden="true" />
+                                )
+                              })()}
                           </span>
                         </td>
                         <td
