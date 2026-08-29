@@ -540,6 +540,7 @@ export default defineConfig({
           'vendor-csv': ['papaparse'],
           'vendor-markdown': ['react-markdown', 'remark-gfm'],
           'vendor-chat': ['minisearch'],
+          'vendor-three': ['three'],
         },
       },
     },
