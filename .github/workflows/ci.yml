@@ -554,8 +554,20 @@ jobs:
     # real wasm engine is heavier than the default suite budget — project
     # directive 2026-07-01: new suites are local-only), and the wasm-provenance
     # check (a no-op here: it only compares against a sibling pqctoday-hsm
-    # checkout, which doesn't exist in this job — see
-    # scripts/ci/check-wasm-provenance.ts).
+    # checkout — see scripts/ci/check-wasm-provenance.ts).
+    #
+    # Most of the *.local.test.ts drift guards under src/components/Playground/kmip
+    # and src/wasm/kmip also compare against a sibling pqctoday-hsm checkout, and
+    # most of THOSE no-op gracefully when it's absent (existsSync guard). One does
+    # not: ruleCatalog.local.test.ts's catalog<->grammar guard deliberately FAILS
+    # LOUDLY instead of skipping ("a rule-vocabulary drift check that can silently
+    # never run is not a check at all") — so this job needs a real, if minimal,
+    # sibling checkout. Found 2026-08-29: this job's own comment previously
+    # claimed the whole gate was a no-op without one, which was never actually
+    # true for that one guard and had never been exercised against real CI until
+    # this fix (only tested against a real ../pqctoday-hsm sibling on a dev
+    # machine, where it trivially passed). Sparse + shallow: this job only ever
+    # reads kmip/src/policy/rule.rs and kmip/policies/*.yaml.
     #
     # Held out of `checks` deliberately, same rationale as kat-node24: a
     # separate job keeps the main job's run time and toolchain assumptions
@@ -569,6 +581,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # A true sibling of the hub checkout (../pqctoday-hsm relative to
+      # $GITHUB_WORKSPACE, i.e. /home/runner/work/pqctoday-hub/pqctoday-hsm) —
+      # exactly where the *.local.test.ts drift guards above look for it.
+      # Sparse + shallow: this job only ever reads kmip/src/policy/rule.rs and
+      # kmip/policies/*.yaml.
+      - name: Checkout sibling pqctoday-hsm (sparse — drift-guard sources only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: pqctoday-org/pqctoday-hsm
+          path: ../pqctoday-hsm
+          sparse-checkout: |
+            kmip/src/policy/rule.rs
+            kmip/policies
+          sparse-checkout-cone-mode: false
 
       - name: Use Node.js 22
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
