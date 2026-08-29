@@ -2326,7 +2326,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'Which sectors use which mechanisms',
-            body: 'The industry landscape — 22 sectors, the crypto each use case actually relies on, and the standards behind them.',
+            body: 'The industry landscape — 21 sectors, the crypto each use case actually relies on, and the standards behind them.',
             href: '/algorithms?tab=landscape',
           },
           {

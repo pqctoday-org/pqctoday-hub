@@ -14,6 +14,7 @@ import { CLASSICAL_HSM_DEFAULT, USE_CASES } from './hsmCapacityDefaults'
 import { MIGRATION_KEYS } from '../components/Playground/kmip/migration/migrationKeys'
 import { TRACK_INFO } from '../components/Assess/redesign/assessFlowModel'
 import { getLandscapeIndustries } from './industryLandscapeData'
+import { isCrossIndustry } from './industryMatch'
 import {
   getCrqcConsensus,
   CRQC_ESTIMATES,
@@ -1868,14 +1869,23 @@ export const ASSESS_QUICK_QUESTION_COUNT = TRACK_INFO.quick.count
 export const ASSESS_QUICK_MINUTES = TRACK_INFO.quick.minutes
 
 /**
- * Distinct industries in the industry-landscape catalogue — re-exported so a
- * board claim like "22 sectors" can be tokenised against the same count
+ * Distinct REAL industries in the industry-landscape catalogue — re-exported
+ * so a board claim like "22 sectors" can be tokenised against the same count
  * `getLandscapeIndustries()` returns everywhere else, rather than a literal
  * that silently goes stale when a sector is added or retired. Added
  * 2026-08-23 as the first fix driven by audit-role-board-literals.ts's
  * backfill run.
+ *
+ * Excludes `isCrossIndustry()` labels (2026-08-29): 'Cross-Industry' and its
+ * 'Cross-Industry / X' sub-labels aren't sectors — they're the "applies to
+ * every sector" bucket, split by topic only so the per-industry
+ * learn_module_id consistency guard can give each topic its own honest
+ * module. Counting them would inflate "22 sectors" to "25" the moment a
+ * sub-label is added, overstating real sector coverage.
  */
-export const INDUSTRY_LANDSCAPE_SECTOR_COUNT = getLandscapeIndustries().length
+export const INDUSTRY_LANDSCAPE_SECTOR_COUNT = getLandscapeIndustries().filter(
+  (i) => !isCrossIndustry(i)
+).length
 
 /**
  * Mosca's inequality as a deadline: data that must stay secret for `x` years
