@@ -143,6 +143,16 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
   })
 
   test('Mobile wizard — shows step 1 on narrow viewport for transition tab', async ({ page }) => {
+    // A fresh session at mobile width shows the "Who's asking?" persona
+    // picker before any requested page — MainLayout's isMobileFirstRun gate.
+    // Seed a persona so the test reaches the wizard itself, same pattern as
+    // sim-mobile.spec.ts's seedUnlockedAssessment.
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-learning-persona',
+        JSON.stringify({ state: { selectedPersona: 'architect' }, version: 10 })
+      )
+    })
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/algorithms?tab=transition')
     await page.waitForLoadState('domcontentloaded')
@@ -155,6 +165,13 @@ test.describe('Algorithms UX — Phase 1+2+3', () => {
   })
 
   test('Mobile wizard — Show full table / Back to wizard toggle', async ({ page }) => {
+    // Same mobile first-run persona gate as the test above.
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-learning-persona',
+        JSON.stringify({ state: { selectedPersona: 'architect' }, version: 10 })
+      )
+    })
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/algorithms?tab=transition')
     await page.waitForLoadState('domcontentloaded')
