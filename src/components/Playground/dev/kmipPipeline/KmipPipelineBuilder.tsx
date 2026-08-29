@@ -59,9 +59,9 @@ const EXPORT_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
 
 const STATUS_STYLE: Record<KmipStepStatus, { cls: string; label: string } | null> = {
   idle: null,
-  running: { cls: 'text-blue-500', label: '· running' },
-  ok: { cls: 'text-emerald-500', label: '✓ ran' },
-  error: { cls: 'text-red-500', label: '✗ failed' },
+  running: { cls: 'text-status-info', label: '· running' },
+  ok: { cls: 'text-status-success', label: '✓ ran' },
+  error: { cls: 'text-status-error', label: '✗ failed' },
   skipped: { cls: 'text-muted-foreground', label: '— skipped' },
 }
 
@@ -523,7 +523,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                       variant="ghost"
                       size="sm"
                       onClick={() => deleteSaved(name)}
-                      className="px-1.5 text-red-500 hover:text-red-400"
+                      className="px-1.5 text-status-error hover:opacity-80"
                       aria-label={`Delete saved pipeline ${name}`}
                     >
                       <X className="h-3.5 w-3.5" />
@@ -604,16 +604,16 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
         />
 
         {notice && (
-          <div className="px-4 py-2 text-xs font-mono text-blue-500 border-b">{notice}</div>
+          <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
         )}
         {runError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-red-500 bg-red-500/5 border-b border-red-500/25">
+          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
             ✗ {runError}
           </div>
         )}
         {detached && (
-          <div className="px-4 py-2.5 text-xs bg-amber-500/5 border-b border-amber-500/25 flex items-center gap-3 flex-wrap">
-            <span className="text-amber-600 dark:text-amber-400">
+          <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex items-center gap-3 flex-wrap">
+            <span className="text-status-warning">
               ⚠ Custom script — you edited the generated code, so the step list below is just a
               reference; the edited script is what actually runs.
             </span>
@@ -650,10 +650,10 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             onChange={(e) => setMessage(e.target.value)}
             aria-label="Message to sign"
             placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
-            className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-red-500/60' : ''}`}
+            className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-destructive/60' : ''}`}
           />
           {messageError && (
-            <p className="mt-1 text-[10.5px] text-red-500 font-mono">{messageError}</p>
+            <p className="mt-1 text-[10.5px] text-status-error font-mono">{messageError}</p>
           )}
           {messageMode === 'hex' && !messageError && (
             <p className="mt-1 text-[10.5px] text-muted-foreground">
@@ -718,7 +718,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           </div>
           {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
             <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
-              <span className="text-emerald-600 dark:text-emerald-400">What this proved: </span>
+              <span className="text-status-success">What this proved: </span>
               {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
             </p>
           )}
@@ -805,7 +805,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
 /* ─── helpers ─── */
 
 const KmipInsertBar: React.FC = () => (
-  <div className="w-full max-w-xl h-1 bg-blue-500 rounded-full mb-1" />
+  <div className="w-full max-w-xl h-1 bg-status-info rounded-full mb-1" />
 )
 
 const KmipDropZone: React.FC<{
@@ -818,7 +818,7 @@ const KmipDropZone: React.FC<{
   <div
     onDragOver={onDragOver}
     onDrop={onDrop}
-    className={`w-full max-w-xl text-center rounded border border-dashed font-mono text-xs text-muted-foreground ${subtle ? 'py-2.5 mt-2' : 'py-6'} ${active ? 'border-blue-500 bg-blue-500/5' : 'border-input'}`}
+    className={`w-full max-w-xl text-center rounded border border-dashed font-mono text-xs text-muted-foreground ${subtle ? 'py-2.5 mt-2' : 'py-6'} ${active ? 'border-info bg-status-info/5' : 'border-input'}`}
   >
     {label}
   </div>
@@ -892,7 +892,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
   onDenyTarget,
 }) => {
   const statusStyle = stepState ? STATUS_STYLE[stepState.status] : null
-  const borderColor = findings.length ? 'border-red-500/45' : 'border-border'
+  const borderColor = findings.length ? 'border-destructive/45' : 'border-border'
   const opSpec = step.kind === 'op' ? KMIP_PRIMITIVES[step.primId] : undefined
   const required =
     step.kind === 'op'
@@ -957,7 +957,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
                         string id) — the option's real identity IS that object, encoded
                         here as its JSON string only so the native select can compare it. */}
                     <select
-                      className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-red-500'}`}
+                      className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-status-error'}`}
                       aria-label={`${name} for step ${index + 1}`}
                       value={known ? currentKey : ''}
                       onChange={(e) =>
@@ -1063,13 +1063,13 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
           </div>
 
           {findings.map((f, i) => (
-            <div key={i} className="font-mono text-[10.5px] text-red-500 mt-1.5">
+            <div key={i} className="font-mono text-[10.5px] text-status-error mt-1.5">
               ✗ {f.text}
             </div>
           ))}
           {stepState?.output && (
             <pre className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto">
-              <span className={stepState.status === 'error' ? 'text-red-500' : ''}>
+              <span className={stepState.status === 'error' ? 'text-status-error' : ''}>
                 {stepState.output}
               </span>
             </pre>
@@ -1078,7 +1078,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="text-red-500 hover:text-red-400 flex-shrink-0 h-auto w-auto p-1"
+          className="text-status-error hover:opacity-80 flex-shrink-0 h-auto w-auto p-1"
           onClick={onDelete}
           aria-label={`Remove step ${index + 1}`}
         >
@@ -1104,10 +1104,10 @@ const KmipParamRow: React.FC<{ name: string; children: React.ReactNode }> = ({
 const KmipValRow: React.FC<{ ok?: boolean; text: string }> = ({ ok, text }) => (
   <div className="flex gap-2 items-start">
     <span
-      className={`w-3.5 h-3.5 rounded-full grid place-items-center text-[9px] flex-shrink-0 mt-0.5 ${ok ? 'bg-emerald-500/15 text-emerald-500' : 'bg-red-500/15 text-red-500'}`}
+      className={`w-3.5 h-3.5 rounded-full grid place-items-center text-[9px] flex-shrink-0 mt-0.5 ${ok ? 'bg-status-success/15 text-status-success' : 'bg-status-error/15 text-status-error'}`}
     >
       {ok ? '✓' : '!'}
     </span>
-    <span className={ok ? 'text-muted-foreground' : 'text-red-500'}>{text}</span>
+    <span className={ok ? 'text-muted-foreground' : 'text-status-error'}>{text}</span>
   </div>
 )

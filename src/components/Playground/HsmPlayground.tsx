@@ -456,7 +456,7 @@ export const HsmPlayground = () => {
           done={tour.doneLessons}
           onStart={tour.startLesson}
           onClose={tour.closeHub}
-          planeBadge={() => ({ label: 'Developer', className: 'bg-purple-500/10 text-purple-500' })}
+          planeBadge={() => ({ label: 'Developer', className: 'bg-accent/10 text-accent' })}
         />
       )}
       {tour.activeLesson && tour.tourStep >= 0 && (

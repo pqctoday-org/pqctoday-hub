@@ -84,9 +84,9 @@ const OP_LABEL: Record<Op, string> = {
 
 const STATUS_STYLE: Record<StepStatus, { cls: string; label: string } | null> = {
   idle: null,
-  running: { cls: 'text-blue-500', label: '· running' },
-  ok: { cls: 'text-emerald-500', label: '✓ ran' },
-  error: { cls: 'text-red-500', label: '✗ failed' },
+  running: { cls: 'text-status-info', label: '· running' },
+  ok: { cls: 'text-status-success', label: '✓ ran' },
+  error: { cls: 'text-status-error', label: '✗ failed' },
   skipped: { cls: 'text-muted-foreground', label: '— skipped' },
 }
 
@@ -507,7 +507,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => deleteSaved(name)}
-                      className="px-1.5 text-red-500 hover:text-red-400"
+                      className="px-1.5 text-status-error hover:opacity-80"
                       aria-label={`Delete saved pipeline ${name}`}
                     >
                       <X className="h-3.5 w-3.5" />
@@ -588,21 +588,21 @@ export const PkcsPipelineBuilder: React.FC = () => {
         />
 
         {notice && (
-          <div className="px-4 py-2 text-xs font-mono text-blue-500 border-b">{notice}</div>
+          <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
         )}
         {runError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-red-500 bg-red-500/5 border-b border-red-500/25">
+          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
             ✗ {runError}
           </div>
         )}
         {slotError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-red-500 bg-red-500/5 border-b border-red-500/25">
+          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
             ✗ Could not set up your Developer token: {slotError}
           </div>
         )}
         {detached && (
-          <div className="px-4 py-2.5 text-xs bg-amber-500/5 border-b border-amber-500/25 flex items-center gap-3 flex-wrap">
-            <span className="text-amber-600 dark:text-amber-400">
+          <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex items-center gap-3 flex-wrap">
+            <span className="text-status-warning">
               ⚠ Custom script — you edited the generated code, so the builder is detached and greyed
               out.
             </span>
@@ -683,10 +683,10 @@ export const PkcsPipelineBuilder: React.FC = () => {
 
             <FlowArrow />
             <div
-              className="px-4 py-3 bg-emerald-500/5 border border-dashed border-emerald-500/40 rounded text-center min-w-[280px]"
+              className="px-4 py-3 bg-status-success/5 border border-dashed border-success/40 rounded text-center min-w-[280px]"
               data-tour="pkcs-dev-output"
             >
-              <div className="text-xs font-semibold uppercase text-emerald-600 dark:text-emerald-400">
+              <div className="text-xs font-semibold uppercase text-status-success">
                 Output bundle
               </div>
               <div className="font-mono text-xs mt-1">
@@ -700,7 +700,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
               </div>
               {elapsedMs != null && TEMPLATE_OUTCOMES[pipelineName] && (
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  <span className="text-emerald-600 dark:text-emerald-400">What this proved: </span>
+                  <span className="text-status-success">What this proved: </span>
                   {TEMPLATE_OUTCOMES[pipelineName]}
                 </p>
               )}
@@ -723,7 +723,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
                 pipeline.filter((s) => PALETTE_ENTRIES.find((p) => p.id === s.primId)?.pq === true)
                   .length
               )}
-              c="text-purple-500"
+              c="text-accent"
             />
             <SummaryRow
               k="Classical ops"
@@ -731,7 +731,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
                 pipeline.filter((s) => PALETTE_ENTRIES.find((p) => p.id === s.primId)?.pq === false)
                   .length
               )}
-              c="text-amber-500"
+              c="text-status-warning"
             />
             <SummaryRow k="Language" v="Python · p11 v3.2" />
             <SummaryRow
@@ -812,7 +812,7 @@ function bindingLabel(steps: PipelineStep[], nextIndex: number): string {
 }
 
 const InsertBar: React.FC = () => (
-  <div className="w-full max-w-xl h-1 bg-blue-500 rounded-full mb-1" />
+  <div className="w-full max-w-xl h-1 bg-status-info rounded-full mb-1" />
 )
 
 const DropZone: React.FC<{
@@ -825,7 +825,7 @@ const DropZone: React.FC<{
   <div
     onDragOver={onDragOver}
     onDrop={onDrop}
-    className={`w-full max-w-xl text-center rounded border border-dashed font-mono text-xs text-muted-foreground ${subtle ? 'py-2.5 mt-2' : 'py-6'} ${active ? 'border-blue-500 bg-blue-500/5' : 'border-input'}`}
+    className={`w-full max-w-xl text-center rounded border border-dashed font-mono text-xs text-muted-foreground ${subtle ? 'py-2.5 mt-2' : 'py-6'} ${active ? 'border-info bg-status-info/5' : 'border-input'}`}
   >
     {label}
   </div>
@@ -836,7 +836,7 @@ const PaletteRow: React.FC<{ p: PaletteEntry; onDragStart: React.DragEventHandle
   onDragStart,
 }) => {
   const isPq = p.pq === true
-  const dotColor = isPq ? 'bg-purple-500' : p.pq === false ? 'bg-amber-500' : 'bg-muted-foreground'
+  const dotColor = isPq ? 'bg-accent' : p.pq === false ? 'bg-status-warning' : 'bg-muted-foreground'
   const ops = opsFor(p.id)
   return (
     <div
@@ -880,11 +880,11 @@ const StepCard: React.FC<StepCardProps> = ({
   const required = Object.entries(spec?.ops[step.op]?.requires ?? {})
   const statusStyle = STATUS_STYLE[step.status ?? 'idle']
   const borderColor = findings.length
-    ? 'border-red-500/45'
+    ? 'border-destructive/45'
     : isPq
-      ? 'border-purple-500/30'
+      ? 'border-accent/30'
       : meta?.pq === false
-        ? 'border-amber-500/30'
+        ? 'border-warning/30'
         : 'border-border'
 
   return (
@@ -895,7 +895,7 @@ const StepCard: React.FC<StepCardProps> = ({
       data-tour={step.op === 'sign' ? 'pkcs-dev-step-sign' : undefined}
     >
       <div
-        className={`h-0.5 ${isPq ? 'bg-purple-500' : meta?.pq === false ? 'bg-amber-500' : 'bg-blue-500'}`}
+        className={`h-0.5 ${isPq ? 'bg-accent' : meta?.pq === false ? 'bg-status-warning' : 'bg-status-info'}`}
       />
       <div className="p-3.5 flex items-start gap-3">
         <div className="w-6.5 h-6.5 rounded bg-muted grid place-items-center text-xs font-semibold font-mono flex-shrink-0 cursor-grab">
@@ -923,14 +923,14 @@ const StepCard: React.FC<StepCardProps> = ({
               ))}
             </select>
             {isPq && (
-              <span className="px-1.5 py-0.5 rounded text-[9.5px] bg-purple-500/15 text-purple-500 font-mono">
+              <span className="px-1.5 py-0.5 rounded text-[9.5px] bg-accent/15 text-accent font-mono">
                 PQ
               </span>
             )}
             {spec?.stateful && (
               <span
                 title="Stateful: every signature consumes one of a finite set of one-time keys"
-                className="px-1.5 py-0.5 rounded text-[9.5px] text-amber-500 border border-amber-500/30 font-mono"
+                className="px-1.5 py-0.5 rounded text-[9.5px] text-status-warning border border-warning/30 font-mono"
               >
                 stateful · {spec.maxSignatures} sigs
               </span>
@@ -973,7 +973,7 @@ const StepCard: React.FC<StepCardProps> = ({
                       string id) — the option's real identity IS that object, encoded
                       here as its JSON string only so the native select can compare it. */}
                   <select
-                    className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-red-500'}`}
+                    className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-status-error'}`}
                     aria-label={`${name} for step ${index + 1}`}
                     value={known ? currentKey : ''}
                     onChange={(e) =>
@@ -997,7 +997,7 @@ const StepCard: React.FC<StepCardProps> = ({
             })}
           </div>
           {findings.map((f, i) => (
-            <div key={i} className="font-mono text-[10.5px] text-red-500 mt-1.5">
+            <div key={i} className="font-mono text-[10.5px] text-status-error mt-1.5">
               ✗ {f.text}
             </div>
           ))}
@@ -1006,7 +1006,7 @@ const StepCard: React.FC<StepCardProps> = ({
               className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto"
               style={{ color: step.output.status === 'error' ? undefined : undefined }}
             >
-              <span className={step.output.status === 'error' ? 'text-red-500' : ''}>
+              <span className={step.output.status === 'error' ? 'text-status-error' : ''}>
                 {step.output.text}
               </span>
             </pre>
@@ -1015,7 +1015,7 @@ const StepCard: React.FC<StepCardProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="text-red-500 hover:text-red-400 flex-shrink-0 h-auto w-auto p-1"
+          className="text-status-error hover:opacity-80 flex-shrink-0 h-auto w-auto p-1"
           onClick={onDelete}
           aria-label={`Remove step ${index + 1}`}
         >
@@ -1039,12 +1039,12 @@ const FlowArrow: React.FC<{ label?: string | null }> = ({ label }) => (
   <div className="flex flex-col items-center py-1 text-muted-foreground">
     <div className="w-px h-3.5 bg-border" />
     {label && (
-      <span className="font-mono text-[10px] text-blue-500 px-2 py-0.5 bg-muted rounded-full border my-0.5 max-w-[320px] truncate">
+      <span className="font-mono text-[10px] text-status-info px-2 py-0.5 bg-muted rounded-full border my-0.5 max-w-[320px] truncate">
         {label}
       </span>
     )}
     <div className="w-px h-3.5 bg-border" />
-    <span className="text-blue-500 text-[10px] -mt-1">▼</span>
+    <span className="text-status-info text-[10px] -mt-1">▼</span>
   </div>
 )
 
@@ -1058,10 +1058,10 @@ const SummaryRow: React.FC<{ k: string; v: string; c?: string }> = ({ k, v, c = 
 const ValRow: React.FC<{ ok?: boolean; text: string }> = ({ ok, text }) => (
   <div className="flex gap-2 items-start">
     <span
-      className={`w-3.5 h-3.5 rounded-full grid place-items-center text-[9px] flex-shrink-0 mt-0.5 ${ok ? 'bg-emerald-500/15 text-emerald-500' : 'bg-red-500/15 text-red-500'}`}
+      className={`w-3.5 h-3.5 rounded-full grid place-items-center text-[9px] flex-shrink-0 mt-0.5 ${ok ? 'bg-status-success/15 text-status-success' : 'bg-status-error/15 text-status-error'}`}
     >
       {ok ? '✓' : '!'}
     </span>
-    <span className={ok ? 'text-muted-foreground' : 'text-red-500'}>{text}</span>
+    <span className={ok ? 'text-muted-foreground' : 'text-status-error'}>{text}</span>
   </div>
 )

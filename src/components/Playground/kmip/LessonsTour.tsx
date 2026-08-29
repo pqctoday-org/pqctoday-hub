@@ -36,7 +36,7 @@ const PLANE_BADGE: Record<Plane, PlaneBadge> = {
   agility: { label: 'Workbench', className: 'bg-status-warning/10 text-status-warning' },
   policy: { label: 'Policy', className: 'bg-primary/10 text-primary' },
   kmip3: { label: 'KMIP3.0', className: 'bg-status-info/10 text-status-info' },
-  developer: { label: 'Developer', className: 'bg-purple-500/10 text-purple-500' },
+  developer: { label: 'Developer', className: 'bg-accent/10 text-accent' },
 }
 
 export function useLessonsTour(lessons: Lesson[], onLessonPlane: (p: Plane) => void) {
