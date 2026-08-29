@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.60.0] - 2026-08-28
+## [4.61.0] - 2026-08-28
 
 Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one.
 
