@@ -605,6 +605,17 @@ export function LibraryViewRedesign({
             <span>
               {displayedItems.length} document{displayedItems.length === 1 ? '' : 's'}
             </span>
+            {/* Persona narrowing has its own on/off lever (prefs=off) separate from
+                the FILTER_PARAMS/resetFilters system below — until now the ONLY way
+                to reach it was the "Show all documents" button inside the
+                newHiddenByPersonaCount banner, which only renders when a newly
+                hidden document happens to exist. A persona with zero new hidden
+                items (a normal, common case) narrowed the corpus with no visible
+                way to turn it off. This chip is unconditional on that count, so
+                it's always here whenever narrowing is actually active. */}
+            {pipeline.personaPreferredActive && (
+              <FilterChip label="Narrowed to your role" onClear={() => setParam('prefs', 'off')} />
+            )}
             {activeFilterChips.map((chip) => (
               <FilterChip key={chip.id} label={chip.label} onClear={chip.onClear} />
             ))}
