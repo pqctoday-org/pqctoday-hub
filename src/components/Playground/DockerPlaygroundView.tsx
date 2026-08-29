@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Server, Container, ServerCrash, ExternalLink } from 'lucide-react'
 import { EmptyState } from '../ui/empty-state'
 import { Card } from '../ui/card'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useSandboxAvailable } from './useSandboxAvailable'
 import { SANDBOX_ACCESS_URL } from './cryptoLabMeta'
 
@@ -67,6 +67,18 @@ export const DockerPlaygroundView = () => {
     window.addEventListener('message', handler)
     return () => window.removeEventListener('message', handler)
   }, [targetOrigin, availability])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // page's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: 'Enterprise Docker Simulation — PQC Today',
+      shareText: 'Explore the PQC enterprise sandbox simulation',
+    })
+    return () => clearPageActions()
+  }, [])
 
   if (availability !== 'available' || !baseUrl) {
     return (
@@ -137,11 +149,6 @@ export const DockerPlaygroundView = () => {
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               Sandbox
             </span>
-            <ShareButton
-              title="Enterprise Docker Simulation — PQC Today"
-              text="Explore the PQC enterprise sandbox simulation"
-              variant="icon"
-            />
           </div>
         </div>
         <p className="text-sm text-muted-foreground">

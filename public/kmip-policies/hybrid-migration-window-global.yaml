@@ -1,0 +1,32 @@
+# Hybrid migration window — cross-cutting share (modular-policy plan,
+# 2026-08-28). Split out of the single-file `hybrid-migration-window.yaml`.
+# The original's post-2030 cutoff used a BARE `CreateKeyPair` — banning
+# classical key creation for EVERY purpose (Sign/KeyAgreement/Encrypt), even
+# though the file's own description scoped itself to signing. `Scope::Global`
+# can gate any op, including an unrefined `CreateKeyPair`, so this rule
+# moves here VERBATIM rather than being split into per-domain refinements —
+# simpler than carrying two near-empty per-scope siblings, and a more
+# accurate match for what the rule actually always meant: "after the
+# window, no new classical asymmetric keys of any kind." Pair with
+# `hybrid-migration-window-signing.yaml` (the real signing content).
+
+schema_version: 3
+
+metadata:
+  name: hybrid-migration-window-global
+  description: |
+    After 2029-12-31, classical asymmetric key-pair creation is denied for
+    every purpose (signing, key-establishment, encryption) — the original
+    single-file policy's post-window `CreateKeyPair` cutoff, moved here
+    unchanged since it was never really signing-specific despite the rest
+    of the file being about signing.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [global]
+
+rules:
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Post-migration: classical asymmetric key creation banned (every purpose)"

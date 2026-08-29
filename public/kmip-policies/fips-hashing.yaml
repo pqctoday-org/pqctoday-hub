@@ -7,7 +7,7 @@
 # `Hashing Algorithm` regardless of the signing key algorithm. Switching the
 # allowed set is a policy edit — no application change.
 
-schema_version: 1
+schema_version: 3
 
 metadata:
   name: fips-hashing
@@ -17,9 +17,13 @@ metadata:
     KMIP 3.0 `Hashing Algorithm` enum names. Notes: a request that carries
     no hash parameter is not gated (KMIP §11 — irrelevant params are not an
     error), and this policy gates signature hashing only; MAC and KDF hash
-    choices are out of its scope.
+    choices are out of its own scope. `scopes: [global]` (modular-policy
+    plan, 2026-08-28) — a pure gate over signing ops, meant to compose with
+    whichever signing module is active, not to own the signing scope
+    itself.
   authority: pqctoday-hsm/training
   effective: "always"
+  scopes: [global]
   compliance_mapping:
     - { framework: "FIPS 180-4", status: required }
     - { framework: "FIPS 202",   status: required }

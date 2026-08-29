@@ -1,0 +1,95 @@
+# PQC migration policy, 2030 cutoff — cross-cutting share (modular-policy
+# plan, 2026-08-28). Split from `pqc-migration-2030.yaml`: every rule here
+# either uses a bare/cross-domain op (DES/3DES denylist, the post-2030
+# CreateKeyPair cutoff) or omits `ops:` entirely, defaulting to the
+# engine's cross-domain creation/ingress set (`min_key_length` has no ops
+# field at all — it is global by nature; the two `require_*` rules default
+# to Create/CreateKeyPair/Register/Import). All moved here UNCHANGED. Pair
+# with `-signing`, `-key-establishment`, and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: pqc-migration-2030-global
+  description: |
+    Enterprise PQC migration policy — cross-cutting rules: weak mechanisms
+    banned at all times (DES/3DES as algorithms; SHA-1/MD5 and PKCS#1 v1.5
+    are gated on the mechanism/padding dimension in the sibling `-signing`/
+    `-encryption` modules), a minimum RSA key length, the post-2030
+    classical key-CREATION cutoff for every purpose, and the governance-tag
+    + usage-mask requirements for production PQC signing/KEM keys.
+
+    STRICTER THAN THE CITED SOURCE: NIST IR 8547 (an initial public draft as
+    of Nov 2024) DEPRECATES 112-bit-security classical public-key after 2030
+    and DISALLOWS it after 2035 — it does not hard-ban at 2030. This module
+    set hard-stops classical signing/encryption/key-establishment at 2030 by
+    deliberate enterprise choice, and scopes the ban to quantum-vulnerable
+    PUBLIC-KEY algorithms (AES and other symmetric primitives stay allowed
+    — they are quantum-safe).
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "NIST IR 8547 (ipd)", status: stricter-than }
+    - { framework: "CNSA-2.0",           status: partial }
+
+rules:
+  # DES/3DES ARE real KMIP algorithm names (spec §11) and stay banned as
+  # algorithms — a Register or dry-run can carry them even though this
+  # engine never generates them.
+  - type: algorithm_denylist
+    ops: [Create, CreateKeyPair, Sign, Encrypt]
+    algorithms: [DES, 3DES]
+    reason: "Single/Triple-DES banned at all times"
+
+  # Minimum RSA key length 3072 bits for any new key after 2026-01-01.
+  - type: min_key_length
+    algorithm: RSA
+    min_bits: 3072
+    reason: "RSA-2048 below organizational minimum; require >= 3072 bits"
+
+  # Post-2030 the ban covers key CREATION too, for every key-pair purpose
+  # (bare CreateKeyPair prefix-matches :Sign/:Encrypt/:KeyAgreement).
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical asymmetric key creation banned by migration roadmap from 2030-01-01"
+
+  # Production-classification signing keys must be PQC or composite.
+  # Exhaustive over every signing algorithm this stack can instantiate.
+  - type: require_custom_attribute
+    attribute_name: pqctoday-purpose
+    algorithms:
+      - ML-DSA-44
+      - ML-DSA-65
+      - ML-DSA-87
+      - SLH-DSA-SHA2-128s
+      - SLH-DSA-SHA2-128f
+      - SLH-DSA-SHA2-192s
+      - SLH-DSA-SHA2-192f
+      - SLH-DSA-SHA2-256s
+      - SLH-DSA-SHA2-256f
+      - SLH-DSA-SHAKE-128s
+      - SLH-DSA-SHAKE-128f
+      - SLH-DSA-SHAKE-192s
+      - SLH-DSA-SHAKE-192f
+      - SLH-DSA-SHAKE-256s
+      - SLH-DSA-SHAKE-256f
+      - ML-DSA-65-Ed25519
+      - ML-DSA-87-ECDSA-P384
+    reason: "Production PQC signing keys must declare x-pqctoday-purpose"
+
+  # KEM-only keys (ML-KEM) must carry KeyAgreement usage mask.
+  - type: require_usage_mask
+    algorithm: ML-KEM-512
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"
+  - type: require_usage_mask
+    algorithm: ML-KEM-768
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"
+  - type: require_usage_mask
+    algorithm: ML-KEM-1024
+    flags: [KeyAgreement]
+    reason: "ML-KEM keys must declare KeyAgreement usage"

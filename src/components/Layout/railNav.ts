@@ -7,6 +7,7 @@
 import {
   AlertTriangle,
   ArrowRightLeft,
+  Atom,
   BookOpen,
   ClipboardCheck,
   Compass,
@@ -192,6 +193,7 @@ export const RAIL_ICON_MAP: Record<string, LucideIcon> = {
   '/library': BookOpen,
   '/leaders': Users,
   '/patents': ScrollText,
+  '/navigate': Atom,
   '/revisions': History,
   '/about': Info,
 }
@@ -282,6 +284,7 @@ const FOR_YOU_PATH_GROUP: Partial<Record<string, ForYouGroupId>> = {
   '/library': 'reference',
   '/leaders': 'reference',
   '/patents': 'reference',
+  '/navigate': 'reference',
   '/revisions': 'reference',
 }
 
@@ -341,14 +344,38 @@ const WORKFLOW_DISPLAY_ORDER = [
   '/business',
 ]
 
+// Practice's visual display order (2026-08-28: "reorder practice left bar -
+// playground - business tools - simulation") — independent of each persona's
+// own PERSONA_NAV_PATHS array order, which previously put Simulation before
+// Playground for some personas and after for others. Same fixed-order /
+// append-the-rest pattern as WORKFLOW_DISPLAY_ORDER above.
+const PRACTICE_DISPLAY_ORDER = ['/playground', '/business/tools', '/simulation']
+
+// Reference's visual display order (2026-08-28: "reorder reference left bar -
+// threats - library - algorithms - timeline - community - patents") —
+// independent of FOR_YOU_PATH_GROUP's declaration order and of '/timeline'/
+// '/threats' previously being appended unconditionally at the end. Same
+// fixed-order / append-the-rest pattern as WORKFLOW_DISPLAY_ORDER above.
+const REFERENCE_DISPLAY_ORDER = [
+  '/threats',
+  '/library',
+  '/algorithms',
+  '/timeline',
+  '/leaders',
+  '/patents',
+  '/navigate',
+]
+
 /**
  * The real display-position adjustments MainLayout's desktop rail applies on
  * top of getForYouGroups' plain FOR_YOU_PATH_GROUP bucketing — reordering
- * Workflow (including pulling '/explore' into its first slot), adding
- * '/business/tools' to Practice (reached via an in-page tab bar before
- * 2026-08-01, now a real rail row, never added to FOR_YOU_PATH_GROUP itself),
- * and adding '/timeline'/'/threats' to Reference (RAIL_ALWAYS_VISIBLE_PATHS,
- * never persona-gated). Pure-moved out of MainLayout.tsx's inline JSX
+ * Workflow (including pulling '/explore' into its first slot) per
+ * WORKFLOW_DISPLAY_ORDER, adding '/business/tools' to Practice (reached via
+ * an in-page tab bar before 2026-08-01, now a real rail row, never added to
+ * FOR_YOU_PATH_GROUP itself) and fixing Practice's order per
+ * PRACTICE_DISPLAY_ORDER, and adding '/timeline'/'/threats' to Reference
+ * (RAIL_ALWAYS_VISIBLE_PATHS, never persona-gated) and fixing Reference's
+ * order per REFERENCE_DISPLAY_ORDER. Pure-moved out of MainLayout.tsx's inline JSX
  * (2026-08-23) so the mobile Practice/Workflow/Reference group panels use
  * this exact same real logic instead of the raw, unadjusted group.paths —
  * confirmed via a real usage report that mobile's Practice panel was missing
@@ -367,10 +394,18 @@ export function computeGroupDisplayPaths(
     ]
   }
   if (group.id === 'practice') {
-    return [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+    const candidates = [...group.paths.filter((p) => p !== '/explore'), '/business/tools']
+    return [
+      ...PRACTICE_DISPLAY_ORDER.filter((p) => candidates.includes(p)),
+      ...candidates.filter((p) => !PRACTICE_DISPLAY_ORDER.includes(p)),
+    ]
   }
   if (group.id === 'reference') {
-    return [...group.paths, '/timeline', '/threats']
+    const candidates = [...group.paths, '/timeline', '/threats']
+    return [
+      ...REFERENCE_DISPLAY_ORDER.filter((p) => candidates.includes(p)),
+      ...candidates.filter((p) => !REFERENCE_DISPLAY_ORDER.includes(p)),
+    ]
   }
   return group.paths
 }

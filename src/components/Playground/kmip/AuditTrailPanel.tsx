@@ -16,6 +16,29 @@ const num = (v: unknown): number | undefined => (typeof v === 'number' ? v : und
 const obj = (v: unknown): Record<string, unknown> =>
   v && typeof v === 'object' ? (v as Record<string, unknown>) : {}
 
+/** C4 (2026-08-28 gaps-remediation plan) — a forced `CpOverride`, as one
+ * short line, or `''` when nothing was forced. The audit wire format
+ * (`DecisionSummary`, plain serde derive, no `rename_all`) carries the raw
+ * KMIP codepoints, not resolved names — unlike the wasm `dry_run` binding,
+ * which resolves them for the Simulate tab's teaching-focused badge; a
+ * second name table here for this denser, more technical trail view isn't
+ * worth the duplication. `bool`/int fields ARE already human values, so
+ * only the three codepoint fields show as hex. */
+function cpOverrideLine(v: unknown): string {
+  const cp = obj(v)
+  const parts: string[] = []
+  if (num(cp.hashing_algorithm) !== undefined)
+    parts.push(`hash=0x${num(cp.hashing_algorithm)!.toString(16)}`)
+  if (num(cp.block_cipher_mode) !== undefined)
+    parts.push(`mode=0x${num(cp.block_cipher_mode)!.toString(16)}`)
+  if (num(cp.padding_method) !== undefined)
+    parts.push(`padding=0x${num(cp.padding_method)!.toString(16)}`)
+  if (typeof cp.deterministic === 'boolean') parts.push(`deterministic=${cp.deterministic}`)
+  if (num(cp.tag_length) !== undefined) parts.push(`tagLength=${cp.tag_length}`)
+  if (num(cp.salt_length) !== undefined) parts.push(`saltLength=${cp.salt_length}`)
+  return parts.join(', ')
+}
+
 /** One friendly line for an audit event, by type. In Guided mode (`detailed`
  * false) the PKCS#11 line drops the raw mechanism + CK_RV + latency, keeping
  * just the human-readable function name. */
@@ -27,7 +50,10 @@ function describe(ev: Record<string, unknown>, detailed: boolean): string {
       const o = obj(ev.outcome)
       const extra = str(o.algorithm_override) || str(o.new_algorithm)
       const rule = num(o.substituted_by_rule) ?? num(ev.fired_rule_index)
-      return `decision: ${str(o.type) || '?'}${extra ? ` → ${extra}` : ''}${detailed && rule ? `  (rule #${rule})` : ''}`
+      // C4 (2026-08-28 gaps-remediation plan) — was dropped entirely here;
+      // a forcing rule's rewrite was invisible in the audit trail.
+      const forced = cpOverrideLine(o.cp_override)
+      return `decision: ${str(o.type) || '?'}${extra ? ` → ${extra}` : ''}${detailed && rule ? `  (rule #${rule})` : ''}${forced ? `  · forced: ${forced}` : ''}`
     }
     case 'RekeyPlanned':
       return `rekey ${str(ev.from_algorithm)} → ${str(ev.new_algorithm)}${detailed ? `  (rule #${num(ev.triggered_by_rule) ?? '?'})` : ''}`

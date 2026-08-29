@@ -1,0 +1,29 @@
+# Transparent auto-migration — cross-cutting share (modular-policy plan,
+# 2026-08-28). Split from `auto-migrate-on-use.yaml`: "no NEW classical
+# asymmetric keys while migrating" used a bare `CreateKeyPair` (plus
+# redundant explicit `:Sign`/`:KeyAgreement` entries the bare form already
+# covers) over a mixed signing+KEM algorithm list, so it moves here
+# UNCHANGED rather than being split three ways. Pair with `-signing`,
+# `-key-establishment`, and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: auto-migrate-on-use-global
+  description: |
+    No new classical asymmetric keys of any purpose while migrating is in
+    progress — legacy keys keep working and rekey on use (see the sibling
+    per-domain modules); only NEW classical key creation is refused.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [global]
+
+rules:
+  - type: algorithm_denylist
+    ops: [CreateKeyPair]
+    # RSA (family entry) covers every RSA size incl. 4096; curve names listed
+    # exhaustively (family matching is prefix-based, so ECDSA-P521 / Ed448 /
+    # X25519 need their own entries — added 2026-07-02; ECDH-P521 added
+    # 2026-08-28, audit finding B4's same gap in a third file).
+    algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, ECDH-P256, ECDH-P384, ECDH-P521, X25519, X448]
+    reason: "Migration in progress — create PQC keys; legacy keys rekey on use"

@@ -1,0 +1,43 @@
+# Migration tab — classical estate baseline, signing share (modular-policy
+# plan, 2026-08-28). Split from `migration-classical.yaml`. Pair with
+# `-key-establishment`, `-encryption`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: migration-classical-signing
+  description: |
+    Label-pattern signing defaults for the Migration tab's demo estate:
+    firmware-release-signing → RSA-2048, api-gateway-signing → ECDSA-P256,
+    code-commit-signing → Ed25519. Name-patterned defaults are evaluated
+    before the generic ECDSA-P256 fallback (most-specific-wins), so listing
+    order doesn't matter.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline", status: representative }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "firmware-*"
+    default_algorithm: RSA-2048
+    reason: "Firmware release signing (RSA-2048, RSASSA-PSS)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "api-*"
+    default_algorithm: ECDSA-P256
+    reason: "API gateway signing (ECDSA-P256)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    name_pattern: "code-*"
+    default_algorithm: Ed25519
+    reason: "Code commit signing (Ed25519, RFC 8032)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ECDSA-P256
+    reason: "Classical signing fallback for unlabelled requests"

@@ -1,0 +1,36 @@
+# PQC migration policy, 2030 cutoff — encryption share (modular-policy
+# plan, 2026-08-28). Split from `pqc-migration-2030.yaml`. Pair with
+# `-signing`, `-key-establishment`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: pqc-migration-2030-encryption
+  description: |
+    RSA encryption must use OAEP (PKCS#1 v1.5 banned; legacy Decrypt stays
+    open — a consumer op on material already fixed to an algorithm, nothing
+    to migrate). Hard cutoff: no classical Encrypt after 2030-01-01.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "NIST IR 8547 (ipd)", status: stricter-than }
+    - { framework: "CNSA-2.0",           status: partial }
+
+rules:
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "RSA encryption must use OAEP (PKCS#1 v1.5 banned; legacy Decrypt stays open)"
+
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical encryption banned by migration roadmap from 2030-01-01"
+
+  - type: lifecycle_state_gate
+    op: Encrypt
+    allowed_states: [Active]
+    reason: "Encryption only with Active keys"

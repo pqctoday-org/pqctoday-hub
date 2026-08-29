@@ -402,10 +402,17 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
     // policy scopes signing rules to signing ops, so this progression now
     // runs against `CreateKeyPair:Sign` — the real op a classical signing
     // key creation request uses.
+    //
+    // 2025-06-01 corrected to `deny` 2026-08-28 (gaps-remediation plan
+    // WS-5a): predates this policy's own `metadata.effective: "2026-01-01"`.
+    // A2 made the engine (and now this simulator) treat a not-yet-effective
+    // policy as inert — fail-closed, same as no policy loaded at all — not
+    // "classical still permitted because the migration hasn't started yet".
+    // Same fix as `policyScenarios.ts`'s `hybrid-deny-legacy-pre`.
     [
       'hybrid-migration-window.yaml',
       { op: 'CreateKeyPair:Sign', algorithm: 'ECDSA-P256', date: '2025-06-01' },
-      'allow',
+      'deny',
     ],
     [
       'hybrid-migration-window.yaml',
@@ -574,6 +581,59 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
     ['migration-hybrid.yaml', { op: 'Create', algorithm: 'AES-128' }, 'deny'],
   ]
 
+  // WS-5b (2026-08-28 gaps-remediation plan) — synthetic fixtures for the two
+  // required regression cases. Inline rather than added to the shipped
+  // library: each exists purely to pin one resolve-then-gate ordering
+  // behavior, not to model a real customer policy.
+  const EXTRA_CASES: [string, string, Partial<SimRequest>, 'allow' | 'deny' | 'rekey'][] = [
+    [
+      'gate-before-substitution in file order',
+      `schema_version: 1
+metadata:
+  name: ws5b-gate-before-substitution
+  description: >
+    WS-5b regression fixture — the denylist appears BEFORE the substitution
+    in file order, but must still gate on the POST-substitution algorithm:
+    resolution (Pass 1) always completes before gating (Pass 2) regardless
+    of declared rule order.
+  authority: test
+  effective: "2020-01-01"
+rules:
+  - type: algorithm_denylist
+    ops: [Sign]
+    algorithms: [ML-DSA-65]
+    reason: "ML-DSA-65 banned for Sign in this fixture"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-2048
+    to: ML-DSA-65
+    reason: "auto-upgrade legacy RSA-2048 signing key to ML-DSA-65"
+`,
+      { op: 'Sign', algorithm: 'RSA-2048' },
+      'deny',
+    ],
+    [
+      'create-op substitution has no object to rekey',
+      `schema_version: 1
+metadata:
+  name: ws5b-create-op-substitution
+  description: >
+    WS-5b regression fixture — a substitution matching a create-family op
+    (no existing object) must allow with an algorithm override, not rekey.
+  authority: test
+  effective: "2020-01-01"
+rules:
+  - type: algorithm_substitution
+    ops: ["CreateKeyPair:Sign"]
+    from: RSA-2048
+    to: ML-DSA-65
+    reason: "silently upgrade any RSA-2048 signing CreateKeyPair request"
+`,
+      { op: 'CreateKeyPair:Sign', algorithm: 'RSA-2048' },
+      'allow',
+    ],
+  ]
+
   it('every matrix case: sim verdict === engine verdict === expected', () => {
     // ONE playground for the whole matrix — the PKCS#11 engine behind the
     // playground is a per-module singleton, so a second constructor call
@@ -593,6 +653,19 @@ describe('layer 2 — sim verdict ≡ real engine dry_run verdict', () => {
       expect(simKind, `${label}: sim`).toBe(expected)
       expect(engKind, `${label}: engine`).toBe(expected)
     }
+
+    for (const [label, yaml, over, expected] of EXTRA_CASES) {
+      const loaded = JSON.parse(pg.load_policy(yaml)) as { ok: boolean; error?: string }
+      expect(loaded.ok, `${label} must load: ${loaded.error}`).toBe(true)
+
+      const r = req(over)
+      const simKind = evaluatePolicy(toEditable(yaml), r).verdict.kind
+      const engKind = engineVerdict(pg, r)
+
+      expect(simKind, `${label}: sim`).toBe(expected)
+      expect(engKind, `${label}: engine`).toBe(expected)
+    }
+
     pg.free()
   })
 })

@@ -1,0 +1,27 @@
+# Transparent auto-migration — encryption share (modular-policy plan,
+# 2026-08-28). Split from `auto-migrate-on-use.yaml`. Pair with `-signing`,
+# `-key-establishment`, and `-global`.
+#
+# RSA key-TRANSPORT (Encrypt/Decrypt) → ML-KEM rekey remains deferred — a
+# cross-primitive migration the Encrypt op cannot execute in one call — so
+# this module carries only the symmetric default; there is no substitution
+# or backstop rule for the encryption domain in the original policy.
+
+schema_version: 3
+
+metadata:
+  name: auto-migrate-on-use-encryption
+  description: |
+    New symmetric keys default to AES-256 (quantum-safe at 256-bit). RSA
+    key-transport's Encrypt-path rekey is deferred (see the module-level
+    note above) — no other rule exists for this domain in the original
+    single-file policy.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [encryption]
+
+rules:
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "New symmetric keys default to AES-256 (quantum-safe at 256-bit)"

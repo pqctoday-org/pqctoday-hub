@@ -1,0 +1,25 @@
+# CNSA 2.0 — key-establishment share (modular-policy plan, 2026-08-28).
+# Split from `cnsa-2.0.yaml`. Pair with `cnsa-2.0-global` (the bulk of the
+# suite, incl. the ML-KEM-1024 allowlist itself), `-signing`, and
+# `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: cnsa-2.0-key-establishment
+  description: |
+    Only Active CNSA keys may perform key establishment (Encapsulate).
+    Algorithm approval (ML-KEM-1024 only) lives in the sibling
+    `cnsa-2.0-global` module.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "NSA CNSA-2.0", status: aligned }
+    - { framework: "FIPS 140-3",   level: 3 }
+
+rules:
+  - type: lifecycle_state_gate
+    op: Encapsulate
+    allowed_states: [Active]
+    reason: "CNSA encapsulation only with Active keys"

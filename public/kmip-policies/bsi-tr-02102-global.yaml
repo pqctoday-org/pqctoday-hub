@@ -1,0 +1,43 @@
+# BSI TR-02102-1 (Germany) — cross-cutting share (modular-policy plan,
+# 2026-08-28). Split from `bsi-tr-02102.yaml`: the hybrid-partner
+# requirement carries no `ops:` field (defaults cross-domain), the RSA
+# minimum key length has no ops field at all by design, and the
+# below-minimum-algorithm denylist spans Create/CreateKeyPair/Sign/Encrypt
+# together — all moved here unchanged. Pair with `-signing`,
+# `-key-establishment`, and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: bsi-tr-02102-global
+  description: |
+    Standalone PQC KEM keys must declare the classical hybrid partner via
+    a custom attribute at creation (the combined hybrid KEMs are exempt —
+    they are hybrid by construction). Minimum security level: RSA/DH
+    >= 3000 bits (BSI's ~120-bit floor). Broken/below-minimum algorithms
+    (RSA-2048, DES, 3DES) banned everywhere.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "BSI TR-02102-1", status: aligned }
+
+rules:
+  - type: require_custom_attribute
+    attribute_name: pqctoday-hybrid-partner
+    algorithms: [ML-KEM-768, ML-KEM-1024, FrodoKEM-976, FrodoKEM-1344,
+                 Classic-McEliece-460896, Classic-McEliece-6688128]
+    reason: "BSI hybrid: standalone PQC KEM keys must name their classical partner (x-pqctoday-hybrid-partner)"
+
+  - type: min_key_length
+    algorithm: RSA
+    min_bits: 3000
+    reason: "BSI TR-02102-1 minimum ~120-bit security (RSA >= 3000 bits)"
+
+  # DES/3DES are real KMIP CryptographicAlgorithm names (spec §11), so they
+  # belong here even though this engine never instantiates them — a
+  # Register/dry-run can still carry them.
+  - type: algorithm_denylist
+    ops: [Create, CreateKeyPair, Sign, Encrypt]
+    algorithms: [RSA-2048, DES, 3DES]
+    reason: "Below BSI TR-02102-1 minimums / broken primitive"

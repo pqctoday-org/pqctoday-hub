@@ -2,8 +2,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { SupplyChainRiskMatrix, computeLayerStats, matrixRiskLevel } from './SupplyChainRiskMatrix'
-import { LAYERS } from '@/data/infrastructureLayers'
+import {
+  SupplyChainRiskMatrix,
+  computeDomainStats,
+  matrixRiskLevel,
+  threatImpactLevel,
+  IMPACT_BANDS,
+  DOMAIN_THREAT_KEYWORDS,
+} from './SupplyChainRiskMatrix'
+import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import type { ExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import type { ThreatData } from '@/data/threatsData'
@@ -85,9 +92,9 @@ function makeThreat(over: Partial<ThreatData>): ThreatData {
   }
 }
 
-// --- Fixture layers ---
-// Database: 1/2 not PQC-ready (Migration Gap > 0), 1/2 Critical priority,
-// 1 matching threat.
+// --- Fixture domains (domain taxonomy since 2026-08-27) ---
+// atrest: 1/2 not PQC-ready (Migration Gap > 0), 1/2 Critical priority,
+// 1 matching threat (keyword 'database').
 const dbReady = makeProduct({ productId: 'db-1', softwareName: 'ReadyDB', pqcSupport: 'Yes' })
 const dbGap = makeProduct({
   productId: 'db-2',
@@ -96,8 +103,10 @@ const dbGap = makeProduct({
   pqcMigrationPriority: 'Critical',
 })
 
-// Cloud: same 1/2 Critical-priority ratio as Database, but 3 matching
-// threats instead of 1 — proves Impact no longer tracks pqcMigrationPriority.
+// kms: same 1/2 Critical-priority ratio as atrest, but 3 matching threats
+// instead of 1 — proves Impact no longer tracks pqcMigrationPriority.
+// Descriptions deliberately avoid platform keywords ('cloud' etc.) so the
+// fully-ready platform fixture below keeps a genuine 0 Impact.
 const cloudReady = makeProduct({
   productId: 'cloud-1',
   softwareName: 'ReadyCloudKMS',
@@ -111,12 +120,12 @@ const cloudGap = makeProduct({
   pqcCapabilityDescription: 'Hybrid ML-KEM + X25519 key exchange',
 })
 
-// OS: fully PQC-ready, no Critical priority, zero matching threats —
+// platform: fully PQC-ready, no Critical priority, zero matching threats —
 // both axes should be exactly 0 ("no risk", not floored to 1).
 const osReady1 = makeProduct({ productId: 'os-1', softwareName: 'ReadyOS-A', pqcSupport: 'Yes' })
 const osReady2 = makeProduct({ productId: 'os-2', softwareName: 'ReadyOS-B', pqcSupport: 'Yes' })
 
-// Libraries: dependency provider, referenced by name in an AppServers consumer.
+// foundations: dependency provider, referenced by name in a platform consumer.
 const opensslProvider = makeProduct({
   productId: 'lib-1',
   softwareName: 'OpenSSL',
@@ -126,23 +135,28 @@ const appServerConsumer = makeProduct({
   productId: 'app-1',
   softwareName: 'Consumer App Server',
   pqcSupport: 'Yes',
-  pqcCapabilityDescription: 'Built on OpenSSL for TLS termination',
+  pqcCapabilityDescription: 'Built on OpenSSL for termination',
 })
 
-const vendorsByLayer = new Map<string, SoftwareItem[]>([
-  ['Database', [dbReady, dbGap]],
-  ['Cloud', [cloudReady, cloudGap]],
-  ['OS', [osReady1, osReady2]],
-  ['Libraries', [opensslProvider]],
-  ['AppServers', [appServerConsumer]],
+const vendorsByDomain = new Map<DomainId, SoftwareItem[]>([
+  ['atrest', [dbReady, dbGap]],
+  ['kms', [cloudReady, cloudGap]],
+  ['platform', [osReady1, osReady2, appServerConsumer]],
+  ['foundations', [opensslProvider]],
 ])
 
 const threats: ThreatData[] = [
   makeThreat({ threatId: 'T-DB-1', description: 'Attackers exploit weak Database records.' }),
-  makeThreat({ threatId: 'T-CLOUD-1', description: 'Cloud KMS misconfiguration exposes keys.' }),
-  makeThreat({ threatId: 'T-CLOUD-2', description: 'Cloud tenant isolation failure.' }),
-  makeThreat({ threatId: 'T-CLOUD-3', description: 'Cloud IAM privilege escalation.' }),
+  makeThreat({ threatId: 'T-KMS-1', description: 'KMS misconfiguration exposes keys.' }),
+  makeThreat({ threatId: 'T-KMS-2', description: 'KMS tenant isolation failure.' }),
+  makeThreat({ threatId: 'T-KMS-3', description: 'KMS privilege escalation.' }),
 ]
+
+// Expected Impact levels, computed through the exported helpers so the test
+// keeps working when the corpus-derived IMPACT_BANDS shift: 1 High threat
+// (weight 3) for atrest, 3 High threats (weight 9) for kms.
+const atrestImpact = threatImpactLevel(3)
+const kmsImpact = threatImpactLevel(9)
 
 function baseData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModuleData {
   return {
@@ -150,12 +164,12 @@ function baseData(overrides: Partial<ExecutiveModuleData> = {}): ExecutiveModule
     criticalThreatCount: 0,
     totalThreatCount: threats.length,
     industryThreats: threats,
-    vendorsByLayer,
+    vendorsByDomain,
     fipsValidatedCount: 0,
-    pqcReadyCount: 4,
+    pqcReadyCount: 5,
     vendorReadinessWeighted: 0,
-    vendorReadinessByLayer: new Map(),
-    totalProducts: 7,
+    vendorReadinessByDomain: new Map(),
+    totalProducts: 8,
     frameworks: [],
     frameworksByIndustry: [],
     countryDeadlines: [],
@@ -253,26 +267,27 @@ describe('SupplyChainRiskMatrix', () => {
     expect(screen.queryByText(/^Rare$/)).not.toBeInTheDocument()
   })
 
-  it('computes Impact independently of pqcMigrationPriority for layers with the same Critical/High ratio', () => {
+  it('computes Impact independently of pqcMigrationPriority for domains with the same Critical/High ratio', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
-    // Database and Cloud both have a 1/2 Critical-priority ratio, but
-    // Database matches 1 threat and Cloud matches 3 — Impact must differ.
-    const dbBadge = screen.getByTitle(/Migration Gap 3\/5 × Impact 2\/5/)
-    const cloudBadge = screen.getByTitle(/Migration Gap 3\/5 × Impact 4\/5/)
+    // atrest and kms both have a 1/2 Critical-priority ratio, but atrest
+    // matches 1 threat and kms matches 3 — Impact must differ.
+    expect(kmsImpact).toBeGreaterThan(atrestImpact)
+    const dbBadge = screen.getByTitle(new RegExp(`Migration Gap 3/5 × Impact ${atrestImpact}/5`))
+    const kmsBadge = screen.getByTitle(new RegExp(`Migration Gap 3/5 × Impact ${kmsImpact}/5`))
     expect(dbBadge).toBeInTheDocument()
-    expect(cloudBadge).toBeInTheDocument()
+    expect(kmsBadge).toBeInTheDocument()
   })
 
-  it('shows a fully-ready, zero-threat-match layer as "No risk" instead of a fabricated nonzero score', () => {
+  it('shows a fully-ready, zero-threat-match domain as "No risk" instead of a fabricated nonzero score', () => {
     render(<SupplyChainRiskMatrix variant="flat" />)
-    const osCard = screen.getByTestId('layer-card-OS')
-    expect(within(osCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).toHaveTextContent(
+    const platformCard = screen.getByTestId('layer-card-platform')
+    expect(within(platformCard).getByTitle(/Migration Gap 0\/5 × Impact 0\/5/)).toHaveTextContent(
       'No risk'
     )
     // Named as its own chip in the "not plotted" strip, not silently dropped.
     const noRiskStrip = screen.getByTestId('no-risk-strip')
     expect(within(noRiskStrip).getByText(/not plotted above/i)).toBeInTheDocument()
-    expect(within(noRiskStrip).getByText('Operating System')).toBeInTheDocument()
+    expect(within(noRiskStrip).getByText(DOMAINS.platform.label)).toBeInTheDocument()
   })
 
   it('shows an explicit not-personalized state instead of silently reusing pqcMigrationPriority when no industry is selected', () => {
@@ -311,7 +326,7 @@ describe('SupplyChainRiskMatrix', () => {
   describe('CVE exposure badge (U6)', () => {
     it('shows "None" before the snapshot has loaded and when no product in the layer has a CPE match', async () => {
       render(<SupplyChainRiskMatrix variant="flat" />)
-      const dbCard = screen.getByTestId('layer-card-Database')
+      const dbCard = screen.getByTestId('layer-card-atrest')
       await waitFor(() => {
         expect(within(dbCard).getByText('Known CVEs')).toBeInTheDocument()
       })
@@ -358,7 +373,7 @@ describe('SupplyChainRiskMatrix', () => {
         },
       }
       render(<SupplyChainRiskMatrix variant="flat" />)
-      const dbCard = screen.getByTestId('layer-card-Database')
+      const dbCard = screen.getByTestId('layer-card-atrest')
       await waitFor(() => {
         expect(within(dbCard).getByText('2')).toBeInTheDocument()
       })
@@ -398,7 +413,7 @@ describe('SupplyChainRiskMatrix', () => {
         },
       }
       render(<SupplyChainRiskMatrix variant="flat" />)
-      const dbCard = screen.getByTestId('layer-card-Database')
+      const dbCard = screen.getByTestId('layer-card-atrest')
       await waitFor(() => {
         expect(within(dbCard).getByText('Known CVEs')).toBeInTheDocument()
       })
@@ -409,66 +424,82 @@ describe('SupplyChainRiskMatrix', () => {
 
 // ── W1-4 regression guards (audit 2026-08-10) ────────────────────────────────
 // Impact used to be `threatMatches / totalThreatMatches` — a share of the
-// displayed estate. On the nine canonical layers that pinned every layer to
-// impact 1 and the whole matrix to "Low", and adding a layer silently
+// displayed estate. On the canonical grouping that pinned every group to
+// impact 1 and the whole matrix to "Low", and adding a group silently
 // downgraded every other one.
-describe('computeLayerStats — absolute impact (W1-4)', () => {
+describe('computeDomainStats — absolute impact (W1-4)', () => {
+  const ALL_DOMAINS = Object.keys(DOMAINS) as DomainId[]
   const gapProduct = (id: string) =>
     makeProduct({ productId: id, softwareName: id, pqcSupport: 'No' })
 
+  // Threats built from each domain's own first matching keyword, at whatever
+  // count pushes the severity-weighted score past the top corpus-derived
+  // band — so every domain lands at Impact 5 regardless of where the bands
+  // currently sit.
+  const level5Count = Math.ceil((IMPACT_BANDS[3] + 1) / 4)
   const criticalThreats = (n: number, term: string) =>
     Array.from({ length: n }, (_, i) =>
       makeThreat({
-        threatId: `T-${term}-${i}`,
+        threatId: `T-${i}`,
         description: `${term} compromise scenario ${i}`,
         criticality: 'Critical',
       })
     )
 
-  it('an estate where EVERY layer is heavily threatened reads Critical, not Low', () => {
-    // This is the shape that broke: threats spread across all nine layers gave
-    // each a 1/9 share, so every layer scored impact 1 and the whole matrix
-    // capped at "Low" — the more thoroughly exposed the estate, the safer it
-    // looked. A single-hot-layer fixture would NOT catch it (share 1.0 -> 5).
-    const vendorsByLayer = new Map<string, SoftwareItem[]>(
-      LAYERS.map((l) => [l.id, [gapProduct(`${l.id}-a`)]])
+  it('an estate where EVERY domain is heavily threatened reads Critical, not Low', () => {
+    // This is the shape that broke: threats spread across all domains gave
+    // each a small share, so every domain scored impact 1 and the whole
+    // matrix capped at "Low" — the more thoroughly exposed the estate, the
+    // safer it looked. A single-hot-domain fixture would NOT catch it.
+    const byDomain = new Map<DomainId, SoftwareItem[]>(
+      ALL_DOMAINS.map((d) => [d, [gapProduct(`${d}-a`)]])
     )
-    const threats = LAYERS.flatMap((l) => criticalThreats(6, l.label))
-    const stats = computeLayerStats(vendorsByLayer, threats, true, null)
+    const threats = ALL_DOMAINS.flatMap((d) =>
+      criticalThreats(level5Count, DOMAIN_THREAT_KEYWORDS[d][0])
+    )
+    const stats = computeDomainStats(byDomain, threats, true, null)
 
-    expect(stats.length).toBe(LAYERS.length)
+    expect(stats.length).toBe(ALL_DOMAINS.length)
     for (const s of stats) {
-      expect(s.likelihood, `${s.layerId} likelihood`).toBe(5) // every product has a gap
-      expect(s.impact, `${s.layerId} impact`).toBe(5)
-      expect(matrixRiskLevel(s.riskScore ?? 0), `${s.layerId} verdict`).toBe('Critical')
+      expect(s.likelihood, `${s.domainId} likelihood`).toBe(5) // every product has a gap
+      expect(s.impact, `${s.domainId} impact`).toBe(5)
+      expect(matrixRiskLevel(s.riskScore ?? 0), `${s.domainId} verdict`).toBe('Critical')
     }
   })
 
-  it("a layer's impact does not change when unrelated layers are added or removed", () => {
-    const threats = criticalThreats(6, 'Database')
-    const small = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
-    const large = new Map<string, SoftwareItem[]>(
-      LAYERS.map((l) => [l.id, [gapProduct(`${l.id}-a`)]])
+  it("a domain's impact does not change when unrelated domains are added or removed", () => {
+    const threats = criticalThreats(6, 'database')
+    const small = new Map<DomainId, SoftwareItem[]>([['atrest', [gapProduct('db-a')]]])
+    const large = new Map<DomainId, SoftwareItem[]>(
+      ALL_DOMAINS.map((d) => [d, [gapProduct(`${d}-a`)]])
     )
-    const dbSmall = computeLayerStats(small, threats, true, null).find(
-      (s) => s.layerId === 'Database'
+    const dbSmall = computeDomainStats(small, threats, true, null).find(
+      (s) => s.domainId === 'atrest'
     )
-    const dbLarge = computeLayerStats(large, threats, true, null).find(
-      (s) => s.layerId === 'Database'
+    const dbLarge = computeDomainStats(large, threats, true, null).find(
+      (s) => s.domainId === 'atrest'
     )
     expect(dbLarge!.impact).toBe(dbSmall!.impact)
     expect(dbLarge!.riskScore).toBe(dbSmall!.riskScore)
   })
 
   it('weights impact by threat severity, not raw match count', () => {
-    const vendorsByLayer = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
-    const critical = computeLayerStats(vendorsByLayer, criticalThreats(3, 'Database'), true, null)
-    const low = computeLayerStats(
-      vendorsByLayer,
-      Array.from({ length: 3 }, (_, i) =>
+    // level5Count Critical threats clear the top band by construction, while
+    // the same COUNT of Low threats scores a quarter of that — below the top
+    // band — so the two impacts must differ whatever the derived bands are.
+    const byDomain = new Map<DomainId, SoftwareItem[]>([['atrest', [gapProduct('db-a')]]])
+    const critical = computeDomainStats(
+      byDomain,
+      criticalThreats(level5Count, 'database'),
+      true,
+      null
+    )
+    const low = computeDomainStats(
+      byDomain,
+      Array.from({ length: level5Count }, (_, i) =>
         makeThreat({
           threatId: `T-low-${i}`,
-          description: `Database issue ${i}`,
+          description: `database issue ${i}`,
           criticality: 'Low',
         })
       ),
@@ -480,8 +511,8 @@ describe('computeLayerStats — absolute impact (W1-4)', () => {
   })
 
   it('still refuses to score impact with no industry context', () => {
-    const vendorsByLayer = new Map<string, SoftwareItem[]>([['Database', [gapProduct('db-a')]]])
-    const stats = computeLayerStats(vendorsByLayer, criticalThreats(6, 'Database'), false, null)
+    const byDomain = new Map<DomainId, SoftwareItem[]>([['atrest', [gapProduct('db-a')]]])
+    const stats = computeDomainStats(byDomain, criticalThreats(6, 'database'), false, null)
     expect(stats[0].impact).toBeNull()
     expect(stats[0].riskScore).toBeNull()
   })
@@ -508,7 +539,7 @@ describe('SupplyChainRiskMatrix render budget', () => {
       makeProduct({ productId: `bulk-${i}`, softwareName: `BulkProduct${i}`, pqcSupport: 'No' })
     )
     mockData = baseData({
-      vendorsByLayer: new Map([['Database', many]]),
+      vendorsByDomain: new Map<DomainId, SoftwareItem[]>([['atrest', many]]),
       totalProducts: many.length,
     })
   })
@@ -527,12 +558,12 @@ describe('SupplyChainRiskMatrix render budget', () => {
     expect(screen.getByText(/Pick your infrastructure on Migrate/i)).toBeInTheDocument()
   })
 
-  it('still names the layer and its product count', () => {
+  it('still names the domain and its product count', () => {
     render(
       <MemoryRouter>
         <SupplyChainRiskMatrix variant="flat" />
       </MemoryRouter>
     )
-    expect(screen.getByText(/60 catalog products sit in this layer/i)).toBeInTheDocument()
+    expect(screen.getByText(/60 catalog products sit in this domain/i)).toBeInTheDocument()
   })
 })

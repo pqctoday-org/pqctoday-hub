@@ -1,0 +1,48 @@
+# Migration tab — full-PQC target state, key-establishment share
+# (modular-policy plan, 2026-08-28). Split from `migration-pqc.yaml`. Pair
+# with `-signing`, `-encryption`, and `-global`.
+#
+# `ReKeyKeyPair` refined to `ReKeyKeyPair:KeyAgreement` (was bare —
+# ambiguous in a scoped file; see `-signing.yaml`'s header for the same
+# refinement on the Sign side).
+
+schema_version: 3
+
+metadata:
+  name: migration-pqc-key-establishment
+  description: |
+    New key-agreement keys default to ML-KEM (FIPS 203): ML-KEM-1024 for
+    interbank-* labels, ML-KEM-768 generically. Existing classical KEM keys
+    (X25519, X448) auto-rekey to the matching ML-KEM level at first use
+    (Encapsulate) or via the migration sweep (ReKeyKeyPair). Mappings follow
+    the Hub algorithm-transitions dataset
+    (algorithms_transitions_06252026.csv, rows 40/41).
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM", status: required }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "interbank-*"
+    default_algorithm: ML-KEM-1024
+    reason: "Interbank KEM uplift to ML-KEM-1024 (highest security category)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-768
+    reason: "PQC key-establishment default (FIPS 203, ML-KEM-768)"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, "ReKeyKeyPair:KeyAgreement"]
+    from: X25519
+    to: ML-KEM-768
+    reason: "FIPS 203 — X25519 to ML-KEM-768 (CSV row 40)"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, "ReKeyKeyPair:KeyAgreement"]
+    from: X448
+    to: ML-KEM-1024
+    reason: "FIPS 203 — X448 to ML-KEM-1024 (CSV row 41)"

@@ -23,6 +23,30 @@ block a push even when CI would be green. Note: proof directories
 `public/timeline/`) are untracked working-tree assets — run the gate in a
 checkout that has them (the main checkout, or copy them into your worktree).
 
+### `gate:cacp` — the KMIP crypto-agility control plane
+
+```bash
+npm run gate:cacp   # src/components/Playground/kmip + src/wasm/kmip: the
+                     # CI-visible suite, the *.local.test.ts drift guards,
+                     # and the cacp-kmip wasm-provenance check
+```
+
+Wired into `.husky/pre-push` (2026-08-28, gaps-remediation plan WS-10) —
+runs on every push, unconditionally, like every other check in that hook.
+
+Two of its `*.local.test.ts` drift guards
+(`ruleCatalog.local.test.ts`'s catalog ↔ grammar and scope guards,
+`tests/policy_dual_form_parity.rs`-style checks) **require a sibling
+checkout of `pqctoday-hsm`** at `../pqctoday-hsm` relative to this repo —
+they read `kmip/src/policy/rule.rs` directly off disk to catch the rule
+vocabulary (and the `Scope` enum) drifting from what the visual editor's
+catalog assumes. There is no environment variable for this path; it's a
+hardcoded relative path (same convention `sync:wasm:check` already uses
+for the wasm-provenance check), so **this repo and `pqctoday-hsm` must be
+sibling directories** for `gate:cacp` to do its real job. Without that
+sibling checkout, the guard fails loudly (by design — see its own error
+message) rather than silently skipping.
+
 ## Test Structure
 
 The project uses a comprehensive testing approach with three layers:

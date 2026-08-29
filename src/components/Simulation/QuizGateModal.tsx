@@ -86,46 +86,57 @@ export function QuizGateModal({ question, moduleTitle, onPass, onCancel }: QuizG
           animate={{ opacity: 1, scale: 1 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
           transition={{ duration: reduce ? 0 : 0.16, ease: 'easeOut' }}
-          className="w-full max-w-lg rounded-2xl border-2 border-primary/30 bg-card p-5 shadow-2xl"
+          // mobile fix (sim-mobile-full-play WS-0): a True/False question grows
+          // ~280px taller once submitted (feedback panel), and a 4-option
+          // question can exceed an iPhone-13 viewport BEFORE submitting — with
+          // no max-height/overflow here the action button (Submit / Mark
+          // complete / Try again) was pushed off-screen with no way to scroll
+          // to it (measured: 390x664 viewport, button y=847-1154, unreachable).
+          // max-h + overflow-y-auto lets the body scroll; the button row below
+          // is `sticky bottom-0` INSIDE this same scroll container so it never
+          // depends on total content height.
+          className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-y-auto rounded-2xl border-2 border-primary/30 bg-card shadow-2xl"
         >
-          <div className="mb-3 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-primary">
-                One quick check before this counts as done
-              </p>
-              <h2 id="quiz-gate-title" className="text-sm font-bold text-foreground">
-                {moduleTitle}
-              </h2>
+          <div className="p-5 pb-0">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wide text-primary">
+                  One quick check before this counts as done
+                </p>
+                <h2 id="quiz-gate-title" className="text-sm font-bold text-foreground">
+                  {moduleTitle}
+                </h2>
+              </div>
+              <Button
+                ref={cancelRef}
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onCancel}
+                aria-label="Cancel"
+                className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+              >
+                <X size={16} />
+              </Button>
             </div>
-            <Button
-              ref={cancelRef}
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onCancel}
-              aria-label="Cancel"
-              className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
-            >
-              <X size={16} />
-            </Button>
+
+            <QuestionCard
+              question={question}
+              selectedAnswer={answer}
+              hasSubmitted={submitted}
+              onSelectAnswer={setAnswer}
+            />
+
+            {submitted && (
+              <FeedbackPanel
+                isCorrect={correct}
+                explanation={question.explanation}
+                learnMorePath={question.learnMorePath}
+              />
+            )}
           </div>
 
-          <QuestionCard
-            question={question}
-            selectedAnswer={answer}
-            hasSubmitted={submitted}
-            onSelectAnswer={setAnswer}
-          />
-
-          {submitted && (
-            <FeedbackPanel
-              isCorrect={correct}
-              explanation={question.explanation}
-              learnMorePath={question.learnMorePath}
-            />
-          )}
-
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="sticky bottom-0 mt-4 flex shrink-0 justify-end gap-2 border-t border-border bg-card p-5 pt-3">
             {!submitted ? (
               <Button
                 type="button"

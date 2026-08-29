@@ -106,19 +106,22 @@ rules:
   # pair, re-issues the Encapsulate. The application (an Encapsulate caller
   # holding the public-key UID) sees only the handle.
   #
-  # NOTE on `from:` values — `helpers::qualified_name` derives the qualified
-  # algorithm name from bit-length only (pre-existing limitation, not
-  # introduced here): X25519 (256 bits) and X448 (448→ default 256) both
-  # currently stringify identically to real P-256, i.e. as `ECDH-P256`. That
-  # means this ONE rule below already covers P-256/X25519/X448 keys today
-  # (harmless — all three correctly migrate to ML-KEM-1024), but a future
-  # fix to `qualified_name` to give X25519/X448 their own distinct names
-  # would need a corresponding split here.
+  # NOTE on `from:` values — CORRECTED 2026-08-28 (audit finding B5). This
+  # comment previously claimed X25519/X448 "currently stringify identically
+  # to real P-256, i.e. as ECDH-P256" via `helpers::qualified_name`, so one
+  # ECDH-P256 rule was said to cover all three. That stopped being true:
+  # `helpers::montgomery_name_for_len` gives length-255/448 Montgomery keys
+  # their own distinct policy names, `X25519` and `X448`, rather than
+  # falling through to `ECDH-P{bits}`. Under the stale single-rule setup, an
+  # X25519 or X448 key silently never matched `from: ECDH-P256` and so never
+  # rekeyed to ML-KEM-1024 — it kept doing classical key establishment
+  # forever under a policy whose entire point is "after PQC migration".
+  # Explicit rules for X25519/X448 below close that gap.
   - type: algorithm_substitution
     ops: [Encapsulate]
     from: ECDH-P256
     to: ML-KEM-1024
-    reason: "Rekey legacy ECDH-P256/X25519/X448 key-establishment key to ML-KEM-1024 at first use"
+    reason: "Rekey legacy ECDH-P256 key-establishment key to ML-KEM-1024 at first use"
   - type: algorithm_substitution
     ops: [Encapsulate]
     from: ECDH-P384
@@ -129,6 +132,16 @@ rules:
     from: ECDH-P521
     to: ML-KEM-1024
     reason: "Rekey legacy ECDH-P521 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X25519
+    to: ML-KEM-1024
+    reason: "Rekey legacy X25519 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X448
+    to: ML-KEM-1024
+    reason: "Rekey legacy X448 key-establishment key to ML-KEM-1024 at first use"
 
   # RSA key-TRANSPORT (Encrypt/Decrypt path, distinct from the ECDH
   # key-ESTABLISHMENT path above) → ML-KEM remains deferred: that is a

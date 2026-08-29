@@ -95,7 +95,7 @@ describe('learnModulesForIndustry', () => {
   it('routes multi-industry modules at the industry’s own learn path', () => {
     // emv-payment-pqc serves cards, banking and retail; each deep-links at its
     // own path rather than the top of a 110-minute module.
-    const banking = learnModulesForIndustry('Financial Services / Banking', useCases)
+    const banking = learnModulesForIndustry('Finance & Banking', useCases)
     expect(banking[0].href).toContain('path=banking')
   })
 })

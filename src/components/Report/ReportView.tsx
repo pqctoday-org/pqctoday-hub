@@ -498,12 +498,12 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
   // `window.location.href`, which on /report is just the bare `/report`
   // path — a recipient who opens it lands on "No Report Yet" while the
   // sender gets a success toast implying it worked. `buildReportShareUrl` is
-  // the SAME token-minting mechanism the in-page Share button
-  // (`ReportContent`'s `handleShare` → `shareReport`) already uses, so both
-  // affordances always produce the identical, self-contained `?share=`
-  // link. Gated on `!simEmbed`, same pattern as ThreatsDashboard/TimelineView,
-  // and on `result` being present — with no report yet there is nothing
-  // meaningful to share, so the top bar keeps its generic bare-path fallback.
+  // the same token-minting mechanism `shareReport` uses for the native share
+  // sheet (mobile's MobileHeader calls this same top-bar registration — see
+  // reportContentActions.ts). Gated on `!simEmbed`, same pattern as
+  // ThreatsDashboard/TimelineView, and on `result` being present — with no
+  // report yet there is nothing meaningful to share, so the top bar keeps
+  // its generic bare-path fallback.
   useEffect(() => {
     if (simEmbed || !result) return
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()

@@ -1,0 +1,23 @@
+# BSI TR-02102-1 (Germany) — encryption share (modular-policy plan,
+# 2026-08-28). Split from `bsi-tr-02102.yaml`. Pair with `-signing`,
+# `-key-establishment`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: bsi-tr-02102-encryption
+  description: |
+    RSA encryption must use OAEP padding (BSI does not recommend PKCS#1
+    v1.5 for new use).
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "BSI TR-02102-1", status: aligned }
+
+rules:
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "BSI: RSA encryption must use OAEP padding"

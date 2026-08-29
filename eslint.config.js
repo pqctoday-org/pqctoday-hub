@@ -238,14 +238,11 @@ export default defineConfig([
                 '!@/components/BusinessCenter/widgets/Cswp39SectionBadge',
                 // ReportUpgradeNudge.tsx (Report/redesign) — explicitly
                 // generic, no baked-in desktop-only layout (already
-                // grid-cols-1/flex-wrap below md). reportContentActions.ts
-                // (Report/sections) — pure logic, no JSX: the real
-                // share-token/navigator.share mechanism. Imported directly
-                // so the mobile Report screen's share link and copy can
-                // never drift from desktop's. (TopThreeActions.tsx's own
-                // exception lives in the pre-existing common/ block below —
-                // same reasoning: "so dense pages... can offer a 'do this
-                // now' hero".)
+                // grid-cols-1/flex-wrap below md). Imported directly so the
+                // mobile Report screen's upgrade nudge can never drift from
+                // desktop's. (TopThreeActions.tsx's own exception lives in
+                // the pre-existing common/ block below — same reasoning:
+                // "so dense pages... can offer a 'do this now' hero".)
                 // faqData.ts (FAQ) — pure data, no JSX. The real FAQ_DATA
                 // catalogue every desktop FAQ view reads, so the ⋯ sheet's
                 // FAQ row count can never drift from the real question count.
@@ -257,9 +254,6 @@ export default defineConfig([
                 '!@/components/Report/redesign',
                 '@/components/Report/redesign/*',
                 '!@/components/Report/redesign/ReportUpgradeNudge',
-                '!@/components/Report/sections',
-                '@/components/Report/sections/*',
-                '!@/components/Report/sections/reportContentActions',
                 // assessFlowModel.ts / useAssessFlow.ts (Assess/redesign) —
                 // pure data/logic + a pure hook, no JSX. The identical
                 // question copy, validators and step-navigation hook every
@@ -508,6 +502,19 @@ export default defineConfig([
                 '!@/components/Playground/workshopRegistry',
                 '!@/components/Playground/cryptoLabMeta',
                 '!@/components/Playground/cryptoLabTaxonomy',
+                // simChrome.ts (Simulation) — isSimResumePending()/
+                // markSimExited() + the small style/label maps, pure
+                // sessionStorage helpers + data, no React, no store, no JSX
+                // (the file's own doc comment says so explicitly). The same
+                // real "did the player come from the sim gate?" signal
+                // desktop's AssessViewRedesign.generate() already reads, so
+                // MobileAssessView's own "Generate my report" can return to
+                // /simulation unlocked instead of always landing on this
+                // screen's own done state (sim-mobile-full-play WS-0 fix —
+                // it never had this check before).
+                '!@/components/Simulation',
+                '@/components/Simulation/*',
+                '!@/components/Simulation/simChrome',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',

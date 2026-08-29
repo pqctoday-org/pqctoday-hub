@@ -103,6 +103,12 @@ rules:
 
   # ── No NEW classical asymmetric keys ─────────────────────────────────
   # Existing ones remain usable for Verify/Decrypt/Decapsulate until rekeyed.
+  # ECDH-P521 added 2026-08-28 (audit finding B4) — the engine supports it
+  # (ECDH-P256/P384/P521 are all real key-agreement curves) but it was
+  # missing from this list, so a new classical ECDH-P521 key-agreement pair
+  # was creatable under a policy whose whole point is "no new classical
+  # asymmetric keys". `pqc.yaml` got this same fix on 2026-07-04; it never
+  # propagated to the Migration tab's copy of the same rule.
   - type: algorithm_denylist
     ops:
       - CreateKeyPair
@@ -119,6 +125,7 @@ rules:
       - ECDSA-P521
       - ECDH-P256
       - ECDH-P384
+      - ECDH-P521
       - Ed25519
       - Ed448
       - X25519

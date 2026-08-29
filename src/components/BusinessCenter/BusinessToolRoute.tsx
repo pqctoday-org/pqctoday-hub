@@ -9,7 +9,7 @@ import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { logBusinessToolOpen } from '@/utils/analytics'
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
@@ -27,6 +27,20 @@ export const BusinessToolRoute = () => {
       logBusinessToolOpen(tool.id, tool.name)
       useAchievementStore.getState().recordBusinessToolUsage(tool.id)
     }
+  }, [tool])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // tool's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback. The URL itself needs no
+  // override: `/business/tools/${toolId}` is already the shareable deep link.
+  useEffect(() => {
+    if (!tool) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: `${tool.name} — PQC Business Tools`,
+      shareText: `Try the ${tool.name} tool in the PQC Today Business Center`,
+    })
+    return () => clearPageActions()
   }, [tool])
 
   if (!tool) return <Navigate to="/business/tools" replace />
@@ -54,11 +68,6 @@ export const BusinessToolRoute = () => {
             opened a tool directly saw none of it. (Audit 2026-08-10, W3-1.) */}
         <Cswp39SectionBadge sectionRef={tool.cswp39SectionRef} subSection={tool.cswp39SubSection} />
         <div className="ml-auto flex items-center gap-1">
-          <ShareButton
-            title={`${tool.name} — PQC Business Tools`}
-            text={`Try the ${tool.name} tool in the PQC Today Business Center`}
-            variant="icon"
-          />
           <EndorseButton
             endorseUrl={buildEndorsementUrl({
               category: 'pqc-tool-endorsement',

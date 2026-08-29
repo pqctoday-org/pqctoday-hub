@@ -4,7 +4,6 @@ import { ArrowLeftRight, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { ShareButton } from '../../ui/ShareButton'
 import {
   CKD_SHA256_KDF,
   CKD_SHA384_KDF,
@@ -184,7 +183,6 @@ export const HsmKeyAgreementPanel = ({
           <ArrowLeftRight size={18} className="text-primary" />
           <h3 className="font-semibold text-foreground">ECDH Key Agreement</h3>
           <div className="ml-auto flex items-center gap-1">
-            <ShareButton title="HSM Key Agreement" variant="icon" />
             <span className="text-xs text-muted-foreground">PKCS#11 v3.2 §6.3.17</span>
           </div>
         </div>

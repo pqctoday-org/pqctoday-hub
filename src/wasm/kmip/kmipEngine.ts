@@ -61,6 +61,27 @@ export interface LoadPolicyResult {
   error?: string
 }
 
+/** Modular-policy plan (2026-08-28) — one scoped module file activated
+ * alongside others (see {@link KmipEngine.activatePolicyModule}). */
+export interface PolicyModuleInfo {
+  name: string
+  fingerprint: string
+  scopes: string[]
+  rules: number
+  enabled: boolean
+}
+
+export interface PolicyModulesStatus {
+  modules: PolicyModuleInfo[]
+  uncoveredOps: 'deny' | 'allow'
+}
+
+/** Shape shared by every module-management call that just reports success. */
+export interface OkResult {
+  ok: boolean
+  error?: string
+}
+
 /** Result of {@link KmipEngine.rawPkcs11EncryptProbe} — a raw, KMIP/CACP-bypassing
  * PKCS#11 Encrypt attempt against a KMIP-created key's own engine object. */
 export interface RawPkcs11EncryptProbeResult {
@@ -260,6 +281,19 @@ export interface DryRunTraceStep {
   note: string
 }
 
+/** Mechanism parameters a `mechanism_parameter_default` rule forced onto the
+ * request (C4, 2026-08-28 gaps-remediation plan) — every field is `null`
+ * unless a forcing rule actually set it. Names are already resolved from the
+ * raw KMIP codepoint, not the codepoint itself. */
+export interface CpOverrideResult {
+  hashingAlgorithm: string | null
+  blockCipherMode: string | null
+  paddingMethod: string | null
+  deterministic: boolean | null
+  tagLength: number | null
+  saltLength: number | null
+}
+
 export interface DryRunResult {
   kind: 'Allow' | 'Deny' | 'Rekey'
   algorithm?: string | null
@@ -270,6 +304,28 @@ export interface DryRunResult {
   denyReason?: string
   /** Per-rule engine trace — drives the visual simulator's node highlighting. */
   trace?: DryRunTraceStep[]
+  /** Set only on an `Allow` a forcing rule touched — was silently dropped
+   * before C4, so a mechanism-forcing rule's rewrite was invisible here. */
+  cpOverride?: CpOverrideResult | null
+}
+
+/** One value-level lint finding (C3, 2026-08-28 gaps-remediation plan) —
+ * mirrors the Rust engine's `policy::lint::Finding` exactly. `ruleIndex` is
+ * 1-based, matching policy file line order and `Decision::Deny`'s own
+ * `fired_rule_index` convention. */
+export interface PolicyLintFinding {
+  ruleIndex: number
+  field: string
+  value: string
+  fatal: boolean
+  message: string
+}
+
+export interface PolicyLintResult {
+  ok: boolean
+  findings?: PolicyLintFinding[]
+  /** Set only when `ok:false` — a structural failure, not a rule-level one. */
+  error?: string
 }
 
 export interface DryRunSpec {
@@ -309,6 +365,14 @@ interface WasmKmipPlayground {
   submit(ttlv: Uint8Array): Uint8Array
   load_policy(yaml: string): string
   policy_status(): string
+  release_legacy_policy(): void
+  activate_policy_module(yaml: string): string
+  deactivate_policy_module(name: string): string
+  set_policy_module_enabled(name: string, enabled: boolean): string
+  clear_policy_modules(): void
+  policy_modules_status(): string
+  set_uncovered_ops(mode: string): string
+  lint_policy_draft(yaml: string): string
   dry_run(specJson: string): string
   list_objects(): string
   audit_snapshot(limit: number): string
@@ -346,6 +410,13 @@ interface WasmModule {
 export class KmipEngine {
   private readonly pg: WasmKmipPlayground
   private readonly mod: WasmModule
+  /** Modular-policy plan — the engine itself has no notion of a "preset"
+   * (only individual scoped modules), so the label a multi-file preset
+   * activated under is tracked here purely for {@link policyStatus} to
+   * report a `name` the UI's `isActive`/catalog-highlight checks recognise.
+   * Cleared whenever a legacy {@link loadPolicy} policy is loaded or the
+   * modules are cleared. */
+  private activeModulePreset: string | null = null
 
   private constructor(pg: WasmKmipPlayground, mod: WasmModule) {
     this.pg = pg
@@ -398,18 +469,121 @@ export class KmipEngine {
     return JSON.parse(this.pg.setup_demo_ca(algorithm, subjectCn)) as SetupDemoCaResult
   }
 
-  /** Activate a crypto-agility policy from YAML (Plane 1). */
+  /** Activate a crypto-agility policy from YAML (Plane 1) — replaces
+   * whatever else is active (legacy policy AND any modules). */
   loadPolicy(yaml: string): LoadPolicyResult {
-    return JSON.parse(this.pg.load_policy(yaml)) as LoadPolicyResult
+    const res = JSON.parse(this.pg.load_policy(yaml)) as LoadPolicyResult
+    if (res.ok) this.activeModulePreset = null
+    return res
   }
 
+  /** The currently-active policy, `{ active: false }` if none. Transparently
+   * reports a multi-file modular preset too — see {@link activateModulePreset}
+   * — synthesizing the same shape a legacy {@link loadPolicy} policy reports
+   * (`name` = the preset name every module was activated under; `fingerprint`/
+   * `source` = every module's fingerprint/name joined; `rules` = summed). */
   policyStatus(): PolicyStatus {
-    return JSON.parse(this.pg.policy_status()) as PolicyStatus
+    const legacy = JSON.parse(this.pg.policy_status()) as PolicyStatus
+    if (legacy.active || !this.activeModulePreset) return legacy
+    const { modules } = this.policyModulesStatus()
+    if (modules.length === 0) {
+      this.activeModulePreset = null
+      return legacy
+    }
+    return {
+      active: true,
+      name: this.activeModulePreset,
+      fingerprint: modules.map((m) => m.fingerprint).join('+'),
+      source: modules.map((m) => m.name).join('+'),
+      rules: modules.reduce((sum, m) => sum + m.rules, 0),
+    }
+  }
+
+  /** Release the legacy single-policy slot without loading a replacement —
+   * needed before {@link activatePolicyModule} the first time (the
+   * playground boots with a legacy permissive policy active). */
+  releaseLegacyPolicy(): void {
+    this.pg.release_legacy_policy()
+  }
+
+  /** Modular-policy plan — activate ONE scoped module (e.g. one file from a
+   * policy split into `-signing`/`-key-establishment`/`-encryption`/
+   * `-global`) alongside whatever else is already active, instead of
+   * replacing the whole engine state like {@link loadPolicy}. Prefer
+   * {@link activateModulePreset} for loading a whole preset's file set. */
+  activatePolicyModule(yaml: string): LoadPolicyResult {
+    return JSON.parse(this.pg.activate_policy_module(yaml)) as LoadPolicyResult
+  }
+
+  /** Deactivate one named module. `ok:false` means no module by that name
+   * was active. */
+  deactivatePolicyModule(name: string): OkResult {
+    return JSON.parse(this.pg.deactivate_policy_module(name)) as OkResult
+  }
+
+  /** Enable/disable one active module without unloading it — a disabled
+   * module's rules are skipped during evaluation but its scope stays
+   * claimed. `ok:false` means no module by that name was active. */
+  setPolicyModuleEnabled(name: string, enabled: boolean): OkResult {
+    return JSON.parse(this.pg.set_policy_module_enabled(name, enabled)) as OkResult
+  }
+
+  /** Deactivate every module (does not touch a legacy {@link loadPolicy}
+   * policy). Call before activating a different multi-file preset — or just
+   * use {@link activateModulePreset}, which does this for you. */
+  clearPolicyModules(): void {
+    this.pg.clear_policy_modules()
+    this.activeModulePreset = null
+  }
+
+  /** Every currently-active module plus the uncovered-ops fallback mode. */
+  policyModulesStatus(): PolicyModulesStatus {
+    return JSON.parse(this.pg.policy_modules_status()) as PolicyModulesStatus
+  }
+
+  /** What the engine does with a request whose op no active module's scope
+   * covers (modular mode only) — `'deny'` (fail closed, the default) or
+   * `'allow'` (fail open; playground/incremental adoption only). */
+  setUncoveredOps(mode: 'deny' | 'allow'): OkResult {
+    return JSON.parse(this.pg.set_uncovered_ops(mode)) as OkResult
+  }
+
+  /** Swap in a whole multi-file preset atomically: releases the legacy slot,
+   * clears any previously-active modules, then activates every YAML in
+   * `yamls` (already-fetched file contents, in any order — scopes don't
+   * overlap within one preset) as a module. On the first failure, the
+   * modules already activated in this call are torn back down (so a bad
+   * preset can't leave a half-activated mix behind) and `{ ok: false,
+   * error }` is returned without touching {@link policyStatus}'s preset
+   * label. Warnings from every file are concatenated. */
+  activateModulePreset(name: string, yamls: string[]): LoadPolicyResult {
+    this.releaseLegacyPolicy()
+    this.clearPolicyModules()
+    const warnings: string[] = []
+    for (const yaml of yamls) {
+      const res = this.activatePolicyModule(yaml)
+      if (!res.ok) {
+        this.clearPolicyModules()
+        return { ok: false, error: res.error }
+      }
+      if (res.warnings) warnings.push(...res.warnings)
+    }
+    this.activeModulePreset = name
+    return { ok: true, warnings }
   }
 
   /** Evaluate what the active policy would decide — without executing anything. */
   dryRun(spec: DryRunSpec): DryRunResult {
     return JSON.parse(this.pg.dry_run(JSON.stringify(spec))) as DryRunResult
+  }
+
+  /** C3 (2026-08-28 gaps-remediation plan) — every value-level lint finding
+   * for a draft, fatal and advisory alike, unlike `loadPolicy`'s `ok:false`
+   * which reports only the first fatal one. `ok:false` here means a
+   * STRUCTURAL failure (bad YAML, unknown top-level field, bad schema
+   * version) — the visual editor's own generator never produces one. */
+  lintPolicyDraft(yaml: string): PolicyLintResult {
+    return JSON.parse(this.pg.lint_policy_draft(yaml)) as PolicyLintResult
   }
 
   listObjects(): KmipObject[] {

@@ -1,0 +1,30 @@
+# Classical crypto policy — encryption share (modular-policy plan,
+# 2026-08-28). Split from the single-file `classical.yaml`. Pair with
+# `classical-signing`, `classical-key-establishment`, and `classical-global`.
+
+schema_version: 3
+
+metadata:
+  name: classical-encryption
+  description: |
+    Pre-PQC encryption baseline: new asymmetric-encrypt keys default to
+    RSA-3072, new symmetric keys to AES-256. The `pqc-encryption` module's
+    `from: RSA-3072` substitution rule migrates existing asymmetric keys
+    after flipping (AES-256 is already PQC-safe — Grover-resistant — so it
+    carries over unchanged).
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Encrypt"]
+    default_algorithm: RSA-3072
+    reason: "Classical asymmetric-encrypt default (RSA-3072)"
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "Symmetric encryption default (AES-256)"

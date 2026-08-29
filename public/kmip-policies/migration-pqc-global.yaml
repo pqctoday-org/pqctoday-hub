@@ -1,0 +1,46 @@
+# Migration tab — full-PQC target state, cross-cutting share
+# (modular-policy plan, 2026-08-28). Split from `migration-pqc.yaml`: the
+# classical-algorithm denylist uses bare `CreateKeyPair` (plus redundant
+# explicit refinements) — cross-domain, moved here unchanged, same pattern
+# as `classical-global.yaml`. Pair with `-signing`, `-key-establishment`,
+# and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: migration-pqc-global
+  description: |
+    Under the full-PQC target state, no classical asymmetric algorithm may
+    be provisioned — new keys and rekeys must land on ML-DSA/ML-KEM/hybrid.
+    Bare `CreateKeyPair` covers every purpose; the explicit
+    `CreateKeyPair:KeyAgreement`/`:Sign`/`:Encrypt` entries are redundant
+    with it and kept only for readability.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "FIPS 203/204 target state", status: required }
+
+rules:
+  - type: algorithm_denylist
+    ops:
+      - CreateKeyPair
+      - "CreateKeyPair:KeyAgreement"
+      - "CreateKeyPair:Sign"
+      - "CreateKeyPair:Encrypt"
+    algorithms:
+      - RSA
+      - RSA-2048
+      - RSA-3072
+      - RSA-4096
+      - ECDSA-P256
+      - ECDSA-P384
+      - ECDSA-P521
+      - ECDH-P256
+      - ECDH-P384
+      - ECDH-P521
+      - Ed25519
+      - Ed448
+      - X25519
+      - X448
+    reason: "Classical asymmetric algorithms retired under the full-PQC target state"

@@ -1,0 +1,34 @@
+# Migration tab — classical estate baseline, key-establishment share
+# (modular-policy plan, 2026-08-28). Split from `migration-classical.yaml`.
+# Pair with `-signing`, `-encryption`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: migration-classical-key-establishment
+  description: |
+    Label-pattern key-agreement defaults for the Migration tab's demo
+    estate: partner-tls-kex → X25519, interbank-vpn-kex → X448.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline", status: representative }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "partner-*"
+    default_algorithm: X25519
+    reason: "Partner TLS key agreement (X25519, RFC 7748)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    name_pattern: "interbank-*"
+    default_algorithm: X448
+    reason: "Interbank VPN key agreement (X448, RFC 7748)"
+
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ECDH-P256
+    reason: "Classical KEM fallback for unlabelled requests (ECDH-P256)"

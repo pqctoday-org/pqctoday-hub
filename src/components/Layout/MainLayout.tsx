@@ -421,6 +421,14 @@ export const MainLayout = () => {
   const isCuriousMobileTakeover =
     selectedPersona === 'curious' && isBelowLg && location.pathname === '/' && !isMobileShell
 
+  // Navigate (force-cluster graph, design_handoff_force_cluster/IMPLEMENTATION-PLAN-2026-08-28.md
+  // §2.6). Unlike isCuriousMobileTakeover, this does NOT suppress the rail/top-bar chrome
+  // (deliberate product decision: "keep the left and top bar") — it only affects which
+  // content-wrapper branch renders below (bare Outlet vs. the padded/max-w-7xl/motion one),
+  // so it's used ONLY at that one branch-selection point, never at the header/bottom-nav
+  // suppression checks that key off isCuriousMobileTakeover elsewhere in this file.
+  const isFullBleedContentRoute = location.pathname === '/navigate'
+
   const isPathActive = React.useCallback(
     (path: string) =>
       path === '/' ? location.pathname === '/' : location.pathname.startsWith(path),
@@ -1344,13 +1352,23 @@ export const MainLayout = () => {
             isMobileShell && !isCuriousMobileTakeover && 'pb-[var(--mobile-nav-height)]'
           )}
         >
-          {isCuriousMobileTakeover ? (
-            /* Curious-mobile takeover: bare Outlet, no container padding, no
-               banners/Breadcrumb/PhaseContextBanner — CuriousMobileBoard is a
-               full-bleed standalone screen that supplies all of its own
-               chrome. `id="main-content"` + `role="main"` are kept so the
-               skip-link and the page's main landmark still resolve. */
-            <div id="main-content" role="main">
+          {isCuriousMobileTakeover || isFullBleedContentRoute ? (
+            /* Curious-mobile takeover OR /navigate: bare Outlet, no container
+               padding, no banners/Breadcrumb/PhaseContextBanner. CuriousMobileBoard
+               is a full-bleed standalone screen that supplies all of its own chrome;
+               /navigate's force-cluster canvas needs the same bare content slot but
+               keeps the rail/top-bar chrome around it (isFullBleedContentRoute is
+               deliberately NOT part of isCuriousMobileTakeover, which also suppresses
+               that chrome — see its definition above). `id="main-content"` +
+               `role="main"` are kept so the skip-link and the page's main landmark
+               still resolve. `h-full` is required, not cosmetic — without it
+               this div has no defined height (its own parent, the scroll
+               container, is a plain block box, not flex), so a `h-full` child
+               like ForceClusterView's canvas wrapper has nothing to inherit
+               from and collapses to its content's natural height instead of
+               filling the viewport (found via real browser verification,
+               2026-08-28). */
+            <div id="main-content" role="main" className="h-full">
               <React.Suspense
                 fallback={
                   <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">

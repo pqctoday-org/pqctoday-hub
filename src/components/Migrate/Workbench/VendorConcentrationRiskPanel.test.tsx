@@ -174,7 +174,7 @@ describe('VendorConcentrationRiskPanel', () => {
     render(<VendorConcentrationRiskPanel />)
     expect(screen.getByText('67%')).toBeInTheDocument()
     expect(
-      screen.getByText(/Acme Crypto supplies 2 of your 3 GA-ready products/)
+      screen.getByText(/Acme Crypto supplies 2 of the 3 GA-ready catalog products/)
     ).toBeInTheDocument()
   })
 

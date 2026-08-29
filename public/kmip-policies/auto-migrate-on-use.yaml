@@ -19,6 +19,14 @@ metadata:
     migration advances key-by-key as the workload exercises each one. This
     is the substitution ("rekey-on-use") dimension of crypto agility that
     KMIP alone cannot express.
+
+    Every classical signing/key-establishment algorithm this stack can
+    instantiate has an explicit rekey target (2026-08-28 audit finding B2 —
+    previously ECDSA-P521, RSA-2048, RSA-4096, Ed25519, Ed448, ECDH-P521,
+    X25519 and X448 had none, so a key using one of them kept operating
+    classically forever with no signal); a class-based backstop denies any
+    classical Sign/Encapsulate that somehow still isn't covered, so a gap
+    fails loud instead of failing open.
   authority: pqctoday-hsm/training
   effective: "2026-01-01"
   compliance_mapping:
@@ -58,9 +66,34 @@ rules:
     reason: "Rekey legacy ECDSA-P384 signing key to ML-DSA-87 at first use"
   - type: algorithm_substitution
     ops: [Sign]
+    from: ECDSA-P521
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P521 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-2048
+    to: ML-DSA-65
+    reason: "Rekey legacy RSA-2048 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
     from: RSA-3072
     to: ML-DSA-65
     reason: "Rekey legacy RSA-3072 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-4096
+    to: ML-DSA-87
+    reason: "Rekey legacy RSA-4096 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: Ed25519
+    to: ML-DSA-65
+    reason: "Rekey legacy Ed25519 signing key to ML-DSA-65 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: Ed448
+    to: ML-DSA-87
+    reason: "Rekey legacy Ed448 signing key to ML-DSA-87 at first use"
 
   # ── Existing key-establishment keys auto-rekey at first Encapsulate
   # (2026-07-05 — closes the deferral below for the ECDH side) ──────────
@@ -69,28 +102,64 @@ rules:
   # below — this is a same-op rekey the engine can execute directly, exactly
   # like the Sign-side rules above.
   #
-  # NOTE — `from:` collision (pre-existing `qualified_name` limitation, not
-  # introduced here): X25519 (256 bits) and X448 (448→default 256) both
-  # currently stringify identically to real P-256 (`ECDH-P256`), so the
-  # first rule below already covers all three (harmless — all migrate to
-  # the same ML-KEM-768 target); a future fix to give them distinct names
-  # would need a corresponding split.
+  # `from:` values — CORRECTED 2026-08-28 (audit finding B5). This comment
+  # previously claimed X25519/X448 "currently stringify identically to real
+  # P-256", so one ECDH-P256 rule was said to cover all three. That stopped
+  # being true: `helpers::montgomery_name_for_len` gives length-255/448
+  # Montgomery keys their own distinct policy names (`X25519`, `X448`)
+  # rather than falling through to `ECDH-P{bits}`, so those keys silently
+  # never matched `from: ECDH-P256` and never rekeyed. Explicit rules below.
   - type: algorithm_substitution
     ops: [Encapsulate]
     from: ECDH-P256
     to: ML-KEM-768
-    reason: "Rekey legacy ECDH-P256/X25519/X448 key-establishment key to ML-KEM-768 at first use"
+    reason: "Rekey legacy ECDH-P256 key-establishment key to ML-KEM-768 at first use"
   - type: algorithm_substitution
     ops: [Encapsulate]
     from: ECDH-P384
     to: ML-KEM-768
     reason: "Rekey legacy ECDH-P384 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P521
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P521 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X25519
+    to: ML-KEM-768
+    reason: "Rekey legacy X25519 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X448
+    to: ML-KEM-768
+    reason: "Rekey legacy X448 key-establishment key to ML-KEM-768 at first use"
 
   # RSA key-TRANSPORT (Encrypt/Decrypt, distinct from ECDH key-ESTABLISHMENT
   # above) → ML-KEM remains deferred: a cross-primitive migration (encrypt →
   # encapsulate) the Encrypt op cannot execute in one call. The Sign-side
   # and Encapsulate-side rekeys above are the live demo for their
   # respective primitives.
+
+  # ── Backstop: any classical Sign/Encapsulate not covered above must fail
+  # loud, not run classically forever (2026-08-28 audit finding B2). Pass 1
+  # (resolution, including the substitutions above) runs before Pass 2
+  # (gating), so a key whose algorithm WAS successfully substituted to PQC
+  # is gated against its NEW algorithm here and never matches
+  # `algorithm_class: classical` — only a genuinely uncovered classical
+  # algorithm (one with no `from:` rule above) reaches this deny. That is
+  # the intended effect: a coverage gap becomes a loud, diagnosable denial
+  # instead of a silent "keeps working classically forever".
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: classical
+    after: "always"
+    reason: "No classical signing algorithm reaches this policy without an explicit PQC rekey target"
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: classical
+    after: "always"
+    reason: "No classical key-establishment algorithm reaches this policy without an explicit PQC rekey target"
 
   # ── No NEW classical asymmetric keys while migrating ──────────────────
   - type: algorithm_denylist
@@ -100,8 +169,9 @@ rules:
       - "CreateKeyPair:KeyAgreement"
     # RSA (family entry) covers every RSA size incl. 4096; curve names listed
     # exhaustively (family matching is prefix-based, so ECDSA-P521 / Ed448 /
-    # X25519 need their own entries — added 2026-07-02).
-    algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, ECDH-P256, ECDH-P384, X25519, X448]
+    # X25519 need their own entries — added 2026-07-02; ECDH-P521 added
+    # 2026-08-28, audit finding B4's same gap in a third file).
+    algorithms: [RSA, ECDSA-P256, ECDSA-P384, ECDSA-P521, Ed25519, Ed448, ECDH-P256, ECDH-P384, ECDH-P521, X25519, X448]
     reason: "Migration in progress — create PQC keys; legacy keys rekey on use"
 
   # ── Signing only with Active keys ─────────────────────────────────────

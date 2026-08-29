@@ -7,26 +7,39 @@
 # `Padding Method` — the agility layer governing *how* a cipher is used, not
 # just *which* algorithm. Tightening the allowed modes is a policy edit.
 
-schema_version: 1
+schema_version: 3
 
 metadata:
   name: aead-only
   description: |
-    AES Encrypt/Decrypt restricted to authenticated modes (GCM / CCM); RSA
-    Encrypt/Decrypt restricted to OAEP padding. Names are KMIP 3.0 `Block
-    Cipher Mode` / `Padding Method` enum names. Note: constraint rules gate
-    parameters that are PRESENT on the request — a request that omits the
-    mode/padding entirely is not denied here (the op handler's own resolver
-    then applies its defaults).
+    AES Encrypt/Decrypt restricted to an authenticated mode (GCM only — this
+    engine's `aes_mechanism_for` does not implement CCM at all, so allowing
+    it in this list previously advertised a mode every real request would
+    fail with an unrelated-looking "unsupported cryptographic parameters"
+    engine error instead of a clean policy denial; corrected 2026-08-28,
+    audit finding B8). RSA Encrypt/Decrypt restricted to OAEP padding. Names
+    are KMIP 3.0 `Block Cipher Mode` / `Padding Method` enum names. Note:
+    constraint rules gate parameters that are PRESENT on the request — a
+    request that omits the mode/padding entirely is not denied here (the op
+    handler's own resolver then applies its defaults). `scopes: [global]`
+    (modular-policy plan, 2026-08-28 — corrected from an earlier draft's
+    `[encryption]`): this is a pure mechanism-parameter gate, not an
+    algorithm-default/substitution policy — it composes with whichever
+    encryption module (pqc-encryption, classical-encryption, ...) is
+    actually active, the same reasoning already applied to
+    `fips-hashing.yaml`/`deterministic-signing.yaml` for the signing side.
   authority: pqctoday-hsm/training
   effective: "always"
+  scopes: [global]
 
 rules:
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: AES
-    allowed_block_cipher_modes: [GCM, CCM]
-    reason: "AES must use an authenticated mode (GCM or CCM)"
+    # CCM removed 2026-08-28 (audit finding B8) — not implemented by
+    # `ops/helpers.rs::aes_mechanism_for`; see the description above.
+    allowed_block_cipher_modes: [GCM]
+    reason: "AES must use an authenticated mode (GCM — CCM is not implemented by this engine)"
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: RSA

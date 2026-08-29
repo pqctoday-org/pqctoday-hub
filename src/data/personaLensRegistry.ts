@@ -150,6 +150,11 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
     onScreenNotice: 'src/components/Changelog/ChangelogView.tsx',
     note: 'The "For me" filter states its tagged-vs-guessed split; curious gets a framing line.',
   },
+  '/navigate': {
+    lens: 'deliberately-none',
+    onScreenNotice: 'src/components/Layout/railNav.ts',
+    note: 'The whole-hub graph is derived live from real data, not persona-filtered; every persona gets the same unconditional rail entry (PERSONA_NAV_PATHS).',
+  },
   '/revisions': {
     lens: 'per-persona-config',
     configKeys: ['PERSONA_REVISION_DOMAINS'],

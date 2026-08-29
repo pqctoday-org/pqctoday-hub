@@ -1,0 +1,62 @@
+# PQC crypto policy — signing share (modular-policy plan, 2026-08-28).
+# Split from the single-file `pqc.yaml`. Pair with `pqc-key-establishment`
+# and `pqc-encryption`. The classical-asymmetric-Create denylist that used
+# to live at the bottom of `pqc.yaml` split by op into all three modules
+# (this file gets the signing-purpose algorithms).
+#
+# Application code is unchanged from the classical-* module set — this is
+# the agility engine's value-add: existing classical signing keys
+# auto-rekey to ML-DSA-87 at first Sign via the substitution rules below
+# (Decision::RekeyAndProceed → dispatcher's multi-op rekey transaction).
+
+schema_version: 3
+
+metadata:
+  name: pqc-signing
+  description: |
+    Post-PQC signing default: ML-DSA-87. Existing classical SIGNING keys
+    (ECDSA P-256/384/521, RSA-3072) auto-rekey to ML-DSA-87 at first Sign —
+    the application sees only the handle change.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "FIPS 204 ML-DSA",  status: required }
+    - { framework: "NSA CNSA-2.0",     status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:Sign"]
+    default_algorithm: ML-DSA-87
+    reason: "PQC signature default (FIPS 204, CNSA 2.0 Level 5)"
+
+  # ── Existing-key rekey: classical signing → ML-DSA-87 on Sign ─────────
+  # Triggered when the application calls Sign against a key created under
+  # classical-signing.yaml. Engine emits Decision::RekeyAndProceed —
+  # dispatcher generates a fresh ML-DSA-87 keypair, deactivates+supersedes
+  # the classical key, re-issues the Sign.
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P256
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P384
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P384 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: ECDSA-P521
+    to: ML-DSA-87
+    reason: "Rekey legacy ECDSA-P521 signing key to ML-DSA-87 at first use"
+  - type: algorithm_substitution
+    ops: [Sign]
+    from: RSA-3072
+    to: ML-DSA-87
+    reason: "Rekey legacy RSA-3072 signing key to ML-DSA-87 at first use"
+
+  # No NEW classical signing keys once flipped to PQC — moved to
+  # `pqc-global.yaml` 2026-08-28 (WS-1a parity guard): a per-scope partial
+  # denylist here covered fewer algorithms than the monolithic form's bare
+  # `CreateKeyPair` entry, a real behavioral gap the guard caught.

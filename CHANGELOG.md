@@ -29,11 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.64.0] - 2026-08-28
+## [4.67.0] - 2026-08-29
 
-Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one.
+Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run, and export a real sequence of calls, not just read about one — and now you can switch freely between the drag-and-drop builder and the real Python it generates.
 
 ### Added
+
+- **A Builder/Code switch on both Developer tabs** [view:/playground] [persona:developer]: the generated-code editor is no longer squeezed into a fixed 320px sidebar — switch to the Code tab and it takes the full width. It starts read-only (an explicit "Edit as custom script" action unlocks it) so you can't accidentally detach from the builder with a stray keystroke, and an honest "try to apply to Builder" action reads a hand-edited script back into the visual builder for the edits it can actually recognize (changed values, deleted or reordered steps) — and tells you plainly, by name, when an edit is too different to reverse (a new step typed directly into the code, for instance) rather than silently guessing.
 
 - **A PKCS#11 v3.2 Developer tab, with a drag-and-drop sequence builder** [view:/playground] [persona:developer]: drag key generation, sign/verify, encrypt/decrypt, and key-agreement primitives onto a canvas, bind each step's inputs to an earlier step's outputs, and run the whole sequence for real against the same in-browser HSM engine the rest of the PKCS#11 playground uses — on your own dedicated token slot, so it never disturbs what you're doing elsewhere on the page. The generated Python is the real PKCS#11 v3.2 classic API (`C_SignInit`/`C_Sign`, not a simplified wrapper), and downloads unmodified as a script you can run in the separately distributed dev sandbox.
 - **A KMIP 3.0 + crypto-agility Developer tab** [view:/playground] [persona:developer] [persona:architect]: pick a template — a full governed key lifecycle, an ML-KEM round trip, a policy dry-run comparison — see its real ordered steps, and run them against the same KMIP + crypto-agility policy engine the rest of the KMIP playground uses. The governed-lifecycle template ends on a policy refusal that's graded as a pass, not a failure: signing with a key before it's been activated is denied by design, and that honest "no" is the point.
@@ -50,6 +52,37 @@ Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run
 - **The PKCS#11 Developer tab's C++ engine could never provision its own practice token** [view:/playground] [persona:developer]: switching the engine selector to C++ silently broke this tab specifically, because that engine reports every slot as having a token present the instant it exists, not just once one has actually been set up — so its dedicated token slot could never be created. Both engines now work, and the summary rail names which one ran your sequence.
 - **A runaway script in either Developer tab could hang the browser tab indefinitely** [view:/playground] [persona:developer]: the 15-second timeout used to just give up and report failure while the script kept running unseen in the background — for a tight loop with no natural pause point, it couldn't even manage that much, since the timeout's own clock could never get a turn to run either. A dedicated background watchdog now delivers a real interrupt, the same way pressing Ctrl-C would, so the script actually stops.
 
+## [4.66.0] - 2026-08-29
+
+The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy set the server does, with a real module-status view and a scope-conflict warning when two policies disagree.
+
+### Added
+
+- **The Playground's crypto-agility policy engine now shows which modules are active and warns about conflicts** [view:/playground] [persona:architect] [persona:developer]: a new module-status panel lists every loaded policy module by scope, and a scope-conflict check flags when two active modules make contradictory rules for the same operation instead of silently picking one.
+- **The Playground's policy graph and simulator now reflect the real, modular policy set** [view:/playground] [persona:architect] [persona:developer]: previously built against a single combined policy file; now mirrors the server engine's 40 per-scenario YAML modules (encryption, signing, key-establishment, and global scope, across CNSA 2.0, BSI TR-02102, FIPS-only, classical, and migration-window presets), so what you see in the browser matches what the server actually enforces.
+
+### Fixed
+
+- **The in-browser KMIP engine was 2 commits behind the server engine** [persona:developer]: rebuilt from the current engine, including the ACVP test-vector resync and the modular policy-engine hardening; the corpus manifest and engine bundle now agree on which commit they were built from (a mismatch here would have silently masked drift going forward).
+
+## [4.65.0] - 2026-08-29
+
+The Simulation is now genuinely playable on a phone, start to finish: every phase works, not just the first two, and every step type — including the ones that build a document — has a real way to complete it.
+
+### Added
+
+- **All 9 migration phases (plus Foundations) are now playable on a phone, not just the first two** [view:/simulation] [persona:executive] [persona:developer] [persona:curious]: a phase strip replaces the old 2-phase switcher, and every phase's real decisions, traps, and lessons are reachable from a phone.
+- **Steps that build a document now have a real phone-native way to complete them** [view:/simulation] [persona:executive] [persona:developer]: read the same generated, sector-specific document the narrated walkthrough uses, answer one check question, and it's filed as a "Generated brief" — crediting the exact same signal desktop's Business-tool steps do. Architecture and workshop steps get their own phone-native card (a hybrid/pure-PQC pick, or a cited result card) instead of being blocked.
+- **A move-by-move receipt after every decision** [view:/simulation] [persona:executive] [persona:curious]: what just changed — a level gained, budget secured, quarters lost — instead of only the running totals.
+- **End Quarter and the quarterly report now work on a phone** [view:/simulation] [persona:executive].
+
+### Fixed
+
+- **The "Play This Phase" button in the Watch menu didn't play anything — it started the same narrated video as "Watch"** [view:/simulation] [persona:executive] [persona:curious]: it now opens the real Decide screen for phases that have one, and is labeled honestly (as narrated) for the ones that don't yet.
+- **A quiz question could grow tall enough on a phone to push its own answer button off-screen, with no way to scroll to it** [view:/simulation] [persona:developer] [persona:curious]: fixed at the source, so every quiz gate app-wide — including the new document-check flow — is affected.
+- **Completing the assessment from the Simulation's locked screen, on a phone, never actually unlocked the simulation** [view:/simulation] [persona:executive] [persona:curious]: the mobile assessment flow now correctly returns you to an unlocked run.
+- **On tablets (768–1023px), the onboarding tour and the quiz-completion gate silently didn't appear even though the full desktop board was showing** [view:/simulation] [persona:developer].
+
 ## [4.63.0] - 2026-08-28
 
 The Simulation now works honestly on a phone: learn and catalog steps can actually be marked complete there, and the artifact-reveal card no longer hides behind the run controls.
@@ -59,6 +92,24 @@ The Simulation now works honestly on a phone: learn and catalog steps can actual
 - **On mobile, Simulation steps had no way to finish — a correct pick only ever linked away** [view:/simulation] [persona:executive] [persona:curious]: the mobile Decide view now has a real completion control for learn steps (the same quiz gate desktop uses) and catalog steps (the same save action). Steps whose artifact comes from a Business tool — out of mobile's scope for now — are labeled "laptop steps" and auto-credited from the same signal desktop uses, instead of either faking them done or leaving their count permanently stuck below total. Each phase now shows a plain "X phone steps · Y laptop steps" split so that distinction is visible, not just backend logic.
 - **The mobile run-progress card could land underneath the run-control bar at the bottom of the screen, with no way to scroll to the hidden part** [view:/simulation] [persona:executive] [persona:curious]: the card now measures the run-control bar's real height and sits above it, and gains a scrollable max-height so a longer artifact description is fully readable. On mobile the run-control bar itself now starts collapsed to its title (still one tap to expand) instead of covering roughly a quarter of the screen by default.
 - **Leaving the Simulation phase overview and returning, or reloading the page on a phone, could silently reset an in-progress mobile run back to the overview** [view:/simulation] [persona:executive] [persona:curious]: the mobile play-panel's open/closed state now survives a reload, matching how the rest of a run's progress was already preserved.
+
+## [4.62.0] - 2026-08-28
+
+A new /navigate page renders the whole PQC knowledge hub as an explorable 3D graph, the Migrate vendor-risk tab's numbers are now trustworthy, and Share moves out of every page and into one place.
+
+### Added
+
+- **A new 3D graph of the whole PQC knowledge hub, at /navigate** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: about 2,400 nodes and 5,600 edges — certification bodies, crypto mechanisms, industries, use cases, compliance requirements, standards, glossary terms, products, and protocols — built live from the site's real data, not a fixed dataset. Click any node to see what it connects to and jump straight to its real page.
+
+### Fixed
+
+- **The Migrate vendor-risk tab significantly undercounted products and mislabeled infrastructure layers** [view:/migrate] [persona:executive] [persona:architect] [persona:ops]: a silent filter had been dropping about 85% of the catalog for some industries (3 of 34 HSMs shown for Finance & Banking, while the page claimed to show everything); the Supply Chain Risk matrix grouped products by raw, inconsistent layer strings (67 products miscategorized as generic "Application" instead of their real category) instead of the audited 18-domain taxonomy; and the vendor-concentration cards silently scored the wrong product set while claiming to show "yours." The formerly-largest "Unassigned" vendor bucket is gone — 19 of its 20 products now carry a real, verified vendor identity.
+- **Industry names disagreed with each other across Threats, Compliance, and Algorithms** [view:/threats] [view:/compliance] [view:/algorithms] [persona:executive] [persona:architect]: three genuinely drifted spellings ("Financial Services / Banking" vs. "Finance & Banking," and two others) are unified, and the whole site now uses one consistent industry vocabulary — 777 migrate-catalog products and 180 compliance requirements had their industry tags corrected in the process.
+- **/migrate on mobile: product PQC capabilities were hard to read and 604 of about 1,011 catalog products had no path to browse to them** [view:/migrate] [persona:executive] [persona:architect]: larger capability/certification text, a visible proof-status section, foundation-domain browsing added alongside the existing 10 "replace" domains, a working Plan-tab product lookup, a vendor product drill-down, and catalog-wide search.
+
+### Changed
+
+- **Share moved out of every individual page and into the top bar, everywhere** [persona:executive] [persona:architect] [persona:developer] [persona:researcher] [persona:ops] [persona:curious]: 19 duplicate in-page Share buttons across the Playground, business tools, Library, and Report page are gone; the top bar's Share now produces the same specific deep link each of those used to.
 
 ## [4.60.0] - 2026-08-28
 

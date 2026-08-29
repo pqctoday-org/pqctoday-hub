@@ -23,11 +23,12 @@ export const printReport = () => {
  * recipient opened rather than regenerating a token from the recipient's own
  * assessment input, which would not match the report they're looking at.
  *
- * This is the SINGLE source of truth for building a /report share URL —
- * both the in-page Share button (`shareReport` below) and the global top-bar
- * ShareButton (registered via `usePageActionsStore` in ReportView.tsx) call
- * this so they always produce the same working link, never a second/broken
- * bare-path mechanism.
+ * This is the SINGLE source of truth for building a /report share URL — the
+ * global top-bar ShareButton (registered via `usePageActionsStore` in
+ * ReportView.tsx) calls this so it always produces a working, self-contained
+ * link, never a bare-path fallback. Share lives ONLY in the top bar
+ * (2026-08-27 remediation) — `shareReport` below is the native-share-sheet
+ * mechanism that registration ultimately drives.
  */
 export const buildReportShareUrl = (result: AssessmentResult, shared: boolean): string => {
   if (shared) return window.location.href

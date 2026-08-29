@@ -1,0 +1,49 @@
+# Migration tab — classical estate baseline, cross-cutting share
+# (modular-policy plan, 2026-08-28). Split from `migration-classical.yaml`:
+# the "PQC gated off" cutoffs use bare/cross-domain ops
+# (Create/CreateKeyPair/Sign/Encrypt/Encapsulate), same pattern as
+# `classical.yaml`'s identical block — moved here unchanged. Pair with
+# `-signing`, `-key-establishment`, and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: migration-classical-global
+  description: |
+    If the application directly asks for any PQC algorithm while the
+    migration-classical module set is active, deny — this set is the
+    "before" state of the Migration tab's demo. Class-based: `algorithm_class:
+    pqc` covers every PQC and hybrid-KEM name, present and future;
+    `after: "always"` makes the cutoff unconditional.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [global]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline", status: representative }
+
+rules:
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"

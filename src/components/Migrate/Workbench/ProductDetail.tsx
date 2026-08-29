@@ -109,19 +109,22 @@ export function ProductDetail({ product }: { product: SoftwareItem }) {
         )}
       </div>
 
-      {(supportDetail || product.pqcCapabilityDescription) && (
-        <div>
-          <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
-            PQC capabilities
+      <div>
+        <p className="mb-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+          PQC capabilities
+        </p>
+        {supportDetail && <p className="font-medium text-foreground">{supportDetail}</p>}
+        {product.pqcCapabilityDescription && (
+          <p className="mt-0.5 leading-relaxed text-foreground/80">
+            {product.pqcCapabilityDescription}
           </p>
-          {supportDetail && <p className="font-medium text-foreground">{supportDetail}</p>}
-          {product.pqcCapabilityDescription && (
-            <p className="mt-0.5 leading-relaxed text-foreground/80">
-              {product.pqcCapabilityDescription}
-            </p>
-          )}
-        </div>
-      )}
+        )}
+        {!supportDetail && !product.pqcCapabilityDescription && (
+          <p className="italic text-muted-foreground">
+            No PQC capability details documented for this product.
+          </p>
+        )}
+      </div>
 
       {certs.length > 0 && (
         <div>

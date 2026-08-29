@@ -54,7 +54,7 @@ const baseMockData: ExecutiveModuleData = {
   criticalThreatCount: 0,
   totalThreatCount: 0,
   industryThreats: [],
-  vendorsByLayer: new Map(),
+  vendorsByDomain: new Map(),
   fipsValidatedCount: 0,
   pqcReadyCount: 0,
   vendorReadinessWeighted: 0,
@@ -86,7 +86,7 @@ const baseMockData: ExecutiveModuleData = {
   myThreats: [],
   myTimelineCountries: [],
   myTimelineCountryData: [],
-  vendorReadinessByLayer: new Map(),
+  vendorReadinessByDomain: new Map(),
   isAssessmentComplete: false,
   migrationDeadlineYear: 2035,
 }

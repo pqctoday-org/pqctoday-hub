@@ -27,7 +27,7 @@ import { LogsTab } from './tabs/LogsTab'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { SimplifiedViewNotice } from '../common/SimplifiedViewNotice'
@@ -91,6 +91,19 @@ export const InteractivePlayground = () => {
     logEvent('Playground', 'Switch Tab', tab)
   }
 
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // page's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback. No URL override
+  // needed: tab/algo are already synced to the URL above.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: 'Interactive Playground — PQC Today',
+      shareText: 'Run real PQC crypto operations in your browser',
+    })
+    return () => clearPageActions()
+  }, [])
+
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
       {role === 'executive' && (
@@ -121,11 +134,6 @@ export const InteractivePlayground = () => {
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h3>
-        <ShareButton
-          title="Interactive Playground — PQC Today"
-          text="Run real PQC crypto operations in your browser"
-          variant="icon"
-        />
       </div>
 
       {/* Last log entry strip */}

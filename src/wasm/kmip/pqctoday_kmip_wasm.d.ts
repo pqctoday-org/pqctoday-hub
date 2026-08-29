@@ -10,6 +10,20 @@ export class KmipPlayground {
     free(): void;
     [Symbol.dispose](): void;
     /**
+     * Modular-policy plan (2026-08-28) — activate ONE scoped module
+     * alongside whatever else is already active, instead of replacing the
+     * whole engine state. Multiple modules (e.g. a policy split into
+     * `-signing.yaml`/`-key-establishment.yaml`/`-encryption.yaml`/
+     * `-global.yaml`) compose into one working policy. Returns
+     * `{ ok, warnings, error? }`. Refused (ok:false) if the file has no
+     * `metadata.scopes`, if a legacy ([`load_policy`](Self::load_policy))
+     * policy is active, or if its scope is already claimed by a
+     * differently-named module — call
+     * [`clear_policy_modules`](Self::clear_policy_modules) first to switch
+     * presets.
+     */
+    activate_policy_module(yaml: string): string;
+    /**
      * The most recent `limit` cross-plane audit events as a JSON array
      * (each: `{ ts, plane, correlation_id, event }`).
      */
@@ -18,6 +32,17 @@ export class KmipPlayground {
      * Clear the audit ring (UI "reset trace" button).
      */
     clear_audit(): void;
+    /**
+     * Deactivate every module (does not touch a legacy
+     * [`load_policy`](Self::load_policy) policy). Call before activating a
+     * different multi-file preset.
+     */
+    clear_policy_modules(): void;
+    /**
+     * Deactivate one named module. Returns `{ ok }` — `ok:false` means no
+     * module by that name was active.
+     */
+    deactivate_policy_module(name: string): string;
     /**
      * Plane-1 "policy decision tester" (dry-run): evaluate what the active
      * policy WOULD decide for an operation, without executing it or touching the
@@ -45,6 +70,17 @@ export class KmipPlayground {
      * holds, not the request that created it).
      */
     engine_certificate_attributes(certificate_uid: string): string;
+    /**
+     * C3 (2026-08-28 gaps-remediation plan) — every value-level lint finding
+     * for a policy draft, fatal and advisory alike (not just the first fatal
+     * one `load_policy` itself stops at). Structural failures (bad YAML,
+     * unknown top-level field, bad schema version) still come back as a
+     * single `{ ok: false, error }` — those are genuinely single-valued (no
+     * "second" malformed document) and the visual editor's own generator
+     * never produces one anyway. Returns
+     * `{ ok: true, findings: [{ ruleIndex, field, value, fatal, message }] }`.
+     */
+    lint_policy_draft(yaml: string): string;
     /**
      * Every object in the KMIP store (Plane 2 keystore view) as a JSON array.
      */
@@ -83,6 +119,11 @@ export class KmipPlayground {
      */
     constructor(slot?: number | null, rng_seed_mode?: string | null);
     /**
+     * Every currently-active module: `{ modules: [{ name, fingerprint,
+     * scopes, rules, enabled }], uncoveredOps }`.
+     */
+    policy_modules_status(): string;
+    /**
      * The currently-active policy (Plane 1): `{ active, name, fingerprint,
      * source, rules }`.
      */
@@ -114,6 +155,14 @@ export class KmipPlayground {
      * strongSwan would present one, not a full in-browser CA workflow.
      */
     register_certificate_demo(linked_public_key_uid: string, cert_der_hex: string): string;
+    /**
+     * Release the legacy single-policy slot ([`load_policy`](Self::load_policy))
+     * without loading a replacement. [`activate_policy_module`](Self::activate_policy_module)
+     * refuses while it is occupied — the playground boots with a legacy
+     * permissive policy active, so switching to a multi-file modular preset
+     * must call this first.
+     */
+    release_legacy_policy(): void;
     /**
      * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
      * many operations and dispatch it through the identical decode → dispatch →
@@ -162,6 +211,20 @@ export class KmipPlayground {
      * `audit` is the list of Plane-1/2/3 events this op emitted.
      */
     run_op(spec_json: string): string;
+    /**
+     * Enable/disable one active module without unloading it — a disabled
+     * module's rules are skipped during evaluation but stay activated (its
+     * scope stays claimed). Returns `{ ok }` — `ok:false` means no module
+     * by that name was active.
+     */
+    set_policy_module_enabled(name: string, enabled: boolean): string;
+    /**
+     * Set what the engine does with a request whose op no active module's
+     * scope covers (modular mode only) — `mode` is `"deny"` (fail closed,
+     * the server default) or `"allow"` (fail open; playground/incremental
+     * adoption only). Returns `{ ok, error? }`.
+     */
+    set_uncovered_ops(mode: string): string;
     /**
      * WP5 — "Set up demo CA" affordance for the Certificate Services
      * teaching flow: generate a fresh keypair of `algorithm` in the

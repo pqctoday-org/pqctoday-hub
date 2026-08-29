@@ -12,7 +12,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -37,6 +37,20 @@ export const PlaygroundToolRoute = () => {
 
   useEffect(() => {
     if (tool) useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
+  }, [tool])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // tool's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback. The URL itself needs no
+  // override: `/playground/${toolId}` is already the shareable deep link.
+  useEffect(() => {
+    if (!tool) return
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: `${tool.name} — PQC Playground`,
+      shareText: `Try the ${tool.name} tool in the PQC Today Playground`,
+    })
+    return () => clearPageActions()
   }, [tool])
 
   // Unknown toolId → back to workshop grid
@@ -73,11 +87,6 @@ export const PlaygroundToolRoute = () => {
           </span>
         </h1>
         <div className="ml-auto flex items-center gap-1 max-sm:w-full max-sm:justify-end">
-          <ShareButton
-            title={`${tool.name} — PQC Playground`}
-            text={`Try the ${tool.name} tool in the PQC Today Playground`}
-            variant="icon"
-          />
           <EndorseButton
             endorseUrl={buildEndorsementUrl({
               category: 'pqc-tool-endorsement',

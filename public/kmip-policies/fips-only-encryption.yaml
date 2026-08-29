@@ -1,0 +1,24 @@
+# FIPS-only policy — encryption share (modular-policy plan, 2026-08-28).
+# Split from `fips-only.yaml`. Pair with `fips-only-global` (the bulk of
+# the suite) and `-signing`.
+
+schema_version: 3
+
+metadata:
+  name: fips-only-encryption
+  description: |
+    RSA encryption padding pinned to OAEP: SP 800-131A r2 disallows PKCS#1
+    v1.5 encryption after 2023 (Decrypt stays open so legacy ciphertext
+    remains recoverable).
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "FIPS 140-3", level: 3 }
+
+rules:
+  - type: mechanism_parameter_constraint
+    ops: [Encrypt]
+    algorithm: RSA
+    allowed_padding_methods: [OAEP]
+    reason: "RSA encryption must use OAEP (PKCS#1 v1.5 disallowed per SP 800-131A)"
