@@ -2,8 +2,15 @@
 /* eslint-disable security/detect-object-injection */
 import type { KeyboardEvent } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { Briefcase, Code, ShieldCheck, GraduationCap, Server, Lightbulb } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import {
+  Briefcase,
+  Code,
+  ShieldCheck,
+  GraduationCap,
+  Server,
+  Lightbulb,
+  LayoutGrid,
+} from 'lucide-react'
 import { PERSONAS, type PersonaId, type LearningPersona } from '@/data/learningPersonas'
 
 export interface RoleHomeViewProps {
@@ -154,6 +161,59 @@ const RoleCard = ({ personaId, onSelect }: RoleCardProps) => {
   )
 }
 
+interface SkipCardProps {
+  onSkip: () => void
+}
+
+/**
+ * B4 (bplus-remediation-plan-08292026.md): "Show me everything" used to sit
+ * below the 6 role cards as a plain outline `<Button>` in its own
+ * border-separated footer — a legitimate, real escape hatch (every batch of
+ * the B+ audit could reach it), but visually a fraction of a persona card's
+ * weight, so "just skip" read as the unfavored path even though picking a
+ * persona and skipping are equally supported choices here. Same
+ * `RoleCard`-shaped tile, same grid, as the 7th item — visually distinct
+ * (dashed border, muted icon chip, no urgency/first-win framing since there
+ * is none) rather than a smaller, separately-styled control.
+ */
+const SkipCard = ({ onSkip }: SkipCardProps) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onSkip()
+    }
+  }
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label="Show me everything"
+      onClick={onSkip}
+      onKeyDown={handleKeyDown}
+      className="glass-panel flex h-full cursor-pointer select-none flex-col gap-3 border-dashed p-5 text-left transition-all duration-200 hover:border-primary/50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <div className="flex items-center gap-3">
+        <span className="rounded-lg bg-muted p-2">
+          <LayoutGrid size={20} className="text-muted-foreground" aria-hidden="true" />
+        </span>
+        <div>
+          <p className="font-bold leading-tight text-foreground">Show me everything</p>
+          <p className="text-xs text-muted-foreground">No filtering</p>
+        </div>
+      </div>
+
+      <p className="text-sm leading-relaxed text-foreground/80">
+        Not sure which fits, or don't want to commit? See the full catalog, unfiltered.
+      </p>
+
+      <div className="mt-auto space-y-1 border-t border-border/50 pt-3">
+        <p className="text-xs text-muted-foreground">You can pick a role later from any page</p>
+      </div>
+    </div>
+  )
+}
+
 /**
  * Role Home — the pre-personalization front door. Replaces the old
  * multi-step Track → Role → Region → Industry wizard's entry screen with a
@@ -189,16 +249,7 @@ export const RoleHomeView = ({ onSelectPersona, onSkip }: RoleHomeViewProps) => 
         {ROLE_ORDER.map((id) => (
           <RoleCard key={id} personaId={id} onSelect={onSelectPersona} />
         ))}
-      </div>
-
-      <div className="mt-10 flex flex-col items-center gap-3 border-t border-border/50 pt-8 text-center">
-        <p className="max-w-[520px] text-sm text-muted-foreground">
-          Not sure? Skip this — you'll get everything, unfiltered, and can pick a role later from
-          any page.
-        </p>
-        <Button variant="outline" onClick={onSkip}>
-          Show me everything
-        </Button>
+        <SkipCard onSkip={onSkip} />
       </div>
     </section>
   )
