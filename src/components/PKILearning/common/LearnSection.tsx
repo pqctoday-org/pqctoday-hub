@@ -244,9 +244,9 @@ export const LearnSection: React.FC<LearnSectionProps> = ({
         className="w-full flex items-center justify-between p-6 text-left"
         aria-expanded={isOpen}
       >
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">{icon}</div>
-          <h2 id={headingId} className="text-xl font-bold text-gradient">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="shrink-0 p-2 rounded-lg bg-primary/10">{icon}</div>
+          <h2 id={headingId} className="min-w-0 text-xl font-bold text-gradient">
             {title}
           </h2>
         </div>
