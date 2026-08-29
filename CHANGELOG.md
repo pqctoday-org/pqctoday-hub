@@ -29,6 +29,24 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.62.0] - 2026-08-28
+
+A new /navigate page renders the whole PQC knowledge hub as an explorable 3D graph, the Migrate vendor-risk tab's numbers are now trustworthy, and Share moves out of every page and into one place.
+
+### Added
+
+- **A new 3D graph of the whole PQC knowledge hub, at /navigate** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: about 2,400 nodes and 5,600 edges — certification bodies, crypto mechanisms, industries, use cases, compliance requirements, standards, glossary terms, products, and protocols — built live from the site's real data, not a fixed dataset. Click any node to see what it connects to and jump straight to its real page.
+
+### Fixed
+
+- **The Migrate vendor-risk tab significantly undercounted products and mislabeled infrastructure layers** [view:/migrate] [persona:executive] [persona:architect] [persona:ops]: a silent filter had been dropping about 85% of the catalog for some industries (3 of 34 HSMs shown for Finance & Banking, while the page claimed to show everything); the Supply Chain Risk matrix grouped products by raw, inconsistent layer strings (67 products miscategorized as generic "Application" instead of their real category) instead of the audited 18-domain taxonomy; and the vendor-concentration cards silently scored the wrong product set while claiming to show "yours." The formerly-largest "Unassigned" vendor bucket is gone — 19 of its 20 products now carry a real, verified vendor identity.
+- **Industry names disagreed with each other across Threats, Compliance, and Algorithms** [view:/threats] [view:/compliance] [view:/algorithms] [persona:executive] [persona:architect]: three genuinely drifted spellings ("Financial Services / Banking" vs. "Finance & Banking," and two others) are unified, and the whole site now uses one consistent industry vocabulary — 777 migrate-catalog products and 180 compliance requirements had their industry tags corrected in the process.
+- **/migrate on mobile: product PQC capabilities were hard to read and 604 of about 1,011 catalog products had no path to browse to them** [view:/migrate] [persona:executive] [persona:architect]: larger capability/certification text, a visible proof-status section, foundation-domain browsing added alongside the existing 10 "replace" domains, a working Plan-tab product lookup, a vendor product drill-down, and catalog-wide search.
+
+### Changed
+
+- **Share moved out of every individual page and into the top bar, everywhere** [persona:executive] [persona:architect] [persona:developer] [persona:researcher] [persona:ops] [persona:curious]: 19 duplicate in-page Share buttons across the Playground, business tools, Library, and Report page are gone; the top bar's Share now produces the same specific deep link each of those used to.
+
 ## [4.59.0] - 2026-08-26
 
 The compliance requirements catalogue grows by a third and every requirement in it is now traceable to a quote that really appears in the document it cites, 126 Library documents say which Learn modules teach them, and mobile Library and Timeline gain the Document Analysis panel desktop already had.
