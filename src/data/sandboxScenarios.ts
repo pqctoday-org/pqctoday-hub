@@ -47,12 +47,12 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'SSH PQC Authentication + KEX',
     emoji: '💻',
     useCase:
-      "Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined with draft-ietf-sshm-mlkem-hybrid-kex hybrid ML-KEM key exchange (mlkem768x25519). Every auth signature traverses C_Sign on the HSM token; the ephemeral ML-KEM KEX runs in-process inside OpenSSH. Run the signature matrix to compare that HSM-backed pure ML-DSA-65 against OpenSSH 10.4's own software-only composite ML-DSA-44+Ed25519 side by side — same handshake, different key custody.",
+      "Full post-quantum SSH session: host and client auth keys (ML-DSA-65) held in softhsmv3 via PKCS#11 v3.2, combined with draft-ietf-sshm-mlkem-hybrid-kex hybrid ML-KEM key exchange (mlkem768x25519). Every auth signature traverses C_Sign on the HSM token; the ephemeral ML-KEM KEX runs in-process inside OpenSSH. Run the signature matrix to compare that HSM-backed pure ML-DSA-65 against OpenSSH 10.5's own software-only composite ML-DSA-44+Ed25519 side by side — same handshake, different key custody.",
     algorithms: [
       'ML-DSA-65',
       'SLH-DSA-SHA2-128s',
       'ML-KEM hybrid KEX',
-      'OpenSSH 10.4',
+      'OpenSSH 10.5',
       'PKCS#11 v3.2',
       'ML-DSA-44+Ed25519 (upstream)',
     ],
@@ -126,7 +126,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Hybrid Certificate Formats',
     emoji: '📜',
     useCase:
-      'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, backward compatibility, and encapsulation round-trips.',
+      'Generate and compare all 7 PQC X.509 certificate formats — Pure ML-DSA, Pure SLH-DSA, Composite, Alt-Sig/Catalyst, Related Certificates, Chameleon, and the new ML-KEM-768 KEM certificate (RFC 9935) — measuring DER sizes, keygen times, and encapsulation round-trips. Composite, Alt-Sig, Related, and Chameleon are structurally illustrated with placeholder extension content, not built to their real standardized wire format; Pure ML-DSA, Pure SLH-DSA, and the RFC 9935 KEM cert are real.',
     algorithms: ['7 Formats', 'X.509', 'RFC 9935'],
     difficulty: 'advanced',
     trackId: 'infrastructure',
@@ -165,7 +165,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Supply Chain Signing — Quantum-Safe Container Provenance',
     emoji: '📦',
     useCase:
-      'Demonstrate post-quantum software signing with the forked Sigstore cosign (v3.0.6 + ML-DSA-65) — sign a blob/manifest with an HSM-backed ML-DSA-65 key, verify it, and attach an SBOM attestation. Rekor transparency-log upload is OFF (Rekor has no ML-DSA entry type yet), disclosed honestly. Protects supply-chain integrity against quantum signature forgery per EO 14028 and SLSA Level 3.',
+      'Demonstrate post-quantum software signing with the forked Sigstore cosign (v3.0.6 + ML-DSA-65) — sign a manifest with an ML-DSA-65 key that prefers the HSM and falls back to an in-process key if the token probe fails (reported honestly via `hsm_backed`), verify it, and attach an SBOM attestation. Rekor transparency-log upload is OFF (Rekor has no ML-DSA entry type yet), disclosed honestly. Protects supply-chain integrity against quantum signature forgery per EO 14028 and SLSA Level 3.',
     algorithms: ['ML-DSA-65', 'Sigstore / cosign', 'SLSA L3'],
     difficulty: 'advanced',
     trackId: 'supply-chain',
@@ -254,7 +254,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'HSM Performance Benchmark',
     emoji: '📊',
     useCase:
-      "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment; 32 with --include-slow, which adds the six SLH-DSA small-signature parameter sets) — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers. A second access path measures the same operations through a REAL KMIP 3.0 client over TLS against pqc-kmip:5696 — remote protocol calls that each pay a full TLS handshake, so they are deliberately never plotted against the in-process PKCS#11 numbers.",
+      "Measure real PKCS#11 v3.2 throughput and latency across 26 algorithms by default (16 signature, 10 key-establishment; 32 with --include-slow, which adds the six SLH-DSA small-signature parameter sets) — classical (ECDSA, X25519/ECDH) vs pure post-quantum (ML-DSA, ML-KEM, optionally SLH-DSA) — against a real Rust PKCS#11 engine, through the exact same dlopen'd C ABI a real application would load. Every number comes from a real timed C_Sign/C_DeriveKey/C_EncapsulateKey call; keygen is measured and reported separately, never mixed into the hot-loop numbers. Three further access paths measure the same operation classes (sign, encapsulate) on a representative algorithm set (Ed25519, ML-DSA-65, ML-KEM-768 — not the full 26-algorithm matrix) through REAL remote clients, each with its own connection model stated on every row: a KMIP 3.0 client over TLS against pqc-kmip:5696 (a full TCP+TLS handshake per operation — per-request); a gRPC client, measured both with one persistent multiplexed channel reused for the whole run (persistent-channel) and with a fresh channel opened per operation for direct comparison against KMIP's per-request cost (per-request-channel); and a REST/JSON client over an HTTP/1.1 keep-alive connection (keep-alive). All three remote paths are deliberately never plotted against the in-process PKCS#11 numbers above — they measure a different thing (a network protocol, not the cryptography).",
     algorithms: ['ML-DSA', 'ML-KEM', 'Benchmark'],
     difficulty: 'advanced',
     trackId: 'web',
@@ -279,8 +279,8 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     title: 'Automated CA (Step-CA)',
     emoji: '🪜',
     useCase:
-      'Deploy Smallstep step-ca with PQC-enabled certificate issuance, contrasting classical RSA ACME workflows against post-quantum ML-DSA-65 automated certificate management.',
-    algorithms: ['ML-DSA-65', 'ACME'],
+      "Deploy Smallstep step-ca with PQC-enabled certificate issuance, contrasting classical ECDSA-P256 automated certificate management against post-quantum ML-DSA-65. This run drives the CA's issuance engine directly (mldsa-issue); the ACME protocol itself is exercised by the separate live-server scenario (18b), which verifies the directory endpoint but does not complete a full ACME order.",
+    algorithms: ['ML-DSA-65', 'ACME-capable CA'],
     difficulty: 'intermediate',
     trackId: 'applications',
     tool: {
@@ -345,7 +345,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'protocol-simulation',
     label: 'Protocol Simulation',
     subtitle:
-      'Interactive hardware telemetry for OpenSSL TLS 1.3, OpenSSH, IKEv2 VPN, and WASM TPM 2.0 PQC. Same ML-KEM-768, three integration styles: TLS negotiates it as one named hybrid group (X25519MLKEM768, ciphertext inside the key_share), SSH concatenates it into the KEX payload (mlkem768x25519-sha256, 1088 B + 32 B = 1120 B), and IKEv2 carries it as an RFC 9370 Additional Key Exchange under the IANA name ml-kem-768 — run all three and compare the wire evidence.',
+      'Interactive hardware telemetry for OpenSSL TLS 1.3, OpenSSH, and IKEv2 VPN. Same ML-KEM-768, three integration styles: TLS negotiates it as one named hybrid group (X25519MLKEM768, ciphertext inside the key_share), SSH concatenates it into the KEX payload (mlkem768x25519-sha256, 1088 B + 32 B = 1120 B), and IKEv2 carries it as an RFC 9370 Additional Key Exchange under the IANA name ml-kem-768 — run all three and compare the wire evidence.',
     difficulty: 'Intermediate',
   },
   {
@@ -373,7 +373,7 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     id: 'web',
     label: 'Web & Network Security',
     subtitle:
-      'Browser TLS negotiation, migration impact quantification, HAProxy edge-termination, A/B handshake benchmarking, and live PQC traffic analysis',
+      'Browser TLS negotiation, migration impact quantification, A/B handshake benchmarking, and real PKCS#11/KMIP throughput measurement',
     difficulty: 'Intermediate',
   },
   {
