@@ -18,8 +18,11 @@ import { mulberry32, sampleWith } from './rng'
 
 /** FNV-1a — a small, dependency-free string hash for deriving a per-module
  *  sub-seed from the run seed (so a different phase/module never draws with
- *  the same stream as another). */
-function hashString(s: string): number {
+ *  the same stream as another). Exported for briefCheck.ts (sim-mobile-
+ *  full-play WS-2), which needs the identical hash to pick a DIFFERENT
+ *  question than this module's own gate question — reusing it rather than a
+ *  second copy keeps both draws provably from the same hash family. */
+export function hashString(s: string): number {
   let h = 0x811c9dc5
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i)
