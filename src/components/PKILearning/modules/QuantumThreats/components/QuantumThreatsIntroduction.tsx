@@ -19,6 +19,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { getCrqcConsensus } from '../data/quantumConstants'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -28,6 +29,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
   onNavigateToWorkshop,
 }) => {
   useSectionAnchors()
+  const crqc = getCrqcConsensus()
 
   return (
     <div className="space-y-6 w-full">
@@ -334,7 +336,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             If your data must remain secure for <em>X</em> years, your migration will take{' '}
             <em>Y</em> years, and a CRQC is expected in <em>Z</em> years, you must start migrating{' '}
             within <strong>Z &minus; X &minus; Y</strong> years. For data with 25-year sensitivity,
-            a 5-year migration time, and a CRQC in 2035, migration should have started by 2005.
+            a 5-year migration time, and a CRQC in {crqc.zEstimate} (this catalog&apos;s
+            data-derived consensus estimate), migration should have started by{' '}
+            {crqc.zEstimate - 25 - 5}.
           </p>
         </div>
       </section>
@@ -394,8 +398,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-xs font-bold text-foreground mb-1">Why it&apos;s urgent now</div>
             <p className="text-xs text-muted-foreground">
               A Root CA issued today with a 20-year validity period will still be trusted in 2046.
-              If a CRQC arrives in 2035, that CA&apos;s RSA or ECDSA key is breakable — and every
-              certificate it ever signed becomes forgeable. Migration to{' '}
+              If a CRQC arrives within the consensus window ({crqc.qdayLow}&ndash;{crqc.qdayHigh}),
+              that CA&apos;s RSA or ECDSA key is breakable — and every certificate it ever signed
+              becomes forgeable. Migration to{' '}
               <strong>
                 <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> or{' '}
                 <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>

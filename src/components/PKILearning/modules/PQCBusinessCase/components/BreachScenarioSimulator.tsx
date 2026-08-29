@@ -297,10 +297,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           <div className="mt-3 space-y-2 text-xs text-muted-foreground leading-relaxed">
             <p>
               <strong className="text-foreground/80">1. Cost of one breach today (SLE).</strong> The
-              industry-average total breach cost from IBM&apos;s Cost of a Data Breach report,
-              multiplied by your severity setting. IBM&apos;s figure already includes detection,
+              industry-average total breach cost from{' '}
+              <a
+                href="https://www.ibm.com/reports/data-breach"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                IBM&apos;s Cost of a Data Breach Report 2025
+              </a>
+              , multiplied by your severity setting. IBM&apos;s figure already includes detection,
               notification, lost business and reputational damage, so no separate reputational term
-              is added on top — that would double-count.
+              is added on top — that would double-count.{' '}
+              <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
             </p>
             <p>
               <strong className="text-foreground/80">

@@ -18,7 +18,7 @@ const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'ai-model-sigver',
     useCase: 'AI model weight authenticity (ML-DSA-65)',
-    standard: 'NIST AI RMF + FIPS 204 ACVP',
+    standard: 'NIST AI 100-1 (AI RMF) + FIPS 204 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-functional', variant: 65 },
@@ -27,7 +27,7 @@ const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
   {
     id: 'ai-agent-encrypt',
     useCase: 'Agent credential envelope encryption',
-    standard: 'SP 800-38D + NIST AI RMF',
+    standard: 'SP 800-38D + NIST AI 100-1 (AI RMF)',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
     kind: { type: 'aesgcm-functional' },
     message: 'Agent credential token: iss=pqc-ai-platform,sub=agent-7b3f,exp=1735689600',
@@ -304,7 +304,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
       <KatValidationPanel
         specs={AI_SECURITY_KAT_SPECS}
         label="AI Security PQC Known Answer Tests"
-        authorityNote="NIST AI RMF · FIPS 204 · SP 800-38D"
+        authorityNote="NIST AI 100-1 (AI RMF) · FIPS 204 · SP 800-38D"
       />
     </div>
   )

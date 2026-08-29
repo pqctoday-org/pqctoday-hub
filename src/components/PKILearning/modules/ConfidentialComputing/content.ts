@@ -46,6 +46,11 @@ export const content: ModuleContent = {
     // before declaring — the check that caught RFC 4210, RFC 6712, SP 800-161r1
     // and a misnamed RFC 9700 row earlier the same day.
     getStandard('NIST-SP-800-38F-Recommendation-for-Block-Cipher-Modes-of-Ope'),
+    // DECLARED 2026-08-29: this module's entire subject (TEE remote
+    // attestation + key release for cloud workloads) is what NIST IR 8320E
+    // defines, and the module cited only vendor material. Active library
+    // row, directly on topic — no new reference needed.
+    getStandard('NIST IR 8320E'),
   ],
 
   algorithms: [
@@ -71,7 +76,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'TEE Architecture Explorer — Compare 7 TEE platforms by isolation, encryption, attestation, and PQC readiness. Attestation Workshop — Interactive remote attestation flow simulator with quantum vulnerability highlighting. Encryption Mechanisms — Memory encryption engine comparison, sealing key derivation, Grover impact calculator. TEE-HSM Trusted Channel — Design mutual attestation and PQC key provisioning between TEE and HSM.',
     relatedStandards:
-      'FIPS 203/204 (ML-KEM, ML-DSA for attestation key migration). Intel SGX/TDX SDK, DCAP attestation. ARM CCA (Confidential Compute Architecture). AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging). AWS Nitro Enclaves attestation framework. PKCS#11 v3.2 (TEE-HSM integration)',
+      'NIST IR 8320E (Hardware-Enabled Security: Confidential Computing of Data in Cloud Workloads — Initial Public Draft) defines the TEE + remote-attestation + key-release workflow this module teaches. FIPS 203/204 (ML-KEM, ML-DSA for attestation key migration). Intel SGX/TDX SDK, DCAP attestation. ARM CCA (Confidential Compute Architecture). AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging). AWS Nitro Enclaves attestation framework. PKCS#11 v3.2 (TEE-HSM integration)',
   },
 }
 
