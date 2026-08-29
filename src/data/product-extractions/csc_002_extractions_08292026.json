@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "softhsmrustv3 (pqctoday Rust PKCS#11 engine)",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "softhsmrustv3",
+    "product_brief": "Rust PKCS#11 engine serving as WASM crypto path for in-browser HSM and production backend for KMIP server.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implements ML-KEM, ML-DSA, SLH-DSA, and stateful HSS/LMS. Uses patched FIPS reference crates (fips204-patched, fips205-patched, hbs-lms-patched). Includes ACVP feature for conformance KATs and carries checked-in conformance evidence.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM, ML-DSA, SLH-DSA, HSS, LMS, AES, HMAC, RSA, ECDSA, EdDSA, SP800-108 KBKDF",
+    "key_management_model": "PKCS#11 v3.2 surface implementation; acts as backend for KMIP server and CACP policy engine.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software library (Rust), WASM bundle, Native library",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated (Uses \"FIPS reference crates\" with local patches; mentions FIPS 204/205/206 context via algorithm names, but no validation status is explicitly claimed for the engine itself)",
+    "primary_platforms": "Rust, WASM (WebAssembly), OrbStack/Docker",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA, HSS, LMS, ECDSA, EdDSA, RSA",
+    "authoritative_source_url": "pqctoday-org / pqctoday-hsm",
+    "implementation_attack_surface": "Not stated",
+    "cryptographic_discovery_&_inventory": "Not stated",
+    "testing_&_validation_methods": "PKCS#11 v3.2 conformance (188 checks), KAT parity vs C++ engine, ACVP conformance KATs, unit/integration tests, R3.6 parameter-set coverage",
+    "qkd_protocols_&_quantum_networking": "Not stated",
+    "qrng_&_entropy_sources": "Not stated",
+    "constrained_device_&_iot_suitability": "Not stated",
+    "supply_chain_&_vendor_risk": "Not stated",
+    "deployment_&_migration_complexity": "Not stated",
+    "financial_&_business_impact": "Not stated",
+    "organizational_readiness": "Not stated",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-08-29"
+    }
+  }
+]
