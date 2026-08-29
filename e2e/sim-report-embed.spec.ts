@@ -106,8 +106,13 @@ test.describe('Simulation — Executive Report embeds under the sim header', () 
     // has to be opened before any journey step is reachable. Measured, not
     // guessed: on the Progress tab the page carries "Executive Report" and 4
     // "open here" affordances; on Decide and Resources it carries none.
+    //
+    // The tab strip (SimulationView.tsx) is the shared Tabs/TabsTrigger
+    // component (Radix), which renders role="tab" inside a role="tablist" —
+    // confirmed via a fresh error-context.md snapshot 2026-08-29. This spec
+    // originally targeted role="button", which never matched.
     await page
-      .getByRole('button', { name: /^Progress$/i })
+      .getByRole('tab', { name: /^Progress$/i })
       .first()
       .click()
 
