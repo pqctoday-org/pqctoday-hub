@@ -231,7 +231,38 @@ const COMPOSITE_KEM_DRAFT_REVISION_BUMP =
   'replacement -19 rows are active in the same generation, same industry and ' +
   'same standard. Recorded 2026-08-18.'
 
+/** industry_market_size_: keyed by `industry`, so a label rename reads as a
+ *  deletion. f8e48c18b (WS-1, 2026-08-27) renamed 3 drifted-twin spellings
+ *  to their Assess-vocabulary form across every CSV sharing this vocabulary,
+ *  per the vendor-risk remediation plan's decision E1. Verified: the newest
+ *  generation carries "Finance & Banking" / "Government & Defense" /
+ *  "Retail & E-Commerce" in the same row position with the same payload
+ *  (value, year, metric, region, source), and both generations hold 19
+ *  industries — no row was added or dropped, only re-spelled. */
+const INDUSTRY_LABEL_DRIFTED_TWIN_RENAME =
+  'label renamed to its Assess-vocabulary spelling, not removed (f8e48c18b, ' +
+  'WS-1, 2026-08-27): same row, same payload, under the new spelling. Both ' +
+  'generations hold 19 industries.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  {
+    family: 'industry_market_size_',
+    key: 'Financial Services / Banking',
+    reason: INDUSTRY_LABEL_DRIFTED_TWIN_RENAME,
+    recorded: '2026-08-27',
+  },
+  {
+    family: 'industry_market_size_',
+    key: 'Government / Defense',
+    reason: INDUSTRY_LABEL_DRIFTED_TWIN_RENAME,
+    recorded: '2026-08-27',
+  },
+  {
+    family: 'industry_market_size_',
+    key: 'Retail / E-Commerce',
+    reason: INDUSTRY_LABEL_DRIFTED_TWIN_RENAME,
+    recorded: '2026-08-27',
+  },
   {
     family: 'industry_standards_',
     key: 'draft-ietf-lamps-pq-composite-kem-16',

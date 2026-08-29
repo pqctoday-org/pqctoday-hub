@@ -67,6 +67,7 @@ export const _C_GenerateKey: (a: number, b: number, c: number, d: number, e: num
 export const _C_GenerateKeyPair: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
 export const _C_GenerateRandom: (a: number, b: number, c: number) => number;
 export const _C_GetAttributeValue: (a: number, b: number, c: number, d: number) => number;
+export const _C_GetFunctionList: (a: number) => number;
 export const _C_GetInfo: (a: number) => number;
 export const _C_GetInterface: (a: number, b: number, c: number, d: number) => number;
 export const _C_GetInterfaceList: (a: number, b: number) => number;

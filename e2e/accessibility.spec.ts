@@ -201,6 +201,13 @@ test('RightPanel chat drawer — focus is trapped inside when open', async ({ pa
 test('Assess wizard inputs — all labelled', async ({ page }) => {
   await page.goto('/assess')
   await page.waitForSelector('[data-testid="assess-view"], [role="form"], main', { timeout: 10000 })
+  // PageMeta.tsx renders <title> via React 19's native document-metadata
+  // hoisting — during hydration there is a real, brief window where the
+  // prerendered <title> has been torn down and the client-rendered one has
+  // not landed yet, and `main` (the wait above) resolves well before that
+  // gap closes. `networkidle` is the same settle wait the passing per-route
+  // a11y tests above already rely on for this exact class of hydration race.
+  await page.waitForLoadState('networkidle').catch(() => {})
   await injectAxe(page)
   await checkA11y(
     page,
