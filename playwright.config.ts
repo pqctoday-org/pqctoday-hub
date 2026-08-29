@@ -110,10 +110,17 @@ export default defineConfig({
     // Full suite — every spec EXCEPT the local-only `*.local.spec.ts` tier
     // (directive 2026-07-01: new suites are local-only). Runs nightly
     // (.github/workflows/e2e-nightly.yml) and locally via `npm run test:e2e`.
+    // sim-mobile.spec.ts is also excluded: it has no viewport override of its
+    // own (relies entirely on mobile-smoke's `devices['iPhone 14']`), so at
+    // this project's Desktop Chrome width `isMobileShell` is structurally
+    // false and its whole phone-play UI never mounts — every test in the file
+    // failed the nightly run this way, not from a real regression. The
+    // spec's own header comment already documented mobile-smoke as its only
+    // intended project; the exclusion here was simply missing.
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: ['**/*.local.spec.ts'],
+      testIgnore: ['**/*.local.spec.ts', '**/sim-mobile.spec.ts'],
     },
     // SMOKE tier — a fast, curated, reliably-green subset of critical user
     // journeys, gated on every PR (ci.yml). Membership is an explicit allowlist
