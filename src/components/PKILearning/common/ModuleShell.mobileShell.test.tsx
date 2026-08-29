@@ -77,6 +77,16 @@ describe('ModuleShell — mobile UX layer wiring', () => {
     expect(useModuleStore.getState().modules['hsm-pqc']?.learnSectionChecks?.pkcs11).toBe(true)
   })
 
+  // Wave C2 (2026-08-29) — RelatedModulesPanel (module↔module relations,
+  // WS22 Stage 3) used to be desktop-only. hsm-pqc has real computed
+  // relations (same track/frameworkPhase peers), so this exercises the
+  // actual mount, not just "doesn't crash".
+  it('flag on: shows Related modules (WS22, previously desktop-only)', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    renderShell(<ModuleShell manifest={base} learn={<div>LEARN BODY</div>} />)
+    expect(screen.getByRole('heading', { name: 'Related modules' })).toBeInTheDocument()
+  })
+
   it('flag on: honors learnRaw over learn, matching desktop precedence', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderShell(

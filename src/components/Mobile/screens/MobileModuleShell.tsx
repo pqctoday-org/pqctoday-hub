@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import { CheckCircle2, Circle, Wrench } from 'lucide-react'
+import { CheckCircle2, Circle, Network, ArrowRight, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { MODULE_TO_TRACK, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
+// moduleRelations() is pure data/logic (no JSX) — src/components/Mobile may
+// not import a desktop VIEW component (RelatedModulesPanel), so this renders
+// its own mobile-styled list off the same computed relations instead of
+// reusing that component. See eslint.config.js's no-restricted-imports rule.
+import { moduleRelations } from '@/data/moduleRelations'
 import { useModuleStore } from '@/store/useModuleStore'
 import { MobileProgress } from '../primitives/Progress'
 import { mobileChip } from '../mobileTokens'
@@ -80,6 +85,7 @@ export function MobileModuleShell({
   const sections = LEARN_SECTIONS[manifest.id] ?? []
   const checks = modules[manifest.id]?.learnSectionChecks ?? {}
   const checkedCount = sections.filter((s) => checks[s.id]).length
+  const { entries: relatedModules } = moduleRelations(manifest.id)
 
   return (
     <div className="flex flex-col gap-4 px-4 pb-4 pt-4">
@@ -190,6 +196,44 @@ export function MobileModuleShell({
             to run it.
           </p>
         )
+      )}
+
+      {/* Wave C2 (2026-08-29) — mirrors ModuleShell.tsx's desktop-only
+          RelatedModulesPanel mount (WS22 Stage 3), rendered with mobile's own
+          markup (see the moduleRelations import note above). Rendered
+          unconditionally, same rationale as desktop: the point is to be
+          found, not a reward for completion. */}
+      {relatedModules.length > 0 && (
+        <div className="rounded-xl border border-border bg-card p-3.5">
+          <div className="mb-2.5 flex items-center gap-2">
+            <Network size={15} className="shrink-0 text-primary" aria-hidden="true" />
+            <h2 className="text-[13px] font-semibold text-foreground">Related modules</h2>
+          </div>
+          <ul className="flex flex-col gap-2">
+            {relatedModules.map((entry) => (
+              <li key={entry.id}>
+                <Link
+                  to={`/learn/${entry.id}`}
+                  className="flex items-start gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-[12.5px] transition-colors active:bg-muted"
+                >
+                  <ArrowRight
+                    size={13}
+                    className="mt-0.5 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0">
+                    <span className="block font-medium text-foreground">{entry.title}</span>
+                    {entry.reason ? (
+                      <span className="block text-[10.5px] text-muted-foreground">
+                        {entry.reason}
+                      </span>
+                    ) : null}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   )
