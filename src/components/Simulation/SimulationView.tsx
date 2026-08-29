@@ -1359,6 +1359,16 @@ export function SimulationView() {
       const budgetDelta = Math.round((budgetSecured - prev.budgetSecured) * 10) / 10
       if (budgetDelta !== 0) parts.push(`Budget ${budgetDelta > 0 ? '+' : ''}€${budgetDelta}M`)
       setMoveReceipt(parts.join(' · '))
+      // mobile-ux-layer (WS-5): "phase-cleared toast from the strip" — fires
+      // the moment THIS completion is what pushed the phase over the win
+      // line (prev.level below it, current level at/above it), regardless of
+      // whether the player is still inside Decide or already back on the
+      // strip. Guarded to isMobileShell only — desktop already has its own
+      // in-board "✓ PHASE CLEARED" banner (DecisionSection) and must not
+      // gain a NEW toast it never had.
+      if (isMobileShell && prev.level < PHASE_WIN_LEVEL && level >= PHASE_WIN_LEVEL) {
+        toast.success(`${phase.name} cleared — Gate ${phaseTree?.gate?.id ?? ''} certified`)
+      }
       pendingWrongPickRef.current = null
     } else if (pendingWrongPickRef.current && prev.sel === sel) {
       const { quarters, yearsBefore } = pendingWrongPickRef.current
@@ -2304,6 +2314,23 @@ export function SimulationView() {
           )}
           {walkthroughDoneOpen && (
             <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
+          )}
+          {/* mobile-ux-layer (WS-4): "End quarter" — the same real store action
+              (endQuarter, wired to the desktop header's own button) the board
+              uses; QuarterReport itself is hoisted below (out of the
+              desktop-only wrapper) so it's visible here too. Without this a
+              phone run's clock only ever moved on a wrong pick — a silent
+              difficulty change vs desktop. */}
+          {!autoRunPlayer.running && !autoRunPlayer.done && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={endQuarter}
+              className="gap-1.5"
+            >
+              End quarter →
+            </Button>
           )}
           <Link
             to="/"
@@ -4483,23 +4510,29 @@ export function SimulationView() {
           </div>
         )}
 
-        {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
         {/* WS-12: skippable first-run guide, shown until dismissed/finished.
             Suppressed for the DURATION of an active auto-run (including the very first
             paint of a ?run=exec deep link, checked directly to avoid a one-frame flash
             before `running` flips) — but tourSeen is never force-set here, so a user who
             enters via auto-run and never organically saw the tour is offered it once the
             run ends, instead of it being silently burned forever. */}
-        {/* mobile-ux-layer (WS-C1, 08-27): this whole block lives inside the
-            desktop-only wrapper, so it's already invisible below 768px — but
-            it still MOUNTED there (React doesn't skip effects for a
-            display:none subtree), holding a permanent focus trap + document
-            keydown listener with no way to dismiss it, since tourSeen can
-            never become true on a phone (its own onClose is what sets it).
-            !isMobileShell is a no-op at real desktop widths (always false
-            there), so this changes nothing for desktop; it only stops the
-            invisible mobile mount. */}
-        {!isMobileShell &&
+        {/* mobile-ux-layer (WS-C1, 08-27; WS-6 sim-mobile-full-play): this whole
+            block lives inside the desktop-only wrapper, so it's already
+            invisible below the `md:` (768px) breakpoint — but it still
+            MOUNTED there (React doesn't skip effects for a display:none
+            subtree), holding a permanent focus trap + document keydown
+            listener with no way to dismiss it, since tourSeen can never
+            become true on a phone (its own onClose is what sets it).
+            Guarded on `!isMobileViewport` (the real `max-width:767px` check),
+            NOT `!isMobileShell` (audit D1/WS-6 tablet-band gap): isMobileShell
+            is the FEATURE-FLAG-driven phone-shell gate, true up to 1024px —
+            so in the 768–1023px tablet band the desktop board IS visible
+            (CSS `md:flex` triggers at 768px) but isMobileShell was ALSO still
+            true there, wrongly suppressing the tour guide (and the quiz gate
+            below) even though there was a real board on screen to use them.
+            `!isMobileViewport` is a no-op at real desktop widths (both are
+            always false there), so this changes nothing above 768px. */}
+        {!isMobileViewport &&
           ((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
             tourOpen) && (
             <SimTour
@@ -4509,39 +4542,14 @@ export function SimulationView() {
               }}
             />
           )}
-        {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
-        {runCompleteOpen && !suppressWinUI && (
-          <SimRunComplete
-            objectives={scoreboard.objectives.map((o) => ({
-              id: o.id,
-              label: o.label,
-              byYear: o.byYear,
-              done: o.done,
-
-              achievedYear: objectiveAchievedYears[o.id],
-            }))}
-            maturity={scoreboard.maturity}
-            programEndYear={getScenario(country).programEndYear}
-            score={computeRunScore({
-              quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
-              difficulty,
-              trapsThisRun,
-              compliancePct: readiness.compliancePct,
-              objectivesOnTime,
-              objectivesTotal: scoreboard.objectives.length,
-            })}
-            onCopyChallenge={copyChallenge}
-            onSaveRoadmap={saveRoadmapFromCeremony}
-            onClose={() => setRunCompleteOpen(false)}
-          />
-        )}
-        {/* mobile-ux-layer (WS-A1): this instance lives inside the desktop-only
-            `hidden md:flex` wrapper, so it's invisible below 768px. isMobileShell
-            is always false at real desktop widths, so this guard is a no-op there
-            — it exists only to avoid double-mounting alongside the mobile Decide
-            view's own QuizGateModal instance below (same quizGate/setQuizGate
-            state; only one should ever be on screen). */}
-        {quizGate && !isMobileShell && (
+        {/* mobile-ux-layer (WS-A1; WS-6): this instance lives inside the
+            desktop-only `hidden md:flex` wrapper, so it's invisible below
+            768px. Guarded on `!isMobileViewport` (see SimTour above for why
+            `!isMobileShell` wrongly suppressed this in the 768–1023px tablet
+            band) — it exists only to avoid double-mounting alongside the
+            mobile Decide view's own QuizGateModal instance below (same
+            quizGate/setQuizGate state; only one should ever be on screen). */}
+        {quizGate && !isMobileViewport && (
           <QuizGateModal
             question={quizGate.question}
             moduleTitle={quizGate.title}
@@ -4554,12 +4562,6 @@ export function SimulationView() {
         )}
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
-        )}
-        {phaseRunDoneOpen && (
-          <SimPhaseRunComplete
-            phaseFocus={autoRunPlayer.phaseFocus}
-            onClose={() => setPhaseRunDoneOpen(false)}
-          />
         )}
         {pendingConfirm === 'reset' && (
           <SimConfirmDialog
@@ -4640,6 +4642,56 @@ export function SimulationView() {
             setPendingModeSwitch(null)
             setPlayModalOpen(false)
           }}
+        />
+      )}
+      {/* mobile-ux-layer (WS-4): moved OUTSIDE the desktop-only `hidden
+          md:flex` wrapper for the same reason as the confirm dialog above —
+          it used to only ever be reachable/visible on a wide viewport, so a
+          phone run's "End quarter" button (added this workstream) would have
+          opened a report that rendered off-screen. QuarterReport's own grid
+          is already `grid-cols-1 sm:grid-cols-2`, so no responsive changes
+          were needed inside sections.tsx — only its position in this tree. */}
+      {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* mobile-ux-layer (WS-5): the two ceremonies that used to fire only
+          inside the desktop-only wrapper — completion was recorded correctly
+          either way (fullyMature/runCompleteSeen and the phase-run "done"
+          state are store-derived, viewport-agnostic), but the moment itself
+          was consumed unseen on a phone (audit "Invisible ceremonies").
+          Hoisted the same way as the confirm dialog / QuarterReport above:
+          same component, same props, same conditions — only the position in
+          the tree changes, so desktop's rendering is unaffected. Both
+          components are already phone-safe by construction (fixed inset-0,
+          a max-w-constrained card, p-4 outer padding, flex-wrap button rows)
+          — confirmed by screenshot at iPhone-13 width, no `max-md:` changes
+          needed in either file. */}
+      {runCompleteOpen && !suppressWinUI && (
+        <SimRunComplete
+          objectives={scoreboard.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+            achievedYear: objectiveAchievedYears[o.id],
+          }))}
+          maturity={scoreboard.maturity}
+          programEndYear={getScenario(country).programEndYear}
+          score={computeRunScore({
+            quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+            difficulty,
+            trapsThisRun,
+            compliancePct: readiness.compliancePct,
+            objectivesOnTime,
+            objectivesTotal: scoreboard.objectives.length,
+          })}
+          onCopyChallenge={copyChallenge}
+          onSaveRoadmap={saveRoadmapFromCeremony}
+          onClose={() => setRunCompleteOpen(false)}
+        />
+      )}
+      {phaseRunDoneOpen && (
+        <SimPhaseRunComplete
+          phaseFocus={autoRunPlayer.phaseFocus}
+          onClose={() => setPhaseRunDoneOpen(false)}
         />
       )}
     </>

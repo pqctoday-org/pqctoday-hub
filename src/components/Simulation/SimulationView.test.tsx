@@ -613,3 +613,28 @@ describe('SimulationView — mobile-ux-layer phase switcher + sel restore (audit
     ).not.toBeInTheDocument()
   })
 })
+
+// mobile-ux-layer (WS-6, sim-mobile-full-play) — the 768–1023px tablet band:
+// isMobileShell (the feature-flag-driven phone-shell gate) is true up to
+// 1024px wide, but the desktop board's CSS visibility only flips at 768px
+// (`hidden md:flex`) — so a tablet-width visitor sees the FULL desktop board
+// (isMobileShell true, isMobileViewport false) while guards that read
+// isMobileShell alone wrongly treated it as a phone and suppressed
+// desktop-only features that were actually on screen. jsdom has no
+// `window.matchMedia`, so isMobileViewport initializes false in every test —
+// exactly the tablet-band condition when isMobileShell is mocked true.
+describe('SimulationView — mobile-ux-layer tablet band (WS-6)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('the first-run guide is NOT suppressed in the tablet band (isMobileShell true, real board visible)', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ tourSeen: false })
+    renderPage()
+    // Before the WS-6 fix this guarded on `!isMobileShell` (false here),
+    // so the tour never rendered even though the desktop board it walks
+    // through is what's actually on screen at this width.
+    expect(screen.getByRole('dialog', { name: /simulation guide/i })).toBeInTheDocument()
+  })
+})
