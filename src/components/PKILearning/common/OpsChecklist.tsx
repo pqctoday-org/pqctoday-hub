@@ -28,6 +28,10 @@ interface OpsChecklistProps {
    *  rendered markdown + the set of checked item ids so the caller can persist
    *  an executive artifact. Omit to hide the button (back-compat default). */
   onSave?: (payload: { markdown: string; checkedItems: string[] }) => void
+  /** Restore-on-mount half of the save/restore pair — the caller's own
+   *  `useSavedArtifactInputs('<type>')` read-back. Omit to start unchecked
+   *  (the pre-existing behavior for callers with no persistence at all). */
+  initialCheckedItems?: string[]
 }
 
 /** Extracted (07192026, Batch 3) so the simulation's real-tool doc generator
@@ -56,18 +60,25 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
   description,
   sections,
   onSave,
+  initialCheckedItems,
 }) => {
   const { selectedPersona } = usePersonaStore()
   const isOps = selectedPersona === 'ops'
 
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(() => new Set(initialCheckedItems))
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(sections.map((s) => s.title))
   )
   const [copied, setCopied] = useState(false)
   // Persistent done-state keyed on the checked items (survives further edits).
-  const [wasSaved, setWasSaved] = useState(false)
-  const [lastSavedKey, setLastSavedKey] = useState<string | null>(null)
+  // Seeded from a restored save so reopening this checklist right after
+  // saving doesn't show "not yet saved" for state that already is.
+  const initialKey = useMemo(
+    () => (initialCheckedItems ? [...initialCheckedItems].sort().join('|') : null),
+    [initialCheckedItems]
+  )
+  const [wasSaved, setWasSaved] = useState(initialKey !== null)
+  const [lastSavedKey, setLastSavedKey] = useState<string | null>(initialKey)
 
   const totalItems = useMemo(() => sections.reduce((sum, s) => sum + s.items.length, 0), [sections])
   const checkedCount = checkedItems.size

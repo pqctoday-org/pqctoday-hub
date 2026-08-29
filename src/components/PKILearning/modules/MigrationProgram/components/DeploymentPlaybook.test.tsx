@@ -58,3 +58,36 @@ describe('DeploymentPlaybook — roadmap output chaining', () => {
     ).toBeInTheDocument()
   })
 })
+
+describe('DeploymentPlaybook — checklist persistence', () => {
+  beforeEach(() => {
+    mockExecutiveDocuments = []
+    addExecutiveDocument.mockClear()
+  })
+
+  it('restores previously-checked items instead of always starting empty', () => {
+    // OpsChecklist's checkedItems state used to always initialize to new
+    // Set() with no restore path at all, so a saved playbook looked reset
+    // on every remount even though the save itself succeeded.
+    mockExecutiveDocuments = [
+      {
+        id: 'deployment-playbook-1',
+        moduleId: 'migration-program',
+        type: 'deployment-playbook',
+        title: 'PQC Deployment Playbook',
+        data: '',
+        createdAt: Date.now(),
+        inputs: { checkedItems: ['prep-feature-flags'] },
+      },
+    ]
+    render(<DeploymentPlaybook />)
+    const checkbox = screen.getAllByRole('checkbox')[0]
+    expect(checkbox).toBeChecked()
+  })
+
+  it('starts unchecked when nothing was saved before', () => {
+    render(<DeploymentPlaybook />)
+    const checkbox = screen.getAllByRole('checkbox')[0]
+    expect(checkbox).not.toBeChecked()
+  })
+})
