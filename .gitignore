@@ -416,6 +416,10 @@ scripts/*
 # Timeline single-source codegen — derives sim/page facts from the timeline CSV.
 # Tracked: runs in prebuild and the CI freshness gate.
 !scripts/gen-timeline-facts.mjs
+# Landing hero-counter codegen — derives the estimate constants from the
+# algorithms/timeline/library CSVs. Tracked: runs in prebuild and the local
+# pre-push freshness gate (same pattern as gen-timeline-facts.mjs above).
+!scripts/gen-landing-counts.mjs
 # Simulation live-feed generator — emits the committed dated sim_feed_*.csv.
 !scripts/gen-sim-feed.mjs
 

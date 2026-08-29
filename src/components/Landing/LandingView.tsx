@@ -6,6 +6,11 @@ import { ArrowRight, Save, Upload } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
+import {
+  ALGORITHM_COUNT_ESTIMATE,
+  TIMELINE_EVENT_COUNT_ESTIMATE,
+  LIBRARY_COUNT_ESTIMATE,
+} from '@/data/landingCounts.generated'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useRoleBoardVariantStore } from '@/store/useRoleBoardVariantStore'
 import { resolveRoleBoardVariant, RESEARCHER_FIELD_WATCH_VARIANT_ID } from '@/data/personaConfig'
@@ -271,9 +276,16 @@ export const LandingView = () => {
     return base
   }, [selectedPersona, hasLearningProgress, assessmentStatus])
 
-  const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
-  const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
-  const [libraryCount, setLibraryCount] = useState<number | null>(null)
+  // Seeded from build-time estimates (src/data/landingCounts.generated.ts) so
+  // the hero counters render a real number on first paint instead of '...' —
+  // the async loads below still run and self-correct the count if it's ever
+  // off; they're kept because they also derive nssDeadline/latestRfc below,
+  // which genuinely do need the full datasets, not just a count.
+  const [algorithmCount, setAlgorithmCount] = useState<number | null>(ALGORITHM_COUNT_ESTIMATE)
+  const [timelineEventCount, setTimelineEventCount] = useState<number | null>(
+    TIMELINE_EVENT_COUNT_ESTIMATE
+  )
+  const [libraryCount, setLibraryCount] = useState<number | null>(LIBRARY_COUNT_ESTIMATE)
   const [nssDeadline, setNssDeadline] = useState(NSS_DEADLINE_FALLBACK)
   const [latestRfc, setLatestRfc] = useState(LATEST_RFC_FALLBACK)
 

@@ -82,6 +82,16 @@ npm run sync:wasm:check
 # Bypass with `git push --no-verify`.
 npm run gate:cacp
 
+# Landing hero-counter estimates derived from the CSVs (single source of
+# truth) — same contract and same reasoning as the timeline-facts check in
+# ci.yml, kept local-only per this repo's "no new CI jobs" policy (GitHub
+# Actions minutes are capped; local machines are the fast path). `predev`/
+# `prebuild` already regenerate this file unconditionally, so this only
+# matters for the case those two checks exist for elsewhere: a CSV edited
+# and committed without running dev/build locally afterward first.
+# Bypass with `git push --no-verify`.
+npm run gen:landing-counts:check
+
 # Silent row loss between two generations of a dated CSV.
 # ADDED 2026-08-14, after a near-miss that NOTHING else could have caught. Two
 # sessions each wrote a new generation of library_*.csv; because dated
