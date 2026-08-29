@@ -109,6 +109,18 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   const activate = page.getByRole('button', { name: '2 · Activate' })
   await expect(activate).toBeEnabled()
   await activate.click()
+  // onActivate (KmipPlaygroundView.tsx) awaits two sequential engine calls —
+  // activate the private key, then the public key. The Result panel's
+  // "Success" badge text is reused across every op (StatusBadge), so it's
+  // not a reliable signal that BOTH activations actually landed: switching
+  // tabs right after the click was observed to leave the keystore with both
+  // keys still in PreActive (a fresh error-context.md snapshot 2026-08-29
+  // showed "WrongKeyLifecycleState ... is in PreActive — op requires
+  // Active" at Sign time). Wait on the keystore table's own state cells
+  // instead — the actual ground truth, not a proxy.
+  await expect(page.getByRole('cell', { name: 'PreActive', exact: true })).toHaveCount(0, {
+    timeout: 15000,
+  })
 
   // Hand the now-Active classical key over to the rekey-on-use policy — not
   // in the featured quick-switch strip, so go through the full library.
