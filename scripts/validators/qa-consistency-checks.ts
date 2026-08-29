@@ -175,7 +175,7 @@ function isValidRoute(p: string): boolean {
   })
 }
 
-interface QARow {
+export interface QARow {
   question_id: string
   module_id: string
   module_title: string
@@ -201,7 +201,7 @@ interface QARow {
 
 // ── Find latest combined QA CSV ─────────────────────────────────────────────
 
-function findLatestQACSV(): { path: string; file: string } | null {
+export function findLatestQACSV(): { path: string; file: string } | null {
   if (!fs.existsSync(qaDir())) return null
 
   const files = fs
@@ -214,7 +214,7 @@ function findLatestQACSV(): { path: string; file: string } | null {
   return { path: path.join(qaDir(), files[0]), file: files[0] }
 }
 
-function loadQACSV(csvPath: string): QARow[] {
+export function loadQACSV(csvPath: string): QARow[] {
   const content = fs.readFileSync(csvPath, 'utf-8')
   const lines = content.split('\n')
   if (lines.length < 2) return []
