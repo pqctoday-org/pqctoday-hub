@@ -275,7 +275,10 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     <div className="space-y-6">
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
-        <p className="text-sm text-muted-foreground mb-2">{title} — Overall Score</p>
+        {/* Semantic heading, not just styled text — kpi-tracker and
+            kpi-dashboard were the only on-page structure their pages had at
+            all before this (no h1/h2/h3), a real screen-reader nav gap. */}
+        <h2 className="text-sm font-normal text-muted-foreground mb-2">{title} — Overall Score</h2>
         <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal, colorScale)}`}>
           {weightedTotal}
         </p>
