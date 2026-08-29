@@ -4,10 +4,11 @@ import { render, screen, fireEvent, within, waitFor } from '@testing-library/rea
 import { MemoryRouter } from 'react-router'
 import { SimulationView } from './SimulationView'
 import { useSimulationStore } from '@/store/useSimulationStore'
+import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentResultStore } from '@/store/useAssessmentResultStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { SIM_TREES, flattenTree } from '@/simulation'
+import { SIM_TREES, flattenTree, isGatingStep, type TreeStep } from '@/simulation'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 
 // mobile-ux-layer: SimulationView is one of the two sanctioned isMobileShell
@@ -503,21 +504,25 @@ describe('SimulationView — mobile-ux-layer real play (p0/p1)', () => {
     expect(useSimulationStore.getState().q).not.toBe(before)
   })
 
-  it('the back control returns to the read-only overview without losing the run', () => {
+  it('the back control returns to the run-home overview without losing the run', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     renderPage()
     fireEvent.click(screen.getByRole('button', { name: /Play Executive Mandate now/i }))
     fireEvent.click(screen.getByRole('button', { name: /Overview/i }))
     expect(screen.queryByTestId('sim-mobile-decide')).not.toBeInTheDocument()
-    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+    expect(screen.getByText('Your migration')).toBeInTheDocument()
   })
 
-  it('a phase beyond p0/p1 has no Play CTA — falls back to the existing read-only overview', () => {
+  // WS-1 (sim-mobile-full-play): every phase is playable now, not just p0/p1
+  // — the p0/p1-only guard this test used to assert is exactly the gap the
+  // plan closes (audit: "a phone player reaches a real decision engine for
+  // 2 of 9 phases").
+  it('a phase beyond p0/p1 ALSO has a real Play CTA (WS-1: all phases play)', () => {
     mockUseIsMobileShell.mockReturnValue(true)
     useSimulationStore.setState({ sel: 'p3' })
     renderPage()
-    expect(screen.queryByRole('button', { name: /Play .* now/i })).not.toBeInTheDocument()
-    expect(screen.getByText('Your migration at a glance')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Play .* now/i })).toBeInTheDocument()
+    expect(screen.getByText('Your migration')).toBeInTheDocument()
   })
 
   it('with the mobile shell off, the read-only overview never offers a Play CTA', () => {
@@ -607,5 +612,245 @@ describe('SimulationView — mobile-ux-layer phase switcher + sel restore (audit
     expect(
       screen.queryByRole('group', { name: /choose a playable phase/i })
     ).not.toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer (WS-6, sim-mobile-full-play) — the 768–1023px tablet band:
+// isMobileShell (the feature-flag-driven phone-shell gate) is true up to
+// 1024px wide, but the desktop board's CSS visibility only flips at 768px
+// (`hidden md:flex`) — so a tablet-width visitor sees the FULL desktop board
+// (isMobileShell true, isMobileViewport false) while guards that read
+// isMobileShell alone wrongly treated it as a phone and suppressed
+// desktop-only features that were actually on screen. jsdom has no
+// `window.matchMedia`, so isMobileViewport initializes false in every test —
+// exactly the tablet-band condition when isMobileShell is mocked true.
+describe('SimulationView — mobile-ux-layer tablet band (WS-6)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  it('the first-run guide is NOT suppressed in the tablet band (isMobileShell true, real board visible)', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ tourSeen: false })
+    renderPage()
+    // Before the WS-6 fix this guarded on `!isMobileShell` (false here),
+    // so the tour never rendered even though the desktop board it walks
+    // through is what's actually on screen at this width.
+    expect(screen.getByRole('dialog', { name: /simulation guide/i })).toBeInTheDocument()
+  })
+})
+
+// mobile-ux-layer (WS-2/WS-3/WS-7, sim-mobile-full-play) — renderCompletion
+// crediting each of the 3 kinds that gained a phone completion path this
+// plan (activity, workshop, architecture). learn/catalog/reference were
+// already covered by the pre-existing "real play (p0/p1)" describe block
+// above.
+//
+// Setup for each test completes every step BEFORE the one under test via
+// the REAL store actions the UI itself calls (updateModuleProgress,
+// markRefVisited, markCatalogStepDone, addExecutiveDocument,
+// markWorkshopVisited) — not mocks, the exact same signals isStepComplete
+// reads — so `nextMove` lands deterministically on the target step without
+// a long, fragile chain of UI-driven decisions (including quiz answers,
+// which a real `<Link>` click inside a bare MemoryRouter with no <Routes>
+// doesn't reliably resolve). The step actually under test is still driven
+// through its real rendered UI.
+describe('SimulationView — mobile-ux-layer Brief+check kinds (WS-2/WS-3)', () => {
+  afterEach(() => {
+    mockUseIsMobileShell.mockReturnValue(false)
+  })
+
+  /** Picks whichever option resolves "Right call" (tries A/B/C — content is
+   *  real framework data, not asserted against directly here). */
+  const pickRightCall = (mobileBoard: HTMLElement) => {
+    for (const letter of ['A', 'B', 'C']) {
+      const btn = within(mobileBoard).queryByRole('button', {
+        name: new RegExp(`^Option ${letter}:`),
+      })
+      if (!btn) continue
+      fireEvent.click(btn)
+      if (within(mobileBoard).queryByText('Right call', { exact: false })) return
+    }
+    throw new Error('no option resolved Right call')
+  }
+
+  /** Answers whatever quiz dialog is open (module gate or Brief check) by
+   *  trying each real answer option until Submit reveals a pass. */
+  const passAnyQuiz = () => {
+    // jsdom has no CSS engine, so a desktop-only instance of some dialogs can
+    // stay in the DOM alongside the mobile one (same reason this file's other
+    // tests use getAllByText/getAllByRole) — take the first, matching the
+    // established pattern.
+    const dialogs = screen.queryAllByRole('dialog')
+    if (dialogs.length === 0) return
+    const dialog = dialogs[0]!
+    for (let attempt = 0; attempt < 8; attempt++) {
+      // Answer options render as real <button> tags but with role="radio"
+      // (QuestionCard.tsx, single-select) — an explicit role overrides the
+      // element's implicit ARIA role, so getByRole('button') would miss
+      // them. Query the tag directly, same as this spec's e2e counterpart.
+      const candidates = Array.from(dialog.querySelectorAll('button')).filter((b) => {
+        const text = (b.textContent ?? '').trim()
+        const label = b.getAttribute('aria-label') ?? ''
+        // Exclude the action row (Submit/Try again/Mark complete) AND the
+        // icon-only close/cancel button (empty text content, aria-label
+        // only) — otherwise it's `candidates[0]` and "clicking an answer"
+        // silently closes the dialog's close button instead.
+        if (!text) return false
+        if (/^(submit|try again|mark complete|cancel)$/i.test(text)) return false
+        if (/cancel|close/i.test(label)) return false
+        return true
+      })
+      if (candidates.length === 0) return
+      fireEvent.click(candidates[attempt % candidates.length]!)
+      const submitBtn = within(dialog).queryByRole('button', { name: /^Submit$/i })
+      if (submitBtn) fireEvent.click(submitBtn)
+      const passBtn = within(dialog).queryByRole('button', { name: /Mark complete/i })
+      if (passBtn) {
+        fireEvent.click(passBtn)
+        return
+      }
+      const retryBtn = within(dialog).queryByRole('button', { name: /Try again/i })
+      if (retryBtn) fireEvent.click(retryBtn)
+    }
+  }
+
+  /** Completes ONE gating step via the real store action its kind uses —
+   *  the same signal isStepComplete (embedContract.ts) reads. `architecture`
+   *  is deliberately NOT handled (the caller stops before it; it's what
+   *  each test drives through the real UI instead). */
+  const completeStepDirectly = (step: TreeStep) => {
+    switch (step.kind) {
+      case 'learn':
+        if (step.moduleId) {
+          useModuleStore.getState().updateModuleProgress(step.moduleId, { status: 'completed' })
+        }
+        break
+      case 'reference':
+        if (step.refId) useSimulationStore.getState().markRefVisited(step.refId)
+        break
+      case 'catalog':
+        if (step.catalogId) useSimulationStore.getState().markCatalogStepDone(step.catalogId)
+        break
+      case 'workshop':
+        if (step.workshopId) useSimulationStore.getState().markWorkshopVisited(step.workshopId)
+        break
+      case 'activity':
+        if (step.artifactType) {
+          useModuleStore.getState().addExecutiveDocument({
+            id: `test-setup-${step.artifactType}`,
+            moduleId: 'test-setup',
+            type: step.artifactType,
+            title: 'test setup artifact',
+            data: '# test',
+            createdAt: Date.now(),
+          })
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  /** Completes every REQUIRED step of `phase` up to (excluding) the first
+   *  one matching `stopAt`, via real store actions. Throws if none match,
+   *  so a tree-data change that removes the target kind fails loudly. */
+  const clearStepsBefore = (phase: 'p1' | 'p5', stopAt: (s: TreeStep) => boolean) => {
+    const steps = flattenTree(SIM_TREES[phase]!).filter(isGatingStep)
+    const idx = steps.findIndex(stopAt)
+    if (idx < 0) throw new Error('no matching step found in tree — test fixture is stale')
+    for (const step of steps.slice(0, idx)) completeStepDirectly(step)
+  }
+
+  it('an activity step opens the real generated document and credits via addExecutiveDocument on File', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p1' })
+    clearStepsBefore('p1', (s) => s.kind === 'activity' && s.artifactType === 'initial-scoping')
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /(Play|Resume) Discovery & Inventory/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+
+    pickRightCall(mobileBoard)
+    const briefBtn = within(mobileBoard).getByRole('button', { name: /Read the brief/i })
+    expect(briefBtn).toBeInTheDocument()
+    fireEvent.click(briefBtn)
+
+    const sheet = screen.getByTestId('sim-brief-sheet')
+    // Real generated content (autorun/realToolDocs.ts's initial-scoping
+    // generator) — not a placeholder. The title appears twice (sheet header
+    // + the document's own H1).
+    expect(within(sheet).getAllByText(/Initial Scoping Assessment/i).length).toBeGreaterThan(0)
+
+    const checkBtn = within(sheet).queryByRole('button', { name: /Take the check/i })
+    const fileBtn = within(sheet).queryByRole('button', { name: /File this brief/i })
+    if (checkBtn) {
+      fireEvent.click(checkBtn)
+      passAnyQuiz()
+    } else {
+      fireEvent.click(fileBtn!)
+    }
+
+    // Credited through the SAME addExecutiveDocument path the narrated
+    // auto-run uses — real store state, not a mobile-only flag.
+    const docs = useModuleStore.getState().artifacts.executiveDocuments ?? []
+    const filed = docs.find(
+      (d) => d.type === 'initial-scoping' && d.moduleId === 'sim-mobile-brief'
+    )
+    expect(filed).toBeDefined()
+    expect(filed?.title).toMatch(/Generated brief/)
+    expect(screen.queryByTestId('sim-brief-sheet')).not.toBeInTheDocument()
+  })
+
+  it('a workshop step shows the real result card and credits via markWorkshopVisited on File/Log', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p5' })
+    clearStepsBefore('p5', (s) => s.kind === 'workshop')
+    const targetWorkshopId = flattenTree(SIM_TREES.p5!)
+      .filter(isGatingStep)
+      .find((s) => s.kind === 'workshop')!.workshopId!
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /(Play|Resume) Pilots/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+
+    pickRightCall(mobileBoard)
+    const resultBtn = within(mobileBoard).getByRole('button', { name: /See the result/i })
+    expect(resultBtn).toBeInTheDocument()
+    fireEvent.click(resultBtn)
+
+    const sheet = screen.getByTestId('sim-brief-sheet')
+    const checkBtn = within(sheet).queryByRole('button', { name: /Take the check/i })
+    const fileBtn = within(sheet).queryByRole('button', { name: /Log this result/i })
+    if (checkBtn) {
+      fireEvent.click(checkBtn)
+      passAnyQuiz()
+    } else {
+      fireEvent.click(fileBtn!)
+    }
+
+    // Credited through the same markWorkshopVisited store action the desktop
+    // embed uses. (Not asserting the "this step is credited" copy here — a
+    // successful credit advances `nextMove` to the NEXT step immediately,
+    // same as the activity/architecture cases, so that copy no longer
+    // applies to what's on screen the instant this assertion would run.)
+    expect(useSimulationStore.getState().visitedWorkshops).toContain(targetWorkshopId)
+    expect(screen.queryByTestId('sim-brief-sheet')).not.toBeInTheDocument()
+  })
+
+  it('an architecture step credits via the same setEdgeDecision store action desktop uses', () => {
+    mockUseIsMobileShell.mockReturnValue(true)
+    useSimulationStore.setState({ sel: 'p5' })
+    clearStepsBefore('p5', (s) => s.kind === 'architecture')
+    renderPage()
+    fireEvent.click(screen.getByRole('button', { name: /(Play|Resume) Pilots/i }))
+    const mobileBoard = screen.getByTestId('sim-mobile-decide')
+
+    pickRightCall(mobileBoard)
+    expect(within(mobileBoard).getByText(/pick Hybrid or Pure PQC/i)).toBeInTheDocument()
+    const before = Object.keys(useSimulationStore.getState().edgeDecisions).length
+    fireEvent.click(within(mobileBoard).getAllByRole('button', { name: /^Hybrid$/i })[0]!)
+    // Same real store action (setEdgeDecision) desktop's ArchitecturePanel
+    // calls — the count is the exact signal isStepComplete's architecture
+    // branch reads (embedContract.ts).
+    expect(Object.keys(useSimulationStore.getState().edgeDecisions).length).toBe(before + 1)
   })
 })

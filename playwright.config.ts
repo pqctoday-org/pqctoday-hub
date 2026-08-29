@@ -62,7 +62,17 @@ const MOBILE_SMOKE_EXCLUDE = new Set([
   'timeline-freshness-badge.spec.ts',
   'compliance-foryou-executive.spec.ts',
 ])
-const MOBILE_SMOKE_SPECS = SMOKE_SPECS.filter((f) => !MOBILE_SMOKE_EXCLUDE.has(f))
+// sim-mobile-full-play WS-7: the phone Simulation play-through spec. Added
+// directly to MOBILE_SMOKE_SPECS (not SMOKE_SPECS) so it runs ONLY under
+// `--project=mobile-smoke`, never under desktop `smoke` — and mobile-smoke
+// itself stays local-only per the comment above (not wired into ci.yml).
+// It's slow (drives ~10-25 real decisions incl. quiz interactions) and not
+// meant as a fast PR gate; run it explicitly via
+// `npx playwright test --project=mobile-smoke e2e/sim-mobile.spec.ts`.
+const MOBILE_SMOKE_SPECS = [
+  ...SMOKE_SPECS.filter((f) => !MOBILE_SMOKE_EXCLUDE.has(f)),
+  'sim-mobile.spec.ts',
+]
 
 const useDev = process.env.E2E_SERVER === 'dev' && !process.env.CI
 const serverCommand = useDev

@@ -502,6 +502,19 @@ export default defineConfig([
                 '!@/components/Playground/workshopRegistry',
                 '!@/components/Playground/cryptoLabMeta',
                 '!@/components/Playground/cryptoLabTaxonomy',
+                // simChrome.ts (Simulation) — isSimResumePending()/
+                // markSimExited() + the small style/label maps, pure
+                // sessionStorage helpers + data, no React, no store, no JSX
+                // (the file's own doc comment says so explicitly). The same
+                // real "did the player come from the sim gate?" signal
+                // desktop's AssessViewRedesign.generate() already reads, so
+                // MobileAssessView's own "Generate my report" can return to
+                // /simulation unlocked instead of always landing on this
+                // screen's own done state (sim-mobile-full-play WS-0 fix —
+                // it never had this check before).
+                '!@/components/Simulation',
+                '@/components/Simulation/*',
+                '!@/components/Simulation/simChrome',
               ],
               message:
                 'src/components/Mobile may not import a desktop view component. If the data it needs is trapped inside one, extract it as a pure-move (IMPLEMENTATION-PLAN.md §5.4) rather than importing the component. If this IS a pure logic/data module (no JSX), add an explicit 4-line exception above instead (see the comment above this rule).',

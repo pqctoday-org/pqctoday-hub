@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.64.0",
+  "version": "4.65.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -198,7 +198,6 @@
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.0",
-    "three": "^0.185.1",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
@@ -213,7 +212,6 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
-    "@types/three": "^0.185.1",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.1.10",
     "ajv": "^8.20.0",

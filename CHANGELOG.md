@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.64.0] - 2026-08-29
+## [4.66.0] - 2026-08-29
 
 The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy set the server does, with a real module-status view and a scope-conflict warning when two policies disagree.
 
@@ -41,6 +41,24 @@ The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy s
 ### Fixed
 
 - **The in-browser KMIP engine was 2 commits behind the server engine** [persona:developer]: rebuilt from the current engine, including the ACVP test-vector resync and the modular policy-engine hardening; the corpus manifest and engine bundle now agree on which commit they were built from (a mismatch here would have silently masked drift going forward).
+
+## [4.65.0] - 2026-08-29
+
+The Simulation is now genuinely playable on a phone, start to finish: every phase works, not just the first two, and every step type — including the ones that build a document — has a real way to complete it.
+
+### Added
+
+- **All 9 migration phases (plus Foundations) are now playable on a phone, not just the first two** [view:/simulation] [persona:executive] [persona:developer] [persona:curious]: a phase strip replaces the old 2-phase switcher, and every phase's real decisions, traps, and lessons are reachable from a phone.
+- **Steps that build a document now have a real phone-native way to complete them** [view:/simulation] [persona:executive] [persona:developer]: read the same generated, sector-specific document the narrated walkthrough uses, answer one check question, and it's filed as a "Generated brief" — crediting the exact same signal desktop's Business-tool steps do. Architecture and workshop steps get their own phone-native card (a hybrid/pure-PQC pick, or a cited result card) instead of being blocked.
+- **A move-by-move receipt after every decision** [view:/simulation] [persona:executive] [persona:curious]: what just changed — a level gained, budget secured, quarters lost — instead of only the running totals.
+- **End Quarter and the quarterly report now work on a phone** [view:/simulation] [persona:executive].
+
+### Fixed
+
+- **The "Play This Phase" button in the Watch menu didn't play anything — it started the same narrated video as "Watch"** [view:/simulation] [persona:executive] [persona:curious]: it now opens the real Decide screen for phases that have one, and is labeled honestly (as narrated) for the ones that don't yet.
+- **A quiz question could grow tall enough on a phone to push its own answer button off-screen, with no way to scroll to it** [view:/simulation] [persona:developer] [persona:curious]: fixed at the source, so every quiz gate app-wide — including the new document-check flow — is affected.
+- **Completing the assessment from the Simulation's locked screen, on a phone, never actually unlocked the simulation** [view:/simulation] [persona:executive] [persona:curious]: the mobile assessment flow now correctly returns you to an unlocked run.
+- **On tablets (768–1023px), the onboarding tour and the quiz-completion gate silently didn't appear even though the full desktop board was showing** [view:/simulation] [persona:developer].
 
 ## [4.63.0] - 2026-08-28
 

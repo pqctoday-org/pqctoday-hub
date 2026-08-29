@@ -23,7 +23,7 @@
  * intel rail from beginners.
  */
 import { useMemo, useState, useEffect, useRef, useCallback, Suspense } from 'react'
-import { Monitor, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   BUSINESS_TOOL_COMPONENTS,
@@ -32,6 +32,7 @@ import {
   isEmbeddableModule,
   EmbeddedLearnProvider,
   ARTIFACT_TYPE_TO_TOOL_ID,
+  TOOL_LABELS_BY_ARTIFACT_TYPE,
 } from './resourceContract'
 import {
   canEmbedStep,
@@ -63,6 +64,11 @@ import { logEvent } from '@/utils/analytics'
 import { SimArtifactReveal } from './autorun/SimArtifactReveal'
 import { SimExecWalkthroughComplete } from './autorun/SimExecWalkthroughComplete'
 import { SimPhaseRunComplete } from './autorun/SimPhaseRunComplete'
+import { SimBriefSheet } from './autorun/SimBriefSheet'
+import { WorkshopResultCard } from './autorun/WorkshopResultCard'
+import { docFor } from './autorun/simAutoRun'
+import { MarkdownView } from '@/components/ui/MarkdownView'
+import { edgeKey } from '@/data/simArchitecture'
 import {
   EXEC_TOUR_STAGES,
   EXEC_TOUR_OPENING_CONCEPTS,
@@ -106,7 +112,7 @@ import { MATURITY_LEVEL_NAMES, PHASE_WIN_LEVEL, LEVEL_EVIDENCE } from '@/data/ph
 import { SIM_MISSIONS } from '@/data/simMissions'
 import { SECTORS } from '@/data/moscaClock'
 import { deriveSimClock } from './hooks/useSimClock'
-import { JURISDICTION_RULES } from '@/data/jurisdiction'
+import { JURISDICTION_RULES, checkChoice } from '@/data/jurisdiction'
 import { JURISDICTION_AUTHORITY_NOTE } from '@/data/jurisdictionsData'
 import { useArchetypeChangeNotice } from '@/hooks/useArchetypeChangeNotice'
 import { useIsMobileShell } from '@/hooks/useIsMobileShell'
@@ -120,8 +126,10 @@ import {
   achievedTreeLevel,
   isGatingStep,
   type TreeStep,
+  type TreeActivity,
 } from '@/simulation'
 import { topBandLevel, normalizeLevel, phaseReadinessFraction } from '@/simulation/maturityScale'
+import { pickBriefCheckQuestion } from '@/simulation/briefCheck'
 import { useSandboxAvailable } from '@/components/Playground/useSandboxAvailable'
 import { computeReadiness } from '@/simulation/readiness'
 import { buildScoreboard } from '@/simulation/scoreboard'
@@ -324,6 +332,7 @@ export function SimulationView() {
     mobilePlayOpen,
     setMobilePlayOpen,
     edgeDecisions,
+    setEdgeDecision,
     year,
     q,
     crqcShift,
@@ -449,6 +458,13 @@ export function SimulationView() {
     title: string
     question: QuizQuestion
   } | null>(null)
+  // mobile-ux-layer (WS-2/WS-3): the phone "Brief + check" sheet — an
+  // `activity` step's generated document, or a `workshop` step's pre-computed
+  // result card, each with a comprehension check drawn from a sibling learn
+  // module. Captured at OPEN time (not re-derived from the live `nextMove`
+  // while the sheet is showing) so the sheet's content can't shift under the
+  // player if a store update advances `nextMove` mid-interaction.
+  const [sheetFor, setSheetFor] = useState<{ step: TreeStep; act: TreeActivity } | null>(null)
   // Is a Docker sandbox actually reachable? Scenario (lab) steps are gated on this:
   // when unavailable they show LOCKED and never open or auto-complete (bonus steps,
   // so they never block a maturity band either — see isGatingStep).
@@ -1319,16 +1335,53 @@ export function SimulationView() {
   const flatSteps = (phaseTree ? flattenTree(phaseTree) : []).filter(isGatingStep)
   const stepsTotal = flatSteps.length
   const stepsDone = flatSteps.filter((s) => stepDone(s, sel)).length
-  // mobile-ux-layer (WS-A2): activity steps produce their artifact through a
-  // Business tool (out of mobile scope for now — BusinessToolRoute has no
-  // mobile gate of its own), so they can only ever be credited from a wider
-  // screen. Every other kind (learn/reference/catalog) genuinely completes on
-  // a phone now (WS-A1). Split so the mobile UI can say that honestly instead
-  // of showing one count that can never reach its total on a phone alone.
-  const phoneSteps = flatSteps.filter((s) => s.kind !== 'activity')
-  const phoneStepsDone = phoneSteps.filter((s) => stepDone(s, sel)).length
-  const laptopSteps = flatSteps.filter((s) => s.kind === 'activity')
-  const laptopStepsDone = laptopSteps.filter((s) => stepDone(s, sel)).length
+  // mobile-ux-layer (WS-1): "move receipt" — a one-line summary of what the
+  // last decision on the ACTIVE phase actually changed (step count, level,
+  // budget), shown under the phone Decide view right after a correct pick.
+  // Computed purely from store deltas around the action (no new model,
+  // matching the plan's own constraint): snapshot the previous render's
+  // values in a ref and diff against the current render's; reset whenever
+  // `sel` changes so switching phases never manufactures a fake "move".
+  const [moveReceipt, setMoveReceipt] = useState<string | null>(null)
+  const moveReceiptRef = useRef({ sel, stepsDone, level, budgetSecured })
+  // A wrong pick's clock setback lands in the store synchronously but only
+  // shows up in `clock.yearsToHorizon` on the NEXT render — this records the
+  // pre-setback value + the exact quarters just charged (the same value
+  // handed to applyDecisionSetback below) so the effect can build the
+  // "−N quarters · Years to act X → Y" receipt off real before/after clock
+  // reads once that render lands, instead of re-deriving the arithmetic.
+  const pendingWrongPickRef = useRef<{ quarters: number; yearsBefore: number } | null>(null)
+  useEffect(() => {
+    const prev = moveReceiptRef.current
+    if (prev.sel === sel && prev.stepsDone !== stepsDone) {
+      const parts = [`Step ${stepsDone}/${stepsTotal} done`]
+      if (level !== prev.level) parts.push(`L${prev.level} → L${level}`)
+      const budgetDelta = Math.round((budgetSecured - prev.budgetSecured) * 10) / 10
+      if (budgetDelta !== 0) parts.push(`Budget ${budgetDelta > 0 ? '+' : ''}€${budgetDelta}M`)
+      setMoveReceipt(parts.join(' · '))
+      // mobile-ux-layer (WS-5): "phase-cleared toast from the strip" — fires
+      // the moment THIS completion is what pushed the phase over the win
+      // line (prev.level below it, current level at/above it), regardless of
+      // whether the player is still inside Decide or already back on the
+      // strip. Guarded to isMobileShell only — desktop already has its own
+      // in-board "✓ PHASE CLEARED" banner (DecisionSection) and must not
+      // gain a NEW toast it never had.
+      if (isMobileShell && prev.level < PHASE_WIN_LEVEL && level >= PHASE_WIN_LEVEL) {
+        toast.success(`${phase.name} cleared — Gate ${phaseTree?.gate?.id ?? ''} certified`)
+      }
+      pendingWrongPickRef.current = null
+    } else if (pendingWrongPickRef.current && prev.sel === sel) {
+      const { quarters, yearsBefore } = pendingWrongPickRef.current
+      setMoveReceipt(
+        `−${quarters} quarter${quarters > 1 ? 's' : ''} · Years to act ${yearsBefore.toFixed(1)}y → ${clock.yearsToHorizon.toFixed(1)}y`
+      )
+      pendingWrongPickRef.current = null
+    } else if (prev.sel !== sel) {
+      setMoveReceipt(null)
+      pendingWrongPickRef.current = null
+    }
+    moveReceiptRef.current = { sel, stepsDone, level, budgetSecured }
+  }, [sel, stepsDone, level, budgetSecured, stepsTotal, clock.yearsToHorizon])
   // index of the first not-yet-done step. -1 ⇒ all done. This drives only the
   // DecisionSection's "recommended" next move — it is NOT the only way to act:
   // the active band's steps are all openable (any order) in the ladder below.
@@ -1615,17 +1668,19 @@ export function SimulationView() {
 
   return (
     <>
-      {/* mobile-ux-layer Phase 9: real interactive play for p0/p1, reusing the
-          same DecisionSection + store wiring the desktop board uses (all the
-          props below are the exact real values the board computes — nothing
-          re-derived). canEmbed is forced false here: the real embed pane
-          (learnEmbed/etc.) renders inside the desktop-only `hidden md:flex`
-          wrapper below, so it would be invisible on a phone — resources open
-          via the real Link/deep-link path instead. Reached only by a
-          deliberate tap (setMobilePlayOpen(true)) from the read-only block
-          below; every other phase, and a reader who hasn't tapped in, keeps
-          that unchanged read-only block. */}
-      {isMobileShell && (sel === 'p0' || sel === 'p1') && mobilePlayOpen ? (
+      {/* mobile-ux-layer (WS-1, sim-mobile-full-play): real interactive play
+          for EVERY phase (+ Foundations) — reusing the same DecisionSection +
+          store wiring the desktop board uses (all the props below are the
+          exact real values the board computes — nothing re-derived). Until
+          this plan, this was p0/p1-only (Phase 9); every phase has a real
+          framework tree (SIM_TREES), so the restriction was never a content
+          gap, just an unimplemented guard. canEmbed is forced false here: the
+          real embed pane (learnEmbed/etc.) renders inside the desktop-only
+          `hidden md:flex` wrapper below, so it would be invisible on a phone —
+          resources open via the real Link/deep-link path instead. Reached by
+          a deliberate tap (setMobilePlayOpen(true)) from the run-home screen
+          below. */}
+      {isMobileShell && mobilePlayOpen ? (
         <div
           className="flex md:hidden fixed inset-0 z-50 flex-col overflow-auto bg-background px-4 py-6 text-foreground"
           data-testid="sim-mobile-decide"
@@ -1645,24 +1700,16 @@ export function SimulationView() {
           </div>
           <div className="mb-3">
             <span className="font-mono text-sim-micro font-bold uppercase tracking-[0.14em] text-primary">
-              Phase {phase.number} {phaseCleared ? '· cleared' : '· active'}
+              {/* WS-1: Foundations has no number (FRAMEWORK_PHASES.foundations.number
+                  is null, a spanning band, not a lifecycle phase) — this was never
+                  exercised while mobile play was p0/p1-only. */}
+              {phase.number !== null ? `Phase ${phase.number}` : 'Foundations'}{' '}
+              {phaseCleared ? '· cleared' : '· active'}
             </span>
             <h1 className="text-lg font-extrabold text-foreground">{phase.name}</h1>
             {phaseTree?.gate && (
               <p className="mt-0.5 text-[11px] text-muted-foreground">
                 Gate {phaseTree.gate.id}: {phaseTree.gate.criterion}
-              </p>
-            )}
-            {/* mobile-ux-layer (WS-A2): honest split — phoneSteps is what can
-                actually finish here; laptopSteps needs a Business tool this
-                page can't offer yet. Only shown when this phase actually has
-                laptop-only steps, so p0/p1 read identically to today if that
-                ever changes. */}
-            {laptopSteps.length > 0 && (
-              <p className="mt-1 font-mono text-[10.5px] text-muted-foreground">
-                {phoneStepsDone}/{phoneSteps.length} phone steps · {laptopStepsDone}/
-                {laptopSteps.length} laptop steps
-                {laptopStepsDone > 0 ? ` (${laptopStepsDone} credited)` : ''}
               </p>
             )}
           </div>
@@ -1732,17 +1779,111 @@ export function SimulationView() {
               }
               if (step.kind === 'activity') {
                 const done = !!step.artifactType && artifactDone(step.artifactType)
+                if (done) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ Artifact on file — this step is credited.
+                    </div>
+                  )
+                }
+                const toolLabel = step.artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[step.artifactType]?.name
+                  : undefined
                 return (
-                  <div
-                    className={`mt-2 rounded-md border px-3 py-2 text-[11px] leading-snug ${
-                      done
-                        ? 'border-success/40 bg-success/5 font-bold text-success'
-                        : 'border-dashed border-muted-foreground/40 bg-muted/30 text-muted-foreground'
-                    }`}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
+                    className="mt-2 h-auto w-full rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-[11px] font-bold text-warning hover:bg-warning/20"
                   >
-                    {done
-                      ? '✓ Artifact on file — this step is credited.'
-                      : 'Laptop step — this step is credited once its artifact is built on a wider screen.'}
+                    Read the brief{toolLabel ? ` — ${toolLabel}` : ''}
+                  </Button>
+                )
+              }
+              if (step.kind === 'workshop' && step.workshopId) {
+                const workshopId = step.workshopId
+                const done = visitedWorkshops.includes(workshopId)
+                if (done) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ Result reviewed — this step is credited.
+                    </div>
+                  )
+                }
+                return (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => nextMove && setSheetFor({ step, act: nextMove.act })}
+                    className="mt-2 h-auto w-full rounded-md border border-accent/50 bg-accent/10 px-3 py-2 text-[11px] font-bold text-accent hover:bg-accent/20"
+                  >
+                    See the result
+                  </Button>
+                )
+              }
+              if (step.kind === 'architecture' && step.minDecisions) {
+                // WS-3 (plan §4.3): a compact, inline edge picker — no sheet
+                // needed. Same judging logic as desktop's ArchitecturePanel
+                // (checkChoice against jurisdiction) and the same store action
+                // (setEdgeDecision); completion is the cumulative decision
+                // count vs this step's threshold (embedContract.ts), exactly
+                // like the desktop instance below.
+                const arch = ARCHITECTURES[size as 'small' | 'mid' | 'large' | 'global']
+                const migratable = arch.edges.filter(
+                  (e) => e.vulnerable && edgeState(arch, e) === 'migratable'
+                )
+                const decidedCount = Object.keys(edgeDecisions).length
+                const target = Math.min(step.minDecisions, migratable.length)
+                if (decidedCount >= target) {
+                  return (
+                    <div className="mt-2 rounded-md border border-success/40 bg-success/5 px-3 py-2 text-[11px] font-bold text-success">
+                      ✓ {decidedCount}/{target} migration decisions made — this step is credited.
+                    </div>
+                  )
+                }
+                const undecided = migratable.filter((e) => !edgeDecisions[edgeKey(e)])
+                return (
+                  <div className="mt-2 space-y-1.5">
+                    <div className="text-[10.5px] font-bold text-muted-foreground">
+                      {decidedCount}/{target} decisions — pick Hybrid or Pure PQC for each link:
+                    </div>
+                    {undecided.slice(0, 4).map((e) => {
+                      const key = edgeKey(e)
+                      return (
+                        <div
+                          key={key}
+                          className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5"
+                        >
+                          <span className="min-w-0 flex-1 truncate text-[11px] font-semibold text-foreground">
+                            {e.from} → {e.to} ({e.protocol})
+                          </span>
+                          <div className="flex shrink-0 gap-1">
+                            {(['hybrid', 'pure'] as const).map((choice) => {
+                              const verdict = checkChoice(country, choice)
+                              return (
+                                <Button
+                                  key={choice}
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  title={verdict.reason}
+                                  onClick={() => setEdgeDecision(key, choice)}
+                                  className={`h-auto px-2 py-1 text-[10.5px] font-bold ${
+                                    verdict.level === 'fail'
+                                      ? 'border-destructive/40 text-destructive'
+                                      : verdict.level === 'warn'
+                                        ? 'border-warning/40 text-warning'
+                                        : 'border-success/40 text-success'
+                                  }`}
+                                >
+                                  {choice === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
+                                </Button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 )
               }
@@ -1751,20 +1892,38 @@ export function SimulationView() {
             assessRec={nextMoveRec}
             onTrapPicked={incrementTrapsThisRun}
             allowRetry={balance.decisions.freeRetryOnWrongPick}
-            wrongPickCostQuarters={sel === 'p1' ? 2 : 1}
+            // WS-1: mirrors the desktop DecisionSection instance exactly (incl.
+            // the p5 edge-decision rollback) — this used to hard-code p0/p1's
+            // formula only, which was correct while mobile play was p0/p1-only
+            // but would have silently under-charged a wrong pick on p1/p5 once
+            // every phase became playable here.
+            wrongPickCostQuarters={sel === 'p1' || sel === 'p5' ? 2 : 1}
             onWrongPick={(label) => {
               // Same real setback the desktop board applies — WP4.4 uniform
-              // stakes, 2 quarters on p1 (Discovery), 1 on p0. The p5-only
-              // edge-decision rollback never applies here — this branch is
-              // only ever reached for sel === 'p0' | 'p1'.
-              const quarters = sel === 'p1' ? 2 : 1
+              // stakes, 2 quarters on Inventory (p1) / Pilots (p5), 1 elsewhere.
+              const quarters = sel === 'p1' || sel === 'p5' ? 2 : 1
+              // On Pilots (p5) a wrong call also rolls back a migrated estate
+              // link, exactly like the desktop instance.
+              const revertId = sel === 'p5' ? Object.keys(edgeDecisions)[0] : undefined
+              const extra = revertId ? ` — rolled back link ${revertId}` : ''
+              pendingWrongPickRef.current = { quarters, yearsBefore: clock.yearsToHorizon }
               applyDecisionSetback(
                 quarters,
-                `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}`,
-                undefined
+                `Lost ${quarters} quarter${quarters > 1 ? 's' : ''} to rework — wrong call: ${label}${extra}`,
+                revertId
               )
             }}
           />
+          {/* mobile-ux-layer (WS-1): the move receipt — what THIS decision
+              actually changed, computed from real store deltas (§3.3). */}
+          {moveReceipt && (
+            <div
+              className="mb-3 rounded-md border border-border bg-muted/40 px-3 py-1.5 font-mono text-[10.5px] font-bold text-foreground"
+              data-testid="sim-move-receipt"
+            >
+              {moveReceipt}
+            </div>
+          )}
           <TrapInsightsPanel />
           {/* mobile-ux-layer (WS-A1): the quiz gate a "learn" step's Mark-complete
               above can open. A second instance of the same quizGate/setQuizGate
@@ -1782,6 +1941,83 @@ export function SimulationView() {
                 setQuizGate(null)
               }}
             />
+          )}
+          {/* mobile-ux-layer (WS-2): the Brief sheet for an `activity` step —
+              reads the SAME generated document the narrated auto-run files
+              (autorun/simAutoRun.ts docFor), answers one check drawn from a
+              sibling learn module, then credits through the exact same
+              addExecutiveDocument call the auto-run uses (no parallel
+              completion mechanism). Labeled "(Generated brief)" in the
+              artifact title — the 08-27 honesty rule: a desktop user can
+              later replace it by building the real one in the tool. */}
+          {sheetFor && sheetFor.step.kind === 'activity' && (
+            <>
+              {(() => {
+                const artifactType = sheetFor.step.artifactType
+                const doc = artifactType ? docFor(artifactType, sector) : undefined
+                const toolLabel = artifactType
+                  ? TOOL_LABELS_BY_ARTIFACT_TYPE[artifactType]?.name
+                  : undefined
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker={`Generated for ${sectorOpt.label} · ${sizeOpt.label}${
+                      toolLabel
+                        ? ` — on a laptop you'd build this yourself in the ${toolLabel} tool.`
+                        : ''
+                    }`}
+                    title={doc?.title ?? sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="File this brief"
+                    onFile={() => {
+                      if (doc && artifactType) {
+                        addExecutiveDocument({
+                          id: `sim-mobile-brief-${artifactType}`,
+                          moduleId: 'sim-mobile-brief',
+                          type: artifactType,
+                          title: `${doc.title} (Generated brief)`,
+                          data: doc.data,
+                          createdAt: nowMs(),
+                        })
+                      }
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <MarkdownView content={doc?.data ?? '_No content available._'} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
+          )}
+          {/* mobile-ux-layer (WS-3): the result sheet for a `workshop` step —
+              a pre-computed, cited result card (the live playground tool
+              can't run on a phone), same check-then-credit shape, credited
+              via the same markWorkshopVisited() the desktop embed uses. */}
+          {sheetFor && sheetFor.step.kind === 'workshop' && sheetFor.step.workshopId && (
+            <>
+              {(() => {
+                const workshopId = sheetFor.step.workshopId!
+                const checkPick = pickBriefCheckQuestion(sheetFor.act, seed)
+                return (
+                  <SimBriefSheet
+                    kicker="Workshop result — practice on a laptop for the interactive version"
+                    title={sheetFor.step.label}
+                    checkTitle={sheetFor.step.label}
+                    question={checkPick?.question ?? null}
+                    fileLabel="Log this result"
+                    onFile={() => {
+                      markWorkshopVisited(workshopId)
+                      setSheetFor(null)
+                    }}
+                    onClose={() => setSheetFor(null)}
+                  >
+                    <WorkshopResultCard workshopId={workshopId} />
+                  </SimBriefSheet>
+                )
+              })()}
+            </>
           )}
           {(phaseCleared || phaseAutoActive) && recommendedStudy.length > 0 && (
             <div
@@ -1831,29 +2067,37 @@ export function SimulationView() {
           // way to reach the last ~325px of content.
           style={{ paddingBottom: 'calc(var(--sim-transport-h, 0px) + 2.5rem)' }}
         >
-          <Monitor className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
           <div className="space-y-1">
-            <h2 className="text-lg font-bold">Your migration at a glance</h2>
+            <h2 className="text-lg font-bold">Your migration</h2>
+            {/* WS-1 (sim-mobile-full-play): the board itself stays a
+                tablet/desktop layout, but every phase is genuinely playable
+                from here now — this no longer says "needs a wider screen". */}
             <p className="text-xs text-muted-foreground max-w-[300px]">
-              The playable board needs a wider screen — open it on a tablet or desktop. Here&apos;s
-              where your run stands today.
+              Pick a phase below and play it — every phase, right here on your phone.
             </p>
           </div>
-          {/* mobile-ux-layer (2026-08-24 audit R1.3): the only way to reach p0/p1
-              play was the phase ladder (desktop-only) or the "Watch" auto-run,
-              which walks `sel` through all 9 phases with no way back — a reader
-              past p1 (or one who just watched the overview) had no on-screen path
-              to the two playable phases. Visible here in BOTH the playable state
-              (sel already p0/p1) and this same read-only p2+ fallback, so it
-              doubles as the recovery path. */}
+          {/* mobile-ux-layer (WS-1): phase strip — ALL lifecycle phases +
+              Foundations, not just p0/p1 (2026-08-24 audit R1.3's p0/p1-only
+              switcher). Every chip is tappable regardless of "cleared/active/
+              available" state, exactly like the desktop phase ladder just
+              below in the `hidden md:flex` board (`onClick={() => setSel(p)}`,
+              no gate check there either) — phases are NOT sequentially locked
+              in this engine (SIM_MOVES/achievedTreeLevel gate LEVELS within a
+              phase, never phase selection itself), so this strip doesn't
+              invent a lock the desktop board doesn't have. A phase not yet
+              cleared still shows which framework gate it's working toward
+              (title tooltip + the Decide view's own header once opened). */}
           {isMobileShell && (
             <div
-              className="flex w-full max-w-[320px] rounded-lg border border-border bg-muted/40 p-1"
+              className="flex w-full max-w-[340px] gap-1.5 overflow-x-auto pb-1"
               role="group"
               aria-label="Choose a playable phase"
             >
-              {(['p0', 'p1'] as const).map((p) => {
+              {[...LIFECYCLE, 'foundations' as const].map((p) => {
                 const stats = phaseStepStats(p)
+                const fpName = p === 'foundations' ? 'Foundations' : FRAMEWORK_PHASES[p].name
+                const cleared = levelOf(p) >= PHASE_WIN_LEVEL
+                const gate = SIM_TREES[p]?.gate
                 return (
                   <Button
                     key={p}
@@ -1862,16 +2106,23 @@ export function SimulationView() {
                     size="sm"
                     onClick={() => setSel(p)}
                     aria-pressed={sel === p}
-                    className={`h-auto flex-1 flex-col gap-0 py-1.5 text-[11.5px] font-bold ${
+                    title={
+                      !cleared && gate
+                        ? `Gate ${gate.id}: ${gate.criterion}`
+                        : cleared
+                          ? 'Cleared'
+                          : undefined
+                    }
+                    className={`h-auto shrink-0 flex-col gap-0 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-[11.5px] font-bold ${
                       sel === p
-                        ? 'bg-background text-primary shadow-sm'
-                        : 'text-muted-foreground hover:bg-transparent'
+                        ? 'border-primary bg-background text-primary shadow-sm'
+                        : 'border-border text-muted-foreground hover:bg-muted'
                     }`}
                   >
-                    <span>{FRAMEWORK_PHASES[p].name}</span>
-                    {/* mobile-ux-layer (WS-A3) */}
+                    <span>{fpName}</span>
                     <span className="font-mono text-sim-chip font-normal opacity-70">
                       {stats.done}/{stats.total} · L{levelOf(p)}
+                      {cleared ? ' · cleared' : sel === p ? ' · active' : ''}
                     </span>
                   </Button>
                 )
@@ -1898,6 +2149,10 @@ export function SimulationView() {
                 label: 'Budget secured',
                 value: `€${budgetSecured}M of €${budgetTarget}M`,
               },
+              // WS-4 (sim-mobile-full-play): the phone run card had no clock
+              // readout at all — a player had no idea what quarter/year the
+              // run was on until they tapped into a phase's Decide header.
+              { label: 'Turn', value: `Q${q} ${year}` },
             ].map((row) => (
               <div
                 key={row.label}
@@ -1953,13 +2208,30 @@ export function SimulationView() {
                 type="button"
                 variant="outline"
                 size="tile"
-                onClick={() => startFromModal('phase', defaultPhase)}
+                onClick={() => {
+                  // WS-0 (D3) — this button is labeled "Play", so it must
+                  // actually play: route straight into the real Decide view
+                  // for this phase (mobilePlayOpen), the same interactive
+                  // engine every phase now has (WS-1 removed the p0/p1-only
+                  // guard). Previously this always started the NARRATED
+                  // engine — a "Play" button that only ever watched. Falls
+                  // back to the narrated single-phase run only if a phase
+                  // genuinely has no framework tree (should not happen; every
+                  // lifecycle phase + foundations has one).
+                  if (SIM_TREES[defaultPhase]) {
+                    setSel(defaultPhase)
+                    setPlayModalOpen(false)
+                    setMobilePlayOpen(true)
+                    return
+                  }
+                  startFromModal('phase', defaultPhase)
+                }}
               >
                 <div className="text-sm font-bold text-foreground">
                   Play This Phase — {FRAMEWORK_PHASES[defaultPhase].name}
                 </div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
-                  Just this phase's required steps, narrated and auto-advanced.
+                  Jump straight into this phase's decisions — real play, no narration.
                 </p>
               </Button>
               <Button
@@ -1973,17 +2245,15 @@ export function SimulationView() {
               </Button>
             </div>
           )}
-          {/* mobile-ux-layer: real interactive play, p0/p1 only — a deliberate tap,
-            never auto-opened on a genuinely fresh phase. Everything else on this
-            screen (the stats above, Watch the Executive Overview below) is
-            untouched. Label reflects real progress (level > 0, the same
-            already-computed signal phaseCleared uses) rather than always
-            reading "now" — a reader backing out via ← Overview, or landing
-            here on a fresh /simulation visit after playing earlier, deserves
-            to see this is a real phase in progress, not a start-over prompt
-            (2026-08-24, real production feedback). */}
+          {/* mobile-ux-layer (WS-1): real interactive play for EVERY phase now
+            (was p0/p1 only) — a deliberate tap, never auto-opened on a
+            genuinely fresh phase. Label reflects real progress (level > 0,
+            the same already-computed signal phaseCleared uses) rather than
+            always reading "now" — a reader backing out via ← Overview, or
+            landing here on a fresh /simulation visit after playing earlier,
+            deserves to see this is a real phase in progress, not a
+            start-over prompt (2026-08-24, real production feedback). */}
           {isMobileShell &&
-            (sel === 'p0' || sel === 'p1') &&
             !(isMobileViewport && playModalOpen) &&
             !autoRunPlayer.running &&
             !autoRunPlayer.done && (
@@ -2002,7 +2272,7 @@ export function SimulationView() {
             !autoRunPlayer.done && (
               <Button
                 type="button"
-                variant={isMobileShell && (sel === 'p0' || sel === 'p1') ? 'outline' : 'gradient'}
+                variant={isMobileShell ? 'outline' : 'gradient'}
                 size="sm"
                 className="gap-1.5"
                 onClick={() => {
@@ -2045,7 +2315,28 @@ export function SimulationView() {
           {walkthroughDoneOpen && (
             <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
           )}
-          <Link to="/" className="text-sm text-primary underline underline-offset-4">
+          {/* mobile-ux-layer (WS-4): "End quarter" — the same real store action
+              (endQuarter, wired to the desktop header's own button) the board
+              uses; QuarterReport itself is hoisted below (out of the
+              desktop-only wrapper) so it's visible here too. Without this a
+              phone run's clock only ever moved on a wrong pick — a silent
+              difficulty change vs desktop. */}
+          {!autoRunPlayer.running && !autoRunPlayer.done && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={endQuarter}
+              className="gap-1.5"
+            >
+              End quarter →
+            </Button>
+          )}
+          <Link
+            to="/"
+            onClick={() => markSimExited()}
+            className="text-sm text-primary underline underline-offset-4"
+          >
             Back to hub
           </Link>
         </div>
@@ -4219,23 +4510,29 @@ export function SimulationView() {
           </div>
         )}
 
-        {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
         {/* WS-12: skippable first-run guide, shown until dismissed/finished.
             Suppressed for the DURATION of an active auto-run (including the very first
             paint of a ?run=exec deep link, checked directly to avoid a one-frame flash
             before `running` flips) — but tourSeen is never force-set here, so a user who
             enters via auto-run and never organically saw the tour is offered it once the
             run ends, instead of it being silently burned forever. */}
-        {/* mobile-ux-layer (WS-C1, 08-27): this whole block lives inside the
-            desktop-only wrapper, so it's already invisible below 768px — but
-            it still MOUNTED there (React doesn't skip effects for a
-            display:none subtree), holding a permanent focus trap + document
-            keydown listener with no way to dismiss it, since tourSeen can
-            never become true on a phone (its own onClose is what sets it).
-            !isMobileShell is a no-op at real desktop widths (always false
-            there), so this changes nothing for desktop; it only stops the
-            invisible mobile mount. */}
-        {!isMobileShell &&
+        {/* mobile-ux-layer (WS-C1, 08-27; WS-6 sim-mobile-full-play): this whole
+            block lives inside the desktop-only wrapper, so it's already
+            invisible below the `md:` (768px) breakpoint — but it still
+            MOUNTED there (React doesn't skip effects for a display:none
+            subtree), holding a permanent focus trap + document keydown
+            listener with no way to dismiss it, since tourSeen can never
+            become true on a phone (its own onClose is what sets it).
+            Guarded on `!isMobileViewport` (the real `max-width:767px` check),
+            NOT `!isMobileShell` (audit D1/WS-6 tablet-band gap): isMobileShell
+            is the FEATURE-FLAG-driven phone-shell gate, true up to 1024px —
+            so in the 768–1023px tablet band the desktop board IS visible
+            (CSS `md:flex` triggers at 768px) but isMobileShell was ALSO still
+            true there, wrongly suppressing the tour guide (and the quiz gate
+            below) even though there was a real board on screen to use them.
+            `!isMobileViewport` is a no-op at real desktop widths (both are
+            always false there), so this changes nothing above 768px. */}
+        {!isMobileViewport &&
           ((!tourSeen && !autoRunPlayer.running && searchParams.get('run') !== 'exec') ||
             tourOpen) && (
             <SimTour
@@ -4245,39 +4542,14 @@ export function SimulationView() {
               }}
             />
           )}
-        {/* W2b: run-end ceremony — the summative "did you beat Q-Day?" moment */}
-        {runCompleteOpen && !suppressWinUI && (
-          <SimRunComplete
-            objectives={scoreboard.objectives.map((o) => ({
-              id: o.id,
-              label: o.label,
-              byYear: o.byYear,
-              done: o.done,
-
-              achievedYear: objectiveAchievedYears[o.id],
-            }))}
-            maturity={scoreboard.maturity}
-            programEndYear={getScenario(country).programEndYear}
-            score={computeRunScore({
-              quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
-              difficulty,
-              trapsThisRun,
-              compliancePct: readiness.compliancePct,
-              objectivesOnTime,
-              objectivesTotal: scoreboard.objectives.length,
-            })}
-            onCopyChallenge={copyChallenge}
-            onSaveRoadmap={saveRoadmapFromCeremony}
-            onClose={() => setRunCompleteOpen(false)}
-          />
-        )}
-        {/* mobile-ux-layer (WS-A1): this instance lives inside the desktop-only
-            `hidden md:flex` wrapper, so it's invisible below 768px. isMobileShell
-            is always false at real desktop widths, so this guard is a no-op there
-            — it exists only to avoid double-mounting alongside the mobile Decide
-            view's own QuizGateModal instance below (same quizGate/setQuizGate
-            state; only one should ever be on screen). */}
-        {quizGate && !isMobileShell && (
+        {/* mobile-ux-layer (WS-A1; WS-6): this instance lives inside the
+            desktop-only `hidden md:flex` wrapper, so it's invisible below
+            768px. Guarded on `!isMobileViewport` (see SimTour above for why
+            `!isMobileShell` wrongly suppressed this in the 768–1023px tablet
+            band) — it exists only to avoid double-mounting alongside the
+            mobile Decide view's own QuizGateModal instance below (same
+            quizGate/setQuizGate state; only one should ever be on screen). */}
+        {quizGate && !isMobileViewport && (
           <QuizGateModal
             question={quizGate.question}
             moduleTitle={quizGate.title}
@@ -4290,12 +4562,6 @@ export function SimulationView() {
         )}
         {walkthroughDoneOpen && (
           <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
-        )}
-        {phaseRunDoneOpen && (
-          <SimPhaseRunComplete
-            phaseFocus={autoRunPlayer.phaseFocus}
-            onClose={() => setPhaseRunDoneOpen(false)}
-          />
         )}
         {pendingConfirm === 'reset' && (
           <SimConfirmDialog
@@ -4334,7 +4600,16 @@ export function SimulationView() {
             }}
           />
         )}
-        {playModalOpen && (
+        {/* mobile-ux-layer (WS-0, D8): SimPlayChoiceModal never becomes VISIBLE
+            below 768px (this whole wrapper is `hidden md:flex`), but it still
+            MOUNTED there — its focus trap + a global `window` Escape-keydown
+            listener (SimConfirmDialog/QuizGateModal use the same pattern) ran
+            regardless of CSS visibility, fighting the phone stand-in chooser's
+            own Escape/Tab handling while it was open. `!isMobileViewport`
+            (the real `max-width:767px` check, independent of the isMobileShell
+            feature flag) stops it from mounting at all on a phone — a no-op
+            at real desktop widths. */}
+        {playModalOpen && !isMobileViewport && (
           <SimPlayChoiceModal
             onClose={() => setPlayModalOpen(false)}
             onStart={startFromModal}
@@ -4344,20 +4619,81 @@ export function SimulationView() {
           />
         )}
         {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
-        {pendingModeSwitch && (
-          <SimConfirmDialog
-            title="Start a different path?"
-            description="You have an in-progress run. Starting this path will restart the guided playhead — steps you've already completed stay completed, but the run begins its new queue from the top."
-            confirmLabel="Start this path"
-            onCancel={() => setPendingModeSwitch(null)}
-            onConfirm={() => {
-              autoRunPlayer.start({ mode: pendingModeSwitch })
-              setPendingModeSwitch(null)
-              setPlayModalOpen(false)
-            }}
-          />
-        )}
       </div>
+      {/* mobile-ux-layer (WS-0, D2): moved OUTSIDE the desktop-only `hidden
+          md:flex` wrapper above — this confirm can be triggered by the phone
+          stand-in chooser too (startFromModal, called from both the mobile
+          "Choose how to play" panel and the desktop SimPlayChoiceModal, opens
+          this when resuming a different mode than the in-progress run). It
+          used to live inside that wrapper, so on a phone the chooser's
+          Executive Overview / Full Migration Journey buttons went silently
+          dead — the confirm they triggered rendered off-screen (display:none
+          ancestor) with no way to see or answer it. A single instance shared
+          by both viewports; nothing about desktop's rendering changes since
+          the JSX/props/conditions are identical, only its position in the tree. */}
+      {pendingModeSwitch && (
+        <SimConfirmDialog
+          title="Start a different path?"
+          description="You have an in-progress run. Starting this path will restart the guided playhead — steps you've already completed stay completed, but the run begins its new queue from the top."
+          confirmLabel="Start this path"
+          onCancel={() => setPendingModeSwitch(null)}
+          onConfirm={() => {
+            autoRunPlayer.start({ mode: pendingModeSwitch })
+            setPendingModeSwitch(null)
+            setPlayModalOpen(false)
+          }}
+        />
+      )}
+      {/* mobile-ux-layer (WS-4): moved OUTSIDE the desktop-only `hidden
+          md:flex` wrapper for the same reason as the confirm dialog above —
+          it used to only ever be reachable/visible on a wide viewport, so a
+          phone run's "End quarter" button (added this workstream) would have
+          opened a report that rendered off-screen. QuarterReport's own grid
+          is already `grid-cols-1 sm:grid-cols-2`, so no responsive changes
+          were needed inside sections.tsx — only its position in this tree. */}
+      {report && <QuarterReport report={report} onClose={() => setReport(null)} />}
+      {/* mobile-ux-layer (WS-5): the two ceremonies that used to fire only
+          inside the desktop-only wrapper — completion was recorded correctly
+          either way (fullyMature/runCompleteSeen and the phase-run "done"
+          state are store-derived, viewport-agnostic), but the moment itself
+          was consumed unseen on a phone (audit "Invisible ceremonies").
+          Hoisted the same way as the confirm dialog / QuarterReport above:
+          same component, same props, same conditions — only the position in
+          the tree changes, so desktop's rendering is unaffected. Both
+          components are already phone-safe by construction (fixed inset-0,
+          a max-w-constrained card, p-4 outer padding, flex-wrap button rows)
+          — confirmed by screenshot at iPhone-13 width, no `max-md:` changes
+          needed in either file. */}
+      {runCompleteOpen && !suppressWinUI && (
+        <SimRunComplete
+          objectives={scoreboard.objectives.map((o) => ({
+            id: o.id,
+            label: o.label,
+            byYear: o.byYear,
+            done: o.done,
+            achievedYear: objectiveAchievedYears[o.id],
+          }))}
+          maturity={scoreboard.maturity}
+          programEndYear={getScenario(country).programEndYear}
+          score={computeRunScore({
+            quartersUsed: (year - RUN_START.year) * 4 + (q - RUN_START.q),
+            difficulty,
+            trapsThisRun,
+            compliancePct: readiness.compliancePct,
+            objectivesOnTime,
+            objectivesTotal: scoreboard.objectives.length,
+          })}
+          onCopyChallenge={copyChallenge}
+          onSaveRoadmap={saveRoadmapFromCeremony}
+          onClose={() => setRunCompleteOpen(false)}
+        />
+      )}
+      {phaseRunDoneOpen && (
+        <SimPhaseRunComplete
+          phaseFocus={autoRunPlayer.phaseFocus}
+          onClose={() => setPhaseRunDoneOpen(false)}
+        />
+      )}
     </>
   )
 }

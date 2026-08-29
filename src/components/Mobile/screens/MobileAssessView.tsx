@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, Check, ChevronDown, HelpCircle } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { isSimResumePending } from '@/components/Simulation/simChrome'
 import {
   STEP_META,
   TRACK_INFO,
@@ -279,6 +280,7 @@ function deriveTimelinePressure(
  */
 export function MobileAssessView() {
   const store = useAssessmentStore()
+  const navigate = useNavigate()
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const complianceGroups = useMemo(() => {
     const profile = { industry: store.industry, country: store.country, region: selectedRegion }
@@ -487,6 +489,17 @@ export function MobileAssessView() {
             size="sm"
             onClick={() => {
               store.markComplete()
+              // Came from the sim's locked-gate "Start the assessment" link
+              // (WS-0, sim-mobile-full-play plan) — return to the now-unlocked
+              // simulation instead of stranding the player on this screen's
+              // "View report"/"Start over" choices, exactly like desktop's
+              // AssessViewRedesign.generate(). Without this check the mobile
+              // assess flow NEVER re-joined a sim run: this component has no
+              // other reference to isSimResumePending anywhere.
+              if (isSimResumePending()) {
+                navigate('/simulation')
+                return
+              }
               setDone(true)
             }}
             className="h-10 flex-1 gap-1 text-[12.5px]"
