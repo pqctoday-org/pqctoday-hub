@@ -14,6 +14,7 @@
 // tab), rather than replacing it — the design program's own stated
 // invariant across all 10 pages is that no existing coverage gets dropped.
 import { AlertTriangle, Users, ShieldOff, Globe2 } from 'lucide-react'
+import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useVendorConcentrationRisks, type RiskCard } from './vendorConcentrationRisk'
 
 // Icons are this panel's own presentational concern (the shared hook only
@@ -27,14 +28,16 @@ const RISK_ICON: Record<RiskCard['key'], typeof Users> = {
 
 export function VendorConcentrationRiskPanel() {
   const risks = useVendorConcentrationRisks()
+  const selectedCount = useSelectedProductIds().length
 
   return (
     <div className="mb-4 space-y-3">
       <div>
         <h3 className="text-sm font-semibold text-foreground">Concentration &amp; coverage risk</h3>
         <p className="text-xs text-muted-foreground">
-          Computed from your product catalog, not a generic checklist — refreshes as the catalog
-          does.
+          {selectedCount > 0
+            ? `Computed from the ${selectedCount} product${selectedCount !== 1 ? 's' : ''} you selected on the Replace tab — refreshes as your selection does.`
+            : 'Computed from the full product catalog (select products on the Replace tab to score your own estate) — refreshes as the catalog does.'}
         </p>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

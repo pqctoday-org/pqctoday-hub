@@ -10,7 +10,7 @@
 //                        each a REAL KMIP request; see the TTLV wire response.
 //   Plane 3 · PKCS#11  — the keystore the engine actually populated, plus the
 //                        cross-plane audit trail every op emits.
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
   Cpu,
@@ -38,7 +38,7 @@ import {
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
-import { ShareButton } from '@/components/ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
@@ -61,6 +61,7 @@ import { PolicyView } from './PolicyView'
 import { Kmip3View } from './Kmip3View'
 import { MigrationView } from './migration/MigrationView'
 import { AgilityStoryPanel } from './AgilityStoryPanel'
+import { loadCacpSession, saveCacpPresetSession, saveCacpDraft } from './cacpSessionStorage'
 import {
   useLessonsTour,
   LessonsHub,
@@ -236,6 +237,11 @@ export function KmipPlaygroundView() {
   const [engine, setEngine] = useState<KmipEngine | null>(null)
   const [bootError, setBootError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  /** WS-4c (2026-08-28 gaps-remediation plan) — set when a restored session's
+   * policy fingerprint(s) no longer match what was active last visit (the
+   * shipped file changed server-side meanwhile). Restore still proceeds with
+   * the CURRENT file; this only controls whether the notice banner shows. */
+  const [staleNotice, setStaleNotice] = useState(false)
 
   const [policy, setPolicy] = useState<PolicyStatus>({ active: false })
   const [policyYaml, setPolicyYaml] = useState<string | null>(null)
@@ -311,6 +317,18 @@ export function KmipPlaygroundView() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [guideOpen])
+
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // page's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: 'KMIP Control Plane — PQC Today',
+      shareText: 'A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser',
+    })
+    return () => clearPageActions()
+  }, [])
 
   /** Governance x-attributes attached at Create/CreateKeyPair, as free text
    * "name=value, name=value" (x- prefix optional). Policies like cnsa-2.0 /
@@ -512,13 +530,44 @@ export function KmipPlaygroundView() {
     if (!engine) return
     setBusy(true)
     try {
-      const yaml = await fetch(`/kmip-policies/${preset.file}`).then((r) => r.text())
-      setPolicyYaml(yaml)
-      const res = engine.loadPolicy(yaml)
-      if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
+      if (preset.files && preset.files.length > 0) {
+        // Modular-policy plan (2026-08-28) — fetch every module file first
+        // (so a network failure can't leave the engine half-switched), THEN
+        // activate them all in one synchronous batch. `policyYaml` becomes
+        // the concatenation, purely for the List/YAML/Visual tabs' display —
+        // `parsePolicyModel` just scans for `- type:` lines, so it merges
+        // every file's rules into one model regardless of the boundary.
+        const yamls = await Promise.all(
+          preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
+        )
+        setPolicyYaml(yamls.join('\n\n# ── next module ──\n\n'))
+        const res = engine.activateModulePreset(preset.name, yamls)
+        if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
+        else {
+          const modStatus = engine.policyModulesStatus()
+          saveCacpPresetSession({
+            presetFile: preset.file,
+            moduleFiles: preset.files,
+            uncoveredOps: modStatus.uncoveredOps,
+            fingerprints: modStatus.modules.map((m) => m.fingerprint),
+          })
+        }
+      } else {
+        const yaml = await fetch(`/kmip-policies/${preset.file}`).then((r) => r.text())
+        setPolicyYaml(yaml)
+        const res = engine.loadPolicy(yaml)
+        if (!res.ok) setResult(engineError('LoadPolicy', res.error ?? 'policy load failed'))
+        else
+          saveCacpPresetSession({
+            presetFile: preset.file,
+            moduleFiles: null,
+            uncoveredOps: 'deny',
+            fingerprints: [engine.policyStatus().fingerprint ?? ''],
+          })
+      }
       refresh(engine)
     } catch (err) {
-      // fetch failure (missing/!ok policy file) or a wasm panic in load_policy.
+      // fetch failure (missing/!ok policy file) or a wasm panic loading it.
       setResult(engineError('LoadPolicy', err))
     } finally {
       setBusy(false)
@@ -535,6 +584,44 @@ export function KmipPlaygroundView() {
     refresh(engine)
     return res
   }
+
+  // WS-4c (2026-08-28 gaps-remediation plan) — restore the last-active
+  // preset/modules once the engine boots, then layer the one global draft
+  // back on top if it was edited under that same preset. Runs exactly once
+  // per page life (guarded by the ref, not by an empty dep array — `engine`
+  // itself flips from null to set exactly once, but re-running on every
+  // re-render of THIS effect for other reasons would re-restore a session
+  // the user has since moved on from).
+  const restoredRef = useRef(false)
+  useEffect(() => {
+    if (!engine || restoredRef.current) return
+    restoredRef.current = true
+    const saved = loadCacpSession()
+    if (!saved.presetFile) return
+    const preset = POLICY_PRESETS.find((p) => p.file === saved.presetFile)
+    if (!preset) return
+    const isModular = Boolean(preset.files && preset.files.length > 0)
+    void onLoadPolicy(preset).then(() => {
+      const fresh = isModular
+        ? engine.policyModulesStatus().modules.map((m) => m.fingerprint)
+        : [engine.policyStatus().fingerprint ?? '']
+      const changed =
+        fresh.length !== saved.fingerprints.length ||
+        fresh.some((f, i) => f !== saved.fingerprints[i])
+      if (changed) setStaleNotice(true)
+      // Drafts only ever apply to an editable (single-file) preset — the
+      // visual editor is `readOnly` for a multi-module one, so no draft
+      // could have been made under it in the first place.
+      if (!isModular && saved.draftYaml && saved.draftPresetFile === saved.presetFile) {
+        const res = onApplyYaml(saved.draftYaml)
+        if (res?.ok) saveCacpDraft(saved.presetFile, saved.draftYaml)
+      }
+    })
+    // onLoadPolicy/onApplyYaml are fresh closures every render; this effect
+    // must run exactly once (per the ref guard above), not on every render
+    // a new closure identity would otherwise trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engine])
 
   // ── Guided lessons (A-grade review item #19) ───────────────────────────────
   // Five cross-tab lessons that drive the REAL controls — every `act` below
@@ -807,6 +894,23 @@ export function KmipPlaygroundView() {
           survive inside the panel as an exit AFTER the story rather than as an
           alternative to it. */}
       {role === 'executive' && <AgilityStoryPanel className="mb-4" />}
+      {/* WS-4c (2026-08-28 gaps-remediation plan) — the restored preset's
+          fingerprint no longer matched what was active last visit; the
+          CURRENT server file is what's loaded, this is just disclosure. */}
+      {staleNotice && (
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-status-warning/40 bg-status-warning/5 px-3 py-2 text-xs text-foreground">
+          <AlertTriangle size={14} className="shrink-0 text-status-warning" />
+          <span>Policy updated since your last visit — showing the current version.</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setStaleNotice(false)}
+            className="ml-auto h-6 px-2 text-[11px] text-muted-foreground hover:text-foreground"
+          >
+            dismiss
+          </Button>
+        </div>
+      )}
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -858,11 +962,6 @@ export function KmipPlaygroundView() {
         </div>
         {/* VIEW · Guided / Expert progressive-disclosure toggle */}
         <div className="shrink-0 flex items-center gap-2">
-          <ShareButton
-            title="KMIP Control Plane — PQC Today"
-            text="A real KMIP 3.0 control plane + PKCS#11 HSM running in the browser"
-            variant="icon"
-          />
           <Button
             variant="ghost"
             size="sm"

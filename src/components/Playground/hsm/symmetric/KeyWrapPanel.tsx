@@ -15,7 +15,6 @@ import {
   X as XIcon,
 } from 'lucide-react'
 import { Button } from '../../../ui/button'
-import { ShareButton } from '../../../ui/ShareButton'
 import { ErrorAlert } from '../../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useHsmContext } from '../HsmContext'
@@ -1207,7 +1206,6 @@ export const KeyWrapPanel = ({
                 Wrapping Mode
               </p>
               <div className="flex items-center gap-1">
-                <ShareButton title="HSM Key Wrap" variant="icon" />
                 <Button
                   variant="ghost"
                   size="sm"

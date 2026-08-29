@@ -11,6 +11,8 @@ import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { pqcReadinessTier, isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
+import { matchesIndustry } from '@/data/industryMatch'
+import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
 import type {
   AssessmentResult,
   HNDLRiskWindow,
@@ -31,14 +33,20 @@ export interface ExecutiveModuleData {
   industryThreats: ThreatData[]
 
   // Software / Vendors
-  vendorsByLayer: Map<string, SoftwareItem[]>
+  /** Products grouped by the audited `classifyProductDomain` taxonomy (the
+   *  one the /migrate Replace tab uses) — every product in exactly one
+   *  domain. Replaced the free-text `infrastructureLayer` grouping this hook
+   *  used until 2026-08-27 (vendor-risk remediation, decision D3/WS-6):
+   *  ~15 stray CSV spellings scattered e.g. the HSM products across 5
+   *  buckets and rendered phantom "layer" cards downstream. */
+  vendorsByDomain: Map<DomainId, SoftwareItem[]>
   fipsValidatedCount: number
   pqcReadyCount: number
   /** Tiered readiness as a fraction in [0,1]: sum of per-product readiness ÷ totalProducts. */
   vendorReadinessWeighted: number
-  /** Per-layer tiered readiness (0–1), keyed by infrastructure layer. Drives the
-   *  architect-facing per-layer vendor readiness view (D9). */
-  vendorReadinessByLayer: Map<string, { weighted: number; count: number }>
+  /** Per-domain tiered readiness (0–1), keyed by migration domain. Drives the
+   *  architect-facing per-domain vendor readiness view (D9). */
+  vendorReadinessByDomain: Map<DomainId, { weighted: number; count: number }>
   totalProducts: number
 
   // Compliance
@@ -118,48 +126,42 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       (t) => t.criticality === 'Critical' || t.criticality === 'High'
     ).length
 
+    // Sector-key join (see industryMatch.ts): 'Finance & Banking' matches
+    // 'Financial Services / Banking' because both are aliases of sector 52,
+    // and Cross-Industry threats match every industry. The old raw substring
+    // test matched zero threats for most Assess industries, leaving the
+    // supply-chain matrix's Impact axis silently empty.
     const industryThreats = effectiveIndustry
-      ? threatsData.filter((t) =>
-          t.industry.toLowerCase().includes(effectiveIndustry.toLowerCase())
-        )
+      ? threatsData.filter((t) => matchesIndustry(t.industry, effectiveIndustry))
       : []
 
     // ── Software / Vendors ────────────────────────────────────────────────
-    // Precedence:
-    //   1. explicit `selectedProductKeys` always wins (caller controls scope)
-    //   2. else, narrow to products that either list the active industry in
-    //      `targetIndustries` or leave the field blank (universal products)
-    //   3. else, full catalog
-    const industryLc = effectiveIndustry.toLowerCase()
+    // Explicit `selectedProductKeys` wins (caller controls scope); otherwise
+    // the full catalog. The former middle tier — silently narrowing to
+    // products whose free-text `targetIndustries` contained the industry
+    // string — was removed 2026-08-27 (vendor-risk remediation, decision D5):
+    // the substring join dropped ~85% of the catalog (e.g. 3 of 34 HSMs for
+    // 'Finance & Banking') while the UI claimed to show everything. Industry
+    // personalizes threat/compliance/timeline CONTEXT, never product scope.
     const filteredSoftware =
       selectedProductKeys && selectedProductKeys.length > 0
         ? (() => {
             const keySet = new Set(selectedProductKeys)
             return softwareData.filter((s) => keySet.has(s.productId))
           })()
-        : industryLc
-          ? softwareData.filter((s) => {
-              const ti = (s.targetIndustries || '').toLowerCase().trim()
-              if (!ti || ti === 'all' || ti === 'any') return true
-              return ti.includes(industryLc)
-            })
-          : softwareData
+        : softwareData
 
-    const vendorsByLayer = new Map<string, SoftwareItem[]>()
+    const vendorsByDomain = new Map<DomainId, SoftwareItem[]>()
     let fipsValidatedCount = 0
     let pqcReadyCount = 0
     let readinessWeightSum = 0
 
     for (const s of filteredSoftware) {
-      // Split comma-separated layers so products appear in each layer
-      const layers = (s.infrastructureLayer || 'Other').split(',').map((l) => l.trim())
-      for (const layer of layers) {
-        const existing = vendorsByLayer.get(layer)
-        if (existing) {
-          existing.push(s)
-        } else {
-          vendorsByLayer.set(layer, [s])
-        }
+      const domain = classifyProductDomain(s.categoryName, s.infrastructureLayer)
+      if (domain) {
+        const existing = vendorsByDomain.get(domain)
+        if (existing) existing.push(s)
+        else vendorsByDomain.set(domain, [s])
       }
 
       if (isFips1403Validated(s.fipsValidated)) fipsValidatedCount++
@@ -170,25 +172,30 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
     const vendorReadinessWeighted =
       filteredSoftware.length > 0 ? readinessWeightSum / filteredSoftware.length : 0
 
-    // Per-layer tiered readiness for the architect view. A product that spans
-    // multiple comma-separated layers contributes to each. Readiness weight
-    // uses the same tier map as the global roll-up.
-    const vendorReadinessByLayer = new Map<string, { weighted: number; count: number }>()
-    for (const [layer, products] of vendorsByLayer.entries()) {
+    // Per-domain tiered readiness for the architect view. Unlike the old
+    // per-layer version, each product contributes to exactly one domain
+    // (classifyProductDomain guarantees this), so there's no multi-bucket
+    // double-counting to reason about. Readiness weight uses the same tier
+    // map as the global roll-up.
+    const vendorReadinessByDomain = new Map<DomainId, { weighted: number; count: number }>()
+    for (const [domain, products] of vendorsByDomain.entries()) {
       let sum = 0
       for (const p of products) sum += pqcReadinessTier(p.pqcSupport)
-      vendorReadinessByLayer.set(layer, {
+      vendorReadinessByDomain.set(domain, {
         weighted: products.length > 0 ? sum / products.length : 0,
         count: products.length,
       })
     }
 
     // ── Compliance ────────────────────────────────────────────────────────
+    // Same sector-key join as threats above ('Finance & Banking' must match a
+    // framework tagged 'Financial Services'); unknown spellings fall back to
+    // the old substring test inside matchesIndustry.
     const frameworksByIndustry = effectiveIndustry
       ? complianceFrameworks.filter(
           (f) =>
             f.industries.length === 0 ||
-            f.industries.some((ind) => ind.toLowerCase().includes(effectiveIndustry.toLowerCase()))
+            f.industries.some((ind) => matchesIndustry(ind, effectiveIndustry))
         )
       : complianceFrameworks
 
@@ -228,11 +235,11 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       criticalThreatCount,
       totalThreatCount: threatsData.length,
       industryThreats,
-      vendorsByLayer,
+      vendorsByDomain,
       fipsValidatedCount,
       pqcReadyCount,
       vendorReadinessWeighted,
-      vendorReadinessByLayer,
+      vendorReadinessByDomain,
       totalProducts: filteredSoftware.length,
       frameworks: complianceFrameworks,
       frameworksByIndustry,

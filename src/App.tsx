@@ -171,6 +171,11 @@ const PatentsViewRedesign = lazyWithRetry(() =>
     default: module.PatentsViewRedesign,
   }))
 )
+const ForceClusterView = lazyWithRetry(() =>
+  import('./components/Navigate/ForceClusterView').then((module) => ({
+    default: module.ForceClusterView,
+  }))
+)
 const RevisionsView = lazyWithRetry(() =>
   import('./components/Revisions/RevisionsView').then((module) => ({
     default: module.RevisionsView,
@@ -432,6 +437,14 @@ function App() {
         element={
           <ErrorBoundary>
             <PatentsViewRedesign />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="navigate"
+        element={
+          <ErrorBoundary>
+            <ForceClusterView />
           </ErrorBoundary>
         }
       />

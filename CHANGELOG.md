@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.66.0] - 2026-08-29
+
+The in-browser KMIP crypto-agility engine now runs the same modular, 40-policy set the server does, with a real module-status view and a scope-conflict warning when two policies disagree.
+
+### Added
+
+- **The Playground's crypto-agility policy engine now shows which modules are active and warns about conflicts** [view:/playground] [persona:architect] [persona:developer]: a new module-status panel lists every loaded policy module by scope, and a scope-conflict check flags when two active modules make contradictory rules for the same operation instead of silently picking one.
+- **The Playground's policy graph and simulator now reflect the real, modular policy set** [view:/playground] [persona:architect] [persona:developer]: previously built against a single combined policy file; now mirrors the server engine's 40 per-scenario YAML modules (encryption, signing, key-establishment, and global scope, across CNSA 2.0, BSI TR-02102, FIPS-only, classical, and migration-window presets), so what you see in the browser matches what the server actually enforces.
+
+### Fixed
+
+- **The in-browser KMIP engine was 2 commits behind the server engine** [persona:developer]: rebuilt from the current engine, including the ACVP test-vector resync and the modular policy-engine hardening; the corpus manifest and engine bundle now agree on which commit they were built from (a mismatch here would have silently masked drift going forward).
+
 ## [4.65.0] - 2026-08-29
 
 The Simulation is now genuinely playable on a phone, start to finish: every phase works, not just the first two, and every step type — including the ones that build a document — has a real way to complete it.
@@ -56,6 +69,24 @@ The Simulation now works honestly on a phone: learn and catalog steps can actual
 - **On mobile, Simulation steps had no way to finish — a correct pick only ever linked away** [view:/simulation] [persona:executive] [persona:curious]: the mobile Decide view now has a real completion control for learn steps (the same quiz gate desktop uses) and catalog steps (the same save action). Steps whose artifact comes from a Business tool — out of mobile's scope for now — are labeled "laptop steps" and auto-credited from the same signal desktop uses, instead of either faking them done or leaving their count permanently stuck below total. Each phase now shows a plain "X phone steps · Y laptop steps" split so that distinction is visible, not just backend logic.
 - **The mobile run-progress card could land underneath the run-control bar at the bottom of the screen, with no way to scroll to the hidden part** [view:/simulation] [persona:executive] [persona:curious]: the card now measures the run-control bar's real height and sits above it, and gains a scrollable max-height so a longer artifact description is fully readable. On mobile the run-control bar itself now starts collapsed to its title (still one tap to expand) instead of covering roughly a quarter of the screen by default.
 - **Leaving the Simulation phase overview and returning, or reloading the page on a phone, could silently reset an in-progress mobile run back to the overview** [view:/simulation] [persona:executive] [persona:curious]: the mobile play-panel's open/closed state now survives a reload, matching how the rest of a run's progress was already preserved.
+
+## [4.62.0] - 2026-08-28
+
+A new /navigate page renders the whole PQC knowledge hub as an explorable 3D graph, the Migrate vendor-risk tab's numbers are now trustworthy, and Share moves out of every page and into one place.
+
+### Added
+
+- **A new 3D graph of the whole PQC knowledge hub, at /navigate** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: about 2,400 nodes and 5,600 edges — certification bodies, crypto mechanisms, industries, use cases, compliance requirements, standards, glossary terms, products, and protocols — built live from the site's real data, not a fixed dataset. Click any node to see what it connects to and jump straight to its real page.
+
+### Fixed
+
+- **The Migrate vendor-risk tab significantly undercounted products and mislabeled infrastructure layers** [view:/migrate] [persona:executive] [persona:architect] [persona:ops]: a silent filter had been dropping about 85% of the catalog for some industries (3 of 34 HSMs shown for Finance & Banking, while the page claimed to show everything); the Supply Chain Risk matrix grouped products by raw, inconsistent layer strings (67 products miscategorized as generic "Application" instead of their real category) instead of the audited 18-domain taxonomy; and the vendor-concentration cards silently scored the wrong product set while claiming to show "yours." The formerly-largest "Unassigned" vendor bucket is gone — 19 of its 20 products now carry a real, verified vendor identity.
+- **Industry names disagreed with each other across Threats, Compliance, and Algorithms** [view:/threats] [view:/compliance] [view:/algorithms] [persona:executive] [persona:architect]: three genuinely drifted spellings ("Financial Services / Banking" vs. "Finance & Banking," and two others) are unified, and the whole site now uses one consistent industry vocabulary — 777 migrate-catalog products and 180 compliance requirements had their industry tags corrected in the process.
+- **/migrate on mobile: product PQC capabilities were hard to read and 604 of about 1,011 catalog products had no path to browse to them** [view:/migrate] [persona:executive] [persona:architect]: larger capability/certification text, a visible proof-status section, foundation-domain browsing added alongside the existing 10 "replace" domains, a working Plan-tab product lookup, a vendor product drill-down, and catalog-wide search.
+
+### Changed
+
+- **Share moved out of every individual page and into the top bar, everywhere** [persona:executive] [persona:architect] [persona:developer] [persona:researcher] [persona:ops] [persona:curious]: 19 duplicate in-page Share buttons across the Playground, business tools, Library, and Report page are gone; the top bar's Share now produces the same specific deep link each of those used to.
 
 ## [4.60.0] - 2026-08-28
 

@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, ClipboardCheck, FileBarChart, Share2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { AlertTriangle, ClipboardCheck, FileBarChart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessment/orchestrator'
 import { TopThreeActions } from '@/components/common/TopThreeActions'
 import { ReportUpgradeNudge } from '@/components/Report/redesign/ReportUpgradeNudge'
-import { shareReport } from '@/components/Report/sections/reportContentActions'
 import { REPORT_SECTION_ORDER, REPORT_SECTION_LABELS } from '@/data/reportSectionToCswp39'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
 import { riskConfig as RISK_TIER } from '@/data/riskConfig'
@@ -25,20 +23,20 @@ import { riskConfig as RISK_TIER } from '@/data/riskConfig'
  * uncapped "Recommended Actions" section (5 only for the executive persona,
  * titled "(Top 5)", sitting 12th of 17 sections, nowhere near the top). The
  * 5-pill CSWP.39 row is real but is cross-navigation to the Command Center
- * (/business#step-X), not an internal report nav. "Share this report" is
- * really just a plain "Share" button with no subtext, positioned near the
- * BOTTOM of the desktop report. None of the screenshot's 5 example action
- * strings exist anywhere in the codebase — real generated actions read
- * plainer ("Conduct a cryptographic asset inventory…", "Migrate TLS
- * endpoints to hybrid PQC key exchange (ML-KEM + X25519).").
+ * (/business#step-X), not an internal report nav. None of the screenshot's 5
+ * example action strings exist anywhere in the codebase — real generated
+ * actions read plainer ("Conduct a cryptographic asset inventory…", "Migrate
+ * TLS endpoints to hybrid PQC key exchange (ML-KEM + X25519).").
  *
  * Scope confirmed with the user given the real page's size (~950-line
  * content file, 17 real sections): highlights + a real section index, not a
  * full section-by-section reader. Real risk score/tier, the real Quick-vs-
  * Comprehensive distinction and its exact real banner copy, "Do this first"
- * and "Recommended Actions" both real, real Share (navigator.share on
- * mobile, not desktop's clipboard fallback), and all 17 real section names
- * as an index — full section bodies stated as a laptop-only cut.
+ * and "Recommended Actions" both real, and all 17 real section names as an
+ * index — full section bodies stated as a laptop-only cut. Share is NOT
+ * rendered on this screen (2026-08-27 remediation): it lives only in
+ * MobileHeader's top bar, which reads the same self-contained `?share=` deep
+ * link ReportView.tsx already registers via usePageActionsStore.
  *
  * Reuses real desktop logic/components verbatim (Rule 2): computeAssessment
  * (the same pure scoring pipeline ReportView.tsx calls — desktop's async
@@ -46,16 +44,13 @@ import { riskConfig as RISK_TIER } from '@/data/riskConfig'
  * TopThreeActions and ReportUpgradeNudge (both explicitly generic
  * components with no baked-
  * in desktop-only layout — imported directly rather than re-implemented),
- * shareReport (the real navigator.share/clipboard + token-minting share
- * mechanism), and REPORT_SECTION_ORDER/REPORT_SECTION_LABELS (the real 17
- * sections, in real order). 3 new ESLint exceptions (TopThreeActions,
- * ReportUpgradeNudge, reportContentActions — the first two are genuinely
- * reusable components, not desktop views; the third is pure logic).
+ * and REPORT_SECTION_ORDER/REPORT_SECTION_LABELS (the real 17 sections, in
+ * real order). 2 ESLint exceptions (TopThreeActions, ReportUpgradeNudge —
+ * genuinely reusable components, not desktop views).
  */
 export function MobileReportView() {
   const store = useAssessmentStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const [sharing, setSharing] = useState(false)
 
   const result = useMemo(() => {
     if (store.assessmentStatus !== 'complete') return null
@@ -162,25 +157,6 @@ export function MobileReportView() {
           />
         </div>
       )}
-
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled={sharing}
-        onClick={async () => {
-          setSharing(true)
-          try {
-            await shareReport(result, false)
-          } finally {
-            setSharing(false)
-          }
-        }}
-        className="mt-1 h-9 w-full gap-1.5 text-[12px]"
-      >
-        <Share2 size={13} aria-hidden="true" />
-        Share
-      </Button>
 
       <h2
         id="mobile-recommended-actions"

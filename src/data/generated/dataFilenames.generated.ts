@@ -27,12 +27,12 @@ export interface GeneratedDataFilenames {
 export const DATA_FILENAMES: GeneratedDataFilenames = {
   library: 'library_08232026_r46.csv',
   timeline: 'timeline_08232026.csv',
-  migrate: 'pqc_product_catalog_08182026_r34.csv',
-  threats: 'quantum_threats_hsm_industries_08222026_r1.csv',
+  migrate: 'pqc_product_catalog_08272026_r2.csv',
+  threats: 'quantum_threats_hsm_industries_08272026.csv',
   leaders: 'leaders_08232026_r2.csv',
-  compliance: 'compliance_08232026_r5.csv',
+  compliance: 'compliance_08272026.csv',
   algorithms: 'algorithms_transitions_07282026.csv',
-  authoritativeSources: 'pqc_authoritative_sources_reference_08222026.csv',
+  authoritativeSources: 'pqc_authoritative_sources_reference_08272026_r15.csv',
   certificationXref: 'migrate_certification_xref_08112026_r2.csv',
   quiz: 'pqcquiz_08172026_r2.csv',
 }

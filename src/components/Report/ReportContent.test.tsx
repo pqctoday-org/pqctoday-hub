@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { ReportContent } from './ReportContent'
 import '@testing-library/jest-dom'
@@ -306,11 +306,14 @@ describe('ReportContent', () => {
   })
 
   describe('action buttons', () => {
-    it('renders all five action buttons', () => {
+    // Share is no longer one of these — it lives ONLY in the global top bar
+    // (2026-08-27 remediation). Its exact-result encoding is covered by
+    // ReportView.share.test.tsx, which tests the surviving mechanism
+    // (ReportView's usePageActionsStore registration) directly.
+    it('renders all four action buttons', () => {
       renderReport()
       expect(screen.getByText('Print / Save as PDF')).toBeInTheDocument()
       expect(screen.getByText('Export CSV')).toBeInTheDocument()
-      expect(screen.getByText('Share')).toBeInTheDocument()
       expect(screen.getByText('Edit Answers')).toBeInTheDocument()
       expect(screen.getByText('Start Over')).toBeInTheDocument()
     })
@@ -329,37 +332,6 @@ describe('ReportContent', () => {
       fireEvent.click(screen.getByText('Export CSV'))
       expect(URL.createObjectURL).toHaveBeenCalledOnce()
       expect(URL.revokeObjectURL).toHaveBeenCalledOnce()
-    })
-
-    it('copies share URL to clipboard when Share is clicked', async () => {
-      renderReport()
-      fireEvent.click(screen.getByText('Share'))
-      await waitFor(() => {
-        expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-          expect.stringContaining('share=')
-        )
-      })
-    })
-
-    it('encodes the exact computed result as a v2 share token (ACCURACY-0708-2)', async () => {
-      renderReport()
-      fireEvent.click(screen.getByText('Share'))
-      await waitFor(() => {
-        expect(navigator.clipboard.writeText).toHaveBeenCalled()
-      })
-      const url = (navigator.clipboard.writeText as ReturnType<typeof vi.fn>).mock.calls[0][0]
-      // New format: single compact ?share=<base64url-token> instead of individual params
-      expect(url).toContain('share=')
-      // Decode the token and verify it carries the sender's exact result — not
-      // partial inputs decode would otherwise have to recompute differently.
-      const tokenMatch = url.match(/share=([^&]+)/)
-      expect(tokenMatch).not.toBeNull()
-      const decoded = atob(tokenMatch![1].replace(/-/g, '+').replace(/_/g, '/') + '==')
-      const parsed = JSON.parse(decoded)
-      expect(parsed.v).toBe(2)
-      expect(parsed.result).toEqual(baseResult)
-      expect(parsed.result.riskScore).toBe(65)
-      expect(parsed.result.riskLevel).toBe('high')
     })
 
     it('calls editFromStep(0) and navigates to /assess when Edit Answers is clicked', () => {

@@ -93,26 +93,38 @@ rules:
     reason: "Classical signing fallback for unlabelled requests"
 
   # ── PQC gated off — this policy IS the before state ──────────────────
-  - type: algorithm_denylist
-    ops:
-      - Create
-      - CreateKeyPair
-      - "CreateKeyPair:KeyAgreement"
-      - "CreateKeyPair:Sign"
-      - "CreateKeyPair:Encrypt"
-      - Sign
-      - Encrypt
-      - Encapsulate
-    algorithms:
-      - ML-KEM-512
-      - ML-KEM-768
-      - ML-KEM-1024
-      - ML-DSA-44
-      - ML-DSA-65
-      - ML-DSA-87
-      - X25519MLKEM768
-      - SecP256r1MLKEM768
-      - ML-DSA-65-Ed25519
-      - SLH-DSA-SHA2-128s
-      - SLH-DSA-SHA2-256s
-    reason: "PQC gated off under the classical baseline — flip policy to migrate"
+  # Class-based (2026-08-28 audit finding B3, same fix classical.yaml
+  # already had for the identical bug: the hand-listed algorithm denylist
+  # named 11 algorithms and let every SLH-DSA set but two, all Falcon/HQC/
+  # BIKE/FrodoKEM/Classic-McEliece, every stateful hash-based signature
+  # (LMS/HSS/XMSS/XMSS-MT), and every composite but one walk straight
+  # through the "before" boundary). `algorithm_class: pqc` covers every PQC
+  # and hybrid-KEM name, present and future; `after: "always"` makes the
+  # cutoff unconditional. A bare `CreateKeyPair` cutoff already matches
+  # every `CreateKeyPair:*` refinement (op_matches), so one rule per base op
+  # covers what the old list spelled out as five separate op strings.
+  - type: temporal_cutoff
+    op: Create
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: CreateKeyPair
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Sign
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Encrypt
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: pqc
+    after: "always"
+    reason: "PQC algorithms gated off under the classical baseline — flip policy to migrate"

@@ -19,6 +19,7 @@ const SECTION_MAP: Record<string, string> = {
   '/simulation': 'simulation',
   '/explore': 'explore',
   '/patents': 'patents',
+  '/navigate': 'navigate',
   '/revisions': 'revisions',
   '/about': 'about',
   // '/' is deliberately excluded — every session hits it, so counting it would

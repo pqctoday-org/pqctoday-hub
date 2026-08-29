@@ -15,6 +15,35 @@ export class KmipPlayground {
         wasm.__wbg_kmipplayground_free(ptr, 0);
     }
     /**
+     * Modular-policy plan (2026-08-28) — activate ONE scoped module
+     * alongside whatever else is already active, instead of replacing the
+     * whole engine state. Multiple modules (e.g. a policy split into
+     * `-signing.yaml`/`-key-establishment.yaml`/`-encryption.yaml`/
+     * `-global.yaml`) compose into one working policy. Returns
+     * `{ ok, warnings, error? }`. Refused (ok:false) if the file has no
+     * `metadata.scopes`, if a legacy ([`load_policy`](Self::load_policy))
+     * policy is active, or if its scope is already claimed by a
+     * differently-named module — call
+     * [`clear_policy_modules`](Self::clear_policy_modules) first to switch
+     * presets.
+     * @param {string} yaml
+     * @returns {string}
+     */
+    activate_policy_module(yaml) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(yaml, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_activate_policy_module(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * The most recent `limit` cross-plane audit events as a JSON array
      * (each: `{ ts, plane, correlation_id, event }`).
      * @param {number} limit
@@ -37,6 +66,34 @@ export class KmipPlayground {
      */
     clear_audit() {
         wasm.kmipplayground_clear_audit(this.__wbg_ptr);
+    }
+    /**
+     * Deactivate every module (does not touch a legacy
+     * [`load_policy`](Self::load_policy) policy). Call before activating a
+     * different multi-file preset.
+     */
+    clear_policy_modules() {
+        wasm.kmipplayground_clear_policy_modules(this.__wbg_ptr);
+    }
+    /**
+     * Deactivate one named module. Returns `{ ok }` — `ok:false` means no
+     * module by that name was active.
+     * @param {string} name
+     * @returns {string}
+     */
+    deactivate_policy_module(name) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_deactivate_policy_module(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
     }
     /**
      * Plane-1 "policy decision tester" (dry-run): evaluate what the active
@@ -88,6 +145,32 @@ export class KmipPlayground {
             const ptr0 = passStringToWasm0(certificate_uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             const len0 = WASM_VECTOR_LEN;
             const ret = wasm.kmipplayground_engine_certificate_attributes(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * C3 (2026-08-28 gaps-remediation plan) — every value-level lint finding
+     * for a policy draft, fatal and advisory alike (not just the first fatal
+     * one `load_policy` itself stops at). Structural failures (bad YAML,
+     * unknown top-level field, bad schema version) still come back as a
+     * single `{ ok: false, error }` — those are genuinely single-valued (no
+     * "second" malformed document) and the visual editor's own generator
+     * never produces one anyway. Returns
+     * `{ ok: true, findings: [{ ruleIndex, field, value, fatal, message }] }`.
+     * @param {string} yaml
+     * @returns {string}
+     */
+    lint_policy_draft(yaml) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(yaml, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_lint_policy_draft(this.__wbg_ptr, ptr0, len0);
             deferred2_0 = ret[0];
             deferred2_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);
@@ -172,6 +255,23 @@ export class KmipPlayground {
         return this;
     }
     /**
+     * Every currently-active module: `{ modules: [{ name, fingerprint,
+     * scopes, rules, enabled }], uncoveredOps }`.
+     * @returns {string}
+     */
+    policy_modules_status() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.kmipplayground_policy_modules_status(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
      * The currently-active policy (Plane 1): `{ active, name, fingerprint,
      * source, rules }`.
      * @returns {string}
@@ -249,6 +349,16 @@ export class KmipPlayground {
         }
     }
     /**
+     * Release the legacy single-policy slot ([`load_policy`](Self::load_policy))
+     * without loading a replacement. [`activate_policy_module`](Self::activate_policy_module)
+     * refuses while it is occupied — the playground boots with a legacy
+     * permissive policy active, so switching to a multi-file modular preset
+     * must call this first.
+     */
+    release_legacy_policy() {
+        wasm.kmipplayground_release_legacy_policy(this.__wbg_ptr);
+    }
+    /**
      * High-level **batch** driver: build ONE KMIP 3.0 `Request Message` carrying
      * many operations and dispatch it through the identical decode → dispatch →
      * encode path `submit`/`run_op` use. This is a *real* on-the-wire batch (one
@@ -319,6 +429,51 @@ export class KmipPlayground {
             const ptr0 = passStringToWasm0(spec_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
             const len0 = WASM_VECTOR_LEN;
             const ret = wasm.kmipplayground_run_op(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * Enable/disable one active module without unloading it — a disabled
+     * module's rules are skipped during evaluation but stay activated (its
+     * scope stays claimed). Returns `{ ok }` — `ok:false` means no module
+     * by that name was active.
+     * @param {string} name
+     * @param {boolean} enabled
+     * @returns {string}
+     */
+    set_policy_module_enabled(name, enabled) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_set_policy_module_enabled(this.__wbg_ptr, ptr0, len0, enabled);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * Set what the engine does with a request whose op no active module's
+     * scope covers (modular mode only) — `mode` is `"deny"` (fail closed,
+     * the server default) or `"allow"` (fail open; playground/incremental
+     * adoption only). Returns `{ ok, error? }`.
+     * @param {string} mode
+     * @returns {string}
+     */
+    set_uncovered_ops(mode) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(mode, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_set_uncovered_ops(this.__wbg_ptr, ptr0, len0);
             deferred2_0 = ret[0];
             deferred2_1 = ret[1];
             return getStringFromWasm0(ret[0], ret[1]);

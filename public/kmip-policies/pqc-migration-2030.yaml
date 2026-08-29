@@ -11,9 +11,15 @@ metadata:
     legacy artefacts. From 2027-01-01 no NEW classical signing key may be
     created (new signing keys are PQC, or the LAMPS ML-DSA-65+Ed25519
     composite for requests that opt in via x-pqctoday-hybrid-sign=required).
-    After 2030-01-01, classical algorithms are banned for signing AND
-    encryption, and classical key-pair creation ends for every purpose
-    (verify + decrypt of pre-cutoff material remains allowed indefinitely).
+    After 2030-01-01, classical algorithms are banned for signing,
+    encryption, AND key establishment (Encapsulate — a classical ECDH/X25519
+    key producing fresh shared secrets is exactly as quantum-vulnerable as a
+    classical signature or encryption operation, and was originally left
+    uncovered by this policy: see the 2026-08-28 six-requirement audit,
+    finding B1), and classical key-pair creation ends for every purpose
+    (verify + decrypt + decapsulate of pre-cutoff material remains allowed
+    indefinitely — those are consumer ops on material a peer already fixed
+    to an algorithm, so there is nothing left to migrate).
     Governance tags (x-pqctoday-purpose) are required at key creation only.
 
     STRICTER THAN THE CITED SOURCE: NIST IR 8547 (an initial public draft as
@@ -66,6 +72,27 @@ rules:
     min_bits: 3072
     reason: "RSA-2048 below organizational minimum; require >= 3072 bits"
 
+  # 3a. Worked example of the recommended deprecation pattern (A1,
+  #     2026-08-28 gaps-remediation plan): the SAME condition as rule 3
+  #     below, written twice — `severity: warn` from this policy's own
+  #     effective date (continuous early notice, PolicyWarned in the audit
+  #     trail, no app impact) paired with rule 3's `severity: deny`
+  #     (default) that actually starts refusing from 2027-01-01. Ordered
+  #     BEFORE rule 3 deliberately: Pass 2 walks rules in file order, and a
+  #     `severity: deny` rule short-circuits — listing it first would make
+  #     this warn rule permanently unreachable (and dead-code-flagged by the
+  #     visual editor's static lint) from 2027 onward, instead of doing its
+  #     one job of warning continuously BEFORE the real cutoff takes over.
+  #     This is what "no sunset with no teeth" looks like done right — see
+  #     the lint's own `deprecation with no sunset` advisory for the version
+  #     that ISN'T.
+  - type: temporal_cutoff
+    severity: warn
+    op: "CreateKeyPair:Sign"
+    algorithm_class: classical
+    after: "2026-01-01"
+    reason: "Classical signing keys are deprecated — denied by policy from 2027-01-01, see rule 3"
+
   # 3. No new CLASSICAL signing keys of any kind after 2027-01-01 — from 2027
   #    every new signing key must be PQC or a LAMPS composite. (2026-07-04
   #    rewrite: was a hand list [ECDSA-P256, ECDSA-P384] that missed
@@ -94,7 +121,12 @@ rules:
     triggered_by_custom_attribute: { name: pqctoday-hybrid-sign, value: required }
     reason: "Request opted into hybrid signing: composite ML-DSA-65 + Ed25519 required"
 
-  # 4. Hard cutoff: no classical Sign or Encrypt after 2030-01-01.
+  # 4. Hard cutoff: no classical Sign, Encrypt, or Encapsulate after
+  #    2030-01-01. (2026-08-28 audit finding B1: Encapsulate was missing —
+  #    it is a PRODUCING op, exactly like Sign/Encrypt, establishing fresh
+  #    classical key material every call; leaving it out meant a legacy
+  #    ECDH/X25519 key could keep performing classical key establishment
+  #    forever, defeating the point of the cutoff.)
   - type: temporal_cutoff
     op: Sign
     algorithm_class: classical
@@ -107,6 +139,12 @@ rules:
     after: "2030-01-01"
     reason: "Classical encryption banned by migration roadmap from 2030-01-01"
 
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical key establishment (ECDH/X25519 Encapsulate) banned by migration roadmap from 2030-01-01"
+
   # 4b. Post-2030 the ban covers key CREATION too, for every key-pair purpose
   #     (bare CreateKeyPair prefix-matches :Sign/:Encrypt/:KeyAgreement).
   #     Before 2026-07-04 only classical *use* was cut off — a new RSA-3072
@@ -117,8 +155,10 @@ rules:
     after: "2030-01-01"
     reason: "Classical asymmetric key creation banned by migration roadmap from 2030-01-01"
 
-  # 5. Verify + Decrypt of legacy classical artefacts remain allowed
-  #    indefinitely (no rule needed — absence of Deny = Allow).
+  # 5. Verify + Decrypt + Decapsulate of legacy classical artefacts remain
+  #    allowed indefinitely (no rule needed — absence of Deny = Allow; all
+  #    three are consumer ops per rule::is_consumer_op, so there is never
+  #    anything to migrate on them).
 
   # 6. Production-classification signing keys must be PQC or composite.
   #    NOTE: does not cover ML-KEM — that's rule 7's job (KeyAgreement usage

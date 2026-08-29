@@ -352,6 +352,19 @@
     --phase-regulation: 0 55% 36%;
     --phase-research: 258 50% 38%;
     --phase-deadline: 0 55% 36%;
+
+    /* Navigate (force-cluster graph) node categories — same HSL-channel /
+       WCAG-4.5:1-against-white convention as the Timeline Phase tokens above.
+       See design_handoff_force_cluster/IMPLEMENTATION-PLAN-2026-08-28.md §6. */
+    --graph-certbody: 200 75% 32%;
+    --graph-mechanism: 280 55% 40%;
+    --graph-industry: 35 70% 34%;
+    --graph-usecase: 50 65% 30%;
+    --graph-compliance: 345 60% 38%;
+    --graph-standard: 165 60% 26%;
+    --graph-glossary: 220 15% 42%;
+    --graph-product: 100 45% 28%;
+    --graph-protocol: 315 55% 40%;
     --stack-mix-base: white;
   }
 
@@ -431,6 +444,17 @@
     --phase-regulation: 0 75% 68%;
     --phase-research: 258 80% 72%;
     --phase-deadline: 0 75% 68%;
+
+    /* Navigate (force-cluster graph) node categories — Dark Mode */
+    --graph-certbody: 200 85% 65%;
+    --graph-mechanism: 280 85% 74%;
+    --graph-industry: 35 90% 62%;
+    --graph-usecase: 50 90% 58%;
+    --graph-compliance: 345 80% 68%;
+    --graph-standard: 165 75% 52%;
+    --graph-glossary: 220 15% 68%;
+    --graph-product: 100 55% 55%;
+    --graph-protocol: 315 80% 70%;
   }
 
   /* On screen: render as transparent block so report content is visible.

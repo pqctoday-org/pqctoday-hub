@@ -1,0 +1,64 @@
+# Transparent auto-migration — key-establishment share (modular-policy
+# plan, 2026-08-28). Split from `auto-migrate-on-use.yaml`. Pair with
+# `-signing`, `-encryption`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: auto-migrate-on-use-key-establishment
+  description: |
+    Lazy, transparent key-establishment migration. New key-establishment
+    keys default to ML-KEM-768. Every classical key-establishment algorithm
+    this stack can instantiate has an explicit rekey target (2026-08-28
+    audit finding B2); a class-based backstop denies any classical
+    Encapsulate that somehow still isn't covered.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM", status: required }
+    - { framework: "NIST IR 8547",    status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-768
+    reason: "New key-establishment keys default to ML-KEM-768 (FIPS 203)"
+
+  # Existing key-establishment keys auto-rekey at first Encapsulate.
+  # X25519/X448 have their own distinct policy names (`montgomery_name_for_len`
+  # gives length-255/448 records `X25519`/`X448` rather than falling through
+  # to `ECDH-P{bits}`), so they need their own explicit rules — see
+  # audit finding B5.
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P256
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P256 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P384
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P384 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P521
+    to: ML-KEM-768
+    reason: "Rekey legacy ECDH-P521 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X25519
+    to: ML-KEM-768
+    reason: "Rekey legacy X25519 key-establishment key to ML-KEM-768 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X448
+    to: ML-KEM-768
+    reason: "Rekey legacy X448 key-establishment key to ML-KEM-768 at first use"
+
+  # Backstop — same rationale as the signing module's.
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: classical
+    after: "always"
+    reason: "No classical key-establishment algorithm reaches this policy without an explicit PQC rekey target"

@@ -162,6 +162,41 @@ reporting; never denies).
    `hub src/components/Playground/kmip/policyScenarios.ts` (§3.5) — the gap
    audit existed because broken paths had no scenario.
 
+### 2.8 Modular policies (scopes, multiple active modules)
+
+Added 2026-08-28 — schema v3's `metadata.scopes: [<Scope>, ...]` lets several
+small, independently-owned files be active on the engine at once instead of
+one file that keeps growing. Full reference (the 7-scope taxonomy,
+containment rules, the non-conflict model, `Engine::activate`/`deactivate`/
+`set_module_enabled`/`clear_modules`) lives in
+[`policies/README.md`](../policies/README.md#modular-policies-schema-v3--scopes-and-multi-file-composition) —
+this is the short version:
+
+- **Scopes**: `signing`, `key-establishment`, `encryption`, `mac-hash`,
+  `ingress`, `lifecycle`, `global` (cross-cutting, containment-exempt).
+- **One module owns each scope** — `activate()` refuses a second,
+  differently-named module claiming a scope another module already holds.
+- **`replace_all`** (the original single-policy activation) and
+  **`activate`** (push one scoped module) are mutually exclusive modes on
+  the same engine, never mixed — `replace_all` is not deprecated, it's the
+  permanent legacy path for an unscoped file.
+- **Uncovered ops** (no active module's scope covers the request) follow
+  `UncoveredOps::Deny` by default — fail closed, same posture as no policy
+  loaded at all. `Allow` (fail open) exists for the wasm playground only.
+- Eleven of the library's policies ship BOTH forms — one monolithic file
+  (`classical.yaml`) and its per-scope split (`classical-signing.yaml` etc,
+  see the README's [Modular siblings](../policies/README.md#modular-siblings-schema-v3)
+  table) — because the Hub catalog's single-file demo flow and its
+  multi-file activation flow both need a working target; edit both when you
+  change one of these eleven policies' rules.
+- Native server flags: `--policy <name>` / `--module <name>` (repeatable,
+  mutually exclusive with `--policy`) / `--uncovered-ops deny|allow`
+  (default `deny`). Admin API: `GET/POST/DELETE /api/v1/active-modules`,
+  `DELETE/PATCH /api/v1/active-modules/{name}`, `GET/PUT
+  /api/v1/config/uncovered-ops` — full request/response shapes in
+  [`cryptopolicy-manager/openapi.yaml`](../cryptopolicy-manager/openapi.yaml),
+  the source of truth for the admin surface (not duplicated here).
+
 ## 3. Testing in the Agility Workbench (`/playground/cacp`)
 
 Three tabs; a **Guided/Expert** toggle gates the advanced controls.
@@ -199,16 +234,24 @@ Three tabs; a **Guided/Expert** toggle gates the advanced controls.
   (Verify/Decrypt/Decapsulate). "Recover = denied" on an otherwise-allowed
   algorithm is a red flag — transition policies promise recovery stays open.
   Sweeps supply the governance tags, so cells show the *algorithm* verdict,
-  not a missing-tag artefact.
+  not a missing-tag artefact. A card whose preset carries a `files: [...]`
+  split (§2.8) activates its whole module set — the wasm engine's
+  `activateModulePreset` releases whatever was active, activates every
+  module, and `policyStatus()` reports the preset as active exactly like a
+  single-file `loadPolicy` would (added 2026-08-28).
 - **Visual** — node-graph editor (palette of all 18 rule types, per-rule
   inspector, drag/reorder/disable), **Simulate** (full dry-run: op, key
   state, algorithm, date, key bits; Expert adds custom attributes, usage
   mask, hash, CKM mechanism, block mode, padding, deterministic flag,
   activation date — with a two-pass rule-by-rule trace), **Check**
   (validation findings), and an editable **YAML drawer** (edits auto-apply
-  to the in-browser engine only; nothing is written to disk).
+  to the in-browser engine only; nothing is written to disk). A multi-file
+  preset's graph is READ-ONLY (merges every module's rules for display —
+  re-serializing the merge would misdeclare its scope): edit the individual
+  module file instead.
 - **Compare / Timeline** — side-by-side policy diffs and the dated-cutoff
-  view.
+  view. Compare activates each side through the same module-aware path as
+  the catalog, so a multi-file preset compares correctly too.
 
 ### 3.3 Batch & Macros tab
 

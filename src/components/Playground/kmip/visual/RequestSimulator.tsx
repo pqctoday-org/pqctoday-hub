@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { DryRunResult, DryRunTraceStep } from '@/wasm/kmip/kmipEngine'
+import type { CpOverrideResult, DryRunResult, DryRunTraceStep } from '@/wasm/kmip/kmipEngine'
 import type { PolicyExample } from '@/wasm/kmip/kmipMeta'
 import { FieldLabel, SelectField, TagEditor } from './editorControls'
 import {
@@ -61,6 +61,22 @@ const kindColor = (kind: string): string =>
     : kind === 'Rekey'
       ? 'text-status-warning'
       : 'text-destructive'
+
+/** C4 (2026-08-28 gaps-remediation plan) — a `mechanism_parameter_default`
+ * rule's forced parameters, as one readable line, or `null` when nothing was
+ * forced (was silently dropped before C4, invisible in this teaching UI even
+ * though the engine had been forcing parameters correctly all along). */
+const cpOverrideSummary = (cp: CpOverrideResult | null | undefined): string | null => {
+  if (!cp) return null
+  const parts: string[] = []
+  if (cp.hashingAlgorithm) parts.push(`hash=${cp.hashingAlgorithm}`)
+  if (cp.blockCipherMode) parts.push(`mode=${cp.blockCipherMode}`)
+  if (cp.paddingMethod) parts.push(`padding=${cp.paddingMethod}`)
+  if (cp.deterministic !== null) parts.push(`deterministic=${cp.deterministic}`)
+  if (cp.tagLength !== null) parts.push(`tagLength=${cp.tagLength}`)
+  if (cp.saltLength !== null) parts.push(`saltLength=${cp.saltLength}`)
+  return parts.length ? parts.join(', ') : null
+}
 
 /** The engine's per-rule trace is 1-based over the rules it actually saw —
  * ENABLED rules only, in order (disabled ones are serialized as comments, so
@@ -345,6 +361,12 @@ export function RequestSimulator({
           </div>
           <div className="mt-1.5 font-mono text-[12px] text-foreground">
             {engineVerdict.kind === 'Allow' && <>resolved → {engineVerdict.algorithm ?? '—'}</>}
+            {engineVerdict.kind === 'Allow' && cpOverrideSummary(engineVerdict.cpOverride) && (
+              <div className="mt-1 font-sans text-[11px] text-muted-foreground">
+                <span className="font-semibold text-foreground">Parameters forced:</span>{' '}
+                {cpOverrideSummary(engineVerdict.cpOverride)}
+              </div>
+            )}
             {engineVerdict.kind === 'Rekey' && (
               <>
                 {engineVerdict.from} → {engineVerdict.to}{' '}

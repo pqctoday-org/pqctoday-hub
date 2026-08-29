@@ -1,0 +1,68 @@
+# PQC crypto policy — key-establishment share (modular-policy plan,
+# 2026-08-28). Split from the single-file `pqc.yaml`. Pair with
+# `pqc-signing` and `pqc-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: pqc-key-establishment
+  description: |
+    Post-PQC KEM default: ML-KEM-1024. Existing classical KEY-ESTABLISHMENT
+    keys (ECDH-P256/384/521, X25519, X448) auto-rekey to ML-KEM-1024 at
+    first Encapsulate (2026-07-05).
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "FIPS 203 ML-KEM",  status: required }
+    - { framework: "NSA CNSA-2.0",     status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ML-KEM-1024
+    reason: "PQC KEM default (FIPS 203, CNSA 2.0 Level 5)"
+
+  # ── Existing-key rekey: classical key-establishment → ML-KEM-1024 on
+  # Encapsulate ──────────────────────────────────────────────────────────
+  # Classical ECDH key-establishment keys go through `Encapsulate` (DHKEM
+  # mode), the same op ML-KEM/hybrid use, so this is a same-op rekey exactly
+  # like the Sign-side rules in pqc-signing.yaml: engine emits
+  # RekeyAndProceed, `encapsulate.rs::rekey_and_encapsulate` mints a fresh
+  # ML-KEM-1024 pair, activates both halves, deactivates+supersedes both
+  # halves of the old pair, re-issues the Encapsulate.
+  #
+  # X25519/X448 have their own distinct policy names (`montgomery_name_for_len`
+  # gives length-255/448 records `X25519`/`X448` rather than falling through
+  # to `ECDH-P{bits}`), so they need their own explicit rules — see the
+  # 2026-08-28 audit finding B5 fix in the original `pqc.yaml`.
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P256
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P256 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P384
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P384 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: ECDH-P521
+    to: ML-KEM-1024
+    reason: "Rekey legacy ECDH-P521 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X25519
+    to: ML-KEM-1024
+    reason: "Rekey legacy X25519 key-establishment key to ML-KEM-1024 at first use"
+  - type: algorithm_substitution
+    ops: [Encapsulate]
+    from: X448
+    to: ML-KEM-1024
+    reason: "Rekey legacy X448 key-establishment key to ML-KEM-1024 at first use"
+
+  # No NEW classical key-establishment keys once flipped to PQC — moved to
+  # `pqc-global.yaml` 2026-08-28 (WS-1a parity guard): a per-scope partial
+  # denylist here covered fewer algorithms than the monolithic form's bare
+  # `CreateKeyPair` entry, a real behavioral gap the guard caught.

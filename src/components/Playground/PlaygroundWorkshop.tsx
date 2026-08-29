@@ -34,7 +34,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import {
   WORKSHOP_TOOLS,
   type WorkshopTool,
@@ -435,6 +435,21 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
   // eslint-disable-next-line security/detect-object-injection -- relatedModuleId is derived from the tool's own registry-declared moduleLink, not user input
   const relatedModuleTitle = relatedModuleId ? MODULE_CATALOG[relatedModuleId]?.title : undefined
 
+  // Share lives ONLY in the top bar (2026-08-27 remediation). This modal
+  // previews a DIFFERENT page (`/playground/${tool.id}`) than the one behind
+  // it, so the top bar's default `window.location.href` fallback can't share
+  // it — register the modal's own url/title/text for as long as it's open,
+  // same escape hatch MigrationWorkbench.tsx uses for its selection state.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: `${tool.name} — PQC Playground`,
+      shareText: `Try the ${tool.name} tool in the PQC Today Playground`,
+      url: `${window.location.origin}/playground/${tool.id}`,
+    })
+    return () => clearPageActions()
+  }, [tool])
+
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -482,12 +497,6 @@ const ToolDetailModal: React.FC<ToolModalProps> = ({
               </div>
               <p className="mt-1 text-[11.5px] text-muted-foreground">{tool.category}</p>
             </div>
-            <ShareButton
-              title={`${tool.name} — PQC Playground`}
-              text={`Try the ${tool.name} tool in the PQC Today Playground`}
-              url={`${window.location.origin}/playground/${tool.id}`}
-              variant="icon"
-            />
             <Button
               variant="ghost"
               onClick={onClose}

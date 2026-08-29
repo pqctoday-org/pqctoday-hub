@@ -64,13 +64,44 @@ export interface SimResult {
 
 const lc = (s: string): string => (s || '').toLowerCase()
 
+/** rule.rs::is_ml_dsa_composite_tail — the classical half of an
+ * `ML-DSA-<level>-<tail>` LAMPS composite name. Mirrors the Rust tail set
+ * exactly (A6.1, 2026-08-28 gaps-remediation plan) so this simulator's
+ * composite exclusion below can't drift from the engine's. */
+const isMlDsaCompositeTail = (tail: string): boolean =>
+  [
+    'ED25519',
+    'ED448',
+    'ECDSA-P256',
+    'ECDSA-P384',
+    'ECDSA-P521',
+    'RSA2048-PSS',
+    'RSA3072-PSS',
+    'RSA4096-PSS',
+  ].includes(tail.toUpperCase())
+
+/** rule.rs::is_composite_algorithm_name — `true` for `ML-DSA-<level>-<tail>`.
+ * ML-DSA-specific, not a generic "any two known halves" check — every real
+ * composite this engine can produce is `CompositeMlDsa*`; see the Rust
+ * function's doc comment for why the generic version was tried and
+ * rejected (it missed RSA-PSS tails and flagged `ECDSA-SHA1`). */
+const isCompositeAlgorithmName = (name: string): boolean => {
+  const m = /^ML-DSA-(\d+)-(.+)$/i.exec(name)
+  if (!m) return false
+  return ['44', '65', '87'].includes(m[1]) && isMlDsaCompositeTail(m[2])
+}
+
 /** rule.rs::algo_matches (Y3) — a policy entry covers a request algorithm when
  * it equals it or is a family prefix of a hyphen-suffixed member (`AES` covers
- * `AES-256`; `AES-128` never covers `AES-256`). */
+ * `AES-256`; `AES-128` never covers `AES-256`) THAT IS NOT ITSELF A COMPOSITE
+ * (A6.1, 2026-08-28) — a composite is matched/denied only by its own full name. */
 const algoMatches = (policyEntry: string, requestAlgo: string): boolean => {
   const e = lc(policyEntry)
   const a = lc(requestAlgo)
-  return !!e && (e === a || a.startsWith(`${e}-`))
+  if (!e) return false
+  if (e === a) return true
+  if (isCompositeAlgorithmName(requestAlgo)) return false
+  return a.startsWith(`${e}-`)
 }
 const inAlgoList = (list: string[] | undefined, a: string): boolean =>
   (list ?? []).some((x) => algoMatches(x, a))
@@ -153,6 +184,23 @@ const windowActive = (r: EditableRule, reqDate: Date | null): boolean => {
   return true
 }
 
+/** engine.rs::policy_is_live (A2, 2026-08-28) — a policy outside
+ * `[metadata.effective, metadata.expires]` is INERT for this request, same
+ * fail-closed posture as no policy loaded at all. This simulator never
+ * implemented that check at all — the exact gap `hybrid-deny-legacy-pre`
+ * surfaced (SIM said Allow, engine said Deny, for a pre-`effective`-date
+ * request). `parseDate` already treats any non-`YYYY-MM-DD` string
+ * (`"always"`/`"immediate"`/`"never"`/empty) as an unbounded side, so this
+ * reuses it directly rather than special-casing those keywords again. */
+const metadataWindowActive = (policy: EditablePolicy, reqDate: Date | null): boolean => {
+  if (!reqDate) return true
+  const from = parseDate(policy.metadata.effective)
+  const until = parseDate(policy.metadata.expires)
+  if (from && reqDate < from) return false
+  if (until && reqDate > until) return false
+  return true
+}
+
 /** A request attr entry "name", "x-name", "name=value" → {name, value}. */
 const parseAttr = (s: string): { name: string; value: string | null } => {
   const [rawName, ...rest] = s.split('=')
@@ -174,18 +222,85 @@ const attrPredicateMatches = (
   )
 }
 
+interface ResolvedAlgorithm {
+  algorithm: string
+  /** Rule ids that actually changed the running value — the winning
+   * default (if any) plus every substitution that matched in the chain.
+   * Drives the 'resolve' trace effect at each rule's own file position. */
+  resolvedByIds: Set<string>
+  /** Set only when a SUBSTITUTION changed the value (a default alone is
+   * never a rekey candidate) — the LAST link in the chain if more than one
+   * substitution fired. */
+  rekey: { from: string; to: string } | null
+}
+
+/** Pass 0 (defaults) + Pass 1 (substitutions) as ONE independent, complete
+ * resolution step, computed before any gating rule runs — mirrors
+ * `engine.rs:421-456` exactly. Fixes a real divergence (2026-08-28
+ * gaps-remediation plan WS-5b): the previous design resolved the algorithm
+ * INLINE as the main loop reached each resolution rule, so a gating rule
+ * listed BEFORE a later substitution in file order gated the
+ * pre-substitution value — the engine always gates against the FULLY
+ * resolved value regardless of where in the file the substitution sits. */
+const resolveAlgorithm = (
+  policy: EditablePolicy,
+  req: SimRequest,
+  winningDefaultId: string | null
+): ResolvedAlgorithm => {
+  let carried = req.algorithm
+  const resolvedByIds = new Set<string>()
+
+  if (winningDefaultId) {
+    const r = policy.rules.find((x) => x.id === winningDefaultId)
+    if (r) {
+      carried = r.scalars.default_algorithm ?? carried
+      resolvedByIds.add(r.id)
+    }
+  }
+
+  let rekey: { from: string; to: string } | null = null
+  for (const r of policy.rules) {
+    if (!r.enabled || r.type !== 'algorithm_substitution') continue
+    if (!opMatches(opsOf(r), req.op)) continue
+    if (lc(carried) !== lc(r.scalars.from ?? '')) continue
+    if (namePatternGate(r, req.keyName) === false) continue
+    const to = r.scalars.to ?? carried
+    rekey = { from: carried, to }
+    carried = to
+    resolvedByIds.add(r.id)
+  }
+
+  return { algorithm: carried, resolvedByIds, rekey }
+}
+
 /**
  * Walk the enabled rules in precedence order, mirroring the Rust engine's
- * two-pass semantics (resolve then gate). Produces a per-rule trace and a
- * terminal verdict. Deterministic single path.
+ * three-pass semantics (defaults, then substitutions, THEN gating —
+ * `resolveAlgorithm` above computes the first two as one independent step
+ * before this function's main loop, which gates against the result;
+ * corrected 2026-08-28, see `resolveAlgorithm`'s doc comment). Produces a
+ * per-rule trace and a terminal verdict. Deterministic single path.
  */
 export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResult {
+  const reqDate = parseDate(req.date)
+
+  // A2 pre-check — runs before Pass 0/1/2 even start, mirroring
+  // engine.rs:390-414 exactly: an out-of-window policy is treated like no
+  // policy loaded at all (empty trace, same `PolicyNotLoaded`-class deny).
+  if (!metadataWindowActive(policy, reqDate)) {
+    return {
+      verdict: {
+        kind: 'deny',
+        reason: `Active policy ${JSON.stringify(policy.metadata.name)} is outside its validity window (effective: ${policy.metadata.effective || 'always'}, expires: ${policy.metadata.expires || 'never'}) for this request; denying by default.`,
+      },
+      trace: [],
+      deciderId: null,
+    }
+  }
+
   const trace: TraceStep[] = []
-  let carried = req.algorithm
-  let rekey: { from: string; to: string } | null = null
   let verdict: SimVerdict | null = null
   let deciderId: string | null = null
-  const reqDate = parseDate(req.date)
   const attrs = req.attrs.map(parseAttr)
   const flags = req.usageFlags.map(lc)
   const bits = req.bits === '' ? null : Number(req.bits)
@@ -208,6 +323,15 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
     }
     return null
   })()
+
+  // WS-5b: fully resolved BEFORE any gating rule runs, independent of file
+  // order — see `resolveAlgorithm`'s doc comment. `carried` is a read-only
+  // reference to this result for the rest of the function; only the
+  // `algorithm_default`/`algorithm_substitution` cases below need to know
+  // whether THEY were the one that produced it (for the trace), never to
+  // mutate it themselves.
+  const resolved = resolveAlgorithm(policy, req, winningDefaultId)
+  const carried = resolved.algorithm
 
   for (const r of policy.rules) {
     if (verdict) {
@@ -237,7 +361,11 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
 
     switch (r.type) {
       case 'algorithm_default':
-        if (opMatches(ops, req.op) && !carried) {
+        // WS-5b: `carried` is now the precomputed FINAL value (read-only) —
+        // whether THIS rule is the one that produced it is `resolvedByIds`,
+        // not a `!carried` check (which no longer means "nothing has
+        // resolved yet" once `carried` is always already-final).
+        if (opMatches(ops, req.op) && !req.algorithm) {
           if (winningDefaultId !== null && r.id !== winningDefaultId) {
             skip(
               r.scalars.name_pattern
@@ -254,25 +382,24 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
           }
           matched = true
           effect = 'resolve'
-          carried = r.scalars.default_algorithm ?? carried
           note = r.scalars.name_pattern
             ? `"${req.keyName}" matches ${r.scalars.name_pattern} → ${carried}`
             : `default → ${carried}`
         }
         break
       case 'algorithm_substitution':
-        if (opMatches(ops, req.op) && lc(carried) === lc(r.scalars.from ?? '')) {
-          if (namePatternGate(r, req.keyName) === false) {
-            skip(
-              `name_pattern "${r.scalars.name_pattern}" doesn't match "${req.keyName || '(unnamed)'}"`
-            )
-            break
-          }
+        // WS-5b: `resolveAlgorithm` already ran the whole chain up front;
+        // `resolvedByIds` says definitively whether THIS rule was a link in
+        // it. A rule that didn't fire shows a plain pass here rather than
+        // trying to reconstruct which specific reason (op/from/name_pattern)
+        // — that would need re-deriving this rule's chain-position-specific
+        // intermediate value, which is exactly the per-position coupling
+        // this fix removes; a cosmetic "why not" detail isn't worth
+        // reintroducing it.
+        if (opMatches(ops, req.op) && resolved.resolvedByIds.has(r.id)) {
           matched = true
           effect = 'resolve'
-          rekey = { from: carried, to: r.scalars.to ?? '' }
-          carried = r.scalars.to ?? carried
-          note = `${rekey.from} → ${rekey.to}`
+          note = `${r.scalars.from ?? ''} → ${r.scalars.to ?? carried}`
         }
         break
       case 'algorithm_denylist': {
@@ -568,9 +695,16 @@ export function evaluatePolicy(policy: EditablePolicy, req: SimRequest): SimResu
   }
 
   if (!verdict) {
-    verdict = rekey
-      ? { kind: 'rekey', from: rekey.from, to: rekey.to, algorithm: carried }
-      : { kind: 'allow', algorithm: carried || req.algorithm }
+    // A substitution match on a create-family op has no existing object to
+    // rekey — the engine allows with an algorithm override instead (see
+    // `toDrySpec`'s `newObject` check, reused verbatim here so the two stay
+    // in lockstep). Only a "use" op (an existing object, per KMIP semantics)
+    // produces a genuine rekey verdict.
+    const isNewObject = /^(Create|CreateKeyPair|Register|Import)/.test(req.op)
+    verdict =
+      resolved.rekey && !isNewObject
+        ? { kind: 'rekey', from: resolved.rekey.from, to: resolved.rekey.to, algorithm: carried }
+        : { kind: 'allow', algorithm: carried || req.algorithm }
   }
 
   return { verdict, trace, deciderId }

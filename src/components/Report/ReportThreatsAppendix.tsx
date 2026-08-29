@@ -9,13 +9,13 @@ import clsx from 'clsx'
 /** Maps assess-module industry names to threats CSV industry column values. */
 export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
   'Finance & Banking': [
-    'Financial Services / Banking',
+    'Finance & Banking',
     'Cryptocurrency / Blockchain',
     'Payment Card Industry',
     'Insurance',
     'Legal / Notary / eSignature',
   ],
-  'Government & Defense': ['Government / Defense'],
+  'Government & Defense': ['Government & Defense'],
   Healthcare: ['Healthcare / Pharmaceutical'],
   Telecommunications: ['Telecommunications'],
   Technology: [
@@ -34,7 +34,7 @@ export const ASSESS_TO_THREATS_INDUSTRY: Record<string, string[]> = {
   ],
   Automotive: ['Automotive / Connected Vehicles'],
   Aerospace: ['Aerospace / Aviation'],
-  'Retail & E-Commerce': ['Retail / E-Commerce', 'Payment Card Industry'],
+  'Retail & E-Commerce': ['Retail & E-Commerce', 'Payment Card Industry'],
   Other: [],
 }
 

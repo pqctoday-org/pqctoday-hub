@@ -1,0 +1,44 @@
+# BSI TR-02102-1 (Germany) — key-establishment share (modular-policy plan,
+# 2026-08-28). Split from `bsi-tr-02102.yaml`. Pair with `-signing`,
+# `-encryption`, and `bsi-tr-02102-global` (the hybrid-partner attribute
+# requirement).
+
+schema_version: 3
+
+metadata:
+  name: bsi-tr-02102-key-establishment
+  description: |
+    Key establishment must be HYBRID: either a combined hybrid KEM
+    (X25519MLKEM768 / SecP256r1MLKEM768) or a standalone PQC KEM (ML-KEM,
+    FrodoKEM, Classic McEliece — BSI recognises the conservative
+    lattice/code KEMs for long-term confidentiality) that declares its
+    classical partner via x-pqctoday-hybrid-partner at creation (enforced
+    in the sibling `-global` module). Classical KEM/DH stays allowed
+    because BSI requires it as the HYBRID partner, not standalone.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "BSI TR-02102-1",  status: aligned }
+    - { framework: "FIPS 203 ML-KEM", status: aligned }
+
+rules:
+  # KEM allowlist — BSI-recognised PQC KEMs (note FrodoKEM / Classic
+  # McEliece, which fips-only and cnsa-2.0 deny), the combined hybrid KEMs,
+  # and classical ECDH/X25519 as the hybrid partner.
+  - type: algorithm_allowlist
+    ops: ["CreateKeyPair:KeyAgreement"]
+    algorithms:
+      - ML-KEM-768
+      - ML-KEM-1024
+      - FrodoKEM-976
+      - FrodoKEM-1344
+      - Classic-McEliece-460896
+      - Classic-McEliece-6688128
+      - X25519MLKEM768
+      - SecP256r1MLKEM768
+      - ECDH-P256
+      - ECDH-P384
+      - ECDH-P521
+      - X25519
+    reason: "KEM not recognised by BSI TR-02102-1 for new key establishment"

@@ -1,0 +1,42 @@
+# Migration tab — hybrid target state, key-establishment share
+# (modular-policy plan, 2026-08-28). Split from `migration-hybrid.yaml`.
+# Pair with `-signing`, `-encryption`, and `-global`.
+#
+# `ReKeyKeyPair` refined to `ReKeyKeyPair:KeyAgreement` — see
+# `migration-pqc-signing.yaml`'s header for the reasoning.
+
+schema_version: 3
+
+metadata:
+  name: migration-hybrid-key-establishment
+  description: |
+    New key-agreement keys default to the named hybrid group
+    X25519MLKEM768 (classical + ML-KEM-768 composite — defense-in-depth
+    while ML-KEM confidence builds). Existing classical KEM keys (X25519,
+    X448) both converge on X25519MLKEM768 at first use (Encapsulate) or via
+    the migration sweep (ReKeyKeyPair) — the hybrid target state does not
+    offer a higher hybrid tier, unlike the full-PQC state's X448→ML-KEM-1024
+    step-up.
+  authority: pqctoday-hsm/demo
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "Hybrid KEM (classical + FIPS 203 ML-KEM)", status: required }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: X25519MLKEM768
+    reason: "Hybrid key-establishment default (X25519 + ML-KEM-768 composite)"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, "ReKeyKeyPair:KeyAgreement"]
+    from: X25519
+    to: X25519MLKEM768
+    reason: "X25519 uplifted to hybrid X25519MLKEM768"
+
+  - type: algorithm_substitution
+    ops: [Encapsulate, "ReKeyKeyPair:KeyAgreement"]
+    from: X448
+    to: X25519MLKEM768
+    reason: "X448 uplifted to hybrid X25519MLKEM768"

@@ -81,6 +81,10 @@ rules:
     reason: "Hybrid window — Ed25519 to ML-DSA-44"
 
   # ── No NEW pure-classical asymmetric keys during the hybrid window ────
+  # ECDH-P521 added 2026-08-28 (audit finding B4) — see migration-pqc.yaml's
+  # identical fix for the full rationale (engine supports it; it was simply
+  # missing from this hand-maintained list, same gap `pqc.yaml` closed
+  # 2026-07-04 that never propagated to the Migration tab's copies).
   - type: algorithm_denylist
     ops:
       - CreateKeyPair
@@ -97,6 +101,7 @@ rules:
       - ECDSA-P521
       - ECDH-P256
       - ECDH-P384
+      - ECDH-P521
       - Ed25519
       - Ed448
       - X25519

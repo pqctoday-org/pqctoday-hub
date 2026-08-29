@@ -65,6 +65,23 @@ npm run validate:data -- --exclude-checks TP-1,MP-2
 # Bypass with `git push --no-verify`.
 npm run sync:wasm:check
 
+# CACP (crypto-agility control plane) suite — the KMIP policy engine's wasm
+# bridge, visual editor, and policy library. ADDED 2026-08-28 (gaps-
+# remediation plan WS-10), after `gate:cacp` was found to exist in
+# package.json but be wired into nothing: `gate:local`'s bare `npm run test`
+# already covers this tree's CI-visible tests, but the *.local.test.ts
+# drift guards (catalog ↔ Rust-grammar, dual-form policy parity,
+# sim ↔ engine parity) and the narrow cacp-kmip wasm-provenance check ran
+# nowhere at push time. Some of those drift guards are no-ops without a
+# sibling ../pqctoday-hsm checkout (same convention as `sync:wasm:check`
+# above) — see TESTING.md's CACP section. Runs unconditionally, matching
+# every other check in this hook, rather than path-scoped to the CACP
+# directories the plan named: the scoped test run itself is a couple of
+# seconds, and path-scoping would be new machinery this hook doesn't use
+# anywhere else, for a saving that small.
+# Bypass with `git push --no-verify`.
+npm run gate:cacp
+
 # Silent row loss between two generations of a dated CSV.
 # ADDED 2026-08-14, after a near-miss that NOTHING else could have caught. Two
 # sessions each wrote a new generation of library_*.csv; because dated

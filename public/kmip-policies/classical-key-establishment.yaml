@@ -1,0 +1,25 @@
+# Classical crypto policy — key-establishment share (modular-policy plan,
+# 2026-08-28). Split from the single-file `classical.yaml`. Pair with
+# `classical-signing`, `classical-encryption`, and `classical-global`.
+
+schema_version: 3
+
+metadata:
+  name: classical-key-establishment
+  description: |
+    Pre-PQC KEM baseline: new key-establishment keys default to ECDH-P256.
+    The `pqc-key-establishment` module's substitution rules migrate
+    existing keys (ECDH-P256/P384/P521, X25519, X448) at first Encapsulate
+    after flipping.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline",  status: representative }
+    - { framework: "FIPS 140-3 legacy", status: aligned }
+
+rules:
+  - type: algorithm_default
+    ops: ["CreateKeyPair:KeyAgreement"]
+    default_algorithm: ECDH-P256
+    reason: "Classical KEM default (ECDH-P256)"

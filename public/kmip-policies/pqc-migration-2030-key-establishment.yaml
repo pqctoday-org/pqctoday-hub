@@ -1,0 +1,29 @@
+# PQC migration policy, 2030 cutoff — key-establishment share
+# (modular-policy plan, 2026-08-28). Split from `pqc-migration-2030.yaml`.
+# Pair with `-signing`, `-encryption`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: pqc-migration-2030-key-establishment
+  description: |
+    Hard cutoff: no classical key establishment (ECDH/X25519 Encapsulate)
+    after 2030-01-01 — a classical ECDH/X25519 key producing fresh shared
+    secrets is exactly as quantum-vulnerable as a classical signature or
+    encryption operation, and was originally left uncovered by the
+    single-file policy this module was split from (2026-08-28
+    six-requirement audit finding B1). Decapsulate of pre-cutoff material
+    remains allowed indefinitely (consumer op, nothing to migrate).
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [key-establishment]
+  compliance_mapping:
+    - { framework: "NIST IR 8547 (ipd)", status: stricter-than }
+    - { framework: "CNSA-2.0",           status: partial }
+
+rules:
+  - type: temporal_cutoff
+    op: Encapsulate
+    algorithm_class: classical
+    after: "2030-01-01"
+    reason: "Classical key establishment (ECDH/X25519 Encapsulate) banned by migration roadmap from 2030-01-01"

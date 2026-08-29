@@ -7,13 +7,14 @@ import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
 import { useSelectedProductIds } from '@/store/useMigrateSelectionStore'
 import { softwareData, softwareMetadata } from '@/data/migrateData'
 import { vendorMap } from '@/data/vendorData'
-import { LAYERS } from '@/data/infrastructureLayers'
+import { DOMAINS, type DomainId } from '@/data/migrationAssets'
 import { softwareItemToCbomInput } from '@/components/Migrate/cbomExport'
 import { buildCbomDocument, downloadCbomJson } from '@/services/cbom/cycloneDx'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import { cpeByProduct } from '@/data/cpeXrefData'
 import { loadCveSnapshot } from '@/data/cveSnapshotData'
-import type { ThreatData } from '@/data/threatsData'
+import { threatsData, type ThreatData } from '@/data/threatsData'
+import { matchesIndustry, isCrossIndustry } from '@/data/industryMatch'
 import { ProductRow } from '@/components/Migrate/Workbench/ProductRow'
 import { ProductDetail } from '@/components/Migrate/Workbench/ProductDetail'
 import {
@@ -32,6 +33,24 @@ import {
   Download,
   Link2,
   ChevronDown,
+  Lock,
+  Network,
+  Terminal,
+  Mail,
+  MessageSquare,
+  FileSignature,
+  ShieldCheck,
+  Cpu,
+  KeyRound,
+  Database,
+  Fingerprint,
+  Boxes,
+  Globe2,
+  HardDrive,
+  Server,
+  Library,
+  Search,
+  Landmark,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -186,8 +205,116 @@ const StatBadge: React.FC<StatBadgeProps> = ({ label, count, total, isGap }) => 
   )
 }
 
-// Lookup map for LAYERS by id
-const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
+// ── Domain taxonomy (vendor-risk remediation, 2026-08-27) ────────────────
+//
+// This matrix used to group products by the catalog's free-text
+// `infrastructure_layer` column — 9 canonical values plus ~15 stray
+// spellings and 28 blanks, which scattered the 34 HSM products across five
+// buckets and rendered phantom "layer" cards for every stray string. It now
+// groups by `classifyProductDomain` — the audited, coverage-tested taxonomy
+// the /migrate Replace tab uses, in which every active product lands in
+// exactly one of the 18 domains.
+
+/** Domain ids in DOMAINS declaration order (replace assets first). */
+const DOMAIN_ORDER = Object.keys(DOMAINS) as DomainId[]
+
+/** Presentational icons per domain (the shared DOMAINS registry is
+ *  deliberately presentation-free). */
+const DOMAIN_ICONS: Record<DomainId, typeof Package> = {
+  tls: Lock,
+  vpn: Network,
+  ssh: Terminal,
+  email: Mail,
+  msg: MessageSquare,
+  codesign: FileSignature,
+  certs: ShieldCheck,
+  hsm: Cpu,
+  kms: KeyRound,
+  atrest: Database,
+  identity: Fingerprint,
+  blockchain: Boxes,
+  network: Globe2,
+  hardware: HardDrive,
+  platform: Server,
+  foundations: Library,
+  discovery: Search,
+  programs: Landmark,
+}
+
+/**
+ * Threat-matching keywords per domain, replacing the old derivation from
+ * LAYERS label/description prose. Explicit and reviewed rather than derived:
+ * these terms are matched (case-insensitive substring) against each threat's
+ * description, cryptoAtRisk, and threatId to decide whether the threat
+ * "names" the domain for the Impact axis. Overlap is intentional — one
+ * threat can bear on several domains.
+ */
+export const DOMAIN_THREAT_KEYWORDS: Record<DomainId, readonly string[]> = {
+  tls: ['tls', 'ssl', 'https', 'web traffic', 'session encryption'],
+  vpn: ['vpn', 'ipsec', 'ikev2', 'tunnel'],
+  ssh: ['ssh', 'remote access'],
+  email: ['email', 's/mime', 'mail encryption'],
+  msg: ['messaging', 'messenger', 'end-to-end'],
+  codesign: [
+    'code signing',
+    'firmware',
+    'secure boot',
+    'software supply',
+    'supply chain',
+    'software update',
+    'software integrity',
+  ],
+  certs: ['pki', 'certificate', 'x.509', 'digital signature', 'signing key'],
+  hsm: [
+    'hsm',
+    'hardware security module',
+    'tpm',
+    'secure element',
+    'smart card',
+    'payment terminal',
+  ],
+  kms: ['key management', 'kms', 'key vault', 'secrets management', 'key wrapping'],
+  atrest: ['data at rest', 'data-at-rest', 'database', 'storage', 'backup', 'archive'],
+  identity: ['identity', 'authentication', 'credential', 'iam', 'single sign-on'],
+  blockchain: [
+    'blockchain',
+    'cryptocurrency',
+    'digital asset',
+    'ledger',
+    'wallet',
+    'smart contract',
+  ],
+  network: ['network', '5g', 'telecom', 'dns', 'routing', 'cdn', 'satellite', 'backbone'],
+  hardware: [
+    'semiconductor',
+    'chip',
+    'hardware accelerator',
+    'confidential computing',
+    'root of trust',
+    'side-channel',
+  ],
+  platform: [
+    'operating system',
+    'cloud',
+    'container',
+    'iot',
+    'scada',
+    'industrial control',
+    'ics',
+    'embedded',
+  ],
+  foundations: [
+    'library',
+    'libraries',
+    'openssl',
+    'sdk',
+    'crypto implementation',
+    'random number',
+    'qkd',
+  ],
+  discovery: ['inventory', 'cbom', 'sbom', 'discovery', 'cryptographic audit'],
+  programs: ['national', 'standardization', 'regulation', 'mandate', 'migration deadline'],
+}
 
 /**
  * Above this many products in one layer, an UNSELECTED view shows a count and
@@ -252,19 +379,59 @@ const THREAT_SEVERITY_WEIGHT: Record<string, number> = {
   Low: 1,
 }
 
+/** Keyword regex for one domain's threat matching (see DOMAIN_THREAT_KEYWORDS). */
+export function domainKeywordRegex(domain: DomainId): RegExp {
+  const terms = DOMAIN_THREAT_KEYWORDS[domain].map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  if (terms.length === 0) return /(?!)/ // matches nothing
+  return new RegExp(`(${terms.join('|')})`, 'i')
+}
+
+function threatMatchesDomain(t: ThreatData, regex: RegExp): boolean {
+  return (
+    regex.test(t.description || '') ||
+    regex.test(t.cryptoAtRisk || '') ||
+    regex.test(t.threatId || '')
+  )
+}
+
 /**
  * Impact bands, calibrated against the real threat corpus rather than chosen
- * for roundness. Scoring every industry × every layer in
- * `quantum_threats_hsm_industries_08072026.csv` (218 threats, 25 industries)
- * with the weights above gives 80 non-zero layer scores distributed:
- *
- *   min 2 · p25 3 · p50 4 · p75 7 · p90 15 · max 33
- *
- * The bands below are those quartiles, so a level-5 layer is genuinely in the
- * corpus's top decile rather than merely "the biggest of however many layers
- * happen to be on screen". Re-derive these if the threat corpus changes shape.
+ * for roundness — derived at module load so they can never silently drift
+ * from the data (the previous hardcoded bands were quartiles of a corpus
+ * revision that had since moved on). Every distinct corpus industry × every
+ * domain is scored exactly the way the live matrix scores it (sector-key
+ * industry join including Cross-Industry threats, severity weights above);
+ * the bands are the p25/p50/p75/p90 of the non-zero scores, so a level-5
+ * domain is genuinely in the corpus's top decile rather than merely "the
+ * biggest of however many domains happen to be on screen".
  */
-const IMPACT_BANDS: readonly number[] = [3, 5, 9, 15]
+export function deriveImpactBands(allThreats: ThreatData[]): number[] {
+  const industries = [...new Set(allThreats.map((t) => t.industry))].filter(
+    (ind) => ind && !isCrossIndustry(ind)
+  )
+  const regexes = DOMAIN_ORDER.map((d) => domainKeywordRegex(d))
+  const scores: number[] = []
+  for (const industry of industries) {
+    const industryThreats = allThreats.filter((t) => matchesIndustry(t.industry, industry))
+    for (const regex of regexes) {
+      let score = 0
+      for (const t of industryThreats) {
+        if (threatMatchesDomain(t, regex)) score += THREAT_SEVERITY_WEIGHT[t.criticality] ?? 0
+      }
+      if (score > 0) scores.push(score)
+    }
+  }
+  if (scores.length === 0) return [3, 5, 9, 15] // corpus empty — keep last known shape
+  scores.sort((a, b) => a - b)
+  const pct = (q: number) =>
+    scores[Math.min(scores.length - 1, Math.floor(q * (scores.length - 1)))]
+  // Strictly increasing: collapse ties upward so the 4 bands stay 4 levels.
+  const raw = [pct(0.25), pct(0.5), pct(0.75), pct(0.9)].map(Math.round)
+  for (let i = 1; i < raw.length; i++) if (raw[i] <= raw[i - 1]) raw[i] = raw[i - 1] + 1
+  return raw
+}
+
+export const IMPACT_BANDS: readonly number[] = deriveImpactBands(threatsData)
 
 /**
  * Absolute impact level (0–5) for a layer, from the severity-weighted total of
@@ -295,12 +462,12 @@ export function isCriticalOrHighPriority(priority: string): boolean {
   return p === 'critical' || p === 'high'
 }
 
-/** Sum of known NVD CVEs (MEDIUM+, per the static snapshot) across a layer's
+/** Sum of known NVD CVEs (MEDIUM+, per the static snapshot) across a domain's
  *  products, joined via the same softwareName-keyed CPE xref
  *  CryptoVulnerabilityWatch.tsx uses. `null` snapshot (still loading) or a
  *  product with no CPE match contributes 0, not an error — this is a known-
  *  exposure count, not a completeness claim. */
-function countLayerCves(products: SoftwareItem[], snapshot: CveSnapshot | null): number {
+function countDomainCves(products: SoftwareItem[], snapshot: CveSnapshot | null): number {
   if (!snapshot) return 0
   let total = 0
   for (const product of products) {
@@ -311,8 +478,8 @@ function countLayerCves(products: SoftwareItem[], snapshot: CveSnapshot | null):
   return total
 }
 
-export interface LayerStat {
-  layerId: string
+export interface DomainStat {
+  domainId: DomainId
   products: SoftwareItem[]
   total: number
   pqcReady: number
@@ -322,13 +489,13 @@ export interface LayerStat {
    *  the catalog curator. Real data, surfaced as its own "Priority"
    *  badge — no longer used as the Impact axis input (see below). */
   criticalHigh: number
-  /** 1–5, or 0 when the layer is fully PQC-ready: share of the layer not
+  /** 1–5, or 0 when the domain is fully PQC-ready: share of the domain not
    *  yet PQC-ready. Labeled "Migration Gap" in the UI, not "Likelihood"
    *  — see the comment above MATRIX_LIKELIHOOD_LABELS. */
   likelihood: number
   threatMatches: number
-  /** Known NVD CVEs (MEDIUM+) across the layer's products, per the static
-   *  snapshot — see countLayerCves. */
+  /** Known NVD CVEs (MEDIUM+) across the domain's products, per the static
+   *  snapshot — see countDomainCves. */
   cveCount: number
   /** null when hasIndustryContext is false ("not personalized" — Impact
    *  can't be computed from real threat data without an industry). */
@@ -337,52 +504,39 @@ export interface LayerStat {
 }
 
 /**
- * Per-layer Migration-Gap × Impact statistics — the shared computation behind
+ * Per-domain Migration-Gap × Impact statistics — the shared computation behind
  * both the live SupplyChainRiskMatrix component and its exec-tour sample doc
  * (realToolDocs.ts). Impact is derived from the share of the given industry's
- * threats that name each layer (via layerKeywordRegex) — a genuinely separate
- * signal from the catalog's own `pqcMigrationPriority` field, to avoid the
- * circular reasoning of using a priority judgment to justify itself (see the
- * `criticalHigh` field above). `hasIndustryContext=false` leaves impact/
- * riskScore null rather than silently falling back to criticalHigh, which
- * would reintroduce that exact circularity.
+ * threats that name each domain (via domainKeywordRegex) — a genuinely
+ * separate signal from the catalog's own `pqcMigrationPriority` field, to
+ * avoid the circular reasoning of using a priority judgment to justify itself
+ * (see the `criticalHigh` field above). `hasIndustryContext=false` leaves
+ * impact/riskScore null rather than silently falling back to criticalHigh,
+ * which would reintroduce that exact circularity.
  */
-export function computeLayerStats(
-  vendorsByLayer: Map<string, SoftwareItem[]>,
+export function computeDomainStats(
+  vendorsByDomain: Map<DomainId, SoftwareItem[]>,
   industryThreats: ThreatData[],
   hasIndustryContext: boolean,
   cveSnapshot: CveSnapshot | null
-): LayerStat[] {
-  const layerThreatMatchCounts = new Map<string, number>()
-  // Severity-weighted total per layer — the ABSOLUTE impact input (W1-4).
-  const layerThreatSeverity = new Map<string, number>()
-  for (const layer of LAYERS) {
-    const regex = layerKeywordRegex(layer)
-    const matched = industryThreats.filter(
-      (t) =>
-        regex.test(t.description || '') ||
-        regex.test(t.cryptoAtRisk || '') ||
-        regex.test(t.threatId || '')
-    )
-    layerThreatMatchCounts.set(layer.id, matched.length)
-    layerThreatSeverity.set(
-      layer.id,
+): DomainStat[] {
+  const domainThreatMatchCounts = new Map<DomainId, number>()
+  // Severity-weighted total per domain — the ABSOLUTE impact input (W1-4).
+  const domainThreatSeverity = new Map<DomainId, number>()
+  for (const domainId of DOMAIN_ORDER) {
+    const regex = domainKeywordRegex(domainId)
+    const matched = industryThreats.filter((t) => threatMatchesDomain(t, regex))
+    domainThreatMatchCounts.set(domainId, matched.length)
+    domainThreatSeverity.set(
+      domainId,
       matched.reduce((sum, t) => sum + (THREAT_SEVERITY_WEIGHT[t.criticality] ?? 0), 0)
     )
   }
 
-  // Ordered layers from LAYERS constant first
-  const orderedIds = LAYERS.map((l) => l.id)
-  // Add any extra layer IDs not in LAYERS
-  const extraIds = Array.from(vendorsByLayer.keys())
-    .filter((id) => !LAYER_MAP.has(id))
-    .sort()
-  const allIds = [...orderedIds, ...extraIds]
+  const base: Omit<DomainStat, 'impact' | 'riskScore'>[] = []
 
-  const base: Omit<LayerStat, 'impact' | 'riskScore'>[] = []
-
-  for (const layerId of allIds) {
-    const products = vendorsByLayer.get(layerId)
+  for (const domainId of DOMAIN_ORDER) {
+    const products = vendorsByDomain.get(domainId)
     if (!products || products.length === 0) continue
 
     const total = products.length
@@ -401,7 +555,7 @@ export function computeLayerStats(
     const likelihood = toMatrixLevel(total > 0 ? gapCount / total : 0)
 
     base.push({
-      layerId,
+      domainId,
       products,
       total,
       pqcReady,
@@ -409,8 +563,8 @@ export function computeLayerStats(
       hybridSupport: hybrid,
       criticalHigh,
       likelihood,
-      threatMatches: layerThreatMatchCounts.get(layerId) ?? 0,
-      cveCount: countLayerCves(products, cveSnapshot),
+      threatMatches: domainThreatMatchCounts.get(domainId) ?? 0,
+      cveCount: countDomainCves(products, cveSnapshot),
     })
   }
 
@@ -419,8 +573,8 @@ export function computeLayerStats(
       return { ...s, impact: null, riskScore: null }
     }
     // Absolute, severity-weighted — NOT a share of the displayed estate, so a
-    // layer's impact no longer changes when unrelated layers come and go.
-    const impact = threatImpactLevel(layerThreatSeverity.get(s.layerId) ?? 0)
+    // domain's impact no longer changes when unrelated domains come and go.
+    const impact = threatImpactLevel(domainThreatSeverity.get(s.domainId) ?? 0)
     const riskScore = s.likelihood > 0 && impact > 0 ? s.likelihood * impact : 0
     return { ...s, impact, riskScore }
   })
@@ -440,26 +594,12 @@ function matrixBadgeClasses(score: number): string {
   return 'bg-status-success/10 text-status-success border-status-success/20'
 }
 
-export interface LayerMatrixEntry {
-  layerId: string
+export interface DomainMatrixEntry {
+  domainId: DomainId
   label: string
   likelihood: number
   impact: number
   score: number
-}
-
-/**
- * Small keyword regex per infrastructure layer, derived from its own `label`
- * plus the comma-separated terms already in its `description` (no new
- * taxonomy — reuses metadata the layer already carries in LAYERS).
- */
-export function layerKeywordRegex(layer: { label: string; description: string }): RegExp {
-  const terms = [layer.label, ...layer.description.split(/,\s*/)]
-    .map((t) => t.trim())
-    .filter((t) => t.length >= 4)
-    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-  if (terms.length === 0) return /(?!)/ // matches nothing
-  return new RegExp(`(${terms.join('|')})`, 'i')
 }
 
 /** Minimum name length before a provider's product name is used as a text-match
@@ -512,33 +652,33 @@ export function buildDependencyRelations(
   return relations.sort((a, b) => b.dependents.length - a.dependents.length)
 }
 
-/** Layers with a real, non-null score placed on the 5×5 grid. The grid's
+/** Domains with a real, non-null score placed on the 5×5 grid. The grid's
  *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0 on
- *  either axis, so a layer with a zero Migration Gap or zero Impact can't be
- *  plotted — those belong in {@link computeNoRiskLayers} instead of being
+ *  either axis, so a domain with a zero Migration Gap or zero Impact can't be
+ *  plotted — those belong in {@link computeNoRiskDomains} instead of being
  *  silently dropped or floored back up to a fake nonzero score. */
-export function computeMatrixEntries(layerStats: LayerStat[]): LayerMatrixEntry[] {
-  return layerStats
+export function computeMatrixEntries(domainStats: DomainStat[]): DomainMatrixEntry[] {
+  return domainStats
     .filter(
-      (stat): stat is LayerStat & { impact: number; riskScore: number } =>
+      (stat): stat is DomainStat & { impact: number; riskScore: number } =>
         stat.impact !== null && stat.likelihood > 0 && stat.impact > 0
     )
     .map((stat) => ({
-      layerId: stat.layerId,
-      label: LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId,
+      domainId: stat.domainId,
+      label: DOMAINS[stat.domainId]?.label ?? stat.domainId,
       likelihood: stat.likelihood,
       impact: stat.impact,
       score: stat.riskScore,
     }))
 }
 
-/** Layers with a real, computed (non-null) score of exactly 0 on either
+/** Domains with a real, computed (non-null) score of exactly 0 on either
  *  axis — fully PQC-ready and/or matching no industry threats. Not a bug to
  *  hide: shown as its own "no risk" list, attached directly to the grid,
- *  with layers named (not just counted) so it reads as "the rest of the
+ *  with domains named (not just counted) so it reads as "the rest of the
  *  picture," not "these dropped out." */
-export function computeNoRiskLayers(layerStats: LayerStat[]): LayerStat[] {
-  return layerStats.filter(
+export function computeNoRiskDomains(domainStats: DomainStat[]): DomainStat[] {
+  return domainStats.filter(
     (stat) => stat.impact !== null && (stat.likelihood === 0 || stat.impact === 0)
   )
 }
@@ -551,9 +691,9 @@ export interface SupplyChainMarkdownInput {
   pqcReadyCount: number
   overallFipsPct: number
   fipsValidatedCount: number
-  layerStats: LayerStat[]
-  matrixEntries: LayerMatrixEntry[]
-  noRiskLayers: LayerStat[]
+  domainStats: DomainStat[]
+  matrixEntries: DomainMatrixEntry[]
+  noRiskDomains: DomainStat[]
   hasIndustryContext: boolean
   /** Where to tell the reader to go personalize (differs by the live tool's
    *  mount point — 'Step 1' in the Learn-module wizard, 'the Assess page' on
@@ -570,8 +710,8 @@ export interface SupplyChainMarkdownInput {
  * Renders the Supply Chain PQC Risk Matrix export — the shared markdown
  * builder behind both the live tool's "Export" button and its exec-tour
  * sample doc (realToolDocs.ts). Pure formatting only: every number/list here
- * is already computed by the caller (computeLayerStats, computeMatrixEntries,
- * computeNoRiskLayers, buildDependencyRelations, mapToAssetClass) — a fix to
+ * is already computed by the caller (computeDomainStats, computeMatrixEntries,
+ * computeNoRiskDomains, buildDependencyRelations, mapToAssetClass) — a fix to
  * any of those shows up here automatically.
  */
 export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): string {
@@ -583,9 +723,9 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
     pqcReadyCount,
     overallFipsPct,
     fipsValidatedCount,
-    layerStats,
+    domainStats,
     matrixEntries,
-    noRiskLayers,
+    noRiskDomains,
     hasIndustryContext,
     industryContextHint,
     dependencyRelations,
@@ -605,12 +745,11 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   md += `| Metric | Value |\n|--------|-------|\n`
   md += `| PQC Ready | ${overallPqcPct}% (${pqcReadyCount}/${totalProducts}) |\n`
   md += `| FIPS Validated | ${overallFipsPct}% (${fipsValidatedCount}/${totalProducts}) |\n`
-  md += `| Infrastructure Layers | ${layerStats.length} |\n\n`
+  md += `| Domains Covered | ${domainStats.length} |\n\n`
 
-  md += '## Layer Breakdown\n\n'
-  for (const stat of layerStats) {
-    const layerDef = LAYER_MAP.get(stat.layerId)
-    const label = layerDef?.label ?? stat.layerId
+  md += '## Domain Breakdown\n\n'
+  for (const stat of domainStats) {
+    const label = DOMAINS[stat.domainId]?.label ?? stat.domainId
     const gapCount = stat.total - stat.pqcReady
     md += `### ${label} (${stat.total} products)\n\n`
     md += `| Metric | Count | % |\n|--------|-------|---|\n`
@@ -628,16 +767,16 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
 
   md += '## Migration Gap × Impact Risk Matrix\n\n'
   if (!hasIndustryContext) {
-    md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per layer above._\n\n`
+    md += `_Not personalized: select an industry/country in ${industryContextHint} to compute Impact from real threat data. Migration Gap alone is shown per domain above._\n\n`
   } else {
     md +=
-      '_Migration Gap derives from the share of each layer not yet PQC-ready. Impact is the severity-weighted count of this industry\'s supply-chain-relevant threats naming each layer (Critical 4, High 3, Medium 2, Low 1), banded 1-5 at the quartiles of the real threat corpus — an absolute measure that does not shift when other layers are added or removed, and an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
-    md += '| Layer | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
+      '_Migration Gap derives from the share of each domain not yet PQC-ready. Impact is the severity-weighted count of this industry\'s supply-chain-relevant threats naming each domain (Critical 4, High 3, Medium 2, Low 1), banded 1-5 at the quartiles of the real threat corpus — an absolute measure that does not shift when other domains are added or removed, and an independent signal from the separately-authored threats catalog, not the catalog\'s own `pqcMigrationPriority` field (shown separately above as "Priority"). Both are heuristics, not validated risk measurements — see the methodology note above the grid._\n\n'
+    md += '| Domain | Migration Gap (1-5) | Impact (1-5) | Score | Level |\n|---|---|---|---|---|\n'
     for (const entry of [...matrixEntries].sort((a, b) => b.score - a.score)) {
       md += `| ${entry.label} | ${entry.likelihood} | ${entry.impact} | ${entry.score} | ${matrixRiskLevel(entry.score)} |\n`
     }
-    if (noRiskLayers.length > 0) {
-      md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskLayers.map((s) => LAYER_MAP.get(s.layerId)?.label ?? s.layerId).join(', ')}\n`
+    if (noRiskDomains.length > 0) {
+      md += `\n_No risk — not plotted (0 on at least one axis):_ ${noRiskDomains.map((s) => DOMAINS[s.domainId]?.label ?? s.domainId).join(', ')}\n`
     }
   }
   md += '\n'
@@ -645,7 +784,7 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   md += '## Product Dependencies\n\n'
   if (dependencyRelations.length === 0) {
     md +=
-      '_No text-detected dependencies between catalog products in this view (a consumer product must reference a Library/Hardware-layer product by name in its own description)._\n\n'
+      '_No text-detected dependencies between catalog products in this view (a consumer product must reference a crypto-library, hardware, or HSM product by name in its own description)._\n\n'
   } else {
     md += '| Library / HSM | Depended on by |\n|---|---|\n'
     for (const rel of dependencyRelations) {
@@ -696,8 +835,8 @@ export function buildSupplyChainMarkdown(input: SupplyChainMarkdownInput): strin
   return md
 }
 
-function buildLayerEntriesMap(entries: LayerMatrixEntry[]): Map<string, LayerMatrixEntry[]> {
-  const map = new Map<string, LayerMatrixEntry[]>()
+function buildDomainEntriesMap(entries: DomainMatrixEntry[]): Map<string, DomainMatrixEntry[]> {
+  const map = new Map<string, DomainMatrixEntry[]>()
   for (const e of entries) {
     const rowIdx = 5 - e.likelihood
     const colIdx = e.impact - 1
@@ -709,7 +848,7 @@ function buildLayerEntriesMap(entries: LayerMatrixEntry[]): Map<string, LayerMat
   return map
 }
 
-/** 5×5 likelihood × impact grid — plots infrastructure layers instead of
+/** 5×5 likelihood × impact grid — plots migration domains instead of
  *  individual risks, on top of the shared `HeatmapGrid` component (the same
  *  one `RiskHeatmapGenerator` is grounded in conceptually) rather than a
  *  hand-rolled table. */
@@ -717,7 +856,7 @@ function SupplyChainRiskGrid({
   entriesMap,
   onCellClick,
 }: {
-  entriesMap: Map<string, LayerMatrixEntry[]>
+  entriesMap: Map<string, DomainMatrixEntry[]>
   onCellClick?: (rowIdx: number, colIdx: number) => void
 }) {
   const rows = MATRIX_LIKELIHOOD_LABELS.map((label, rowIdx) => `${5 - rowIdx} · ${label}`)
@@ -833,7 +972,7 @@ export const SupplyChainRiskMatrix: React.FC<{
   }, [])
   const myProducts = useSelectedProductIds()
   const {
-    vendorsByLayer,
+    vendorsByDomain,
     fipsValidatedCount,
     pqcReadyCount,
     totalProducts,
@@ -864,7 +1003,7 @@ export const SupplyChainRiskMatrix: React.FC<{
 
   const cbomBuckets = useMemo(() => {
     const source: SoftwareItem[] =
-      selectedItems.length > 0 ? selectedItems : Array.from(vendorsByLayer.values()).flat()
+      selectedItems.length > 0 ? selectedItems : Array.from(vendorsByDomain.values()).flat()
     const buckets: Record<CSWP39AssetClass, SoftwareItem[]> = {
       Code: [],
       Library: [],
@@ -877,45 +1016,48 @@ export const SupplyChainRiskMatrix: React.FC<{
       buckets[mapToAssetClass(item)].push(item)
     }
     return buckets
-  }, [selectedItems, vendorsByLayer])
+  }, [selectedItems, vendorsByDomain])
 
   // Impact used to be derived from `pqcMigrationPriority` — a hand-curated
   // catalog field that may already have been set considering impact, which
   // risked circular reasoning (using a priority judgment to justify the same
   // priority judgment). `industryThreats` is a genuinely separate data
-  // source (the threats/compliance-framework catalog), so a per-layer count
+  // source (the threats/compliance-framework catalog), so a per-domain count
   // of matching threats is used instead. This breaks the circularity but is
   // still a heuristic (keyword matching), not a validated measurement — it's
   // not more *accurate* than the old field, just no longer the same field
   // reused to justify itself.
   const hasIndustryContext = industry.trim().length > 0
 
-  const layerStats = useMemo(
-    () => computeLayerStats(vendorsByLayer, industryThreats, hasIndustryContext, cveSnapshot),
-    [vendorsByLayer, industryThreats, hasIndustryContext, cveSnapshot]
+  const domainStats = useMemo(
+    () => computeDomainStats(vendorsByDomain, industryThreats, hasIndustryContext, cveSnapshot),
+    [vendorsByDomain, industryThreats, hasIndustryContext, cveSnapshot]
   )
 
-  /** Layers with a real, non-null score placed on the 5×5 grid. The grid's
+  /** Domains with a real, non-null score placed on the 5×5 grid. The grid's
    *  row/col math (`5 - likelihood`, `impact - 1`) has no slot for level 0
-   *  on either axis, so a layer with a zero Migration Gap or zero Impact
+   *  on either axis, so a domain with a zero Migration Gap or zero Impact
    *  can't be plotted — those are listed separately below instead of being
    *  silently dropped or floored back up to a fake nonzero score. */
-  const matrixEntries = useMemo(() => computeMatrixEntries(layerStats), [layerStats])
-  const matrixEntriesMap = useMemo(() => buildLayerEntriesMap(matrixEntries), [matrixEntries])
-  const noRiskLayers = useMemo(() => computeNoRiskLayers(layerStats), [layerStats])
+  const matrixEntries = useMemo(() => computeMatrixEntries(domainStats), [domainStats])
+  const matrixEntriesMap = useMemo(() => buildDomainEntriesMap(matrixEntries), [matrixEntries])
+  const noRiskDomains = useMemo(() => computeNoRiskDomains(domainStats), [domainStats])
 
-  // Real product-to-product dependencies: Library/Hardware-layer products
-  // ("providers") that other catalog products ("consumers") reference by name
-  // in their own description/brief text.
+  // Real product-to-product dependencies: crypto-library / hardware / HSM
+  // products ("providers") that other catalog products ("consumers")
+  // reference by name in their own description/brief text. Providers come
+  // from the domain taxonomy — the old raw-layer keys ('Libraries',
+  // 'Hardware') missed every HSM filed under a stray layer spelling.
   const dependencyRelations = useMemo(() => {
     const providers = [
-      ...(vendorsByLayer.get('Libraries') ?? []),
-      ...(vendorsByLayer.get('Hardware') ?? []),
+      ...(vendorsByDomain.get('foundations') ?? []),
+      ...(vendorsByDomain.get('hardware') ?? []),
+      ...(vendorsByDomain.get('hsm') ?? []),
     ]
     const consumers =
-      selectedItems.length > 0 ? selectedItems : Array.from(vendorsByLayer.values()).flat()
+      selectedItems.length > 0 ? selectedItems : Array.from(vendorsByDomain.values()).flat()
     return buildDependencyRelations(providers, consumers)
-  }, [vendorsByLayer, selectedItems])
+  }, [vendorsByDomain, selectedItems])
 
   const overallPqcPct = totalProducts > 0 ? Math.round((pqcReadyCount / totalProducts) * 100) : 0
   const overallFipsPct =
@@ -931,9 +1073,9 @@ export const SupplyChainRiskMatrix: React.FC<{
         pqcReadyCount,
         overallFipsPct,
         fipsValidatedCount,
-        layerStats,
+        domainStats,
         matrixEntries,
-        noRiskLayers,
+        noRiskDomains,
         hasIndustryContext,
         industryContextHint,
         dependencyRelations,
@@ -950,9 +1092,9 @@ export const SupplyChainRiskMatrix: React.FC<{
       pqcReadyCount,
       overallFipsPct,
       fipsValidatedCount,
-      layerStats,
+      domainStats,
       matrixEntries,
-      noRiskLayers,
+      noRiskDomains,
       hasIndustryContext,
       industryContextHint,
       dependencyRelations,
@@ -1035,19 +1177,19 @@ export const SupplyChainRiskMatrix: React.FC<{
     )
 
   // Drill-down: HeatmapGrid already supports onCellClick, just unused here
-  // before now. Resolves the layer(s) in the clicked cell and scrolls to +
-  // briefly highlights their existing layer card(s) below, instead of
-  // building a new UI surface for what the layer cards already show.
-  const layerCardRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const [highlightedLayerId, setHighlightedLayerId] = useState<string | null>(null)
+  // before now. Resolves the domain(s) in the clicked cell and scrolls to +
+  // briefly highlights their existing domain card(s) below, instead of
+  // building a new UI surface for what the domain cards already show.
+  const domainCardRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [highlightedDomainId, setHighlightedDomainId] = useState<string | null>(null)
   const handleMatrixCellClick = useCallback(
     (rowIdx: number, colIdx: number) => {
       const entries = matrixEntriesMap.get(`${rowIdx}-${colIdx}`)
       if (!entries || entries.length === 0) return
-      const target = layerCardRefs.current[entries[0].layerId]
+      const target = domainCardRefs.current[entries[0].domainId]
       target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      setHighlightedLayerId(entries[0].layerId)
-      window.setTimeout(() => setHighlightedLayerId(null), 1600)
+      setHighlightedDomainId(entries[0].domainId)
+      window.setTimeout(() => setHighlightedDomainId(null), 1600)
     },
     [matrixEntriesMap]
   )
@@ -1060,9 +1202,8 @@ export const SupplyChainRiskMatrix: React.FC<{
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">
           This view maps {myProducts.length > 0 ? 'your selected' : ''} product capabilities across
-          infrastructure layers using real data from the migration catalog. Each layer card shows
-          PQC readiness, FIPS validation status, hybrid support, and gaps requiring vendor
-          engagement.
+          migration domains using real data from the migration catalog. Each domain card shows PQC
+          readiness, FIPS validation status, hybrid support, and gaps requiring vendor engagement.
         </p>
       </div>
 
@@ -1160,14 +1301,14 @@ export const SupplyChainRiskMatrix: React.FC<{
           Supply Chain Risk Matrix (Migration Gap × Impact)
         </h3>
         <p className="text-xs text-muted-foreground mb-3">
-          Each infrastructure layer plotted by <strong>migration gap</strong> (share of the layer
-          not yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this
-          industry&apos;s supply-chain-relevant threats naming this layer — Critical threats weigh
+          Each migration domain plotted by <strong>migration gap</strong> (share of the domain not
+          yet PQC-ready) × <strong>impact</strong> (the severity-weighted count of this
+          industry&apos;s supply-chain-relevant threats naming this domain — Critical threats weigh
           4, High 3, Medium 2, Low 1). Impact is an <em>absolute</em> measure: it does not change
-          when other layers are added or removed, and its 1–5 bands are set at the quartiles of the
-          real threat corpus, so a level-5 layer sits in its top decile. Both axes are heuristics
+          when other domains are added or removed, and its 1–5 bands are set at the quartiles of the
+          real threat corpus, so a level-5 domain sits in its top decile. Both axes are heuristics
           derived from real catalog/threat data, not a validated risk-probability estimate — click a
-          cell to jump to the layer(s) it represents below.
+          cell to jump to the domain(s) it represents below.
         </p>
         {!hasIndustryContext ? (
           <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
@@ -1178,12 +1319,12 @@ export const SupplyChainRiskMatrix: React.FC<{
                 select yours in {industryContextHint}. Showing Migration Gap only, worst first:
               </p>
               <ul className="mt-2 space-y-1">
-                {[...layerStats]
+                {[...domainStats]
                   .sort((a, b) => b.likelihood - a.likelihood)
                   .map((stat) => (
-                    <li key={stat.layerId} className="flex items-center justify-between gap-2">
+                    <li key={stat.domainId} className="flex items-center justify-between gap-2">
                       <span className="text-foreground">
-                        {LAYER_MAP.get(stat.layerId)?.label ?? stat.layerId}
+                        {DOMAINS[stat.domainId]?.label ?? stat.domainId}
                       </span>
                       <span className="tabular-nums">
                         {stat.likelihood === 0
@@ -1218,7 +1359,7 @@ export const SupplyChainRiskMatrix: React.FC<{
                 </div>
               </div>
             </div>
-            {noRiskLayers.length > 0 && (
+            {noRiskDomains.length > 0 && (
               <div
                 data-testid="no-risk-strip"
                 className="mt-2 flex items-start gap-2 rounded-lg border border-status-success/30 bg-status-success/5 p-2 text-xs text-muted-foreground"
@@ -1227,18 +1368,18 @@ export const SupplyChainRiskMatrix: React.FC<{
                 <div className="min-w-0 flex-1">
                   <p>
                     <strong className="text-foreground">
-                      {noRiskLayers.length} layer{noRiskLayers.length !== 1 ? 's' : ''}
+                      {noRiskDomains.length} domain{noRiskDomains.length !== 1 ? 's' : ''}
                     </strong>{' '}
                     not plotted above — zero on at least one axis, not enough matrix room for a true
                     &quot;no risk&quot; cell:
                   </p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
-                    {noRiskLayers.map((s) => (
+                    {noRiskDomains.map((s) => (
                       <span
-                        key={s.layerId}
+                        key={s.domainId}
                         className="rounded-full border border-status-success/20 bg-background px-2 py-0.5 font-medium text-status-success"
                       >
-                        {LAYER_MAP.get(s.layerId)?.label ?? s.layerId}
+                        {DOMAINS[s.domainId]?.label ?? s.domainId}
                       </span>
                     ))}
                   </div>
@@ -1271,14 +1412,11 @@ export const SupplyChainRiskMatrix: React.FC<{
         </div>
       )}
 
-      {/* Layer cards */}
+      {/* Domain cards */}
       <div className="space-y-4">
-        {layerStats.map((stat) => {
-          const layerDef = LAYER_MAP.get(stat.layerId)
-          const Icon = layerDef?.icon ?? Package
-          const borderColor = layerDef?.borderColor ?? 'border-border'
-          const iconColor = layerDef?.iconColor ?? 'text-muted-foreground'
-          const label = layerDef?.label ?? stat.layerId
+        {domainStats.map((stat) => {
+          const Icon = DOMAIN_ICONS[stat.domainId] ?? Package
+          const label = DOMAINS[stat.domainId]?.label ?? stat.domainId
 
           const riskBadge =
             stat.impact === null ? (
@@ -1306,18 +1444,18 @@ export const SupplyChainRiskMatrix: React.FC<{
 
           return (
             <div
-              key={stat.layerId}
-              data-testid={`layer-card-${stat.layerId}`}
+              key={stat.domainId}
+              data-testid={`layer-card-${stat.domainId}`}
               ref={(el) => {
-                layerCardRefs.current[stat.layerId] = el
+                domainCardRefs.current[stat.domainId] = el
               }}
               className={`${cardClass('p-4')} transition-colors ${
-                highlightedLayerId === stat.layerId ? 'ring-2 ring-primary' : ''
+                highlightedDomainId === stat.domainId ? 'ring-2 ring-primary' : ''
               }`}
             >
-              {/* Layer header — matches InfrastructureSelector pattern */}
+              {/* Domain header — matches InfrastructureSelector pattern */}
               <div className="flex items-center gap-3 mb-4">
-                <div className={`p-2 rounded-lg bg-muted/20 border ${borderColor} ${iconColor}`}>
+                <div className="p-2 rounded-lg bg-muted/20 border border-border text-primary">
                   <Icon size={18} />
                 </div>
                 <div className="min-w-0 flex-1">
@@ -1361,7 +1499,7 @@ export const SupplyChainRiskMatrix: React.FC<{
               <div className="mt-3 pt-3 border-t border-border/50">
                 {selectedItems.length === 0 && stat.products.length > UNSELECTED_LAYER_ROW_CAP ? (
                   <p className="text-xs text-muted-foreground">
-                    {stat.products.length} catalog products sit in this layer.{' '}
+                    {stat.products.length} catalog products sit in this domain.{' '}
                     <Link to="/migrate" className="text-primary hover:underline">
                       Pick your infrastructure on Migrate
                     </Link>{' '}
@@ -1395,7 +1533,7 @@ export const SupplyChainRiskMatrix: React.FC<{
           <p className="text-sm text-muted-foreground mb-1">Total Products Tracked</p>
           <p className="text-3xl font-bold text-foreground">{totalProducts}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            across {layerStats.length} infrastructure layers
+            across {domainStats.length} migration domains
           </p>
         </div>
         <div className={cardClass('p-4 text-center')}>

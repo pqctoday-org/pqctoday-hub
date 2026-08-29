@@ -112,6 +112,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
+    '/navigate',
     // Persona-journeys A-grade redesign (2026-08-01): the Executive Overview
     // guided tour already exists (EXEC_TOUR_STAGES, SimulationView.tsx) but
     // /simulation was never nav-linked for this persona — it's the featured
@@ -131,6 +132,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/patents',
+    '/navigate',
     // Persona-journeys A-grade redesign (2026-08-01): /openssl dropped as a
     // standalone nav path — OpenSSL Studio is reachable via the Playground
     // grid's own 'openssl-studio' (PT-023) card (RAIL_HIDDEN_PATHS below),
@@ -153,6 +155,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
+    '/navigate',
     // Same redesign notes as developer above: /openssl folded into
     // Playground's own card; /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -175,6 +178,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/playground',
+    '/navigate',
     // /openssl folded into Playground's own card (see developer's note above).
     // /simulation added as a plain (non-marked) row.
     '/simulation',
@@ -191,6 +195,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/algorithms',
     '/library',
     '/playground',
+    '/navigate',
     // B+ remediation 2.2 (2026-08-10). Two changes to this list:
     //  - '/patents' removed entirely — it now carries a PERSONA_ABSENT_PATHS
     //    entry instead, so the rail says "not offered, and why" rather than
@@ -445,6 +450,7 @@ export const NAV_PATH_LABELS: Record<string, string> = {
   '/library': 'Library',
   '/leaders': 'Community',
   '/patents': 'Patents',
+  '/navigate': 'Navigate',
   '/openssl': 'OpenSSL Studio',
   '/revisions': 'Revisions',
   '/about': 'About',
@@ -776,12 +782,12 @@ export const PERSONA_THREATS_DEFAULT_INDUSTRIES: Record<PersonaId, string[]> = {
 
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   'Finance & Banking': [
-    'Financial Services / Banking',
+    'Finance & Banking',
     'Insurance',
     'Payment Card Industry',
     'Cryptocurrency / Blockchain',
   ],
-  'Government & Defense': ['Government / Defense', 'Legal / Notary / eSignature'],
+  'Government & Defense': ['Government & Defense', 'Legal / Notary / eSignature'],
   Healthcare: ['Healthcare / Pharmaceutical'],
   Telecommunications: ['Telecommunications'],
   Technology: [
@@ -801,7 +807,7 @@ export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   ],
   Automotive: ['Automotive / Connected Vehicles', 'Rail / Transit'],
   Aerospace: ['Aerospace / Aviation'],
-  'Retail & E-Commerce': ['Retail / E-Commerce'],
+  'Retail & E-Commerce': ['Retail & E-Commerce'],
   'Cross-cutting & Other': ['Cross-Industry', 'Education / Research'],
   Other: [],
 }
@@ -1073,23 +1079,12 @@ export interface ReportCTA {
   label: string
   path: string
   /** lucide-react icon name (resolved in the component) */
-  icon:
-    | 'Share2'
-    | 'Calendar'
-    | 'BookOpen'
-    | 'FlaskConical'
-    | 'Package'
-    | 'BarChart3'
-    | 'Terminal'
-    | 'Layers'
-  /** If true, triggers the share handler instead of navigating */
-  isShareAction?: boolean
+  icon: 'Calendar' | 'BookOpen' | 'FlaskConical' | 'Package' | 'BarChart3' | 'Terminal' | 'Layers'
 }
 
 export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   executive: [
     { label: 'Open Command Center', path: '/business', icon: 'BarChart3' },
-    { label: 'Share with your board', path: '', icon: 'Share2', isShareAction: true },
     { label: 'View compliance deadlines', path: '/compliance', icon: 'Calendar' },
   ],
   developer: [
@@ -1113,7 +1108,6 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
   curious: [
-    { label: 'Share report', path: '', icon: 'Share2', isShareAction: true },
     { label: 'Explore the timeline', path: '/timeline', icon: 'Calendar' },
     { label: 'Continue learning', path: '/learn', icon: 'BookOpen' },
   ],

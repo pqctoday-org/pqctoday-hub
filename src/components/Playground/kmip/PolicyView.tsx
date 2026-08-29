@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
 import type { DryRunResult, KmipEngine, PolicyStatus } from '@/wasm/kmip/kmipEngine'
+import { ModuleStatusPanel } from './ModuleStatusPanel'
 import {
   POLICY_PRESETS,
   POLICY_CATEGORIES,
@@ -260,12 +261,26 @@ export function PolicyView({
   useEffect(() => {
     let alive = true
     Promise.all(
-      POLICY_PRESETS.map((p) =>
-        fetch(`/kmip-policies/${p.file}`)
-          .then((r) => (r.ok ? r.text() : ''))
-          .catch(() => '')
-          .then((txt) => [p.file, txt] as const)
-      )
+      POLICY_PRESETS.map((p) => {
+        // Modular-policy plan (2026-08-28) — a split preset's `files` are
+        // fetched and concatenated under the SAME `p.file` key every other
+        // consumer (Compare, YAML tab, rule counts) already reads from, so
+        // this is the only place that needs to know about the split.
+        const sources = p.files && p.files.length > 0 ? p.files : [p.file]
+        return Promise.all(
+          sources.map((f) =>
+            fetch(`/kmip-policies/${f}`)
+              .then((r) => (r.ok ? r.text() : ''))
+              .catch(() => '')
+          )
+        ).then(
+          (texts) =>
+            [
+              p.file,
+              texts.every((t) => t) ? texts.join('\n\n# ── next module ──\n\n') : '',
+            ] as const
+        )
+      })
     ).then((entries) => {
       if (!alive) return
       const nextModels: Record<string, PolicyModel> = {}
@@ -337,23 +352,52 @@ export function PolicyView({
   } | null>(null)
   useEffect(() => {
     if (detailTab !== 'compare') return
+    const presetA = POLICY_PRESETS.find((p) => p.file === compareAFile)
+    const presetB = POLICY_PRESETS.find((p) => p.file === compareBFile)
     const yamlA = rawYaml[compareAFile]
     const yamlB = rawYaml[compareBFile]
-    if (!yamlA || !yamlB) {
+    if (!presetA || !presetB || !yamlA || !yamlB) {
       setCompareResult(null)
       return
     }
-    const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
-    engine.loadPolicy(yamlA)
-    const a = sweepDispositions(engine, asOfDate)
-    engine.loadPolicy(yamlB)
-    const b = sweepDispositions(engine, asOfDate)
-    if (restoreTo) onApplyYaml(restoreTo)
-    setCompareResult({ a, b })
-    // `onApplyYaml` is a fresh function reference every parent render (not
-    // memoized) — depending on it would re-run this (and re-mutate the shared
-    // engine, re-emitting audit events) on every unrelated re-render. `engine`
-    // already captures the only thing that actually matters.
+    let cancelled = false
+    // Modular-policy plan (2026-08-28) — a split preset's `rawYaml` entry is
+    // the CONCATENATION of its module files (fine for display, but not valid
+    // single-document YAML), so comparing it must go through the real
+    // multi-file activation path, not `engine.loadPolicy`. Async because that
+    // path re-fetches each module file.
+    const activateSide = async (preset: PolicyPreset, mergedYaml: string) => {
+      if (preset.files && preset.files.length > 0) {
+        const yamls = await Promise.all(
+          preset.files.map((f) => fetch(`/kmip-policies/${f}`).then((r) => r.text()))
+        )
+        engine.activateModulePreset(preset.name, yamls)
+      } else {
+        engine.loadPolicy(mergedYaml)
+      }
+    }
+    void (async () => {
+      await activateSide(presetA, yamlA)
+      const a = sweepDispositions(engine, asOfDate)
+      await activateSide(presetB, yamlB)
+      const b = sweepDispositions(engine, asOfDate)
+      // Restore whatever was actually active before Compare ran.
+      if (activePreset?.files && activePreset.files.length > 0) {
+        await activateSide(activePreset, '')
+      } else {
+        const restoreTo = policyYaml ?? rawYaml['training-permissive.yaml']
+        if (restoreTo) onApplyYaml(restoreTo)
+      }
+      if (!cancelled) setCompareResult({ a, b })
+    })()
+    return () => {
+      cancelled = true
+    }
+    // `onApplyYaml`/`activePreset` are fresh references every parent render
+    // (not memoized) — depending on them would re-run this (and re-mutate the
+    // shared engine, re-emitting audit events) on every unrelated re-render.
+    // `engine` + the explicit file/tab/date deps already capture everything
+    // that actually needs to retrigger the sweep.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engine, detailTab, compareAFile, compareBFile, rawYaml, policyYaml, asOfDate])
 
@@ -575,6 +619,10 @@ export function PolicyView({
               </p>
             </div>
           </div>
+
+          {/* Module status (WS-7A, 2026-08-28 gaps-remediation plan) — only
+              renders when a multi-module preset is active. */}
+          <ModuleStatusPanel engine={engine} />
         </section>
 
         {/* ── Sub-tab row ─────────────────────────────────────────────── */}
@@ -770,6 +818,7 @@ export function PolicyView({
               guided={!expert}
               onLoadPreset={onLoadPolicy}
               onApplyYaml={onApplyYaml}
+              readOnly={Boolean(activePreset?.files)}
             />
           </section>
         )}

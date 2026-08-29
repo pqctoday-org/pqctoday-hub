@@ -9,7 +9,6 @@ import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { ErrorAlert } from '../../ui/error-alert'
-import { ShareButton } from '../../ui/ShareButton'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
@@ -1236,7 +1235,6 @@ export const HsmSignCombinedPanel: React.FC<{
               </>
             )}
           </div>
-          <ShareButton title="HSM Sign &amp; Verify" variant="icon" />
         </div>
         {signFamily === 'pqc' ? (
           pqcAlgo === 'ml-dsa' ? (

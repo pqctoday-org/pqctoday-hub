@@ -84,6 +84,8 @@ const shell = (rules: EditableRule[]): EditablePolicy => ({
     description: 'line one\nline two',
     authority: 'pqctoday-hsm/training',
     effective: 'always',
+    expires: '',
+    scopes: [],
     complianceMapping: [{ framework: 'NIST IR 8547', status: 'aligned' }],
   },
   rules,
@@ -113,6 +115,30 @@ describe('serializer grammar details', () => {
     expect(y).toContain('effective: "always"')
     expect(y).toContain('deterministic: true')
     expect(y).toContain('tag_length: 16')
+  })
+
+  it('round-trips metadata.expires (schema v2+) and omits it when unset', () => {
+    const withExpiry = shell([])
+    withExpiry.metadata.expires = '2030-01-01'
+    const y = serialize(withExpiry)
+    expect(y).toContain('expires: "2030-01-01"')
+    expect(toEditable(y).metadata.expires).toBe('2030-01-01')
+
+    const noExpiry = serialize(shell([]))
+    expect(noExpiry).not.toContain('expires:')
+    expect(toEditable(noExpiry).metadata.expires).toBe('')
+  })
+
+  it('round-trips metadata.scopes (schema v3) and omits it when unset', () => {
+    const withScopes = shell([])
+    withScopes.metadata.scopes = ['signing', 'global']
+    const y = serialize(withScopes)
+    expect(y).toContain('scopes: [signing, global]')
+    expect(toEditable(y).metadata.scopes).toEqual(['signing', 'global'])
+
+    const noScopes = serialize(shell([]))
+    expect(noScopes).not.toContain('scopes:')
+    expect(toEditable(noScopes).metadata.scopes).toEqual([])
   })
 
   it('emits AttrPredicate maps as inline flow maps', () => {

@@ -1,0 +1,31 @@
+# Migration tab — classical estate baseline, encryption share
+# (modular-policy plan, 2026-08-28). Split from `migration-classical.yaml`.
+# Pair with `-signing`, `-key-establishment`, and `-global`.
+
+schema_version: 3
+
+metadata:
+  name: migration-classical-encryption
+  description: |
+    Label-pattern symmetric-encryption defaults for the Migration tab's
+    demo estate: payments-db-cipher → AES-128 (flagged quantum-at-risk),
+    everything else → AES-256 (vault-archive-cipher's already-quantum-safe
+    default). Name-patterned defaults are evaluated before the generic
+    rule (most-specific-wins), so the payments-* rule can't be shadowed.
+  authority: pqctoday-hsm/demo
+  effective: "always"
+  scopes: [encryption]
+  compliance_mapping:
+    - { framework: "Pre-PQC baseline", status: representative }
+
+rules:
+  - type: algorithm_default
+    ops: [Create]
+    name_pattern: "payments-*"
+    default_algorithm: AES-128
+    reason: "Legacy payments DB cipher (AES-128 — flagged quantum-at-risk)"
+
+  - type: algorithm_default
+    ops: [Create]
+    default_algorithm: AES-256
+    reason: "Symmetric default (AES-256, Grover-resistant)"

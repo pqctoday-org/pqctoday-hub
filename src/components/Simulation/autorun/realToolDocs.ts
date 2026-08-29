@@ -65,15 +65,17 @@ import {
   type ScorecardDimensionRow,
 } from '@/components/PKILearning/modules/VendorRisk/components/VendorScorecardBuilder'
 import {
-  computeLayerStats,
+  computeDomainStats,
   computeMatrixEntries,
-  computeNoRiskLayers,
+  computeNoRiskDomains,
   buildDependencyRelations,
   buildSupplyChainMarkdown,
   mapToAssetClass,
   type CSWP39AssetClass,
 } from '@/components/PKILearning/modules/VendorRisk/components/SupplyChainRiskMatrix'
 import type { SoftwareItem } from '@/types/MigrateTypes'
+import { classifyProductDomain, type DomainId } from '@/data/migrationAssets'
+import { matchesIndustry } from '@/data/industryMatch'
 import { threatsData } from '@/data/threatsData'
 import { isPqcReady, isFips1403Validated } from '@/data/kpiCatalog'
 import {
@@ -407,47 +409,48 @@ function vendorScorecardSample() {
 
 /**
  * Sample supply-chain risk matrix (Wave 5, WP5.3) — 3 real, verified catalog
- * products spanning 3 distinct infrastructure layers with mixed PQC status
- * (aws-lc/Libraries: available; Entrust nShield/Hardware: available —
+ * products spanning 3 distinct migration domains with mixed PQC status
+ * (aws-lc/foundations: available; Entrust nShield/hsm: available —
  * also the ArchitecturePanel mid-size node and compliance-cert-check's A7285
- * cert, for continuity across the tour; Microsoft Entra ID/Cloud: roadmap —
- * so the matrix shows a real migration gap, not an all-green demo). Industry
- * uses threatsData's OWN taxonomy string, 'Financial Services / Banking' —
- * verified directly against the data, not assumed: the assessment-side label
- * seedDemoOrg uses ('Finance & Banking') doesn't match threatsData's
- * industry field at all, which would have silently produced zero threat
- * matches and an empty Impact column. So Impact is computed from real
- * threatsData, not left "not personalized".
+ * cert, for continuity across the tour; Microsoft Entra ID/identity:
+ * roadmap — so the matrix shows a real migration gap, not an all-green
+ * demo). Industry threats are joined through matchesIndustry (the sector-key
+ * join the live hook uses since 2026-08-27), so 'Financial Services /
+ * Banking' and the assessment-side 'Finance & Banking' resolve to the same
+ * sector and Impact is computed from real threatsData either way.
  *
- * `vendorsByLayer` is built here with the same split-comma-layers logic
- * useExecutiveModuleData uses — that hook itself is a wide, cross-page
- * aggregator (assessment + compliance + timeline + more) not worth pulling
- * into a synchronous sample-doc generator; this reproduces only the ~8 lines
- * of layer-grouping it shares with the matrix, not the rest of the hook.
+ * `vendorsByDomain` is built here with the same classifyProductDomain
+ * grouping useExecutiveModuleData uses — that hook itself is a wide,
+ * cross-page aggregator (assessment + compliance + timeline + more) not
+ * worth pulling into a synchronous sample-doc generator; this reproduces
+ * only the few lines of domain-grouping it shares with the matrix, not the
+ * rest of the hook.
  */
 function supplyChainMatrixSample() {
   const industry = 'Financial Services / Banking'
   const items = resolveProductNames(['aws-lc', 'entrust-nshield', 'microsoft-entra-id'])
 
-  const vendorsByLayer = new Map<string, SoftwareItem[]>()
+  const vendorsByDomain = new Map<DomainId, SoftwareItem[]>()
   for (const item of items) {
-    for (const layer of (item.infrastructureLayer || 'Other').split(',').map((l) => l.trim())) {
-      const existing = vendorsByLayer.get(layer)
-      if (existing) existing.push(item)
-      else vendorsByLayer.set(layer, [item])
-    }
+    const domain = classifyProductDomain(item.categoryName, item.infrastructureLayer)
+    if (!domain) continue
+    const existing = vendorsByDomain.get(domain)
+    if (existing) existing.push(item)
+    else vendorsByDomain.set(domain, [item])
   }
 
-  const industryThreats = threatsData.filter((t) =>
-    t.industry.toLowerCase().includes(industry.toLowerCase())
-  )
+  const industryThreats = threatsData.filter((t) => matchesIndustry(t.industry, industry))
 
-  const layerStats = computeLayerStats(vendorsByLayer, industryThreats, true, null)
-  const matrixEntries = computeMatrixEntries(layerStats)
-  const noRiskLayers = computeNoRiskLayers(layerStats)
+  const domainStats = computeDomainStats(vendorsByDomain, industryThreats, true, null)
+  const matrixEntries = computeMatrixEntries(domainStats)
+  const noRiskDomains = computeNoRiskDomains(domainStats)
 
   const dependencyRelations = buildDependencyRelations(
-    [...(vendorsByLayer.get('Libraries') ?? []), ...(vendorsByLayer.get('Hardware') ?? [])],
+    [
+      ...(vendorsByDomain.get('foundations') ?? []),
+      ...(vendorsByDomain.get('hardware') ?? []),
+      ...(vendorsByDomain.get('hsm') ?? []),
+    ],
     items
   )
 
@@ -473,9 +476,9 @@ function supplyChainMatrixSample() {
     pqcReadyCount,
     overallFipsPct: totalProducts > 0 ? Math.round((fipsValidatedCount / totalProducts) * 100) : 0,
     fipsValidatedCount,
-    layerStats,
+    domainStats,
     matrixEntries,
-    noRiskLayers,
+    noRiskDomains,
     hasIndustryContext: true,
     industryContextHint: 'Step 1',
     dependencyRelations,
@@ -564,7 +567,7 @@ function migrationVerificationState(sector: DemoSector): VerifyState {
  *  rows they gate render as the tool's real "locked — no data" state, and the
  *  sample supplies manual scores for the rest, an exemplary mid-flight fill. */
 function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
-  const industry = sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare'
+  const industry = sector === 'financial' ? 'Finance & Banking' : 'Healthcare'
   const industryThreats = threatsData.filter((t) => t.industry === industry)
   const pqcReadyCount = softwareData.filter((i) => isPqcReady(i.pqcSupport)).length
   const fipsValidatedCount = softwareData.filter((i) => isFips1403Validated(i.fipsValidated)).length
@@ -573,11 +576,11 @@ function demoKpiExecData(sector: DemoSector): ExecutiveModuleData {
     criticalThreatCount: threatsData.filter((t) => t.criticality === 'Critical').length,
     totalThreatCount: threatsData.length,
     industryThreats,
-    vendorsByLayer: new Map(),
+    vendorsByDomain: new Map(),
     fipsValidatedCount,
     pqcReadyCount,
     vendorReadinessWeighted: softwareData.length > 0 ? pqcReadyCount / softwareData.length : 0,
-    vendorReadinessByLayer: new Map(),
+    vendorReadinessByDomain: new Map(),
     totalProducts: softwareData.length,
     frameworks: [],
     frameworksByIndustry: [],
@@ -877,7 +880,7 @@ export const REAL_DOC_GENERATORS: Partial<
         crqcYear,
         currentYear,
         urgencyLevel,
-        industry: sector === 'financial' ? 'Financial Services / Banking' : 'Healthcare',
+        industry: sector === 'financial' ? 'Finance & Banking' : 'Healthcare',
       }),
     }
   },

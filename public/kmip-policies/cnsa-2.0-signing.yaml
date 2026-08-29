@@ -1,0 +1,31 @@
+# CNSA 2.0 — signing share (modular-policy plan, 2026-08-28). Split from
+# `cnsa-2.0.yaml`. Pair with `cnsa-2.0-global` (the bulk of the suite),
+# `-key-establishment`, and `-encryption`.
+
+schema_version: 3
+
+metadata:
+  name: cnsa-2.0-signing
+  description: |
+    CNSA 2.0 mandates SHA-384 or SHA-512 (FIPS 180-4) for ALL signature
+    hashing; SHA-256 is not in the suite. Gates the KMIP `Hashing Algorithm`
+    mechanism parameter on Sign — scoped to Sign only: SignatureVerify
+    stays open so legacy SHA-256-hashed artefacts remain verifiable during
+    the transition. Only Active CNSA keys may sign.
+  authority: pqctoday-hsm/training
+  effective: "2026-01-01"
+  scopes: [signing]
+  compliance_mapping:
+    - { framework: "NSA CNSA-2.0", status: aligned }
+    - { framework: "FIPS 140-3",   level: 3 }
+
+rules:
+  - type: hash_algorithm_allowlist
+    ops: [Sign]
+    hashing_algorithms: [SHA-384, SHA-512]
+    reason: "CNSA 2.0 requires SHA-384 or SHA-512 for signature hashing"
+
+  - type: lifecycle_state_gate
+    op: Sign
+    allowed_states: [Active]
+    reason: "CNSA signing only with Active keys"

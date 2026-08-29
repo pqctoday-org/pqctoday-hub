@@ -4,7 +4,6 @@ import { flushSync } from 'react-dom'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import {
   Printer,
-  Share2,
   RotateCcw,
   Download,
   Pencil,
@@ -88,11 +87,7 @@ import { ComplianceImpactSection } from './sections/ComplianceImpactSection'
 import { RecommendedActionsSection } from './sections/RecommendedActionsSection'
 import { ThreatLandscapeSection } from './sections/ThreatLandscapeSection'
 import { SimulationOutcomesSection } from './sections/SimulationOutcomesSection'
-import {
-  printReport,
-  shareReport,
-  exportAlgorithmMigrationsCsv,
-} from './sections/reportContentActions'
+import { printReport, exportAlgorithmMigrationsCsv } from './sections/reportContentActions'
 import { findReferenceEstate } from '@/data/assessmentScenarios'
 
 declare const __APP_VERSION__: string
@@ -291,8 +286,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const isComprehensive = result.assessmentProfile?.mode === 'comprehensive'
 
   const handlePrint = printReport
-
-  const handleShare = () => shareReport(result, shared)
 
   const handleCSVExport = () => exportAlgorithmMigrationsCsv(result)
 
@@ -799,19 +792,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                           {(PERSONA_REPORT_CTAS[selectedPersona] ?? []).map((cta: ReportCTA) => {
                             const Icon = CTA_ICONS[cta.icon] ?? BookOpen
-                            if (cta.isShareAction) {
-                              return (
-                                <Button
-                                  key={cta.label}
-                                  variant="outline"
-                                  onClick={handleShare}
-                                  className="flex items-center gap-2"
-                                >
-                                  <Icon size={16} className="shrink-0" />
-                                  {cta.label}
-                                </Button>
-                              )
-                            }
                             return (
                               <Link
                                 key={cta.label}
@@ -919,14 +899,6 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         >
                           <Download size={16} />
                           Export CSV
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={handleShare}
-                          className="gap-2 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/30"
-                        >
-                          <Share2 size={16} />
-                          Share
                         </Button>
                         {/* Edit/Reset act on the RECIPIENT's own store — hidden on a
                           shared/example view since there's no "your answers" here to

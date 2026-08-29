@@ -450,7 +450,18 @@ export interface PolicyExample {
 }
 
 export interface PolicyPreset {
-  file: string // under /kmip-policies/
+  /** Under /kmip-policies/ — the canonical single-file form, always present
+   * (even for a preset also split into `files`) and used as this preset's
+   * stable identity: React keys, catalog/compare/tour lookups, and the List/
+   * YAML/Visual tabs' rule display all key off this one file. */
+  file: string
+  /** Modular-policy plan (2026-08-28) — when set, these are the per-scope
+   * module files (e.g. `-signing.yaml`/`-key-establishment.yaml`/
+   * `-encryption.yaml`/`-global.yaml`) that reproduce `file`'s behavior as
+   * independently-activated modules; ACTIVATING this preset loads these
+   * instead of `file` (see `KmipEngine.activateModulePreset`). Absent for a
+   * preset that was never split (still a single legacy file both ways). */
+  files?: string[]
   name: string
   label: string
   blurb: string
@@ -484,6 +495,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'classical.yaml',
+    files: [
+      'classical-signing.yaml',
+      'classical-key-establishment.yaml',
+      'classical-encryption.yaml',
+      'classical-global.yaml',
+    ],
     name: 'classical',
     label: 'Classical (the "before")',
     blurb: 'RSA / ECDSA / ECDH defaults — a pre-migration baseline.',
@@ -496,6 +513,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   // ── Post-quantum ──────────────────────────────────────────────────────────
   {
     file: 'pqc.yaml',
+    files: [
+      'pqc-signing.yaml',
+      'pqc-key-establishment.yaml',
+      'pqc-encryption.yaml',
+      'pqc-global.yaml',
+    ],
     name: 'pqc',
     label: 'PQC (the "after")',
     blurb:
@@ -508,6 +531,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'auto-migrate-on-use.yaml',
+    files: [
+      'auto-migrate-on-use-signing.yaml',
+      'auto-migrate-on-use-key-establishment.yaml',
+      'auto-migrate-on-use-encryption.yaml',
+      'auto-migrate-on-use-global.yaml',
+    ],
     name: 'auto-migrate-on-use',
     label: 'Auto-migrate on use',
     blurb:
@@ -520,6 +549,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   // ── Migration & transition ────────────────────────────────────────────────
   {
     file: 'migration-classical.yaml',
+    files: [
+      'migration-classical-signing.yaml',
+      'migration-classical-key-establishment.yaml',
+      'migration-classical-encryption.yaml',
+      'migration-classical-global.yaml',
+    ],
     name: 'migration-classical',
     label: 'Migration estate · classical',
     blurb:
@@ -532,6 +567,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'migration-hybrid.yaml',
+    files: [
+      'migration-hybrid-signing.yaml',
+      'migration-hybrid-key-establishment.yaml',
+      'migration-hybrid-encryption.yaml',
+      'migration-hybrid-global.yaml',
+    ],
     name: 'migration-hybrid',
     label: 'Migration estate · hybrid',
     blurb:
@@ -543,6 +584,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'migration-pqc.yaml',
+    files: [
+      'migration-pqc-signing.yaml',
+      'migration-pqc-key-establishment.yaml',
+      'migration-pqc-encryption.yaml',
+      'migration-pqc-global.yaml',
+    ],
     name: 'migration-pqc',
     label: 'Migration estate · full PQC',
     blurb:
@@ -554,6 +601,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'pqc-migration-2030.yaml',
+    files: [
+      'pqc-migration-2030-signing.yaml',
+      'pqc-migration-2030-key-establishment.yaml',
+      'pqc-migration-2030-encryption.yaml',
+      'pqc-migration-2030-global.yaml',
+    ],
     name: 'pqc-migration-2030',
     label: 'PQC migration · 2030 cutoff',
     blurb:
@@ -567,6 +620,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'hybrid-migration-window.yaml',
+    files: ['hybrid-migration-window-signing.yaml', 'hybrid-migration-window-global.yaml'],
     name: 'hybrid-migration-window',
     label: 'Hybrid window (2026–2029)',
     blurb:
@@ -579,6 +633,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   // ── Compliance regimes ────────────────────────────────────────────────────
   {
     file: 'cnsa-2.0.yaml',
+    files: [
+      'cnsa-2.0-signing.yaml',
+      'cnsa-2.0-key-establishment.yaml',
+      'cnsa-2.0-encryption.yaml',
+      'cnsa-2.0-global.yaml',
+    ],
     name: 'cnsa-2.0',
     label: 'NSA CNSA 2.0',
     blurb:
@@ -591,6 +651,7 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'fips-only.yaml',
+    files: ['fips-only-signing.yaml', 'fips-only-encryption.yaml', 'fips-only-global.yaml'],
     name: 'fips-only',
     label: 'FIPS-only',
     blurb:
@@ -602,6 +663,12 @@ export const POLICY_PRESETS: PolicyPreset[] = [
   },
   {
     file: 'bsi-tr-02102.yaml',
+    files: [
+      'bsi-tr-02102-signing.yaml',
+      'bsi-tr-02102-key-establishment.yaml',
+      'bsi-tr-02102-encryption.yaml',
+      'bsi-tr-02102-global.yaml',
+    ],
     name: 'bsi-tr-02102',
     label: 'BSI TR-02102-1 (Germany)',
     blurb:

@@ -40,7 +40,7 @@ import { HsmLearnView } from './hsm/learn/HsmLearnView'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { InlineTooltip } from '../ui/InlineTooltip'
-import { ShareButton } from '../ui/ShareButton'
+import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { logEvent } from '../../utils/analytics'
@@ -239,6 +239,19 @@ export const HsmPlayground = () => {
     if (error) errorRef.current?.focus()
   }, [error])
 
+  // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
+  // page's title/text so the global ShareButton (MainLayout.tsx) shows the
+  // right copy instead of the generic route fallback. No URL override
+  // needed: tab/engine/algo are already synced to the URL above.
+  useEffect(() => {
+    const { setPageActions, clearPageActions } = usePageActionsStore.getState()
+    setPageActions({
+      shareTitle: 'PKCS#11 HSM Playground — PQC Today',
+      shareText: 'Drive a real PKCS#11 HSM in your browser',
+    })
+    return () => clearPageActions()
+  }, [])
+
   // Safety net: if a persona switch lands a curious/executive user on the
   // gated ACVP/Conformance tab mid-session (they were on it as another
   // persona, then switched role), fall back to the default tab rather than
@@ -319,11 +332,6 @@ export const HsmPlayground = () => {
         </h3>
 
         <div className="flex flex-wrap items-center gap-2">
-          <ShareButton
-            title="PKCS#11 HSM Playground — PQC Today"
-            text="Drive a real PKCS#11 HSM in your browser"
-            variant="icon"
-          />
           {/* Engine mode selector — an engineering-workbench control, gated
               for curious/executive same as the ACVP tab; they run on the
               'rust' default without needing to choose. */}
