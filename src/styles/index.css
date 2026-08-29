@@ -44,6 +44,7 @@
   --color-warning-legible: hsl(var(--warning-legible));
   --color-info-legible: hsl(var(--info-legible));
   --color-destructive-legible: hsl(var(--destructive-legible));
+  --color-tertiary-legible: hsl(var(--tertiary-legible));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -287,15 +288,21 @@
     --secondary-foreground: 0 0% 100%;
     --tertiary: 270 95% 65%;
     --tertiary-foreground: 210 40% 98%;
+    /* Wave D (2026-08-29): 65% lightness measured 3.42:1 against the "Industries"
+       track badge's bg-tertiary/10 (#f0e9fc) — axe color-contrast on every
+       module in that track. 55% clears 4.5:1 with margin (4.82:1 measured). */
+    --tertiary-legible: 270 95% 55%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215 16% 35%;
     --accent: 153 60% 32%;
     --accent-foreground: 210 40% 98%;
     /* See the `-legible` note in the @theme block. Each value is the measured
        4.5:1 floor against that token's worst observed background:
-       accent vs #fefefe, success vs #d0ecda, warning vs #fcebcd,
-       info vs #fefefe, destructive vs #e0f2f6. */
-    --accent-legible: 153 60% 32%;
+       accent vs bg-accent/10 (#e2eeeb, the "Role Guides" track badge —
+       axe-measured 2026-08-29; #fefefe was the prior, less-worst background
+       and still passes at this lightness), success vs #d0ecda,
+       warning vs #fcebcd, info vs #fefefe, destructive vs #e0f2f6. */
+    --accent-legible: 153 60% 29%;
     --success-legible: 142.1 76.2% 26%;
     --warning-legible: 38 92% 30%;
     /* a11y (WS9, 2026-08-02): 53% lightness gave 4.39:1 on the light page

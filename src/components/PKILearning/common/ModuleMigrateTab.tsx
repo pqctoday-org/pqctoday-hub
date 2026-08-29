@@ -107,7 +107,10 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         PQC-ready tools and products relevant to this module. All items are also available in the{' '}
-        <Link to="/migrate" className="text-primary hover:underline">
+        {/* `underline`, not `hover:underline`: this link sits inside a
+            paragraph, so colour alone is not a sufficient affordance
+            (axe link-in-text-block / WCAG 1.4.1). */}
+        <Link to="/migrate" className="text-primary underline">
           Migrate Catalog
         </Link>
         .

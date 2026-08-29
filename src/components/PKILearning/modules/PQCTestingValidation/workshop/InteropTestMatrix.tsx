@@ -27,7 +27,7 @@ const STATUS_CONFIG: Record<
   incompatible: {
     icon: <XCircle size={14} className="text-destructive" />,
     label: 'Incompatible',
-    cls: 'text-destructive bg-destructive/10 border-destructive/30',
+    cls: 'text-status-error bg-destructive/10 border-destructive/30',
     cellCls: 'bg-destructive/10',
   },
   untested: {

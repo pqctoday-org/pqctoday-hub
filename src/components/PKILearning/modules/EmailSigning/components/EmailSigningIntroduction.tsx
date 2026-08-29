@@ -141,7 +141,7 @@ const Step1SmimeCmsKem: React.FC = () => (
                 Generate random CEK
               </div>
               <div className="text-muted-foreground">&darr;</div>
-              <div className="p-2 rounded bg-destructive/10 text-destructive text-xs font-bold">
+              <div className="p-2 rounded bg-destructive/10 text-status-error text-xs font-bold">
                 RSA-OAEP encrypt CEK with recipient&apos;s public key
               </div>
               <div className="text-muted-foreground">&darr;</div>

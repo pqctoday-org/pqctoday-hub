@@ -91,7 +91,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
                       ? 'bg-success/10 text-success'
                       : prevScore >= 60
                         ? 'bg-warning/10 text-warning'
-                        : 'bg-destructive/10 text-destructive'
+                        : 'bg-destructive/10 text-status-error'
                   )}
                 >
                   Best: {prevScore}%

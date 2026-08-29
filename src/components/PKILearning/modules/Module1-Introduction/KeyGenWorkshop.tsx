@@ -180,7 +180,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* ── Classical ── */}
         <div className="space-y-4">
-          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-destructive/10 text-destructive border border-destructive/20">
+          <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-destructive/10 text-status-error border border-destructive/20">
             Classical (Quantum-Vulnerable)
           </span>
 
@@ -202,7 +202,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
             variant="ghost"
             onClick={handleGenerateClassical}
             disabled={classicalKey.loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-status-error font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
           >
             {classicalKey.loading ? (
               <Loader2 className="animate-spin" size={16} />

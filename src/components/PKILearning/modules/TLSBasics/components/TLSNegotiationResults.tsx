@@ -215,7 +215,7 @@ export const TLSNegotiationResults: React.FC = () => {
           'p-4 rounded-xl border flex flex-col gap-2',
           isSuccess
             ? 'bg-success/10 border-success/30 text-success'
-            : 'bg-destructive/10 border-destructive/30 text-destructive'
+            : 'bg-destructive/10 border-destructive/30 text-status-error'
         )}
       >
         <div className="flex items-center justify-between">

@@ -88,13 +88,13 @@ async function settle(page: Page) {
  * list fails the test, and shrinking a list here is always safe. Do not add to
  * it to make a new failure go away — fix the page.
  */
-const KNOWN_PREEXISTING: Record<string, string[]> = {
-  'dev-quantum-impact': ['color-contrast'],
-  'api-security-jwt': ['color-contrast'],
-  '5g-security': ['color-contrast'],
-  qkd: ['color-contrast'],
-  'secrets-management-pqc': ['color-contrast'],
-}
+// Wave D (2026-08-29): all 5 color-contrast entries previously here are
+// fixed — the track badge (moduleData.ts TRACK_COLORS) and the
+// bg-destructive/10 + text-destructive pairing (ModuleShell.tsx + ~52 module
+// files) were the shared root causes; verified clean via a full rebuild +
+// rerun of this spec. Kept as an empty allowlist, not deleted, so a future
+// regression has somewhere to go if a genuine new pre-existing issue turns up.
+const KNOWN_PREEXISTING: Record<string, string[]> = {}
 
 async function assertNoNewViolations(page: Page, id: string, where: string) {
   await injectAxe(page)

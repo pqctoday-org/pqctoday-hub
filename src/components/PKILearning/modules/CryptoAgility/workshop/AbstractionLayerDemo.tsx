@@ -126,7 +126,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
                       className={`text-xs px-2 py-0.5 rounded border font-bold ${
                         backend.quantumSafe
                           ? 'bg-success/10 text-success border-success/20'
-                          : 'bg-destructive/10 text-destructive border-destructive/20'
+                          : 'bg-destructive/10 text-status-error border-destructive/20'
                       }`}
                     >
                       {backend.algorithm}
@@ -225,7 +225,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
                     pattern.severity === 'critical'
-                      ? 'bg-destructive/10 text-destructive border-destructive/20'
+                      ? 'bg-destructive/10 text-status-error border-destructive/20'
                       : 'bg-warning/10 text-warning border-warning/20'
                   }`}
                 >

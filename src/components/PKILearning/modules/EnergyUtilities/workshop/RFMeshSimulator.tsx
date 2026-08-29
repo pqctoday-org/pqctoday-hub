@@ -113,7 +113,7 @@ export const RFMeshSimulator: React.FC = () => {
                 </span>
               </div>
               <div
-                className={`p-3 rounded-lg border ${impact.meshCollapse ? 'bg-destructive/10 border-destructive/30 text-destructive' : 'bg-success/10 border-success/30 text-success-foreground'}`}
+                className={`p-3 rounded-lg border ${impact.meshCollapse ? 'bg-destructive/10 border-destructive/30 text-status-error' : 'bg-success/10 border-success/30 text-success-foreground'}`}
               >
                 <span className="text-xs opacity-80 block mb-1">Total Cell Time</span>
                 <span className="font-mono text-lg font-bold">
@@ -141,7 +141,7 @@ export const RFMeshSimulator: React.FC = () => {
 
           <div className="mt-8">
             {impact.meshCollapse ? (
-              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-destructive">
+              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-status-error">
                 <AlertTriangle size={24} className="shrink-0" />
                 <div>
                   <h4 className="font-bold text-sm">Mesh Collapse</h4>

@@ -210,7 +210,7 @@ const Step1WhyAndMerkle: React.FC = () => (
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">sk</span>
               <span className="text-muted-foreground">&rarr;</span>
-              <span className="px-1.5 py-0.5 rounded bg-destructive/10 border border-destructive/20 text-destructive">
+              <span className="px-1.5 py-0.5 rounded bg-destructive/10 border border-destructive/20 text-status-error">
                 H&sup1;(sk)
               </span>
               <span className="text-muted-foreground">&rarr;</span>

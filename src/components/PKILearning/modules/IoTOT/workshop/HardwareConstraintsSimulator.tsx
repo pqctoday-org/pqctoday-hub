@@ -258,7 +258,7 @@ export const HardwareConstraintsSimulator: React.FC = () => {
               </div>
             </div>
             {mldsaV2XRateMbps > channelLimitMbps && (
-              <div className="mt-3 text-xs text-destructive font-medium border border-destructive/20 bg-destructive/10 p-2 rounded">
+              <div className="mt-3 text-xs text-status-error font-medium border border-destructive/20 bg-destructive/10 p-2 rounded">
                 Broadcast Storm! The RF channel capacity ({channelLimitMbps} Mbps) is exceeded.
                 Messages will be dropped, endangering autonomous safety features.
               </div>

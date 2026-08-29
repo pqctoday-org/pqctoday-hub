@@ -54,7 +54,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
 
     if (hasSubmitted) {
       if (correct) return 'border-success bg-success/10 text-success'
-      if (selected && !correct) return 'border-destructive bg-destructive/10 text-destructive'
+      if (selected && !correct) return 'border-destructive bg-destructive/10 text-status-error'
       return 'border-border text-muted-foreground opacity-60'
     }
 

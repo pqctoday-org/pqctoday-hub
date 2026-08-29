@@ -60,7 +60,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                   BASE64URL(Payload)
                 </span>
                 <span className="text-muted-foreground font-bold">.</span>
-                <span className="px-2 py-1 rounded bg-destructive/10 text-destructive">
+                <span className="px-2 py-1 rounded bg-destructive/10 text-status-error">
                   BASE64URL(Signature)
                 </span>
               </div>
@@ -263,7 +263,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                   Sender generates ephemeral EC keypair
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
-                <div className="p-2 rounded bg-destructive/10 text-destructive text-xs font-bold">
+                <div className="p-2 rounded bg-destructive/10 text-status-error text-xs font-bold">
                   ECDH(ephemeral_sk, recipient_pk) &rarr; shared secret
                 </div>
                 <div className="text-muted-foreground">&darr;</div>

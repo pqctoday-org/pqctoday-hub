@@ -162,7 +162,7 @@ export const NetworkTelemetryAnalyzer: React.FC = () => {
                 </div>
 
                 {packets.some((p) => p.flight > 2) && (
-                  <div className="text-xs text-destructive flex items-center gap-2 mt-4 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <div className="text-xs text-status-error flex items-center gap-2 mt-4 p-3 bg-destructive/10 rounded-lg border border-destructive/20">
                     <ShieldAlert size={16} />
                     <span>
                       Extreme Fragmentation! Payload spans{' '}

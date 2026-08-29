@@ -181,7 +181,7 @@ function WorkshopStepper({
         <Button
           variant="ghost"
           onClick={onReset}
-          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-status-error rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
           Reset

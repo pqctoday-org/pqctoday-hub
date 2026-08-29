@@ -669,7 +669,7 @@ export const HybridCertFormats: React.FC = () => {
                             size="sm"
                             onClick={() => generateFormat(fmt.id)}
                             disabled={generating !== null || !hsm.isReady}
-                            className="flex items-center gap-2 text-destructive border-destructive/20 hover:bg-destructive/10 mt-2"
+                            className="flex items-center gap-2 text-status-error border-destructive/20 hover:bg-destructive/10 mt-2"
                           >
                             <Play size={14} fill="currentColor" />
                             Retry
