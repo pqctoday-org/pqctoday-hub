@@ -1953,13 +1953,30 @@ export function SimulationView() {
                 type="button"
                 variant="outline"
                 size="tile"
-                onClick={() => startFromModal('phase', defaultPhase)}
+                onClick={() => {
+                  // WS-0 (D3) — this button is labeled "Play", so it must
+                  // actually play: route straight into the real Decide view
+                  // for this phase (mobilePlayOpen), the same interactive
+                  // engine every phase now has (WS-1 removed the p0/p1-only
+                  // guard). Previously this always started the NARRATED
+                  // engine — a "Play" button that only ever watched. Falls
+                  // back to the narrated single-phase run only if a phase
+                  // genuinely has no framework tree (should not happen; every
+                  // lifecycle phase + foundations has one).
+                  if (SIM_TREES[defaultPhase]) {
+                    setSel(defaultPhase)
+                    setPlayModalOpen(false)
+                    setMobilePlayOpen(true)
+                    return
+                  }
+                  startFromModal('phase', defaultPhase)
+                }}
               >
                 <div className="text-sm font-bold text-foreground">
                   Play This Phase — {FRAMEWORK_PHASES[defaultPhase].name}
                 </div>
                 <p className="text-[11px] leading-snug text-muted-foreground">
-                  Just this phase's required steps, narrated and auto-advanced.
+                  Jump straight into this phase's decisions — real play, no narration.
                 </p>
               </Button>
               <Button
@@ -2045,7 +2062,11 @@ export function SimulationView() {
           {walkthroughDoneOpen && (
             <SimExecWalkthroughComplete onClose={() => setWalkthroughDoneOpen(false)} />
           )}
-          <Link to="/" className="text-sm text-primary underline underline-offset-4">
+          <Link
+            to="/"
+            onClick={() => markSimExited()}
+            className="text-sm text-primary underline underline-offset-4"
+          >
             Back to hub
           </Link>
         </div>
@@ -4334,7 +4355,16 @@ export function SimulationView() {
             }}
           />
         )}
-        {playModalOpen && (
+        {/* mobile-ux-layer (WS-0, D8): SimPlayChoiceModal never becomes VISIBLE
+            below 768px (this whole wrapper is `hidden md:flex`), but it still
+            MOUNTED there — its focus trap + a global `window` Escape-keydown
+            listener (SimConfirmDialog/QuizGateModal use the same pattern) ran
+            regardless of CSS visibility, fighting the phone stand-in chooser's
+            own Escape/Tab handling while it was open. `!isMobileViewport`
+            (the real `max-width:767px` check, independent of the isMobileShell
+            feature flag) stops it from mounting at all on a phone — a no-op
+            at real desktop widths. */}
+        {playModalOpen && !isMobileViewport && (
           <SimPlayChoiceModal
             onClose={() => setPlayModalOpen(false)}
             onStart={startFromModal}
@@ -4344,20 +4374,31 @@ export function SimulationView() {
           />
         )}
         {termsOpen && <SimTermsPanel onClose={() => setTermsOpen(false)} />}
-        {pendingModeSwitch && (
-          <SimConfirmDialog
-            title="Start a different path?"
-            description="You have an in-progress run. Starting this path will restart the guided playhead — steps you've already completed stay completed, but the run begins its new queue from the top."
-            confirmLabel="Start this path"
-            onCancel={() => setPendingModeSwitch(null)}
-            onConfirm={() => {
-              autoRunPlayer.start({ mode: pendingModeSwitch })
-              setPendingModeSwitch(null)
-              setPlayModalOpen(false)
-            }}
-          />
-        )}
       </div>
+      {/* mobile-ux-layer (WS-0, D2): moved OUTSIDE the desktop-only `hidden
+          md:flex` wrapper above — this confirm can be triggered by the phone
+          stand-in chooser too (startFromModal, called from both the mobile
+          "Choose how to play" panel and the desktop SimPlayChoiceModal, opens
+          this when resuming a different mode than the in-progress run). It
+          used to live inside that wrapper, so on a phone the chooser's
+          Executive Overview / Full Migration Journey buttons went silently
+          dead — the confirm they triggered rendered off-screen (display:none
+          ancestor) with no way to see or answer it. A single instance shared
+          by both viewports; nothing about desktop's rendering changes since
+          the JSX/props/conditions are identical, only its position in the tree. */}
+      {pendingModeSwitch && (
+        <SimConfirmDialog
+          title="Start a different path?"
+          description="You have an in-progress run. Starting this path will restart the guided playhead — steps you've already completed stay completed, but the run begins its new queue from the top."
+          confirmLabel="Start this path"
+          onCancel={() => setPendingModeSwitch(null)}
+          onConfirm={() => {
+            autoRunPlayer.start({ mode: pendingModeSwitch })
+            setPendingModeSwitch(null)
+            setPlayModalOpen(false)
+          }}
+        />
+      )}
     </>
   )
 }
