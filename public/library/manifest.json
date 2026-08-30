@@ -11397,6 +11397,16 @@
       "sizeBytes": 567306,
       "contentType": "text/html",
       "sha256": "d7fb452dbfb5b8d65de8fa799ca51650fa1737fb013c8bfa2a5d9b2fb3bddace"
+    },
+    {
+      "refId": "DO-326A-Airworthiness-Security-Process-Specification",
+      "title": "DO-326A Airworthiness Security Process Specification",
+      "url": "https://products.rtca.org/21dja1f/",
+      "status": "pending-manual",
+      "filename": "DO-326A-Airworthiness-Security-Process-Specification.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
