@@ -29,6 +29,41 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.68.0] - 2026-08-29
+
+A big /navigate upgrade, real fixes across mobile, accessibility, Business Tools, and Learn, and a stuck local-AI loop on mobile fixed for good.
+
+### Added
+
+- **/navigate now has motion controls: spin it, take a guided tour, or turn it off** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: a speed slider controls how fast the graph turns, and a new guided tour flies the camera between categories and notable nodes on its own, with a caption for what you're looking at.
+- **Accessibility coverage extended to 36 more Playground tools, with 9 real issues fixed** [view:/playground] [persona:curious].
+- **Two persona learning paths gained entries they'd been missing** [persona:executive] [persona:developer] [persona:ops]: CBOM content for the executive path, and Trust Services PQC for developer and ops.
+- **Related modules now show on mobile Learn pages, not just desktop** [view:/learn] [persona:curious].
+- **Three industry-landscape use cases — web TLS, code signing, and VPN — now link to a real Learn module** [view:/industry-landscape] [persona:curious]: previously they sat in a generic mixed-topic bucket with no module link at all.
+- **Mobile Playground now suggests a "Start here" set of tools for new visitors** [view:/playground] [persona:curious]: matches what desktop's Overview already does, and steps aside once you start filtering or searching.
+
+### Fixed
+
+- **The PQC Assistant's local AI could get stuck in an endless download-crash-reload loop on mobile** [view:/] [persona:curious]: mobile browsers cap a tab's memory well below what local AI needs, so the download reliably crashed the tab, which reloaded, which downloaded again. Mobile now says plainly that Local AI isn't available on this device and points you to Cloud instead.
+- **The PKCS#11 and KMIP Developer tabs' Run button was silently failing every time** [view:/playground] [persona:developer]: a version mismatch in the in-browser Python runtime broke every run before a single step could execute, and the failure showed no error at all if you were on the default Builder view. Both are fixed — Run works, and a failed run now shows why from either view.
+- **/navigate's auto-rotation ignored your device's reduced-motion setting** [view:/navigate] [persona:curious]: now pauses correctly, and the graph also gained a keyboard-reachable list view of the currently visible nodes.
+- **The landing page's headline stats flashed "..." before showing real numbers** [view:/] [persona:curious]: Algorithms, Timeline Events, and Library Documents counts are now ready on first paint.
+- **Mobile's "Start Workshop" button went nowhere real** [view:/playground] [persona:curious]: now routes to an actual workshop.
+- **/explore was missing from the mobile navigation menu** [view:/explore] [persona:curious]: restored.
+- **The Library's persona-based narrowing could leave you with no way to see everything** [view:/library] [persona:curious]: the one "show all" escape hatch only appeared when there happened to be new hidden documents to announce. A persistent way to turn narrowing off is now always visible.
+- **Several Business Tools reset your work on every reload** [view:/business-tools] [persona:executive] [persona:ops]: the breach simulator, crypto architecture diagram, KPI tracker, and deployment playbook now save and restore your inputs.
+- **Two accessibility issues fixed**: a real violation on the CRQC Scenario Planner, and a missing heading on the Data-Driven Scorecard [view:/business-tools] [persona:curious].
+
+### Data
+
+- **Corrected a CRQC-timeline confidence figure** [view:/threats] [persona:researcher] [persona:curious]: specific years had been attributed to GRI's own report that GRI never actually stated; restated in GRI's own words, percentages unchanged.
+- **Recovered an Israel government PQC-readiness guide and a threats document**, both dropped by earlier data-pipeline errors [view:/timeline] [view:/threats] [persona:researcher] [persona:curious].
+- **Fixed 15+ incomplete Library document-status entries and removed a duplicated GRI row** [view:/library] [persona:researcher] [persona:curious].
+- **Corrected 12 source dates and a broken Learn-module link** across the Timeline and Migrate catalogs [view:/timeline] [view:/migrate] [persona:researcher] [persona:developer].
+- **Added 25 new patent candidates and corrected an incorrect status on an existing one** [view:/patents] [persona:researcher].
+- **Removed a duplicate vendor-roadmap entry** in the Migrate catalog [view:/migrate] [persona:developer] [persona:architect].
+- **Corrected 5 editorial issues — hardcoded dates, missing citations — across Learn modules** [view:/learn] [persona:curious].
+
 ## [4.67.1] - 2026-08-29
 
 ### Fixed
