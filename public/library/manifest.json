@@ -11967,6 +11967,16 @@
       "sizeBytes": 432168,
       "contentType": "text/html",
       "sha256": "860e61ee4b57e5acaa3d497b69aa45c9f448128daa4eed45851c56cffb1efa32"
+    },
+    {
+      "refId": "Crypto-getRandomValues-method-Web-APIs-MDN",
+      "title": "Crypto: getRandomValues() method - Web APIs | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues",
+      "status": "downloaded",
+      "filename": "Crypto-getRandomValues-method-Web-APIs-MDN.html",
+      "sizeBytes": 155676,
+      "contentType": "text/html",
+      "sha256": "59f461033b52e01f84dd88cb3ddca8feb78f61428816f0f9d28578ffb9fe43c3"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
