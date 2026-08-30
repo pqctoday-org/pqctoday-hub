@@ -11407,6 +11407,36 @@
       "sizeBytes": 1195704,
       "contentType": "application/pdf",
       "sha256": "3f384b6df1e9dc70a589fc2eee78a4d0d7c9277b1a51ff29048714754a748928"
+    },
+    {
+      "refId": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics",
+      "title": "Agile, Post-Quantum Secure Cryptography in Avionics",
+      "url": "https://eprint.iacr.org/2024/667.pdf",
+      "status": "downloaded",
+      "filename": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics.pdf",
+      "sizeBytes": 379083,
+      "contentType": "application/pdf",
+      "sha256": "568f194a0048a70afca254586c43fae32667b9f3d04b7c06c18be9172cc2db9f"
+    },
+    {
+      "refId": "DO-178C-Costs-vs-Benefits-Analysis",
+      "title": "DO-178C Costs vs Benefits Analysis",
+      "url": "https://afuzion.com/do-178c-costs-versus-benefits/",
+      "status": "downloaded",
+      "filename": "DO-178C-Costs-vs-Benefits-Analysis.html",
+      "sizeBytes": 210740,
+      "contentType": "text/html",
+      "sha256": "e6e2b203610039ef19ae85bd0de050ccb1e07cf8d38140eb647e9f563d619bdb"
+    },
+    {
+      "refId": "ARINC-429-Cyber-vulnerabilities-and-Voltage-Data-in-a-Hardwa",
+      "title": "ARINC 429 Cyber-vulnerabilities and Voltage Data in a Hardware-in-the-Loop Simulator",
+      "url": "https://arxiv.org/pdf/2408.16714",
+      "status": "downloaded",
+      "filename": "ARINC-429-Cyber-vulnerabilities-and-Voltage-Data-in-a-Hardwa.pdf",
+      "sizeBytes": 3112522,
+      "contentType": "application/pdf",
+      "sha256": "f2368a9c295dacbb98f0fa088cc9c0cf28da556cb08971404c9fdfdd5afb66be"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
