@@ -11857,6 +11857,26 @@
       "sizeBytes": 618743,
       "contentType": "application/pdf",
       "sha256": "304b0e79f75ac398ff2acced8bf440a3cfce83de8a80dc7bd72fc063d095766f"
+    },
+    {
+      "refId": "SMART-App-Launch",
+      "title": "SMART App Launch",
+      "url": "https://www.hl7.org/fhir/smart-app-launch/",
+      "status": "downloaded",
+      "filename": "SMART-App-Launch.html",
+      "sizeBytes": 40410,
+      "contentType": "text/html",
+      "sha256": "74f0778857be28b11dc7ae139bc1b429668b1519b1374913fbd8ed04b15475a2"
+    },
+    {
+      "refId": "Deep-CNN-Face-Matchers-Inherently-Support-Revocable-Biometri",
+      "title": "Deep CNN Face Matchers Inherently Support Revocable Biometric Templates",
+      "url": "https://arxiv.org/pdf/2506.18731",
+      "status": "downloaded",
+      "filename": "Deep-CNN-Face-Matchers-Inherently-Support-Revocable-Biometri.pdf",
+      "sizeBytes": 5017042,
+      "contentType": "application/pdf",
+      "sha256": "e9d08aeb48ef84b0a9e5807cf99ab36ec67bdd9062bf82bd306feff129d91a19"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
