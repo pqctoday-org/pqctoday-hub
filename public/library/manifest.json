@@ -11607,6 +11607,16 @@
       "sizeBytes": 26084,
       "contentType": "text/html",
       "sha256": "2ed422cf2be165a9a844cb13a52fc1cfb32dbdf200030f33991e58f7c255cceb"
+    },
+    {
+      "refId": "Cybersecurity-in-an-Era-with-Quantum-Computers-Will-We-Be-Re",
+      "title": "Cybersecurity in an Era with Quantum Computers: Will We Be Ready?",
+      "url": "https://eprint.iacr.org/2015/1075.pdf",
+      "status": "downloaded",
+      "filename": "Cybersecurity-in-an-Era-with-Quantum-Computers-Will-We-Be-Re.pdf",
+      "sizeBytes": 64880,
+      "contentType": "application/pdf",
+      "sha256": "6752a95b970fd0f762967689a8eff0da741078b88dd714c82fee5b027762bdbd"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
