@@ -12017,6 +12017,26 @@
       "sizeBytes": 68554,
       "contentType": "text/html",
       "sha256": "37c73623258dde98c1d6f2b668e5ca17c0b4b1ed2a5062942e31728635f75de8"
+    },
+    {
+      "refId": "Visa-Token-Service",
+      "title": "Visa Token Service",
+      "url": "https://usa.visa.com/products/visa-token-service.html",
+      "status": "downloaded",
+      "filename": "Visa-Token-Service.html",
+      "sizeBytes": 192707,
+      "contentType": "text/html",
+      "sha256": "98cb8a61ff72fe4f03e67bd364854d209d9726f7029ec3be3bbe87d40333a9d4"
+    },
+    {
+      "refId": "EMV-Key-Management-Explained",
+      "title": "EMV Key Management - Explained",
+      "url": "https://www.cryptomathic.com/hubfs/docs/cryptomathic_white_paper-emv_key_management.pdf",
+      "status": "downloaded",
+      "filename": "EMV-Key-Management-Explained.pdf",
+      "sizeBytes": 2826318,
+      "contentType": "application/pdf",
+      "sha256": "be12678f24f5b986dd4f887221c14e637bc445a8dd98bb1b5d59c0140c8b85ac"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
