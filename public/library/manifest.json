@@ -11937,6 +11937,16 @@
       "sizeBytes": 66019,
       "contentType": "text/html",
       "sha256": "4f7442450d47f06d36dd4a19e74fa3b71dff334b058122367ddd6f11d2c0994b"
+    },
+    {
+      "refId": "Understanding-Programs-and-Projects",
+      "title": "Understanding Programs and Projects",
+      "url": "https://www.pmi.org/learning/library/understanding-difference-programs-versus-projects-6896",
+      "status": "downloaded",
+      "filename": "Understanding-Programs-and-Projects.html",
+      "sizeBytes": 455041,
+      "contentType": "text/html",
+      "sha256": "820ec5ae7bf02641f056bc34cd822376ab1d55689212d916660015d41d77ccf4"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
