@@ -1,7 +1,7 @@
 {
   "description": "Downloaded digital proofs backing the migrate catalog (accumulated across passes)",
   "generated": "2026-07-09",
-  "count": 1180,
+  "count": 1185,
   "downloads": [
     {
       "product_id": "btq-bitcoin-quantum",
@@ -9527,6 +9527,41 @@
       "bytes": 108535,
       "content_type": "text/html; charset=UTF-8",
       "tier": "new"
+    },
+    {
+      "product_id": "Post-quantum-cryptography-support-in-Tru",
+      "url": "https://dev.digicert.com/trustcore-sdk/compliance-and-regulations/post-quantum-cryptography-support-in-trustcore-sdk.html",
+      "file": "Post-quantum-cryptography-support-in-Tru-b944decc.html",
+      "bytes": 132023,
+      "tier": "playwright-stealth"
+    },
+    {
+      "product_id": "Safe-Smart-Account",
+      "url": "https://github.com/safe-global/safe-smart-account",
+      "file": "Safe-Smart-Account-221b3896.html",
+      "bytes": 339357,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "Schnorrkel",
+      "url": "https://github.com/w3f/schnorrkel",
+      "file": "Schnorrkel-9a26764c.html",
+      "bytes": 271146,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "cardano-crypto-praos",
+      "url": "https://github.com/IntersectMBO/cardano-base",
+      "file": "cardano-crypto-praos-1ebafc61.html",
+      "bytes": 346966,
+      "tier": "curl_cffi:chrome124"
+    },
+    {
+      "product_id": "input-output-hk-kes",
+      "url": "https://github.com/input-output-hk/kes",
+      "file": "input-output-hk-kes-d116e03e.html",
+      "bytes": 283468,
+      "tier": "curl_cffi:chrome124"
     }
   ]
 }

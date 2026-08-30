@@ -28,6 +28,11 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { MainLayout } from '../Layout/MainLayout'
 import { LandingView } from './LandingView'
 import { PERSONA_JOURNEY_BOARD } from '@/data/personaConfig'
+import {
+  ALGORITHM_COUNT_ESTIMATE,
+  TIMELINE_EVENT_COUNT_ESTIMATE,
+  LIBRARY_COUNT_ESTIMATE,
+} from '@/data/landingCounts.generated'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { NAV_PATH_LABELS } from '../../data/personaConfig'
 import { getRailSections } from '../Layout/railNav'
@@ -148,6 +153,21 @@ describe('LandingView wired end-to-end under the real MainLayout', () => {
     expect(screen.queryByRole('heading', { name: /who's asking/i })).not.toBeInTheDocument()
     expect(screen.getByText(/the quantum era is/i)).toBeInTheDocument()
     expectDesktopRailCoversForYou(null)
+  })
+
+  it('hero stats bar renders real numbers on first paint, never the "..." placeholder', () => {
+    // REGRESSION (plan Track B4): algorithmCount/timelineEventCount/libraryCount
+    // used to start as `null` (rendering '...') until an async CSV load resolved.
+    // They're now seeded from src/data/landingCounts.generated.ts, so a number
+    // must be present synchronously on the very first render — no `act`/await,
+    // no waiting for the useEffect's dynamic imports to settle.
+    usePersonaStore.setState({ hasSkippedPersonalization: true })
+    renderApp()
+    expect(screen.getByText('Timeline Events')).toBeInTheDocument()
+    expect(screen.getByText(String(ALGORITHM_COUNT_ESTIMATE))).toBeInTheDocument()
+    expect(screen.getByText(String(TIMELINE_EVENT_COUNT_ESTIMATE))).toBeInTheDocument()
+    expect(screen.getByText(String(LIBRARY_COUNT_ESTIMATE))).toBeInTheDocument()
+    expect(screen.queryByText('...')).not.toBeInTheDocument()
   })
 
   it('a selected persona renders PersonaBoardView (not the old hero), with full FOR YOU rail coverage', () => {

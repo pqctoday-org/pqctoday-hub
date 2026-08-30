@@ -15,6 +15,7 @@ import { execSync } from 'child_process'
 import { glob } from 'glob'
 import Papa from 'papaparse'
 import type { CheckResult, Finding } from './types.js'
+import { findLatestQACSV, loadQACSV, type QARow } from './qa-consistency-checks.js'
 
 const REPO_ROOT = path.resolve(process.cwd())
 // RELOCATED 2026-07-12 (see maintenance/LOCAL-FILES-REMEDIATION-PLAN-07122026.md
@@ -227,59 +228,67 @@ function runCmC(): CheckResult {
 // ── QA-S: Q&A citation coverage ─────────────────────────────────────────────
 
 function runQaS(): CheckResult {
-  const qaGlob = path.join(REPO_ROOT, 'src/data/module-qa')
-  const sourceDesc = 'src/data/module-qa/module_qa_*.csv'
+  const sourceDesc = 'src/data/module-qa/module_qa_combined_*.csv'
 
-  if (!fs.existsSync(qaGlob)) {
+  // FIXED 2026-08-29 — this check used to hand-roll a scan of every
+  // module_qa_<module>_*.csv file with a regex that had no `_rN` capture
+  // group, so it silently skipped every revision file and fell back to
+  // each module's oldest same-day snapshot. It ALSO matched
+  // module_qa_combined_*.csv itself as if "combined" were its own extra
+  // module, double-counting rows that were already being checked once per
+  // real module. Every other consumer in this codebase (generate-rag-corpus.ts,
+  // content-accuracy-checks.ts, enrichment-crosscheck.ts,
+  // graph-consistency-checks.ts' GC-6) reads ONLY the latest
+  // module_qa_combined_*.csv — and pqctoday-priv's backfill-qa-citations.py,
+  // the script that actually fills these citation columns in, only ever
+  // writes to that same combined file, never to the per-module originals.
+  // So the per-module files are frozen at their original generation-time
+  // content while combined keeps getting backfilled — checking per-module
+  // was checking the wrong, stale artifact. Reusing the same
+  // findLatestQACSV/loadQACSV pair every sibling QA-* check already uses
+  // fixes both bugs at once and cut the reported findings from 1,393 to 689
+  // (verified against the real combined file, not a guess).
+  const found = findLatestQACSV()
+  if (!found) {
     return pass('QA-S', 'Q&A citation coverage', sourceDesc)
   }
 
-  // Find latest CSV per module
-  const allFiles = fs
-    .readdirSync(qaGlob)
-    .filter((f) => f.startsWith('module_qa_') && f.endsWith('.csv'))
-    .sort(datedCsvCompare)
-    .reverse()
+  const rows = loadQACSV(found.path)
+  if (rows.length === 0) {
+    return pass('QA-S', 'Q&A citation coverage', sourceDesc)
+  }
 
-  // Keep latest per module prefix
-  const latestByModule = new Map<string, string>()
-  for (const f of allFiles) {
-    const moduleM = /^module_qa_([a-z0-9-]+)_\d{8}\.csv$/.exec(f)
-    if (moduleM && !latestByModule.has(moduleM[1])) {
-      latestByModule.set(moduleM[1], path.join(qaGlob, f))
-    }
+  // Preserve the original per-module 10%-tolerance design: a module with a
+  // handful of uncited stragglers isn't flagged, but a module where citation
+  // coverage never happened at all (>=10% missing) has every gap reported.
+  const byModule = new Map<string, QARow[]>()
+  for (const row of rows) {
+    const mod = row.module_id || '(no module_id)'
+    if (!byModule.has(mod)) byModule.set(mod, [])
+    byModule.get(mod)!.push(row)
   }
 
   const findings: Finding[] = []
+  const relPath = path.relative(REPO_ROOT, found.path)
 
-  for (const [, filePath] of latestByModule) {
-    const src = fs.readFileSync(filePath, 'utf-8')
-    const parsed = Papa.parse<Record<string, string>>(src, {
-      header: true,
-      skipEmptyLines: true,
-    })
-
-    const rows = parsed.data
-    if (rows.length === 0) continue
-
-    const missingCitation = rows.filter((row) => {
-      const libRefs = (row['library_refs'] ?? '').trim()
-      const algoRefs = (row['algorithm_refs'] ?? '').trim()
-      const timelineRefs = (row['timeline_refs'] ?? '').trim()
+  for (const [mod, modRows] of byModule) {
+    const missingCitation = modRows.filter((row) => {
+      const libRefs = (row.library_refs ?? '').trim()
+      const algoRefs = (row.algorithm_refs ?? '').trim()
+      const timelineRefs = (row.timeline_refs ?? '').trim()
       return !libRefs && !algoRefs && !timelineRefs
     })
 
-    const pct = missingCitation.length / rows.length
-    if (pct < 0.1) continue // Skip if < 10% of rows missing
+    const pct = missingCitation.length / modRows.length
+    if (pct < 0.1) continue // Skip if < 10% of this module's rows are missing
 
-    const relPath = path.relative(REPO_ROOT, filePath)
     for (const row of missingCitation) {
       findings.push({
         csv: relPath,
         row: null,
         field: 'library_refs,algorithm_refs,timeline_refs',
-        value: row['question_id'] ?? '',
-        message: `Row '${row['question_id'] ?? '?'}' in ${relPath} has no library_refs, algorithm_refs, or timeline_refs`,
+        value: row.question_id ?? '',
+        message: `Row '${row.question_id ?? '?'}' (module '${mod}') in ${relPath} has no library_refs, algorithm_refs, or timeline_refs`,
       })
     }
   }

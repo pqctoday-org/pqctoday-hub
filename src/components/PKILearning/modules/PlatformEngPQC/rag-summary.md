@@ -24,7 +24,7 @@
 ### Step 1: Pipeline Crypto Inventory
 
 - 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh
-- 17 crypto assets across stages with HNDL exposure ratings and PQC replacements
+- 16 crypto assets across stages with HNDL exposure ratings and PQC replacements
 - HNDL: High assets: Vault mTLS (→ ML-KEM-768 X-Wing), Container Image Signing Key (→ ML-DSA-65), SBOM Attestation (→ SLH-DSA-SHAKE-128f), kube-apiserver TLS (→ ML-DSA-65 hybrid), Helm Chart Signing (→ ML-DSA-87), Service Mesh mTLS (→ ML-DSA-44 + ML-KEM-512)
 
 ### Step 2: Quantum Threat Timeline

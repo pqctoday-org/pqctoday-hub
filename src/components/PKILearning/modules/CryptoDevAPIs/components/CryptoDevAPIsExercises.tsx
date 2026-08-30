@@ -81,7 +81,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Matrix',
       badgeColor: 'bg-status-error/20 text-status-error border-status-error/50',
       observe:
-        'Windows CNG shows "Planned" for both ML-DSA and ML-KEM — meaning your CA signing stack needs a mitigation. Options: (1) Use OpenSSL or Bouncy Castle as an intermediate layer for PQC operations while CNG handles classical key storage. (2) Deploy an oqsprovider-enabled OpenSSL as the CA signing backend with PKCS#11 for key storage (decoupled from CNG). PKCS#11 v3.2 shows "Experimental" — choose an HSM vendor with confirmed v3.2 support (Thales Luna 10.x).',
+        'Windows CNG shows "Planned" for both ML-DSA and ML-KEM — meaning your CA signing stack needs a mitigation. Options: (1) Use OpenSSL or Bouncy Castle as an intermediate layer for PQC operations while CNG handles classical key storage. (2) Deploy an oqsprovider-enabled OpenSSL as the CA signing backend with PKCS#11 for key storage (decoupled from CNG). For HSM-backed key storage, choose a vendor with confirmed PKCS#11 v3.2 PQC support (Thales Luna Firmware 7.9.0+ with Client 10.9.0+, or Utimaco Quantum Protect) — both ship it in production today.',
       config: { step: 5 },
     },
     {
