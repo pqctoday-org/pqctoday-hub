@@ -9050,16 +9050,6 @@
       "sha256": "f861e3b8da19e292169b9ef41fb5e39ffd69c7ca77a1155760c17b8859acc8a0"
     },
     {
-      "refId": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag",
-      "title": "UN Regulation No 155 \u2014 Cyber Security and Cyber Security Management System",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:42021X0387",
-      "status": "downloaded",
-      "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
-      "sizeBytes": 565900,
-      "contentType": "text/html",
-      "sha256": "c09806ad903cd5a3ba76256ed166718d4d374b0c8662e5d25acec3d3bce59aaa"
-    },
-    {
       "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D",
       "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(7) \u2014 End-User Device Encryption",
       "url": "https://www.healthit.gov/test-method/end-user-device-encryption",
@@ -11393,7 +11383,7 @@
       "title": "UN Regulation No. 155 - Cyber security and cyber security management system",
       "url": "https://eur-lex.europa.eu/eli/reg/2021/387/oj/eng",
       "status": "downloaded",
-      "filename": "UN-Regulation-No-155-Cyber-security-and-cyber-security-manag.html",
+      "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
       "sizeBytes": 567306,
       "contentType": "text/html",
       "sha256": "d7fb452dbfb5b8d65de8fa799ca51650fa1737fb013c8bfa2a5d9b2fb3bddace"
@@ -11407,6 +11397,16 @@
       "sizeBytes": 0,
       "contentType": "text/html",
       "sha256": ""
+    },
+    {
+      "refId": "Integrated-Methodology-for-Information-Security-Risk-Managem",
+      "title": "Integrated Methodology for Information Security Risk Management using ISO 27005:2018 and NIST SP 800-30 for Insurance Sector",
+      "url": "https://thesai.org/Downloads/Volume14No4/Paper_68-Integrated_Methodology_for_Information_Security_Risk_Management.pdf",
+      "status": "downloaded",
+      "filename": "Integrated-Methodology-for-Information-Security-Risk-Managem.pdf",
+      "sizeBytes": 1195704,
+      "contentType": "application/pdf",
+      "sha256": "3f384b6df1e9dc70a589fc2eee78a4d0d7c9277b1a51ff29048714754a748928"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
