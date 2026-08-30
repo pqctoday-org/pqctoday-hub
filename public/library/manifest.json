@@ -11667,6 +11667,36 @@
       "sizeBytes": 602260,
       "contentType": "application/pdf",
       "sha256": "1899a810d789534895cc4f2ffae36a94767e0191f9cc3eac75cae7c451745566"
+    },
+    {
+      "refId": "MTU-and-Deep-SSL-Inspection-Essential-Insights-for-2026",
+      "title": "MTU and Deep SSL Inspection: Essential Insights for 2026",
+      "url": "https://www.pablosec.com/blog/mtu-a-critical-part-of-deep-ssl-inspection-in-2026/",
+      "status": "downloaded",
+      "filename": "MTU-and-Deep-SSL-Inspection-Essential-Insights-for-2026.html",
+      "sizeBytes": 274783,
+      "contentType": "text/html",
+      "sha256": "95e573b18b812b1c64ef7fde4442a40237f1bb4bfb86fa80990859e227b82757"
+    },
+    {
+      "refId": "Post-quantum-between-Cloudflare-and-origin-servers",
+      "title": "Post-quantum between Cloudflare and origin servers",
+      "url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-to-origin/",
+      "status": "downloaded",
+      "filename": "Post-quantum-between-Cloudflare-and-origin-servers.html",
+      "sizeBytes": 163169,
+      "contentType": "text/html",
+      "sha256": "2a87f49d167afb6fd69b1e4da03f35ba8340cbced94bd3cb5d23db8ee8734335"
+    },
+    {
+      "refId": "TLS-Termination-Models-SSL-Passthrough-vs-SSL-Termination-vs",
+      "title": "TLS Termination Models: SSL Passthrough vs SSL Termination vs SSL Bridging",
+      "url": "https://dev.to/sharonkynu/tls-termination-models-ssl-passthrough-vs-ssl-termination-offloading-vs-ssl-bridging-39ck",
+      "status": "downloaded",
+      "filename": "TLS-Termination-Models-SSL-Passthrough-vs-SSL-Termination-vs.html",
+      "sizeBytes": 79842,
+      "contentType": "text/html",
+      "sha256": "7d773003fdb76ce7dd6101be9ab7f87cea2f55244620d6c171e0c0e9ced42c9f"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
