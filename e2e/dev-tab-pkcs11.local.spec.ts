@@ -326,3 +326,26 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran').first()).toBeVisible()
 })
+
+test("the real PKCS#11 call log and key table show this tab's own run activity", async ({
+  page,
+}) => {
+  // Regression guard: HsmContext's logging proxy already captures every
+  // C_* call this tab's script makes, and the devSlot scan already
+  // registers whatever it creates — the only thing this tab was missing
+  // was rendering either. Proves both are actually reachable from here,
+  // not just present in state nothing displays.
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
+  // A real function name from the default template's own generate/encrypt
+  // steps — not just the panel chrome.
+  await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
+  // The key(s) the run just created, via the devSlot discovery scan.
+  await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
+})

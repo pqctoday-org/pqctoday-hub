@@ -468,3 +468,28 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(9, { timeout: 5000 })
 })
+
+test("the real cross-plane audit trail shows this tab's own run activity", async ({ page }) => {
+  // Regression guard: getKmipEngine() is a per-tab singleton shared with
+  // the manual workbench, so every runOp/dryRun/loadPolicy call this tab's
+  // script makes was already landing in engine.auditSnapshot() — the only
+  // thing missing was rendering it here. Proves both the CACP (Plane 1)
+  // and KMIP (Plane 2) columns show real content from THIS tab's run, not
+  // just that the panel chrome renders.
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  // One label per transaction row (this template has several), so .first().
+  await expect(page.getByText('Plane 1 · Agility').first()).toBeVisible()
+  await expect(page.getByText('Plane 2 · KMIP').first()).toBeVisible()
+  // A real policy decision (Plane 1) and a real KMIP request marker
+  // (Plane 2) — not just the swimlane headers.
+  await expect(page.getByText(/policy activated|decision:/).first()).toBeVisible()
+  await expect(page.getByText(/▸ CreateKeyPair|▸ Activate|▸ Sign/).first()).toBeVisible()
+})
