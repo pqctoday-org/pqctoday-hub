@@ -11587,6 +11587,16 @@
       "sizeBytes": 84011,
       "contentType": "text/html",
       "sha256": "633de8aad49f2c3b6e9a2ce7abb842cb12dc19cae320bf051b50cf1f30a5ec4c"
+    },
+    {
+      "refId": "TCG-Hardware-Requirements-for-a-Device-Identifier-Compositio",
+      "title": "TCG Hardware Requirements for a Device Identifier Composition Engine",
+      "url": "https://trustedcomputinggroup.org/wp-content/uploads/Hardware-Requirements-for-Device-Identifier-Composition-Engine-r78_For-Publication.pdf",
+      "status": "downloaded",
+      "filename": "TCG-Hardware-Requirements-for-a-Device-Identifier-Compositio.pdf",
+      "sizeBytes": 938192,
+      "contentType": "application/pdf",
+      "sha256": "bc25ef0aa11cfd4d7c37f3667ed6c0b534d3039b1fa062ecdbbf89e1a7ef8755"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
