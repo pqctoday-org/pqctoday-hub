@@ -11627,6 +11627,16 @@
       "sizeBytes": 306277,
       "contentType": "application/pdf",
       "sha256": "d14ea53daf1da1eb76589b3bc6267ed226124bcbb9da8f924d9036a2facd6f5d"
+    },
+    {
+      "refId": "Integrating-Remote-Attestation-with-Transport-Layer-Security",
+      "title": "Integrating Remote Attestation with Transport Layer Security",
+      "url": "https://arxiv.org/pdf/1801.05863",
+      "status": "downloaded",
+      "filename": "Integrating-Remote-Attestation-with-Transport-Layer-Security.pdf",
+      "sizeBytes": 342101,
+      "contentType": "application/pdf",
+      "sha256": "b5044df2cc816e5ec3232f9da327c4437bc2d5ee2b007aa14676f5219584800d"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
