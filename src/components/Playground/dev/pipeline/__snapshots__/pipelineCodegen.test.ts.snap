@@ -44,7 +44,7 @@ with Module() as hsm:
     try:
         # ── t1 · AES-256-GCM · generate ──
         try:
-            key_t1 = s.generate_aes256()
+            key_t1 = s.generate_aes256(token=True)
             print('%s key · handle=%d' % ('AES-256-GCM', key_t1))
             print('###STEP t1 ok###')
         except Exception as _e:
@@ -72,7 +72,7 @@ with Module() as hsm:
 
         # ── t4 · ML-DSA-65 · generate ──
         try:
-            pub_t4, priv_t4 = s.generate_ml_dsa(p11.CKP_ML_DSA_65)
+            pub_t4, priv_t4 = s.generate_ml_dsa(p11.CKP_ML_DSA_65, token=True)
             print('%s keypair · pub=%d priv=%d' % ('ML-DSA-65', pub_t4, priv_t4))
             print('###STEP t4 ok###')
         except Exception as _e:
@@ -113,7 +113,7 @@ with Module() as hsm:
     try:
         # ── t1 · ML-DSA-65 · generate ──
         try:
-            pub_t1, priv_t1 = s.generate_ml_dsa(p11.CKP_ML_DSA_65)
+            pub_t1, priv_t1 = s.generate_ml_dsa(p11.CKP_ML_DSA_65, token=True)
             print('%s keypair · pub=%d priv=%d' % ('ML-DSA-65', pub_t1, priv_t1))
             print('###STEP t1 ok###')
         except Exception as _e:
@@ -122,7 +122,7 @@ with Module() as hsm:
 
         # ── t2 · ECDSA P-256 · generate ──
         try:
-            pub_t2, priv_t2 = s.generate_ec_p256()
+            pub_t2, priv_t2 = s.generate_ec_p256(token=True)
             print('%s keypair · pub=%d priv=%d' % ('ECDSA P-256', pub_t2, priv_t2))
             print('###STEP t2 ok###')
         except Exception as _e:
@@ -181,7 +181,7 @@ with Module() as hsm:
     try:
         # ── t1 · ML-KEM-768 · generate ──
         try:
-            pub_t1, priv_t1 = s.generate_ml_kem(p11.CKP_ML_KEM_768)
+            pub_t1, priv_t1 = s.generate_ml_kem(p11.CKP_ML_KEM_768, token=True)
             print('%s keypair · pub=%d priv=%d' % ('ML-KEM-768', pub_t1, priv_t1))
             print('###STEP t1 ok###')
         except Exception as _e:
@@ -234,7 +234,7 @@ with Module() as hsm:
     try:
         # ── t1 · ML-KEM-768 · generate ──
         try:
-            pub_t1, priv_t1 = s.generate_ml_kem(p11.CKP_ML_KEM_768)
+            pub_t1, priv_t1 = s.generate_ml_kem(p11.CKP_ML_KEM_768, token=True)
             print('%s keypair · pub=%d priv=%d' % ('ML-KEM-768', pub_t1, priv_t1))
             print('###STEP t1 ok###')
         except Exception as _e:
@@ -264,7 +264,7 @@ with Module() as hsm:
 
         # ── t4 · ML-DSA-65 · generate ──
         try:
-            pub_t4, priv_t4 = s.generate_ml_dsa(p11.CKP_ML_DSA_65)
+            pub_t4, priv_t4 = s.generate_ml_dsa(p11.CKP_ML_DSA_65, token=True)
             print('%s keypair · pub=%d priv=%d' % ('ML-DSA-65', pub_t4, priv_t4))
             print('###STEP t4 ok###')
         except Exception as _e:

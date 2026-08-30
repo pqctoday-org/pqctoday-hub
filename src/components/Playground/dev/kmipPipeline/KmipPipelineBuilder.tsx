@@ -634,7 +634,12 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           )}
         </Button>
         {showActivity && (
-          <div className="px-4 pb-3 flex flex-col gap-2">
+          // Same fix as the PKCS#11 twin: the Tabs root is a fixed h-[70vh]
+          // with overflow-hidden, so this section needs its own bound and
+          // scroll rather than risk silently clipping past the container
+          // edge as it grows (AuditTrailPanel self-caps at max-h-80, but
+          // this keeps both tabs' activity sections behaving identically).
+          <div className="px-4 pb-3 flex flex-col gap-2 max-h-64 overflow-y-auto">
             {audit.length > 0 && (
               <div className="flex justify-end">
                 <Button
