@@ -285,7 +285,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
-            <div className="text-sm font-bold text-destructive mb-1">Traditional PQC Chain</div>
+            <div className="text-sm font-bold text-status-error mb-1">Traditional PQC Chain</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
                 3 ML-DSA-44 signatures: <strong>7,260 B</strong>

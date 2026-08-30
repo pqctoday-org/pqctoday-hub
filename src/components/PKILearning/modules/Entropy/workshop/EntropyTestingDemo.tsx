@@ -474,7 +474,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                 href="https://github.com/usnistgov/SP800-90B_EntropyAssessment"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary underline"
               >
                 github.com/usnistgov/SP800-90B_EntropyAssessment
               </a>
@@ -493,7 +493,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             are tracked in the{' '}
             <a
               href="/migrate?category=Hardware+Security+Modules"
-              className="text-primary hover:underline"
+              className="text-primary underline"
             >
               Migrate catalog → Hardware Security Modules
             </a>
@@ -503,7 +503,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
               href="https://github.com/pqctoday-org/pqctoday-hub/issues"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary underline"
             >
               issue tracker
             </a>

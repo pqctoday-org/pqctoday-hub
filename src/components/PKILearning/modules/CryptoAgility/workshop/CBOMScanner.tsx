@@ -14,7 +14,7 @@ const statusBadge = (status: CBOMEntry['quantumStatus']) => {
   switch (status) {
     case 'vulnerable':
       return (
-        <span className="text-[10px] px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 font-bold">
+        <span className="text-[10px] px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold">
           VULNERABLE
         </span>
       )

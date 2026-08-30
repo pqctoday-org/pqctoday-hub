@@ -392,7 +392,7 @@ export const HybridJWT: React.FC = () => {
       </div>
 
       {error && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error">
           {error}
         </div>
       )}

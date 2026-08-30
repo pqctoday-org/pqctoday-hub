@@ -16,6 +16,7 @@ import {
   toolsForUseCase,
 } from './industryCrossRefs'
 import { getLandscapeIndustries, loadIndustryLandscape } from '@/data/industryLandscapeData'
+import { isCrossIndustry } from '@/data/industryMatch'
 import type { ComplianceFramework } from '@/data/complianceData'
 
 const { useCases, standards } = loadIndustryLandscape()
@@ -44,7 +45,7 @@ describe('sectorCodesFor', () => {
   it('resolves every landscape industry except Cross-Industry', () => {
     for (const ind of getLandscapeIndustries()) {
       const codes = sectorCodesFor(ind)
-      if (ind === 'Cross-Industry') expect(codes).toEqual([])
+      if (isCrossIndustry(ind)) expect(codes).toEqual([])
       else expect(codes.length, `${ind} resolved to no sector code`).toBeGreaterThan(0)
     }
   })
@@ -67,15 +68,20 @@ describe('sectorCodesFor', () => {
 })
 
 describe('learnModulesForIndustry', () => {
-  it('resolves a module for the 19 industries that declare one', () => {
+  it('resolves a module for the 22 industries that declare one', () => {
     // 2026-08-19: was 20 — Supply Chain / Logistics's learn_module_id was
     // cleared (vendor-risk covers vendor/software supply-chain risk, not the
     // physical maritime/customs/EBL use cases this industry actually lists;
     // no dedicated logistics module exists to relink to instead).
+    // 2026-08-29: 19 → 22 — three single-row 'Cross-Industry / X' sub-labels
+    // (Web & API TLS, Network & VPN, Code Signing) split out of the bare
+    // 'Cross-Industry' bucket so each could honestly carry its own module,
+    // without forcing the other, genuinely mixed-topic Cross-Industry rows
+    // (PKI, email, OpenPGP, DNSSEC) to share it.
     const withModule = getLandscapeIndustries().filter(
       (i) => learnModulesForIndustry(i, useCases).length > 0
     )
-    expect(withModule).toHaveLength(19)
+    expect(withModule).toHaveLength(22)
   })
 
   it('returns nothing for the three industries with no module', () => {
@@ -158,9 +164,11 @@ describe('toolsForUseCase / toolsForIndustry', () => {
     const tools = toolsForIndustry('Cross-Industry', useCases)
     const ids = tools.map((t) => t.tool.id)
     expect(new Set(ids).size).toBe(ids.length)
-    // sbx-tls is named by cross-web-tls only; vpn-sim by cross-vpn only.
-    const tls = tools.find((t) => t.tool.id === 'sbx-tls')!
-    expect(tls.useCases.map((u) => u.useCaseId)).toEqual(['cross-web-tls'])
+    // sbx-pki is named by cross-pki only (2026-08-29: cross-web-tls, the
+    // original example here, moved to its own 'Cross-Industry / Web & API
+    // TLS' sub-label — see learnModulesForIndustry's 19→22 test above).
+    const pki = tools.find((t) => t.tool.id === 'sbx-pki')!
+    expect(pki.useCases.map((u) => u.useCaseId)).toEqual(['cross-pki'])
   })
 
   it('every industry surfaces at least one tool', () => {

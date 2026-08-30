@@ -104,7 +104,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         {/* Key type table */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-3">UEFI Key Hierarchy Summary</div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="UEFI key hierarchy summary"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">
@@ -238,7 +244,13 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         {/* Size comparison table */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-sm font-bold text-foreground mb-3">Algorithm Size Reference</div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Algorithm size reference"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">

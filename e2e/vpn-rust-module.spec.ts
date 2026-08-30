@@ -12,6 +12,25 @@ const BASE = '/playground/vpn-sim'
 const TIMEOUT = 90_000
 const CERTGEN_TIMEOUT = 60_000
 
+/**
+ * The client/server auth key-type pickers were native `<select>`s until
+ * commit 85b065191 (2026-08-21) converted VpnSimulationPanel.tsx to the
+ * shared `FilterDropdown` — `page.locator('select')` no longer matches
+ * anything there, so `selectOption()` timed out. The trigger button carries
+ * a distinguishing `aria-label` (`ariaLabel` prop, e.g. "Client
+ * authentication key type"); the option text is unchanged.
+ */
+async function pickFilterDropdown(
+  page: import('@playwright/test').Page,
+  triggerName: string,
+  optionName: string
+): Promise<void> {
+  const trigger = page.getByRole('button', { name: triggerName })
+  await trigger.waitFor({ state: 'visible', timeout: 15_000 })
+  await trigger.click()
+  await page.getByRole('option', { name: optionName, exact: true }).click()
+}
+
 async function suppressWhatsNew(page: import('@playwright/test').Page) {
   await page.addInitScript(() => {
     localStorage.setItem(
@@ -149,16 +168,14 @@ for (const { mode, expectEcdh, expectMlKem } of PSK_SCENARIOS) {
     })
 
     // Set client alg to ML-DSA (default may be RSA)
-    const clientAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()
-    await clientAlgSelect.selectOption('ML-DSA')
+    await pickFilterDropdown(page, 'Client authentication key type', 'ML-DSA (PQC)')
 
     // Switch to Server tab and set server alg to ML-DSA
     await page
       .getByRole('tab', { name: /Server Token/i })
       .first()
       .click()
-    const serverAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()
-    await serverAlgSelect.selectOption('ML-DSA')
+    await pickFilterDropdown(page, 'Server authentication key type', 'ML-DSA (PQC)')
 
     // Generate Certs
     const genBtn = page.locator('[data-testid="vpn-gen-certs"]')

@@ -104,7 +104,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
                     className={`text-[10px] px-1.5 py-0.5 rounded font-semibold border shrink-0 ${
                       t.implementation === 'masked'
                         ? 'text-status-success bg-status-success/10 border-status-success/30'
-                        : 'text-destructive bg-destructive/10 border-destructive/30'
+                        : 'text-status-error bg-destructive/10 border-destructive/30'
                     }`}
                   >
                     {t.implementation.toUpperCase()}

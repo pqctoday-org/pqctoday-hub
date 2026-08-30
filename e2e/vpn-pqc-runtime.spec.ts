@@ -20,6 +20,24 @@ async function suppressWhatsNew(page: Page) {
   })
 }
 
+/**
+ * The client/server auth key-type pickers were native `<select>`s until
+ * commit 85b065191 (2026-08-21) converted VpnSimulationPanel.tsx to the
+ * shared `FilterDropdown` — `page.locator('select')` no longer matches
+ * anything there. The trigger button carries a distinguishing `aria-label`
+ * (e.g. "Client authentication key type"); the option text is unchanged.
+ */
+async function pickFilterDropdown(
+  page: Page,
+  triggerName: string,
+  optionName: string
+): Promise<void> {
+  const trigger = page.getByRole('button', { name: triggerName })
+  await trigger.waitFor({ state: 'visible', timeout: 15_000 })
+  await trigger.click()
+  await page.getByRole('option', { name: optionName, exact: true }).click()
+}
+
 async function startDaemon(page: Page) {
   const startBtn = page.locator('[data-testid="vpn-start-daemon"]')
   await startBtn.waitFor({ state: 'attached', timeout: 15_000 })
@@ -68,14 +86,12 @@ test.describe('VPN PQC runtime capabilities', () => {
       timeout: 30_000,
     })
 
-    const clientAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()
-    await clientAlgSelect.selectOption('ML-DSA')
+    await pickFilterDropdown(page, 'Client authentication key type', 'ML-DSA (PQC)')
     await page
       .getByRole('tab', { name: /Server Token/i })
       .first()
       .click()
-    const serverAlgSelect = page.locator('select').filter({ hasText: 'ML-DSA (PQC)' }).first()
-    await serverAlgSelect.selectOption('ML-DSA')
+    await pickFilterDropdown(page, 'Server authentication key type', 'ML-DSA (PQC)')
 
     await page.locator('[data-testid="vpn-gen-certs"]').click()
     await startDaemon(page)

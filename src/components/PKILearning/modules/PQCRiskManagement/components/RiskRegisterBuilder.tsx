@@ -265,7 +265,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                 <Button
                   variant="ghost"
                   onClick={() => removeEntry(entry.id)}
-                  className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-status-error transition-colors"
                   title="Remove entry"
                 >
                   <Trash2 size={14} />

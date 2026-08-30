@@ -210,7 +210,7 @@ const Step1WhyAndMerkle: React.FC = () => (
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">sk</span>
               <span className="text-muted-foreground">&rarr;</span>
-              <span className="px-1.5 py-0.5 rounded bg-destructive/10 border border-destructive/20 text-destructive">
+              <span className="px-1.5 py-0.5 rounded bg-destructive/10 border border-destructive/20 text-status-error">
                 H&sup1;(sk)
               </span>
               <span className="text-muted-foreground">&rarr;</span>
@@ -347,7 +347,13 @@ const Step2LmsXmss: React.FC = () => (
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-border">
           <div className="text-xs font-bold text-foreground mb-3">LMS vs XMSS Comparison</div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="LMS vs XMSS comparison"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">
@@ -489,7 +495,13 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
             Stateful (LMS/XMSS) vs Stateless (<InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>{' '}
             / SPHINCS+)
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Stateful vs stateless signature scheme comparison"
+          >
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border">

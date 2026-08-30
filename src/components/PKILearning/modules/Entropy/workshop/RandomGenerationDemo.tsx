@@ -514,7 +514,7 @@ export const RandomGenerationDemo: React.FC = () => {
                 LCG Determinism — Can We Predict the Next Bytes?
               </h4>
             </div>
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
               Not NIST SP 800-90A Approved
             </span>
           </div>

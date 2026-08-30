@@ -1065,7 +1065,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
             {/* Classical side */}
             <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 font-bold">
+                <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold">
                   CLASSICAL
                 </span>
                 <span className="text-xs text-muted-foreground">RSA-OAEP</span>

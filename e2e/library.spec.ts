@@ -53,19 +53,31 @@ async function seedPersona(page: Page, persona: Persona): Promise<void> {
   }, persona)
 }
 
-/** Read the "Showing N of TOTAL — narrowed to your role's focus areas" count, or
- *  the bare "{N} documents" reading when the persona narrowing is inactive. */
-async function readDocumentCount(page: Page): Promise<{ narrowed: boolean; count: number }> {
-  const banner = page.getByText(/Showing (\d+) of \d+ — narrowed to your role/)
-  if (await banner.count()) {
-    const text = (await banner.first().textContent()) ?? ''
-    const m = text.match(/Showing (\d+)/)
-    return { narrowed: true, count: m ? Number(m[1]) : Number.NaN }
-  }
+/**
+ * Read the "{N} documents" count. This line (LibraryViewRedesign.tsx) renders
+ * unconditionally regardless of persona narrowing — unlike the "Showing N of
+ * TOTAL — narrowed to your role's focus areas" banner, which only appears
+ * when `newHiddenByPersonaCount > 0` (a content-dependent count of documents
+ * tagged `status: 'New'` that narrowing happens to hide, not a general
+ * "you are narrowed" signal). This spec originally read that banner as if it
+ * were the latter, so it silently passed or failed depending on the corpus's
+ * current New-item composition rather than on narrowing actually working —
+ * confirmed 2026-08-29 by reproducing locally and finding a real 937→427 drop
+ * for `executive` even while the banner never rendered (0 New items hidden).
+ */
+async function readDocumentCount(page: Page): Promise<number> {
   const bare = page.getByText(/^(\d+) documents?/).first()
   const text = (await bare.textContent()) ?? ''
   const m = text.match(/^(\d+)/)
-  return { narrowed: false, count: m ? Number(m[1]) : Number.NaN }
+  return m ? Number(m[1]) : Number.NaN
+}
+
+/** The persistent "Narrowed to your role" filter chip (added 2026-08-29) —
+ *  unlike the New-hidden banner above, this renders whenever
+ *  `personaPreferredActive` is true, independent of what's currently tagged
+ *  New. It's the one reliable "is narrowing active" signal. */
+async function isNarrowed(page: Page): Promise<boolean> {
+  return (await page.getByText('Narrowed to your role').count()) > 0
 }
 
 // Eight tests hammering the same dev server in parallel hit Vite cold-start
@@ -90,36 +102,35 @@ test.describe('library — persona-overwhelm-p0', () => {
   const FULL_CORPUS_FLOOR = 500
   const NARROWED_CEILING = 800
 
-  test('researcher sees the full corpus and NO matched banner', async ({ page }) => {
+  test('researcher sees the full corpus and no narrowing chip', async ({ page }) => {
     await seedPersona(page, 'researcher')
     await page.goto('/library')
     await expect(page.getByRole('heading', { name: 'PQC Library' })).toBeVisible({
       timeout: 15000,
     })
-    const reading = await readDocumentCount(page)
-    expect(reading.narrowed).toBe(false)
-    expect(reading.count).toBeGreaterThan(FULL_CORPUS_FLOOR)
+    expect(await isNarrowed(page)).toBe(false)
+    expect(await readDocumentCount(page)).toBeGreaterThan(FULL_CORPUS_FLOOR)
   })
 
   for (const persona of PERSONAS_WITH_NARROWING) {
-    test(`persona=${persona} narrows the corpus AND shows the matched banner`, async ({ page }) => {
+    test(`persona=${persona} narrows the corpus`, async ({ page }) => {
       await seedPersona(page, persona)
       // Curious collapses the shell; expand=1 is needed to see the count.
       await page.goto('/library?expand=1')
       await expect(page.getByRole('heading', { name: 'PQC Library' })).toBeVisible({
         timeout: 15000,
       })
-      const reading = await readDocumentCount(page)
-      expect(reading.narrowed, 'matched-to-your-role banner should be visible').toBe(true)
-      expect(reading.count, 'narrowed count must be > 0').toBeGreaterThan(0)
+      expect(await isNarrowed(page), 'narrowing chip should be visible').toBe(true)
+      const count = await readDocumentCount(page)
+      expect(count, 'narrowed count must be > 0').toBeGreaterThan(0)
       expect(
-        reading.count,
+        count,
         `narrowed count must be < full corpus (using ceiling ${NARROWED_CEILING})`
       ).toBeLessThan(NARROWED_CEILING)
     })
   }
 
-  test('"Show all documents" escape hatch round-trips ?prefs=off + restores the full corpus', async ({
+  test('the "Narrowed to your role" chip round-trips ?prefs=off + restores the full corpus', async ({
     page,
   }) => {
     await seedPersona(page, 'executive')
@@ -128,21 +139,26 @@ test.describe('library — persona-overwhelm-p0', () => {
       timeout: 15000,
     })
 
-    const narrowed = await readDocumentCount(page)
-    expect(narrowed.narrowed).toBe(true)
+    expect(await isNarrowed(page)).toBe(true)
+    const narrowedCount = await readDocumentCount(page)
 
-    // The reset link in the banner reads "Show all documents".
-    const seeAll = page.getByRole('button', { name: /Show all documents/i })
-    await expect(seeAll).toBeVisible()
-    await seeAll.click()
+    // Unlike the New-hidden banner's own "Show all documents" button (only
+    // rendered when something New is hidden — not guaranteed, see
+    // isNarrowed's comment), this chip's Clear button is always present
+    // whenever narrowing is active, so it's the reliable escape hatch to test.
+    const clearChip = page.getByRole('button', { name: 'Clear Narrowed to your role' })
+    await expect(clearChip).toBeVisible()
+    await clearChip.click()
 
-    // URL converges on ?prefs=off and the banner disappears.
+    // URL converges on ?prefs=off and the chip disappears. isNarrowed's
+    // one-shot count() check raced the pipeline recompute here (the URL
+    // param commits a render tick before personaPreferredCategories flips to
+    // []), so use a real retrying assertion instead of a snapshot read.
     await expect(page).toHaveURL(/prefs=off/)
-    await expect(page.getByText(/narrowed to your role/i)).toHaveCount(0)
+    await expect(page.getByText('Narrowed to your role')).toHaveCount(0, { timeout: 5000 })
 
-    const expanded = await readDocumentCount(page)
-    expect(expanded.narrowed).toBe(false)
-    expect(expanded.count).toBeGreaterThan(narrowed.count)
+    const expandedCount = await readDocumentCount(page)
+    expect(expandedCount).toBeGreaterThan(narrowedCount)
   })
 
   // QUARANTINED 2026-06-25 (e2e triage): asserts testid `persona-picks-curious`, which

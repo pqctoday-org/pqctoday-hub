@@ -984,7 +984,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               variant="ghost"
               onClick={handleSimulateStateLoss}
               disabled={counter === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive font-medium rounded-lg hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-destructive/30"
+              className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-status-error font-medium rounded-lg hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-destructive/30"
             >
               <AlertTriangle size={14} />
               Simulate State Loss
@@ -1024,7 +1024,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                         tabIndex={0}
                         className={`flex items-center gap-2 text-[10px] font-mono px-2 py-1.5 rounded cursor-pointer transition-colors ${
                           isReused
-                            ? 'bg-destructive/5 border border-destructive/20 text-destructive hover:bg-destructive/10'
+                            ? 'bg-destructive/5 border border-destructive/20 text-status-error hover:bg-destructive/10'
                             : isInspecting
                               ? 'bg-primary/10 border border-primary/30 text-foreground'
                               : 'bg-background/50 text-muted-foreground hover:bg-muted/60'

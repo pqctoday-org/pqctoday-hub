@@ -27,6 +27,25 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
+/**
+ * Monaco virtualizes rows — only the currently-scrolled-into-view lines
+ * exist as `.view-line` DOM nodes, so a plain `toContainText` on
+ * `.view-lines` only ever sees whatever happens to be at the top. Scroll
+ * the editor a bit at a time (mouse wheel, not a JS API — this needs to
+ * work the same way a real reader scrolling the panel would see it) until
+ * the target text is actually rendered, or give up after a bounded number
+ * of steps.
+ */
+async function expectMonacoToContainText(editorViewLines: Locator, text: string) {
+  await editorViewLines.hover()
+  for (let i = 0; i < 15; i++) {
+    if ((await editorViewLines.textContent())?.includes(text)) return
+    await editorViewLines.page().mouse.wheel(0, 300)
+    await editorViewLines.page().waitForTimeout(150)
+  }
+  await expect(editorViewLines).toContainText(text) // fails with a real diff
+}
+
 test('deep-links straight to the Developer plane and loads the default template', async ({
   page,
 }) => {
@@ -185,6 +204,10 @@ test('Monaco genuinely loads on a fresh session — this tab alone, no prior PKC
     timeout: 30000,
   })
 
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0)
+  // — the self-host install this test guards against still has to have run
+  // by the time it does, which is exactly what this test checks.
+  await page.getByRole('tab', { name: 'Code' }).click()
   const viewLines = page.locator('.monaco-editor .view-lines').first()
   await expect(viewLines).toBeVisible({ timeout: 30000 })
   await expect(viewLines).toContainText('pqctoday_kmip')
@@ -208,9 +231,18 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
   const hexPayload = 'ff00fe0180deadbeef'
   await page.getByLabel('Message to sign').fill(hexPayload)
 
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0).
+  await page.getByRole('tab', { name: 'Code' }).click()
   const genCode = page.locator('.monaco-editor .view-lines').first()
-  await expect(genCode).toContainText(`bytes.fromhex('${hexPayload}')`)
+  // The sign step is a few lines past what the editor's fixed height
+  // renders by default — see expectMonacoToContainText's own comment.
+  await expectMonacoToContainText(genCode, `bytes.fromhex('${hexPayload}')`)
 
+  // Run results (elapsed time, per-step ✓/✗) render in the Builder tab's
+  // step list, which is unmounted while Code is active — switch back
+  // before triggering the run, same as a real user checking the generated
+  // code then returning to watch it execute.
+  await page.getByRole('tab', { name: 'Builder' }).click()
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('✓ ran')).toHaveCount(9, {
@@ -342,7 +374,10 @@ test('drag/drop assembles the Governed lifecycle from an empty canvas and runs i
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(9)
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  // Semantic-token class name, not the raw red-500 palette class this
+  // locator was written against (it never matched, so this assertion was
+  // vacuously true — see the KeyboardInterrupt test's twin fix above).
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('drag/drop: reorder, delete, and rebind are all live (G9/W2)', async ({ page }) => {
@@ -392,17 +427,31 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   })
   await expect(page.getByText(/preemptive kill/)).toBeVisible()
 
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0).
+  await page.getByRole('tab', { name: 'Code' }).click()
+  // The editor starts read-only (Change 2) — typing does nothing, and
+  // `detached` never flips, until this gate is explicitly unlocked. A real
+  // bug this session found live: without this click, Run silently re-runs
+  // the unmodified template instead of the typed script — no error, no
+  // KeyboardInterrupt, just a fast, quiet false pass.
+  await page.getByRole('button', { name: 'Edit as custom script' }).click()
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('Control+A')
   // delay: 35 — see dev-tab-pkcs11.local.spec.ts's twin test for why this
   // script needs a wider margin than most typed content in this suite.
   await page.keyboard.type('while True: pass', { delay: 35 })
-  await expect(page.getByText('you edited the generated code')).toBeVisible()
+  // Renamed from "you edited the generated code" to the KmipSyncStatusChip
+  // pill next to the Builder/Code switch (persistent header, Change 1).
+  // The bullet distinguishes it from the unrelated "Edit as custom script"
+  // button text, which also contains the substring "custom script".
+  await expect(page.getByText('● custom script')).toBeVisible()
 
   const t0 = Date.now()
   await page.getByRole('button', { name: /^Run$/ }).click()
-  const errorBanner = page.locator('.bg-red-500\\/5.border-b.border-red-500\\/25')
+  // Semantic-token class names (text-status-error / border-destructive),
+  // not the raw red-500 palette classes this locator was written against.
+  const errorBanner = page.locator('.bg-status-error\\/5.border-b.border-destructive\\/25')
   await expect(errorBanner).toBeVisible({ timeout: 25000 })
   const elapsed = Date.now() - t0
   expect(await errorBanner.textContent()).toMatch(/KeyboardInterrupt/)
@@ -410,7 +459,11 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   expect(elapsed).toBeLessThan(20000)
 
   // The tab must be fully alive again: revert and run the template green.
-  await page.getByRole('button', { name: 'Revert to template' }).click()
+  // Renamed from "Revert to template" to "Discard edits, resync" (Change 2/3).
+  await page.getByRole('button', { name: 'Discard edits, resync' }).click()
+  // Run results render in the Builder tab's step list, unmounted while Code
+  // is active (see expectMonacoToContainText's twin fix above).
+  await page.getByRole('tab', { name: 'Builder' }).click()
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(9, { timeout: 5000 })

@@ -114,7 +114,7 @@ function getRiskColor(score: number): string {
 }
 
 function getRiskBadgeClasses(score: number): string {
-  if (score >= 20) return 'bg-destructive/10 text-destructive'
+  if (score >= 20) return 'bg-destructive/10 text-status-error'
   if (score >= 12) return 'bg-warning/10 text-warning'
   if (score >= 6) return 'bg-primary/10 text-primary'
   return 'bg-success/10 text-success'

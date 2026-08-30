@@ -45,7 +45,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-sm font-bold text-destructive mb-1">Classical KEM</div>
+            <div className="text-sm font-bold text-status-error mb-1">Classical KEM</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Security from mathematical hardness</li>
               <li>Runs on standard networks</li>

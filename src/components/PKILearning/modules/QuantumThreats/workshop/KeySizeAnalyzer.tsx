@@ -24,7 +24,7 @@ export const KeySizeAnalyzer: React.FC<KeySizeAnalyzerProps> = ({
     switch (status) {
       case 'broken':
         return (
-          <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 font-bold">
+          <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold">
             BROKEN
           </span>
         )

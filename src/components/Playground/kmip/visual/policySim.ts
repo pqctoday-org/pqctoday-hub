@@ -170,7 +170,7 @@ const DEFAULT_PROVENANCE_OPS = ['Create', 'CreateKeyPair', 'Register', 'Import']
 const scopedOpMatches = (ruleOps: string[] | undefined, reqOp: string): boolean =>
   (ruleOps?.length ? ruleOps : DEFAULT_PROVENANCE_OPS).some((o) => opMatch1(o, reqOp))
 
-const parseDate = (s: string | undefined): Date | null =>
+export const parseDate = (s: string | undefined): Date | null =>
   s && /^\d{4}-\d{2}-\d{2}/.test(s) ? new Date(s.slice(0, 10)) : null
 
 /** rule.rs::window_active — ts within [effective_from, effective_until],
@@ -192,7 +192,7 @@ const windowActive = (r: EditableRule, reqDate: Date | null): boolean => {
  * request). `parseDate` already treats any non-`YYYY-MM-DD` string
  * (`"always"`/`"immediate"`/`"never"`/empty) as an unbounded side, so this
  * reuses it directly rather than special-casing those keywords again. */
-const metadataWindowActive = (policy: EditablePolicy, reqDate: Date | null): boolean => {
+export const metadataWindowActive = (policy: EditablePolicy, reqDate: Date | null): boolean => {
   if (!reqDate) return true
   const from = parseDate(policy.metadata.effective)
   const until = parseDate(policy.metadata.expires)

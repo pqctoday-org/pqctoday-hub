@@ -111,7 +111,7 @@ export const MerkleWorkshopSteps: React.FC<{ initialStep?: number }> = ({ initia
           <Button
             onClick={() => setConfirmingReset(true)}
             variant="outline"
-            className="flex items-center gap-1 bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 text-xs h-7"
+            className="flex items-center gap-1 bg-destructive/10 text-status-error border-destructive/20 hover:bg-destructive/20 text-xs h-7"
           >
             <RotateCcw size={12} />
             Reset

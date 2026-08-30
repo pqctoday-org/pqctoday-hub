@@ -35,7 +35,7 @@ const STAGES = [
     label: 'Revocation / Renewal',
     sublabel: 'CRL, OCSP, or re-issue',
     icon: RefreshCw,
-    color: 'text-destructive',
+    color: 'text-status-error',
     bg: 'bg-destructive/10 border-destructive/30',
   },
 ]

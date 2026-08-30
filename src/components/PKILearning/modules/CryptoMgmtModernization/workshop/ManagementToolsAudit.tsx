@@ -349,6 +349,7 @@ export const ManagementToolsAudit: React.FC = () => {
                       value={pct}
                       onChange={(e) => setPct(tool.id, Number(e.target.value))}
                       className="w-full h-1.5 accent-primary"
+                      aria-label={`Systems covered by ${tool.name}`}
                     />
                   </div>
                 </div>

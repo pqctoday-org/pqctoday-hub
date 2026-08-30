@@ -78,8 +78,13 @@ export const TRACK_COLORS: Record<string, string> = {
   'Software Infrastructure': 'bg-status-warning/10 text-status-warning',
   Applications: 'bg-status-success/15 text-status-success',
   Executive: 'bg-status-error/15 text-status-error',
-  Industries: 'bg-tertiary/10 text-tertiary',
-  'Role Guides': 'bg-accent/10 text-accent',
+  // Wave D (2026-08-29): axe color-contrast on the track badge these two
+  // feed (rendered in ModuleShell.tsx and reused by ModuleCard/LearnTrackStack/
+  // ModuleTable/BrowseAllView) — text-tertiary/text-accent measured below
+  // 4.5:1 against their own bg-*/10 tint. See the `-legible` tokens' comments
+  // in src/styles/index.css for the measured floors.
+  Industries: 'bg-tertiary/10 text-tertiary-legible',
+  'Role Guides': 'bg-accent/10 text-accent-legible',
 }
 
 /** Module tracks for the grid display */

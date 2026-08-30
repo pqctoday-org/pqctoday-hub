@@ -379,7 +379,9 @@ export const JWEEncryption: React.FC = () => {
             <span className="text-muted-foreground font-bold">.</span>
             <span className="px-2 py-1 rounded bg-secondary/10 text-secondary">IV</span>
             <span className="text-muted-foreground font-bold">.</span>
-            <span className="px-2 py-1 rounded bg-destructive/10 text-destructive">Ciphertext</span>
+            <span className="px-2 py-1 rounded bg-destructive/10 text-status-error">
+              Ciphertext
+            </span>
             <span className="text-muted-foreground font-bold">.</span>
             <span className="px-2 py-1 rounded bg-success/10 text-success">Auth Tag</span>
           </div>
@@ -480,7 +482,7 @@ export const JWEEncryption: React.FC = () => {
       </div>
 
       {encryptError && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error">
           {encryptError}
         </div>
       )}
@@ -621,7 +623,7 @@ export const JWEEncryption: React.FC = () => {
       )}
 
       {decryptError && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive flex items-center gap-2">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error flex items-center gap-2">
           <XCircle size={14} /> {decryptError}
         </div>
       )}

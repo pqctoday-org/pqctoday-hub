@@ -625,7 +625,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded border font-bold shrink-0 ${
                       vector.hsmRelevance === 'high'
-                        ? 'bg-destructive/10 text-destructive border-destructive/20'
+                        ? 'bg-destructive/10 text-status-error border-destructive/20'
                         : vector.hsmRelevance === 'medium'
                           ? 'bg-warning/10 text-warning border-warning/20'
                           : 'bg-muted/50 text-muted-foreground border-border'
@@ -732,7 +732,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                               ? 'bg-success/10 text-success border-success/20'
                               : path.upgradeComplexity === 'medium'
                                 ? 'bg-warning/10 text-warning border-warning/20'
-                                : 'bg-destructive/10 text-destructive border-destructive/20'
+                                : 'bg-destructive/10 text-status-error border-destructive/20'
                           }`}
                         >
                           {path.upgradeComplexity.toUpperCase()}

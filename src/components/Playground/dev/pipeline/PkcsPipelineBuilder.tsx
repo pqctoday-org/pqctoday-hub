@@ -581,6 +581,27 @@ export const PkcsPipelineBuilder: React.FC = () => {
         </div>
       </div>
 
+      {/* Save/Import/Export feedback and Run/slot errors: rendered here,
+          outside either TabsContent, so they're visible from both the
+          Builder and Code tabs — same fix as Change 1 intended for the
+          buttons that produce them (see that comment below). Previously
+          lived inside the Code tab only, so a Builder-tab user (the default
+          view) never saw a save confirmation or a run failure unless they
+          happened to switch tabs. */}
+      {notice && (
+        <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
+      )}
+      {runError && (
+        <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
+          ✗ {runError}
+        </div>
+      )}
+      {slotError && (
+        <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
+          ✗ Could not set up your Developer token: {slotError}
+        </div>
+      )}
+
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">
         <div className="grid grid-cols-[280px_1fr_320px] gap-0 h-full overflow-hidden">
@@ -841,20 +862,6 @@ export const PkcsPipelineBuilder: React.FC = () => {
           the sync-status chip live in the persistent header above (visible from
           both tabs) since Change 1 — see the file-scope note there. ── */}
       <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
-        {notice && (
-          <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
-        )}
-        {runError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
-            ✗ {runError}
-          </div>
-        )}
-        {slotError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
-            ✗ Could not set up your Developer token: {slotError}
-          </div>
-        )}
-
         {/* Change 2: explicit "edit as custom script" gate — shown only while the
             editor is read-only-and-synced. */}
         {readOnly && (

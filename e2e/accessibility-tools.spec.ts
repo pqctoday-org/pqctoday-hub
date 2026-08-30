@@ -87,6 +87,44 @@ const BUSINESS_TOOLS = [
   { path: '/business/tools/contract-clause', name: 'Contract Clause Generator' },
   { path: '/business/tools/policy-generator', name: 'Policy Template Generator' },
   { path: '/business/tools/hybrid-transition-planner', name: 'Hybrid Transition Planner' },
+  // Wave D (2026-08-29): the remaining 28 of 37. Confirmed zero WASM/
+  // SharedArrayBuffer signal anywhere under src/components/BusinessCenter —
+  // every business tool is a plain React form, same safety class as the 9
+  // above, so the exclusion this file documents never applied to this tier.
+  { path: '/business/tools/breach-simulator', name: 'Breach Scenario Simulator' },
+  { path: '/business/tools/cost-of-inaction', name: 'Cost of Inaction Analyzer' },
+  { path: '/business/tools/cost-model-explorer', name: 'Cost Model Explorer' },
+  { path: '/business/tools/crqc-scenario', name: 'CRQC Scenario Planner' },
+  { path: '/business/tools/risk-treatment-plan', name: 'Risk Heatmap & Treatment Plan' },
+  { path: '/business/tools/audit-checklist', name: 'Audit Readiness Checklist' },
+  { path: '/business/tools/compliance-timeline', name: 'Compliance Timeline Builder' },
+  { path: '/business/tools/kpi-dashboard', name: 'KPI Dashboard Builder' },
+  { path: '/business/tools/vendor-scorecard', name: 'Vendor Scorecard Builder' },
+  { path: '/business/tools/supply-chain-matrix', name: 'Supply Chain Risk Matrix' },
+  { path: '/business/tools/stakeholder-comms', name: 'Stakeholder Comms Planner' },
+  { path: '/business/tools/kpi-tracker', name: 'KPI Tracker Template' },
+  { path: '/business/tools/deployment-playbook', name: 'Deployment Playbook' },
+  { path: '/business/tools/mti-negotiator', name: 'MTI Negotiator' },
+  { path: '/business/tools/crypto-api-refactor-audit', name: 'Crypto API Refactor Audit' },
+  { path: '/business/tools/cloud-responsibility-matrix', name: 'Cloud Responsibility Matrix' },
+  { path: '/business/tools/crypto-architecture-diagram', name: 'Crypto Architecture Diagram' },
+  { path: '/business/tools/management-tools-audit', name: 'Management Tools Audit' },
+  { path: '/business/tools/crypto-cbom-builder', name: 'Crypto BOM (CBOM) Builder' },
+  { path: '/business/tools/crypto-vulnerability-watch', name: 'Crypto Vulnerability Watch' },
+  { path: '/business/tools/program-charter', name: 'Program Charter' },
+  { path: '/business/tools/initial-scoping', name: 'Initial Scoping Assessment' },
+  { path: '/business/tools/skills-team-plan', name: 'Skills & Team Plan' },
+  {
+    path: '/business/tools/infra-modernization-planner',
+    name: 'Infrastructure Modernization Planner',
+  },
+  { path: '/business/tools/refresh-cycle-alignment', name: 'Refresh-Cycle Alignment' },
+  {
+    path: '/business/tools/accelerated-execution-profile',
+    name: 'Accelerated Execution Profile',
+  },
+  { path: '/business/tools/data-at-rest-strategy', name: 'Data-at-Rest Strategy' },
+  { path: '/business/tools/migration-verification', name: 'Migration Verification & Closure' },
 ]
 
 /** Crypto Lab tools that need no engine — safe to scan. */
@@ -100,6 +138,20 @@ const COMPUTE_ONLY_LAB_TOOLS = [
   // layering — no engine download, no SharedArrayBuffer. Same safety class as
   // the four above, not a reclassification of a WASM-excluded tool.
   { path: '/playground/hd-wallet', name: 'HD Wallet Derivation' },
+  // Wave D (2026-08-29): 8 more, individually verified pure-JS by tracing each
+  // component's imports (not a blind sweep — 16 of the 24 remaining tools DO
+  // pull in useHSM/@pqctoday/softhsm-wasm/liboqs and stay excluded). These 3
+  // (rng-demo/entropy-test/drbg-demo) are Entropy-module siblings of the
+  // already-covered qrng-demo/source-combining, consistent with that module
+  // being pure-JS throughout.
+  { path: '/playground/rng-demo', name: 'Random Generation' },
+  { path: '/playground/entropy-test', name: 'Entropy Testing' },
+  { path: '/playground/drbg-demo', name: 'SP 800-90A DRBG' },
+  { path: '/playground/pki-enrollment', name: 'PKI Enrollment (EST + CMP)' },
+  { path: '/playground/merkle-proof', name: 'Merkle Tree Workshop' },
+  { path: '/playground/pki-workshop', name: 'PKI Workshop' },
+  { path: '/playground/mls-group-messaging', name: 'MLS Group Messaging' },
+  { path: '/playground/suci-flow', name: '5G SUCI Construction' },
 ]
 
 /** The grid itself — the surface every tool is reached through. */
