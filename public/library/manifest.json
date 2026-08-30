@@ -11977,6 +11977,36 @@
       "sizeBytes": 155676,
       "contentType": "text/html",
       "sha256": "59f461033b52e01f84dd88cb3ddca8feb78f61428816f0f9d28578ffb9fe43c3"
+    },
+    {
+      "refId": "ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL",
+      "title": "ALTER DATABASE ENCRYPTION KEY (Transact-SQL)",
+      "url": "https://learn.microsoft.com/en-us/sql/t-sql/statements/alter-database-encryption-key-transact-sql?view=sql-server-ver16",
+      "status": "downloaded",
+      "filename": "ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL.html",
+      "sizeBytes": 52551,
+      "contentType": "text/html",
+      "sha256": "f228df0334e8049c9e82f0af4a1c25379d5403ac8dcc828be5ca073244e36825"
+    },
+    {
+      "refId": "sys-dm-database-encryption-keys-Transact-SQL",
+      "title": "sys.dm_database_encryption_keys (Transact-SQL)",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-database-encryption-keys-transact-sql?view=sql-server-ver17",
+      "status": "downloaded",
+      "filename": "sys-dm-database-encryption-keys-Transact-SQL.html",
+      "sizeBytes": 56892,
+      "contentType": "text/html",
+      "sha256": "b5184e38def47a66964b2a264c777d631168800e8b38b204fe596e1a932a406c"
+    },
+    {
+      "refId": "Choosing-a-Cloud-Key-Management-Model",
+      "title": "Choosing a Cloud Key Management Model",
+      "url": "https://cloudsecurityalliance.org/blog/2026/01/05/choosing-the-right-key-responsibility-model",
+      "status": "downloaded",
+      "filename": "Choosing-a-Cloud-Key-Management-Model.html",
+      "sizeBytes": 137541,
+      "contentType": "text/html",
+      "sha256": "353d192827b050d0d0625743ca70477b23a07748c261607e9e684e6491acc893"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
