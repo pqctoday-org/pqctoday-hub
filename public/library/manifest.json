@@ -11827,6 +11827,26 @@
       "sizeBytes": 365696,
       "contentType": "text/html",
       "sha256": "171ba990331c7c43c3702ff8306297e82c9e3853973e640b6ddd6084cf8f6c95"
+    },
+    {
+      "refId": "The-Importance-and-Effectiveness-of-Cyber-Risk-Quantificatio",
+      "title": "The Importance and Effectiveness of Cyber Risk Quantification (FAIR)",
+      "url": "https://www.fairinstitute.org/what-is-fair",
+      "status": "downloaded",
+      "filename": "The-Importance-and-Effectiveness-of-Cyber-Risk-Quantificatio.html",
+      "sizeBytes": 103500,
+      "contentType": "text/html",
+      "sha256": "f8f35fa3e17a03d7b3164f301b9d701d796f7e743f761e74677ded7185dc2d1f"
+    },
+    {
+      "refId": "The-Open-FAIR-Body-of-Knowledge",
+      "title": "The Open FAIR Body of Knowledge",
+      "url": "https://www.opengroup.org/open-fair",
+      "status": "downloaded",
+      "filename": "The-Open-FAIR-Body-of-Knowledge.html",
+      "sizeBytes": 87120,
+      "contentType": "text/html",
+      "sha256": "ce67b9f6ea56f4a7a1fc51e3becb205ed9e746627c88041ae0650b32a30c4a5c"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
