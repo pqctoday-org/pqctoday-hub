@@ -29,6 +29,20 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.69.0] - 2026-08-29
+
+The PKCS#11 and KMIP Developer tabs now show what your script actually did, and 150+ Learn module citations were closed out.
+
+### Added
+
+- **Both Developer tabs now show a real session-activity log for the script you just ran** [view:/playground] [persona:developer]: a collapsible panel reuses the same HSM log and key inspector (PKCS#11 tab) or the same cross-plane audit trail (KMIP tab) the rest of each playground already keeps — no separate rebuilt log, so what you see is exactly what happened.
+- **The KMIP Developer tab's Governed-lifecycle template now prints real output for every step, not just the first two** [view:/playground] [persona:developer]: activate, create, decapsulate, get-attributes, locate, revoke, and destroy previously showed nothing beyond a checkmark; all 9 steps now show their real result.
+
+### Data
+
+- **150+ citation gaps closed across dozens of Learn modules** [view:/learn] [persona:curious] [persona:researcher]: missing standards/paper references filled in with real, verifiable sources — largest single pass so far.
+- **74 additional Q&A/quiz and module content corrections** [view:/learn] [persona:curious]: factual fixes found during citation research, including a corrected Thales Luna firmware version and an overstated PQC TLS latency figure.
+
 ## [4.68.0] - 2026-08-29
 
 A big /navigate upgrade, real fixes across mobile, accessibility, Business Tools, and Learn, and a stuck local-AI loop on mobile fixed for good.
