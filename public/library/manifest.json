@@ -11527,6 +11527,36 @@
       "sizeBytes": 599782,
       "contentType": "application/pdf",
       "sha256": "9a33708dfa8e322a8c1d3d08fa3bbae61c434f3de171c6ed92d2ff74e4dd5aac"
+    },
+    {
+      "refId": "Quantum-cryptography-Public-key-distribution-and-coin-tossin",
+      "title": "Quantum cryptography: Public key distribution and coin tossing",
+      "url": "https://arxiv.org/pdf/2003.06557",
+      "status": "downloaded",
+      "filename": "Quantum-cryptography-Public-key-distribution-and-coin-tossin.pdf",
+      "sizeBytes": 1229111,
+      "contentType": "application/pdf",
+      "sha256": "6c936dc191cbd5c54a69170a57ed46dbc2a5df9b7acea00cf819644284950f27"
+    },
+    {
+      "refId": "Micius-quantum-experiments-in-space",
+      "title": "Micius quantum experiments in space",
+      "url": "https://arxiv.org/pdf/2208.10236",
+      "status": "downloaded",
+      "filename": "Micius-quantum-experiments-in-space.pdf",
+      "sizeBytes": 38589334,
+      "contentType": "application/pdf",
+      "sha256": "eaafb9f4afe53e6b5dbe05bb056bd899765928ed411f9bd58bbfecb079d5fecc"
+    },
+    {
+      "refId": "Simple-Proof-of-Security-of-the-BB84-Quantum-Key-Distributio",
+      "title": "Simple Proof of Security of the BB84 Quantum Key Distribution Protocol",
+      "url": "https://bpb-us-w2.wpmucdn.com/u.osu.edu/dist/7/36891/files/2019/07/ShorPreskill-2000-proof-of-BB84-encryption.pdf",
+      "status": "downloaded",
+      "filename": "Simple-Proof-of-Security-of-the-BB84-Quantum-Key-Distributio.pdf",
+      "sizeBytes": 267564,
+      "contentType": "application/pdf",
+      "sha256": "df89d439b13d181b8e112a1ce0535faf66df33a55a96ce459571eff58d510b17"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
