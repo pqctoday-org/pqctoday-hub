@@ -11917,6 +11917,26 @@
       "sizeBytes": 86257,
       "contentType": "text/html",
       "sha256": "1f1bf56fa9d3d9d57d8560c4b3b7d337dfc80b2afddd4af80929b380efca26d2"
+    },
+    {
+      "refId": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub",
+      "title": "Evaluation of Time-Critical Communications for IEC 61850-Substation Network Architecture",
+      "url": "https://arxiv.org/pdf/1512.07004",
+      "status": "downloaded",
+      "filename": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.pdf",
+      "sizeBytes": 295610,
+      "contentType": "application/pdf",
+      "sha256": "7f415afa991497ab13023014bfe894198b3830b6c0dcdc39129074578e786d2b"
+    },
+    {
+      "refId": "IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness",
+      "title": "IEC 61850 Meets IEC 62351: Securing GOOSE Power Grid Weaknesses",
+      "url": "https://www.nozominetworks.com/blog/iec-61850-meets-iec-62351",
+      "status": "downloaded",
+      "filename": "IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness.html",
+      "sizeBytes": 66019,
+      "contentType": "text/html",
+      "sha256": "4f7442450d47f06d36dd4a19e74fa3b71dff334b058122367ddd6f11d2c0994b"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
