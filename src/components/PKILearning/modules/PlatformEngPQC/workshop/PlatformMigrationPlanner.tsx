@@ -41,7 +41,7 @@ const MIGRATION_PHASES: MigrationPhase[] = [
       'Deploy x509-certificate-exporter to all namespaces',
       'Enable Vault audit log shipping to SIEM',
       'Run CBOM scanner (Syft + OCI manifest scan)',
-      'Document crypto asset register (all 17 assets)',
+      'Document crypto asset register (all 16 assets)',
       'Set Kyverno/OPA policies to Audit mode',
     ],
     rollbackNote: 'No production changes — inventory only. Zero rollback risk.',

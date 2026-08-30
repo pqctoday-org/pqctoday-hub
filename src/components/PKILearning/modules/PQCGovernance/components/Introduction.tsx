@@ -455,20 +455,20 @@ const Step2ModelsEscalationKpis: React.FC = () => (
         <div className="space-y-2">
           {[
             {
-              level: 'Level 1: Working Group Resolution',
-              desc: 'Technical disagreements resolved within the PQC working group (e.g., algorithm selection, testing methodology). Timeframe: 5 business days.',
+              level: 'Tier 1: Team Lead',
+              desc: 'Technical disagreements resolved by the Crypto Engineering Lead (e.g., algorithm selection, test environment blockers, minor schedule slippage under 2 weeks). Timeframe: 5 business days.',
             },
             {
-              level: 'Level 2: Steering Committee',
-              desc: 'Cross-functional conflicts (timeline vs. resource constraints, vendor exceptions) escalated to the PQC steering committee. Timeframe: 10 business days.',
+              level: 'Tier 2: PQC Program Manager',
+              desc: 'Cross-team dependencies, vendor delivery misses, budget variance over 10%, or policy exception requests escalated to the PQC Program Manager. Timeframe: 10 business days.',
             },
             {
-              level: 'Level 3: Executive Sponsor (CISO/CTO)',
-              desc: 'Unresolved steering committee issues or budget-impacting decisions escalated to executive sponsor. Timeframe: 5 business days.',
+              level: 'Tier 3: CISO',
+              desc: 'Regulatory deadlines at risk, critical production migration blockers, vendor non-compliance, or risk acceptance requests for high-severity gaps escalated to the Chief Information Security Officer. Timeframe: 15 business days.',
             },
             {
-              level: 'Level 4: Board / Risk Committee',
-              desc: 'Enterprise-level risk acceptance decisions (e.g., accepting quantum vulnerability for a critical system beyond deadline). Requires formal risk acceptance documentation.',
+              level: 'Tier 4: Executive Steering Committee',
+              desc: 'Program-wide compliance misses, board-level risk exposure, or regulatory enforcement action escalated to the Executive Steering Committee (CTO / CRO / CFO) — the terminal tier, with no further escalation path. Timeframe: 30 business days.',
             },
           ].map((step, idx) => (
             <div key={idx} className="flex items-start gap-3 bg-muted/50 rounded-lg p-3">
