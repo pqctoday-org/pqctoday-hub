@@ -11507,6 +11507,16 @@
       "sizeBytes": 431306,
       "contentType": "text/html",
       "sha256": "735f2dc9297a9b2b0f74a84638fa3a9e0dad5a6ef4102b5f6f158111c74e494c"
+    },
+    {
+      "refId": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa",
+      "title": "Template and CPA Side Channel Attacks on the Kyber/ML-KEM Pair-Pointwise Multiplication",
+      "url": "https://eprint.iacr.org/2025/1577.pdf",
+      "status": "downloaded",
+      "filename": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa.pdf",
+      "sizeBytes": 1117495,
+      "contentType": "application/pdf",
+      "sha256": "75708519473798e9dbd1f2b694f19812d33005008e5bf19adb0fb862a3884d59"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
