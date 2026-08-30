@@ -29,6 +29,16 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.70.0] - 2026-08-29
+
+### Added
+
+- **The KMIP Developer tab now shows a real keystore viewer after each run** [view:/playground] [persona:developer]: a fourth reused panel, alongside the session log and audit trail, listing the actual objects your script created — the same view the rest of the KMIP playground already uses, not a separate rebuilt one.
+
+### Fixed
+
+- **The PKCS#11 Developer tab's key viewer was unreliable — keys could vanish, show "read error," or get double-counted** [view:/playground] [persona:developer]: three separate bugs, now fixed. Keys are generated as durable token objects instead of ones that vanished the instant your script logged out; the viewer now tracks each key by its permanent ID instead of a session handle that could point to the wrong key (or a dead one) on a later read; and re-authentication now happens correctly per run instead of silently logging out mid-session.
+
 ## [4.69.0] - 2026-08-29
 
 The PKCS#11 and KMIP Developer tabs now show what your script actually did, and 150+ Learn module citations were closed out.
