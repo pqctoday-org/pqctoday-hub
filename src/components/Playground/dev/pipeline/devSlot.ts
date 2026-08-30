@@ -186,3 +186,34 @@ export function ensureDevSlot(M: SoftHSMModule): number {
   cachedSlot = slot
   return slot
 }
+
+/**
+ * Opens a short-lived, logged-in session against the Developer slot purely
+ * for post-run bookkeeping (e.g. discovering keys the generated script just
+ * created) — NOT the session the script itself runs under (that one opens
+ * and logs out inside the generated Python, same as `provisionUserPin`'s own
+ * doc comment describes for the provisioning case). Caller must close it
+ * (`M._C_CloseSession(hSession)`) when done. Uses the token's already-set
+ * USER PIN — `ensureDevSlot` must have run at least once first, same
+ * requirement every other caller of this slot already has.
+ */
+export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
+  const sessPtr = M._malloc(4)
+  let hSession: number
+  try {
+    checkRV(M._C_OpenSession(slot, 0x0002 | 0x0004, 0, 0, sessPtr), 'C_OpenSession')
+    hSession = M.getValue(sessPtr, 'i32') >>> 0
+  } finally {
+    M._free(sessPtr)
+  }
+  const userPinPtr = writeStr(M, DEV_SLOT_USER_PIN)
+  try {
+    checkRV(
+      M._C_Login(hSession, 1 /* CKU_USER */, userPinPtr, DEV_SLOT_USER_PIN.length),
+      'C_Login(USER)'
+    )
+  } finally {
+    M._free(userPinPtr)
+  }
+  return hSession
+}
