@@ -11517,6 +11517,16 @@
       "sizeBytes": 1117495,
       "contentType": "application/pdf",
       "sha256": "75708519473798e9dbd1f2b694f19812d33005008e5bf19adb0fb862a3884d59"
+    },
+    {
+      "refId": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA",
+      "title": "Migration to Post-Quantum Cryptography: From ECDSA to ML-DSA",
+      "url": "https://eprint.iacr.org/2025/2025.pdf",
+      "status": "downloaded",
+      "filename": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA.pdf",
+      "sizeBytes": 599782,
+      "contentType": "application/pdf",
+      "sha256": "9a33708dfa8e322a8c1d3d08fa3bbae61c434f3de171c6ed92d2ff74e4dd5aac"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
