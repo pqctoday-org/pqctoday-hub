@@ -12067,6 +12067,26 @@
       "sizeBytes": 1443984,
       "contentType": "application/pdf",
       "sha256": "e558a2cfc9b93f38a06dc52a40fdd003ced6e649c3e357c1285f5604444a3d61"
+    },
+    {
+      "refId": "Post-Quantum-Algorithms-Luna-HSM",
+      "title": "Post Quantum Algorithms - Luna HSM",
+      "url": "https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Algorithms-Luna-HSM.html",
+      "sizeBytes": 47081,
+      "contentType": "text/html",
+      "sha256": "ab6001b6e85c42faafca2339c1b51659b8e7eb2b5993a30a5be484dc5493f968"
+    },
+    {
+      "refId": "A-Multifaceted-Look-at-Starlink-Performance",
+      "title": "A Multifaceted Look at Starlink Performance",
+      "url": "https://arxiv.org/pdf/2310.09242",
+      "status": "downloaded",
+      "filename": "A-Multifaceted-Look-at-Starlink-Performance.pdf",
+      "sizeBytes": 2934270,
+      "contentType": "application/pdf",
+      "sha256": "c27c123b7e11633302f3deeeb16b345dfce4b719b40ea5d69152188f6237c55b"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
