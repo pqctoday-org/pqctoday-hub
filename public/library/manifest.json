@@ -11437,6 +11437,26 @@
       "sizeBytes": 3112522,
       "contentType": "application/pdf",
       "sha256": "f2368a9c295dacbb98f0fa088cc9c0cf28da556cb08971404c9fdfdd5afb66be"
+    },
+    {
+      "refId": "Vehicle-Security-Post-Quantum-Security-to-the-CAN-Network",
+      "title": "Vehicle Security: Post-Quantum Security to the CAN Network",
+      "url": "https://semiengineering.com/vehicle-security-post-quantum-security-to-the-can-network/",
+      "status": "downloaded",
+      "filename": "Vehicle-Security-Post-Quantum-Security-to-the-CAN-Network.html",
+      "sizeBytes": 866318,
+      "contentType": "text/html",
+      "sha256": "bbc8ebf63247746e0ea2e2122ff75fff8866b5e6769557b7b8e58cb00488a962"
+    },
+    {
+      "refId": "Critical-Role-of-MACsec-in-Automotive-Security",
+      "title": "Critical Role of MACsec in Automotive Security",
+      "url": "https://www.ti.com/lit/wp/snla462/snla462.pdf",
+      "status": "downloaded",
+      "filename": "Critical-Role-of-MACsec-in-Automotive-Security.pdf",
+      "sizeBytes": 390335,
+      "contentType": "application/pdf",
+      "sha256": "e03ba50fdd547e3d34909b71672cb3cfe1d27a10adfd623af948663ce8ff3ace"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
