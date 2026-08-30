@@ -11957,6 +11957,16 @@
       "sizeBytes": 26822,
       "contentType": "text/html",
       "sha256": "df8cb8eb1d42e13581b55a576d33d6858db192fed7303529c95193348cc52c52"
+    },
+    {
+      "refId": "oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo",
+      "title": "oqs-provider: OpenSSL 3 provider containing post-quantum algorithms",
+      "url": "https://github.com/open-quantum-safe/oqs-provider",
+      "status": "downloaded",
+      "filename": "oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo.html",
+      "sizeBytes": 432168,
+      "contentType": "text/html",
+      "sha256": "860e61ee4b57e5acaa3d497b69aa45c9f448128daa4eed45851c56cffb1efa32"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
