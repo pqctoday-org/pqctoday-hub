@@ -11457,6 +11457,26 @@
       "sizeBytes": 390335,
       "contentType": "application/pdf",
       "sha256": "e03ba50fdd547e3d34909b71672cb3cfe1d27a10adfd623af948663ce8ff3ace"
+    },
+    {
+      "refId": "AI-models-collapse-when-trained-on-recursively-generated-dat",
+      "title": "AI models collapse when trained on recursively generated data",
+      "url": "https://www.nature.com/articles/s41586-024-07566-y",
+      "status": "downloaded",
+      "filename": "AI-models-collapse-when-trained-on-recursively-generated-dat.html",
+      "sizeBytes": 367034,
+      "contentType": "text/html",
+      "sha256": "e020e853a6cc87826ca54840b79bad2f81f4cb5e07a7d4ff1cd9df32d664c278"
+    },
+    {
+      "refId": "Secure-Use-of-the-Agent-Payments-Protocol-AP2",
+      "title": "Secure Use of the Agent Payments Protocol (AP2)",
+      "url": "https://cloudsecurityalliance.org/blog/2025/10/06/secure-use-of-the-agent-payments-protocol-ap2-a-framework-for-trustworthy-ai-driven-transactions",
+      "status": "downloaded",
+      "filename": "Secure-Use-of-the-Agent-Payments-Protocol-AP2.html",
+      "sizeBytes": 1226432,
+      "contentType": "text/html",
+      "sha256": "69891ef6a87a98bf88aea18bf09100acd6266f0c6dbafdca23453e22f2d6b44e"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
