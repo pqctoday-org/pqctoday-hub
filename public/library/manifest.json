@@ -11847,6 +11847,16 @@
       "sizeBytes": 87120,
       "contentType": "text/html",
       "sha256": "ce67b9f6ea56f4a7a1fc51e3becb205ed9e746627c88041ae0650b32a30c4a5c"
+    },
+    {
+      "refId": "Layered-Performance-Analysis-of-TLS-1-3-Handshakes-Classical",
+      "title": "Layered Performance Analysis of TLS 1.3 Handshakes: Classical, Hybrid, and Pure Post-Quantum Key Exchange",
+      "url": "https://arxiv.org/pdf/2603.11006",
+      "status": "downloaded",
+      "filename": "Layered-Performance-Analysis-of-TLS-1-3-Handshakes-Classical.pdf",
+      "sizeBytes": 618743,
+      "contentType": "application/pdf",
+      "sha256": "304b0e79f75ac398ff2acced8bf440a3cfce83de8a80dc7bd72fc063d095766f"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
