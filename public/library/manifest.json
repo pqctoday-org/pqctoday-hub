@@ -11797,6 +11797,36 @@
       "sizeBytes": 1381700,
       "contentType": "application/pdf",
       "sha256": "a13b052a63380f90ac88818450d28dc38ba75218ccbdf3f4fe5229a06f240433"
+    },
+    {
+      "refId": "cosign-CHANGELOG",
+      "title": "cosign CHANGELOG",
+      "url": "https://github.com/sigstore/cosign/blob/main/CHANGELOG.md",
+      "status": "downloaded",
+      "filename": "cosign-CHANGELOG.html",
+      "sizeBytes": 581968,
+      "contentType": "text/html",
+      "sha256": "224e547bb49b64c39dd5de406014046cb2618afd8e29db56a6782419cd1d6629"
+    },
+    {
+      "refId": "Prometheus-Metrics-cert-manager-Documentation",
+      "title": "Prometheus Metrics - cert-manager Documentation",
+      "url": "https://cert-manager.io/docs/devops-tips/prometheus-metrics/",
+      "status": "downloaded",
+      "filename": "Prometheus-Metrics-cert-manager-Documentation.html",
+      "sizeBytes": 181402,
+      "contentType": "text/html",
+      "sha256": "1277c290f04cf763fb0ad86e9300672ad809fd151d2680fff71688ab155f088b"
+    },
+    {
+      "refId": "x509-certificate-exporter",
+      "title": "x509-certificate-exporter",
+      "url": "https://github.com/enix/x509-certificate-exporter",
+      "status": "downloaded",
+      "filename": "x509-certificate-exporter.html",
+      "sizeBytes": 365696,
+      "contentType": "text/html",
+      "sha256": "171ba990331c7c43c3702ff8306297e82c9e3853973e640b6ddd6084cf8f6c95"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
