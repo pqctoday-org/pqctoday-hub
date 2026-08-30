@@ -11497,6 +11497,16 @@
       "sizeBytes": 252322,
       "contentType": "text/html",
       "sha256": "47c8e5031cd00294c78235d9d28b413aa4cee7005baea852e96dcf8cd3ed9471"
+    },
+    {
+      "refId": "Analysis-of-the-Codecov-Supply-Chain-Compromise",
+      "title": "Analysis of the Codecov Supply Chain Compromise",
+      "url": "https://www.rapid7.com/blog/post/2021/04/16/codecov-discloses-supply-chain-compromise/",
+      "status": "downloaded",
+      "filename": "Analysis-of-the-Codecov-Supply-Chain-Compromise.html",
+      "sizeBytes": 431306,
+      "contentType": "text/html",
+      "sha256": "735f2dc9297a9b2b0f74a84638fa3a9e0dad5a6ef4102b5f6f158111c74e494c"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
