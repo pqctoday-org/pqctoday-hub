@@ -57,19 +57,37 @@ const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
  * object into an `HsmKey` — every caller (the shared HsmContext session,
  * the Developer tab's own separately-slotted session) goes through this one
  * function so that classification is never written twice.
+ *
+ * Stamps `uniqueId` (CKA_UNIQUE_ID) on every registered key — the object's
+ * durable identity. `handle` is only ever meaningful within the session
+ * that returned it (PKCS#11 v3.2 §3.2); a real bug found live 2026-08-30
+ * had the Developer tab register a handle from the generating script's own
+ * (already-closed) session, and a fresh session saw the same object under
+ * a DIFFERENT handle — every later attribute read failed with
+ * CKR_OBJECT_HANDLE_INVALID. `HsmKeyTable` re-resolves the current handle
+ * from `uniqueId` before every live query; `handle` here is only a
+ * same-session-call convenience, never treated as identity downstream.
  */
 function discoverObjectsOnSession(
   M: SoftHSMModule,
   hSession: number,
-  knownHandles: ReadonlySet<number>,
-  addKey: (key: HsmKey) => void
+  known: { handles: ReadonlySet<number>; uniqueIds: ReadonlySet<string> },
+  addKey: (key: HsmKey) => void,
+  extra?: { sessionHandle?: number; slotId?: number }
 ): number {
   const handles = hsm_findAllObjects(M, hSession, [])
   let added = 0
   for (const h of handles) {
-    if (knownHandles.has(h)) continue
     try {
       const a = hsm_getKeyAttributes(M, hSession, h)
+      // De-dup by CKA_UNIQUE_ID when the object has one — its durable
+      // identity, not the handle this particular find call happened to
+      // return (handle allocation is not guaranteed stable call-to-call,
+      // even within the same session — the exact fragility this whole fix
+      // exists to route around). Falls back to the raw handle only for
+      // objects with no UID.
+      const alreadyKnown = a.ckUniqueId ? known.uniqueIds.has(a.ckUniqueId) : known.handles.has(h)
+      if (alreadyKnown) continue
       const family: HsmFamily = a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
       const role: HsmKeyRole = a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
       const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
@@ -84,6 +102,9 @@ function discoverObjectsOnSession(
         role,
         label,
         generatedAt: new Date().toLocaleTimeString(),
+        uniqueId: a.ckUniqueId ?? undefined,
+        sessionHandle: extra?.sessionHandle,
+        slotId: extra?.slotId,
       })
       added++
     } catch {
@@ -110,12 +131,18 @@ function discoverObjectsOnSession(
  * (which would otherwise show up after literally every step, around nothing
  * visible in between) must never appear in a learner's call log.
  */
+const knownFromRegistry = (
+  hsmKeysRef: Pick<HsmContextValue, 'hsmKeysRef'>['hsmKeysRef']
+): { handles: ReadonlySet<number>; uniqueIds: ReadonlySet<string> } => ({
+  handles: new Set(hsmKeysRef.current.map((k) => k.handle)),
+  uniqueIds: new Set(hsmKeysRef.current.flatMap((k) => (k.uniqueId ? [k.uniqueId] : []))),
+})
+
 export const discoverHsmObjects = (hsm: HsmContextValue): number => {
   const M = hsm.rawModuleRef.current
   const hSession = hsm.hSessionRef.current
   if (!M || !hSession) return 0
-  const knownHandles = new Set(hsm.hsmKeysRef.current.map((k) => k.handle))
-  return discoverObjectsOnSession(M, hSession, knownHandles, hsm.addHsmKey)
+  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey)
 }
 
 /**
@@ -124,14 +151,19 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
  * specifically for the Developer tab's separately-labeled/PIN'd slot
  * (`devSlot.ts`), which is deliberately isolated from `HsmContext.hSessionRef`
  * so a Developer-tab script can never log the rest of the HSM playground out
- * from under it. Caller owns the session's lifecycle (open before, close
- * after) — this function only scans and registers.
+ * from under it. Stamps `sessionHandle` on every registered key so
+ * `HsmKeyTable`'s later live queries route to the right session automatically
+ * — no slot-picker UI needed, the routing is per-key data. Caller owns the
+ * session's lifecycle; this function only scans and registers.
  */
 export const discoverHsmObjectsOnSession = (
   M: SoftHSMModule,
   hSession: number,
+  slotId: number,
   hsm: Pick<HsmContextValue, 'hsmKeysRef' | 'addHsmKey'>
 ): number => {
-  const knownHandles = new Set(hsm.hsmKeysRef.current.map((k) => k.handle))
-  return discoverObjectsOnSession(M, hSession, knownHandles, hsm.addHsmKey)
+  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey, {
+    sessionHandle: hSession,
+    slotId,
+  })
 }

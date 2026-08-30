@@ -110,47 +110,56 @@ function emitGenerate(step: PipelineStep, spec: PrimSpec): string[] {
     key = secretVar(step.id)
   const L = pyStr(spec.label)
 
+  // token=True: these keys need to survive past the generating session
+  // closing (s.logout() at the end of this very script) so the Developer
+  // tab's own Key inspector — a real PKCS#11 attribute query, not a
+  // reconstruction — can still find them afterward. Scoped to the
+  // Developer tab's own isolated DevSequences slot (devSlot.ts); nothing
+  // else on the token shares it.
   switch (kg.kind) {
     case 'ml-dsa':
       return [
-        `${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ml-kem':
       return [
-        `${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'slh-dsa':
       return [
-        `${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'hss':
       // Stateful: the token tracks CKA_HSS_KEYS_REMAINING and the key is spent when it hits 0.
       return [
         `# CKA_HSS_KEYS_REMAINING decrements on every signature (PKCS#11 v3.2 §6.65)`,
-        `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName})`,
+        `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d · %d signatures available'`,
         `      % (${L}, ${pub}, ${priv}, s.hss_keys_remaining(${priv})))`,
       ]
     case 'rsa':
       return [
-        `${pub}, ${priv} = s.generate_rsa(${kg.bits})`,
+        `${pub}, ${priv} = s.generate_rsa(${kg.bits}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ec-p256':
       return [
-        `${pub}, ${priv} = s.generate_ec_p256()`,
+        `${pub}, ${priv} = s.generate_ec_p256(token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ed25519':
       return [
-        `${pub}, ${priv} = s.generate_ed25519()`,
+        `${pub}, ${priv} = s.generate_ed25519(token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'aes256':
-      return [`${key} = s.generate_aes256()`, `print('%s key · handle=%d' % (${L}, ${key}))`]
+      return [
+        `${key} = s.generate_aes256(token=True)`,
+        `print('%s key · handle=%d' % (${L}, ${key}))`,
+      ]
   }
 }
 

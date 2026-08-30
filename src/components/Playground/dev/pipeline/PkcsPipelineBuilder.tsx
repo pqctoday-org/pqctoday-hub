@@ -35,7 +35,7 @@ import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
-import { ensureDevSlot, openDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
+import { ensureDevSlot, openDevSlotSession, reloginDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
 import { Pkcs11LogPanel } from '../../../shared/Pkcs11LogPanel'
 import { HsmKeyTable } from '../../keystore/HsmKeyTable'
 import { discoverHsmObjectsOnSession } from '../../keystore/discoverHsmObjects'
@@ -136,6 +136,26 @@ export const PkcsPipelineBuilder: React.FC = () => {
   const hsmCtx = useHsmContext()
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog } = hsmCtx
 
+  // A session on the Developer slot, kept open for the UI's own use —
+  // querying a key's real attributes when the Key inspector is clicked,
+  // after the script's OWN session (opened/closed inside the generated
+  // Python) is long gone. Opened lazily on first need, closed on unmount.
+  // Generated keys are token=True specifically so this session can still
+  // find them (see pipelineCodegen.ts's emitGenerate).
+  const devSlotSessionRef = useRef<number | null>(null)
+  useEffect(
+    () => () => {
+      if (devSlotSessionRef.current !== null && rawModuleRef.current) {
+        try {
+          rawModuleRef.current._C_CloseSession(devSlotSessionRef.current)
+        } catch {
+          // tab is unmounting — nothing left to report this to
+        }
+      }
+    },
+    [rawModuleRef]
+  )
+
   // G7: called from a `useEffect` (not module top level — see
   // monacoSelfHost.ts's header for why that broke a real production build),
   // and <Editor> below is gated on `monacoReady` (see monacoSelfHost.ts's
@@ -154,9 +174,9 @@ export const PkcsPipelineBuilder: React.FC = () => {
 
   // Real PKCS#11 call log + key registry for THIS tab's activity — both
   // already populate from Developer-tab scripts (moduleRef is the same
-  // logging-proxied module; the key table is refreshed by runAll's own
-  // devSlot scan, above). Collapsed by default so the palette/canvas layout
-  // isn't disrupted for someone not looking for it.
+  // logging-proxied module; the key table is populated by runAll's own
+  // key registration, above). Collapsed by default so the palette/canvas
+  // layout isn't disrupted for someone not looking for it.
   const [showActivity, setShowActivity] = useState(false)
 
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
@@ -412,6 +432,43 @@ export const PkcsPipelineBuilder: React.FC = () => {
           }))
         )
         setRunError(outcome.error)
+
+        // Register any keys this run generated into the shared key
+        // registry — a real scan on a long-lived session against the SAME
+        // slot the script used (not the script's own, which is already
+        // closed by the time we're back in JS). pipelineCodegen.ts now
+        // generates keys token=True specifically so this scan finds real,
+        // still-existing objects; discoverHsmObjectsOnSession stamps each
+        // with the real CKA_UNIQUE_ID (identity) and this session's handle
+        // (a same-session convenience, never treated as identity
+        // downstream — see HsmKey.uniqueId's doc comment for why that
+        // distinction matters here specifically).
+        //
+        // reloginDevSlotSession runs EVERY time, not just on first open —
+        // real bug found live: the script's own s.logout() (the last line
+        // of every run) deauthenticates the whole TOKEN, including this
+        // kept-open session, so private objects silently stop appearing in
+        // the scan (C_FindObjects doesn't error, it just sees less) unless
+        // re-authenticated first. Doing this here also covers the Key
+        // inspector's later live queries for free — login stays valid
+        // until the NEXT run's script logs out again.
+        if (rawModuleRef.current && devSlot !== null) {
+          try {
+            if (devSlotSessionRef.current === null) {
+              devSlotSessionRef.current = openDevSlotSession(rawModuleRef.current, devSlot)
+            } else {
+              reloginDevSlotSession(rawModuleRef.current, devSlotSessionRef.current)
+            }
+            discoverHsmObjectsOnSession(
+              rawModuleRef.current,
+              devSlotSessionRef.current,
+              devSlot,
+              hsmCtx
+            )
+          } catch {
+            // best-effort — a registration failure isn't a run failure
+          }
+        }
       } else {
         setRunError(result.ok ? null : (result.error ?? 'run failed'))
       }
@@ -425,23 +482,6 @@ export const PkcsPipelineBuilder: React.FC = () => {
       setRunError(`Could not run: ${(e as Error).message}`)
       setElapsedMs(null)
     } finally {
-      // Best-effort key-registry refresh: the script opens and closes its
-      // OWN session (devSlot.ts's deliberate isolation from HsmContext's
-      // hSessionRef), so nothing it creates is visible to <HsmKeyTable>
-      // without a scan on a session of our own. Never lets a discovery
-      // failure affect the run's own success/error reporting above.
-      if (rawModuleRef.current && devSlot !== null) {
-        try {
-          const scanSession = openDevSlotSession(rawModuleRef.current, devSlot)
-          try {
-            discoverHsmObjectsOnSession(rawModuleRef.current, scanSession, hsmCtx)
-          } finally {
-            rawModuleRef.current._C_CloseSession(scanSession)
-          }
-        } catch {
-          // best-effort — a scan failure isn't a run failure
-        }
-      }
       setRunning(false)
     }
   }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, rawModuleRef, devSlot, hsmCtx])
@@ -660,7 +700,13 @@ export const PkcsPipelineBuilder: React.FC = () => {
           )}
         </Button>
         {showActivity && (
-          <div className="px-4 pb-3 flex flex-col gap-3">
+          // The Tabs root is a fixed h-[70vh] with overflow-hidden (so the
+          // Builder/Code panes below can scroll internally without the
+          // whole card growing) — real bug found live: without its own
+          // bound here, a populated log + key table silently clipped past
+          // the container edge with no scrollbar, not just "below the
+          // fold." Capped and independently scrollable instead.
+          <div className="px-4 pb-3 flex flex-col gap-3 max-h-64 overflow-y-auto">
             <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
             <HsmKeyTable />
           </div>

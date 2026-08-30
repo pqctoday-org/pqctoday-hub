@@ -493,3 +493,26 @@ test("the real cross-plane audit trail shows this tab's own run activity", async
   await expect(page.getByText(/policy activated|decision:/).first()).toBeVisible()
   await expect(page.getByText(/▸ CreateKeyPair|▸ Activate|▸ Sign/).first()).toBeVisible()
 })
+
+test("the keystore shows this run's real objects with real lifecycle states", async ({ page }) => {
+  // Regression guard: KmipObject is addressed by uid natively (no
+  // PKCS#11-style ephemeral handle to go stale, no session/login
+  // lifecycle to be invalidated between runs — see the PKCS#11 twin's
+  // fix for what that class of bug looked like). listObjects() just
+  // reads the engine singleton's own persistent state, refreshed the
+  // same way audit is. The Governed-lifecycle template's own last step
+  // destroys its key — Destroyed is the real, honest end state, not "✓ ran"
+  // in disguise.
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  await expect(page.getByText(/Keystore.*\d+ object/)).toBeVisible()
+  await expect(page.getByText('ML-DSA-65').first()).toBeVisible()
+  await expect(page.getByText('Destroyed').first()).toBeVisible()
+})

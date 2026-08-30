@@ -208,7 +208,19 @@ class Session:
         try:
             pptr, plen = alloc.bytes(pin_b)
             rv = b.call('C_Login', [self.h, user, pptr, plen])
-            _check(rv, 'C_Login')
+            # Login is per-TOKEN, not per-session (PKCS#11 v3.2 §5.6) — a real
+            # bug found live 2026-08-30: the Developer tab's own UI now keeps
+            # a session logged in on this slot (to query key attributes after
+            # a run), so THIS script's second-and-later run sees the token
+            # already logged in and would otherwise fail its own login before
+            # doing anything. Already-logged-in isn't an error for the caller
+            # here — it's the state login() exists to reach — so both RVs
+            # that mean exactly that are treated as success, the same
+            # tolerance session.ts's hsm_openUserSession already applies on
+            # the JS side for the identical reason.
+            if rv not in (0, CONSTANTS['CKR_USER_ALREADY_LOGGED_IN'],
+                          CONSTANTS['CKR_USER_ANOTHER_ALREADY_LOGGED_IN']):
+                _check(rv, 'C_Login')
         finally:
             alloc.free_all()
         return self

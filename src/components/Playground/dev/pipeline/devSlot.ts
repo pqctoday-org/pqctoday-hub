@@ -188,14 +188,47 @@ export function ensureDevSlot(M: SoftHSMModule): number {
 }
 
 /**
- * Opens a short-lived, logged-in session against the Developer slot purely
- * for post-run bookkeeping (e.g. discovering keys the generated script just
- * created) — NOT the session the script itself runs under (that one opens
- * and logs out inside the generated Python, same as `provisionUserPin`'s own
- * doc comment describes for the provisioning case). Caller must close it
- * (`M._C_CloseSession(hSession)`) when done. Uses the token's already-set
- * USER PIN — `ensureDevSlot` must have run at least once first, same
- * requirement every other caller of this slot already has.
+ * (Re-)authenticates a session on the Developer slot as USER. Login AND
+ * logout are per-TOKEN, not per-session (PKCS#11 v3.2 §5.6) — real bug
+ * found live 2026-08-30: the generated script's own `s.logout()`, the
+ * last line of every run, deauthenticates the WHOLE token, including this
+ * kept-open session's login state. Without re-logging in before a
+ * post-run scan, private objects (CKA_PRIVATE=true, the common case for
+ * private keys) become invisible to C_FindObjects — the scan doesn't
+ * error, it just silently sees fewer objects than exist. Both RVs that
+ * mean "already logged in" are tolerated (same as the Python shim's own
+ * `login()` tolerates for the identical reason on the script's side), so
+ * calling this unconditionally before every scan is always safe.
+ */
+export function reloginDevSlotSession(M: SoftHSMModule, hSession: number): void {
+  const userPinPtr = writeStr(M, DEV_SLOT_USER_PIN)
+  try {
+    const rv = M._C_Login(hSession, 1 /* CKU_USER */, userPinPtr, DEV_SLOT_USER_PIN.length) >>> 0
+    if (
+      rv !== 0 &&
+      rv !== 0x100 /* CKR_USER_ALREADY_LOGGED_IN */ &&
+      rv !== 0x104 /* CKR_USER_ANOTHER_ALREADY_LOGGED_IN */
+    ) {
+      checkRV(rv, 'C_Login(USER)')
+    }
+  } finally {
+    M._free(userPinPtr)
+  }
+}
+
+/**
+ * Opens a session against the Developer slot for the UI's own use —
+ * inspecting a key's real PKCS#11 attributes after a run, not the session
+ * the script itself runs under (that one opens and logs out inside the
+ * generated Python, same as `provisionUserPin`'s doc comment describes
+ * for the provisioning case). Meant to be opened once and kept open for
+ * as long as the tab needs it (generated keys are token=True — see
+ * pipelineCodegen.ts — specifically so this session can still find them
+ * after the script's own session has closed). Caller owns its lifecycle:
+ * close with `M._C_CloseSession(hSession)` on unmount, and must call
+ * `reloginDevSlotSession` again before EVERY use after this — see that
+ * function's own doc comment for why a kept-open session doesn't stay
+ * authenticated on its own.
  */
 export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
   const sessPtr = M._malloc(4)
@@ -206,14 +239,6 @@ export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
   } finally {
     M._free(sessPtr)
   }
-  const userPinPtr = writeStr(M, DEV_SLOT_USER_PIN)
-  try {
-    checkRV(
-      M._C_Login(hSession, 1 /* CKU_USER */, userPinPtr, DEV_SLOT_USER_PIN.length),
-      'C_Login(USER)'
-    )
-  } finally {
-    M._free(userPinPtr)
-  }
+  reloginDevSlotSession(M, hSession)
   return hSession
 }
