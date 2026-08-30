@@ -12007,6 +12007,16 @@
       "sizeBytes": 137541,
       "contentType": "text/html",
       "sha256": "353d192827b050d0d0625743ca70477b23a07748c261607e9e684e6491acc893"
+    },
+    {
+      "refId": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio",
+      "title": "21 CFR 312.62 -- Investigator recordkeeping and record retention",
+      "url": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312/subpart-D/section-312.62",
+      "status": "downloaded",
+      "filename": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html",
+      "sizeBytes": 68554,
+      "contentType": "text/html",
+      "sha256": "37c73623258dde98c1d6f2b668e5ca17c0b4b1ed2a5062942e31728635f75de8"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
