@@ -11637,6 +11637,36 @@
       "sizeBytes": 342101,
       "contentType": "application/pdf",
       "sha256": "b5044df2cc816e5ec3232f9da327c4437bc2d5ee2b007aa14676f5219584800d"
+    },
+    {
+      "refId": "Intel-SGX-Explained",
+      "title": "Intel SGX Explained",
+      "url": "https://eprint.iacr.org/2016/086.pdf",
+      "status": "downloaded",
+      "filename": "Intel-SGX-Explained.pdf",
+      "sizeBytes": 2385053,
+      "contentType": "application/pdf",
+      "sha256": "8ff63fe160a9028832064470af991a6d8e4865070af0fe53451a6a2a41d6e4da"
+    },
+    {
+      "refId": "SoK-Hardware-supported-Trusted-Execution-Environments",
+      "title": "SoK: Hardware-supported Trusted Execution Environments",
+      "url": "https://arxiv.org/pdf/2205.12742",
+      "status": "downloaded",
+      "filename": "SoK-Hardware-supported-Trusted-Execution-Environments.pdf",
+      "sizeBytes": 786065,
+      "contentType": "application/pdf",
+      "sha256": "9143d951a39dbbe9770bcfe4572753941dc8297057e066b2b627de99f0d611fc"
+    },
+    {
+      "refId": "The-Security-Design-of-the-AWS-Nitro-System",
+      "title": "The Security Design of the AWS Nitro System",
+      "url": "https://docs.aws.amazon.com/pdfs/whitepapers/latest/security-design-of-aws-nitro-system/security-design-of-aws-nitro-system.pdf",
+      "status": "downloaded",
+      "filename": "The-Security-Design-of-the-AWS-Nitro-System.pdf",
+      "sizeBytes": 602260,
+      "contentType": "application/pdf",
+      "sha256": "1899a810d789534895cc4f2ffae36a94767e0191f9cc3eac75cae7c451745566"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
