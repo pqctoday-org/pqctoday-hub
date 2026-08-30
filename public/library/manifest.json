@@ -11777,6 +11777,26 @@
       "sizeBytes": 1552250,
       "contentType": "application/pdf",
       "sha256": "4bd4bbedbbbd232c5c0e68b024ffdf92e890559df8a4b55a2488f6157f30b1ab"
+    },
+    {
+      "refId": "What-are-timing-attacks-and-how-will-they-impact-postquantum",
+      "title": "What are timing attacks and how will they impact postquantum cryptography?",
+      "url": "https://www.sectigo.com/blog/how-timing-attacks-threaten-postquantum-cryptography",
+      "status": "downloaded",
+      "filename": "What-are-timing-attacks-and-how-will-they-impact-postquantum.html",
+      "sizeBytes": 587822,
+      "contentType": "text/html",
+      "sha256": "9c6fb2c09881842f35e75bdc3e690f4d9d3be22a41631c7a7228d5ee1ae6e164"
+    },
+    {
+      "refId": "CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile",
+      "title": "CAR 2 CAR Communication Consortium HSM Protection Profile",
+      "url": "https://www.commoncriteriaportal.org/files/ppfiles/pp0114b_C2CCC_PP_2056_HSM_v1_0_pdf.pdf",
+      "status": "downloaded",
+      "filename": "CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile.pdf",
+      "sizeBytes": 1381700,
+      "contentType": "application/pdf",
+      "sha256": "a13b052a63380f90ac88818450d28dc38ba75218ccbdf3f4fe5229a06f240433"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
