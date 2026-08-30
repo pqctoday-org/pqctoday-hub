@@ -61,6 +61,7 @@ except Exception as _e:
 try:
     r_activate = c.activate(priv_create)
     if not r_activate.ok: raise RuntimeError(r_activate.message or 'Activate failed')
+    print(f'  now {r_activate.get("state")}')
     print('###STEP activate ok###')
 except Exception as _e:
     print('###STEP activate error### %s: %s' % (type(_e).__name__, _e))
@@ -80,6 +81,7 @@ except Exception as _e:
 try:
     r_attrs = c.get_attributes(priv_create)
     if not r_attrs.ok: raise RuntimeError(r_attrs.message or 'GetAttributes failed')
+    print(f'  alg={r_attrs.get("CryptographicAlgorithm")} state={r_attrs.get("State")} usage={r_attrs.get("CryptographicUsageMask")}')
     print('###STEP attrs ok###')
 except Exception as _e:
     print('###STEP attrs error### %s: %s' % (type(_e).__name__, _e))
@@ -89,6 +91,7 @@ except Exception as _e:
 try:
     r_locate = c.locate()
     if not r_locate.ok: raise RuntimeError(r_locate.message or 'Locate failed')
+    print(f'  found {len(r_locate.get("uids") or [])} object(s)')
     print('###STEP locate ok###')
 except Exception as _e:
     print('###STEP locate error### %s: %s' % (type(_e).__name__, _e))
@@ -98,6 +101,7 @@ except Exception as _e:
 try:
     r_revoke = c.revoke(priv_create)
     if not r_revoke.ok: raise RuntimeError(r_revoke.message or 'Revoke failed')
+    print(f'  now {r_revoke.get("state")}')
     print('###STEP revoke ok###')
 except Exception as _e:
     print('###STEP revoke error### %s: %s' % (type(_e).__name__, _e))
@@ -107,6 +111,7 @@ except Exception as _e:
 try:
     r_destroy = c.destroy(priv_create)
     if not r_destroy.ok: raise RuntimeError(r_destroy.message or 'Destroy failed')
+    print(f'  now {r_destroy.get("state")}')
     print('###STEP destroy ok###')
 except Exception as _e:
     print('###STEP destroy error### %s: %s' % (type(_e).__name__, _e))
@@ -141,6 +146,7 @@ except Exception as _e:
 try:
     r_activate_pub = c.activate(pub_create)
     if not r_activate_pub.ok: raise RuntimeError(r_activate_pub.message or 'Activate failed')
+    print(f'  now {r_activate_pub.get("state")}')
     print('###STEP activate-pub ok###')
 except Exception as _e:
     print('###STEP activate-pub error### %s: %s' % (type(_e).__name__, _e))
@@ -150,6 +156,7 @@ except Exception as _e:
 try:
     r_activate_priv = c.activate(priv_create)
     if not r_activate_priv.ok: raise RuntimeError(r_activate_priv.message or 'Activate failed')
+    print(f'  now {r_activate_priv.get("state")}')
     print('###STEP activate-priv ok###')
 except Exception as _e:
     print('###STEP activate-priv error### %s: %s' % (type(_e).__name__, _e))
@@ -172,6 +179,7 @@ try:
     r_decap = c.decapsulate(priv_create, bytes.fromhex(ct_encap))
     uid_decap = r_decap.get('UniqueIdentifier')
     if not r_decap.ok: raise RuntimeError(r_decap.message or 'Decapsulate failed')
+    print(f'  secret={uid_decap}')
     print('###STEP decap ok###')
 except Exception as _e:
     print('###STEP decap error### %s: %s' % (type(_e).__name__, _e))

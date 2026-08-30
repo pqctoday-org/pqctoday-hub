@@ -19,12 +19,26 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
+import {
+  Play,
+  Loader2,
+  Download,
+  Save,
+  Upload,
+  Trash2,
+  X,
+  Pencil,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
-import { ensureDevSlot, DEV_SLOT_LABEL } from './devSlot'
+import { ensureDevSlot, openDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
+import { Pkcs11LogPanel } from '../../../shared/Pkcs11LogPanel'
+import { HsmKeyTable } from '../../keystore/HsmKeyTable'
+import { discoverHsmObjectsOnSession } from '../../keystore/discoverHsmObjects'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from '../monacoSelfHost'
 import { PRIMITIVES, opsFor, defaultOpFor, type Op } from './pipelinePrimitives'
@@ -119,7 +133,8 @@ const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export const PkcsPipelineBuilder: React.FC = () => {
-  const { moduleRef, isReady, autoInit, engineMode } = useHsmContext()
+  const hsmCtx = useHsmContext()
+  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog } = hsmCtx
 
   // G7: called from a `useEffect` (not module top level — see
   // monacoSelfHost.ts's header for why that broke a real production build),
@@ -136,6 +151,13 @@ export const PkcsPipelineBuilder: React.FC = () => {
       cancelled = true
     }
   }, [])
+
+  // Real PKCS#11 call log + key registry for THIS tab's activity — both
+  // already populate from Developer-tab scripts (moduleRef is the same
+  // logging-proxied module; the key table is refreshed by runAll's own
+  // devSlot scan, above). Collapsed by default so the palette/canvas layout
+  // isn't disrupted for someone not looking for it.
+  const [showActivity, setShowActivity] = useState(false)
 
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() =>
@@ -403,9 +425,26 @@ export const PkcsPipelineBuilder: React.FC = () => {
       setRunError(`Could not run: ${(e as Error).message}`)
       setElapsedMs(null)
     } finally {
+      // Best-effort key-registry refresh: the script opens and closes its
+      // OWN session (devSlot.ts's deliberate isolation from HsmContext's
+      // hSessionRef), so nothing it creates is visible to <HsmKeyTable>
+      // without a scan on a session of our own. Never lets a discovery
+      // failure affect the run's own success/error reporting above.
+      if (rawModuleRef.current && devSlot !== null) {
+        try {
+          const scanSession = openDevSlotSession(rawModuleRef.current, devSlot)
+          try {
+            discoverHsmObjectsOnSession(rawModuleRef.current, scanSession, hsmCtx)
+          } finally {
+            rawModuleRef.current._C_CloseSession(scanSession)
+          }
+        } catch {
+          // best-effort — a scan failure isn't a run failure
+        }
+      }
       setRunning(false)
     }
-  }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, devSlot])
+  }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, rawModuleRef, devSlot, hsmCtx])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -601,6 +640,32 @@ export const PkcsPipelineBuilder: React.FC = () => {
           ✗ Could not set up your Developer token: {slotError}
         </div>
       )}
+
+      {/* Real PKCS#11 log + key inspector for this tab's own DevSequences
+          slot — reuses the exact same panels the main HSM Playground uses
+          (HsmContext's logging proxy already captures every call the
+          generated script makes; runAll's devSlot scan above keeps the key
+          table current). Visible from both Builder and Code tabs. */}
+      <div className="border-b">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowActivity((v) => !v)}
+          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
+        >
+          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+          Session activity — PKCS#11 log &amp; keys
+          {hsmLog.length > 0 && !showActivity && (
+            <span className="ml-1 text-[10.5px]">({hsmLog.length})</span>
+          )}
+        </Button>
+        {showActivity && (
+          <div className="px-4 pb-3 flex flex-col gap-3">
+            <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
+            <HsmKeyTable />
+          </div>
+        )}
+      </div>
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">

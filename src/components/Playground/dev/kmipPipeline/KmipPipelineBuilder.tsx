@@ -20,12 +20,24 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
+import {
+  Play,
+  Loader2,
+  Download,
+  Save,
+  Upload,
+  Trash2,
+  X,
+  Pencil,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { installMonacoSelfHost } from '../monacoSelfHost'
-import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
+import type { KmipEngine, AuditEvent } from '../../../../wasm/kmip/kmipEngine'
+import { AuditTrailPanel } from '../../kmip/AuditTrailPanel'
 import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
@@ -165,6 +177,15 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   >({})
   const [detached, setDetached] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // Cross-plane audit trail (CACP policy decisions + KMIP request/response +
+  // the underlying PKCS#11 call) — `engine` is the same per-tab singleton
+  // KmipPlaygroundView's own manual workbench reads, so every runOp/dryRun/
+  // loadPolicy call this tab's script makes already lands in the engine's
+  // own audit ring; this just also asks for it. Collapsed by default so the
+  // palette/canvas layout isn't disrupted for someone not looking for it.
+  const [audit, setAudit] = useState<AuditEvent[]>([])
+  const [showActivity, setShowActivity] = useState(false)
 
   // Change 1: which pane of the Builder/Code switch is showing.
   const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
@@ -414,6 +435,13 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       setRunError(`Could not run: ${(e as Error).message}`)
       setElapsedMs(null)
     } finally {
+      // Best-effort audit-trail refresh — never lets a snapshot failure
+      // affect the run's own success/error reporting above.
+      try {
+        if (engine) setAudit(engine.auditSnapshot())
+      } catch {
+        // best-effort
+      }
       setRunning(false)
     }
   }, [steps, message, messageMode, messageError, detached, engine, blocking.length])
@@ -585,6 +613,47 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           ✗ {runError}
         </div>
       )}
+
+      {/* Cross-plane audit trail for this tab's own activity — reuses
+          AuditTrailPanel exactly as the manual workbench (plane=agility)
+          renders it, one row per request with CACP (Plane 1 · Agility),
+          KMIP (Plane 2), and PKCS#11 (Plane 3) side by side, since
+          `engine` is the same per-tab singleton either plane uses. Visible
+          from both Builder and Code tabs. */}
+      <div className="border-b">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowActivity((v) => !v)}
+          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
+        >
+          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+          Session activity — CACP &amp; KMIP audit trail
+          {audit.length > 0 && !showActivity && (
+            <span className="ml-1 text-[10.5px]">({audit.length})</span>
+          )}
+        </Button>
+        {showActivity && (
+          <div className="px-4 pb-3 flex flex-col gap-2">
+            {audit.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6 px-2 text-[10.5px]"
+                  onClick={() => {
+                    engine?.clearAudit()
+                    setAudit([])
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            )}
+            <AuditTrailPanel events={audit} />
+          </div>
+        )}
+      </div>
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">

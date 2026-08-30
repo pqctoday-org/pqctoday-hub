@@ -154,11 +154,13 @@ function emitOpStep(
       lines.push(`${rv} = c.create_symmetric(${pyStr(spec.algorithm)}, 256)`)
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Create'))
+      lines.push(`print(f'  {${uidVar(step.id)}} · {${rv}.get("objectType")}')`)
       break
     case 'activate': {
       const uid = renderRef(step.params.uid)
       lines.push(`${rv} = c.activate(${uid})`)
       lines.push(...raiseUnless('Activate'))
+      lines.push(`print(f'  now {${rv}.get("state")}')`)
       break
     }
     case 'sign': {
@@ -185,28 +187,35 @@ function emitOpStep(
       lines.push(`${rv} = c.decapsulate(${priv}, bytes.fromhex(${ct}))`)
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Decapsulate'))
+      lines.push(`print(f'  secret={${uidVar(step.id)}}')`)
       break
     }
     case 'getAttributes': {
       const uid = renderRef(step.params.uid)
       lines.push(`${rv} = c.get_attributes(${uid})`)
       lines.push(...raiseUnless('GetAttributes'))
+      lines.push(
+        `print(f'  alg={${rv}.get("CryptographicAlgorithm")} state={${rv}.get("State")} usage={${rv}.get("CryptographicUsageMask")}')`
+      )
       break
     }
     case 'locate':
       lines.push(`${rv} = c.locate()`)
       lines.push(...raiseUnless('Locate'))
+      lines.push(`print(f'  found {len(${rv}.get("uids") or [])} object(s)')`)
       break
     case 'revoke': {
       const uid = renderRef(step.params.uid)
       lines.push(`${rv} = c.revoke(${uid})`)
       lines.push(...raiseUnless('Revoke'))
+      lines.push(`print(f'  now {${rv}.get("state")}')`)
       break
     }
     case 'destroy': {
       const uid = renderRef(step.params.uid)
       lines.push(`${rv} = c.destroy(${uid})`)
       lines.push(...raiseUnless('Destroy'))
+      lines.push(`print(f'  now {${rv}.get("state")}')`)
       break
     }
     default:
