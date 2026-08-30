@@ -11557,6 +11557,26 @@
       "sizeBytes": 267564,
       "contentType": "application/pdf",
       "sha256": "df89d439b13d181b8e112a1ce0535faf66df33a55a96ce459571eff58d510b17"
+    },
+    {
+      "refId": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr",
+      "title": "Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer",
+      "url": "https://arxiv.org/pdf/quant-ph/9508027",
+      "status": "downloaded",
+      "filename": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr.pdf",
+      "sizeBytes": 315663,
+      "contentType": "application/pdf",
+      "sha256": "96ba03bbfa27ea6a9ab5f1795cb62166948a6de4d8da84f9f43044bb5ab58838"
+    },
+    {
+      "refId": "A-fast-quantum-mechanical-algorithm-for-database-search",
+      "title": "A fast quantum mechanical algorithm for database search",
+      "url": "https://arxiv.org/pdf/quant-ph/9605043",
+      "status": "downloaded",
+      "filename": "A-fast-quantum-mechanical-algorithm-for-database-search.pdf",
+      "sizeBytes": 67338,
+      "contentType": "application/pdf",
+      "sha256": "630528f5297271288797900dffc9ae2a8e14854759b54d87f6bb7b75c5b770db"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
