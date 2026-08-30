@@ -11697,6 +11697,86 @@
       "sizeBytes": 79842,
       "contentType": "text/html",
       "sha256": "7d773003fdb76ce7dd6101be9ab7f87cea2f55244620d6c171e0c0e9ced42c9f"
+    },
+    {
+      "refId": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme",
+      "title": "Signature Correction Attack on Dilithium Signature Scheme",
+      "url": "https://arxiv.org/pdf/2203.00637",
+      "status": "downloaded",
+      "filename": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme.pdf",
+      "sizeBytes": 684276,
+      "contentType": "application/pdf",
+      "sha256": "d27d072fa0c6ddb2eb6a4fb8e35c38a084400a8a09bf97eb3a5449149ce838b8"
+    },
+    {
+      "refId": "RAD750",
+      "title": "RAD750",
+      "url": "https://en.wikipedia.org/wiki/RAD750",
+      "status": "downloaded",
+      "filename": "RAD750.html",
+      "sizeBytes": 136851,
+      "contentType": "text/html",
+      "sha256": "d08b5465ef59858ab84aa84e05131f690e94c7518c06db0398e6180e32e34945"
+    },
+    {
+      "refId": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf",
+      "title": "Potential Data Link Candidates for Civilian Unmanned Aircraft Systems: A Survey",
+      "url": "https://arxiv.org/pdf/1912.13379",
+      "status": "downloaded",
+      "filename": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf.pdf",
+      "sizeBytes": 1646617,
+      "contentType": "application/pdf",
+      "sha256": "b5692f7de21f355ac968b2060ff3c63d65b3f6dd0b1dad26aaddb8c3fb90f4a7"
+    },
+    {
+      "refId": "Advanced-Physical-Layer-Technologies-in-VHF-Data-Link-for-Ae",
+      "title": "Advanced Physical-Layer Technologies in VHF Data Link for Aeronautical Applications",
+      "url": "https://arxiv.org/pdf/2005.11456",
+      "status": "downloaded",
+      "filename": "Advanced-Physical-Layer-Technologies-in-VHF-Data-Link-for-Ae.pdf",
+      "sizeBytes": 954940,
+      "contentType": "application/pdf",
+      "sha256": "74b717128145474ef9cba53bd8d3238c83e2ef0d8c8c2afdc5fbaba11608faef"
+    },
+    {
+      "refId": "15-CFR-742-15-Encryption-items",
+      "title": "15 CFR 742.15 -- Encryption items",
+      "url": "https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-742/section-742.15",
+      "status": "downloaded",
+      "filename": "15-CFR-742-15-Encryption-items.html",
+      "sizeBytes": 82621,
+      "contentType": "text/html",
+      "sha256": "7e71b9627cd7bb637aa2ea2961835ab51e7c41df7c91a89b5179e3e60f03d58d"
+    },
+    {
+      "refId": "Toward-Space-Based-Public-Key-Systems-Enabling-Secure-Space",
+      "title": "Toward Space-Based Public Key Systems: Enabling Secure Space Communications through In-Orbit Trust Services",
+      "url": "https://arxiv.org/pdf/2605.05948",
+      "status": "downloaded",
+      "filename": "Toward-Space-Based-Public-Key-Systems-Enabling-Secure-Space.pdf",
+      "sizeBytes": 3949713,
+      "contentType": "application/pdf",
+      "sha256": "524e4ac67ee4d0aad37d06814d92782b75b81766af16ad0b25a1292053fcfa32"
+    },
+    {
+      "refId": "Starlink-Constellation-Deployment-Configuration-and-Dynamics",
+      "title": "Starlink Constellation: Deployment, Configuration, and Dynamics",
+      "url": "https://arxiv.org/pdf/2603.25835",
+      "status": "downloaded",
+      "filename": "Starlink-Constellation-Deployment-Configuration-and-Dynamics.pdf",
+      "sizeBytes": 3328058,
+      "contentType": "application/pdf",
+      "sha256": "e61e8af62d8cb737fdacaefb2f0d0507bfe4dfe173ebc2ed4d0531cd13392031"
+    },
+    {
+      "refId": "System-Architecting-for-GEO-Communication-Satellite-Consider",
+      "title": "System Architecting for GEO Communication Satellite Considering On-Orbit Refueling",
+      "url": "https://arxiv.org/pdf/2504.07438",
+      "status": "downloaded",
+      "filename": "System-Architecting-for-GEO-Communication-Satellite-Consider.pdf",
+      "sizeBytes": 1552250,
+      "contentType": "application/pdf",
+      "sha256": "4bd4bbedbbbd232c5c0e68b024ffdf92e890559df8a4b55a2488f6157f30b1ab"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
