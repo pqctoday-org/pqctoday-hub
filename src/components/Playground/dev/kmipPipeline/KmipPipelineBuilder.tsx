@@ -36,8 +36,9 @@ import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { installMonacoSelfHost } from '../monacoSelfHost'
-import type { KmipEngine, AuditEvent } from '../../../../wasm/kmip/kmipEngine'
+import type { KmipEngine, AuditEvent, KmipObject } from '../../../../wasm/kmip/kmipEngine'
 import { AuditTrailPanel } from '../../kmip/AuditTrailPanel'
+import { KeystoreTable } from '../../kmip/Inspector'
 import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
@@ -185,6 +186,15 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   // own audit ring; this just also asks for it. Collapsed by default so the
   // palette/canvas layout isn't disrupted for someone not looking for it.
   const [audit, setAudit] = useState<AuditEvent[]>([])
+  // The engine's own keystore — same singleton, same reasoning as `audit`
+  // above. Unlike PKCS#11's key viewer, this needs no session/handle
+  // plumbing at all: KmipObject is addressed by `uid` natively everywhere
+  // in the engine, and listObjects() reads the singleton's own persistent
+  // state directly — there's no PKCS#11-style ephemeral handle to go
+  // stale, and no per-token login/logout lifecycle to be invalidated
+  // between runs (see the PKCS#11 twin's fix for what THAT class of bug
+  // looked like — none of it applies here by construction).
+  const [keystoreObjects, setKeystoreObjects] = useState<KmipObject[]>([])
   const [showActivity, setShowActivity] = useState(false)
 
   // Change 1: which pane of the Builder/Code switch is showing.
@@ -435,10 +445,15 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       setRunError(`Could not run: ${(e as Error).message}`)
       setElapsedMs(null)
     } finally {
-      // Best-effort audit-trail refresh — never lets a snapshot failure
-      // affect the run's own success/error reporting above.
+      // Best-effort audit-trail + keystore refresh — never lets a snapshot
+      // failure affect the run's own success/error reporting above. No
+      // session/auth lifecycle here (see keystoreObjects's own doc
+      // comment) — just re-reading the engine's current state.
       try {
-        if (engine) setAudit(engine.auditSnapshot())
+        if (engine) {
+          setAudit(engine.auditSnapshot())
+          setKeystoreObjects(engine.listObjects())
+        }
       } catch {
         // best-effort
       }
@@ -628,7 +643,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
         >
           {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-          Session activity — CACP &amp; KMIP audit trail
+          Session activity — keystore, CACP &amp; KMIP audit trail
           {audit.length > 0 && !showActivity && (
             <span className="ml-1 text-[10.5px]">({audit.length})</span>
           )}
@@ -639,23 +654,34 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           // scroll rather than risk silently clipping past the container
           // edge as it grows (AuditTrailPanel self-caps at max-h-80, but
           // this keeps both tabs' activity sections behaving identically).
-          <div className="px-4 pb-3 flex flex-col gap-2 max-h-64 overflow-y-auto">
-            {audit.length > 0 && (
-              <div className="flex justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-6 px-2 text-[10.5px]"
-                  onClick={() => {
-                    engine?.clearAudit()
-                    setAudit([])
-                  }}
-                >
-                  Clear
-                </Button>
+          <div className="px-4 pb-3 flex flex-col gap-3 max-h-64 overflow-y-auto">
+            <div>
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
+                Keystore — {keystoreObjects.length} object(s)
               </div>
-            )}
-            <AuditTrailPanel events={audit} />
+              <KeystoreTable objects={keystoreObjects} expert />
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-xs font-semibold uppercase text-muted-foreground">
+                  Audit trail
+                </div>
+                {audit.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-[10.5px]"
+                    onClick={() => {
+                      engine?.clearAudit()
+                      setAudit([])
+                    }}
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+              <AuditTrailPanel events={audit} />
+            </div>
           </div>
         )}
       </div>

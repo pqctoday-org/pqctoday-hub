@@ -141,7 +141,7 @@ export function Inspector({
   )
 }
 
-function KeystoreTable({ objects, expert }: { objects: KmipObject[]; expert: boolean }) {
+export function KeystoreTable({ objects, expert }: { objects: KmipObject[]; expert: boolean }) {
   if (objects.length === 0)
     return (
       <p className="text-xs text-muted-foreground italic">No objects yet — create a key pair.</p>
