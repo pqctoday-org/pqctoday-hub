@@ -12047,6 +12047,26 @@
       "sizeBytes": 206282,
       "contentType": "text/html",
       "sha256": "965a7f587caece670c086b2288fff65a3d4428dd9dae499494ab978226fcb8eb"
+    },
+    {
+      "refId": "Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant",
+      "title": "Toward Quantum-Safe 6G: Experimental Evaluation of Post-Quantum Cryptography Techniques",
+      "url": "https://arxiv.org/pdf/2605.06881",
+      "status": "downloaded",
+      "filename": "Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant.pdf",
+      "sizeBytes": 1136898,
+      "contentType": "application/pdf",
+      "sha256": "e80926247f7359a40e8a4f8ad26c36f9499d3c4e7bde2266a26a602c1d4771bc"
+    },
+    {
+      "refId": "LoRaWAN-Regional-Parameters",
+      "title": "LoRaWAN Regional Parameters",
+      "url": "https://lora-alliance.org/wp-content/uploads/2020/11/lorawan_regional_parameters_v1.0.3reva_0.pdf",
+      "status": "downloaded",
+      "filename": "LoRaWAN-Regional-Parameters.pdf",
+      "sizeBytes": 1443984,
+      "contentType": "application/pdf",
+      "sha256": "e558a2cfc9b93f38a06dc52a40fdd003ced6e649c3e357c1285f5604444a3d61"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
