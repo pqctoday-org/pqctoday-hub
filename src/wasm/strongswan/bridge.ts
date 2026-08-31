@@ -151,7 +151,13 @@ export class StrongSwanEngine {
     proposalMode: number,
     authMode: 'psk' | 'dual',
     localKeyId?: string,
-    remoteKeyId?: string
+    remoteKeyId?: string,
+    /** TEST/VERIFICATION HOOK ONLY (2026-08-31) — overrides the fixed
+     * classical/pqc/hybrid proposal strings via wasm_backend.c's
+     * WASM_IKE_PROPOSAL env read, letting a caller request an explicit IKE
+     * proposal (e.g. "aes256-sha256-mlkem512!") to exercise ML-KEM-512/1024,
+     * which the UI has no selector for yet. Not wired to any UI control. */
+    kemOverride?: string
   ): Worker {
     const worker = new Worker(`/wasm/strongswan_worker.js?v=${Date.now()}`)
     const spawnEpoch = this._epoch // Capture epoch at spawn time
@@ -418,6 +424,7 @@ export class StrongSwanEngine {
         remoteKeyId,
         fragmentation: this._fragmentation,
         childSa: this._childSa,
+        kemOverride,
       },
     })
     return worker
@@ -441,6 +448,8 @@ export class StrongSwanEngine {
       fragmentation?: boolean
       /** Negotiate a real CHILD_SA via the stub kernel (WASM_CHILDSA=1). */
       childSa?: boolean
+      /** TEST/VERIFICATION HOOK ONLY — see _spawnWorker's kemOverride doc. */
+      kemOverride?: string
     }
   ): Promise<void> {
     if (this.initWorker) return Promise.resolve()
@@ -487,7 +496,8 @@ export class StrongSwanEngine {
       usePropMode,
       this._authMode,
       initKeyId, // local for initiator
-      respKeyId // remote for initiator
+      respKeyId, // remote for initiator
+      options?.kemOverride
     )
     this.respWorker = this._spawnWorker(
       respConfigs,
@@ -499,7 +509,8 @@ export class StrongSwanEngine {
       usePropMode,
       this._authMode,
       respKeyId, // local for responder
-      initKeyId // remote for responder
+      initKeyId, // remote for responder
+      options?.kemOverride
     )
     return readyPromise
   }

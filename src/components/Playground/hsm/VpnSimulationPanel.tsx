@@ -768,6 +768,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     const p = new URLSearchParams(window.location.search).get('vpnRpc')
     return p !== '0' // default true unless explicitly disabled
   })
+  // TEST/VERIFICATION HOOK ONLY (2026-08-31) — no UI control sets this; it
+  // exists so an e2e/manual test can request an explicit IKE proposal (e.g.
+  // "aes256-sha256-mlkem512!") to exercise ML-KEM-512/1024, which
+  // selectedMode's three fixed classical/pure-pqc/hybrid modes don't expose.
+  // See bridge.ts's kemOverride doc and wasm_backend.c's WASM_IKE_PROPOSAL.
+  const vpnKemProposalOverride = React.useMemo(
+    () => new URLSearchParams(window.location.search).get('vpnKemProposal') || undefined,
+    []
+  )
   const [showQkdNote, setShowQkdNote] = useState(false)
   const [logCopied, setLogCopied] = useState(false)
   const [ssLogs, setSsLogs] = useState<StrongSwanLog[]>([])
@@ -4470,7 +4479,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode, fragmentation: allowFragmentation, childSa: true }
+                        {
+                          authMode,
+                          fragmentation: allowFragmentation,
+                          childSa: true,
+                          kemOverride: vpnKemProposalOverride,
+                        }
                       )
                     }
                     setCurrentStep(1)

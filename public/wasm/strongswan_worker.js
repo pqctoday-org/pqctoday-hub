@@ -628,6 +628,13 @@ self.onmessage = (e) => {
   // CHILDLESS_FORCE → CHILDLESS_NEVER in wasm_setup_config).
   const fragEnv = payload.fragmentation === false ? 'no' : 'yes'
   const childSaEnv = payload.childSa ? '1' : '0'
+  // TEST/VERIFICATION HOOK ONLY (2026-08-31) — not wired to any UI control.
+  // Forwarded to wasm_backend.c's WASM_IKE_PROPOSAL getenv() override (see
+  // strongswan-wasm-shims/wasm_backend.c), which replaces the fixed
+  // classical/pqc/hybrid proposal strings with an arbitrary caller-supplied
+  // one. Used to exercise ML-KEM-512/1024, which proposalMode's three fixed
+  // modes don't expose.
+  const kemOverrideEnv = payload.kemOverride || ''
   netInboxSab = payload.netSab || payload.netInboxSab
   if (netInboxSab) {
     netInboxI32 = new Int32Array(netInboxSab, 0, 4)
@@ -714,6 +721,7 @@ self.onmessage = (e) => {
             ENV['WASM_ROLE'] = workerRole
             ENV['WASM_FRAGMENTATION'] = fragEnv
             ENV['WASM_CHILDSA'] = childSaEnv
+            if (kemOverrideEnv) ENV['WASM_IKE_PROPOSAL'] = kemOverrideEnv
             if (localKeyId) ENV['WASM_LOCAL_KEYID'] = localKeyId
             if (remoteKeyId) ENV['WASM_REMOTE_KEYID'] = remoteKeyId
             self.postMessage({
@@ -747,6 +755,7 @@ self.onmessage = (e) => {
               envObj['WASM_ROLE'] = workerRole
               envObj['WASM_FRAGMENTATION'] = fragEnv
               envObj['WASM_CHILDSA'] = childSaEnv
+              if (kemOverrideEnv) envObj['WASM_IKE_PROPOSAL'] = kemOverrideEnv
               if (localKeyId) envObj['WASM_LOCAL_KEYID'] = localKeyId
               if (remoteKeyId) envObj['WASM_REMOTE_KEYID'] = remoteKeyId
               self.postMessage({
