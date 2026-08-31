@@ -29,6 +29,18 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.71.0] - 2026-08-30
+
+### Added
+
+- **Both Developer tabs gained a real ACVP known-answer test for ML-KEM-768 (FIPS 203)** [view:/playground] [persona:developer] [persona:researcher]: a genuine NIST test vector — real fixed key material, real expected output, not a simulated one — runs against the actual engine and byte-compares the result, proving the implementation is correct against the standard's own answer key.
+- **The KMIP Developer tab's generated script now speaks real KMIP 3.0 request grammar** [view:/playground] [persona:developer]: instead of one friendly wrapper call per operation, every step now goes through the actual Operation/Attribute vocabulary the KMIP 3.0 spec uses, so what you read matches what the spec describes.
+- **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
+
+### Fixed
+
+- **A stale claim in the PKCS#11 Developer tab's generated script explained key lifetime incorrectly** [view:/playground] [persona:developer]: corrected, with a clearer note on how the generated script's convenience calls relate to the real PKCS#11 functions.
+
 ## [4.70.2] - 2026-08-30
 
 ### Fixed
