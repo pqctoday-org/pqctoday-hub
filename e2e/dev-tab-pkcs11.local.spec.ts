@@ -342,10 +342,15 @@ test("the real PKCS#11 call log and key table show this tab's own run activity",
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
   await page.getByText('Session activity').click()
+  // Inspector-style tab bar — Log and Keys are separate tabs now, not
+  // stacked, so each has to be selected before asserting its content.
+  await expect(page.getByRole('button', { name: /^Log \(\d+\)$/ })).toBeVisible()
   await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
   // A real function name from the default template's own generate/encrypt
   // steps — not just the panel chrome.
   await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
+
   // The key(s) the run just created, via the devSlot discovery scan.
+  await page.getByRole('button', { name: /^Keys \(\d+\)$/ }).click()
   await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
 })
