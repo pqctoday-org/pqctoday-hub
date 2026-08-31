@@ -43,7 +43,13 @@ import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
-import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
+import {
+  KMIP_PRIMITIVES,
+  opsFor,
+  defaultOpFor,
+  ALL_KMIP_WIRE_OPS,
+  type KmipOp,
+} from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
 import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
 import {
@@ -83,21 +89,6 @@ const STATUS_STYLE: Record<KmipStepStatus, { cls: string; label: string } | null
   skipped: { cls: 'text-muted-foreground', label: '— skipped' },
 }
 
-/** Wire operation names the shim's dry_run(op, algorithm=...) accepts —
- *  the real KMIP verb spellings (PascalCase), same convention the shipped
- *  templates already use (e.g. 'CreateKeyPair' in "Policy dry-run compare"). */
-const KMIP_DRY_RUN_OPS = [
-  'CreateKeyPair',
-  'Create',
-  'Activate',
-  'Sign',
-  'Encapsulate',
-  'Decapsulate',
-  'GetAttributes',
-  'Locate',
-  'Revoke',
-  'Destroy',
-]
 const KMIP_DRY_RUN_ALGORITHMS = Object.values(KMIP_PRIMITIVES).map((p) => p.algorithm)
 
 // G9/W4: static for the session — see PkcsPipelineBuilder.tsx's identical row.
@@ -1281,7 +1272,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
                     value={step.op}
                     onChange={(e) => onDryRunOp(e.target.value)}
                   >
-                    {KMIP_DRY_RUN_OPS.map((op) => (
+                    {ALL_KMIP_WIRE_OPS.map((op) => (
                       <option key={op} value={op}>
                         {op}
                       </option>
