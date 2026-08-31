@@ -37,9 +37,9 @@ import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { installMonacoSelfHost } from '../monacoSelfHost'
 import type { KmipEngine, AuditEvent, KmipObject } from '../../../../wasm/kmip/kmipEngine'
-import { AuditTrailPanel } from '../../kmip/AuditTrailPanel'
+import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
 import { KeystoreTable } from '../../kmip/Inspector'
-import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
+import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
@@ -196,6 +196,11 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   // looked like — none of it applies here by construction).
   const [keystoreObjects, setKeystoreObjects] = useState<KmipObject[]>([])
   const [showActivity, setShowActivity] = useState(false)
+  // Full Inspector-style tab bar (matching the manual workbench's own
+  // Keystore/Wire/Audit pattern), rather than AuditTrailPanel's default
+  // request-grouped swimlanes — one plane's events as its own flat,
+  // chronological list per tab, switchable independently of the keystore.
+  const [activityTab, setActivityTab] = useState<'keystore' | 'p1' | 'p2' | 'p3'>('keystore')
 
   // Change 1: which pane of the Builder/Code switch is showing.
   const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
@@ -649,38 +654,58 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           )}
         </Button>
         {showActivity && (
-          // Same fix as the PKCS#11 twin: the Tabs root is a fixed h-[70vh]
-          // with overflow-hidden, so this section needs its own bound and
-          // scroll rather than risk silently clipping past the container
-          // edge as it grows (AuditTrailPanel self-caps at max-h-80, but
-          // this keeps both tabs' activity sections behaving identically).
-          <div className="px-4 pb-3 flex flex-col gap-3 max-h-64 overflow-y-auto">
-            <div>
-              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
-                Keystore — {keystoreObjects.length} object(s)
-              </div>
-              <KeystoreTable objects={keystoreObjects} expert />
+          <div className="border-t">
+            {/* Inspector-style tab bar — same pattern as the manual
+                workbench's own Keystore/Wire/Audit tabs, one plane's
+                events as its own flat list per tab instead of
+                AuditTrailPanel's request-grouped swimlanes. */}
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
+              {(
+                [
+                  { id: 'keystore', label: `Keystore (${keystoreObjects.length})` },
+                  { id: 'p1', label: PLANE_INFO.p1?.label ?? 'CACP' },
+                  { id: 'p2', label: PLANE_INFO.p2?.label ?? 'KMIP' },
+                  { id: 'p3', label: PLANE_INFO.p3?.label ?? 'PKCS#11' },
+                ] as const
+              ).map((t) => (
+                <Button
+                  key={t.id}
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={activityTab === t.id}
+                  onClick={() => setActivityTab(t.id)}
+                  className={`h-7 rounded-md px-2.5 text-[11px] ${
+                    activityTab === t.id
+                      ? 'bg-card text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t.label}
+                </Button>
+              ))}
+              {activityTab !== 'keystore' && audit.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    engine?.clearAudit()
+                    setAudit([])
+                  }}
+                  className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground ml-auto"
+                >
+                  Clear
+                </Button>
+              )}
             </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="text-xs font-semibold uppercase text-muted-foreground">
-                  Audit trail
-                </div>
-                {audit.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-6 px-2 text-[10.5px]"
-                    onClick={() => {
-                      engine?.clearAudit()
-                      setAudit([])
-                    }}
-                  >
-                    Clear
-                  </Button>
-                )}
-              </div>
-              <AuditTrailPanel events={audit} />
+            {/* Same fix as the PKCS#11 twin: the Tabs root is a fixed
+                h-[70vh] with overflow-hidden, so this section needs its
+                own bound and scroll rather than risk silently clipping
+                past the container edge as it grows. */}
+            <div className="px-4 py-3 max-h-64 overflow-y-auto">
+              {activityTab === 'keystore' && <KeystoreTable objects={keystoreObjects} expert />}
+              {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
+              {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
+              {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}
             </div>
           </div>
         )}
@@ -1347,3 +1372,30 @@ const KmipValRow: React.FC<{ ok?: boolean; text: string }> = ({ ok, text }) => (
     <span className={ok ? 'text-muted-foreground' : 'text-status-error'}>{text}</span>
   </div>
 )
+
+/** One plane's events as a flat, chronological list — reuses AuditTrailPanel's
+ * own `describe()` for per-type formatting so a KMIP request line, a CACP
+ * decision line, and a PKCS#11 call line all read exactly the way they do
+ * in the swimlane view, just not grouped by request here. Newest first,
+ * matching AuditTrailPanel's own convention. */
+const PlaneEventList: React.FC<{ events: AuditEvent[]; plane: AuditEvent['plane'] }> = ({
+  events,
+  plane,
+}) => {
+  const filtered = events.filter((e) => e.plane === plane)
+  if (filtered.length === 0)
+    return <p className="text-xs text-muted-foreground italic">No events yet.</p>
+  return (
+    <div className="space-y-1">
+      {filtered
+        .slice()
+        .reverse()
+        .map((e, i) => (
+          <div key={i} className="flex gap-2 text-[11px] font-mono">
+            <span className="text-muted-foreground flex-shrink-0">{e.ts}</span>
+            <span className="text-foreground break-all">{describeAuditEvent(e.event, true)}</span>
+          </div>
+        ))}
+    </div>
+  )
+}
