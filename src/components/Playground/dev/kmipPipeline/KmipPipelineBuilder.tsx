@@ -56,6 +56,7 @@ import {
   type KmipStepStatus,
 } from './kmipPipelineCodegen'
 import type { StepDetail } from '../pipeline/pipelineCodegen'
+import { KmipStepInspectPanel } from './KmipStepInspectPanel'
 import {
   KMIP_TEMPLATES,
   KMIP_TEMPLATE_NAMES,
@@ -1158,6 +1159,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
   onDryRunAlgorithm,
   onDenyTarget,
 }) => {
+  const [inspectOpen, setInspectOpen] = useState(false)
   const statusStyle = stepState ? STATUS_STYLE[stepState.status] : null
   const borderColor = findings.length ? 'border-destructive/45' : 'border-border'
   const opSpec = step.kind === 'op' ? KMIP_PRIMITIVES[step.primId] : undefined
@@ -1335,11 +1337,27 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
             </div>
           ))}
           {stepState?.output && (
-            <pre className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto">
-              <span className={stepState.status === 'error' ? 'text-status-error' : ''}>
-                {stepState.output}
-              </span>
-            </pre>
+            <>
+              <pre className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto">
+                <span className={stepState.status === 'error' ? 'text-status-error' : ''}>
+                  {stepState.output}
+                </span>
+              </pre>
+              {stepState.detail && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-1 h-auto p-0 text-[10.5px] text-muted-foreground hover:text-foreground hover:underline hover:bg-transparent"
+                  onClick={() => setInspectOpen(!inspectOpen)}
+                >
+                  {inspectOpen ? '▼ Hide inspect' : '▶ Inspect'}
+                </Button>
+              )}
+              {inspectOpen && stepState.detail && (
+                <KmipStepInspectPanel detail={stepState.detail} />
+              )}
+            </>
           )}
         </div>
         <Button

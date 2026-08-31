@@ -6,43 +6,18 @@
  * of, the existing summary <pre> — PkcsPipelineBuilder.tsx only mounts
  * this when the user opts into Inspect for that step.
  */
-import { useState } from 'react'
 import type { StepDetail } from './pipelineCodegen'
 import { CollapsibleValue } from '../../../shared/CollapsibleValue'
+import { ErrorDetailPanel } from '../../../shared/ErrorDetailPanel'
 
 export function StepInspectPanel({ detail }: { detail: StepDetail }) {
-  const [tbExpanded, setTbExpanded] = useState(false)
-
   if (detail.kind === 'error') {
     return (
-      <div className="mt-2 ml-1 pl-2 border-l-2 border-destructive/40 bg-muted/30 rounded-r-lg p-2">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-          Error detail
-        </p>
-        <p className="text-xs font-mono text-status-error mb-1.5">
-          {detail.excType}: {detail.message}
-        </p>
-        <div
-          role="button"
-          tabIndex={0}
-          className="text-[11px] select-none cursor-pointer hover:underline text-muted-foreground"
-          onClick={() => setTbExpanded(!tbExpanded)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              setTbExpanded(!tbExpanded)
-            }
-          }}
-        >
-          <span className="text-[9px] opacity-70 mr-1">{tbExpanded ? '▼' : '▶'}</span>
-          {tbExpanded ? 'Hide traceback' : 'Show full traceback'}
-        </div>
-        {tbExpanded && (
-          <pre className="mt-1.5 p-2 bg-background/50 rounded border border-border/30 max-h-56 overflow-auto text-[10px] leading-relaxed whitespace-pre-wrap select-text">
-            {detail.traceback}
-          </pre>
-        )}
-      </div>
+      <ErrorDetailPanel
+        excType={detail.excType}
+        message={detail.message}
+        traceback={detail.traceback}
+      />
     )
   }
 

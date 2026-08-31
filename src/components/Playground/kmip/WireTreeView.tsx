@@ -5,22 +5,18 @@ import type { TtlvNode } from '@/wasm/kmip/kmipEngine'
 import { tagName, ENUM_NAMES, normalizeHexKey } from '@/wasm/kmip/kmipMeta'
 import { Term } from '@/components/Playground/learnkit/Term'
 import { lookupGlossaryDef } from './kmip3/glossary'
+import { CollapsibleValue } from '@/components/shared/CollapsibleValue'
 
-/** Render one decoded TTLV value (leaf) compactly, truncating long blobs. */
+/** Render one decoded TTLV value (leaf) compactly. ByteString/BigInteger go
+ *  through CollapsibleValue (click-to-expand, same component the pipeline
+ *  builders' Inspect views use) instead of a hard 48-char truncation, so
+ *  Inspect can actually show a full signature/ciphertext/key here — this
+ *  function now only covers the remaining scalar types. */
 const renderValue = (node: TtlvNode): string => {
   if (node.value === undefined) return ''
   if (node.type === 'Enumeration') {
     const label = ENUM_NAMES[normalizeHexKey(node.tag)]?.[normalizeHexKey(String(node.value))]
     return label ? `${node.value} (${label})` : String(node.value)
-  }
-  if (
-    (node.type === 'ByteString' || node.type === 'BigInteger') &&
-    typeof node.value === 'string'
-  ) {
-    const hex = node.value
-    return hex.length > 48
-      ? `${hex.slice(0, 48)}… (${hex.length / 2} bytes)`
-      : `${hex} (${hex.length / 2} bytes)`
   }
   return String(node.value)
 }
@@ -37,6 +33,7 @@ const typeTone: Record<string, string> = {
 
 function Node({ node, depth, annotated }: { node: TtlvNode; depth: number; annotated?: boolean }) {
   const isStruct = node.type === 'Structure'
+  const isBlob = node.type === 'ByteString' || node.type === 'BigInteger'
   const [open, setOpen] = useState(depth < 3)
   const name = tagName(node.tag)
   const caption = annotated ? lookupGlossaryDef(name) : undefined
@@ -75,7 +72,14 @@ function Node({ node, depth, annotated }: { node: TtlvNode; depth: number; annot
         <span className={`${typeTone[node.type] ?? 'text-muted-foreground'} opacity-70`}>
           {node.type}
         </span>
-        {!isStruct && <span className="text-muted-foreground break-all">{renderValue(node)}</span>}
+        {!isStruct && isBlob && typeof node.value === 'string' && (
+          <span className="flex-1 min-w-0 text-muted-foreground">
+            <CollapsibleValue value={node.value} showModeToggle />
+          </span>
+        )}
+        {!isStruct && !isBlob && (
+          <span className="text-muted-foreground break-all">{renderValue(node)}</span>
+        )}
         {isStruct && node.children && (
           <span className="text-muted-foreground">{`{${node.children.length}}`}</span>
         )}
