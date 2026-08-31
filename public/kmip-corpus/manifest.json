@@ -1,6 +1,6 @@
 {
   "generated_by": "scripts/build-kmip-wasm.sh (corpus staging step)",
-  "hsmCommit": "e5292f0ccc93a9e65239b9a9c64775ef3b8f427f",
+  "hsmCommit": "6ec2726221dfa26cc1d5840c8c8e7da2f028306d",
   "builtAt": "2026-08-31",
   "specBaseline": "KMIP 3.0 CSD02 (2026-05-07); Profiles 3.0 CSD02 (2026-05-21)",
   "corpusSource": {
