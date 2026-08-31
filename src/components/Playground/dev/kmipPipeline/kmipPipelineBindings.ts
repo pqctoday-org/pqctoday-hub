@@ -40,6 +40,24 @@ export function optionsFor(kind: KmipParamKind, steps: KmipStep[], index: number
 
   for (let i = 0; i < index; i++) {
     const st = steps[i]
+    if (st.kind === 'register') {
+      // A Register step is a valid bind source too — it produces exactly
+      // the private OR public half a fresh createKeyPair step would (see
+      // kmipPipelineCodegen.ts's emitStepBody 'register' case, which
+      // stores into the SAME priv_<id>/pub_<id> variable a keypair step
+      // would). ACVP known-answer templates are the only current caller.
+      const tag = `${i + 1}. Register (${st.objectType})`
+      if (st.objectType === 'PrivateKey' && (kind === 'privUid' || kind === 'uid')) {
+        out.push({
+          label: `${tag} · private key`,
+          value: { bind: 'ref', step: st.id, part: 'priv' },
+        })
+      }
+      if (st.objectType === 'PublicKey' && (kind === 'pubUid' || kind === 'uid')) {
+        out.push({ label: `${tag} · public key`, value: { bind: 'ref', step: st.id, part: 'pub' } })
+      }
+      continue
+    }
     if (st.kind !== 'op') continue
     const spec = KMIP_PRIMITIVES[st.primId]
     const produces = spec?.ops[st.op]?.produces
@@ -192,6 +210,12 @@ export function validate(steps: KmipStep[]): Finding[] {
       }
       return
     }
+
+    // register/assert-equals: ACVP known-answer template steps, not
+    // palette-draggable — every field is already fixed by the template
+    // that created them, so there's nothing here for a learner to bind
+    // incorrectly.
+    if (st.kind === 'register' || st.kind === 'assert-equals') return
 
     // expect-deny
     if (!st.targetStepId) {

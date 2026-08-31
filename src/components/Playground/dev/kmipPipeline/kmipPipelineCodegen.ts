@@ -71,7 +71,53 @@ export interface KmipDryRunStep {
   output?: KmipStepResult | null
 }
 
-export type KmipStep = KmipOpStep | KmipLoadPolicyStep | KmipExpectDenyStep | KmipDryRunStep
+/** Real KMIP Register (Operation 0x00000003, KMIP 3.0 §6.1.50) with real
+ *  raw key material (Key Format Type "Raw", 0x00000001) — how an ACVP
+ *  known-answer test's own fixed key gets INTO the engine, since every
+ *  other op step generates a fresh random key. The engine's real
+ *  register_ml_dsa_private_key/register_ml_kem_private_key/etc. (already
+ *  shipped, not new for this) do the actual import. */
+export interface KmipRegisterStep {
+  kind: 'register'
+  id: string
+  objectType: 'PrivateKey' | 'PublicKey'
+  /** Real KMIP CryptographicAlgorithm wire name (underscore convention,
+   *  same as KmipPrimSpec.algorithm). */
+  algorithm: string
+  /** Raw key material, hex-encoded — verbatim from the ACVP vector. */
+  keyMaterialHex: string
+  status?: KmipStepStatus
+  output?: KmipStepResult | null
+}
+
+/** Byte-exact known-answer check against a real NIST ACVP vector's own
+ *  expected output — the actual point of importing a fixed key via
+ *  `register` instead of generating a fresh random one. Raises with a
+ *  real diff on mismatch; never silently reports success. */
+export interface KmipAssertEqualsStep {
+  kind: 'assert-equals'
+  id: string
+  /** The earlier step whose result field is being checked. */
+  targetStepId: string
+  /** Real KMIP response Attribute/field name, e.g. 'Data' (shared secret
+   *  hex) or 'SignatureData'. */
+  field: string
+  /** Expected value, hex-encoded — verbatim from the ACVP vector. */
+  expectedHex: string
+  /** What this proves, for the printed output — e.g. "shared secret
+   *  matches NIST ACVP ML-KEM-768 tcId=26". */
+  label: string
+  status?: KmipStepStatus
+  output?: KmipStepResult | null
+}
+
+export type KmipStep =
+  | KmipOpStep
+  | KmipLoadPolicyStep
+  | KmipExpectDenyStep
+  | KmipDryRunStep
+  | KmipRegisterStep
+  | KmipAssertEqualsStep
 
 export const DEFAULT_KMIP_MESSAGE = 'pqctoday KMIP Developer tab payload'
 
@@ -91,8 +137,6 @@ export interface KmipEmitOptions {
 const pyStr = (s: string) =>
   `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r')}'`
 const pyBytes = (s: string) => `b${pyStr(s)}`
-const pyBytesFromHex = (hex: string) => `bytes.fromhex(${pyStr(hex)})`
-
 const sym = (id: string) => id.replace(/[^A-Za-z0-9_]/g, '_')
 const privVar = (id: string) => `priv_${sym(id)}`
 const pubVar = (id: string) => `pub_${sym(id)}`
@@ -127,6 +171,17 @@ function renderRef(pv: KmipParamValue | undefined, fallback = 'None'): string {
  * failure on the intentionally-early Sign step aborted the whole pipeline
  * before the expect-deny step ever got a chance to judge it.
  */
+/**
+ * Real KMIP 3.0 grammar (dev-tabs Python-grammar-realignment plan, Phase 1):
+ * every step below calls `c.submit(operation, ...)` with explicit
+ * `leaf`/`struct` request fields, carrying the real KMIP 3.0 Operation name
+ * and real Attribute tag names (§4.x/§3.x) — not a friendly one-call-per-op
+ * wrapper. Payload shapes are copied from the real
+ * `pqctoday_kmip.KmipClient`'s own per-op methods
+ * (pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/kmip.py), read
+ * directly rather than guessed, so a reader with the KMIP 3.0 spec open
+ * recognizes every tag/operation name used here.
+ */
 function emitOpStep(
   step: KmipOpStep,
   spec: KmipPrimSpec,
@@ -143,7 +198,10 @@ function emitOpStep(
   switch (step.op) {
     case 'createKeyPair':
       lines.push(
-        `${rv} = c.create_key_pair(${pyStr(spec.algorithm)}, 'Sign Verify Encapsulate Decapsulate')`
+        `${rv} = c.submit('CreateKeyPair',`,
+        `    struct('CommonAttributes',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)}),`,
+        `        leaf('CryptographicUsageMask', 'Integer', 'Sign Verify Encapsulate Decapsulate')))`
       )
       lines.push(`${privVar(step.id)} = ${rv}.get('PrivateKeyUniqueIdentifier')`)
       lines.push(`${pubVar(step.id)} = ${rv}.get('PublicKeyUniqueIdentifier')`)
@@ -151,30 +209,46 @@ function emitOpStep(
       lines.push(`print(f'  priv={${privVar(step.id)}}  pub={${pubVar(step.id)}}')`)
       break
     case 'create':
-      lines.push(`${rv} = c.create_symmetric(${pyStr(spec.algorithm)}, 256)`)
+      lines.push(
+        `${rv} = c.submit('Create',`,
+        `    leaf('ObjectType', 'Enumeration', 'SymmetricKey'),`,
+        `    struct('Attributes',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)}),`,
+        `        leaf('CryptographicLength', 'Integer', 256),`,
+        `        leaf('CryptographicUsageMask', 'Integer', 'Encrypt Decrypt')))`
+      )
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Create'))
-      lines.push(`print(f'  {${uidVar(step.id)}} · {${rv}.get("objectType")}')`)
+      lines.push(`print(f'  {${uidVar(step.id)}} · {${rv}.get("ObjectType")}')`)
       break
     case 'activate': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.activate(${uid})`)
+      lines.push(`${rv} = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
       lines.push(...raiseUnless('Activate'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  activated {${uid}}')`)
       break
     }
     case 'sign': {
       const priv = renderRef(step.params.privUid)
       const text = step.params.text?.bind === 'literal' ? step.params.text.value : message
-      const bytesExpr = messageMode === 'hex' ? pyBytesFromHex(text) : pyBytes(text)
-      lines.push(`${rv} = c.sign(${priv}, ${bytesExpr}, ${pyStr(spec.algorithm)})`)
+      // ByteString leaves take a hex STRING (Data's real wire encoding) —
+      // hex mode already has one (the literal hex text), so use it
+      // directly rather than round-tripping bytes.fromhex(x).hex().
+      const dataHexExpr = messageMode === 'hex' ? pyStr(text) : `${pyBytes(text)}.hex()`
+      lines.push(
+        `${rv} = c.submit('Sign',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${priv}),`,
+        `    struct('CryptographicParameters',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)})),`,
+        `    leaf('Data', 'ByteString', ${dataHexExpr}))`
+      )
       lines.push(`print(f'  signature {len(${rv}.get("SignatureData") or "") // 2} bytes')`)
       lines.push(...raiseUnless('Sign'))
       break
     }
     case 'encapsulate': {
       const pub = renderRef(step.params.pubUid)
-      lines.push(`${rv} = c.encapsulate(${pub})`)
+      lines.push(`${rv} = c.submit('Encapsulate', leaf('UniqueIdentifier', 'TextString', ${pub}))`)
       lines.push(`${ctVar(step.id)} = ${rv}.get('Data')`)
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Encapsulate'))
@@ -184,15 +258,32 @@ function emitOpStep(
     case 'decapsulate': {
       const priv = renderRef(step.params.privUid)
       const ct = renderRef(step.params.ciphertext)
-      lines.push(`${rv} = c.decapsulate(${priv}, bytes.fromhex(${ct}))`)
+      lines.push(
+        `${rv} = c.submit('Decapsulate',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${priv}),`,
+        `    leaf('Data', 'ByteString', ${ct}))`
+      )
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Decapsulate'))
       lines.push(`print(f'  secret={${uidVar(step.id)}}')`)
       break
     }
+    case 'get': {
+      // Decapsulate/Encapsulate only return the derived secret's real KMIP
+      // uid (KMIP 3.0 §6.1.15/§6.1.22) — a separate Get (§6.1.25) is the
+      // real way to read its actual bytes back (KeyMaterial), same as any
+      // other managed object.
+      const uid = renderRef(step.params.uid)
+      lines.push(`${rv} = c.submit('Get', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
+      lines.push(...raiseUnless('Get'))
+      lines.push(`print(f'  key material {len(${rv}.get("KeyMaterial") or "") // 2} bytes')`)
+      break
+    }
     case 'getAttributes': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.get_attributes(${uid})`)
+      lines.push(
+        `${rv} = c.submit('GetAttributes', leaf('UniqueIdentifier', 'TextString', ${uid}))`
+      )
       lines.push(...raiseUnless('GetAttributes'))
       lines.push(
         `print(f'  alg={${rv}.get("CryptographicAlgorithm")} state={${rv}.get("State")} usage={${rv}.get("CryptographicUsageMask")}')`
@@ -200,22 +291,26 @@ function emitOpStep(
       break
     }
     case 'locate':
-      lines.push(`${rv} = c.locate()`)
+      lines.push(`${rv} = c.submit('Locate')`)
       lines.push(...raiseUnless('Locate'))
-      lines.push(`print(f'  found {len(${rv}.get("uids") or [])} object(s)')`)
+      lines.push(`print(f'  found {len(find_all(${rv}.payload, "UniqueIdentifier"))} object(s)')`)
       break
     case 'revoke': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.revoke(${uid})`)
+      lines.push(
+        `${rv} = c.submit('Revoke',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${uid}),`,
+        `    struct('RevocationReason', leaf('RevocationReasonCode', 'Enumeration', 'Unspecified')))`
+      )
       lines.push(...raiseUnless('Revoke'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  revoked {${uid}}')`)
       break
     }
     case 'destroy': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.destroy(${uid})`)
+      lines.push(`${rv} = c.submit('Destroy', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
       lines.push(...raiseUnless('Destroy'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  destroyed {${uid}}')`)
       break
     }
     default:
@@ -281,6 +376,37 @@ function emitStepBody(
     lines.push(
       `    if not _denied: raise RuntimeError('governance hole: operation was allowed when it should have been denied')`
     )
+  } else if (step.kind === 'register') {
+    const rv = resultVar(step.id)
+    const bits = step.keyMaterialHex.length * 4
+    // Stored into priv_<id>/pub_<id> — the SAME variables generate/
+    // createKeyPair steps use — so a later op step can bind to this
+    // registered key exactly like it would a freshly generated one, via
+    // the existing 'ref' KmipParamValue mechanism unchanged.
+    const uidVarName = step.objectType === 'PrivateKey' ? privVar(step.id) : pubVar(step.id)
+    lines.push(
+      `    ${rv} = c.submit('Register',`,
+      `        leaf('ObjectType', 'Enumeration', ${pyStr(step.objectType)}),`,
+      `        struct('Attributes',`,
+      `            leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(step.algorithm)})),`,
+      `        struct(${pyStr(step.objectType)},`,
+      `            struct('KeyBlock',`,
+      `                leaf('KeyFormatType', 'Enumeration', 'Raw'),`,
+      `                struct('KeyValue', leaf('KeyMaterial', 'ByteString', ${pyStr(step.keyMaterialHex)})),`,
+      `                leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(step.algorithm)}),`,
+      `                leaf('CryptographicLength', 'Integer', ${bits}))))`
+    )
+    lines.push(`    if not ${rv}.ok: raise RuntimeError(${rv}.message or 'Register failed')`)
+    lines.push(`    ${uidVarName} = ${rv}.get('UniqueIdentifier')`)
+    lines.push(`    print(f'  registered {${uidVarName}} ({${bits}}-bit ${step.objectType})')`)
+  } else if (step.kind === 'assert-equals') {
+    const targetRv = resultVar(step.targetStepId)
+    lines.push(`    _actual = (${targetRv}.get(${pyStr(step.field)}) or '').lower()`)
+    lines.push(`    _expected = ${pyStr(step.expectedHex.toLowerCase())}`)
+    lines.push(
+      `    if _actual != _expected: raise RuntimeError(f'ACVP KAT MISMATCH — expected {_expected[:32]}..., got {_actual[:32]}...')`
+    )
+    lines.push(`    print(${pyStr(`  ACVP KAT MATCH: ${step.label}`)})`)
   }
   lines.push(`    print('###STEP ${step.id} ok###')`)
   lines.push('except Exception as _e:')
@@ -298,9 +424,16 @@ export function emitKmipPipeline(steps: KmipStep[], opts: KmipEmitOptions = {}):
     '',
     'Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip',
     "client's real API surface — every operation crosses the CACP policy plane.",
+    '',
+    'c.submit(operation, *payload) sends a real KMIP 3.0 request: `operation` is a',
+    'real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,',
+    'value)/struct(tag, *children) — real Attribute tag names and field types',
+    '(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip',
+    'client uses internally. Dispatched through the same decode -> policy ->',
+    'engine -> encode path a real server request takes.',
     '"""',
     'import os',
-    'from pqctoday_kmip import KmipClient',
+    'from pqctoday_kmip import KmipClient, leaf, struct, find_all',
     '',
     `c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))`,
     '',
@@ -329,6 +462,8 @@ function describeStep(step: KmipStep): string {
     return `${KMIP_PRIMITIVES[step.primId]?.label ?? step.primId} · ${step.op}`
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run') return `Dry-run: ${step.op}`
+  if (step.kind === 'register') return `Register: ${step.objectType} (${step.algorithm})`
+  if (step.kind === 'assert-equals') return `Assert: ${step.label}`
   return `Expect deny: ${step.targetStepId}`
 }
 

@@ -11,7 +11,7 @@
  */
 import { PRIMITIVES } from './pipelinePrimitives'
 
-export type PrimitiveFamily = 'Signature' | 'KEM' | 'Symmetric' | 'Hash'
+export type PrimitiveFamily = 'Signature' | 'KEM' | 'Symmetric' | 'Hash' | 'Utility'
 
 export interface PaletteMeta {
   family: PrimitiveFamily
@@ -39,6 +39,14 @@ export const PALETTE_META: Record<string, PaletteMeta> = {
   'aes-256-gcm': { family: 'Symmetric', hex: '0x1087' },
   'sha3-256': { family: 'Hash', hex: '0x2b0' },
   'sha-256': { family: 'Hash', hex: '0x250' },
+  // Not a crypto primitive — an ACVP known-answer comparison step. Family
+  // 'Utility' has no palette column in PkcsPipelineBuilder.tsx's `families`
+  // grouping, so it stays out of the manual "add primitive" picker (it's
+  // only ever added via the ACVP templates), while still satisfying the
+  // driftguard's "every PRIMITIVES id has a PALETTE_META entry" invariant.
+  // hex has no real PKCS#11 mechanism to report; 0x00 is a placeholder,
+  // not CKM_RSA_PKCS_KEY_PAIR_GEN or any other real codepoint.
+  'assert-equals': { family: 'Utility', hex: '0x00' },
 }
 
 export interface PaletteEntry {

@@ -27,25 +27,6 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-/**
- * Monaco virtualizes rows — only the currently-scrolled-into-view lines
- * exist as `.view-line` DOM nodes, so a plain `toContainText` on
- * `.view-lines` only ever sees whatever happens to be at the top. Scroll
- * the editor a bit at a time (mouse wheel, not a JS API — this needs to
- * work the same way a real reader scrolling the panel would see it) until
- * the target text is actually rendered, or give up after a bounded number
- * of steps.
- */
-async function expectMonacoToContainText(editorViewLines: Locator, text: string) {
-  await editorViewLines.hover()
-  for (let i = 0; i < 15; i++) {
-    if ((await editorViewLines.textContent())?.includes(text)) return
-    await editorViewLines.page().mouse.wheel(0, 300)
-    await editorViewLines.page().waitForTimeout(150)
-  }
-  await expect(editorViewLines).toContainText(text) // fails with a real diff
-}
-
 test('deep-links straight to the Developer plane and loads the default template', async ({
   page,
 }) => {
@@ -231,18 +212,23 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
   const hexPayload = 'ff00fe0180deadbeef'
   await page.getByLabel('Message to sign').fill(hexPayload)
 
-  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0).
-  await page.getByRole('tab', { name: 'Code' }).click()
-  const genCode = page.locator('.monaco-editor .view-lines').first()
-  // The sign step is a few lines past what the editor's fixed height
-  // renders by default — see expectMonacoToContainText's own comment.
-  await expectMonacoToContainText(genCode, `bytes.fromhex('${hexPayload}')`)
-
-  // Run results (elapsed time, per-step ✓/✗) render in the Builder tab's
-  // step list, which is unmounted while Code is active — switch back
-  // before triggering the run, same as a real user checking the generated
-  // code then returning to watch it execute.
-  await page.getByRole('tab', { name: 'Builder' }).click()
+  // Real grammar (dev-tabs Python-grammar-realignment plan, Phase 1) put the
+  // sign step's hex leaf several steps deep into a now much longer file —
+  // deep enough that Monaco's virtualized-scroll DOM (expectMonacoToContainText)
+  // proved unreliable to drive from Playwright (mouse-wheel and PageDown both
+  // either under- or over-shot the target between checks; Monaco exposes no
+  // `window.monaco` here to read the model directly). The exported .py is the
+  // same generated text with none of that DOM virtualization — checking it
+  // proves the same fact (real hex bytes reached the real generated code)
+  // without depending on Monaco's rendering internals.
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Export \.py/ }).click()
+  const download = await downloadPromise
+  const path = await download.path()
+  const fs = await import('node:fs')
+  const exported = fs.readFileSync(path!, 'utf-8')
+  expect(exported).toContain(`leaf('Data', 'ByteString', '${hexPayload}')`)
+  expect(exported).not.toContain(`b'${hexPayload}'`)
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('✓ ran')).toHaveCount(9, {

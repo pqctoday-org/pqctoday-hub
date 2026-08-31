@@ -66,6 +66,8 @@ export type Op =
   | 'decapsulate'
   | 'derive'
   | 'digest'
+  | 'import'
+  | 'assert'
 
 /** What a parameter slot accepts. Drives the binding dropdown and validation. */
 export type ParamKind =
@@ -124,6 +126,12 @@ export interface PrimSpec {
 
 const signOps = (mech: number): Partial<Record<Op, OpSpec>> => ({
   generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
+  // ACVP known-answer tests: `keyMaterial` is a fixed vector's own raw
+  // private-key hex, not a display label — reuses the 'label' ParamKind
+  // (free-text, always literal-bound) since neither carries UI-binding
+  // compatibility semantics here; the codegen (emitOp's 'import' case)
+  // is what actually treats the value as hex, not the type layer.
+  import: { requires: { keyMaterial: 'label' }, produces: 'keypair' },
   sign: { requires: { privKey: 'privKey', input: 'bytes' }, produces: 'signature', mech },
   verify: {
     requires: { pubKey: 'pubKey', input: 'bytes', signature: 'signature' },
@@ -134,6 +142,7 @@ const signOps = (mech: number): Partial<Record<Op, OpSpec>> => ({
 
 const kemOps = (): Partial<Record<Op, OpSpec>> => ({
   generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
+  import: { requires: { keyMaterial: 'label' }, produces: 'keypair' },
   encapsulate: { requires: { pubKey: 'pubKey' }, produces: 'ciphertext', mech: CKM_ML_KEM },
   decapsulate: {
     requires: { privKey: 'privKey', ciphertext: 'ciphertext' },
@@ -313,6 +322,20 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
   'sha-256': {
     label: 'SHA-256',
     ops: { digest: { requires: { input: 'bytes' }, produces: 'bytes', mech: CKM_SHA256 } },
+  },
+
+  // ── ACVP known-answer check — not a real algorithm, no keygen/mechanism.
+  // A byte-exact comparison against a NIST ACVP vector's own expected
+  // output, the reason `import` exists at all: a freshly generated key
+  // can never reproduce a fixed vector's expected bytes. ──
+  'assert-equals': {
+    label: 'ACVP check',
+    ops: {
+      assert: {
+        requires: { secret: 'secretKey', expected: 'label', label: 'label' },
+        produces: 'bool',
+      },
+    },
   },
 }
 

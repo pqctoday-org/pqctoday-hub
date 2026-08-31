@@ -41,6 +41,7 @@ import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
 import { KeystoreTable } from '../../kmip/Inspector'
 import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
+import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
@@ -129,6 +130,8 @@ function stepLabel(step: KmipStep): string {
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run')
     return `Dry-run: ${step.op}${step.algorithm ? ` (${step.algorithm})` : ''}`
+  if (step.kind === 'register') return `Register: ${step.objectType} (${step.algorithm})`
+  if (step.kind === 'assert-equals') return `Assert: ${step.label}`
   return `Expect deny: ${step.targetStepId}`
 }
 
@@ -419,7 +422,8 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
-      const bridge = createKmipBridge(engine)
+      const table = await getCodepointTable()
+      const bridge = createKmipBridge(engine, table)
       py.registerJsModule('kmip_bridge', bridge)
       const result = await runPython(code)
       const elapsed = performance.now() - t0
@@ -702,7 +706,9 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                 own bound and scroll rather than risk silently clipping
                 past the container edge as it grows. */}
             <div className="px-4 py-3 max-h-64 overflow-y-auto">
-              {activityTab === 'keystore' && <KeystoreTable objects={keystoreObjects} expert />}
+              {activityTab === 'keystore' && (
+                <KeystoreTable objects={keystoreObjects} expert engine={engine ?? undefined} />
+              )}
               {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
               {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
               {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}

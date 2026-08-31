@@ -20,6 +20,7 @@ export type KmipOp =
   | 'sign'
   | 'encapsulate'
   | 'decapsulate'
+  | 'get'
   | 'getAttributes'
   | 'locate'
   | 'revoke'
@@ -37,6 +38,7 @@ export type KmipOutputKind =
   | 'signatureHex'
   | 'ciphertextAndUid'
   | 'bool'
+  | 'keyMaterialHex'
 
 export interface KmipOpSpec {
   requires: Partial<Record<string, KmipParamKind>>
@@ -56,6 +58,7 @@ export interface KmipPrimSpec {
 const lifecycleOps = (
   extra: Partial<Record<KmipOp, KmipOpSpec>>
 ): Partial<Record<KmipOp, KmipOpSpec>> => ({
+  get: { requires: { uid: 'uid' }, produces: 'keyMaterialHex' },
   getAttributes: { requires: { uid: 'uid' }, produces: 'bool' },
   locate: { requires: {}, produces: 'bool' },
   revoke: { requires: { uid: 'uid' }, produces: 'bool' },
