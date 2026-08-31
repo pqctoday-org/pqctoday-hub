@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.70.2] - 2026-08-30
+
+### Fixed
+
+- **Both Developer tabs' Session activity panel no longer pushes the key/keystore view below the fold** [view:/playground] [persona:developer]: the call log and key table were stacked on top of each other; they're now separate tabs, matching the same Inspector-style tab pattern the rest of each playground already uses. The KMIP tab's activity is also now split per plane (Keystore, Agility, KMIP, PKCS#11) instead of one merged stream.
+
 ## [4.70.1] - 2026-08-30
 
 ### Data
