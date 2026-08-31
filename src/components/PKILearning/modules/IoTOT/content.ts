@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
