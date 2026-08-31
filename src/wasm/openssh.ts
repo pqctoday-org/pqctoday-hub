@@ -13,14 +13,24 @@ import {
   hsm_generateECKeyPair,
   hsm_generateMLDSAKeyPair,
   hsm_generateMLKEMKeyPair,
+  hsm_generateSLHDSAKeyPair,
   hsm_ecdhDerive,
   hsm_eddsaSign,
   hsm_signBytesMLDSA,
+  hsm_signBytesSLHDSA,
   hsm_encapsulate,
   hsm_extractECPoint,
   hsm_extractKeyValue,
   hsm_digest,
   CKM_SHA256,
+  CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHA2_128F,
+  CKP_SLH_DSA_SHAKE_128S,
+  CKP_SLH_DSA_SHAKE_128F,
+  CKP_SLH_DSA_SHA2_256S,
+  CKP_SLH_DSA_SHA2_256F,
+  CKP_SLH_DSA_SHAKE_256S,
+  CKP_SLH_DSA_SHAKE_256F,
   createLoggingProxy,
 } from './softhsm'
 
@@ -112,8 +122,29 @@ export type SshKexAlg =
   | 'mlkem768'
   | 'mlkem1024'
 
-/** SSH host-key signature algorithms exposed by this engine. */
-export type SshHostKeyAlg = 'ssh-ed25519' | 'ssh-mldsa-44' | 'ssh-mldsa-65' | 'ssh-mldsa-87'
+/**
+ * SSH host-key signature algorithms exposed by this engine.
+ *
+ * The 8 `ssh-slh-dsa-*` ids are every FIPS 205 parameter set the connector's
+ * openssh-pkcs11/patches/ssh-slhdsa.c actually implements (2026-08-31 SLH-DSA
+ * UI wiring) — the 128-/256-bit SHA2 and SHAKE variants in both `s` (small
+ * signature) and `f` (fast) modes. The 192-bit sets (SHA2/SHAKE-192s/192f)
+ * are deliberately absent: draft-josefsson-ssh-sphincs-02 (the wire-name
+ * source) defines no standalone SSH algorithm name for them.
+ */
+export type SshHostKeyAlg =
+  | 'ssh-ed25519'
+  | 'ssh-mldsa-44'
+  | 'ssh-mldsa-65'
+  | 'ssh-mldsa-87'
+  | 'ssh-slh-dsa-sha2-128s'
+  | 'ssh-slh-dsa-sha2-128f'
+  | 'ssh-slh-dsa-shake-128s'
+  | 'ssh-slh-dsa-shake-128f'
+  | 'ssh-slh-dsa-sha2-256s'
+  | 'ssh-slh-dsa-sha2-256f'
+  | 'ssh-slh-dsa-shake-256s'
+  | 'ssh-slh-dsa-shake-256f'
 
 export interface SshHandshakeConfig {
   kex: SshKexAlg
@@ -199,6 +230,15 @@ export const SSH_HOST_KEY_OPTIONS: ReadonlyArray<{ id: SshHostKeyAlg; label: str
   { id: 'ssh-mldsa-44', label: 'ssh-mldsa-44 (PQC)' },
   { id: 'ssh-mldsa-65', label: 'ssh-mldsa-65 (PQC)' },
   { id: 'ssh-mldsa-87', label: 'ssh-mldsa-87 (PQC)' },
+  // Order matches openssh-pkcs11/wasm-shims/sshd_wasm_main.c's HOSTKEY_VARIANTS[] table.
+  { id: 'ssh-slh-dsa-sha2-128s', label: 'ssh-slh-dsa-sha2-128s (PQC)' },
+  { id: 'ssh-slh-dsa-sha2-128f', label: 'ssh-slh-dsa-sha2-128f (PQC)' },
+  { id: 'ssh-slh-dsa-shake-128s', label: 'ssh-slh-dsa-shake-128s (PQC)' },
+  { id: 'ssh-slh-dsa-shake-128f', label: 'ssh-slh-dsa-shake-128f (PQC)' },
+  { id: 'ssh-slh-dsa-sha2-256s', label: 'ssh-slh-dsa-sha2-256s (PQC)' },
+  { id: 'ssh-slh-dsa-sha2-256f', label: 'ssh-slh-dsa-sha2-256f (PQC)' },
+  { id: 'ssh-slh-dsa-shake-256s', label: 'ssh-slh-dsa-shake-256s (PQC)' },
+  { id: 'ssh-slh-dsa-shake-256f', label: 'ssh-slh-dsa-shake-256f (PQC)' },
 ]
 
 export interface SshHsmBinding {
@@ -322,17 +362,74 @@ function kexAlgInfo(kex: SshKexAlg): {
 function hostKeyAlgInfo(hk: SshHostKeyAlg): {
   isClassical: boolean
   mldsaVariant: 44 | 65 | 87 | null
+  /** One of the CKP_SLH_DSA_* constants, or null for a non-SLH-DSA host key. */
+  slhdsaParamSet: number | null
 } {
   switch (hk) {
     case 'ssh-ed25519':
-      return { isClassical: true, mldsaVariant: null }
+      return { isClassical: true, mldsaVariant: null, slhdsaParamSet: null }
     case 'ssh-mldsa-44':
-      return { isClassical: false, mldsaVariant: 44 }
+      return { isClassical: false, mldsaVariant: 44, slhdsaParamSet: null }
     case 'ssh-mldsa-65':
-      return { isClassical: false, mldsaVariant: 65 }
+      return { isClassical: false, mldsaVariant: 65, slhdsaParamSet: null }
     case 'ssh-mldsa-87':
-      return { isClassical: false, mldsaVariant: 87 }
+      return { isClassical: false, mldsaVariant: 87, slhdsaParamSet: null }
+    case 'ssh-slh-dsa-sha2-128s':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHA2_128S }
+    case 'ssh-slh-dsa-sha2-128f':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHA2_128F }
+    case 'ssh-slh-dsa-shake-128s':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHAKE_128S }
+    case 'ssh-slh-dsa-shake-128f':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHAKE_128F }
+    case 'ssh-slh-dsa-sha2-256s':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHA2_256S }
+    case 'ssh-slh-dsa-sha2-256f':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHA2_256F }
+    case 'ssh-slh-dsa-shake-256s':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHAKE_256S }
+    case 'ssh-slh-dsa-shake-256f':
+      return { isClassical: false, mldsaVariant: null, slhdsaParamSet: CKP_SLH_DSA_SHAKE_256F }
   }
+}
+
+/**
+ * Generate a host/client PQC signing key pair for the family the selected
+ * host-key algorithm belongs to (ML-DSA or SLH-DSA), dispatching to the
+ * matching softhsm.ts primitive. Both families' generators share the same
+ * `(M, hSession, extractable)` tail shape once the variant/param-set is
+ * bound, so callers don't need to branch again after this point.
+ */
+function generateHostKeyPair(
+  M: SoftHSMModule,
+  h: number,
+  host: ReturnType<typeof hostKeyAlgInfo>,
+  extractable: boolean
+): { pubHandle: number; privHandle: number } {
+  if (host.mldsaVariant !== null) {
+    return hsm_generateMLDSAKeyPair(M, h, host.mldsaVariant, extractable)
+  }
+  if (host.slhdsaParamSet !== null) {
+    return hsm_generateSLHDSAKeyPair(M, h, host.slhdsaParamSet, extractable)
+  }
+  throw new Error('generateHostKeyPair invoked on non-PQC host key')
+}
+
+/**
+ * Sign raw bytes with the matching family's C_Sign helper. hsm_signBytesMLDSA
+ * and hsm_signBytesSLHDSA both take `(M, hSession, privHandle, data)`, so this
+ * is a thin family dispatch, not a behavior change for either.
+ */
+function signWithHostKeyFamily(
+  M: SoftHSMModule,
+  h: number,
+  host: ReturnType<typeof hostKeyAlgInfo>,
+  privHandle: number,
+  data: Uint8Array
+): Uint8Array {
+  if (host.mldsaVariant !== null) return hsm_signBytesMLDSA(M, h, privHandle, data)
+  if (host.slhdsaParamSet !== null) return hsm_signBytesSLHDSA(M, h, privHandle, data)
+  throw new Error('signWithHostKeyFamily invoked on non-PQC host key')
 }
 
 // ── Classical handshake (curve25519-sha256 + ssh-ed25519) ────────────────────
@@ -507,11 +604,12 @@ async function runClassical(
   }
 }
 
-// ── PQC handshake (ML-KEM KEX + ML-DSA host key) ─────────────────────────────
+// ── PQC handshake (ML-KEM KEX + ML-DSA/SLH-DSA host key) ─────────────────────
 //
 // Handles hybrid (ML-KEM + classical X25519/P-256, draft-ietf-sshm-mlkem-hybrid-kex)
 // and pure ML-KEM-{768,1024} (CNSA 2.0 SSH profile) modes against any of the
-// three ML-DSA host-key parameter sets.
+// three ML-DSA host-key parameter sets, or any of the 8 SLH-DSA parameter sets
+// (generateHostKeyPair/signWithHostKeyFamily dispatch on config.hostKey's family).
 
 async function runPqc(
   M: SoftHSMModule,
@@ -523,7 +621,7 @@ async function runPqc(
   if (kex.mlkemVariant === null) {
     throw new Error(`runPqc invoked on non-PQC KEX ${config.kex}`)
   }
-  if (host.mldsaVariant === null) {
+  if (host.mldsaVariant === null && host.slhdsaParamSet === null) {
     throw new Error(`runPqc invoked on non-PQC host key ${config.hostKey}`)
   }
 
@@ -531,9 +629,10 @@ async function runPqc(
 
   const t0 = performance.now()
 
-  // Key generation phase
-  const hostDsa = hsm_generateMLDSAKeyPair(M, h, host.mldsaVariant, false)
-  const clientDsa = hsm_generateMLDSAKeyPair(M, h, host.mldsaVariant, false)
+  // Key generation phase — dispatches to ML-DSA or SLH-DSA generation
+  // depending on which family config.hostKey belongs to.
+  const hostDsa = generateHostKeyPair(M, h, host, false)
+  const clientDsa = generateHostKeyPair(M, h, host, false)
   const clientKem = hsm_generateMLKEMKeyPair(M, h, kex.mlkemVariant, true)
 
   // Classical ECDH key pairs only generated for hybrid modes.
@@ -609,12 +708,12 @@ async function runPqc(
   const hashInput = concat(sshString(K_S), Q_C, Q_S, K_wrapped)
   const H = hsm_digest(M, h, hashInput, CKM_SHA256)
 
-  // Host signature (ML-DSA)
-  const hostSig = hsm_signBytesMLDSA(M, h, hostDsa.privHandle, H)
+  // Host signature (ML-DSA or SLH-DSA, per config.hostKey's family)
+  const hostSig = signWithHostKeyFamily(M, h, host, hostDsa.privHandle, H)
   const t3 = performance.now()
 
-  // Client signature (ML-DSA)
-  const clientSig = hsm_signBytesMLDSA(M, h, clientDsa.privHandle, H)
+  // Client signature (same family as the host key)
+  const clientSig = signWithHostKeyFamily(M, h, host, clientDsa.privHandle, H)
   const t4 = performance.now()
 
   const host_pubkey_bytes = 4 + config.hostKey.length + 4 + host_dsa_pub_raw.length

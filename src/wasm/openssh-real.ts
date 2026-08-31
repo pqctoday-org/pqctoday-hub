@@ -192,10 +192,27 @@ export const REAL_HOSTKEY_ID = 'ssh-mldsa-65'
 // set_handshake_config). The modeled engine's ids (openssh.ts SshHostKeyAlg)
 // are identical to the real OpenSSH wire names for these three, so no mapping
 // is needed to pass a selection straight through to the real binary.
+//
+// Widened same-night (2026-08-31, SLH-DSA UI wiring) with the 8 real SLH-DSA
+// parameter sets openssh-pkcs11/patches/ssh-slhdsa.c implements via its own
+// DEFINE_SLHDSA_IMPL(...) macro, also selected through the same
+// HOSTKEY_VARIANTS[] table. These 8 are every FIPS 205 parameter set with a
+// standalone SSH wire name in draft-josefsson-ssh-sphincs-02 (128-/256-bit
+// SHA2 and SHAKE, both `s`/`f` modes) — the connector deliberately does not
+// implement 192-bit SLH-DSA, since that draft defines no standalone name for
+// it (see ssh-slhdsa.c's file header for the full citation).
 export const REAL_HOSTKEY_IDS: ReadonlySet<string> = new Set([
   'ssh-mldsa-44',
   'ssh-mldsa-65',
   'ssh-mldsa-87',
+  'ssh-slh-dsa-sha2-128s',
+  'ssh-slh-dsa-sha2-128f',
+  'ssh-slh-dsa-shake-128s',
+  'ssh-slh-dsa-shake-128f',
+  'ssh-slh-dsa-sha2-256s',
+  'ssh-slh-dsa-sha2-256f',
+  'ssh-slh-dsa-shake-256s',
+  'ssh-slh-dsa-shake-256f',
 ])
 
 /** True when the chosen PQC combo is one the real binary actually runs. */
@@ -206,11 +223,22 @@ export function isRealCombo(kex: string, hostKey: string): boolean {
 // Public-key wire sizes by host-key algorithm (approx, for the size bars).
 // ML-DSA sizes are FIPS 204 Table 2 raw public keys, cross-checked against
 // deps/openssl-src/openssl-3.6.3/include/crypto/ml_dsa.h (see openssh-pkcs11
-// CHANGELOG.md 2026-08-31 entry).
+// CHANGELOG.md 2026-08-31 entry). SLH-DSA sizes are FIPS 205 s11 Table 2,
+// cross-checked against ssh-slhdsa.c's DEFINE_SLHDSA_IMPL(...) pk_sz
+// arguments — SHA2 and SHAKE variants of the same security level share the
+// same pk/sig sizes.
 const HOST_PUBKEY_BYTES: Record<string, number> = {
   'ssh-mldsa-44': 1312, // FIPS 204 ML-DSA-44 raw public key
   'ssh-mldsa-65': 1952, // FIPS 204 ML-DSA-65 raw public key
   'ssh-mldsa-87': 2592, // FIPS 204 ML-DSA-87 raw public key
+  'ssh-slh-dsa-sha2-128s': 32, // FIPS 205 128-bit raw public key
+  'ssh-slh-dsa-sha2-128f': 32,
+  'ssh-slh-dsa-shake-128s': 32,
+  'ssh-slh-dsa-shake-128f': 32,
+  'ssh-slh-dsa-sha2-256s': 64, // FIPS 205 256-bit raw public key
+  'ssh-slh-dsa-sha2-256f': 64,
+  'ssh-slh-dsa-shake-256s': 64,
+  'ssh-slh-dsa-shake-256f': 64,
   'ecdsa-sha2-nistp256': 65, // uncompressed P-256 point Q
 }
 // KEX init/reply share sizes by KEX algorithm.
@@ -303,8 +331,10 @@ export function mapRealEventsToResult(
   const hostalg = start?.hostkey ?? 'ssh-mldsa-65'
   const [clientShare, serverShare] = KEX_SHARES[kex] ?? [0, 0]
   const pub = HOST_PUBKEY_BYTES[hostalg] ?? 0
-  // Quantum-safe when the KEX uses ML-KEM and the host key uses ML-DSA.
-  const quantum_safe = kex.includes('mlkem') && hostalg.includes('mldsa')
+  // Quantum-safe when the KEX uses ML-KEM and the host key uses ML-DSA or
+  // SLH-DSA (both PQC signature families the real binary can run).
+  const quantum_safe =
+    kex.includes('mlkem') && (hostalg.includes('mldsa') || hostalg.includes('slh-dsa'))
 
   const result: import('./openssh').SshHandshakeResult = {
     connection_ok,
@@ -351,6 +381,14 @@ const HOSTKEY_FILE: Record<string, string> = {
   'ssh-mldsa-44': 'ssh_host_mldsa44_key',
   'ssh-mldsa-65': 'ssh_host_mldsa65_key',
   'ssh-mldsa-87': 'ssh_host_mldsa87_key',
+  'ssh-slh-dsa-sha2-128s': 'ssh_host_slhdsa_sha2_128s_key',
+  'ssh-slh-dsa-sha2-128f': 'ssh_host_slhdsa_sha2_128f_key',
+  'ssh-slh-dsa-shake-128s': 'ssh_host_slhdsa_shake_128s_key',
+  'ssh-slh-dsa-shake-128f': 'ssh_host_slhdsa_shake_128f_key',
+  'ssh-slh-dsa-sha2-256s': 'ssh_host_slhdsa_sha2_256s_key',
+  'ssh-slh-dsa-sha2-256f': 'ssh_host_slhdsa_sha2_256f_key',
+  'ssh-slh-dsa-shake-256s': 'ssh_host_slhdsa_shake_256s_key',
+  'ssh-slh-dsa-shake-256f': 'ssh_host_slhdsa_shake_256f_key',
   'ecdsa-sha2-nistp256': 'ssh_host_ecdsa_key',
 }
 

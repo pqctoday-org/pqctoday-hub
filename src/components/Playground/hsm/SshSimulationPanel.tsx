@@ -84,8 +84,8 @@ export function SshSimulationPanel() {
   // PQC-family KEX options excluding the classical baseline (which is the
   // implicit comparison run).
   const pqcKexOptions = useMemo(() => SSH_KEX_OPTIONS.filter((o) => o.family !== 'classical'), [])
-  // ML-DSA host-key options. Ed25519 stays on the classical baseline run and
-  // is never paired with a PQC KEX in this simulator.
+  // ML-DSA/SLH-DSA host-key options. Ed25519 stays on the classical baseline
+  // run and is never paired with a PQC KEX in this simulator.
   const pqcHostKeyOptions = useMemo(
     () => SSH_HOST_KEY_OPTIONS.filter((o) => o.id !== 'ssh-ed25519'),
     []
@@ -228,8 +228,8 @@ export function SshSimulationPanel() {
           <h2 className="text-lg font-bold text-gradient">PQC SSH Simulator</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
             Real softhsmv3 PKCS#11 SSH handshakes — pick any ML-KEM KEX (hybrid or pure) plus an
-            ML-DSA host-key variant and compare it against the classical curve25519 + Ed25519
-            baseline. All key material lives inside the softhsmv3 WASM token; no network or
+            ML-DSA or SLH-DSA host-key variant and compare it against the classical curve25519 +
+            Ed25519 baseline. All key material lives inside the softhsmv3 WASM token; no network or
             container required.
           </p>
         </div>
@@ -282,7 +282,7 @@ export function SshSimulationPanel() {
               PQC Host-Key Algorithm
             </span>
             <span className="text-[10px] text-muted-foreground">
-              softhsmv3 generates and signs with the chosen ML-DSA parameter set
+              softhsmv3 generates and signs with the chosen ML-DSA or SLH-DSA parameter set
             </span>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -333,13 +333,14 @@ export function SshSimulationPanel() {
               binary currently runs <span className="font-mono">mlkem768x25519-sha256</span> paired
               with any ML-DSA host key (<span className="font-mono">ssh-mldsa-44</span>,{' '}
               <span className="font-mono">ssh-mldsa-65</span>, or{' '}
-              <span className="font-mono">ssh-mldsa-87</span>) — select one of those to drive the
-              genuine handshake. SLH-DSA host keys and other KEX combos are simulated for
-              comparison.{' '}
-              {/* The host-key name is pre-standard: it comes from an Internet-Draft
-                  with a competing proposal, and has no IANA assignment. The VPN
-                  simulator already discloses the equivalent status for its own
-                  ML-DSA draft; this tool presented the name as settled. */}
+              <span className="font-mono">ssh-mldsa-87</span>) or any of the 8 real SLH-DSA host
+              keys (SHA2/SHAKE × 128-/256-bit × small/fast, e.g.{' '}
+              <span className="font-mono">ssh-slh-dsa-sha2-128s</span>) — select one of those to
+              drive the genuine handshake. Other KEX combos are simulated for comparison.{' '}
+              {/* The host-key names are pre-standard: they come from Internet-Drafts
+                  (one with a competing proposal), and neither has an IANA assignment.
+                  The VPN simulator already discloses the equivalent status for its own
+                  ML-DSA draft; this tool presented the ML-DSA name as settled. */}
               The <span className="font-mono">ssh-mldsa-*</span> host-key names come from{' '}
               <a
                 href="https://datatracker.ietf.org/doc/draft-rpe-ssh-mldsa/"
@@ -351,7 +352,19 @@ export function SshSimulationPanel() {
               </a>
               , an Internet-Draft — not a ratified standard. A competing proposal
               (draft-sfluhrer-ssh-mldsa) covers the same ground, and the name has no IANA assignment
-              yet, so it may still change.
+              yet, so it may still change. The <span className="font-mono">ssh-slh-dsa-*</span>{' '}
+              names come from a separate, also pre-standard draft,{' '}
+              <a
+                href="https://datatracker.ietf.org/doc/draft-josefsson-ssh-sphincs/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                draft-josefsson-ssh-sphincs
+              </a>
+              . That draft only names the 128-/256-bit SLH-DSA parameter sets — it defines no
+              standalone wire name for 192-bit SLH-DSA, so this simulator can&apos;t offer it
+              either.
             </>
           )}
         </p>
