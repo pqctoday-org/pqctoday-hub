@@ -5,45 +5,8 @@
  * Shared by PkcsLogPanel (Playground) and Pkcs11LogPanel (learning modules).
  * Pure presentational component — no side effects, no context dependencies.
  */
-import { useState } from 'react'
 import type { Pkcs11LogInspect, InspectSection, DecodedAttribute } from '../../wasm/pkcs11Inspect'
-
-const CollapsibleValue = ({ value, isOutput = false }: { value: string; isOutput?: boolean }) => {
-  const [expanded, setExpanded] = useState(false)
-
-  // Only collapse long payload strings
-  if (value.length <= 40) {
-    return <span className={isOutput ? 'text-status-success' : 'text-foreground'}>{value}</span>
-  }
-
-  return (
-    <div className="flex flex-col w-full">
-      <div
-        role="button"
-        tabIndex={0}
-        className={`flex items-center gap-1 text-[11px] select-none text-left appearance-none bg-transparent border-none p-0 cursor-pointer hover:underline ${isOutput ? 'text-status-success' : 'text-foreground'}`}
-        onClick={() => setExpanded(!expanded)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            setExpanded(!expanded)
-          }
-        }}
-      >
-        <span className="text-[9px] opacity-70">{expanded ? '▼' : '▶'}</span>
-        {expanded ? 'Hide payload' : 'Show payload'}
-        <span className="text-muted-foreground opacity-50 ml-1">
-          ({Math.floor(value.length / 2)} bytes)
-        </span>
-      </div>
-      {expanded && (
-        <div className="mt-1.5 p-2 bg-background/50 rounded border border-border/30 max-h-40 overflow-y-auto break-all font-mono text-[10px] leading-relaxed select-text">
-          {value}
-        </div>
-      )}
-    </div>
-  )
-}
+import { CollapsibleValue } from './CollapsibleValue'
 
 export const AttributeRow = ({ attr }: { attr: DecodedAttribute }) => (
   <div className="grid grid-cols-[minmax(0,10rem)_minmax(0,1fr)] gap-x-3 text-xs font-mono py-0.5 border-b border-border/20 last:border-0">

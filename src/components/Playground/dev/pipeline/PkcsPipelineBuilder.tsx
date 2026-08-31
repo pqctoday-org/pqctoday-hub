@@ -50,6 +50,7 @@ import {
   type PipelineStep,
   type StepStatus,
 } from './pipelineCodegen'
+import { StepInspectPanel } from './StepInspectPanel'
 import { optionsFor, validate, type Finding } from './pipelineBindings'
 import { TEMPLATES, TEMPLATE_NAMES, TEMPLATE_OUTCOMES } from './pipelineTemplates'
 import {
@@ -1185,6 +1186,7 @@ const StepCard: React.FC<StepCardProps> = ({
   onOpChange,
   onParam,
 }) => {
+  const [inspectOpen, setInspectOpen] = useState(false)
   const spec = PRIMITIVES[step.primId]
   const meta = PALETTE_ENTRIES.find((x) => x.id === step.primId)
   const isPq = meta?.pq === true
@@ -1313,14 +1315,30 @@ const StepCard: React.FC<StepCardProps> = ({
             </div>
           ))}
           {step.output && (
-            <pre
-              className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto"
-              style={{ color: step.output.status === 'error' ? undefined : undefined }}
-            >
-              <span className={step.output.status === 'error' ? 'text-status-error' : ''}>
-                {step.output.text}
-              </span>
-            </pre>
+            <>
+              <pre
+                className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto"
+                style={{ color: step.output.status === 'error' ? undefined : undefined }}
+              >
+                <span className={step.output.status === 'error' ? 'text-status-error' : ''}>
+                  {step.output.text}
+                </span>
+              </pre>
+              {step.output.detail && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-1 h-auto p-0 text-[10.5px] text-muted-foreground hover:text-foreground hover:underline hover:bg-transparent"
+                  onClick={() => setInspectOpen(!inspectOpen)}
+                >
+                  {inspectOpen ? '▼ Hide inspect' : '▶ Inspect'}
+                </Button>
+              )}
+              {inspectOpen && step.output.detail && (
+                <StepInspectPanel detail={step.output.detail} />
+              )}
+            </>
           )}
         </div>
         <Button

@@ -349,6 +349,41 @@ function refStep(pv: ParamValue | undefined): string {
   return pv && pv.bind === 'ref' ? pv.step : PIPELINE_INPUT_ID
 }
 
+/**
+ * Python dict-literal fragments for the ###STEP <id> detail### line's
+ * 'fields' array — one per real byte payload this op's own summary print
+ * (emitOp above) already extracted via s.value()/a direct return. Never a
+ * fresh CKA_VALUE read of a key handle itself — generate/import/assert/
+ * verify contribute nothing beyond what the summary already shows.
+ */
+function detailFields(step: PipelineStep): string[] {
+  const out = resultVar(step.id)
+  const secret = secretVar(step.id)
+  const field = (name: string, expr: string) =>
+    `{'name': ${pyStr(name)}, 'hex': (${expr}).hex(), 'bytesLen': len(${expr})}`
+
+  switch (step.op) {
+    case 'sign':
+      return [field('signature', out)]
+    case 'encapsulate':
+      return [field('ciphertext', out), field('shared secret', `s.value(${secret})`)]
+    case 'decapsulate':
+    case 'derive':
+      return [field('shared secret', out)]
+    case 'encrypt':
+      return [field('ciphertext', out)]
+    case 'decrypt':
+      return [field('plaintext', out)]
+    case 'digest':
+      return [field('digest', out)]
+    case 'generate':
+    case 'import':
+    case 'assert':
+    case 'verify':
+      return []
+  }
+}
+
 /* ── whole-pipeline emission ─────────────────────────────────────────────────── */
 
 /** The delimiter comment `emitPipeline` writes ahead of every step — kept as its own
@@ -368,15 +403,23 @@ function emitStepMarker(step: PipelineStep, spec: PrimSpec | undefined): string 
  */
 function emitStepBody(step: PipelineStep, spec: PrimSpec | undefined): string[] {
   const lines: string[] = ['        try:']
-  if (!spec || !spec.ops[step.op]) {
+  const supported = !!spec && !!spec.ops[step.op]
+  if (!supported) {
     lines.push(
       `            raise RuntimeError(${pyStr(`${step.primId} does not support ${step.op}`)})`
     )
   } else {
     for (const l of emitOp(step, spec)) lines.push(`            ${l}`)
   }
+  const fields = supported ? detailFields(step) : []
+  lines.push(
+    `            print('###STEP ${step.id} detail### ' + json.dumps({'kind': 'output', 'fields': [${fields.join(', ')}]}))`
+  )
   lines.push(`            print('###STEP ${step.id} ok###')`)
   lines.push('        except Exception as _e:')
+  lines.push(
+    `            print('###STEP ${step.id} detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc()}))`
+  )
   lines.push(`            print('###STEP ${step.id} error### %s: %s' % (type(_e).__name__, _e))`)
   lines.push('            raise')
   lines.push('')
@@ -400,6 +443,8 @@ export function emitPipeline(steps: PipelineStep[], opts: EmitOptions = {}): str
     'activity Log tab for the literal C_* call trace.',
     '"""',
     'import os',
+    'import json',
+    'import traceback',
     'import p11',
     'from p11 import Module',
     '',
