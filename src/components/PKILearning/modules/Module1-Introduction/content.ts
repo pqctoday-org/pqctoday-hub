@@ -91,7 +91,7 @@ export const content: ModuleContent = {
     symmetricMention:
       "Symmetric cryptography (like AES-256) is largely unaffected by Shor's algorithm and remains quantum-safe.",
     fips206Mention:
-      'Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures.',
+      "Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }
 

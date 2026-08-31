@@ -81,5 +81,7 @@ export const content: ModuleContent = {
     mtcProof: '300 bytes',
     ecdsaSigConstraint: '64 bytes',
     hybridKem: 'X25519MLKEM768',
+    relatedStandards:
+      "FIPS 206 (FN-DSA), cited above as a compact-signature option for constrained devices, is still a NIST draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }

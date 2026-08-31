@@ -109,7 +109,16 @@ const NOISE = new Set([
  * parts that identify it rather than on the id string.
  */
 function searchKeys(id: string): string[] {
-  return [...new Set(id.split(/[^A-Za-z0-9]+/).filter((t) => t.length >= 4))].filter(
+  // >=3, not >=4: BIP-39 splits into "BIP" (3 chars, distinctive) + "39" (2
+  // chars, already dropped by the length floor alone) — a >=4 floor discarded
+  // BIP's only token entirely, tripping the "guard the guard" check as a false
+  // alarm rather than actually verifying disclosure. FIPS 206 shows why a pure
+  // length change is enough and a value-based digit filter would NOT be: it
+  // splits into "FIPS" (already in NOISE, too generic on its own) + "206",
+  // and "206" is exactly the distinctive part that must survive. NOISE
+  // already filters generic 3-letter filler ("the", "and", "for"), so
+  // lowering the floor doesn't reopen the false-positive risk >=4 guarded.
+  return [...new Set(id.split(/[^A-Za-z0-9]+/).filter((t) => t.length >= 3))].filter(
     (t) => !NOISE.has(t.toLowerCase())
   )
 }

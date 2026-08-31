@@ -36,6 +36,6 @@ export const content: ModuleContent = {
       'Algorithm families are grouped by primitive (signature, KEM/PKE, key-agreement, block/stream cipher, AEAD, MAC, hash, XOF, KDF, key-wrap, DRBG). Elliptic curves are grouped into 15 standardization categories (NIST, SECG, Brainpool, ANSSI, BLS, GOST, X9.62/X9.63 and more), each entry carrying its OID, form (Weierstrass/Edwards/Montgomery) and cross-referenced aliases.',
     pqc: 'ML-KEM, ML-DSA, SLH-DSA, XMSS and LMS are registered as first-class families alongside their classical counterparts — the registry does not treat PQC as an afterthought bolted onto a legacy list, which is exactly what a PQC-readiness review needs: one place to check whether a discovered mechanism is quantum-safe.',
     independence:
-      'The registry ships as its own versioned JSON + JSON Schema, decoupled from the CycloneDX specification release cycle and explicitly usable by tooling that has nothing to do with CBOM or CycloneDX — an SPDX-based scanner, a homegrown inventory format, or a compliance dashboard can all adopt the same names.',
+      "The registry ships as its own versioned JSON + JSON Schema, decoupled from the CycloneDX specification release cycle and explicitly usable by tooling that has nothing to do with CBOM or CycloneDX — an SPDX-based scanner, a homegrown inventory format, or a compliance dashboard can all adopt the same names. This hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide itself changed.",
   },
 }

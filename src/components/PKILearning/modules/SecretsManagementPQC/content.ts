@@ -79,7 +79,7 @@ export const content: ModuleContent = {
     keyConcepts:
       'Secret types vs encryption keys: what PQC protects. Harvest-now-decrypt-later (HNDL) risk for long-lived credentials. HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65). Dynamic secrets and TTL-based rotation with PQC. AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines. Kubernetes secrets encryption-at-rest with ML-KEM (via KMS plugin). External Secrets Operator and SPIFFE/SPIRE integration. CI/CD OIDC + ML-DSA short-lived certificate patterns.',
     relatedStandards:
-      'NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — ML-KEM). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). HashiCorp Vault Transit Secrets Engine documentation. HashiCorp Vault Database Secrets Engine documentation. CIS Kubernetes Benchmark v1.9 (etcd encryption-at-rest, section 1.2.33).',
+      "NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — ML-KEM). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). BIP-32/BIP-39 (HD wallet key derivation, cited for secret-derivation parallels — this hub's BIP-39 citation is deprecated pending re-capture of the source page, not because the standard changed). HashiCorp Vault Transit Secrets Engine documentation. HashiCorp Vault Database Secrets Engine documentation. CIS Kubernetes Benchmark v1.9 (etcd encryption-at-rest, section 1.2.33).",
   },
 }
 
