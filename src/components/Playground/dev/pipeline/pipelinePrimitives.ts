@@ -124,21 +124,34 @@ export interface PrimSpec {
   maxSignatures?: number
 }
 
-const signOps = (mech: number): Partial<Record<Op, OpSpec>> => ({
-  generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
-  // ACVP known-answer tests: `keyMaterial` is a fixed vector's own raw
-  // private-key hex, not a display label — reuses the 'label' ParamKind
-  // (free-text, always literal-bound) since neither carries UI-binding
-  // compatibility semantics here; the codegen (emitOp's 'import' case)
-  // is what actually treats the value as hex, not the type layer.
-  import: { requires: { keyMaterial: 'label' }, produces: 'keypair' },
-  sign: { requires: { privKey: 'privKey', input: 'bytes' }, produces: 'signature', mech },
-  verify: {
-    requires: { pubKey: 'pubKey', input: 'bytes', signature: 'signature' },
-    produces: 'bool',
-    mech,
-  },
-})
+/**
+ * `import` is opt-in, not automatic: emitOp's 'import' case (pipelineCodegen.ts)
+ * only actually supports ml-kem/ml-dsa keygen kinds — offering it on every
+ * signOps() primitive regardless meant SLH-DSA/HSS-LMS/RSA/ECDSA/Ed25519
+ * tiles all showed a working-looking "import" op that always crashed at
+ * runtime. Only pass `{ import: true }` for a primitive emitOp's guard
+ * actually backs.
+ */
+const signOps = (mech: number, opts: { import?: boolean } = {}): Partial<Record<Op, OpSpec>> => {
+  const ops: Partial<Record<Op, OpSpec>> = {
+    generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
+    sign: { requires: { privKey: 'privKey', input: 'bytes' }, produces: 'signature', mech },
+    verify: {
+      requires: { pubKey: 'pubKey', input: 'bytes', signature: 'signature' },
+      produces: 'bool',
+      mech,
+    },
+  }
+  if (opts.import) {
+    // ACVP known-answer tests: `keyMaterial` is a fixed vector's own raw
+    // private-key hex, not a display label — reuses the 'label' ParamKind
+    // (free-text, always literal-bound) since neither carries UI-binding
+    // compatibility semantics here; the codegen (emitOp's 'import' case)
+    // is what actually treats the value as hex, not the type layer.
+    ops.import = { requires: { keyMaterial: 'label' }, produces: 'keypair' }
+  }
+  return ops
+}
 
 const kemOps = (): Partial<Record<Op, OpSpec>> => ({
   generate: { requires: { keyLabel: 'label' }, produces: 'keypair' },
@@ -156,17 +169,17 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
   'ml-dsa-44': {
     label: 'ML-DSA-44',
     keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_44, paramSetName: 'CKP_ML_DSA_44' },
-    ops: signOps(CKM_ML_DSA),
+    ops: signOps(CKM_ML_DSA, { import: true }),
   },
   'ml-dsa-65': {
     label: 'ML-DSA-65',
     keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_65, paramSetName: 'CKP_ML_DSA_65' },
-    ops: signOps(CKM_ML_DSA),
+    ops: signOps(CKM_ML_DSA, { import: true }),
   },
   'ml-dsa-87': {
     label: 'ML-DSA-87',
     keygen: { kind: 'ml-dsa', paramSet: CKP_ML_DSA_87, paramSetName: 'CKP_ML_DSA_87' },
-    ops: signOps(CKM_ML_DSA),
+    ops: signOps(CKM_ML_DSA, { import: true }),
   },
 
   // ── ML-KEM: real C_EncapsulateKey / C_DecapsulateKey via the v3.2 interface ───

@@ -37,3 +37,21 @@ describe('pipelineCatalogMeta driftguard', () => {
     }
   })
 })
+
+// Same class of check, one level deeper: not "does every primitive have a
+// palette entry" but "does every op a primitive DECLARES actually have real
+// codegen support" — pipelineCodegen.ts's emitOp 'import' case guards to
+// ml-kem/ml-dsa keygen kinds only; a primitive offering import without one
+// of those would show a working-looking tile that always crashes at
+// runtime (the exact bug this test pins, found via the 2026-08-30 palette
+// audit — RSA/ECDSA/Ed25519/SLH-DSA/HSS-LMS all had this before signOps()'s
+// import became opt-in).
+describe('PRIMITIVES op/keygen consistency', () => {
+  it('every primitive offering import has keygen support emitOp actually implements', () => {
+    const badImports = Object.entries(PRIMITIVES)
+      .filter(([, spec]) => spec.ops.import)
+      .filter(([, spec]) => spec.keygen?.kind !== 'ml-kem' && spec.keygen?.kind !== 'ml-dsa')
+      .map(([id]) => id)
+    expect(badImports).toEqual([])
+  })
+})
