@@ -42,6 +42,7 @@ export const _C_GenerateKey: (a: number, b: number, c: number, d: number, e: num
 export const _C_GenerateKeyPair: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
 export const _C_GenerateRandom: (a: number, b: number, c: number) => number;
 export const _C_GetAttributeValue: (a: number, b: number, c: number, d: number) => number;
+export const _C_GetFunctionList: (a: number) => number;
 export const _C_GetInfo: (a: number) => number;
 export const _C_GetInterface: (a: number, b: number, c: number, d: number) => number;
 export const _C_GetInterfaceList: (a: number, b: number) => number;
@@ -111,9 +112,9 @@ export const _C_AsyncGetID: (a: number, b: number, c: number) => number;
 export const _C_GetOperationState: (a: number, b: number, c: number) => number;
 export const _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number;
 export const wasm_start: () => void;
+export const _C_GetMechanismList: (a: number, b: number, c: number) => number;
 export const _free: (a: number, b: number) => void;
 export const _malloc: (a: number) => number;
-export const _C_GetMechanismList: (a: number, b: number, c: number) => number;
 export const __wbindgen_exn_store: (a: number) => void;
 export const __externref_table_alloc: () => number;
 export const __wbindgen_externrefs: WebAssembly.Table;

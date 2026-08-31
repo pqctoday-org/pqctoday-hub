@@ -92,12 +92,13 @@ rules:
 
   # ── AES must use an authenticated mode (belt-and-braces with the CKM denylist) ──
   # CCM removed 2026-08-28 (audit finding B8) — not implemented by
-  # `ops/helpers.rs::aes_mechanism_for` (only CBC/CBC_PAD/ECB/CTR/GCM); a
-  # request asking for it fails downstream with an unrelated-looking
-  # "unsupported cryptographic parameters" engine error instead of a clean
-  # policy denial, so advertising it here as an allowed choice was fiction.
+  # `ops/helpers.rs::aes_mechanism_for` at the time. Restored 2026-08-30
+  # (KMIP/CACP coverage gap-analysis item 2.2) — CCM is now genuinely
+  # dispatched (`aes_mechanism_for`, wired to the engine's real
+  # `CKM_AES_CCM` support), so it belongs in this allowlist on the same
+  # footing as GCM: both are authenticated (AEAD) modes.
   - type: mechanism_parameter_constraint
     ops: [Encrypt, Decrypt]
     algorithm: AES
-    allowed_block_cipher_modes: [GCM]
-    reason: "AES must use an authenticated mode (GCM — CCM is not implemented by this engine)"
+    allowed_block_cipher_modes: [GCM, CCM]
+    reason: "AES must use an authenticated mode (GCM or CCM)"

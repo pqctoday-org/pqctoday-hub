@@ -590,6 +590,19 @@ export function _C_GetAttributeValue(h_session, h_object, p_template, count) {
 }
 
 /**
+ * PKCS#11 v3.2 §5.4.4. "It's OK to call C_GetFunctionList before calling
+ * C_Initialize" — no `require_init!()` guard, matching that requirement
+ * (also matches C_GetInterfaceList/C_GetInterface just below, and the
+ * C++ engine's own C_GetFunctionList).
+ * @param {number} pp_function_list
+ * @returns {number}
+ */
+export function _C_GetFunctionList(pp_function_list) {
+    const ret = wasm._C_GetFunctionList(pp_function_list);
+    return ret >>> 0;
+}
+
+/**
  * §5.21 (legacy) — always CKR_FUNCTION_NOT_PARALLEL per spec.
  * @param {number} _h_session
  * @returns {number}
