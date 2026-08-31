@@ -134,7 +134,8 @@ const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export const PkcsPipelineBuilder: React.FC = () => {
   const hsmCtx = useHsmContext()
-  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog } = hsmCtx
+  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog, hsmKeys } =
+    hsmCtx
 
   // A session on the Developer slot, kept open for the UI's own use —
   // querying a key's real attributes when the Key inspector is clicked,
@@ -178,6 +179,12 @@ export const PkcsPipelineBuilder: React.FC = () => {
   // key registration, above). Collapsed by default so the palette/canvas
   // layout isn't disrupted for someone not looking for it.
   const [showActivity, setShowActivity] = useState(false)
+  // Inspector-style tab bar — same pattern as the KMIP Developer tab's own
+  // Session activity section (and the manual workbench's Keystore/Wire/
+  // Audit tabs): one thing shown full-width per tab instead of both panels
+  // stacked, so the (already dense) log doesn't push the key table below
+  // the fold.
+  const [activityTab, setActivityTab] = useState<'log' | 'keys'>('log')
 
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() =>
@@ -700,15 +707,44 @@ export const PkcsPipelineBuilder: React.FC = () => {
           )}
         </Button>
         {showActivity && (
-          // The Tabs root is a fixed h-[70vh] with overflow-hidden (so the
-          // Builder/Code panes below can scroll internally without the
-          // whole card growing) — real bug found live: without its own
-          // bound here, a populated log + key table silently clipped past
-          // the container edge with no scrollbar, not just "below the
-          // fold." Capped and independently scrollable instead.
-          <div className="px-4 pb-3 flex flex-col gap-3 max-h-64 overflow-y-auto">
-            <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
-            <HsmKeyTable />
+          <div className="border-t">
+            {/* Inspector-style tab bar — same pattern as the KMIP Developer
+                tab's Session activity section. */}
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
+              {(
+                [
+                  { id: 'log', label: `Log (${hsmLog.length})` },
+                  { id: 'keys', label: `Keys (${hsmKeys.length})` },
+                ] as const
+              ).map((t) => (
+                <Button
+                  key={t.id}
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={activityTab === t.id}
+                  onClick={() => setActivityTab(t.id)}
+                  className={`h-7 rounded-md px-2.5 text-[11px] ${
+                    activityTab === t.id
+                      ? 'bg-card text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t.label}
+                </Button>
+              ))}
+            </div>
+            {/* The Tabs root is a fixed h-[70vh] with overflow-hidden (so the
+                Builder/Code panes below can scroll internally without the
+                whole card growing) — real bug found live: without its own
+                bound here, a populated log or key table silently clipped
+                past the container edge with no scrollbar, not just "below
+                the fold." Capped and independently scrollable instead. */}
+            <div className="px-4 py-3 max-h-64 overflow-y-auto">
+              {activityTab === 'log' && (
+                <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
+              )}
+              {activityTab === 'keys' && <HsmKeyTable />}
+            </div>
           </div>
         )}
       </div>

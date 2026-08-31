@@ -474,8 +474,10 @@ test("the real cross-plane audit trail shows this tab's own run activity", async
   // the manual workbench, so every runOp/dryRun/loadPolicy call this tab's
   // script makes was already landing in engine.auditSnapshot() — the only
   // thing missing was rendering it here. Proves both the CACP (Plane 1)
-  // and KMIP (Plane 2) columns show real content from THIS tab's run, not
-  // just that the panel chrome renders.
+  // and KMIP (Plane 2) tabs show real content from THIS tab's run, not
+  // just that the panel chrome renders. Session activity is a proper
+  // Inspector-style tab bar (Keystore/CACP/KMIP/PKCS#11) — each plane's
+  // events only render once its own tab is selected.
   await page.goto('/playground/cacp?plane=developer')
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
@@ -485,12 +487,12 @@ test("the real cross-plane audit trail shows this tab's own run activity", async
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
   await page.getByText('Session activity').click()
-  // One label per transaction row (this template has several), so .first().
-  await expect(page.getByText('Plane 1 · Agility').first()).toBeVisible()
-  await expect(page.getByText('Plane 2 · KMIP').first()).toBeVisible()
-  // A real policy decision (Plane 1) and a real KMIP request marker
-  // (Plane 2) — not just the swimlane headers.
+  await page.getByRole('button', { name: /Plane 1/ }).click()
+  // A real policy decision, not just the tab label.
   await expect(page.getByText(/policy activated|decision:/).first()).toBeVisible()
+
+  await page.getByRole('button', { name: /Plane 2/ }).click()
+  // A real KMIP request marker, not just the tab label.
   await expect(page.getByText(/▸ CreateKeyPair|▸ Activate|▸ Sign/).first()).toBeVisible()
 })
 
@@ -512,7 +514,8 @@ test("the keystore shows this run's real objects with real lifecycle states", as
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
   await page.getByText('Session activity').click()
-  await expect(page.getByText(/Keystore.*\d+ object/)).toBeVisible()
+  // Keystore is the default active tab — its count shows right on the tab.
+  await expect(page.getByRole('button', { name: /Keystore \(\d+\)/ })).toBeVisible()
   await expect(page.getByText('ML-DSA-65').first()).toBeVisible()
   await expect(page.getByText('Destroyed').first()).toBeVisible()
 })

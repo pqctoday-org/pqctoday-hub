@@ -41,8 +41,11 @@ function cpOverrideLine(v: unknown): string {
 
 /** One friendly line for an audit event, by type. In Guided mode (`detailed`
  * false) the PKCS#11 line drops the raw mechanism + CK_RV + latency, keeping
- * just the human-readable function name. */
-function describe(ev: Record<string, unknown>, detailed: boolean): string {
+ * just the human-readable function name. Exported so a single-plane flat
+ * list (the Developer tab's per-plane tabs) can reuse the exact same
+ * per-type formatting this file's own swimlane view uses, rather than a
+ * second copy of it. */
+export function describe(ev: Record<string, unknown>, detailed: boolean): string {
   switch (ev.type) {
     case 'KmipRequestReceived':
       return `▸ ${str(ev.op)}${str(ev.request_summary) ? `  ·  ${str(ev.request_summary)}` : ''}`
