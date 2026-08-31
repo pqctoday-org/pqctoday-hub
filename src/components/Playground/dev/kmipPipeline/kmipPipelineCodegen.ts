@@ -71,7 +71,53 @@ export interface KmipDryRunStep {
   output?: KmipStepResult | null
 }
 
-export type KmipStep = KmipOpStep | KmipLoadPolicyStep | KmipExpectDenyStep | KmipDryRunStep
+/** Real KMIP Register (Operation 0x00000003, KMIP 3.0 §6.1.50) with real
+ *  raw key material (Key Format Type "Raw", 0x00000001) — how an ACVP
+ *  known-answer test's own fixed key gets INTO the engine, since every
+ *  other op step generates a fresh random key. The engine's real
+ *  register_ml_dsa_private_key/register_ml_kem_private_key/etc. (already
+ *  shipped, not new for this) do the actual import. */
+export interface KmipRegisterStep {
+  kind: 'register'
+  id: string
+  objectType: 'PrivateKey' | 'PublicKey'
+  /** Real KMIP CryptographicAlgorithm wire name (underscore convention,
+   *  same as KmipPrimSpec.algorithm). */
+  algorithm: string
+  /** Raw key material, hex-encoded — verbatim from the ACVP vector. */
+  keyMaterialHex: string
+  status?: KmipStepStatus
+  output?: KmipStepResult | null
+}
+
+/** Byte-exact known-answer check against a real NIST ACVP vector's own
+ *  expected output — the actual point of importing a fixed key via
+ *  `register` instead of generating a fresh random one. Raises with a
+ *  real diff on mismatch; never silently reports success. */
+export interface KmipAssertEqualsStep {
+  kind: 'assert-equals'
+  id: string
+  /** The earlier step whose result field is being checked. */
+  targetStepId: string
+  /** Real KMIP response Attribute/field name, e.g. 'Data' (shared secret
+   *  hex) or 'SignatureData'. */
+  field: string
+  /** Expected value, hex-encoded — verbatim from the ACVP vector. */
+  expectedHex: string
+  /** What this proves, for the printed output — e.g. "shared secret
+   *  matches NIST ACVP ML-KEM-768 tcId=26". */
+  label: string
+  status?: KmipStepStatus
+  output?: KmipStepResult | null
+}
+
+export type KmipStep =
+  | KmipOpStep
+  | KmipLoadPolicyStep
+  | KmipExpectDenyStep
+  | KmipDryRunStep
+  | KmipRegisterStep
+  | KmipAssertEqualsStep
 
 export const DEFAULT_KMIP_MESSAGE = 'pqctoday KMIP Developer tab payload'
 
@@ -222,6 +268,17 @@ function emitOpStep(
       lines.push(`print(f'  secret={${uidVar(step.id)}}')`)
       break
     }
+    case 'get': {
+      // Decapsulate/Encapsulate only return the derived secret's real KMIP
+      // uid (KMIP 3.0 §6.1.15/§6.1.22) — a separate Get (§6.1.25) is the
+      // real way to read its actual bytes back (KeyMaterial), same as any
+      // other managed object.
+      const uid = renderRef(step.params.uid)
+      lines.push(`${rv} = c.submit('Get', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
+      lines.push(...raiseUnless('Get'))
+      lines.push(`print(f'  key material {len(${rv}.get("KeyMaterial") or "") // 2} bytes')`)
+      break
+    }
     case 'getAttributes': {
       const uid = renderRef(step.params.uid)
       lines.push(
@@ -319,6 +376,37 @@ function emitStepBody(
     lines.push(
       `    if not _denied: raise RuntimeError('governance hole: operation was allowed when it should have been denied')`
     )
+  } else if (step.kind === 'register') {
+    const rv = resultVar(step.id)
+    const bits = step.keyMaterialHex.length * 4
+    // Stored into priv_<id>/pub_<id> — the SAME variables generate/
+    // createKeyPair steps use — so a later op step can bind to this
+    // registered key exactly like it would a freshly generated one, via
+    // the existing 'ref' KmipParamValue mechanism unchanged.
+    const uidVarName = step.objectType === 'PrivateKey' ? privVar(step.id) : pubVar(step.id)
+    lines.push(
+      `    ${rv} = c.submit('Register',`,
+      `        leaf('ObjectType', 'Enumeration', ${pyStr(step.objectType)}),`,
+      `        struct('Attributes',`,
+      `            leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(step.algorithm)})),`,
+      `        struct(${pyStr(step.objectType)},`,
+      `            struct('KeyBlock',`,
+      `                leaf('KeyFormatType', 'Enumeration', 'Raw'),`,
+      `                struct('KeyValue', leaf('KeyMaterial', 'ByteString', ${pyStr(step.keyMaterialHex)})),`,
+      `                leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(step.algorithm)}),`,
+      `                leaf('CryptographicLength', 'Integer', ${bits}))))`
+    )
+    lines.push(`    if not ${rv}.ok: raise RuntimeError(${rv}.message or 'Register failed')`)
+    lines.push(`    ${uidVarName} = ${rv}.get('UniqueIdentifier')`)
+    lines.push(`    print(f'  registered {${uidVarName}} ({${bits}}-bit ${step.objectType})')`)
+  } else if (step.kind === 'assert-equals') {
+    const targetRv = resultVar(step.targetStepId)
+    lines.push(`    _actual = (${targetRv}.get(${pyStr(step.field)}) or '').lower()`)
+    lines.push(`    _expected = ${pyStr(step.expectedHex.toLowerCase())}`)
+    lines.push(
+      `    if _actual != _expected: raise RuntimeError(f'ACVP KAT MISMATCH — expected {_expected[:32]}..., got {_actual[:32]}...')`
+    )
+    lines.push(`    print(${pyStr(`  ACVP KAT MATCH: ${step.label}`)})`)
   }
   lines.push(`    print('###STEP ${step.id} ok###')`)
   lines.push('except Exception as _e:')
@@ -374,6 +462,8 @@ function describeStep(step: KmipStep): string {
     return `${KMIP_PRIMITIVES[step.primId]?.label ?? step.primId} · ${step.op}`
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run') return `Dry-run: ${step.op}`
+  if (step.kind === 'register') return `Register: ${step.objectType} (${step.algorithm})`
+  if (step.kind === 'assert-equals') return `Assert: ${step.label}`
   return `Expect deny: ${step.targetStepId}`
 }
 

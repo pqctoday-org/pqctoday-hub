@@ -130,6 +130,8 @@ function stepLabel(step: KmipStep): string {
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run')
     return `Dry-run: ${step.op}${step.algorithm ? ` (${step.algorithm})` : ''}`
+  if (step.kind === 'register') return `Register: ${step.objectType} (${step.algorithm})`
+  if (step.kind === 'assert-equals') return `Assert: ${step.label}`
   return `Expect deny: ${step.targetStepId}`
 }
 
