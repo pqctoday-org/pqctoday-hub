@@ -5,7 +5,7 @@
  * emitter writes. The previous builder split output on a bare separator and assigned
  * chunks by list position, which is only correct while every step prints exactly once.
  */
-import type { PipelineStep, StepStatus } from './pipelineCodegen'
+import type { PipelineStep, StepDetail, StepStatus } from './pipelineCodegen'
 
 /**
  * D5/WS-I: the exported .py file's only honest link to the dev sandbox is
@@ -32,13 +32,17 @@ export function pipelineProvenanceHeader(lane: string): string {
 export interface RunOutcome {
   status: Record<string, StepStatus>
   text: Record<string, string>
+  /** Real output/error data for an opt-in Inspect view. Absent entry means
+   *  the step emitted no detail### line (e.g. a non-submit step like
+   *  load-policy/dry-run) — not an error. */
+  detail: Record<string, StepDetail>
   /** Set when the run failed as a whole (non-zero exit, or the backend was unreachable). */
   error: string | null
   elapsedMs: number | null
   hsmCalls: number | null
 }
 
-const MARKER = /###STEP (\S+) (ok|error)###\s*(.*)/
+const MARKER = /###STEP (\S+) (ok|error|detail)###\s*(.*)/
 
 /**
  * `steps` is typed structurally ({id: string}[], not the concrete
@@ -54,6 +58,7 @@ export function parseRun(
 ): RunOutcome {
   const status: Record<string, StepStatus> = {}
   const text: Record<string, string> = {}
+  const detail: Record<string, StepDetail> = {}
   for (const s of steps) status[s.id] = 'skipped'
 
   let buffer: string[] = []
@@ -65,12 +70,23 @@ export function parseRun(
       buffer.push(line)
       continue
     }
-    const [, id, verdict, detail] = m
+    const [, id, verdict, rest] = m
+    if (verdict === 'detail') {
+      // Additive-only: a step that never emits this line (older cached
+      // script, or a step kind with nothing to capture) must parse exactly
+      // as before — never touch buffer/status/text here.
+      try {
+        detail[id] = JSON.parse(rest) as StepDetail
+      } catch {
+        /* malformed detail payload must never break the run */
+      }
+      continue
+    }
     status[id] = verdict === 'ok' ? 'ok' : 'error'
     text[id] = buffer.join('\n').trim()
     if (verdict === 'error') {
-      sawError = detail || 'step failed'
-      text[id] = [text[id], detail].filter(Boolean).join('\n').trim()
+      sawError = rest || 'step failed'
+      text[id] = [text[id], rest].filter(Boolean).join('\n').trim()
     }
     buffer = []
   }
@@ -89,6 +105,7 @@ export function parseRun(
   return {
     status,
     text,
+    detail,
     error: returncode === 0 ? null : (sawError ?? `exited with code ${returncode}`),
     elapsedMs: null,
     hsmCalls: null,

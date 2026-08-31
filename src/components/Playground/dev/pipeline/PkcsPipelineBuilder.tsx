@@ -436,6 +436,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
               ? {
                   text: outcome.text[s.id],
                   status: outcome.status[s.id] === 'error' ? 'error' : 'ok',
+                  detail: outcome.detail[s.id],
                 }
               : null,
           }))

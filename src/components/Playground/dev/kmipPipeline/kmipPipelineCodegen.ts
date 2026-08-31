@@ -20,6 +20,10 @@
  *   priv_<id> / pub_<id>   a CreateKeyPair step's two produced uids
  */
 import { KMIP_PRIMITIVES, type KmipOp, type KmipPrimSpec } from './kmipPipelinePrimitives'
+// StepDetail: the ###STEP <id> detail### payload shape is part of the SAME
+// shared marker contract as parseRun (see module header) — reused as-is,
+// not redefined, so a value parseRun hands back is directly assignable here.
+import type { StepDetail } from '../pipeline/pipelineCodegen'
 
 export type KmipParamValue =
   | { bind: 'literal'; value: string }
@@ -30,6 +34,7 @@ export type KmipStepStatus = 'idle' | 'running' | 'ok' | 'error' | 'skipped'
 export interface KmipStepResult {
   text: string
   status: 'ok' | 'error'
+  detail?: StepDetail
 }
 
 export interface KmipOpStep {

@@ -38,9 +38,26 @@ export type ParamValue =
 
 export type StepStatus = 'idle' | 'running' | 'ok' | 'error' | 'skipped'
 
+/** A single named byte payload Inspect can render (e.g. a signature or a
+ *  shared secret) — always real bytes the step's own summary print already
+ *  extracted, never a fresh read of a key handle's own value. */
+export interface StepDetailField {
+  name: string
+  hex: string
+  bytesLen: number
+}
+
+/** Emitted alongside (never instead of) the existing ok/error summary line —
+ *  carries the data an opt-in "Inspect" view renders. `tree` is the KMIP
+ *  lane's decoded namedResponseTree; the PKCS#11 lane never sets it. */
+export type StepDetail =
+  | { kind: 'output'; fields: StepDetailField[]; tree?: unknown }
+  | { kind: 'error'; excType: string; message: string; traceback: string; tree?: unknown }
+
 export interface StepResult {
   text: string
   status: 'ok' | 'error'
+  detail?: StepDetail
 }
 
 export interface PipelineStep {

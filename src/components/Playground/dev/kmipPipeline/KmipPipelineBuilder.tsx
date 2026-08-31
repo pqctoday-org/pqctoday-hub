@@ -55,6 +55,7 @@ import {
   type KmipStep,
   type KmipStepStatus,
 } from './kmipPipelineCodegen'
+import type { StepDetail } from '../pipeline/pipelineCodegen'
 import {
   KMIP_TEMPLATES,
   KMIP_TEMPLATE_NAMES,
@@ -177,7 +178,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const [runError, setRunError] = useState<string | null>(null)
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
   const [stepState, setStepState] = useState<
-    Record<string, { status: KmipStepStatus; output: string | null }>
+    Record<string, { status: KmipStepStatus; output: string | null; detail?: StepDetail }>
   >({})
   const [detached, setDetached] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -440,6 +441,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               {
                 status: outcome.status[s.id] ?? 'skipped',
                 output: outcome.text[s.id] || null,
+                detail: outcome.detail[s.id],
               },
             ])
           )
@@ -1129,7 +1131,7 @@ interface KmipStepCardProps {
   step: KmipStep
   index: number
   steps: KmipStep[]
-  stepState?: { status: KmipStepStatus; output: string | null }
+  stepState?: { status: KmipStepStatus; output: string | null; detail?: StepDetail }
   findings: Finding[]
   onDelete: () => void
   onDragStart: React.DragEventHandler
