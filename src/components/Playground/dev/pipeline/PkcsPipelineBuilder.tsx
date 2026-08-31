@@ -88,6 +88,7 @@ const TIMEOUT_LABEL: Record<ReturnType<typeof getInterruptMode>, string> = {
 
 const OP_LABEL: Record<Op, string> = {
   generate: 'gen key',
+  import: 'import key',
   encrypt: 'encrypt',
   decrypt: 'decrypt',
   encapsulate: 'encap',
@@ -96,6 +97,7 @@ const OP_LABEL: Record<Op, string> = {
   digest: 'hash',
   sign: 'sign',
   verify: 'verify',
+  assert: 'assert',
 }
 
 const STATUS_STYLE: Record<StepStatus, { cls: string; label: string } | null> = {
@@ -571,6 +573,10 @@ export const PkcsPipelineBuilder: React.FC = () => {
     KEM: PALETTE_ENTRIES.filter((p) => p.family === 'KEM'),
     Symmetric: PALETTE_ENTRIES.filter((p) => p.family === 'Symmetric'),
     Hash: PALETTE_ENTRIES.filter((p) => p.family === 'Hash'),
+    // Not rendered — FAMILIES (below) only lists the 4 real crypto families,
+    // so 'Utility' entries (ACVP assert-equals) never appear in this manual
+    // "drag onto canvas" palette, only via the "Start from" templates.
+    Utility: PALETTE_ENTRIES.filter((p) => p.family === 'Utility'),
   }
   const inputBytes = new TextEncoder().encode(pipelineInput).length
   const lastStep = pipeline[pipeline.length - 1]

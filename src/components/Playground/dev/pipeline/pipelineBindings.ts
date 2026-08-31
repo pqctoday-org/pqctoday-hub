@@ -122,7 +122,12 @@ export function validate(steps: PipelineStep[]): Finding[] {
       if (!kind) continue
       const bound = st.params[name]
       if (kind === 'label') {
-        if (!bound || bound.bind !== 'literal' || !bound.value.trim()) {
+        // 'hex' also lands here — an ACVP template's fixed key/ciphertext
+        // material (see pipelinePrimitives.ts's 'import' op comment) is
+        // free-text from the same "no earlier step to bind to" family as
+        // a display label, just rendered as bytes.fromhex(...) instead of
+        // a quoted string.
+        if (!bound || (bound.bind !== 'literal' && bound.bind !== 'hex') || !bound.value.trim()) {
           findings.push({
             stepIndex: i,
             text: `Step ${i + 1} · ${spec.label}: "${name}" is empty`,
