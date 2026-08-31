@@ -38,9 +38,9 @@ export const SIGNING_TOOLS: SigningTool[] = [
     signingAlgorithm: 'ecdsa',
     signatureFormat: 'COSE Sign1 / JWS (ECDSA-P256 or RSA-PSS)',
     transparencyLog: false,
-    pqcReadiness: 'roadmap',
+    pqcReadiness: 'beta',
     pqcNotes:
-      'Notation ML-DSA support is planned via the AWS Crypto Tools plugin (roadmap, not yet released). Plugin system allows swapping signing backends without changing the CLI. Composite (ECDSA + ML-DSA) certificate signing will enable gradual migration.',
+      'Notation has ML-DSA-65 support available now via the AWS Crypto Tools plugin (beta). Plugin system allows swapping signing backends without changing the CLI. Composite (ECDSA + ML-DSA) certificate signing will enable gradual migration.',
     pqcAlgorithm: 'ml-dsa',
     estimatedPqcYear: '2026',
     strengths: [

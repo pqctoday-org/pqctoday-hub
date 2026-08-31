@@ -80,6 +80,81 @@ def _get_bridge():
     return kmip_bridge
 
 
+# ── Real KMIP 3.0 request grammar (dev-tabs Python-grammar-realignment plan,
+# Phase 1) — leaf()/struct() build a real KMIP request payload: real
+# Attribute names (KMIP 3.0 Sec.3/Sec.4, e.g. 'CryptographicAlgorithm') and
+# real Item Types (Sec.9.1.1 — 'Enumeration', 'Integer', 'TextString', ...),
+# the same shape pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/_ttlv.py's
+# own leaf()/struct() build requests with (that module is the real client's
+# own request-building layer, not invented here). `struct` names a KMIP
+# Structure (a field that groups other fields, e.g. Attributes,
+# CryptographicParameters); `leaf` names the opposite case — a single
+# named field with one value.
+def leaf(tag, ttlv_type, value):
+    """One request field: `tag` (a real KMIP Attribute/field name, e.g.
+    'CryptographicAlgorithm'), `ttlv_type` (one of the 11 KMIP 3.0 Sec.9.1.1
+    item types — 'Enumeration', 'Integer', 'TextString', 'ByteString',
+    'Boolean', ...), `value`."""
+    return {'tag': tag, 'type': ttlv_type, 'value': value}
+
+
+def struct(tag, *children):
+    """A KMIP Structure field: `tag` plus its nested leaf()/struct() fields —
+    e.g. struct('Attributes', leaf('CryptographicAlgorithm', ...), ...)."""
+    return {'tag': tag, 'type': 'Structure', 'children': list(children)}
+
+
+def find(node, tag):
+    """First descendant (breadth-first) of a response `.payload` tree whose
+    tag matches — mirrors the real client's own `_ttlv.find()`. Punctuation/
+    spacing-insensitive (same `_norm()` the rest of this shim already uses
+    for `.get(tag)`) because a decoded response's tag names come back in
+    their spec DISPLAY form ('Unique Identifier', with a space) — not the
+    no-space PascalCase leaf()/struct() calls use on the request side."""
+    if node is None:
+        return None
+    want = _norm(tag)
+    queue = [node]
+    while queue:
+        n = queue.pop(0)
+        if _norm(n.get('tag') or '') == want:
+            return n
+        queue.extend(n.get('children') or [])
+    return None
+
+
+def find_all(node, tag):
+    """Every descendant whose tag matches — mirrors `_ttlv.find_all()`.
+    Needed for a response that legitimately repeats a tag (e.g. Locate's
+    UniqueIdentifier, once per matching object) — `KmipResult.get()` only
+    ever surfaces the first one."""
+    if node is None:
+        return []
+    want = _norm(tag)
+    out = []
+    queue = [node]
+    while queue:
+        n = queue.pop(0)
+        if _norm(n.get('tag') or '') == want:
+            out.append(n)
+        queue.extend(n.get('children') or [])
+    return out
+
+
+def _flatten_response(node, out):
+    """Walk a decoded response tree into a flat {tag: value} dict, so
+    `KmipResult.get(tag)` works the same way for `submit()` as it already
+    does for every friendly op method below."""
+    if not node:
+        return out
+    tag = node.get('tag')
+    if tag is not None and 'value' in node and node.get('value') is not None:
+        out.setdefault(tag, node['value'])
+    for child in node.get('children') or []:
+        _flatten_response(child, out)
+    return out
+
+
 # Hub KmipEngine `summary` key -> real KMIP tag name, confirmed by reading
 # every runOp call site in src/components/Playground/kmip/*.tsx that reads
 # a summary field (KmipPlaygroundView.tsx, migration/MigrationKeyCard.tsx):
@@ -140,12 +215,20 @@ def _normalize_algorithm(name):
 class KmipResult:
     """Mirrors the real pqctoday_kmip.KmipResult dataclass's public surface."""
 
-    def __init__(self, operation, status, reason=None, message=None, fields=None):
+    def __init__(self, operation, status, reason=None, message=None, fields=None, tree=None):
         self.operation = operation
         self.status = status
         self.reason = reason
         self.message = message
-        self.payload = None  # no TTLV tree here — see module docstring
+        # `tree` is the response's real decoded fields, tag names already
+        # resolved — populated by submit() (the real-grammar path, which
+        # genuinely has one), still None for every friendly op method below
+        # (matching the module docstring's original note: this shim has no
+        # response tree from THOSE calls). find()/find_all() below walk
+        # this — needed for e.g. Locate, whose response repeats
+        # UniqueIdentifier once per match, which a flat {tag: value} dict
+        # (what `.get()` reads) can only ever hold one of.
+        self.payload = tree
         self.raw = None
         self._fields = fields or {}
 
@@ -260,6 +343,31 @@ class KmipClient:
         raise NotImplementedError(
             'serve_as_endpoint() needs a real listening socket — use the dev sandbox.'
         )
+
+    # ── real KMIP 3.0 grammar (Phase 1 — see leaf()/struct() above) ─────────
+    def submit(self, operation, *payload):
+        """Send `operation` (a real KMIP 3.0 Operation name, e.g.
+        'CreateKeyPair') with `payload` (leaf()/struct() nodes making up
+        the RequestPayload) as a real KMIP 3.0 request — the same
+        RequestHeader{ProtocolVersion} + BatchItem{Operation,
+        RequestPayload} envelope real_client.request() builds, encoded and
+        dispatched through the SAME decode -> policy -> engine -> encode
+        path a real KMIP/CACP server request
+        takes (not a shortcut through the friendly op vocabulary the other
+        methods on this class use). Not part of the real
+        pqctoday_kmip.KmipClient's public surface under this exact name —
+        the real client's equivalent is `request()`; this hub-only
+        addition exists so the Developer tab's generated script can show
+        real KMIP grammar without needing a matching change upstream
+        first (see the 2026-08-30 plan doc's Phase 1)."""
+        raw = self._bridge.submitOpJson(operation, json.dumps(list(payload)))
+        r = json.loads(raw)
+        status = RESULT_SUCCESS if r.get('ok') else RESULT_OP_FAILED
+        tree = r.get('namedResponseTree')
+        fields = _flatten_response(tree, {})
+        return KmipResult(operation=operation, status=status,
+                           reason=r.get('resultReason'), message=r.get('resultMessage'),
+                           fields=fields, tree=tree)
 
     # ── core dispatch ────────────────────────────────────────────────────────
     def _run(self, op_dict):

@@ -226,7 +226,13 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
 
         <HDWalletFlowDiagram />
 
-        <div className="mt-4 overflow-x-auto">
+        <div
+          className="mt-4 overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="HD wallet derivation paths by chain"
+        >
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="border-b border-border">

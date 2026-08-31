@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
-import { BreachCostModel } from '@/components/PKILearning/common/executive'
+import {
+  BreachCostModel,
+  type BreachScenarioInputs,
+} from '@/components/PKILearning/common/executive'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
@@ -45,12 +48,18 @@ interface BreachScenarioSimulatorProps {
 export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = ({ onOutput }) => {
   const data = useExecutiveModuleData()
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
-  // Restore the last-saved scenario's industry so the tool round-trips
-  // instead of resetting to the assessment default on every visit.
-  const savedInputs = useSavedArtifactInputs<{ selectedIndustry: string }>('breach-scenario')
+  // Restore the last-saved scenario so the tool round-trips instead of
+  // resetting to the assessment default on every visit. Previously only
+  // `selectedIndustry` was saved/restored — the model's other 7 sliders
+  // (severity, years-of-data, org size, HNDL factor, planning horizon,
+  // discount rate, migration duration, region) reset to defaults on every
+  // remount even though `industry` correctly persisted, live-verified.
+  type SavedBreachScenarioInputs = { selectedIndustry: string } & Partial<BreachScenarioInputs>
+  const savedInputs = useSavedArtifactInputs<SavedBreachScenarioInputs>('breach-scenario')
   const [selectedIndustry, setSelectedIndustry] = useState(
     savedInputs?.selectedIndustry ?? data.industry ?? 'Other'
   )
+  const [modelInputs, setModelInputs] = useState<BreachScenarioInputs | null>(null)
   const [breachCosts, setBreachCosts] = useState<{
     classicalCost: number
     quantumCost: number
@@ -187,7 +196,12 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
       </div>
 
       {/* Breach Cost Model */}
-      <BreachCostModel industry={selectedIndustry} onCostCalculated={setBreachCosts} />
+      <BreachCostModel
+        industry={selectedIndustry}
+        initialValues={savedInputs}
+        onCostCalculated={setBreachCosts}
+        onInputsChanged={setModelInputs}
+      />
 
       {/* Summary Panel */}
       {breachCosts && (
@@ -272,7 +286,7 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
               type: 'breach-scenario',
               title: `Breach Scenario — ${selectedIndustry} (${new Date().toLocaleDateString()})`,
               data: exportMarkdown,
-              inputs: { selectedIndustry },
+              inputs: { selectedIndustry, ...modelInputs },
               output: outputPayload ?? undefined,
               createdAt: Date.now(),
             })
@@ -297,10 +311,19 @@ export const BreachScenarioSimulator: React.FC<BreachScenarioSimulatorProps> = (
           <div className="mt-3 space-y-2 text-xs text-muted-foreground leading-relaxed">
             <p>
               <strong className="text-foreground/80">1. Cost of one breach today (SLE).</strong> The
-              industry-average total breach cost from IBM&apos;s Cost of a Data Breach report,
-              multiplied by your severity setting. IBM&apos;s figure already includes detection,
+              industry-average total breach cost from{' '}
+              <a
+                href="https://www.ibm.com/reports/data-breach"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                IBM&apos;s Cost of a Data Breach Report 2025
+              </a>
+              , multiplied by your severity setting. IBM&apos;s figure already includes detection,
               notification, lost business and reputational damage, so no separate reputational term
-              is added on top — that would double-count.
+              is added on top — that would double-count.{' '}
+              <span className="text-status-warning">{IBM_BASELINE_UNVERIFIED_NOTE}</span>
             </p>
             <p>
               <strong className="text-foreground/80">

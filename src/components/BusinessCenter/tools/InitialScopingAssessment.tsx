@@ -492,7 +492,10 @@ export const InitialScopingAssessment: React.FC = () => {
           Triage the top 20 by <strong>priority tier</strong> (A = internet-exposed + long-lived
           secrecy/trust; B = internal Tier-1; C = everything else) and <strong>owner</strong>. The
           detailed crypto per system belongs in the{' '}
-          <Link to="/business/tools/crypto-cbom-builder" className="text-primary hover:underline">
+          {/* `underline`, not `hover:underline`: this link sits inside a
+              paragraph, so colour alone is not a sufficient affordance
+              (axe link-in-text-block / WCAG 1.4.1). */}
+          <Link to="/business/tools/crypto-cbom-builder" className="text-primary underline">
             CBOM Builder
           </Link>{' '}
           — this stays a rapid triage.

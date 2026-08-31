@@ -127,7 +127,7 @@ export const AwsKmsPolicyLab: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-destructive">
+              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex gap-3 text-status-error">
                 <ShieldAlert size={28} className="shrink-0" />
                 <div className="w-full">
                   <h4 className="font-bold text-md mb-1">Policy is Vulnerable</h4>

@@ -46,7 +46,7 @@ const PQC_BADGE: Record<
   },
   none: {
     label: 'Vulnerable',
-    cls: 'bg-destructive/10 text-destructive border-destructive/30',
+    cls: 'bg-destructive/10 text-status-error border-destructive/30',
     icon: <ShieldOff size={12} />,
   },
 }

@@ -26,7 +26,13 @@ export const PQCThreatSummary: React.FC = () => {
 
       {/* Vulnerability Table */}
       <div className="glass-panel p-0 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+          tabIndex={0}
+          role="region"
+          aria-label="Blockchain quantum vulnerability by chain"
+        >
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/30">

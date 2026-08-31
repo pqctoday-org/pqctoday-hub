@@ -65,7 +65,7 @@ function renderPqcBadge(support: string) {
   } else if (lower.startsWith('planned') || lower.startsWith('in progress')) {
     badgeClass = 'bg-primary/10 text-primary border-primary/20'
   } else {
-    badgeClass = 'bg-destructive/10 text-destructive border-destructive/20'
+    badgeClass = 'bg-destructive/10 text-status-error border-destructive/20'
   }
   return (
     <span

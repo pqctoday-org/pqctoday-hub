@@ -186,3 +186,59 @@ export function ensureDevSlot(M: SoftHSMModule): number {
   cachedSlot = slot
   return slot
 }
+
+/**
+ * (Re-)authenticates a session on the Developer slot as USER. Login AND
+ * logout are per-TOKEN, not per-session (PKCS#11 v3.2 §5.6) — real bug
+ * found live 2026-08-30: the generated script's own `s.logout()`, the
+ * last line of every run, deauthenticates the WHOLE token, including this
+ * kept-open session's login state. Without re-logging in before a
+ * post-run scan, private objects (CKA_PRIVATE=true, the common case for
+ * private keys) become invisible to C_FindObjects — the scan doesn't
+ * error, it just silently sees fewer objects than exist. Both RVs that
+ * mean "already logged in" are tolerated (same as the Python shim's own
+ * `login()` tolerates for the identical reason on the script's side), so
+ * calling this unconditionally before every scan is always safe.
+ */
+export function reloginDevSlotSession(M: SoftHSMModule, hSession: number): void {
+  const userPinPtr = writeStr(M, DEV_SLOT_USER_PIN)
+  try {
+    const rv = M._C_Login(hSession, 1 /* CKU_USER */, userPinPtr, DEV_SLOT_USER_PIN.length) >>> 0
+    if (
+      rv !== 0 &&
+      rv !== 0x100 /* CKR_USER_ALREADY_LOGGED_IN */ &&
+      rv !== 0x104 /* CKR_USER_ANOTHER_ALREADY_LOGGED_IN */
+    ) {
+      checkRV(rv, 'C_Login(USER)')
+    }
+  } finally {
+    M._free(userPinPtr)
+  }
+}
+
+/**
+ * Opens a session against the Developer slot for the UI's own use —
+ * inspecting a key's real PKCS#11 attributes after a run, not the session
+ * the script itself runs under (that one opens and logs out inside the
+ * generated Python, same as `provisionUserPin`'s doc comment describes
+ * for the provisioning case). Meant to be opened once and kept open for
+ * as long as the tab needs it (generated keys are token=True — see
+ * pipelineCodegen.ts — specifically so this session can still find them
+ * after the script's own session has closed). Caller owns its lifecycle:
+ * close with `M._C_CloseSession(hSession)` on unmount, and must call
+ * `reloginDevSlotSession` again before EVERY use after this — see that
+ * function's own doc comment for why a kept-open session doesn't stay
+ * authenticated on its own.
+ */
+export function openDevSlotSession(M: SoftHSMModule, slot: number): number {
+  const sessPtr = M._malloc(4)
+  let hSession: number
+  try {
+    checkRV(M._C_OpenSession(slot, 0x0002 | 0x0004, 0, 0, sessPtr), 'C_OpenSession')
+    hSession = M.getValue(sessPtr, 'i32') >>> 0
+  } finally {
+    M._free(sessPtr)
+  }
+  reloginDevSlotSession(M, hSession)
+  return hSession
+}

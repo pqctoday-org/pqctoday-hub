@@ -11,7 +11,7 @@ import fs from 'fs'
 import { datedCsvCompare } from '../lib/latestDatedCsv'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
-import { loadCSV, splitSemicolon, getDataDir, ROOT } from './data-loader.js'
+import { loadCSV, splitSemicolon, getDataDir, ROOT, isKnownAlgorithmName } from './data-loader.js'
 
 const qaDir = () => path.join(getDataDir(), 'module-qa')
 
@@ -175,7 +175,7 @@ function isValidRoute(p: string): boolean {
   })
 }
 
-interface QARow {
+export interface QARow {
   question_id: string
   module_id: string
   module_title: string
@@ -201,7 +201,7 @@ interface QARow {
 
 // ── Find latest combined QA CSV ─────────────────────────────────────────────
 
-function findLatestQACSV(): { path: string; file: string } | null {
+export function findLatestQACSV(): { path: string; file: string } | null {
   if (!fs.existsSync(qaDir())) return null
 
   const files = fs
@@ -214,7 +214,7 @@ function findLatestQACSV(): { path: string; file: string } | null {
   return { path: path.join(qaDir(), files[0]), file: files[0] }
 }
 
-function loadQACSV(csvPath: string): QARow[] {
+export function loadQACSV(csvPath: string): QARow[] {
   const content = fs.readFileSync(csvPath, 'utf-8')
   const lines = content.split('\n')
   if (lines.length < 2) return []
@@ -403,7 +403,13 @@ export function runQAConsistencyChecks(): CheckResult[] {
     const f: Finding[] = []
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.algorithm_refs)) {
-        if (!algorithmNames.has(ref))
+        // Was an exact-match-only lookup (plus algorithm_family, which never
+        // carries a bare family name like "SLH-DSA" or "ML-DSA" either) —
+        // false-flagged every family-name citation, since the CSV only ever
+        // carries specific parameter-set rows ("SLH-DSA-SHA2-128s"). N10 in
+        // cross-ref-checks.ts already solved this (allowlist + prefix-match);
+        // shared here via isKnownAlgorithmName (found 2026-08-29, Track C).
+        if (!isKnownAlgorithmName(ref, algorithmNames))
           f.push(
             finding(
               qaFile.file,

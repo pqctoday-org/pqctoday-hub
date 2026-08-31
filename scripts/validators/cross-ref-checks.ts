@@ -16,6 +16,7 @@ import {
   loadGlossary,
   splitSemicolon,
   splitComma,
+  isKnownAlgorithmName,
 } from './data-loader.js'
 import { QUIZ_CATEGORIES as APP_QUIZ_CATEGORIES } from '../../src/components/PKILearning/modules/Quiz/types.js'
 
@@ -697,6 +698,12 @@ export function runCrossRefChecks(): CheckResult[] {
   {
     const f: Finding[] = []
     certXref.rows.forEach((row, i) => {
+      // Skip deprecated rows — a cert this file's own regeneration already
+      // dropped from the compliance-data.json scrape (and marked deprecated
+      // for exactly that reason) isn't a dangling reference, it's a retired
+      // one. Found live 2026-08-29: a row deprecated the same day
+      // (deprecated_reason "not in regen") still flagged here.
+      if ((row.status || '').toLowerCase() === 'deprecated') return
       if (row.cert_id && !complianceJsonIds.has(row.cert_id))
         f.push(
           finding(
@@ -1332,19 +1339,6 @@ export function runCrossRefChecks(): CheckResult[] {
 
   // N10: algorithm_transitions.PQC_Replacement → algorithms.Algorithm names
   {
-    // Classical algorithms that are quantum-safe (large key sizes) — exempt from algorithms CSV lookup
-    const classicalQuantumSafeAllowlist = new Set([
-      'AES-256',
-      'AES-128',
-      'SHA3-256',
-      'SHA3-512',
-      'SHA-256',
-      'SHA-384',
-      'SHA-512',
-      'HMAC-SHA256',
-      'HMAC-SHA384',
-      'HMAC-SHA512',
-    ])
     const f: Finding[] = []
     transitions.rows.forEach((row, i) => {
       // Header renamed to snake_case in the 06252026 snapshot; keep the old
@@ -1353,21 +1347,16 @@ export function runCrossRefChecks(): CheckResult[] {
       if (!replacement) return
       // Extract base algorithm name: "ML-KEM-512 (NIST Level 1)" → "ML-KEM-512"
       const baseName = replacement.split('(')[0].trim()
-      if (baseName && !algorithmNames.has(baseName)) {
-        // Skip known classical quantum-safe algorithms
-        if (classicalQuantumSafeAllowlist.has(baseName)) return
-        // Also check prefix match: baseName may be a family prefix like "SLH-DSA" matching "SLH-DSA-SHA2-128s"
-        const familyMatch = [...algorithmNames].some((name) => name.startsWith(baseName))
-        if (!familyMatch)
-          f.push(
-            finding(
-              transitions.file,
-              i + 2,
-              'PQC Replacement',
-              baseName,
-              `Transition PQC replacement "${baseName}" not found in algorithms CSV`
-            )
+      if (baseName && !isKnownAlgorithmName(baseName, algorithmNames)) {
+        f.push(
+          finding(
+            transitions.file,
+            i + 2,
+            'PQC Replacement',
+            baseName,
+            `Transition PQC replacement "${baseName}" not found in algorithms CSV`
           )
+        )
       }
     })
     results.push(

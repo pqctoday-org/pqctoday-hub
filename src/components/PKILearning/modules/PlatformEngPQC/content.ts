@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'platform-eng-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -67,7 +67,7 @@ export const content: ModuleContent = {
     keyConcepts:
       '### Algorithm Sizes (container signing and TLS). ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (67×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). ### IaC Quantum-Vulnerable Defaults.',
     workshopSummary:
-      '### Step 1: Pipeline Crypto Inventory. 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh. 17 crypto assets across stages with HNDL exposure ratings and PQC replacements.',
+      '### Step 1: Pipeline Crypto Inventory. 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh. 16 crypto assets across stages with HNDL exposure ratings and PQC replacements.',
   },
 }
 

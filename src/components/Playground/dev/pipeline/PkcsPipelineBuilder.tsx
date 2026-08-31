@@ -19,12 +19,26 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
+import {
+  Play,
+  Loader2,
+  Download,
+  Save,
+  Upload,
+  Trash2,
+  X,
+  Pencil,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
-import { ensureDevSlot, DEV_SLOT_LABEL } from './devSlot'
+import { ensureDevSlot, openDevSlotSession, reloginDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
+import { Pkcs11LogPanel } from '../../../shared/Pkcs11LogPanel'
+import { HsmKeyTable } from '../../keystore/HsmKeyTable'
+import { discoverHsmObjectsOnSession } from '../../keystore/discoverHsmObjects'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from '../monacoSelfHost'
 import { PRIMITIVES, opsFor, defaultOpFor, type Op } from './pipelinePrimitives'
@@ -74,6 +88,7 @@ const TIMEOUT_LABEL: Record<ReturnType<typeof getInterruptMode>, string> = {
 
 const OP_LABEL: Record<Op, string> = {
   generate: 'gen key',
+  import: 'import key',
   encrypt: 'encrypt',
   decrypt: 'decrypt',
   encapsulate: 'encap',
@@ -82,6 +97,7 @@ const OP_LABEL: Record<Op, string> = {
   digest: 'hash',
   sign: 'sign',
   verify: 'verify',
+  assert: 'assert',
 }
 
 const STATUS_STYLE: Record<StepStatus, { cls: string; label: string } | null> = {
@@ -119,7 +135,29 @@ const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
 export const PkcsPipelineBuilder: React.FC = () => {
-  const { moduleRef, isReady, autoInit, engineMode } = useHsmContext()
+  const hsmCtx = useHsmContext()
+  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog, hsmKeys } =
+    hsmCtx
+
+  // A session on the Developer slot, kept open for the UI's own use —
+  // querying a key's real attributes when the Key inspector is clicked,
+  // after the script's OWN session (opened/closed inside the generated
+  // Python) is long gone. Opened lazily on first need, closed on unmount.
+  // Generated keys are token=True specifically so this session can still
+  // find them (see pipelineCodegen.ts's emitGenerate).
+  const devSlotSessionRef = useRef<number | null>(null)
+  useEffect(
+    () => () => {
+      if (devSlotSessionRef.current !== null && rawModuleRef.current) {
+        try {
+          rawModuleRef.current._C_CloseSession(devSlotSessionRef.current)
+        } catch {
+          // tab is unmounting — nothing left to report this to
+        }
+      }
+    },
+    [rawModuleRef]
+  )
 
   // G7: called from a `useEffect` (not module top level — see
   // monacoSelfHost.ts's header for why that broke a real production build),
@@ -136,6 +174,19 @@ export const PkcsPipelineBuilder: React.FC = () => {
       cancelled = true
     }
   }, [])
+
+  // Real PKCS#11 call log + key registry for THIS tab's activity — both
+  // already populate from Developer-tab scripts (moduleRef is the same
+  // logging-proxied module; the key table is populated by runAll's own
+  // key registration, above). Collapsed by default so the palette/canvas
+  // layout isn't disrupted for someone not looking for it.
+  const [showActivity, setShowActivity] = useState(false)
+  // Inspector-style tab bar — same pattern as the KMIP Developer tab's own
+  // Session activity section (and the manual workbench's Keystore/Wire/
+  // Audit tabs): one thing shown full-width per tab instead of both panels
+  // stacked, so the (already dense) log doesn't push the key table below
+  // the fold.
+  const [activityTab, setActivityTab] = useState<'log' | 'keys'>('log')
 
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() =>
@@ -390,6 +441,43 @@ export const PkcsPipelineBuilder: React.FC = () => {
           }))
         )
         setRunError(outcome.error)
+
+        // Register any keys this run generated into the shared key
+        // registry — a real scan on a long-lived session against the SAME
+        // slot the script used (not the script's own, which is already
+        // closed by the time we're back in JS). pipelineCodegen.ts now
+        // generates keys token=True specifically so this scan finds real,
+        // still-existing objects; discoverHsmObjectsOnSession stamps each
+        // with the real CKA_UNIQUE_ID (identity) and this session's handle
+        // (a same-session convenience, never treated as identity
+        // downstream — see HsmKey.uniqueId's doc comment for why that
+        // distinction matters here specifically).
+        //
+        // reloginDevSlotSession runs EVERY time, not just on first open —
+        // real bug found live: the script's own s.logout() (the last line
+        // of every run) deauthenticates the whole TOKEN, including this
+        // kept-open session, so private objects silently stop appearing in
+        // the scan (C_FindObjects doesn't error, it just sees less) unless
+        // re-authenticated first. Doing this here also covers the Key
+        // inspector's later live queries for free — login stays valid
+        // until the NEXT run's script logs out again.
+        if (rawModuleRef.current && devSlot !== null) {
+          try {
+            if (devSlotSessionRef.current === null) {
+              devSlotSessionRef.current = openDevSlotSession(rawModuleRef.current, devSlot)
+            } else {
+              reloginDevSlotSession(rawModuleRef.current, devSlotSessionRef.current)
+            }
+            discoverHsmObjectsOnSession(
+              rawModuleRef.current,
+              devSlotSessionRef.current,
+              devSlot,
+              hsmCtx
+            )
+          } catch {
+            // best-effort — a registration failure isn't a run failure
+          }
+        }
       } else {
         setRunError(result.ok ? null : (result.error ?? 'run failed'))
       }
@@ -405,7 +493,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
     } finally {
       setRunning(false)
     }
-  }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, devSlot])
+  }, [pipeline, pipelineInput, blocking.length, detached, moduleRef, rawModuleRef, devSlot, hsmCtx])
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -485,6 +573,10 @@ export const PkcsPipelineBuilder: React.FC = () => {
     KEM: PALETTE_ENTRIES.filter((p) => p.family === 'KEM'),
     Symmetric: PALETTE_ENTRIES.filter((p) => p.family === 'Symmetric'),
     Hash: PALETTE_ENTRIES.filter((p) => p.family === 'Hash'),
+    // Not rendered — FAMILIES (below) only lists the 4 real crypto families,
+    // so 'Utility' entries (ACVP assert-equals) never appear in this manual
+    // "drag onto canvas" palette, only via the "Start from" templates.
+    Utility: PALETTE_ENTRIES.filter((p) => p.family === 'Utility'),
   }
   const inputBytes = new TextEncoder().encode(pipelineInput).length
   const lastStep = pipeline[pipeline.length - 1]
@@ -579,6 +671,88 @@ export const PkcsPipelineBuilder: React.FC = () => {
             <TabsTrigger value="code">Code</TabsTrigger>
           </TabsList>
         </div>
+      </div>
+
+      {/* Save/Import/Export feedback and Run/slot errors: rendered here,
+          outside either TabsContent, so they're visible from both the
+          Builder and Code tabs — same fix as Change 1 intended for the
+          buttons that produce them (see that comment below). Previously
+          lived inside the Code tab only, so a Builder-tab user (the default
+          view) never saw a save confirmation or a run failure unless they
+          happened to switch tabs. */}
+      {notice && (
+        <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
+      )}
+      {runError && (
+        <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
+          ✗ {runError}
+        </div>
+      )}
+      {slotError && (
+        <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
+          ✗ Could not set up your Developer token: {slotError}
+        </div>
+      )}
+
+      {/* Real PKCS#11 log + key inspector for this tab's own DevSequences
+          slot — reuses the exact same panels the main HSM Playground uses
+          (HsmContext's logging proxy already captures every call the
+          generated script makes; runAll's devSlot scan above keeps the key
+          table current). Visible from both Builder and Code tabs. */}
+      <div className="border-b">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowActivity((v) => !v)}
+          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
+        >
+          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+          Session activity — PKCS#11 log &amp; keys
+          {hsmLog.length > 0 && !showActivity && (
+            <span className="ml-1 text-[10.5px]">({hsmLog.length})</span>
+          )}
+        </Button>
+        {showActivity && (
+          <div className="border-t">
+            {/* Inspector-style tab bar — same pattern as the KMIP Developer
+                tab's Session activity section. */}
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
+              {(
+                [
+                  { id: 'log', label: `Log (${hsmLog.length})` },
+                  { id: 'keys', label: `Keys (${hsmKeys.length})` },
+                ] as const
+              ).map((t) => (
+                <Button
+                  key={t.id}
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={activityTab === t.id}
+                  onClick={() => setActivityTab(t.id)}
+                  className={`h-7 rounded-md px-2.5 text-[11px] ${
+                    activityTab === t.id
+                      ? 'bg-card text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t.label}
+                </Button>
+              ))}
+            </div>
+            {/* The Tabs root is a fixed h-[70vh] with overflow-hidden (so the
+                Builder/Code panes below can scroll internally without the
+                whole card growing) — real bug found live: without its own
+                bound here, a populated log or key table silently clipped
+                past the container edge with no scrollbar, not just "below
+                the fold." Capped and independently scrollable instead. */}
+            <div className="px-4 py-3 max-h-64 overflow-y-auto">
+              {activityTab === 'log' && (
+                <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
+              )}
+              {activityTab === 'keys' && <HsmKeyTable />}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
@@ -841,20 +1015,6 @@ export const PkcsPipelineBuilder: React.FC = () => {
           the sync-status chip live in the persistent header above (visible from
           both tabs) since Change 1 — see the file-scope note there. ── */}
       <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
-        {notice && (
-          <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
-        )}
-        {runError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
-            ✗ {runError}
-          </div>
-        )}
-        {slotError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
-            ✗ Could not set up your Developer token: {slotError}
-          </div>
-        )}
-
         {/* Change 2: explicit "edit as custom script" gate — shown only while the
             editor is read-only-and-synced. */}
         {readOnly && (

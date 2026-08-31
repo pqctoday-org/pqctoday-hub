@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'vendor-risk',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   // ORDER MATTERS — the accuracy spot-check samples this list by even stride and
   // reads only four. Five entries, so all are sampled. This module is about supply-chain scoring and
@@ -64,7 +64,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 3 interactive steps: Vendor Scorecard Builder — interactive scorecard with 6 weighted slider dimensions; FIPS validation auto-scored from migration catalog data; saves assessment as executive document. Contract Clause Generator — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters.',
     relatedStandards:
-      'NIST SP 800-161 (Cybersecurity Supply Chain Risk Management). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). CycloneDX CBOM Specification. FIPS 140-3 (Security Requirements for Cryptographic Modules)',
+      "NIST SP 800-161 (Cybersecurity Supply Chain Risk Management). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). CycloneDX CBOM Specification — this hub's OWASP CycloneDX CBOM Guide citation is deprecated pending re-capture of the source page, not because the guide changed. FIPS 140-3 (Security Requirements for Cryptographic Modules)",
   },
 }
 

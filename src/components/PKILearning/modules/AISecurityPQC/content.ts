@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-24',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -35,6 +35,12 @@ export const content: ModuleContent = {
     // audit_module_designation_aliases.py — the literal-id check could not match the
     // prose "SP 800-38D" against a row filed as NIST-SP-800-38D.
     getStandard('NIST-SP-800-38D'),
+    // DECLARED 2026-08-29: this module cites 'NIST AI RMF' and 'C2PA' in 4
+    // places with no resolvable reference (WS21 finding, filed 2026-08-22 —
+    // both rows have since been added to the library and were re-verified
+    // active before citing).
+    getStandard('NIST-AI-100-1-Artificial-Intelligence-Risk-Management-Framew'),
+    getStandard('Content-Credentials-C2PA-Technical-Specification-Version-2-4'),
   ],
 
   algorithms: [
@@ -59,6 +65,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Configure verification layers, visualize model collapse, compare signing overheads. Model Weight Vault — Configure model encryption/signing, compare classical vs PQC overhead. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay.',
     relatedStandards:
-      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) — transport security for AI API endpoints. NIST AI RMF — AI risk management framework',
+      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA Technical Specification v2.4 (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 9846 (TLS 1.3, July 2026 — obsoletes RFC 8446) — transport security for AI API endpoints. NIST AI 100-1 (AI RMF 1.0) — AI risk management framework',
   },
 }

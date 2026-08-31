@@ -25,10 +25,10 @@ export const PKIEnrollmentPlayground: React.FC = () => {
         Four-step PKI enrollment showcase — RFC 9810 (CMP, obsoletes RFC 4210) · RFC 7030 (EST).
         Generate a key, enroll via CMP, enroll the same key via EST, then perform a quantum-safe KEM
         key update.{' '}
-        <Link
-          to="/learn/pki-enrollment-protocols?tab=workshop"
-          className="text-primary hover:underline"
-        >
+        {/* `underline`, not `hover:underline`: this link sits inside a
+            paragraph, so colour alone is not a sufficient affordance
+            (axe link-in-text-block / WCAG 1.4.1). */}
+        <Link to="/learn/pki-enrollment-protocols?tab=workshop" className="text-primary underline">
           Open the full module for composite enrollment and cert inspection steps.
         </Link>
       </div>

@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'digital-assets',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('RFC-8032'),
@@ -67,6 +67,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'Bitcoin Flow: Generate a secp256k1 key pair inside SoftHSMv3 via PKCS#11 C_GenerateKeyPair, derive a Bitcoin address through the SHA-256/RIPEMD-160/Base58Check pipeline, format a transaction, sign it with CKM_ECDSA (raw ECDSA via C_Sign), and verify the signature. Ethereum Flow: Generate secp256k1 keys, derive an Ethereum address via Keccak-256 with EIP-55 checksumming, create and sign a transaction with recovery parameter, and verify. HD Wallet Flow (5-step): Generate a 24-word BIP39 mnemonic, derive the 512-bit PBKDF2 seed, demonstrate hardened vs non-hardened BIP32 derivation with a live KAT (including Ed25519 hardened-only enforcement), derive Bitcoin/Ethereum/Solana addresses with an inline BIP44 derivation tree visualization, and assess the quantum threat surface of the HD wallet stack.',
     relatedStandards:
-      'SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation), BIP-141 (Segregated Witness — P2WPKH/P2WSH, bech32 addresses), BIP-341 (Taproot — P2TR spending rules, Schnorr signatures), BIP-350 (bech32m encoding for Taproot/SegWit v1+ addresses). EIP-55 (Ethereum address checksumming), EIP-155 (replay protection with chain ID). FIPS 204 (ML-DSA), FIPS 203 (ML-KEM) as potential PQC replacements for blockchain signature and key exchange schemes',
+      "SEC 2 (secp256k1 curve specification), RFC 8032 (Ed25519/EdDSA), BIP-32 (HD wallet derivation), BIP-39 (mnemonic seed phrases), BIP-44 (multi-account hierarchy), SLIP-0010 (Ed25519 HD derivation), BIP-141 (Segregated Witness — P2WPKH/P2WSH, bech32 addresses), BIP-341 (Taproot — P2TR spending rules, Schnorr signatures), BIP-350 (bech32m encoding for Taproot/SegWit v1+ addresses). EIP-55 (Ethereum address checksumming), EIP-155 (replay protection with chain ID). FIPS 204 (ML-DSA), FIPS 203 (ML-KEM), FIPS 206 (FN-DSA — this hub's citation is deprecated pending NIST's final publication; the BIP-39/BIP-44 citations are separately deprecated pending re-capture of the source page, not because either standard changed) as potential PQC replacements for blockchain signature and key exchange schemes",
   },
 }

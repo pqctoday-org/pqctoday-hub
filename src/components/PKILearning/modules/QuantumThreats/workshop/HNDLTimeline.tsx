@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { CRQC_ESTIMATES } from '../data/quantumConstants'
+import { CRQC_ESTIMATES, getCrqcConsensus } from '../data/quantumConstants'
 import { Button } from '@/components/ui/button'
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -8,7 +8,7 @@ const CURRENT_YEAR = new Date().getFullYear()
 export const HNDLTimeline: React.FC = () => {
   const [dataLifetime, setDataLifetime] = useState(25)
   const [migrationTime, setMigrationTime] = useState(5)
-  const [crqcYear, setCrqcYear] = useState(2035)
+  const [crqcYear, setCrqcYear] = useState(() => getCrqcConsensus().zEstimate)
 
   const migrationDeadline = useMemo(
     () => crqcYear - dataLifetime - migrationTime,

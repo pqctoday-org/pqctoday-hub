@@ -388,7 +388,7 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             href="https://doi.org/10.6028/NIST.CSWP.39-upd1"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline"
+            className="text-primary underline hover:no-underline"
           >
             NIST CSWP 39
           </a>{' '}
@@ -500,7 +500,13 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
               Algorithms Broken at {crqcYear}
             </h3>
           </div>
-          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          <div
+            className="space-y-2 max-h-[300px] overflow-y-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / BB84Simulator.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label={`Algorithms broken at ${crqcYear}`}
+          >
             {affectedAlgorithms.map((algo) => (
               <div
                 key={algo.name}
@@ -527,7 +533,13 @@ export const CRQCScenarioPlanner: React.FC<CRQCScenarioPlannerProps> = ({ onCrqc
             <Calendar size={18} className="text-status-warning" />
             <h3 className="text-base font-semibold text-foreground">Compliance Deadlines</h3>
           </div>
-          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          <div
+            className="space-y-2 max-h-[300px] overflow-y-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx / BB84Simulator.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Compliance deadlines"
+          >
             {COMPLIANCE_DEADLINES.map((deadline) => {
               const isMissed = deadline.year <= crqcYear
               const isPast = deadline.year <= currentYear

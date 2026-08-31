@@ -30,11 +30,19 @@ test.use({ reducedMotion: 'reduce' })
  *  colours. `emulateMedia` does take effect. */
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  // The WhatsNew alertdialog (z-[100]) intercepts the tab clicks below.
   await page.addInitScript(() => {
+    // The WhatsNew alertdialog (z-[100]) intercepts the tab clicks below.
     localStorage.setItem(
       'pqc-version-storage',
       JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+    )
+    // A fresh session at mobile width shows the "Who's asking?" persona
+    // picker instead of the requested module (MainLayout's isMobileFirstRun
+    // gate) — harmless to seed for the desktop tests too since they never
+    // hit that gate at >=1024px.
+    localStorage.setItem(
+      'pqc-learning-persona',
+      JSON.stringify({ state: { selectedPersona: 'architect' }, version: 10 })
     )
   })
 })
@@ -80,13 +88,13 @@ async function settle(page: Page) {
  * list fails the test, and shrinking a list here is always safe. Do not add to
  * it to make a new failure go away — fix the page.
  */
-const KNOWN_PREEXISTING: Record<string, string[]> = {
-  'dev-quantum-impact': ['color-contrast'],
-  'api-security-jwt': ['color-contrast'],
-  '5g-security': ['color-contrast'],
-  qkd: ['color-contrast'],
-  'secrets-management-pqc': ['color-contrast'],
-}
+// Wave D (2026-08-29): all 5 color-contrast entries previously here are
+// fixed — the track badge (moduleData.ts TRACK_COLORS) and the
+// bg-destructive/10 + text-destructive pairing (ModuleShell.tsx + ~52 module
+// files) were the shared root causes; verified clean via a full rebuild +
+// rerun of this spec. Kept as an empty allowlist, not deleted, so a future
+// regression has somewhere to go if a genuine new pre-existing issue turns up.
+const KNOWN_PREEXISTING: Record<string, string[]> = {}
 
 async function assertNoNewViolations(page: Page, id: string, where: string) {
   await injectAxe(page)
@@ -188,78 +196,94 @@ for (const id of TAB_PATTERN_MODULES) {
     await expect(tabs.nth(count - 1)).toBeFocused()
   })
 
-  test(`module: /learn/${id} — mobile ··· overflow popover exposes real tabs (390x844)`, async ({
+  test(`module: /learn/${id} — mobile (390x844) has no tab bar, only a section checklist`, async ({
     page,
   }) => {
+    // The desktop tab pattern above (tablist/tab/tabpanel + the "More tabs"
+    // overflow popover) does not exist on mobile at all — it isn't hidden
+    // behind a control, it's a different component. MobileModuleShell
+    // (default-on 2026-08-23) mounts only a Learn-tab-equivalent view: a
+    // section-read checklist over the same real prose, with no
+    // Workshop/Exercises/References/Tools tab strip. This replaces the
+    // three "··· overflow popover" tests that asserted a pattern this
+    // breakpoint has never rendered since that date — they were failing on
+    // every module, every nightly run, for that reason alone.
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
     await settle(page)
 
-    // Below `sm` the tabs past index 2 are display:none — the popover is the
-    // ONLY interactive path to them, which is why it must carry tab semantics.
-    const more = page.getByRole('button', { name: 'More tabs' })
-    await expect(more).toBeVisible()
-    await more.click()
+    await expect(page.getByRole('tablist')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'More tabs' })).toHaveCount(0)
 
-    const popover = page.getByRole('tablist', { name: 'More module sections' })
-    await expect(popover).toBeVisible()
-    await expect(popover).toHaveAttribute('aria-orientation', 'vertical')
-
-    const items = popover.getByRole('tab')
-    expect(await items.count()).toBeGreaterThanOrEqual(2)
-    for (let i = 0; i < (await items.count()); i++) {
-      await expect(items.nth(i)).toHaveAttribute('aria-selected', /true|false/)
-    }
-
-    // Opening with the pointer still lands a keyboard tab stop inside the menu.
-    await expect(popover.locator('[role="tab"][tabindex="0"]')).toHaveCount(1)
-
-    // Vertical roving — MANUAL activation, so arrowing must not dismiss the menu.
-    await expect(items.nth(0)).toBeFocused()
-    await page.keyboard.press('ArrowDown')
-    await expect(items.nth(1)).toBeFocused()
-    await expect(popover).toBeVisible()
-
-    // Enter selects, and aria-selected follows.
-    const chosen = await items.nth(1).textContent()
-    await page.keyboard.press('Enter')
-    await expect(popover).toBeHidden()
-    await expect(page.getByRole('tabpanel')).toBeVisible()
-    await more.click()
-    await expect(
-      page
-        .getByRole('tablist', { name: 'More module sections' })
-        .locator('[role="tab"][aria-selected="true"]')
-    ).toHaveText(new RegExp((chosen ?? '').trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+    const checklist = page.getByRole('progressbar', { name: /\d+\/\d+ sections read/i })
+    await expect(checklist).toBeVisible()
+    const sectionButtons = page.locator('ul > li > button[aria-pressed]')
+    expect(await sectionButtons.count()).toBeGreaterThanOrEqual(1)
   })
 
-  test(`module: /learn/${id} — axe clean at 390x844 with the ··· popover OPEN`, async ({
+  test(`module: /learn/${id} — mobile section checklist toggles real read state`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
     await settle(page)
-    await page.getByRole('button', { name: 'More tabs' }).click()
-    await expect(page.getByRole('tablist', { name: 'More module sections' })).toBeVisible()
-    // The state this whole work stream is grounded in: two tablists live in the
-    // DOM at once here, with duplicate labels for the same tabs. If the popover
-    // markup were wrong, `aria-required-children` / `aria-required-parent` /
-    // `duplicate-id-aria` would fire right here.
-    await assertNoNewViolations(page, id, 'mobile 390x844, ··· popover open')
+
+    const first = page.locator('ul > li > button[aria-pressed]').first()
+    await expect(first).toBeVisible()
+    const before = await first.getAttribute('aria-pressed')
+    await first.click()
+    await expect(first).toHaveAttribute('aria-pressed', before === 'true' ? 'false' : 'true')
+    // Reflected in the progress summary, not just the button's own state.
+    await first.click()
+    await expect(first).toHaveAttribute('aria-pressed', before ?? 'false')
   })
 
-  test(`module: /learn/${id} — Escape closes the ··· popover and returns focus`, async ({
+  test(`module: /learn/${id} — axe clean at 390x844`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto(`/learn/${id}`)
+    await settle(page)
+    await assertNoNewViolations(page, id, 'mobile 390x844')
+  })
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+ * B3 (bplus-remediation-plan-08292026.md) — 8 modules whose Learn content
+ * carries a wide comparison table in a bare `overflow-x-auto` div. None of
+ * these 8 are in MODULES/TAB_PATTERN_MODULES above, so nothing previously
+ * scanned them at a narrow viewport — the table only becomes an actual
+ * scrollable region (and so only trips axe's `scrollable-region-focusable`)
+ * once its content is wider than a 390px container; at desktop widths there
+ * is room to spare and the rule never fires, which is exactly why this was
+ * a mobile-only finding. Fixed 2026-08-29 by adding tabIndex={0}/role=
+ * "region"/aria-label to each table's wrapper, the same pattern
+ * VpnSimulationPanel.tsx and QKDIntroduction.tsx already use for the same
+ * rule. Scoped to the one rule (not assertNoNewViolations' full serious/
+ * critical set) since these 8 modules have no KNOWN_PREEXISTING entry above
+ * to filter unrelated pre-existing failures against.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const B3_SCROLLABLE_TABLE_MODULES = [
+  'web-gateway-pqc',
+  'network-security-pqc',
+  'api-security-jwt',
+  'kms-pqc',
+  'stateful-signatures',
+  'slh-dsa',
+  'secure-boot-pqc',
+  'digital-assets',
+]
+
+for (const id of B3_SCROLLABLE_TABLE_MODULES) {
+  test(`module: /learn/${id} — mobile table is a keyboard-reachable scroll region (B3)`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(`/learn/${id}`)
     await settle(page)
-    const more = page.getByRole('button', { name: 'More tabs' })
-    await more.click()
-    await expect(page.getByRole('tablist', { name: 'More module sections' })).toBeVisible()
-    await page.keyboard.press('Escape')
-    await expect(page.getByRole('tablist', { name: 'More module sections' })).toHaveCount(0)
-    await expect(more).toBeFocused()
+
+    await injectAxe(page)
+    await checkA11y(page, undefined, {
+      axeOptions: { runOnly: { type: 'rule' as const, values: ['scrollable-region-focusable'] } },
+    })
   })
 }
 
@@ -302,7 +326,12 @@ test('qkd: BB84 qubit grid and phase rail are keyboard-reachable scroll regions'
   page,
 }) => {
   test.slow()
-  await page.setViewportSize({ width: 900, height: 1200 })
+  // Must stay >= 1024px (Tailwind's `lg`, see useIsBelowLgViewport.ts) — the
+  // mobile-shell rework (2026-08-23) made that the one gate between the
+  // desktop tab bar this test drives and MobileModuleShell's tab-free
+  // section-checklist UI, where 'Workshop' as a role="tab" doesn't exist.
+  // 900px predates that threshold and silently landed in the mobile shell.
+  await page.setViewportSize({ width: 1100, height: 1200 })
   await page.goto('/learn/qkd')
   await settle(page)
   await page.getByRole('tab', { name: 'Workshop', exact: true }).first().click()

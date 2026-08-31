@@ -104,7 +104,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
             disabled={!isIdle}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors ${
               eveEnabled
-                ? 'bg-destructive/10 text-destructive border-destructive/30 font-bold'
+                ? 'bg-destructive/10 text-status-error border-destructive/30 font-bold'
                 : 'bg-muted border-border text-muted-foreground hover:border-primary/50 disabled:opacity-50'
             }`}
           >
@@ -251,7 +251,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                     key={i}
                     className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-sm font-mono border-2 ${
                       intercepted
-                        ? 'border-destructive/50 bg-destructive/10 text-destructive'
+                        ? 'border-destructive/50 bg-destructive/10 text-status-error'
                         : 'border-transparent'
                     }`}
                   >

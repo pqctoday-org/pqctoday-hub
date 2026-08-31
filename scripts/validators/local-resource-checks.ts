@@ -81,13 +81,19 @@ export function runLocalResourceChecks(): {
       library.rows.forEach((row, i) => {
         const localFileRaw = row.local_file?.trim()
         const downloadable = (row.downloadable || '').toLowerCase()
+        const isDeprecated = (row.status || '').toLowerCase() === 'deprecated'
 
         if (localFileRaw) {
           const localFile = localFileRaw.split('/').pop() || localFileRaw
           referencedFiles.add(localFile)
           if (!filesOnDisk.has(localFile)) {
-            // Only flag if downloadable=yes
-            if (downloadable === 'yes') {
+            // Only flag if downloadable=yes AND the row is still active — a
+            // deprecated row's evidence is retired along with it, so a stale
+            // downloadable=yes left over from before deprecation (found live
+            // 2026-08-29: 3 rows deprecated days earlier, each for a reason
+            // — registration-gated, wrong-document-cached — that makes the
+            // file genuinely unrecoverable) must not keep flagging forever.
+            if (downloadable === 'yes' && !isDeprecated) {
               expectedCount++
               findings.push({
                 csv: library.file,

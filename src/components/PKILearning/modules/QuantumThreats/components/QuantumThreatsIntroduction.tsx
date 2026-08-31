@@ -19,6 +19,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { Button } from '@/components/ui/button'
+import { getCrqcConsensus } from '../data/quantumConstants'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -28,6 +29,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
   onNavigateToWorkshop,
 }) => {
   useSectionAnchors()
+  const crqc = getCrqcConsensus()
 
   return (
     <div className="space-y-6 w-full">
@@ -183,7 +185,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 <td className="p-2 text-center">128-bit</td>
                 <td className="p-2 text-center text-destructive font-bold">64-bit</td>
                 <td className="p-2 text-center">
-                  <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+                  <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
                     Insufficient
                   </span>
                 </td>
@@ -307,7 +309,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
             <div className="text-2xl mb-1">📡</div>
-            <div className="text-sm font-bold text-destructive mb-1">Phase 1: Harvest</div>
+            <div className="text-sm font-bold text-status-error mb-1">Phase 1: Harvest</div>
             <p className="text-xs text-muted-foreground">
               Adversaries intercept encrypted traffic today (VPN, TLS, email) and store it.
             </p>
@@ -334,7 +336,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             If your data must remain secure for <em>X</em> years, your migration will take{' '}
             <em>Y</em> years, and a CRQC is expected in <em>Z</em> years, you must start migrating{' '}
             within <strong>Z &minus; X &minus; Y</strong> years. For data with 25-year sensitivity,
-            a 5-year migration time, and a CRQC in 2035, migration should have started by 2005.
+            a 5-year migration time, and a CRQC in {crqc.zEstimate} (this catalog&apos;s
+            data-derived consensus estimate), migration should have started by{' '}
+            {crqc.zEstimate - 25 - 5}.
           </p>
         </div>
       </section>
@@ -354,7 +358,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
             <div className="text-2xl mb-1">📂</div>
-            <div className="text-sm font-bold text-destructive mb-1">Phase 1: Capture</div>
+            <div className="text-sm font-bold text-status-error mb-1">Phase 1: Capture</div>
             <p className="text-xs text-muted-foreground">
               Collect signed artifacts — firmware images, CA certificates, code-signing blobs.
               Public-key material is often publicly accessible.
@@ -394,8 +398,9 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             <div className="text-xs font-bold text-foreground mb-1">Why it&apos;s urgent now</div>
             <p className="text-xs text-muted-foreground">
               A Root CA issued today with a 20-year validity period will still be trusted in 2046.
-              If a CRQC arrives in 2035, that CA&apos;s RSA or ECDSA key is breakable — and every
-              certificate it ever signed becomes forgeable. Migration to{' '}
+              If a CRQC arrives within the consensus window ({crqc.qdayLow}&ndash;{crqc.qdayHigh}),
+              that CA&apos;s RSA or ECDSA key is breakable — and every certificate it ever signed
+              becomes forgeable. Migration to{' '}
               <strong>
                 <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> or{' '}
                 <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>

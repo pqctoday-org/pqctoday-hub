@@ -73,6 +73,19 @@ export interface HsmKey {
   /** PKCS#11 session handle that owns this key (for multi-session scenarios like VPN sim) */
   sessionHandle?: number
   /**
+   * CKA_UNIQUE_ID — the object's durable identity. `handle` is a
+   * session-specific lookup result (PKCS#11 v3.2 §3.2: a handle is only
+   * meaningful within the session that returned it), never stable across
+   * a re-opened session — real bug found live 2026-08-30: the Developer
+   * tab registered a handle printed by the script's OWN (now-closed)
+   * session, and a fresh session saw the same private key under a
+   * DIFFERENT handle (106 vs the real 107), so every attribute read
+   * failed with CKR_OBJECT_HANDLE_INVALID. When present, callers must
+   * re-resolve the current handle via a CKA_UNIQUE_ID find before reading
+   * attributes — never trust a stored `handle` across a session boundary.
+   */
+  uniqueId?: string
+  /**
    * Which WASM instance owns this key. Defaults to 'main' (panel softhsm). VPN sim uses
    * 'worker-init' / 'worker-resp' for keys that live inside a strongSwan worker's local
    * softhsmv3 — those handles are invalid in the panel WASM and require worker RPC to inspect.

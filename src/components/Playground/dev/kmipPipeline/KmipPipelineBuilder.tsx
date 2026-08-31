@@ -20,14 +20,28 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
+import {
+  Play,
+  Loader2,
+  Download,
+  Save,
+  Upload,
+  Trash2,
+  X,
+  Pencil,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { installMonacoSelfHost } from '../monacoSelfHost'
-import type { KmipEngine } from '../../../../wasm/kmip/kmipEngine'
-import { POLICY_PRESETS } from '../../../../wasm/kmip/kmipMeta'
+import type { KmipEngine, AuditEvent, KmipObject } from '../../../../wasm/kmip/kmipEngine'
+import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
+import { KeystoreTable } from '../../kmip/Inspector'
+import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
+import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
@@ -116,6 +130,8 @@ function stepLabel(step: KmipStep): string {
   if (step.kind === 'load-policy') return `Load policy: ${step.policyFile}`
   if (step.kind === 'dry-run')
     return `Dry-run: ${step.op}${step.algorithm ? ` (${step.algorithm})` : ''}`
+  if (step.kind === 'register') return `Register: ${step.objectType} (${step.algorithm})`
+  if (step.kind === 'assert-equals') return `Assert: ${step.label}`
   return `Expect deny: ${step.targetStepId}`
 }
 
@@ -165,6 +181,29 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   >({})
   const [detached, setDetached] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // Cross-plane audit trail (CACP policy decisions + KMIP request/response +
+  // the underlying PKCS#11 call) — `engine` is the same per-tab singleton
+  // KmipPlaygroundView's own manual workbench reads, so every runOp/dryRun/
+  // loadPolicy call this tab's script makes already lands in the engine's
+  // own audit ring; this just also asks for it. Collapsed by default so the
+  // palette/canvas layout isn't disrupted for someone not looking for it.
+  const [audit, setAudit] = useState<AuditEvent[]>([])
+  // The engine's own keystore — same singleton, same reasoning as `audit`
+  // above. Unlike PKCS#11's key viewer, this needs no session/handle
+  // plumbing at all: KmipObject is addressed by `uid` natively everywhere
+  // in the engine, and listObjects() reads the singleton's own persistent
+  // state directly — there's no PKCS#11-style ephemeral handle to go
+  // stale, and no per-token login/logout lifecycle to be invalidated
+  // between runs (see the PKCS#11 twin's fix for what THAT class of bug
+  // looked like — none of it applies here by construction).
+  const [keystoreObjects, setKeystoreObjects] = useState<KmipObject[]>([])
+  const [showActivity, setShowActivity] = useState(false)
+  // Full Inspector-style tab bar (matching the manual workbench's own
+  // Keystore/Wire/Audit pattern), rather than AuditTrailPanel's default
+  // request-grouped swimlanes — one plane's events as its own flat,
+  // chronological list per tab, switchable independently of the keystore.
+  const [activityTab, setActivityTab] = useState<'keystore' | 'p1' | 'p2' | 'p3'>('keystore')
 
   // Change 1: which pane of the Builder/Code switch is showing.
   const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
@@ -383,7 +422,8 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
-      const bridge = createKmipBridge(engine)
+      const table = await getCodepointTable()
+      const bridge = createKmipBridge(engine, table)
       py.registerJsModule('kmip_bridge', bridge)
       const result = await runPython(code)
       const elapsed = performance.now() - t0
@@ -414,6 +454,18 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
       setRunError(`Could not run: ${(e as Error).message}`)
       setElapsedMs(null)
     } finally {
+      // Best-effort audit-trail + keystore refresh — never lets a snapshot
+      // failure affect the run's own success/error reporting above. No
+      // session/auth lifecycle here (see keystoreObjects's own doc
+      // comment) — just re-reading the engine's current state.
+      try {
+        if (engine) {
+          setAudit(engine.auditSnapshot())
+          setKeystoreObjects(engine.listObjects())
+        }
+      } catch {
+        // best-effort
+      }
       setRunning(false)
     }
   }, [steps, message, messageMode, messageError, detached, engine, blocking.length])
@@ -568,6 +620,99 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
             <TabsTrigger value="code">Code</TabsTrigger>
           </TabsList>
         </div>
+      </div>
+
+      {/* Save/Import/Export feedback and Run errors: rendered here, outside
+          either TabsContent, so they're visible from both the Builder and
+          Code tabs — same fix as Change 1 intended for the buttons that
+          produce them (see that comment below). Previously lived inside the
+          Code tab only, so a Builder-tab user (the default view) never saw
+          a save confirmation or a run failure unless they happened to
+          switch tabs. */}
+      {notice && (
+        <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
+      )}
+      {runError && (
+        <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
+          ✗ {runError}
+        </div>
+      )}
+
+      {/* Cross-plane audit trail for this tab's own activity — reuses
+          AuditTrailPanel exactly as the manual workbench (plane=agility)
+          renders it, one row per request with CACP (Plane 1 · Agility),
+          KMIP (Plane 2), and PKCS#11 (Plane 3) side by side, since
+          `engine` is the same per-tab singleton either plane uses. Visible
+          from both Builder and Code tabs. */}
+      <div className="border-b">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowActivity((v) => !v)}
+          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
+        >
+          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+          Session activity — keystore, CACP &amp; KMIP audit trail
+          {audit.length > 0 && !showActivity && (
+            <span className="ml-1 text-[10.5px]">({audit.length})</span>
+          )}
+        </Button>
+        {showActivity && (
+          <div className="border-t">
+            {/* Inspector-style tab bar — same pattern as the manual
+                workbench's own Keystore/Wire/Audit tabs, one plane's
+                events as its own flat list per tab instead of
+                AuditTrailPanel's request-grouped swimlanes. */}
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
+              {(
+                [
+                  { id: 'keystore', label: `Keystore (${keystoreObjects.length})` },
+                  { id: 'p1', label: PLANE_INFO.p1?.label ?? 'CACP' },
+                  { id: 'p2', label: PLANE_INFO.p2?.label ?? 'KMIP' },
+                  { id: 'p3', label: PLANE_INFO.p3?.label ?? 'PKCS#11' },
+                ] as const
+              ).map((t) => (
+                <Button
+                  key={t.id}
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={activityTab === t.id}
+                  onClick={() => setActivityTab(t.id)}
+                  className={`h-7 rounded-md px-2.5 text-[11px] ${
+                    activityTab === t.id
+                      ? 'bg-card text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t.label}
+                </Button>
+              ))}
+              {activityTab !== 'keystore' && audit.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    engine?.clearAudit()
+                    setAudit([])
+                  }}
+                  className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground ml-auto"
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+            {/* Same fix as the PKCS#11 twin: the Tabs root is a fixed
+                h-[70vh] with overflow-hidden, so this section needs its
+                own bound and scroll rather than risk silently clipping
+                past the container edge as it grows. */}
+            <div className="px-4 py-3 max-h-64 overflow-y-auto">
+              {activityTab === 'keystore' && <KeystoreTable objects={keystoreObjects} expert />}
+              {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
+              {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
+              {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
@@ -830,15 +975,6 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           the sync-status chip live in the persistent header above (visible from
           both tabs) since Change 1 — see the file-scope note there. ── */}
       <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
-        {notice && (
-          <div className="px-4 py-2 text-xs font-mono text-status-info border-b">{notice}</div>
-        )}
-        {runError && (
-          <div className="px-4 py-2.5 text-xs font-mono text-status-error bg-status-error/5 border-b border-destructive/25">
-            ✗ {runError}
-          </div>
-        )}
-
         {/* Change 2: explicit "edit as custom script" gate — shown only while the
             editor is read-only-and-synced. */}
         {readOnly && (
@@ -1240,3 +1376,30 @@ const KmipValRow: React.FC<{ ok?: boolean; text: string }> = ({ ok, text }) => (
     <span className={ok ? 'text-muted-foreground' : 'text-status-error'}>{text}</span>
   </div>
 )
+
+/** One plane's events as a flat, chronological list — reuses AuditTrailPanel's
+ * own `describe()` for per-type formatting so a KMIP request line, a CACP
+ * decision line, and a PKCS#11 call line all read exactly the way they do
+ * in the swimlane view, just not grouped by request here. Newest first,
+ * matching AuditTrailPanel's own convention. */
+const PlaneEventList: React.FC<{ events: AuditEvent[]; plane: AuditEvent['plane'] }> = ({
+  events,
+  plane,
+}) => {
+  const filtered = events.filter((e) => e.plane === plane)
+  if (filtered.length === 0)
+    return <p className="text-xs text-muted-foreground italic">No events yet.</p>
+  return (
+    <div className="space-y-1">
+      {filtered
+        .slice()
+        .reverse()
+        .map((e, i) => (
+          <div key={i} className="flex gap-2 text-[11px] font-mono">
+            <span className="text-muted-foreground flex-shrink-0">{e.ts}</span>
+            <span className="text-foreground break-all">{describeAuditEvent(e.event, true)}</span>
+          </div>
+        ))}
+    </div>
+  )
+}

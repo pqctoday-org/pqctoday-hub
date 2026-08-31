@@ -73,3 +73,36 @@ export const TOOL_BY_MODULE_ID: ReadonlyMap<string, string> = new Map([
 export function resolveModuleTool(manifest: ModuleManifest): string | undefined {
   return manifest.playgroundTool ?? TOOL_BY_MODULE_ID.get(manifest.id)
 }
+
+/**
+ * Wave B / B2 (2026-08-29, bplus-remediation-plan-08292026.md): modules
+ * excluded from the mobile "Practice on your phone" card even though they
+ * have a real twin per `resolveModuleTool` — user sign-off, not a data gap:
+ *   - mls-group-messaging: the tool's own registry entry says it "needs a
+ *     wider screen" (read-only credit only on mobile).
+ *   - vpn-ssh-pqc: its Android-only twin is Chromium-gated on iOS.
+ *   - confidential-computing: its twin (tee-channel) is too narrow a tool
+ *     for a first mobile practice step.
+ * Two modules the plan's own B2 table also proposed (crypto-agility →
+ * cacp-kmip, hsm-pqc → hsm) were dropped entirely, not just excluded: no
+ * `WorkshopTool.moduleLink` in workshopRegistry.tsx actually points at
+ * either module (verified directly against the registry, 2026-08-29) — that
+ * table's two extra rows were wrong, not a real, drift-guarded link like the
+ * 16 below.
+ */
+const MOBILE_PRACTICE_EXCLUDED = new Set([
+  'mls-group-messaging',
+  'vpn-ssh-pqc',
+  'confidential-computing',
+])
+
+/**
+ * The mobile "Practice on your phone" twin for a module (MobileModuleShell's
+ * B2 card), or undefined when none exists or it's on the exclusion list
+ * above. Same resolution as `resolveModuleTool` — the mobile shortlist is a
+ * subset, not a different data source.
+ */
+export function mobilePracticeTool(manifest: ModuleManifest): string | undefined {
+  if (MOBILE_PRACTICE_EXCLUDED.has(manifest.id)) return undefined
+  return resolveModuleTool(manifest)
+}

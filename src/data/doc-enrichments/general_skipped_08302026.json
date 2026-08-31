@@ -1,0 +1,34 @@
+[
+  {
+    "ref_id": "BIP-39",
+    "reason": "Probable landing page, not the document (315,621 bytes of markup, only 7,614 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "BIP-44",
+    "reason": "Probable landing page, not the document (324,574 bytes of markup, only 7,297 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ASC-X9-Financial-PKI",
+    "reason": "Probable landing page, not the document (219,701 bytes of markup, only 6,070 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "CIRCL-Cloudflare",
+    "reason": "Probable landing page, not the document (405,974 bytes of markup, only 6,962 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Lattice-Estimator",
+    "reason": "Probable landing page, not the document (375,672 bytes of markup, only 7,939 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "VIAVI-PQC-Migration-WP-2026",
+    "reason": "Probable landing page, not the document (65,688 bytes of markup, only 5,084 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ref-obrien-chrome-hybrid",
+    "reason": "Probable landing page, not the document (178,653 bytes of markup, only 4,505 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "ref-joseph-transitioning",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "ref_id": "draft-ietf-uta-pqc-app-01",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "OpenSSL-3x-Docs",
+    "reason": "Probable landing page, not the document (21,365 bytes of markup, only 884 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Cloudflare-PQ-Internet-2025",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "IETF-SD-JWT-Draft",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "RFC 9019",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "PKI-Consortium-PQC-2025",
+    "reason": "Probable landing page, not the document (79,601 bytes of markup, only 6,223 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF RFC 4556",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-ietf-tls-merkle-tree-certs",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-ietf-plants-merkle-tree-certs-00",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-ietf-plants-merkle-tree-certs-01",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "draft-sfluhrer-ipsecme-ikev2-mldsa",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "IBM-CBOM-Harishankar",
+    "reason": "Probable landing page, not the document (68,311 bytes of markup, only 6,536 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Keyfactor-Introducing-CBOM",
+    "reason": "Probable landing page, not the document (139,674 bytes of markup, only 6,108 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IBM-IBV-Secure-PostQuantum-2025",
+    "reason": "Probable landing page, not the document (581,870 bytes of markup, only 5,658 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "InfoSec-Global-Hype-Cycles",
+    "reason": "Probable landing page, not the document (93,755 bytes of markup, only 7,018 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "NIST-CMVP-Validated-Modules",
+    "reason": "Probable landing page, not the document (51,410 bytes of markup, only 3,040 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF-RFC-7030-EST",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "OWASP-CycloneDX-CBOM-Guide",
+    "reason": "Probable landing page, not the document (35,229 bytes of markup, only 1,971 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF-RFC-8555",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST-IR-8547-IPD2",
+    "reason": "Probable landing page, not the document (45,146 bytes of markup, only 3,830 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF RFC 8555",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "Ponemon-Global-PKI-Trends-2026",
+    "reason": "Probable landing page, not the document (144,883 bytes of markup, only 6,320 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Gartner-PQC-Time-To-Prepare",
+    "reason": "Probable landing page, not the document (229,263 bytes of markup, only 6,616 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]

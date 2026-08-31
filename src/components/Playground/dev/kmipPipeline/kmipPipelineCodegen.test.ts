@@ -69,27 +69,24 @@ describe('emitKmipPipeline — algorithm normalization', () => {
     // legitimately still appears in the emitted comments/print labels —
     // those are display text, not the algorithm argument this test checks.)
     const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], {})
-    expect(code).toContain("c.create_key_pair('ML_DSA_65'")
-    expect(code).not.toContain("c.create_key_pair('ML-DSA-65'")
-    expect(code).not.toContain(
-      "c.sign(priv_create, b'pqctoday KMIP Developer tab payload', 'ML-DSA-65')"
-    )
+    expect(code).toContain("leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65')")
+    expect(code).not.toContain("leaf('CryptographicAlgorithm', 'Enumeration', 'ML-DSA-65')")
   })
 })
 
 describe('emitKmipPipeline — messageMode (G9, W3b: genuinely binary payloads)', () => {
-  it('text mode (default) is unchanged: a plain bytes literal', () => {
+  it('text mode (default) is unchanged: a plain bytes literal, hex-encoded at runtime', () => {
     const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], { message: 'hello' })
-    expect(code).toContain("c.sign(priv_create, b'hello', ")
+    expect(code).toContain("leaf('Data', 'ByteString', b'hello'.hex())")
     expect(code).not.toContain('fromhex')
   })
 
-  it('hex mode emits bytes.fromhex(...), not a text literal', () => {
+  it('hex mode passes the hex text straight through, not a bytes literal', () => {
     const code = emitKmipPipeline(KMIP_TEMPLATES['Governed lifecycle'], {
       message: 'ff00fe0180deadbeef',
       messageMode: 'hex',
     })
-    expect(code).toContain("c.sign(priv_create, bytes.fromhex('ff00fe0180deadbeef'), ")
+    expect(code).toContain("leaf('Data', 'ByteString', 'ff00fe0180deadbeef')")
     expect(code).not.toContain("b'ff00fe0180deadbeef'")
   })
 
@@ -98,10 +95,10 @@ describe('emitKmipPipeline — messageMode (G9, W3b: genuinely binary payloads)'
       message: 'deadbeef',
       messageMode: 'hex',
     })
-    const signCalls = code.match(/c\.sign\(/g) ?? []
-    const hexCalls = code.match(/bytes\.fromhex\('deadbeef'\)/g) ?? []
+    const signCalls = code.match(/c\.submit\('Sign',/g) ?? []
+    const hexLeaves = code.match(/leaf\('Data', 'ByteString', 'deadbeef'\)/g) ?? []
     expect(signCalls.length).toBeGreaterThan(1)
-    expect(hexCalls).toHaveLength(signCalls.length)
+    expect(hexLeaves).toHaveLength(signCalls.length)
   })
 })
 
@@ -131,7 +128,7 @@ describe('tryParsePipelineFromEditedCode — reverse-parsing the Code tab back t
       },
     ]
     const generated = emitKmipPipeline(steps, {})
-    expect(generated).toContain("c.get_attributes('some-uid-1')")
+    expect(generated).toContain("leaf('UniqueIdentifier', 'TextString', 'some-uid-1')")
     const edited = generated.replace("'some-uid-1'", "'some-uid-2'")
     const result = tryParsePipelineFromEditedCode(edited, steps)
     expect(result.ok).toBe(true)
@@ -154,8 +151,11 @@ describe('tryParsePipelineFromEditedCode — reverse-parsing the Code tab back t
     const signStart = markerLine(lines, 'sign')
     const attrsStart = markerLine(lines, 'attrs')
     for (let i = signStart; i < attrsStart; i++) {
-      if (lines[i].includes("bytes.fromhex('deadbeef')")) {
-        lines[i] = lines[i].replace("bytes.fromhex('deadbeef')", "bytes.fromhex('cafebabe')")
+      if (lines[i].includes("leaf('Data', 'ByteString', 'deadbeef')")) {
+        lines[i] = lines[i].replace(
+          "leaf('Data', 'ByteString', 'deadbeef')",
+          "leaf('Data', 'ByteString', 'cafebabe')"
+        )
       }
     }
     const edited = lines.join('\n')
@@ -227,8 +227,16 @@ describe('tryParsePipelineFromEditedCode — reverse-parsing the Code tab back t
     const generated = emitKmipPipeline(steps, {})
     // 'activate' binds uid to priv_create (a ref) — swap it for a different
     // identifier entirely, the exact "guessed wrong" failure mode this feature
-    // exists to prevent.
-    const edited = generated.replace('c.activate(priv_create)', 'c.activate(pub_create)')
+    // exists to prevent. Scoped to just the 'activate' block: priv_create is
+    // also referenced verbatim by 'sign', so a global replace would touch
+    // both steps' text instead of isolating the one edit this test means.
+    const lines = generated.split('\n')
+    const activateStart = markerLine(lines, 'activate')
+    const activateEnd = markerLine(lines, 'sign')
+    for (let i = activateStart; i < activateEnd; i++) {
+      lines[i] = lines[i].replace('priv_create', 'pub_create')
+    }
+    const edited = lines.join('\n')
     const result = tryParsePipelineFromEditedCode(edited, steps)
     expect(result.ok).toBe(false)
     if (!result.ok) expect(result.reason).toContain('`activate`')

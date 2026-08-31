@@ -55,7 +55,6 @@ export const PREFIX_CTA_MAP: Array<[prefix: string, ctas: AlgoCtas]> = [
     'FN-DSA',
     {
       try: '/playground/interactive?algo=FN-DSA-512&tab=sign_verify',
-      specRef: 'FIPS 206',
       why: '/learn/pqc-101',
     },
   ],

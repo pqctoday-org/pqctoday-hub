@@ -29,6 +29,90 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.71.0] - 2026-08-30
+
+### Added
+
+- **Both Developer tabs gained a real ACVP known-answer test for ML-KEM-768 (FIPS 203)** [view:/playground] [persona:developer] [persona:researcher]: a genuine NIST test vector — real fixed key material, real expected output, not a simulated one — runs against the actual engine and byte-compares the result, proving the implementation is correct against the standard's own answer key.
+- **The KMIP Developer tab's generated script now speaks real KMIP 3.0 request grammar** [view:/playground] [persona:developer]: instead of one friendly wrapper call per operation, every step now goes through the actual Operation/Attribute vocabulary the KMIP 3.0 spec uses, so what you read matches what the spec describes.
+- **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
+
+### Fixed
+
+- **A stale claim in the PKCS#11 Developer tab's generated script explained key lifetime incorrectly** [view:/playground] [persona:developer]: corrected, with a clearer note on how the generated script's convenience calls relate to the real PKCS#11 functions.
+
+## [4.70.2] - 2026-08-30
+
+### Fixed
+
+- **Both Developer tabs' Session activity panel no longer pushes the key/keystore view below the fold** [view:/playground] [persona:developer]: the call log and key table were stacked on top of each other; they're now separate tabs, matching the same Inspector-style tab pattern the rest of each playground already uses. The KMIP tab's activity is also now split per plane (Keystore, Agility, KMIP, PKCS#11) instead of one merged stream.
+
+## [4.70.1] - 2026-08-30
+
+### Data
+
+- **21 Library documents with confirmed-unfixable evidence deprecated** [view:/library] [persona:researcher] [persona:curious]: each investigated individually rather than swept — paid standards with no legitimate free source were left active as correctly paywalled, not deprecated.
+- **70 more Library documents enriched** [view:/library] [persona:researcher].
+
+## [4.70.0] - 2026-08-29
+
+### Added
+
+- **The KMIP Developer tab now shows a real keystore viewer after each run** [view:/playground] [persona:developer]: a fourth reused panel, alongside the session log and audit trail, listing the actual objects your script created — the same view the rest of the KMIP playground already uses, not a separate rebuilt one.
+
+### Fixed
+
+- **The PKCS#11 Developer tab's key viewer was unreliable — keys could vanish, show "read error," or get double-counted** [view:/playground] [persona:developer]: three separate bugs, now fixed. Keys are generated as durable token objects instead of ones that vanished the instant your script logged out; the viewer now tracks each key by its permanent ID instead of a session handle that could point to the wrong key (or a dead one) on a later read; and re-authentication now happens correctly per run instead of silently logging out mid-session.
+
+## [4.69.0] - 2026-08-29
+
+The PKCS#11 and KMIP Developer tabs now show what your script actually did, and 150+ Learn module citations were closed out.
+
+### Added
+
+- **Both Developer tabs now show a real session-activity log for the script you just ran** [view:/playground] [persona:developer]: a collapsible panel reuses the same HSM log and key inspector (PKCS#11 tab) or the same cross-plane audit trail (KMIP tab) the rest of each playground already keeps — no separate rebuilt log, so what you see is exactly what happened.
+- **The KMIP Developer tab's Governed-lifecycle template now prints real output for every step, not just the first two** [view:/playground] [persona:developer]: activate, create, decapsulate, get-attributes, locate, revoke, and destroy previously showed nothing beyond a checkmark; all 9 steps now show their real result.
+
+### Data
+
+- **150+ citation gaps closed across dozens of Learn modules** [view:/learn] [persona:curious] [persona:researcher]: missing standards/paper references filled in with real, verifiable sources — largest single pass so far.
+- **74 additional Q&A/quiz and module content corrections** [view:/learn] [persona:curious]: factual fixes found during citation research, including a corrected Thales Luna firmware version and an overstated PQC TLS latency figure.
+
+## [4.68.0] - 2026-08-29
+
+A big /navigate upgrade, real fixes across mobile, accessibility, Business Tools, and Learn, and a stuck local-AI loop on mobile fixed for good.
+
+### Added
+
+- **/navigate now has motion controls: spin it, take a guided tour, or turn it off** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: a speed slider controls how fast the graph turns, and a new guided tour flies the camera between categories and notable nodes on its own, with a caption for what you're looking at.
+- **Accessibility coverage extended to 36 more Playground tools, with 9 real issues fixed** [view:/playground] [persona:curious].
+- **Two persona learning paths gained entries they'd been missing** [persona:executive] [persona:developer] [persona:ops]: CBOM content for the executive path, and Trust Services PQC for developer and ops.
+- **Related modules now show on mobile Learn pages, not just desktop** [view:/learn] [persona:curious].
+- **Three industry-landscape use cases — web TLS, code signing, and VPN — now link to a real Learn module** [view:/industry-landscape] [persona:curious]: previously they sat in a generic mixed-topic bucket with no module link at all.
+- **Mobile Playground now suggests a "Start here" set of tools for new visitors** [view:/playground] [persona:curious]: matches what desktop's Overview already does, and steps aside once you start filtering or searching.
+
+### Fixed
+
+- **The PQC Assistant's local AI could get stuck in an endless download-crash-reload loop on mobile** [view:/] [persona:curious]: mobile browsers cap a tab's memory well below what local AI needs, so the download reliably crashed the tab, which reloaded, which downloaded again. Mobile now says plainly that Local AI isn't available on this device and points you to Cloud instead.
+- **The PKCS#11 and KMIP Developer tabs' Run button was silently failing every time** [view:/playground] [persona:developer]: a version mismatch in the in-browser Python runtime broke every run before a single step could execute, and the failure showed no error at all if you were on the default Builder view. Both are fixed — Run works, and a failed run now shows why from either view.
+- **/navigate's auto-rotation ignored your device's reduced-motion setting** [view:/navigate] [persona:curious]: now pauses correctly, and the graph also gained a keyboard-reachable list view of the currently visible nodes.
+- **The landing page's headline stats flashed "..." before showing real numbers** [view:/] [persona:curious]: Algorithms, Timeline Events, and Library Documents counts are now ready on first paint.
+- **Mobile's "Start Workshop" button went nowhere real** [view:/playground] [persona:curious]: now routes to an actual workshop.
+- **/explore was missing from the mobile navigation menu** [view:/explore] [persona:curious]: restored.
+- **The Library's persona-based narrowing could leave you with no way to see everything** [view:/library] [persona:curious]: the one "show all" escape hatch only appeared when there happened to be new hidden documents to announce. A persistent way to turn narrowing off is now always visible.
+- **Several Business Tools reset your work on every reload** [view:/business-tools] [persona:executive] [persona:ops]: the breach simulator, crypto architecture diagram, KPI tracker, and deployment playbook now save and restore your inputs.
+- **Two accessibility issues fixed**: a real violation on the CRQC Scenario Planner, and a missing heading on the Data-Driven Scorecard [view:/business-tools] [persona:curious].
+
+### Data
+
+- **Corrected a CRQC-timeline confidence figure** [view:/threats] [persona:researcher] [persona:curious]: specific years had been attributed to GRI's own report that GRI never actually stated; restated in GRI's own words, percentages unchanged.
+- **Recovered an Israel government PQC-readiness guide and a threats document**, both dropped by earlier data-pipeline errors [view:/timeline] [view:/threats] [persona:researcher] [persona:curious].
+- **Fixed 15+ incomplete Library document-status entries and removed a duplicated GRI row** [view:/library] [persona:researcher] [persona:curious].
+- **Corrected 12 source dates and a broken Learn-module link** across the Timeline and Migrate catalogs [view:/timeline] [view:/migrate] [persona:researcher] [persona:developer].
+- **Added 25 new patent candidates and corrected an incorrect status on an existing one** [view:/patents] [persona:researcher].
+- **Removed a duplicate vendor-roadmap entry** in the Migrate catalog [view:/migrate] [persona:developer] [persona:architect].
+- **Corrected 5 editorial issues — hardcoded dates, missing citations — across Learn modules** [view:/learn] [persona:curious].
+
 ## [4.67.1] - 2026-08-29
 
 ### Fixed
@@ -57,6 +141,7 @@ Two new Developer tabs teach PKCS#11 v3.2 and KMIP 3.0 by letting you build, run
 - **The mobile "unread updates" indicator could get permanently stuck on, for every visitor** [persona:curious] [persona:developer]: once a changelog entry for a not-yet-released version landed in this file — which happens routinely, ahead of the actual version bump — there was no way to ever mark it "seen": the red dot on the ⋯ menu stayed on for everyone until the version number caught up. The unread check is now capped at the version actually running.
 - **The PKCS#11 Developer tab's C++ engine could never provision its own practice token** [view:/playground] [persona:developer]: switching the engine selector to C++ silently broke this tab specifically, because that engine reports every slot as having a token present the instant it exists, not just once one has actually been set up — so its dedicated token slot could never be created. Both engines now work, and the summary rail names which one ran your sequence.
 - **A runaway script in either Developer tab could hang the browser tab indefinitely** [view:/playground] [persona:developer]: the 15-second timeout used to just give up and report failure while the script kept running unseen in the background — for a tight loop with no natural pause point, it couldn't even manage that much, since the timeout's own clock could never get a turn to run either. A dedicated background watchdog now delivers a real interrupt, the same way pressing Ctrl-C would, so the script actually stops.
+- **The new /navigate 3D knowledge-graph page failed to open, flashing "Loading..." on a repeating cycle** [view:/navigate] [persona:researcher] [persona:architect] [persona:curious]: a production-build-only bundling defect made the page's graph engine crash the instant it loaded, and the app's own recovery step — reloading the page to fetch a fresh copy — hit the same crash every time, so it never got past the loading screen. The page's 3D library now builds in isolation from the rest of the app, which avoids the defect entirely.
 
 ## [4.66.0] - 2026-08-29
 

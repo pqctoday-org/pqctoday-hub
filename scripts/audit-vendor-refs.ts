@@ -181,6 +181,12 @@ const KNOWN_INDIRECT: Array<{ prefix: string; vnd: string }> = [
   // from VND-247 (ANSSI) to VND-256 (KiviCore) 2026-07-27; still needs
   // this entry since the name still doesn't token-match.
   { prefix: 'cast-kivipqc-', vnd: 'VND-256' },
+  // Hamad Bin Khalifa University (HBKU) — 'qatar-qc2-quantum-center' is the
+  // product/center name (QC2), which shares no tokens with "Hamad Bin
+  // Khalifa University (HBKU)". Genuine: the row's authoritative_source is
+  // https://www.hbku.edu.qa/en/cse/qc2, on HBKU's own domain. Added
+  // 2026-08-29 after N/A-audit-vendor-refs flagged it as a likely mismatch.
+  { prefix: 'qatar-qc2-', vnd: 'VND-278' },
 ]
 
 // ---------------------------------------------------------------------------

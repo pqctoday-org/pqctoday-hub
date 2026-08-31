@@ -9050,16 +9050,6 @@
       "sha256": "f861e3b8da19e292169b9ef41fb5e39ffd69c7ca77a1155760c17b8859acc8a0"
     },
     {
-      "refId": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag",
-      "title": "UN Regulation No 155 \u2014 Cyber Security and Cyber Security Management System",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:42021X0387",
-      "status": "downloaded",
-      "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
-      "sizeBytes": 565900,
-      "contentType": "text/html",
-      "sha256": "c09806ad903cd5a3ba76256ed166718d4d374b0c8662e5d25acec3d3bce59aaa"
-    },
-    {
       "refId": "ONC-Health-IT-Certification-Criterion-170-315-d-7-End-User-D",
       "title": "ONC Health IT Certification Criterion \u00a7 170.315(d)(7) \u2014 End-User Device Encryption",
       "url": "https://www.healthit.gov/test-method/end-user-device-encryption",
@@ -11387,6 +11377,716 @@
       "sizeBytes": 261599,
       "contentType": "text/html",
       "sha256": "c00e2234fcd79581bc29669c60d693afaa42f67d9205bddee848f757ae975419"
+    },
+    {
+      "refId": "UN-Regulation-No-155-Cyber-security-and-cyber-security-manag",
+      "title": "UN Regulation No. 155 - Cyber security and cyber security management system",
+      "url": "https://eur-lex.europa.eu/eli/reg/2021/387/oj/eng",
+      "status": "downloaded",
+      "filename": "UN-Regulation-No-155-Cyber-Security-and-Cyber-Security-Manag.html",
+      "sizeBytes": 567306,
+      "contentType": "text/html",
+      "sha256": "d7fb452dbfb5b8d65de8fa799ca51650fa1737fb013c8bfa2a5d9b2fb3bddace"
+    },
+    {
+      "refId": "DO-326A-Airworthiness-Security-Process-Specification",
+      "title": "DO-326A Airworthiness Security Process Specification",
+      "url": "https://products.rtca.org/21dja1f/",
+      "status": "pending-manual",
+      "filename": "DO-326A-Airworthiness-Security-Process-Specification.html",
+      "sizeBytes": 0,
+      "contentType": "text/html",
+      "sha256": ""
+    },
+    {
+      "refId": "Integrated-Methodology-for-Information-Security-Risk-Managem",
+      "title": "Integrated Methodology for Information Security Risk Management using ISO 27005:2018 and NIST SP 800-30 for Insurance Sector",
+      "url": "https://thesai.org/Downloads/Volume14No4/Paper_68-Integrated_Methodology_for_Information_Security_Risk_Management.pdf",
+      "status": "downloaded",
+      "filename": "Integrated-Methodology-for-Information-Security-Risk-Managem.pdf",
+      "sizeBytes": 1195704,
+      "contentType": "application/pdf",
+      "sha256": "3f384b6df1e9dc70a589fc2eee78a4d0d7c9277b1a51ff29048714754a748928"
+    },
+    {
+      "refId": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics",
+      "title": "Agile, Post-Quantum Secure Cryptography in Avionics",
+      "url": "https://eprint.iacr.org/2024/667.pdf",
+      "status": "downloaded",
+      "filename": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics.pdf",
+      "sizeBytes": 379083,
+      "contentType": "application/pdf",
+      "sha256": "568f194a0048a70afca254586c43fae32667b9f3d04b7c06c18be9172cc2db9f"
+    },
+    {
+      "refId": "DO-178C-Costs-vs-Benefits-Analysis",
+      "title": "DO-178C Costs vs Benefits Analysis",
+      "url": "https://afuzion.com/do-178c-costs-versus-benefits/",
+      "status": "downloaded",
+      "filename": "DO-178C-Costs-vs-Benefits-Analysis.html",
+      "sizeBytes": 210740,
+      "contentType": "text/html",
+      "sha256": "e6e2b203610039ef19ae85bd0de050ccb1e07cf8d38140eb647e9f563d619bdb"
+    },
+    {
+      "refId": "ARINC-429-Cyber-vulnerabilities-and-Voltage-Data-in-a-Hardwa",
+      "title": "ARINC 429 Cyber-vulnerabilities and Voltage Data in a Hardware-in-the-Loop Simulator",
+      "url": "https://arxiv.org/pdf/2408.16714",
+      "status": "downloaded",
+      "filename": "ARINC-429-Cyber-vulnerabilities-and-Voltage-Data-in-a-Hardwa.pdf",
+      "sizeBytes": 3112522,
+      "contentType": "application/pdf",
+      "sha256": "f2368a9c295dacbb98f0fa088cc9c0cf28da556cb08971404c9fdfdd5afb66be"
+    },
+    {
+      "refId": "Vehicle-Security-Post-Quantum-Security-to-the-CAN-Network",
+      "title": "Vehicle Security: Post-Quantum Security to the CAN Network",
+      "url": "https://semiengineering.com/vehicle-security-post-quantum-security-to-the-can-network/",
+      "status": "downloaded",
+      "filename": "Vehicle-Security-Post-Quantum-Security-to-the-CAN-Network.html",
+      "sizeBytes": 866318,
+      "contentType": "text/html",
+      "sha256": "bbc8ebf63247746e0ea2e2122ff75fff8866b5e6769557b7b8e58cb00488a962"
+    },
+    {
+      "refId": "Critical-Role-of-MACsec-in-Automotive-Security",
+      "title": "Critical Role of MACsec in Automotive Security",
+      "url": "https://www.ti.com/lit/wp/snla462/snla462.pdf",
+      "status": "downloaded",
+      "filename": "Critical-Role-of-MACsec-in-Automotive-Security.pdf",
+      "sizeBytes": 390335,
+      "contentType": "application/pdf",
+      "sha256": "e03ba50fdd547e3d34909b71672cb3cfe1d27a10adfd623af948663ce8ff3ace"
+    },
+    {
+      "refId": "AI-models-collapse-when-trained-on-recursively-generated-dat",
+      "title": "AI models collapse when trained on recursively generated data",
+      "url": "https://www.nature.com/articles/s41586-024-07566-y",
+      "status": "downloaded",
+      "filename": "AI-models-collapse-when-trained-on-recursively-generated-dat.html",
+      "sizeBytes": 367034,
+      "contentType": "text/html",
+      "sha256": "e020e853a6cc87826ca54840b79bad2f81f4cb5e07a7d4ff1cd9df32d664c278"
+    },
+    {
+      "refId": "Secure-Use-of-the-Agent-Payments-Protocol-AP2",
+      "title": "Secure Use of the Agent Payments Protocol (AP2)",
+      "url": "https://cloudsecurityalliance.org/blog/2025/10/06/secure-use-of-the-agent-payments-protocol-ap2-a-framework-for-trustworthy-ai-driven-transactions",
+      "status": "downloaded",
+      "filename": "Secure-Use-of-the-Agent-Payments-Protocol-AP2.html",
+      "sizeBytes": 1226432,
+      "contentType": "text/html",
+      "sha256": "69891ef6a87a98bf88aea18bf09100acd6266f0c6dbafdca23453e22f2d6b44e"
+    },
+    {
+      "refId": "A-Post-Quantum-Future-for-Let-s-Encrypt",
+      "title": "A Post-Quantum Future for Let's Encrypt",
+      "url": "https://letsencrypt.org/2026/06/03/pq-certs",
+      "status": "downloaded",
+      "filename": "A-Post-Quantum-Future-for-Let-s-Encrypt.html",
+      "sizeBytes": 38953,
+      "contentType": "text/html",
+      "sha256": "a78d5e3ce91c927f4fe416d46128ce36a2a69e32e3899d12e329dca6dc5a3600"
+    },
+    {
+      "refId": "Docker-Content-Trust-Retirement-and-Migration-Guidance",
+      "title": "Docker Content Trust: Retirement and Migration Guidance",
+      "url": "https://www.docker.com/blog/docker-content-trust-retirement-and-migration-guidance/",
+      "status": "downloaded",
+      "filename": "Docker-Content-Trust-Retirement-and-Migration-Guidance.html",
+      "sizeBytes": 252322,
+      "contentType": "text/html",
+      "sha256": "47c8e5031cd00294c78235d9d28b413aa4cee7005baea852e96dcf8cd3ed9471"
+    },
+    {
+      "refId": "Analysis-of-the-Codecov-Supply-Chain-Compromise",
+      "title": "Analysis of the Codecov Supply Chain Compromise",
+      "url": "https://www.rapid7.com/blog/post/2021/04/16/codecov-discloses-supply-chain-compromise/",
+      "status": "downloaded",
+      "filename": "Analysis-of-the-Codecov-Supply-Chain-Compromise.html",
+      "sizeBytes": 431306,
+      "contentType": "text/html",
+      "sha256": "735f2dc9297a9b2b0f74a84638fa3a9e0dad5a6ef4102b5f6f158111c74e494c"
+    },
+    {
+      "refId": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa",
+      "title": "Template and CPA Side Channel Attacks on the Kyber/ML-KEM Pair-Pointwise Multiplication",
+      "url": "https://eprint.iacr.org/2025/1577.pdf",
+      "status": "downloaded",
+      "filename": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa.pdf",
+      "sizeBytes": 1117495,
+      "contentType": "application/pdf",
+      "sha256": "75708519473798e9dbd1f2b694f19812d33005008e5bf19adb0fb862a3884d59"
+    },
+    {
+      "refId": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA",
+      "title": "Migration to Post-Quantum Cryptography: From ECDSA to ML-DSA",
+      "url": "https://eprint.iacr.org/2025/2025.pdf",
+      "status": "downloaded",
+      "filename": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA.pdf",
+      "sizeBytes": 599782,
+      "contentType": "application/pdf",
+      "sha256": "9a33708dfa8e322a8c1d3d08fa3bbae61c434f3de171c6ed92d2ff74e4dd5aac"
+    },
+    {
+      "refId": "Quantum-cryptography-Public-key-distribution-and-coin-tossin",
+      "title": "Quantum cryptography: Public key distribution and coin tossing",
+      "url": "https://arxiv.org/pdf/2003.06557",
+      "status": "downloaded",
+      "filename": "Quantum-cryptography-Public-key-distribution-and-coin-tossin.pdf",
+      "sizeBytes": 1229111,
+      "contentType": "application/pdf",
+      "sha256": "6c936dc191cbd5c54a69170a57ed46dbc2a5df9b7acea00cf819644284950f27"
+    },
+    {
+      "refId": "Micius-quantum-experiments-in-space",
+      "title": "Micius quantum experiments in space",
+      "url": "https://arxiv.org/pdf/2208.10236",
+      "status": "downloaded",
+      "filename": "Micius-quantum-experiments-in-space.pdf",
+      "sizeBytes": 38589334,
+      "contentType": "application/pdf",
+      "sha256": "eaafb9f4afe53e6b5dbe05bb056bd899765928ed411f9bd58bbfecb079d5fecc"
+    },
+    {
+      "refId": "Simple-Proof-of-Security-of-the-BB84-Quantum-Key-Distributio",
+      "title": "Simple Proof of Security of the BB84 Quantum Key Distribution Protocol",
+      "url": "https://bpb-us-w2.wpmucdn.com/u.osu.edu/dist/7/36891/files/2019/07/ShorPreskill-2000-proof-of-BB84-encryption.pdf",
+      "status": "downloaded",
+      "filename": "Simple-Proof-of-Security-of-the-BB84-Quantum-Key-Distributio.pdf",
+      "sizeBytes": 267564,
+      "contentType": "application/pdf",
+      "sha256": "df89d439b13d181b8e112a1ce0535faf66df33a55a96ce459571eff58d510b17"
+    },
+    {
+      "refId": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr",
+      "title": "Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer",
+      "url": "https://arxiv.org/pdf/quant-ph/9508027",
+      "status": "downloaded",
+      "filename": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr.pdf",
+      "sizeBytes": 315663,
+      "contentType": "application/pdf",
+      "sha256": "96ba03bbfa27ea6a9ab5f1795cb62166948a6de4d8da84f9f43044bb5ab58838"
+    },
+    {
+      "refId": "A-fast-quantum-mechanical-algorithm-for-database-search",
+      "title": "A fast quantum mechanical algorithm for database search",
+      "url": "https://arxiv.org/pdf/quant-ph/9605043",
+      "status": "downloaded",
+      "filename": "A-fast-quantum-mechanical-algorithm-for-database-search.pdf",
+      "sizeBytes": 67338,
+      "contentType": "application/pdf",
+      "sha256": "630528f5297271288797900dffc9ae2a8e14854759b54d87f6bb7b75c5b770db"
+    },
+    {
+      "refId": "Cybersecurity-in-Medical-Devices-Quality-System-Consideratio",
+      "title": "Cybersecurity in Medical Devices: Quality System Considerations and Content of Premarket Submissions",
+      "url": "https://www.federalregister.gov/documents/2023/09/27/2023-20955/cybersecurity-in-medical-devices-quality-system-considerations-and-content-of-premarket-submissions",
+      "status": "downloaded",
+      "filename": "Cybersecurity-in-Medical-Devices-Quality-System-Consideratio.html",
+      "sizeBytes": 84011,
+      "contentType": "text/html",
+      "sha256": "633de8aad49f2c3b6e9a2ce7abb842cb12dc19cae320bf051b50cf1f30a5ec4c"
+    },
+    {
+      "refId": "TCG-Hardware-Requirements-for-a-Device-Identifier-Compositio",
+      "title": "TCG Hardware Requirements for a Device Identifier Composition Engine",
+      "url": "https://trustedcomputinggroup.org/wp-content/uploads/Hardware-Requirements-for-Device-Identifier-Composition-Engine-r78_For-Publication.pdf",
+      "status": "downloaded",
+      "filename": "TCG-Hardware-Requirements-for-a-Device-Identifier-Compositio.pdf",
+      "sizeBytes": 938192,
+      "contentType": "application/pdf",
+      "sha256": "bc25ef0aa11cfd4d7c37f3667ed6c0b534d3039b1fa062ecdbbf89e1a7ef8755"
+    },
+    {
+      "refId": "Debian-Security-Advisory-DSA-1571-1-openssl-predictable-rand",
+      "title": "Debian Security Advisory DSA-1571-1: openssl -- predictable random number generator",
+      "url": "https://www.debian.org/security/2008/dsa-1571",
+      "status": "downloaded",
+      "filename": "Debian-Security-Advisory-DSA-1571-1-openssl-predictable-rand.html",
+      "sizeBytes": 26084,
+      "contentType": "text/html",
+      "sha256": "2ed422cf2be165a9a844cb13a52fc1cfb32dbdf200030f33991e58f7c255cceb"
+    },
+    {
+      "refId": "Cybersecurity-in-an-Era-with-Quantum-Computers-Will-We-Be-Re",
+      "title": "Cybersecurity in an Era with Quantum Computers: Will We Be Ready?",
+      "url": "https://eprint.iacr.org/2015/1075.pdf",
+      "status": "downloaded",
+      "filename": "Cybersecurity-in-an-Era-with-Quantum-Computers-Will-We-Be-Re.pdf",
+      "sizeBytes": 64880,
+      "contentType": "application/pdf",
+      "sha256": "6752a95b970fd0f762967689a8eff0da741078b88dd714c82fee5b027762bdbd"
+    },
+    {
+      "refId": "Mapping-Quantum-Threats-An-Engineering-Inventory-of-Cryptogr",
+      "title": "Mapping Quantum Threats: An Engineering Inventory of Cryptographic Dependencies",
+      "url": "https://arxiv.org/pdf/2509.24623",
+      "status": "downloaded",
+      "filename": "Mapping-Quantum-Threats-An-Engineering-Inventory-of-Cryptogr.pdf",
+      "sizeBytes": 306277,
+      "contentType": "application/pdf",
+      "sha256": "d14ea53daf1da1eb76589b3bc6267ed226124bcbb9da8f924d9036a2facd6f5d"
+    },
+    {
+      "refId": "Integrating-Remote-Attestation-with-Transport-Layer-Security",
+      "title": "Integrating Remote Attestation with Transport Layer Security",
+      "url": "https://arxiv.org/pdf/1801.05863",
+      "status": "downloaded",
+      "filename": "Integrating-Remote-Attestation-with-Transport-Layer-Security.pdf",
+      "sizeBytes": 342101,
+      "contentType": "application/pdf",
+      "sha256": "b5044df2cc816e5ec3232f9da327c4437bc2d5ee2b007aa14676f5219584800d"
+    },
+    {
+      "refId": "Intel-SGX-Explained",
+      "title": "Intel SGX Explained",
+      "url": "https://eprint.iacr.org/2016/086.pdf",
+      "status": "downloaded",
+      "filename": "Intel-SGX-Explained.pdf",
+      "sizeBytes": 2385053,
+      "contentType": "application/pdf",
+      "sha256": "8ff63fe160a9028832064470af991a6d8e4865070af0fe53451a6a2a41d6e4da"
+    },
+    {
+      "refId": "SoK-Hardware-supported-Trusted-Execution-Environments",
+      "title": "SoK: Hardware-supported Trusted Execution Environments",
+      "url": "https://arxiv.org/pdf/2205.12742",
+      "status": "downloaded",
+      "filename": "SoK-Hardware-supported-Trusted-Execution-Environments.pdf",
+      "sizeBytes": 786065,
+      "contentType": "application/pdf",
+      "sha256": "9143d951a39dbbe9770bcfe4572753941dc8297057e066b2b627de99f0d611fc"
+    },
+    {
+      "refId": "The-Security-Design-of-the-AWS-Nitro-System",
+      "title": "The Security Design of the AWS Nitro System",
+      "url": "https://docs.aws.amazon.com/pdfs/whitepapers/latest/security-design-of-aws-nitro-system/security-design-of-aws-nitro-system.pdf",
+      "status": "downloaded",
+      "filename": "The-Security-Design-of-the-AWS-Nitro-System.pdf",
+      "sizeBytes": 602260,
+      "contentType": "application/pdf",
+      "sha256": "1899a810d789534895cc4f2ffae36a94767e0191f9cc3eac75cae7c451745566"
+    },
+    {
+      "refId": "MTU-and-Deep-SSL-Inspection-Essential-Insights-for-2026",
+      "title": "MTU and Deep SSL Inspection: Essential Insights for 2026",
+      "url": "https://www.pablosec.com/blog/mtu-a-critical-part-of-deep-ssl-inspection-in-2026/",
+      "status": "downloaded",
+      "filename": "MTU-and-Deep-SSL-Inspection-Essential-Insights-for-2026.html",
+      "sizeBytes": 274783,
+      "contentType": "text/html",
+      "sha256": "95e573b18b812b1c64ef7fde4442a40237f1bb4bfb86fa80990859e227b82757"
+    },
+    {
+      "refId": "Post-quantum-between-Cloudflare-and-origin-servers",
+      "title": "Post-quantum between Cloudflare and origin servers",
+      "url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-to-origin/",
+      "status": "downloaded",
+      "filename": "Post-quantum-between-Cloudflare-and-origin-servers.html",
+      "sizeBytes": 163169,
+      "contentType": "text/html",
+      "sha256": "2a87f49d167afb6fd69b1e4da03f35ba8340cbced94bd3cb5d23db8ee8734335"
+    },
+    {
+      "refId": "TLS-Termination-Models-SSL-Passthrough-vs-SSL-Termination-vs",
+      "title": "TLS Termination Models: SSL Passthrough vs SSL Termination vs SSL Bridging",
+      "url": "https://dev.to/sharonkynu/tls-termination-models-ssl-passthrough-vs-ssl-termination-offloading-vs-ssl-bridging-39ck",
+      "status": "downloaded",
+      "filename": "TLS-Termination-Models-SSL-Passthrough-vs-SSL-Termination-vs.html",
+      "sizeBytes": 79842,
+      "contentType": "text/html",
+      "sha256": "7d773003fdb76ce7dd6101be9ab7f87cea2f55244620d6c171e0c0e9ced42c9f"
+    },
+    {
+      "refId": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme",
+      "title": "Signature Correction Attack on Dilithium Signature Scheme",
+      "url": "https://arxiv.org/pdf/2203.00637",
+      "status": "downloaded",
+      "filename": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme.pdf",
+      "sizeBytes": 684276,
+      "contentType": "application/pdf",
+      "sha256": "d27d072fa0c6ddb2eb6a4fb8e35c38a084400a8a09bf97eb3a5449149ce838b8"
+    },
+    {
+      "refId": "RAD750",
+      "title": "RAD750",
+      "url": "https://en.wikipedia.org/wiki/RAD750",
+      "status": "downloaded",
+      "filename": "RAD750.html",
+      "sizeBytes": 136851,
+      "contentType": "text/html",
+      "sha256": "d08b5465ef59858ab84aa84e05131f690e94c7518c06db0398e6180e32e34945"
+    },
+    {
+      "refId": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf",
+      "title": "Potential Data Link Candidates for Civilian Unmanned Aircraft Systems: A Survey",
+      "url": "https://arxiv.org/pdf/1912.13379",
+      "status": "downloaded",
+      "filename": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf.pdf",
+      "sizeBytes": 1646617,
+      "contentType": "application/pdf",
+      "sha256": "b5692f7de21f355ac968b2060ff3c63d65b3f6dd0b1dad26aaddb8c3fb90f4a7"
+    },
+    {
+      "refId": "Advanced-Physical-Layer-Technologies-in-VHF-Data-Link-for-Ae",
+      "title": "Advanced Physical-Layer Technologies in VHF Data Link for Aeronautical Applications",
+      "url": "https://arxiv.org/pdf/2005.11456",
+      "status": "downloaded",
+      "filename": "Advanced-Physical-Layer-Technologies-in-VHF-Data-Link-for-Ae.pdf",
+      "sizeBytes": 954940,
+      "contentType": "application/pdf",
+      "sha256": "74b717128145474ef9cba53bd8d3238c83e2ef0d8c8c2afdc5fbaba11608faef"
+    },
+    {
+      "refId": "15-CFR-742-15-Encryption-items",
+      "title": "15 CFR 742.15 -- Encryption items",
+      "url": "https://www.ecfr.gov/current/title-15/subtitle-B/chapter-VII/subchapter-C/part-742/section-742.15",
+      "status": "downloaded",
+      "filename": "15-CFR-742-15-Encryption-items.html",
+      "sizeBytes": 82621,
+      "contentType": "text/html",
+      "sha256": "7e71b9627cd7bb637aa2ea2961835ab51e7c41df7c91a89b5179e3e60f03d58d"
+    },
+    {
+      "refId": "Toward-Space-Based-Public-Key-Systems-Enabling-Secure-Space",
+      "title": "Toward Space-Based Public Key Systems: Enabling Secure Space Communications through In-Orbit Trust Services",
+      "url": "https://arxiv.org/pdf/2605.05948",
+      "status": "downloaded",
+      "filename": "Toward-Space-Based-Public-Key-Systems-Enabling-Secure-Space.pdf",
+      "sizeBytes": 3949713,
+      "contentType": "application/pdf",
+      "sha256": "524e4ac67ee4d0aad37d06814d92782b75b81766af16ad0b25a1292053fcfa32"
+    },
+    {
+      "refId": "Starlink-Constellation-Deployment-Configuration-and-Dynamics",
+      "title": "Starlink Constellation: Deployment, Configuration, and Dynamics",
+      "url": "https://arxiv.org/pdf/2603.25835",
+      "status": "downloaded",
+      "filename": "Starlink-Constellation-Deployment-Configuration-and-Dynamics.pdf",
+      "sizeBytes": 3328058,
+      "contentType": "application/pdf",
+      "sha256": "e61e8af62d8cb737fdacaefb2f0d0507bfe4dfe173ebc2ed4d0531cd13392031"
+    },
+    {
+      "refId": "System-Architecting-for-GEO-Communication-Satellite-Consider",
+      "title": "System Architecting for GEO Communication Satellite Considering On-Orbit Refueling",
+      "url": "https://arxiv.org/pdf/2504.07438",
+      "status": "downloaded",
+      "filename": "System-Architecting-for-GEO-Communication-Satellite-Consider.pdf",
+      "sizeBytes": 1552250,
+      "contentType": "application/pdf",
+      "sha256": "4bd4bbedbbbd232c5c0e68b024ffdf92e890559df8a4b55a2488f6157f30b1ab"
+    },
+    {
+      "refId": "What-are-timing-attacks-and-how-will-they-impact-postquantum",
+      "title": "What are timing attacks and how will they impact postquantum cryptography?",
+      "url": "https://www.sectigo.com/blog/how-timing-attacks-threaten-postquantum-cryptography",
+      "status": "downloaded",
+      "filename": "What-are-timing-attacks-and-how-will-they-impact-postquantum.html",
+      "sizeBytes": 587822,
+      "contentType": "text/html",
+      "sha256": "9c6fb2c09881842f35e75bdc3e690f4d9d3be22a41631c7a7228d5ee1ae6e164"
+    },
+    {
+      "refId": "CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile",
+      "title": "CAR 2 CAR Communication Consortium HSM Protection Profile",
+      "url": "https://www.commoncriteriaportal.org/files/ppfiles/pp0114b_C2CCC_PP_2056_HSM_v1_0_pdf.pdf",
+      "status": "downloaded",
+      "filename": "CAR-2-CAR-Communication-Consortium-HSM-Protection-Profile.pdf",
+      "sizeBytes": 1381700,
+      "contentType": "application/pdf",
+      "sha256": "a13b052a63380f90ac88818450d28dc38ba75218ccbdf3f4fe5229a06f240433"
+    },
+    {
+      "refId": "cosign-CHANGELOG",
+      "title": "cosign CHANGELOG",
+      "url": "https://github.com/sigstore/cosign/blob/main/CHANGELOG.md",
+      "status": "downloaded",
+      "filename": "cosign-CHANGELOG.html",
+      "sizeBytes": 581968,
+      "contentType": "text/html",
+      "sha256": "224e547bb49b64c39dd5de406014046cb2618afd8e29db56a6782419cd1d6629"
+    },
+    {
+      "refId": "Prometheus-Metrics-cert-manager-Documentation",
+      "title": "Prometheus Metrics - cert-manager Documentation",
+      "url": "https://cert-manager.io/docs/devops-tips/prometheus-metrics/",
+      "status": "downloaded",
+      "filename": "Prometheus-Metrics-cert-manager-Documentation.html",
+      "sizeBytes": 181402,
+      "contentType": "text/html",
+      "sha256": "1277c290f04cf763fb0ad86e9300672ad809fd151d2680fff71688ab155f088b"
+    },
+    {
+      "refId": "x509-certificate-exporter",
+      "title": "x509-certificate-exporter",
+      "url": "https://github.com/enix/x509-certificate-exporter",
+      "status": "downloaded",
+      "filename": "x509-certificate-exporter.html",
+      "sizeBytes": 365696,
+      "contentType": "text/html",
+      "sha256": "171ba990331c7c43c3702ff8306297e82c9e3853973e640b6ddd6084cf8f6c95"
+    },
+    {
+      "refId": "The-Importance-and-Effectiveness-of-Cyber-Risk-Quantificatio",
+      "title": "The Importance and Effectiveness of Cyber Risk Quantification (FAIR)",
+      "url": "https://www.fairinstitute.org/what-is-fair",
+      "status": "downloaded",
+      "filename": "The-Importance-and-Effectiveness-of-Cyber-Risk-Quantificatio.html",
+      "sizeBytes": 103500,
+      "contentType": "text/html",
+      "sha256": "f8f35fa3e17a03d7b3164f301b9d701d796f7e743f761e74677ded7185dc2d1f"
+    },
+    {
+      "refId": "The-Open-FAIR-Body-of-Knowledge",
+      "title": "The Open FAIR Body of Knowledge",
+      "url": "https://www.opengroup.org/open-fair",
+      "status": "downloaded",
+      "filename": "The-Open-FAIR-Body-of-Knowledge.html",
+      "sizeBytes": 87120,
+      "contentType": "text/html",
+      "sha256": "ce67b9f6ea56f4a7a1fc51e3becb205ed9e746627c88041ae0650b32a30c4a5c"
+    },
+    {
+      "refId": "Layered-Performance-Analysis-of-TLS-1-3-Handshakes-Classical",
+      "title": "Layered Performance Analysis of TLS 1.3 Handshakes: Classical, Hybrid, and Pure Post-Quantum Key Exchange",
+      "url": "https://arxiv.org/pdf/2603.11006",
+      "status": "downloaded",
+      "filename": "Layered-Performance-Analysis-of-TLS-1-3-Handshakes-Classical.pdf",
+      "sizeBytes": 618743,
+      "contentType": "application/pdf",
+      "sha256": "304b0e79f75ac398ff2acced8bf440a3cfce83de8a80dc7bd72fc063d095766f"
+    },
+    {
+      "refId": "SMART-App-Launch",
+      "title": "SMART App Launch",
+      "url": "https://www.hl7.org/fhir/smart-app-launch/",
+      "status": "downloaded",
+      "filename": "SMART-App-Launch.html",
+      "sizeBytes": 40410,
+      "contentType": "text/html",
+      "sha256": "74f0778857be28b11dc7ae139bc1b429668b1519b1374913fbd8ed04b15475a2"
+    },
+    {
+      "refId": "Deep-CNN-Face-Matchers-Inherently-Support-Revocable-Biometri",
+      "title": "Deep CNN Face Matchers Inherently Support Revocable Biometric Templates",
+      "url": "https://arxiv.org/pdf/2506.18731",
+      "status": "downloaded",
+      "filename": "Deep-CNN-Face-Matchers-Inherently-Support-Revocable-Biometri.pdf",
+      "sizeBytes": 5017042,
+      "contentType": "application/pdf",
+      "sha256": "e9d08aeb48ef84b0a9e5807cf99ab36ec67bdd9062bf82bd306feff129d91a19"
+    },
+    {
+      "refId": "OpenSSH-Post-Quantum-Cryptography",
+      "title": "OpenSSH: Post-Quantum Cryptography",
+      "url": "https://www.openssh.org/pq.html",
+      "status": "downloaded",
+      "filename": "OpenSSH-Post-Quantum-Cryptography.html",
+      "sizeBytes": 7811,
+      "contentType": "text/html",
+      "sha256": "570f7aaa9145fa4467a582156f336a0dae6fec530389e564a37e8f91e126ed7c"
+    },
+    {
+      "refId": "Understanding-standards-ETSI",
+      "title": "Understanding standards - ETSI",
+      "url": "https://www.etsi.org/standards/types-of-standards",
+      "status": "downloaded",
+      "filename": "Understanding-standards-ETSI.html",
+      "sizeBytes": 150914,
+      "contentType": "text/html",
+      "sha256": "f73a7fc5f642c564832d5e72076ea1b32bd73a2677f1986f3f6c827e6ec3edc2"
+    },
+    {
+      "refId": "Post-Quantum-Use-In-Protocols-pquip-IETF-Working-Group-Chart",
+      "title": "Post-Quantum Use In Protocols (pquip) - IETF Working Group Charter",
+      "url": "https://datatracker.ietf.org/wg/pquip/about/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Use-In-Protocols-pquip-IETF-Working-Group-Chart.html",
+      "sizeBytes": 38998,
+      "contentType": "text/html",
+      "sha256": "fc2dfb5990ec57973281625f253f35766b0c5289bfd66c20e17db0ab5792b9fd"
+    },
+    {
+      "refId": "Introduction-to-the-IETF",
+      "title": "Introduction to the IETF",
+      "url": "https://www.ietf.org/about/introduction/",
+      "status": "downloaded",
+      "filename": "Introduction-to-the-IETF.html",
+      "sizeBytes": 86257,
+      "contentType": "text/html",
+      "sha256": "1f1bf56fa9d3d9d57d8560c4b3b7d337dfc80b2afddd4af80929b380efca26d2"
+    },
+    {
+      "refId": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub",
+      "title": "Evaluation of Time-Critical Communications for IEC 61850-Substation Network Architecture",
+      "url": "https://arxiv.org/pdf/1512.07004",
+      "status": "downloaded",
+      "filename": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.pdf",
+      "sizeBytes": 295610,
+      "contentType": "application/pdf",
+      "sha256": "7f415afa991497ab13023014bfe894198b3830b6c0dcdc39129074578e786d2b"
+    },
+    {
+      "refId": "IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness",
+      "title": "IEC 61850 Meets IEC 62351: Securing GOOSE Power Grid Weaknesses",
+      "url": "https://www.nozominetworks.com/blog/iec-61850-meets-iec-62351",
+      "status": "downloaded",
+      "filename": "IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness.html",
+      "sizeBytes": 66019,
+      "contentType": "text/html",
+      "sha256": "4f7442450d47f06d36dd4a19e74fa3b71dff334b058122367ddd6f11d2c0994b"
+    },
+    {
+      "refId": "Understanding-Programs-and-Projects",
+      "title": "Understanding Programs and Projects",
+      "url": "https://www.pmi.org/learning/library/understanding-difference-programs-versus-projects-6896",
+      "status": "downloaded",
+      "filename": "Understanding-Programs-and-Projects.html",
+      "sizeBytes": 455041,
+      "contentType": "text/html",
+      "sha256": "820ec5ae7bf02641f056bc34cd822376ab1d55689212d916660015d41d77ccf4"
+    },
+    {
+      "refId": "About-Updating-SafeNet-Network-HSM",
+      "title": "About Updating SafeNet Network HSM",
+      "url": "https://thalesdocs.com/gphsm/luna/6.3/docs/network/Content/administration/sw_maint/about_updating_lunasa.htm",
+      "status": "downloaded",
+      "filename": "About-Updating-SafeNet-Network-HSM.html",
+      "sizeBytes": 26822,
+      "contentType": "text/html",
+      "sha256": "df8cb8eb1d42e13581b55a576d33d6858db192fed7303529c95193348cc52c52"
+    },
+    {
+      "refId": "oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo",
+      "title": "oqs-provider: OpenSSL 3 provider containing post-quantum algorithms",
+      "url": "https://github.com/open-quantum-safe/oqs-provider",
+      "status": "downloaded",
+      "filename": "oqs-provider-OpenSSL-3-provider-containing-post-quantum-algo.html",
+      "sizeBytes": 432168,
+      "contentType": "text/html",
+      "sha256": "860e61ee4b57e5acaa3d497b69aa45c9f448128daa4eed45851c56cffb1efa32"
+    },
+    {
+      "refId": "Crypto-getRandomValues-method-Web-APIs-MDN",
+      "title": "Crypto: getRandomValues() method - Web APIs | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues",
+      "status": "downloaded",
+      "filename": "Crypto-getRandomValues-method-Web-APIs-MDN.html",
+      "sizeBytes": 155676,
+      "contentType": "text/html",
+      "sha256": "59f461033b52e01f84dd88cb3ddca8feb78f61428816f0f9d28578ffb9fe43c3"
+    },
+    {
+      "refId": "ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL",
+      "title": "ALTER DATABASE ENCRYPTION KEY (Transact-SQL)",
+      "url": "https://learn.microsoft.com/en-us/sql/t-sql/statements/alter-database-encryption-key-transact-sql?view=sql-server-ver16",
+      "status": "downloaded",
+      "filename": "ALTER-DATABASE-ENCRYPTION-KEY-Transact-SQL.html",
+      "sizeBytes": 52551,
+      "contentType": "text/html",
+      "sha256": "f228df0334e8049c9e82f0af4a1c25379d5403ac8dcc828be5ca073244e36825"
+    },
+    {
+      "refId": "sys-dm-database-encryption-keys-Transact-SQL",
+      "title": "sys.dm_database_encryption_keys (Transact-SQL)",
+      "url": "https://learn.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-database-encryption-keys-transact-sql?view=sql-server-ver17",
+      "status": "downloaded",
+      "filename": "sys-dm-database-encryption-keys-Transact-SQL.html",
+      "sizeBytes": 56892,
+      "contentType": "text/html",
+      "sha256": "b5184e38def47a66964b2a264c777d631168800e8b38b204fe596e1a932a406c"
+    },
+    {
+      "refId": "Choosing-a-Cloud-Key-Management-Model",
+      "title": "Choosing a Cloud Key Management Model",
+      "url": "https://cloudsecurityalliance.org/blog/2026/01/05/choosing-the-right-key-responsibility-model",
+      "status": "downloaded",
+      "filename": "Choosing-a-Cloud-Key-Management-Model.html",
+      "sizeBytes": 137541,
+      "contentType": "text/html",
+      "sha256": "353d192827b050d0d0625743ca70477b23a07748c261607e9e684e6491acc893"
+    },
+    {
+      "refId": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio",
+      "title": "21 CFR 312.62 -- Investigator recordkeeping and record retention",
+      "url": "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312/subpart-D/section-312.62",
+      "status": "downloaded",
+      "filename": "21-CFR-312-62-Investigator-recordkeeping-and-record-retentio.html",
+      "sizeBytes": 68554,
+      "contentType": "text/html",
+      "sha256": "37c73623258dde98c1d6f2b668e5ca17c0b4b1ed2a5062942e31728635f75de8"
+    },
+    {
+      "refId": "Visa-Token-Service",
+      "title": "Visa Token Service",
+      "url": "https://usa.visa.com/products/visa-token-service.html",
+      "status": "downloaded",
+      "filename": "Visa-Token-Service.html",
+      "sizeBytes": 192707,
+      "contentType": "text/html",
+      "sha256": "98cb8a61ff72fe4f03e67bd364854d209d9726f7029ec3be3bbe87d40333a9d4"
+    },
+    {
+      "refId": "EMV-Key-Management-Explained",
+      "title": "EMV Key Management - Explained",
+      "url": "https://www.cryptomathic.com/hubfs/docs/cryptomathic_white_paper-emv_key_management.pdf",
+      "status": "downloaded",
+      "filename": "EMV-Key-Management-Explained.pdf",
+      "sizeBytes": 2826318,
+      "contentType": "application/pdf",
+      "sha256": "be12678f24f5b986dd4f887221c14e637bc445a8dd98bb1b5d59c0140c8b85ac"
+    },
+    {
+      "refId": "Secret-Zero-Tackling-the-Secret-Zero-Problem",
+      "title": "Secret Zero: Tackling the Secret Zero Problem",
+      "url": "https://www.akeyless.io/secrets-management-glossary/secret-zero/",
+      "status": "downloaded",
+      "filename": "Secret-Zero-Tackling-the-Secret-Zero-Problem.html",
+      "sizeBytes": 206282,
+      "contentType": "text/html",
+      "sha256": "965a7f587caece670c086b2288fff65a3d4428dd9dae499494ab978226fcb8eb"
+    },
+    {
+      "refId": "Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant",
+      "title": "Toward Quantum-Safe 6G: Experimental Evaluation of Post-Quantum Cryptography Techniques",
+      "url": "https://arxiv.org/pdf/2605.06881",
+      "status": "downloaded",
+      "filename": "Toward-Quantum-Safe-6G-Experimental-Evaluation-of-Post-Quant.pdf",
+      "sizeBytes": 1136898,
+      "contentType": "application/pdf",
+      "sha256": "e80926247f7359a40e8a4f8ad26c36f9499d3c4e7bde2266a26a602c1d4771bc"
+    },
+    {
+      "refId": "LoRaWAN-Regional-Parameters",
+      "title": "LoRaWAN Regional Parameters",
+      "url": "https://lora-alliance.org/wp-content/uploads/2020/11/lorawan_regional_parameters_v1.0.3reva_0.pdf",
+      "status": "downloaded",
+      "filename": "LoRaWAN-Regional-Parameters.pdf",
+      "sizeBytes": 1443984,
+      "contentType": "application/pdf",
+      "sha256": "e558a2cfc9b93f38a06dc52a40fdd003ced6e649c3e357c1285f5604444a3d61"
+    },
+    {
+      "refId": "Post-Quantum-Algorithms-Luna-HSM",
+      "title": "Post Quantum Algorithms - Luna HSM",
+      "url": "https://thalesdocs.com/gphsm/luna/7/docs/network/Content/sdk/extensions/pqc/post_quantum_algorithms.htm",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Algorithms-Luna-HSM.html",
+      "sizeBytes": 47081,
+      "contentType": "text/html",
+      "sha256": "ab6001b6e85c42faafca2339c1b51659b8e7eb2b5993a30a5be484dc5493f968"
+    },
+    {
+      "refId": "A-Multifaceted-Look-at-Starlink-Performance",
+      "title": "A Multifaceted Look at Starlink Performance",
+      "url": "https://arxiv.org/pdf/2310.09242",
+      "status": "downloaded",
+      "filename": "A-Multifaceted-Look-at-Starlink-Performance.pdf",
+      "sizeBytes": 2934270,
+      "contentType": "application/pdf",
+      "sha256": "c27c123b7e11633302f3deeeb16b345dfce4b719b40ea5d69152188f6237c55b"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

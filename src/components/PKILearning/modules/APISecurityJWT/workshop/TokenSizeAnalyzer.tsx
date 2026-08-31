@@ -194,7 +194,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
       )}
       {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} className="max-h-40" />}
       {measureError && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error">
           Failed to measure: {measureError}
         </div>
       )}

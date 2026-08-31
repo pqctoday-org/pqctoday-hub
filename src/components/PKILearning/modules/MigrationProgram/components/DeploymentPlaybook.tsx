@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from 'react'
 import { Rocket } from 'lucide-react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
+import { useSavedArtifactInputs, useSavedArtifactOutput } from '@/hooks/useSavedArtifactInputs'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import type { RoadmapOutput } from '../types'
 
@@ -250,6 +250,12 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
     return lines.join(' | ')
   }, [phaseGroups])
 
+  // Restore half of the save/restore pair — handleSave below writes this
+  // same shape into inputs, but nothing ever read it back until this fix:
+  // OpsChecklist always started checkedItems as an empty Set, so a saved
+  // playbook looked reset on every remount despite the save succeeding.
+  const savedInputs = useSavedArtifactInputs<{ checkedItems: string[] }>('deployment-playbook')
+
   const handleSave = useCallback(
     ({ markdown, checkedItems }: { markdown: string; checkedItems: string[] }) => {
       addExecutiveDocument({
@@ -292,6 +298,7 @@ export const DeploymentPlaybook: React.FC<DeploymentPlaybookProps> = ({ roadmapO
         description={DEPLOYMENT_PLAYBOOK_DESCRIPTION}
         sections={DEPLOYMENT_PLAYBOOK_SECTIONS}
         onSave={handleSave}
+        initialCheckedItems={savedInputs?.checkedItems}
       />
     </div>
   )

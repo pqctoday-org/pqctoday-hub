@@ -12,7 +12,7 @@ import {
   type WorkshopCategory,
   type ToolDifficulty,
 } from '@/components/Playground/workshopRegistry'
-import { PERSONA_CHIP_LABEL } from '@/components/Playground/cryptoLabMeta'
+import { PERSONA_CHIP_LABEL, roleLabel } from '@/components/Playground/cryptoLabMeta'
 import { expandSearchQuery } from '@/components/Playground/cryptoLabTaxonomy'
 import {
   useDeviceCapabilities,
@@ -22,6 +22,7 @@ import {
 } from '@/hooks/useDeviceCapabilities'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { MobileSheet } from '../primitives/Sheet'
 
 // Tools whose own real UI does not distill to a phone screen — dropped from
@@ -95,6 +96,23 @@ export function MobilePlaygroundView() {
   const caps = useDeviceCapabilities()
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
   const toggleBookmark = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
+  const role = usePersonaStore((s) => s.selectedPersona)
+
+  // Mirrors desktop's Overview "Start here" pool (PlaygroundWorkshop.tsx,
+  // playground.md Phase 9.2 acceptance) — role-matched tools, or beginner
+  // difficulty when no role is set. Mobile had no curated pick at all before
+  // this, just the full filterable/searchable grid below. Only shown in the
+  // default browse state: once a visitor narrows via category, difficulty or
+  // search, they've already found their own starting point, and keeping a
+  // filter-blind recommendation visible would contradict the active filter.
+  const startHere = useMemo(() => {
+    if (category || difficulty !== 'All' || search.trim()) return []
+    const runnable = MOBILE_TOOLS.filter((t) => toolFitness(t.requires, caps) === 'runs')
+    const base = role
+      ? runnable.filter((t) => t.recommendedPersonas.includes(role))
+      : runnable.filter((t) => t.difficulty === 'beginner')
+    return base.slice(0, 3)
+  }, [role, category, difficulty, search, caps])
 
   const categoryCounts = useMemo(() => {
     const counts = new Map<string, number>()
@@ -136,6 +154,26 @@ export function MobilePlaygroundView() {
           {MOBILE_TOOLS.length} tools · runs in-browser
         </p>
       </div>
+
+      {startHere.length > 0 && (
+        <div className="mb-4">
+          <p className="mb-2 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
+            {role ? `Recommended for ${roleLabel(role)}` : 'Good places to start'}
+          </p>
+          <div className="flex flex-col gap-2.5">
+            {startHere.map((tool) => (
+              <ToolCardMobile
+                key={tool.id}
+                tool={tool}
+                caps={caps}
+                bookmarked={myPlaygroundTools.includes(tool.id)}
+                onToggleBookmark={() => toggleBookmark(tool.id)}
+                onSelect={() => setSelected(tool)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       <input
         type="search"
@@ -216,7 +254,7 @@ export function MobilePlaygroundView() {
         </Button>
       )}
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5" data-testid="playground-tools-grid">
         {filtered.length === 0 && (
           <p className="text-[12.5px] text-muted-foreground">No tools match these filters.</p>
         )}

@@ -28,6 +28,11 @@ export const DEFAULT_PIPELINE_INPUT = 'pqctoday sandbox payload'
 export type ParamValue =
   | { bind: 'literal'; value: string }
   | { bind: 'bytes'; value: string }
+  /** Hex-encoded bytes — an ACVP known-answer test's own fixed key/
+   *  ciphertext material, verbatim from the vector. Distinct from
+   *  'bytes' (a UTF-8 text literal): this is `bytes.fromhex(value)`, not
+   *  `value.encode()`. */
+  | { bind: 'hex'; value: string }
   | { bind: 'ref'; step: string }
   | { bind: 'key'; step: string; part: 'pub' | 'priv' | 'secret' }
 
@@ -78,6 +83,7 @@ const pyStr = (s: string) =>
   `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r')}'`
 
 const pyBytes = (s: string) => `b${pyStr(s)}`
+const pyBytesFromHex = (hex: string) => `bytes.fromhex(${pyStr(hex)})`
 
 function render(pv: ParamValue | undefined, fallback = 'None'): string {
   if (!pv) return fallback
@@ -86,6 +92,8 @@ function render(pv: ParamValue | undefined, fallback = 'None'): string {
       return pyStr(pv.value)
     case 'bytes':
       return pyBytes(pv.value)
+    case 'hex':
+      return pyBytesFromHex(pv.value)
     case 'ref':
       return resultVar(pv.step)
     case 'key':
@@ -110,47 +118,56 @@ function emitGenerate(step: PipelineStep, spec: PrimSpec): string[] {
     key = secretVar(step.id)
   const L = pyStr(spec.label)
 
+  // token=True: these keys need to survive past the generating session
+  // closing (s.logout() at the end of this very script) so the Developer
+  // tab's own Key inspector — a real PKCS#11 attribute query, not a
+  // reconstruction — can still find them afterward. Scoped to the
+  // Developer tab's own isolated DevSequences slot (devSlot.ts); nothing
+  // else on the token shares it.
   switch (kg.kind) {
     case 'ml-dsa':
       return [
-        `${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_ml_dsa(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ml-kem':
       return [
-        `${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_ml_kem(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'slh-dsa':
       return [
-        `${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName})`,
+        `${pub}, ${priv} = s.generate_slh_dsa(p11.${kg.paramSetName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'hss':
       // Stateful: the token tracks CKA_HSS_KEYS_REMAINING and the key is spent when it hits 0.
       return [
         `# CKA_HSS_KEYS_REMAINING decrements on every signature (PKCS#11 v3.2 §6.65)`,
-        `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName})`,
+        `${pub}, ${priv} = s.generate_hss(p11.${kg.lmsName}, p11.${kg.lmotsName}, token=True)`,
         `print('%s keypair · pub=%d priv=%d · %d signatures available'`,
         `      % (${L}, ${pub}, ${priv}, s.hss_keys_remaining(${priv})))`,
       ]
     case 'rsa':
       return [
-        `${pub}, ${priv} = s.generate_rsa(${kg.bits})`,
+        `${pub}, ${priv} = s.generate_rsa(${kg.bits}, token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ec-p256':
       return [
-        `${pub}, ${priv} = s.generate_ec_p256()`,
+        `${pub}, ${priv} = s.generate_ec_p256(token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'ed25519':
       return [
-        `${pub}, ${priv} = s.generate_ed25519()`,
+        `${pub}, ${priv} = s.generate_ed25519(token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
     case 'aes256':
-      return [`${key} = s.generate_aes256()`, `print('%s key · handle=%d' % (${L}, ${key}))`]
+      return [
+        `${key} = s.generate_aes256(token=True)`,
+        `print('%s key · handle=%d' % (${L}, ${key}))`,
+      ]
   }
 }
 
@@ -202,13 +219,26 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
         `      % (${L}, len(${out}), len(s.value(${secretVar(step.id)}))))`,
       ]
 
-    case 'decapsulate':
-      return [
+    case 'decapsulate': {
+      const lines = [
         `${secretVar(step.id)} = s.decapsulate(${render(p.privKey)}, ${render(p.ciphertext)})`,
         `${out} = s.value(${secretVar(step.id)})`,
-        `print('%s decapsulate · secret=%d B match=%s'`,
-        `      % (${L}, len(${out}), ${out} == s.value(${secretVar(refStep(p.ciphertext))})))`,
       ]
+      // A fixed (hex-bound) ciphertext — an ACVP vector's own, not a
+      // prior encapsulate step's — has no earlier secret to self-compare
+      // against; refStep's PIPELINE_INPUT_ID fallback would reference a
+      // secretVar that was never assigned. An 'assert' step (if the
+      // template has one) does the real comparison instead.
+      if (p.ciphertext?.bind === 'hex') {
+        lines.push(`print('%s decapsulate · secret=%d B' % (${L}, len(${out})))`)
+      } else {
+        lines.push(
+          `print('%s decapsulate · secret=%d B match=%s'`,
+          `      % (${L}, len(${out}), ${out} == s.value(${secretVar(refStep(p.ciphertext))})))`
+        )
+      }
+      return lines
+    }
 
     case 'derive':
       return [
@@ -243,6 +273,49 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
       return [
         `${out} = s.decrypt(${render(p.privKey)}, ${m}, ${render(p.input)}${extra})`,
         `print('%s plaintext · %d B match=%s' % (${L}, len(${out}), ${out} == pipeline_input))`,
+      ]
+    }
+
+    case 'import': {
+      // ACVP known-answer test: import the vector's own fixed private key
+      // via real C_CreateObject (PKCS#11 v3.2 §4.1.1), not C_GenerateKeyPair
+      // — the only way a KAT's expected output is even reachable, since a
+      // freshly generated key is random. requires.keyMaterial's kind is
+      // 'label' at the type level (see pipelinePrimitives.ts's comment);
+      // the codegen here is what actually treats the value as hex.
+      const priv = privVar(step.id)
+      const material = render(p.keyMaterial)
+      const kg = spec.keygen
+      if (!kg || (kg.kind !== 'ml-kem' && kg.kind !== 'ml-dsa')) {
+        return [
+          `raise RuntimeError(${pyStr(`${spec.label} import is only wired for ML-KEM/ML-DSA`)})`,
+        ]
+      }
+      const ckkName = kg.kind === 'ml-kem' ? 'CKK_ML_KEM' : 'CKK_ML_DSA'
+      const usageAttr = kg.kind === 'ml-kem' ? 'CKA_DECAPSULATE' : 'CKA_SIGN'
+      return [
+        `priv_template_${sym(step.id)} = [`,
+        `    (p11.CKA_CLASS, p11.CKO_PRIVATE_KEY),`,
+        `    (p11.CKA_KEY_TYPE, p11.${ckkName}),`,
+        `    (p11.${usageAttr}, True),`,
+        `    (p11.CKA_PARAMETER_SET, p11.${kg.paramSetName}),`,
+        `    (p11.CKA_VALUE, ${material}),`,
+        `    (p11.CKA_TOKEN, True),`,
+        `]`,
+        `${priv} = s.create_object(priv_template_${sym(step.id)})`,
+        `print('%s imported · priv=%d' % (${L}, ${priv}))`,
+      ]
+    }
+
+    case 'assert': {
+      const secret = render(p.secret)
+      const expected = p.expected?.bind === 'hex' ? p.expected.value.toLowerCase() : ''
+      const label = p.label?.bind === 'literal' ? p.label.value : 'ACVP known-answer check'
+      return [
+        `_actual = s.value(${secret}).hex()`,
+        `_expected = ${pyStr(expected)}`,
+        `if _actual != _expected: raise RuntimeError(f'ACVP KAT MISMATCH — expected {_expected[:32]}..., got {_actual[:32]}...')`,
+        `print(${pyStr(`  ACVP KAT MATCH: ${label}`)})`,
       ]
     }
 
@@ -299,8 +372,15 @@ export function emitPipeline(steps: PipelineStep[], opts: EmitOptions = {}): str
     '"""Generated by the pqctoday sandbox pipeline builder.',
     '',
     'Runs against the softhsmv3 token through the bundled p11 package, which negotiates',
-    'the PKCS#11 v3.2 interface with C_GetInterface. Keys are session objects: they are',
-    'destroyed when the session closes.',
+    'the PKCS#11 v3.2 interface with C_GetInterface. Keys are created as TOKEN objects',
+    '(token=True below), so they survive this session closing.',
+    '',
+    "s.sign()/s.generate_*()/etc. are p11's own convenience API (the same public",
+    'surface as pqctoday-sandbox/samples/py/p11, which runs this exact script against',
+    'a real libsofthsmv3.so) — not literal PKCS#11 C_* function names. Each one really',
+    'does issue the real calls underneath (s.sign() -> C_SignInit/C_Sign,',
+    's.generate_ml_dsa() -> C_GenerateKeyPair, ...) — see this run in the Session',
+    'activity Log tab for the literal C_* call trace.',
     '"""',
     'import os',
     'import p11',

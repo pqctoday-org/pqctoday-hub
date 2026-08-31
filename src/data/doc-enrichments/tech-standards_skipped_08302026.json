@@ -1,0 +1,62 @@
+[
+  {
+    "ref_id": "TCG-TPM-V185-Part3",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "FIPS 206",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "RFC 9810",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "ISO/IEC 14888-4:2024",
+    "reason": "Probable landing page, not the document (88,046 bytes of markup, only 2,941 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "3GPP TS 33.501",
+    "reason": "Probable landing page, not the document (645,652 bytes of markup, only 7,157 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03",
+    "reason": "Probable landing page, not the document (46,957 bytes of markup, only 2,194 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "draft-kampanakis-curdle-ssh-pq-ke",
+    "reason": "Probable landing page, not the document (46,177 bytes of markup, only 1,715 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "draft-sfluhrer-ipsecme-ikev2-mldsa-01",
+    "reason": "Probable landing page, not the document (40,018 bytes of markup, only 1,573 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "Ethereum-PQC-Tasklist-Ethresearch",
+    "reason": "Probable landing page, not the document (466,703 bytes of markup, only 3,331 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "OpenID4VP-Spec",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "IETF-Token-Status-List",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST-SP-800-131A-Rev3",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "NIST-SP-800-22-R1A",
+    "reason": "Probable landing page, not the document (49,208 bytes of markup, only 4,339 chars of text). Re-fetch the linked document before treating this as covered."
+  },
+  {
+    "ref_id": "IETF RFC 7296",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "RFC 7519",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  }
+]

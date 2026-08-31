@@ -45,7 +45,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-sm font-bold text-destructive mb-1">Bad Entropy</div>
+            <div className="text-sm font-bold text-status-error mb-1">Bad Entropy</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Debian OpenSSL bug (2008): PID-only seeding produced ~32,768 possible keys</li>
               <li>Predictable seeds lead to key recovery attacks</li>

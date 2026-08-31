@@ -788,7 +788,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
 
   if (!joseRow) {
     return (
-      <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+      <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error">
         JOSE row not found in pqcProtocolMatrix.ts — check the data file.
       </div>
     )
@@ -847,7 +847,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       </div>
 
       {loadError && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive flex items-center gap-2">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error flex items-center gap-2">
           <AlertCircle size={14} /> Failed to load snapshot data: {loadError}
         </div>
       )}
@@ -875,7 +875,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       </div>
 
       {auditError && (
-        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error">
           {auditError}
         </div>
       )}
@@ -930,7 +930,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
         </p>
 
         {complianceError && (
-          <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive mb-3">
+          <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error mb-3">
             {complianceError}
           </div>
         )}
@@ -1031,7 +1031,7 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
         </p>
 
         {joseKatError && (
-          <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive mb-3">
+          <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-status-error mb-3">
             {joseKatError}
           </div>
         )}

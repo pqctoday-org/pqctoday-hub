@@ -133,7 +133,7 @@ export const PassiveDiscoveryLab: React.FC = () => {
           [
             ['quantum-safe', 'Quantum-Safe', 'text-status-success bg-status-success/10'],
             ['hybrid', 'Hybrid', 'text-status-warning bg-status-warning/10'],
-            ['vulnerable', 'Vulnerable', 'text-destructive bg-destructive/10'],
+            ['vulnerable', 'Vulnerable', 'text-status-error bg-destructive/10'],
             ['unknown', 'Unknown', 'text-muted-foreground bg-muted'],
           ] as const
         ).map(([key, label, cls]) => (

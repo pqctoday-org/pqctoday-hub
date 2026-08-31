@@ -203,8 +203,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <code className="text-primary font-mono text-sm">CKM_ML_KEM_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_ML_DSA_*</code>,{' '}
             <code className="text-primary font-mono text-sm">CKM_SLH_DSA_*</code>. Hardware tokens
-            are beginning to implement these — Thales Luna 10.x and Utimaco SecurityServer are in
-            beta support.
+            are beginning to implement these — Thales Luna (Firmware 7.9.0+, Client 10.9.0+) and
+            Utimaco (Quantum Protect application package) both ship it now.
           </p>
           <div className="bg-status-warning/10 border border-status-warning/40 rounded-lg p-3">
             <div className="font-semibold text-status-warning text-sm mb-1">
@@ -499,8 +499,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               },
               {
                 api: 'PKCS#11 v3.2',
-                status: 'experimental',
-                note: 'HSM vendor support beginning; Thales Luna 10.x in beta',
+                status: 'production',
+                note: 'Thales Luna (Firmware 7.9.0+, Client 10.9.0+) and Utimaco (Quantum Protect) both ship v3.2 PQC mechanisms today',
               },
             ].map((item) => {
               const colors = {

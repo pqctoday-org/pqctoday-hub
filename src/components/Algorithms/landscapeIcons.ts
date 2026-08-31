@@ -148,6 +148,13 @@ export const INDUSTRY_ICONS: Record<string, LucideIcon> = {
   'Cloud Computing / Data Centers': Cloud,
   'Critical Infrastructure / Energy': Zap,
   'Cross-Industry': Layers,
+  // Sub-labels of 'Cross-Industry' (isCrossIndustry() still matches them by
+  // prefix) — same icon as the parent, since they're the same "applies to
+  // every sector" concept split only for the industry-level learn_module_id
+  // consistency guard, not a real distinct sector.
+  'Cross-Industry / Web & API TLS': Layers,
+  'Cross-Industry / Network & VPN': Layers,
+  'Cross-Industry / Code Signing': Layers,
   'Cryptocurrency / Blockchain': Bitcoin,
   'Education / Research': GraduationCap,
   'Finance & Banking': Landmark,

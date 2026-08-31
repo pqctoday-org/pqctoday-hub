@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -107,5 +107,7 @@ export const content: ModuleContent = {
       'Eight certificate approaches are covered here — six that carry signatures, plus two that carry KEM (encryption) keys. Signature formats: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in X.509 extensions, ITU-T X.509 (2019) §9.8), Related Certificates (paired certs with a binding hash, RFC 9763), and Chameleon (delta extension — an expired individual draft, taught as a design study). KEM formats: Pure PQC KEM (ML-KEM, RFC 9935) and Composite KEM (single OID over ML-KEM plus a classical KEM). Only Alt-Sig, Related Certificates and Chameleon remain verifiable by a validator that does not understand PQC; composite is not backward compatible.',
     compositeSigSize: '~3,379 bytes',
     altSigSize: '2,017 bytes',
+    relatedStandards:
+      "FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, is still a NIST draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }

@@ -25,6 +25,17 @@ import {
 } from '@/data/forceClusterGraph'
 import { NavigateDetailPanel } from './NavigateDetailPanel'
 import { GRAPH_TOKEN, NODE_TYPES, TYPE_LABEL } from './graphVisuals'
+import { boundingSphere, easeInOutCubic, frameDistance, nodeApproach } from './cameraPath'
+import { buildItinerary, skippedCategories, type TourStop } from './tourItinerary'
+import {
+  MotionControls,
+  MOTION_SPEED_DEFAULT,
+  MOTION_SPEED_MAX,
+  MOTION_SPEED_MIN,
+  type MotionMode,
+  type TourProgress,
+} from './MotionControls'
+import { TourCaption } from './TourCaption'
 import { Button } from '@/components/ui/button'
 
 function resolveGraphColor(varName: string, fallback: string): THREE.Color {
@@ -284,6 +295,62 @@ async function createRenderer(canvas: HTMLCanvasElement): Promise<THREE.WebGLRen
 const LOD_FAR_DISTANCE = 46
 const LOD_MID_DISTANCE = 20
 
+// Tour timing (navigate-motion-modes-plan-08292026.md §4.6) — a category
+// beat lingers longer on the pull-back (more to read/orient to) than a node
+// stop, which lingers longer on the dwell (that's where the caption bar and
+// the actual content live) than on the flight itself.
+const TOUR_TOP_N = 10
+const TOUR_CATEGORY_FLIGHT_MS = 3500
+const TOUR_CATEGORY_DWELL_MS = 2000
+const TOUR_NODE_FLIGHT_MS = 1800
+const TOUR_NODE_DWELL_MS = 2500
+const TOUR_NODE_APPROACH_DISTANCE = 7
+const TOUR_FRAME_PADDING = 1.15
+const TOUR_CAMERA_FOV_DEG = 50
+
+const MOTION_STORAGE_KEY = 'pqctoday:navigate:motion'
+
+interface MotionPrefs {
+  mode: MotionMode
+  speed: number
+}
+
+function defaultMotionMode(): MotionMode {
+  if (typeof window === 'undefined') return 'spin'
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'off' : 'spin'
+}
+
+/** Reads persisted mode/speed from localStorage, falling back safely on anything malformed — a corrupt or hand-edited value must not wedge the page. */
+function loadMotionPrefs(): MotionPrefs {
+  const fallback: MotionPrefs = { mode: defaultMotionMode(), speed: MOTION_SPEED_DEFAULT }
+  if (typeof window === 'undefined') return fallback
+  try {
+    const raw = window.localStorage.getItem(MOTION_STORAGE_KEY)
+    if (!raw) return fallback
+    const parsed: unknown = JSON.parse(raw)
+    if (typeof parsed !== 'object' || parsed === null) return fallback
+    const { mode, speed } = parsed as { mode?: unknown; speed?: unknown }
+    const validMode: MotionMode =
+      mode === 'off' || mode === 'spin' || mode === 'tour' ? mode : fallback.mode
+    const validSpeed =
+      typeof speed === 'number' && speed >= MOTION_SPEED_MIN && speed <= MOTION_SPEED_MAX
+        ? speed
+        : MOTION_SPEED_DEFAULT
+    return { mode: validMode, speed: validSpeed }
+  } catch {
+    return fallback
+  }
+}
+
+function saveMotionPrefs(prefs: MotionPrefs) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(MOTION_STORAGE_KEY, JSON.stringify(prefs))
+  } catch {
+    // Best-effort persistence — private browsing / a full storage quota should not break the page.
+  }
+}
+
 function makeLabelDiv(
   text: string,
   style: {
@@ -315,6 +382,13 @@ function makeLabelDiv(
   return div
 }
 
+/** World-independent (still local to rotatingGroup) snapshot of the layout a given applyFilters() call produced — the guided tour needs real node/category positions to fly to, which applyFilters previously computed and threw away. */
+interface LayoutSnapshot {
+  positionById: Map<string, THREE.Vector3>
+  typeCenters: Map<ForceClusterNodeType, THREE.Vector3>
+  visibleNodes: ForceClusterNode[]
+}
+
 interface BuiltScene {
   scene: THREE.Scene
   /**
@@ -324,7 +398,9 @@ interface BuiltScene {
    * layout. Toggling a whole category off/on leaves gaps and stale positions
    * otherwise; a real re-cluster is what "refresh the clustering" means.
    */
-  applyFilters: (enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => void
+  applyFilters: (enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => LayoutSnapshot
+  /** The layout produced by buildScene's own initial applyFilters() call, so callers don't need to re-derive it. */
+  initialLayout: LayoutSnapshot
 }
 
 function buildScene(graph: ForceClusterGraph): BuiltScene {
@@ -345,7 +421,10 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
   rotatingGroup.name = 'force-cluster-graph'
   scene.add(rotatingGroup)
 
-  function applyFilters(enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) {
+  function applyFilters(
+    enabledTypes: ReadonlySet<ForceClusterNodeType>,
+    percent: number
+  ): LayoutSnapshot {
     for (const child of [...rotatingGroup.children]) {
       rotatingGroup.remove(child)
       if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
@@ -473,6 +552,10 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
       const label = new CSS2DObject(div)
       label.position.copy(center)
       label.userData.kind = 'type-label'
+      // Read by the tour's applyTourLabelFocus() to show only the ONE
+      // type-label matching the category currently being framed — `kind`
+      // alone can't tell 9 type-labels apart.
+      label.userData.type = type
       rotatingGroup.add(label)
     }
 
@@ -508,12 +591,18 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
       const label = new CSS2DObject(div)
       label.position.copy(pos).add(new THREE.Vector3(0, NODE_RADIUS + 0.3, 0))
       label.userData.kind = 'node-label'
+      // Read by the tour's applyTourLabelFocus() to show only the ONE
+      // node-label matching the node currently being visited — `kind` alone
+      // can't tell hundreds of node-labels apart.
+      label.userData.nodeId = node.id
       rotatingGroup.add(label)
     }
+
+    return { positionById, typeCenters, visibleNodes }
   }
 
-  applyFilters(new Set(NODE_TYPES), DEFAULT_VISIBLE_PERCENT)
-  return { scene, applyFilters }
+  const initialLayout = applyFilters(new Set(NODE_TYPES), DEFAULT_VISIBLE_PERCENT)
+  return { scene, applyFilters, initialLayout }
 }
 
 export function ForceClusterView() {
@@ -531,9 +620,81 @@ export function ForceClusterView() {
   const [enabledTypes, setEnabledTypes] = useState<ReadonlySet<ForceClusterNodeType>>(
     () => new Set(NODE_TYPES)
   )
+  const [listOpen, setListOpen] = useState(false)
   const applyFiltersRef = useRef<
-    ((enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => void) | null
+    ((enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => LayoutSnapshot) | null
   >(null)
+  // The layout applyFilters() most recently produced — the tour reads real
+  // node/category positions from here to build its itinerary and flight
+  // targets; applyFilters itself only returns a snapshot to its caller, it
+  // doesn't retain one.
+  const layoutSnapshotRef = useRef<LayoutSnapshot | null>(null)
+
+  const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
+  const motionMode = motionPrefs.mode
+  const motionSpeed = motionPrefs.speed
+  const motionModeRef = useRef<MotionMode>(motionMode)
+  const motionSpeedRef = useRef<number>(motionSpeed)
+  useEffect(() => {
+    motionModeRef.current = motionMode
+  }, [motionMode])
+  useEffect(() => {
+    motionSpeedRef.current = motionSpeed
+  }, [motionSpeed])
+
+  const setMotionMode = (mode: MotionMode) => {
+    setMotionPrefsState((prev) => {
+      const next = { ...prev, mode }
+      saveMotionPrefs(next)
+      return next
+    })
+  }
+  const setMotionSpeed = (speed: number) => {
+    setMotionPrefsState((prev) => {
+      const next = { ...prev, speed }
+      saveMotionPrefs(next)
+      return next
+    })
+  }
+
+  // Bridges React state -> the imperative tour runtime living inside the
+  // scene-setup effect below, the same pattern applyFiltersRef already uses
+  // for applyFilters.
+  const tourControlRef = useRef<{
+    rebuild: (
+      enabledTypes: ReadonlySet<ForceClusterNodeType>,
+      resumeCategoryType: ForceClusterNodeType | null
+    ) => void
+    resume: () => void
+  } | null>(null)
+  const [tourProgress, setTourProgress] = useState<TourProgress | null>(null)
+  const [tourPaused, setTourPaused] = useState(false)
+  const [tourCaptionNode, setTourCaptionNode] = useState<ForceClusterNode | null>(null)
+  const [skippedCategoryLabels, setSkippedCategoryLabels] = useState<string[]>([])
+  // Mirrors the current tour stop's category, so toggleType/changeVisiblePercent
+  // (outside the scene-setup effect) know which category to resume into after
+  // a filter-driven rebuild, without needing the tour's internal state shape.
+  const currentTourStopTypeRef = useRef<ForceClusterNodeType | null>(null)
+
+  // Starts/stops the tour itself in response to a mode change (the scene
+  // itself never triggers this — only the MotionControls buttons do).
+  // Deliberately keyed on [motionMode] alone: enabledTypes is read fresh via
+  // closure at the moment `motionMode` becomes 'tour', which is exactly the
+  // filter state a fresh tour should start against; toggleType/
+  // changeVisiblePercent handle rebuilding an already-running tour
+  // themselves when filters change mid-tour.
+  useEffect(() => {
+    if (motionMode === 'tour') {
+      setSelectedNodeId(null)
+      tourControlRef.current?.rebuild(enabledTypes, null)
+    } else {
+      setTourProgress(null)
+      setTourCaptionNode(null)
+      setTourPaused(false)
+      setSkippedCategoryLabels([])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- see comment above: enabledTypes is deliberately not a trigger here
+  }, [motionMode])
 
   // Filter changes trigger a real re-cluster (buildScene's applyFilters
   // fully recomputes layout), so they're applied directly from the event
@@ -546,13 +707,24 @@ export function ForceClusterView() {
     else next.add(type)
     setEnabledTypes(next)
     setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
-    applyFiltersRef.current?.(next, visiblePercent)
+    const snapshot = applyFiltersRef.current?.(next, visiblePercent) ?? null
+    layoutSnapshotRef.current = snapshot
+    // A filter change invalidates every position the tour's itinerary holds
+    // (navigate-motion-modes-plan-08292026.md §4.7) — rebuild it against the
+    // fresh layout, resuming at the start of whichever category was active.
+    if (motionModeRef.current === 'tour') {
+      tourControlRef.current?.rebuild(next, currentTourStopTypeRef.current)
+    }
   }
 
   const changeVisiblePercent = (percent: number) => {
     setVisiblePercent(percent)
     setSelectedNodeId(null)
-    applyFiltersRef.current?.(enabledTypes, percent)
+    const snapshot = applyFiltersRef.current?.(enabledTypes, percent) ?? null
+    layoutSnapshotRef.current = snapshot
+    if (motionModeRef.current === 'tour') {
+      tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
+    }
   }
 
   const nodesById = useMemo(() => {
@@ -562,6 +734,19 @@ export function ForceClusterView() {
   }, [graph])
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
+
+  // Keyboard/screen-reader path to node selection — raycast-on-canvas-click
+  // (the only other way in) is reachable by pointer alone. Mirrors
+  // applyFilters' own type + top-percent-by-degree logic (buildScene above)
+  // so the list matches what's actually rendered, without touching the
+  // imperative three.js scene-building code to get there.
+  const visibleNodeList = useMemo(() => {
+    if (!graph) return []
+    const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
+    const sortedDesc = [...typeFiltered].sort((a, b) => b.degree - a.degree)
+    const keepCount = Math.max(1, Math.ceil((visiblePercent / 100) * sortedDesc.length))
+    return sortedDesc.slice(0, keepCount)
+  }, [graph, enabledTypes, visiblePercent])
 
   const connections = useMemo(() => {
     if (!graph || !selectedNodeId) return []
@@ -589,6 +774,7 @@ export function ForceClusterView() {
     let resizeObserver: ResizeObserver | null = null
     let canvasClickHandler: ((event: MouseEvent) => void) | null = null
     let canvasEl: HTMLCanvasElement | null = null
+    let controlsStartHandler: (() => void) | null = null
     const container = containerRef.current
 
     async function setup() {
@@ -633,8 +819,9 @@ export function ForceClusterView() {
         'position:absolute;top:0;left:0;pointer-events:none;z-index:1;'
       container.appendChild(labelRenderer.domElement)
 
-      const { scene, applyFilters } = buildScene(builtGraph)
+      const { scene, applyFilters, initialLayout } = buildScene(builtGraph)
       applyFiltersRef.current = applyFilters
+      layoutSnapshotRef.current = initialLayout
       const rotatingGroup = scene.getObjectByName('force-cluster-graph')
 
       controls = new OrbitControls(camera, canvas)
@@ -663,16 +850,235 @@ export function ForceClusterView() {
         }
       }
 
+      const prefersReducedMotion =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      // --- Guided tour (navigate-motion-modes-plan-08292026.md §4) ---------
+      // Camera flies to fixed world-space targets computed from the current
+      // LayoutSnapshot. rotatingGroup keeps rotating under Spin but is never
+      // touched by Tour, so entering Tour mode "freezes" it for free — the
+      // spin branch below simply stops advancing rotation.y while
+      // motionModeRef.current === 'tour', at whatever angle it already held.
+
+      interface TourRuntime {
+        stops: TourStop[]
+        index: number
+        phase: 'flying' | 'dwelling'
+        elapsedMs: number
+        fromPos: THREE.Vector3
+        fromTarget: THREE.Vector3
+        toPos: THREE.Vector3
+        toTarget: THREE.Vector3
+        flightMs: number
+        dwellMs: number
+        paused: boolean
+      }
+      const tourStateRef: { current: TourRuntime | null } = { current: null }
+
+      /** World-space { camera position, look-at target } for one tour stop, using the current layout + rotatingGroup's (frozen) world transform. */
+      function stopTarget(stop: TourStop): { pos: THREE.Vector3; target: THREE.Vector3 } | null {
+        const layout = layoutSnapshotRef.current
+        if (!layout || !rotatingGroup || !controls) return null
+
+        if (stop.kind === 'category') {
+          const localCenter = layout.typeCenters.get(stop.type)
+          if (!localCenter) return null
+          const worldPoints = layout.visibleNodes
+            .filter((n) => n.type === stop.type)
+            .map((n) => layout.positionById.get(n.id))
+            .filter((p): p is THREE.Vector3 => !!p)
+            .map((p) => rotatingGroup.localToWorld(p.clone()))
+          const worldCenter = rotatingGroup.localToWorld(localCenter.clone())
+          const { radius } = boundingSphere(worldPoints.length > 0 ? worldPoints : [worldCenter])
+          const distance = frameDistance(
+            radius,
+            TOUR_CAMERA_FOV_DEG,
+            camera.aspect,
+            TOUR_FRAME_PADDING,
+            controls.minDistance,
+            controls.maxDistance
+          )
+          const outward = worldCenter.clone().sub(new THREE.Vector3(0, 0, 0))
+          const approachDir =
+            outward.lengthSq() > 1e-6 ? outward.normalize() : new THREE.Vector3(0, 0, 1)
+          const pos = worldCenter.clone().add(approachDir.multiplyScalar(distance))
+          return { pos, target: worldCenter }
+        }
+
+        const localPos = layout.positionById.get(stop.node.id)
+        const localCenter = layout.typeCenters.get(stop.type)
+        if (!localPos || !localCenter) return null
+        const worldPos = rotatingGroup.localToWorld(localPos.clone())
+        const worldCenter = rotatingGroup.localToWorld(localCenter.clone())
+        const fallbackDir = camera.position.clone().sub(controls.target)
+        const pos = nodeApproach(worldPos, worldCenter, TOUR_NODE_APPROACH_DISTANCE, fallbackDir)
+        return { pos, target: worldPos }
+      }
+
+      /** Shows exactly the ONE label relevant to `stop` — bypasses updateLod()'s distance-based tiering, which would otherwise show every node-label at once this close in (navigate-motion-modes-plan-08292026.md §4.4). */
+      function applyTourLabelFocus(stop: TourStop) {
+        if (!rotatingGroup) return
+        for (const child of rotatingGroup.children) {
+          if (!(child instanceof CSS2DObject)) continue
+          const kind = child.userData.kind as string | undefined
+          const show =
+            (stop.kind === 'category' &&
+              kind === 'type-label' &&
+              child.userData.type === stop.type) ||
+            (stop.kind === 'node' &&
+              kind === 'node-label' &&
+              child.userData.nodeId === stop.node.id)
+          child.element.style.opacity = show ? '1' : '0'
+        }
+      }
+
+      function beginStop(state: TourRuntime, index: number): boolean {
+        // eslint-disable-next-line security/detect-object-injection -- index is a numeric stop position clamped by callers to [0, state.stops.length), not user input
+        const stop = state.stops[index]
+        if (!stop || !controls) return false
+        const targets = stopTarget(stop)
+        if (!targets) return false
+        state.index = index
+        state.phase = 'flying'
+        state.elapsedMs = 0
+        state.fromPos.copy(camera.position)
+        state.fromTarget.copy(controls.target)
+        state.toPos.copy(targets.pos)
+        state.toTarget.copy(targets.target)
+        state.flightMs = stop.kind === 'category' ? TOUR_CATEGORY_FLIGHT_MS : TOUR_NODE_FLIGHT_MS
+        state.dwellMs = stop.kind === 'category' ? TOUR_CATEGORY_DWELL_MS : TOUR_NODE_DWELL_MS
+        applyTourLabelFocus(stop)
+        currentTourStopTypeRef.current = stop.type
+        setTourProgress({
+          stopIndex: index,
+          stopCount: state.stops.length,
+          categoryLabel: TYPE_LABEL[stop.type],
+        })
+        setTourCaptionNode(null) // hidden while flying; re-shown once dwelling at a node stop, below
+        setSelectedNodeId(null) // closes the detail panel while flying to the next stop, whether category or node
+        return true
+      }
+
+      /** Builds a fresh itinerary from the current layout and starts (or resumes into) it. `resumeCategoryType` re-enters at that category's beat after a filter-driven rebuild; null starts from the very first stop. */
+      function rebuildTour(
+        enabledTypesNow: ReadonlySet<ForceClusterNodeType>,
+        resumeCategoryType: ForceClusterNodeType | null
+      ) {
+        const layout = layoutSnapshotRef.current
+        if (!layout) return
+        const stops = buildItinerary(layout.visibleNodes, TOUR_TOP_N)
+        setSkippedCategoryLabels(
+          // eslint-disable-next-line security/detect-object-injection -- t is drawn from the typed ForceClusterNodeType union (NODE_TYPES), not user input
+          skippedCategories(layout.visibleNodes, enabledTypesNow).map((t) => TYPE_LABEL[t])
+        )
+        if (stops.length === 0) {
+          tourStateRef.current = null
+          currentTourStopTypeRef.current = null
+          setTourProgress(null)
+          setTourCaptionNode(null)
+          return
+        }
+        const resumeIndex = resumeCategoryType
+          ? stops.findIndex((s) => s.type === resumeCategoryType)
+          : -1
+        const state: TourRuntime = {
+          stops,
+          index: 0,
+          phase: 'dwelling',
+          elapsedMs: 0,
+          fromPos: new THREE.Vector3(),
+          fromTarget: new THREE.Vector3(),
+          toPos: new THREE.Vector3(),
+          toTarget: new THREE.Vector3(),
+          flightMs: 0,
+          dwellMs: 0,
+          paused: false,
+        }
+        tourStateRef.current = state
+        setTourPaused(false)
+        beginStop(state, Math.max(0, resumeIndex))
+      }
+
+      function advanceTourFrame(state: TourRuntime, deltaMs: number) {
+        if (state.phase === 'flying') {
+          state.elapsedMs += deltaMs
+          const t = easeInOutCubic(state.elapsedMs / state.flightMs)
+          camera.position.lerpVectors(state.fromPos, state.toPos, t)
+          controls?.target.lerpVectors(state.fromTarget, state.toTarget, t)
+          if (state.elapsedMs >= state.flightMs) {
+            state.phase = 'dwelling'
+            state.elapsedMs = 0
+            const stop = state.stops[state.index]
+            if (stop?.kind === 'node') {
+              setTourCaptionNode(stop.node)
+              // Opens the same right-hand NavigateDetailPanel a manual click
+              // would — the tour reaching a node is functionally "select
+              // this node", it just didn't arrive via a canvas click. Safe
+              // to set unconditionally here: this function only ever runs
+              // while state.paused is false (gated by its one caller in the
+              // render loop), so it can never fight a real user's manual
+              // selection made during a genuine pause.
+              setSelectedNodeId(stop.node.id)
+            }
+          }
+        } else {
+          state.elapsedMs += deltaMs
+          if (state.elapsedMs >= state.dwellMs) {
+            setTourCaptionNode(null)
+            beginStop(state, (state.index + 1) % state.stops.length)
+          }
+        }
+      }
+
+      tourControlRef.current = {
+        rebuild: rebuildTour,
+        resume: () => {
+          if (tourStateRef.current) tourStateRef.current.paused = false
+          setTourPaused(false)
+          setSelectedNodeId(null)
+        },
+      }
+
+      controlsStartHandler = () => {
+        const state = tourStateRef.current
+        if (state && !state.paused) {
+          state.paused = true
+          setTourPaused(true)
+        }
+      }
+      controls.addEventListener('start', controlsStartHandler)
+      // ----------------------------------------------------------------------
+
       const timer = new THREE.Timer()
       renderer.setAnimationLoop(() => {
         timer.update()
         const delta = timer.getDelta()
-        // Paused while a node is selected — orbiting the scene away from
-        // under a reader mid-inspection is a real usability problem, not a
-        // cosmetic one.
-        if (rotatingGroup && !selectedNodeIdRef.current) rotatingGroup.rotation.y += delta * 0.02
+        const tourState = tourStateRef.current
+        const touring = motionModeRef.current === 'tour' && !!tourState
+        // Unlike Spin, touring does NOT gate on !selectedNodeIdRef.current —
+        // the tour itself sets selectedNodeId while dwelling on a node (to
+        // open its detail panel, see advanceTourFrame), and that must not
+        // freeze the tour's own dwell/advance timer. tourState.paused (only
+        // ever set by a real drag/click on the canvas) is the actual
+        // interrupt signal here.
+        if (touring && tourState && !tourState.paused) {
+          advanceTourFrame(tourState, delta * 1000 * motionSpeedRef.current)
+        } else if (
+          rotatingGroup &&
+          motionModeRef.current === 'spin' &&
+          !selectedNodeIdRef.current &&
+          !prefersReducedMotion
+        ) {
+          // Paused while a node is selected — orbiting the scene away from
+          // under a reader mid-inspection is a real usability problem, not a
+          // cosmetic one. Also paused outright under prefers-reduced-motion:
+          // this is a direct three.js animation-loop call, so it sits outside
+          // the CSS-keyframe reduced-motion block the rest of the product uses.
+          rotatingGroup.rotation.y += delta * 0.02 * motionSpeedRef.current
+        }
         controls?.update()
-        updateLod()
+        if (!touring) updateLod()
         renderer?.render(scene, camera)
         labelRenderer.render(scene, camera)
       })
@@ -728,11 +1134,15 @@ export function ForceClusterView() {
       cancelled = true
       resizeObserver?.disconnect()
       if (canvasEl && canvasClickHandler) canvasEl.removeEventListener('click', canvasClickHandler)
+      if (controls && controlsStartHandler)
+        controls.removeEventListener('start', controlsStartHandler)
       controls?.dispose()
       renderer?.setAnimationLoop(null)
       renderer?.dispose()
       container?.replaceChildren()
       applyFiltersRef.current = null
+      layoutSnapshotRef.current = null
+      tourControlRef.current = null
     }
   }, [])
 
@@ -762,6 +1172,19 @@ export function ForceClusterView() {
       )}
       {!loading && !error && (
         <div className="glass-panel absolute bottom-4 left-4 max-w-[360px] space-y-3 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Filter</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto gap-1.5 px-2 py-1 text-xs"
+              aria-expanded={listOpen}
+              aria-controls="navigate-node-list"
+              onClick={() => setListOpen((v) => !v)}
+            >
+              {listOpen ? 'Hide list view' : 'List view (keyboard)'}
+            </Button>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {NODE_TYPES.map((type) => {
               const on = enabledTypes.has(type)
@@ -803,7 +1226,43 @@ export function ForceClusterView() {
               aria-label="Percentage of nodes shown, ranked by connection count"
             />
           </label>
+          <MotionControls
+            mode={motionMode}
+            onModeChange={setMotionMode}
+            speed={motionSpeed}
+            onSpeedChange={setMotionSpeed}
+            tourProgress={tourProgress}
+            tourPaused={tourPaused}
+            onResumeTour={() => tourControlRef.current?.resume()}
+            skippedCategoryLabels={skippedCategoryLabels}
+          />
+          {listOpen && (
+            <ul
+              id="navigate-node-list"
+              aria-label={`${visibleNodeList.length} visible nodes, ranked by connection count`}
+              className="max-h-64 space-y-0.5 overflow-y-auto border-t border-border pt-2"
+            >
+              {visibleNodeList.map((node) => (
+                <li key={node.id}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedNodeId(node.id)}
+                    aria-current={node.id === selectedNodeId ? 'true' : undefined}
+                    className="h-auto w-full justify-start truncate rounded px-1.5 py-1 text-left text-xs font-normal"
+                  >
+                    <span className="text-muted-foreground">{TYPE_LABEL[node.type]}:</span>{' '}
+                    {node.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+      )}
+      {!loading && !error && motionMode === 'tour' && tourCaptionNode && (
+        <TourCaption node={tourCaptionNode} panelOpen={!!selectedNode} />
       )}
     </div>
   )

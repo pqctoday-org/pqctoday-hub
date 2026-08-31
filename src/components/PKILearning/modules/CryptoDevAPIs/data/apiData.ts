@@ -117,7 +117,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     providerPattern:
       'Security.addProvider(new LunaProvider()); // or: CryptokiEx cryptoki = new CryptokiEx(); long session = cryptoki.C_OpenSession(slot, flags);',
     pqcStatus:
-      'PQC support depends on HSM firmware version. Luna 7.x firmware supports ML-KEM and ML-DSA via PKCS#11 v3.2 mechanisms. JCProv passes through to firmware capabilities.',
+      'PQC support depends on HSM firmware and client versions. Luna HSM Firmware 7.9.0+ (with Luna HSM Client 10.9.0+) supports ML-KEM and ML-DSA via PKCS#11 v3.2 mechanisms. JCProv passes through to firmware capabilities.',
     strengths: [
       'Hardware-backed key protection — keys never leave the HSM',
       'FIPS 140-2/3 Level 3 validated (hardware)',

@@ -115,6 +115,29 @@ const KNOWN_MODULE_IDS = new Set([
   // consistently, which is what exposed the gap rather than 6 unrelated
   // hallucinations.
   'pqc-candidates',
+  // ADDED 2026-08-29 (Track C N23 scoping): same failure mode as
+  // pqc-candidates above — a real, live module
+  // (src/components/PKILearning/modules/CryptoMgmtModernization/, route
+  // /learn/crypto-mgmt-modernization) missing from this hand-maintained
+  // list. This list has now drifted twice; it duplicates
+  // Object.keys(MODULE_CATALOG) from src/components/PKILearning/moduleData.ts
+  // (the source LandingView.tsx's own MODULE_COUNT reads) — importing that
+  // directly would make this class of gap structurally impossible, but is a
+  // bigger change (a validator script pulling in the full module-content
+  // import graph) than this scoping pass's remit; left as a follow-up.
+  'crypto-mgmt-modernization',
+  // ADDED 2026-08-29 (Track C N23 scoping): the vendor-risk module and
+  // pqc-governance module are both real (already listed above by id) but
+  // enrichment repeatedly cites them by DISPLAY TITLE or a natural-language
+  // shortening of it, not by module id — a class of gap this list can't see
+  // at all, since it only ever compares against ids. vendor-risk's real
+  // title is "Vendor & Supply Chain Risk" (src/components/PKILearning/
+  // modules/VendorRisk/manifest.ts); these are the exact normalized forms
+  // 11 findings across library/threats actually used.
+  'supply-chain-&-vendor-risk',
+  'supply-chain-vendor-risk',
+  'supply-chain',
+  'governance',
 ])
 
 // ── Enrichment parsing ────────────────────────────────────────────────────────
@@ -413,7 +436,36 @@ function runN23B(
     'Commercial National Security Algorithm Suite',
     'National Security Memorandum',
     'National Security Directive',
+    // ADDED 2026-08-29 (Track C N23 scoping): same "abbreviation already
+    // known, spelled-out form wasn't" gap, found live — 21 findings across
+    // library/timeline/threats cited "Federal Information Security
+    // Modernization Act" (or "...of 2014") in full; only its abbreviation
+    // FISMA (above) matched. "Executive Order 14306"/"14028" etc. likewise
+    // never matched, because only the abbreviated 'EO ' prefix was listed,
+    // never the spelled-out form real citations actually use.
+    'Federal Information Security Modernization Act',
+    'Federal Information Security Management Act',
+    'Executive Order',
   ]
+
+  // IETF Trust boilerplate that appears near-verbatim on the front page of
+  // EVERY RFC/Internet-Draft (the "Status of This Memo" / copyright
+  // sections) — never a substantive compliance framework the document is
+  // ABOUT, but the extraction prompt has no way to distinguish that from a
+  // real citation just by seeing the text. Found 2026-08-29 (Track C N23
+  // scoping): BCP 78/79/14 and the two IETF Trust license names alone
+  // accounted for 130+ of library's 418 findings (31%+) — a single
+  // extraction-prompt blind spot, not 130 independent content defects.
+  // Root cause belongs in enrich-docs.py's extraction prompt (skip this
+  // section); this list is the symptom fix so the validator stops
+  // re-surfacing what's already known boilerplate on every run.
+  const IETF_BOILERPLATE = new Set([
+    'BCP 78',
+    'BCP 79',
+    'BCP 14',
+    'Simplified BSD License',
+    'Revised BSD License',
+  ])
 
   for (const rec of records) {
     const raw = rec.fields[FIELD]
@@ -425,6 +477,18 @@ function runN23B(
       .filter(Boolean)
     for (const item of items) {
       if (item === 'None detected' || item.length < 3) continue
+      // A comma-joined list of boilerplate terms ("BCP 78, Revised BSD
+      // License") passes through here as ONE item when the extractor used
+      // commas instead of the expected semicolon — skip if EVERY
+      // comma-separated piece is itself known boilerplate, rather than
+      // silently accepting the whole joined string as a single citation.
+      if (
+        item
+          .split(',')
+          .map((s) => s.trim())
+          .every((piece) => IETF_BOILERPLATE.has(piece))
+      )
+        continue
 
       // Replace with a single space, not '' — see N23-A's identical fix above for
       // why (mid-string parentheticals otherwise merge the words either side).
@@ -639,6 +703,26 @@ export function runEnrichmentAccuracyChecks(): CheckResult[] {
     'Streamlined NTRU Prime sntrup761', // exact phrase as OpenSSH/IETF name it; the
     // bare 'NTRU Prime' alias above doesn't
     // prefix-match this longer phrasing
+    // ADDED 2026-08-29 (Track C N23 scoping): real algorithms/families whose
+    // CSV form doesn't share a common prefix with how a document actually
+    // names them, so even the bidirectional startsWith in runN23A never
+    // catches them — the same class of gap 'Classic McEliece' already
+    // covers, just for names the CSV doesn't lead with.
+    'McEliece', // bare form — the CSV/existing alias only has "Classic McEliece"/
+    // "Classic-McEliece" (McEliece is the family's SECOND word there, so no
+    // prefix match either direction); this bare alias also prefix-matches
+    // the CSV's lowercase parameter-set rows (mceliece6688128 etc.)
+    'Niederreiter', // McEliece's dual cryptosystem, a real code-based scheme
+    // documents cite alongside it
+    'Module-Lattice-Based Digital Signature Algorithm', // FIPS 204's own full
+    // name for ML-DSA — the CSV only has the abbreviation
+    'NTRU-HRSS', // real NTRU variant (IETF hybrid KEX candidate), distinct
+    // rows from Classic McEliece / NTRU Prime already listed
+    'NTRUEncrypt', // NTRU's original (pre-standardization) name, still used
+    // historically
+    'NTRU-MLS',
+    'qTESLA', // NIST Round 2 signature candidate, eliminated but a real,
+    // legitimate historical reference
   ])
 
   const complianceIds = new Set(complianceData.rows.map((r) => r.id).filter(Boolean))

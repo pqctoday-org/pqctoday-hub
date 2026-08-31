@@ -185,6 +185,10 @@ test('Monaco genuinely loads on a fresh session — this tab alone, no prior PKC
     timeout: 30000,
   })
 
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0)
+  // — the self-host install this test guards against still has to have run
+  // by the time it does, which is exactly what this test checks.
+  await page.getByRole('tab', { name: 'Code' }).click()
   const viewLines = page.locator('.monaco-editor .view-lines').first()
   await expect(viewLines).toBeVisible({ timeout: 30000 })
   await expect(viewLines).toContainText('pqctoday_kmip')
@@ -208,9 +212,23 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
   const hexPayload = 'ff00fe0180deadbeef'
   await page.getByLabel('Message to sign').fill(hexPayload)
 
-  const genCode = page.locator('.monaco-editor .view-lines').first()
-  await expect(genCode).toContainText(`bytes.fromhex('${hexPayload}')`)
-
+  // Real grammar (dev-tabs Python-grammar-realignment plan, Phase 1) put the
+  // sign step's hex leaf several steps deep into a now much longer file —
+  // deep enough that Monaco's virtualized-scroll DOM (expectMonacoToContainText)
+  // proved unreliable to drive from Playwright (mouse-wheel and PageDown both
+  // either under- or over-shot the target between checks; Monaco exposes no
+  // `window.monaco` here to read the model directly). The exported .py is the
+  // same generated text with none of that DOM virtualization — checking it
+  // proves the same fact (real hex bytes reached the real generated code)
+  // without depending on Monaco's rendering internals.
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Export \.py/ }).click()
+  const download = await downloadPromise
+  const path = await download.path()
+  const fs = await import('node:fs')
+  const exported = fs.readFileSync(path!, 'utf-8')
+  expect(exported).toContain(`leaf('Data', 'ByteString', '${hexPayload}')`)
+  expect(exported).not.toContain(`b'${hexPayload}'`)
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.locator('[data-tour="kmip-dev-steps"]').getByText('✓ ran')).toHaveCount(9, {
@@ -342,7 +360,10 @@ test('drag/drop assembles the Governed lifecycle from an empty canvas and runs i
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(9)
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  // Semantic-token class name, not the raw red-500 palette class this
+  // locator was written against (it never matched, so this assertion was
+  // vacuously true — see the KeyboardInterrupt test's twin fix above).
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('drag/drop: reorder, delete, and rebind are all live (G9/W2)', async ({ page }) => {
@@ -392,17 +413,31 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   })
   await expect(page.getByText(/preemptive kill/)).toBeVisible()
 
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0).
+  await page.getByRole('tab', { name: 'Code' }).click()
+  // The editor starts read-only (Change 2) — typing does nothing, and
+  // `detached` never flips, until this gate is explicitly unlocked. A real
+  // bug this session found live: without this click, Run silently re-runs
+  // the unmodified template instead of the typed script — no error, no
+  // KeyboardInterrupt, just a fast, quiet false pass.
+  await page.getByRole('button', { name: 'Edit as custom script' }).click()
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('Control+A')
   // delay: 35 — see dev-tab-pkcs11.local.spec.ts's twin test for why this
   // script needs a wider margin than most typed content in this suite.
   await page.keyboard.type('while True: pass', { delay: 35 })
-  await expect(page.getByText('you edited the generated code')).toBeVisible()
+  // Renamed from "you edited the generated code" to the KmipSyncStatusChip
+  // pill next to the Builder/Code switch (persistent header, Change 1).
+  // The bullet distinguishes it from the unrelated "Edit as custom script"
+  // button text, which also contains the substring "custom script".
+  await expect(page.getByText('● custom script')).toBeVisible()
 
   const t0 = Date.now()
   await page.getByRole('button', { name: /^Run$/ }).click()
-  const errorBanner = page.locator('.bg-red-500\\/5.border-b.border-red-500\\/25')
+  // Semantic-token class names (text-status-error / border-destructive),
+  // not the raw red-500 palette classes this locator was written against.
+  const errorBanner = page.locator('.bg-status-error\\/5.border-b.border-destructive\\/25')
   await expect(errorBanner).toBeVisible({ timeout: 25000 })
   const elapsed = Date.now() - t0
   expect(await errorBanner.textContent()).toMatch(/KeyboardInterrupt/)
@@ -410,8 +445,63 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   expect(elapsed).toBeLessThan(20000)
 
   // The tab must be fully alive again: revert and run the template green.
-  await page.getByRole('button', { name: 'Revert to template' }).click()
+  // Renamed from "Revert to template" to "Discard edits, resync" (Change 2/3).
+  await page.getByRole('button', { name: 'Discard edits, resync' }).click()
+  // Run results render in the Builder tab's step list, unmounted while Code
+  // is active (see expectMonacoToContainText's twin fix above).
+  await page.getByRole('tab', { name: 'Builder' }).click()
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(9, { timeout: 5000 })
+})
+
+test("the real cross-plane audit trail shows this tab's own run activity", async ({ page }) => {
+  // Regression guard: getKmipEngine() is a per-tab singleton shared with
+  // the manual workbench, so every runOp/dryRun/loadPolicy call this tab's
+  // script makes was already landing in engine.auditSnapshot() — the only
+  // thing missing was rendering it here. Proves both the CACP (Plane 1)
+  // and KMIP (Plane 2) tabs show real content from THIS tab's run, not
+  // just that the panel chrome renders. Session activity is a proper
+  // Inspector-style tab bar (Keystore/CACP/KMIP/PKCS#11) — each plane's
+  // events only render once its own tab is selected.
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  await page.getByRole('button', { name: /Plane 1/ }).click()
+  // A real policy decision, not just the tab label.
+  await expect(page.getByText(/policy activated|decision:/).first()).toBeVisible()
+
+  await page.getByRole('button', { name: /Plane 2/ }).click()
+  // A real KMIP request marker, not just the tab label.
+  await expect(page.getByText(/▸ CreateKeyPair|▸ Activate|▸ Sign/).first()).toBeVisible()
+})
+
+test("the keystore shows this run's real objects with real lifecycle states", async ({ page }) => {
+  // Regression guard: KmipObject is addressed by uid natively (no
+  // PKCS#11-style ephemeral handle to go stale, no session/login
+  // lifecycle to be invalidated between runs — see the PKCS#11 twin's
+  // fix for what that class of bug looked like). listObjects() just
+  // reads the engine singleton's own persistent state, refreshed the
+  // same way audit is. The Governed-lifecycle template's own last step
+  // destroys its key — Destroyed is the real, honest end state, not "✓ ran"
+  // in disguise.
+  await page.goto('/playground/cacp?plane=developer')
+  await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  // Keystore is the default active tab — its count shows right on the tab.
+  await expect(page.getByRole('button', { name: /Keystore \(\d+\)/ })).toBeVisible()
+  await expect(page.getByText('ML-DSA-65').first()).toBeVisible()
+  await expect(page.getByText('Destroyed').first()).toBeVisible()
 })

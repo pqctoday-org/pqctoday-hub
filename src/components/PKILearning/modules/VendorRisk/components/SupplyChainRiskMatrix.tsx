@@ -133,7 +133,7 @@ function renderPqcBadge(support: string) {
   } else if (lower.startsWith('planned') || lower.startsWith('in progress')) {
     badgeClass = 'bg-primary/10 text-primary border-primary/20'
   } else {
-    badgeClass = 'bg-destructive/10 text-destructive border-destructive/20'
+    badgeClass = 'bg-destructive/10 text-status-error border-destructive/20'
   }
   return (
     <span
@@ -1277,7 +1277,7 @@ export const SupplyChainRiskMatrix: React.FC<{
                         <span
                           className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
                             isLow
-                              ? 'bg-destructive/10 text-destructive border-destructive/20'
+                              ? 'bg-destructive/10 text-status-error border-destructive/20'
                               : row.overall >= 75
                                 ? 'bg-status-success/10 text-status-success border-status-success/20'
                                 : 'bg-status-warning/10 text-status-warning border-status-warning/20'

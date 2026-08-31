@@ -45,7 +45,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </p>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
-            <div className="text-sm font-bold text-destructive mb-1">Pre-5G Problem</div>
+            <div className="text-sm font-bold text-status-error mb-1">Pre-5G Problem</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>IMSI sent in cleartext over the air</li>
               <li>IMSI catchers track & intercept users</li>
@@ -291,7 +291,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20">
-            <div className="text-sm font-bold text-destructive mb-1">Quantum-Vulnerable</div>
+            <div className="text-sm font-bold text-status-error mb-1">Quantum-Vulnerable</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>SUCI Profile A (X25519 ECDH)</li>
               <li>SUCI Profile B (P-256 ECDH)</li>

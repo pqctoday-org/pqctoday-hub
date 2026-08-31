@@ -46,7 +46,7 @@ test('runs the default template and shows a real per-step pass', async ({ page }
   const okBadges = page.getByText('✓ ran')
   await expect(okBadges.first()).toBeVisible()
   expect(await okBadges.count()).toBeGreaterThan(0)
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('switching templates changes the visible step count', async ({ page }) => {
@@ -80,14 +80,27 @@ test('editing the generated code detaches the builder; Revert restores it', asyn
   await page.goto('/playground/hsm?tab=developer')
   await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
 
+  // Monaco only mounts once the Code tab is active, and the editor starts
+  // read-only — typing does nothing, and the sync chip never flips to
+  // "custom script", until this gate is explicitly unlocked (Builder/Code
+  // split, v4.67.0; a real bug this session found live via the KMIP twin
+  // of this test: without this click, Run would silently re-run the
+  // unmodified template instead of the typed script, with no error).
+  await page.getByRole('tab', { name: 'Code' }).click()
+  await page.getByRole('button', { name: 'Edit as custom script' }).click()
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('End')
   await page.keyboard.type('\n# e2e-edit-marker')
 
-  const detachBanner = page.getByText('you edited the generated code')
+  // Renamed from "you edited the generated code" to the sync-status chip
+  // ("● custom script") next to the Builder/Code switch. The bullet
+  // distinguishes it from the unrelated "Edit as custom script" button
+  // text, which also contains the substring "custom script".
+  const detachBanner = page.getByText('● custom script')
   await expect(detachBanner).toBeVisible()
-  await page.getByRole('button', { name: 'Revert to builder' }).click()
+  // Renamed from "Revert to builder" to "Discard edits, resync".
+  await page.getByRole('button', { name: 'Discard edits, resync' }).click()
   await expect(detachBanner).not.toBeVisible()
 })
 
@@ -154,6 +167,8 @@ test('Monaco mounts with a real web worker, no console noise or page errors (G8)
 
   await page.goto('/playground/hsm?tab=developer')
   await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  // Monaco only mounts once the Code tab is active (Builder/Code split, v4.67.0).
+  await page.getByRole('tab', { name: 'Code' }).click()
   const editor = page.locator('.monaco-editor .view-lines').first()
   await expect(editor).toBeVisible({ timeout: 10000 })
   // Give the worker a beat to (fail to) spin up before asserting silence.
@@ -180,7 +195,7 @@ test('runs green on the C++ engine (?engine=cpp) — real bug found+fixed in G9/
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran').first()).toBeVisible()
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('runs green on the Rust engine (?engine=rust) — the existing default lane', async ({
@@ -193,7 +208,7 @@ test('runs green on the Rust engine (?engine=rust) — the existing default lane
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran').first()).toBeVisible()
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('HSS/LMS-H10 generates, signs, and verifies live (G9/W3a)', async ({ page }) => {
@@ -257,7 +272,7 @@ test('HSS/LMS-H10 generates, signs, and verifies live (G9/W3a)', async ({ page }
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran')).toHaveCount(3)
-  await expect(page.locator('.bg-red-500\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt (G9/W4)', async ({
@@ -277,6 +292,11 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   // the summary rail must report the preemptive lane, not the fallback.
   await expect(page.getByText(/preemptive kill/)).toBeVisible()
 
+  // Monaco only mounts once the Code tab is active, and the editor starts
+  // read-only until this gate is unlocked — see the twin fix on "editing
+  // the generated code detaches..." above.
+  await page.getByRole('tab', { name: 'Code' }).click()
+  await page.getByRole('button', { name: 'Edit as custom script' }).click()
   const editor = page.locator('.monaco-editor .view-lines').first()
   await editor.click()
   await page.keyboard.press('Control+A')
@@ -284,20 +304,53 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   // keystroke (found live: under load, 15ms once typed "while Tre: pass",
   // a NameError with nothing to do with the interrupt this test proves).
   await page.keyboard.type('while True: pass', { delay: 35 })
-  await expect(page.getByText('you edited the generated code')).toBeVisible()
+  // Renamed from "you edited the generated code" to the sync-status chip.
+  await expect(page.getByText('● custom script')).toBeVisible()
 
   const t0 = Date.now()
   await page.getByRole('button', { name: /^Run$/ }).click()
-  const errorBanner = page.locator('.bg-red-500\\/5.border-b.border-red-500\\/25')
+  const errorBanner = page.locator('.bg-status-error\\/5.border-b.border-destructive\\/25')
   await expect(errorBanner).toBeVisible({ timeout: 25000 })
   const elapsed = Date.now() - t0
   expect(await errorBanner.textContent()).toMatch(/KeyboardInterrupt/)
   expect(elapsed).toBeGreaterThan(14000)
   expect(elapsed).toBeLessThan(20000)
 
-  // The tab must be fully alive again: revert and run the default template green.
-  await page.getByRole('button', { name: 'Revert to builder' }).click()
+  // The tab must be fully alive again: revert and run the default template
+  // green. Renamed from "Revert to builder" to "Discard edits, resync".
+  await page.getByRole('button', { name: 'Discard edits, resync' }).click()
+  // Run results render in the Builder tab's step list, unmounted while
+  // Code is active.
+  await page.getByRole('tab', { name: 'Builder' }).click()
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('✓ ran').first()).toBeVisible()
+})
+
+test("the real PKCS#11 call log and key table show this tab's own run activity", async ({
+  page,
+}) => {
+  // Regression guard: HsmContext's logging proxy already captures every
+  // C_* call this tab's script makes, and the devSlot scan already
+  // registers whatever it creates — the only thing this tab was missing
+  // was rendering either. Proves both are actually reachable from here,
+  // not just present in state nothing displays.
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+  await page.getByRole('button', { name: /^Run$/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+
+  await page.getByText('Session activity').click()
+  // Inspector-style tab bar — Log and Keys are separate tabs now, not
+  // stacked, so each has to be selected before asserting its content.
+  await expect(page.getByRole('button', { name: /^Log \(\d+\)$/ })).toBeVisible()
+  await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
+  // A real function name from the default template's own generate/encrypt
+  // steps — not just the panel chrome.
+  await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
+
+  // The key(s) the run just created, via the devSlot discovery scan.
+  await page.getByRole('button', { name: /^Keys \(\d+\)$/ }).click()
+  await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
 })
