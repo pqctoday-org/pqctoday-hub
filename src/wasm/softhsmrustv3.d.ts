@@ -103,7 +103,10 @@ export function _C_GenerateRandom(_h_session: number, p_random_data: number, ul_
 export function _C_GetAttributeValue(h_session: number, h_object: number, p_template: number, count: number): number;
 
 /**
- * §5.5.1 — writes a CK_FUNCTION_LIST_PTR to *pp_function_list.
+ * PKCS#11 v3.2 §5.4.4. "It's OK to call C_GetFunctionList before calling
+ * C_Initialize" — no `require_init!()` guard, matching that requirement
+ * (also matches C_GetInterfaceList/C_GetInterface just below, and the
+ * C++ engine's own C_GetFunctionList).
  */
 export function _C_GetFunctionList(pp_function_list: number): number;
 

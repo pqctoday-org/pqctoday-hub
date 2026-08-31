@@ -105,6 +105,20 @@ export const KMIP_PRIMITIVES: Record<string, KmipPrimSpec> = {
 export const opsFor = (primId: string): KmipOp[] =>
   Object.keys(KMIP_PRIMITIVES[primId]?.ops ?? {}) as KmipOp[]
 
+/** Real KMIP wire verb for one op — every KmipOp is camelCase; the wire
+ *  spelling is just its own first letter capitalized (confirmed against
+ *  every emitOpStep case in kmipPipelineCodegen.ts). */
+export const toWireOpName = (op: KmipOp): string => op[0].toUpperCase() + op.slice(1)
+
+/** Every op name actually used by at least one primitive, wire-spelled —
+ *  the Dry-run step's op picker uses this instead of a second, hand-
+ *  maintained list that can (and did) silently miss one (KmipPipelineBuilder.tsx's
+ *  old KMIP_DRY_RUN_OPS was missing 'Get' despite every primitive declaring
+ *  it — see the 2026-08-30 palette audit). */
+export const ALL_KMIP_WIRE_OPS: string[] = Array.from(
+  new Set(Object.values(KMIP_PRIMITIVES).flatMap((p) => Object.keys(p.ops) as KmipOp[]))
+).map(toWireOpName)
+
 export const specFor = (primId: string): KmipPrimSpec | undefined => KMIP_PRIMITIVES[primId]
 
 export const defaultOpFor = (primId: string): KmipOp => {

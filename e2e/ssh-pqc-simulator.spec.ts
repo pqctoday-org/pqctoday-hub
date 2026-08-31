@@ -163,5 +163,62 @@ test.describe('PQC SSH Simulator', () => {
       await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText(/keygen/i).first()).toBeVisible()
     })
+
+    // 2026-08-31: openssh-pkcs11's ssh-mldsa.c was generalized from a single
+    // hardcoded ML-DSA-65 impl to all 3 FIPS 204 parameter sets (see
+    // pqctoday-hsm/openssh-pkcs11/CHANGELOG.md), and the panel's isRealCombo
+    // check widened to match — these two now drive the REAL OpenSSH WASM
+    // binary (real C_Sign, not the modeled TS engine), not just ssh-mldsa-65.
+    test('ssh-mldsa-44 host key drives a real handshake (sig 2,420 B)', async ({ page }) => {
+      await page.getByRole('button', { name: /^ssh-mldsa-44/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/2,420 B/i).first()).toBeVisible()
+    })
+
+    test('ssh-mldsa-87 host key drives a real handshake (sig 4,627 B)', async ({ page }) => {
+      await page.getByRole('button', { name: /^ssh-mldsa-87/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/4,627 B/i).first()).toBeVisible()
+    })
+
+    // 2026-08-31: SLH-DSA UI wiring. openssh-pkcs11's ssh-slhdsa.c implements
+    // 8 of the connector's 12 FIPS 205 parameter sets (patches/ssh-slhdsa.c),
+    // selected through the same HOSTKEY_VARIANTS[] table as ML-DSA — these
+    // three cover the small (128s), fast (128f/shake), and largest (256f)
+    // ends of the size range, each against its real FIPS 205 s11 Table 2
+    // signature size.
+    test('ssh-slh-dsa-sha2-128s host key drives a real handshake (sig 7,856 B)', async ({
+      page,
+    }) => {
+      await page.getByRole('button', { name: /^ssh-slh-dsa-sha2-128s/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/7,856 B/i).first()).toBeVisible()
+    })
+
+    test('ssh-slh-dsa-shake-128f host key drives a real handshake (sig 17,088 B)', async ({
+      page,
+    }) => {
+      await page.getByRole('button', { name: /^ssh-slh-dsa-shake-128f/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/17,088 B/i).first()).toBeVisible()
+    })
+
+    test('ssh-slh-dsa-sha2-256f host key drives a real handshake (sig 49,856 B)', async ({
+      page,
+    }) => {
+      await page.getByRole('button', { name: /^ssh-slh-dsa-sha2-256f/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/49,856 B/i).first()).toBeVisible()
+    })
   })
 })

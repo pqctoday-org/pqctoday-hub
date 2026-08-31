@@ -239,6 +239,15 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
     36
   )
 
+  // The PQC leg's host key can now be ML-DSA (2,420–4,627 B signatures) or
+  // any of 8 SLH-DSA parameter sets (7,856–49,856 B) — reflect the actual
+  // combo once a run exists instead of a hardcoded "ML-DSA-65" title that
+  // would misdescribe an SLH-DSA run. Falls back to the pre-run default combo
+  // shown in the idle placeholder card.
+  const pqcTitle = pqc
+    ? `PQC (${pqc.host_key_algorithm} + ${pqc.kex_algorithm})`
+    : 'PQC (ML-DSA-65 + ML-KEM-768 × X25519)'
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
@@ -257,7 +266,7 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
           maxKexBytes={maxKexBytes}
         />
         <LegCard
-          title="PQC (ML-DSA-65 + ML-KEM-768 × X25519)"
+          title={pqcTitle}
           result={pqc}
           isPqc={true}
           maxPubBytes={maxPubBytes}
@@ -282,15 +291,36 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
         ))}
       </div>
 
-      {/* Migration analysis */}
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        Migrating SSH to post-quantum cryptography replaces classical key exchange (ECDH /
-        Curve25519) and signatures (ECDSA / Ed25519) with NIST-standardised ML-KEM-768 hybrid KEX
-        and ML-DSA-65 signatures. The host and client keys grow from 32 B (Ed25519) to 1,952 B
-        (ML-DSA-65), and signatures from 64 B to 3,309 B — a 52× increase driven by the security
-        margin of lattice-based FIPS 204. Both operations are delegated to softhsmv3 via PKCS#11
-        v3.2 C_Sign, ensuring private key material never leaves the token boundary.
-      </p>
+      {/* Migration analysis — dynamic once both legs have run, since the PQC
+          leg's actual byte sizes now range from ML-DSA-44 (2,420 B sigs) to
+          SLH-DSA-SHA2-256f (49,856 B sigs), not just the ML-DSA-65 default. */}
+      {classical && pqc && !classical.error && !pqc.error ? (
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Migrating SSH to post-quantum cryptography replaces classical key exchange (ECDH /
+          Curve25519) and signatures ({classical.host_key_algorithm}) with a NIST-standardised
+          ML-KEM hybrid or pure KEX and {pqc.host_key_algorithm} signatures (
+          {pqc.host_key_algorithm.includes('slh-dsa') ? 'FIPS 205' : 'FIPS 204'}). The host and
+          client keys grow from {classical.host_pubkey_bytes} B to{' '}
+          {pqc.host_pubkey_bytes.toLocaleString()} B, and signatures from {classical.host_sig_bytes}{' '}
+          B to {pqc.host_sig_bytes.toLocaleString()} B — a{' '}
+          {(pqc.host_sig_bytes / Math.max(classical.host_sig_bytes, 1)).toFixed(1)}× increase driven
+          by the security margin of{' '}
+          {pqc.host_key_algorithm.includes('slh-dsa')
+            ? 'hash-based FIPS 205 (stateless SLH-DSA has no lattice assumption, at the cost of much larger signatures)'
+            : 'lattice-based FIPS 204'}
+          . Both operations are delegated to softhsmv3 via PKCS#11 v3.2 C_Sign, ensuring private key
+          material never leaves the token boundary.
+        </p>
+      ) : (
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Migrating SSH to post-quantum cryptography replaces classical key exchange (ECDH /
+          Curve25519) and signatures (ECDSA / Ed25519) with a NIST-standardised ML-KEM hybrid or
+          pure KEX and ML-DSA (FIPS 204) or SLH-DSA (FIPS 205) signatures — run the classical and
+          PQC handshakes above to see the exact byte-size deltas for your selected combo. Both
+          operations are delegated to softhsmv3 via PKCS#11 v3.2 C_Sign, ensuring private key
+          material never leaves the token boundary.
+        </p>
+      )}
     </div>
   )
 }

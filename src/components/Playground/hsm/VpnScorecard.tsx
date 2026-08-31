@@ -17,6 +17,9 @@ interface VpnScorecardProps {
   fragmentationEnabled: boolean
   /** Active MTU. Used to detect whether fragmentation actually triggered. */
   mtu: number
+  /** Selected ML-KEM parameter set (512/768/1024). Defaults to 768 for callers
+   * that predate the KEM-size selector. */
+  kemSize?: 512 | 768 | 1024
 }
 
 // Reference baselines for classical IKEv2 (two-roundtrip ECDH + auth).
@@ -50,6 +53,7 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
   authAlg,
   fragmentationEnabled,
   mtu,
+  kemSize = 768,
 }) => {
   const packets = useVpnPacketStore((s) => s.packets)
 
@@ -144,7 +148,11 @@ export const VpnScorecard: React.FC<VpnScorecardProps> = ({
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <Indicator on={pqKeOn} label="PQC key exchange" subtitle={pqKeOn ? 'ML-KEM-768' : ''} />
+        <Indicator
+          on={pqKeOn}
+          label="PQC key exchange"
+          subtitle={pqKeOn ? `ML-KEM-${kemSize}` : ''}
+        />
         <Indicator on={pqAuthOn} label="PQC authentication" subtitle={authAlg.toUpperCase()} />
         <Indicator on={rfc9370On} label="RFC 9370 (Multiple KE)" />
         <Indicator on={rfc9242On} label="RFC 9242 (IKE_INTERMEDIATE)" />

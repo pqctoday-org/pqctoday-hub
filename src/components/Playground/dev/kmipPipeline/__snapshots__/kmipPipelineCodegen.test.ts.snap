@@ -14,12 +14,15 @@ client uses internally. Dispatched through the same decode -> policy ->
 engine -> encode path a real server request takes.
 """
 import os
+import json
+import traceback
 from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
 # ── reg-sk · Register: PrivateKey (ML_KEM_768) ──
 try:
+    r_reg_sk = None
     r_reg_sk = c.submit('Register',
         leaf('ObjectType', 'Enumeration', 'PrivateKey'),
         struct('Attributes',
@@ -33,41 +36,52 @@ try:
     if not r_reg_sk.ok: raise RuntimeError(r_reg_sk.message or 'Register failed')
     priv_reg_sk = r_reg_sk.get('UniqueIdentifier')
     print(f'  registered {priv_reg_sk} ({19200}-bit PrivateKey)')
+    print('###STEP reg-sk detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_reg_sk.payload if r_reg_sk else None)}))
     print('###STEP reg-sk ok###')
 except Exception as _e:
+    print('###STEP reg-sk detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_reg_sk.payload if r_reg_sk else None)}))
     print('###STEP reg-sk error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── activate-sk · ML-KEM-768 · activate ──
 try:
+    r_activate_sk = None
     r_activate_sk = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', priv_reg_sk))
     if not r_activate_sk.ok: raise RuntimeError(r_activate_sk.message or 'Activate failed')
     print(f'  activated {priv_reg_sk}')
+    print('###STEP activate-sk detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_sk.payload if r_activate_sk else None)}))
     print('###STEP activate-sk ok###')
 except Exception as _e:
+    print('###STEP activate-sk detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_activate_sk.payload if r_activate_sk else None)}))
     print('###STEP activate-sk error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── decap · ML-KEM-768 · decapsulate ──
 try:
+    r_decap = None
     r_decap = c.submit('Decapsulate',
         leaf('UniqueIdentifier', 'TextString', priv_reg_sk),
         leaf('Data', 'ByteString', '0385E8044D17E2B96B3F50ED28C2502216322AC33F69D2CE34F0A11E9B3DE339AEBE98283A6010A34BDC98B0E5BBE142A38575DA305066331D8D11D161F512B4B56B60FD049DFEE3771473253A0310CD842C71CB7734474BFBDBBADD2B9B87C37804D8558B00D77B1F79F0FD2C94552A8D3B19FDD6A5511C4EBEEA40AA839A489AEC636B510BF51BF3782F24F53F752EE2DB9FB4964E8379D0FA70603CB8C2C7293BC35A56B818257B65FBE6B2C98178B61D7CEB58C7E1A9100650A945C739E3603C188BA3C179823950C6D874D7FC8F8DDB7A9EE941F4A78A0F8A1EAE080D4D77893AAEFB0DB452659B0275D171736390A1B23661C69058869A8C4D0BB46D1655858162012A057C7C067FD035D47D5D627E3CD27CD3CA021A34F8DB6695C7E581ECE67D898482D509E4DF61DCE5BBDFAAC89465A9209C547B4263E9155940F8FCB1DA3A4A7D25DF2969F31644741A8C6FE8065D5F176214A4DB8FE76BF41869B0F22E1F5CF5C34A5067B1D9F39F3AB4B0B9F6330D7CF6EC7477B53D9223FA70E4C680D49B32883D92B50C53CF9E61915437CF57ECA49D6BBC88C64CCB222D4F20227CCCD4F7E7C21F95CE74D6AB5DECE17F600AD1715248648E4D1AF6FE41A02023EB5CFF871EC654756B7D156E601E82827E17DD0FE4F5357136120A810506A40F28A0B860C3CE75BF7796653327939B507043AB8BE0175A9B312319818063AC40302EB42452DA0B1CB9E3C2E43C49D740A03AC1B9057FB44EFF830D548D12585F50DBAF7404C2DFA7F4403DB8B7CEE65DF528F575C7F552D0632553FC6C90A3B09C1114492392C165E9B1B0A10E9556C72CDE2BB23DF6DA784521249EEC542012EC33599B97B95FF5234158A6D553B3BBAE9704E630D64A66D658F74F27C8C30237E87686FB04551BB128D917305173E2788883352A0216FD8D0035D748C9B42A600073ADBA73F851BB5ECA287AD325A3A3561769868C56E6D84FB661ED5A41649342EA342F82BE528FD9BB4F492452C0A9426ED8677113EC6F1CAC51233F0520425C3B27ACFAA0D25A07BC2CA01115C90432ED14A1F4DDA693C6E704A16BECE8972D8218B62CEC4F255058988B224D86F2BDE4B221A3C672CB744CA8F9158A4E5C97D0C56AF5DFC1C5F0191F64CB6D7AB86B14432ECEB5A3ED77A8D3EA651A07C9A0CF95E631F41C2AB29191F66DD9A73271F47A455999C5FC8391550BBB346CA1BCAD598A32A50CB52281156874F36DE9D8EA5860D99703EA3F4907C640B47A75A285B4347845CD6C94407995F569FD8A4B12461D8236E4015AE000E2ACAF2BD9F8D28377EC0D9E4CAE714C481C5ABAE37448B3F84A291B84B4213C8FE1F6E0FDFA1A6D1A52C974F795C5947F667A8DBE162983EC0C71C0F0237E6ED8BCB7AC9E4C73B5A1ED85FD5E0FA2810C842D484D6F9DFCC8472F05683D9D1144EF6C36294BD06A019EFEC202FC46288EBA2ADE82AA3363FAF32B9B027C75A7D615845CF2EC538141F1746009737600F697CC8D90C80C1E19F1AB2C08646C0E3958'))
     uid_decap = r_decap.get('UniqueIdentifier')
     if not r_decap.ok: raise RuntimeError(r_decap.message or 'Decapsulate failed')
     print(f'  secret={uid_decap}')
+    print('###STEP decap detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_decap.payload if r_decap else None)}))
     print('###STEP decap ok###')
 except Exception as _e:
+    print('###STEP decap detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_decap.payload if r_decap else None)}))
     print('###STEP decap error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── get-ss · ML-KEM-768 · get ──
 try:
+    r_get_ss = None
     r_get_ss = c.submit('Get', leaf('UniqueIdentifier', 'TextString', uid_decap))
     if not r_get_ss.ok: raise RuntimeError(r_get_ss.message or 'Get failed')
     print(f'  key material {len(r_get_ss.get("KeyMaterial") or "") // 2} bytes')
+    print('###STEP get-ss detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_get_ss.payload if r_get_ss else None)}))
     print('###STEP get-ss ok###')
 except Exception as _e:
+    print('###STEP get-ss detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_get_ss.payload if r_get_ss else None)}))
     print('###STEP get-ss error### %s: %s' % (type(_e).__name__, _e))
     raise
 
@@ -77,8 +91,10 @@ try:
     _expected = '79d74f6c6c2d916bec47bd828fd9b67295a37f54927fab1263c0d122f1c6f1ed'
     if _actual != _expected: raise RuntimeError(f'ACVP KAT MISMATCH — expected {_expected[:32]}..., got {_actual[:32]}...')
     print('  ACVP KAT MATCH: shared secret matches NIST ACVP ML-KEM-768 tcId=26')
+    print('###STEP check-ss detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP check-ss ok###')
 except Exception as _e:
+    print('###STEP check-ss detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP check-ss error### %s: %s' % (type(_e).__name__, _e))
     raise
 "
@@ -98,6 +114,8 @@ client uses internally. Dispatched through the same decode -> policy ->
 engine -> encode path a real server request takes.
 """
 import os
+import json
+import traceback
 from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
@@ -119,12 +137,15 @@ client uses internally. Dispatched through the same decode -> policy ->
 engine -> encode path a real server request takes.
 """
 import os
+import json
+import traceback
 from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
 # ── create · ML-DSA-65 · createKeyPair ──
 try:
+    r_create = None
     r_create = c.submit('CreateKeyPair',
         struct('CommonAttributes',
             leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65'),
@@ -133,21 +154,26 @@ try:
     pub_create = r_create.get('PublicKeyUniqueIdentifier')
     if not r_create.ok: raise RuntimeError(r_create.message or 'CreateKeyPair failed')
     print(f'  priv={priv_create}  pub={pub_create}')
+    print('###STEP create detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_create.payload if r_create else None)}))
     print('###STEP create ok###')
 except Exception as _e:
+    print('###STEP create detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_create.payload if r_create else None)}))
     print('###STEP create error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── sign-early · ML-DSA-65 · sign ──
 try:
+    r_sign_early = None
     r_sign_early = c.submit('Sign',
         leaf('UniqueIdentifier', 'TextString', priv_create),
         struct('CryptographicParameters',
             leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65')),
         leaf('Data', 'ByteString', b'test payload'.hex()))
     print(f'  signature {len(r_sign_early.get("SignatureData") or "") // 2} bytes')
+    print('###STEP sign-early detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_sign_early.payload if r_sign_early else None)}))
     print('###STEP sign-early ok###')
 except Exception as _e:
+    print('###STEP sign-early detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_sign_early.payload if r_sign_early else None)}))
     print('###STEP sign-early error### %s: %s' % (type(_e).__name__, _e))
     raise
 
@@ -157,23 +183,29 @@ try:
     _reason = r_sign_early.get('ResultReason') or r_sign_early.get('ResultMessage') or 'denied'
     print(f'  expect-deny: {"refused (" + str(_reason) + ")" if _denied else "UNEXPECTEDLY ALLOWED — governance hole"}')
     if not _denied: raise RuntimeError('governance hole: operation was allowed when it should have been denied')
+    print('###STEP deny-early detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP deny-early ok###')
 except Exception as _e:
+    print('###STEP deny-early detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP deny-early error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── activate · ML-DSA-65 · activate ──
 try:
+    r_activate = None
     r_activate = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_activate.ok: raise RuntimeError(r_activate.message or 'Activate failed')
     print(f'  activated {priv_create}')
+    print('###STEP activate detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate.payload if r_activate else None)}))
     print('###STEP activate ok###')
 except Exception as _e:
+    print('###STEP activate detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_activate.payload if r_activate else None)}))
     print('###STEP activate error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── sign · ML-DSA-65 · sign ──
 try:
+    r_sign = None
     r_sign = c.submit('Sign',
         leaf('UniqueIdentifier', 'TextString', priv_create),
         struct('CryptographicParameters',
@@ -181,50 +213,64 @@ try:
         leaf('Data', 'ByteString', b'test payload'.hex()))
     print(f'  signature {len(r_sign.get("SignatureData") or "") // 2} bytes')
     if not r_sign.ok: raise RuntimeError(r_sign.message or 'Sign failed')
+    print('###STEP sign detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_sign.payload if r_sign else None)}))
     print('###STEP sign ok###')
 except Exception as _e:
+    print('###STEP sign detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_sign.payload if r_sign else None)}))
     print('###STEP sign error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── attrs · ML-DSA-65 · getAttributes ──
 try:
+    r_attrs = None
     r_attrs = c.submit('GetAttributes', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_attrs.ok: raise RuntimeError(r_attrs.message or 'GetAttributes failed')
     print(f'  alg={r_attrs.get("CryptographicAlgorithm")} state={r_attrs.get("State")} usage={r_attrs.get("CryptographicUsageMask")}')
+    print('###STEP attrs detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_attrs.payload if r_attrs else None)}))
     print('###STEP attrs ok###')
 except Exception as _e:
+    print('###STEP attrs detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_attrs.payload if r_attrs else None)}))
     print('###STEP attrs error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── locate · ML-DSA-65 · locate ──
 try:
+    r_locate = None
     r_locate = c.submit('Locate')
     if not r_locate.ok: raise RuntimeError(r_locate.message or 'Locate failed')
     print(f'  found {len(find_all(r_locate.payload, "UniqueIdentifier"))} object(s)')
+    print('###STEP locate detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_locate.payload if r_locate else None)}))
     print('###STEP locate ok###')
 except Exception as _e:
+    print('###STEP locate detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_locate.payload if r_locate else None)}))
     print('###STEP locate error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── revoke · ML-DSA-65 · revoke ──
 try:
+    r_revoke = None
     r_revoke = c.submit('Revoke',
         leaf('UniqueIdentifier', 'TextString', priv_create),
         struct('RevocationReason', leaf('RevocationReasonCode', 'Enumeration', 'Unspecified')))
     if not r_revoke.ok: raise RuntimeError(r_revoke.message or 'Revoke failed')
     print(f'  revoked {priv_create}')
+    print('###STEP revoke detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_revoke.payload if r_revoke else None)}))
     print('###STEP revoke ok###')
 except Exception as _e:
+    print('###STEP revoke detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_revoke.payload if r_revoke else None)}))
     print('###STEP revoke error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── destroy · ML-DSA-65 · destroy ──
 try:
+    r_destroy = None
     r_destroy = c.submit('Destroy', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_destroy.ok: raise RuntimeError(r_destroy.message or 'Destroy failed')
     print(f'  destroyed {priv_create}')
+    print('###STEP destroy detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_destroy.payload if r_destroy else None)}))
     print('###STEP destroy ok###')
 except Exception as _e:
+    print('###STEP destroy detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_destroy.payload if r_destroy else None)}))
     print('###STEP destroy error### %s: %s' % (type(_e).__name__, _e))
     raise
 "
@@ -244,12 +290,15 @@ client uses internally. Dispatched through the same decode -> policy ->
 engine -> encode path a real server request takes.
 """
 import os
+import json
+import traceback
 from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
 # ── create · ML-KEM-768 · createKeyPair ──
 try:
+    r_create = None
     r_create = c.submit('CreateKeyPair',
         struct('CommonAttributes',
             leaf('CryptographicAlgorithm', 'Enumeration', 'ML_KEM_768'),
@@ -258,53 +307,67 @@ try:
     pub_create = r_create.get('PublicKeyUniqueIdentifier')
     if not r_create.ok: raise RuntimeError(r_create.message or 'CreateKeyPair failed')
     print(f'  priv={priv_create}  pub={pub_create}')
+    print('###STEP create detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_create.payload if r_create else None)}))
     print('###STEP create ok###')
 except Exception as _e:
+    print('###STEP create detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_create.payload if r_create else None)}))
     print('###STEP create error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── activate-pub · ML-KEM-768 · activate ──
 try:
+    r_activate_pub = None
     r_activate_pub = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', pub_create))
     if not r_activate_pub.ok: raise RuntimeError(r_activate_pub.message or 'Activate failed')
     print(f'  activated {pub_create}')
+    print('###STEP activate-pub detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_pub.payload if r_activate_pub else None)}))
     print('###STEP activate-pub ok###')
 except Exception as _e:
+    print('###STEP activate-pub detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_activate_pub.payload if r_activate_pub else None)}))
     print('###STEP activate-pub error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── activate-priv · ML-KEM-768 · activate ──
 try:
+    r_activate_priv = None
     r_activate_priv = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_activate_priv.ok: raise RuntimeError(r_activate_priv.message or 'Activate failed')
     print(f'  activated {priv_create}')
+    print('###STEP activate-priv detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_activate_priv.payload if r_activate_priv else None)}))
     print('###STEP activate-priv ok###')
 except Exception as _e:
+    print('###STEP activate-priv detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_activate_priv.payload if r_activate_priv else None)}))
     print('###STEP activate-priv error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── encap · ML-KEM-768 · encapsulate ──
 try:
+    r_encap = None
     r_encap = c.submit('Encapsulate', leaf('UniqueIdentifier', 'TextString', pub_create))
     ct_encap = r_encap.get('Data')
     uid_encap = r_encap.get('UniqueIdentifier')
     if not r_encap.ok: raise RuntimeError(r_encap.message or 'Encapsulate failed')
     print(f'  ciphertext {len(ct_encap or "") // 2} bytes')
+    print('###STEP encap detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_encap.payload if r_encap else None)}))
     print('###STEP encap ok###')
 except Exception as _e:
+    print('###STEP encap detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_encap.payload if r_encap else None)}))
     print('###STEP encap error### %s: %s' % (type(_e).__name__, _e))
     raise
 
 # ── decap · ML-KEM-768 · decapsulate ──
 try:
+    r_decap = None
     r_decap = c.submit('Decapsulate',
         leaf('UniqueIdentifier', 'TextString', priv_create),
         leaf('Data', 'ByteString', ct_encap))
     uid_decap = r_decap.get('UniqueIdentifier')
     if not r_decap.ok: raise RuntimeError(r_decap.message or 'Decapsulate failed')
     print(f'  secret={uid_decap}')
+    print('###STEP decap detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': (r_decap.payload if r_decap else None)}))
     print('###STEP decap ok###')
 except Exception as _e:
+    print('###STEP decap detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': (r_decap.payload if r_decap else None)}))
     print('###STEP decap error### %s: %s' % (type(_e).__name__, _e))
     raise
 "
@@ -324,6 +387,8 @@ client uses internally. Dispatched through the same decode -> policy ->
 engine -> encode path a real server request takes.
 """
 import os
+import json
+import traceback
 from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
@@ -336,8 +401,10 @@ try:
     r_load_permissive = c.load_policy(_yaml)
     if not r_load_permissive.ok: raise RuntimeError(r_load_permissive.message or 'LoadPolicy failed')
     print('  policy loaded: training-permissive.yaml')
+    print('###STEP load-permissive detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP load-permissive ok###')
 except Exception as _e:
+    print('###STEP load-permissive detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP load-permissive error### %s: %s' % (type(_e).__name__, _e))
     raise
 
@@ -345,8 +412,10 @@ except Exception as _e:
 try:
     r_dry_permissive = c.dry_run('CreateKeyPair', algorithm='ML_DSA_65')
     print(f'  dry-run: {r_dry_permissive.get("Kind")} ({r_dry_permissive.get("Reason")})')
+    print('###STEP dry-permissive detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP dry-permissive ok###')
 except Exception as _e:
+    print('###STEP dry-permissive detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP dry-permissive error### %s: %s' % (type(_e).__name__, _e))
     raise
 
@@ -358,8 +427,10 @@ try:
     r_load_cnsa = c.load_policy(_yaml)
     if not r_load_cnsa.ok: raise RuntimeError(r_load_cnsa.message or 'LoadPolicy failed')
     print('  policy loaded: cnsa-2.0.yaml')
+    print('###STEP load-cnsa detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP load-cnsa ok###')
 except Exception as _e:
+    print('###STEP load-cnsa detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP load-cnsa error### %s: %s' % (type(_e).__name__, _e))
     raise
 
@@ -367,8 +438,10 @@ except Exception as _e:
 try:
     r_dry_cnsa = c.dry_run('CreateKeyPair', algorithm='ML_DSA_65')
     print(f'  dry-run: {r_dry_cnsa.get("Kind")} ({r_dry_cnsa.get("Reason")})')
+    print('###STEP dry-cnsa detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': None}))
     print('###STEP dry-cnsa ok###')
 except Exception as _e:
+    print('###STEP dry-cnsa detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': None}))
     print('###STEP dry-cnsa error### %s: %s' % (type(_e).__name__, _e))
     raise
 "

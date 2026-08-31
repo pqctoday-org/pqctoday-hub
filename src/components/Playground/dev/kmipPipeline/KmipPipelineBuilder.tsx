@@ -43,7 +43,13 @@ import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
-import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
+import {
+  KMIP_PRIMITIVES,
+  opsFor,
+  defaultOpFor,
+  ALL_KMIP_WIRE_OPS,
+  type KmipOp,
+} from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
 import { DevSandboxDiffNote } from '../pipeline/DevSandboxDiffNote'
 import {
@@ -55,6 +61,8 @@ import {
   type KmipStep,
   type KmipStepStatus,
 } from './kmipPipelineCodegen'
+import type { StepDetail } from '../pipeline/pipelineCodegen'
+import { KmipStepInspectPanel } from './KmipStepInspectPanel'
 import {
   KMIP_TEMPLATES,
   KMIP_TEMPLATE_NAMES,
@@ -81,21 +89,6 @@ const STATUS_STYLE: Record<KmipStepStatus, { cls: string; label: string } | null
   skipped: { cls: 'text-muted-foreground', label: '— skipped' },
 }
 
-/** Wire operation names the shim's dry_run(op, algorithm=...) accepts —
- *  the real KMIP verb spellings (PascalCase), same convention the shipped
- *  templates already use (e.g. 'CreateKeyPair' in "Policy dry-run compare"). */
-const KMIP_DRY_RUN_OPS = [
-  'CreateKeyPair',
-  'Create',
-  'Activate',
-  'Sign',
-  'Encapsulate',
-  'Decapsulate',
-  'GetAttributes',
-  'Locate',
-  'Revoke',
-  'Destroy',
-]
 const KMIP_DRY_RUN_ALGORITHMS = Object.values(KMIP_PRIMITIVES).map((p) => p.algorithm)
 
 // G9/W4: static for the session — see PkcsPipelineBuilder.tsx's identical row.
@@ -177,7 +170,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const [runError, setRunError] = useState<string | null>(null)
   const [elapsedMs, setElapsedMs] = useState<number | null>(null)
   const [stepState, setStepState] = useState<
-    Record<string, { status: KmipStepStatus; output: string | null }>
+    Record<string, { status: KmipStepStatus; output: string | null; detail?: StepDetail }>
   >({})
   const [detached, setDetached] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -440,6 +433,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               {
                 status: outcome.status[s.id] ?? 'skipped',
                 output: outcome.text[s.id] || null,
+                detail: outcome.detail[s.id],
               },
             ])
           )
@@ -1129,7 +1123,7 @@ interface KmipStepCardProps {
   step: KmipStep
   index: number
   steps: KmipStep[]
-  stepState?: { status: KmipStepStatus; output: string | null }
+  stepState?: { status: KmipStepStatus; output: string | null; detail?: StepDetail }
   findings: Finding[]
   onDelete: () => void
   onDragStart: React.DragEventHandler
@@ -1156,6 +1150,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
   onDryRunAlgorithm,
   onDenyTarget,
 }) => {
+  const [inspectOpen, setInspectOpen] = useState(false)
   const statusStyle = stepState ? STATUS_STYLE[stepState.status] : null
   const borderColor = findings.length ? 'border-destructive/45' : 'border-border'
   const opSpec = step.kind === 'op' ? KMIP_PRIMITIVES[step.primId] : undefined
@@ -1277,7 +1272,7 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
                     value={step.op}
                     onChange={(e) => onDryRunOp(e.target.value)}
                   >
-                    {KMIP_DRY_RUN_OPS.map((op) => (
+                    {ALL_KMIP_WIRE_OPS.map((op) => (
                       <option key={op} value={op}>
                         {op}
                       </option>
@@ -1333,11 +1328,27 @@ const KmipStepCard: React.FC<KmipStepCardProps> = ({
             </div>
           ))}
           {stepState?.output && (
-            <pre className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto">
-              <span className={stepState.status === 'error' ? 'text-status-error' : ''}>
-                {stepState.output}
-              </span>
-            </pre>
+            <>
+              <pre className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto">
+                <span className={stepState.status === 'error' ? 'text-status-error' : ''}>
+                  {stepState.output}
+                </span>
+              </pre>
+              {stepState.detail && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-1 h-auto p-0 text-[10.5px] text-muted-foreground hover:text-foreground hover:underline hover:bg-transparent"
+                  onClick={() => setInspectOpen(!inspectOpen)}
+                >
+                  {inspectOpen ? '▼ Hide inspect' : '▶ Inspect'}
+                </Button>
+              )}
+              {inspectOpen && stepState.detail && (
+                <KmipStepInspectPanel detail={stepState.detail} />
+              )}
+            </>
           )}
         </div>
         <Button

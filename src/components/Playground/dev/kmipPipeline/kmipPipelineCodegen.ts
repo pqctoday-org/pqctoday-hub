@@ -20,6 +20,10 @@
  *   priv_<id> / pub_<id>   a CreateKeyPair step's two produced uids
  */
 import { KMIP_PRIMITIVES, type KmipOp, type KmipPrimSpec } from './kmipPipelinePrimitives'
+// StepDetail: the ###STEP <id> detail### payload shape is part of the SAME
+// shared marker contract as parseRun (see module header) — reused as-is,
+// not redefined, so a value parseRun hands back is directly assignable here.
+import type { StepDetail } from '../pipeline/pipelineCodegen'
 
 export type KmipParamValue =
   | { bind: 'literal'; value: string }
@@ -30,6 +34,7 @@ export type KmipStepStatus = 'idle' | 'running' | 'ok' | 'error' | 'skipped'
 export interface KmipStepResult {
   text: string
   status: 'ok' | 'error'
+  detail?: StepDetail
 }
 
 export interface KmipOpStep {
@@ -333,6 +338,17 @@ function emitStepMarker(step: KmipStep): string {
  * step's literal params (and a Sign step's effective message) swapped for unique
  * placeholder tokens — and use it as a matching template against edited code.
  */
+/** Only 'op'/'register' steps assign a fresh KmipResult (from a real
+ *  c.submit() call) to resultVar(step.id) — the source of a detail line's
+ *  real response tree. Every other step kind either has nothing new to
+ *  show (load-policy/dry-run's own small field set is already printed in
+ *  full) or references an EARLIER step's result (expect-deny/assert-equals). */
+function detailTreeExpr(step: KmipStep): string {
+  if (step.kind !== 'op' && step.kind !== 'register') return 'None'
+  const rv = resultVar(step.id)
+  return `(${rv}.payload if ${rv} else None)`
+}
+
 function emitStepBody(
   step: KmipStep,
   message: string,
@@ -340,6 +356,12 @@ function emitStepBody(
   mayBeDenied: boolean
 ): string[] {
   const lines: string[] = ['try:']
+  // Guards the except block's own detail line below against a NameError if
+  // c.submit() itself throws before <rv> is ever assigned — every 'op'/
+  // 'register' case's own first line immediately overwrites this.
+  if (step.kind === 'op' || step.kind === 'register') {
+    lines.push(`    ${resultVar(step.id)} = None`)
+  }
   if (step.kind === 'op') {
     const spec = KMIP_PRIMITIVES[step.primId]
     if (!spec || !spec.ops[step.op]) {
@@ -408,8 +430,15 @@ function emitStepBody(
     )
     lines.push(`    print(${pyStr(`  ACVP KAT MATCH: ${step.label}`)})`)
   }
+  const treeExpr = detailTreeExpr(step)
+  lines.push(
+    `    print('###STEP ${step.id} detail### ' + json.dumps({'kind': 'output', 'fields': [], 'tree': ${treeExpr}}))`
+  )
   lines.push(`    print('###STEP ${step.id} ok###')`)
   lines.push('except Exception as _e:')
+  lines.push(
+    `    print('###STEP ${step.id} detail### ' + json.dumps({'kind': 'error', 'excType': type(_e).__name__, 'message': str(_e), 'traceback': traceback.format_exc(), 'tree': ${treeExpr}}))`
+  )
   lines.push(`    print('###STEP ${step.id} error### %s: %s' % (type(_e).__name__, _e))`)
   lines.push('    raise')
   lines.push('')
@@ -433,6 +462,8 @@ export function emitKmipPipeline(steps: KmipStep[], opts: KmipEmitOptions = {}):
     'engine -> encode path a real server request takes.',
     '"""',
     'import os',
+    'import json',
+    'import traceback',
     'from pqctoday_kmip import KmipClient, leaf, struct, find_all',
     '',
     `c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))`,

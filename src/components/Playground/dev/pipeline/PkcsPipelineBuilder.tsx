@@ -50,6 +50,7 @@ import {
   type PipelineStep,
   type StepStatus,
 } from './pipelineCodegen'
+import { StepInspectPanel } from './StepInspectPanel'
 import { optionsFor, validate, type Finding } from './pipelineBindings'
 import { TEMPLATES, TEMPLATE_NAMES, TEMPLATE_OUTCOMES } from './pipelineTemplates'
 import {
@@ -436,6 +437,7 @@ export const PkcsPipelineBuilder: React.FC = () => {
               ? {
                   text: outcome.text[s.id],
                   status: outcome.status[s.id] === 'error' ? 'error' : 'ok',
+                  detail: outcome.detail[s.id],
                 }
               : null,
           }))
@@ -1184,6 +1186,7 @@ const StepCard: React.FC<StepCardProps> = ({
   onOpChange,
   onParam,
 }) => {
+  const [inspectOpen, setInspectOpen] = useState(false)
   const spec = PRIMITIVES[step.primId]
   const meta = PALETTE_ENTRIES.find((x) => x.id === step.primId)
   const isPq = meta?.pq === true
@@ -1275,33 +1278,89 @@ const StepCard: React.FC<StepCardProps> = ({
               const current = step.params[name]
               const currentKey = current ? JSON.stringify(current) : ''
               const known = opts.some((o) => JSON.stringify(o.value) === currentKey)
+              const select = (
+                // eslint-disable-next-line no-restricted-syntax -- FilterDropdown's onSelect(id: string) can't carry this option's value, a full ParamValue object (a step reference/key-part pair, not a simple string id) — the option's real identity IS that object, encoded here as its JSON string only so the native select can compare it.
+                <select
+                  className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-status-error'}`}
+                  aria-label={`${name} for step ${index + 1}`}
+                  value={known ? currentKey : ''}
+                  onChange={(e) =>
+                    onParam(
+                      name,
+                      e.target.value ? (JSON.parse(e.target.value) as ParamValue) : undefined
+                    )
+                  }
+                >
+                  <option value="">
+                    {opts.length ? '— choose a source —' : '— nothing compatible earlier —'}
+                  </option>
+                  {opts.map((o) => (
+                    <option key={o.label} value={JSON.stringify(o.value)}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              )
+
+              // 'bytes' params (sign/verify/digest/encrypt's message data) can
+              // also take a literal value typed right on the step, not just a
+              // reference to the pipeline-wide input or an earlier step's
+              // output — e.g. signing a different message per step.
+              if (kind === 'bytes') {
+                const mode: 'ref' | 'text' | 'hex' =
+                  current?.bind === 'hex' ? 'hex' : current?.bind === 'bytes' ? 'text' : 'ref'
+                return (
+                  <ParamRow key={name} name={name}>
+                    <div className="flex flex-1 min-w-0 gap-1.5">
+                      <div className="flex rounded border border-border/60 overflow-hidden shrink-0">
+                        {(['ref', 'text', 'hex'] as const).map((m) => (
+                          <Button
+                            key={m}
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className={`h-auto rounded-none px-1.5 py-0.5 text-[9.5px] ${mode === m ? 'bg-primary/20 text-primary' : 'text-muted-foreground'}`}
+                            onClick={() =>
+                              onParam(
+                                name,
+                                m === 'ref'
+                                  ? undefined
+                                  : { bind: m === 'hex' ? 'hex' : 'bytes', value: '' }
+                              )
+                            }
+                          >
+                            {m}
+                          </Button>
+                        ))}
+                      </div>
+                      {mode === 'ref' ? (
+                        select
+                      ) : (
+                        <input
+                          className="flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono"
+                          aria-label={`${name} for step ${index + 1}`}
+                          value={
+                            current?.bind === 'bytes' || current?.bind === 'hex'
+                              ? current.value
+                              : ''
+                          }
+                          placeholder={mode === 'hex' ? 'hex bytes' : 'literal text'}
+                          onChange={(e) =>
+                            onParam(name, {
+                              bind: mode === 'hex' ? 'hex' : 'bytes',
+                              value: e.target.value,
+                            })
+                          }
+                        />
+                      )}
+                    </div>
+                  </ParamRow>
+                )
+              }
+
               return (
                 <ParamRow key={name} name={name}>
-                  {/* eslint-disable-next-line no-restricted-syntax -- FilterDropdown's
-                      onSelect(id: string) can't carry this option's value, a full
-                      ParamValue object (a step reference/key-part pair, not a simple
-                      string id) — the option's real identity IS that object, encoded
-                      here as its JSON string only so the native select can compare it. */}
-                  <select
-                    className={`flex-1 min-w-0 bg-background border rounded px-1.5 py-0.5 text-xs font-mono ${known ? '' : 'text-status-error'}`}
-                    aria-label={`${name} for step ${index + 1}`}
-                    value={known ? currentKey : ''}
-                    onChange={(e) =>
-                      onParam(
-                        name,
-                        e.target.value ? (JSON.parse(e.target.value) as ParamValue) : undefined
-                      )
-                    }
-                  >
-                    <option value="">
-                      {opts.length ? '— choose a source —' : '— nothing compatible earlier —'}
-                    </option>
-                    {opts.map((o) => (
-                      <option key={o.label} value={JSON.stringify(o.value)}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
+                  {select}
                 </ParamRow>
               )
             })}
@@ -1312,14 +1371,30 @@ const StepCard: React.FC<StepCardProps> = ({
             </div>
           ))}
           {step.output && (
-            <pre
-              className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto"
-              style={{ color: step.output.status === 'error' ? undefined : undefined }}
-            >
-              <span className={step.output.status === 'error' ? 'text-status-error' : ''}>
-                {step.output.text}
-              </span>
-            </pre>
+            <>
+              <pre
+                className="mt-2.5 p-2 bg-muted rounded text-[10.5px] font-mono whitespace-pre-wrap max-h-40 overflow-auto"
+                style={{ color: step.output.status === 'error' ? undefined : undefined }}
+              >
+                <span className={step.output.status === 'error' ? 'text-status-error' : ''}>
+                  {step.output.text}
+                </span>
+              </pre>
+              {step.output.detail && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="mt-1 h-auto p-0 text-[10.5px] text-muted-foreground hover:text-foreground hover:underline hover:bg-transparent"
+                  onClick={() => setInspectOpen(!inspectOpen)}
+                >
+                  {inspectOpen ? '▼ Hide inspect' : '▶ Inspect'}
+                </Button>
+              )}
+              {inspectOpen && step.output.detail && (
+                <StepInspectPanel detail={step.output.detail} />
+              )}
+            </>
           )}
         </div>
         <Button

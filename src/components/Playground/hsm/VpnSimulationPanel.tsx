@@ -83,6 +83,19 @@ export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
 }
 
+// ML-KEM parameter-set axis (FIPS 203), orthogonal to IKEv2Mode's classical/
+// hybrid/pure-pqc axis. 768 is strongSwan-pkcs11's long-standing default;
+// 512/1024 became real (not just standalone-verified) via the 2026-08-31
+// strongswan-pkcs11 fix — see kem_parameter_set() in pqctoday-hsm's
+// pkcs11_kem.c and this panel's buildKemOverrideProposal.
+type KemSize = 512 | 768 | 1024
+const KEM_NIST_LEVEL: Record<KemSize, string> = { 512: 'Level 1', 768: 'Level 3', 1024: 'Level 5' }
+// FIPS 203 encapsulation-key (public key) byte sizes, ek size per size class.
+const KEM_PUBKEY_BYTES: Record<KemSize, number> = { 512: 800, 768: 1184, 1024: 1568 }
+// FIPS 203 ciphertext byte sizes per size class (also the C_EncapsulateKey
+// ct_len this panel's PKCS#11 trace log reports).
+const KEM_CIPHERTEXT_BYTES: Record<KemSize, number> = { 512: 768, 768: 1088, 1024: 1568 }
+
 type SoftHSMWasmModule = NonNullable<
   ReturnType<typeof getSoftHSMRustModule> extends Promise<infer T> ? T : never
 >
@@ -185,7 +198,9 @@ function hsmSign(
 // Minimal 2-attr template proven to work with softhsmv3 C_EncapsulateKey/C_DecapsulateKey.
 // softhsmv3 builds its own base attrs (CKA_CLASS, CKA_TOKEN, CKA_PRIVATE, CKA_KEY_TYPE)
 // internally — caller only needs to supply attrs that differ from defaults:
-//   CKA_VALUE_LEN = 32  (required by ck3 for OBJECT_OP_GENERATE; ML-KEM-768 = 32 bytes)
+//   CKA_VALUE_LEN = 32  (required by ck3 for OBJECT_OP_GENERATE; FIPS 203's shared
+//                        secret K is 32 bytes for ALL of ML-KEM-512/768/1024 — only
+//                        the public key / ciphertext sizes vary by parameter set)
 //   CKA_EXTRACTABLE = TRUE  (default is FALSE; must be explicit to allow C_GetAttributeValue)
 function buildKemSecretKeyTmpl(M: SoftHSMWasmModule): {
   tpl: number
@@ -193,7 +208,7 @@ function buildKemSecretKeyTmpl(M: SoftHSMWasmModule): {
   free: () => void
 } {
   const pValLen = M._malloc(4)
-  M.setValue(pValLen, 32, 'i32') // 32-byte ML-KEM-768 shared secret
+  M.setValue(pValLen, 32, 'i32') // 32-byte shared secret (fixed size for every ML-KEM variant)
   const pTrue = M._malloc(1)
   M.setValue(pTrue, 1, 'i8') // CK_TRUE
 
@@ -737,6 +752,21 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   React.useEffect(() => {
     selectedModeRef.current = selectedMode
   }, [selectedMode])
+  // Real, user-facing ML-KEM parameter-set selector — orthogonal to selectedMode's
+  // classical/hybrid/pure-pqc axis. Only meaningful for hybrid/pure-pqc (classical
+  // uses no KEM at all). Threaded through to the WASM daemon via the same
+  // kemOverride/WASM_IKE_PROPOSAL mechanism verified for real negotiated sessions
+  // tonight (2026-08-31) — see buildKemOverrideProposal below and bridge.ts's
+  // kemOverride doc. Reads/writes ?vpnKemSize= for parity with vpnMode's URL param.
+  const [kemSize, setKemSize] = useState<KemSize>(() => {
+    const p = new URLSearchParams(window.location.search).get('vpnKemSize')
+    if (p === '512' || p === '1024') return Number(p) as KemSize
+    return 768
+  })
+  const kemSizeRef = React.useRef<KemSize>(kemSize)
+  React.useEffect(() => {
+    kemSizeRef.current = kemSize
+  }, [kemSize])
   const [currentStep, setCurrentStep] = useState(0)
   const [showInstructions, setShowInstructions] = useState(true)
   const [mtu, setMtu] = useState<number>(1500)
@@ -768,6 +798,37 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     const p = new URLSearchParams(window.location.search).get('vpnRpc')
     return p !== '0' // default true unless explicitly disabled
   })
+  // RAW escape hatch (2026-08-31) — lets an e2e/manual test request an exact,
+  // arbitrary IKE proposal string (e.g. a mixed-size hybrid like
+  // "aes256-sha256-mlkem768-ke1_mlkem512" that the kemSize selector below
+  // can't express) by bypassing the selector entirely. When unset (the normal
+  // path, including the real ML-KEM Size UI control), buildKemOverrideProposal
+  // derives the same kind of override string from selectedMode + kemSize. Both
+  // paths land on the identical kemOverride/WASM_IKE_PROPOSAL mechanism — see
+  // bridge.ts's kemOverride doc and wasm_backend.c's WASM_IKE_PROPOSAL.
+  const vpnKemProposalOverride = React.useMemo(
+    () => new URLSearchParams(window.location.search).get('vpnKemProposal') || undefined,
+    []
+  )
+
+  // Real proposal-string builder for the ML-KEM Size UI control. Mirrors
+  // wasm_backend.c's fixed proposal_ike_pqc/proposal_ike_hybrid strings
+  // (verbatim for kemSize=768) but substitutes the selected FIPS 203 size —
+  // exercising the same kemOverride/WASM_IKE_PROPOSAL path tonight's
+  // ML-KEM-512/1024 verification used, just driven by UI state instead of a
+  // raw URL param. Classical mode has no KEM, so no override applies.
+  const buildKemOverrideProposal = useCallback(
+    (mode: IKEv2Mode, size: KemSize): string | undefined => {
+      if (mode === 'classical') return undefined
+      const base = `aes256-sha256-mlkem${size}`
+      return mode === 'hybrid' ? `${base}-ke1_ecp256` : base
+    },
+    []
+  )
+  // Effective override for the CURRENT selection — the raw URL param (if any)
+  // wins for e2e flexibility; otherwise the real selector drives it.
+  const kemOverrideProposal =
+    vpnKemProposalOverride ?? buildKemOverrideProposal(selectedMode, kemSize)
   const [showQkdNote, setShowQkdNote] = useState(false)
   const [logCopied, setLogCopied] = useState(false)
   const [ssLogs, setSsLogs] = useState<StrongSwanLog[]>([])
@@ -1055,20 +1116,25 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       mode: IKEv2Mode,
       auth: 'psk' | 'dual',
       frag: boolean,
+      kemSizeArg: KemSize,
       keyIdHex?: { left: string; right: string }
     ) => {
       // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
-      //   pure-pqc:  aes256-sha384-mlkem768           — IKE_SA_INIT only
+      //   pure-pqc:  aes256-sha384-mlkemNNN           — IKE_SA_INIT only
       //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
-      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT
+      //   hybrid:    aes256-sha384-mlkemNNN-ke1_ecp256 — ML-KEM in IKE_SA_INIT
       //              (real C_Encapsulate/DecapsulateKey on the HSM), then an
       //              IKE_INTERMEDIATE round with ECP-256 as Additional KE 1
       //              (RFC 9242/9370). The additional-KE exchange logic is not
       //              in this WASM build, so that round is narrated as [SIM]
       //              log entries rather than executed by charon.
-      let modeIke = 'aes256-sha384-mlkem768!'
+      // NNN is the selected ML-KEM parameter set (512/768/1024) — this text is
+      // display-only (see the "Raw Config" tab note below), but must match the
+      // real negotiated size so it's not misleading; the real value is driven
+      // by kemOverrideProposal/WASM_IKE_PROPOSAL, not by this string.
+      let modeIke = `aes256-sha384-mlkem${kemSizeArg}!`
       if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
-      if (mode === 'hybrid') modeIke = 'aes256-sha384-mlkem768-ke1_ecp256!'
+      if (mode === 'hybrid') modeIke = `aes256-sha384-mlkem${kemSizeArg}-ke1_ecp256!`
       const left = role === 'initiator' ? '192.168.0.1' : '192.168.0.2'
       const right = role === 'initiator' ? '192.168.0.2' : '192.168.0.1'
       const auto = role === 'initiator' ? 'start' : 'route'
@@ -1101,21 +1167,25 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [activeInitConfig, setActiveInitConfig] = useState(() => buildCharonConf('psk', 1500))
   const [activeRespConfig, setActiveRespConfig] = useState(() => buildCharonConf('psk', 1500))
   const [activeInitIpsec, setActiveInitIpsec] = useState(() =>
-    buildIpsecConf('initiator', selectedMode, 'psk', true)
+    buildIpsecConf('initiator', selectedMode, 'psk', true, kemSize)
   )
   const [activeRespIpsec, setActiveRespIpsec] = useState(() =>
-    buildIpsecConf('responder', selectedMode, 'psk', true)
+    buildIpsecConf('responder', selectedMode, 'psk', true, kemSize)
   )
 
-  // Rebuild ipsec.conf and strongswan.conf whenever KE mode, auth mode, MTU, or fragmentation changes.
+  // Rebuild ipsec.conf and strongswan.conf whenever KE mode, KEM size, auth mode, MTU, or fragmentation changes.
   React.useEffect(() => {
-    setActiveInitIpsec(buildIpsecConf('initiator', selectedMode, authMode, allowFragmentation))
-    setActiveRespIpsec(buildIpsecConf('responder', selectedMode, authMode, allowFragmentation))
+    setActiveInitIpsec(
+      buildIpsecConf('initiator', selectedMode, authMode, allowFragmentation, kemSize)
+    )
+    setActiveRespIpsec(
+      buildIpsecConf('responder', selectedMode, authMode, allowFragmentation, kemSize)
+    )
 
     const updatedCharon = buildCharonConf(authMode, mtu)
     setActiveInitConfig(updatedCharon)
     setActiveRespConfig(updatedCharon)
-  }, [selectedMode, authMode, mtu, allowFragmentation, buildIpsecConf, buildCharonConf])
+  }, [selectedMode, kemSize, authMode, mtu, allowFragmentation, buildIpsecConf, buildCharonConf])
 
   React.useEffect(() => {
     const handleLog = (log: StrongSwanLog) => {
@@ -1280,13 +1350,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // the panel's rawM. Tag with wasmContext so HsmKeyInspector routes attribute
       // reads through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) instead
       // of querying panel WASM (which would return CKR_OBJECT_HANDLE_INVALID).
+      // Real negotiated size for THIS session — set from the ML-KEM Size UI
+      // control at Start Daemon time (see kemSizeRef) and only changed via a
+      // full session reset (handleKemSizeChange), so it always matches
+      // whatever keys these trace events actually belong to.
+      const kemVariant = `ML-KEM-${kemSizeRef.current}`
       if (ev.op === 'C_GenerateKeyPair' && ev.mech === 0x0f) {
         addHsmKey({
           handle: ev.outA,
           family: 'ml-kem',
           role: 'public',
-          label: `ML-KEM-768 Public Key`,
-          variant: 'ML-KEM-768',
+          label: `${kemVariant} Public Key`,
+          variant: kemVariant,
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
@@ -1297,8 +1372,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           handle: ev.outB,
           family: 'ml-kem',
           role: 'private',
-          label: `ML-KEM-768 Private Key`,
-          variant: 'ML-KEM-768',
+          label: `${kemVariant} Private Key`,
+          variant: kemVariant,
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
@@ -1311,7 +1386,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           family: 'ml-kem',
           role: 'secret',
           label: `ML-KEM Session Key (encap)`,
-          variant: 'ML-KEM-768',
+          variant: kemVariant,
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
@@ -1324,7 +1399,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           family: 'ml-kem',
           role: 'secret',
           label: `ML-KEM Session Key (decap)`,
-          variant: 'ML-KEM-768',
+          variant: kemVariant,
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
@@ -1818,29 +1893,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             const extPub = injectTokenFlag(pubTpl.tplPtr, pubCount59)
             const extPriv = injectTokenFlag(privTpl.tplPtr, privCount59)
 
-            // ML-KEM public key: CKA_PARAMETER_SET (0x061d) has ck3 flag = MUST be in generate template.
-            // charon's pkcs11_kem.c only sends {CKA_DERIVE=CK_TRUE} — inject CKP_ML_KEM_768 (2) here.
-            const CKA_PARAMETER_SET_ID = 0x0000061d
-            let finalPubPtr = extPub.extTplPtr
-            let finalPubCount = pubCount59 + 1
-            let paramSetValPtr: number | null = null
-
-            if (mechType59 === 0x000f) {
-              finalPubCount = pubCount59 + 2
-              const newPubPtr = M._malloc(finalPubCount * 12)
-              M.HEAPU8.set(
-                M.HEAPU8.subarray(extPub.extTplPtr, extPub.extTplPtr + (pubCount59 + 1) * 12),
-                newPubPtr
-              )
-              paramSetValPtr = M._malloc(4)
-              M.setValue(paramSetValPtr, 2, 'i32') // CKP_ML_KEM_768 = 2
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12, CKA_PARAMETER_SET_ID, 'i32')
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 4, paramSetValPtr, 'i32')
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 8, 4, 'i32')
-              M._free(extPub.boolPtr)
-              M._free(extPub.extTplPtr)
-              finalPubPtr = newPubPtr
-            }
+            // ML-KEM public key: CKA_PARAMETER_SET (0x061d) has ck3 flag = MUST be in
+            // generate template. charon's pkcs11_kem.c (strongswan-pkcs11 fix, 2026-08-31)
+            // now derives this from the negotiated group via kem_parameter_set() and sends
+            // it as a real attribute in pubTpl/extPub above — no injection needed here.
+            // (Previously this block unconditionally appended a hardcoded
+            // CKA_PARAMETER_SET=CKP_ML_KEM_768 duplicate for mechType59===0x000f; harmless
+            // at the time because softhsmv3's extractParameterSet() takes the first
+            // matching attribute, but stale now that the real one is always present.)
+            const finalPubPtr = extPub.extTplPtr
+            const finalPubCount = pubCount59 + 1
 
             rv =
               M._C_GenerateKeyPair(
@@ -1855,13 +1917,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               ) >>> 0
 
             // Free extended arrays only (NOT their shared valPtrs 0..n-1 — those belong to originals)
-            if (paramSetValPtr !== null) {
-              M._free(paramSetValPtr)
-              M._free(finalPubPtr)
-            } else {
-              M._free(extPub.boolPtr)
-              M._free(extPub.extTplPtr)
-            }
+            M._free(extPub.boolPtr)
+            M._free(extPub.extTplPtr)
             M._free(extPriv.boolPtr)
             M._free(extPriv.extTplPtr)
 
@@ -2301,7 +2358,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   family: 'ml-kem',
                   role: 'secret',
                   label: `ML-KEM Session Key${fp92 ? ` FP:${fp92}` : secretHex92 ? ` — ${secretHex92.slice(0, 16)}…` : ''}`,
-                  variant: 'ML-KEM-768',
+                  variant: `ML-KEM-${kemSizeRef.current}`,
                   engine: 'rust',
                   generatedAt: new Date().toISOString(),
                   slotId: keySlotId92,
@@ -2388,7 +2445,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 family: 'ml-kem',
                 role: 'secret',
                 label: `ML-KEM Session Key${fp93 ? ` FP:${fp93}` : secretHex93 ? ` — ${secretHex93.slice(0, 16)}…` : ''}`,
-                variant: 'ML-KEM-768',
+                variant: `ML-KEM-${kemSizeRef.current}`,
                 engine: 'rust',
                 generatedAt: new Date().toISOString(),
                 slotId: keySlotId93,
@@ -2520,6 +2577,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
+  // modeConfig.dhGroup is shared Learn-module content and always describes the
+  // 768 default; substitute the live kemSize for the "Tunnel Statistics" result
+  // tile so it doesn't misreport the size actually negotiated this session.
+  const keAlgorithmLabel =
+    selectedMode === 'classical'
+      ? (modeConfig?.dhGroup ?? '—')
+      : selectedMode === 'hybrid'
+        ? `ML-KEM-${kemSize} (primary) + ECP-256 (Additional KE 1)`
+        : `ML-KEM-${kemSize}`
 
   // Displayed auth algorithm per side. PSK carries no CERT payload; cert
   // ("dual") mode is dominated by the certificate + AUTH signature bytes.
@@ -2908,14 +2974,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // charon's get_private hits the ID_KEY_ID fast path. From each role's
       // POV: left = self, right = peer.
       if (authMode === 'dual' && initHex && respHex) {
-        const newInitIpsec = buildIpsecConf('initiator', selectedMode, 'dual', allowFragmentation, {
-          left: initHex,
-          right: respHex,
-        })
-        const newRespIpsec = buildIpsecConf('responder', selectedMode, 'dual', allowFragmentation, {
-          left: respHex,
-          right: initHex,
-        })
+        const newInitIpsec = buildIpsecConf(
+          'initiator',
+          selectedMode,
+          'dual',
+          allowFragmentation,
+          kemSize,
+          { left: initHex, right: respHex }
+        )
+        const newRespIpsec = buildIpsecConf(
+          'responder',
+          selectedMode,
+          'dual',
+          allowFragmentation,
+          kemSize,
+          { left: respHex, right: initHex }
+        )
         setActiveInitIpsec(newInitIpsec)
         setActiveRespIpsec(newRespIpsec)
         strongSwanEngine.dispatchLog({
@@ -2946,6 +3020,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     serverAlg,
     serverSize,
     selectedMode,
+    kemSize,
     authMode,
     allowFragmentation,
     buildIpsecConf,
@@ -2989,8 +3064,20 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // has leftauth=pubkey + leftcert=... — bypasses any staleness in
       // activeInitIpsec/activeRespIpsec state. Same call signature as the
       // useEffect at line 954 uses; verified at line 908.
-      const initIpsec = buildIpsecConf('initiator', selectedMode, 'dual', allowFragmentation)
-      const respIpsec = buildIpsecConf('responder', selectedMode, 'dual', allowFragmentation)
+      const initIpsec = buildIpsecConf(
+        'initiator',
+        selectedMode,
+        'dual',
+        allowFragmentation,
+        kemSize
+      )
+      const respIpsec = buildIpsecConf(
+        'responder',
+        selectedMode,
+        'dual',
+        allowFragmentation,
+        kemSize
+      )
 
       strongSwanEngine.dispatchLog({
         level: 'info',
@@ -3015,6 +3102,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           phase: 'spawn-only',
           authMode: 'dual',
           keyIds: { initKeyId: initKeyIdHex, respKeyId: respKeyIdHex },
+          // Real KEM-size wiring (2026-08-31): ENV must be set by preRun, before
+          // _main() runs — this spawn-only init is the ONLY init() call in the
+          // dual+ML-DSA flow (dualWorkerReadyRef's later start() reuses these
+          // already-spawned workers), so kemOverride has to land here to take
+          // effect for that flow at all.
+          kemOverride: kemOverrideProposal,
         }
       )
       await ready
@@ -3169,6 +3262,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     clientPsk,
     clientSize,
     selectedMode,
+    kemSize,
+    kemOverrideProposal,
     serverPsk,
   ])
 
@@ -3294,6 +3389,25 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // Reset VPN slot state so the next Start Daemon initializes fresh slots for the new mode.
       // Without this, stale vpnSlotsRef from a previous dual-auth run (e.g., {init:2,resp:3})
       // would be used for pure-PQC mode, causing wrong session mapping.
+      vpnRpcInitRef.current = false
+      vpnSlotsRef.current = { init: 0, resp: 1 }
+      vpnStateRef.current.sessions.clear()
+      setCertData(null)
+      setKemSecrets({})
+    },
+    [vpnRpcInitRef, vpnSlotsRef]
+  )
+
+  // Same full reset as handleModeChange — a KEM size change is a proposal
+  // change just like a mode change, and stale kemSecrets/certData/slot state
+  // from a previous size would otherwise mislabel the next run's results.
+  const handleKemSizeChange = useCallback(
+    (size: KemSize) => {
+      strongSwanEngine.destroy()
+      setSsLogs([])
+      setKemSize(size)
+      setCurrentStep(0)
+      setCharonFailed(false)
       vpnRpcInitRef.current = false
       vpnSlotsRef.current = { init: 0, resp: 1 }
       vpnStateRef.current.sessions.clear()
@@ -3530,6 +3644,40 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               {modeConfig && (
                 <p className="text-[11px] text-muted-foreground">{modeConfig.description}</p>
               )}
+
+              <div
+                className={`text-xs font-bold uppercase tracking-wider pt-2 ${selectedMode === 'classical' ? 'text-muted-foreground/50' : 'text-muted-foreground'}`}
+              >
+                ML-KEM Size
+              </div>
+              <div
+                className="flex flex-wrap gap-2"
+                data-testid="vpn-kem-size-group"
+                aria-disabled={selectedMode === 'classical'}
+              >
+                {([512, 768, 1024] as const).map((size) => (
+                  <Button
+                    variant="ghost"
+                    key={size}
+                    data-testid={`vpn-kem-size-${size}`}
+                    disabled={selectedMode === 'classical'}
+                    onClick={() => handleKemSizeChange(size)}
+                    aria-pressed={kemSize === size}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border disabled:opacity-40 disabled:cursor-not-allowed ${
+                      kemSize === size && selectedMode !== 'classical'
+                        ? 'bg-primary/20 border-primary/50 text-primary'
+                        : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    ML-KEM-{size}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {selectedMode === 'classical'
+                  ? 'Classical mode uses ECDH/MODP key exchange, not ML-KEM — this selector has no effect.'
+                  : `NIST ${KEM_NIST_LEVEL[kemSize]} · encapsulation key ${KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B · ciphertext ${KEM_CIPHERTEXT_BYTES[kemSize].toLocaleString()} B (FIPS 203). Real C_GenerateKeyPair/C_EncapsulateKey/C_DecapsulateKey run at this size — verify via the PKCS#11 trace log below.`}
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -3567,10 +3715,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </label>
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">
-                PQC key exchange payloads are 5–18× larger than classical DH (ML-KEM-768
-                encapsulation key: 1,184 B vs. MODP-3072: 256 B or ECP-256: 64 B), often exceeding
-                UDP MTU. RFC 7383 splits oversized SK-carrying IKE messages into fragments
-                reassembled before processing — IKE_SA_INIT itself can never be fragmented.
+                PQC key exchange payloads are 3–24× larger than classical DH (ML-KEM-{kemSize}
+                encapsulation key: {KEM_PUBKEY_BYTES[kemSize].toLocaleString()} B vs. MODP-3072: 256
+                B or ECP-256: 64 B), often exceeding UDP MTU. RFC 7383 splits oversized SK-carrying
+                IKE messages into fragments reassembled before processing — IKE_SA_INIT itself can
+                never be fragmented.
               </p>
             </div>
           </div>
@@ -4461,7 +4610,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode, keyIds, fragmentation: allowFragmentation, childSa: true }
+                        {
+                          authMode,
+                          keyIds,
+                          fragmentation: allowFragmentation,
+                          childSa: true,
+                          kemOverride: kemOverrideProposal,
+                        }
                       )
                     } else {
                       strongSwanEngine.init(
@@ -4470,7 +4625,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
                         proposalMode,
-                        { authMode, fragmentation: allowFragmentation, childSa: true }
+                        {
+                          authMode,
+                          fragmentation: allowFragmentation,
+                          childSa: true,
+                          kemOverride: kemOverrideProposal,
+                        }
                       )
                     }
                     setCurrentStep(1)
@@ -4596,6 +4756,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           authAlg={initiatorAuthAlg}
           fragmentationEnabled={allowFragmentation}
           mtu={mtu}
+          kemSize={kemSize}
         />
       </div>
 
@@ -4644,7 +4805,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-center">
             <span className="text-sm font-bold font-mono">
-              {selectedMode === 'classical' ? 'N/A' : 'Level 3'}
+              {selectedMode === 'classical' ? 'N/A' : KEM_NIST_LEVEL[kemSize]}
             </span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               NIST Sec. Level
@@ -4652,7 +4813,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
           <div className="p-3 rounded-xl bg-card border border-border flex flex-col justify-center items-start overflow-hidden">
             <span className="text-[11px] font-bold font-mono truncate w-full">
-              {modeConfig?.dhGroup ?? '—'}
+              {keAlgorithmLabel}
             </span>
             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mt-1">
               KE Algorithm
@@ -4766,7 +4927,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
               {selectedMode === 'pure-pqc'
                 ? `SKEYSEED = prf(Ni ‖ Nr, ss_kem)\n         = PRF-HMAC-SHA-256(Ni ‖ Nr,\n             0x${kemSecrets.responder?.hex ?? '…'})`
-                : `SKEYSEED  = prf(Ni ‖ Nr, ss_kem)\n                              ↑ ML-KEM-768 secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, g^ir ‖ Ni ‖ Nr)\n                      ↑ ECDH ECP-256 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
+                : `SKEYSEED  = prf(Ni ‖ Nr, ss_kem)\n                              ↑ ML-KEM-${kemSize} secret (IKE_SA_INIT)\nSKEYSEED' = prf(SK_d, g^ir ‖ Ni ‖ Nr)\n                      ↑ ECDH ECP-256 secret (after IKE_INTERMEDIATE)\n            ss_kem = 0x${kemSecrets.responder?.hex ?? '…'}`}
             </pre>
             <div className="text-[11px] text-muted-foreground space-y-1">
               {selectedMode === 'pure-pqc' ? (
@@ -4785,7 +4946,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     After each IKE_INTERMEDIATE, SKEYSEED is re-derived keyed by the previous SK_d —
                     chaining the secrets so an attacker must break{' '}
                     <span className="font-semibold text-foreground">both</span> the classical ECDH
-                    and ML-KEM-768 exchanges to recover the final keys. Either alone is
+                    and ML-KEM-{kemSize} exchanges to recover the final keys. Either alone is
                     insufficient.
                   </p>
                   <p className="text-muted-foreground">

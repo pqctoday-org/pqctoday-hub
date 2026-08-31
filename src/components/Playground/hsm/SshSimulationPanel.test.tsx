@@ -56,6 +56,17 @@ vi.mock('@/wasm/openssh', () => ({
     { id: 'ssh-mldsa-44', label: 'ssh-mldsa-44 (PQC)' },
     { id: 'ssh-mldsa-65', label: 'ssh-mldsa-65 (PQC)' },
     { id: 'ssh-mldsa-87', label: 'ssh-mldsa-87 (PQC)' },
+    // 2026-08-31 SLH-DSA UI wiring — mirrors the real SSH_HOST_KEY_OPTIONS
+    // array in src/wasm/openssh.ts, so this mock doesn't silently drift out
+    // of sync with what the panel actually renders.
+    { id: 'ssh-slh-dsa-sha2-128s', label: 'ssh-slh-dsa-sha2-128s (PQC)' },
+    { id: 'ssh-slh-dsa-sha2-128f', label: 'ssh-slh-dsa-sha2-128f (PQC)' },
+    { id: 'ssh-slh-dsa-shake-128s', label: 'ssh-slh-dsa-shake-128s (PQC)' },
+    { id: 'ssh-slh-dsa-shake-128f', label: 'ssh-slh-dsa-shake-128f (PQC)' },
+    { id: 'ssh-slh-dsa-sha2-256s', label: 'ssh-slh-dsa-sha2-256s (PQC)' },
+    { id: 'ssh-slh-dsa-sha2-256f', label: 'ssh-slh-dsa-sha2-256f (PQC)' },
+    { id: 'ssh-slh-dsa-shake-256s', label: 'ssh-slh-dsa-shake-256s (PQC)' },
+    { id: 'ssh-slh-dsa-shake-256f', label: 'ssh-slh-dsa-shake-256f (PQC)' },
   ],
 }))
 

@@ -29,6 +29,19 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.72.0] - 2026-08-31
+
+### Added
+
+- **VPN playground: choose your ML-KEM size (512/768/1024)** [view:/playground] [persona:developer] [persona:researcher]: previously fixed at ML-KEM-768 everywhere in the UI; a real selector now drives the IKE proposal, HSM key labels, and every displayed security-level/algorithm value down to a real keygen at the size you chose.
+- **SSH playground: SLH-DSA host keys now run for real** [view:/playground] [persona:developer] [persona:researcher]: 8 of the 12 FIPS 205 parameter sets, plus all 3 ML-DSA sizes, drive genuine handshakes through the real OpenSSH binary — signature sizes and migration-comparison numbers are computed from the actual run, not hardcoded to ML-DSA-65.
+- **KMIP and PKCS#11 Developer-tab pipeline builders gained a real per-step Inspect view** [view:/playground] [persona:developer]: an opt-in toggle on each generated step shows the real decoded response or output bytes, plus a full traceback on failure — and PKCS#11 steps can now take a typed literal message instead of only the shared input or a prior step's output.
+
+### Fixed
+
+- **PKCS#11 pipeline builder no longer crashes importing SLH-DSA, HSS/LMS, RSA, ECDSA, or Ed25519 keys** [view:/playground] [persona:developer]: Import was offered on every key type but only ever worked for ML-KEM/ML-DSA.
+- **SSH playground: a real SLH-DSA handshake could silently report itself as not quantum-safe** [view:/playground] [persona:developer]: the check only recognized ML-DSA host keys; fixed to recognize both PQC signature families.
+
 ## [4.71.0] - 2026-08-30
 
 ### Added
