@@ -153,6 +153,34 @@ export class KmipPlayground {
         }
     }
     /**
+     * Read back a Private/Public/Secret key's REAL engine-side PKCS#11
+     * attributes (not the KMIP store record) by its KMIP uid — the same
+     * pattern as `engine_certificate_attributes`, generalized to key
+     * object types via `find_handle_for_object`'s existing per-class
+     * dispatch. `CKA_VALUE`/`CKA_SEED` are deliberately never requested
+     * here: for a sensitive/non-extractable key they're engine-blocked
+     * anyway (PKCS#11 v3.2 §4.9/§4.10), so this surfaces exactly the
+     * metadata attributes a real PKCS#11 caller can always see —
+     * including the sensitivity/extractability flags themselves, which
+     * is the educational point (an honest "no" beats a fabricated value).
+     * @param {string} uid
+     * @returns {string}
+     */
+    engine_key_attributes(uid) {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ptr0 = passStringToWasm0(uid, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+            const len0 = WASM_VECTOR_LEN;
+            const ret = wasm.kmipplayground_engine_key_attributes(this.__wbg_ptr, ptr0, len0);
+            deferred2_0 = ret[0];
+            deferred2_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
      * C3 (2026-08-28 gaps-remediation plan) — every value-level lint finding
      * for a policy draft, fatal and advisory alike (not just the first fatal
      * one `load_policy` itself stops at). Structural failures (bad YAML,

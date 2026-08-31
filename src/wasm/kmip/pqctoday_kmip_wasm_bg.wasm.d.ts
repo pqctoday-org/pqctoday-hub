@@ -11,6 +11,7 @@ export const kmipplayground_clear_policy_modules: (a: number) => void;
 export const kmipplayground_deactivate_policy_module: (a: number, b: number, c: number) => [number, number];
 export const kmipplayground_dry_run: (a: number, b: number, c: number) => [number, number];
 export const kmipplayground_engine_certificate_attributes: (a: number, b: number, c: number) => [number, number];
+export const kmipplayground_engine_key_attributes: (a: number, b: number, c: number) => [number, number];
 export const kmipplayground_lint_policy_draft: (a: number, b: number, c: number) => [number, number];
 export const kmipplayground_list_objects: (a: number) => [number, number];
 export const kmipplayground_load_policy: (a: number, b: number, c: number) => [number, number];
