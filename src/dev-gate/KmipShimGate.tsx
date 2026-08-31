@@ -11,6 +11,7 @@
 import { useEffect, useRef } from 'react'
 import { getKmipEngine } from '../wasm/kmip/kmipEngine'
 import { createKmipBridge } from '../services/python/pyodide/kmipBridge'
+import { getCodepointTable } from '../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython } from '../services/python/pyRuntime'
 
 declare global {
@@ -30,7 +31,8 @@ async function runGate(): Promise<void> {
     const engine = await getKmipEngine()
 
     const py = await bootPyRuntime()
-    const bridge = createKmipBridge(engine)
+    const table = await getCodepointTable()
+    const bridge = createKmipBridge(engine, table)
     py.registerJsModule('kmip_bridge', bridge)
 
     const sampleRes = await fetch('/dev-gate-fixtures/17-kmip-cacp.py')

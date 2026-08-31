@@ -5,9 +5,16 @@ exports[`emitKmipPipeline — template snapshots > emits stable code for "Empty"
 
 Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip
 client's real API surface — every operation crosses the CACP policy plane.
+
+c.submit(operation, *payload) sends a real KMIP 3.0 request: \`operation\` is a
+real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,
+value)/struct(tag, *children) — real Attribute tag names and field types
+(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip
+client uses internally. Dispatched through the same decode -> policy ->
+engine -> encode path a real server request takes.
 """
 import os
-from pqctoday_kmip import KmipClient
+from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
@@ -19,15 +26,25 @@ exports[`emitKmipPipeline — template snapshots > emits stable code for "Govern
 
 Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip
 client's real API surface — every operation crosses the CACP policy plane.
+
+c.submit(operation, *payload) sends a real KMIP 3.0 request: \`operation\` is a
+real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,
+value)/struct(tag, *children) — real Attribute tag names and field types
+(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip
+client uses internally. Dispatched through the same decode -> policy ->
+engine -> encode path a real server request takes.
 """
 import os
-from pqctoday_kmip import KmipClient
+from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
 # ── create · ML-DSA-65 · createKeyPair ──
 try:
-    r_create = c.create_key_pair('ML_DSA_65', 'Sign Verify Encapsulate Decapsulate')
+    r_create = c.submit('CreateKeyPair',
+        struct('CommonAttributes',
+            leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65'),
+            leaf('CryptographicUsageMask', 'Integer', 'Sign Verify Encapsulate Decapsulate')))
     priv_create = r_create.get('PrivateKeyUniqueIdentifier')
     pub_create = r_create.get('PublicKeyUniqueIdentifier')
     if not r_create.ok: raise RuntimeError(r_create.message or 'CreateKeyPair failed')
@@ -39,7 +56,11 @@ except Exception as _e:
 
 # ── sign-early · ML-DSA-65 · sign ──
 try:
-    r_sign_early = c.sign(priv_create, b'test payload', 'ML_DSA_65')
+    r_sign_early = c.submit('Sign',
+        leaf('UniqueIdentifier', 'TextString', priv_create),
+        struct('CryptographicParameters',
+            leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65')),
+        leaf('Data', 'ByteString', b'test payload'.hex()))
     print(f'  signature {len(r_sign_early.get("SignatureData") or "") // 2} bytes')
     print('###STEP sign-early ok###')
 except Exception as _e:
@@ -59,9 +80,9 @@ except Exception as _e:
 
 # ── activate · ML-DSA-65 · activate ──
 try:
-    r_activate = c.activate(priv_create)
+    r_activate = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_activate.ok: raise RuntimeError(r_activate.message or 'Activate failed')
-    print(f'  now {r_activate.get("state")}')
+    print(f'  activated {priv_create}')
     print('###STEP activate ok###')
 except Exception as _e:
     print('###STEP activate error### %s: %s' % (type(_e).__name__, _e))
@@ -69,7 +90,11 @@ except Exception as _e:
 
 # ── sign · ML-DSA-65 · sign ──
 try:
-    r_sign = c.sign(priv_create, b'test payload', 'ML_DSA_65')
+    r_sign = c.submit('Sign',
+        leaf('UniqueIdentifier', 'TextString', priv_create),
+        struct('CryptographicParameters',
+            leaf('CryptographicAlgorithm', 'Enumeration', 'ML_DSA_65')),
+        leaf('Data', 'ByteString', b'test payload'.hex()))
     print(f'  signature {len(r_sign.get("SignatureData") or "") // 2} bytes')
     if not r_sign.ok: raise RuntimeError(r_sign.message or 'Sign failed')
     print('###STEP sign ok###')
@@ -79,7 +104,7 @@ except Exception as _e:
 
 # ── attrs · ML-DSA-65 · getAttributes ──
 try:
-    r_attrs = c.get_attributes(priv_create)
+    r_attrs = c.submit('GetAttributes', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_attrs.ok: raise RuntimeError(r_attrs.message or 'GetAttributes failed')
     print(f'  alg={r_attrs.get("CryptographicAlgorithm")} state={r_attrs.get("State")} usage={r_attrs.get("CryptographicUsageMask")}')
     print('###STEP attrs ok###')
@@ -89,9 +114,9 @@ except Exception as _e:
 
 # ── locate · ML-DSA-65 · locate ──
 try:
-    r_locate = c.locate()
+    r_locate = c.submit('Locate')
     if not r_locate.ok: raise RuntimeError(r_locate.message or 'Locate failed')
-    print(f'  found {len(r_locate.get("uids") or [])} object(s)')
+    print(f'  found {len(find_all(r_locate.payload, "UniqueIdentifier"))} object(s)')
     print('###STEP locate ok###')
 except Exception as _e:
     print('###STEP locate error### %s: %s' % (type(_e).__name__, _e))
@@ -99,9 +124,11 @@ except Exception as _e:
 
 # ── revoke · ML-DSA-65 · revoke ──
 try:
-    r_revoke = c.revoke(priv_create)
+    r_revoke = c.submit('Revoke',
+        leaf('UniqueIdentifier', 'TextString', priv_create),
+        struct('RevocationReason', leaf('RevocationReasonCode', 'Enumeration', 'Unspecified')))
     if not r_revoke.ok: raise RuntimeError(r_revoke.message or 'Revoke failed')
-    print(f'  now {r_revoke.get("state")}')
+    print(f'  revoked {priv_create}')
     print('###STEP revoke ok###')
 except Exception as _e:
     print('###STEP revoke error### %s: %s' % (type(_e).__name__, _e))
@@ -109,9 +136,9 @@ except Exception as _e:
 
 # ── destroy · ML-DSA-65 · destroy ──
 try:
-    r_destroy = c.destroy(priv_create)
+    r_destroy = c.submit('Destroy', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_destroy.ok: raise RuntimeError(r_destroy.message or 'Destroy failed')
-    print(f'  now {r_destroy.get("state")}')
+    print(f'  destroyed {priv_create}')
     print('###STEP destroy ok###')
 except Exception as _e:
     print('###STEP destroy error### %s: %s' % (type(_e).__name__, _e))
@@ -124,15 +151,25 @@ exports[`emitKmipPipeline — template snapshots > emits stable code for "ML-KEM
 
 Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip
 client's real API surface — every operation crosses the CACP policy plane.
+
+c.submit(operation, *payload) sends a real KMIP 3.0 request: \`operation\` is a
+real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,
+value)/struct(tag, *children) — real Attribute tag names and field types
+(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip
+client uses internally. Dispatched through the same decode -> policy ->
+engine -> encode path a real server request takes.
 """
 import os
-from pqctoday_kmip import KmipClient
+from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 
 # ── create · ML-KEM-768 · createKeyPair ──
 try:
-    r_create = c.create_key_pair('ML_KEM_768', 'Sign Verify Encapsulate Decapsulate')
+    r_create = c.submit('CreateKeyPair',
+        struct('CommonAttributes',
+            leaf('CryptographicAlgorithm', 'Enumeration', 'ML_KEM_768'),
+            leaf('CryptographicUsageMask', 'Integer', 'Sign Verify Encapsulate Decapsulate')))
     priv_create = r_create.get('PrivateKeyUniqueIdentifier')
     pub_create = r_create.get('PublicKeyUniqueIdentifier')
     if not r_create.ok: raise RuntimeError(r_create.message or 'CreateKeyPair failed')
@@ -144,9 +181,9 @@ except Exception as _e:
 
 # ── activate-pub · ML-KEM-768 · activate ──
 try:
-    r_activate_pub = c.activate(pub_create)
+    r_activate_pub = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', pub_create))
     if not r_activate_pub.ok: raise RuntimeError(r_activate_pub.message or 'Activate failed')
-    print(f'  now {r_activate_pub.get("state")}')
+    print(f'  activated {pub_create}')
     print('###STEP activate-pub ok###')
 except Exception as _e:
     print('###STEP activate-pub error### %s: %s' % (type(_e).__name__, _e))
@@ -154,9 +191,9 @@ except Exception as _e:
 
 # ── activate-priv · ML-KEM-768 · activate ──
 try:
-    r_activate_priv = c.activate(priv_create)
+    r_activate_priv = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', priv_create))
     if not r_activate_priv.ok: raise RuntimeError(r_activate_priv.message or 'Activate failed')
-    print(f'  now {r_activate_priv.get("state")}')
+    print(f'  activated {priv_create}')
     print('###STEP activate-priv ok###')
 except Exception as _e:
     print('###STEP activate-priv error### %s: %s' % (type(_e).__name__, _e))
@@ -164,7 +201,7 @@ except Exception as _e:
 
 # ── encap · ML-KEM-768 · encapsulate ──
 try:
-    r_encap = c.encapsulate(pub_create)
+    r_encap = c.submit('Encapsulate', leaf('UniqueIdentifier', 'TextString', pub_create))
     ct_encap = r_encap.get('Data')
     uid_encap = r_encap.get('UniqueIdentifier')
     if not r_encap.ok: raise RuntimeError(r_encap.message or 'Encapsulate failed')
@@ -176,7 +213,9 @@ except Exception as _e:
 
 # ── decap · ML-KEM-768 · decapsulate ──
 try:
-    r_decap = c.decapsulate(priv_create, bytes.fromhex(ct_encap))
+    r_decap = c.submit('Decapsulate',
+        leaf('UniqueIdentifier', 'TextString', priv_create),
+        leaf('Data', 'ByteString', ct_encap))
     uid_decap = r_decap.get('UniqueIdentifier')
     if not r_decap.ok: raise RuntimeError(r_decap.message or 'Decapsulate failed')
     print(f'  secret={uid_decap}')
@@ -192,9 +231,16 @@ exports[`emitKmipPipeline — template snapshots > emits stable code for "Policy
 
 Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip
 client's real API surface — every operation crosses the CACP policy plane.
+
+c.submit(operation, *payload) sends a real KMIP 3.0 request: \`operation\` is a
+real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,
+value)/struct(tag, *children) — real Attribute tag names and field types
+(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip
+client uses internally. Dispatched through the same decode -> policy ->
+engine -> encode path a real server request takes.
 """
 import os
-from pqctoday_kmip import KmipClient
+from pqctoday_kmip import KmipClient, leaf, struct, find_all
 
 c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))
 

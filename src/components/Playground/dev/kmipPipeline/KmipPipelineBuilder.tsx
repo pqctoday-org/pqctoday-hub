@@ -41,6 +41,7 @@ import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
 import { KeystoreTable } from '../../kmip/Inspector'
 import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
+import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
 import { KMIP_PRIMITIVES, opsFor, defaultOpFor, type KmipOp } from './kmipPipelinePrimitives'
 import { optionsFor, validate, type Finding } from './kmipPipelineBindings'
@@ -419,7 +420,8 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     const t0 = performance.now()
     try {
       const py = await bootPyRuntime()
-      const bridge = createKmipBridge(engine)
+      const table = await getCodepointTable()
+      const bridge = createKmipBridge(engine, table)
       py.registerJsModule('kmip_bridge', bridge)
       const result = await runPython(code)
       const elapsed = performance.now() - t0

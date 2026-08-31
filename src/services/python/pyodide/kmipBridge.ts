@@ -19,6 +19,9 @@
  * that shape one layer up instead of introducing a different one.
  */
 import type { KmipEngine, OpSpec, DryRunSpec } from '../../../wasm/kmip/kmipEngine'
+import { runOp as runRealKmipRequest } from '../../../wasm/kmip/ttlv/runner'
+import type { CodepointTable } from '../../../wasm/kmip/ttlv/codepointTable'
+import type { KmipNode } from '../../../wasm/kmip/ttlv/nodes'
 
 export interface KmipBridgeHandle {
   /** specJson: a JSON-encoded OpSpec. Returns a JSON-encoded OpResult. */
@@ -45,9 +48,18 @@ export interface KmipBridgeHandle {
   loadPolicyJson: (yaml: string) => string
   dryRunJson: (specJson: string) => string
   policyStatusJson: () => string
+  /** Real-grammar path (dev-tabs Python-grammar-realignment plan, Phase 1):
+   *  `operation` is a real KMIP 3.0 Operation name, `payloadJson` a
+   *  JSON-encoded `KmipNode[]` (the SAME friendly leaf/struct request-field
+   *  shape the Commands tab and the OASIS corpus replay already build
+   *  requests with — see ttlv/runner.ts's `runOp`). Goes through the real
+   *  request-build -> encode -> dispatch -> decode pipeline, not a
+   *  shortcut. Returns a JSON-encoded `{ok, resultReason, resultMessage,
+   *  namedResponseTree, requestWireHex, responseWireHex}`. */
+  submitOpJson: (operation: string, payloadJson: string) => string
 }
 
-export function createKmipBridge(engine: KmipEngine): KmipBridgeHandle {
+export function createKmipBridge(engine: KmipEngine, table: CodepointTable): KmipBridgeHandle {
   return {
     runOpJson: (specJson: string) => {
       const spec = JSON.parse(specJson) as OpSpec
@@ -60,5 +72,17 @@ export function createKmipBridge(engine: KmipEngine): KmipBridgeHandle {
       return JSON.stringify(engine.dryRun(spec))
     },
     policyStatusJson: () => JSON.stringify(engine.policyStatus()),
+    submitOpJson: (operation: string, payloadJson: string) => {
+      const payload = JSON.parse(payloadJson) as KmipNode[]
+      const result = runRealKmipRequest(engine, table, operation, payload)
+      return JSON.stringify({
+        ok: result.ok,
+        resultReason: result.resultReason,
+        resultMessage: result.resultMessage,
+        namedResponseTree: result.namedResponseTree,
+        requestWireHex: result.requestWireHex,
+        responseWireHex: result.responseWireHex,
+      })
+    },
   }
 }

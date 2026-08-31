@@ -91,8 +91,6 @@ export interface KmipEmitOptions {
 const pyStr = (s: string) =>
   `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r')}'`
 const pyBytes = (s: string) => `b${pyStr(s)}`
-const pyBytesFromHex = (hex: string) => `bytes.fromhex(${pyStr(hex)})`
-
 const sym = (id: string) => id.replace(/[^A-Za-z0-9_]/g, '_')
 const privVar = (id: string) => `priv_${sym(id)}`
 const pubVar = (id: string) => `pub_${sym(id)}`
@@ -127,6 +125,17 @@ function renderRef(pv: KmipParamValue | undefined, fallback = 'None'): string {
  * failure on the intentionally-early Sign step aborted the whole pipeline
  * before the expect-deny step ever got a chance to judge it.
  */
+/**
+ * Real KMIP 3.0 grammar (dev-tabs Python-grammar-realignment plan, Phase 1):
+ * every step below calls `c.submit(operation, ...)` with explicit
+ * `leaf`/`struct` request fields, carrying the real KMIP 3.0 Operation name
+ * and real Attribute tag names (§4.x/§3.x) — not a friendly one-call-per-op
+ * wrapper. Payload shapes are copied from the real
+ * `pqctoday_kmip.KmipClient`'s own per-op methods
+ * (pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/kmip.py), read
+ * directly rather than guessed, so a reader with the KMIP 3.0 spec open
+ * recognizes every tag/operation name used here.
+ */
 function emitOpStep(
   step: KmipOpStep,
   spec: KmipPrimSpec,
@@ -143,7 +152,10 @@ function emitOpStep(
   switch (step.op) {
     case 'createKeyPair':
       lines.push(
-        `${rv} = c.create_key_pair(${pyStr(spec.algorithm)}, 'Sign Verify Encapsulate Decapsulate')`
+        `${rv} = c.submit('CreateKeyPair',`,
+        `    struct('CommonAttributes',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)}),`,
+        `        leaf('CryptographicUsageMask', 'Integer', 'Sign Verify Encapsulate Decapsulate')))`
       )
       lines.push(`${privVar(step.id)} = ${rv}.get('PrivateKeyUniqueIdentifier')`)
       lines.push(`${pubVar(step.id)} = ${rv}.get('PublicKeyUniqueIdentifier')`)
@@ -151,30 +163,46 @@ function emitOpStep(
       lines.push(`print(f'  priv={${privVar(step.id)}}  pub={${pubVar(step.id)}}')`)
       break
     case 'create':
-      lines.push(`${rv} = c.create_symmetric(${pyStr(spec.algorithm)}, 256)`)
+      lines.push(
+        `${rv} = c.submit('Create',`,
+        `    leaf('ObjectType', 'Enumeration', 'SymmetricKey'),`,
+        `    struct('Attributes',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)}),`,
+        `        leaf('CryptographicLength', 'Integer', 256),`,
+        `        leaf('CryptographicUsageMask', 'Integer', 'Encrypt Decrypt')))`
+      )
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Create'))
-      lines.push(`print(f'  {${uidVar(step.id)}} · {${rv}.get("objectType")}')`)
+      lines.push(`print(f'  {${uidVar(step.id)}} · {${rv}.get("ObjectType")}')`)
       break
     case 'activate': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.activate(${uid})`)
+      lines.push(`${rv} = c.submit('Activate', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
       lines.push(...raiseUnless('Activate'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  activated {${uid}}')`)
       break
     }
     case 'sign': {
       const priv = renderRef(step.params.privUid)
       const text = step.params.text?.bind === 'literal' ? step.params.text.value : message
-      const bytesExpr = messageMode === 'hex' ? pyBytesFromHex(text) : pyBytes(text)
-      lines.push(`${rv} = c.sign(${priv}, ${bytesExpr}, ${pyStr(spec.algorithm)})`)
+      // ByteString leaves take a hex STRING (Data's real wire encoding) —
+      // hex mode already has one (the literal hex text), so use it
+      // directly rather than round-tripping bytes.fromhex(x).hex().
+      const dataHexExpr = messageMode === 'hex' ? pyStr(text) : `${pyBytes(text)}.hex()`
+      lines.push(
+        `${rv} = c.submit('Sign',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${priv}),`,
+        `    struct('CryptographicParameters',`,
+        `        leaf('CryptographicAlgorithm', 'Enumeration', ${pyStr(spec.algorithm)})),`,
+        `    leaf('Data', 'ByteString', ${dataHexExpr}))`
+      )
       lines.push(`print(f'  signature {len(${rv}.get("SignatureData") or "") // 2} bytes')`)
       lines.push(...raiseUnless('Sign'))
       break
     }
     case 'encapsulate': {
       const pub = renderRef(step.params.pubUid)
-      lines.push(`${rv} = c.encapsulate(${pub})`)
+      lines.push(`${rv} = c.submit('Encapsulate', leaf('UniqueIdentifier', 'TextString', ${pub}))`)
       lines.push(`${ctVar(step.id)} = ${rv}.get('Data')`)
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Encapsulate'))
@@ -184,7 +212,11 @@ function emitOpStep(
     case 'decapsulate': {
       const priv = renderRef(step.params.privUid)
       const ct = renderRef(step.params.ciphertext)
-      lines.push(`${rv} = c.decapsulate(${priv}, bytes.fromhex(${ct}))`)
+      lines.push(
+        `${rv} = c.submit('Decapsulate',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${priv}),`,
+        `    leaf('Data', 'ByteString', ${ct}))`
+      )
       lines.push(`${uidVar(step.id)} = ${rv}.get('UniqueIdentifier')`)
       lines.push(...raiseUnless('Decapsulate'))
       lines.push(`print(f'  secret={${uidVar(step.id)}}')`)
@@ -192,7 +224,9 @@ function emitOpStep(
     }
     case 'getAttributes': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.get_attributes(${uid})`)
+      lines.push(
+        `${rv} = c.submit('GetAttributes', leaf('UniqueIdentifier', 'TextString', ${uid}))`
+      )
       lines.push(...raiseUnless('GetAttributes'))
       lines.push(
         `print(f'  alg={${rv}.get("CryptographicAlgorithm")} state={${rv}.get("State")} usage={${rv}.get("CryptographicUsageMask")}')`
@@ -200,22 +234,26 @@ function emitOpStep(
       break
     }
     case 'locate':
-      lines.push(`${rv} = c.locate()`)
+      lines.push(`${rv} = c.submit('Locate')`)
       lines.push(...raiseUnless('Locate'))
-      lines.push(`print(f'  found {len(${rv}.get("uids") or [])} object(s)')`)
+      lines.push(`print(f'  found {len(find_all(${rv}.payload, "UniqueIdentifier"))} object(s)')`)
       break
     case 'revoke': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.revoke(${uid})`)
+      lines.push(
+        `${rv} = c.submit('Revoke',`,
+        `    leaf('UniqueIdentifier', 'TextString', ${uid}),`,
+        `    struct('RevocationReason', leaf('RevocationReasonCode', 'Enumeration', 'Unspecified')))`
+      )
       lines.push(...raiseUnless('Revoke'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  revoked {${uid}}')`)
       break
     }
     case 'destroy': {
       const uid = renderRef(step.params.uid)
-      lines.push(`${rv} = c.destroy(${uid})`)
+      lines.push(`${rv} = c.submit('Destroy', leaf('UniqueIdentifier', 'TextString', ${uid}))`)
       lines.push(...raiseUnless('Destroy'))
-      lines.push(`print(f'  now {${rv}.get("state")}')`)
+      lines.push(`print(f'  destroyed {${uid}}')`)
       break
     }
     default:
@@ -298,9 +336,16 @@ export function emitKmipPipeline(steps: KmipStep[], opts: KmipEmitOptions = {}):
     '',
     'Runs against the KMIP + crypto-agility policy engine through the pqctoday_kmip',
     "client's real API surface — every operation crosses the CACP policy plane.",
+    '',
+    'c.submit(operation, *payload) sends a real KMIP 3.0 request: `operation` is a',
+    'real Operation name (KMIP 3.0 Sec.4), payload is built from leaf(tag, type,',
+    'value)/struct(tag, *children) — real Attribute tag names and field types',
+    '(Sec.3 / Sec.9.1.1), the same request-building blocks the real pqctoday_kmip',
+    'client uses internally. Dispatched through the same decode -> policy ->',
+    'engine -> encode path a real server request takes.',
     '"""',
     'import os',
-    'from pqctoday_kmip import KmipClient',
+    'from pqctoday_kmip import KmipClient, leaf, struct, find_all',
     '',
     `c = KmipClient(os.environ.get('KMIP_HOST', 'pqc-kmip'), int(os.environ.get('KMIP_PORT', '5696')))`,
     '',
