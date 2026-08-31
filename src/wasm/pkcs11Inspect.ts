@@ -60,7 +60,7 @@ export interface Pkcs11LogInspect {
 
 // ── Private constant tables ───────────────────────────────────────────────────
 
-export interface ConstEntry {
+interface ConstEntry {
   name: string
   description?: string
 }
@@ -318,7 +318,7 @@ const CKM_TABLE: Record<number, ConstEntry> = {
 }
 
 // CKO_ object classes
-export const CKO_TABLE: Record<number, ConstEntry> = {
+const CKO_TABLE: Record<number, ConstEntry> = {
   0x00: { name: 'CKO_DATA', description: 'Opaque data object' },
   0x01: { name: 'CKO_CERTIFICATE', description: 'Certificate object' },
   0x02: { name: 'CKO_PUBLIC_KEY', description: 'Public key — encapsulate / verify operations' },
@@ -328,7 +328,7 @@ export const CKO_TABLE: Record<number, ConstEntry> = {
 }
 
 // CKK_ key types
-export const CKK_TABLE: Record<number, ConstEntry> = {
+const CKK_TABLE: Record<number, ConstEntry> = {
   0x00: { name: 'CKK_RSA' },
   0x03: { name: 'CKK_EC' },
   0x10: { name: 'CKK_GENERIC_SECRET', description: 'Generic secret key (HMAC, KDF base)' },

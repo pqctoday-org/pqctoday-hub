@@ -706,9 +706,7 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
                 own bound and scroll rather than risk silently clipping
                 past the container edge as it grows. */}
             <div className="px-4 py-3 max-h-64 overflow-y-auto">
-              {activityTab === 'keystore' && (
-                <KeystoreTable objects={keystoreObjects} expert engine={engine ?? undefined} />
-              )}
+              {activityTab === 'keystore' && <KeystoreTable objects={keystoreObjects} expert />}
               {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
               {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
               {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}

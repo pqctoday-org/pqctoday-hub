@@ -1438,7 +1438,6 @@ export function KmipPlaygroundView() {
                   engine.clearAudit()
                   setAudit([])
                 }}
-                engine={engine}
               />
             </div>
           </div>

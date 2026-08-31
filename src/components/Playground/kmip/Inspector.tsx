@@ -5,20 +5,10 @@
 // the real KMIP TTLV wire response (Expert), and the cross-plane audit / activity
 // trail. Tabs adapt to the disclosure mode — Guided shows Keystore + Activity;
 // Expert adds the raw KMIP Wire tab and the PKCS#11 detail.
-import { useState, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import { Boxes, Server, Database, Download, ScanSearch, X } from 'lucide-react'
+import { useState } from 'react'
+import { Boxes, Server, Database, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type {
-  KmipObject,
-  AuditEvent,
-  OpResult,
-  OpSpec,
-  PolicyStatus,
-  KmipEngine,
-  EngineKeyAttributes,
-} from '@/wasm/kmip/kmipEngine'
-import { CKO_TABLE, CKK_TABLE } from '@/wasm/pkcs11Inspect'
+import type { KmipObject, AuditEvent, OpResult, OpSpec, PolicyStatus } from '@/wasm/kmip/kmipEngine'
 import { WireTreeView } from './WireTreeView'
 import { AuditTrailPanel } from './AuditTrailPanel'
 
@@ -61,7 +51,6 @@ export function Inspector({
   policyYaml,
   expert,
   onClearAudit,
-  engine,
 }: {
   objects: KmipObject[]
   audit: AuditEvent[]
@@ -71,10 +60,6 @@ export function Inspector({
   policyYaml: string | null
   expert: boolean
   onClearAudit: () => void
-  /** Lets the Keystore tab's row Inspect action read back a key's real
-   * engine-side PKCS#11 attributes. Optional — a caller with no engine in
-   * scope simply gets no Inspect action, not a crash. */
-  engine?: KmipEngine
 }) {
   const [tab, setTab] = useState<Tab>('keystore')
   // Guided mode has no Wire tab — fall back to Keystore without needing to sync
@@ -148,9 +133,7 @@ export function Inspector({
       </div>
 
       <div className="p-4">
-        {active === 'keystore' && (
-          <KeystoreTable objects={objects} expert={expert} engine={engine} />
-        )}
+        {active === 'keystore' && <KeystoreTable objects={objects} expert={expert} />}
         {active === 'wire' && <WirePanel result={result} lastSpec={lastSpec} />}
         {active === 'audit' && <AuditTrailPanel events={audit} detailed={expert} />}
       </div>
@@ -158,35 +141,7 @@ export function Inspector({
   )
 }
 
-/** The object types `find_handle_for_object` (hsm's wasm engine helper)
- * actually maps to a real PKCS#11 class — the only ones `engineKeyAttributes`
- * can resolve a live handle for. Certificate has its own dedicated demo
- * (Pkcs11CertificateDemo, a different attribute shape); the remaining KMIP
- * object types have no PKCS#11 cryptoki class at all. */
-const INSPECTABLE_KEY_TYPES = new Set(['PrivateKey', 'PublicKey', 'SymmetricKey', 'SecretData'])
-
-export function KeystoreTable({
-  objects,
-  expert,
-  engine,
-}: {
-  objects: KmipObject[]
-  expert: boolean
-  engine?: KmipEngine
-}) {
-  const [inspectUid, setInspectUid] = useState<string | null>(null)
-  const [inspectAttrs, setInspectAttrs] = useState<EngineKeyAttributes | null>(null)
-
-  const openInspect = (uid: string) => {
-    if (!engine) return
-    setInspectUid(uid)
-    try {
-      setInspectAttrs(engine.engineKeyAttributes(uid))
-    } catch (e) {
-      setInspectAttrs({ error: e instanceof Error ? e.message : String(e) })
-    }
-  }
-
+export function KeystoreTable({ objects, expert }: { objects: KmipObject[]; expert: boolean }) {
   if (objects.length === 0)
     return (
       <p className="text-xs text-muted-foreground italic">No objects yet — create a key pair.</p>
@@ -199,8 +154,7 @@ export function KeystoreTable({
             <th className="py-1 pr-2">Algorithm</th>
             <th className="py-1 pr-2">Type</th>
             <th className="py-1 pr-2">State</th>
-            {expert && <th className="py-1 pr-2">UID</th>}
-            {engine && <th className="py-1" />}
+            {expert && <th className="py-1">UID</th>}
           </tr>
         </thead>
         <tbody>
@@ -231,132 +185,15 @@ export function KeystoreTable({
                 )}
               </td>
               {expert && (
-                <td className="py-1 pr-2 font-mono text-[10px] text-muted-foreground truncate max-w-[140px]">
+                <td className="py-1 font-mono text-[10px] text-muted-foreground truncate max-w-[140px]">
                   {o.uid}
-                </td>
-              )}
-              {engine && (
-                <td className="py-1 text-right">
-                  {INSPECTABLE_KEY_TYPES.has(o.objectType) && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openInspect(o.uid)}
-                      title="Inspect this key's real PKCS#11 engine attributes"
-                      className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-                    >
-                      <ScanSearch size={12} />
-                    </Button>
-                  )}
                 </td>
               )}
             </tr>
           ))}
         </tbody>
       </table>
-      {inspectUid && inspectAttrs && (
-        <EngineKeyAttrModal
-          uid={inspectUid}
-          attrs={inspectAttrs}
-          onClose={() => {
-            setInspectUid(null)
-            setInspectAttrs(null)
-          }}
-        />
-      )}
     </div>
-  )
-}
-
-const attrRow = (label: string, value: ReactNode) => (
-  <>
-    <dt className="text-muted-foreground">{label}</dt>
-    <dd className="text-foreground">{value}</dd>
-  </>
-)
-
-const boolLabel = (v: boolean | undefined) => (v === undefined ? '(unknown)' : v ? 'true' : 'false')
-
-/** The Keystore row's "Inspect" action — real engine-side PKCS#11 attributes
- * for a KMIP-addressed key, read back by `engineKeyAttributes` (KMIP uid →
- * CKA_UNIQUE_ID-stable engine handle, same identity approach the PKCS#11
- * Developer tab's key viewer uses — see HsmKey.uniqueId's doc comment). An
- * honest "not extractable" beats a fabricated CKA_VALUE, which is why this
- * never requests CKA_VALUE at all: the sensitivity/extractability flags
- * themselves ARE the answer for a private/secret key. */
-function EngineKeyAttrModal({
-  uid,
-  attrs,
-  onClose,
-}: {
-  uid: string
-  attrs: EngineKeyAttributes
-  onClose: () => void
-}) {
-  const ckClassName =
-    attrs.ckClass !== undefined
-      ? (CKO_TABLE[attrs.ckClass]?.name ?? `0x${attrs.ckClass.toString(16)}`)
-      : '(unknown)'
-  const ckKeyTypeName =
-    attrs.ckKeyType !== undefined
-      ? (CKK_TABLE[attrs.ckKeyType]?.name ?? `0x${attrs.ckKeyType.toString(16)}`)
-      : '(unknown)'
-
-  return createPortal(
-    <div
-      role="presentation"
-      className="fixed inset-0 embed-backdrop bg-black/60 flex items-center justify-center z-[100] p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
-    >
-      <div className="glass-panel w-full max-w-md max-h-[85vh] overflow-y-auto p-5 space-y-3 shadow-xl z-[101] bg-background border border-border">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="font-semibold text-sm">Real engine attributes</h3>
-            <p className="text-[10px] text-muted-foreground font-mono mt-0.5 truncate">{uid}</p>
-          </div>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0" onClick={onClose}>
-            <X size={14} />
-          </Button>
-        </div>
-
-        {attrs.error ? (
-          <p className="text-xs text-status-error">{attrs.error}</p>
-        ) : (
-          <>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Read back from the token itself (not the KMIP store record) — this is what a raw
-              PKCS#11 caller would see for the same object.
-            </p>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 font-mono text-[10.5px]">
-              {attrRow('CKA_ID', attrs.ckaId ?? '(none)')}
-              {attrRow('CKA_UNIQUE_ID', attrs.ckUniqueId ?? '(none)')}
-              {attrRow('CKA_CLASS', ckClassName)}
-              {attrRow('CKA_KEY_TYPE', ckKeyTypeName)}
-              {attrRow('CKA_LABEL', attrs.ckLabel ?? '(none)')}
-              {attrs.sizeAttr &&
-                attrRow(
-                  attrs.sizeAttr,
-                  attrs.sizeValue !== undefined ? String(attrs.sizeValue) : '(none)'
-                )}
-              {attrRow('CKA_LOCAL', boolLabel(attrs.ckLocal))}
-              {attrRow('CKA_SENSITIVE', boolLabel(attrs.ckSensitive))}
-              {attrRow('CKA_EXTRACTABLE', boolLabel(attrs.ckExtractable))}
-              {attrRow('CKA_ALWAYS_SENSITIVE', boolLabel(attrs.ckAlwaysSensitive))}
-              {attrRow('CKA_NEVER_EXTRACTABLE', boolLabel(attrs.ckNeverExtractable))}
-            </dl>
-            {(attrs.ckSensitive || attrs.ckExtractable === false) && (
-              <p className="text-[10.5px] text-muted-foreground italic">
-                CKA_VALUE isn't shown above — this key is sensitive and/or non-extractable, so a
-                real PKCS#11 caller can't read it back either (§4.9/§4.10). That refusal is the
-                honest answer, not a gap in this inspector.
-              </p>
-            )}
-          </>
-        )}
-      </div>
-    </div>,
-    document.body
   )
 }
 
