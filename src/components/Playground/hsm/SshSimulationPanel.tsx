@@ -45,7 +45,7 @@ import {
   buildSshConfigArtifacts,
   isRealCombo,
   REAL_KEX_ID,
-  REAL_HOSTKEY_ID,
+  REAL_HOSTKEY_IDS,
   REAL_CLASSICAL,
   REAL_PQC,
 } from '@/wasm/openssh-real'
@@ -145,8 +145,12 @@ export function SshSimulationPanel() {
       // binary; every signature is a real token C_Sign. Other combos are modeled.
       setPhase('running-pqc')
       if (isRealCombo(pqcKex, pqcHostKey)) {
-        appendLog(`Starting REAL OpenSSH handshake (${REAL_PQC.kex} + ${REAL_PQC.hostalg})…`)
-        const pqc = await runRealLeg(REAL_PQC.kex, REAL_PQC.hostalg)
+        // REAL_PQC.kex is the real binary's only wire-driven KEX; the host-key
+        // wire name is identical to the modeled id for every real-capable
+        // combo (see REAL_HOSTKEY_IDS), so the user's own selection passes
+        // straight through instead of the old single hardcoded value.
+        appendLog(`Starting REAL OpenSSH handshake (${REAL_PQC.kex} + ${pqcHostKey})…`)
+        const pqc = await runRealLeg(REAL_PQC.kex, pqcHostKey)
         setPqcResult(pqc)
         appendLog(
           `REAL PQC done: connection_ok=${pqc.connection_ok}, host C_Sign=${pqc.host_sig_bytes}B, user C_Sign=${pqc.client_sig_bytes}B, auth_ms=${pqc.auth_ms.toFixed(1)}ms`
@@ -293,7 +297,7 @@ export function SshSimulationPanel() {
                 aria-pressed={pqcHostKey === opt.id}
               >
                 {opt.id}
-                <RealityBadge real={opt.id === REAL_HOSTKEY_ID} />
+                <RealityBadge real={REAL_HOSTKEY_IDS.has(opt.id)} />
               </Button>
             ))}
           </div>
@@ -326,14 +330,17 @@ export function SshSimulationPanel() {
           ) : (
             <>
               <strong className="text-foreground">Modeled in TypeScript.</strong> The real OpenSSH
-              binary currently runs only{' '}
-              <span className="font-mono">mlkem768x25519-sha256 + ssh-mldsa-65</span> — select those
-              two to drive the genuine handshake. Other parameter sets are simulated for comparison.{' '}
+              binary currently runs <span className="font-mono">mlkem768x25519-sha256</span> paired
+              with any ML-DSA host key (<span className="font-mono">ssh-mldsa-44</span>,{' '}
+              <span className="font-mono">ssh-mldsa-65</span>, or{' '}
+              <span className="font-mono">ssh-mldsa-87</span>) — select one of those to drive the
+              genuine handshake. SLH-DSA host keys and other KEX combos are simulated for
+              comparison.{' '}
               {/* The host-key name is pre-standard: it comes from an Internet-Draft
                   with a competing proposal, and has no IANA assignment. The VPN
                   simulator already discloses the equivalent status for its own
                   ML-DSA draft; this tool presented the name as settled. */}
-              The <span className="font-mono">ssh-mldsa-65</span> host-key name comes from{' '}
+              The <span className="font-mono">ssh-mldsa-*</span> host-key names come from{' '}
               <a
                 href="https://datatracker.ietf.org/doc/draft-rpe-ssh-mldsa/"
                 target="_blank"

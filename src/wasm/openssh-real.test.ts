@@ -102,4 +102,19 @@ describe('openssh-real mapping', () => {
     expect(isRealCombo('mlkem512-curve25519-sha256', 'ssh-mldsa-65')).toBe(false)
     expect(REAL_CLASSICAL.hostalg).toBe('ecdsa-sha2-nistp256')
   })
+
+  // 2026-08-31: the rebuilt OpenSSH WASM binary generalized ssh-mldsa.c to a
+  // per-parameter-set dispatch table (all 3 FIPS 204 ML-DSA sets), so every
+  // ML-DSA host key the panel offers now drives the real binary, not just
+  // ssh-mldsa-65.
+  it('treats ssh-mldsa-44 and ssh-mldsa-87 as real combos too', () => {
+    expect(isRealCombo('mlkem768-curve25519-sha256', 'ssh-mldsa-44')).toBe(true)
+    expect(isRealCombo('mlkem768-curve25519-sha256', 'ssh-mldsa-87')).toBe(true)
+    // Still gated on the real KEX — an unsupported KEX stays modeled even
+    // with a real-capable host key.
+    expect(isRealCombo('mlkem512-curve25519-sha256', 'ssh-mldsa-44')).toBe(false)
+    // SLH-DSA host keys aren't offered by the panel and aren't in the real
+    // binary's dispatch-table-backed set here — stays modeled.
+    expect(isRealCombo('mlkem768-curve25519-sha256', 'ssh-slh-dsa-sha2-128s')).toBe(false)
+  })
 })

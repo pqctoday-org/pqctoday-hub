@@ -88,7 +88,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /Users/pqctoday/Antigravity/pqctoday-hsm/src/wasm/softhsm_pre.js
+// include: /Users/pqctoday/Antigravity/pqctoday-hsm/.worktrees/openssl-provider-remediation/src/wasm/softhsm_pre.js
 // softhsm_pre.js — Emscripten pre-JS shim for SoftHSMv3 WASM
 //
 // Loaded by emcc --pre-js before the WASM module starts executing.
@@ -121,7 +121,7 @@ Module['preRun'].push(function() {
         'log.level = ERROR\n'
     );
 });
-// end include: /Users/pqctoday/Antigravity/pqctoday-hsm/src/wasm/softhsm_pre.js
+// end include: /Users/pqctoday/Antigravity/pqctoday-hsm/.worktrees/openssl-provider-remediation/src/wasm/softhsm_pre.js
 
 
 var programArgs = [];
@@ -7215,20 +7215,20 @@ var dynCall_iii = makeInvalidEarlyAccess('dynCall_iii');
 var dynCall_iiiii = makeInvalidEarlyAccess('dynCall_iiiii');
 var dynCall_iiiiii = makeInvalidEarlyAccess('dynCall_iiiiii');
 var dynCall_iiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiii');
+var dynCall_iiiiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiiiii');
+var dynCall_iiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiii');
+var dynCall_iiiiiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiiiiii');
 var dynCall_vi = makeInvalidEarlyAccess('dynCall_vi');
 var dynCall_v = makeInvalidEarlyAccess('dynCall_v');
 var dynCall_vii = makeInvalidEarlyAccess('dynCall_vii');
-var dynCall_iiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiii');
 var dynCall_viii = makeInvalidEarlyAccess('dynCall_viii');
 var dynCall_i = makeInvalidEarlyAccess('dynCall_i');
 var dynCall_viiiiii = makeInvalidEarlyAccess('dynCall_viiiiii');
-var dynCall_iiiiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiiiii');
 var dynCall_viiii = makeInvalidEarlyAccess('dynCall_viiii');
 var dynCall_jii = makeInvalidEarlyAccess('dynCall_jii');
 var dynCall_vjii = makeInvalidEarlyAccess('dynCall_vjii');
 var dynCall_vji = makeInvalidEarlyAccess('dynCall_vji');
 var dynCall_iiid = makeInvalidEarlyAccess('dynCall_iiid');
-var dynCall_iiiiiiiiiii = makeInvalidEarlyAccess('dynCall_iiiiiiiiiii');
 var dynCall_vij = makeInvalidEarlyAccess('dynCall_vij');
 var dynCall_jiji = makeInvalidEarlyAccess('dynCall_jiji');
 var dynCall_iidiiiii = makeInvalidEarlyAccess('dynCall_iidiiiii');
@@ -7272,20 +7272,20 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['dynCall_iiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiii');
   assert(typeof wasmExports['dynCall_iiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiii');
   assert(typeof wasmExports['dynCall_iiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiii');
+  assert(typeof wasmExports['dynCall_iiiiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiiiii');
+  assert(typeof wasmExports['dynCall_iiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiii');
+  assert(typeof wasmExports['dynCall_iiiiiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiiiiii');
   assert(typeof wasmExports['dynCall_vi'] != 'undefined', 'missing Wasm export: dynCall_vi');
   assert(typeof wasmExports['dynCall_v'] != 'undefined', 'missing Wasm export: dynCall_v');
   assert(typeof wasmExports['dynCall_vii'] != 'undefined', 'missing Wasm export: dynCall_vii');
-  assert(typeof wasmExports['dynCall_iiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiii');
   assert(typeof wasmExports['dynCall_viii'] != 'undefined', 'missing Wasm export: dynCall_viii');
   assert(typeof wasmExports['dynCall_i'] != 'undefined', 'missing Wasm export: dynCall_i');
   assert(typeof wasmExports['dynCall_viiiiii'] != 'undefined', 'missing Wasm export: dynCall_viiiiii');
-  assert(typeof wasmExports['dynCall_iiiiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiiiii');
   assert(typeof wasmExports['dynCall_viiii'] != 'undefined', 'missing Wasm export: dynCall_viiii');
   assert(typeof wasmExports['dynCall_jii'] != 'undefined', 'missing Wasm export: dynCall_jii');
   assert(typeof wasmExports['dynCall_vjii'] != 'undefined', 'missing Wasm export: dynCall_vjii');
   assert(typeof wasmExports['dynCall_vji'] != 'undefined', 'missing Wasm export: dynCall_vji');
   assert(typeof wasmExports['dynCall_iiid'] != 'undefined', 'missing Wasm export: dynCall_iiid');
-  assert(typeof wasmExports['dynCall_iiiiiiiiiii'] != 'undefined', 'missing Wasm export: dynCall_iiiiiiiiiii');
   assert(typeof wasmExports['dynCall_vij'] != 'undefined', 'missing Wasm export: dynCall_vij');
   assert(typeof wasmExports['dynCall_jiji'] != 'undefined', 'missing Wasm export: dynCall_jiji');
   assert(typeof wasmExports['dynCall_iidiiiii'] != 'undefined', 'missing Wasm export: dynCall_iidiiiii');
@@ -7326,20 +7326,20 @@ function assignWasmExports(wasmExports) {
   dynCall_iiiii = dynCalls['iiiii'] = createExportWrapper('dynCall_iiiii', wasmExports['dynCall_iiiii'], 5);
   dynCall_iiiiii = dynCalls['iiiiii'] = createExportWrapper('dynCall_iiiiii', wasmExports['dynCall_iiiiii'], 6);
   dynCall_iiiiiii = dynCalls['iiiiiii'] = createExportWrapper('dynCall_iiiiiii', wasmExports['dynCall_iiiiiii'], 7);
+  dynCall_iiiiiiiiii = dynCalls['iiiiiiiiii'] = createExportWrapper('dynCall_iiiiiiiiii', wasmExports['dynCall_iiiiiiiiii'], 10);
+  dynCall_iiiiiiii = dynCalls['iiiiiiii'] = createExportWrapper('dynCall_iiiiiiii', wasmExports['dynCall_iiiiiiii'], 8);
+  dynCall_iiiiiiiiiii = dynCalls['iiiiiiiiiii'] = createExportWrapper('dynCall_iiiiiiiiiii', wasmExports['dynCall_iiiiiiiiiii'], 11);
   dynCall_vi = dynCalls['vi'] = createExportWrapper('dynCall_vi', wasmExports['dynCall_vi'], 2);
   dynCall_v = dynCalls['v'] = createExportWrapper('dynCall_v', wasmExports['dynCall_v'], 1);
   dynCall_vii = dynCalls['vii'] = createExportWrapper('dynCall_vii', wasmExports['dynCall_vii'], 3);
-  dynCall_iiiiiiii = dynCalls['iiiiiiii'] = createExportWrapper('dynCall_iiiiiiii', wasmExports['dynCall_iiiiiiii'], 8);
   dynCall_viii = dynCalls['viii'] = createExportWrapper('dynCall_viii', wasmExports['dynCall_viii'], 4);
   dynCall_i = dynCalls['i'] = createExportWrapper('dynCall_i', wasmExports['dynCall_i'], 1);
   dynCall_viiiiii = dynCalls['viiiiii'] = createExportWrapper('dynCall_viiiiii', wasmExports['dynCall_viiiiii'], 7);
-  dynCall_iiiiiiiiii = dynCalls['iiiiiiiiii'] = createExportWrapper('dynCall_iiiiiiiiii', wasmExports['dynCall_iiiiiiiiii'], 10);
   dynCall_viiii = dynCalls['viiii'] = createExportWrapper('dynCall_viiii', wasmExports['dynCall_viiii'], 5);
   dynCall_jii = dynCalls['jii'] = createExportWrapper('dynCall_jii', wasmExports['dynCall_jii'], 3);
   dynCall_vjii = dynCalls['vjii'] = createExportWrapper('dynCall_vjii', wasmExports['dynCall_vjii'], 4);
   dynCall_vji = dynCalls['vji'] = createExportWrapper('dynCall_vji', wasmExports['dynCall_vji'], 3);
   dynCall_iiid = dynCalls['iiid'] = createExportWrapper('dynCall_iiid', wasmExports['dynCall_iiid'], 4);
-  dynCall_iiiiiiiiiii = dynCalls['iiiiiiiiiii'] = createExportWrapper('dynCall_iiiiiiiiiii', wasmExports['dynCall_iiiiiiiiiii'], 11);
   dynCall_vij = dynCalls['vij'] = createExportWrapper('dynCall_vij', wasmExports['dynCall_vij'], 3);
   dynCall_jiji = dynCalls['jiji'] = createExportWrapper('dynCall_jiji', wasmExports['dynCall_jiji'], 4);
   dynCall_iidiiiii = dynCalls['iidiiiii'] = createExportWrapper('dynCall_iidiiiii', wasmExports['dynCall_iidiiiii'], 8);

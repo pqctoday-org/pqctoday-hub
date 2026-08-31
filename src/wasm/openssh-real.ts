@@ -176,20 +176,41 @@ export function mapPkcs11Event(
   }
 }
 
-// The one combo the shim currently runs for real (hardcoded in drive_kex until
+// The KEX the shim currently runs for real (hardcoded in drive_kex until
 // M2a parameterizes it). The model's KEX id `mlkem768-curve25519-sha256` is the
 // same algorithm as OpenSSH's wire name `mlkem768x25519-sha256`.
 export const REAL_KEX_ID = 'mlkem768-curve25519-sha256'
+// Default/primary real host-key id — kept for back-compat with existing callers
+// (e.g. the honesty-banner default combo). Prefer REAL_HOSTKEY_IDS for a
+// membership check.
 export const REAL_HOSTKEY_ID = 'ssh-mldsa-65'
+// All ML-DSA host-key parameter sets the rebuilt OpenSSH WASM binary can now
+// actually sign with for real (2026-08-31 remediation: ssh-mldsa.c generalized
+// from a single hardcoded ML-DSA-65 impl to a DEFINE_MLDSA_IMPL(...) macro
+// covering all 3 FIPS 204 parameter sets, and wasm-shims/sshd_wasm_main.c's
+// HOSTKEY_VARIANTS[] table now selects any of them by name via
+// set_handshake_config). The modeled engine's ids (openssh.ts SshHostKeyAlg)
+// are identical to the real OpenSSH wire names for these three, so no mapping
+// is needed to pass a selection straight through to the real binary.
+export const REAL_HOSTKEY_IDS: ReadonlySet<string> = new Set([
+  'ssh-mldsa-44',
+  'ssh-mldsa-65',
+  'ssh-mldsa-87',
+])
 
-/** True when the chosen PQC combo is the one the real binary actually runs. */
+/** True when the chosen PQC combo is one the real binary actually runs. */
 export function isRealCombo(kex: string, hostKey: string): boolean {
-  return kex === REAL_KEX_ID && hostKey === REAL_HOSTKEY_ID
+  return kex === REAL_KEX_ID && REAL_HOSTKEY_IDS.has(hostKey)
 }
 
 // Public-key wire sizes by host-key algorithm (approx, for the size bars).
+// ML-DSA sizes are FIPS 204 Table 2 raw public keys, cross-checked against
+// deps/openssl-src/openssl-3.6.3/include/crypto/ml_dsa.h (see openssh-pkcs11
+// CHANGELOG.md 2026-08-31 entry).
 const HOST_PUBKEY_BYTES: Record<string, number> = {
+  'ssh-mldsa-44': 1312, // FIPS 204 ML-DSA-44 raw public key
   'ssh-mldsa-65': 1952, // FIPS 204 ML-DSA-65 raw public key
+  'ssh-mldsa-87': 2592, // FIPS 204 ML-DSA-87 raw public key
   'ecdsa-sha2-nistp256': 65, // uncompressed P-256 point Q
 }
 // KEX init/reply share sizes by KEX algorithm.
@@ -327,7 +348,9 @@ export interface SshConfigArtifacts {
 
 // Host-key file basename per algorithm (matches OpenSSH conventions).
 const HOSTKEY_FILE: Record<string, string> = {
+  'ssh-mldsa-44': 'ssh_host_mldsa44_key',
   'ssh-mldsa-65': 'ssh_host_mldsa65_key',
+  'ssh-mldsa-87': 'ssh_host_mldsa87_key',
   'ecdsa-sha2-nistp256': 'ssh_host_ecdsa_key',
 }
 

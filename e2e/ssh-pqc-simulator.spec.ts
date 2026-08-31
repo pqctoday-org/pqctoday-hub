@@ -163,5 +163,26 @@ test.describe('PQC SSH Simulator', () => {
       await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
       await expect(page.getByText(/keygen/i).first()).toBeVisible()
     })
+
+    // 2026-08-31: openssh-pkcs11's ssh-mldsa.c was generalized from a single
+    // hardcoded ML-DSA-65 impl to all 3 FIPS 204 parameter sets (see
+    // pqctoday-hsm/openssh-pkcs11/CHANGELOG.md), and the panel's isRealCombo
+    // check widened to match — these two now drive the REAL OpenSSH WASM
+    // binary (real C_Sign, not the modeled TS engine), not just ssh-mldsa-65.
+    test('ssh-mldsa-44 host key drives a real handshake (sig 2,420 B)', async ({ page }) => {
+      await page.getByRole('button', { name: /^ssh-mldsa-44/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/2,420 B/i).first()).toBeVisible()
+    })
+
+    test('ssh-mldsa-87 host key drives a real handshake (sig 4,627 B)', async ({ page }) => {
+      await page.getByRole('button', { name: /^ssh-mldsa-87/ }).click()
+      await page.getByRole('button', { name: /run.*handshake/i }).click()
+      await expect(page.getByText(/Both handshakes complete/i)).toBeVisible({ timeout: 90_000 })
+      await expect(page.getByText('Runs the real OpenSSH binary.')).toBeVisible()
+      await expect(page.getByText(/4,627 B/i).first()).toBeVisible()
+    })
   })
 })
