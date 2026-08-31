@@ -29,6 +29,13 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.70.1] - 2026-08-30
+
+### Data
+
+- **21 Library documents with confirmed-unfixable evidence deprecated** [view:/library] [persona:researcher] [persona:curious]: each investigated individually rather than swept — paid standards with no legitimate free source were left active as correctly paywalled, not deprecated.
+- **70 more Library documents enriched** [view:/library] [persona:researcher].
+
 ## [4.70.0] - 2026-08-29
 
 ### Added
