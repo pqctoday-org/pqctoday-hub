@@ -1827,29 +1827,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             const extPub = injectTokenFlag(pubTpl.tplPtr, pubCount59)
             const extPriv = injectTokenFlag(privTpl.tplPtr, privCount59)
 
-            // ML-KEM public key: CKA_PARAMETER_SET (0x061d) has ck3 flag = MUST be in generate template.
-            // charon's pkcs11_kem.c only sends {CKA_DERIVE=CK_TRUE} — inject CKP_ML_KEM_768 (2) here.
-            const CKA_PARAMETER_SET_ID = 0x0000061d
-            let finalPubPtr = extPub.extTplPtr
-            let finalPubCount = pubCount59 + 1
-            let paramSetValPtr: number | null = null
-
-            if (mechType59 === 0x000f) {
-              finalPubCount = pubCount59 + 2
-              const newPubPtr = M._malloc(finalPubCount * 12)
-              M.HEAPU8.set(
-                M.HEAPU8.subarray(extPub.extTplPtr, extPub.extTplPtr + (pubCount59 + 1) * 12),
-                newPubPtr
-              )
-              paramSetValPtr = M._malloc(4)
-              M.setValue(paramSetValPtr, 2, 'i32') // CKP_ML_KEM_768 = 2
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12, CKA_PARAMETER_SET_ID, 'i32')
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 4, paramSetValPtr, 'i32')
-              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 8, 4, 'i32')
-              M._free(extPub.boolPtr)
-              M._free(extPub.extTplPtr)
-              finalPubPtr = newPubPtr
-            }
+            // ML-KEM public key: CKA_PARAMETER_SET (0x061d) has ck3 flag = MUST be in
+            // generate template. charon's pkcs11_kem.c (strongswan-pkcs11 fix, 2026-08-31)
+            // now derives this from the negotiated group via kem_parameter_set() and sends
+            // it as a real attribute in pubTpl/extPub above — no injection needed here.
+            // (Previously this block unconditionally appended a hardcoded
+            // CKA_PARAMETER_SET=CKP_ML_KEM_768 duplicate for mechType59===0x000f; harmless
+            // at the time because softhsmv3's extractParameterSet() takes the first
+            // matching attribute, but stale now that the real one is always present.)
+            const finalPubPtr = extPub.extTplPtr
+            const finalPubCount = pubCount59 + 1
 
             rv =
               M._C_GenerateKeyPair(
@@ -1864,13 +1851,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               ) >>> 0
 
             // Free extended arrays only (NOT their shared valPtrs 0..n-1 — those belong to originals)
-            if (paramSetValPtr !== null) {
-              M._free(paramSetValPtr)
-              M._free(finalPubPtr)
-            } else {
-              M._free(extPub.boolPtr)
-              M._free(extPub.extTplPtr)
-            }
+            M._free(extPub.boolPtr)
+            M._free(extPub.extTplPtr)
             M._free(extPriv.boolPtr)
             M._free(extPriv.extTplPtr)
 
