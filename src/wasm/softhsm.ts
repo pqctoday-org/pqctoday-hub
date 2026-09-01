@@ -676,10 +676,10 @@ export const CKD_HPKE_HKDF_SHA256 = 0x0001
 export const CKD_HPKE_HKDF_SHA384 = 0x0002
 export const CKD_HPKE_HKDF_SHA512 = 0x0003
 // CK_HPKE_AEAD_TYPE — equal to RFC 9180 §7.3 aead_id.
-export const CKA_HPKE_AEAD_128_GCM = 0x0001
-export const CKA_HPKE_AEAD_256_GCM = 0x0002
-export const CKA_HPKE_AEAD_CHACHA20POLY1305 = 0x0003
-export const CKA_HPKE_AEAD_EXPORT_ONLY = 0xffff
+export const CKZ_HPKE_AEAD_128_GCM = 0x0001
+export const CKZ_HPKE_AEAD_256_GCM = 0x0002
+export const CKZ_HPKE_AEAD_CHACHA20POLY1305 = 0x0003
+export const CKZ_HPKE_AEAD_EXPORT_ONLY = 0xffff
 // CK_HPKE_MODE_TYPE — equal to RFC 9180 §5.1 mode byte.
 export const CKZ_HPKE_MODE_BASE = 0x00
 export const CKZ_HPKE_MODE_PSK = 0x01
@@ -3935,7 +3935,7 @@ export interface HpkeMechParams {
 }
 
 export interface HpkeResult {
-  /** The AEAD key handle, or (aeadId === CKA_HPKE_AEAD_EXPORT_ONLY) the exporter-secret handle — mirrors the engine's own key_handle.or(exporter_handle) fallback. */
+  /** The AEAD key handle, or (aeadId === CKZ_HPKE_AEAD_EXPORT_ONLY) the exporter-secret handle — mirrors the engine's own key_handle.or(exporter_handle) fallback. */
   keyHandle: number | null
   baseNonce: Uint8Array | null
   /** Only set when a separate `exporterTemplate` was supplied to this call. */
@@ -4078,7 +4078,7 @@ export const hsm_hpkeEncapsulate = (
     const keyHandle = readUlong(M, keyHPtr) || null
     const exporterHandle = built.exporterHPtr ? readUlong(M, built.exporterHPtr) || null : null
     const baseNonce =
-      p.aeadId === CKA_HPKE_AEAD_EXPORT_ONLY
+      p.aeadId === CKZ_HPKE_AEAD_EXPORT_ONLY
         ? null
         : M.HEAPU8.slice(baseNoncePtr, baseNoncePtr + 12)
     return { enc, keyHandle, baseNonce, exporterHandle }
@@ -4118,7 +4118,7 @@ export const hsm_hpkeDecapsulate = (
     const keyHandle = readUlong(M, keyHPtr) || null
     const exporterHandle = built.exporterHPtr ? readUlong(M, built.exporterHPtr) || null : null
     const baseNonce =
-      p.aeadId === CKA_HPKE_AEAD_EXPORT_ONLY
+      p.aeadId === CKZ_HPKE_AEAD_EXPORT_ONLY
         ? null
         : M.HEAPU8.slice(baseNoncePtr, baseNoncePtr + 12)
     return { keyHandle, baseNonce, exporterHandle }

@@ -40,10 +40,10 @@ const {
   CKD_HPKE_HKDF_SHA256,
   CKD_HPKE_HKDF_SHA384,
   CKD_HPKE_HKDF_SHA512,
-  CKA_HPKE_AEAD_128_GCM,
-  CKA_HPKE_AEAD_256_GCM,
-  CKA_HPKE_AEAD_CHACHA20POLY1305,
-  CKA_HPKE_AEAD_EXPORT_ONLY,
+  CKZ_HPKE_AEAD_128_GCM,
+  CKZ_HPKE_AEAD_256_GCM,
+  CKZ_HPKE_AEAD_CHACHA20POLY1305,
+  CKZ_HPKE_AEAD_EXPORT_ONLY,
   CKZ_HPKE_MODE_BASE,
   CKZ_HPKE_MODE_PSK,
   CKZ_HPKE_MODE_AUTH,
@@ -90,7 +90,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     aad: Uint8Array,
     pt: Uint8Array
   ): Uint8Array {
-    if (aeadId === CKA_HPKE_AEAD_CHACHA20POLY1305) {
+    if (aeadId === CKZ_HPKE_AEAD_CHACHA20POLY1305) {
       const ct = hsm_chacha20Poly1305Encrypt(M, hSession, senderKeyHandle, baseNonce, aad, pt)
       return hsm_chacha20Poly1305Decrypt(M, hSession, recipientKeyHandle, baseNonce, aad, ct)
     }
@@ -108,7 +108,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const enc1 = hsm_hpkeEncapsulate(M, hSession, recipient.pubHandle, {
       kemId,
       kdfId: CKD_HPKE_HKDF_SHA256,
-      aeadId: CKA_HPKE_AEAD_128_GCM,
+      aeadId: CKZ_HPKE_AEAD_128_GCM,
       mode: CKZ_HPKE_MODE_BASE,
       info,
     })
@@ -119,7 +119,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const dec1 = hsm_hpkeDecapsulate(M, hSession, recipient.privHandle, enc1.enc, {
       kemId,
       kdfId: CKD_HPKE_HKDF_SHA256,
-      aeadId: CKA_HPKE_AEAD_128_GCM,
+      aeadId: CKZ_HPKE_AEAD_128_GCM,
       mode: CKZ_HPKE_MODE_BASE,
       info,
     })
@@ -129,7 +129,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const pt = utf8('CKM_HPKE single-call classical round trip')
     const aad = utf8('ckm-hpke-aad')
     const recovered = sealOpenRoundTrip(
-      CKA_HPKE_AEAD_128_GCM,
+      CKZ_HPKE_AEAD_128_GCM,
       enc1.keyHandle!,
       dec1.keyHandle!,
       enc1.baseNonce!,
@@ -149,7 +149,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const enc1 = hsm_hpkeEncapsulate(M, hSession, recipient.pubHandle, {
       kemId,
       kdfId: CKD_HPKE_HKDF_SHA256,
-      aeadId: CKA_HPKE_AEAD_128_GCM,
+      aeadId: CKZ_HPKE_AEAD_128_GCM,
       mode: CKZ_HPKE_MODE_AUTH,
       info,
       hSenderStaticKey: sender.privHandle,
@@ -157,7 +157,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const dec1 = hsm_hpkeDecapsulate(M, hSession, recipient.privHandle, enc1.enc, {
       kemId,
       kdfId: CKD_HPKE_HKDF_SHA256,
-      aeadId: CKA_HPKE_AEAD_128_GCM,
+      aeadId: CKZ_HPKE_AEAD_128_GCM,
       mode: CKZ_HPKE_MODE_AUTH,
       info,
       senderPk,
@@ -167,7 +167,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const pt = utf8('auth mode round trip')
     const aad = utf8('auth-aad')
     const recovered = sealOpenRoundTrip(
-      CKA_HPKE_AEAD_128_GCM,
+      CKZ_HPKE_AEAD_128_GCM,
       enc1.keyHandle!,
       dec1.keyHandle!,
       enc1.baseNonce!,
@@ -177,7 +177,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     expect(new TextDecoder().decode(recovered)).toBe('auth mode round trip')
   })
 
-  it('aeadId = CKA_HPKE_AEAD_EXPORT_ONLY: keyHandle is the exporter secret, baseNonce is null', () => {
+  it('aeadId = CKZ_HPKE_AEAD_EXPORT_ONLY: keyHandle is the exporter secret, baseNonce is null', () => {
     const kemId = CKP_HPKE_KEM_DHKEM_P256_HKDF_SHA256
     const recipient = hsm_generateHpkeKeyPair(M, hSession, kemId)
     const info = utf8('ckm_hpke binding export-only')
@@ -200,7 +200,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
       {
         kemId,
         kdfId: CKD_HPKE_HKDF_SHA256,
-        aeadId: CKA_HPKE_AEAD_EXPORT_ONLY,
+        aeadId: CKZ_HPKE_AEAD_EXPORT_ONLY,
         mode: CKZ_HPKE_MODE_BASE,
         info,
       },
@@ -217,7 +217,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
       {
         kemId,
         kdfId: CKD_HPKE_HKDF_SHA256,
-        aeadId: CKA_HPKE_AEAD_EXPORT_ONLY,
+        aeadId: CKZ_HPKE_AEAD_EXPORT_ONLY,
         mode: CKZ_HPKE_MODE_BASE,
         info,
       },
@@ -252,7 +252,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
       {
         kemId,
         kdfId: CKD_HPKE_HKDF_SHA256,
-        aeadId: CKA_HPKE_AEAD_128_GCM,
+        aeadId: CKZ_HPKE_AEAD_128_GCM,
         mode: CKZ_HPKE_MODE_BASE,
         info,
       },
@@ -270,7 +270,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
       {
         kemId,
         kdfId: CKD_HPKE_HKDF_SHA256,
-        aeadId: CKA_HPKE_AEAD_128_GCM,
+        aeadId: CKZ_HPKE_AEAD_128_GCM,
         mode: CKZ_HPKE_MODE_BASE,
         info,
       },
@@ -286,7 +286,7 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     const pt = utf8('aead key alongside exporter')
     const aad = utf8('aad')
     const recovered = sealOpenRoundTrip(
-      CKA_HPKE_AEAD_128_GCM,
+      CKZ_HPKE_AEAD_128_GCM,
       enc1.keyHandle!,
       dec1.keyHandle!,
       enc1.baseNonce!,
@@ -311,9 +311,9 @@ describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/
     { name: 'HKDF-SHA512', kdfId: CKD_HPKE_HKDF_SHA512 },
   ] as const
   const AEADS = [
-    { name: 'AES-128-GCM', aeadId: CKA_HPKE_AEAD_128_GCM },
-    { name: 'AES-256-GCM', aeadId: CKA_HPKE_AEAD_256_GCM },
-    { name: 'ChaCha20-Poly1305', aeadId: CKA_HPKE_AEAD_CHACHA20POLY1305 },
+    { name: 'AES-128-GCM', aeadId: CKZ_HPKE_AEAD_128_GCM },
+    { name: 'AES-256-GCM', aeadId: CKZ_HPKE_AEAD_256_GCM },
+    { name: 'ChaCha20-Poly1305', aeadId: CKZ_HPKE_AEAD_CHACHA20POLY1305 },
   ] as const
   const MODES = [
     { name: 'Base', mode: CKZ_HPKE_MODE_BASE },
