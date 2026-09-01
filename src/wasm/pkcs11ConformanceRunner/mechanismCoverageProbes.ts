@@ -20,7 +20,9 @@ import {
   buildTemplate,
   freeTemplate,
   checkRV,
+  writeBytes,
   hsm_extractKeyValue,
+  hsm_importGenericSecret,
   dsaParamSet,
   kemParamSet,
   CKA_CLASS,
@@ -34,11 +36,21 @@ import {
   CKA_VERIFY,
   CKA_ENCAPSULATE,
   CKA_DECAPSULATE,
+  CKA_DERIVE,
+  CKA_EC_PARAMS,
+  CKA_VALUE_LEN,
+  CKA_KEY_TYPE,
   CKO_PUBLIC_KEY,
   CKO_PRIVATE_KEY,
+  CKO_SECRET_KEY,
+  CKK_EC,
+  CKK_GENERIC_SECRET,
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM_KEY_PAIR_GEN,
   CKM_SLH_DSA_KEY_PAIR_GEN,
+  CKM_EC_KEY_PAIR_GEN,
+  CKM_ECDH1_DERIVE,
+  CKM_CONCATENATE_BASE_AND_KEY,
   CKP_SLH_DSA_SHA2_128S,
 } from '../softhsm'
 
@@ -180,6 +192,278 @@ const deterministicKeygenProbe =
     return `two independent C_GenerateKeyPair(${kind}) calls with the same ${seedLen}B CKA_SEED produced byte-identical ${firstPub.length}B public keys`
   }
 
+// ── Hybrid KEM building blocks ──────────────────────────────────────────────
+//
+// There is no dedicated PKCS#11 "hybrid KEM" mechanism, in either engine or
+// in the spec itself — a hybrid construction (e.g. X25519+ML-KEM-768) is
+// built by the CALLER out of two ordinary KEMs plus a combiner (per both
+// engines' own comments, e.g. pqctoday-hsm SoftHSM_kem.cpp:52-58). These are
+// the two real PKCS#11-layer mechanisms that dependency actually rests on;
+// ACVP exercises neither.
+
+// DER OID for secp256r1/P-256 (RFC 5480), the same bytes
+// pqctoday-hub's own ecCurveOID('P-256') helper produces — inlined here
+// rather than exporting that private helper for one caller.
+const P256_OID = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
+
+/** CKM_ECDH1_DERIVE dispatched under C_EncapsulateKey/C_DecapsulateKey
+ *  (PKCS#11 v3.2 §6.3.17 Table 78) — "ECDH-as-KEM", the classical half of a
+ *  hybrid construction. Real round-trip proof: encapsulate to a real P-256
+ *  public key (generates a fresh ephemeral pair internally, returns its
+ *  public point as ciphertext), decapsulate with the matching private key,
+ *  and assert the two derived shared secrets are byte-identical — the same
+ *  proof ACVP's own "ML-KEM Encap+Decap Round-Trip" section uses, applied
+ *  to the classical side of the hybrid pair. */
+const hybridEcdhKemProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const oidPtr = writeBytes(M, P256_OID)
+  const mech = buildMechRaw(M, CKM_EC_KEY_PAIR_GEN)
+  // CKA_ENCAPSULATE/CKA_DECAPSULATE are NOT supplied in the generate
+  // template here (2026-08-31 real-engine finding): PKCS#11 v3.2 Table 18
+  // has C_GenerateKeyPair set these automatically, and both engines' own
+  // attribute-validation tables mark them ck8 ("may be modified after
+  // object is created with C_SetAttributeValue") — the C++ engine only
+  // auto-sets them for its ML-KEM keygen branch specifically and rejects
+  // them in an EC generate template with CKR_ATTRIBUTE_READ_ONLY (the Rust
+  // engine is more permissive and accepts them there directly, which is
+  // why this only failed on C++ during verification). Set both explicitly
+  // via C_SetAttributeValue right after creation instead — works on both.
+  const pubAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: P256_OID.length },
+  ]
+  // CKA_EC_PARAMS deliberately NOT repeated here — matching the proven-
+  // working hsm_generateECKeyPair (softhsm.ts), the curve is specified on
+  // the public template only; the mechanism infers it for the private key.
+  const prvAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+  ]
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+  const pubHPtr = M._malloc(4)
+  const prvHPtr = M._malloc(4)
+  let pubHandle = 0
+  let privHandle = 0
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
+      'C_GenerateKeyPair(EC P-256)'
+    )
+    pubHandle = M.getValue(pubHPtr, 'i32') >>> 0
+    privHandle = M.getValue(prvHPtr, 'i32') >>> 0
+  } finally {
+    M._free(mech)
+    M._free(oidPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+
+  const encapTpl = buildTemplate(M, [{ type: CKA_ENCAPSULATE, boolVal: true }])
+  try {
+    checkRV(
+      M._C_SetAttributeValue(hSession, pubHandle, encapTpl.ptr, 1),
+      'C_SetAttributeValue(CKA_ENCAPSULATE)'
+    )
+  } finally {
+    freeTemplate(M, encapTpl, 1)
+  }
+  const decapTpl = buildTemplate(M, [{ type: CKA_DECAPSULATE, boolVal: true }])
+  try {
+    checkRV(
+      M._C_SetAttributeValue(hSession, privHandle, decapTpl.ptr, 1),
+      'C_SetAttributeValue(CKA_DECAPSULATE)'
+    )
+  } finally {
+    freeTemplate(M, decapTpl, 1)
+  }
+
+  const secretAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+  ]
+
+  // C_EncapsulateKey — two-call size-then-fetch, same convention
+  // hsm_encapsulate (softhsm.ts) uses for CKM_ML_KEM, no fixed-length
+  // table here since a raw EC point's length isn't mechanism-agnostic.
+  const encMech = buildMechRaw(M, CKM_ECDH1_DERIVE)
+  const encTpl = buildTemplate(M, secretAttrs)
+  const ctLenPtr = M._malloc(4)
+  const encHPtr = M._malloc(4)
+  let ciphertext: Uint8Array
+  let encapSecretHandle: number
+  try {
+    checkRV(
+      M._C_EncapsulateKey(
+        hSession,
+        encMech,
+        pubHandle,
+        encTpl.ptr,
+        secretAttrs.length,
+        0,
+        ctLenPtr,
+        encHPtr
+      ),
+      'C_EncapsulateKey(size)'
+    )
+    const ctLen = M.getValue(ctLenPtr, 'i32') >>> 0
+    if (ctLen === 0) throw new Error('C_EncapsulateKey reported a 0-byte ciphertext')
+    const ctPtr = M._malloc(ctLen)
+    try {
+      M.setValue(ctLenPtr, ctLen, 'i32')
+      checkRV(
+        M._C_EncapsulateKey(
+          hSession,
+          encMech,
+          pubHandle,
+          encTpl.ptr,
+          secretAttrs.length,
+          ctPtr,
+          ctLenPtr,
+          encHPtr
+        ),
+        'C_EncapsulateKey'
+      )
+      ciphertext = M.HEAPU8.slice(ctPtr, ctPtr + (M.getValue(ctLenPtr, 'i32') >>> 0))
+      encapSecretHandle = M.getValue(encHPtr, 'i32') >>> 0
+    } finally {
+      M._free(ctPtr)
+    }
+  } finally {
+    M._free(encMech)
+    freeTemplate(M, encTpl, secretAttrs.length)
+    M._free(ctLenPtr)
+    M._free(encHPtr)
+  }
+
+  const encapSecret = hsm_extractKeyValue(M, hSession, encapSecretHandle)
+  M._C_DestroyObject(hSession, encapSecretHandle)
+
+  // C_DecapsulateKey with the matching private key + the ciphertext just produced.
+  const decMech = buildMechRaw(M, CKM_ECDH1_DERIVE)
+  const decTpl = buildTemplate(M, secretAttrs)
+  const ctPtr2 = writeBytes(M, ciphertext)
+  const decHPtr = M._malloc(4)
+  let decapSecretHandle: number
+  try {
+    checkRV(
+      M._C_DecapsulateKey(
+        hSession,
+        decMech,
+        privHandle,
+        decTpl.ptr,
+        secretAttrs.length,
+        ctPtr2,
+        ciphertext.length,
+        decHPtr
+      ),
+      'C_DecapsulateKey'
+    )
+    decapSecretHandle = M.getValue(decHPtr, 'i32') >>> 0
+  } finally {
+    M._free(decMech)
+    freeTemplate(M, decTpl, secretAttrs.length)
+    M._free(ctPtr2)
+    M._free(decHPtr)
+  }
+  const decapSecret = hsm_extractKeyValue(M, hSession, decapSecretHandle)
+  M._C_DestroyObject(hSession, decapSecretHandle)
+  M._C_DestroyObject(hSession, pubHandle)
+  M._C_DestroyObject(hSession, privHandle)
+
+  if (encapSecret.length === 0 || encapSecret.length !== decapSecret.length)
+    throw new Error(
+      `shared-secret length mismatch or empty: encap=${encapSecret.length}B decap=${decapSecret.length}B`
+    )
+  for (let i = 0; i < encapSecret.length; i++) {
+    if (encapSecret[i] !== decapSecret[i])
+      throw new Error(`encapsulate/decapsulate shared secrets differ at byte ${i}`)
+  }
+  return `C_EncapsulateKey/C_DecapsulateKey(CKM_ECDH1_DERIVE) round-trip on a real P-256 key pair produced the same ${encapSecret.length}B shared secret; ciphertext=${ciphertext.length}B ephemeral public point`
+}
+
+/** CKM_CONCATENATE_BASE_AND_KEY (PKCS#11 v2.40 §2.31.3, still current in
+ *  v3.2) — the literal combiner mechanism a hybrid construction's classical
+ *  and PQC shared secrets would actually be joined with at the PKCS#11
+ *  layer. Real correctness proof: import two known secret values, derive,
+ *  and assert the result is exactly base‖other, not merely non-empty. */
+const concatenateBaseAndKeyProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const baseBytes = new Uint8Array(8).fill(0xaa)
+  const otherBytes = new Uint8Array(8).fill(0xbb)
+  const baseHandle = hsm_importGenericSecret(M, hSession, baseBytes)
+  const otherHandle = hsm_importGenericSecret(M, hSession, otherBytes)
+
+  const otherHandlePtr = M._malloc(4)
+  M.setValue(otherHandlePtr, otherHandle, 'i32')
+  const mech = buildMechRaw(M, CKM_CONCATENATE_BASE_AND_KEY)
+  // Overwrite the generic 12-byte mechanism buildMechRaw wrote: pParameter
+  // must point at the CK_OBJECT_HANDLE of the "other" key, per §2.31.3.
+  M.setValue(mech + 4, otherHandlePtr, 'i32')
+  M.setValue(mech + 8, 4, 'i32')
+
+  const derivedAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DERIVE, boolVal: false },
+    { type: CKA_VALUE_LEN, ulongVal: baseBytes.length + otherBytes.length },
+  ]
+  const derivedTpl = buildTemplate(M, derivedAttrs)
+  const derivedHPtr = M._malloc(4)
+  let derivedHandle: number
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseHandle, derivedTpl.ptr, derivedAttrs.length, derivedHPtr),
+      'C_DeriveKey(CKM_CONCATENATE_BASE_AND_KEY)'
+    )
+    derivedHandle = M.getValue(derivedHPtr, 'i32') >>> 0
+  } finally {
+    M._free(mech)
+    M._free(otherHandlePtr)
+    freeTemplate(M, derivedTpl, derivedAttrs.length)
+    M._free(derivedHPtr)
+  }
+
+  const derived = hsm_extractKeyValue(M, hSession, derivedHandle)
+  M._C_DestroyObject(hSession, derivedHandle)
+  M._C_DestroyObject(hSession, baseHandle)
+  M._C_DestroyObject(hSession, otherHandle)
+
+  const expected = new Uint8Array(baseBytes.length + otherBytes.length)
+  expected.set(baseBytes, 0)
+  expected.set(otherBytes, baseBytes.length)
+  if (derived.length !== expected.length)
+    throw new Error(`derived length ${derived.length}B, expected ${expected.length}B (base‖other)`)
+  for (let i = 0; i < expected.length; i++) {
+    if (derived[i] !== expected[i])
+      throw new Error(
+        `derived value is not base‖other at byte ${i} (got 0x${derived[i].toString(16)}, expected 0x${expected[i].toString(16)}) — check concatenation order`
+      )
+  }
+  return `C_DeriveKey(CKM_CONCATENATE_BASE_AND_KEY) produced exactly base‖other (${derived.length}B)`
+}
+
 export const MECHANISM_PROBES: MechanismProbe[] = [
   {
     id: 'pqc-seed-mldsa',
@@ -205,6 +489,23 @@ export const MECHANISM_PROBES: MechanismProbe[] = [
     citation:
       'PKCS#11 v3.2 §6.69.2 (SLH-DSA deterministic key generation, SK.seed‖SK.prf‖PK.seed — SLH-DSA-SHA2-128s, n=16, 3n=48B)',
     run: deterministicKeygenProbe('slh-dsa', CKM_SLH_DSA_KEY_PAIR_GEN, CKP_SLH_DSA_SHA2_128S, 48),
+  },
+  {
+    id: 'hybrid-ecdh1-kem',
+    mechanism: CKM_ECDH1_DERIVE,
+    mechanismName: 'CKM_ECDH1_DERIVE (as C_Encapsulate/DecapsulateKey)',
+    family: 'Hybrid KEM',
+    citation: 'PKCS#11 v3.2 §6.3.17 Table 78 (ECDH-as-KEM, the classical half of a hybrid KEM)',
+    run: hybridEcdhKemProbe,
+  },
+  {
+    id: 'hybrid-concatenate-base-and-key',
+    mechanism: CKM_CONCATENATE_BASE_AND_KEY,
+    mechanismName: 'CKM_CONCATENATE_BASE_AND_KEY',
+    family: 'Hybrid KEM',
+    citation:
+      'PKCS#11 v2.40 §2.31.3 (the combiner a hybrid KEM would join its two shared secrets with)',
+    run: concatenateBaseAndKeyProbe,
   },
 ]
 

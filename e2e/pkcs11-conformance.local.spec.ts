@@ -66,10 +66,16 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
       // if the not-claimed assertion above ever loosens (e.g. if a future
       // engine build stops advertising these mechanisms, this loop fails
       // by name instead of silently vanishing into "some row somewhere").
+      // Hybrid KEM building blocks (2026-08-31): the two real PKCS#11-layer
+      // mechanisms a hybrid PQC/classical construction actually depends on
+      // (CKM_ECDH1_DERIVE-as-KEM, CKM_CONCATENATE_BASE_AND_KEY) — same gap
+      // category as the PQC seed probes above, checked the same way.
       for (const mech of [
         'CKM_ML_DSA_KEY_PAIR_GEN',
         'CKM_ML_KEM_KEY_PAIR_GEN',
         'CKM_SLH_DSA_KEY_PAIR_GEN',
+        'CKM_ECDH1_DERIVE',
+        'CKM_CONCATENATE_BASE_AND_KEY',
       ]) {
         const mechRows = rows.filter({ hasText: mech })
         const mechRowCount = await mechRows.count()

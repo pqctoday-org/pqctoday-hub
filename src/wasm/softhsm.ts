@@ -2474,6 +2474,10 @@ export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
 export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §6.3.18 — cofactor ECDH
+// PKCS#11 v2.40 §2.31.3, still current in v3.2 — C_DeriveKey mechanism
+// param is a CK_OBJECT_HANDLE (the "other" key); derived value = base key's
+// value concatenated with the other key's value.
+export const CKM_CONCATENATE_BASE_AND_KEY = 0x00000360
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 export const CKM_EDDSA_PH = 0x80001057
