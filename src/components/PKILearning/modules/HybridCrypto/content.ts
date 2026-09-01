@@ -35,7 +35,10 @@ export const content: ModuleContent = {
     getStandard('NIST SP 800-56A'),
     getStandard('RFC 5869'),
     getStandard('RFC 8017'),
-    getStandard('RFC 9180'),
+    getStandard('RFC 9180'), // HPKE base spec — see the HPKE section + Step 7 workshop
+    getStandard('draft-ietf-hpke-pq'), // PQ/PQ-T hybrid HPKE KEM IDs (MLKEM768-X25519/P256, MLKEM1024-P384)
+    getStandard('draft-ietf-cose-hpke'), // HPKE use case: COSE
+    getStandard('draft-ietf-jose-hpke-encrypt'), // HPKE use case: JOSE
     getStandard('draft-ietf-pquip-hybrid-signature-spectrums'),
     getStandard('draft-sheffer-tls-pqc-continuity'),
     // DECLARED 2026-08-23: this module labels a hashing mechanism it describes as conforming to FIPS 180-4
@@ -109,5 +112,13 @@ export const content: ModuleContent = {
     altSigSize: '2,017 bytes',
     relatedStandards:
       "FIPS 206 (FN-DSA), cited above as a future pure-PQC signature format, is still a NIST draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
+    hpkeDefinition:
+      "HPKE (RFC 9180) is a public-key encryption scheme built from three swappable components — a KEM, a KDF, and an AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction. It is not itself a hybrid-vs-classical choice: RFC 9180's own KEM registry is all-classical (DHKEM over P-256/P-384/P-521/X25519/X448). The PQC angle comes from draft-ietf-hpke-pq, which registers PQ and PQ/T hybrid KEM IDs (pure ML-KEM, and MLKEM768-X25519 / MLKEM768-P256 / MLKEM1024-P384 hybrids) that plug into the exact same KeySchedule and Seal/Open — still an Internet-Draft, not yet an RFC.",
+    hpkeUseCases:
+      'MLS (RFC 9420) uses HPKE for its TreeKEM path updates. TLS 1.3 Encrypted Client Hello (ECH) uses it to encrypt the ClientHello. draft-ietf-jose-hpke-encrypt and draft-ietf-cose-hpke extend it to JOSE/COSE, so it can wrap a JWT or CWT payload the same way. All four share one property: a KEM has no way for the sender to supply a chosen shared secret (unlike ECDH) — HPKE always encapsulates a fresh, sender-unpredictable one.',
+    hpkeAuthLimitation:
+      'RFC 9180\'s Auth and AuthPSK modes require the KEM to expose AuthEncap/AuthDecap. Every classical DHKEM in RFC 9180 supports this; draft-ietf-hpke-pq\'s ML-KEM and PQ/T hybrid KEM entries mark the Auth column "no" — so Auth/AuthPSK stay classical-only until a future KEM adds it.',
+    hpkeNoNativeMechanism:
+      'PKCS#11 v3.2 has no CKM_HPKE mechanism (checked against the canonical v3.2 header — no HPKE entry exists at all). A real HSM deployment of HPKE composes it from mechanisms the spec does define: CKM_ECDH1_DERIVE / CKM_ML_KEM for the KEM leg, CKM_HKDF_DERIVE plus C_Sign(CKM_SHA*_HMAC) for LabeledExtract/LabeledExpand, and CKM_AES_GCM / CKM_CHACHA20_POLY1305 for Seal/Open. The Step 7 workshop below does exactly that, cross-checked byte-for-byte against RFC 9180 Appendix A.',
   },
 }

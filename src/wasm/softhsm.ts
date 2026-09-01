@@ -650,10 +650,41 @@ export const CKK_XMSS = 0x00000047 // PKCS#11 v3.2 §6.14 — XMSS single-tree
 export const CKK_XMSSMT = 0x00000048 // PKCS#11 v3.2 §6.14 — XMSS-MT multi-tree
 export const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
 export const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
-const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
+export const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
-const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
+export const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
 const CKM_ML_DSA = 0x0000001d
+
+// CKM_HPKE (RFC 9180 over PKCS#11) — a PQCToday vendor mechanism family, not
+// yet OASIS TC allocated. Values verified against
+// pqctoday-hsm/rust/src/constants.rs (the source of truth for these) and
+// docs/proposals/pkcs11-ckm-hpke-mechanism-proposal.md.
+export const CKK_HPKE_KEM = 0x80000003
+export const CKM_HPKE_KEM_KEY_PAIR_GEN = 0x80000013
+export const CKM_HPKE = 0x80000014
+// CK_HPKE_KEM_PARAMETER_SET_TYPE — deliberately equal to RFC 9180 §7.1 / HPKE-PQ kem_id.
+export const CKP_HPKE_KEM_DHKEM_P256_HKDF_SHA256 = 0x0010
+export const CKP_HPKE_KEM_DHKEM_P384_HKDF_SHA384 = 0x0011
+export const CKP_HPKE_KEM_DHKEM_P521_HKDF_SHA512 = 0x0012
+export const CKP_HPKE_KEM_DHKEM_X25519_HKDF_SHA256 = 0x0020
+export const CKP_HPKE_KEM_DHKEM_X448_HKDF_SHA512 = 0x0021
+export const CKP_HPKE_KEM_MLKEM768_P256 = 0x0050
+export const CKP_HPKE_KEM_MLKEM1024_P384 = 0x0051
+export const CKP_HPKE_KEM_MLKEM768_X25519 = 0x647a
+// CK_HPKE_KDF_TYPE — equal to RFC 9180 §7.2 kdf_id.
+export const CKD_HPKE_HKDF_SHA256 = 0x0001
+export const CKD_HPKE_HKDF_SHA384 = 0x0002
+export const CKD_HPKE_HKDF_SHA512 = 0x0003
+// CK_HPKE_AEAD_TYPE — equal to RFC 9180 §7.3 aead_id.
+export const CKA_HPKE_AEAD_128_GCM = 0x0001
+export const CKA_HPKE_AEAD_256_GCM = 0x0002
+export const CKA_HPKE_AEAD_CHACHA20POLY1305 = 0x0003
+export const CKA_HPKE_AEAD_EXPORT_ONLY = 0xffff
+// CK_HPKE_MODE_TYPE — equal to RFC 9180 §5.1 mode byte.
+export const CKZ_HPKE_MODE_BASE = 0x00
+export const CKZ_HPKE_MODE_PSK = 0x01
+export const CKZ_HPKE_MODE_AUTH = 0x02
+export const CKZ_HPKE_MODE_AUTH_PSK = 0x03
 
 // Attributes
 export const CKA_CLASS = 0x00000000
@@ -663,12 +694,20 @@ export const CKA_LABEL = 0x00000003
 export const CKA_ID = 0x00000102
 export const CKA_SENSITIVE = 0x00000103
 export const CKA_SIGN = 0x00000108
+export const CKA_SIGN_RECOVER = 0x00000109
 export const CKA_VERIFY = 0x0000010a
+export const CKA_VERIFY_RECOVER = 0x0000010b
 export const CKA_EXTRACTABLE = 0x00000162
 export const CKA_VALUE_LEN = 0x00000161
 export const CKA_VALUE = 0x00000011
 export const CKA_KEY_TYPE = 0x00000100
 export const CKA_PARAMETER_SET = 0x0000061d
+// Deterministic PQC key generation seed — ξ (32B) for ML-DSA §6.67.4, d‖z
+// (64B) for ML-KEM §6.68.4, SK.seed‖SK.prf‖PK.seed (3n B) for SLH-DSA
+// §6.69.2. Goes in the PRIVATE key template of C_GenerateKeyPair (verified
+// against both engines' dispatch: pqctoday-hsm SoftHSM_keygen.cpp's
+// extractSeed(pPrivateKeyTemplate, ...) call sites).
+export const CKA_SEED = 0x00000637
 export const CKA_LOCAL = 0x00000163
 export const CKA_NEVER_EXTRACTABLE = 0x00000164
 export const CKA_ALWAYS_SENSITIVE = 0x00000165
@@ -701,6 +740,12 @@ export const CKP_BASELINE_PROVIDER = 0x00000001
 export const CKP_EXTENDED_PROVIDER = 0x00000002
 export const CKP_AUTHENTICATION_TOKEN = 0x00000003
 export const CKP_PUBLIC_CERTIFICATES_TOKEN = 0x00000004
+// 2026-08-31 conformance coverage gap closure — the 2 remaining Profiles
+// v3.2 §3 profile ids (neither engine claims either yet; added so the
+// runner CAN detect a future claim rather than being structurally blind
+// to it).
+export const CKP_COMPLETE_PROVIDER = 0x00000005
+export const CKP_HKDF_TLS_TOKEN = 0x00000006
 // PKCS#11 v3.2 §4.8 Table 13 — pins a key to an allow-list of mechanisms;
 // any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID.
 // CKF_ARRAY_ATTRIBUTE (0x40000000) | 0x0600, per constants.rs.
@@ -1533,7 +1578,8 @@ export const hsm_encapsulate = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
-  variant: 512 | 768 | 1024
+  variant: 512 | 768 | 1024,
+  extractable = true
 ): { ciphertextBytes: Uint8Array; secretHandle: number } => {
   const expectedCtLen: Record<number, number> = { 512: 768, 768: 1088, 1024: 1568 }
   const mech = M._malloc(12)
@@ -1546,8 +1592,8 @@ export const hsm_encapsulate = (
   const secretTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_VALUE_LEN, ulongVal: 32 },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: 0x10c, boolVal: true }, // CKA_DERIVE
   ])
   const ctLenPtr = allocUlong(M)
@@ -1555,7 +1601,7 @@ export const hsm_encapsulate = (
 
   // First call: size query (ctPtr = 0)
   checkRV(
-    M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 4, 0, ctLenPtr, secretHPtr),
+    M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 5, 0, ctLenPtr, secretHPtr),
     'C_EncapsulateKey(size)'
   )
   const ctLen = readUlong(M, ctLenPtr)
@@ -1570,14 +1616,14 @@ export const hsm_encapsulate = (
   try {
     writeUlong(M, ctLenPtr, ctLen)
     checkRV(
-      M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 4, ctPtr, ctLenPtr, secretHPtr),
+      M._C_EncapsulateKey(hSession, mech, pubHandle, secretTpl.ptr, 5, ctPtr, ctLenPtr, secretHPtr),
       'C_EncapsulateKey'
     )
     const ciphertextBytes = M.HEAPU8.slice(ctPtr, ctPtr + readUlong(M, ctLenPtr))
     return { ciphertextBytes, secretHandle: readUlong(M, secretHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, secretTpl, 4)
+    freeTemplate(M, secretTpl, 5)
     M._free(ctLenPtr)
     M._free(ctPtr)
     M._free(secretHPtr)
@@ -1591,7 +1637,8 @@ export const hsm_decapsulate = (
   hSession: number,
   privHandle: number,
   ciphertextBytes: Uint8Array,
-  variant: 512 | 768 | 1024
+  variant: 512 | 768 | 1024,
+  extractable = true
 ): number => {
   const expectedCtLen: Record<number, number> = { 512: 768, 768: 1088, 1024: 1568 }
   if (ciphertextBytes.length !== expectedCtLen[variant]) {
@@ -1608,8 +1655,8 @@ export const hsm_decapsulate = (
   const secretTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_VALUE_LEN, ulongVal: 32 },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: 0x10c, boolVal: true }, // CKA_DERIVE
   ])
 
@@ -1624,7 +1671,7 @@ export const hsm_decapsulate = (
         mech,
         privHandle,
         secretTpl.ptr,
-        4,
+        5,
         ctPtr,
         ciphertextBytes.length,
         secretHPtr
@@ -1634,7 +1681,7 @@ export const hsm_decapsulate = (
     return readUlong(M, secretHPtr)
   } finally {
     M._free(mech)
-    freeTemplate(M, secretTpl, 4)
+    freeTemplate(M, secretTpl, 5)
     M._free(ctPtr)
     M._free(secretHPtr)
   }
@@ -2443,6 +2490,12 @@ export const CKK_CHACHA20 = 0x00000033
 
 // RSA mechanisms
 export const CKM_RSA_PKCS_KEY_PAIR_GEN = 0x00
+// Raw PKCS#1 v1.5 sign/verify + encrypt/decrypt (no combined hash step —
+// C_Sign/C_Verify take the caller's own bytes directly, pad/unpad only).
+export const CKM_RSA_PKCS = 0x01
+// Unpadded RSA (textbook RSASP1/RSAVP1/RSAEP/RSADP) — no padding scheme at
+// all; input/output are exactly the modulus size.
+export const CKM_RSA_X_509 = 0x03
 export const CKM_RSA_PKCS_OAEP = 0x09
 export const CKM_SHA256_RSA_PKCS = 0x40
 export const CKM_SHA384_RSA_PKCS = 0x41
@@ -2453,6 +2506,10 @@ export const CKM_SHA512_RSA_PKCS_PSS = 0x45
 
 // EC mechanisms
 export const CKM_EC_KEY_PAIR_GEN = 0x1040
+// Raw ECDSA — C_Sign/C_Verify take an already-hashed digest directly, no
+// internal hash step (distinct from the CKM_ECDSA_SHA* combined forms
+// below, which hash the caller's message internally).
+export const CKM_ECDSA = 0x1041
 export const CKM_ECDSA_SHA256 = 0x1044
 export const CKM_ECDSA_SHA384 = 0x1045
 export const CKM_ECDSA_SHA512 = 0x1046
@@ -2462,6 +2519,18 @@ export const CKM_ECDSA_SHA3_384 = 0x1049
 export const CKM_ECDSA_SHA3_512 = 0x104a
 export const CKM_ECDH1_DERIVE = 0x1050
 export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §6.3.18 — cofactor ECDH
+// PKCS#11 v2.40 §2.31.3, still current in v3.2 — C_DeriveKey mechanism
+// param is a CK_OBJECT_HANDLE (the "other" key); derived value = base key's
+// value concatenated with the other key's value.
+export const CKM_CONCATENATE_BASE_AND_KEY = 0x00000360
+// PKCS#11 v3.2 §6.43.4 — mechanism param is a CK_KEY_DERIVATION_STRING_DATA
+// {pData, ulLen}; derived value = base key's value ‖ pData. Lets a combiner
+// append caller-supplied public bytes (a ciphertext, public key, or label)
+// onto a running secret without ever reading the secret out of the token.
+export const CKM_CONCATENATE_BASE_AND_DATA = 0x00000362
+// PKCS#11 v3.2 §6.29 — no mechanism param; derived value = SHA3-256(base
+// key's value), staying a key object throughout.
+export const CKM_SHA3_256_KEY_DERIVATION = 0x00000397
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 export const CKM_EDDSA_PH = 0x80001057
@@ -2484,6 +2553,7 @@ export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
 export const CKM_AES_KEY_WRAP = 0x2109
+export const CKM_AES_KEY_WRAP_PAD = 0x210a // legacy arbitrary-length AES wrap — distinct from RFC 5649/SP800-38F's CKM_AES_KEY_WRAP_KWP below; ACVP only tests KEY_WRAP + KEY_WRAP_KWP
 export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11t.h: CKM_AES_KEY_WRAP_PAD=0x210a, CKM_AES_KEY_WRAP_KWP=0x210b)
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
@@ -2496,6 +2566,10 @@ export const CKM_SHA384_HMAC_GENERAL = 0x262
 export const CKM_SHA512_HMAC_GENERAL = 0x272
 export const CKM_SHA3_256_HMAC = 0x2b1
 export const CKM_SHA3_512_HMAC = 0x2d1
+// A still-defined legacy digest ACVP's own SHA-2/3-only coverage (256/384/512
+// + SHA3-256/512) doesn't exercise.
+export const CKM_SHA_1 = 0x220
+export const CKM_SHA224 = 0x255
 export const CKM_SHA256 = 0x250
 export const CKM_SHA384 = 0x260
 export const CKM_SHA512 = 0x270
@@ -2631,8 +2705,15 @@ export const CKD_SHA3_512_KDF = 0x0000000d // ANSI X9.63 KDF with SHA3-512 (PKCS
 
 // HKDF derive (PKCS#11 v3.2 §6.62)
 export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
+// Same derivation as CKM_HKDF_DERIVE — only the derived object's class
+// differs: CKO_DATA, not CKO_SECRET_KEY (§2.43; both engines' own dispatch
+// comments confirm this, e.g. pqctoday-hsm rust/src/ffi.rs:9815-9820 and
+// src/lib/SoftHSM_keygen.cpp:4195-4199). Required by the HKDF TLS Token
+// profile (§5.6 condition 7.a).
+export const CKM_HKDF_DATA = 0x0000402b
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
+export const CKF_HKDF_SALT_KEY = 0x00000004 // Salt sourced from another key's CKA_VALUE — lets the salt be a non-extractable secret handle
 
 // NIST SP 800-108 KBKDF (PKCS#11 v3.2 §6.42)
 export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
@@ -2756,7 +2837,7 @@ const buildGCMParams = (
  *  kdf: CKD_NULL (default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
  *  sharedData: optional SharedInfo bytes (passed as ANSI X9.63 KDF input, e.g. ephemeral public key for SUCI).
  */
-const buildECDH1DeriveParams = (
+export const buildECDH1DeriveParams = (
   M: SoftHSMModule,
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,
@@ -3614,6 +3695,441 @@ export const hsm_hkdf = (
     if (infoPtr) M._free(infoPtr)
     freeTemplate(M, derivedTpl, 6)
     M._free(derivedHPtr)
+  }
+}
+
+// ── Non-extracting combiner primitives (PKCS#11 v3.2 §6.43.3/§6.43.4, §6.29) ──
+//
+// A shared secret produced by C_EncapsulateKey/C_DecapsulateKey or
+// C_DeriveKey(CKM_ECDH1_DERIVE) is a key OBJECT (a handle), not bytes. The
+// three functions below chain such handles into a combined secret entirely
+// inside the token — CKA_EXTRACTABLE=false by default — so a caller building
+// a KEM combiner (e.g. a hybrid KEM's
+// SHA3-256(ss_PQ ‖ ss_T ‖ ct_T ‖ ek_T ‖ label)) never has to call
+// C_GetAttributeValue on the intermediate secrets to concatenate/hash them
+// in application code. All three are standard OASIS mechanisms, not
+// vendor-defined.
+
+/**
+ * C_DeriveKey(CKM_CONCATENATE_BASE_AND_KEY) (PKCS#11 v3.2 §6.43.3):
+ * base.CKA_VALUE ‖ second.CKA_VALUE, computed inside the token — neither
+ * key's raw bytes are read out to the caller. Returns the new key's handle.
+ */
+export const hsm_concatenateBaseAndKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseHandle: number,
+  secondHandle: number,
+  extractable = false
+): number => {
+  const params = M._malloc(4)
+  M.setValue(params, secondHandle, 'i32') // CK_OBJECT_HANDLE — the second key
+  const mech = buildMech(M, CKM_CONCATENATE_BASE_AND_KEY, params, 4)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DERIVE, boolVal: true },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(CONCATENATE_BASE_AND_KEY)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    M._free(params)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * C_DeriveKey(CKM_CONCATENATE_BASE_AND_DATA) (PKCS#11 v3.2 §6.43.4):
+ * base.CKA_VALUE ‖ data — appends caller-supplied bytes (a ciphertext,
+ * public key, or label — never a secret) onto a running secret without
+ * reading the base key's value out of the token. Returns the new key's
+ * handle.
+ */
+export const hsm_concatenateBaseAndData = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseHandle: number,
+  data: Uint8Array,
+  extractable = false
+): number => {
+  const dataPtr = writeBytes(M, data)
+  const params = M._malloc(8)
+  M.setValue(params, dataPtr, 'i32') // CK_KEY_DERIVATION_STRING_DATA.pData
+  M.setValue(params + 4, data.length, 'i32') // .ulLen
+  const mech = buildMech(M, CKM_CONCATENATE_BASE_AND_DATA, params, 8)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DERIVE, boolVal: true },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(CONCATENATE_BASE_AND_DATA)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(params)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * C_DeriveKey(CKM_SHA3_256_KEY_DERIVATION) (PKCS#11 v3.2 §6.29): derived
+ * value = SHA3-256(base.CKA_VALUE), staying a key object throughout — the
+ * hash-second-step of a concat-then-hash combiner. No mechanism parameter.
+ * Returns the new key's handle.
+ */
+export const hsm_sha3_256KeyDerivation = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseHandle: number,
+  extractable = false
+): number => {
+  const mech = buildMech(M, CKM_SHA3_256_KEY_DERIVATION)
+  const derivedTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DERIVE, boolVal: true },
+  ])
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, baseHandle, derivedTpl.ptr, 6, derivedHPtr),
+      'C_DeriveKey(SHA3_256_KEY_DERIVATION)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    freeTemplate(M, derivedTpl, 6)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * Non-extracting variant of hsm_hkdf: same CK_HKDF_PARAMS marshalling, but
+ * the caller supplies the FULL derived-key template (so the output can be
+ * created directly as a non-extractable CKK_AES/CKK_CHACHA20 key ready for
+ * C_EncryptInit/C_DecryptInit, or as a non-extractable CKK_GENERIC_SECRET
+ * PRK/expand output for further chaining) and gets the handle back, never
+ * the bytes.
+ *
+ * @param saltKeyHandle  Optional CKF_HKDF_SALT_KEY salt (PKCS#11 v3.2
+ *   §6.62.3): the salt is sourced from this key's CKA_VALUE instead of raw
+ *   bytes — HKDF-Extract keys HMAC on it internally, so it never needs to be
+ *   read out of the token either. Lets a caller use a non-extractable
+ *   derived secret (e.g. a KEM combiner's output) directly as the salt in
+ *   RFC 9180's `secret = LabeledExtract(shared_secret, "secret", psk)`,
+ *   where `shared_secret` plays the salt role. Ignored if `salt` bytes are
+ *   also supplied (CKF_HKDF_SALT_DATA takes precedence).
+ */
+export const hsm_hkdfToHandle = (
+  M: SoftHSMModule,
+  hSession: number,
+  baseKeyHandle: number,
+  prf: number,
+  bExtract: boolean,
+  bExpand: boolean,
+  outputTemplate: AttrDef[],
+  salt?: Uint8Array,
+  info?: Uint8Array,
+  saltKeyHandle?: number
+): number => {
+  const saltPtr = salt && salt.length > 0 ? writeBytes(M, salt) : 0
+  const infoPtr = info && info.length > 0 ? writeBytes(M, info) : 0
+  const saltType =
+    saltPtr > 0 ? CKF_HKDF_SALT_DATA : saltKeyHandle ? CKF_HKDF_SALT_KEY : CKF_HKDF_SALT_NULL
+
+  const params = M._malloc(32)
+  M.HEAPU8.fill(0, params, params + 32)
+  M.HEAPU8[params + 0] = bExtract ? 1 : 0
+  M.HEAPU8[params + 1] = bExpand ? 1 : 0
+  M.setValue(params + 4, prf, 'i32')
+  M.setValue(params + 8, saltType, 'i32')
+  M.setValue(params + 12, saltPtr, 'i32')
+  M.setValue(params + 16, salt ? salt.length : 0, 'i32')
+  M.setValue(params + 20, saltType === CKF_HKDF_SALT_KEY ? (saltKeyHandle ?? 0) : 0, 'i32')
+  M.setValue(params + 24, infoPtr, 'i32')
+  M.setValue(params + 28, info ? info.length : 0, 'i32')
+
+  const mech = buildMech(M, CKM_HKDF_DERIVE, params, 32)
+  const derivedTpl = buildTemplate(M, outputTemplate)
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(
+        hSession,
+        mech,
+        baseKeyHandle,
+        derivedTpl.ptr,
+        outputTemplate.length,
+        derivedHPtr
+      ),
+      'C_DeriveKey(HKDF, to-handle)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    M._free(params)
+    if (saltPtr) M._free(saltPtr)
+    if (infoPtr) M._free(infoPtr)
+    freeTemplate(M, derivedTpl, outputTemplate.length)
+    M._free(derivedHPtr)
+  }
+}
+
+// ── CKM_HPKE (RFC 9180 over PKCS#11, PQCToday vendor mechanism) ─────────────
+// See docs/proposals/pkcs11-ckm-hpke-mechanism-proposal.md (pqctoday-hsm) for
+// the full mechanism spec. R2 of remediation-plan-ckm-hpke-and-hpke-
+// gaps-2026-08-31.md: this is the first JS/WASM binding for CKM_HPKE — no
+// prior code here to copy-adjust from.
+//
+// CK_HPKE_PARAMS field order, independently transcribed from that proposal's
+// §4 struct declaration (cross-checked against pqctoday-hsm's
+// rust/src/ck_param.rs `hpke_params` — NOT copy-adjusted from that file's
+// byte offsets, which are 8-byte-word LP64 offsets and would be wrong here):
+//   kemId, kdfId, aeadId, mode, hPsk, pPskId, ulPskIdLen, pInfo, ulInfoLen,
+//   hSenderStaticKey, pSenderPk, ulSenderPkLen, pBaseNonce, ulBaseNonceLen,
+//   pExporterKey, pEphemeralSeed, ulEphemeralSeedLen.
+// Every field is CK_ULONG or a pointer — no CK_BBOOL in the struct to break
+// word alignment — so on this wasm32 ABI (4-byte CK_ULONG/pointer, per
+// buildMech's own CK_MECHANISM layout above) each field is one 4-byte word
+// at offset = field_index * 4; the struct is 17 * 4 = 68 bytes.
+const HPKE_PARAMS_SIZE = 68
+
+export interface HpkeMechParams {
+  kemId: number
+  kdfId: number
+  aeadId: number
+  mode: number
+  /** PSK/AuthPSK modes: handle to a key whose CKA_VALUE is the PSK. */
+  hPsk?: number
+  pskId?: Uint8Array
+  info?: Uint8Array
+  /** Auth/AuthPSK, Encap (sender) side only: handle to the sender's static CKK_HPKE_KEM private key. */
+  hSenderStaticKey?: number
+  /** Auth/AuthPSK, Decap (recipient) side only: the sender's static public key's raw CKA_VALUE bytes. */
+  senderPk?: Uint8Array
+  /** Classical KEM ids only; forces the ephemeral keypair for byte-exact RFC 9180 Appendix A reproduction. Test-only — never use for real traffic. */
+  ephemeralSeed?: Uint8Array
+}
+
+export interface HpkeResult {
+  /** The AEAD key handle, or (aeadId === CKA_HPKE_AEAD_EXPORT_ONLY) the exporter-secret handle — mirrors the engine's own key_handle.or(exporter_handle) fallback. */
+  keyHandle: number | null
+  baseNonce: Uint8Array | null
+  /** Only set when a separate `exporterTemplate` was supplied to this call. */
+  exporterHandle: number | null
+}
+
+/** Build CK_HPKE_PARAMS in WASM heap for one Encap/Decap call. `baseNoncePtr`
+ * is caller-owned (12 bytes, always allocated regardless of aeadId — the
+ * engine simply never writes to it in EXPORT_ONLY mode). Returns everything
+ * that must be freed after the call, plus the exporter's own out-pointer/
+ * template (if `exporterTemplate` was given) for the caller to read before
+ * freeing. */
+function buildHpkeParams(
+  M: SoftHSMModule,
+  p: HpkeMechParams,
+  baseNoncePtr: number,
+  exporterTemplate?: AttrDef[]
+): {
+  ptr: number
+  free: () => void
+  exporterHPtr: number | null
+  exporterTpl: { ptr: number; auxPtrs: number[] } | null
+} {
+  const ptr = M._malloc(HPKE_PARAMS_SIZE)
+  M.HEAPU8.fill(0, ptr, ptr + HPKE_PARAMS_SIZE)
+
+  const pskIdPtr = p.pskId && p.pskId.length > 0 ? writeBytes(M, p.pskId) : 0
+  const infoPtr = p.info && p.info.length > 0 ? writeBytes(M, p.info) : 0
+  const senderPkPtr = p.senderPk && p.senderPk.length > 0 ? writeBytes(M, p.senderPk) : 0
+  const seedPtr = p.ephemeralSeed && p.ephemeralSeed.length > 0 ? writeBytes(M, p.ephemeralSeed) : 0
+
+  let exporterHPtr: number | null = null
+  let exporterTpl: { ptr: number; auxPtrs: number[] } | null = null
+  let derivedKeyPtr = 0
+  if (exporterTemplate) {
+    exporterTpl = buildTemplate(M, exporterTemplate)
+    exporterHPtr = allocUlong(M)
+    writeUlong(M, exporterHPtr, 0)
+    // CK_DERIVED_KEY: pTemplate(4B) + ulAttributeCount(4B) + phKey(4B) = 12 bytes.
+    derivedKeyPtr = M._malloc(12)
+    M.setValue(derivedKeyPtr, exporterTpl.ptr, 'i32')
+    M.setValue(derivedKeyPtr + 4, exporterTemplate.length, 'i32')
+    M.setValue(derivedKeyPtr + 8, exporterHPtr, 'i32')
+  }
+
+  M.setValue(ptr + 0, p.kemId, 'i32')
+  M.setValue(ptr + 4, p.kdfId, 'i32')
+  M.setValue(ptr + 8, p.aeadId, 'i32')
+  M.setValue(ptr + 12, p.mode, 'i32')
+  M.setValue(ptr + 16, p.hPsk ?? 0, 'i32')
+  M.setValue(ptr + 20, pskIdPtr, 'i32')
+  M.setValue(ptr + 24, p.pskId ? p.pskId.length : 0, 'i32')
+  M.setValue(ptr + 28, infoPtr, 'i32')
+  M.setValue(ptr + 32, p.info ? p.info.length : 0, 'i32')
+  M.setValue(ptr + 36, p.hSenderStaticKey ?? 0, 'i32')
+  M.setValue(ptr + 40, senderPkPtr, 'i32')
+  M.setValue(ptr + 44, p.senderPk ? p.senderPk.length : 0, 'i32')
+  M.setValue(ptr + 48, baseNoncePtr, 'i32')
+  M.setValue(ptr + 52, 12, 'i32')
+  M.setValue(ptr + 56, derivedKeyPtr, 'i32')
+  M.setValue(ptr + 60, seedPtr, 'i32')
+  M.setValue(ptr + 64, p.ephemeralSeed ? p.ephemeralSeed.length : 0, 'i32')
+
+  const free = () => {
+    M._free(ptr)
+    if (pskIdPtr) M._free(pskIdPtr)
+    if (infoPtr) M._free(infoPtr)
+    if (senderPkPtr) M._free(senderPkPtr)
+    if (seedPtr) M._free(seedPtr)
+    if (derivedKeyPtr) M._free(derivedKeyPtr)
+    // exporterHPtr/exporterTpl are freed by the CALLER, after reading the
+    // exporter handle out of exporterHPtr — see hsm_hpkeEncapsulate/Decapsulate.
+  }
+
+  return { ptr, free, exporterHPtr, exporterTpl }
+}
+
+/** CKM_HPKE_KEM_KEY_PAIR_GEN → {pubHandle, privHandle}. `kemId` selects a
+ * classical or hybrid shape (CKP_HPKE_KEM_* above); the engine reads only
+ * CKA_PARAMETER_SET from the public template in this Phase-1 implementation
+ * — no other caller template attribute is threaded through yet. */
+export const hsm_generateHpkeKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  kemId: number
+): { pubHandle: number; privHandle: number } => {
+  const pubTpl = buildTemplate(M, [{ type: CKA_PARAMETER_SET, ulongVal: kemId }])
+  const prvTpl = buildTemplate(M, [{ type: CKA_PARAMETER_SET, ulongVal: kemId }])
+  const mech = buildMech(M, CKM_HPKE_KEM_KEY_PAIR_GEN)
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 1, prvTpl.ptr, 1, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(CKM_HPKE_KEM_KEY_PAIR_GEN)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, 1)
+    freeTemplate(M, prvTpl, 1)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** CKM_HPKE C_EncapsulateKey — sender role. Query-then-fill for `enc`
+ * (the standard two-call convention every other KEM mechanism in this
+ * binding already uses), returning it alongside the key/base_nonce/exporter
+ * outputs in one call — this is the "short sequence" alternative to
+ * composing Encap+KeySchedule from ~5 separate PKCS#11 v3.2 mechanism calls
+ * (see hpkeService.ts's hybridEncap/keyScheduleSecure). */
+export const hsm_hpkeEncapsulate = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  p: HpkeMechParams,
+  exporterTemplate?: AttrDef[]
+): { enc: Uint8Array } & HpkeResult => {
+  const baseNoncePtr = M._malloc(12)
+  M.HEAPU8.fill(0, baseNoncePtr, baseNoncePtr + 12)
+  const built = buildHpkeParams(M, p, baseNoncePtr, exporterTemplate)
+  const mech = buildMech(M, CKM_HPKE, built.ptr, HPKE_PARAMS_SIZE)
+  const ctLenPtr = allocUlong(M)
+  const keyHPtr = allocUlong(M)
+  let ctPtr = 0
+  try {
+    checkRV(
+      M._C_EncapsulateKey(hSession, mech, pubHandle, 0, 0, 0, ctLenPtr, keyHPtr),
+      'C_EncapsulateKey(CKM_HPKE, size)'
+    )
+    const ctLen = readUlong(M, ctLenPtr)
+    ctPtr = M._malloc(ctLen || 1)
+    writeUlong(M, ctLenPtr, ctLen)
+    checkRV(
+      M._C_EncapsulateKey(hSession, mech, pubHandle, 0, 0, ctPtr, ctLenPtr, keyHPtr),
+      'C_EncapsulateKey(CKM_HPKE)'
+    )
+    const enc = M.HEAPU8.slice(ctPtr, ctPtr + readUlong(M, ctLenPtr))
+    const keyHandle = readUlong(M, keyHPtr) || null
+    const exporterHandle = built.exporterHPtr ? readUlong(M, built.exporterHPtr) || null : null
+    const baseNonce =
+      p.aeadId === CKA_HPKE_AEAD_EXPORT_ONLY
+        ? null
+        : M.HEAPU8.slice(baseNoncePtr, baseNoncePtr + 12)
+    return { enc, keyHandle, baseNonce, exporterHandle }
+  } finally {
+    M._free(mech)
+    built.free()
+    if (built.exporterTpl) freeTemplate(M, built.exporterTpl, exporterTemplate!.length)
+    if (built.exporterHPtr) M._free(built.exporterHPtr)
+    M._free(ctLenPtr)
+    M._free(keyHPtr)
+    M._free(baseNoncePtr)
+    if (ctPtr) M._free(ctPtr)
+  }
+}
+
+/** CKM_HPKE C_DecapsulateKey — recipient role. Mirrors hsm_hpkeEncapsulate;
+ * `enc` is the sender's KEM output (an input here, not query-then-fill). */
+export const hsm_hpkeDecapsulate = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  enc: Uint8Array,
+  p: HpkeMechParams,
+  exporterTemplate?: AttrDef[]
+): HpkeResult => {
+  const baseNoncePtr = M._malloc(12)
+  M.HEAPU8.fill(0, baseNoncePtr, baseNoncePtr + 12)
+  const encPtr = writeBytes(M, enc)
+  const built = buildHpkeParams(M, p, baseNoncePtr, exporterTemplate)
+  const mech = buildMech(M, CKM_HPKE, built.ptr, HPKE_PARAMS_SIZE)
+  const keyHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DecapsulateKey(hSession, mech, privHandle, 0, 0, encPtr, enc.length, keyHPtr),
+      'C_DecapsulateKey(CKM_HPKE)'
+    )
+    const keyHandle = readUlong(M, keyHPtr) || null
+    const exporterHandle = built.exporterHPtr ? readUlong(M, built.exporterHPtr) || null : null
+    const baseNonce =
+      p.aeadId === CKA_HPKE_AEAD_EXPORT_ONLY
+        ? null
+        : M.HEAPU8.slice(baseNoncePtr, baseNoncePtr + 12)
+    return { keyHandle, baseNonce, exporterHandle }
+  } finally {
+    M._free(mech)
+    built.free()
+    if (built.exporterTpl) freeTemplate(M, built.exporterTpl, exporterTemplate!.length)
+    if (built.exporterHPtr) M._free(built.exporterHPtr)
+    M._free(keyHPtr)
+    M._free(baseNoncePtr)
+    M._free(encPtr)
   }
 }
 

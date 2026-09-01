@@ -34,9 +34,11 @@ import {
   CheckCircle2,
   XCircle,
   MinusCircle,
+  Code2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { getCodepointTable, type CodepointTable } from '@/wasm/kmip/ttlv/codepointTable'
 import { runCorpusTest, type TestResult, type TestStatus } from '@/wasm/kmip/corpus/runner'
 import { CHAINED_TEST_GROUPS } from '@/wasm/kmip/corpus/classify'
@@ -102,6 +104,13 @@ export function CorpusReplayView() {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
   const [expandedTests, setExpandedTests] = useState<Set<string>>(new Set())
   const nextSlot = useRef(SLOT_BASE)
+  // Code mode: which test's decoded request script is shown. Selecting a
+  // test here (or in Builder) runs it if it hasn't been already — the
+  // request tree only exists as part of a real TestResult (runCorpusTest
+  // decodes both request and response together; there's no decode-only
+  // path, and there doesn't need to be one — see runner.ts's TestResult.pairs).
+  const [viewMode, setViewMode] = useState<'builder' | 'code'>('builder')
+  const [selectedTest, setSelectedTest] = useState<string | null>(null)
 
   useEffect(() => {
     let alive = true
@@ -129,6 +138,12 @@ export function CorpusReplayView() {
       list.push(t)
       m.set(t.category, list)
     }
+    return m
+  }, [manifest])
+
+  const entryByName = useMemo(() => {
+    const m = new Map<string, ManifestEntry>()
+    for (const t of manifest?.tests ?? []) m.set(t.name, t)
     return m
   }, [manifest])
 
@@ -165,6 +180,15 @@ export function CorpusReplayView() {
         xml: await fetchXml({ ...entry, name, file: dir + name }),
       }))
     )
+  }
+
+  /** Code mode's picker: select a test's script, running it first if it
+   * hasn't been (the request tree is only ever produced as a byproduct of
+   * a real run — see the `selectedTest` state's own comment). Re-selecting
+   * an already-run test is instant, no re-run. */
+  async function selectForCode(entry: ManifestEntry) {
+    setSelectedTest(entry.name)
+    if (!results[entry.name]) await runOne(entry)
   }
 
   async function runOne(entry: ManifestEntry) {
@@ -268,102 +292,205 @@ export function CorpusReplayView() {
         </p>
       )}
 
-      <div className="space-y-3">
-        {Array.from(byCategory.entries()).map(([cat, entries]) => {
-          const isCollapsed = collapsed.has(cat)
-          return (
-            <section key={cat} className="rounded-xl border border-border bg-card">
-              <Button
-                variant="ghost"
-                onClick={() => toggleCategory(cat)}
-                className="flex h-auto w-full items-center gap-2 rounded-xl px-3 py-2 text-left"
-              >
-                {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-                <span className="text-xs font-bold uppercase tracking-wide text-foreground">
-                  {cat}
-                </span>
-                <span className="text-[10.5px] text-muted-foreground">({entries.length})</span>
-              </Button>
-              {!isCollapsed && (
-                <ul className="space-y-1.5 px-3 pb-3">
-                  {entries.map((entry) => {
-                    const result = results[entry.name]
-                    const open = expandedTests.has(entry.name)
-                    return (
-                      <li
-                        key={entry.name}
-                        className="rounded-lg border border-border bg-card/60 px-3 py-2"
-                      >
-                        <div className="flex flex-wrap items-center gap-2">
-                          {result && result.pairs.length > 0 && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                setExpandedTests((prev) => {
-                                  const next = new Set(prev)
-                                  if (next.has(entry.name)) next.delete(entry.name)
-                                  else next.add(entry.name)
-                                  return next
-                                })
-                              }
-                              className="h-auto p-0.5"
-                            >
-                              {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-                            </Button>
-                          )}
-                          <span className="font-mono text-xs text-foreground">{entry.name}</span>
-                          {result && (
-                            <>
-                              <StatusBadge status={result.status} />
-                              {result.detail && (
-                                <span
-                                  className="max-w-md truncate text-[10.5px] text-muted-foreground"
-                                  title={result.detail}
+      <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'builder' | 'code')}>
+        <TabsList data-tour="corpus-view-tabs" className="mb-3">
+          <TabsTrigger value="builder">Builder</TabsTrigger>
+          <TabsTrigger value="code">Code</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="builder" className="mt-0">
+          <div className="space-y-3">
+            {Array.from(byCategory.entries()).map(([cat, entries]) => {
+              const isCollapsed = collapsed.has(cat)
+              return (
+                <section key={cat} className="rounded-xl border border-border bg-card">
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleCategory(cat)}
+                    className="flex h-auto w-full items-center gap-2 rounded-xl px-3 py-2 text-left"
+                  >
+                    {isCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+                    <span className="text-xs font-bold uppercase tracking-wide text-foreground">
+                      {cat}
+                    </span>
+                    <span className="text-[10.5px] text-muted-foreground">({entries.length})</span>
+                  </Button>
+                  {!isCollapsed && (
+                    <ul className="space-y-1.5 px-3 pb-3">
+                      {entries.map((entry) => {
+                        const result = results[entry.name]
+                        const open = expandedTests.has(entry.name)
+                        return (
+                          <li
+                            key={entry.name}
+                            className="rounded-lg border border-border bg-card/60 px-3 py-2"
+                          >
+                            <div className="flex flex-wrap items-center gap-2">
+                              {result && result.pairs.length > 0 && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    setExpandedTests((prev) => {
+                                      const next = new Set(prev)
+                                      if (next.has(entry.name)) next.delete(entry.name)
+                                      else next.add(entry.name)
+                                      return next
+                                    })
+                                  }
+                                  className="h-auto p-0.5"
                                 >
-                                  {result.detail}
-                                </span>
+                                  {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                                </Button>
                               )}
-                            </>
-                          )}
+                              <span className="font-mono text-xs text-foreground">
+                                {entry.name}
+                              </span>
+                              {result && (
+                                <>
+                                  <StatusBadge status={result.status} />
+                                  {result.detail && (
+                                    <span
+                                      className="max-w-md truncate text-[10.5px] text-muted-foreground"
+                                      title={result.detail}
+                                    >
+                                      {result.detail}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                disabled={!table || !!running}
+                                onClick={() => runOne(entry)}
+                                className="ml-auto h-7 gap-1.5 px-2.5 text-[11px]"
+                              >
+                                {running === entry.name ? (
+                                  <Loader2 size={12} className="animate-spin" />
+                                ) : (
+                                  <Play size={12} />
+                                )}{' '}
+                                Run
+                              </Button>
+                            </div>
+                            {open && result && result.pairs.length > 0 && (
+                              <div className="mt-2 space-y-2">
+                                {result.pairs.map((pair, i) => (
+                                  <div key={i}>
+                                    {result.pairs.length > 1 && (
+                                      <p className="mb-1 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                                        Pair {i + 1} of {result.pairs.length}
+                                      </p>
+                                    )}
+                                    <WireTreeView root={pair.responseTree} annotated />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  )}
+                </section>
+              )
+            })}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="code" className="mt-0">
+          <div className="grid gap-3 lg:grid-cols-[280px_1fr]">
+            <div className="space-y-3 lg:max-h-[70vh] lg:overflow-y-auto">
+              {Array.from(byCategory.entries()).map(([cat, entries]) => (
+                <section key={cat} className="rounded-xl border border-border bg-card">
+                  <div className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-foreground">
+                    {cat}{' '}
+                    <span className="text-[10.5px] text-muted-foreground">({entries.length})</span>
+                  </div>
+                  <ul className="space-y-1 px-2 pb-2">
+                    {entries.map((entry) => {
+                      const result = results[entry.name]
+                      const active = selectedTest === entry.name
+                      return (
+                        <li key={entry.name}>
                           <Button
+                            variant={active ? 'secondary' : 'ghost'}
                             size="sm"
-                            variant="secondary"
-                            disabled={!table || !!running}
-                            onClick={() => runOne(entry)}
-                            className="ml-auto h-7 gap-1.5 px-2.5 text-[11px]"
+                            disabled={!table}
+                            onClick={() => void selectForCode(entry)}
+                            className="h-auto w-full justify-start gap-1.5 px-2 py-1.5 text-left text-[11px] font-mono"
                           >
                             {running === entry.name ? (
-                              <Loader2 size={12} className="animate-spin" />
+                              <Loader2 size={11} className="shrink-0 animate-spin" />
+                            ) : result ? (
+                              <StatusBadge status={result.status} />
                             ) : (
-                              <Play size={12} />
-                            )}{' '}
-                            Run
+                              <Code2 size={11} className="shrink-0 text-muted-foreground" />
+                            )}
+                            <span className="truncate">{entry.name}</span>
                           </Button>
-                        </div>
-                        {open && result && result.pairs.length > 0 && (
-                          <div className="mt-2 space-y-2">
-                            {result.pairs.map((pair, i) => (
-                              <div key={i}>
-                                {result.pairs.length > 1 && (
-                                  <p className="mb-1 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
-                                    Pair {i + 1} of {result.pairs.length}
-                                  </p>
-                                )}
-                                <WireTreeView root={pair.responseTree} annotated />
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
+              ))}
+            </div>
+
+            <div className="min-w-0">
+              {!selectedTest && (
+                <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
+                  Pick a test on the left to see the decoded KMIP request it actually sends — the
+                  real script this corpus replays, not just a pass/fail verdict.
+                </p>
               )}
-            </section>
-          )
-        })}
-      </div>
+              {selectedTest &&
+                (() => {
+                  const entry = entryByName.get(selectedTest)
+                  const result = results[selectedTest]
+                  return (
+                    <div>
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs text-foreground">{selectedTest}</span>
+                        {entry && (
+                          <span className="text-[10.5px] uppercase tracking-wide text-muted-foreground">
+                            {entry.category} · {entry.tier}
+                          </span>
+                        )}
+                        {result && <StatusBadge status={result.status} />}
+                      </div>
+                      {running === selectedTest && (
+                        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Loader2 size={13} className="animate-spin" /> Replaying…
+                        </p>
+                      )}
+                      {result && result.pairs.length === 0 && running !== selectedTest && (
+                        <p className="text-xs text-muted-foreground">
+                          {result.detail || 'No request was decoded for this test.'}
+                        </p>
+                      )}
+                      {result && result.pairs.length > 0 && (
+                        <div className="space-y-3">
+                          {result.pairs.map((pair, i) => (
+                            <div key={i}>
+                              {result.pairs.length > 1 && (
+                                <p className="mb-1 text-[9.5px] font-bold uppercase tracking-wide text-muted-foreground">
+                                  Request {i + 1} of {result.pairs.length}
+                                </p>
+                              )}
+                              <WireTreeView root={pair.requestTree} annotated />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -14,7 +14,10 @@ import { test, expect } from '@playwright/test'
 test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
   for (const engine of ['cpp', 'rust', 'dual'] as const) {
     test(`${engine} engine — every claimed Tier A/B row is conformant`, async ({ page }) => {
-      await page.goto(`/playground/hsm?tab=conformance&engine=${engine}`)
+      // Conformance moved from its own top-level tab into a Developer
+      // sub-tab (2026-08-31) — dtab=conformance selects it, same as
+      // ?tab=conformance used to.
+      await page.goto(`/playground/hsm?tab=developer&dtab=conformance&engine=${engine}`)
 
       const runButton = page.getByTestId('pkcs11-conformance-run-button')
       await expect(runButton).toBeVisible({ timeout: 15000 })
@@ -56,6 +59,105 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
       // publish a CKO_PROFILE for must have a real, executed Tier A/B row.
       const notClaimedCount = await rows.locator('[data-status="not-claimed"]').count()
       expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
+
+      // Mechanism Coverage (2026-08-31): deterministic PQC key generation
+      // from CKA_SEED — real mechanisms neither Tier A/B nor the ACVP tab
+      // exercises anywhere. This is the first thing to catch a regression
+      // if the not-claimed assertion above ever loosens (e.g. if a future
+      // engine build stops advertising these mechanisms, this loop fails
+      // by name instead of silently vanishing into "some row somewhere").
+      // Hybrid KEM building blocks (2026-08-31): the two real PKCS#11-layer
+      // mechanisms a hybrid PQC/classical construction actually depends on
+      // (CKM_ECDH1_DERIVE-as-KEM, CKM_CONCATENATE_BASE_AND_KEY) — same gap
+      // category as the PQC seed probes above, checked the same way.
+      // Classical Asymmetric (2026-08-31): raw PKCS#1v1.5, unpadded RSA,
+      // combined hash-then-sign PKCS#1v1.5, raw pre-hashed ECDSA, and
+      // cofactor ECDH — none exercised by ACVP. 'CKM_ECDSA (raw' (not bare
+      // 'CKM_ECDSA') deliberately avoids matching CKM_ECDSA_SHA256/384/512
+      // if those ever appear in row text elsewhere.
+      for (const mech of [
+        'CKM_ML_DSA_KEY_PAIR_GEN',
+        'CKM_ML_KEM_KEY_PAIR_GEN',
+        'CKM_SLH_DSA_KEY_PAIR_GEN',
+        'CKM_ECDH1_DERIVE',
+        'CKM_CONCATENATE_BASE_AND_KEY',
+        'CKM_RSA_PKCS',
+        'CKM_RSA_X_509',
+        'CKM_SHA256_RSA_PKCS',
+        'CKM_ECDSA (raw',
+        'CKM_ECDH1_COFACTOR_DERIVE',
+        // Symmetric/AEAD (2026-08-31): a representative slice (PKCS#7-padded
+        // CBC, legacy arbitrary-length AES key wrap) — not exhaustive, see
+        // mechanismCoverageProbes.ts's own header comment for what's
+        // deliberately still open, including why CKM_AES_CMAC,
+        // CKM_SP800_108_DOUBLE_PIPELINE_KDF, and CKM_SHA224 were dropped
+        // rather than kept or substituted: a real vendored-WASM-bundle
+        // staleness issue, a genuine Rust-engine capability gap, and (after
+        // checking CKM_SHA_1 as a replacement) no "extra" digest both
+        // engines currently advertise beyond what ACVP already covers.
+        'CKM_AES_CBC_PAD',
+        'CKM_AES_KEY_WRAP_PAD',
+      ]) {
+        const mechRows = rows.filter({ hasText: mech })
+        const mechRowCount = await mechRows.count()
+        expect(mechRowCount, `expected a Mechanism Coverage row for ${mech}`).toBeGreaterThan(0)
+        for (let i = 0; i < mechRowCount; i++) {
+          const row = mechRows.nth(i)
+          const status = await row.getAttribute('data-status')
+          const detail = await row.textContent()
+          expect(status, `${mech} row: ${detail}`).toBe('pass')
+        }
+      }
+    })
+  }
+
+  // The three tests above all navigate straight to ?dtab=conformance, so
+  // Pipeline (the Developer tab's other sub-tab) is never even mounted —
+  // they can't catch state left behind by a real user who visits Pipeline
+  // first. Since all three Developer sub-tabs are TabsContent panels that
+  // unmount when inactive (2026-08-31 merge), the real risk is Pipeline's
+  // OWN internal Builder/Code view state (or its Monaco editor instance)
+  // somehow interfering with Conformance once the user switches over.
+  for (const pipelineView of ['Builder', 'Code'] as const) {
+    test(`conformance still runs clean after visiting Pipeline in ${pipelineView} view first`, async ({
+      page,
+    }) => {
+      await page.goto('/playground/hsm?tab=developer')
+      await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+      if (pipelineView === 'Code') {
+        await page.getByRole('tab', { name: 'Code' }).click()
+        await expect(page.locator('.monaco-editor .view-lines').first()).toBeVisible({
+          timeout: 10000,
+        })
+      }
+
+      await page.getByRole('tab', { name: 'Conformance' }).click()
+      const runButton = page.getByTestId('pkcs11-conformance-run-button')
+      await expect(runButton).toBeVisible({ timeout: 15000 })
+      await runButton.click()
+
+      const summary = page.getByTestId('pkcs11-conformance-summary')
+      await expect(summary).toBeVisible({ timeout: 120000 })
+      const summaryText = (await summary.textContent())!.replace(/\s+/g, ' ').trim()
+      expect(summaryText, summaryText).toMatch(/^\d+\/\d+ rows conformant$/)
+      const notClaimedCount = await page
+        .getByTestId('pkcs11-conformance-row')
+        .locator('[data-status="not-claimed"]')
+        .count()
+      expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
+
+      // Switching back to Pipeline must remount it clean (fresh default
+      // template, Builder view) — not crash, and not get stuck showing
+      // Conformance's own DOM.
+      await page.getByRole('tab', { name: 'Pipeline' }).click()
+      await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
+        timeout: 10000,
+      })
+      await expect(page.getByRole('tab', { name: 'Builder · 5 steps' })).toHaveAttribute(
+        'aria-selected',
+        'true'
+      )
     })
   }
 })

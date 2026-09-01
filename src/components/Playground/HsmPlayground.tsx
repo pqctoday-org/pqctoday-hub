@@ -12,13 +12,11 @@ import {
   FileSignature,
   ArrowLeftRight,
   Filter,
-  ShieldCheck,
   AlertCircle,
   Construction,
   FlaskConical,
   Code2,
   Route,
-  ListChecks,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -31,8 +29,6 @@ import { HsmKdfPanel } from './hsm/HsmKdfPanel'
 import { HsmKemPanel } from './hsm/HsmKemPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
-import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
-import { Pkcs11ConformanceRunner } from './hsm/Pkcs11ConformanceRunner'
 import { HsmTestMethodologyModal } from './hsm/HsmTestMethodologyModal'
 import { TokenSetupPanel } from './components/TokenSetupPanel'
 import { HsmKeyTable } from './keystore/HsmKeyTable'
@@ -51,7 +47,7 @@ import {
   hsm_generateECKeyPair,
   hsm_generateAESKey,
 } from '../../wasm/softhsm'
-import { PkcsPipelineBuilder } from './dev/pipeline/PkcsPipelineBuilder'
+import { DeveloperTab, type DeveloperSubTab } from './dev/DeveloperTab'
 import {
   useLessonsTour,
   LessonsHub,
@@ -71,10 +67,10 @@ type HsmTab =
   | 'key_agree'
   | 'key_derive'
   | 'mechanisms'
-  | 'acvp'
-  | 'conformance'
   | 'logs'
   | 'developer'
+
+const DEFAULT_DEV_SUB_TAB: DeveloperSubTab = 'pipeline'
 
 /** First-time visitors land on the guided Learn tab (matching the KMIP
  * playground's own Learn-first default), not the bare workbench. */
@@ -96,6 +92,7 @@ export const HsmPlayground = () => {
     clearHsmLog,
   } = useHsmContext()
   const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
+  const [devSubTab, setDevSubTab] = useState<DeveloperSubTab>(DEFAULT_DEV_SUB_TAB)
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
@@ -105,9 +102,20 @@ export const HsmPlayground = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Capture incoming URL params once at mount (before any effects modify the URL)
-  const initialTab = useRef(searchParams.get('tab') as HsmTab | null)
+  // Old `?tab=acvp` / `?tab=conformance` deep links (pre-2026-08-31 merge,
+  // when these were their own top-level tabs) now resolve to the Developer
+  // tab with the matching sub-tab, same as `?tab=developer&dtab=acvp` would.
+  const rawInitialTab = searchParams.get('tab')
+  const legacyDevSubTab =
+    rawInitialTab === 'acvp' || rawInitialTab === 'conformance'
+      ? (rawInitialTab as DeveloperSubTab)
+      : null
+  const initialTab = useRef((legacyDevSubTab ? 'developer' : rawInitialTab) as HsmTab | null)
   const initialEngine = useRef(searchParams.get('engine') as EngineMode | null)
   const initialAlgo = useRef(searchParams.get('algo') ?? undefined)
+  const initialDevSubTab = useRef(
+    (searchParams.get('dtab') as DeveloperSubTab | null) ?? legacyDevSubTab ?? DEFAULT_DEV_SUB_TAB
+  )
 
   // Guard to skip URL sync on the very first render (don't wipe incoming params)
   const urlSyncReady = useRef(false)
@@ -198,17 +206,23 @@ export const HsmPlayground = () => {
     const tab = initialTab.current
     const engine = initialEngine.current
     const algo = initialAlgo.current
+    const devSub = initialDevSubTab.current
     if (engine) setEngineMode(engine)
-    if (!tab || tab === DEFAULT_TAB) {
-      // No explicit tab, or it matches the default — nothing extra to do.
-    } else if (
-      (tab === 'acvp' || tab === 'conformance') &&
+    if (
+      tab === 'developer' &&
+      (devSub === 'acvp' || devSub === 'conformance') &&
       (role === 'curious' || role === 'executive')
     ) {
-      // ACVP and Conformance are engineering-workbench surfaces, gated for
-      // curious/executive (matches the ExecutiveRedirectBanner above) —
-      // don't honor a stale or hand-crafted ?tab= deep link for these
-      // personas.
+      // ACVP and Conformance are engineering-workbench sub-tabs, gated for
+      // curious/executive (matches the ExecutiveRedirectBanner above) — don't
+      // honor a stale or hand-crafted ?dtab= (or legacy ?tab=acvp/conformance)
+      // deep link for these personas. Falls through to DEFAULT_DEV_SUB_TAB
+      // via the state initializer, so `developer` itself still opens fine.
+    } else {
+      setDevSubTab(devSub)
+    }
+    if (!tab || tab === DEFAULT_TAB) {
+      // No explicit tab, or it matches the default — nothing extra to do.
     } else if (tab === 'keystore') {
       // Manual 3-step walkthrough tab, on purpose — switch to it without
       // eagerly auto-initing the engine in the background.
@@ -236,6 +250,9 @@ export const HsmPlayground = () => {
         const next = new URLSearchParams(prev)
         if (activeTab !== DEFAULT_TAB) next.set('tab', activeTab)
         else next.delete('tab')
+        if (activeTab === 'developer' && devSubTab !== DEFAULT_DEV_SUB_TAB)
+          next.set('dtab', devSubTab)
+        else next.delete('dtab')
         if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
         if (algoParam) next.set('algo', algoParam)
@@ -244,7 +261,7 @@ export const HsmPlayground = () => {
       },
       { replace: true }
     )
-  }, [activeTab, engineMode, algoParam, setSearchParams])
+  }, [activeTab, devSubTab, engineMode, algoParam, setSearchParams])
 
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -264,17 +281,19 @@ export const HsmPlayground = () => {
   }, [])
 
   // Safety net: if a persona switch lands a curious/executive user on the
-  // gated ACVP/Conformance tab mid-session (they were on it as another
-  // persona, then switched role), fall back to the default tab rather than
-  // leaving them on a surface whose tab button is now hidden.
+  // gated ACVP/Conformance sub-tab mid-session (they were on it as another
+  // persona, then switched role), fall back to the Pipeline sub-tab rather
+  // than leaving them on a surface whose tab button is now hidden. Unlike
+  // the pre-merge version, the Developer tab itself stays open — it's the
+  // Pipeline builder that's ungated, only the ACVP/Conformance sub-tabs are.
   useEffect(() => {
     if (
-      (activeTab === 'acvp' || activeTab === 'conformance') &&
+      (devSubTab === 'acvp' || devSubTab === 'conformance') &&
       (role === 'curious' || role === 'executive')
     ) {
-      setActiveTab(DEFAULT_TAB)
+      setDevSubTab(DEFAULT_DEV_SUB_TAB)
     }
-  }, [role, activeTab])
+  }, [role, devSubTab])
 
   useEffect(() => {
     const el = tabListRef.current
@@ -376,7 +395,14 @@ export const HsmPlayground = () => {
       ],
     },
   ]
-  const tour = useLessonsTour<DevPlane>(devLessons, (p) => handleTabChange(p))
+  const tour = useLessonsTour<DevPlane>(devLessons, (p) => {
+    handleTabChange(p)
+    // The tour's data-tour="pkcs-dev-*" selectors only exist while the
+    // Pipeline sub-tab is mounted (TabsContent unmounts inactive panels) —
+    // force back to it so starting this lesson from the ACVP/Conformance
+    // sub-tab doesn't leave every selector finding nothing.
+    setDevSubTab('pipeline')
+  })
 
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
@@ -622,27 +648,6 @@ export const HsmPlayground = () => {
               </span>
             </>
           )}
-          {role !== 'curious' &&
-            role !== 'executive' &&
-            tabBtn(
-              'acvp',
-              <>
-                <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />
-                <span className="text-xs ml-1">ACVP</span>
-              </>
-            )}
-          {role !== 'curious' &&
-            role !== 'executive' &&
-            tabBtn(
-              'conformance',
-              <>
-                <ListChecks size={16} className="shrink-0" aria-hidden="true" />
-                <span className="text-xs ml-1">
-                  <span className="sm:hidden">Conf.</span>
-                  <span className="hidden sm:inline">Conformance</span>
-                </span>
-              </>
-            )}
           {tabBtn(
             'logs',
             <>
@@ -709,12 +714,12 @@ export const HsmPlayground = () => {
           <HsmKdfPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
         )}
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
-        {activeTab === 'acvp' && <HsmAcvpTesting />}
-        {activeTab === 'conformance' && <Pkcs11ConformanceRunner />}
         {activeTab === 'logs' && (
           <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen={true} />
         )}
-        {activeTab === 'developer' && <PkcsPipelineBuilder />}
+        {activeTab === 'developer' && (
+          <DeveloperTab activeSubTab={devSubTab} onSubTabChange={setDevSubTab} />
+        )}
       </div>
 
       {error && (
