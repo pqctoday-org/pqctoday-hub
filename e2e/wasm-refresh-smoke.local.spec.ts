@@ -58,7 +58,12 @@ test('KMIP3.0 Command Lab + Policy plane render cleanly on the refreshed bundle'
   await subTabs.getByRole('tab', { name: 'Commands' }).click()
   await expect(page.getByText(/Register/).first()).toBeVisible({ timeout: 10000 })
 
-  await subTabs.getByRole('tab', { name: 'Corpus Replay' }).click()
+  // Corpus Replay is nested inside the Dev sub-tab (2026-08-31 restructure —
+  // see e2e/REMEDIATION-PLAN-KMIP-DEV-TAB-2026-08-31.md), not a direct
+  // child of kmip3-subtabs any more.
+  await subTabs.getByRole('tab', { name: 'Dev' }).click()
+  const devSubTabs = page.locator('[data-tour="kmip-dev-subtabs"]')
+  await devSubTabs.getByRole('tab', { name: 'Corpus Replay' }).click()
   await page.waitForTimeout(500)
 
   const seriousErrors = consoleErrors.filter(
