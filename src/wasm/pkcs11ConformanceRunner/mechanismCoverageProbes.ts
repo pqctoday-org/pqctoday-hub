@@ -28,6 +28,11 @@ import {
   hsm_extractECPoint,
   hsm_ecdhCofactorDerive,
   hsm_getMechanismInfo,
+  hsm_generateAESKey,
+  hsm_aesEncrypt,
+  hsm_aesDecrypt,
+  hsm_wrapKeyMech,
+  hsm_unwrapKeyMech,
   dsaParamSet,
   kemParamSet,
   CKA_CLASS,
@@ -68,6 +73,8 @@ import {
   CKM_SHA256_RSA_PKCS,
   CKM_ECDSA,
   CKM_SHA256,
+  CKM_AES_CBC_PAD,
+  CKM_AES_KEY_WRAP_PAD,
   CKP_SLH_DSA_SHA2_128S,
 } from '../softhsm'
 
@@ -83,7 +90,7 @@ export interface MechanismProbe {
   id: string
   mechanism: number
   mechanismName: string
-  family: 'PQC' | 'Hybrid KEM' | 'Classical Asymmetric' | 'Symmetric/AEAD' | 'KDF' | 'Digest'
+  family: 'PQC' | 'Hybrid KEM' | 'Classical Asymmetric' | 'Symmetric/AEAD'
   /** Exact spec citation, e.g. "PKCS#11 v3.2 §6.67.4". */
   citation: string
   run: (ctx: MechanismProbeContext) => string
@@ -802,6 +809,111 @@ const ecdhCofactorProbe = (ctx: MechanismProbeContext): string => {
   return `CKM_ECDH1_COFACTOR_DERIVE two-party round-trip on real P-256 keys produced the same ${secretA.length}B shared secret`
 }
 
+// ── Symmetric/AEAD ───────────────────────────────────────────────────────
+//
+// A representative slice of this family's real gap, not an exhaustive list
+// of every named constant. Three mechanisms originally probed here —
+// CKM_AES_CMAC, CKM_SP800_108_DOUBLE_PIPELINE_KDF, CKM_SHA224 — were
+// dropped 2026-08-31 after real-engine verification:
+//   - CKM_SP800_108_DOUBLE_PIPELINE_KDF: both vendored WASM bundles
+//     (src/vendor/softhsm-wasm) predate the pqctoday-hsm commits that add
+//     its advertisement (rust @ 34796e04, cpp @ 35cc1562 — neither is an
+//     ancestor of the bundles' pinned hsmCommit in
+//     public/wasm/wasm-provenance.json). Re-add once the bundles are
+//     rebuilt from current hsm main.
+//   - CKM_AES_CMAC: the Rust engine has no standalone C_SignInit dispatch
+//     for it at all today (confirmed via rust/src/ffi.rs — it only appears
+//     inside the SP800-108 KDF PRF-selection helpers, never in
+//     C_SignInit's own switch) — a genuine capability gap, not staleness.
+//   - CKM_SHA224: genuinely cpp-only (confirmed via a full
+//     C_GetMechanismList dump from both engines) — Rust's digest coverage
+//     is SHA-256/384/512 + SHA3-256/512 + RIPEMD160 only, no SHA-224 and,
+//     it turns out, no SHA-1 either (checked as a replacement candidate
+//     and also found cpp-only) — there is currently no "extra" digest
+//     both engines advertise that ACVP doesn't already cover, so the
+//     Digest family has no probe here for now.
+// Replaced CMAC/double-pipeline with two mechanisms verified present in
+// BOTH engines' CURRENT C_GetMechanismList (no rebuild required) and NOT
+// exercised by the ACVP tab: PKCS#7-padded CBC (ACVP's own CKM_AES_CBC
+// coverage is deliberately raw/block-aligned only — see hsm_aesDecrypt's
+// 'cbc-raw' vs 'cbc' comment) and the legacy arbitrary-length AES key wrap
+// (ACVP only exercises CKM_AES_KEY_WRAP + CKM_AES_KEY_WRAP_KWP). Also
+// still open: AES-ECB/CCM/XTS/OFB/CFB, AES-GMAC, bare ChaCha20, RSA-AES
+// hybrid wrap, CKM_HKDF_DATA as a standalone entry (already exercised via
+// the HKDF TLS Token Tier B probes), CKM_SHAKE_256_KEY_DERIVATION — same
+// pattern, add on request.
+
+/** CKM_AES_CBC_PAD — PKCS#7-padded CBC (PKCS#11 v3.2 §6.10, RFC 5652
+ *  §6.3). ACVP's own CKM_AES_CBC coverage is deliberately the RAW,
+ *  block-aligned mechanism only (see hsm_aesDecrypt's own comment: "this is
+ *  the mechanism NIST's ACVP-AES-CBC KATs actually test"), so it never
+ *  exercises padding/unpadding at all. Real proof: round-trip a
+ *  deliberately non-block-aligned (13-byte) plaintext — padding logic is
+ *  invisible on block-aligned input, so an aligned plaintext wouldn't
+ *  actually test anything CKM_AES_CBC doesn't already cover. */
+const aesCbcPadProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const keyHandle = hsm_generateAESKey(M, hSession, 128, true, true, false, false, false, true)
+  const plaintext = new TextEncoder().encode('13 raw bytes') // deliberately not a multiple of 16
+  if (plaintext.length % 16 === 0) throw new Error('probe bug: plaintext must NOT be block-aligned')
+
+  const { ciphertext, iv } = hsm_aesEncrypt(M, hSession, keyHandle, plaintext, 'cbc')
+  const recovered = hsm_aesDecrypt(M, hSession, keyHandle, ciphertext, iv, 'cbc')
+  M._C_DestroyObject(hSession, keyHandle)
+
+  if (recovered.length !== plaintext.length)
+    throw new Error(
+      `recovered ${recovered.length}B, expected ${plaintext.length}B (PKCS#7 unpadding produced the wrong length)`
+    )
+  for (let i = 0; i < plaintext.length; i++) {
+    if (recovered[i] !== plaintext[i])
+      throw new Error(`recovered plaintext differs from the original at byte ${i}`)
+  }
+  return `CKM_AES_CBC_PAD encrypt/decrypt round-trip on a non-block-aligned ${plaintext.length}B plaintext (ciphertext=${ciphertext.length}B, correctly PKCS#7-padded to a 16B multiple) recovered the exact original`
+}
+
+/** CKM_AES_KEY_WRAP_PAD — the legacy arbitrary-length AES key wrap
+ *  (PKCS#11 v3.2 §6.10.3), distinct from the RFC 5649/SP800-38F
+ *  CKM_AES_KEY_WRAP_KWP mechanism ACVP already exercises and from the
+ *  block-aligned-only CKM_AES_KEY_WRAP. Real proof: wrap a deliberately
+ *  non-8-byte-aligned (20-byte) generic secret under a real AES-256 KEK,
+ *  unwrap it, and assert the recovered value is byte-identical. */
+const aesKeyWrapPadProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const kekHandle = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
+  const targetBytes = new Uint8Array(20) // deliberately not a multiple of 8
+  for (let i = 0; i < targetBytes.length; i++) targetBytes[i] = (i * 53 + 7) & 0xff
+  const targetHandle = hsm_importGenericSecret(M, hSession, targetBytes)
+
+  const wrapped = hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_PAD, kekHandle, targetHandle)
+  M._C_DestroyObject(hSession, targetHandle)
+
+  // CKA_VALUE_LEN deliberately NOT supplied: the C++ engine's C_UnwrapKey
+  // routes through the same CreateObject path as C_CreateObject, where
+  // CKA_VALUE_LEN is a MUST-NOT attribute (P11Attributes.h's P11AttrValueLen
+  // ck2 check — measured: CKR_ATTRIBUTE_READ_ONLY when supplied here). The
+  // engine derives the real length itself from the unwrapped, unpadded key
+  // data, same as hsm_importGenericSecret already does for C_CreateObject.
+  const unwrappedHandle = hsm_unwrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_PAD, kekHandle, wrapped, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+  ])
+  const recovered = hsm_extractKeyValue(M, hSession, unwrappedHandle)
+  M._C_DestroyObject(hSession, unwrappedHandle)
+  M._C_DestroyObject(hSession, kekHandle)
+
+  if (recovered.length !== targetBytes.length)
+    throw new Error(`recovered ${recovered.length}B, expected ${targetBytes.length}B`)
+  for (let i = 0; i < targetBytes.length; i++) {
+    if (recovered[i] !== targetBytes[i])
+      throw new Error(`unwrapped value differs from the original at byte ${i}`)
+  }
+  return `CKM_AES_KEY_WRAP_PAD wrap/unwrap round-trip on a non-8-byte-aligned ${targetBytes.length}B secret (wrapped=${wrapped.length}B) recovered the exact original`
+}
+
 export const MECHANISM_PROBES: MechanismProbe[] = [
   {
     id: 'pqc-seed-mldsa',
@@ -900,6 +1012,24 @@ export const MECHANISM_PROBES: MechanismProbe[] = [
     family: 'Classical Asymmetric',
     citation: 'PKCS#11 v3.2 §6.3.18 (cofactor ECDH — hsm_ecdhCofactorDerive had zero callers)',
     run: ecdhCofactorProbe,
+  },
+  {
+    id: 'symmetric-aes-cbc-pad',
+    mechanism: CKM_AES_CBC_PAD,
+    mechanismName: 'CKM_AES_CBC_PAD',
+    family: 'Symmetric/AEAD',
+    citation:
+      'PKCS#11 v3.2 §6.10 (PKCS#7-padded CBC — ACVP’s own CKM_AES_CBC coverage is raw/block-aligned only)',
+    run: aesCbcPadProbe,
+  },
+  {
+    id: 'symmetric-aes-key-wrap-pad',
+    mechanism: CKM_AES_KEY_WRAP_PAD,
+    mechanismName: 'CKM_AES_KEY_WRAP_PAD',
+    family: 'Symmetric/AEAD',
+    citation:
+      'PKCS#11 v3.2 §6.10.3 (legacy arbitrary-length AES key wrap — ACVP only exercises CKM_AES_KEY_WRAP + CKM_AES_KEY_WRAP_KWP)',
+    run: aesKeyWrapPadProbe,
   },
 ]
 

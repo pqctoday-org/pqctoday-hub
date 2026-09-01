@@ -2512,6 +2512,7 @@ export const CKM_AES_CBC_PAD = 0x1085
 export const CKM_AES_GCM = 0x1087
 export const CKM_AES_CMAC = 0x108a
 export const CKM_AES_KEY_WRAP = 0x2109
+export const CKM_AES_KEY_WRAP_PAD = 0x210a // legacy arbitrary-length AES wrap — distinct from RFC 5649/SP800-38F's CKM_AES_KEY_WRAP_KWP below; ACVP only tests KEY_WRAP + KEY_WRAP_KWP
 export const CKM_AES_KEY_WRAP_KWP = 0x210b // RFC 5649 / NIST SP 800-38F (pkcs11t.h: CKM_AES_KEY_WRAP_PAD=0x210a, CKM_AES_KEY_WRAP_KWP=0x210b)
 export const CKM_SHA256_HMAC = 0x251
 export const CKM_SHA384_HMAC = 0x261
@@ -2524,6 +2525,10 @@ export const CKM_SHA384_HMAC_GENERAL = 0x262
 export const CKM_SHA512_HMAC_GENERAL = 0x272
 export const CKM_SHA3_256_HMAC = 0x2b1
 export const CKM_SHA3_512_HMAC = 0x2d1
+// A still-defined legacy digest ACVP's own SHA-2/3-only coverage (256/384/512
+// + SHA3-256/512) doesn't exercise.
+export const CKM_SHA_1 = 0x220
+export const CKM_SHA224 = 0x255
 export const CKM_SHA256 = 0x250
 export const CKM_SHA384 = 0x260
 export const CKM_SHA512 = 0x270

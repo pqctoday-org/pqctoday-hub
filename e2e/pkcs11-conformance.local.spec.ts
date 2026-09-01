@@ -86,6 +86,17 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
         'CKM_SHA256_RSA_PKCS',
         'CKM_ECDSA (raw',
         'CKM_ECDH1_COFACTOR_DERIVE',
+        // Symmetric/AEAD (2026-08-31): a representative slice (PKCS#7-padded
+        // CBC, legacy arbitrary-length AES key wrap) — not exhaustive, see
+        // mechanismCoverageProbes.ts's own header comment for what's
+        // deliberately still open, including why CKM_AES_CMAC,
+        // CKM_SP800_108_DOUBLE_PIPELINE_KDF, and CKM_SHA224 were dropped
+        // rather than kept or substituted: a real vendored-WASM-bundle
+        // staleness issue, a genuine Rust-engine capability gap, and (after
+        // checking CKM_SHA_1 as a replacement) no "extra" digest both
+        // engines currently advertise beyond what ACVP already covers.
+        'CKM_AES_CBC_PAD',
+        'CKM_AES_KEY_WRAP_PAD',
       ]) {
         const mechRows = rows.filter({ hasText: mech })
         const mechRowCount = await mechRows.count()
