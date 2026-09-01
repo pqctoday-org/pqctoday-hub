@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { FC } from 'react'
-import { Key, Lock, Shield, Layers, Search, Fingerprint } from 'lucide-react'
+import { Key, Lock, Shield, Layers, Search, Fingerprint, LockKeyhole } from 'lucide-react'
 import { HybridCryptoIntroduction } from './components/HybridCryptoIntroduction'
 import { HybridCryptoExercises } from './components/HybridCryptoExercises'
 import { HybridKeyGeneration } from './workshop/HybridKeyGeneration'
@@ -9,6 +9,7 @@ import { HybridCASetup } from './workshop/HybridCASetup'
 import { HybridCertFormats } from './workshop/HybridCertFormats'
 import { HybridCertInspector } from './workshop/HybridCertInspector'
 import { HybridSignatures } from './workshop/HybridSignatures'
+import { HpkeWorkshop } from './workshop/HpkeWorkshop'
 import { ModuleShell, type WorkshopPart } from '@/components/PKILearning/common/ModuleShell'
 import manifest from './manifest'
 
@@ -49,6 +50,12 @@ const PARTS: WorkshopPart[] = [
     description: 'Concatenation, nesting, and Silithium — from no non-separability to SNS.',
     icon: Fingerprint,
   },
+  {
+    id: 'hpke',
+    title: 'Step 7: HPKE',
+    description: 'RFC 9180 Hybrid Public Key Encryption, composed from PKCS#11 v3.2 primitives.',
+    icon: LockKeyhole,
+  },
 ]
 
 export const HybridCryptoModule: FC = () => (
@@ -79,6 +86,8 @@ export const HybridCryptoModule: FC = () => (
           return <HybridCertInspector key={`inspect-${configKey}`} />
         case 5:
           return <HybridSignatures key={`hybrid-sigs-${configKey}`} />
+        case 6:
+          return <HpkeWorkshop key={`hpke-${configKey}`} />
         default:
           return null
       }

@@ -392,6 +392,13 @@ export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 
+// Concatenation + digest-key-derivation combiners (PKCS#11 v3.2 §6.43.3/§6.43.4, §6.29)
+// — chain a KEM/DH shared secret into a running key OBJECT without ever
+// exposing its bytes to the caller. Standard OASIS mechanisms, not vendor-defined.
+export const CKM_CONCATENATE_BASE_AND_KEY = 0x00000360 // §6.43.3 — base.value ‖ second-key.value
+export const CKM_CONCATENATE_BASE_AND_DATA = 0x00000362 // §6.43.4 — base.value ‖ caller-supplied bytes
+export const CKM_SHA3_256_KEY_DERIVATION = 0x00000397 // §6.29 — SHA3-256(base.value), output stays a key
+
 // NIST SP 800-108 KBKDF (PKCS#11 v3.2 §6.42)
 export const CKM_SP800_108_COUNTER_KDF = 0x000003ac // Counter mode KBKDF
 export const CKM_SP800_108_FEEDBACK_KDF = 0x000003ad // Feedback mode KBKDF

@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "EO-14144",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "HKMA-Fintech-Blueprint-2026",
+    "reason": "Probable landing page, not the document (81,742 bytes of markup, only 5,002 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]

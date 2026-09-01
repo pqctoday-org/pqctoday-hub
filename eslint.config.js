@@ -21,6 +21,7 @@ export default defineConfig([
       '**/*.min.js',
       'public/coi-serviceworker.js',
       'public/embed/sdk.js',
+      'public/pyRuntimeWatchdog.js',
     ],
   },
 

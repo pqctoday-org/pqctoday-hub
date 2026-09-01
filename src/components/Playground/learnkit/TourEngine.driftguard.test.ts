@@ -32,6 +32,13 @@ const read = (relPath: string) => readFileSync(resolve(ROOT, relPath), 'utf8')
 
 const KMIP_VIEW = 'src/components/Playground/kmip/KmipPlaygroundView.tsx'
 const KMIP_BUILDER = 'src/components/Playground/dev/kmipPipeline/KmipPipelineBuilder.tsx'
+// 2026-08-31 merge (feat/navigate-label-selection @ 417710f35): the KMIP Dev
+// plane folded into KMIP3.0's own Dev sub-tab, and the new wrapper —
+// KmipDevTab.tsx — introduced its own `data-tour="kmip-dev-subtabs"` anchor
+// on the Pipeline/Corpus Replay TabsList it now owns. Every OTHER kmip-dev-*
+// anchor still lives in KmipPipelineBuilder.tsx itself, so this lane now
+// spans both files rather than one.
+const KMIP_DEV_TAB = 'src/components/Playground/kmip/KmipDevTab.tsx'
 const PKCS_VIEW = 'src/components/Playground/HsmPlayground.tsx'
 const PKCS_BUILDER = 'src/components/Playground/dev/pipeline/PkcsPipelineBuilder.tsx'
 
@@ -74,7 +81,10 @@ describe('G5 guided-lesson anchor driftguard', () => {
   it('every KMIP Developer-tab lesson target exists in KmipPipelineBuilder', () => {
     const targets = extractTargets(read(KMIP_VIEW), 'kmip-dev-')
     expect(targets.size).toBeGreaterThan(0)
-    const anchors = extractAnchors(read(KMIP_BUILDER))
+    const anchors = new Set([
+      ...extractAnchors(read(KMIP_BUILDER)),
+      ...extractAnchors(read(KMIP_DEV_TAB)),
+    ])
     const missing = [...targets].filter((t) => !anchors.has(t))
     expect(missing).toEqual([])
   })

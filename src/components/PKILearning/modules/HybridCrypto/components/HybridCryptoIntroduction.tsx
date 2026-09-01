@@ -19,6 +19,7 @@ import {
   ExternalLink,
   ShieldCheck,
   ShieldAlert,
+  LockKeyhole,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -449,6 +450,186 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               The X-Wing KEM draft bakes this combiner in directly (single labeled extraction); TLS
               1.3 relies on its own <InlineTooltip term="HKDF">HKDF</InlineTooltip> key schedule for
               the same effect.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section: HPKE */}
+      <section data-section-id="hpke" className="glass-panel p-6 scroll-mt-20">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <LockKeyhole size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">
+            HPKE —{' '}
+            <InlineTooltip term="Hybrid Public Key Encryption">
+              Hybrid Public Key Encryption
+            </InlineTooltip>{' '}
+            (
+            <Link to="/library?ref=RFC%209180" className="text-primary underline">
+              RFC 9180
+            </Link>
+            )
+          </h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <h3 className="text-sm font-bold text-foreground mb-2">Definition</h3>
+            <p>
+              HPKE is a public-key encryption scheme built from three swappable components — a{' '}
+              <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip>, a KDF, and an
+              AEAD — combined through a standard KeySchedule so any KEM/KDF/AEAD triple, plus one of
+              four modes (Base, PSK, Auth, AuthPSK), yields an interoperable construction.
+              &quot;Hybrid&quot; in HPKE&apos;s own name refers to this KEM+KDF+AEAD composition,
+              not to a PQC+classical pairing — that is a separate, additional meaning layered on top
+              by draft-ietf-hpke-pq (below), and easy to conflate with the certificate-level hybrid
+              formats covered earlier on this page.
+            </p>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 border border-border">
+            <h3 className="text-sm font-bold text-foreground mb-2">Use cases</h3>
+            <p className="mb-2">
+              A KEM has no way for the sender to supply a chosen shared secret (unlike ECDH) — HPKE
+              always encapsulates a fresh, sender-unpredictable one. That property is why it shows
+              up wherever a protocol needs one-shot public-key encryption rather than an interactive
+              handshake:
+            </p>
+            <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
+              <li>
+                <strong>MLS</strong> uses HPKE for TreeKEM path updates (see the{' '}
+                <Link to="/learn/mls-group-messaging" className="text-primary underline">
+                  MLS Group Messaging
+                </Link>{' '}
+                module).
+              </li>
+              <li>
+                <strong>TLS 1.3 Encrypted Client Hello (ECH)</strong> uses it to encrypt the
+                ClientHello.
+              </li>
+              <li>
+                <strong>
+                  <Link
+                    to="/library?ref=draft-ietf-jose-hpke-encrypt"
+                    className="text-primary underline"
+                  >
+                    JOSE
+                  </Link>
+                </strong>{' '}
+                and{' '}
+                <strong>
+                  <Link to="/library?ref=draft-ietf-cose-hpke" className="text-primary underline">
+                    COSE
+                  </Link>
+                </strong>{' '}
+                extend it to wrap a JWT or CWT payload the same way.
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+            <h3 className="text-sm font-bold text-foreground mb-1">Variants</h3>
+            <p className="text-xs text-muted-foreground">
+              RFC 9180 itself registers only classical KEMs. The PQC angle comes from{' '}
+              <Link to="/library?ref=draft-ietf-hpke-pq" className="text-primary underline">
+                draft-ietf-hpke-pq
+              </Link>{' '}
+              — still an Internet-Draft, not yet an RFC — which registers pure ML-KEM and PQ/T
+              hybrid KEM IDs that plug into the same KeySchedule and Seal/Open.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left font-bold text-foreground py-1.5 pr-3">Dimension</th>
+                    <th className="text-left font-bold text-foreground py-1.5 pr-3">
+                      RFC 9180 (ratified)
+                    </th>
+                    <th className="text-left font-bold text-foreground py-1.5">
+                      draft-ietf-hpke-pq (draft)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 font-semibold text-foreground">KEM</td>
+                    <td className="py-1.5 pr-3 font-mono text-[11px]">
+                      DHKEM(P-256/P-384/P-521/X25519/X448)
+                    </td>
+                    <td className="py-1.5 font-mono text-[11px]">
+                      ML-KEM-512/768/1024; MLKEM768-X25519, MLKEM768-P256, MLKEM1024-P384
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 font-semibold text-foreground">KDF</td>
+                    <td className="py-1.5 pr-3 font-mono text-[11px]">HKDF-SHA256/384/512</td>
+                    <td className="py-1.5 font-mono text-[11px]">
+                      + SHAKE128/256, TurboSHAKE128/256
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1.5 pr-3 font-semibold text-foreground">AEAD</td>
+                    <td className="py-1.5 pr-3 font-mono text-[11px]">
+                      AES-128/256-GCM, ChaCha20-Poly1305, Export-only
+                    </td>
+                    <td className="py-1.5 font-mono text-[11px]">unchanged</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Independently of the KEM/KDF/AEAD choice, RFC 9180 defines four <strong>modes</strong>
+              : Base (unauthenticated), PSK (pre-shared key), Auth (sender authenticated via its own
+              KEM keypair), and AuthPSK (both).{' '}
+              <strong>Auth and AuthPSK stay classical-only</strong>: draft-ietf-hpke-pq&apos;s
+              ML-KEM and PQ/T hybrid KEM entries mark the Auth column &quot;no&quot;, since ML-KEM
+              has no AuthEncap/AuthDecap interface.
+            </p>
+            <p className="text-[10px] text-muted-foreground italic">
+              The MLKEM768-X25519/P256 and MLKEM1024-P384 hybrid KEMs are not defined by
+              draft-ietf-hpke-pq itself — it delegates to the CFRG&apos;s generic hybrid-KEM
+              combiner (
+              <a
+                href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-12"
+                className="text-primary underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                draft-irtf-cfrg-hybrid-kems
+              </a>
+              ), instantiated concretely in{' '}
+              <a
+                href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-03"
+                className="text-primary underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                draft-irtf-cfrg-concrete-hybrid-kems
+              </a>
+              : PQ-component-first concatenation, SHA3-256 as the combiner over concat(ss_PQ, ss_T,
+              ct_T, ek_T, Label).
+            </p>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">PKCS#11 v3.2 has no CKM_HPKE mechanism</strong> —
+              checked against the canonical v3.2 header, no HPKE entry exists at all. A real HSM
+              deployment composes it from mechanisms the spec does define:{' '}
+              <InlineTooltip term="CKM_ECDH1_DERIVE">CKM_ECDH1_DERIVE</InlineTooltip> /{' '}
+              <InlineTooltip term="CKM_ML_KEM">CKM_ML_KEM</InlineTooltip> for the KEM leg,{' '}
+              <InlineTooltip term="HKDF">CKM_HKDF_DERIVE</InlineTooltip> plus HMAC signing for
+              LabeledExtract/LabeledExpand, and AES-GCM / ChaCha20-Poly1305 for Seal/Open.{' '}
+              <Button
+                variant="link"
+                onClick={onNavigateToWorkshop}
+                className="h-auto p-0 text-primary underline font-medium text-xs align-baseline"
+              >
+                Try it in the Step 7 workshop
+              </Button>{' '}
+              — every KEM/KDF/AEAD/mode combination above is selectable, and the classical DHKEM
+              path is cross-checked byte-for-byte against RFC 9180 Appendix A.
             </p>
           </div>
         </div>

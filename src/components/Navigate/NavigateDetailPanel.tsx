@@ -31,6 +31,10 @@ interface NavigateDetailPanelProps {
   node: ForceClusterNode
   connections: Connection[]
   onSelectNode: (nodeId: string) => void
+  /** Spotlights node.type as a whole category — same zoom + hide-the-rest a category's 3D label click does, but (unlike that click) leaves this node's own panel open, since it's always inside the category it names. */
+  onSelectCategory: (type: ForceClusterNodeType) => void
+  /** Spotlights node.type + node.sub — same as onSelectCategory, one level deeper. */
+  onSelectSub: (type: ForceClusterNodeType, sub: string) => void
   onClose: () => void
 }
 
@@ -38,6 +42,8 @@ export function NavigateDetailPanel({
   node,
   connections,
   onSelectNode,
+  onSelectCategory,
+  onSelectSub,
   onClose,
 }: NavigateDetailPanelProps) {
   const grouped = new Map<string, Connection[]>()
@@ -56,12 +62,33 @@ export function NavigateDetailPanel({
           node/edge clusters, sometimes label text), and the translucent
           style made it hard to read (found via direct user testing). */}
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <TypeDot type={node.type} />
-          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onSelectCategory(node.type)}
+            className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
+          >
             {TYPE_LABEL[node.type]}
-            {node.sub ? ` · ${node.sub}` : ''}
-          </span>
+          </Button>
+          {node.sub && (
+            <>
+              <span className="text-xs text-muted-foreground" aria-hidden="true">
+                ·
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => onSelectSub(node.type, node.sub)}
+                className="h-auto rounded px-1 py-0 text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground hover:underline"
+              >
+                {node.sub}
+              </Button>
+            </>
+          )}
         </div>
         <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close details">
           <X size={16} aria-hidden="true" />
@@ -74,24 +101,55 @@ export function NavigateDetailPanel({
         {node.degree} connection{node.degree === 1 ? '' : 's'}
       </p>
 
-      {node.href &&
-        (node.href.startsWith('http') ? (
-          <a
-            href={node.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            View source <ExternalLink size={13} aria-hidden="true" />
-          </a>
-        ) : (
-          <Link
-            to={node.href}
-            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-          >
-            Open in hub <ArrowUpRight size={13} aria-hidden="true" />
-          </Link>
-        ))}
+      {/* One row per REAL destination this node actually has — node.href
+          (the type's base hub page) plus every entry in extraLinks (a Learn
+          module or Playground tool this specific entity is declared to
+          teach/demo, from that source's own reverse-link field). Never more
+          or fewer than what's real: a node with no extraLinks shows only
+          its base link, exactly as before this feature existed. */}
+      {(node.href || (node.extraLinks && node.extraLinks.length > 0)) && (
+        <div className="mt-3 flex flex-col items-start gap-1.5">
+          {node.href &&
+            (node.href.startsWith('http') ? (
+              <a
+                href={node.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                View source <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            ) : (
+              <Link
+                to={node.href}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                Open in hub <ArrowUpRight size={13} aria-hidden="true" />
+              </Link>
+            ))}
+          {node.extraLinks?.map((link) =>
+            link.href.startsWith('http') ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                {link.label} <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                {link.label} <ArrowUpRight size={13} aria-hidden="true" />
+              </Link>
+            )
+          )}
+        </div>
+      )}
 
       <div className="mt-4 space-y-4">
         {Array.from(grouped.entries()).map(([key, items]) => {

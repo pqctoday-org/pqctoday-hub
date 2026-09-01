@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "draft-ietf-uta-pqc-app-01",
+    "reason": "single-window failed (no requirements key; got []); 3-window fallback also found nothing"
+  },
+  {
+    "ref_id": "OpenSSL-3x-Docs",
+    "reason": "Probable landing page, not the document (21,365 bytes of markup, only 884 chars of text). Re-fetch the linked document before treating this as covered."
+  }
+]
