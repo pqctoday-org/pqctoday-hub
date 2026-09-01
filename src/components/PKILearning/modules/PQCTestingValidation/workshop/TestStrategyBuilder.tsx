@@ -68,7 +68,7 @@ const DEADLINE_OPTIONS: {
 ]
 
 const URGENCY_COLORS: Record<string, string> = {
-  high: 'text-destructive bg-destructive/10 border-destructive/30',
+  high: 'text-status-error bg-destructive/10 border-destructive/30',
   medium: 'text-status-warning bg-status-warning/10 border-status-warning/30',
   low: 'text-status-success bg-status-success/10 border-status-success/30',
 }

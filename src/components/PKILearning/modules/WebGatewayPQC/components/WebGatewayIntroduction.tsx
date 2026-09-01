@@ -405,7 +405,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             <div className="text-xs font-bold text-foreground mb-3">
               Production PQC Support ({productionVendors.length} vendors)
             </div>
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto"
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+              tabIndex={0}
+              role="region"
+              aria-label="Production PQC support by vendor"
+            >
               <table className="w-full text-xs">
                 <thead>
                   <tr className="text-left text-muted-foreground">

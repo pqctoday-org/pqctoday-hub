@@ -491,7 +491,7 @@ const ReadinessChecklist: React.FC = () => {
                       {item.title}
                     </span>
                     {item.critical && (
-                      <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-destructive text-[10px] font-medium border border-destructive/20">
+                      <span className="px-1.5 py-0.5 rounded bg-destructive/10 text-status-error text-[10px] font-medium border border-destructive/20">
                         Critical
                       </span>
                     )}

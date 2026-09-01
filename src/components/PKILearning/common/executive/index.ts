@@ -13,6 +13,6 @@ export type { HeatmapCell } from './HeatmapGrid'
 export { TimelinePlanner } from './TimelinePlanner'
 export type { Milestone, ExternalDeadline } from './TimelinePlanner'
 
-export { BreachCostModel } from './BreachCostModel'
+export { BreachCostModel, type BreachScenarioInputs } from './BreachCostModel'
 
 export { KpiPersonaSelector } from './KpiPersonaSelector'

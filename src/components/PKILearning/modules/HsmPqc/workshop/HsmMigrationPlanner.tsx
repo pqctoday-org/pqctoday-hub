@@ -527,7 +527,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                   )}
                   <span className="text-xs text-foreground flex-1">{item.label}</span>
                   {item.required && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20 font-bold shrink-0">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20 font-bold shrink-0">
                       REQUIRED
                     </span>
                   )}

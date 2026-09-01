@@ -335,7 +335,13 @@ const Step3Parameters: React.FC = () => (
         with identical parameters). Every set uses{' '}
         <strong className="text-foreground">lg_w = 4</strong> (Winternitz parameter w = 16).
       </p>
-      <div className="overflow-x-auto">
+      <div
+        className="overflow-x-auto"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+        tabIndex={0}
+        role="region"
+        aria-label="FIPS 205 parameter sets"
+      >
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr className="text-muted-foreground border-b border-border">

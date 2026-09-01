@@ -27,7 +27,10 @@ export function StandardRef({ cite, children, className }: StandardRefProps) {
   return (
     <Link
       to={href}
-      className={className ?? 'text-primary hover:underline'}
+      // `underline`, not `hover:underline`: this renders inline in prose (see
+      // the doc comment above), so colour alone is not a sufficient
+      // affordance (axe link-in-text-block / WCAG 1.4.1).
+      className={className ?? 'text-primary underline'}
       title={`Open ${cite} in the library`}
     >
       {label}

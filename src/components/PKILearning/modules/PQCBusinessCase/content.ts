@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-business-case',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('NIST IR 8547'),

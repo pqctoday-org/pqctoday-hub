@@ -18,6 +18,7 @@
 
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import { resolveToNaicsSet } from '@/data/sectorVocabularyData'
+import { isCrossIndustry } from '@/data/industryMatch'
 import { MANIFEST_BY_ID } from '@/components/PKILearning/manifest/registry'
 import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 import { WORKSHOP_TOOLS, type WorkshopTool } from '@/components/Playground/workshopRegistry'
@@ -35,13 +36,14 @@ import { learnHref } from './learnHref'
  * input** when nothing matches, which would silently produce
  * `/library?sector=Healthcare / Pharmaceutical` — a filter matching nothing.
  * We treat the echo as "unresolved" and return `[]` so callers render no link
- * rather than a broken one. The driftguard pins that only 'Cross-Industry'
- * takes that path.
+ * rather than a broken one. The driftguard pins that only a `Cross-Industry`
+ * label takes that path.
  */
 export function sectorCodesFor(industry: string): string[] {
-  // 'Cross-Industry' is the absence of a sector, not a sector — it has no
+  // 'Cross-Industry' (and its 'Cross-Industry / X' sub-labels — see
+  // isCrossIndustry) is the absence of a sector, not a sector — it has no
   // alias by design and must not be linked at a sector-filtered page.
-  if (!industry || industry === 'Cross-Industry') return []
+  if (!industry || isCrossIndustry(industry)) return []
   const codes = resolveToNaicsSet(industry)
   if (codes.length === 1 && codes[0] === industry) return []
   return codes

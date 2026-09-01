@@ -93,12 +93,26 @@ export function getUnseenChangelogSections(
   lastSeenVersion: string | null,
   personaId: PersonaId | null
 ): ChangelogSection[] {
-  // Collect entries from all versions newer than lastSeenVersion. Treat the
-  // literal `Unreleased` as newer than any released version so in-progress
-  // entries are surfaced automatically.
+  // Collect entries from all versions newer than lastSeenVersion, capped at
+  // what's actually running. This repo's own workflow writes entries into a
+  // numbered "provisional" heading progressively as features ship, then
+  // bumps package.json later at release — so CHANGELOG.md routinely has a
+  // top section ahead of the deployed app version for a while. Without the
+  // cap, that section is permanently "newer" than lastSeenVersion can ever
+  // be (markAllSeen can only set it to the CURRENT app version), so the
+  // unread indicator becomes undismissable for every real visitor until the
+  // version bump — a live bug this exact case caught. The literal
+  // `Unreleased` marker is exempt from the cap: it is always treated as
+  // newer than any released version, by design, so in-progress entries
+  // under that literal heading still surface automatically.
+  const currentVersion = getCurrentVersion()
+  const isReleasable = (v: string) =>
+    v === 'Unreleased' || compareChangelogVersion(v, currentVersion) <= 0
   const unseenVersions = lastSeenVersion
-    ? ALL_CHANGELOG_VERSIONS.filter((v) => compareChangelogVersion(v.version, lastSeenVersion) > 0)
-    : ALL_CHANGELOG_VERSIONS.slice(0, 1) // fallback: show latest only
+    ? ALL_CHANGELOG_VERSIONS.filter(
+        (v) => compareChangelogVersion(v.version, lastSeenVersion) > 0 && isReleasable(v.version)
+      )
+    : ALL_CHANGELOG_VERSIONS.filter((v) => isReleasable(v.version)).slice(0, 1) // fallback: show latest releasable only
 
   // Merge all sections across unseen versions
   const mergedSections = new Map<SectionType, ChangelogEntry[]>()

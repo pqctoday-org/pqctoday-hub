@@ -45,8 +45,9 @@ export interface MobileGroupPanelProps {
  * the raw persona-gated bucketing alone. Both are RAIL_ALWAYS_VISIBLE_PATHS
  * / render-only additions on desktop, reachable by every persona and never
  * persona-gated, so unlike the rest of this panel's tile set they need no
- * absence handling. '/explore' is filtered out for mobile specifically
- * (confirmed decision, 2026-08-23 — dropped from mobile entirely).
+ * absence handling. '/explore' is no longer filtered out for mobile (see
+ * mobileNavGroups.ts) — it flows through the same `forYou`/ungated gating as
+ * every other path, same as the desktop rail.
  */
 export function MobileGroupPanel({ groupId, open, onClose, persona }: MobileGroupPanelProps) {
   const navigate = useNavigate()

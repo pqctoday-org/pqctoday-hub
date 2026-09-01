@@ -16,10 +16,12 @@ export default defineConfig([
       'public/dist',
       'src/wasm',
       'public/wasm',
+      'public/pyodide',
       'src/vendor',
       '**/*.min.js',
       'public/coi-serviceworker.js',
       'public/embed/sdk.js',
+      'public/pyRuntimeWatchdog.js',
     ],
   },
 

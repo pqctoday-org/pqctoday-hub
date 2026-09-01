@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'standards-bodies',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -79,5 +79,7 @@ export const content: ModuleContent = {
       "Slug: standards-bodies. Difficulty: Intermediate. Estimated Time: 60 minutes. Track: Strategy. This module teaches learners how to distinguish between standards bodies (which _define_ algorithms and protocols), certification bodies (which _validate_ implementations), and compliance frameworks / regulatory agencies (which _mandate_ usage). It covers 12 key organizations globally and regionally, and directly connects to the app's /compliance and /migrate pages. ---",
     keyConcepts:
       'NIST vs CMVP: NIST wrote the standard; CMVP certifies implementations against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s unique position: Requires hybrid PQC (classical + PQC) for sensitive systems; permits standalone SLH-DSA. CCRA vs EUCC: CCRA is the global 31-nation scheme; EUCC is the EU-specific harmonized adaptation managed by ENISA. IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).',
+    relatedStandards:
+      "FIPS 206 (FN-DSA), cited above alongside NIST's other PQC signature standards, is still a draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }

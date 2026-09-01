@@ -19,6 +19,8 @@ import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { validateApiKey } from '@/services/chat/GeminiService'
 import {
   checkWebGPUSupport,
+  checkWebGPUBufferCapability,
+  isMobileBrowser,
   WEBLLM_MODELS,
   DEFAULT_LOCAL_MODEL,
   MIN_CONTEXT_WINDOW,
@@ -27,6 +29,7 @@ import {
 
 type ValidationState = 'idle' | 'validating' | 'success' | 'error'
 type WebGPUCheck = 'checking' | 'supported' | 'unsupported'
+type BufferCheck = 'checking' | 'sufficient' | { insufficientMB: number }
 
 export const ProviderSetup: React.FC = () => {
   const setApiKey = useChatStore((s) => s.setApiKey)
@@ -44,6 +47,14 @@ export const ProviderSetup: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState(DEFAULT_LOCAL_MODEL)
   const [contextWindow, setContextWindow] = useState(DEFAULT_CONTEXT_WINDOW)
   const [webgpuCheck, setWebgpuCheck] = useState<WebGPUCheck>('checking')
+  // Real per-device GPU buffer limits, not a mobile/desktop guess — see
+  // checkWebGPUBufferCapability() for why a UA sniff can't answer this.
+  const [bufferCheck, setBufferCheck] = useState<BufferCheck>('checking')
+  // Phones/tablets skip the WebGPU/buffer checks entirely — confirmed via a
+  // real upstream issue (see isMobileBrowser() doc comment) that even a much
+  // smaller model reliably crashes the tab on iOS Safari, so there's no
+  // honest way to offer this as a working option there.
+  const [isMobile] = useState(() => isMobileBrowser())
   const [showConsent, setShowConsent] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
   // Double acknowledgement gate. Both must be explicitly ticked before the user
@@ -55,10 +66,20 @@ export const ProviderSetup: React.FC = () => {
   const selectedModelData = WEBLLM_MODELS.find((m) => m.id === selectedModel)
   const modelMaxContext = selectedModelData?.maxContextLength ?? MIN_CONTEXT_WINDOW
 
-  // Check WebGPU support on mount
+  // Check WebGPU support, then the device's real GPU buffer limits, on mount
   useEffect(() => {
     checkWebGPUSupport().then((supported) => {
       setWebgpuCheck(supported ? 'supported' : 'unsupported')
+      if (!supported) return
+      checkWebGPUBufferCapability().then((capability) => {
+        if (!capability || capability.ok) {
+          setBufferCheck('sufficient')
+        } else {
+          setBufferCheck({
+            insufficientMB: Math.round(capability.maxStorageBufferBindingSize / (1024 * 1024)),
+          })
+        }
+      })
     })
   }, [])
 
@@ -92,6 +113,15 @@ export const ProviderSetup: React.FC = () => {
     setLocalModel(selectedModel)
     setLocalContextWindow(contextWindow)
     setProvider('local')
+  }
+
+  // Cloud is Flash-only (no model picker exists in this app), so the
+  // mobile-blocked Local card can send users straight to the one field that
+  // matters instead of leaving them to find the Gemini card themselves.
+  const focusGeminiApiKeyInput = () => {
+    const el = document.getElementById('provider-gemini-api-key')
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    ;(el as HTMLInputElement | null)?.focus()
   }
 
   const handleModelChange = (id: string) => {
@@ -175,327 +205,395 @@ export const ProviderSetup: React.FC = () => {
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Local (Private) Card */}
-          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
-                <Shield size={18} className="text-status-success" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-sm font-semibold text-foreground">Local (Private)</h4>
-                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-status-warning/20 text-status-warning">
-                    Experimental
-                  </span>
+          {/* Local (Private) Card — phones/tablets get a compact explanation
+              instead of the full picker; see isMobile doc comment above. */}
+          {isMobile ? (
+            <div className="glass-panel rounded-xl p-5 space-y-3 border border-border">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-full bg-muted/40 flex items-center justify-center">
+                  <Shield size={18} className="text-muted-foreground" />
                 </div>
-                <p className="text-xs text-muted-foreground">100% on-device</p>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-foreground">Local (Private)</h4>
+                  <p className="text-xs text-muted-foreground">Desktop browsers only</p>
+                </div>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Local AI runs the model directly in your browser tab, which needs more memory than
+                mobile browsers can reliably provide — even much smaller models than this one&apos;s
+                crash the tab partway through loading on current phones and tablets. It works well
+                on desktop browsers (Chrome, Edge, or Safari on macOS) with a capable GPU.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                On this device, use <strong className="text-foreground">Cloud (Gemini)</strong> — no
+                download, no GPU requirement, and more accurate answers than any local model.
+              </p>
             </div>
+          ) : (
+            <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
+                  <Shield size={18} className="text-status-success" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-sm font-semibold text-foreground">Local (Private)</h4>
+                    <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-status-warning/20 text-status-warning">
+                      Experimental
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">100% on-device</p>
+                </div>
+              </div>
 
-            {/* Quality warning — prominent, not collapsed. Sets expectations
+              {/* Quality warning — prominent, not collapsed. Sets expectations
                 before the user has invested time picking a model. */}
-            <div className="rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-status-warning">
-                <AlertTriangle size={14} className="shrink-0" />
-                Accuracy is currently below our bar
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Local AI runs entirely in your browser, but small on-device models (1.7–8B
-                parameters) <strong className="text-foreground">routinely fabricate facts</strong>{' '}
-                about specific algorithms, standards, and dates — including inventing non-existent
-                algorithm names or using deprecated terminology.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                We&apos;re actively monitoring local-AI progress and will reintroduce it as a
-                first-class option once on-device models reach the accuracy bar this app needs. For
-                now,{' '}
-                <strong className="text-foreground">
-                  use Cloud (Gemini) for any factual question about standards, algorithms, or
-                  compliance
-                </strong>
-                .
-              </p>
-            </div>
-
-            <p className="text-sm text-muted-foreground">
-              Everything stays on your device — zero network requests during inference. Answers are
-              shorter and less detailed than cloud, but your data never leaves your browser.
-            </p>
-
-            {webgpuCheck === 'checking' && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader2 size={14} className="animate-spin" />
-                Checking WebGPU support...
-              </div>
-            )}
-
-            {webgpuCheck === 'unsupported' && (
-              <div className="rounded-lg bg-status-warning/10 p-3 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-status-warning">
-                  <AlertTriangle size={14} />
-                  WebGPU is not available
+              <div className="rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                  <AlertTriangle size={14} className="shrink-0" />
+                  Accuracy is currently below our bar
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Local AI requires WebGPU. Please use Chrome 113+, Edge 113+, or Safari 18+ (macOS
-                  Sequoia).
+                  Local AI runs entirely in your browser, but small on-device models (1.7–8B
+                  parameters) <strong className="text-foreground">routinely fabricate facts</strong>{' '}
+                  about specific algorithms, standards, and dates — including inventing non-existent
+                  algorithm names or using deprecated terminology.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  We&apos;re actively monitoring local-AI progress and will reintroduce it as a
+                  first-class option once on-device models reach the accuracy bar this app needs.
+                  For now,{' '}
+                  <strong className="text-foreground">
+                    use Cloud (Gemini) for any factual question about standards, algorithms, or
+                    compliance
+                  </strong>
+                  .
                 </p>
               </div>
-            )}
 
-            {webgpuCheck === 'supported' && (
-              <>
-                <div className="space-y-2">
-                  <span className="text-xs font-medium text-muted-foreground">Model</span>
-                  {/* When only one model is offered, render a static label instead of
+              <p className="text-sm text-muted-foreground">
+                Everything stays on your device — zero network requests during inference. Answers
+                are shorter and less detailed than cloud, but your data never leaves your browser.
+              </p>
+
+              {webgpuCheck === 'checking' && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 size={14} className="animate-spin" />
+                  Checking WebGPU support...
+                </div>
+              )}
+
+              {webgpuCheck === 'unsupported' && (
+                <div className="rounded-lg bg-status-warning/10 p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-status-warning">
+                    <AlertTriangle size={14} />
+                    WebGPU is not available
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Local AI requires WebGPU. Please use Chrome 113+, Edge 113+, or Safari 18+
+                    (macOS Sequoia).
+                  </p>
+                </div>
+              )}
+
+              {webgpuCheck === 'supported' && bufferCheck === 'checking' && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 size={14} className="animate-spin" />
+                  Checking this device&apos;s GPU capability...
+                </div>
+              )}
+
+              {webgpuCheck === 'supported' && typeof bufferCheck === 'object' && (
+                <div className="rounded-lg bg-status-warning/10 p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-status-warning">
+                    <AlertTriangle size={14} />
+                    This device&apos;s GPU can&apos;t run local AI
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Local AI needs GPU buffers of at least 128MB. Your browser&apos;s WebGPU driver
+                    reports a maximum of {bufferCheck.insufficientMB}MB on this device — a limit
+                    common on lower-end mobile GPUs. Please use Cloud (Gemini) instead.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    onClick={focusGeminiApiKeyInput}
+                    className="w-full"
+                  >
+                    <Cloud size={14} />
+                    Use Cloud (Gemini) instead
+                  </Button>
+                </div>
+              )}
+
+              {webgpuCheck === 'supported' && bufferCheck === 'sufficient' && (
+                <>
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium text-muted-foreground">Model</span>
+                    {/* When only one model is offered, render a static label instead of
                       a single-item dropdown — avoids implying choice that doesn't exist. */}
-                  {WEBLLM_MODELS.length > 1 ? (
-                    <FilterDropdown
-                      items={modelItems}
-                      selectedId={selectedModel}
-                      onSelect={handleModelChange}
-                      noContainer
-                    />
-                  ) : (
-                    <div className="rounded-lg border border-border bg-muted/10 p-2.5">
-                      <p className="text-sm font-medium text-foreground">
-                        {selectedModelData?.label ?? selectedModel}
+                    {WEBLLM_MODELS.length > 1 ? (
+                      <FilterDropdown
+                        items={modelItems}
+                        selectedId={selectedModel}
+                        onSelect={handleModelChange}
+                        noContainer
+                      />
+                    ) : (
+                      <div className="rounded-lg border border-border bg-muted/10 p-2.5">
+                        <p className="text-sm font-medium text-foreground">
+                          {selectedModelData?.label ?? selectedModel}
+                        </p>
+                      </div>
+                    )}
+                    {selectedModelData && (
+                      <div className="rounded-lg border border-border bg-muted/10 p-2.5 space-y-1.5">
+                        <p className="text-[11px] text-muted-foreground">{selectedModelData.tip}</p>
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                          <span>
+                            Speed{' '}
+                            <span className="text-foreground font-medium">
+                              {'●'.repeat(selectedModelData.speed)}
+                              {'○'.repeat(5 - selectedModelData.speed)}
+                            </span>
+                          </span>
+                          <span>
+                            Accuracy{' '}
+                            <span className="text-foreground font-medium">
+                              {'●'.repeat(selectedModelData.accuracy)}
+                              {'○'.repeat(5 - selectedModelData.accuracy)}
+                            </span>
+                          </span>
+                          <span>VRAM ~{(selectedModelData.vramMB / 1024).toFixed(1)} GB</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Context window presets */}
+                  <div className="space-y-2">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Context Window
+                    </span>
+                    <div className="space-y-1.5">
+                      {contextPresets.map((p) => (
+                        <Button
+                          variant="ghost"
+                          size="tile"
+                          key={p.tokens}
+                          type="button"
+                          onClick={() => setContextWindow(p.tokens)}
+                          className={`min-h-0 p-2.5 border transition-colors ${
+                            contextWindow === p.tokens
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border bg-muted/10 hover:border-muted-foreground/30'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span className="text-xs font-semibold text-foreground">
+                              {p.label} tokens
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {p.highVram && (
+                                <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-status-warning/15 text-status-warning">
+                                  High VRAM
+                                </span>
+                              )}
+                              <span className="text-[10px] text-muted-foreground">{p.note}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between w-full mt-0.5">
+                            <span className="text-[10px] text-muted-foreground">
+                              {p.chunks} chunks &middot; {p.coverage} coverage
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">{p.hw}</span>
+                          </div>
+                          {p.highVram && contextWindow === p.tokens && (
+                            <p className="text-[10px] text-status-warning mt-1 w-full">
+                              If loading fails with an out-of-memory error, switch to a lower
+                              context window or a smaller model.
+                            </p>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Info panel */}
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => setShowInfo(!showInfo)}
+                    className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    <Info size={12} />
+                    How does local AI work?
+                  </Button>
+                  {showInfo && (
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 text-xs text-muted-foreground">
+                      <p>
+                        <strong className="text-foreground">WebLLM</strong> runs AI models directly
+                        in your browser using <strong>WebGPU</strong>, which gives the model access
+                        to your device&apos;s GPU for fast inference.
+                      </p>
+                      <p>
+                        <strong className="text-foreground">GPU Memory</strong> is the main
+                        constraint. Model weights + a <strong>KV cache</strong> (scales with context
+                        window) must fit in your GPU memory. Integrated GPUs share 4–8 GB with
+                        system RAM.
+                      </p>
+                      <p>
+                        <strong className="text-foreground">On phones and tablets</strong>, the
+                        browser itself typically caps a single tab&apos;s total memory well below
+                        what this model needs — a limit the browser doesn&apos;t expose in advance,
+                        so it can only show up as the download failing partway through. If that
+                        happens, use Cloud (Gemini) instead — no download or GPU memory required.
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Context Window</strong> controls how
+                        much reference data (RAG chunks) the model sees alongside your question. A
+                        larger window means more relevant facts are included, improving answer
+                        quality. The 4K default works on any GPU — increase if your hardware allows.
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Why only Qwen 3 8B</strong>: Smaller
+                        in-browser models (1.7–4B parameters) hallucinate too aggressively on PQC
+                        standards content — inventing algorithm names, mixing up FIPS numbers, and
+                        using deprecated terminology (e.g., &ldquo;Kyber&rdquo; instead of ML-KEM).
+                        Qwen 3 8B is the strongest currently-available MLC build for this app&apos;s
+                        RAG workload. We&apos;re monitoring smaller-model progress and will
+                        reintroduce a tiered catalog when on-device models reach the accuracy bar
+                        this app needs.
+                      </p>
+                      <p>
+                        <strong className="text-foreground">Limitations vs Cloud</strong>: Even Qwen
+                        3 8B is much smaller than Gemini and still hallucinates a meaningful
+                        fraction of factual answers. For any question about specific standards,
+                        algorithms, certifications, or compliance frameworks, use Cloud (Gemini) and
+                        verify named entities against the source pages.
                       </p>
                     </div>
                   )}
-                  {selectedModelData && (
-                    <div className="rounded-lg border border-border bg-muted/10 p-2.5 space-y-1.5">
-                      <p className="text-[11px] text-muted-foreground">{selectedModelData.tip}</p>
-                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                        <span>
-                          Speed{' '}
-                          <span className="text-foreground font-medium">
-                            {'●'.repeat(selectedModelData.speed)}
-                            {'○'.repeat(5 - selectedModelData.speed)}
-                          </span>
+
+                  {!showConsent ? (
+                    <>
+                      {/* Acknowledgement #1 — quality risk. Stays in the main card so
+                        the user faces it before clicking Get Started. */}
+                      <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-border bg-muted/10 p-3 hover:border-muted-foreground/30">
+                        <input
+                          type="checkbox"
+                          checked={ackQualityRisk}
+                          onChange={(e) => setAckQualityRisk(e.target.checked)}
+                          className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
+                          aria-describedby="local-ack-quality-text"
+                        />
+                        <span
+                          id="local-ack-quality-text"
+                          className="text-xs text-foreground leading-relaxed"
+                        >
+                          I understand that local AI may{' '}
+                          <strong>
+                            fabricate algorithm names, standards, dates, and other facts
+                          </strong>
+                          , and I will verify every named entity in its responses against the source
+                          pages before relying on it.
                         </span>
-                        <span>
-                          Accuracy{' '}
-                          <span className="text-foreground font-medium">
-                            {'●'.repeat(selectedModelData.accuracy)}
-                            {'○'.repeat(5 - selectedModelData.accuracy)}
-                          </span>
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        One-time download ({selectedModelData?.sizeGB ?? '?'} GB). Cached in your
+                        browser for instant startup.
+                      </p>
+                      <Button
+                        variant="gradient"
+                        className="w-full"
+                        onClick={() => setShowConsent(true)}
+                        disabled={!ackQualityRisk}
+                      >
+                        Get Started
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-3">
+                      <p className="text-xs text-foreground font-medium">
+                        Download Acknowledgement
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        The model{' '}
+                        <strong>
+                          {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.label ??
+                            selectedModel}
+                        </strong>{' '}
+                        will be downloaded from{' '}
+                        <a
+                          href={`https://huggingface.co/mlc-ai/${selectedModel}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          huggingface.co/mlc-ai
+                        </a>
+                        . This is a one-time download of{' '}
+                        {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.sizeGB ?? '?'} GB that
+                        will be cached in your browser.
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        After download, the model runs entirely on your device — no data is sent to
+                        any server during inference.
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Ensure <strong>huggingface.co</strong> is not blocked by your ad blocker,
+                        firewall, or VPN.
+                      </p>
+                      {/* Acknowledgement #2 — exploratory status, distinct from #1.
+                        Required to enable the final "Agree & Download" button. */}
+                      <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-status-warning/30 bg-status-warning/10 p-3">
+                        <input
+                          type="checkbox"
+                          checked={ackExploratory}
+                          onChange={(e) => setAckExploratory(e.target.checked)}
+                          className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
+                          aria-describedby="local-ack-exploratory-text"
+                        />
+                        <span
+                          id="local-ack-exploratory-text"
+                          className="text-xs text-foreground leading-relaxed"
+                        >
+                          I understand that local AI is an <strong>exploratory feature</strong>,
+                          that current results do <strong>not meet the accuracy bar</strong> of this
+                          app, and I am proceeding on that basis. I will not screenshot or share
+                          local-AI responses as if they were authoritative.
                         </span>
-                        <span>VRAM ~{(selectedModelData.vramMB / 1024).toFixed(1)} GB</span>
+                      </label>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="gradient"
+                          className="flex-1"
+                          onClick={handleLocalStart}
+                          disabled={!ackExploratory}
+                        >
+                          Agree & Download
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="shrink-0"
+                          onClick={() => {
+                            // Reset both ack flags so backing out forces a fresh
+                            // re-confirmation rather than passively reusing prior consent.
+                            setShowConsent(false)
+                            setAckExploratory(false)
+                            setAckQualityRisk(false)
+                          }}
+                        >
+                          Back
+                        </Button>
                       </div>
                     </div>
                   )}
-                </div>
-
-                {/* Context window presets */}
-                <div className="space-y-2">
-                  <span className="text-xs font-medium text-muted-foreground">Context Window</span>
-                  <div className="space-y-1.5">
-                    {contextPresets.map((p) => (
-                      <Button
-                        variant="ghost"
-                        size="tile"
-                        key={p.tokens}
-                        type="button"
-                        onClick={() => setContextWindow(p.tokens)}
-                        className={`min-h-0 p-2.5 border transition-colors ${
-                          contextWindow === p.tokens
-                            ? 'border-primary bg-primary/10'
-                            : 'border-border bg-muted/10 hover:border-muted-foreground/30'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-xs font-semibold text-foreground">
-                            {p.label} tokens
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            {p.highVram && (
-                              <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-status-warning/15 text-status-warning">
-                                High VRAM
-                              </span>
-                            )}
-                            <span className="text-[10px] text-muted-foreground">{p.note}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between w-full mt-0.5">
-                          <span className="text-[10px] text-muted-foreground">
-                            {p.chunks} chunks &middot; {p.coverage} coverage
-                          </span>
-                          <span className="text-[10px] text-muted-foreground">{p.hw}</span>
-                        </div>
-                        {p.highVram && contextWindow === p.tokens && (
-                          <p className="text-[10px] text-status-warning mt-1 w-full">
-                            If loading fails with an out-of-memory error, switch to a lower context
-                            window or a smaller model.
-                          </p>
-                        )}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Info panel */}
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => setShowInfo(!showInfo)}
-                  className="flex items-center gap-1.5 text-xs text-primary hover:underline"
-                >
-                  <Info size={12} />
-                  How does local AI work?
-                </Button>
-                {showInfo && (
-                  <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 text-xs text-muted-foreground">
-                    <p>
-                      <strong className="text-foreground">WebLLM</strong> runs AI models directly in
-                      your browser using <strong>WebGPU</strong>, which gives the model access to
-                      your device&apos;s GPU for fast inference.
-                    </p>
-                    <p>
-                      <strong className="text-foreground">GPU Memory</strong> is the main
-                      constraint. Model weights + a <strong>KV cache</strong> (scales with context
-                      window) must fit in your GPU memory. Integrated GPUs share 4–8 GB with system
-                      RAM.
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Context Window</strong> controls how much
-                      reference data (RAG chunks) the model sees alongside your question. A larger
-                      window means more relevant facts are included, improving answer quality. The
-                      4K default works on any GPU — increase if your hardware allows.
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Why only Qwen 3 8B</strong>: Smaller
-                      in-browser models (1.7–4B parameters) hallucinate too aggressively on PQC
-                      standards content — inventing algorithm names, mixing up FIPS numbers, and
-                      using deprecated terminology (e.g., &ldquo;Kyber&rdquo; instead of ML-KEM).
-                      Qwen 3 8B is the strongest currently-available MLC build for this app&apos;s
-                      RAG workload. We&apos;re monitoring smaller-model progress and will
-                      reintroduce a tiered catalog when on-device models reach the accuracy bar this
-                      app needs.
-                    </p>
-                    <p>
-                      <strong className="text-foreground">Limitations vs Cloud</strong>: Even Qwen 3
-                      8B is much smaller than Gemini and still hallucinates a meaningful fraction of
-                      factual answers. For any question about specific standards, algorithms,
-                      certifications, or compliance frameworks, use Cloud (Gemini) and verify named
-                      entities against the source pages.
-                    </p>
-                  </div>
-                )}
-
-                {!showConsent ? (
-                  <>
-                    {/* Acknowledgement #1 — quality risk. Stays in the main card so
-                        the user faces it before clicking Get Started. */}
-                    <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-border bg-muted/10 p-3 hover:border-muted-foreground/30">
-                      <input
-                        type="checkbox"
-                        checked={ackQualityRisk}
-                        onChange={(e) => setAckQualityRisk(e.target.checked)}
-                        className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
-                        aria-describedby="local-ack-quality-text"
-                      />
-                      <span
-                        id="local-ack-quality-text"
-                        className="text-xs text-foreground leading-relaxed"
-                      >
-                        I understand that local AI may{' '}
-                        <strong>
-                          fabricate algorithm names, standards, dates, and other facts
-                        </strong>
-                        , and I will verify every named entity in its responses against the source
-                        pages before relying on it.
-                      </span>
-                    </label>
-                    <p className="text-xs text-muted-foreground">
-                      One-time download ({selectedModelData?.sizeGB ?? '?'} GB). Cached in your
-                      browser for instant startup.
-                    </p>
-                    <Button
-                      variant="gradient"
-                      className="w-full"
-                      onClick={() => setShowConsent(true)}
-                      disabled={!ackQualityRisk}
-                    >
-                      Get Started
-                    </Button>
-                  </>
-                ) : (
-                  <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-3">
-                    <p className="text-xs text-foreground font-medium">Download Acknowledgement</p>
-                    <p className="text-xs text-muted-foreground">
-                      The model{' '}
-                      <strong>
-                        {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.label ?? selectedModel}
-                      </strong>{' '}
-                      will be downloaded from{' '}
-                      <a
-                        href={`https://huggingface.co/mlc-ai/${selectedModel}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        huggingface.co/mlc-ai
-                      </a>
-                      . This is a one-time download of{' '}
-                      {WEBLLM_MODELS.find((m) => m.id === selectedModel)?.sizeGB ?? '?'} GB that
-                      will be cached in your browser.
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      After download, the model runs entirely on your device — no data is sent to
-                      any server during inference.
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Ensure <strong>huggingface.co</strong> is not blocked by your ad blocker,
-                      firewall, or VPN.
-                    </p>
-                    {/* Acknowledgement #2 — exploratory status, distinct from #1.
-                        Required to enable the final "Agree & Download" button. */}
-                    <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-status-warning/30 bg-status-warning/10 p-3">
-                      <input
-                        type="checkbox"
-                        checked={ackExploratory}
-                        onChange={(e) => setAckExploratory(e.target.checked)}
-                        className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
-                        aria-describedby="local-ack-exploratory-text"
-                      />
-                      <span
-                        id="local-ack-exploratory-text"
-                        className="text-xs text-foreground leading-relaxed"
-                      >
-                        I understand that local AI is an <strong>exploratory feature</strong>, that
-                        current results do <strong>not meet the accuracy bar</strong> of this app,
-                        and I am proceeding on that basis. I will not screenshot or share local-AI
-                        responses as if they were authoritative.
-                      </span>
-                    </label>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="gradient"
-                        className="flex-1"
-                        onClick={handleLocalStart}
-                        disabled={!ackExploratory}
-                      >
-                        Agree & Download
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="shrink-0"
-                        onClick={() => {
-                          // Reset both ack flags so backing out forces a fresh
-                          // re-confirmation rather than passively reusing prior consent.
-                          setShowConsent(false)
-                          setAckExploratory(false)
-                          setAckQualityRisk(false)
-                        }}
-                      >
-                        Back
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Gemini (Cloud) Card */}
           <div

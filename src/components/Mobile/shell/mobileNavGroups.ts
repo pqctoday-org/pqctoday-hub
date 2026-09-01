@@ -7,15 +7,20 @@ import {
 } from '@/components/Layout/railNav'
 
 /**
- * '/explore' is deliberately dropped from mobile entirely (confirmed
- * decision, 2026-08-23) — the built MobileExploreGrid screen and its
- * ExploreView wiring were reverted; mobile visitors who reach /explore
- * directly now see desktop's ExploreView in mobile chrome, same as every
- * other not-yet-distilled section, and it's no longer offered as a group-
- * panel tile or given a crumb. Filtered out here — the one shared place
- * both MobileGroupPanel (tiles) and mobileGroupIdForPath (crumb) read.
+ * '/explore' was dropped from mobile entirely on 2026-08-23 — the built
+ * MobileExploreGrid screen and its ExploreView wiring were reverted, and it
+ * was filtered out of every mobile-nav tile/crumb below. Restored 2026-08-29
+ * (Wave B, bplus-remediation-plan-08292026.md A5): investigating the
+ * original commit found it was a broader reading of "skip explore in the
+ * mobile ux" than intended — dropping it from mobile reachability entirely,
+ * not just deferring a distilled mobile screen for it. desktop's ExploreView
+ * already renders fine in mobile chrome (same as every other
+ * not-yet-distilled section), so there's a real destination to restore.
+ * `/explore` is not special-cased here any more; it flows through the same
+ * persona gating every other path already gets (getRailSections /
+ * PERSONA_ABSENT_PATHS — see railNav.ts's `if (persona === 'curious')
+ * extra.push('/explore')`, unchanged by this file).
  */
-const MOBILE_HIDDEN_PATHS = ['/explore']
 
 /**
  * Real display-position tiles for a group panel, mobile's version of what
@@ -31,7 +36,7 @@ export function mobileGroupDisplayPaths(
   group: { id: ForYouGroupId | 'other'; paths: string[] },
   forYou: string[]
 ): string[] {
-  return computeGroupDisplayPaths(group, forYou).filter((p) => !MOBILE_HIDDEN_PATHS.includes(p))
+  return computeGroupDisplayPaths(group, forYou)
 }
 
 /**
@@ -45,7 +50,6 @@ export function mobileGroupDisplayPaths(
  * computeGroupDisplayPaths adds on top of the raw bucketing) get a crumb too.
  */
 export function mobileGroupIdForPath(pathname: string): ForYouGroupId | undefined {
-  if (MOBILE_HIDDEN_PATHS.includes(pathname)) return undefined
   const ungated = getUngatedGroupablePaths()
   const groups = getForYouGroups(ungated)
   for (const group of groups) {

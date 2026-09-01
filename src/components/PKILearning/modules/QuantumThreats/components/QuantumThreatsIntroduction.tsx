@@ -185,7 +185,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
                 <td className="p-2 text-center">128-bit</td>
                 <td className="p-2 text-center text-destructive font-bold">64-bit</td>
                 <td className="p-2 text-center">
-                  <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+                  <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
                     Insufficient
                   </span>
                 </td>
@@ -309,7 +309,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
             <div className="text-2xl mb-1">📡</div>
-            <div className="text-sm font-bold text-destructive mb-1">Phase 1: Harvest</div>
+            <div className="text-sm font-bold text-status-error mb-1">Phase 1: Harvest</div>
             <p className="text-xs text-muted-foreground">
               Adversaries intercept encrypted traffic today (VPN, TLS, email) and store it.
             </p>
@@ -358,7 +358,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
             <div className="text-2xl mb-1">📂</div>
-            <div className="text-sm font-bold text-destructive mb-1">Phase 1: Capture</div>
+            <div className="text-sm font-bold text-status-error mb-1">Phase 1: Capture</div>
             <p className="text-xs text-muted-foreground">
               Collect signed artifacts — firmware images, CA certificates, code-signing blobs.
               Public-key material is often publicly accessible.

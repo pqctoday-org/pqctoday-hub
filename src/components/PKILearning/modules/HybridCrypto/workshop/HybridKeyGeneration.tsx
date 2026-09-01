@@ -304,7 +304,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-foreground">{algo.name}</span>
                         {result.error ? (
-                          <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+                          <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-status-error border border-destructive/20">
                             ERROR
                           </span>
                         ) : (

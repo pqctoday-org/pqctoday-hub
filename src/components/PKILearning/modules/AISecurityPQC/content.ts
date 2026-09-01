@@ -10,7 +10,7 @@ export const content: ModuleContent = {
   moduleId: 'ai-security-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-24',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),

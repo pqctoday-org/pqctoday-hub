@@ -23,6 +23,17 @@
  * import graph — the first needs a real browser at 390 px, which is WS0's job.
  * The guard therefore asserts the three derivable requirements exactly and
  * ignores the rest, rather than pretending to verify something it cannot see.
+ *
+ * `sab` is scanned LINE-by-line, not file-wide like `threads`/`chromium`:
+ * G9/W4 gave pyRuntime.ts an OPTIONAL, feature-detected SharedArrayBuffer use
+ * (a true-kill timeout when `crossOriginIsolated`, a no-op fallback
+ * otherwise) that reaches `cacp-kmip`'s component tree. A file-wide match
+ * would force `cacp-kmip` to declare `requires: ['sab']`, wrongly marking
+ * its ENTIRE tool — key lifecycle ops, policy loading, none of which touch
+ * SAB — as unusable on a device without SharedArrayBuffer. A line carrying
+ * the literal marker `sab-optional` alongside its `SharedArrayBuffer`
+ * reference is exempt; every other occurrence still counts, so a tool that
+ * genuinely hard-requires SAB (a future one, or a mistake) is still caught.
  */
 import { describe, it, expect } from 'vitest'
 import fs from 'fs'
@@ -35,8 +46,19 @@ const REGISTRY = path.join(SRC, 'components/Playground/workshopRegistry.tsx')
 /** Requirements this scan can actually see in source. */
 const DERIVABLE: ToolRuntimeRequirement[] = ['sab', 'threads', 'chromium']
 
+const SAB_RE = /\bSharedArrayBuffer\b/
+const SAB_OPTIONAL_MARKER = 'sab-optional'
+
+/** True if `text` uses SharedArrayBuffer on a line NOT carrying the
+ *  `sab-optional` exemption marker on that SAME line — see the module
+ *  header. Deliberately line-scoped, not whole-file: an annotated
+ *  reference must not blind the scan to a different, unannotated one
+ *  elsewhere in the same file (proven by this file's own sabotage test). */
+function hasUnexemptedSab(text: string): boolean {
+  return text.split('\n').some((line) => SAB_RE.test(line) && !line.includes(SAB_OPTIONAL_MARKER))
+}
+
 const MARKERS: { req: ToolRuntimeRequirement; re: RegExp }[] = [
-  { req: 'sab', re: /\bSharedArrayBuffer\b/ },
   { req: 'chromium', re: /ChromiumGateBanner|useChromiumGate|detectBrowser/ },
   {
     req: 'threads',
@@ -71,6 +93,7 @@ function derive(entry: string): Set<ToolRuntimeRequirement> {
       continue
     }
     for (const { req, re } of MARKERS) if (re.test(text)) found.add(req)
+    if (hasUnexemptedSab(text)) found.add('sab')
     const importRe = /from\s+'([^']+)'|import\('([^']+)'\)/g
     let m: RegExpExecArray | null
     while ((m = importRe.exec(text)) !== null) {
@@ -139,6 +162,30 @@ describe('WorkshopTool.requires — declared values match the code', () => {
       ).toEqual([])
     }
   )
+})
+
+describe('hasUnexemptedSab — the sab-optional annotation is line-scoped, not file-scoped', () => {
+  it('a SharedArrayBuffer reference carrying the marker on the same line is exempt', () => {
+    const text = `const x = new SharedArrayBuffer(1) // sab-optional: reason`
+    expect(hasUnexemptedSab(text)).toBe(false)
+  })
+
+  it('a SharedArrayBuffer reference with no marker still counts', () => {
+    const text = `const x = new SharedArrayBuffer(1)`
+    expect(hasUnexemptedSab(text)).toBe(true)
+  })
+
+  it('an annotated reference does not exempt a DIFFERENT, unannotated reference in the same file', () => {
+    const text = [
+      `const a = typeof SharedArrayBuffer !== 'undefined' // sab-optional: ok`,
+      `const b = new SharedArrayBuffer(1)`, // no marker — a real hard use, must still be caught
+    ].join('\n')
+    expect(hasUnexemptedSab(text)).toBe(true)
+  })
+
+  it('the marker alone, with no SharedArrayBuffer reference, adds nothing', () => {
+    expect(hasUnexemptedSab(`// sab-optional: this comment mentions nothing real`)).toBe(false)
+  })
 })
 
 describe('WorkshopTool.requires — invariants', () => {

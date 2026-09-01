@@ -4,17 +4,47 @@
  * All keys are session objects (non-persistent) — no export/download.
  */
 import { useState, useMemo, useRef, useEffect } from 'react'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Eye, Key as KeyIcon, Lock, RefreshCw, Trash2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { useHsmContext, type HsmKey } from '../hsm/HsmContext'
 import {
   hsm_getKeyAttributes,
   hsm_destroyObject,
+  hsm_findAllObjects,
+  CKA_UNIQUE_ID,
   type KeyAttributeSet,
 } from '../../../wasm/softhsm'
 import { formatBytes } from './keySizeUtils'
 import { discoverHsmObjects } from './discoverHsmObjects'
 import { estimateKeySize, KeyAttrModal } from '@/components/shared/hsmKeyAttrDisplay'
+
+/**
+ * A `handle` is only ever valid within the session that returned it
+ * (PKCS#11 v3.2 §3.2) — real bug found live 2026-08-30: a handle printed
+ * by one session was registered and later queried through a DIFFERENT
+ * session, which knew the same object under a different number, so every
+ * attribute read failed with CKR_OBJECT_HANDLE_INVALID. `CKA_UNIQUE_ID` is
+ * the durable identity; when a key carries one, re-resolve its CURRENT
+ * handle on `hSession` before every live query instead of trusting the
+ * cached `handle`. No fallback to the stale handle on a miss — a UID that
+ * finds nothing means the object is genuinely gone (e.g. destroyed), and
+ * that's the honest thing to report, not a read through a dead handle.
+ */
+function resolveCurrentHandle(M: SoftHSMModule, hSession: number, key: HsmKey): number | null {
+  if (!key.uniqueId) return key.handle
+  const bytes = new TextEncoder().encode(key.uniqueId)
+  const ptr = M._malloc(Math.max(bytes.length, 1))
+  M.HEAPU8.set(bytes, ptr)
+  try {
+    const found = hsm_findAllObjects(M, hSession, [
+      { type: CKA_UNIQUE_ID, bytesPtr: ptr, bytesLen: bytes.length },
+    ])
+    return found.length > 0 ? found[0] : null
+  } finally {
+    M._free(ptr)
+  }
+}
 
 // ── Role styling ──────────────────────────────────────────────────────────────
 
@@ -65,7 +95,11 @@ export const HsmKeyTable = () => {
           attrCache.current.set(k.handle, null)
         } else {
           try {
-            attrCache.current.set(k.handle, hsm_getKeyAttributes(M, hSession, k.handle))
+            const liveHandle = resolveCurrentHandle(M, hSession, k)
+            attrCache.current.set(
+              k.handle,
+              liveHandle !== null ? hsm_getKeyAttributes(M, hSession, liveHandle) : null
+            )
           } catch {
             attrCache.current.set(k.handle, null)
           }
@@ -92,7 +126,13 @@ export const HsmKeyTable = () => {
     const hSession = key.sessionHandle ?? hSessionRef.current
     if (!M || !hSession) return
     try {
-      const a = hsm_getKeyAttributes(M, hSession, key.handle)
+      const liveHandle = resolveCurrentHandle(M, hSession, key)
+      // CK_INVALID_HANDLE (0) is never a real object — hsm_getKeyAttributes
+      // reads every field against it and every read fails, producing the
+      // SAME all-null/all-'error' KeyAttributeSet + the modal's own
+      // existing "could not read attributes" banner, honestly. Reusing
+      // that real path rather than hand-building an empty object here.
+      const a = hsm_getKeyAttributes(M, hSession, liveHandle ?? 0)
       setAttrs(a)
       setInspectedKey(key)
     } catch {
@@ -102,10 +142,15 @@ export const HsmKeyTable = () => {
 
   const destroyKey = (key: HsmKey) => {
     const M = key.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
-    const hSession = hSessionRef.current
+    // Real gap found alongside the inspect-modal bug: this always used
+    // hSessionRef.current, never key.sessionHandle — for a key registered
+    // on a different session (e.g. the Developer tab's own kept-open dev-
+    // slot session), that targets the wrong session/slot entirely.
+    const hSession = key.sessionHandle ?? hSessionRef.current
     if (!M || !hSession) return
     try {
-      hsm_destroyObject(M, hSession, key.handle)
+      const liveHandle = resolveCurrentHandle(M, hSession, key)
+      if (liveHandle !== null) hsm_destroyObject(M, hSession, liveHandle)
       removeHsmKey(key.handle)
       attrCache.current.delete(key.handle)
     } catch {

@@ -12,6 +12,10 @@ node_modules
 dist
 dist-ssr
 public/dist/
+# esbuild-bundled Monaco worker (npm run build:monaco-worker, wired into
+# predev/prebuild) — regenerated from node_modules/monaco-editor on every
+# install, not source.
+public/monaco/
 
 # Generated NotebookLM package (run: npm run notebooklm)
 notebooklm/
@@ -295,6 +299,12 @@ scripts/*
 # rule — a real gap, found 2026-07-10 adding a new test file here).
 !scripts/validators/
 !scripts/validate-data-integrity.ts
+# Keeps validate:data:without-priv's --exclude-checks list honest against
+# ci.yml's own copy (dev-tabs-pkcs11-kmip plan G9, W5) — same "every new
+# scripts/ file needs its own re-include line, on the same commit" gap this
+# whole section exists to prevent, caught here before the file was ever
+# committed rather than after.
+!scripts/validate-data-priv-exclusions.driftguard.test.ts
 
 # Role-board CTA gate — runs in the local gate (npm run audit:role-board-ctas)
 # and is referenced by a committed package.json script, so it MUST be tracked
@@ -662,6 +672,19 @@ check_compliance_sources.ts
 
 # Private Python scripts inside src/
 src/**/*.py
+# EXCEPT the Developer tabs' Pyodide shim sources (dev-tabs-pkcs11-kmip plan)
+# — these are product source, not private tooling: they ship into Pyodide's
+# filesystem at runtime (via public/pyodide-shims/, synced from these by
+# `npm run sync:pyodide-shims`) and are what a learner's script actually
+# imports. Found missing from git history 2026-08-28 after `git add` on this
+# directory silently no-op'd against the blanket rule above (only the
+# public/ synced COPY had been committed, never the real source) — same
+# class of trap as the documented scripts/* gitignore gotcha. Path updated
+# same day when the whole directory moved out from under src/wasm/ (that
+# directory is eslint-excluded repo-wide, which had been silently exempting
+# this hand-written code from lint too) — update this path again if it
+# ever moves again, or the trap recurs silently.
+!src/services/python/pyodide/shims/**/*.py
 
 # macOS clippings
 *.textClipping

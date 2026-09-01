@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router'
 import { MobilePlaygroundView } from './MobilePlaygroundView'
 import { WORKSHOP_TOOLS, CATEGORIES } from '@/components/Playground/workshopRegistry'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 // Real data throughout — WORKSHOP_TOOLS is the same real registry every
 // desktop Playground surface reads. Assertions are structural (derived at
@@ -25,6 +26,39 @@ describe('MobilePlaygroundView', () => {
     useBookmarkStore.getState().myPlaygroundTools.forEach((id) => {
       useBookmarkStore.getState().toggleMyPlaygroundTool(id)
     })
+    usePersonaStore.getState().clearPersona()
+  })
+
+  it('shows a "Good places to start" row of real beginner tools when no persona is set', () => {
+    renderView()
+    const beginners = MOBILE_TOOLS.filter((t) => t.difficulty === 'beginner').slice(0, 3)
+    expect(beginners.length).toBeGreaterThan(0)
+    expect(screen.getByText('Good places to start')).toBeInTheDocument()
+    for (const t of beginners) {
+      expect(screen.getAllByText(t.name).length).toBeGreaterThan(0)
+    }
+  })
+
+  it('the start-here row switches to persona-matched tools once a persona is set', () => {
+    usePersonaStore.getState().setPersona('developer')
+    renderView()
+    expect(screen.getByText('Recommended for Developer')).toBeInTheDocument()
+    const matched = MOBILE_TOOLS.filter((t) => t.recommendedPersonas.includes('developer')).slice(
+      0,
+      3
+    )
+    expect(matched.length).toBeGreaterThan(0)
+    for (const t of matched) {
+      expect(screen.getAllByText(t.name).length).toBeGreaterThan(0)
+    }
+  })
+
+  it('the start-here row disappears once a category filter narrows the list', () => {
+    renderView()
+    expect(screen.getByText('Good places to start')).toBeInTheDocument()
+    const count = MOBILE_TOOLS.filter((t) => t.category === 'Entropy & Random').length
+    fireEvent.click(screen.getByRole('button', { name: `Entropy & Random · ${count}` }))
+    expect(screen.queryByText('Good places to start')).not.toBeInTheDocument()
   })
 
   it('shows the real hand-authored tool count, excluding sandbox scenarios', () => {
@@ -89,7 +123,8 @@ describe('MobilePlaygroundView', () => {
   it('toggles a tool bookmark via the real useBookmarkStore ("My tools")', () => {
     renderView()
     const first = MOBILE_TOOLS[0]
-    const btn = screen.getAllByRole('button', { name: 'Add to My tools' })[0]
+    const grid = screen.getByTestId('playground-tools-grid')
+    const btn = within(grid).getAllByRole('button', { name: 'Add to My tools' })[0]
     fireEvent.click(btn)
     expect(useBookmarkStore.getState().myPlaygroundTools).toContain(first.id)
   })

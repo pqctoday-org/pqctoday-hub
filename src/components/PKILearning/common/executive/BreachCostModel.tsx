@@ -30,8 +30,26 @@ import {
 } from '@/utils/breachCostModel'
 import { computeMoscaVerdict, costOfWaiting } from '@/utils/moscaTheorem'
 
+/** The full set of scenario sliders below, for restore-on-mount and for
+ *  reporting the raw inputs back up (not just the computed costs) so a
+ *  caller can persist and later restore all of them, not only `industry`. */
+export interface BreachScenarioInputs {
+  breachScale: number
+  yearsOfData: number
+  orgSizeTier: OrgSizeTier
+  hndlFactorPct: number
+  dataSensitivityClass: DataSensitivityClass
+  planningHorizonYears: number
+  discountRateAnnual: number
+  migrationDurationYears: number
+  region: 'global' | 'us'
+}
+
 interface BreachCostModelProps {
   industry?: string
+  /** Seeds every slider on mount — omit to use the built-in defaults
+   *  (unaffected existing callers keep exactly their current behavior). */
+  initialValues?: Partial<BreachScenarioInputs>
   onCostCalculated?: (costs: {
     classicalCost: number
     quantumCost: number
@@ -45,6 +63,10 @@ interface BreachCostModelProps {
     hndlFactorPct: number
     annualBreachProbPct: number
   }) => void
+  /** All raw slider values, reported on every change — the restorable half
+   *  `onCostCalculated` doesn't cover (breachScale, planningHorizonYears,
+   *  discountRateAnnual, migrationDurationYears, orgSizeTier, region). */
+  onInputsChanged?: (inputs: BreachScenarioInputs) => void
 }
 
 /**
@@ -87,29 +109,40 @@ const ORG_SIZE_TIER_OPTIONS: { tier: OrgSizeTier; label: string }[] = [
 
 export const BreachCostModel: React.FC<BreachCostModelProps> = ({
   industry = 'Other',
+  initialValues,
   onCostCalculated,
+  onInputsChanged,
 }) => {
   // Scenario inputs. "Breach severity" scales the authoritative industry-average
   // total breach cost, rather than a fabricated flat per-record figure.
-  const [breachScale, setBreachScale] = useState(1)
-  const [yearsOfData, setYearsOfData] = useState(5)
+  const [breachScale, setBreachScale] = useState(initialValues?.breachScale ?? 1)
+  const [yearsOfData, setYearsOfData] = useState(initialValues?.yearsOfData ?? 5)
   // Default prior comes from Cyentia IRIS 2025's organization-size anchors
   // (average org ~9%/yr), not an unsourced flat figure — see roiBaselines.ts.
-  const [orgSizeTier, setOrgSizeTier] = useState<OrgSizeTier>('average')
+  const [orgSizeTier, setOrgSizeTier] = useState<OrgSizeTier>(
+    initialValues?.orgSizeTier ?? 'average'
+  )
   const [annualBreachProbPct, setAnnualBreachProbPct] = useState(
-    ANNUAL_BREACH_PROBABILITY_PCT.average
+    ANNUAL_BREACH_PROBABILITY_PCT[initialValues?.orgSizeTier ?? 'average']
   )
   const selectOrgSizeTier = (tier: OrgSizeTier) => {
     setOrgSizeTier(tier)
     setAnnualBreachProbPct(ANNUAL_BREACH_PROBABILITY_PCT[tier])
   }
-  const [hndlFactorPct, setHndlFactorPct] = useState(30)
-  const [dataSensitivityClass, setDataSensitivityClass] =
-    useState<DataSensitivityClass>('general-pii')
-  const [planningHorizonYears, setPlanningHorizonYears] = useState(10)
-  const [discountRateAnnual, setDiscountRateAnnual] = useState(0.06)
-  const [migrationDurationYears, setMigrationDurationYears] = useState(3)
-  const [region, setRegion] = useState<'global' | 'us'>('global')
+  const [hndlFactorPct, setHndlFactorPct] = useState(initialValues?.hndlFactorPct ?? 30)
+  const [dataSensitivityClass, setDataSensitivityClass] = useState<DataSensitivityClass>(
+    initialValues?.dataSensitivityClass ?? 'general-pii'
+  )
+  const [planningHorizonYears, setPlanningHorizonYears] = useState(
+    initialValues?.planningHorizonYears ?? 10
+  )
+  const [discountRateAnnual, setDiscountRateAnnual] = useState(
+    initialValues?.discountRateAnnual ?? 0.06
+  )
+  const [migrationDurationYears, setMigrationDurationYears] = useState(
+    initialValues?.migrationDurationYears ?? 3
+  )
+  const [region, setRegion] = useState<'global' | 'us'>(initialValues?.region ?? 'global')
 
   const asOfYear = useMemo(() => new Date().getFullYear(), [])
 
@@ -184,6 +217,31 @@ export const BreachCostModel: React.FC<BreachCostModelProps> = ({
     yearsOfData,
     hndlFactorPct,
     annualBreachProbPct,
+  ])
+
+  useEffect(() => {
+    onInputsChanged?.({
+      breachScale,
+      yearsOfData,
+      orgSizeTier,
+      hndlFactorPct,
+      dataSensitivityClass,
+      planningHorizonYears,
+      discountRateAnnual,
+      migrationDurationYears,
+      region,
+    })
+  }, [
+    onInputsChanged,
+    breachScale,
+    yearsOfData,
+    orgSizeTier,
+    hndlFactorPct,
+    dataSensitivityClass,
+    planningHorizonYears,
+    discountRateAnnual,
+    migrationDurationYears,
+    region,
   ])
 
   const pctIncrease = costs.classicalSLE > 0 ? (costs.delta / costs.classicalSLE) * 100 : 0

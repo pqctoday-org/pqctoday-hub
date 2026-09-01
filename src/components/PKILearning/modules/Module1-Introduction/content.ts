@@ -14,7 +14,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-101',
   version: '1.0.1',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     getStandard('FIPS 203'),
@@ -91,7 +91,7 @@ export const content: ModuleContent = {
     symmetricMention:
       "Symmetric cryptography (like AES-256) is largely unaffected by Shor's algorithm and remains quantum-safe.",
     fips206Mention:
-      'Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures.',
+      "Note: The upcoming FIPS 206 (FN-DSA) standard will provide an additional lattice-based signature scheme optimized for small signatures — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }
 

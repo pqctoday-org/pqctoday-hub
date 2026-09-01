@@ -60,7 +60,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                   BASE64URL(Payload)
                 </span>
                 <span className="text-muted-foreground font-bold">.</span>
-                <span className="px-2 py-1 rounded bg-destructive/10 text-destructive">
+                <span className="px-2 py-1 rounded bg-destructive/10 text-status-error">
                   BASE64URL(Signature)
                 </span>
               </div>
@@ -124,7 +124,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
             efficiently on a quantum computer. Key agreement algorithms like ECDH-ES are equally
             vulnerable.
           </p>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="JWT algorithms and quantum vulnerability"
+          >
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
@@ -257,7 +263,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
                   Sender generates ephemeral EC keypair
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
-                <div className="p-2 rounded bg-destructive/10 text-destructive text-xs font-bold">
+                <div className="p-2 rounded bg-destructive/10 text-status-error text-xs font-bold">
                   ECDH(ephemeral_sk, recipient_pk) &rarr; shared secret
                 </div>
                 <div className="text-muted-foreground">&darr;</div>
@@ -330,7 +336,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               </pre>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div
+            className="overflow-x-auto"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- required by WCAG: a scrollable region with no focusable content is unreachable by keyboard; making a scrollable region focusable is axe's documented fix for `scrollable-region-focusable` (same pattern as VpnSimulationPanel.tsx).
+            tabIndex={0}
+            role="region"
+            aria-label="Classical vs PQC JWT header comparison"
+          >
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">

@@ -35,9 +35,11 @@ import {
   Clock,
   BookOpen,
   X,
+  Code2,
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
+import { KmipPipelineBuilder } from '../dev/kmipPipeline/KmipPipelineBuilder'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -95,7 +97,7 @@ function Term({ t }: { t: keyof typeof GLOSSARY }) {
 }
 
 /** Top-level surface of the CACP playground. */
-type Plane = 'agility' | 'policy' | 'kmip3' | 'migration'
+type Plane = 'agility' | 'policy' | 'kmip3' | 'migration' | 'developer'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -260,7 +262,8 @@ export function KmipPlaygroundView() {
     return requested === 'agility' ||
       requested === 'policy' ||
       requested === 'kmip3' ||
-      requested === 'migration'
+      requested === 'migration' ||
+      requested === 'developer'
       ? requested
       : 'agility'
   })
@@ -859,6 +862,37 @@ export function KmipPlaygroundView() {
         },
       ],
     },
+    {
+      id: 'developer-lifecycle',
+      title: 'Build a governed KMIP sequence',
+      icon: Code2,
+      plane: 'developer',
+      blurb: 'The Developer tab: a real pqctoday_kmip.KmipClient script, step by step.',
+      steps: [
+        {
+          title: 'Start from a template',
+          target: '[data-tour="kmip-dev-templates"]',
+          act: () => clickByText('[data-tour="kmip-dev-templates"] button', 'Governed lifecycle'),
+          body: 'Each template is a real ordered list of pqctoday_kmip.KmipClient calls — create, activate, sign, revoke, destroy — the same object lifecycle a production KMIP client walks through.',
+        },
+        {
+          title: 'Four kinds of step',
+          target: '[data-tour="kmip-dev-steps"]',
+          body: 'A lifecycle op (create/activate/sign/…), a policy load, a dry-run, or an "expect deny" step — the list on the right shows exactly what will run, in order, before you press anything.',
+        },
+        {
+          title: 'Run it for real',
+          target: '[data-tour="kmip-dev-run"]',
+          act: () => clickByText('[data-tour="kmip-dev-run"]', 'Run'),
+          body: 'This compiles the step list into real Python and runs it against the same in-page KMIP/CACP engine the rest of this playground uses — not a simulation.',
+        },
+        {
+          title: 'The refusal IS the lesson',
+          target: '[data-tour="kmip-dev-step-deny"]',
+          body: 'Signing with a key before it\'s Activated is refused by the engine — and that refusal is graded as a PASS, not a failure. This is the crypto-agility control plane doing its job: an honest "no" instead of a silent allow.',
+        },
+      ],
+    },
   ]
   const tour = useLessonsTour(lessons, setPlane)
 
@@ -1050,6 +1084,7 @@ export function KmipPlaygroundView() {
               { id: 'policy', label: 'Policy', icon: ShieldCheck },
               { id: 'kmip3', label: 'KMIP3.0', icon: Layers },
               { id: 'migration', label: 'Migration', icon: ArrowRight },
+              { id: 'developer', label: 'Developer', icon: Code2 },
             ] as const
           ).map((t) => {
             const on = plane === t.id
@@ -1434,6 +1469,8 @@ export function KmipPlaygroundView() {
       {/* Migration runs its OWN engine instance on a dedicated slot — the
           estate keystore is hermetic beside the workbench's slot-0 engine. */}
       {plane === 'migration' && <MigrationView />}
+
+      {plane === 'developer' && <KmipPipelineBuilder engine={engine} />}
 
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}

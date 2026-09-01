@@ -73,6 +73,19 @@ export interface HsmKey {
   /** PKCS#11 session handle that owns this key (for multi-session scenarios like VPN sim) */
   sessionHandle?: number
   /**
+   * CKA_UNIQUE_ID — the object's durable identity. `handle` is a
+   * session-specific lookup result (PKCS#11 v3.2 §3.2: a handle is only
+   * meaningful within the session that returned it), never stable across
+   * a re-opened session — real bug found live 2026-08-30: the Developer
+   * tab registered a handle printed by the script's OWN (now-closed)
+   * session, and a fresh session saw the same private key under a
+   * DIFFERENT handle (106 vs the real 107), so every attribute read
+   * failed with CKR_OBJECT_HANDLE_INVALID. When present, callers must
+   * re-resolve the current handle via a CKA_UNIQUE_ID find before reading
+   * attributes — never trust a stored `handle` across a session boundary.
+   */
+  uniqueId?: string
+  /**
    * Which WASM instance owns this key. Defaults to 'main' (panel softhsm). VPN sim uses
    * 'worker-init' / 'worker-resp' for keys that live inside a strongSwan worker's local
    * softhsmv3 — those handles are invalid in the panel WASM and require worker RPC to inspect.
@@ -188,6 +201,21 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const crossCheckModuleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
+  /** Real bug found live (dev-tabs-pkcs11-kmip plan G9, W1): the deep-link
+   *  mount effect (HsmPlayground.tsx) and a tab's own "ensure ready" effect
+   *  (e.g. PkcsPipelineBuilder.tsx) can both call `autoInit()` on the SAME
+   *  mount — neither guards against a call already in flight, since both
+   *  read `phase === 'idle'` before either has had a chance to flip it. Two
+   *  concurrent init sequences each try to claim SoftHSM's one available
+   *  token slot (confirmed live: the C++ engine's WASM build starts with
+   *  exactly one, per SlotManager's own upstream design — "always one slot
+   *  available containing an uninitialised token" — that count does NOT
+   *  grow after C_InitToken, so a second concurrent caller starves).
+   *  Reproduces in a real production build too (not just React StrictMode's
+   *  dev-only double-effect-invoke, which only amplifies the same race).
+   *  A second call while one is in flight now joins it instead of starting
+   *  an independent sequence. */
+  const autoInitInFlightRef = useRef<Promise<boolean> | null>(null)
   const lastInitErrorRef = useRef<string | null>(null)
 
   const [engineMode, setEngineMode] = useState<EngineMode>('rust')
@@ -264,7 +292,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [addHsmLog]
   )
 
-  const autoInit = useCallback(
+  const autoInitImpl = useCallback(
     async (engine?: EngineMode): Promise<boolean> => {
       const mode = engine ?? engineMode
       if (engine) setEngineMode(mode)
@@ -324,6 +352,18 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     },
     [engineMode, addHsmLog]
+  )
+
+  const autoInit = useCallback(
+    (engine?: EngineMode): Promise<boolean> => {
+      if (autoInitInFlightRef.current) return autoInitInFlightRef.current
+      const run = autoInitImpl(engine).finally(() => {
+        autoInitInFlightRef.current = null
+      })
+      autoInitInFlightRef.current = run
+      return run
+    },
+    [autoInitImpl]
   )
 
   // E2E test hook: exposes autoInit on window so Playwright can advance the

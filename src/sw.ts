@@ -91,6 +91,12 @@ self.addEventListener('fetch', (event) => {
     (async (): Promise<Response> => {
       // WASM: no longer precached (Phase 4). Precache is still consulted first so
       // that anything a future config DOES precache keeps working, then CacheFirst.
+      // Covers /pyodide/pyodide.asm.wasm too (Developer tabs, dev-tabs-pkcs11-kmip
+      // plan P1) — no separate route needed. Pyodide's non-.wasm assets
+      // (pyodide.mjs/.asm.js/-lock.json/python_stdlib.zip) deliberately fall
+      // through to the network-fallback branch below: the Developer tabs are
+      // online-only by design (plan §4, WS-A), so a fetch failure there should
+      // surface as "needs a connection", not be masked by a cache.
       if (url.pathname.endsWith('.wasm')) {
         const precachedWasm = await precache.matchPrecache(request)
         if (precachedWasm) return withCOIHeaders(precachedWasm, url)

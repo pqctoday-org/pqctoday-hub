@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'pqc-governance',
   version: '1.0.0',
   lastReviewed: '2026-08-10',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     // Governance documents first, algorithm specifications after. This module's
@@ -75,7 +75,7 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 3 interactive steps: RACI Matrix Builder — interactive 10×6 matrix with color-coded click-to-cycle cells (click cycles: empty → R → A → C → I → empty); includes validation warning for missing Accountable assignments, legend, export to Markdown, and save to learning portfolio as an executive document.',
     relatedStandards:
-      'OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)',
+      "OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, in development — this hub's citation is deprecated pending NIST's final publication). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)",
   },
 }
 

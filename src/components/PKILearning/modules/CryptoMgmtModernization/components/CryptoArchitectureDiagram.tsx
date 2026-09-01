@@ -11,7 +11,7 @@
  * Persists to the Command Center via `useModuleStore.addExecutiveDocument` —
  * the same flow as RiskRegisterBuilder etc.
  */
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Plus, Trash2, Copy, Check, Network, FileType2 } from 'lucide-react'
 import { CompleteStepAction } from '../../../common/CompleteStepAction'
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,7 @@ import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useSavedArtifactInputs } from '@/hooks/useSavedArtifactInputs'
+import { useHasUserInteracted } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { MermaidDiagram } from '@/components/Simulation/MermaidDiagram'
 import { renderMermaidToPngDataUrl } from '@/components/Simulation/mermaidRender'
@@ -335,6 +336,52 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     setSavedAt(Date.now())
     setLastSavedMarkdown(markdown)
   }, [markdown, addExecutiveDocument, components])
+
+  // Debounced autosave + flush-on-unmount. This tool's save was previously
+  // bound only to the explicit CompleteStepAction click — every other
+  // ArtifactBuilder/ExportableArtifact-backed tool got a shared autosave via
+  // WS6, but this component's handleSave never routed through either wrapper,
+  // so it never inherited it: an edit not manually saved before navigating
+  // away was silently lost even though restore-on-mount (savedComponents,
+  // above) worked fine. Same debounce pattern as KPITrackerTemplate.
+  const handleSaveRef = useRef(handleSave)
+  useEffect(() => {
+    handleSaveRef.current = handleSave
+  }, [handleSave])
+
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const autoSavePendingRef = useRef(false)
+  const mountedOnceRef = useRef(false)
+  const userInteracted = useHasUserInteracted()
+
+  useEffect(() => {
+    if (!mountedOnceRef.current) {
+      mountedOnceRef.current = true
+      return
+    }
+    if (!userInteracted.current) return
+    autoSavePendingRef.current = true
+    autoSaveTimerRef.current = setTimeout(() => {
+      autoSaveTimerRef.current = null
+      autoSavePendingRef.current = false
+      handleSaveRef.current()
+    }, 800)
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current)
+        autoSaveTimerRef.current = null
+      }
+    }
+  }, [components, userInteracted])
+
+  useEffect(() => {
+    return () => {
+      if (autoSavePendingRef.current) {
+        autoSavePendingRef.current = false
+        handleSaveRef.current()
+      }
+    }
+  }, [])
 
   const editedSinceSave =
     savedAt !== null && lastSavedMarkdown !== null && markdown !== lastSavedMarkdown

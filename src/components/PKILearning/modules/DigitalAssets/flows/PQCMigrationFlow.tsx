@@ -108,7 +108,7 @@ const VulnerabilityLandscape: React.FC = () => (
             <td className="p-3 font-medium text-status-warning">~$718B (est.)</td>
             <td className="p-3 text-xs">Permanent — UTXO set is immutable</td>
             <td className="p-3">
-              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-destructive/10 text-destructive">
+              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-destructive/10 text-status-error">
                 High
               </span>
               <p className="text-xs mt-1">Soft fork required; legacy UTXOs remain vulnerable</p>
@@ -138,7 +138,7 @@ const VulnerabilityLandscape: React.FC = () => (
             <td className="p-3 font-medium text-status-warning">All SOL + SPL tokens</td>
             <td className="p-3 text-xs">Permanent — and unavoidable by design</td>
             <td className="p-3">
-              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-destructive/10 text-destructive">
+              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-destructive/10 text-status-error">
                 Very High
               </span>
               <p className="text-xs mt-1">
@@ -616,7 +616,7 @@ const SolanaHardProblem: React.FC = () => (
           },
         ].map(({ step, label, detail }) => (
           <div key={step} className="flex items-start gap-3">
-            <span className="w-6 h-6 rounded-full bg-destructive/10 text-destructive text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+            <span className="w-6 h-6 rounded-full bg-destructive/10 text-status-error text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
               {step}
             </span>
             <div>

@@ -11,7 +11,7 @@ export const content: ModuleContent = {
   moduleId: 'iot-ot-pqc',
   version: '1.0.0',
   lastReviewed: '2026-08-22',
-  lastEdited: '2026-08-23',
+  lastEdited: '2026-08-31',
 
   standards: [
     // RFC 7228 FIRST, ahead of the otherwise-alphabetical list. It defines the
@@ -81,5 +81,7 @@ export const content: ModuleContent = {
     mtcProof: '300 bytes',
     ecdsaSigConstraint: '64 bytes',
     hybridKem: 'X25519MLKEM768',
+    relatedStandards:
+      "FIPS 206 (FN-DSA), cited above as a compact-signature option for constrained devices, is still a NIST draft as of 2026 — this hub's citation is deprecated until NIST publishes the final text.",
   },
 }

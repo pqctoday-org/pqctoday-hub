@@ -916,6 +916,7 @@ distinguished_name = dn
                       disabled={attr.status === 'mandatory'}
                       onChange={(e) => handleAttributeChange(attr.id, 'enabled', e.target.checked)}
                       className="rounded border-border bg-muted text-primary focus:ring-primary cursor-pointer w-4 h-4"
+                      aria-label={`Include ${attr.label}`}
                     />
                   </td>
                   <td className="p-3 text-muted-foreground text-xs">{attr.elementType}</td>

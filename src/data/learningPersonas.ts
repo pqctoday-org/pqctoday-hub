@@ -66,6 +66,14 @@ export interface LearningPersona {
  *   (RFC 9420); developer/architect/researcher IS its natural audience. Pushing
  *   it into executive/ops/curious would be the blanket rule WS8 explicitly
  *   rejects. Narrow reach here is correct scoping, not a gap.
+ * - `qkd` stays at 2/6 personas (architect, researcher), added 2026-08-29.
+ *   Advanced-difficulty Hardware Infrastructure content (BB84 protocol
+ *   internals, HSM key derivation) that needs dedicated QKD hardware most
+ *   orgs will never deploy — architect (designs the infra) and researcher
+ *   (investigates the protocol) ARE its audience. Developer has nothing to
+ *   implement against it (no software integration path exists); ops has no
+ *   fleet to operate; executive/curious is too deep for either's framing.
+ *   Same reasoning as mls-group-messaging above, not re-litigated per pass.
  * - `pqc-candidates` (4/6), `database-encryption-pqc` (5/6) and `os-pqc` (4/6)
  *   are NOT narrow on the persona axis at all. Their real gap is a different
  *   axis entirely — see the follow-up note below.
@@ -107,6 +115,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'crypto-mgmt-modernization',
       'sbom',
       'crypto-registry',
+      'cbom',
       'standards-bodies',
       'government-defense-pqc',
       'crypto-agility',
@@ -150,6 +159,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'crypto-mgmt-modernization' },
       { type: 'module', moduleId: 'sbom' },
       { type: 'module', moduleId: 'crypto-registry' },
+      { type: 'module', moduleId: 'cbom' },
       { type: 'module', moduleId: 'standards-bodies' },
       { type: 'module', moduleId: 'government-defense-pqc' },
       {
@@ -206,7 +216,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
     // back deliberately, and the ~10h concern that motivated that trim is now
     // carried by `essentials` (200 min) rather than by the full path, since the
     // capstone unlocks on essentials, not on the whole recommendedPath.
-    estimatedMinutes: 925,
+    estimatedMinutes: 985,
     essentials: [
       'pqc-101',
       'exec-quantum-impact',
@@ -274,6 +284,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'slh-dsa',
       'stateful-signatures',
       'email-signing',
+      'trust-services-pqc',
       'api-security-jwt',
       'iam-pqc',
       'database-encryption-pqc',
@@ -341,6 +352,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'slh-dsa' },
       { type: 'module', moduleId: 'stateful-signatures' },
       { type: 'module', moduleId: 'email-signing' },
+      { type: 'module', moduleId: 'trust-services-pqc' },
       {
         type: 'checkpoint',
         id: 'dev-cp-4',
@@ -390,7 +402,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1755,
+    estimatedMinutes: 1815,
     essentials: [
       'pqc-101',
       'dev-quantum-impact',
@@ -907,6 +919,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'pki-workshop',
       'pki-enrollment-protocols',
       'iam-pqc',
+      'trust-services-pqc',
       'kms-pqc',
       'hsm-pqc',
       'stateful-signatures',
@@ -951,6 +964,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       { type: 'module', moduleId: 'pki-workshop' },
       { type: 'module', moduleId: 'pki-enrollment-protocols' },
       { type: 'module', moduleId: 'iam-pqc' },
+      { type: 'module', moduleId: 'trust-services-pqc' },
       {
         type: 'checkpoint',
         id: 'ops-cp-2',
@@ -1030,7 +1044,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1855,
+    estimatedMinutes: 1915,
     essentials: [
       'pqc-101',
       'ops-quantum-impact',

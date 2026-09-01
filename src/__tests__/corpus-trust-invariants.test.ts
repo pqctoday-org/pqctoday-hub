@@ -434,7 +434,14 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   superseded (deprecate, never delete). Same real fix as above: one-hop
   //   superseded_by resolution would retire most of this pin rather than
   //   grow it.
-  'governance-maturity': 95,
+  //   2026-08-31: 95 -> 96 (+1) on the integration/all-changes-20260830 branch
+  //   (4 parallel workstreams' worth of merged commits + a first refresh-index
+  //   run in a while). Same already-tracked "IETF RFC 9763" one-hop-alias case
+  //   as every entry above — the extra unscored chunk is gov-maturity-IETF RFC
+  //   9763-L2-lifecycle-3, one more archived requirement row citing RFC-9763
+  //   that findAllMaturityCSVs() picked up this run. No governance-maturity
+  //   source row changed on this branch. Ordinary maintenance, same as 82->87.
+  'governance-maturity': 96,
 }
 
 /**

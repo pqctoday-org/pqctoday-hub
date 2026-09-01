@@ -449,6 +449,12 @@ export const KPITrackerTemplate: React.FC<KPITrackerTemplateProps> = ({ roadmapO
         allowWeightEditing={true}
         showExport={false}
         exportFilename={`pqc-kpi-tracker-${activePersona}`}
+        // The autosave above writes userScores/userWeights correctly, but
+        // nothing read them back into the scorecard itself — it initialized
+        // every slider from d.autoScore regardless of a restored save, so a
+        // saved score looked reset on reload even though the write succeeded.
+        initialScores={savedInputs?.userScores}
+        initialWeights={savedInputs?.userWeights}
       />
 
       {/* The overall score is a weighted average over only the KPIs that are

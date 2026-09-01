@@ -32,6 +32,7 @@ import { INDUSTRY_ICONS, USE_CASE_ICONS } from '../components/Algorithms/landsca
 import { MANIFEST_BY_ID } from '../components/PKILearning/manifest/registry'
 import { WORKSHOP_TOOLS } from '../components/Playground/workshopRegistry'
 import { resolveToNaicsSet } from './sectorVocabularyData'
+import { isCrossIndustry } from './industryMatch'
 
 const { useCases, standards, marketSizes } = loadIndustryLandscape()
 const rowByIdForTargets = new Map(PROTOCOL_MATRIX.map((r) => [r.id, r]))
@@ -78,7 +79,12 @@ describe('industry-landscape driftguards', () => {
     const threatIndustries = new Set(threatsData.map((t) => t.industry))
     // 'Cross-Industry' aside (threats keeps it too), each landscape industry
     // must match a canonical threats label so /threats deep links resolve.
+    // 'Cross-Industry / X' sub-labels are exempt the same way: they're not
+    // real industries in the threats taxonomy either, and every row carrying
+    // one today has a populated source_library_ref, so it never falls through
+    // to the /threats?industry= link this guard is protecting.
     for (const ind of getLandscapeIndustries()) {
+      if (isCrossIndustry(ind)) continue
       expect(threatIndustries, `industry "${ind}" missing from threats vocabulary`).toContain(ind)
     }
   })
@@ -367,7 +373,16 @@ describe('industry-landscape driftguards', () => {
   it('market sizes cover every non-exempt industry, with sane values', () => {
     const byIndustry = new Map(marketSizes.map((m) => [m.industry, m]))
     for (const ind of getLandscapeIndustries()) {
-      if (MARKET_SIZE_EXEMPT.has(ind) || MARKET_SIZE_STALE_PENDING_REFRESH.has(ind)) continue
+      // isCrossIndustry catches 'Cross-Industry' sub-labels too (e.g.
+      // 'Cross-Industry / Code Signing') — they're the same "not a real
+      // sector" case MARKET_SIZE_EXEMPT's 'Cross-Industry' entry covers, split
+      // only for the learn_module_id consistency guard.
+      if (
+        MARKET_SIZE_EXEMPT.has(ind) ||
+        isCrossIndustry(ind) ||
+        MARKET_SIZE_STALE_PENDING_REFRESH.has(ind)
+      )
+        continue
       const m = byIndustry.get(ind)
       expect(m, `industry "${ind}" has no market-size row`).toBeDefined()
       expect(m!.marketSizeUsd).toBeGreaterThan(1e9)
@@ -826,9 +841,10 @@ describe('industry-landscape driftguards', () => {
     // is silent — it returns the industry name as if it were a NAICS code and
     // the filter matches nothing.
     for (const ind of getLandscapeIndustries()) {
-      // 'Cross-Industry' is the absence of a sector, not a sector — the tile
-      // renders no sector link for it (see industryCrossRefs.sectorCodesFor).
-      if (ind === 'Cross-Industry') continue
+      // 'Cross-Industry' (and its sub-labels) is the absence of a sector, not
+      // a sector — the tile renders no sector link for it (see
+      // industryCrossRefs.sectorCodesFor).
+      if (isCrossIndustry(ind)) continue
       const codes = resolveToNaicsSet(ind)
       expect(codes, `industry "${ind}" has no sector_vocabulary alias`).not.toEqual([ind])
       expect(codes.length, `industry "${ind}" resolved to no sector code`).toBeGreaterThan(0)
