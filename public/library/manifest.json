@@ -8832,12 +8832,12 @@
     {
       "refId": "Post-Quantum-Composite-Signatures-in-SSH",
       "title": "Post-Quantum Composite Signatures in SSH",
-      "url": "https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-sshm-composite-sigs-00",
       "status": "downloaded",
       "filename": "Post-Quantum-Composite-Signatures-in-SSH.html",
-      "sizeBytes": 57112,
+      "sizeBytes": 83775,
       "contentType": "text/html",
-      "sha256": "8dfc5fa452cfd183771dc71af241e2c89014e4a2b9fa9452390bf7ab695b377c"
+      "sha256": "f563b11a34b190426f5e7c2c899edb06a300ac9bd5f1cf172c6d710a1ea1d528"
     },
     {
       "refId": "ETSI-TS-103-744-Quantum-safe-Hybrid-Key-Exchanges",
@@ -12087,6 +12087,66 @@
       "sizeBytes": 2934270,
       "contentType": "application/pdf",
       "sha256": "c27c123b7e11633302f3deeeb16b345dfce4b719b40ea5d69152188f6237c55b"
+    },
+    {
+      "refId": "Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3",
+      "title": "Post-quantum Hybrid ECDHE-SCloud+ Key Exchange for TLS 1.3",
+      "url": "https://datatracker.ietf.org/doc/draft-wang-tls-hybrid-ecdh-scloud/",
+      "status": "downloaded",
+      "filename": "Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3.html",
+      "sizeBytes": 68129,
+      "contentType": "text/html",
+      "sha256": "4f2307a6b845352e8c2582e0465f88f73ff62d204a068c7e84952192cc52f0e7"
+    },
+    {
+      "refId": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for",
+      "title": "Update to Post-quantum Hybrid ECDHE-MLKEM Key Agreement for TLSv1.3",
+      "url": "https://datatracker.ietf.org/doc/html/draft-usama-tls-ecdhe-mlkem-update-00",
+      "status": "downloaded",
+      "filename": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for.html",
+      "sizeBytes": 54677,
+      "contentType": "text/html",
+      "sha256": "377c207460b89aef6b25e1fc485589a3c9c41fddd0ae4a512aacb0a7cb1f1eb9"
+    },
+    {
+      "refId": "Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut",
+      "title": "Post-Quantum Credential Binding for x402 Agentic Payment Authorization",
+      "url": "https://datatracker.ietf.org/doc/draft-hopley-x402-pqc-credential-binding/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut.html",
+      "sizeBytes": 42892,
+      "contentType": "text/html",
+      "sha256": "67359c20a5ac4f6b5c3edbdd3b2aba95d9c7354133b435dbb678160c3fd89941"
+    },
+    {
+      "refId": "Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment",
+      "title": "Cross-Issuer ZKP Federation for Post-Quantum Agentic Payment Credentials",
+      "url": "https://datatracker.ietf.org/doc/draft-hopley-x402-federation-zkp/",
+      "status": "downloaded",
+      "filename": "Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment.html",
+      "sizeBytes": 45555,
+      "contentType": "text/html",
+      "sha256": "e1c10c67e5249dcb80ffac50fb4724c43e3eeaeacd2b2d0ee3ab1c2761880c75"
+    },
+    {
+      "refId": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-12",
+      "status": "downloaded",
+      "filename": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 210605,
+      "contentType": "text/html",
+      "sha256": "c86a3f830ac222b47fc953291540e361e3e9e07d60169e5bb4a99b2ab5144838"
+    },
+    {
+      "refId": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Concrete Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-03",
+      "status": "downloaded",
+      "filename": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 369216,
+      "contentType": "text/html",
+      "sha256": "801b041aa973d558d068ad48f7b2b19cb0a2378abfaeddb3b403d6ff72eb4816"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
