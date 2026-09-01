@@ -211,6 +211,15 @@ interface Pkcs11LogPanelProps {
    * caller changes.
    */
   defaultHideAdminOps?: boolean
+  /**
+   * Section (isStepHeader-grouped) display order. Defaults to
+   * 'newest-first' — the existing behaviour every other caller relies on
+   * for live debugging (most recent activity at the top). A step-by-step
+   * lesson walkthrough with a fixed, small step count reads backwards under
+   * that default (Step 6's calls above Step 1's) — pass 'chronological'
+   * there to keep sections in the order they were produced instead.
+   */
+  groupOrder?: 'newest-first' | 'chronological'
 }
 
 /**
@@ -256,6 +265,7 @@ export const Pkcs11LogPanel = ({
   showBeginnerMode = false,
   lessonMode = false,
   defaultHideAdminOps,
+  groupOrder = 'newest-first',
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
@@ -297,8 +307,9 @@ export const Pkcs11LogPanel = ({
     }
     if (currentGroup.length > 0) groups.push(currentGroup)
 
-    // 2. Reverse the groups so the newest section is at the top of the UI
-    return groups.reverse().flat()
+    // 2. Reverse the groups so the newest section is at the top of the UI —
+    // unless the caller asked to keep sections in the order they happened.
+    return (groupOrder === 'newest-first' ? groups.reverse() : groups).flat()
   })()
 
   const copyAll = () => {
