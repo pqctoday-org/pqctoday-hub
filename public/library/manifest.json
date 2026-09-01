@@ -12127,6 +12127,26 @@
       "sizeBytes": 45555,
       "contentType": "text/html",
       "sha256": "e1c10c67e5249dcb80ffac50fb4724c43e3eeaeacd2b2d0ee3ab1c2761880c75"
+    },
+    {
+      "refId": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-12",
+      "status": "downloaded",
+      "filename": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 210605,
+      "contentType": "text/html",
+      "sha256": "c86a3f830ac222b47fc953291540e361e3e9e07d60169e5bb4a99b2ab5144838"
+    },
+    {
+      "refId": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Concrete Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-03",
+      "status": "downloaded",
+      "filename": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 369216,
+      "contentType": "text/html",
+      "sha256": "801b041aa973d558d068ad48f7b2b19cb0a2378abfaeddb3b403d6ff72eb4816"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
