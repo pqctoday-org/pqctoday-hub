@@ -78,6 +78,12 @@ export function optionsFor(kind: ParamKind, steps: PipelineStep[], index: number
           out.push({ label: `${tag} · ${st.op} output`, value: { bind: 'ref', step: st.id } })
         }
         break
+      case 'bool':
+        // Currently only `verify` produces 'bool' — an ACVP sigVer KAT's
+        // assert-verified step binds here.
+        if (produces === 'bool')
+          out.push({ label: `${tag} · ${st.op} result`, value: { bind: 'ref', step: st.id } })
+        break
       case 'label':
         break
     }

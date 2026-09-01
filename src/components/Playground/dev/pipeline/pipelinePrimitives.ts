@@ -79,6 +79,10 @@ export type ParamKind =
   | 'signature'
   | 'peerPoint'
   | 'label'
+  /** A prior step's boolean result (currently only `verify`'s `produces:
+   *  'bool'`) — the ACVP sigVer known-answer check binds to this, not to a
+   *  byte payload. */
+  | 'bool'
 
 /** What a step leaves behind for later steps to bind to. */
 export type OutputKind =
@@ -346,6 +350,36 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     ops: {
       assert: {
         requires: { secret: 'secretKey', expected: 'label', label: 'label' },
+        produces: 'bool',
+      },
+    },
+  },
+
+  // ── ACVP known-answer check, raw-bytes variant — same idea as
+  // 'assert-equals' but for a step that produced plain bytes (digest,
+  // decrypt), not a key handle. 'assert-equals' calls s.value(handle).hex()
+  // on its `secret`, which only makes sense for a key object; a digest
+  // result is already the bytes to compare, so it needs its own primitive
+  // rather than a conditional inside the same one. ──
+  'assert-bytes-equal': {
+    label: 'ACVP check (bytes)',
+    ops: {
+      assert: {
+        requires: { actual: 'bytes', expected: 'label', label: 'label' },
+        produces: 'bool',
+      },
+    },
+  },
+
+  // ── ACVP known-answer check, verify-result variant — asserts a prior
+  // `verify` step's own boolean result was True, for an ACVP sigVer KAT
+  // whose vector already carries a signature that must verify by
+  // construction (no separate "expected" byte string to compare against). ──
+  'assert-verified': {
+    label: 'ACVP check (verified)',
+    ops: {
+      assert: {
+        requires: { verified: 'bool', label: 'label' },
         produces: 'bool',
       },
     },
