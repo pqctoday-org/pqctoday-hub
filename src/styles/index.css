@@ -372,6 +372,8 @@
     --graph-glossary: 220 15% 42%;
     --graph-product: 100 45% 28%;
     --graph-protocol: 315 55% 40%;
+    --graph-patent: 245 55% 38%;
+    --graph-leader: 10 60% 36%;
     --stack-mix-base: white;
   }
 
@@ -462,6 +464,8 @@
     --graph-glossary: 220 15% 68%;
     --graph-product: 100 55% 55%;
     --graph-protocol: 315 80% 70%;
+    --graph-patent: 245 85% 76%;
+    --graph-leader: 10 85% 68%;
   }
 
   /* On screen: render as transparent block so report content is visible.

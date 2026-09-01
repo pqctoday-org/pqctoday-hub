@@ -25,6 +25,11 @@ import { algorithmsData as algorithmTransitions } from './algorithmsData'
 import { certsByProduct } from './certificationXrefData'
 import { cpeByProduct } from './cpeXrefData'
 import { purlByProduct } from './purlXrefData'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { patentsData } from './patentsData'
+import { leadersData } from './leadersData'
+import { expandAlgorithmAliases } from './algorithmNameAliases'
 
 export type ForceClusterNodeType =
   | 'certbody'
@@ -36,6 +41,8 @@ export type ForceClusterNodeType =
   | 'glossary'
   | 'product'
   | 'protocol'
+  | 'patent'
+  | 'leader'
 
 export interface ForceClusterNode {
   id: string
@@ -46,6 +53,30 @@ export interface ForceClusterNode {
   degree: number
   /** Deep link to the real hub page for this entity — internal ("/library?...") or external (a trusted source's own URL). Undefined where no real destination exists (glossary has no standalone route). */
   href?: string
+  /**
+   * Additional REAL destinations beyond `href` — a Learn module that
+   * teaches this entity, or a Playground tool for it — from each source's
+   * own declared reverse-link field (library's moduleIds, migrate's
+   * learningModules, compliance's learnModules, industry's learnModuleId/
+   * playgroundTools, protocol's playgrounds, glossary's relatedModule).
+   * Only populated where that field actually resolves to something real;
+   * never guessed/fuzzy-matched. Empty/absent for mechanism/industry/
+   * certbody, which have no such declared field.
+   */
+  extraLinks?: { label: string; href: string }[]
+}
+
+const TOOL_NAME_BY_ID = new Map(WORKSHOP_TOOLS.map((t) => [t.id, t.name]))
+
+function learnModuleLink(moduleId: string): { label: string; href: string } {
+  // eslint-disable-next-line security/detect-object-injection -- moduleId comes from this same codebase's own CSV-declared reverse-link fields, not user input
+  const title = MODULE_CATALOG[moduleId]?.title ?? moduleId
+  return { label: `Open Learn module: ${title}`, href: `/learn/${moduleId}` }
+}
+
+function playgroundToolLink(toolId: string): { label: string; href: string } {
+  const title = TOOL_NAME_BY_ID.get(toolId) ?? toolId
+  return { label: `Open tool: ${title}`, href: `/playground/${toolId}` }
 }
 
 export interface ForceClusterEdge {
@@ -59,7 +90,13 @@ export interface ForceClusterGraph {
   edges: ForceClusterEdge[]
 }
 
-const CAPPED_TYPES: ReadonlySet<ForceClusterNodeType> = new Set(['certbody', 'standard', 'product'])
+const CAPPED_TYPES: ReadonlySet<ForceClusterNodeType> = new Set([
+  'certbody',
+  'standard',
+  'product',
+  'patent',
+  'leader',
+])
 
 function norm(s: string | undefined | null): string {
   return (s ?? '').trim().toLowerCase()
@@ -149,6 +186,10 @@ function buildNodes(
 
   for (const uc of landscape.useCases) {
     const id = `uc-${slug(uc.industry)}-${slug(uc.useCaseId)}`
+    const extraLinks = [
+      ...(uc.learnModuleId ? [learnModuleLink(uc.learnModuleId)] : []),
+      ...uc.playgroundTools.map(playgroundToolLink),
+    ]
     nodes.set(id, {
       id,
       label: uc.useCaseLabel,
@@ -157,11 +198,13 @@ function buildNodes(
       description: uc.summary || uc.useCaseLabel,
       degree: 0,
       href: `/algorithms?tab=landscape&industry=${encodeURIComponent(uc.industry)}`,
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
 
   for (const fw of complianceFrameworks) {
     const id = `comp-${slug(fw.id)}`
+    const extraLinks = (fw.learnModules ?? []).map(learnModuleLink)
     nodes.set(id, {
       id,
       label: fw.label,
@@ -170,11 +213,13 @@ function buildNodes(
       description: fw.description || fw.label,
       degree: 0,
       href: '/compliance',
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
 
   for (const doc of libraryData) {
     const id = `std-${slug(doc.referenceId)}`
+    const extraLinks = (doc.moduleIds ?? []).map(learnModuleLink)
     nodes.set(id, {
       id,
       label: doc.documentTitle,
@@ -183,6 +228,7 @@ function buildNodes(
       description: doc.shortDescription || doc.documentTitle,
       degree: 0,
       href: `/library?spec=${encodeURIComponent(doc.referenceId)}`,
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
 
@@ -197,6 +243,12 @@ function buildNodes(
       description: term.definition,
       degree: 0,
       // No standalone glossary route — it's a panel opened from other pages, not a deep-linkable page.
+      // relatedModule (when present) is already a full route ('/learn/...',
+      // but also sometimes '/library?ref=...' etc) — used verbatim, not
+      // prefixed like the module-id-keyed fields above.
+      extraLinks: term.relatedModule
+        ? [{ label: 'Open related page', href: term.relatedModule }]
+        : undefined,
     })
   }
 
@@ -204,6 +256,17 @@ function buildNodes(
     const id = `prod-x-${slug(xref.productId)}`
     if (nodes.has(id)) continue
     const base = xref.notes || `${xref.implementationType} implementation of ${xref.algorithmName}`
+    // AlgoProductXref itself carries no learningModules field — the real
+    // migrate-catalog row for the same software (if any) does, same match
+    // the dupOfXref reconciliation below already uses.
+    const matchingSoftware = softwareData.find(
+      (sw) => norm(sw.softwareName) === norm(xref.softwareName)
+    )
+    const extraLinks = (matchingSoftware?.learningModules ?? '')
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map(learnModuleLink)
     nodes.set(id, {
       id,
       label: xref.implementationName || xref.softwareName || xref.productId,
@@ -214,6 +277,7 @@ function buildNodes(
       href: xref.softwareName
         ? `/migrate?product=${encodeURIComponent(xref.softwareName)}`
         : undefined,
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
   for (const sw of softwareData) {
@@ -221,6 +285,11 @@ function buildNodes(
     if (dupOfXref) continue // reconciled into the algo_product_xref-origin node instead (§2.11)
     const id = `prod-m-${slug(sw.productId)}`
     if (nodes.has(id)) continue
+    const extraLinks = sw.learningModules
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map(learnModuleLink)
     nodes.set(id, {
       id,
       label: sw.softwareName,
@@ -229,11 +298,16 @@ function buildNodes(
       description: enrichProductDescription(sw.productId, sw.softwareName, sw.softwareName),
       degree: 0,
       href: `/migrate?product=${encodeURIComponent(sw.softwareName)}`,
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
     })
   }
 
   for (const row of PROTOCOL_MATRIX) {
     const id = `proto-${slug(row.id)}`
+    const extraLinks = row.playgrounds.map((tool) => ({
+      label: `Open tool: ${tool.toolName}`,
+      href: tool.url ?? `/playground/${tool.toolId}`,
+    }))
     nodes.set(id, {
       id,
       label: row.name,
@@ -242,6 +316,36 @@ function buildNodes(
       description: row.description || row.name,
       degree: 0,
       href: `/algorithms?tab=support&protocol=${encodeURIComponent(row.id)}`,
+      extraLinks: extraLinks.length > 0 ? extraLinks : undefined,
+    })
+  }
+
+  for (const patent of patentsData) {
+    const id = `pat-${slug(patent.patentNumber)}`
+    nodes.set(id, {
+      id,
+      label: patent.title,
+      type: 'patent',
+      sub: patent.applicationDomain[0] || 'Uncategorized',
+      description: `${patent.assignee} — ${patent.patentNumber}`,
+      degree: 0,
+      href: `/patents?patent=${encodeURIComponent(patent.patentNumber)}`,
+    })
+  }
+
+  for (const leader of leadersData) {
+    const id = `ldr-${slug(leader.name)}`
+    nodes.set(id, {
+      id,
+      label: leader.name,
+      type: 'leader',
+      sub: leader.category,
+      description:
+        leader.organizations.length > 0
+          ? `${leader.title} — ${leader.organizations.join(', ')}`
+          : leader.title,
+      degree: 0,
+      href: `/leaders?leader=${encodeURIComponent(leader.name)}`,
     })
   }
 
@@ -476,6 +580,58 @@ function buildEdges(
     const glId = `gl-${slug(term.term)}`
     const key = norm(term.term)
     for (const targetId of labelIndex.get(key) ?? []) add(glId, targetId, 'related')
+  }
+
+  // patents -> mechanism, via the SAME legacy⇄FIPS alias table
+  // PatentDetail.tsx already uses to deep-link ("Kyber" patent <-> ML-KEM-*
+  // mechanism nodes) — patents cite pre-standardization names, mechanism
+  // nodes are exact FIPS parameter sets, so this matches by family-name
+  // PREFIX (a "Kyber" patent relates to every ML-KEM-* node, since patents
+  // don't specify a parameter set), never an invented exact mapping.
+  const mechanismNodes = Array.from(nodes.values()).filter((n) => n.type === 'mechanism')
+  const mechanismNodeIdsForPatentAlgo = (name: string): string[] => {
+    const candidates = [name, ...expandAlgorithmAliases([name])].map((c) => c.toUpperCase())
+    return mechanismNodes
+      .filter((mech) => candidates.some((c) => mech.label.toUpperCase().startsWith(c)))
+      .map((mech) => mech.id)
+  }
+  // "PCI-DSS" (patent corpus) vs "PCI DSS" (compliance framework label) —
+  // strip hyphens/spaces so the same regulation matches regardless of
+  // which punctuation convention either source happened to use.
+  const normCompliance = (s: string) => norm(s).replace(/[-\s]+/g, '')
+  const complianceIdByNormLabel = new Map(
+    complianceFrameworks.map((fw) => [normCompliance(fw.label), `comp-${slug(fw.id)}`])
+  )
+  for (const patent of patentsData) {
+    const patId = `pat-${slug(patent.patentNumber)}`
+    for (const algoName of [...patent.pqcAlgorithms, ...patent.classicalAlgorithms]) {
+      for (const mechId of mechanismNodeIdsForPatentAlgo(algoName)) add(patId, mechId, 'related')
+    }
+    for (const ref of patent.standardsReferenced) add(patId, libraryNodeIdFor(ref, nodes), 'cites')
+    for (const target of patent.complianceTargets) {
+      add(patId, complianceIdByNormLabel.get(normCompliance(target)) ?? null, 'related')
+    }
+  }
+
+  // leaders -> standard/product/patents/certbody, via each of Leader's own
+  // declared proof-anchor fields (keyResourceRefs/migrateCatalogRefs/
+  // patentRefs, added 2026-07-30 for exactly this kind of cross-check) plus
+  // the dormant-but-populated 'leaders' trusted_source_xref join (349 real
+  // rows as of 2026-08-31, unused by any page until now) — none fuzzy-matched.
+  for (const leader of leadersData) {
+    const ldrId = `ldr-${slug(leader.name)}`
+    for (const ref of leader.keyResourceRefs ?? [])
+      add(ldrId, libraryNodeIdFor(ref, nodes), 'cites')
+    for (const productId of leader.migrateCatalogRefs ?? [])
+      add(ldrId, productNodeIdFor(productId, nodes), 'related')
+    for (const patentRef of leader.patentRefs ?? []) {
+      const patentNumber = /^US/i.test(patentRef) ? patentRef : `US${patentRef}`
+      const patId = `pat-${slug(patentNumber)}`
+      add(ldrId, nodes.has(patId) ? patId : null, 'related')
+    }
+    for (const xref of getSourcesForRecord('leaders', leader.name)) {
+      add(certbodyNodeIdFor(xref.sourceId, nodes), ldrId, 'references')
+    }
   }
 
   return edges

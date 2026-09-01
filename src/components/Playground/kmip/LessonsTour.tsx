@@ -26,17 +26,13 @@ import {
 export type { LessonStep }
 export { TourOverlay, clickByText, dragRangeToMax }
 
-/** 'developer' added for the KMIP Developer tab's own lesson (G5) — the
- * plane already exists on `KmipPlaygroundView.tsx`'s own `Plane` union
- * since the G3 deep-link fix (`?plane=developer`). */
-export type Plane = 'agility' | 'policy' | 'kmip3' | 'developer'
+export type Plane = 'agility' | 'policy' | 'kmip3'
 export type Lesson = LessonGeneric<Plane>
 
 const PLANE_BADGE: Record<Plane, PlaneBadge> = {
   agility: { label: 'Workbench', className: 'bg-status-warning/10 text-status-warning' },
   policy: { label: 'Policy', className: 'bg-primary/10 text-primary' },
   kmip3: { label: 'KMIP3.0', className: 'bg-status-info/10 text-status-info' },
-  developer: { label: 'Developer', className: 'bg-accent/10 text-accent' },
 }
 
 export function useLessonsTour(lessons: Lesson[], onLessonPlane: (p: Plane) => void) {

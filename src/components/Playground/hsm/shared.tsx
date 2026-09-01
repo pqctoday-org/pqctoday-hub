@@ -75,6 +75,7 @@ export const makeHsmKeyLabel = (family: HsmFamily, role: HsmKeyRole, variant?: s
     chacha20: 'ChaCha20',
     hmac: 'HMAC',
     sha: 'SHA',
+    hpke: 'HPKE (CKK_HPKE_KEM)',
   }
   const roleLabel: Record<HsmKeyRole, string> = {
     public: 'Public Key',

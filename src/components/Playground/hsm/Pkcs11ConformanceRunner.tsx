@@ -21,10 +21,13 @@ import {
   hsm_initToken,
   hsm_openUserSession,
   hsm_findProfileObjects,
+  hsm_getMechanismList,
   CKP_BASELINE_PROVIDER,
   CKP_EXTENDED_PROVIDER,
   CKP_AUTHENTICATION_TOKEN,
   CKP_PUBLIC_CERTIFICATES_TOKEN,
+  CKP_COMPLETE_PROVIDER,
+  CKP_HKDF_TLS_TOKEN,
   type SoftHSMModule,
 } from '../../../wasm/softhsm'
 import {
@@ -39,6 +42,7 @@ import {
   provisionAuthFixture,
   provisionCertFixture,
 } from '../../../wasm/pkcs11ConformanceRunner/profileFixtures'
+import { runMechanismCoverageProbes } from '../../../wasm/pkcs11ConformanceRunner/mechanismCoverageProbes'
 import blM132Xml from '../../../data/pkcs11-profiles/test-cases/BL-M-1-32.xml?raw'
 import extM132Xml from '../../../data/pkcs11-profiles/test-cases/EXT-M-1-32.xml?raw'
 import authM132Xml from '../../../data/pkcs11-profiles/test-cases/AUTH-M-1-32.xml?raw'
@@ -49,7 +53,7 @@ type RowStatus = 'pass' | 'fail' | 'not-claimed'
 interface RunnerRow {
   id: string
   engine: string
-  tier: 'A' | 'B'
+  tier: 'A' | 'B' | 'Coverage'
   name: string
   citation: string
   status: RowStatus
@@ -174,6 +178,9 @@ export const Pkcs11ConformanceRunner = () => {
           claims.add('authentication')
         if (profileObjects.some((p) => p.profileId === CKP_PUBLIC_CERTIFICATES_TOKEN))
           claims.add('certificates')
+        if (profileObjects.some((p) => p.profileId === CKP_COMPLETE_PROVIDER))
+          claims.add('complete')
+        if (profileObjects.some((p) => p.profileId === CKP_HKDF_TLS_TOKEN)) claims.add('hkdf_tls')
 
         // Tier A — a FRESH C_InitToken before every case, not just a
         // Finalize/Initialize: CERT-M-1-32's unauthenticated find expects
@@ -239,6 +246,33 @@ export const Pkcs11ConformanceRunner = () => {
           })
         }
         hsm_finalize(M, tierBSession)
+
+        // Mechanism Coverage — real PKCS#11 v3.2 mechanisms neither Tier A/B
+        // (OASIS's own Profiles conformance scope) nor this app's ACVP tab
+        // exercise anywhere (2026-08-31 audit). Not gated on profile claims
+        // at all, only on whether C_GetMechanismList actually advertises
+        // each mechanism — needs its own fresh session, same reasoning as
+        // the Tier A → Tier B transition above (Tier B's own last probe,
+        // §5.1 5.d/5.e, finalizes the module as part of what it's proving).
+        hsm_initialize(M)
+        const mechCovSlot0 = hsm_getFirstSlot(M)
+        const mechCovSlot = hsm_initToken(M, mechCovSlot0, '12345678', 'SoftHSM3')
+        const mechCovSession = hsm_openUserSession(M, mechCovSlot, '12345678', 'user1234')
+        const mechs = new Set(hsm_getMechanismList(M, mechCovSlot))
+        const mechCovResults = runMechanismCoverageProbes(M, mechCovSession, mechCovSlot, mechs)
+        for (const p of mechCovResults) {
+          newRows.push({
+            id: `${p.id}-${eName}`,
+            engine: eName,
+            tier: 'Coverage',
+            name: p.mechanismName,
+            citation: p.citation,
+            status: p.status,
+            detail: p.detail,
+          })
+        }
+        hsm_finalize(M, mechCovSession)
+
         // Restore context state so other tabs (which read hSessionRef/
         // slotRef directly) keep working after a conformance run.
         hsm_initialize(M)
@@ -343,7 +377,7 @@ export const Pkcs11ConformanceRunner = () => {
                     {r.engine}
                   </span>
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
-                    Tier {r.tier}
+                    {r.tier === 'Coverage' ? 'Mechanism Coverage' : `Tier ${r.tier}`}
                   </span>
                   <span className="text-xs font-medium truncate">{r.name}</span>
                   <span className="text-[10px] text-muted-foreground ml-auto shrink-0">
@@ -375,8 +409,21 @@ export const Pkcs11ConformanceRunner = () => {
           genuinely doesn&apos;t publish a CKO_PROFILE for.
         </p>
         <p>
-          Tier B: up to 28 Baseline + 6 Extended + 8 Authentication Token + 5 Public Certificates
-          Token condition probes per engine, gated on each engine&apos;s own claimed profiles.
+          Tier B: up to 17 Baseline + 6 Extended + 8 Authentication Token + 5 Public Certificates
+          Token + 6 HKDF TLS Token condition probes per engine, plus 1 Complete Provider
+          union-conformance check, gated on each engine&apos;s own claimed profiles. Complete
+          Provider and HKDF TLS Token are the 2 remaining Profiles v3.2 §3 profile ids — neither
+          engine claims either today (Tier B only probes profiles an engine actually claims — unlike
+          Tier A, it renders no row at all for one it doesn&apos;t, rather than a not-claimed row),
+          so those probes are dormant until an engine claims one.
+        </p>
+        <p>
+          Mechanism Coverage: real PKCS#11 v3.2 mechanisms neither Tier A/B (OASIS&apos;s own
+          Profiles conformance scope) nor this app&apos;s ACVP tab exercises anywhere — gated only
+          on whether C_GetMechanismList advertises the mechanism, not on any profile claim.
+          Currently covers deterministic PQC key generation from CKA_SEED (ML-DSA, ML-KEM, SLH-DSA)
+          — the two-calls-same-seed-same-key check §6.67.4/§6.68.4/§6.69.2 actually require, which
+          no other suite in this app tests.
         </p>
         <p>
           Not run in-browser: the C++ engine&apos;s native 815-row conformance suite

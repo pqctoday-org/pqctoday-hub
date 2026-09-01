@@ -20,16 +20,18 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
 
   test('validates ML-KEM and ML-DSA via direct ACVP execution trigger', async ({ page }) => {
     // Navigate to the playground sandbox route where ACVP testing mounts.
-    // The HsmPlayground mounts the ACVP components.
-    // We pass ?tab=acvp to ensure autoInit() triggers on mount for the test.
-    await page.goto('/playground/hsm?tab=acvp')
+    // ACVP moved from its own top-level tab into a Developer sub-tab
+    // (2026-08-31) — ?tab=developer&dtab=acvp selects both the top-level
+    // Developer tab and its ACVP sub-tab on mount, same as ?tab=acvp used to.
+    await page.goto('/playground/hsm?tab=developer&dtab=acvp')
 
     // Intercept console to debug WASM or autoInit failures
     page.on('console', (msg) => console.log('BROWSER:', msg.text()))
 
-    // Click the ACVP Validation tab on the sidebar.
-    // Be specific: there are TWO buttons matching "ACVP" — the role=tab sidebar
-    // entry and the "Execute ACVP Tests" action button. Target the tab.
+    // The URL already selects the ACVP sub-tab on mount; click it too as a
+    // defensive re-assertion. Be specific: there are TWO buttons matching
+    // "ACVP" — the role=tab sub-tab entry and the results-table category
+    // badge text. Target the tab.
     const acvpTab = page.getByRole('tab', { name: 'ACVP' })
     await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
@@ -65,8 +67,10 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
         window.dispatchEvent(new CustomEvent('e2e:trigger_acvp'))
       })
 
-      // also try UI button just in case
-      const btn = page.getByRole('button', { name: /Execute ACVP Tests/i })
+      // also try UI button just in case — "Execute ACVP Tests" renamed to
+      // "Run All" when the category-picker sidebar was added (2026-08-31);
+      // it still runs the full suite regardless of sidebar selection.
+      const btn = page.getByRole('button', { name: /Run All/i })
       if (await btn.isEnabled()) {
         await btn.click({ force: true }).catch(() => {})
       }
@@ -155,5 +159,86 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
       }
     }
     expect(failingRows, `Unexpected failing ACVP rows:\n${failingRows.join('\n')}`).toEqual([])
+  })
+
+  test('running a single category runs only that category, and a helper shared across two categories stays in scope', async ({
+    page,
+  }) => {
+    // Regression guard for the 2026-08-31 category-selection sidebar: the 36
+    // ACVP sections were split into 7 categories by wrapping each section's
+    // existing code in `if (selectedCategories.has(id)) { ... }`. One helper,
+    // extractMontgomeryPubKey, is called from BOTH the Classical Asymmetric
+    // category (X25519/X448) and the KDF category (X9.63 KDF) — it had to be
+    // hoisted out of any single category's guard so it stays in scope. This
+    // test selects KDF ALONE (Classical Asymmetric unchecked) — if the hoist
+    // regresses, X9.63 KDF throws a ReferenceError at runtime (TypeScript
+    // would not catch this; the bug only manifests when the guard actually
+    // executes with that specific category combination).
+    const pageErrors: string[] = []
+    page.on('pageerror', (err) => pageErrors.push(err.message))
+
+    await page.goto('/playground/hsm?tab=developer&dtab=acvp')
+    const acvpTab = page.getByRole('tab', { name: 'ACVP' })
+    await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
+    await acvpTab.click()
+    await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 30000 })
+
+    await page.waitForFunction(
+      () =>
+        typeof (window as unknown as { __e2e_hsm_autoinit?: unknown }).__e2e_hsm_autoinit ===
+        'function',
+      undefined,
+      { timeout: 20000 }
+    )
+    const ok = await page.evaluate(async () => {
+      const fn = (
+        window as unknown as { __e2e_hsm_autoinit?: (engine?: string) => Promise<boolean> }
+      ).__e2e_hsm_autoinit
+      return fn ? await fn('rust') : false
+    })
+    expect(ok, 'HSM autoInit failed').toBeTruthy()
+
+    // Select KDF only.
+    await page.getByTestId('acvp-select-none').click()
+    await page.getByTestId('acvp-category-checkbox-kdf').check()
+    await page.getByTestId('acvp-run-selected').click()
+
+    // Wait for the run to finish: the Run Selected button carries
+    // aria-busy while loading, same attribute the original test's "Run All"
+    // button uses.
+    await expect(page.getByTestId('acvp-run-selected')).toHaveAttribute('aria-busy', 'false', {
+      timeout: 60000,
+    })
+
+    const rows = page.getByTestId('acvp-result-row')
+    const rowCount = await rows.count()
+    expect(rowCount, 'KDF-only run produced no result rows').toBeGreaterThan(0)
+
+    // Every row must be tagged 'kdf' — no other category's section executed.
+    for (let i = 0; i < rowCount; i++) {
+      await expect(rows.nth(i)).toHaveAttribute('data-category', 'kdf')
+    }
+
+    // No unhandled exception — this is the actual ReferenceError guard.
+    expect(pageErrors, `Unexpected page errors:\n${pageErrors.join('\n')}`).toEqual([])
+
+    // X9.63 KDF (the section that calls the hoisted helper) actually ran and
+    // its own row is present — not just "no crash", but "did its job".
+    const x963Row = page.locator('[data-testid="acvp-result-row"]', { hasText: 'X9.63' })
+    expect(await x963Row.count(), 'X9.63 KDF row missing from a KDF-only run').toBeGreaterThan(0)
+    for (const row of await x963Row.all()) {
+      await expect(row).not.toHaveAttribute('data-status', 'fail')
+    }
+
+    // The Execution Log is the log this feature actually shows a user —
+    // check it's honest about what ran, not just that the table looks right.
+    // No unrelated category's algorithm name should appear (proves the
+    // category guard skipped that section's code entirely, not merely
+    // hid its row from the table).
+    const logText = await page.locator('div.font-mono.text-xs.text-success\\/80').innerText()
+    expect(logText).toContain('X9.63')
+    expect(logText).not.toContain('AES-GCM')
+    expect(logText).not.toContain('ECDSA P-256')
+    expect(logText).not.toContain('ML-KEM')
   })
 })

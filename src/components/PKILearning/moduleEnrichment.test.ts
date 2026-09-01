@@ -99,6 +99,9 @@ describe('moduleEnrichment — researcher taxonomy (P2-3)', () => {
       'NTIA Minimum Elements',
       'CISA 2026 Minimum Elements v2.1',
       'OASIS CSAF 2.0 (VEX)',
+      'draft-ietf-hpke-pq',
+      'draft-ietf-cose-hpke',
+      'draft-ietf-jose-hpke-encrypt',
     ])
     for (const entry of Object.values(MODULE_TAXONOMY)) {
       for (const alg of entry.algorithms ?? []) {

@@ -39,7 +39,6 @@ import {
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
-import { KmipPipelineBuilder } from '../dev/kmipPipeline/KmipPipelineBuilder'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -97,7 +96,7 @@ function Term({ t }: { t: keyof typeof GLOSSARY }) {
 }
 
 /** Top-level surface of the CACP playground. */
-type Plane = 'agility' | 'policy' | 'kmip3' | 'migration' | 'developer'
+type Plane = 'agility' | 'policy' | 'kmip3' | 'migration'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -262,8 +261,7 @@ export function KmipPlaygroundView() {
     return requested === 'agility' ||
       requested === 'policy' ||
       requested === 'kmip3' ||
-      requested === 'migration' ||
-      requested === 'developer'
+      requested === 'migration'
       ? requested
       : 'agility'
   })
@@ -847,10 +845,17 @@ export function KmipPlaygroundView() {
           body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
         },
         {
-          title: 'Prove it against the OASIS suite',
+          title: 'The Dev tab: pipeline builder and corpus replay',
           target: '[data-tour="kmip3-subtabs"] button',
+          targetText: 'Dev',
+          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
+          body: 'The pipeline builder and the OASIS corpus replay harness both live here — the engineering-workbench surfaces of the KMIP3.0 tab, folded together the same way the PKCS#11 side folds its Pipeline/ACVP/Conformance tools.',
+        },
+        {
+          title: 'Prove it against the OASIS suite',
+          target: '[data-tour="kmip-dev-subtabs"] button',
           targetText: 'Corpus Replay',
-          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Corpus Replay'),
+          act: () => clickByText('[data-tour="kmip-dev-subtabs"] button', 'Corpus Replay'),
           body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
         },
         {
@@ -866,9 +871,16 @@ export function KmipPlaygroundView() {
       id: 'developer-lifecycle',
       title: 'Build a governed KMIP sequence',
       icon: Code2,
-      plane: 'developer',
-      blurb: 'The Developer tab: a real pqctoday_kmip.KmipClient script, step by step.',
+      plane: 'kmip3',
+      blurb: 'The Dev tab: a real pqctoday_kmip.KmipClient script, step by step.',
       steps: [
+        {
+          title: 'The Dev tab',
+          target: '[data-tour="kmip3-subtabs"] button',
+          targetText: 'Dev',
+          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
+          body: "Pipeline is the Dev tab's default sub-tab — the pipeline builder opens straight away.",
+        },
         {
           title: 'Start from a template',
           target: '[data-tour="kmip-dev-templates"]',
@@ -1084,7 +1096,6 @@ export function KmipPlaygroundView() {
               { id: 'policy', label: 'Policy', icon: ShieldCheck },
               { id: 'kmip3', label: 'KMIP3.0', icon: Layers },
               { id: 'migration', label: 'Migration', icon: ArrowRight },
-              { id: 'developer', label: 'Developer', icon: Code2 },
             ] as const
           ).map((t) => {
             const on = plane === t.id
@@ -1470,8 +1481,6 @@ export function KmipPlaygroundView() {
       {/* Migration runs its OWN engine instance on a dedicated slot — the
           estate keystore is hermetic beside the workbench's slot-0 engine. */}
       {plane === 'migration' && <MigrationView />}
-
-      {plane === 'developer' && <KmipPipelineBuilder engine={engine} />}
 
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}

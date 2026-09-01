@@ -25,7 +25,13 @@ import {
 } from '@/data/forceClusterGraph'
 import { NavigateDetailPanel } from './NavigateDetailPanel'
 import { GRAPH_TOKEN, NODE_TYPES, TYPE_LABEL } from './graphVisuals'
-import { boundingSphere, easeInOutCubic, frameDistance, nodeApproach } from './cameraPath'
+import {
+  boundingSphere,
+  easeInOutCubic,
+  frameCluster,
+  frameDistance,
+  nodeApproach,
+} from './cameraPath'
 import { buildItinerary, skippedCategories, type TourStop } from './tourItinerary'
 import {
   MotionControls,
@@ -351,6 +357,15 @@ function saveMotionPrefs(prefs: MotionPrefs) {
   }
 }
 
+/**
+ * Every category/sub-category/node label is a real `<button>`, not a
+ * decorative div — clicking (or Tab+Enter/Space-ing) any label selects the
+ * category/sub-category/node it names. `pointer-events` is toggled per-label
+ * by updateLod()/applyTourLabelFocus() alongside opacity: a label hidden by
+ * LOD (opacity:0) must not still be clickable/tabbable, or a user could
+ * "click" empty space and keyboard users would tab through hundreds of
+ * invisible controls.
+ */
 function makeLabelDiv(
   text: string,
   style: {
@@ -360,33 +375,58 @@ function makeLabelDiv(
     background?: string
     padding?: string
     uppercase?: boolean
-  }
-): HTMLDivElement {
-  const div = document.createElement('div')
-  div.textContent = text
-  div.style.cssText = [
+  },
+  interactive: { ariaLabel: string; onActivate: () => void }
+): HTMLButtonElement {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.textContent = text
+  button.setAttribute('aria-label', interactive.ariaLabel)
+  button.style.cssText = [
+    'appearance:none',
+    'border:0',
+    'margin:0',
+    'display:block',
     `font:${style.weight} ${style.size}px Inter, system-ui, sans-serif`,
     `color:${style.color}`,
-    style.background ? `background:${style.background}` : '',
+    style.background ? `background:${style.background}` : 'background:transparent',
     `padding:${style.padding ?? '0'}`,
     'border-radius:4px',
     'white-space:nowrap',
-    'pointer-events:none',
+    'cursor:pointer',
     'letter-spacing:0.02em',
     style.uppercase ? 'text-transform:uppercase' : '',
     'opacity:0',
+    'pointer-events:none',
     'transition:opacity .15s',
   ]
     .filter(Boolean)
     .join(';')
-  return div
+  button.addEventListener('click', interactive.onActivate)
+  return button
 }
 
 /** World-independent (still local to rotatingGroup) snapshot of the layout a given applyFilters() call produced — the guided tour needs real node/category positions to fly to, which applyFilters previously computed and threw away. */
 interface LayoutSnapshot {
   positionById: Map<string, THREE.Vector3>
   typeCenters: Map<ForceClusterNodeType, THREE.Vector3>
+  /** Keyed `${type}::${sub}` — lets a sub-category spotlight frame the same real cluster center the layout already placed it at, same as typeCenters does for a whole category. */
+  subCenters: Map<string, THREE.Vector3>
   visibleNodes: ForceClusterNode[]
+}
+
+/** A single-selection "spotlight" on one category, or one sub-category within it. Mutually exclusive with node selection (selectedNodeId) — set either, never both, so exactly one thing is ever framed/highlighted at a time. */
+interface ClusterSelection {
+  type: ForceClusterNodeType
+  /** null = whole category selected; a string = that specific sub-category within it. */
+  sub: string | null
+}
+
+/** Click callbacks wired onto every category/sub-category/node label button at creation time — the labels live inside buildScene/applyFilters (outside the component), so this is how their clicks reach back into React state. */
+interface SceneHandlers {
+  onSelectCategory: (type: ForceClusterNodeType) => void
+  onSelectSub: (type: ForceClusterNodeType, sub: string) => void
+  onSelectNode: (nodeId: string) => void
 }
 
 interface BuiltScene {
@@ -403,7 +443,7 @@ interface BuiltScene {
   initialLayout: LayoutSnapshot
 }
 
-function buildScene(graph: ForceClusterGraph): BuiltScene {
+function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltScene {
   const scene = new THREE.Scene()
   scene.add(new THREE.AmbientLight(0xffffff, 0.6))
   const dirLight = new THREE.DirectionalLight(0xffffff, 0.8)
@@ -450,10 +490,45 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
         : (sortedDegreesDesc[Math.min(keepCount - 1, sortedDegreesDesc.length - 1)] ?? -Infinity)
     const visibleNodes = typeFiltered.filter((n) => n.degree >= threshold)
     const visibleIds = new Set(visibleNodes.map((n) => n.id))
+    const nodesById = new Map(visibleNodes.map((n) => [n.id, n]))
     const visibleEdges = graph.edges.filter((e) => visibleIds.has(e.from) && visibleIds.has(e.to))
     const subgraph: ForceClusterGraph = { nodes: visibleNodes, edges: visibleEdges }
 
     const { position: positionById, typeCenters, subCenters } = computeLayout(subgraph)
+
+    // Real (post-relaxation) centroids per type/sub — typeCenters/subCenters
+    // above are the idealized fibonacci-sphere anchors nodes are pulled
+    // TOWARD during layout, not where they actually end up; cross-category
+    // edge attraction (a heavily-cited category like Standard gets pulled
+    // toward whatever it's most connected to) can leave the real cluster
+    // measurably off that anchor. Used for label placement (below) AND for
+    // spotlight camera framing (ForceClusterView's flyToSpotlight) — putting
+    // a label at the idealized anchor while the camera frames the real
+    // cluster can literally leave that label outside the frame; a label at
+    // the real centroid never can, since the centroid of a point set always
+    // sits inside the region framed to contain that same set.
+    const realTypeCenters = new Map<ForceClusterNodeType, THREE.Vector3>()
+    const realSubCenters = new Map<string, THREE.Vector3>()
+    {
+      const typeSums = new Map<ForceClusterNodeType, { sum: THREE.Vector3; count: number }>()
+      const subSums = new Map<string, { sum: THREE.Vector3; count: number }>()
+      for (const node of visibleNodes) {
+        const pos = positionById.get(node.id)
+        if (!pos) continue
+        const typeEntry = typeSums.get(node.type) ?? { sum: new THREE.Vector3(), count: 0 }
+        typeEntry.sum.add(pos)
+        typeEntry.count += 1
+        typeSums.set(node.type, typeEntry)
+        const subKey = `${node.type}::${node.sub}`
+        const subEntry = subSums.get(subKey) ?? { sum: new THREE.Vector3(), count: 0 }
+        subEntry.sum.add(pos)
+        subEntry.count += 1
+        subSums.set(subKey, subEntry)
+      }
+      for (const [type, { sum, count }] of typeSums)
+        realTypeCenters.set(type, sum.divideScalar(count))
+      for (const [key, { sum, count }] of subSums) realSubCenters.set(key, sum.divideScalar(count))
+    }
 
     const byType = new Map<ForceClusterNodeType, ForceClusterNode[]>()
     for (const node of visibleNodes) byType.set(node.type, [...(byType.get(node.type) ?? []), node])
@@ -484,6 +559,12 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
         // instanceId back to a real node via this — three.js's userData bag is the
         // straightforward way to carry app data alongside a scene object.
         mesh.userData.nodes = tierNodes
+        // A category/sub-category spotlight hides non-matching instances by
+        // zeroing their scale (see applySpotlightVisibility) rather than
+        // moving/rebuilding anything — baseMatrices is what lets that be
+        // undone exactly, restoring each instance to its real clustered
+        // position instead of re-running layout.
+        const baseMatrices: THREE.Matrix4[] = []
         tierNodes.forEach((node, i) => {
           const pos = positionById.get(node.id)
           if (!pos) return
@@ -491,7 +572,10 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
           dummy.scale.setScalar(NODE_RADIUS)
           dummy.updateMatrix()
           mesh.setMatrixAt(i, dummy.matrix)
+          // eslint-disable-next-line security/detect-object-injection -- i is tierNodes.forEach's own numeric loop index, not user input
+          baseMatrices[i] = dummy.matrix.clone()
         })
+        mesh.userData.baseMatrices = baseMatrices
         mesh.instanceMatrix.needsUpdate = true
         rotatingGroup.add(mesh)
       }
@@ -502,11 +586,23 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
     // hairball; muted lines let the node clusters and colors stay legible
     // while the connective structure is still genuinely visible.
     const edgePositions = new Float32Array(visibleEdges.length * 6)
+    // One entry per rendered edge (parallel to edgePositions' vertex pairs) —
+    // a spotlight needs each edge's own endpoint type/sub to decide whether
+    // to collapse it, since this is a single shared LineSegments with no
+    // per-segment visibility of its own (see applySpotlightVisibility).
+    const edgeMeta: {
+      fromType: ForceClusterNodeType
+      fromSub: string
+      toType: ForceClusterNodeType
+      toSub: string
+    }[] = []
     let edgeVertexCount = 0
     for (const edge of visibleEdges) {
+      const fromNode = nodesById.get(edge.from)
+      const toNode = nodesById.get(edge.to)
       const from = positionById.get(edge.from)
       const to = positionById.get(edge.to)
-      if (!from || !to) continue
+      if (!from || !to || !fromNode || !toNode) continue
       const base = edgeVertexCount * 6
       // eslint-disable-next-line security/detect-object-injection -- base is a computed numeric index into a pre-sized typed array, not user input
       edgePositions[base] = from.x
@@ -515,13 +611,20 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
       edgePositions[base + 3] = to.x
       edgePositions[base + 4] = to.y
       edgePositions[base + 5] = to.z
+      edgeMeta.push({
+        fromType: fromNode.type,
+        fromSub: fromNode.sub,
+        toType: toNode.type,
+        toSub: toNode.sub,
+      })
       edgeVertexCount += 1
     }
     const edgeGeometry = new THREE.BufferGeometry()
-    edgeGeometry.setAttribute(
-      'position',
-      new THREE.BufferAttribute(edgePositions.subarray(0, edgeVertexCount * 6), 3)
+    const edgePositionAttr = new THREE.BufferAttribute(
+      edgePositions.slice(0, edgeVertexCount * 6),
+      3
     )
+    edgeGeometry.setAttribute('position', edgePositionAttr)
     const edgeMaterial = new THREE.LineBasicMaterial({
       color: resolveGraphColor('--muted-foreground', '#8a8f98'),
       transparent: true,
@@ -530,6 +633,11 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
     })
     const edgeLines = new THREE.LineSegments(edgeGeometry, edgeMaterial)
     edgeLines.name = 'graph-edges'
+    edgeLines.userData.edgeMeta = edgeMeta
+    // An independent copy (not a view) of the real endpoint coordinates — a
+    // spotlight collapses non-matching edges to a point in-place on
+    // edgePositionAttr.array, and needs the originals to restore exactly.
+    edgeLines.userData.baseline = Float32Array.from(edgePositionAttr.array)
     rotatingGroup.add(edgeLines)
 
     // Labels — three LOD tiers, opacity toggled per-frame by updateLOD() in
@@ -537,24 +645,34 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
     // system: category name only when zoomed far out, subcategory name at
     // mid-zoom, individual node name zoomed in close).
     for (const [type] of byType) {
-      const center = typeCenters.get(type)
+      const center = realTypeCenters.get(type)
       if (!center) continue
       // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union, not user input
       const token = GRAPH_TOKEN[type]
       // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union, not user input
-      const div = makeLabelDiv(TYPE_LABEL[type], {
-        size: 13,
-        weight: 700,
-        color: `hsl(var(${token.varName}))`,
-        background: 'hsl(var(--card) / 0.85)',
-        padding: '3px 9px',
-      })
+      const typeLabelText = TYPE_LABEL[type]
+      const div = makeLabelDiv(
+        typeLabelText,
+        {
+          size: 13,
+          weight: 700,
+          color: `hsl(var(${token.varName}))`,
+          background: 'hsl(var(--card) / 0.85)',
+          padding: '3px 9px',
+        },
+        {
+          ariaLabel: `Focus the ${typeLabelText} category`,
+          onActivate: () => handlers.onSelectCategory(type),
+        }
+      )
       const label = new CSS2DObject(div)
       label.position.copy(center)
       label.userData.kind = 'type-label'
       // Read by the tour's applyTourLabelFocus() to show only the ONE
       // type-label matching the category currently being framed — `kind`
-      // alone can't tell 9 type-labels apart.
+      // alone can't tell 9 type-labels apart. Also read by updateLod()'s
+      // spotlight branch to decide whether THIS category's label stays
+      // visible while a category/sub-category is spotlighted.
       label.userData.type = type
       rotatingGroup.add(label)
     }
@@ -564,41 +682,64 @@ function buildScene(graph: ForceClusterGraph): BuiltScene {
       const key = `${node.type}::${node.sub}`
       if (seenSub.has(key)) continue
       seenSub.add(key)
-      const center = subCenters.get(key)
+      const center = realSubCenters.get(key)
       if (!center) continue
-      const div = makeLabelDiv(node.sub, {
-        size: 9,
-        weight: 600,
-        color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
-        uppercase: true,
-      })
+      const div = makeLabelDiv(
+        node.sub,
+        {
+          size: 9,
+          weight: 600,
+          color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
+          uppercase: true,
+        },
+        {
+          ariaLabel: `Focus the ${node.sub} sub-category within ${TYPE_LABEL[node.type]}`,
+          onActivate: () => handlers.onSelectSub(node.type, node.sub),
+        }
+      )
       const label = new CSS2DObject(div)
       label.position.copy(center)
       label.userData.kind = 'sub-label'
+      // Read by updateLod()'s spotlight branch (same reasoning as the
+      // type-label above, but sub-labels also need `sub` since several share
+      // the same `type`).
+      label.userData.type = node.type
+      label.userData.sub = node.sub
       rotatingGroup.add(label)
     }
 
     for (const node of visibleNodes) {
       const pos = positionById.get(node.id)
       if (!pos) continue
-      const div = makeLabelDiv(node.label, {
-        size: 10,
-        weight: 500,
-        color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
-        background: 'hsl(var(--card) / 0.75)',
-        padding: '1px 5px',
-      })
+      const div = makeLabelDiv(
+        node.label,
+        {
+          size: 10,
+          weight: 500,
+          color: `hsl(var(${GRAPH_TOKEN[node.type].varName}))`,
+          background: 'hsl(var(--card) / 0.75)',
+          padding: '1px 5px',
+        },
+        {
+          ariaLabel: `Select ${node.label}`,
+          onActivate: () => handlers.onSelectNode(node.id),
+        }
+      )
       const label = new CSS2DObject(div)
       label.position.copy(pos).add(new THREE.Vector3(0, NODE_RADIUS + 0.3, 0))
       label.userData.kind = 'node-label'
       // Read by the tour's applyTourLabelFocus() to show only the ONE
       // node-label matching the node currently being visited — `kind` alone
-      // can't tell hundreds of node-labels apart.
+      // can't tell hundreds of node-labels apart. Also read by
+      // updateLod()'s spotlight branch to keep only this category/sub's
+      // node-labels visible while spotlighted.
       label.userData.nodeId = node.id
+      label.userData.type = node.type
+      label.userData.sub = node.sub
       rotatingGroup.add(label)
     }
 
-    return { positionById, typeCenters, visibleNodes }
+    return { positionById, typeCenters, subCenters, visibleNodes }
   }
 
   const initialLayout = applyFilters(new Set(NODE_TYPES), DEFAULT_VISIBLE_PERCENT)
@@ -616,6 +757,18 @@ export function ForceClusterView() {
     selectedNodeIdRef.current = selectedNodeId
   }, [selectedNodeId])
 
+  // The category/sub-category "spotlight" — mutually exclusive with node
+  // selection (every setter that sets one clears the other), so exactly one
+  // thing is ever framed/highlighted. Kept as a separate ref (same mirror
+  // pattern as selectedNodeIdRef) because the imperative scene-setup effect
+  // below needs its current value inside a render loop and event handlers
+  // that only close over refs, not fresh React state.
+  const [clusterSelection, setClusterSelection] = useState<ClusterSelection | null>(null)
+  const clusterSelectionRef = useRef<ClusterSelection | null>(null)
+  useEffect(() => {
+    clusterSelectionRef.current = clusterSelection
+  }, [clusterSelection])
+
   const [visiblePercent, setVisiblePercent] = useState(DEFAULT_VISIBLE_PERCENT)
   const [enabledTypes, setEnabledTypes] = useState<ReadonlySet<ForceClusterNodeType>>(
     () => new Set(NODE_TYPES)
@@ -629,6 +782,19 @@ export function ForceClusterView() {
   // targets; applyFilters itself only returns a snapshot to its caller, it
   // doesn't retain one.
   const layoutSnapshotRef = useRef<LayoutSnapshot | null>(null)
+
+  // Bridges clusterSelection -> the imperative camera-flight + instance/edge
+  // visibility inside the scene-setup effect, same ref-bridge pattern as
+  // applyFiltersRef/tourControlRef.
+  const spotlightControlRef = useRef<((target: ClusterSelection | null) => void) | null>(null)
+
+  // Lets NavigateDetailPanel's clickable eyebrow (category/sub-category
+  // breadcrumb) trigger the same spotlight selection a 3D label click does,
+  // without needing its own copy of the flight/toggle logic — same
+  // ref-bridge pattern, assigned inside the scene-setup effect.
+  const breadcrumbSelectRef = useRef<
+    ((type: ForceClusterNodeType, sub: string | null) => void) | null
+  >(null)
 
   const [motionPrefs, setMotionPrefsState] = useState<MotionPrefs>(() => loadMotionPrefs())
   const motionMode = motionPrefs.mode
@@ -686,6 +852,7 @@ export function ForceClusterView() {
   useEffect(() => {
     if (motionMode === 'tour') {
       setSelectedNodeId(null)
+      setClusterSelection(null)
       tourControlRef.current?.rebuild(enabledTypes, null)
     } else {
       setTourProgress(null)
@@ -707,6 +874,7 @@ export function ForceClusterView() {
     else next.add(type)
     setEnabledTypes(next)
     setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
+    setClusterSelection(null) // ...and the meshes/edges a spotlight was tracking
     const snapshot = applyFiltersRef.current?.(next, visiblePercent) ?? null
     layoutSnapshotRef.current = snapshot
     // A filter change invalidates every position the tour's itinerary holds
@@ -720,12 +888,21 @@ export function ForceClusterView() {
   const changeVisiblePercent = (percent: number) => {
     setVisiblePercent(percent)
     setSelectedNodeId(null)
+    setClusterSelection(null)
     const snapshot = applyFiltersRef.current?.(enabledTypes, percent) ?? null
     layoutSnapshotRef.current = snapshot
     if (motionModeRef.current === 'tour') {
       tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
     }
   }
+
+  // Drives the camera fly-to and the instance/edge dim-out whenever the
+  // spotlight changes (selecting, deselecting, or switching cluster) —
+  // mirrors applyFiltersRef's pattern of a plain ref call rather than
+  // reaching into the scene-setup effect's internals from here.
+  useEffect(() => {
+    spotlightControlRef.current?.(clusterSelection)
+  }, [clusterSelection])
 
   const nodesById = useMemo(() => {
     const map = new Map<string, ForceClusterNode>()
@@ -734,6 +911,27 @@ export function ForceClusterView() {
   }, [graph])
 
   const selectedNode = selectedNodeId ? (nodesById.get(selectedNodeId) ?? null) : null
+
+  // A node selected FROM WITHIN an active spotlight (clicking its sphere or
+  // label always hits an already-visible, matching node — the spotlight has
+  // zero-scaled/collapsed everything else, so nothing else is clickable)
+  // should leave that spotlight's zoom + hide-the-rest exactly as is: only
+  // its detail panel needs to appear on top. But a node reached a different
+  // way — following a connection link inside NavigateDetailPanel itself,
+  // which sets selectedNodeId directly and can land on a node outside the
+  // current spotlight — would otherwise leave the panel showing a node the
+  // spotlight has hidden. This is the single place that invariant is
+  // enforced, regardless of entry point, instead of guessing at every call
+  // site whether the node it's about to select matches.
+  useEffect(() => {
+    if (!selectedNodeId || !clusterSelection) return
+    const node = nodesById.get(selectedNodeId)
+    if (!node) return
+    const matchesSpotlight =
+      node.type === clusterSelection.type &&
+      (clusterSelection.sub === null || node.sub === clusterSelection.sub)
+    if (!matchesSpotlight) setClusterSelection(null)
+  }, [selectedNodeId, clusterSelection, nodesById])
 
   // Keyboard/screen-reader path to node selection — raycast-on-canvas-click
   // (the only other way in) is reachable by pointer alone. Mirrors
@@ -819,7 +1017,54 @@ export function ForceClusterView() {
         'position:absolute;top:0;left:0;pointer-events:none;z-index:1;'
       container.appendChild(labelRenderer.domElement)
 
-      const { scene, applyFilters, initialLayout } = buildScene(builtGraph)
+      // pauseTourIfRunning/flyToSpotlight are declared further down (with the
+      // rest of the guided-tour runtime / spotlight runtime respectively) but
+      // callable here already — hoisted function declarations, and these
+      // handlers only ever run later in response to an actual label click,
+      // well after setup() has finished running top to bottom.
+      //
+      // flyToSpotlight is called directly here (not left to the
+      // [clusterSelection] effect below) so that ONLY an actual
+      // category/sub-category selection ever animates the camera. Selecting
+      // a NODE never calls it at all (see onSelectNode below and the
+      // canvas raycast click handler further down) — Q4: a node label click
+      // behaves exactly like clicking its sphere always has, select only,
+      // no camera movement, whether or not a spotlight is currently active.
+      //
+      // Shared by the 3D labels (handlers below, always clearNode=true — a
+      // label click starts a fresh spotlight that may not include whatever
+      // node's panel happened to be open) and by the detail panel's own
+      // eyebrow breadcrumb (breadcrumbSelectRef, clearNode=false — the
+      // breadcrumb's category/sub-category is read directly off the node
+      // currently shown, so it's always inside the spotlight it starts;
+      // closing that node's panel would be pointless churn the user
+      // explicitly didn't want).
+      function selectCluster(type: ForceClusterNodeType, sub: string | null, clearNode: boolean) {
+        pauseTourIfRunning()
+        if (clearNode) setSelectedNodeId(null)
+        const prev = clusterSelectionRef.current
+        const next: ClusterSelection | null =
+          prev && prev.type === type && prev.sub === sub ? null : { type, sub }
+        flyToSpotlight(next)
+        setClusterSelection(next)
+      }
+
+      const handlers: SceneHandlers = {
+        onSelectCategory: (type) => selectCluster(type, null, true),
+        onSelectSub: (type, sub) => selectCluster(type, sub, true),
+        onSelectNode: (nodeId) => {
+          // Does NOT touch clusterSelection — a node reachable by a label
+          // click is always already inside whatever spotlight is active (see
+          // the invariant effect above for why that's safe), so an active
+          // spotlight's zoom + hide-the-rest is left exactly as is.
+          pauseTourIfRunning()
+          setSelectedNodeId(nodeId)
+        },
+      }
+
+      breadcrumbSelectRef.current = (type, sub) => selectCluster(type, sub, false)
+
+      const { scene, applyFilters, initialLayout } = buildScene(builtGraph, handlers)
       applyFiltersRef.current = applyFilters
       layoutSnapshotRef.current = initialLayout
       const rotatingGroup = scene.getObjectByName('force-cluster-graph')
@@ -830,11 +1075,19 @@ export function ForceClusterView() {
       controls.minDistance = 5
       controls.maxDistance = 90
 
+      /** Sets a label's opacity AND click/keyboard reachability together — a label hidden by LOD or spotlight must not still be clickable, or a user could "click" empty space and keyboard users would tab through hundreds of invisible label buttons. */
+      function setLabelShown(element: HTMLElement, show: boolean) {
+        element.style.opacity = show ? '1' : '0'
+        element.style.pointerEvents = show ? 'auto' : 'none'
+        element.tabIndex = show ? 0 : -1
+      }
+
       function updateLod() {
         if (!rotatingGroup || !controls) return
         const distance = camera.position.distanceTo(controls.target)
         const lod =
           distance > LOD_FAR_DISTANCE ? 'far' : distance > LOD_MID_DISTANCE ? 'mid' : 'near'
+        const spotlight = clusterSelectionRef.current
         // Applied every frame, not cached against the last tier — a filter
         // change rebuilds labels fresh (opacity:0 by default) without
         // necessarily changing the zoom tier, so caching would leave the new
@@ -842,13 +1095,174 @@ export function ForceClusterView() {
         for (const child of rotatingGroup.children) {
           if (!(child instanceof CSS2DObject)) continue
           const kind = child.userData.kind as string | undefined
-          const show =
-            (kind === 'type-label' && lod === 'far') ||
-            (kind === 'sub-label' && lod === 'mid') ||
-            (kind === 'node-label' && lod === 'near')
-          child.element.style.opacity = show ? '1' : '0'
+          const type = child.userData.type as ForceClusterNodeType | undefined
+          const sub = child.userData.sub as string | undefined
+          let show: boolean
+          if (spotlight) {
+            // While spotlighted, distance no longer decides label visibility
+            // — only the spotlighted category's own label (kept on as
+            // context even for a sub-category spotlight), the matching
+            // sub-label(s), and that cluster's node-labels stay on; every
+            // other label is off regardless of zoom (applySpotlightVisibility
+            // has already hidden the geometry those other labels would sit
+            // on top of anyway).
+            const inSpotlightedSub = spotlight.sub === null || sub === spotlight.sub
+            show =
+              (kind === 'type-label' && type === spotlight.type) ||
+              (kind === 'sub-label' && type === spotlight.type && inSpotlightedSub) ||
+              (kind === 'node-label' && type === spotlight.type && inSpotlightedSub)
+          } else {
+            show =
+              (kind === 'type-label' && lod === 'far') ||
+              (kind === 'sub-label' && lod === 'mid') ||
+              (kind === 'node-label' && lod === 'near')
+          }
+          setLabelShown(child.element, show)
         }
       }
+
+      // --- Category/sub-category spotlight (click a label to select) ------
+      // A manual, single-cluster counterpart to the guided tour's camera
+      // framing: reuses the exact same boundingSphere/frameDistance math as
+      // stopTarget() below, but drives it from clusterSelection instead of a
+      // scripted itinerary, and — unlike the tour, which only moves the
+      // camera — also dims the rest of the graph out of view.
+      const SPOTLIGHT_FLIGHT_MS = 900
+      const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 0, 55) // matches camera.position.set(0, 0, 55) above
+      const DEFAULT_CAMERA_TARGET = new THREE.Vector3(0, 0, 0)
+      interface SpotlightFlight {
+        fromPos: THREE.Vector3
+        fromTarget: THREE.Vector3
+        toPos: THREE.Vector3
+        toTarget: THREE.Vector3
+        elapsedMs: number
+        durationMs: number
+      }
+      const spotlightFlightRef: { current: SpotlightFlight | null } = { current: null }
+
+      /** Flies the camera to frame `target`'s real, already-clustered nodes (or back to the default overview if null) — never relayouts, so nothing jumps. */
+      function flyToSpotlight(target: ClusterSelection | null) {
+        if (!controls) return
+        const fromPos = camera.position.clone()
+        const fromTarget = controls.target.clone()
+        if (!target) {
+          spotlightFlightRef.current = {
+            fromPos,
+            fromTarget,
+            toPos: DEFAULT_CAMERA_POS.clone(),
+            toTarget: DEFAULT_CAMERA_TARGET.clone(),
+            elapsedMs: 0,
+            durationMs: SPOTLIGHT_FLIGHT_MS,
+          }
+          return
+        }
+        const layout = layoutSnapshotRef.current
+        if (!layout || !rotatingGroup) return
+        const worldPoints = layout.visibleNodes
+          .filter((n) => n.type === target.type && (target.sub === null || n.sub === target.sub))
+          .map((n) => layout.positionById.get(n.id))
+          .filter((p): p is THREE.Vector3 => !!p)
+          .map((p) => rotatingGroup.localToWorld(p.clone()))
+        if (worldPoints.length === 0) return
+        // Framed around the REAL centroid of the current (post-relaxation)
+        // node positions, not layout.typeCenters/subCenters — those are the
+        // idealized fibonacci-sphere anchor a category's nodes are pulled
+        // *toward* during layout, but cross-category edge attraction (a
+        // heavily-cited category like Standard gets pulled toward whatever
+        // it's most connected to) can leave the real cluster measurably off
+        // that anchor. Category/sub-category text labels are placed at this
+        // same real centroid now too (see applyFilters/realTypeCenters —
+        // realSubCenters above), not the idealized anchor, so they're
+        // guaranteed to land inside whatever region frames these same
+        // points — no need to separately widen the frame to chase them.
+        const { center: worldCenter } = boundingSphere(worldPoints)
+        const approachDir =
+          worldCenter.lengthSq() > 1e-6
+            ? worldCenter.clone().normalize()
+            : new THREE.Vector3(0, 0, 1)
+        // frameCluster (not frameDistance/a bounding-sphere radius) —
+        // several sub-clusters spread out sideways more than vertically is
+        // the norm for this graph's layout, and an isotropic sphere fit
+        // sizes the distance off the single farthest point in ANY
+        // direction, leaving the narrower actual dimension mostly empty.
+        // Needs the real viewing direction (forward, into the screen) to
+        // project points onto the actual view plane, not just a radius.
+        const distance = frameCluster(
+          worldPoints,
+          worldCenter,
+          approachDir.clone().negate(),
+          camera.up,
+          TOUR_CAMERA_FOV_DEG,
+          camera.aspect,
+          TOUR_FRAME_PADDING,
+          controls.minDistance,
+          controls.maxDistance
+        )
+        const pos = worldCenter.clone().add(approachDir.multiplyScalar(distance))
+        spotlightFlightRef.current = {
+          fromPos,
+          fromTarget,
+          toPos: pos,
+          toTarget: worldCenter,
+          elapsedMs: 0,
+          durationMs: SPOTLIGHT_FLIGHT_MS,
+        }
+      }
+
+      const SPOTLIGHT_HIDE_SCALE = new THREE.Matrix4().makeScale(0, 0, 0)
+
+      /** Hides every node/edge outside `target` in place — zeroes non-matching instance scales and collapses non-matching edge segments to a point, using the base matrices/positions captured at layout time, so nothing relayouts or jumps. */
+      function applySpotlightVisibility(target: ClusterSelection | null) {
+        if (!rotatingGroup) return
+        const matches = (type: ForceClusterNodeType, sub: string) =>
+          !target || (type === target.type && (target.sub === null || sub === target.sub))
+        for (const child of rotatingGroup.children) {
+          if (child instanceof THREE.InstancedMesh) {
+            const nodes = child.userData.nodes as ForceClusterNode[]
+            const baseMatrices = child.userData.baseMatrices as THREE.Matrix4[]
+            for (let i = 0; i < nodes.length; i++) {
+              // eslint-disable-next-line security/detect-object-injection -- i is this loop's own numeric index bounded by nodes.length, not user input
+              const node = nodes[i]
+              // eslint-disable-next-line security/detect-object-injection -- i is this loop's own numeric index bounded by nodes.length, not user input
+              const base = baseMatrices[i]
+              if (!base) continue
+              child.setMatrixAt(i, matches(node.type, node.sub) ? base : SPOTLIGHT_HIDE_SCALE)
+            }
+            child.instanceMatrix.needsUpdate = true
+          } else if (child.name === 'graph-edges' && child instanceof THREE.LineSegments) {
+            const edgeMeta = child.userData.edgeMeta as {
+              fromType: ForceClusterNodeType
+              fromSub: string
+              toType: ForceClusterNodeType
+              toSub: string
+            }[]
+            const baseline = child.userData.baseline as Float32Array
+            const positionAttr = child.geometry.attributes.position as THREE.BufferAttribute
+            const array = positionAttr.array as Float32Array
+            for (let i = 0; i < edgeMeta.length; i++) {
+              // eslint-disable-next-line security/detect-object-injection -- i is this loop's own numeric index bounded by edgeMeta.length, not user input
+              const meta = edgeMeta[i]
+              const visible =
+                matches(meta.fromType, meta.fromSub) && matches(meta.toType, meta.toSub)
+              const base = i * 6
+              for (let k = 0; k < 6; k++) {
+                array[base + k] = visible ? baseline[base + k] : 0
+              }
+            }
+            positionAttr.needsUpdate = true
+          }
+        }
+      }
+
+      // Visibility only, deliberately — NOT flyToSpotlight. This runs on
+      // every clusterSelection change including the ones that clear it as a
+      // side effect of selecting a node, which must not move the camera; the
+      // two handlers above that SHOULD animate the camera call
+      // flyToSpotlight themselves, directly, at the moment of the click.
+      spotlightControlRef.current = (target) => {
+        applySpotlightVisibility(target)
+      }
+      // ----------------------------------------------------------------------
 
       const prefersReducedMotion =
         typeof window.matchMedia === 'function' &&
@@ -875,6 +1289,14 @@ export function ForceClusterView() {
         paused: boolean
       }
       const tourStateRef: { current: TourRuntime | null } = { current: null }
+
+      /** Interrupts a running tour the same way a real drag/click on the canvas already does (see controlsStartHandler below) — a category/sub-category/node label click isn't a canvas drag, so it wouldn't otherwise trip that same interrupt, and the tour would fly right past the user's manual selection within its next dwell/advance beat. Referenced by `handlers` above, defined here (both work — function declarations hoist — kept together with tourStateRef/setTourPaused for readability). */
+      function pauseTourIfRunning() {
+        if (tourStateRef.current) {
+          tourStateRef.current.paused = true
+          setTourPaused(true)
+        }
+      }
 
       /** World-space { camera position, look-at target } for one tour stop, using the current layout + rotatingGroup's (frozen) world transform. */
       function stopTarget(stop: TourStop): { pos: THREE.Vector3; target: THREE.Vector3 } | null {
@@ -929,7 +1351,7 @@ export function ForceClusterView() {
             (stop.kind === 'node' &&
               kind === 'node-label' &&
               child.userData.nodeId === stop.node.id)
-          child.element.style.opacity = show ? '1' : '0'
+          setLabelShown(child.element, show)
         }
       }
 
@@ -1068,14 +1490,27 @@ export function ForceClusterView() {
           rotatingGroup &&
           motionModeRef.current === 'spin' &&
           !selectedNodeIdRef.current &&
+          !clusterSelectionRef.current &&
           !prefersReducedMotion
         ) {
-          // Paused while a node is selected — orbiting the scene away from
-          // under a reader mid-inspection is a real usability problem, not a
-          // cosmetic one. Also paused outright under prefers-reduced-motion:
-          // this is a direct three.js animation-loop call, so it sits outside
-          // the CSS-keyframe reduced-motion block the rest of the product uses.
+          // Paused while a node OR a category/sub-category spotlight is
+          // selected — orbiting the scene away from under a reader
+          // mid-inspection is a real usability problem, not a cosmetic one.
+          // Also paused outright under prefers-reduced-motion: this is a
+          // direct three.js animation-loop call, so it sits outside the
+          // CSS-keyframe reduced-motion block the rest of the product uses.
           rotatingGroup.rotation.y += delta * 0.02 * motionSpeedRef.current
+        }
+        const spotlightFlight = spotlightFlightRef.current
+        if (spotlightFlight && controls) {
+          spotlightFlight.elapsedMs += delta * 1000
+          const t = easeInOutCubic(
+            Math.min(1, spotlightFlight.elapsedMs / spotlightFlight.durationMs)
+          )
+          camera.position.lerpVectors(spotlightFlight.fromPos, spotlightFlight.toPos, t)
+          controls.target.lerpVectors(spotlightFlight.fromTarget, spotlightFlight.toTarget, t)
+          if (spotlightFlight.elapsedMs >= spotlightFlight.durationMs)
+            spotlightFlightRef.current = null
         }
         controls?.update()
         if (!touring) updateLod()
@@ -1102,9 +1537,20 @@ export function ForceClusterView() {
         if (hit && hit.instanceId != null) {
           const nodes = hit.object.userData.nodes as ForceClusterNode[]
           const node = nodes[hit.instanceId]
+          // Does NOT touch clusterSelection — see the invariant effect in
+          // the component body: a raycast can only ever hit an
+          // already-visible (spotlight-matching) node, since a spotlight
+          // zero-scales everything else out of the raycaster's reach.
           setSelectedNodeId(node ? node.id : null)
         } else {
+          // A miss (empty canvas space) fully deselects — node and spotlight
+          // alike — and, unlike selecting a node, DOES fly back to the
+          // overview if a spotlight was active: leaving the camera framed on
+          // a now-fully-unhidden graph would look like a stray, meaningless
+          // closeup rather than a deliberate deselect.
+          if (clusterSelectionRef.current) flyToSpotlight(null)
           setSelectedNodeId(null)
+          setClusterSelection(null)
         }
       }
       canvas.addEventListener('click', canvasClickHandler)
@@ -1167,6 +1613,8 @@ export function ForceClusterView() {
           node={selectedNode}
           connections={connections}
           onSelectNode={setSelectedNodeId}
+          onSelectCategory={(type) => breadcrumbSelectRef.current?.(type, null)}
+          onSelectSub={(type, sub) => breadcrumbSelectRef.current?.(type, sub)}
           onClose={() => setSelectedNodeId(null)}
         />
       )}
