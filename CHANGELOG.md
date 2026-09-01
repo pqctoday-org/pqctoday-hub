@@ -29,6 +29,25 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.73.0] - 2026-09-01
+
+### Added
+
+- **A hands-on HPKE (Hybrid Public Key Encryption) workshop joins the Hybrid Cryptography learning module** [view:/learn] [persona:developer] [persona:researcher]: builds and tears down a full RFC 9180 session — KeyGen, Encapsulate, KeySchedule, Seal/Open — composed from real PKCS#11 v3.2 primitives across all 3 registered PQ/T hybrid KEMs, verified byte-for-byte against the RFC's own published test vectors.
+- **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
+- **PKCS#11 v3.2 Mechanism Coverage grew to include hybrid-KEM building blocks, classical asymmetric variants, symmetric/AEAD mechanisms, and PQC deterministic-seed keygen (CKA_SEED)** [view:/playground] [persona:developer] [persona:researcher].
+- **The Navigate graph's category, sub-category, and node labels are now clickable**, with a camera move to match [view:/navigate] [persona:curious] [persona:executive].
+- **The KMIP Developer plane now lives inside KMIP 3.0's own Dev sub-tab, and Corpus Replay gained a Builder/Code split** [view:/playground] [persona:developer]: the HSM playground's ACVP and Conformance tools similarly merged into one Developer tab, closing several PKCS#11 v3.2 Profiles conformance gaps.
+
+### Fixed
+
+- **A PKCS#11 pipeline builder param could show a false "nothing compatible earlier" error for a fixed-vector (hex-literal) input on any non-`bytes` parameter kind** [view:/playground] [persona:developer]: an ACVP known-answer test's own fixed ciphertext, for example, now renders correctly instead of looking unbound.
+
+### Data
+
+- **Closed 573 missing-citation gaps across dozens of Learn modules** [view:/learn] [persona:researcher] [persona:curious]: every module's claims now cite a real, verifiable Library source.
+- **195 more Library documents enriched, including 2 new IETF CFRG hybrid-KEM Internet-Drafts** (draft-irtf-cfrg-hybrid-kems, draft-irtf-cfrg-concrete-hybrid-kems) [view:/library] [persona:researcher].
+
 ## [4.72.0] - 2026-08-31
 
 ### Added
