@@ -1,8 +1,8 @@
 ---
 generated: 2026-08-31
 category: Compliance Frameworks
-document_count: 4
-requirement_count: 16
+document_count: 5
+requirement_count: 24
 ---
 
 ## EO-14306
@@ -15,6 +15,22 @@ requirement_count: 16
     - _T2 Risk-Informed · software_: Monitor CISA-released list of product categories where post-quantum cryptography products are widely available.
 - **Lifecycle / CLM**:
     - _T3 Repeatable · software_: Support TLS 1.3 or successor versions by January 2, 2030, to prepare for post-quantum cryptography transition.
+
+## EU-NIS-CG-Roadmap-v1.1
+- **Source**: EU NIS Cooperation Group — Coordinated Implementation Roadmap for PQC Transition v1.1
+- **URL**: https://ec.europa.eu/newsroom/dae/redirection/document/117507
+- **Requirement count**: 8
+- **Governance**:
+    - _T2 Risk-Informed · all_: Establish mature cryptographic asset management to facilitate the transition to PQC and improve cryptographic agility.
+    - _T2 Risk-Informed · all_: Initiate a national PQC transition strategy by the end of 2026 and coordinate efforts at the EU level.
+    - _T2 Risk-Informed · all_: Include the quantum threat as part of the risk management processes for all relevant entities.
+- **Inventory**:
+    - _T2 Risk-Informed · all_: Maintain a structured overview of cryptographic assets to support the PQC transition.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · all_: Transition high-risk use cases to PQC as soon as possible, no later than the end of 2030.
+    - _T2 Risk-Informed · all_: Complete the PQC transition for as many systems as practically feasible by 2035.
+    - _T2 Risk-Informed · all_: Enable quantum-safe upgrades by default during the transition phase.
+    - _T2 Risk-Informed · all_: Use standardized and tested hybrid solutions when migrating to post-quantum cryptographic solutions, whenever feasible.
 
 ## EUCC v2.0 ACM
 - **Source**: EU Cybersecurity Certification Agreed Cryptographic Mechanisms v2.0
