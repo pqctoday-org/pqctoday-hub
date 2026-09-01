@@ -10,7 +10,7 @@ import { trustedSources } from './trustedSourcesData'
 import { loadPQCAlgorithmsData, type AlgorithmDetail } from './pqcAlgorithmsData'
 import { loadIndustryLandscape } from './industryLandscapeData'
 import { complianceFrameworks } from './complianceData'
-import { libraryData } from './libraryData'
+import type { LibraryItem } from './libraryData'
 import { loadGlossary } from './glossary'
 import { algoProductXrefs } from './algoProductXrefData'
 import { softwareData } from './migrateData'
@@ -133,7 +133,8 @@ function enrichProductDescription(productId: string, softwareName: string, base:
 function buildNodes(
   algorithms: AlgorithmDetail[],
   landscape: ReturnType<typeof loadIndustryLandscape>,
-  glossaryTerms: Awaited<ReturnType<typeof loadGlossary>>
+  glossaryTerms: Awaited<ReturnType<typeof loadGlossary>>,
+  libraryData: LibraryItem[]
 ) {
   const nodes = new Map<string, ForceClusterNode>()
 
@@ -404,7 +405,8 @@ function buildEdges(
   nodes: Map<string, ForceClusterNode>,
   algorithms: AlgorithmDetail[],
   landscape: ReturnType<typeof loadIndustryLandscape>,
-  glossaryTerms: Awaited<ReturnType<typeof loadGlossary>>
+  glossaryTerms: Awaited<ReturnType<typeof loadGlossary>>,
+  libraryData: LibraryItem[]
 ): ForceClusterEdge[] {
   const edges: ForceClusterEdge[] = []
   const seen = new Set<string>()
@@ -654,11 +656,15 @@ function computeDegrees(nodes: Map<string, ForceClusterNode>, edges: ForceCluste
  * strands an edge pointing at a dropped node.
  */
 export async function buildForceClusterGraph(): Promise<ForceClusterGraph> {
-  const [algorithms, glossaryTerms] = await Promise.all([loadPQCAlgorithmsData(), loadGlossary()])
+  const [algorithms, glossaryTerms, { libraryData }] = await Promise.all([
+    loadPQCAlgorithmsData(),
+    loadGlossary(),
+    import('./libraryData'),
+  ])
   const landscape = loadIndustryLandscape()
 
-  const nodes = buildNodes(algorithms, landscape, glossaryTerms)
-  const edges = buildEdges(nodes, algorithms, landscape, glossaryTerms)
+  const nodes = buildNodes(algorithms, landscape, glossaryTerms, libraryData)
+  const edges = buildEdges(nodes, algorithms, landscape, glossaryTerms, libraryData)
   computeDegrees(nodes, edges)
 
   const survivingIds = new Set(
