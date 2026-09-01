@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * PkcsPipelineBuilder — the PKCS#11 Developer tab's sequence builder
- * (dev-tabs-pkcs11-kmip plan, WS-D + WS-F).
+ * PkcsDevWorkbench — the PKCS#11 Developer tab's shared Builder/Code
+ * workbench (dev-tabs-pkcs11-kmip plan, WS-D + WS-F; renamed from
+ * PkcsPipelineBuilder as part of the Standard/ACVP/Conformance Test Suite
+ * switcher — see DeveloperTab.tsx's TestSuite type).
  *
  * Ported from pqctoday-sandbox's ui/src/pages/sandbox/PipelinePage.tsx —
  * same interaction model (drag primitives onto a canvas, bind each step's
@@ -16,6 +18,15 @@
  * source of truth; the Monaco panel always shows freshly generated code
  * UNLESS the learner edits it, at which point the pipeline detaches into
  * "custom script" mode (builder greys out) until they explicitly revert.
+ *
+ * `suite` currently only ever receives `'standard'` — DeveloperTab.tsx's
+ * ACVP and Conformance Test Suite values still render their own standalone
+ * components (HsmAcvpTesting.tsx, Pkcs11ConformanceRunner.tsx), not this
+ * workbench. It's threaded through now so the Suite switcher's call site is
+ * already suite-aware; folding ACVP/Conformance content into this shared
+ * shell (a category-grouped template picker replacing the drag palette, a
+ * `'call'`-op step kind for OASIS XML replay) is later, larger, separately
+ * planned work — see the PKCS#11 Test Suite plan's Phase 2/3.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
@@ -135,7 +146,13 @@ const FAMILIES: PrimitiveFamily[] = ['Signature', 'KEM', 'Symmetric', 'Hash']
 const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
-export const PkcsPipelineBuilder: React.FC = () => {
+export interface PkcsDevWorkbenchProps {
+  /** Reserved — see this file's header comment. Only `'standard'` is
+   *  implemented today. */
+  suite: 'standard' | 'acvp' | 'conformance'
+}
+
+export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const hsmCtx = useHsmContext()
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog, hsmKeys } =
     hsmCtx

@@ -40,7 +40,7 @@ const KMIP_BUILDER = 'src/components/Playground/dev/kmipPipeline/KmipPipelineBui
 // spans both files rather than one.
 const KMIP_DEV_TAB = 'src/components/Playground/kmip/KmipDevTab.tsx'
 const PKCS_VIEW = 'src/components/Playground/HsmPlayground.tsx'
-const PKCS_BUILDER = 'src/components/Playground/dev/pipeline/PkcsPipelineBuilder.tsx'
+const PKCS_BUILDER = 'src/components/Playground/dev/pipeline/PkcsDevWorkbench.tsx'
 
 /** Every `target: '[data-tour="…"]…'` a lesson step references, filtered to
  *  this lane's own G5 anchor namespace (both files' OLDER lessons target
@@ -89,7 +89,7 @@ describe('G5 guided-lesson anchor driftguard', () => {
     expect(missing).toEqual([])
   })
 
-  it('every PKCS#11 Developer-tab lesson target exists in PkcsPipelineBuilder', () => {
+  it('every PKCS#11 Developer-tab lesson target exists in PkcsDevWorkbench', () => {
     const targets = extractTargets(read(PKCS_VIEW), 'pkcs-dev-')
     expect(targets.size).toBeGreaterThan(0)
     const anchors = extractAnchors(read(PKCS_BUILDER))

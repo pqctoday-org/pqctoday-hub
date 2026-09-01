@@ -47,7 +47,7 @@ import {
   hsm_generateECKeyPair,
   hsm_generateAESKey,
 } from '../../wasm/softhsm'
-import { DeveloperTab, type DeveloperSubTab } from './dev/DeveloperTab'
+import { DeveloperTab, type TestSuite } from './dev/DeveloperTab'
 import {
   useLessonsTour,
   LessonsHub,
@@ -70,7 +70,13 @@ type HsmTab =
   | 'logs'
   | 'developer'
 
-const DEFAULT_DEV_SUB_TAB: DeveloperSubTab = 'pipeline'
+const DEFAULT_DEV_SUB_TAB: TestSuite = 'standard'
+
+/** Pre-rename deep links (`?dtab=pipeline`, and the sub-tab value itself
+ *  before the Standard/ACVP/Conformance Test Suite rename) still resolve —
+ *  never produced fresh, only accepted on the way in. */
+const normalizeDevSubTab = (raw: string | null): TestSuite | null =>
+  raw === 'pipeline' ? 'standard' : (raw as TestSuite | null)
 
 /** First-time visitors land on the guided Learn tab (matching the KMIP
  * playground's own Learn-first default), not the bare workbench. */
@@ -92,7 +98,7 @@ export const HsmPlayground = () => {
     clearHsmLog,
   } = useHsmContext()
   const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
-  const [devSubTab, setDevSubTab] = useState<DeveloperSubTab>(DEFAULT_DEV_SUB_TAB)
+  const [devSubTab, setDevSubTab] = useState<TestSuite>(DEFAULT_DEV_SUB_TAB)
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
@@ -108,13 +114,13 @@ export const HsmPlayground = () => {
   const rawInitialTab = searchParams.get('tab')
   const legacyDevSubTab =
     rawInitialTab === 'acvp' || rawInitialTab === 'conformance'
-      ? (rawInitialTab as DeveloperSubTab)
+      ? (rawInitialTab as TestSuite)
       : null
   const initialTab = useRef((legacyDevSubTab ? 'developer' : rawInitialTab) as HsmTab | null)
   const initialEngine = useRef(searchParams.get('engine') as EngineMode | null)
   const initialAlgo = useRef(searchParams.get('algo') ?? undefined)
   const initialDevSubTab = useRef(
-    (searchParams.get('dtab') as DeveloperSubTab | null) ?? legacyDevSubTab ?? DEFAULT_DEV_SUB_TAB
+    normalizeDevSubTab(searchParams.get('dtab')) ?? legacyDevSubTab ?? DEFAULT_DEV_SUB_TAB
   )
 
   // Guard to skip URL sync on the very first render (don't wipe incoming params)
@@ -282,10 +288,10 @@ export const HsmPlayground = () => {
 
   // Safety net: if a persona switch lands a curious/executive user on the
   // gated ACVP/Conformance sub-tab mid-session (they were on it as another
-  // persona, then switched role), fall back to the Pipeline sub-tab rather
+  // persona, then switched role), fall back to the Standard sub-tab rather
   // than leaving them on a surface whose tab button is now hidden. Unlike
   // the pre-merge version, the Developer tab itself stays open — it's the
-  // Pipeline builder that's ungated, only the ACVP/Conformance sub-tabs are.
+  // Standard workbench that's ungated, only the ACVP/Conformance sub-tabs are.
   useEffect(() => {
     if (
       (devSubTab === 'acvp' || devSubTab === 'conformance') &&
@@ -398,10 +404,10 @@ export const HsmPlayground = () => {
   const tour = useLessonsTour<DevPlane>(devLessons, (p) => {
     handleTabChange(p)
     // The tour's data-tour="pkcs-dev-*" selectors only exist while the
-    // Pipeline sub-tab is mounted (TabsContent unmounts inactive panels) —
+    // Standard sub-tab is mounted (TabsContent unmounts inactive panels) —
     // force back to it so starting this lesson from the ACVP/Conformance
     // sub-tab doesn't leave every selector finding nothing.
-    setDevSubTab('pipeline')
+    setDevSubTab('standard')
   })
 
   return (
