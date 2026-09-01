@@ -1274,7 +1274,16 @@ const StepCard: React.FC<StepCardProps> = ({
               const opts = optionsFor(kind, steps, index)
               const current = step.params[name]
               const currentKey = current ? JSON.stringify(current) : ''
-              const known = opts.some((o) => JSON.stringify(o.value) === currentKey)
+              // A hex-literal binding (an ACVP known-answer test's own fixed vector
+              // material — ParamValue's 'hex' variant) never comes from an earlier
+              // step, so optionsFor never lists it. Without this branch, a correctly
+              // wired ACVP step (pipelineCodegen.ts handles 'hex' directly and runs
+              // it fine) rendered here as an unbound "— nothing compatible earlier —"
+              // error, indistinguishable from an actually-missing binding.
+              const hexLabel =
+                current?.bind === 'hex' ? `fixed vector · ${current.value.length / 2}B hex` : null
+              const known =
+                hexLabel !== null || opts.some((o) => JSON.stringify(o.value) === currentKey)
               return (
                 <ParamRow key={name} name={name}>
                   {/* eslint-disable-next-line no-restricted-syntax -- FilterDropdown's
@@ -1296,6 +1305,7 @@ const StepCard: React.FC<StepCardProps> = ({
                     <option value="">
                       {opts.length ? '— choose a source —' : '— nothing compatible earlier —'}
                     </option>
+                    {hexLabel !== null && <option value={currentKey}>{hexLabel}</option>}
                     {opts.map((o) => (
                       <option key={o.label} value={JSON.stringify(o.value)}>
                         {o.label}

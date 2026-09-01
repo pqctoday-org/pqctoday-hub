@@ -157,6 +157,82 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
 })
 
+test('the guided lesson still works when started from the ACVP sub-tab, not just the default Pipeline one', async ({
+  page,
+}) => {
+  // Regression guard for the 2026-08-31 merge's devSubTab reset: the lesson
+  // callback does `handleTabChange('developer')` then `setDevSubTab('pipeline')`.
+  // The test above always starts from a fresh page (devSubTab already
+  // defaults to 'pipeline'), so it can't catch a regression here — the fix
+  // only matters when the user is actually on ACVP/Conformance when they
+  // open Lessons, since TabsContent unmounts the Pipeline builder (and its
+  // data-tour="pkcs-dev-*" targets) while a different sub-tab is active.
+  await page.goto('/playground/hsm?tab=developer&dtab=acvp')
+  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveAttribute('aria-selected', 'true', {
+    timeout: 30000,
+  })
+
+  await page.getByRole('button', { name: /Lessons/i }).click()
+  await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
+
+  // If the reset didn't happen, the palette selector would never resolve
+  // (Pipeline unmounted) and this would time out instead of finding it.
+  await expect(page.getByText('The palette')).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('tab', { name: 'Pipeline' })).toHaveAttribute('aria-selected', 'true')
+
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+})
+
+test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even via a stale deep link', async ({
+  page,
+}) => {
+  // Ports the pre-merge top-level-tab gating (ACVP/Conformance used to be
+  // hidden entirely for curious/executive) down to the sub-tab level. Also
+  // covers the legacy-URL path: a bookmarked pre-2026-08-31 `?tab=acvp` link
+  // now resolves through `dtab=acvp`, so the persona guard has to catch it
+  // there too, not just on a hand-written `?dtab=acvp`.
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'pqc-learning-persona',
+      JSON.stringify({
+        state: {
+          selectedPersona: 'curious',
+          selectedRegion: 'global',
+          selectedIndustry: null,
+          selectedIndustries: [],
+          experienceLevel: 'curious',
+          viewAccess: 'preview',
+          hasSeenPersonaPicker: true,
+          suppressSuggestion: true,
+          niceTier: 'awareness',
+          niceTierOverridden: false,
+          curiousGuideDismissed: true,
+        },
+        version: 7,
+      })
+    )
+  })
+
+  // Legacy deep link — pre-merge bookmark straight to the old top-level tab.
+  await page.goto('/playground/hsm?tab=acvp')
+  await expect(page.getByRole('tab', { name: 'Developer' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
+  await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
+
+  // Land on Developer directly with the new sub-tab param — must fall back
+  // to Pipeline rather than honoring the gated sub-tab.
+  await page.goto('/playground/hsm?tab=developer&dtab=acvp')
+  await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
+    timeout: 30000,
+  })
+  await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
+  await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
+})
+
 test('Monaco mounts with a real web worker, no console noise or page errors (G8)', async ({
   page,
 }) => {
@@ -176,6 +252,43 @@ test('Monaco mounts with a real web worker, no console noise or page errors (G8)
 
   expect(consoleMessages.some((m) => /Could not create web worker/i.test(m))).toBe(false)
   expect(pageErrors).toEqual([])
+})
+
+test('Run works identically while the Code sub-view is active, not just Builder', async ({
+  page,
+}) => {
+  // The Run button lives in the shared header outside either TabsContent
+  // panel, so it should work regardless of which sub-view is showing — but
+  // that had never actually been exercised: every other "runs green" test
+  // in this file clicks Run while Builder (the default view) is active.
+  // Real risk if this regresses: Run silently doing nothing, or re-running
+  // stale state, while the visible Code tab shows no indication of failure.
+  await page.goto('/playground/hsm?tab=developer')
+  await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+  await page.getByRole('tab', { name: 'Code' }).click()
+  const editor = page.locator('.monaco-editor .view-lines').first()
+  await expect(editor).toBeVisible({ timeout: 10000 })
+
+  // The "ran in Xs" / "✓ ran" indicators live inside the Builder canvas
+  // (the "Output bundle" box and per-step cards), which TabsContent
+  // unmounts while Code is active — asserting on them here would fail even
+  // on a genuinely successful run. The Run button itself lives in the
+  // shared header outside either panel, so its own busy state is the one
+  // signal visible from Code view: wait for it to leave "Running…".
+  const runButton = page.getByRole('button', { name: /^Run$|^Running…$/ })
+  await runButton.click()
+  await expect(runButton).toHaveText('Run', { timeout: 20000 })
+
+  // Switch back to Builder and confirm the SAME run's per-step results are
+  // visible there too — one shared run state behind both views, not two
+  // independent ones that could silently disagree.
+  await page.getByRole('tab', { name: 'Builder' }).click()
+  await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 5000 })
+  const okBadges = page.getByText('✓ ran')
+  await expect(okBadges.first()).toBeVisible()
+  expect(await okBadges.count()).toBeGreaterThan(0)
+  await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
 })
 
 test('runs green on the C++ engine (?engine=cpp) — real bug found+fixed in G9/W1', async ({

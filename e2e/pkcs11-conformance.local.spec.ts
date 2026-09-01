@@ -14,7 +14,10 @@ import { test, expect } from '@playwright/test'
 test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
   for (const engine of ['cpp', 'rust', 'dual'] as const) {
     test(`${engine} engine — every claimed Tier A/B row is conformant`, async ({ page }) => {
-      await page.goto(`/playground/hsm?tab=conformance&engine=${engine}`)
+      // Conformance moved from its own top-level tab into a Developer
+      // sub-tab (2026-08-31) — dtab=conformance selects it, same as
+      // ?tab=conformance used to.
+      await page.goto(`/playground/hsm?tab=developer&dtab=conformance&engine=${engine}`)
 
       const runButton = page.getByTestId('pkcs11-conformance-run-button')
       await expect(runButton).toBeVisible({ timeout: 15000 })
@@ -56,6 +59,56 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
       // publish a CKO_PROFILE for must have a real, executed Tier A/B row.
       const notClaimedCount = await rows.locator('[data-status="not-claimed"]').count()
       expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
+    })
+  }
+
+  // The three tests above all navigate straight to ?dtab=conformance, so
+  // Pipeline (the Developer tab's other sub-tab) is never even mounted —
+  // they can't catch state left behind by a real user who visits Pipeline
+  // first. Since all three Developer sub-tabs are TabsContent panels that
+  // unmount when inactive (2026-08-31 merge), the real risk is Pipeline's
+  // OWN internal Builder/Code view state (or its Monaco editor instance)
+  // somehow interfering with Conformance once the user switches over.
+  for (const pipelineView of ['Builder', 'Code'] as const) {
+    test(`conformance still runs clean after visiting Pipeline in ${pipelineView} view first`, async ({
+      page,
+    }) => {
+      await page.goto('/playground/hsm?tab=developer')
+      await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+
+      if (pipelineView === 'Code') {
+        await page.getByRole('tab', { name: 'Code' }).click()
+        await expect(page.locator('.monaco-editor .view-lines').first()).toBeVisible({
+          timeout: 10000,
+        })
+      }
+
+      await page.getByRole('tab', { name: 'Conformance' }).click()
+      const runButton = page.getByTestId('pkcs11-conformance-run-button')
+      await expect(runButton).toBeVisible({ timeout: 15000 })
+      await runButton.click()
+
+      const summary = page.getByTestId('pkcs11-conformance-summary')
+      await expect(summary).toBeVisible({ timeout: 120000 })
+      const summaryText = (await summary.textContent())!.replace(/\s+/g, ' ').trim()
+      expect(summaryText, summaryText).toMatch(/^\d+\/\d+ rows conformant$/)
+      const notClaimedCount = await page
+        .getByTestId('pkcs11-conformance-row')
+        .locator('[data-status="not-claimed"]')
+        .count()
+      expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
+
+      // Switching back to Pipeline must remount it clean (fresh default
+      // template, Builder view) — not crash, and not get stuck showing
+      // Conformance's own DOM.
+      await page.getByRole('tab', { name: 'Pipeline' }).click()
+      await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
+        timeout: 10000,
+      })
+      await expect(page.getByRole('tab', { name: 'Builder · 5 steps' })).toHaveAttribute(
+        'aria-selected',
+        'true'
+      )
     })
   }
 })

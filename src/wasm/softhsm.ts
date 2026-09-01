@@ -701,6 +701,12 @@ export const CKP_BASELINE_PROVIDER = 0x00000001
 export const CKP_EXTENDED_PROVIDER = 0x00000002
 export const CKP_AUTHENTICATION_TOKEN = 0x00000003
 export const CKP_PUBLIC_CERTIFICATES_TOKEN = 0x00000004
+// 2026-08-31 conformance coverage gap closure — the 2 remaining Profiles
+// v3.2 §3 profile ids (neither engine claims either yet; added so the
+// runner CAN detect a future claim rather than being structurally blind
+// to it).
+export const CKP_COMPLETE_PROVIDER = 0x00000005
+export const CKP_HKDF_TLS_TOKEN = 0x00000006
 // PKCS#11 v3.2 §4.8 Table 13 — pins a key to an allow-list of mechanisms;
 // any call naming a mechanism outside the list fails CKR_MECHANISM_INVALID.
 // CKF_ARRAY_ATTRIBUTE (0x40000000) | 0x0600, per constants.rs.
@@ -2631,6 +2637,12 @@ export const CKD_SHA3_512_KDF = 0x0000000d // ANSI X9.63 KDF with SHA3-512 (PKCS
 
 // HKDF derive (PKCS#11 v3.2 §6.62)
 export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §6.62
+// Same derivation as CKM_HKDF_DERIVE — only the derived object's class
+// differs: CKO_DATA, not CKO_SECRET_KEY (§2.43; both engines' own dispatch
+// comments confirm this, e.g. pqctoday-hsm rust/src/ffi.rs:9815-9820 and
+// src/lib/SoftHSM_keygen.cpp:4195-4199). Required by the HKDF TLS Token
+// profile (§5.6 condition 7.a).
+export const CKM_HKDF_DATA = 0x0000402b
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 

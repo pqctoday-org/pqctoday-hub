@@ -25,6 +25,8 @@ import {
   CKP_EXTENDED_PROVIDER,
   CKP_AUTHENTICATION_TOKEN,
   CKP_PUBLIC_CERTIFICATES_TOKEN,
+  CKP_COMPLETE_PROVIDER,
+  CKP_HKDF_TLS_TOKEN,
   type SoftHSMModule,
 } from '../../../wasm/softhsm'
 import {
@@ -174,6 +176,9 @@ export const Pkcs11ConformanceRunner = () => {
           claims.add('authentication')
         if (profileObjects.some((p) => p.profileId === CKP_PUBLIC_CERTIFICATES_TOKEN))
           claims.add('certificates')
+        if (profileObjects.some((p) => p.profileId === CKP_COMPLETE_PROVIDER))
+          claims.add('complete')
+        if (profileObjects.some((p) => p.profileId === CKP_HKDF_TLS_TOKEN)) claims.add('hkdf_tls')
 
         // Tier A — a FRESH C_InitToken before every case, not just a
         // Finalize/Initialize: CERT-M-1-32's unauthenticated find expects
@@ -375,8 +380,13 @@ export const Pkcs11ConformanceRunner = () => {
           genuinely doesn&apos;t publish a CKO_PROFILE for.
         </p>
         <p>
-          Tier B: up to 28 Baseline + 6 Extended + 8 Authentication Token + 5 Public Certificates
-          Token condition probes per engine, gated on each engine&apos;s own claimed profiles.
+          Tier B: up to 17 Baseline + 6 Extended + 8 Authentication Token + 5 Public Certificates
+          Token + 6 HKDF TLS Token condition probes per engine, plus 1 Complete Provider
+          union-conformance check, gated on each engine&apos;s own claimed profiles. Complete
+          Provider and HKDF TLS Token are the 2 remaining Profiles v3.2 §3 profile ids — neither
+          engine claims either today (Tier B only probes profiles an engine actually claims — unlike
+          Tier A, it renders no row at all for one it doesn&apos;t, rather than a not-claimed row),
+          so those probes are dormant until an engine claims one.
         </p>
         <p>
           Not run in-browser: the C++ engine&apos;s native 815-row conformance suite
