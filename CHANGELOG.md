@@ -33,7 +33,7 @@ first time (don't ship dev-speak and reformat later):
 
 ### Added
 
-- **A hands-on HPKE (Hybrid Public Key Encryption) workshop joins the Hybrid Cryptography learning module** [view:/learn] [persona:developer] [persona:researcher]: builds and tears down a full RFC 9180 session — KeyGen, Encapsulate, KeySchedule, Seal/Open — composed from real PKCS#11 v3.2 primitives across all 3 registered PQ/T hybrid KEMs, verified byte-for-byte against the RFC's own published test vectors.
+- **A hands-on HPKE (Hybrid Public Key Encryption) workshop joins the Hybrid Cryptography learning module** [view:/learn] [persona:developer] [persona:researcher]: builds and tears down a full RFC 9180 session — KeyGen, Encapsulate, KeySchedule, Seal/Open — composed from real PKCS#11 v3.2 primitives across all 3 registered PQ/T hybrid KEMs, verified byte-for-byte against the RFC's own published test vectors. The workshop's experimental "candidate" mode — a single native `CKM_HPKE` mechanism call, a PQCToday vendor proposal not yet OASIS TC allocated — now runs against a real engine implementation too, instead of throwing an unsupported-mechanism error.
 - **Keystore items now show their real PKCS#11 engine attributes when inspected** [view:/playground] [persona:developer]: previously only certificates had a read-back view; keys do now too.
 - **PKCS#11 v3.2 Mechanism Coverage grew to include hybrid-KEM building blocks, classical asymmetric variants, symmetric/AEAD mechanisms, and PQC deterministic-seed keygen (CKA_SEED)** [view:/playground] [persona:developer] [persona:researcher].
 - **The Navigate graph's category, sub-category, and node labels are now clickable**, with a camera move to match [view:/navigate] [persona:curious] [persona:executive].

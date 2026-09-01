@@ -55,19 +55,15 @@ const hex = (b: Uint8Array): string =>
   Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
 const utf8 = (s: string): Uint8Array => new TextEncoder().encode(s)
 
-// Quarantined 2026-09-01: this release ships main's current softhsmrustv3
-// wasm build (hsm commit bc92034d), which does not yet export the candidate
-// CKM_HPKE mechanism these tests exercise — the HPKE feature branch's own
-// wasm build had it, but was itself stale against bc92034d's 37-commit
-// advance (real, already-shipped mechanisms this release cannot regress),
-// so it was not used. The RFC 9180 crypto itself is proven correct
-// independently: hpkeService.test.ts passes 59/59 via the COMPOSED PKCS#11
-// v3.2 primitive path (real byte-exact A.3 vectors), which is what
-// HpkeWorkshop's default 'composed' mode uses in production. Only the
-// experimental single-call 'candidate' mechanism this file tests — labeled
-// in the UI itself as "a PQCToday vendor proposal, not yet OASIS TC
-// allocated" — needs a follow-up hsm rebuild before this can un-skip.
-describe.skip('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/Decap)', () => {
+// Un-quarantined 2026-09-01: hsm PR #196 (feat/ckm-hpke-candidate, merged as
+// 33ae22b4) lands a real CKM_HPKE mechanism in the engine — the softhsmrustv3
+// wasm bundle now ships from that commit, rebuilt fresh via
+// rust/build-wasm-bundle.sh and staged byte-identically into all 3 hub
+// locations (see wasm-provenance.json's softhsmrustv3-engine entry). The
+// engine's own cargo test --lib (449/449, including 14 HPKE-specific native
+// + FFI-level tests) already proved the mechanism; this suite proves the
+// hub's independent JS/WASM binding survives the same boundary.
+describe('CKM_HPKE JS/WASM binding (candidate mechanism, single-call Encap/Decap)', () => {
   let M: SoftHSM.SoftHSMModule
   let hSession: number
 
