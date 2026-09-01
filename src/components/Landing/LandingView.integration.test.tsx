@@ -43,6 +43,20 @@ vi.mock('../../vite-env.d.ts', () => ({
   __BUILD_TIMESTAMP__: 'Dec 6, 2024, 5:00 PM CST',
 }))
 
+// WhatsNewModal is React.lazy in MainLayout (precache-budget: its
+// dataFingerprint dependency statically imports nine full datasets). This
+// suite mounts the real MainLayout and relies on OTHER lazy chunks
+// (MobileBottomBar) resolving within findBy*'s default window; evaluating
+// WhatsNewModal's chunk concurrently — megabytes of synchronous CSV parsing
+// — starves that window on a loaded CI runner (deterministic failure there,
+// not locally). Irrelevant to what this file tests, so it's mocked out —
+// same fix already applied to MainLayout.mobileShell.test.tsx for the
+// identical reason.
+vi.mock('../ui/WhatsNewModal', () => ({
+  WhatsNewModal: () => null,
+  getUnseenChangelogSections: () => [],
+}))
+
 function renderApp(initialEntry = '/') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
