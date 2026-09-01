@@ -3,11 +3,14 @@
 // Kmip3View — the "KMIP3.0" top-level tab: ten guided walkthroughs
 // (Learn, the on-ramp — first position; six classical→PQC comparisons plus
 // four engine-addition lessons), a category-sorted tester for every KMIP
-// 3.0 operation (Commands/Reference), the pipeline builder + a live
-// in-browser replay of the real OASIS conformance corpus (Dev — 2026-08-31
-// merge, mirroring the PKCS#11 side's Developer tab: Corpus Replay used to
-// be its own sub-tab here, and the pipeline builder used to be a top-level
-// KmipPlaygroundView plane), and the batch/macro builder (Batch & Macros).
+// 3.0 operation (Commands/Reference), the pipeline builder — whose palette
+// can switch from standard operation primitives to a live in-browser replay
+// of the real OASIS conformance corpus (Dev — 2026-08-31 merge, mirroring
+// the PKCS#11 side's Developer tab: Corpus Replay used to be its own
+// sub-tab here, then its own Pipeline-sibling tab, before folding into the
+// pipeline builder's palette on 2026-09-01; the pipeline builder itself
+// used to be a top-level KmipPlaygroundView plane), and the batch/macro
+// builder (Batch & Macros).
 import { useState } from 'react'
 import { BookOpen, Terminal, Code2, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -125,7 +128,7 @@ export function Kmip3View({
           )}
         </div>
 
-        {/* Dev (Pipeline + Corpus Replay) is a workbench, not a reading
+        {/* Dev (the pipeline builder, corpus palette included) is a workbench, not a reading
             context — and KmipPipelineBuilder's own fixed 280px/340px side
             columns (palette, run/validation panel) were sized assuming the
             FULL row width the old top-level "Developer" plane had to

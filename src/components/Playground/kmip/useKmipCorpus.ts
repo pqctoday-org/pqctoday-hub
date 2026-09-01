@@ -138,11 +138,12 @@ export function useKmipCorpus({ enabled }: { enabled: boolean }) {
     )
   }
 
-  /** Code mode's picker: select a test's script, running it first if it
-   * hasn't been (the request tree is only ever produced as a byproduct of
-   * a real run — see `selectedTest`'s own comment). Re-selecting an
-   * already-run test is instant, no re-run. */
-  async function selectForCode(entry: ManifestEntry) {
+  /** The palette's click-to-run picker (both Builder and Code views share
+   * it): select a test, running it first if it hasn't been — the request
+   * tree is only ever produced as a byproduct of a real run (see
+   * `selectedTest`'s own comment). Re-selecting an already-run test is
+   * instant, no re-run. */
+  async function selectTest(entry: ManifestEntry) {
     setSelectedTest(entry.name)
     if (!results[entry.name]) await runOne(entry)
   }
@@ -206,7 +207,7 @@ export function useKmipCorpus({ enabled }: { enabled: boolean }) {
     failed,
     runOne,
     runAll,
-    selectForCode,
+    selectTest,
     toggleCategory,
   }
 }

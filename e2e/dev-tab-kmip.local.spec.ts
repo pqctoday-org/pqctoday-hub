@@ -31,8 +31,10 @@ test.beforeEach(async ({ page }) => {
 
 /**
  * The Developer tab is no longer its own top-level plane (2026-08-31 merge —
- * folded into the KMIP3.0 tab's "Dev" sub-tab, alongside Corpus Replay,
- * mirroring the PKCS#11 side's Developer tab). ?plane=developer is a dead
+ * folded into the KMIP3.0 tab's "Dev" sub-tab, which also absorbed the OASIS
+ * conformance corpus as a palette source on 2026-09-01 — see
+ * kmip3-corpus-palette-plan-09012026.md — mirroring the PKCS#11 side's
+ * Developer tab). ?plane=developer is a dead
  * URL now (falls back to the Agility plane, same as any invalid `plane`
  * value) — every test that used to deep-link straight there now lands on
  * the KMIP3.0 plane and clicks into Dev instead.
@@ -161,22 +163,33 @@ test('the guided lesson drives the real Dev sub-tab end to end, including a live
   // sub-tab...") case-insensitively contains the title too.
   await expect(page.getByRole('heading', { name: 'The Dev tab' })).toBeVisible()
 
-  // Step 2 (tourStep 1): act() clicked the real "Governed lifecycle"
+  // Steps 2-3 (tourStep 1-2): the lesson resets the palette to Standard
+  // first, safe even when it's already Standard — the palette choice now
+  // persists across sessions (kmip3-corpus-palette-plan-09012026.md), so an
+  // earlier lesson (or a returning visitor) could otherwise leave this
+  // lesson's later steps (template/step-list/run) pointed at elements the
+  // Corpus palette doesn't render.
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Palette: open the switch')).toBeVisible()
+  await page.getByRole('button', { name: /^Next/ }).click()
+  await expect(page.getByText('Palette: back to Standard')).toBeVisible()
+
+  // Step 4 (tourStep 3): act() clicked the real "Governed lifecycle"
   // template button.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Start from a template')).toBeVisible()
 
-  // Step 3: no act, just narration over the real step list.
+  // Step 5: no act, just narration over the real step list.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Four kinds of step')).toBeVisible()
 
-  // Step 4: act() fires the real Run click — wait for the genuine
+  // Step 6: act() fires the real Run click — wait for the genuine
   // completion signal, not the tour's own step-advance timing.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Run it for real')).toBeVisible()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
-  // Step 5 (last): spotlights the expect-deny card — the CACP teaching moment.
+  // Step 7 (last): spotlights the expect-deny card — the CACP teaching moment.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('The refusal IS the lesson')).toBeVisible()
   // Scoped to the step list — the generated Python in the Monaco panel also
@@ -529,24 +542,34 @@ test("the keystore shows this run's real objects with real lifecycle states", as
   await expect(page.getByText('Destroyed').first()).toBeVisible()
 })
 
+/** Opens the pipeline builder's palette switcher and picks Corpus — the
+ * OASIS conformance corpus folded in as an alternate palette source
+ * (2026-09-01, kmip3-corpus-palette-plan-09012026.md), not a separate
+ * sibling tab any more. */
+async function switchToCorpusPalette(page: Page) {
+  await page.locator('[data-tour="kmip-dev-palette-source"] button').click()
+  await page.getByRole('option', { name: /Corpus/ }).click()
+}
+
 /**
- * Corpus Replay's own Builder/Code split (2026-08-31, alongside its move
- * into the Dev sub-tab) — mirrors Pipeline's Builder/Code pattern, but
- * Code mode has its own test picker rather than being driven by Builder's
- * Run buttons, and shows the decoded REQUEST tree (the real script this
- * corpus replays), not generated Python. Selecting a test in the picker
- * runs it if it hasn't been already — runCorpusTest() decodes request and
- * response together, there is no decode-only path.
+ * The corpus palette reuses Pipeline's own Builder/Code split
+ * (`kmip-dev-view-tabs`) rather than owning a second one — Code mode's
+ * palette has the same category-tree test picker as Builder's, and the
+ * canvas shows the decoded REQUEST tree (the real script this corpus
+ * replays), not generated Python. Selecting a test in the picker runs it
+ * if it hasn't been already — runCorpusTest() decodes request and response
+ * together, there is no decode-only path. The same `selectedTest` state
+ * drives both tabs, so switching between them keeps the same test in view.
  */
-test('Corpus Replay Code mode: selecting a test runs it and shows the decoded request script', async ({
+test('Corpus palette Code mode: selecting a test runs it and shows the decoded request script', async ({
   page,
 }) => {
   await gotoKmipDevTab(page)
-  await page.getByRole('tab', { name: 'Corpus Replay' }).click()
+  await switchToCorpusPalette(page)
 
-  const corpusTabs = page.locator('[data-tour="corpus-view-tabs"]')
-  await expect(corpusTabs.getByRole('tab', { name: 'Builder' })).toBeVisible({ timeout: 30000 })
-  await corpusTabs.getByRole('tab', { name: 'Code' }).click()
+  const viewTabs = page.locator('[data-tour="kmip-dev-view-tabs"]')
+  await expect(viewTabs.getByRole('tab', { name: 'Code' })).toBeVisible({ timeout: 30000 })
+  await viewTabs.getByRole('tab', { name: 'Code' }).click()
 
   await expect(
     page.getByText('Pick a test on the left to see the decoded KMIP request')
@@ -565,32 +588,28 @@ test('Corpus Replay Code mode: selecting a test runs it and shows the decoded re
   await expect(page.getByText(/PASS|FAIL|SKIP/).first()).toBeVisible()
 })
 
-test('Corpus Replay Code mode: a run triggered from the picker is reflected back in Builder', async ({
+test('Corpus palette: a run triggered from Code mode is reflected back in Builder', async ({
   page,
 }) => {
   await gotoKmipDevTab(page)
-  await page.getByRole('tab', { name: 'Corpus Replay' }).click()
+  await switchToCorpusPalette(page)
 
-  const corpusTabs = page.locator('[data-tour="corpus-view-tabs"]')
-  await corpusTabs.getByRole('tab', { name: 'Code' }).click()
+  const viewTabs = page.locator('[data-tour="kmip-dev-view-tabs"]')
+  await viewTabs.getByRole('tab', { name: 'Code' }).click()
 
   const firstTestButton = page.locator('button.font-mono').first()
   const testName = (await firstTestButton.textContent())?.trim()
   await firstTestButton.click()
   await expect(page.getByText('RequestMessage').first()).toBeVisible({ timeout: 20000 })
 
-  await corpusTabs.getByRole('tab', { name: 'Builder' }).click()
-  // Same shared `results` state Pipeline's own Builder/Code split relies
-  // on — the aggregate counter and the per-test badge both reflect the
-  // run that actually happened in Code mode, not a second, separate one.
+  await viewTabs.getByRole('tab', { name: 'Builder' }).click()
+  // Same shared `results` + `selectedTest` state the corpus hook exposes to
+  // both tabs — the summary card's aggregate count and the canvas detail's
+  // status badge both reflect the run that actually happened in Code mode,
+  // not a second, separate one.
   await expect(page.getByText(/^1\/1 pass$/)).toBeVisible()
   if (testName) {
-    await expect(
-      page
-        .locator('li')
-        .filter({ hasText: testName })
-        .getByText(/PASS|FAIL|SKIP/)
-        .first()
-    ).toBeVisible()
+    await expect(page.getByText(testName).first()).toBeVisible()
+    await expect(page.getByText(/PASS|FAIL|SKIP/).first()).toBeVisible()
   }
 })

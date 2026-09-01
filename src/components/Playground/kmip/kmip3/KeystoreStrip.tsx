@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // KeystoreStrip — persistent, sticky horizontal strip of session objects
-// shared across all 4 KMIP3.0 sub-tabs (Learn, Reference, Corpus Replay,
-// Batch & Macros), so an object created in one sub-tab is visible from any
+// shared across all 4 KMIP3.0 sub-tabs (Learn, Commands, Dev, Batch &
+// Macros), so an object created in one sub-tab is visible from any
 // other. Pattern-matched on `PolicyControlStrip.tsx`'s sticky-strip-of-cards
 // layout. No local refresh plumbing needed: the engine's mutating ops all
 // funnel through the existing `onChanged` callback, which the mounting

@@ -871,7 +871,7 @@ export const LESSONS: Lesson[] = [
       },
     ],
     notes: [
-      "The Corpus Replay tab is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
+      "The Dev tab's palette, switched to Corpus, is the systematic version of this lesson: 97 of the 102 OASIS conformance tests pass against the engine's native baseline, and the in-browser replay pins its own exact breakdown — a new silent skip fails the suite rather than shrinking the pass count.",
       "The same audit fixed usage-budget honesty: once Get Usage Allocation grants part of a key's operation budget, re-setting the UsageLimits attribute is refused (§4.69) — a budget you can silently reset is not a budget.",
       'Not every real operation gets its own walkthrough here. Identity/access (CreateUser, CreateGroup, CreateCredential, Login/Logout), lifecycle (Deactivate — a reversible state change, distinct from Destroy\'s irreversible key-material scrub; Obliterate — Destroy plus wiping the managed-object METADATA too, for when even "a key with this UID once existed" must not be provable), and policy-shaping (Set/Get Constraints, Set Defaults) are all genuinely implemented — try them directly in the Commands tab\'s Reference sub-tab. What\'s honestly NOT implemented, and never pretends to be: Notify and Put (§6.2 server-to-client push — this playground has no "client" to push to; the spec itself says delivery is by unspecified out-of-band means) and Delegated Login / Re-Provision (no handler, never corpus-required).',
     ],

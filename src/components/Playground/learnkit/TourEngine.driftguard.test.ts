@@ -33,11 +33,12 @@ const read = (relPath: string) => readFileSync(resolve(ROOT, relPath), 'utf8')
 const KMIP_VIEW = 'src/components/Playground/kmip/KmipPlaygroundView.tsx'
 const KMIP_BUILDER = 'src/components/Playground/dev/kmipPipeline/KmipPipelineBuilder.tsx'
 // 2026-08-31 merge (feat/navigate-label-selection @ 417710f35): the KMIP Dev
-// plane folded into KMIP3.0's own Dev sub-tab, and the new wrapper —
-// KmipDevTab.tsx — introduced its own `data-tour="kmip-dev-subtabs"` anchor
-// on the Pipeline/Corpus Replay TabsList it now owns. Every OTHER kmip-dev-*
-// anchor still lives in KmipPipelineBuilder.tsx itself, so this lane now
-// spans both files rather than one.
+// plane folded into KMIP3.0's own Dev sub-tab. 2026-09-01
+// (kmip3-corpus-palette-plan-09012026.md): the OASIS conformance corpus
+// folded again, from its own sibling "Corpus Replay" tab into a palette
+// source switch inside KmipPipelineBuilder itself — KmipDevTab.tsx is now a
+// thin wrapper with no anchors of its own, but stays in this lane's file
+// list in case that changes again.
 const KMIP_DEV_TAB = 'src/components/Playground/kmip/KmipDevTab.tsx'
 const PKCS_VIEW = 'src/components/Playground/HsmPlayground.tsx'
 const PKCS_BUILDER = 'src/components/Playground/dev/pipeline/PkcsPipelineBuilder.tsx'
