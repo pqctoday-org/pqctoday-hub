@@ -12,6 +12,8 @@ export const NODE_TYPES: ForceClusterNodeType[] = [
   'glossary',
   'product',
   'protocol',
+  'patent',
+  'leader',
 ]
 
 export const GRAPH_TOKEN: Record<ForceClusterNodeType, { varName: string; fallback: string }> = {
@@ -24,6 +26,8 @@ export const GRAPH_TOKEN: Record<ForceClusterNodeType, { varName: string; fallba
   glossary: { varName: '--graph-glossary', fallback: '#5a6270' },
   product: { varName: '--graph-product', fallback: '#3d7a1e' },
   protocol: { varName: '--graph-protocol', fallback: '#8a2a70' },
+  patent: { varName: '--graph-patent', fallback: '#3e4aa8' },
+  leader: { varName: '--graph-leader', fallback: '#94402e' },
 }
 
 export const TYPE_LABEL: Record<ForceClusterNodeType, string> = {
@@ -36,4 +40,6 @@ export const TYPE_LABEL: Record<ForceClusterNodeType, string> = {
   glossary: 'Glossary',
   product: 'Product',
   protocol: 'Protocol',
+  patent: 'Patent',
+  leader: 'Community',
 }
