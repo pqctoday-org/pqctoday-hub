@@ -59,6 +59,28 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
       // publish a CKO_PROFILE for must have a real, executed Tier A/B row.
       const notClaimedCount = await rows.locator('[data-status="not-claimed"]').count()
       expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
+
+      // Mechanism Coverage (2026-08-31): deterministic PQC key generation
+      // from CKA_SEED — real mechanisms neither Tier A/B nor the ACVP tab
+      // exercises anywhere. This is the first thing to catch a regression
+      // if the not-claimed assertion above ever loosens (e.g. if a future
+      // engine build stops advertising these mechanisms, this loop fails
+      // by name instead of silently vanishing into "some row somewhere").
+      for (const mech of [
+        'CKM_ML_DSA_KEY_PAIR_GEN',
+        'CKM_ML_KEM_KEY_PAIR_GEN',
+        'CKM_SLH_DSA_KEY_PAIR_GEN',
+      ]) {
+        const mechRows = rows.filter({ hasText: mech })
+        const mechRowCount = await mechRows.count()
+        expect(mechRowCount, `expected a Mechanism Coverage row for ${mech}`).toBeGreaterThan(0)
+        for (let i = 0; i < mechRowCount; i++) {
+          const row = mechRows.nth(i)
+          const status = await row.getAttribute('data-status')
+          const detail = await row.textContent()
+          expect(status, `${mech} row: ${detail}`).toBe('pass')
+        }
+      }
     })
   }
 

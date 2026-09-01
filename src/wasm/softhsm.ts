@@ -650,9 +650,9 @@ export const CKK_XMSS = 0x00000047 // PKCS#11 v3.2 §6.14 — XMSS single-tree
 export const CKK_XMSSMT = 0x00000048 // PKCS#11 v3.2 §6.14 — XMSS-MT multi-tree
 export const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
 export const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
-const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
+export const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
-const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
+export const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
 const CKM_ML_DSA = 0x0000001d
 
 // Attributes
@@ -669,6 +669,12 @@ export const CKA_VALUE_LEN = 0x00000161
 export const CKA_VALUE = 0x00000011
 export const CKA_KEY_TYPE = 0x00000100
 export const CKA_PARAMETER_SET = 0x0000061d
+// Deterministic PQC key generation seed — ξ (32B) for ML-DSA §6.67.4, d‖z
+// (64B) for ML-KEM §6.68.4, SK.seed‖SK.prf‖PK.seed (3n B) for SLH-DSA
+// §6.69.2. Goes in the PRIVATE key template of C_GenerateKeyPair (verified
+// against both engines' dispatch: pqctoday-hsm SoftHSM_keygen.cpp's
+// extractSeed(pPrivateKeyTemplate, ...) call sites).
+export const CKA_SEED = 0x00000637
 export const CKA_LOCAL = 0x00000163
 export const CKA_NEVER_EXTRACTABLE = 0x00000164
 export const CKA_ALWAYS_SENSITIVE = 0x00000165
