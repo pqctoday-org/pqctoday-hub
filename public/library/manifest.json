@@ -12101,12 +12101,12 @@
     {
       "refId": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for",
       "title": "Update to Post-quantum Hybrid ECDHE-MLKEM Key Agreement for TLSv1.3",
-      "url": "https://datatracker.ietf.org/doc/draft-usama-tls-ecdhe-mlkem-update/",
+      "url": "https://datatracker.ietf.org/doc/html/draft-usama-tls-ecdhe-mlkem-update-00",
       "status": "downloaded",
       "filename": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for.html",
-      "sizeBytes": 40164,
+      "sizeBytes": 54677,
       "contentType": "text/html",
-      "sha256": "0d8a240d86426229e8c0a06cca1513533216bc1c7b6db9dafac89fe7ee384c5f"
+      "sha256": "377c207460b89aef6b25e1fc485589a3c9c41fddd0ae4a512aacb0a7cb1f1eb9"
     },
     {
       "refId": "Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut",

@@ -1,9 +1,23 @@
 ---
 generated: 2026-08-31
 category: Technical Standards
-document_count: 2
-requirement_count: 9
+document_count: 4
+requirement_count: 19
 ---
+
+## Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment
+- **Source**: Cross-Issuer ZKP Federation for Post-Quantum Agentic Payment Credentials
+- **URL**: https://datatracker.ietf.org/doc/draft-hopley-x402-federation-zkp/
+- **Requirement count**: 6
+- **Assurance / FIPS**:
+    - _T2 Risk-Informed · software_: Configure the validator to perform full cryptographic range proof verification via the ATB ZKP service if structural validation is insufficient.
+- **Governance**:
+    - _T2 Risk-Informed · keys_: Maintain a registry of trusted issuer public keys and reject credentials from issuers not explicitly listed in this registry.
+    - _T2 Risk-Informed · keys_: Share the validator's HMAC secret across all instances via a secrets manager rather than using per-instance secrets.
+    - _T2 Risk-Informed · software_: Configure the validator to enforce issuer-DID uniqueness if distinct issuers are required for cross-issuer composition.
+    - _T2 Risk-Informed · software_: Configure the validator to require cross-issuer evidence (min_issuers > 1) to demonstrate cross-issuer composition capabilities.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · keys_: Rotate the validator's HMAC signing key regularly and revoke outstanding tokens by advancing the token's version upon rotation.
 
 ## FIPS 203
 - **Source**: Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM)
@@ -27,3 +41,15 @@ requirement_count: 9
     - _T2 Risk-Informed · all_: Designate a responsible authority to ensure the overall implementation provides an acceptable level of security.
     - _T2 Risk-Informed · keys_: Guard against the disclosure of private keys to maintain the security of the digital signature system.
     - _T2 Risk-Informed · keys_: Restrict digital signature key pairs from being used for purposes other than digital signatures.
+
+## Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut
+- **Source**: Post-Quantum Credential Binding for x402 Agentic Payment Authorization
+- **URL**: https://datatracker.ietf.org/doc/draft-hopley-x402-pqc-credential-binding/
+- **Requirement count**: 4
+- **Inventory**:
+    - _T2 Risk-Informed · keys_: Maintain a trusted-key registry for issuers to verify public key hashes against credential envelopes before signature verification.
+- **Lifecycle / CLM**:
+    - _T2 Risk-Informed · keys_: Rotate Falcon-1024 signing keys at least annually to manage key lifecycle and support versioning via the key_id field.
+- **Observability**:
+    - _T2 Risk-Informed · software_: Track issued session token nonces to detect and reject replayed tokens, ensuring real-time detection of unauthorized reuse.
+    - _T2 Risk-Informed · software_: Track cumulative spend per agent in-process and reject requests when the limit is exceeded to enforce policy constraints.
