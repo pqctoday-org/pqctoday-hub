@@ -175,13 +175,20 @@ const REFERENCE_STATUS_TIER_LOOKUP: Record<string, AlgorithmStatusTier> = {
   // / 'eliminated'-for-these-specific-rows tier is future work, not this fix's
   // job — this table's only contract is "don't crash the build."
   'NIST Additional Sig Round 3 — Candidate|||NIST Additional Signatures Round 2':
-    'round2-candidate', // MAYO-1/2/3/5, HAWK-512/1024
+    'round2-candidate', // MAYO-1/2/3/5 (HAWK-512/1024 moved to 'eliminated' below, 2026-08-31)
   'NIST Additional Sig Round 3 — Candidate|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
     'round2-candidate', // UOV, FAEST, SNOVA
   'NIST Additional Sig Round 3 — Candidate (SQIsign-I)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
     'round2-candidate', // SQIsign
   'NIST Additional Sig Round 2 — Eliminated (did not advance to Round 3, 2026-05)|||NIST Additional Sig — Round 2 candidate (NOT standardised)':
     'eliminated', // CROSS, LESS
+  // HAWK-512/1024 (2026-08-31): withdrawn by its own submission team on
+  // 2026-07-29 after Anthropic's Claude Mythos Preview model found a lattice
+  // key-recovery attack (2026-07-28) — confirmed directly on csrc.nist.gov's
+  // round-3-additional-signatures page, which now marks HAWK 'Withdrawn'
+  // while the other 8 Round 3 candidates remain active.
+  'NIST Additional Sig Round 3 — Withdrawn (2026-07-29)|||Withdrawn from NIST Additional Digital Signatures standardization (2026-07-29)':
+    'eliminated', // HAWK-512/1024
   'NIST Additional Sig Round 3 — Candidate|||': 'round2-candidate', // MQOM, QR-UOV, SDitH — new
   // stub rows (2026-07-27), fips_standard genuinely blank (add_row.py leaves it for human
   // follow-up rather than guessing). The status itself IS verified (csrc.nist.gov's own
