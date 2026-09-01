@@ -68,11 +68,18 @@ const HPKE_LIVE_OPERATIONS = [
   'C_Decrypt',
 ]
 
+// Pure-classical DHKEM (X25519/P-256/P-384/P-521, no PQ combiner) is
+// deliberately NOT offered here. hpkeService.ts's dhkemEncap/dhkemDecap/
+// dhkemAuthEncap/dhkemAuthDecap extract the raw ECDH shared secret into JS
+// (dhSecret, not the non-extracting dhSecretHandle hybridEncap/hybridDecap
+// use) -- necessary for that module's own byte-exact RFC 9180 Appendix A.3
+// vector tests (hpkeService.test.ts), but not something this live workshop
+// should route a real user through. Both offered engine modes now keep
+// every secret inside PKCS#11: the hybrid KEMs below via the composed
+// mode's non-extracting handle path, and every KEM (hybrid or classical)
+// via the 'candidate' CKM_HPKE single-call mechanism, which never lets a
+// shared secret cross the FFI boundary regardless of KEM family.
 const KEM_OPTIONS = [
-  { id: String(HPKE_KEM.DHKEM_X25519_HKDF_SHA256), label: 'DHKEM(X25519, HKDF-SHA256)' },
-  { id: String(HPKE_KEM.DHKEM_P256_HKDF_SHA256), label: 'DHKEM(P-256, HKDF-SHA256)' },
-  { id: String(HPKE_KEM.DHKEM_P384_HKDF_SHA384), label: 'DHKEM(P-384, HKDF-SHA384)' },
-  { id: String(HPKE_KEM.DHKEM_P521_HKDF_SHA512), label: 'DHKEM(P-521, HKDF-SHA512)' },
   { id: String(HPKE_KEM.MLKEM768_X25519), label: 'MLKEM768-X25519 (PQ-hybrid)' },
   { id: String(HPKE_KEM.MLKEM768_P256), label: 'MLKEM768-P256 (PQ-hybrid)' },
   { id: String(HPKE_KEM.MLKEM1024_P384), label: 'MLKEM1024-P384 (PQ-hybrid)' },
@@ -173,7 +180,7 @@ function extractRawPoint(
 
 export const HpkeWorkshop: React.FC = () => {
   const hsm = useHSM()
-  const [kemId, setKemId] = useState<HpkeKemId>(HPKE_KEM.DHKEM_X25519_HKDF_SHA256)
+  const [kemId, setKemId] = useState<HpkeKemId>(HPKE_KEM.MLKEM768_X25519)
   const [kdfId, setKdfId] = useState<HpkeKdfId>(HPKE_KDF.HKDF_SHA256)
   const [aeadId, setAeadId] = useState<HpkeAeadId>(HPKE_AEAD.AES_128_GCM)
   const [mode, setMode] = useState<HpkeModeId>(HPKE_MODE.BASE)
