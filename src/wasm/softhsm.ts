@@ -663,7 +663,9 @@ export const CKA_LABEL = 0x00000003
 export const CKA_ID = 0x00000102
 export const CKA_SENSITIVE = 0x00000103
 export const CKA_SIGN = 0x00000108
+export const CKA_SIGN_RECOVER = 0x00000109
 export const CKA_VERIFY = 0x0000010a
+export const CKA_VERIFY_RECOVER = 0x0000010b
 export const CKA_EXTRACTABLE = 0x00000162
 export const CKA_VALUE_LEN = 0x00000161
 export const CKA_VALUE = 0x00000011
@@ -2455,6 +2457,12 @@ export const CKK_CHACHA20 = 0x00000033
 
 // RSA mechanisms
 export const CKM_RSA_PKCS_KEY_PAIR_GEN = 0x00
+// Raw PKCS#1 v1.5 sign/verify + encrypt/decrypt (no combined hash step —
+// C_Sign/C_Verify take the caller's own bytes directly, pad/unpad only).
+export const CKM_RSA_PKCS = 0x01
+// Unpadded RSA (textbook RSASP1/RSAVP1/RSAEP/RSADP) — no padding scheme at
+// all; input/output are exactly the modulus size.
+export const CKM_RSA_X_509 = 0x03
 export const CKM_RSA_PKCS_OAEP = 0x09
 export const CKM_SHA256_RSA_PKCS = 0x40
 export const CKM_SHA384_RSA_PKCS = 0x41
@@ -2465,6 +2473,10 @@ export const CKM_SHA512_RSA_PKCS_PSS = 0x45
 
 // EC mechanisms
 export const CKM_EC_KEY_PAIR_GEN = 0x1040
+// Raw ECDSA — C_Sign/C_Verify take an already-hashed digest directly, no
+// internal hash step (distinct from the CKM_ECDSA_SHA* combined forms
+// below, which hash the caller's message internally).
+export const CKM_ECDSA = 0x1041
 export const CKM_ECDSA_SHA256 = 0x1044
 export const CKM_ECDSA_SHA384 = 0x1045
 export const CKM_ECDSA_SHA512 = 0x1046
@@ -2778,7 +2790,7 @@ const buildGCMParams = (
  *  kdf: CKD_NULL (default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
  *  sharedData: optional SharedInfo bytes (passed as ANSI X9.63 KDF input, e.g. ephemeral public key for SUCI).
  */
-const buildECDH1DeriveParams = (
+export const buildECDH1DeriveParams = (
   M: SoftHSMModule,
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,

@@ -70,12 +70,22 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
       // mechanisms a hybrid PQC/classical construction actually depends on
       // (CKM_ECDH1_DERIVE-as-KEM, CKM_CONCATENATE_BASE_AND_KEY) — same gap
       // category as the PQC seed probes above, checked the same way.
+      // Classical Asymmetric (2026-08-31): raw PKCS#1v1.5, unpadded RSA,
+      // combined hash-then-sign PKCS#1v1.5, raw pre-hashed ECDSA, and
+      // cofactor ECDH — none exercised by ACVP. 'CKM_ECDSA (raw' (not bare
+      // 'CKM_ECDSA') deliberately avoids matching CKM_ECDSA_SHA256/384/512
+      // if those ever appear in row text elsewhere.
       for (const mech of [
         'CKM_ML_DSA_KEY_PAIR_GEN',
         'CKM_ML_KEM_KEY_PAIR_GEN',
         'CKM_SLH_DSA_KEY_PAIR_GEN',
         'CKM_ECDH1_DERIVE',
         'CKM_CONCATENATE_BASE_AND_KEY',
+        'CKM_RSA_PKCS',
+        'CKM_RSA_X_509',
+        'CKM_SHA256_RSA_PKCS',
+        'CKM_ECDSA (raw',
+        'CKM_ECDH1_COFACTOR_DERIVE',
       ]) {
         const mechRows = rows.filter({ hasText: mech })
         const mechRowCount = await mechRows.count()

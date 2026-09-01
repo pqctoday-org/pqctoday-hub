@@ -23,6 +23,11 @@ import {
   writeBytes,
   hsm_extractKeyValue,
   hsm_importGenericSecret,
+  hsm_generateRSAKeyPair,
+  hsm_generateECKeyPair,
+  hsm_extractECPoint,
+  hsm_ecdhCofactorDerive,
+  hsm_getMechanismInfo,
   dsaParamSet,
   kemParamSet,
   CKA_CLASS,
@@ -33,7 +38,11 @@ import {
   CKA_PARAMETER_SET,
   CKA_SEED,
   CKA_SIGN,
+  CKA_SIGN_RECOVER,
   CKA_VERIFY,
+  CKA_VERIFY_RECOVER,
+  CKA_MODULUS_BITS,
+  CKA_PUBLIC_EXPONENT,
   CKA_ENCAPSULATE,
   CKA_DECAPSULATE,
   CKA_DERIVE,
@@ -44,13 +53,21 @@ import {
   CKO_PRIVATE_KEY,
   CKO_SECRET_KEY,
   CKK_EC,
+  CKK_RSA,
   CKK_GENERIC_SECRET,
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM_KEY_PAIR_GEN,
   CKM_SLH_DSA_KEY_PAIR_GEN,
   CKM_EC_KEY_PAIR_GEN,
   CKM_ECDH1_DERIVE,
+  CKM_ECDH1_COFACTOR_DERIVE,
   CKM_CONCATENATE_BASE_AND_KEY,
+  CKM_RSA_PKCS,
+  CKM_RSA_X_509,
+  CKM_RSA_PKCS_KEY_PAIR_GEN,
+  CKM_SHA256_RSA_PKCS,
+  CKM_ECDSA,
+  CKM_SHA256,
   CKP_SLH_DSA_SHA2_128S,
 } from '../softhsm'
 
@@ -464,6 +481,327 @@ const concatenateBaseAndKeyProbe = (ctx: MechanismProbeContext): string => {
   return `C_DeriveKey(CKM_CONCATENATE_BASE_AND_KEY) produced exactly base‖other (${derived.length}B)`
 }
 
+// ── Classical Asymmetric ─────────────────────────────────────────────────
+//
+// Mechanisms ACVP doesn't exercise: raw (un-hashed) PKCS#1 v1.5, unpadded
+// RSA, and combined hash-then-sign PKCS#1v1.5 (ACVP's RSA coverage is PSS
+// only — CKM_SHA256_RSA_PKCS_PSS etc). CKM_ECDSA (raw, pre-hashed) is also
+// genuinely untested: every hsm_ecdsaVerify call site in
+// HsmAcvpTesting.tsx uses a COMBINED CKM_ECDSA_SHA* mechanism (P-256
+// defaults to it, P-384/secp256k1 pass it explicitly) — the opposite of
+// what an earlier draft of this audit assumed. CKM_ECDH1_COFACTOR_DERIVE
+// has a real, already-exported wrapper (hsm_ecdhCofactorDerive) that had
+// zero callers anywhere in the app before this.
+
+// CK_MECHANISM_INFO.flags bits (PKCS#11 v3.2 §4.4) needed to detect which
+// of C_Sign/C_Verify vs C_SignRecover/C_VerifyRecover an engine actually
+// exposes CKM_RSA_X_509 through — see rsaX509Probe below for why this
+// matters (a real, measured divergence between the two engines).
+const CKF_SIGN = 0x00000800
+const CKF_SIGN_RECOVER = 0x00001000
+
+/** Real RSA-2048 sign+verify round-trip for any of the three PKCS#1v1.5-
+ *  family mechanisms — the message shape (short vs exactly-modulus-size)
+ *  is the caller's job, since CKM_RSA_X_509 (unpadded) requires it. */
+const rsaSignVerifyRoundTrip = (
+  ctx: MechanismProbeContext,
+  mechType: number,
+  mechName: string,
+  message: Uint8Array
+): string => {
+  const { M, hSession } = ctx
+  const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, 2048, true)
+  const sigLen = 256 // RSA-2048 modulus size — fixed, no size query needed
+
+  const mech1 = buildMechRaw(M, mechType)
+  const msgPtr = writeBytes(M, message)
+  const sigPtr = M._malloc(sigLen)
+  const sigLenPtr = M._malloc(4)
+  M.setValue(sigLenPtr, sigLen, 'i32')
+  let sigBytes: Uint8Array
+  try {
+    checkRV(M._C_SignInit(hSession, mech1, privHandle), `C_SignInit(${mechName})`)
+    checkRV(M._C_Sign(hSession, msgPtr, message.length, sigPtr, sigLenPtr), `C_Sign(${mechName})`)
+    sigBytes = M.HEAPU8.slice(sigPtr, sigPtr + (M.getValue(sigLenPtr, 'i32') >>> 0))
+  } finally {
+    M._free(mech1)
+    M._free(msgPtr)
+    M._free(sigPtr)
+    M._free(sigLenPtr)
+  }
+
+  const mech2 = buildMechRaw(M, mechType)
+  const msgPtr2 = writeBytes(M, message)
+  const sigPtr2 = writeBytes(M, sigBytes)
+  let verifyRv: number
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech2, pubHandle), `C_VerifyInit(${mechName})`)
+    verifyRv = M._C_Verify(hSession, msgPtr2, message.length, sigPtr2, sigBytes.length) >>> 0
+  } finally {
+    M._free(mech2)
+    M._free(msgPtr2)
+    M._free(sigPtr2)
+    M._C_DestroyObject(hSession, pubHandle)
+    M._C_DestroyObject(hSession, privHandle)
+  }
+  if (verifyRv !== 0)
+    throw new Error(
+      `C_Verify(${mechName}) → rv=0x${verifyRv.toString(16)} (sign succeeded, verify did not)`
+    )
+  return `${mechName} sign+verify round-trip on a real RSA-2048 key succeeded (${sigBytes.length}B signature)`
+}
+
+/** CKM_RSA_X_509 specifically: the two engines expose it through DIFFERENT
+ *  PKCS#11 functions (measured, not assumed — see the module-header
+ *  comment). C++ implements it via plain C_Sign/C_Verify; the Rust engine
+ *  only via C_SignRecover/C_VerifyRecover (CKR_MECHANISM_INVALID on plain
+ *  C_Sign there), matching standard PKCS#11 practice for raw/unpadded RSA
+ *  signatures (RFC 8017 §5.2 RSASP1/RSAVP1 — there's no padding to give a
+ *  Verify oracle a pass/fail signal, so Verify-with-recovery, which returns
+ *  the recovered data for the caller to compare, is the conventional API).
+ *  Checked via C_GetMechanismInfo's real flags, not hardcoded per engine. */
+const rsaX509Probe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession, slotId } = ctx
+  // A dedicated raw generate, not hsm_generateRSAKeyPair: that wrapper only
+  // sets CKA_SIGN/CKA_VERIFY, but CKA_SIGN_RECOVER/CKA_VERIFY_RECOVER are
+  // SEPARATE capability attributes a real engine checks independently
+  // (measured: the Rust engine's C_SignRecoverInit returned
+  // CKR_KEY_FUNCTION_NOT_PERMITTED on a key with only CKA_SIGN set). Set
+  // all four so the key works whichever path the running engine uses.
+  const genMech = buildMechRaw(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
+  const expBytes = new Uint8Array([0x01, 0x00, 0x01])
+  const expPtr = writeBytes(M, expBytes)
+  const pubAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_MODULUS_BITS, ulongVal: 2048 },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: expBytes.length },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_VERIFY_RECOVER, boolVal: true },
+  ]
+  const prvAttrs = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_SIGN_RECOVER, boolVal: true },
+  ]
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+  const pubHPtr = M._malloc(4)
+  const prvHPtr = M._malloc(4)
+  let pubHandle = 0
+  let privHandle = 0
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(
+        hSession,
+        genMech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
+      'C_GenerateKeyPair(RSA-2048, sign+recover capable)'
+    )
+    pubHandle = M.getValue(pubHPtr, 'i32') >>> 0
+    privHandle = M.getValue(prvHPtr, 'i32') >>> 0
+  } finally {
+    M._free(genMech)
+    M._free(expPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+  const data = new Uint8Array(256)
+  data[0] = 0x00 // guarantees the value < modulus regardless of the actual modulus
+  for (let i = 1; i < 256; i++) data[i] = (i * 17 + 3) & 0xff
+
+  const info = hsm_getMechanismInfo(M, slotId, CKM_RSA_X_509)
+  const useRecover = !((info?.flags ?? 0) & CKF_SIGN) && !!((info?.flags ?? 0) & CKF_SIGN_RECOVER)
+
+  const mech1 = buildMechRaw(M, CKM_RSA_X_509)
+  const dataPtr = writeBytes(M, data)
+  const outLen = 256
+  const outPtr = M._malloc(outLen)
+  const outLenPtr = M._malloc(4)
+  M.setValue(outLenPtr, outLen, 'i32')
+  let sigBytes: Uint8Array
+  try {
+    if (useRecover) {
+      checkRV(M._C_SignRecoverInit(hSession, mech1, privHandle), 'C_SignRecoverInit')
+      checkRV(M._C_SignRecover(hSession, dataPtr, data.length, outPtr, outLenPtr), 'C_SignRecover')
+    } else {
+      checkRV(M._C_SignInit(hSession, mech1, privHandle), 'C_SignInit(CKM_RSA_X_509)')
+      checkRV(M._C_Sign(hSession, dataPtr, data.length, outPtr, outLenPtr), 'C_Sign(CKM_RSA_X_509)')
+    }
+    sigBytes = M.HEAPU8.slice(outPtr, outPtr + (M.getValue(outLenPtr, 'i32') >>> 0))
+  } finally {
+    M._free(mech1)
+    M._free(dataPtr)
+    M._free(outPtr)
+    M._free(outLenPtr)
+  }
+
+  const mech2 = buildMechRaw(M, CKM_RSA_X_509)
+  const sigPtr2 = writeBytes(M, sigBytes)
+  const recoveredPtr = M._malloc(256)
+  const recoveredLenPtr = M._malloc(4)
+  M.setValue(recoveredLenPtr, 256, 'i32')
+  let ok: boolean
+  let detail: string
+  try {
+    if (useRecover) {
+      checkRV(M._C_VerifyRecoverInit(hSession, mech2, pubHandle), 'C_VerifyRecoverInit')
+      checkRV(
+        M._C_VerifyRecover(hSession, sigPtr2, sigBytes.length, recoveredPtr, recoveredLenPtr),
+        'C_VerifyRecover'
+      )
+      const recovered = M.HEAPU8.slice(
+        recoveredPtr,
+        recoveredPtr + (M.getValue(recoveredLenPtr, 'i32') >>> 0)
+      )
+      // Compare as big-endian integers, not raw bytes: unpadded RSA is
+      // fundamentally big-integer math, and the engine's own integer→bytes
+      // conversion is free to drop data's deliberate leading 0x00 (added
+      // only so the numeric value stays < the modulus) — a real, measured
+      // difference from a byte-exact comparison, not a padding bug.
+      const toBigInt = (b: Uint8Array): bigint =>
+        b.reduce((acc, byte) => (acc << 8n) | BigInt(byte), 0n)
+      ok = toBigInt(recovered) === toBigInt(data)
+      detail = `C_SignRecover/C_VerifyRecover round-trip (engine exposes CKM_RSA_X_509 via recovery, not plain Sign/Verify): recovered value ${ok ? 'matches' : 'does NOT match'} the original (compared as big-endian integers — recovered=${recovered.length}B, original=${data.length}B)`
+      if (!ok) throw new Error(detail)
+    } else {
+      const dataPtr2 = writeBytes(M, data)
+      let verifyRv: number
+      try {
+        checkRV(M._C_VerifyInit(hSession, mech2, pubHandle), 'C_VerifyInit(CKM_RSA_X_509)')
+        verifyRv = M._C_Verify(hSession, dataPtr2, data.length, sigPtr2, sigBytes.length) >>> 0
+      } finally {
+        M._free(dataPtr2)
+      }
+      ok = verifyRv === 0
+      detail = `C_Sign/C_Verify round-trip on a real RSA-2048 key succeeded (${sigBytes.length}B signature)`
+      if (!ok) throw new Error(`C_Verify(CKM_RSA_X_509) → rv=0x${verifyRv.toString(16)}`)
+    }
+  } finally {
+    M._free(mech2)
+    M._free(sigPtr2)
+    M._free(recoveredPtr)
+    M._free(recoveredLenPtr)
+    M._C_DestroyObject(hSession, pubHandle)
+    M._C_DestroyObject(hSession, privHandle)
+  }
+  return detail
+}
+
+/** CKM_ECDSA (raw, pre-hashed) — computes a real SHA-256 digest via the
+ *  engine's own C_Digest, then signs/verifies that raw digest directly.
+ *  Distinct from the CKM_ECDSA_SHA256 combined form ACVP already covers,
+ *  which hashes the message internally in one call. */
+const ecdsaRawProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', true)
+  const message = new TextEncoder().encode('Mechanism Coverage probe: raw pre-hashed CKM_ECDSA')
+
+  const digestMech = buildMechRaw(M, CKM_SHA256)
+  const msgPtr = writeBytes(M, message)
+  const digestPtr = M._malloc(32)
+  const digestLenPtr = M._malloc(4)
+  M.setValue(digestLenPtr, 32, 'i32')
+  let digest: Uint8Array
+  try {
+    checkRV(M._C_DigestInit(hSession, digestMech), 'C_DigestInit(SHA-256)')
+    checkRV(
+      M._C_Digest(hSession, msgPtr, message.length, digestPtr, digestLenPtr),
+      'C_Digest(SHA-256)'
+    )
+    digest = M.HEAPU8.slice(digestPtr, digestPtr + 32)
+  } finally {
+    M._free(digestMech)
+    M._free(msgPtr)
+    M._free(digestPtr)
+    M._free(digestLenPtr)
+  }
+
+  const mech1 = buildMechRaw(M, CKM_ECDSA)
+  const digestPtr2 = writeBytes(M, digest)
+  const sigLen = 64 // P-256: raw r‖s, 32B each
+  const sigPtr = M._malloc(sigLen)
+  const sigLenPtr = M._malloc(4)
+  M.setValue(sigLenPtr, sigLen, 'i32')
+  let sigBytes: Uint8Array
+  try {
+    checkRV(M._C_SignInit(hSession, mech1, privHandle), 'C_SignInit(CKM_ECDSA)')
+    checkRV(M._C_Sign(hSession, digestPtr2, digest.length, sigPtr, sigLenPtr), 'C_Sign(CKM_ECDSA)')
+    sigBytes = M.HEAPU8.slice(sigPtr, sigPtr + (M.getValue(sigLenPtr, 'i32') >>> 0))
+  } finally {
+    M._free(mech1)
+    M._free(digestPtr2)
+    M._free(sigPtr)
+    M._free(sigLenPtr)
+  }
+
+  const mech2 = buildMechRaw(M, CKM_ECDSA)
+  const digestPtr3 = writeBytes(M, digest)
+  const sigPtr2 = writeBytes(M, sigBytes)
+  let verifyRv: number
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech2, pubHandle), 'C_VerifyInit(CKM_ECDSA)')
+    verifyRv = M._C_Verify(hSession, digestPtr3, digest.length, sigPtr2, sigBytes.length) >>> 0
+  } finally {
+    M._free(mech2)
+    M._free(digestPtr3)
+    M._free(sigPtr2)
+    M._C_DestroyObject(hSession, pubHandle)
+    M._C_DestroyObject(hSession, privHandle)
+  }
+  if (verifyRv !== 0)
+    throw new Error(`C_Verify(CKM_ECDSA, raw pre-hashed) → rv=0x${verifyRv.toString(16)}`)
+  return `CKM_ECDSA (raw, pre-hashed) sign+verify round-trip on a real P-256 key succeeded over a real SHA-256 digest computed via C_Digest — distinct from the combined CKM_ECDSA_SHA256 form ACVP already exercises`
+}
+
+/** CKM_ECDH1_COFACTOR_DERIVE — a real two-party round-trip using the
+ *  already-exported hsm_ecdhCofactorDerive (previously zero callers
+ *  anywhere in the app): both sides derive from the other's real public
+ *  point, and the two shared secrets must match. */
+const ecdhCofactorProbe = (ctx: MechanismProbeContext): string => {
+  const { M, hSession } = ctx
+  const a = hsm_generateECKeyPair(M, hSession, 'P-256', true)
+  const b = hsm_generateECKeyPair(M, hSession, 'P-256', true)
+  const aPub = hsm_extractECPoint(M, hSession, a.pubHandle)
+  const bPub = hsm_extractECPoint(M, hSession, b.pubHandle)
+
+  const secretAHandle = hsm_ecdhCofactorDerive(M, hSession, a.privHandle, bPub)
+  const secretBHandle = hsm_ecdhCofactorDerive(M, hSession, b.privHandle, aPub)
+  const secretA = hsm_extractKeyValue(M, hSession, secretAHandle)
+  const secretB = hsm_extractKeyValue(M, hSession, secretBHandle)
+
+  M._C_DestroyObject(hSession, secretAHandle)
+  M._C_DestroyObject(hSession, secretBHandle)
+  M._C_DestroyObject(hSession, a.pubHandle)
+  M._C_DestroyObject(hSession, a.privHandle)
+  M._C_DestroyObject(hSession, b.pubHandle)
+  M._C_DestroyObject(hSession, b.privHandle)
+
+  if (secretA.length === 0 || secretA.length !== secretB.length)
+    throw new Error(
+      `shared-secret length mismatch or empty: A=${secretA.length}B B=${secretB.length}B`
+    )
+  for (let i = 0; i < secretA.length; i++) {
+    if (secretA[i] !== secretB[i])
+      throw new Error(`cofactor ECDH derived DIFFERENT secrets on each side at byte ${i}`)
+  }
+  return `CKM_ECDH1_COFACTOR_DERIVE two-party round-trip on real P-256 keys produced the same ${secretA.length}B shared secret`
+}
+
 export const MECHANISM_PROBES: MechanismProbe[] = [
   {
     id: 'pqc-seed-mldsa',
@@ -506,6 +844,62 @@ export const MECHANISM_PROBES: MechanismProbe[] = [
     citation:
       'PKCS#11 v2.40 §2.31.3 (the combiner a hybrid KEM would join its two shared secrets with)',
     run: concatenateBaseAndKeyProbe,
+  },
+  {
+    id: 'classical-rsa-pkcs',
+    mechanism: CKM_RSA_PKCS,
+    mechanismName: 'CKM_RSA_PKCS',
+    family: 'Classical Asymmetric',
+    citation: 'PKCS#11 v3.2 §6.4.4 (raw PKCS#1 v1.5 sign/verify — no combined hash step)',
+    run: (ctx) =>
+      rsaSignVerifyRoundTrip(
+        ctx,
+        CKM_RSA_PKCS,
+        'CKM_RSA_PKCS',
+        new TextEncoder().encode('Mechanism Coverage probe: raw PKCS#1 v1.5')
+      ),
+  },
+  {
+    id: 'classical-rsa-x509',
+    mechanism: CKM_RSA_X_509,
+    mechanismName: 'CKM_RSA_X_509',
+    family: 'Classical Asymmetric',
+    citation: 'PKCS#11 v3.2 §6.4.7 (unpadded/textbook RSA — RSASP1/RSAVP1, no padding scheme)',
+    run: rsaX509Probe,
+  },
+  {
+    id: 'classical-rsa-hash-sign',
+    mechanism: CKM_SHA256_RSA_PKCS,
+    mechanismName: 'CKM_SHA256_RSA_PKCS',
+    family: 'Classical Asymmetric',
+    citation:
+      'PKCS#11 v3.2 §6.4.5 (combined hash-then-sign PKCS#1v1.5 — ACVP’s RSA coverage is PSS-only)',
+    run: (ctx) =>
+      rsaSignVerifyRoundTrip(
+        ctx,
+        CKM_SHA256_RSA_PKCS,
+        'CKM_SHA256_RSA_PKCS',
+        new TextEncoder().encode(
+          'Mechanism Coverage probe: combined hash-then-sign, arbitrary length message'
+        )
+      ),
+  },
+  {
+    id: 'classical-ecdsa-raw',
+    mechanism: CKM_ECDSA,
+    mechanismName: 'CKM_ECDSA (raw, pre-hashed)',
+    family: 'Classical Asymmetric',
+    citation:
+      'PKCS#11 v3.2 §6.3.1 (raw ECDSA — every ACVP ECDSA check uses a combined CKM_ECDSA_SHA* form instead)',
+    run: ecdsaRawProbe,
+  },
+  {
+    id: 'classical-ecdh-cofactor',
+    mechanism: CKM_ECDH1_COFACTOR_DERIVE,
+    mechanismName: 'CKM_ECDH1_COFACTOR_DERIVE',
+    family: 'Classical Asymmetric',
+    citation: 'PKCS#11 v3.2 §6.3.18 (cofactor ECDH — hsm_ecdhCofactorDerive had zero callers)',
+    run: ecdhCofactorProbe,
   },
 ]
 
