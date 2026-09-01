@@ -157,15 +157,15 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
 })
 
-test('the guided lesson still works when started from the ACVP sub-tab, not just the default Pipeline one', async ({
+test('the guided lesson still works when started from the ACVP sub-tab, not just the default Standard one', async ({
   page,
 }) => {
   // Regression guard for the 2026-08-31 merge's devSubTab reset: the lesson
-  // callback does `handleTabChange('developer')` then `setDevSubTab('pipeline')`.
+  // callback does `handleTabChange('developer')` then `setDevSubTab('standard')`.
   // The test above always starts from a fresh page (devSubTab already
-  // defaults to 'pipeline'), so it can't catch a regression here — the fix
+  // defaults to 'standard'), so it can't catch a regression here — the fix
   // only matters when the user is actually on ACVP/Conformance when they
-  // open Lessons, since TabsContent unmounts the Pipeline builder (and its
+  // open Lessons, since TabsContent unmounts the Standard workbench (and its
   // data-tour="pkcs-dev-*" targets) while a different sub-tab is active.
   await page.goto('/playground/hsm?tab=developer&dtab=acvp')
   await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveAttribute('aria-selected', 'true', {
@@ -176,9 +176,9 @@ test('the guided lesson still works when started from the ACVP sub-tab, not just
   await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
 
   // If the reset didn't happen, the palette selector would never resolve
-  // (Pipeline unmounted) and this would time out instead of finding it.
+  // (Standard unmounted) and this would time out instead of finding it.
   await expect(page.getByText('The palette')).toBeVisible({ timeout: 30000 })
-  await expect(page.getByRole('tab', { name: 'Pipeline' })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tab', { name: 'Standard' })).toHaveAttribute('aria-selected', 'true')
 
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
@@ -224,7 +224,7 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 
   // Land on Developer directly with the new sub-tab param — must fall back
-  // to Pipeline rather than honoring the gated sub-tab.
+  // to Standard rather than honoring the gated sub-tab.
   await page.goto('/playground/hsm?tab=developer&dtab=acvp')
   await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
     timeout: 30000,

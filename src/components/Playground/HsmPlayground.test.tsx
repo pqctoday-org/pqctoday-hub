@@ -8,9 +8,11 @@
 //
 // 2026-08-31 merge (feat/navigate-label-selection @ 509f712e3): ACVP moved
 // from its own top-level tab into a sub-tab under the top-level "Developer"
-// tab (alongside Pipeline/Conformance) — see DeveloperTab.tsx. The Developer
-// tab button itself is never gated (only its ACVP/Conformance sub-tabs are),
-// so reaching the ACVP assertion now requires opening Developer first.
+// tab (alongside Standard/Conformance, relabeled from Pipeline as part of
+// the Standard/ACVP/Conformance Test Suite switcher) — see DeveloperTab.tsx.
+// The Developer tab button itself is never gated (only its ACVP/Conformance
+// sub-tabs are), so reaching the ACVP assertion now requires opening
+// Developer first.
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
@@ -106,13 +108,13 @@ describe('HsmPlayground persona gating', () => {
     expect(screen.getByRole('tab', { name: /^acvp$/i })).toBeInTheDocument()
   })
 
-  it('hides the ACVP sub-tab and engine selector for curious, but still opens Developer > Pipeline', () => {
+  it('hides the ACVP sub-tab and engine selector for curious, but still opens Developer > Standard', () => {
     mockPersona = 'curious'
     renderHsmPlayground()
     expect(screen.queryByText('Engine:')).not.toBeInTheDocument()
     const developerTab = screen.getByRole('tab', { name: /developer/i })
     fireEvent.click(developerTab)
-    expect(screen.getByRole('tab', { name: /^pipeline$/i })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: /^standard$/i })).toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^acvp$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('tab', { name: /^conformance$/i })).not.toBeInTheDocument()
   })

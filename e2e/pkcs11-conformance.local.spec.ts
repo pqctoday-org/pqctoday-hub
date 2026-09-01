@@ -112,14 +112,14 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
   }
 
   // The three tests above all navigate straight to ?dtab=conformance, so
-  // Pipeline (the Developer tab's other sub-tab) is never even mounted —
-  // they can't catch state left behind by a real user who visits Pipeline
+  // Standard (the Developer tab's other sub-tab) is never even mounted —
+  // they can't catch state left behind by a real user who visits Standard
   // first. Since all three Developer sub-tabs are TabsContent panels that
-  // unmount when inactive (2026-08-31 merge), the real risk is Pipeline's
+  // unmount when inactive (2026-08-31 merge), the real risk is Standard's
   // OWN internal Builder/Code view state (or its Monaco editor instance)
   // somehow interfering with Conformance once the user switches over.
   for (const pipelineView of ['Builder', 'Code'] as const) {
-    test(`conformance still runs clean after visiting Pipeline in ${pipelineView} view first`, async ({
+    test(`conformance still runs clean after visiting Standard in ${pipelineView} view first`, async ({
       page,
     }) => {
       await page.goto('/playground/hsm?tab=developer')
@@ -147,10 +147,10 @@ test.describe('PKCS#11 v3.2 Profiles conformance runner', () => {
         .count()
       expect(notClaimedCount, 'no row should render as not-claimed').toBe(0)
 
-      // Switching back to Pipeline must remount it clean (fresh default
+      // Switching back to Standard must remount it clean (fresh default
       // template, Builder view) — not crash, and not get stuck showing
       // Conformance's own DOM.
-      await page.getByRole('tab', { name: 'Pipeline' }).click()
+      await page.getByRole('tab', { name: 'Standard' }).click()
       await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
         timeout: 10000,
       })
