@@ -12087,6 +12087,16 @@
       "sizeBytes": 2934270,
       "contentType": "application/pdf",
       "sha256": "c27c123b7e11633302f3deeeb16b345dfce4b719b40ea5d69152188f6237c55b"
+    },
+    {
+      "refId": "Summary-of-NATO-s-Quantum-Technologies-Strategy",
+      "title": "Summary of NATO's Quantum Technologies Strategy",
+      "url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/01/16/summary-of-natos-quantum-technologies-strategy",
+      "status": "downloaded",
+      "filename": "Summary-of-NATO-s-Quantum-Technologies-Strategy.html",
+      "sizeBytes": 329395,
+      "contentType": "text/html",
+      "sha256": "cfe9d87b462874001049466faad34ae67e4a25c5dabb0ddf0e7747f110d6d5b2"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",
