@@ -613,7 +613,7 @@
     "5g-security": 3,
     "healthcare-pqc": 5,
     "hsm-pqc": 5,
-    "hybrid-crypto": 5,
+    "hybrid-crypto": 6,
     "iam-pqc": 5,
     "iot-ot-pqc": 5,
     "kms-pqc": 5,
@@ -1300,6 +1300,10 @@
       {
         "id": "kem",
         "label": "Hybrid KEM Construction"
+      },
+      {
+        "id": "hpke",
+        "label": "HPKE"
       },
       {
         "id": "composite",
@@ -2582,6 +2586,10 @@
       {
         "id": "inspect-compare",
         "label": "Inspect & Compare"
+      },
+      {
+        "id": "hpke",
+        "label": "HPKE"
       }
     ],
     "iam-pqc": [
@@ -3986,7 +3994,12 @@
     },
     "hybrid-crypto": {
       "algorithms": ["ML-KEM", "X25519", "ECDH"],
-      "standards": ["RFC 9180"]
+      "standards": [
+        "RFC 9180",
+        "draft-ietf-hpke-pq",
+        "draft-ietf-cose-hpke",
+        "draft-ietf-jose-hpke-encrypt"
+      ]
     },
     "kms-pqc": {
       "algorithms": ["ML-KEM"],

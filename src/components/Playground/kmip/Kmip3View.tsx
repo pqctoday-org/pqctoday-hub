@@ -3,29 +3,32 @@
 // Kmip3View — the "KMIP3.0" top-level tab: ten guided walkthroughs
 // (Learn, the on-ramp — first position; six classical→PQC comparisons plus
 // four engine-addition lessons), a category-sorted tester for every KMIP
-// 3.0 operation (Commands/Reference), a live in-browser replay of the real
-// OASIS conformance corpus (Corpus Replay), and the batch/macro builder
-// (Batch & Macros).
+// 3.0 operation (Commands/Reference), the pipeline builder + a live
+// in-browser replay of the real OASIS conformance corpus (Dev — 2026-08-31
+// merge, mirroring the PKCS#11 side's Developer tab: Corpus Replay used to
+// be its own sub-tab here, and the pipeline builder used to be a top-level
+// KmipPlaygroundView plane), and the batch/macro builder (Batch & Macros).
 import { useState } from 'react'
-import { BookOpen, Terminal, FlaskConical, Layers } from 'lucide-react'
+import { BookOpen, Terminal, Code2, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { KmipEngine } from '@/wasm/kmip/kmipEngine'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvider'
 import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { BatchView } from './BatchView'
 import { CommandsView } from './CommandsView'
-import { CorpusReplayView } from './CorpusReplayView'
+import { KmipDevTab } from './KmipDevTab'
 import { KeystoreStrip } from './kmip3/KeystoreStrip'
 import { LearnView } from './kmip3/LearnView'
 import { KMIP_GLOSSARY_DATA } from './kmip3/glossary'
 
-type Kmip3Tab = 'learn' | 'commands' | 'corpus' | 'batch'
+type Kmip3Tab = 'learn' | 'commands' | 'dev' | 'batch'
 
 const TABS: { id: Kmip3Tab; label: string; icon: typeof Terminal }[] = [
   { id: 'learn', label: 'Learn', icon: BookOpen },
   { id: 'commands', label: 'Commands', icon: Terminal },
-  { id: 'corpus', label: 'Corpus Replay', icon: FlaskConical },
+  { id: 'dev', label: 'Dev', icon: Code2 },
   { id: 'batch', label: 'Batch & Macros', icon: Layers },
 ]
 
@@ -44,6 +47,12 @@ export function Kmip3View({
 }) {
   const [tab, setTab] = useState<Kmip3Tab>('learn')
   const [pendingOp, setPendingOp] = useState<string | null>(null)
+  const role = usePersonaStore((s) => s.selectedPersona)
+  // Dev (Pipeline Builder + Corpus Replay) is an engineering-workbench
+  // surface, same gating as the PKCS#11 side's Developer sub-tab — but
+  // gated as one unit here (see KmipDevTab.tsx's own doc comment) rather
+  // than per-inner-tab, since both halves are workbench tools together.
+  const showDevTab = role !== 'curious' && role !== 'executive'
 
   return (
     <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
@@ -59,7 +68,7 @@ export function Kmip3View({
             role="tablist"
             data-tour="kmip3-subtabs"
           >
-            {TABS.map((t) => {
+            {TABS.filter((t) => t.id !== 'dev' || showDevTab).map((t) => {
               const Icon = t.icon
               const on = tab === t.id
               return (
@@ -103,7 +112,7 @@ export function Kmip3View({
             />
           )}
 
-          {tab === 'corpus' && <CorpusReplayView />}
+          {tab === 'dev' && showDevTab && <KmipDevTab engine={engine} />}
 
           {tab === 'batch' && (
             <BatchView
@@ -116,7 +125,16 @@ export function Kmip3View({
           )}
         </div>
 
-        <GlossaryRail />
+        {/* Dev (Pipeline + Corpus Replay) is a workbench, not a reading
+            context — and KmipPipelineBuilder's own fixed 280px/340px side
+            columns (palette, run/validation panel) were sized assuming the
+            FULL row width the old top-level "Developer" plane had to
+            itself. Sharing this row with the glossary rail too collapses
+            its middle canvas column to near-nothing (found live: 722px
+            total - 280px - 340px = 102px). Same reasoning HsmPlayground's
+            own Developer tab already reflects — it has no glossary rail
+            at all. */}
+        {tab !== 'dev' && <GlossaryRail />}
       </div>
     </GlossaryProvider>
   )

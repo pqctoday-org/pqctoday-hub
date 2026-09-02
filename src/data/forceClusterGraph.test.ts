@@ -29,6 +29,8 @@ describe('buildForceClusterGraph', () => {
       glossary: 0,
       product: 0,
       protocol: 0,
+      patent: 0,
+      leader: 0,
     }
     for (const n of graph.nodes) byType[n.type] += 1
     console.log('node counts by type:', byType)
@@ -38,7 +40,7 @@ describe('buildForceClusterGraph', () => {
     for (const e of graph.edges) relCounts.set(e.rel, (relCounts.get(e.rel) ?? 0) + 1)
     console.log('edge counts by rel:', Object.fromEntries(relCounts))
 
-    // Every one of the 9 categories should have at least one surviving node.
+    // Every one of the 11 categories should have at least one surviving node.
     const types = Object.keys(byType) as ForceClusterNodeType[]
     for (const type of types) {
       // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union, not user input

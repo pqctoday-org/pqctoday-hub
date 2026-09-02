@@ -37,7 +37,14 @@ export interface ProofFreshness {
 const STALE_AFTER_MONTHS = 18
 
 function monthsSince(iso: string): number | null {
-  const then = new Date(iso)
+  // Parse date-only ISO strings as LOCAL calendar dates. `new Date('2026-06-01')`
+  // is UTC midnight, which getFullYear()/getMonth() read back as May 31 in any
+  // negative-offset timezone — off by one month whenever the date falls on the
+  // 1st (found when the test suite failed on Sep 1 with an off-by-one age).
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso)
+  const then = dateOnly
+    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+    : new Date(iso)
   if (Number.isNaN(then.getTime())) return null
   const now = new Date()
   const months = (now.getFullYear() - then.getFullYear()) * 12 + (now.getMonth() - then.getMonth())

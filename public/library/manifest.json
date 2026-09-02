@@ -986,24 +986,24 @@
     {
       "refId": "BIP-39",
       "title": "BIP-39: Mnemonic Code for Generating Deterministic Keys",
-      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039.mediawiki",
+      "url": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
       "status": "downloaded",
       "filename": "BIP-39.html",
-      "sizeBytes": 6842,
-      "contentType": "text/plain",
-      "sha256": "afcbcbed36fe9eb734bd607398a8c124683ded2a75c3830e1b16c47b043a9134",
+      "sizeBytes": 315621,
+      "contentType": "text/html",
+      "sha256": "29adca74e748f00bc8394b81ffddad806333bed12ab28bb8c025fec308a1c76d",
       "previousSha256": "bafd11adf0e2c8628042fd10099ff3cce742cf1c373a4dbabff22b756720bdd9",
       "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-44",
       "title": "BIP-44: Multi-Account Hierarchy for Deterministic Wallets",
-      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0044.mediawiki",
+      "url": "https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki",
       "status": "downloaded",
       "filename": "BIP-44.html",
-      "sizeBytes": 6710,
-      "contentType": "text/plain",
-      "sha256": "6a541c79f94077ac529941a8cbd373ce077a5d6e97b6dd8209b45ac10f737eaf",
+      "sizeBytes": 324574,
+      "contentType": "text/html",
+      "sha256": "542adad0dee49249be524c674133979fd625011689c03a47494568604e579a19",
       "previousSha256": "806ebe7ef11160b62ceec3cf80362b8ff610fa7fd2c78c1c469b4bf38af452bb",
       "rehashedAt": "2026-08-22"
     },
@@ -1361,12 +1361,12 @@
     {
       "refId": "NIST-SP-800-22-R1A",
       "title": "SP 800-22 Rev. 1a: A Statistical Test Suite for Random and Pseudorandom Number Generators for Cryptographic Applications",
-      "url": "http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-22r1a.pdf",
+      "url": "https://csrc.nist.gov/publications/detail/sp/800-22/rev-1a/final",
       "status": "downloaded",
-      "filename": "NIST-SP-800-22-R1A.pdf",
-      "sizeBytes": 7583475,
-      "contentType": "application/pdf",
-      "sha256": "38aba1b34a7fa52c440790d6e0cabf498e4b525177b3b6cebb399ab8ccf031d2",
+      "filename": "NIST-SP-800-22-R1A.html",
+      "sizeBytes": 49208,
+      "contentType": "text/html",
+      "sha256": "7969b0c6015fa95fb4815128436520728f827e3f323a4e6dd0bbba6a42e51e28",
       "previousSha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d",
       "rehashedAt": "2026-08-22"
     },
@@ -4120,12 +4120,12 @@
     {
       "refId": "OWASP-CycloneDX-CBOM-Guide",
       "title": "OWASP CycloneDX: CBOM Authoritative Guide",
-      "url": "https://owasp.org/blog/2023/10/03/CycloneDX-Cryptography-CBOM",
+      "url": "https://cyclonedx.org/capabilities/cbom/",
       "status": "downloaded",
       "filename": "OWASP-CycloneDX-CBOM-Guide.html",
-      "sizeBytes": 38336,
+      "sizeBytes": 35229,
       "contentType": "text/html",
-      "sha256": "28299e129ee03877d4b013e8a7d25d1ec8b01dec5c98d299f40fcf6b463029f5"
+      "sha256": "e0b9d50407aab2525d1bbddd16f7aeb01adf84fcf7140eb688a266f3744804a3"
     },
     {
       "refId": "IETF-RFC-8555",
@@ -4623,12 +4623,12 @@
     {
       "refId": "ref-joseph-transitioning",
       "title": "Transitioning organizations to post-quantum cryptography",
-      "url": "https://cdn.prod.website-files.com/63376791eb98a8e2edf9d2c8/69a867ee3495099f5be3bdb1_2022-05-11_Nature_Transitioning%20organizations%20to%20post-quantum%20cryptography%20(1).pdf",
+      "url": "https://www.nature.com/articles/s41586-022-04623-2.pdf",
       "status": "downloaded",
       "filename": "ref-joseph-transitioning.pdf",
-      "sizeBytes": 1454645,
+      "sizeBytes": 234835,
       "contentType": "application/pdf",
-      "sha256": "1e3b5f0fec193bd7b10ee5e674b5872c1d3decf83ef4c9c41bd5c691c024c2af"
+      "sha256": "28dc07e6ef236b7de19945c006abcf28192e6a5d2e5a78d97a921098fbe6e591"
     },
     {
       "refId": "RFC 9142",
@@ -8832,12 +8832,12 @@
     {
       "refId": "Post-Quantum-Composite-Signatures-in-SSH",
       "title": "Post-Quantum Composite Signatures in SSH",
-      "url": "https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/",
+      "url": "https://datatracker.ietf.org/doc/html/draft-ietf-sshm-composite-sigs-00",
       "status": "downloaded",
       "filename": "Post-Quantum-Composite-Signatures-in-SSH.html",
-      "sizeBytes": 57112,
+      "sizeBytes": 83775,
       "contentType": "text/html",
-      "sha256": "8dfc5fa452cfd183771dc71af241e2c89014e4a2b9fa9452390bf7ab695b377c"
+      "sha256": "f563b11a34b190426f5e7c2c899edb06a300ac9bd5f1cf172c6d710a1ea1d528"
     },
     {
       "refId": "ETSI-TS-103-744-Quantum-safe-Hybrid-Key-Exchanges",
@@ -12127,6 +12127,66 @@
       "sizeBytes": 86995,
       "contentType": "text/html",
       "sha256": "937d2f4e5841ee957e8f03f5b5cc5eaecc454b085bb3bcea10c60f04448c9e1f"
+    },
+    {
+      "refId": "Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3",
+      "title": "Post-quantum Hybrid ECDHE-SCloud+ Key Exchange for TLS 1.3",
+      "url": "https://datatracker.ietf.org/doc/draft-wang-tls-hybrid-ecdh-scloud/",
+      "status": "downloaded",
+      "filename": "Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3.html",
+      "sizeBytes": 68129,
+      "contentType": "text/html",
+      "sha256": "4f2307a6b845352e8c2582e0465f88f73ff62d204a068c7e84952192cc52f0e7"
+    },
+    {
+      "refId": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for",
+      "title": "Update to Post-quantum Hybrid ECDHE-MLKEM Key Agreement for TLSv1.3",
+      "url": "https://datatracker.ietf.org/doc/html/draft-usama-tls-ecdhe-mlkem-update-00",
+      "status": "downloaded",
+      "filename": "Update-to-Post-quantum-Hybrid-ECDHE-MLKEM-Key-Agreement-for.html",
+      "sizeBytes": 54677,
+      "contentType": "text/html",
+      "sha256": "377c207460b89aef6b25e1fc485589a3c9c41fddd0ae4a512aacb0a7cb1f1eb9"
+    },
+    {
+      "refId": "Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut",
+      "title": "Post-Quantum Credential Binding for x402 Agentic Payment Authorization",
+      "url": "https://datatracker.ietf.org/doc/draft-hopley-x402-pqc-credential-binding/",
+      "status": "downloaded",
+      "filename": "Post-Quantum-Credential-Binding-for-x402-Agentic-Payment-Aut.html",
+      "sizeBytes": 42892,
+      "contentType": "text/html",
+      "sha256": "67359c20a5ac4f6b5c3edbdd3b2aba95d9c7354133b435dbb678160c3fd89941"
+    },
+    {
+      "refId": "Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment",
+      "title": "Cross-Issuer ZKP Federation for Post-Quantum Agentic Payment Credentials",
+      "url": "https://datatracker.ietf.org/doc/draft-hopley-x402-federation-zkp/",
+      "status": "downloaded",
+      "filename": "Cross-Issuer-ZKP-Federation-for-Post-Quantum-Agentic-Payment.html",
+      "sizeBytes": 45555,
+      "contentType": "text/html",
+      "sha256": "e1c10c67e5249dcb80ffac50fb4724c43e3eeaeacd2b2d0ee3ab1c2761880c75"
+    },
+    {
+      "refId": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hybrid-kems-12",
+      "status": "downloaded",
+      "filename": "Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 210605,
+      "contentType": "text/html",
+      "sha256": "c86a3f830ac222b47fc953291540e361e3e9e07d60169e5bb4a99b2ab5144838"
+    },
+    {
+      "refId": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms",
+      "title": "Concrete Hybrid PQ/T Key Encapsulation Mechanisms",
+      "url": "https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-concrete-hybrid-kems-03",
+      "status": "downloaded",
+      "filename": "Concrete-Hybrid-PQ-T-Key-Encapsulation-Mechanisms.html",
+      "sizeBytes": 369216,
+      "contentType": "text/html",
+      "sha256": "801b041aa973d558d068ad48f7b2b19cb0a2378abfaeddb3b403d6ff72eb4816"
     }
   ],
   "generated": "2026-07-30T00:36:07.104551+00:00",

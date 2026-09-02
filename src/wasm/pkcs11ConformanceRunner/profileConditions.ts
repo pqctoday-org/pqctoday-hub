@@ -40,6 +40,7 @@ import {
   CKA_PUBLIC_EXPONENT,
   CKA_CERTIFICATE_TYPE,
   CKA_SUBJECT,
+  CKA_VALUE_LEN,
   CKO_SECRET_KEY,
   CKO_PUBLIC_KEY,
   CKO_PRIVATE_KEY,
@@ -48,10 +49,13 @@ import {
   CKK_RSA,
   CKC_X_509,
   CKM_RSA_PKCS_KEY_PAIR_GEN,
+  CKM_HKDF_DATA,
+  CKM_SHA256,
   CKP_BASELINE_PROVIDER,
   CKP_EXTENDED_PROVIDER,
   CKP_AUTHENTICATION_TOKEN,
   CKP_PUBLIC_CERTIFICATES_TOKEN,
+  CKP_HKDF_TLS_TOKEN,
 } from '../softhsm'
 
 const CKO_DATA = 0x00000000
@@ -59,7 +63,13 @@ const CKF_SERIAL_SESSION = 0x00000004
 const CKM_SHA256_RSA_PKCS = 0x00000040
 const CKR_FUNCTION_NOT_SUPPORTED = 0x00000054
 
-export type ProfileClaim = 'baseline' | 'extended' | 'authentication' | 'certificates'
+export type ProfileClaim =
+  | 'baseline'
+  | 'extended'
+  | 'authentication'
+  | 'certificates'
+  | 'complete'
+  | 'hkdf_tls'
 
 export interface ProbeContext {
   M: SoftHSMModule
@@ -92,7 +102,13 @@ export interface ProbeContext {
 export interface ConditionProbe {
   id: string
   profile: ProfileClaim
-  category: 'function' | 'attribute' | 'object'
+  // 'mechanism' — HKDF TLS Token's §5.6 condition 7.a is the first profile
+  // condition in this file with a concretely testable mechanism-parameter
+  // requirement (exact literal pInfo byte strings); other profiles' "supports
+  // the following mechanisms" conditions are prose-only and stay implicit.
+  // 'meta' — a check derived from OTHER probes' own results, not a live
+  // engine call (Complete Provider's union-of-clauses check, §6.2).
+  category: 'function' | 'attribute' | 'object' | 'mechanism' | 'meta'
   name: string
   /** Exact condition citation, e.g. "Profiles v3.2 §5.1 condition 5.a". */
   citation: string
@@ -222,11 +238,12 @@ const BASELINE_PROBES: Omit<ConditionProbe, 'profile'>[] = [
       }
     },
   },
-  // C_Initialize/C_Finalize/C_OpenSession/C_CloseSession are exercised by
-  // the harness that boots the engine before any probe runs at all — a
-  // dead engine can't reach this file's run() call in the first place, so
-  // probing them again here would only re-test the harness, not the
-  // engine. Their conditions are satisfied by construction.
+  // C_OpenSession/C_CloseSession (5.j/5.k, below) get real probes via a
+  // disposable second session. C_Initialize/C_Finalize (5.d/5.e) do too,
+  // but NOT here — they tear down the very session/objects every other
+  // probe in this array depends on, so they must run dead last, after
+  // every other profile's probes have finished (see runProfileConditionProbes,
+  // "Baseline lifecycle" section, near the bottom of this file).
   {
     id: 'bl-fn-getinfo',
     category: 'function',
@@ -273,7 +290,24 @@ const BASELINE_PROBES: Omit<ConditionProbe, 'profile'>[] = [
     category: 'function',
     name: 'C_OpenSession',
     citation: 'Profiles v3.2 §5.1 condition 5.j',
-    run: () => 'Session already open for this probe run — engine could not have booted otherwise',
+    // Real functional probe, not a "harness already opened one" inference —
+    // mirrors bl-fn-closesession's own disposable-second-session pattern
+    // directly below (2026-08-31 fix: the previous version never called
+    // C_OpenSession at all, so a broken implementation would still pass).
+    run: ({ M, slotId }) => {
+      const hPtr = M._malloc(4)
+      try {
+        const rv = M._C_OpenSession(slotId, CKF_SERIAL_SESSION, 0, 0, hPtr) >>> 0
+        if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+          throw new Error('C_OpenSession → CKR_FUNCTION_NOT_SUPPORTED')
+        if (rv !== 0) throw new Error(`C_OpenSession → rv=0x${rv.toString(16)}`)
+        const disposable = M.getValue(hPtr, 'i32') >>> 0
+        M._C_CloseSession(disposable) // cleanup only — CloseSession itself is 5.k's job
+        return 'C_OpenSession → OK (on a disposable second session)'
+      } finally {
+        M._free(hPtr)
+      }
+    },
   },
   {
     id: 'bl-fn-closesession',
@@ -874,6 +908,185 @@ const CERT_PROBES: Omit<ConditionProbe, 'profile'>[] = [
   },
 ]
 
+// ── HKDF TLS Token — Profiles v3.2 §5.6 (new in v3.2) ──────────────────────
+//
+// 2026-08-31 coverage-gap closure: zero prior coverage anywhere (this
+// codebase's only HKDF support before this, hsm_hkdf in softhsm.ts, is
+// CKM_HKDF_DERIVE only, which this profile does not require). §5.6's own
+// intro prose calls the mechanism "CKM_HKDF_DERIVE_DATA", but the numbered
+// condition list (7.a, the actually-normative text, PDF p.17 l.589) names
+// the real registered mechanism CKM_HKDF_DATA (0x402b) — the intro line is
+// an OASIS editorial slip, not a second mechanism; there is no
+// CKM_HKDF_DERIVE_DATA constant anywhere in pkcs11t-canonical-v3.2.h.
+//
+// Both engines' own dispatch code confirms CKM_HKDF_DATA is the same HKDF
+// computation as CKM_HKDF_DERIVE, differing only in the derived object's
+// class: CKO_DATA, not CKO_SECRET_KEY (rust/src/ffi.rs:9815-9820,
+// SoftHSM_keygen.cpp:4195-4199) — so condition 5's two object classes are
+// input (5.b CKO_SECRET_KEY, the base key — reuses the shared
+// ctx.keyObjectHandle) and output (5.a CKO_DATA, produced by the derive
+// itself), not two independent objects to fixture separately.
+
+/** Builds the 32-byte CK_HKDF_PARAMS struct and calls C_DeriveKey(CKM_HKDF_DATA)
+ *  against ctx.keyObjectHandle as the base key — same struct layout
+ *  hsm_hkdf (softhsm.ts) uses for CKM_HKDF_DERIVE, see its doc comment for
+ *  the byte-offset table. Returns the raw rv and, on success, the derived
+ *  object's handle — callers assert whatever their specific condition needs
+ *  rather than this helper deciding pass/fail itself. */
+const deriveHkdfData = (
+  ctx: ProbeContext,
+  pInfo: Uint8Array,
+  outLen: number
+): { rv: number; handle: number } => {
+  const { M, hSession } = ctx
+  const infoPtr = writeBytes(M, pInfo)
+  const params = M._malloc(32)
+  M.HEAPU8.fill(0, params, params + 32)
+  M.HEAPU8[params + 0] = 0 // bExtract=false — expand-only, matching TLS 1.3's own HKDF-Expand-Label use
+  M.HEAPU8[params + 1] = 1 // bExpand=true
+  M.setValue(params + 4, CKM_SHA256, 'i32') // prfHashMechanism
+  M.setValue(params + 8, 1, 'i32') // ulSaltType = CKF_HKDF_SALT_NULL (ignored when bExtract=false, §6.62.3)
+  M.setValue(params + 12, 0, 'i32') // pSalt
+  M.setValue(params + 16, 0, 'i32') // ulSaltLen
+  M.setValue(params + 20, 0, 'i32') // hSaltKey
+  M.setValue(params + 24, infoPtr, 'i32') // pInfo
+  M.setValue(params + 28, pInfo.length, 'i32') // ulInfoLen
+  const mech = buildMech(M, CKM_HKDF_DATA, params, 32)
+  // CKA_CLASS is server-managed for this mechanism (both engines force
+  // CKO_DATA regardless of what the template says — see the comment
+  // above), so the template only needs to declare the output length.
+  const derivedTpl = buildTemplate(M, [{ type: CKA_VALUE_LEN, ulongVal: outLen }])
+  const derivedHPtr = M._malloc(4)
+  try {
+    const rv =
+      M._C_DeriveKey(hSession, mech, ctx.keyObjectHandle, derivedTpl.ptr, 1, derivedHPtr) >>> 0
+    return { rv, handle: rv === 0 ? M.getValue(derivedHPtr, 'i32') >>> 0 : 0 }
+  } finally {
+    M._free(mech)
+    M._free(infoPtr)
+    M._free(derivedHPtr)
+    freeTemplate(M, derivedTpl, 1)
+  }
+}
+
+/** The exact literal pInfo byte strings §5.6 condition 7.a.i/7.a.ii require
+ *  a conformant provider to accept: `L1,L2,"<label>",0x00`, L1/L2 the
+ *  big-endian bytes of the requested CKA_VALUE_LEN (PDF p.17 l.592-598). */
+const hkdfTlsPInfo = (label: string, outLen: number): Uint8Array => {
+  const labelBytes = new TextEncoder().encode(label)
+  const out = new Uint8Array(2 + labelBytes.length + 1)
+  out[0] = (outLen >>> 8) & 0xff
+  out[1] = outLen & 0xff
+  out.set(labelBytes, 2)
+  out[out.length - 1] = 0x00
+  return out
+}
+
+const HKDF_TLS_OUT_LEN = 12 // a plausible AEAD-IV length; the spec fixes L1/L2 to whatever length is requested, not to 12 specifically
+
+const HKDF_TLS_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+  {
+    id: 'hkdf-obj-profile',
+    category: 'object',
+    name: 'CKO_PROFILE (CKP_HKDF_TLS_TOKEN)',
+    citation: 'Profiles v3.2 §5.6 condition 5.c',
+    run: ({ profileObjects }) => {
+      const found = profileObjects.find((p) => p.profileId === CKP_HKDF_TLS_TOKEN)
+      if (!found) throw new Error('no CKO_PROFILE object with CKA_PROFILE_ID=CKP_HKDF_TLS_TOKEN')
+      return `found CKO_PROFILE handle=${found.handle} claiming CKP_HKDF_TLS_TOKEN`
+    },
+  },
+  {
+    id: 'hkdf-obj-secretkey',
+    category: 'object',
+    name: 'CKO_SECRET_KEY (as HKDF base key)',
+    citation: 'Profiles v3.2 §5.6 condition 5.b',
+    run: ({ M, hSession, keyObjectHandle }) => {
+      if (!attrIsReadable(M, hSession, keyObjectHandle, CKA_CLASS))
+        throw new Error('CKA_CLASS unreadable on the shared CKO_SECRET_KEY probe object')
+      return 'CKO_SECRET_KEY object usable as an HKDF base key (CKA_CLASS readable)'
+    },
+  },
+  {
+    id: 'hkdf-obj-data',
+    category: 'object',
+    name: 'CKO_DATA (as HKDF derive output)',
+    citation: 'Profiles v3.2 §5.6 condition 5.a',
+    run: (ctx) => {
+      const { rv, handle } = deriveHkdfData(
+        ctx,
+        hkdfTlsPInfo('tls iv', HKDF_TLS_OUT_LEN),
+        HKDF_TLS_OUT_LEN
+      )
+      if (rv !== 0) throw new Error(`C_DeriveKey(CKM_HKDF_DATA) → rv=0x${rv.toString(16)}`)
+      const tpl = buildTemplate(ctx.M, [{ type: CKA_CLASS, ulongVal: 0 }])
+      try {
+        checkRV(
+          ctx.M._C_GetAttributeValue(ctx.hSession, handle, tpl.ptr, 1),
+          'C_GetAttributeValue(CKA_CLASS) on HKDF_DATA output'
+        )
+        const gotClass = ctx.M.getValue(tpl.ptr, 'i32') >>> 0
+        if (gotClass !== CKO_DATA)
+          throw new Error(`derived object CKA_CLASS=0x${gotClass.toString(16)}, expected CKO_DATA`)
+        return 'C_DeriveKey(CKM_HKDF_DATA) produced a real CKO_DATA object, not CKO_SECRET_KEY'
+      } finally {
+        freeTemplate(ctx.M, tpl, 1)
+        ctx.M._C_DestroyObject(ctx.hSession, handle)
+      }
+    },
+  },
+  {
+    id: 'hkdf-fn-derivekey',
+    category: 'function',
+    name: 'C_DeriveKey',
+    citation: 'Profiles v3.2 §5.6 condition 6.a',
+    run: (ctx) => {
+      const { rv, handle } = deriveHkdfData(
+        ctx,
+        hkdfTlsPInfo('tls quic iv', HKDF_TLS_OUT_LEN),
+        HKDF_TLS_OUT_LEN
+      )
+      if (rv === CKR_FUNCTION_NOT_SUPPORTED)
+        throw new Error('C_DeriveKey → CKR_FUNCTION_NOT_SUPPORTED')
+      if (rv !== 0) throw new Error(`C_DeriveKey → rv=0x${rv.toString(16)}`)
+      ctx.M._C_DestroyObject(ctx.hSession, handle)
+      return 'C_DeriveKey(CKM_HKDF_DATA) → OK'
+    },
+  },
+  {
+    id: 'hkdf-mech-tlsiv',
+    category: 'mechanism',
+    name: 'CKM_HKDF_DATA (pInfo="tls iv")',
+    citation: 'Profiles v3.2 §5.6 condition 7.a.i',
+    run: (ctx) => {
+      const pInfo = hkdfTlsPInfo('tls iv', HKDF_TLS_OUT_LEN)
+      const { rv, handle } = deriveHkdfData(ctx, pInfo, HKDF_TLS_OUT_LEN)
+      if (rv !== 0)
+        throw new Error(
+          `C_DeriveKey(CKM_HKDF_DATA, pInfo=L1,L2,"tls iv",0x00) → rv=0x${rv.toString(16)} — a conformant provider SHALL NOT reject this`
+        )
+      ctx.M._C_DestroyObject(ctx.hSession, handle)
+      return `accepted the mandated literal pInfo (${pInfo.length}B: L1,L2,"tls iv",0x00)`
+    },
+  },
+  {
+    id: 'hkdf-mech-tlsquiciv',
+    category: 'mechanism',
+    name: 'CKM_HKDF_DATA (pInfo="tls quic iv")',
+    citation: 'Profiles v3.2 §5.6 condition 7.a.ii',
+    run: (ctx) => {
+      const pInfo = hkdfTlsPInfo('tls quic iv', HKDF_TLS_OUT_LEN)
+      const { rv, handle } = deriveHkdfData(ctx, pInfo, HKDF_TLS_OUT_LEN)
+      if (rv !== 0)
+        throw new Error(
+          `C_DeriveKey(CKM_HKDF_DATA, pInfo=L1,L2,"tls quic iv",0x00) → rv=0x${rv.toString(16)} — a conformant provider SHALL NOT reject this`
+        )
+      ctx.M._C_DestroyObject(ctx.hSession, handle)
+      return `accepted the mandated literal pInfo (${pInfo.length}B: L1,L2,"tls quic iv",0x00)`
+    },
+  },
+]
+
 // ── Orchestrator ─────────────────────────────────────────────────────────
 
 /**
@@ -940,15 +1153,102 @@ export const runProfileConditionProbes = (
     if (!ctx.authKeys) ctx.authKeys = createProbeAuthKeyPair(M, hSession)
     for (const p of AUTH_PROBES) run(p, 'authentication')
   }
+  if (claims.has('hkdf_tls') && claims.has('baseline')) {
+    for (const p of HKDF_TLS_PROBES) run(p, 'hkdf_tls')
+  }
   const authKeys = ctx.authKeys
   const certHandle = ctx.certHandle
 
-  M._C_DestroyObject(hSession, dataObjectHandle)
-  M._C_DestroyObject(hSession, keyObjectHandle)
-  if (certHandle !== undefined) M._C_DestroyObject(hSession, certHandle)
-  if (authKeys) {
-    M._C_DestroyObject(hSession, authKeys.pubHandle)
-    M._C_DestroyObject(hSession, authKeys.privHandle)
+  // Baseline lifecycle — §5.1 conditions 5.d (C_Initialize) / 5.e
+  // (C_Finalize), real functional probes, deliberately run dead last, not
+  // inside BASELINE_PROBES: they tear down the module every probe above
+  // depends on (session, all objects — including dataObjectHandle/
+  // keyObjectHandle/authKeys/certHandle, so the individual
+  // C_DestroyObject cleanup below is skipped when this ran, its job
+  // already done by C_Finalize). Safe to run unconditionally after: the
+  // caller (Pkcs11ConformanceRunner.tsx) already does its own
+  // finalize→initialize→initToken→openSession cycle immediately after this
+  // function returns regardless of what happened in here, to hand back a
+  // clean session for other tabs — hsm_finalize/hsm_initialize are both
+  // idempotent-safe to call again on top of that.
+  let lifecycleProbed = false
+  if (claims.has('baseline')) {
+    run(
+      {
+        id: 'bl-fn-finalize',
+        category: 'function',
+        name: 'C_Finalize',
+        citation: 'Profiles v3.2 §5.1 condition 5.e',
+        run: () => {
+          checkRV(M._C_Finalize(0), 'C_Finalize')
+          // Prove it had a real effect, not just a vacuous CKR_OK: the
+          // session this whole probe run has been using must now be dead.
+          const rv = M._C_CloseSession(hSession) >>> 0
+          if (rv === 0)
+            throw new Error(
+              'C_CloseSession on the pre-finalize session handle still returned CKR_OK — C_Finalize did not actually tear the module down'
+            )
+          return `C_Finalize → OK; the prior session (rv=0x${rv.toString(16)} on re-close) is genuinely gone`
+        },
+      },
+      'baseline'
+    )
+    run(
+      {
+        id: 'bl-fn-initialize',
+        category: 'function',
+        name: 'C_Initialize',
+        citation: 'Profiles v3.2 §5.1 condition 5.d',
+        run: () => {
+          checkRV(M._C_Initialize(0), 'C_Initialize')
+          // Prove the module is genuinely alive again, not just that the RV
+          // happened to be OK — same requireOutputWritten discipline every
+          // other function probe in this file uses.
+          return requireOutputWritten(M, 'C_GetInfo', (ptr) => M._C_GetInfo(ptr), 80)
+        },
+      },
+      'baseline'
+    )
+    lifecycleProbed = true
+  }
+
+  // Complete Provider — §5.2, defined purely as the union of the other 4
+  // base profiles' conformance clauses (§6.2: "SHALL support all of the
+  // provider conformance clauses contained within Conformance (6)"). OASIS
+  // publishes no independent condition list or Tier A case for it (verified
+  // against the spec PDF directly — no §5.2.1 section exists), so there is
+  // nothing to probe independently: the only meaningful check is that every
+  // OTHER probe this same run actually collected — Baseline/Extended/
+  // Authentication/Certificates/HKDF TLS Token, whichever this engine
+  // claimed — passed. Neither engine claims CKP_COMPLETE_PROVIDER today;
+  // this exists so a future claim is caught rather than silently invisible.
+  if (claims.has('complete')) {
+    const failed = results.filter((r) => r.status === 'fail')
+    results.push({
+      id: 'complete-union-conformance',
+      profile: 'complete',
+      category: 'meta',
+      name: 'Union of Baseline/Extended/Authentication/Certificates conformance',
+      citation: 'Profiles v3.2 §5.2 condition 6 / §6.2',
+      // Not a live-engine probe — nothing ever calls this; the row exists
+      // purely so ProbeResult (which extends ConditionProbe) type-checks.
+      run: () => '',
+      status: failed.length === 0 ? 'pass' : 'fail',
+      detail:
+        failed.length === 0
+          ? `claims Complete Provider, and all ${results.length} other Tier B probe(s) this run collected passed`
+          : `claims Complete Provider, but ${failed.length} underlying probe(s) failed: ${failed.map((f) => f.id).join(', ')}`,
+    })
+  }
+
+  if (!lifecycleProbed) {
+    M._C_DestroyObject(hSession, dataObjectHandle)
+    M._C_DestroyObject(hSession, keyObjectHandle)
+    if (certHandle !== undefined) M._C_DestroyObject(hSession, certHandle)
+    if (authKeys) {
+      M._C_DestroyObject(hSession, authKeys.pubHandle)
+      M._C_DestroyObject(hSession, authKeys.privHandle)
+    }
   }
   return results
 }

@@ -2,8 +2,10 @@
 import { test, expect, type Page, type Locator } from '@playwright/test'
 
 /**
- * KMIP/CACP Developer tab — /playground/cacp?plane=developer
- * (dev-tabs-pkcs11-kmip plan G6, WS-J).
+ * KMIP3.0's Dev sub-tab (pipeline builder half) — /playground/cacp?plane=kmip3,
+ * click "Dev" (dev-tabs-pkcs11-kmip plan G6, WS-J; folded from its own
+ * top-level "Developer" plane into KMIP3.0's tab bar, next to Commands,
+ * 2026-08-31 — see gotoKmipDevTab below).
  *
  * Local-only per the 2026-07-01 directive. Sibling to
  * dev-tab-pkcs11.local.spec.ts — same core flows, KMIP-lane selectors.
@@ -27,23 +29,34 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('deep-links straight to the Developer plane and loads the default template', async ({
+/**
+ * The Developer tab is no longer its own top-level plane (2026-08-31 merge —
+ * folded into the KMIP3.0 tab's "Dev" sub-tab, alongside Corpus Replay,
+ * mirroring the PKCS#11 side's Developer tab). ?plane=developer is a dead
+ * URL now (falls back to the Agility plane, same as any invalid `plane`
+ * value) — every test that used to deep-link straight there now lands on
+ * the KMIP3.0 plane and clicks into Dev instead.
+ */
+async function gotoKmipDevTab(page: Page) {
+  await page.goto('/playground/cacp?plane=kmip3')
+  await page.getByRole('tab', { name: 'Dev' }).click()
+}
+
+test('deep-links to the KMIP3.0 plane, opens Dev, and loads the default template', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
 
-  await expect(page.getByRole('tab', { name: /Developer/i })).toHaveAttribute(
-    'aria-selected',
-    'true',
-    { timeout: 30000 }
-  )
+  await expect(page.getByRole('tab', { name: 'Dev' })).toHaveAttribute('aria-selected', 'true', {
+    timeout: 30000,
+  })
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible()
 })
 
 test('runs the Governed-lifecycle template and every step passes, including the deniable one', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -64,7 +77,7 @@ test('runs the Governed-lifecycle template and every step passes, including the 
 })
 
 test('the ML-KEM round trip template runs and completes', async ({ page }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -78,7 +91,7 @@ test('the ML-KEM round trip template runs and completes', async ({ page }) => {
 test('the Policy dry-run compare template shows two different real policy decisions', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -90,7 +103,7 @@ test('the Policy dry-run compare template shows two different real policy decisi
 })
 
 test('save → reload the page → load the saved pipeline → run green', async ({ page }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -100,9 +113,11 @@ test('save → reload the page → load the saved pipeline → run green', async
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText(`Saved "${uniqueName}"`)).toBeVisible()
 
+  // Reload preserves ?plane=kmip3 (URL-synced), but Kmip3View's own inner
+  // sub-tab isn't — it remounts fresh on 'learn', same as any first visit.
   await page.reload()
-  await expect(page.getByRole('tab', { name: /Developer/i })).toBeVisible({ timeout: 30000 })
-  await page.getByRole('tab', { name: /Developer/i }).click()
+  await expect(page.getByRole('tab', { name: 'Dev' })).toBeVisible({ timeout: 30000 })
+  await page.getByRole('tab', { name: 'Dev' }).click()
   await page.getByRole('button', { name: uniqueName, exact: true }).click()
   await expect(page.getByLabel('Pipeline name')).toHaveValue(uniqueName)
 
@@ -113,7 +128,7 @@ test('save → reload the page → load the saved pipeline → run green', async
 test('Export .py downloads a file carrying the provenance header and pqctoday_kmip import', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -129,31 +144,39 @@ test('Export .py downloads a file carrying the provenance header and pqctoday_km
   expect(content).toContain('from pqctoday_kmip import KmipClient')
 })
 
-test('the guided lesson drives the real Developer tab end to end, including a live run and the expect-deny card', async ({
+test('the guided lesson drives the real Dev sub-tab end to end, including a live run and the expect-deny card', async ({
   page,
 }) => {
   await page.goto('/playground/cacp')
   await page.getByRole('button', { name: /Lessons/i }).click()
   await page.getByRole('button', { name: /Build a governed KMIP sequence/ }).click()
 
-  // Step 1 (tourStep 0): act() clicked the real "Governed lifecycle"
-  // template button — lands on the Developer plane with it applied.
+  // Step 1 (tourStep 0): act() clicked the "Dev" sub-tab button — lands on
+  // the KMIP3.0 plane with it open (Pipeline is Dev's own default sub-tab,
+  // so the template picker is already visible once this step's act runs).
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
+  // Not getByText: the step's own body text ("...the Dev tab's default
+  // sub-tab...") case-insensitively contains the title too.
+  await expect(page.getByRole('heading', { name: 'The Dev tab' })).toBeVisible()
+
+  // Step 2 (tourStep 1): act() clicked the real "Governed lifecycle"
+  // template button.
+  await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Start from a template')).toBeVisible()
 
-  // Step 2: no act, just narration over the real step list.
+  // Step 3: no act, just narration over the real step list.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Four kinds of step')).toBeVisible()
 
-  // Step 3: act() fires the real Run click — wait for the genuine
+  // Step 4: act() fires the real Run click — wait for the genuine
   // completion signal, not the tour's own step-advance timing.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('Run it for real')).toBeVisible()
   await expect(page.getByText(/\d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
-  // Step 4 (last): spotlights the expect-deny card — the CACP teaching moment.
+  // Step 5 (last): spotlights the expect-deny card — the CACP teaching moment.
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText('The refusal IS the lesson')).toBeVisible()
   // Scoped to the step list — the generated Python in the Monaco panel also
@@ -180,7 +203,7 @@ test('Monaco genuinely loads on a fresh session — this tab alone, no prior PKC
   const pageErrors: string[] = []
   page.on('pageerror', (err) => pageErrors.push(err.message))
 
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -201,7 +224,7 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
   // UTF-8 text — checked directly against the engine's Rust source
   // (wasm/src/lib.rs, spec_bytes(spec, "data", "text")) and that was
   // already wrong; `data` (hex) is preferred over `text` and always was.
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -237,7 +260,7 @@ test('hex mode signs a genuinely binary (non-UTF-8) payload live — G9/W3b', as
 })
 
 test('hex mode with invalid hex blocks Run with a clear error', async ({ page }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -307,7 +330,7 @@ async function dragSpecialToAppend(page: Page, label: string, kind: string) {
 test('drag/drop assembles the Governed lifecycle from an empty canvas and runs it green (G9/W2)', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -367,7 +390,7 @@ test('drag/drop assembles the Governed lifecycle from an empty canvas and runs i
 })
 
 test('drag/drop: reorder, delete, and rebind are all live (G9/W2)', async ({ page }) => {
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -407,7 +430,7 @@ test('a while-True loop genuinely dies at the 15s deadline via KeyboardInterrupt
   // watchdog worker — see that spec's twin test for the root-cause note).
   // Proven separately here because the plan's W4 gate names BOTH tabs.
   test.setTimeout(90000)
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -464,7 +487,7 @@ test("the real cross-plane audit trail shows this tab's own run activity", async
   // just that the panel chrome renders. Session activity is a proper
   // Inspector-style tab bar (Keystore/CACP/KMIP/PKCS#11) — each plane's
   // events only render once its own tab is selected.
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -491,7 +514,7 @@ test("the keystore shows this run's real objects with real lifecycle states", as
   // same way audit is. The Governed-lifecycle template's own last step
   // destroys its key — Destroyed is the real, honest end state, not "✓ ran"
   // in disguise.
-  await page.goto('/playground/cacp?plane=developer')
+  await gotoKmipDevTab(page)
   await expect(page.getByRole('button', { name: 'Governed lifecycle' })).toBeVisible({
     timeout: 30000,
   })
@@ -504,4 +527,70 @@ test("the keystore shows this run's real objects with real lifecycle states", as
   await expect(page.getByRole('button', { name: /Keystore \(\d+\)/ })).toBeVisible()
   await expect(page.getByText('ML-DSA-65').first()).toBeVisible()
   await expect(page.getByText('Destroyed').first()).toBeVisible()
+})
+
+/**
+ * Corpus Replay's own Builder/Code split (2026-08-31, alongside its move
+ * into the Dev sub-tab) — mirrors Pipeline's Builder/Code pattern, but
+ * Code mode has its own test picker rather than being driven by Builder's
+ * Run buttons, and shows the decoded REQUEST tree (the real script this
+ * corpus replays), not generated Python. Selecting a test in the picker
+ * runs it if it hasn't been already — runCorpusTest() decodes request and
+ * response together, there is no decode-only path.
+ */
+test('Corpus Replay Code mode: selecting a test runs it and shows the decoded request script', async ({
+  page,
+}) => {
+  await gotoKmipDevTab(page)
+  await page.getByRole('tab', { name: 'Corpus Replay' }).click()
+
+  const corpusTabs = page.locator('[data-tour="corpus-view-tabs"]')
+  await expect(corpusTabs.getByRole('tab', { name: 'Builder' })).toBeVisible({ timeout: 30000 })
+  await corpusTabs.getByRole('tab', { name: 'Code' }).click()
+
+  await expect(
+    page.getByText('Pick a test on the left to see the decoded KMIP request')
+  ).toBeVisible()
+
+  // Any test in the picker — its exact name isn't load-bearing here, just
+  // that clicking it runs the real replay and decodes a real request tree.
+  await page.locator('button.font-mono').first().click()
+
+  // The decoded tree renders the real RequestMessage envelope — same
+  // wire-format nodes WireTreeView already proves for responses elsewhere.
+  // .first(): a test with more than one request/response pair (a chained
+  // group, or a batch) renders one RequestMessage node per pair.
+  await expect(page.getByText('RequestMessage').first()).toBeVisible({ timeout: 20000 })
+  await expect(page.getByText('RequestHeader').first()).toBeVisible()
+  await expect(page.getByText(/PASS|FAIL|SKIP/).first()).toBeVisible()
+})
+
+test('Corpus Replay Code mode: a run triggered from the picker is reflected back in Builder', async ({
+  page,
+}) => {
+  await gotoKmipDevTab(page)
+  await page.getByRole('tab', { name: 'Corpus Replay' }).click()
+
+  const corpusTabs = page.locator('[data-tour="corpus-view-tabs"]')
+  await corpusTabs.getByRole('tab', { name: 'Code' }).click()
+
+  const firstTestButton = page.locator('button.font-mono').first()
+  const testName = (await firstTestButton.textContent())?.trim()
+  await firstTestButton.click()
+  await expect(page.getByText('RequestMessage').first()).toBeVisible({ timeout: 20000 })
+
+  await corpusTabs.getByRole('tab', { name: 'Builder' }).click()
+  // Same shared `results` state Pipeline's own Builder/Code split relies
+  // on — the aggregate counter and the per-test badge both reflect the
+  // run that actually happened in Code mode, not a second, separate one.
+  await expect(page.getByText(/^1\/1 pass$/)).toBeVisible()
+  if (testName) {
+    await expect(
+      page
+        .locator('li')
+        .filter({ hasText: testName })
+        .getByText(/PASS|FAIL|SKIP/)
+        .first()
+    ).toBeVisible()
+  }
 })

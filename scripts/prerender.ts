@@ -92,6 +92,29 @@ function createStaticServer(distDir: string): Server {
   })
 }
 
+/**
+ * Modulepreload links present in the pristine Vite shell — the app's REAL
+ * static import graph. Populated once at startup in prerender().
+ *
+ * Why: Vite's runtime preload helper injects a <link rel="modulepreload">
+ * into <head> for every DYNAMICALLY imported chunk (and its deps) the page
+ * loads while it runs. page.content() serializes those injected links into
+ * the snapshot, silently promoting every lazy chunk the route touched during
+ * prerender — data CSVs included — back into every visitor's boot-blocking
+ * preload set. That is exactly the "eager JS" the precache budget gate
+ * measures, and it's how the gate kept failing after imports were made lazy
+ * in source. Runtime-loaded chunks don't need baked preload hints: the
+ * import() that loaded them during prerender loads them at runtime too.
+ */
+let SHELL_PRELOADS: Set<string> = new Set()
+
+function stripRuntimeInjectedPreloads(html: string): string {
+  return html.replace(/<link[^>]*rel="modulepreload"[^>]*>/g, (tag) => {
+    const href = /href="([^"]+)"/.exec(tag)?.[1]
+    return href !== undefined && SHELL_PRELOADS.has(href) ? tag : ''
+  })
+}
+
 function outputPathFor(route: string): string {
   const dir = route === '/' ? DIST_DIR : join(DIST_DIR, ...route.split('/').filter(Boolean))
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
@@ -147,7 +170,7 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
       }
     })
 
-    writeFileSync(outputPathFor(route), await page.content(), 'utf-8')
+    writeFileSync(outputPathFor(route), stripRuntimeInjectedPreloads(await page.content()), 'utf-8')
   } finally {
     await page.close()
   }
@@ -155,6 +178,14 @@ async function renderRoute(browser: Browser, baseUrl: string, route: string): Pr
 
 async function prerender(): Promise<void> {
   console.log(`\n🔍 Prerendering ${ROUTES.length} routes (concurrency ${CONCURRENCY})...\n`)
+
+  const shellHtml = readFileSync(join(DIST_DIR, 'index.html'), 'utf-8')
+  SHELL_PRELOADS = new Set(
+    [...shellHtml.matchAll(/<link[^>]*rel="modulepreload"[^>]*href="([^"]+)"/g)].map((m) => m[1])
+  )
+  console.log(
+    `  Shell static preloads: ${SHELL_PRELOADS.size} (runtime-injected ones will be stripped)`
+  )
 
   const server = createStaticServer(DIST_DIR)
   const port = 41730 + Math.floor(process.pid % 1000)

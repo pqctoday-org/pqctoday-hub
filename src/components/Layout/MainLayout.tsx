@@ -20,7 +20,16 @@ import {
 import { Button } from '../ui/button'
 import { buttonVariants } from '../ui/button-variants'
 import { cn } from '../../lib/utils'
-import { WhatsNewModal } from '../ui/WhatsNewModal'
+// Lazy — same reasoning as the mobile shell / RightPanel below, but for data
+// weight rather than component weight: WhatsNewModal pulls in
+// utils/dataFingerprint, which statically imports NINE full datasets
+// (library, migrate, threats, leaders, timeline, compliance, algorithms,
+// authoritative sources, certification xrefs, quiz). A static import here
+// rode all of that into every visitor's eager bundle — found via the
+// precache budget when library growth pushed eager JS past its 15 MB gate.
+const WhatsNewModal = React.lazy(() =>
+  import('../ui/WhatsNewModal').then((m) => ({ default: m.WhatsNewModal }))
+)
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
@@ -1506,7 +1515,9 @@ export const MainLayout = () => {
           <AirplaneModeToast />
 
           {/* What's New Modal — persona-aware, data-driven */}
-          <WhatsNewModal />
+          <React.Suspense fallback={null}>
+            <WhatsNewModal />
+          </React.Suspense>
 
           {/* First-visit disclaimer — must acknowledge before using the app */}
           <DisclaimerModal />

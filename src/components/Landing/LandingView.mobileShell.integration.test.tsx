@@ -31,6 +31,19 @@ vi.mock('../../hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
+// WhatsNewModal is React.lazy in MainLayout (precache-budget: its
+// dataFingerprint dependency statically imports nine full datasets). This
+// suite mounts the real MainLayout and relies on OTHER lazy chunks
+// (MobileBottomBar) resolving within findBy*'s default window; evaluating
+// WhatsNewModal's chunk concurrently — megabytes of synchronous CSV parsing
+// — starves that window on a loaded CI runner. Irrelevant to what this file
+// tests, so it's mocked out — same fix as MainLayout.mobileShell.test.tsx
+// and LandingView.integration.test.tsx.
+vi.mock('../ui/WhatsNewModal', () => ({
+  WhatsNewModal: () => null,
+  getUnseenChangelogSections: () => [],
+}))
+
 function renderApp(initialEntry = '/') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>

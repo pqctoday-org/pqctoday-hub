@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'hybrid-crypto',
-  contentVersion: 4,
+  contentVersion: 5,
   lm_id: 'LM-006',
   title: 'Hybrid Cryptography',
   description:
@@ -19,6 +19,7 @@ const manifest: ModuleManifest = {
     { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
     { id: 'cert-formats', label: 'Hybrid Cert Formats' },
     { id: 'kem', label: 'Hybrid KEM Construction' },
+    { id: 'hpke', label: 'HPKE' },
     { id: 'composite', label: 'Hybrid Signature Spectrum' },
   ],
   workshopSteps: [
@@ -27,9 +28,18 @@ const manifest: ModuleManifest = {
     { id: 'ca-setup', label: 'CA Setup' },
     { id: 'hybrid-formats', label: 'Hybrid Formats' },
     { id: 'inspect-compare', label: 'Inspect & Compare' },
+    { id: 'hpke', label: 'HPKE' },
   ],
   playgroundTool: 'hybrid-certs',
-  taxonomy: { algorithms: ['ML-KEM', 'X25519', 'ECDH'], standards: ['RFC 9180'] },
+  taxonomy: {
+    algorithms: ['ML-KEM', 'X25519', 'ECDH'],
+    standards: [
+      'RFC 9180',
+      'draft-ietf-hpke-pq',
+      'draft-ietf-cose-hpke',
+      'draft-ietf-jose-hpke-encrypt',
+    ],
+  },
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.HybridCryptoModule })),
 }

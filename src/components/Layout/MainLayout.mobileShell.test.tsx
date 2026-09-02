@@ -14,6 +14,21 @@ vi.mock('../../hooks/useIsMobileShell', () => ({
   useIsMobileShell: mockUseIsMobileShell,
 }))
 
+// WhatsNewModal is React.lazy in MainLayout (precache-budget: its
+// dataFingerprint dependency statically imports nine full datasets). In this
+// worker, evaluating that chunk mid-test parses megabytes of CSV on the same
+// thread findBy* polls on, starving the mobile shell's own lazy chunks past
+// their 1s findByRole window. The modal is irrelevant to what this file
+// tests (mobile chrome isolation), so mock it out — same spirit as the
+// useIsMobileShell mock above.
+// The module has a second export: MobileHeader (via mobileWhatsNew.ts) calls
+// getUnseenChangelogSections for its unread badge, so the stub must provide
+// it or the mobile header itself crashes on render.
+vi.mock('../ui/WhatsNewModal', () => ({
+  WhatsNewModal: () => null,
+  getUnseenChangelogSections: () => [],
+}))
+
 function renderLayout(initialEntry = '/') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>

@@ -113,6 +113,30 @@ export interface EngineCertificateAttributes {
   error?: string
 }
 
+/** Real engine-side PKCS#11 attributes for a Private/Public/Secret key
+ * object, read back by its KMIP uid — `ckClass`/`ckKeyType` are raw CK_*
+ * codepoints (the caller decodes names); `sizeAttr` names which attribute
+ * `sizeValue` came from (`CKA_VALUE_LEN` for symmetric, `CKA_MODULUS_BITS`
+ * for RSA, `CKA_PARAMETER_SET` for a PQC param-set codepoint), since a key's
+ * "size" lives under a different attribute per family. `ckSensitive` /
+ * `ckExtractable` are the honest PKCS#11 answer for whether `CKA_VALUE`
+ * itself is reachable — never fabricated when it isn't. */
+export interface EngineKeyAttributes {
+  ckaId?: string
+  ckClass?: number
+  ckKeyType?: number
+  ckLabel?: string | null
+  ckUniqueId?: string | null
+  ckLocal?: boolean
+  ckSensitive?: boolean
+  ckExtractable?: boolean
+  ckAlwaysSensitive?: boolean
+  ckNeverExtractable?: boolean
+  sizeAttr?: string | null
+  sizeValue?: number | null
+  error?: string
+}
+
 export interface KmipObject {
   uid: string
   objectType: string
@@ -381,6 +405,7 @@ interface WasmKmipPlayground {
   raw_pkcs11_encrypt_probe(public_key_uid: string): string
   register_certificate_demo(linked_public_key_uid: string, cert_der_hex: string): string
   engine_certificate_attributes(certificate_uid: string): string
+  engine_key_attributes(uid: string): string
 }
 
 /** `KmipEngine.setupDemoCa`'s result. Mirrors the wasm binding's
@@ -633,6 +658,13 @@ export class KmipEngine {
     return JSON.parse(
       this.pg.engine_certificate_attributes(certificateUid)
     ) as EngineCertificateAttributes
+  }
+
+  /** Read back a Private/Public/Secret key's real engine-side PKCS#11
+   * attributes by its KMIP uid — the key-object counterpart of
+   * `engineCertificateAttributes`. */
+  engineKeyAttributes(uid: string): EngineKeyAttributes {
+    return JSON.parse(this.pg.engine_key_attributes(uid)) as EngineKeyAttributes
   }
 
   /** Decode any KMIP TTLV frame (request or response) to a wire-view tree. */

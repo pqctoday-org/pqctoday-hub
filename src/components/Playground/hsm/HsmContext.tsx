@@ -42,6 +42,7 @@ export type HsmFamily =
   | 'chacha20'
   | 'hmac'
   | 'sha'
+  | 'hpke'
 
 export type EngineMode = 'software' | 'cpp' | 'rust' | 'dual'
 
