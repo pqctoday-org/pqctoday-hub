@@ -35,7 +35,6 @@ import {
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
-import { FilterDropdown } from '../../../common/FilterDropdown'
 import { installMonacoSelfHost } from '../monacoSelfHost'
 import type { KmipEngine, AuditEvent, KmipObject } from '../../../../wasm/kmip/kmipEngine'
 import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
@@ -781,20 +780,23 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
               <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
                 Palette
               </div>
-              <div data-tour="kmip-dev-palette-source">
-                <FilterDropdown
-                  items={[
-                    { id: 'standard', label: 'Standard' },
-                    { id: 'corpus', label: 'Corpus (OASIS conformance)' },
-                  ]}
-                  selectedId={paletteSource}
-                  onSelect={(id) => setPaletteSource(id as 'standard' | 'corpus')}
-                  ariaLabel="Palette source"
-                  hideDefaultOption
-                  noContainer
+              <Tabs
+                value={paletteSource}
+                onValueChange={(v) => setPaletteSource(v as 'standard' | 'corpus')}
+              >
+                <TabsList
+                  aria-label="Palette source"
+                  data-tour="kmip-dev-palette-source"
                   className="w-full"
-                />
-              </div>
+                >
+                  <TabsTrigger value="standard" className="flex-1">
+                    Standard
+                  </TabsTrigger>
+                  <TabsTrigger value="corpus" className="flex-1">
+                    Corpus (OASIS conformance)
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
               {paletteSource === 'standard' && (
                 <div className="text-xs text-muted-foreground mt-1">Drag onto the canvas →</div>
               )}

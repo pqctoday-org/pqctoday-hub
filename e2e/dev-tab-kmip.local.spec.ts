@@ -546,13 +546,16 @@ test("the keystore shows this run's real objects with real lifecycle states", as
   await expect(page.getByText('Destroyed').first()).toBeVisible()
 })
 
-/** Opens the pipeline builder's palette switcher and picks Corpus — the
+/** Switches the pipeline builder's palette-source toggle to Corpus — the
  * OASIS conformance corpus folded in as an alternate palette source
- * (2026-09-01, kmip3-corpus-palette-plan-09012026.md), not a separate
- * sibling tab any more. */
+ * (2026-09-01, kmip3-corpus-palette-plan-09012026.md; a 2-way toggle since
+ * the 2026-09-02 redesign, not a dropdown any more), not a separate
+ * sibling tab. */
 async function switchToCorpusPalette(page: Page) {
-  await page.locator('[data-tour="kmip-dev-palette-source"] button').click()
-  await page.getByRole('option', { name: /Corpus/ }).click()
+  await page
+    .locator('[data-tour="kmip-dev-palette-source"]')
+    .getByRole('tab', { name: /Corpus/ })
+    .click()
 }
 
 /**

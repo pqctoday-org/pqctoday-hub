@@ -65,8 +65,12 @@ test('KMIP3.0 Command Lab + Policy plane render cleanly on the refreshed bundle'
   // builder (2026-09-01 restructure — see
   // kmip3-corpus-palette-plan-09012026.md), not its own sub-tab any more.
   await tabs.getByRole('tab', { name: 'Dev', exact: true }).click()
-  await page.locator('[data-tour="kmip-dev-palette-source"] button').click()
-  await page.getByRole('option', { name: /Corpus/ }).click()
+  // 2026-09-02: the palette source is a 2-way toggle (Standard/Corpus), not
+  // a dropdown any more — one click on its own tab, not open-then-select.
+  await page
+    .locator('[data-tour="kmip-dev-palette-source"]')
+    .getByRole('tab', { name: /Corpus/ })
+    .click()
   await page.waitForTimeout(500)
 
   const seriousErrors = consoleErrors.filter(

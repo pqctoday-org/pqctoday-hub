@@ -954,19 +954,9 @@ export function KmipPlaygroundView() {
         {
           title: 'Switch the palette to the OASIS corpus',
           target: '[data-tour="kmip-dev-palette-source"] button',
-          act: () => {
-            document
-              .querySelector<HTMLElement>('[data-tour="kmip-dev-palette-source"] button')
-              ?.click()
-          },
-          body: 'This palette normally holds lifecycle primitives to drag onto the canvas — switch it here to replace them with the 144 real OASIS/PQC conformance tests.',
-        },
-        {
-          title: 'Prove it against the OASIS suite',
-          target: '[role="option"]',
           targetText: 'Corpus',
-          act: () => clickByText('[role="option"]', 'Corpus'),
-          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
+          act: () => clickByText('[data-tour="kmip-dev-palette-source"] button', 'Corpus (OASIS'),
+          body: "This palette normally holds lifecycle primitives to drag onto the canvas — this toggle swaps it for the 144 real OASIS/PQC conformance tests. Replay the official conformance corpus right in this tab: the engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
         },
         {
           title: 'Rollback that reaches everything',
@@ -992,21 +982,11 @@ export function KmipPlaygroundView() {
           body: "The pipeline builder opens straight away. Its palette remembers whichever source you left it on — the next two steps make sure it's Standard before continuing.",
         },
         {
-          title: 'Palette: open the switch',
-          target: '[data-tour="kmip-dev-palette-source"] button',
-          act: () => {
-            document
-              .querySelector<HTMLElement>('[data-tour="kmip-dev-palette-source"] button')
-              ?.click()
-          },
-          body: 'Opening the palette switch.',
-        },
-        {
           title: 'Palette: back to Standard',
-          target: '[role="option"]',
+          target: '[data-tour="kmip-dev-palette-source"] button',
           targetText: 'Standard',
-          act: () => clickByText('[role="option"]', 'Standard'),
-          body: 'Selecting Standard — safe to click even if it was already selected.',
+          act: () => clickByText('[data-tour="kmip-dev-palette-source"] button', 'Standard'),
+          body: 'Making sure the palette toggle is on Standard — safe to click even if it already was.',
         },
         {
           title: 'Start from a template',
