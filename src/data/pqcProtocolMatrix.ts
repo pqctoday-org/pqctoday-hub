@@ -1277,7 +1277,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'ietf-last-call',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. draft-ietf-lamps-cms-composite-kem-01 entered Last Call 2026-08-04 (ends 2026-08-18).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-18 (SECDIR review 2026-08-18 'Ready'); IESG state is 'Waiting for AD Go-Ahead', no ballot open, no telechat scheduled. Stage correctly stays at ietf-last-call — the last completed milestone — since IESG evaluation has not actually started yet (contrast the TLS 1.3/X.509/EST-CMP rows' composite-kem refs, which ARE on an active 2026-09-03 telechat and correctly read iesg-submitted). Corrects this note's prior premise, which wrongly described iesg-submitted as a pre-Last-Call state; iesg-submitted is step 5, AFTER ietf-last-call, per this file's own DraftStage definition.",
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
