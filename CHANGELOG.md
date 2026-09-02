@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.74.0] - 2026-09-01
+
+### Added
+
+- **The PKCS#11 pipeline builder now runs 3 more real NIST ACVP known-answer tests as editable, runnable pipeline steps** [view:/playground] [persona:developer] [persona:researcher]: an ML-DSA-44 signature-verification test and SHA-256/SHA3-256 digest tests join the existing ML-KEM one, each built from real NIST ACVP-Server sample vectors and run against the actual engine — not a flat pass/fail table.
+- **The KMIP 3.0 Corpus Replay tab folded into the pipeline builder's own palette** [view:/playground] [persona:developer]: switch the palette between the standard operation primitives and the OASIS KMIP 3.0 conformance corpus (144 tests), all in the same Builder/Code shell — pick a corpus test to run it and see its response, or its decoded request in Code mode. The corpus still replays real TTLV wire bytes, byte-exact against the native CI baseline; only where it's shown moved.
+
+### Changed
+
+- **The PKCS#11 Developer tab's "Pipeline" sub-tab is now called "Standard"**, the first step in unifying it with the ACVP and Conformance tools into one Test Suite switcher [view:/playground] [persona:developer].
+
 ## [4.73.0] - 2026-09-01
 
 ### Added
@@ -38,7 +49,6 @@ first time (don't ship dev-speak and reformat later):
 - **PKCS#11 v3.2 Mechanism Coverage grew to include hybrid-KEM building blocks, classical asymmetric variants, symmetric/AEAD mechanisms, and PQC deterministic-seed keygen (CKA_SEED)** [view:/playground] [persona:developer] [persona:researcher].
 - **The Navigate graph's category, sub-category, and node labels are now clickable**, with a camera move to match [view:/navigate] [persona:curious] [persona:executive].
 - **The KMIP Developer plane now lives inside KMIP 3.0's own Dev sub-tab, and Corpus Replay gained a Builder/Code split** [view:/playground] [persona:developer]: the HSM playground's ACVP and Conformance tools similarly merged into one Developer tab, closing several PKCS#11 v3.2 Profiles conformance gaps.
-- **The Corpus Replay tab folded into the pipeline builder's own palette** [view:/playground] [persona:developer]: switch the palette between the standard operation primitives and the OASIS KMIP 3.0 conformance corpus, all in the same Builder/Code shell — pick a corpus test to run it and see its response, or its decoded request in Code mode. The corpus still replays real TTLV wire bytes, byte-exact against the native CI baseline; only where it's shown moved.
 
 ### Fixed
 
