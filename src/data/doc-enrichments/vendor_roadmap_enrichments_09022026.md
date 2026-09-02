@@ -2799,3 +2799,95 @@ source: public/vendor-roadmaps/
 - **Source Document**: VND-433_OpenBao_LF_Edge_.html (338.4 KB)
 - **Extraction Timestamp**: 2026-07-07T20:41:12
 
+
+## VND-054 — QuSecure Inc.
+
+- **Vendor ID**: VND-054
+- **Vendor Name**: QuSecure Inc.
+- **Roadmap Title**: QuSecure and NIST NCCoE Partner on Post-Quantum Algorithm Migration
+- **Roadmap URL**: https://www.hpcwire.com/off-the-wire/qusecure-and-nists-nccoe-partner-to-address-post-quantum-algorithm-migration/
+- **Publish Date**: 2026-03-31
+- **Local File**: vendor-roadmaps/VND-054_QuSecure_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: QuProtect R3
+- **Compliance Frameworks**: NIST
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "QuSecure will collaborate with Automated Cryptography Discovery and Inventory and post-quantum cryptography vendors to understand tool performance across enterprise environments and use cases."
+- **Coverage Verification**: CONSISTENT. The document is a press release about a partnership and general strategy, not a technical roadmap with specific algorithm coverage details.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-054_QuSecure_Inc.html (289.6 KB)
+- **Extraction Timestamp**: 2026-09-02T11:56:32
+
+
+## VND-031 — Palo Alto Networks Inc.
+
+- **Vendor ID**: VND-031
+- **Vendor Name**: Palo Alto Networks Inc.
+- **Roadmap Title**: Palo Alto Networks Post-Quantum Migration Planning
+- **Roadmap URL**: https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/post-quantum-migration-planning-and-preparation
+- **Publish Date**: Unknown
+- **Local File**: vendor-roadmaps/VND-031_Palo_Alto_Networks_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: PAN-OS 11.1 or later; Quantum-Safe Security app
+- **Compliance Frameworks**: NIST; NSA; RFC 6379; RFC 8784; RFC 9242; RFC 9370
+- **Hybrid Mode Support**: Yes; The document states "the industry is adopting hybrid keys" and recommends using "a strong classic KEM... and one or more PQCs" to provide an extra layer of security.
+- **Current GA Status**: Planned
+- **Customer Action Required**: Assign resources and build awareness; define responsibilities; develop a cryptographic inventory and priority list; evaluate solutions, experiment, and test; continue to monitor progress; harden existing VPN connections (e.g., Suite-B-GCM-256, 4K RSA, SHA-384/512); implement RFC 8784/9242/9370.
+- **Key Commitments & Quotes**: "Post-quantum IKEv2 VPNs ( RFC 8784 ) are the first step to creating a secure post-quantum network, which you can do now without impacting your network."
+- **Coverage Verification**: CONSISTENT; The document is a general planning guide and does not specify the detailed algorithmic or version-specific coverage implied by the "Not specified" CSV note.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-031_Palo_Alto_Networks_Inc.html (303.5 KB)
+- **Extraction Timestamp**: 2026-09-02T11:57:09
+
+
+## VND-311 — IronCore Labs, Inc.
+
+- **Vendor ID**: VND-311
+- **Vendor Name**: IronCore Labs, Inc.
+- **Roadmap Title**: IronCore Labs — Crypto-Agility / Post-Quantum Cryptography
+- **Roadmap URL**: https://ironcorelabs.com/crypto-agility-post-quantum/
+- **Publish Date**: 2026-07-31
+- **Local File**: vendor-roadmaps/VND-311_IronCore_Labs_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: SaaS Shield
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Partial; mentions "hybrid schemes that come with their own tradeoffs" as a general industry practice, not a specific product feature.
+- **Current GA Status**: No PQC
+- **Customer Action Required**: Start migrating to crypto-agility now; Schedule a Consultation
+- **Key Commitments & Quotes**: "We abstract away your reliance on specific key management servers, algorithms, key sizes, etc., and we allow these to rotate at any time with simple configuration changes."
+- **Coverage Verification**: CONSISTENT; The document is a general educational overview and product pitch rather than a technical roadmap, so the lack of specific coverage details in the notes is consistent with the text.
+- **Extraction Quality**: LOW
+- **Source Document**: VND-311_IronCore_Labs_Inc.html (86.1 KB)
+- **Extraction Timestamp**: 2026-09-02T11:58:01
+
+
+## VND-315 — PQSecure Technologies, Inc.
+
+- **Vendor ID**: VND-315
+- **Vendor Name**: PQSecure Technologies, Inc.
+- **Roadmap Title**: PQSecure Technologies — PQSecure Software Products
+- **Roadmap URL**: https://pqsecurity.com/pqsecure-software/
+- **Publish Date**: 2026-07-31
+- **Local File**: vendor-roadmaps/VND-315_PQSecure_Technologies_Inc.html
+- **CSV Coverage Notes**: None
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA; FN-DSA; XMSS; LMS
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: PQSecure-SW; libpqsecure-C; libpqsecure-rs; libpqsecure-asm; PQSecure-TRUST
+- **Compliance Frameworks**: FIPS 180; FIPS 203; FIPS 204; FIPS 205; FIPS 206; FIPS 202; RFC 8391; RFC 8554; NIST SP 800-208; RFC 6234; CNSA 2.0; ACVP
+- **Hybrid Mode Support**: Partial, with brief description: The document mentions "classical primitives required for hybrid deployments" and lists SHA-2, HMAC, and HKDF, but does not explicitly detail hybrid key exchange or signature schemes.
+- **Current GA Status**: GA
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "PQSecure-SW™ delivers production-grade, side-channel-aware, formally verified post-quantum cryptography software"; "libpqsecure consistently demonstrates measurable performance advantages"; "Designed for FIPS-oriented validation pathways"
+- **Coverage Verification**: CONSISTENT, as the document provides detailed product and algorithm information despite the CSV notes being unspecified.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-315_PQSecure_Technologies_Inc.html (74.4 KB)
+- **Extraction Timestamp**: 2026-09-02T11:58:31
+
