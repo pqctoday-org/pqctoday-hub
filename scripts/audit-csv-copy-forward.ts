@@ -244,7 +244,28 @@ const INDUSTRY_LABEL_DRIFTED_TWIN_RENAME =
   'WS-1, 2026-08-27): same row, same payload, under the new spelling. Both ' +
   'generations hold 19 industries.'
 
+/** migrate_vendor_roadmap_: keyed by vendor_id + vendor_name + roadmap_url +
+ *  roadmap_title, so correcting a wrong URL reads as a deletion of the old
+ *  key. 6e34f286f (2026-09-02) reverted VND-054's roadmap_url/title from a
+ *  weaker HPCwire press release back to the vendor's own migration guide
+ *  (qu-secure.net) — the 2026-07-28 review-proposals pass (666a15020) had
+ *  repointed it there and never wrote back replacement coverage_notes. The
+ *  vendor row itself was not removed: VND-054 is present, active, and
+ *  richer in the newest generation, under its restored URL/title. */
+const VND054_URL_REVERTED_NOT_REMOVED =
+  "roadmap_url/title reverted to the vendor's own migration guide, not removed " +
+  '(6e34f286f, 2026-09-02): the 2026-07-28 review-proposals pass (666a15020) had ' +
+  'repointed this row to a weaker HPCwire press release and never wrote back ' +
+  'replacement coverage_notes. VND-054 is present, active, and richer in the ' +
+  'newest generation under the restored URL/title.'
+
 export const RECORDED_REMOVALS: RecordedRemoval[] = [
+  {
+    family: 'migrate_vendor_roadmap_',
+    key: 'VND-054 | QuSecure Inc. | https://www.hpcwire.com/off-the-wire/qusecure-and-nists-nccoe-partner-to-address-post-quantum-algorithm-migration/ | QuSecure and NIST NCCoE Partner on Post-Quantum Algorithm Migration',
+    reason: VND054_URL_REVERTED_NOT_REMOVED,
+    recorded: '2026-09-02',
+  },
   {
     family: 'industry_market_size_',
     key: 'Financial Services / Banking',
