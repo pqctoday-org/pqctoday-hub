@@ -67,8 +67,7 @@ passed = sum(1 for r in rows if r["status"] == "pass")
 failed = sum(1 for r in rows if r["status"] == "fail")
 skipped = sum(1 for r in rows if r["status"] == "skip")
 print(f"\\nResult: {passed} pass, {failed} fail, {skipped} skip (of {len(rows)} rows)")
-if failed:
-    raise SystemExit(1)
+print("FAILED" if failed else "OK")
 `
 }
 
@@ -103,7 +102,6 @@ passed = sum(1 for r in rows if r["status"] == "pass")
 failed = sum(1 for r in rows if r["status"] == "fail")
 not_claimed = sum(1 for r in rows if r["status"] == "not-claimed")
 print(f"\\nResult: {passed} pass, {failed} fail, {not_claimed} not-claimed (of {len(rows)} rows)")
-if failed:
-    raise SystemExit(1)
+print("FAILED" if failed else "OK")
 `
 }

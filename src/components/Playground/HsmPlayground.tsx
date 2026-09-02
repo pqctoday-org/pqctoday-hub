@@ -334,18 +334,24 @@ export const HsmPlayground = () => {
     }
     if (loc.tab === DEFAULT_TAB) {
       // Default tab — nothing extra to do.
-    } else if (loc.tab !== 'operate' || loc.noAutoInit) {
-      // Build / Inspect, and the legacy manual-walkthrough alias: switch
-      // without eagerly auto-initing the engine in the background.
+    } else if (loc.noAutoInit) {
+      // The legacy manual-walkthrough alias (?tab=keystore): switch without
+      // eagerly auto-initing the engine in the background — the token-setup
+      // strip is the walkthrough.
       setActiveTab(loc.tab)
     } else if (phase === 'idle') {
+      // Every other deep link (Operate rails, Build suites, Inspect views)
+      // boots the engine first, exactly as the 12-tab layout did — the
+      // conformance/ACVP e2e specs deep-link straight to a suite and press
+      // Run, and Inspect › Mechanisms is empty without a session.
       autoInit(engine ?? undefined).then((ok) => {
         if (!ok) return
-        setActiveTab('operate')
-        generateDefaultKeyForRail(loc.rail ?? DEFAULT_RAIL, algo, engine ?? undefined)
+        setActiveTab(loc.tab)
+        if (loc.tab === 'operate')
+          generateDefaultKeyForRail(loc.rail ?? DEFAULT_RAIL, algo, engine ?? undefined)
       })
     } else if (isReady) {
-      setActiveTab('operate')
+      setActiveTab(loc.tab)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

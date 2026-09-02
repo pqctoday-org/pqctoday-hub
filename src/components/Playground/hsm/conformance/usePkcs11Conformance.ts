@@ -152,7 +152,8 @@ const summarizeTestCase = (id: string, result: TestCaseExecutionResult): string 
 }
 
 export function usePkcs11Conformance() {
-  const { moduleRef, crossCheckModuleRef, engineMode, hSessionRef, slotRef } = useHsmContext()
+  const { moduleRef, crossCheckModuleRef, engineMode, hSessionRef, slotRef, phase, autoInit } =
+    useHsmContext()
   const [rows, setRows] = useState<RunnerRow[]>([])
   const [loading, setLoading] = useState(false)
   const [ran, setRan] = useState(false)
@@ -186,6 +187,29 @@ export function usePkcs11Conformance() {
       loadingRef.current = true
       setLoading(true)
       setRan(true)
+
+      // Self-heal, same as the ACVP suite: a direct ?dtab=conformance deep
+      // link mounts this suite before anything initialised the engine, and
+      // an engine-mode switch leaves the module null. (Re)initialise rather
+      // than dead-end on "Engine setup: Cannot read properties of null".
+      if (!moduleRef.current || phase !== 'session_open') {
+        const ok = await autoInit()
+        if (!ok || !moduleRef.current) {
+          const row: RunnerRow = {
+            id: 'init-error',
+            engine: engineMode,
+            tier: 'A',
+            name: 'Engine setup',
+            citation: '—',
+            status: 'fail',
+            detail: 'HSM initialization failed. Reload the page and retry.',
+          }
+          setRows([row])
+          setLoading(false)
+          loadingRef.current = false
+          return [row]
+        }
+      }
 
       const engines: { M: SoftHSMModule; name: string }[] = []
       if (engineMode === 'cpp') {
@@ -357,7 +381,7 @@ export function usePkcs11Conformance() {
       loadingRef.current = false
       return newRows
     },
-    [selection, engineMode, moduleRef, crossCheckModuleRef, hSessionRef, slotRef]
+    [selection, engineMode, moduleRef, crossCheckModuleRef, hSessionRef, slotRef, phase, autoInit]
   )
 
   const runAll = useCallback(() => run(FULL_SELECTION()), [run])
