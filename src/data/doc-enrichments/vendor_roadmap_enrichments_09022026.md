@@ -2800,28 +2800,6 @@ source: public/vendor-roadmaps/
 - **Extraction Timestamp**: 2026-07-07T20:41:12
 
 
-## VND-054 — QuSecure Inc.
-
-- **Vendor ID**: VND-054
-- **Vendor Name**: QuSecure Inc.
-- **Roadmap Title**: QuSecure and NIST NCCoE Partner on Post-Quantum Algorithm Migration
-- **Roadmap URL**: https://www.hpcwire.com/off-the-wire/qusecure-and-nists-nccoe-partner-to-address-post-quantum-algorithm-migration/
-- **Publish Date**: 2026-03-31
-- **Local File**: vendor-roadmaps/VND-054_QuSecure_Inc.html
-- **CSV Coverage Notes**: None
-- **PQC Algorithms Announced**: None detected
-- **Target Migration Dates**: None detected
-- **Products / Services Covered**: QuProtect R3
-- **Compliance Frameworks**: NIST
-- **Hybrid Mode Support**: None detected
-- **Current GA Status**: GA
-- **Customer Action Required**: None detected
-- **Key Commitments & Quotes**: "QuSecure will collaborate with Automated Cryptography Discovery and Inventory and post-quantum cryptography vendors to understand tool performance across enterprise environments and use cases."
-- **Coverage Verification**: CONSISTENT. The document is a press release about a partnership and general strategy, not a technical roadmap with specific algorithm coverage details.
-- **Extraction Quality**: LOW
-- **Source Document**: VND-054_QuSecure_Inc.html (289.6 KB)
-- **Extraction Timestamp**: 2026-09-02T11:56:32
-
 
 ## VND-031 — Palo Alto Networks Inc.
 
