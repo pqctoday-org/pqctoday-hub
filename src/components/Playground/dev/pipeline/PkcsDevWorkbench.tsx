@@ -30,25 +30,12 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import {
-  Play,
-  Loader2,
-  Download,
-  Save,
-  Upload,
-  Trash2,
-  X,
-  Pencil,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react'
+import { Play, Loader2, Download, Save, Upload, Trash2, X, Pencil } from 'lucide-react'
 import { Button } from '../../../ui/button'
 import { Card } from '../../../ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../ui/tabs'
 import { useHsmContext, type EngineMode } from '../../hsm/HsmContext'
 import { ensureDevSlot, openDevSlotSession, reloginDevSlotSession, DEV_SLOT_LABEL } from './devSlot'
-import { Pkcs11LogPanel } from '../../../shared/Pkcs11LogPanel'
-import { HsmKeyTable } from '../../keystore/HsmKeyTable'
 import { discoverHsmObjectsOnSession } from '../../keystore/discoverHsmObjects'
 import { DevSandboxDiffNote } from './DevSandboxDiffNote'
 import { installMonacoSelfHost } from '../monacoSelfHost'
@@ -154,8 +141,7 @@ export interface PkcsDevWorkbenchProps {
 
 export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const hsmCtx = useHsmContext()
-  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode, hsmLog, clearHsmLog, hsmKeys } =
-    hsmCtx
+  const { moduleRef, rawModuleRef, isReady, autoInit, engineMode } = hsmCtx
 
   // A session on the Developer slot, kept open for the UI's own use —
   // querying a key's real attributes when the Key inspector is clicked,
@@ -192,19 +178,6 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
       cancelled = true
     }
   }, [])
-
-  // Real PKCS#11 call log + key registry for THIS tab's activity — both
-  // already populate from Developer-tab scripts (moduleRef is the same
-  // logging-proxied module; the key table is populated by runAll's own
-  // key registration, above). Collapsed by default so the palette/canvas
-  // layout isn't disrupted for someone not looking for it.
-  const [showActivity, setShowActivity] = useState(false)
-  // Inspector-style tab bar — same pattern as the KMIP Developer tab's own
-  // Session activity section (and the manual workbench's Keystore/Wire/
-  // Audit tabs): one thing shown full-width per tab instead of both panels
-  // stacked, so the (already dense) log doesn't push the key table below
-  // the fold.
-  const [activityTab, setActivityTab] = useState<'log' | 'keys'>('log')
 
   const [pipelineName, setPipelineName] = useState('Encrypt + sign (PQ)')
   const [pipeline, setPipeline] = useState<PipelineStep[]>(() =>
@@ -712,67 +685,6 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
           ✗ Could not set up your Developer token: {slotError}
         </div>
       )}
-
-      {/* Real PKCS#11 log + key inspector for this tab's own DevSequences
-          slot — reuses the exact same panels the main HSM Playground uses
-          (HsmContext's logging proxy already captures every call the
-          generated script makes; runAll's devSlot scan above keeps the key
-          table current). Visible from both Builder and Code tabs. */}
-      <div className="border-b">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowActivity((v) => !v)}
-          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
-        >
-          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-          Session activity — PKCS#11 log &amp; keys
-          {hsmLog.length > 0 && !showActivity && (
-            <span className="ml-1 text-[10.5px]">({hsmLog.length})</span>
-          )}
-        </Button>
-        {showActivity && (
-          <div className="border-t">
-            {/* Inspector-style tab bar — same pattern as the KMIP Developer
-                tab's Session activity section. */}
-            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
-              {(
-                [
-                  { id: 'log', label: `Log (${hsmLog.length})` },
-                  { id: 'keys', label: `Keys (${hsmKeys.length})` },
-                ] as const
-              ).map((t) => (
-                <Button
-                  key={t.id}
-                  variant="ghost"
-                  size="sm"
-                  aria-pressed={activityTab === t.id}
-                  onClick={() => setActivityTab(t.id)}
-                  className={`h-7 rounded-md px-2.5 text-[11px] ${
-                    activityTab === t.id
-                      ? 'bg-card text-foreground'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t.label}
-                </Button>
-              ))}
-            </div>
-            {/* The Tabs root is a fixed h-[70vh] with overflow-hidden (so the
-                Builder/Code panes below can scroll internally without the
-                whole card growing) — real bug found live: without its own
-                bound here, a populated log or key table silently clipped
-                past the container edge with no scrollbar, not just "below
-                the fold." Capped and independently scrollable instead. */}
-            <div className="px-4 py-3 max-h-64 overflow-y-auto">
-              {activityTab === 'log' && (
-                <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen />
-              )}
-              {activityTab === 'keys' && <HsmKeyTable />}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">

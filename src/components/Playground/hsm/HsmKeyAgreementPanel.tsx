@@ -16,7 +16,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -363,7 +362,6 @@ export const HsmKeyAgreementPanel = ({
           </div>
         )}
 
-        <MiniPkcsLog />
         {error && <ErrorAlert message={error} />}
 
         {/* Educational note */}

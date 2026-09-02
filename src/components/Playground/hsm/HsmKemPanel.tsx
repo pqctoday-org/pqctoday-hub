@@ -5,7 +5,6 @@ import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_encapsulate,
@@ -335,8 +334,6 @@ export const HsmKemPanel = () => {
             )}
           </div>
         )}
-
-        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

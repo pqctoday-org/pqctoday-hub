@@ -14,7 +14,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Algorithm table ────────────────────────────────────────────────────────────
 
@@ -270,8 +269,6 @@ export const HsmHashingPanel = ({
             </div>
           </div>
         )}
-
-        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

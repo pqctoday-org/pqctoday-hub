@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useRef, useEffect, useState } from 'react'
-import React from 'react'
 import { useSearchParams } from 'react-router'
 import {
   BookOpen,
   Cpu,
-  Key as KeyIcon,
   Lock,
   Layers,
   Hash,
@@ -17,6 +15,10 @@ import {
   FlaskConical,
   Code2,
   Route,
+  Wrench,
+  Search,
+  KeyRound,
+  ScrollText,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -37,6 +39,7 @@ import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { HsmLearnView } from './hsm/learn/HsmLearnView'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
 import { InlineTooltip } from '../ui/InlineTooltip'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
 import { ExecutiveRedirectBanner } from '../common/ExecutiveRedirectBanner'
@@ -55,32 +58,128 @@ import {
   clickByText,
   type Lesson,
 } from './learnkit/TourEngine'
+import { WorkshopShell, type WorkshopTab } from './learnkit/WorkshopShell'
+import { InspectChip } from './learnkit/InspectChip'
 
-type HsmTab =
-  | 'learn'
-  | 'keystore'
-  | 'kem'
-  | 'symmetric'
-  | 'key_wrap'
-  | 'hashing'
-  | 'sign_verify'
-  | 'key_agree'
-  | 'key_derive'
-  | 'mechanisms'
-  | 'logs'
-  | 'developer'
+/**
+ * Four modes (design handoff design_handoff_kmip_pkcs11_playground,
+ * 2026-09-02): the previous 12 flat tabs regrouped as Learn · Operate ·
+ * Build · Inspect. Operate hosts the seven crypto-primitive panels behind a
+ * left rail; Inspect hosts the mechanism list, the ONE shared call log and
+ * the key inventory; Build is the Standard/ACVP/Conformance workbench.
+ */
+export type HsmTab = 'learn' | 'operate' | 'build' | 'inspect'
 
+/** Operate's primitive rail. Ids are the `?rail=` URL values. */
+export type RailId = 'kem' | 'sym' | 'wrap' | 'hash' | 'sign' | 'agree' | 'kdf'
+
+/** Inspect's sub-views. Ids are the `?itab=` URL values. */
+export type InspectView = 'mechanisms' | 'log' | 'keys'
+
+export interface HsmLocation {
+  tab: HsmTab
+  rail?: RailId
+  itab?: InspectView
+  dtab?: TestSuite
+  /** Set when a legacy `?tab=keystore` link was resolved — that tab was the
+   *  manual 3-step walkthrough, deliberately NOT auto-initialising the
+   *  engine; the Operate tab it now maps to must keep that contract. */
+  noAutoInit?: boolean
+}
+
+const DEFAULT_TAB: HsmTab = 'learn'
+const DEFAULT_RAIL: RailId = 'kem'
+const DEFAULT_INSPECT: InspectView = 'mechanisms'
 const DEFAULT_DEV_SUB_TAB: TestSuite = 'standard'
 
-/** Pre-rename deep links (`?dtab=pipeline`, and the sub-tab value itself
- *  before the Standard/ACVP/Conformance Test Suite rename) still resolve —
- *  never produced fresh, only accepted on the way in. */
-const normalizeDevSubTab = (raw: string | null): TestSuite | null =>
-  raw === 'pipeline' ? 'standard' : (raw as TestSuite | null)
+/**
+ * Every pre-redesign `?tab=` value (the 12 flat tabs, plus the two even
+ * older `acvp`/`conformance` top-level tabs) still resolves — accepted on
+ * the way in, never produced fresh. Learn's `tryRef` entries and every
+ * existing e2e spec / role-board deep link use these ids.
+ */
+const LEGACY_TABS: Record<string, HsmLocation> = {
+  keystore: { tab: 'operate', rail: DEFAULT_RAIL, noAutoInit: true },
+  kem: { tab: 'operate', rail: 'kem' },
+  symmetric: { tab: 'operate', rail: 'sym' },
+  key_wrap: { tab: 'operate', rail: 'wrap' },
+  hashing: { tab: 'operate', rail: 'hash' },
+  sign_verify: { tab: 'operate', rail: 'sign' },
+  key_agree: { tab: 'operate', rail: 'agree' },
+  key_derive: { tab: 'operate', rail: 'kdf' },
+  mechanisms: { tab: 'inspect', itab: 'mechanisms' },
+  logs: { tab: 'inspect', itab: 'log' },
+  log: { tab: 'inspect', itab: 'log' },
+  developer: { tab: 'build' },
+  acvp: { tab: 'build', dtab: 'acvp' },
+  conformance: { tab: 'build', dtab: 'conformance' },
+}
 
-/** First-time visitors land on the guided Learn tab (matching the KMIP
- * playground's own Learn-first default), not the bare workbench. */
-const DEFAULT_TAB: HsmTab = 'learn'
+const isHsmTab = (v: string | null): v is HsmTab =>
+  v === 'learn' || v === 'operate' || v === 'build' || v === 'inspect'
+const RAIL_IDS: RailId[] = ['kem', 'sym', 'wrap', 'hash', 'sign', 'agree', 'kdf']
+const isRailId = (v: string | null): v is RailId => RAIL_IDS.includes(v as RailId)
+const isInspectView = (v: string | null): v is InspectView =>
+  v === 'mechanisms' || v === 'log' || v === 'keys'
+
+/** Pre-rename deep links (`?dtab=pipeline`) still resolve. */
+const normalizeDevSubTab = (raw: string | null): TestSuite | null =>
+  raw === 'pipeline'
+    ? 'standard'
+    : raw === 'acvp' || raw === 'conformance'
+      ? raw
+      : raw === 'standard'
+        ? raw
+        : null
+
+/**
+ * Resolve the incoming URL (or a legacy tab id handed over by Learn's
+ * "Try it in the workbench" buttons) to a location in the 4-mode IA.
+ * Exported for the unit test.
+ */
+export function resolveHsmLocation(params: {
+  tab: string | null
+  rail?: string | null
+  itab?: string | null
+  dtab?: string | null
+}): HsmLocation {
+  const { tab, rail, itab, dtab } = params
+  const dsub = normalizeDevSubTab(dtab ?? null)
+  if (tab && tab in LEGACY_TABS) {
+    // eslint-disable-next-line security/detect-object-injection -- guarded by `in` against a static literal map
+    const legacy = LEGACY_TABS[tab]
+    return { ...legacy, dtab: legacy.dtab ?? dsub ?? undefined }
+  }
+  const t: HsmTab = isHsmTab(tab) ? tab : DEFAULT_TAB
+  return {
+    tab: t,
+    rail: t === 'operate' ? (isRailId(rail ?? null) ? (rail as RailId) : DEFAULT_RAIL) : undefined,
+    itab:
+      t === 'inspect'
+        ? isInspectView(itab ?? null)
+          ? (itab as InspectView)
+          : DEFAULT_INSPECT
+        : undefined,
+    dtab: t === 'build' ? (dsub ?? DEFAULT_DEV_SUB_TAB) : undefined,
+  }
+}
+
+interface RailEntry {
+  id: RailId
+  label: string
+  mono: string
+  icon: typeof Lock
+}
+
+const RAIL: RailEntry[] = [
+  { id: 'kem', label: 'KEM', mono: 'KM', icon: Lock },
+  { id: 'sym', label: 'Symmetric Encrypt', mono: 'SY', icon: Lock },
+  { id: 'wrap', label: 'Key Wrap / Unwrap', mono: 'KW', icon: Layers },
+  { id: 'hash', label: 'Hashing', mono: 'HA', icon: Hash },
+  { id: 'sign', label: 'Sign & Verify', mono: 'SV', icon: FileSignature },
+  { id: 'agree', label: 'Key Agreement', mono: 'KA', icon: ArrowLeftRight },
+  { id: 'kdf', label: 'KDF', mono: 'KD', icon: Filter },
+]
 
 export const HsmPlayground = () => {
   const role = usePersonaStore((s) => s.selectedPersona)
@@ -96,32 +195,33 @@ export const HsmPlayground = () => {
     addHsmKey,
     hsmLog,
     clearHsmLog,
+    hsmKeys,
+    setLogOrigin,
   } = useHsmContext()
-  const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
-  const [devSubTab, setDevSubTab] = useState<TestSuite>(DEFAULT_DEV_SUB_TAB)
-  const [showMethodologyModal, setShowMethodologyModal] = useState(false)
-  const errorRef = useRef<HTMLDivElement>(null)
-  const tabListRef = useRef<HTMLDivElement>(null)
-  const [showTabFade, setShowTabFade] = useState(false)
 
   // ── URL deep-link setup ──────────────────────────────────────────────────
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Capture incoming URL params once at mount (before any effects modify the URL)
-  // Old `?tab=acvp` / `?tab=conformance` deep links (pre-2026-08-31 merge,
-  // when these were their own top-level tabs) now resolve to the Developer
-  // tab with the matching sub-tab, same as `?tab=developer&dtab=acvp` would.
-  const rawInitialTab = searchParams.get('tab')
-  const legacyDevSubTab =
-    rawInitialTab === 'acvp' || rawInitialTab === 'conformance'
-      ? (rawInitialTab as TestSuite)
-      : null
-  const initialTab = useRef((legacyDevSubTab ? 'developer' : rawInitialTab) as HsmTab | null)
+  const initialLoc = useRef<HsmLocation>(
+    resolveHsmLocation({
+      tab: searchParams.get('tab'),
+      rail: searchParams.get('rail'),
+      itab: searchParams.get('itab'),
+      dtab: searchParams.get('dtab'),
+    })
+  )
   const initialEngine = useRef(searchParams.get('engine') as EngineMode | null)
   const initialAlgo = useRef(searchParams.get('algo') ?? undefined)
-  const initialDevSubTab = useRef(
-    normalizeDevSubTab(searchParams.get('dtab')) ?? legacyDevSubTab ?? DEFAULT_DEV_SUB_TAB
+
+  const [activeTab, setActiveTab] = useState<HsmTab>(DEFAULT_TAB)
+  const [rail, setRail] = useState<RailId>(initialLoc.current.rail ?? DEFAULT_RAIL)
+  const [inspectView, setInspectView] = useState<InspectView>(
+    initialLoc.current.itab ?? DEFAULT_INSPECT
   )
+  const [devSubTab, setDevSubTab] = useState<TestSuite>(DEFAULT_DEV_SUB_TAB)
+  const [showMethodologyModal, setShowMethodologyModal] = useState(false)
+  const errorRef = useRef<HTMLDivElement>(null)
 
   // Guard to skip URL sync on the very first render (don't wipe incoming params)
   const urlSyncReady = useRef(false)
@@ -129,8 +229,8 @@ export const HsmPlayground = () => {
   // Current algo string — updated by panels via onAlgoChange, written to ?algo=
   const [algoParam, setAlgoParam] = useState<string | undefined>(initialAlgo.current)
 
-  /** Generate a sensible default key for the target tab after deep-link auto-init. */
-  const generateDefaultKeyForTab = (tab: HsmTab, algo?: string, engine?: EngineMode) => {
+  /** Generate a sensible default key for the target primitive after deep-link auto-init. */
+  const generateDefaultKeyForRail = (target: RailId, algo?: string, engine?: EngineMode) => {
     if (!moduleRef.current || !hSessionRef.current) return
     const M = moduleRef.current
     const hSession = hSessionRef.current
@@ -140,8 +240,8 @@ export const HsmPlayground = () => {
       minute: '2-digit',
       second: '2-digit',
     })
-    switch (tab) {
-      case 'sign_verify': {
+    switch (target) {
+      case 'sign': {
         const variant: 44 | 65 | 87 = algo === 'ML-DSA-44' ? 44 : algo === 'ML-DSA-87' ? 87 : 65
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, variant)
         addHsmKey({
@@ -164,7 +264,7 @@ export const HsmPlayground = () => {
         })
         break
       }
-      case 'key_agree': {
+      case 'agree': {
         const curve = ['P-256', 'P-384', 'P-521'].includes(algo ?? '')
           ? (algo as 'P-256' | 'P-384' | 'P-521')
           : 'P-256'
@@ -187,9 +287,9 @@ export const HsmPlayground = () => {
         })
         break
       }
-      case 'symmetric':
-      case 'key_wrap':
-      case 'key_derive': {
+      case 'sym':
+      case 'wrap':
+      case 'kdf': {
         const bits: 128 | 192 | 256 = algo === 'AES-128' ? 128 : algo === 'AES-192' ? 192 : 256
         const handle = hsm_generateAESKey(M, hSession, bits)
         addHsmKey({
@@ -209,43 +309,41 @@ export const HsmPlayground = () => {
 
   // ── Deep-link mount effect ───────────────────────────────────────────────
   useEffect(() => {
-    const tab = initialTab.current
+    const loc = initialLoc.current
     const engine = initialEngine.current
     const algo = initialAlgo.current
-    const devSub = initialDevSubTab.current
     if (engine) setEngineMode(engine)
     if (
-      tab === 'developer' &&
-      (devSub === 'acvp' || devSub === 'conformance') &&
+      loc.tab === 'build' &&
+      (loc.dtab === 'acvp' || loc.dtab === 'conformance') &&
       (role === 'curious' || role === 'executive')
     ) {
-      // ACVP and Conformance are engineering-workbench sub-tabs, gated for
-      // curious/executive (matches the ExecutiveRedirectBanner above) — don't
+      // ACVP and Conformance are engineering-workbench suites, gated for
+      // curious/executive (matches the ExecutiveRedirectBanner) — don't
       // honor a stale or hand-crafted ?dtab= (or legacy ?tab=acvp/conformance)
-      // deep link for these personas. Falls through to DEFAULT_DEV_SUB_TAB
-      // via the state initializer, so `developer` itself still opens fine.
-    } else {
-      setDevSubTab(devSub)
+      // deep link for these personas. Build itself still opens on Standard.
+    } else if (loc.dtab) {
+      setDevSubTab(loc.dtab)
     }
-    if (!tab || tab === DEFAULT_TAB) {
-      // No explicit tab, or it matches the default — nothing extra to do.
-    } else if (tab === 'keystore') {
-      // Manual 3-step walkthrough tab, on purpose — switch to it without
-      // eagerly auto-initing the engine in the background.
-      setActiveTab(tab)
+    if (loc.tab === DEFAULT_TAB) {
+      // Default tab — nothing extra to do.
+    } else if (loc.tab !== 'operate' || loc.noAutoInit) {
+      // Build / Inspect, and the legacy manual-walkthrough alias: switch
+      // without eagerly auto-initing the engine in the background.
+      setActiveTab(loc.tab)
     } else if (phase === 'idle') {
       autoInit(engine ?? undefined).then((ok) => {
         if (!ok) return
-        setActiveTab(tab)
-        generateDefaultKeyForTab(tab, algo, engine ?? undefined)
+        setActiveTab('operate')
+        generateDefaultKeyForRail(loc.rail ?? DEFAULT_RAIL, algo, engine ?? undefined)
       })
     } else if (isReady) {
-      setActiveTab(tab)
+      setActiveTab('operate')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // ── URL sync effect: keep URL in sync with current tab + engine ──────────
+  // ── URL sync effect: keep URL in sync with tab / rail / views / engine ───
   useEffect(() => {
     if (!urlSyncReady.current) {
       urlSyncReady.current = true
@@ -256,8 +354,12 @@ export const HsmPlayground = () => {
         const next = new URLSearchParams(prev)
         if (activeTab !== DEFAULT_TAB) next.set('tab', activeTab)
         else next.delete('tab')
-        if (activeTab === 'developer' && devSubTab !== DEFAULT_DEV_SUB_TAB)
-          next.set('dtab', devSubTab)
+        if (activeTab === 'operate' && rail !== DEFAULT_RAIL) next.set('rail', rail)
+        else next.delete('rail')
+        if (activeTab === 'inspect' && inspectView !== DEFAULT_INSPECT)
+          next.set('itab', inspectView)
+        else next.delete('itab')
+        if (activeTab === 'build' && devSubTab !== DEFAULT_DEV_SUB_TAB) next.set('dtab', devSubTab)
         else next.delete('dtab')
         if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
@@ -267,7 +369,7 @@ export const HsmPlayground = () => {
       },
       { replace: true }
     )
-  }, [activeTab, devSubTab, engineMode, algoParam, setSearchParams])
+  }, [activeTab, rail, inspectView, devSubTab, engineMode, algoParam, setSearchParams])
 
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -276,7 +378,7 @@ export const HsmPlayground = () => {
   // Share lives ONLY in the top bar (2026-08-27 remediation) — register this
   // page's title/text so the global ShareButton (MainLayout.tsx) shows the
   // right copy instead of the generic route fallback. No URL override
-  // needed: tab/engine/algo are already synced to the URL above.
+  // needed: tab/rail/engine/algo are already synced to the URL above.
   useEffect(() => {
     const { setPageActions, clearPageActions } = usePageActionsStore.getState()
     setPageActions({
@@ -287,11 +389,8 @@ export const HsmPlayground = () => {
   }, [])
 
   // Safety net: if a persona switch lands a curious/executive user on the
-  // gated ACVP/Conformance sub-tab mid-session (they were on it as another
-  // persona, then switched role), fall back to the Standard sub-tab rather
-  // than leaving them on a surface whose tab button is now hidden. Unlike
-  // the pre-merge version, the Developer tab itself stays open — it's the
-  // Standard workbench that's ungated, only the ACVP/Conformance sub-tabs are.
+  // gated ACVP/Conformance suite mid-session, fall back to Standard rather
+  // than leaving them on a surface whose trigger is now hidden.
   useEffect(() => {
     if (
       (devSubTab === 'acvp' || devSubTab === 'conformance') &&
@@ -301,23 +400,26 @@ export const HsmPlayground = () => {
     }
   }, [role, devSubTab])
 
+  // Stamp every logged call with the surface it came from (§3.4 — one shared
+  // log, grouped by origin). The header row itself is emitted lazily by
+  // HsmContext on the first real call, so switching tabs never adds noise.
   useEffect(() => {
-    const el = tabListRef.current
-    if (!el) return
-    const update = () => {
-      setShowTabFade(
-        el.scrollWidth > el.clientWidth + 1 && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
-      )
-    }
-    update()
-    el.addEventListener('scroll', update, { passive: true })
-    const ro = new ResizeObserver(update)
-    ro.observe(el)
-    return () => {
-      el.removeEventListener('scroll', update)
-      ro.disconnect()
-    }
-  }, [])
+    const railLabel = RAIL.find((r) => r.id === rail)?.label ?? rail
+    const suiteLabel =
+      devSubTab === 'acvp' ? 'ACVP' : devSubTab === 'conformance' ? 'Conformance' : 'Standard'
+    if (activeTab === 'operate') setLogOrigin(`operate:${rail}`, `Operate · ${railLabel}`)
+    else if (activeTab === 'build') setLogOrigin(`build:${devSubTab}`, `Build · ${suiteLabel}`)
+    else if (activeTab === 'inspect') setLogOrigin('inspect', 'Inspect')
+    else setLogOrigin('learn', 'Learn')
+  }, [activeTab, rail, devSubTab, setLogOrigin])
+
+  // Inspect › Log origin filter (All · Operate · Build · Learn · Setup).
+  type OriginFilter = 'all' | 'operate' | 'build' | 'learn' | 'setup'
+  const [originFilter, setOriginFilter] = useState<OriginFilter>('all')
+  const filteredLog =
+    originFilter === 'all'
+      ? hsmLog
+      : hsmLog.filter((e) => (e.origin ?? 'setup').split(':')[0] === originFilter)
 
   const handleTabChange = (tab: HsmTab) => {
     setActiveTab(tab)
@@ -325,46 +427,31 @@ export const HsmPlayground = () => {
     logEvent('HSM Playground', 'Switch Tab', tab)
   }
 
-  const tabBtn = (id: HsmTab, label: React.ReactNode) => (
-    <Button
-      key={id}
-      role="tab"
-      id={`hsm-tab-${id}`}
-      aria-selected={activeTab === id}
-      aria-controls="hsm-tabpanel"
-      onClick={() => handleTabChange(id)}
-      variant="ghost"
-      size="sm"
-      className={clsx(
-        'whitespace-nowrap min-h-[44px] md:min-h-0',
-        activeTab === id
-          ? 'bg-primary/20 text-primary shadow-sm'
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-      )}
-    >
-      {label}
-    </Button>
-  )
+  /** Navigate to a resolved location — used by Learn's "Try it in the
+   *  workbench" (legacy tab ids), the Inspect chip, and the lesson spotlight. */
+  const goTo = (loc: HsmLocation) => {
+    if (loc.rail) setRail(loc.rail)
+    if (loc.itab) setInspectView(loc.itab)
+    if (loc.dtab && !((role === 'curious' || role === 'executive') && loc.dtab !== 'standard'))
+      setDevSubTab(loc.dtab)
+    handleTabChange(loc.tab)
+  }
 
   // ── Guided lessons (dev-tabs-pkcs11-kmip plan G5) ──────────────────────
-  // One tour, driving the real Developer-tab builder: `handleTabChange` is
-  // the exact same handler a real tab-button click calls (see `tabBtn`
-  // above), and `clickByText` below fires real clicks on the builder's own
-  // template/Run buttons — mirrors the KMIP playground's LessonsTour
-  // discipline of never simulating an outcome the real UI didn't produce.
-  // Deliberately does NOT script the palette→canvas HTML5 drag/drop itself
-  // (synthetic DragEvents with a real DataTransfer are unreliable to
-  // fabricate correctly): the drag step is left as a "try it yourself"
-  // narration, and the tour continues via the "Start from a template"
-  // button — a real click loading a real, already-bound pipeline.
-  type DevPlane = 'developer'
-  const devLessons: Lesson<DevPlane>[] = [
+  // One tour, driving the real Build-tab workbench: `handleTabChange` is the
+  // exact same handler a real tab click calls, and `clickByText` fires real
+  // clicks on the builder's own template/Run buttons — never simulating an
+  // outcome the real UI didn't produce. Deliberately does NOT script the
+  // palette→canvas HTML5 drag/drop itself (synthetic DragEvents with a real
+  // DataTransfer are unreliable to fabricate): the drag step is narrated as
+  // "try it yourself" and the tour continues via a real template click.
+  const devLessons: Lesson<HsmTab>[] = [
     {
       id: 'pkcs-dev-builder',
       title: 'Build a PKCS#11 v3.2 sequence',
       icon: Code2,
-      plane: 'developer',
-      blurb: 'The Developer tab: drag, bind, run — real p11 v3.2 calls.',
+      plane: 'build',
+      blurb: 'The Build tab: drag, bind, run — real p11 v3.2 calls.',
       steps: [
         {
           title: 'The palette',
@@ -401,14 +488,210 @@ export const HsmPlayground = () => {
       ],
     },
   ]
-  const tour = useLessonsTour<DevPlane>(devLessons, (p) => {
+  const tour = useLessonsTour<HsmTab>(devLessons, (p) => {
     handleTabChange(p)
     // The tour's data-tour="pkcs-dev-*" selectors only exist while the
-    // Standard sub-tab is mounted (TabsContent unmounts inactive panels) —
+    // Standard suite is mounted (TabsContent unmounts inactive panels) —
     // force back to it so starting this lesson from the ACVP/Conformance
-    // sub-tab doesn't leave every selector finding nothing.
-    setDevSubTab('standard')
+    // suite doesn't leave every selector finding nothing.
+    if (p === 'build') setDevSubTab('standard')
   })
+
+  // Total logged calls minus the synthetic step-header rows the Learn tab
+  // and (post-redesign) every Operate button emit for grouping.
+  const callCount = hsmLog.reduce((n, e) => (e.isStepHeader ? n : n + 1), 0)
+  const inspectChip = (
+    <InspectChip
+      calls={callCount}
+      callsLabel="PKCS#11 calls"
+      keys={hsmKeys.length}
+      onOpen={() => goTo({ tab: 'inspect', itab: 'log' })}
+      tourId="pkcs-inspect-chip"
+    />
+  )
+
+  const activeRail = RAIL.find((r) => r.id === rail) ?? RAIL[0]
+
+  const operatePanel = (() => {
+    switch (rail) {
+      case 'kem':
+        return <HsmKemPanel />
+      case 'sym':
+        return <HsmSymmetricPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+      case 'wrap':
+        return <KeyWrapPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+      case 'hash':
+        return <HsmHashingPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+      case 'sign':
+        return (
+          <HsmSignCombinedPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )
+      case 'agree':
+        return (
+          <HsmKeyAgreementPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )
+      case 'kdf':
+        return <HsmKdfPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+      default:
+        return null
+    }
+  })()
+
+  const tabs: WorkshopTab<HsmTab>[] = [
+    {
+      id: 'learn',
+      label: 'Learn',
+      icon: BookOpen,
+      tourId: 'pkcs-tab-learn',
+      content: <HsmLearnView onTryInWorkbench={(tab) => goTo(resolveHsmLocation({ tab }))} />,
+    },
+    {
+      id: 'operate',
+      label: 'Operate',
+      icon: Wrench,
+      tourId: 'pkcs-tab-operate',
+      content: (
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_minmax(0,1fr)] gap-4 items-start">
+          {/* ── Primitive rail ─────────────────────────────────────────── */}
+          <nav
+            aria-label="Primitives"
+            data-tour="pkcs-rail"
+            className="flex lg:flex-col gap-1 overflow-x-auto no-scrollbar lg:overflow-visible -mx-1 px-1 lg:mx-0 lg:px-0 lg:sticky lg:top-0"
+          >
+            <span className="hidden lg:block text-[10px] font-bold uppercase tracking-wide text-muted-foreground px-2 pb-1">
+              Primitives
+            </span>
+            {RAIL.map((r) => {
+              const on = r.id === rail
+              return (
+                <Button
+                  key={r.id}
+                  variant="ghost"
+                  size="sm"
+                  aria-current={on ? 'true' : undefined}
+                  data-tour={`pkcs-rail-${r.id}`}
+                  onClick={() => {
+                    setRail(r.id)
+                    setAlgoParam(undefined)
+                    logEvent('HSM Playground', 'Switch Primitive', r.id)
+                  }}
+                  className={clsx(
+                    'h-9 justify-start gap-2 px-2 whitespace-nowrap shrink-0 rounded-md border-l-2',
+                    on
+                      ? 'bg-primary/15 text-primary border-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent border-transparent'
+                  )}
+                >
+                  <span
+                    className={clsx(
+                      'font-mono text-[10px] rounded px-1 py-0.5',
+                      on ? 'bg-primary/20' : 'bg-muted'
+                    )}
+                    aria-hidden="true"
+                  >
+                    {r.mono}
+                  </span>
+                  <span className="text-xs">{r.label}</span>
+                </Button>
+              )
+            })}
+          </nav>
+
+          {/* ── Token setup strip + active primitive ─────────────────── */}
+          <div className="min-w-0 space-y-4">
+            <div data-tour="pkcs-op-setup">
+              <TokenSetupPanel />
+            </div>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <h4 className="text-base font-semibold flex items-center gap-2">
+                <activeRail.icon size={16} className="text-primary" aria-hidden="true" />
+                {activeRail.label}
+              </h4>
+              {inspectChip}
+            </div>
+            <div data-tour={`pkcs-op-${rail}`}>{operatePanel}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: 'build',
+      label: 'Build',
+      icon: Code2,
+      tourId: 'pkcs-tab-build',
+      content: (
+        <div className="space-y-3">
+          <div className="flex justify-end">{inspectChip}</div>
+          <DeveloperTab activeSubTab={devSubTab} onSubTabChange={setDevSubTab} />
+        </div>
+      ),
+    },
+    {
+      id: 'inspect',
+      label: 'Inspect',
+      icon: Search,
+      tourId: 'pkcs-tab-inspect',
+      content: (
+        <Tabs value={inspectView} onValueChange={(v) => setInspectView(v as InspectView)}>
+          <TabsList aria-label="Inspect views" data-tour="pkcs-inspect-subtabs">
+            <TabsTrigger value="mechanisms" className="gap-1.5" data-tour="pkcs-insp-mechanisms">
+              <Layers size={14} aria-hidden="true" /> Mechanisms
+            </TabsTrigger>
+            <TabsTrigger value="log" className="gap-1.5" data-tour="pkcs-insp-log">
+              <ScrollText size={14} aria-hidden="true" /> Log
+            </TabsTrigger>
+            <TabsTrigger value="keys" className="gap-1.5" data-tour="pkcs-insp-keys">
+              <KeyRound size={14} aria-hidden="true" /> Keys
+            </TabsTrigger>
+          </TabsList>
+          <p className="text-xs text-muted-foreground mt-2">
+            One log and one key inventory, fed by every Operate and Build surface — no separate
+            copies inside each panel.
+          </p>
+          <TabsContent value="mechanisms">
+            <HsmMechanismPanel />
+          </TabsContent>
+          <TabsContent value="log">
+            <div
+              className="flex flex-wrap items-center gap-1 mb-2"
+              role="group"
+              aria-label="Filter log by origin"
+            >
+              {(
+                [
+                  ['all', 'All'],
+                  ['operate', 'Operate'],
+                  ['build', 'Build'],
+                  ['learn', 'Learn'],
+                  ['setup', 'Setup'],
+                ] as const
+              ).map(([id, label]) => (
+                <Button
+                  key={id}
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={originFilter === id}
+                  onClick={() => setOriginFilter(id)}
+                  className={clsx(
+                    'h-7 rounded-md px-2.5 text-[11px]',
+                    originFilter === id
+                      ? 'bg-primary/15 text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+            <Pkcs11LogPanel log={filteredLog} onClear={clearHsmLog} defaultOpen={true} />
+          </TabsContent>
+          <TabsContent value="keys">
+            <HsmKeyTable />
+          </TabsContent>
+        </Tabs>
+      ),
+    },
+  ]
 
   return (
     <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
@@ -424,91 +707,116 @@ export const HsmPlayground = () => {
           ]}
         />
       )}
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
-        <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-          <Cpu className="text-secondary" aria-hidden="true" />
-          PKCS#11 HSM Playground
-        </h3>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Share lives only in the top bar (2026-08-27 remediation) — see the
-              usePageActionsStore effect above; no local ShareButton here. */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={tour.openHub}
-            className="flex items-center gap-1.5 text-xs"
-          >
-            <Route size={13} /> Lessons
-          </Button>
-          {/* Engine mode selector — an engineering-workbench control, gated
-              for curious/executive same as the ACVP tab; they run on the
-              'rust' default without needing to choose. */}
-          {role !== 'curious' && role !== 'executive' && (
-            <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
-              <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
-                Engine:
-              </span>
-              {(['cpp', 'rust', 'dual'] as const).map((mode) => (
-                <label
-                  key={mode}
-                  className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
-                >
-                  <input
-                    type="radio"
-                    name="engineMode-hsm"
-                    value={mode}
-                    checked={engineMode === mode}
-                    onChange={() => {
-                      if (phase === 'idle') setEngineMode(mode)
-                    }}
-                    disabled={phase !== 'idle'}
-                    className="accent-primary w-3 h-3"
-                  />
-                  <span
-                    className={
-                      engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
-                    }
-                  >
-                    {mode === 'cpp' && 'C++'}
-                    {mode === 'rust' && 'Rust'}
-                    {mode === 'dual' && (
-                      <>
-                        <span className="hidden sm:inline">Dual Parity</span>
-                        <span className="sm:hidden">Dual</span>
-                      </>
-                    )}
-                  </span>
-                </label>
-              ))}
-            </div>
-          )}
-
-          {/* WIP badge */}
+      <WorkshopShell<HsmTab>
+        icon={Cpu}
+        title="PKCS#11 HSM Playground"
+        badge={
           <Button
             variant="ghost"
             onClick={() => setShowMethodologyModal(true)}
-            className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
+            className="ml-1 flex items-center gap-1 text-xs font-semibold px-2 py-0.5 h-auto rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
             aria-label="View PKCS#11 test methodology"
           >
             <Construction size={11} />
             WIP
             <FlaskConical size={11} />
           </Button>
-        </div>
-      </div>
+        }
+        actions={
+          <>
+            {/* Share lives only in the top bar (2026-08-27 remediation) — see the
+                usePageActionsStore effect above; no local ShareButton here. */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={tour.openHub}
+              className="flex items-center gap-1.5 text-xs"
+            >
+              <Route size={13} /> Lessons
+            </Button>
+            {/* Engine mode selector — an engineering-workbench control, gated
+                for curious/executive same as the ACVP suite; they run on the
+                'rust' default without needing to choose. */}
+            {role !== 'curious' && role !== 'executive' ? (
+              <div className="flex items-center gap-2 sm:gap-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
+                <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
+                  Engine:
+                </span>
+                {(['cpp', 'rust', 'dual'] as const).map((mode) => (
+                  <label
+                    key={mode}
+                    className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[44px] md:min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
+                  >
+                    <input
+                      type="radio"
+                      name="engineMode-hsm"
+                      value={mode}
+                      checked={engineMode === mode}
+                      onChange={() => {
+                        if (phase === 'idle') setEngineMode(mode)
+                      }}
+                      disabled={phase !== 'idle'}
+                      className="accent-primary w-3 h-3"
+                    />
+                    <span
+                      className={
+                        engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
+                      }
+                    >
+                      {mode === 'cpp' && 'C++'}
+                      {mode === 'rust' && 'Rust'}
+                      {mode === 'dual' && (
+                        <>
+                          <span className="hidden sm:inline">Dual Parity</span>
+                          <span className="sm:hidden">Dual</span>
+                        </>
+                      )}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                Engine: <span className="font-mono text-foreground">Rust</span>
+              </span>
+            )}
+          </>
+        }
+        preamble={
+          <div className="mb-3 shrink-0 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="font-semibold text-foreground">New to PKCS#11?</span>
+            <span>Hover a term:</span>
+            <InlineTooltip term="C_GenerateKeyPair" />
+            <span aria-hidden="true">·</span>
+            <InlineTooltip term="CKA_EXTRACTABLE" />
+            <span aria-hidden="true">·</span>
+            <InlineTooltip term="CKA_SENSITIVE" />
+            <span aria-hidden="true">·</span>
+            <InlineTooltip term="C_WrapKey" />
+            <span aria-hidden="true">·</span>
+            <InlineTooltip term="CKM_AES_KW" />
+            <span aria-hidden="true">·</span>
+            <InlineTooltip term="C_EncapsulateKey" />
+          </div>
+        }
+        tabs={tabs}
+        value={activeTab}
+        onValueChange={handleTabChange}
+        tabListLabel="HSM Playground modes"
+        tabListTourId="pkcs-tabs"
+      />
 
       {showMethodologyModal && (
         <HsmTestMethodologyModal onClose={() => setShowMethodologyModal(false)} />
       )}
       {tour.hubOpen && (
-        <LessonsHub<DevPlane>
+        <LessonsHub<HsmTab>
           lessons={devLessons}
           done={tour.doneLessons}
           onStart={tour.startLesson}
           onClose={tour.closeHub}
-          planeBadge={() => ({ label: 'Developer', className: 'bg-accent/10 text-accent' })}
+          planeBadge={() => ({ label: 'Build', className: 'bg-accent/10 text-accent' })}
         />
       )}
       {tour.activeLesson && tour.tourStep >= 0 && (
@@ -523,210 +831,6 @@ export const HsmPlayground = () => {
           onEnd={tour.endTour}
         />
       )}
-
-      {/* Inline PKCS#11 jargon reference — hover any term for a definition, no modal needed. */}
-      <div className="mb-4 shrink-0 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="font-semibold text-foreground">New to PKCS#11?</span>
-        <span>Hover a term:</span>
-        <InlineTooltip term="C_GenerateKeyPair" />
-        <span aria-hidden="true">·</span>
-        <InlineTooltip term="CKA_EXTRACTABLE" />
-        <span aria-hidden="true">·</span>
-        <InlineTooltip term="CKA_SENSITIVE" />
-        <span aria-hidden="true">·</span>
-        <InlineTooltip term="C_WrapKey" />
-        <span aria-hidden="true">·</span>
-        <InlineTooltip term="CKM_AES_KW" />
-        <span aria-hidden="true">·</span>
-        <InlineTooltip term="C_EncapsulateKey" />
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="relative shrink-0 mb-4 sm:mb-6">
-        <div
-          ref={tabListRef}
-          role="tablist"
-          aria-label="HSM Playground operations"
-          tabIndex={-1}
-          className="flex space-x-1 bg-muted p-1 rounded-xl overflow-x-auto no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-1"
-          onKeyDown={(e) => {
-            const tabs = Array.from(
-              e.currentTarget.querySelectorAll('[role="tab"]')
-            ) as HTMLElement[]
-            const idx = tabs.findIndex((t) => t === document.activeElement)
-            if (idx === -1) return
-            let next = idx
-            if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length
-            else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length
-            else if (e.key === 'Home') next = 0
-            else if (e.key === 'End') next = tabs.length - 1
-            else return
-            e.preventDefault()
-            tabs[next].focus()
-            tabs[next].click()
-          }}
-        >
-          {tabBtn(
-            'learn',
-            <>
-              <BookOpen size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">Learn</span>
-            </>
-          )}
-          {tabBtn(
-            'keystore',
-            <>
-              <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Keys</span>
-                <span className="hidden sm:inline">HSM Keys</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'kem',
-            <>
-              <Lock size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">KEM</span>
-            </>
-          )}
-          {tabBtn(
-            'symmetric',
-            <>
-              <Lock size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Sym</span>
-                <span className="hidden sm:inline">Sym Encrypt</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'key_wrap',
-            <>
-              <Layers size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Wrap</span>
-                <span className="hidden sm:inline">Wrap / Unwrap</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'hashing',
-            <>
-              <Hash size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">Hash</span>
-            </>
-          )}
-          {tabBtn(
-            'sign_verify',
-            <>
-              <FileSignature size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Sign</span>
-                <span className="hidden sm:inline">Sign &amp; Verify</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'key_agree',
-            <>
-              <ArrowLeftRight size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Agree</span>
-                <span className="hidden sm:inline">Key Agree</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'key_derive',
-            <>
-              <Filter size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">KDF</span>
-            </>
-          )}
-          {tabBtn(
-            'mechanisms',
-            <>
-              <Layers size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Mechs</span>
-                <span className="hidden sm:inline">Mechanisms</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'logs',
-            <>
-              <Cpu size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">P11</span>
-                <span className="hidden sm:inline">PKCS#11 Log</span>
-              </span>
-            </>
-          )}
-          {tabBtn(
-            'developer',
-            <>
-              <Code2 size={16} className="shrink-0" aria-hidden="true" />
-              <span className="text-xs ml-1">
-                <span className="sm:hidden">Dev</span>
-                <span className="hidden sm:inline">Developer</span>
-              </span>
-            </>
-          )}
-        </div>
-        <div
-          className={clsx(
-            'pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-muted to-transparent rounded-r-xl transition-opacity duration-200 sm:hidden',
-            showTabFade ? 'opacity-100' : 'opacity-0'
-          )}
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* Content Area */}
-      <div
-        role="tabpanel"
-        id="hsm-tabpanel"
-        aria-labelledby={`hsm-tab-${activeTab}`}
-        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
-      >
-        {activeTab === 'learn' && (
-          <HsmLearnView onTryInWorkbench={(tab) => handleTabChange(tab as HsmTab)} />
-        )}
-        {activeTab === 'keystore' && (
-          <div className="space-y-4">
-            <TokenSetupPanel />
-            <HsmKeyTable />
-          </div>
-        )}
-        {activeTab === 'kem' && <HsmKemPanel />}
-        {activeTab === 'symmetric' && (
-          <HsmSymmetricPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'key_wrap' && (
-          <KeyWrapPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'hashing' && (
-          <HsmHashingPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'sign_verify' && (
-          <HsmSignCombinedPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'key_agree' && (
-          <HsmKeyAgreementPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'key_derive' && (
-          <HsmKdfPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
-        )}
-        {activeTab === 'mechanisms' && <HsmMechanismPanel />}
-        {activeTab === 'logs' && (
-          <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen={true} />
-        )}
-        {activeTab === 'developer' && (
-          <DeveloperTab activeSubTab={devSubTab} onSubTabChange={setDevSubTab} />
-        )}
-      </div>
 
       {error && (
         <div

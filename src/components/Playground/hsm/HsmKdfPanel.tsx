@@ -25,7 +25,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types & constants ────────────────────────────────────────────────────────
 
@@ -1015,7 +1014,6 @@ export const HsmKdfPanel = ({
         {mode === 'kbkdf-feedback' && <KbkdfPanel feedback={true} onAlgoChange={onAlgoChange} />}
 
         {/* Unified PKCS#11 call log — below all sub-panels */}
-        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

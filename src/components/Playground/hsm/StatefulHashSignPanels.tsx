@@ -18,7 +18,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── XMSS sub-panel ───────────────────────────────────────────────────────────
 
@@ -166,7 +165,6 @@ export const XmssPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -318,7 +316,6 @@ export const LmsPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )

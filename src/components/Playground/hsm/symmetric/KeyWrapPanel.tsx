@@ -52,7 +52,6 @@ import {
   type SoftHSMModule,
   type Pkcs11LogEntry,
 } from '../../../../wasm/softhsm'
-import { MiniPkcsLog } from '@/components/Playground/components/MiniPkcsLog'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
 import { downloadCsv } from '@/utils/csvExport'
@@ -2088,7 +2087,6 @@ export const KeyWrapPanel = ({
         </div>
 
         {/* Scoped clear — never wipes the shared Logs tab (audit N14) */}
-        <MiniPkcsLog title="PKCS#11 Call Log — Key Wrap" defaultOpen />
 
         <HsmKeyInspector
           keys={hsmKeys}

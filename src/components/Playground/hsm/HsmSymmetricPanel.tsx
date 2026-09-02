@@ -26,7 +26,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
@@ -316,8 +315,6 @@ const AesPanel = ({
           )}
         </div>
       )}
-
-      <MiniPkcsLog />
     </div>
   )
 }
@@ -498,8 +495,6 @@ const HmacPanel = () => {
           </div>
         </div>
       )}
-
-      <MiniPkcsLog />
     </div>
   )
 }
@@ -748,8 +743,6 @@ const AesCtrPanel = ({
           )}
         </div>
       )}
-
-      <MiniPkcsLog />
     </div>
   )
 }
@@ -988,8 +981,6 @@ const AesCmacPanel = ({
           </div>
         </div>
       )}
-
-      <MiniPkcsLog />
     </div>
   )
 }
@@ -1311,8 +1302,6 @@ const ChaCha20Panel = () => {
           {decrypted !== null && <HsmResultRow label="Decrypted" value={decrypted} mono={false} />}
         </div>
       )}
-
-      <MiniPkcsLog />
     </div>
   )
 }

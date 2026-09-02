@@ -18,7 +18,7 @@ import type { LucideIcon } from 'lucide-react'
 import { X, ChevronRight, Check, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export interface LessonStep {
+export interface LessonStep<TPlane extends string = string> {
   title: string
   body: string
   /** CSS selector for the spotlight target. Omitted → tooltip centers on screen. */
@@ -27,6 +27,11 @@ export interface LessonStep {
   targetText?: string
   /** Runs when the step becomes active — the real action, not a simulation. */
   act?: () => void | Promise<void>
+  /** Optional per-step plane: when set, the tour switches to this top-level
+   *  tab/plane BEFORE running `act` and measuring `target` — so one lesson
+   *  can walk across tabs (Learn → Operate) instead of being pinned to the
+   *  lesson-level `plane` it started on. Omitted → stays wherever it is. */
+  plane?: TPlane
 }
 
 export interface Lesson<TPlane extends string> {
@@ -38,7 +43,7 @@ export interface Lesson<TPlane extends string> {
    *  union, or the HSM playground's `HsmTab` union. */
   plane: TPlane
   blurb: string
-  steps: LessonStep[]
+  steps: LessonStep<TPlane>[]
 }
 
 /** How a lesson's `plane` renders as the hub's badge chip — left to each
@@ -138,8 +143,16 @@ export function useLessonsTour<TPlane extends string>(
       setTimeout(() => !cancelled && setTourRect(el.getBoundingClientRect()), 320)
     }
     const run = async () => {
+      // Per-step plane hop first (a real tab switch through the embedding's
+      // own handler), then the step's action, then measure — each needs the
+      // previous one's DOM to exist.
+      const hopped = step.plane !== undefined
+      if (hopped) {
+        onLessonPlane(step.plane as TPlane)
+        await new Promise((r) => setTimeout(r, 120))
+      }
       if (step.act) await step.act()
-      setTimeout(place, step.act ? 320 : 40)
+      setTimeout(place, step.act || hopped ? 320 : 40)
     }
     const t = setTimeout(run, 60)
     return () => {

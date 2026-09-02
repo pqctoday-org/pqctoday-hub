@@ -37,7 +37,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -404,7 +403,6 @@ const RsaPanel = () => {
         </>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -675,7 +673,6 @@ const EcdsaPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -871,7 +868,6 @@ const EddsaPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -1023,7 +1019,6 @@ const XmssPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -1175,7 +1170,6 @@ const LmsPanel = () => {
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
