@@ -506,11 +506,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-11',
       },
       {
-        id: 'draft-miller-sshm-composite-sigs',
+        id: 'draft-ietf-sshm-composite-sigs',
         title:
-          'draft-miller-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft, which replaced the ML-DSA-65 one)',
-        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
-        date: '2026-07-24',
+          'draft-ietf-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (WG-adopted; was draft-miller-sshm-composite-sigs)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
+        date: '2026-08-21',
       },
       {
         id: 'draft-becker-cnsa2-ssh-profile-05',
@@ -582,17 +582,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'individual-draft',
-        stageNote: 'Internet-Draft (individual)',
+        stage: 'wg-document',
+        stageNote:
+          'Verified live 2026-09-01: the individual submission was adopted by the SSHM working group and replaced by draft-ietf-sshm-composite-sigs (WG document, IESG state "I-D Exists"). Was individual-draft.',
         note: 'Composite ML-DSA+Ed25519 host-key authentication track; the CNSA 2.0 SSH profile (Independent Submission) also touches composite-sig host-key semantics. OpenSSH 10.4 (2026-07-06) shipped the first implementation — experimental, opt-in support for mldsa44-ed25519 host keys and user auth (ssh-keygen -t mldsa44-ed25519; not enabled by default).',
         refs: [
           {
             kind: 'draft',
-            id: 'draft-miller-sshm-composite-sigs',
+            id: 'draft-ietf-sshm-composite-sigs',
             title:
-              'Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft)',
-            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
-            publishedOn: '2026-07-24',
+              'Post-Quantum Composite Signatures in SSH (WG document; was draft-miller-sshm-composite-sigs)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
+            publishedOn: '2026-08-21',
           },
         ],
       },
@@ -2293,9 +2294,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          'Verified live 2026-08-22: draft-ietf-ipsecme-ikev2-pqc-auth is now at -12, last updated 2026-08-20, WG state "Submitted to IESG for Publication", with OPSDIR and SECDIR Last Call reviews of -10 on record. Supersedes the 2026-08-09 reading, which said -11 was on the 2026-08-20 telechat agenda — that date has passed.',
+          'Verified live 2026-09-01: draft-ietf-ipsecme-ikev2-pqc-auth has cleared IESG evaluation and is now in the RFC Editor queue, "Awaiting Editor Assignment" (revision -12, last updated 2026-08-31; OPSDIR review of -10 on 2026-08-04, SECDIR review of -10 on 2026-07-26, both clean). Supersedes the 2026-08-22 reading of "Submitted to IESG for Publication".',
         refs: [
           {
             kind: 'draft',
