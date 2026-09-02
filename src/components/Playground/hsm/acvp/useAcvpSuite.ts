@@ -274,8 +274,10 @@ export function useAcvpSuite() {
       .map((b: number) => b.toString(16).padStart(2, '0'))
       .join('') + (bytes.length > maxBytes ? '…' : '')
 
-  const runTestsRef = useRef<{ runTests: (override?: Set<CategoryId>) => Promise<void> }>({
-    runTests: () => Promise.resolve(),
+  const runTestsRef = useRef<{
+    runTests: (override?: Set<CategoryId>) => Promise<TestResult[]>
+  }>({
+    runTests: () => Promise.resolve([]),
   })
   runTestsRef.current = {
     runTests: (override?: Set<CategoryId>) => (runTests as typeof runTests)(override),
@@ -297,8 +299,8 @@ export function useAcvpSuite() {
     }
   }, [])
 
-  const runTests = async (overrideCategories?: Set<CategoryId>) => {
-    if (loading) return
+  const runTests = async (overrideCategories?: Set<CategoryId>): Promise<TestResult[]> => {
+    if (loading) return []
     // "Run All" (and the e2e trigger) pass ALL_CATEGORY_IDS explicitly here so
     // the full suite runs regardless of the sidebar's checkbox state; "Run
     // Selected" omits the override and uses whatever's currently checked.
@@ -312,7 +314,7 @@ export function useAcvpSuite() {
       const ok = await autoInit()
       if (!ok || !moduleRef.current) {
         addLog('Error: HSM initialization failed. Reload the page and retry.')
-        return
+        return []
       }
     }
 
@@ -3782,6 +3784,7 @@ export function useAcvpSuite() {
       setProgress(null)
       addLog('Validation Suite Completed.')
     }
+    return newResults
   }
 
   const totalChecks = results.length

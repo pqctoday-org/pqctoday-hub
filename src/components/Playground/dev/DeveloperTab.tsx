@@ -2,8 +2,8 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../ui/tabs'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PkcsDevWorkbench } from './pipeline/PkcsDevWorkbench'
-import { HsmAcvpTesting } from '../hsm/HsmAcvpTesting'
-import { Pkcs11ConformanceRunner } from '../hsm/Pkcs11ConformanceRunner'
+import { AcvpSuiteWorkbench } from './pipeline/suites/AcvpSuiteWorkbench'
+import { ConformanceSuiteWorkbench } from './pipeline/suites/ConformanceSuiteWorkbench'
 
 /**
  * Which content set the shared Builder/Code workbench (PkcsDevWorkbench)
@@ -26,8 +26,9 @@ interface DeveloperTabProps {
  * separate top-level HsmPlayground tabs, folded together here as the
  * engineering-workbench surfaces they all are (2026-08-31 merge), then
  * relabeled Standard/ACVP/Conformance as a Test Suite switcher over one
- * shared Builder/Code workbench (PkcsDevWorkbench) — ACVP generalization
- * still in progress; Conformance still renders its own standalone runner.
+ * shared Builder/Code chrome — Standard = PkcsDevWorkbench (p11 sequences),
+ * ACVP and Conformance = their own suite workbenches on suites/SuiteShell
+ * (2026-09-02 fold-in, design_handoff_kmip_pkcs11_playground D6).
  *
  * Labeled "Standard" — deliberately not "Builder" or "Pipeline Builder": the
  * workbench itself already has its own inner "Builder"/"Code" tabs
@@ -57,16 +58,16 @@ export const DeveloperTab = ({ activeSubTab, onSubTabChange }: DeveloperTabProps
         {showWorkbenchTabs && <TabsTrigger value="conformance">Conformance</TabsTrigger>}
       </TabsList>
       <TabsContent value="standard">
-        <PkcsDevWorkbench suite="standard" />
+        <PkcsDevWorkbench />
       </TabsContent>
       {showWorkbenchTabs && (
         <TabsContent value="acvp">
-          <HsmAcvpTesting />
+          <AcvpSuiteWorkbench />
         </TabsContent>
       )}
       {showWorkbenchTabs && (
         <TabsContent value="conformance">
-          <Pkcs11ConformanceRunner />
+          <ConformanceSuiteWorkbench />
         </TabsContent>
       )}
     </Tabs>

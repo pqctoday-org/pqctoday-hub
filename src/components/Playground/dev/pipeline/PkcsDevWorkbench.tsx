@@ -19,14 +19,11 @@
  * UNLESS the learner edits it, at which point the pipeline detaches into
  * "custom script" mode (builder greys out) until they explicitly revert.
  *
- * `suite` currently only ever receives `'standard'` — DeveloperTab.tsx's
- * ACVP and Conformance Test Suite values still render their own standalone
- * components (HsmAcvpTesting.tsx, Pkcs11ConformanceRunner.tsx), not this
- * workbench. It's threaded through now so the Suite switcher's call site is
- * already suite-aware; folding ACVP/Conformance content into this shared
- * shell (a category-grouped template picker replacing the drag palette, a
- * `'call'`-op step kind for OASIS XML replay) is later, larger, separately
- * planned work — see the PKCS#11 Test Suite plan's Phase 2/3.
+ * 2026-09-02 (design handoff design_handoff_kmip_pkcs11_playground, D6): the
+ * ACVP and Conformance suites now live in their own workbenches
+ * (suites/AcvpSuiteWorkbench.tsx, suites/ConformanceSuiteWorkbench.tsx) on
+ * the shared suites/SuiteShell.tsx chrome — same header/Builder/Code shape
+ * as this component. This one stays the Standard (p11 sequence) suite.
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
@@ -133,11 +130,7 @@ const FAMILIES: PrimitiveFamily[] = ['Signature', 'KEM', 'Symmetric', 'Hash']
 const STORE_KEY = 'pqctoday-hub-pkcs11-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-pkcs11-pipeline-v1'
 
-export interface PkcsDevWorkbenchProps {
-  /** Reserved — see this file's header comment. Only `'standard'` is
-   *  implemented today. */
-  suite: 'standard' | 'acvp' | 'conformance'
-}
+export type PkcsDevWorkbenchProps = Record<string, never>
 
 export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const hsmCtx = useHsmContext()
