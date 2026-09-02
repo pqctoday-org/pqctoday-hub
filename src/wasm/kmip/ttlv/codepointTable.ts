@@ -221,7 +221,8 @@ export class CodepointTable {
 let tablePromise: Promise<CodepointTable> | null = null
 
 /** Fetch + parse the tag/enum spec once per tab — lazy, since it's only
- * needed once the KMIP3.0 Commands or Corpus Replay sub-tabs are opened. */
+ * needed once the KMIP3.0 Commands sub-tab, or the Dev sub-tab's corpus
+ * palette, is opened. */
 export const getCodepointTable = (): Promise<CodepointTable> => {
   tablePromise ??= fetch('/kmip-corpus/tags-enums.json')
     .then((r) =>

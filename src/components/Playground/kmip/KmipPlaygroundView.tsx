@@ -845,17 +845,27 @@ export function KmipPlaygroundView() {
           body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
         },
         {
-          title: 'The Dev tab: pipeline builder and corpus replay',
+          title: 'The Dev tab: build it, or prove it against OASIS',
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Dev',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
-          body: 'The pipeline builder and the OASIS corpus replay harness both live here — the engineering-workbench surfaces of the KMIP3.0 tab, folded together the same way the PKCS#11 side folds its Pipeline/ACVP/Conformance tools.',
+          body: 'The pipeline builder lives here — and its palette can switch from the standard operation primitives to the official OASIS conformance corpus, replayed byte-exact against the real wire protocol, in the same Builder/Code shell.',
+        },
+        {
+          title: 'Switch the palette to the OASIS corpus',
+          target: '[data-tour="kmip-dev-palette-source"] button',
+          act: () => {
+            document
+              .querySelector<HTMLElement>('[data-tour="kmip-dev-palette-source"] button')
+              ?.click()
+          },
+          body: 'This palette normally holds lifecycle primitives to drag onto the canvas — switch it here to replace them with the 144 real OASIS/PQC conformance tests.',
         },
         {
           title: 'Prove it against the OASIS suite',
-          target: '[data-tour="kmip-dev-subtabs"] button',
-          targetText: 'Corpus Replay',
-          act: () => clickByText('[data-tour="kmip-dev-subtabs"] button', 'Corpus Replay'),
+          target: '[role="option"]',
+          targetText: 'Corpus',
+          act: () => clickByText('[role="option"]', 'Corpus'),
           body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
         },
         {
@@ -879,7 +889,24 @@ export function KmipPlaygroundView() {
           target: '[data-tour="kmip3-subtabs"] button',
           targetText: 'Dev',
           act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
-          body: "Pipeline is the Dev tab's default sub-tab — the pipeline builder opens straight away.",
+          body: "The pipeline builder opens straight away. Its palette remembers whichever source you left it on — the next two steps make sure it's Standard before continuing.",
+        },
+        {
+          title: 'Palette: open the switch',
+          target: '[data-tour="kmip-dev-palette-source"] button',
+          act: () => {
+            document
+              .querySelector<HTMLElement>('[data-tour="kmip-dev-palette-source"] button')
+              ?.click()
+          },
+          body: 'Opening the palette switch.',
+        },
+        {
+          title: 'Palette: back to Standard',
+          target: '[role="option"]',
+          targetText: 'Standard',
+          act: () => clickByText('[role="option"]', 'Standard'),
+          body: 'Selecting Standard — safe to click even if it was already selected.',
         },
         {
           title: 'Start from a template',
@@ -988,7 +1015,8 @@ export function KmipPlaygroundView() {
               whose public review closed 13 Aug 2026. Without this line a visitor
               who never opens the guide reasonably reads "KMIP 3.0" as ratified.
               These three strings are the complete set to update on ratification:
-              here, the Commands op-count claim, and CorpusReplayView's heading. */}
+              here, the Commands op-count claim, and the corpus palette's disclosure
+              banner (KmipCorpusPalette.tsx's KmipCorpusDisclosure). */}
           <p className="mt-1 text-[11px] text-muted-foreground">
             <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
               Spec status

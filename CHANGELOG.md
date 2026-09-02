@@ -38,6 +38,7 @@ first time (don't ship dev-speak and reformat later):
 - **PKCS#11 v3.2 Mechanism Coverage grew to include hybrid-KEM building blocks, classical asymmetric variants, symmetric/AEAD mechanisms, and PQC deterministic-seed keygen (CKA_SEED)** [view:/playground] [persona:developer] [persona:researcher].
 - **The Navigate graph's category, sub-category, and node labels are now clickable**, with a camera move to match [view:/navigate] [persona:curious] [persona:executive].
 - **The KMIP Developer plane now lives inside KMIP 3.0's own Dev sub-tab, and Corpus Replay gained a Builder/Code split** [view:/playground] [persona:developer]: the HSM playground's ACVP and Conformance tools similarly merged into one Developer tab, closing several PKCS#11 v3.2 Profiles conformance gaps.
+- **The Corpus Replay tab folded into the pipeline builder's own palette** [view:/playground] [persona:developer]: switch the palette between the standard operation primitives and the OASIS KMIP 3.0 conformance corpus, all in the same Builder/Code shell — pick a corpus test to run it and see its response, or its decoded request in Code mode. The corpus still replays real TTLV wire bytes, byte-exact against the native CI baseline; only where it's shown moved.
 
 ### Fixed
 

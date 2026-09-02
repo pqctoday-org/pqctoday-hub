@@ -8,10 +8,11 @@ import { test, expect } from '@playwright/test'
  * The named WP-0 e2e specs (playground-cacp, acvp-validator, hsm-boundary,
  * strongswan, vpn-rust-module, tls-hsm, cms-hsm-sign) already cover most
  * demo tabs. This fills the remaining gap: the KMIP3.0 Command Lab's own
- * sub-tabs (Learn/Commands/Corpus Replay) and the Policy plane, none of
- * which are exercised by those specs — confirming the new bundle renders
- * them without a console error or crash, since there's no reachable path
- * to actually exercise Certify/Re-certify in wasm (see PR description).
+ * sub-tabs (Learn/Commands/Dev, the latter's palette switched to the OASIS
+ * corpus) and the Policy plane, none of which are exercised by those
+ * specs — confirming the new bundle renders them without a console error
+ * or crash, since there's no reachable path to actually exercise
+ * Certify/Re-certify in wasm (see PR description).
  */
 
 test.beforeEach(async ({ page }) => {
@@ -58,12 +59,12 @@ test('KMIP3.0 Command Lab + Policy plane render cleanly on the refreshed bundle'
   await subTabs.getByRole('tab', { name: 'Commands' }).click()
   await expect(page.getByText(/Register/).first()).toBeVisible({ timeout: 10000 })
 
-  // Corpus Replay is nested inside the Dev sub-tab (2026-08-31 restructure —
-  // see e2e/REMEDIATION-PLAN-KMIP-DEV-TAB-2026-08-31.md), not a direct
-  // child of kmip3-subtabs any more.
+  // The OASIS corpus is a palette source inside the Dev sub-tab's pipeline
+  // builder (2026-09-01 restructure — see
+  // kmip3-corpus-palette-plan-09012026.md), not its own sub-tab any more.
   await subTabs.getByRole('tab', { name: 'Dev' }).click()
-  const devSubTabs = page.locator('[data-tour="kmip-dev-subtabs"]')
-  await devSubTabs.getByRole('tab', { name: 'Corpus Replay' }).click()
+  await page.locator('[data-tour="kmip-dev-palette-source"] button').click()
+  await page.getByRole('option', { name: /Corpus/ }).click()
   await page.waitForTimeout(500)
 
   const seriousErrors = consoleErrors.filter(
