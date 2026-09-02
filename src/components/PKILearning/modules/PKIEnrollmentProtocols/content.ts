@@ -20,7 +20,9 @@ export const content: ModuleContent = {
     // DECLARED 2026-08-22 by writeback_module_declarations.py: documents this
     // module already names to a reader. Mechanical since the four-document
     // sampler cap was lifted the same day — declaring no longer costs coverage.
-    getStandard('RFC 9480'),
+    // RFC 9480 dropped 2026-09-01: deprecated, superseded_by RFC 9810, which
+    // this module already cites above (line 17) — a re-point would have
+    // duplicated the citation.
     getStandard('RFC 9629'),
     getStandard('RFC 9811'),
     getStandard('RFC 9881'),

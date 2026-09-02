@@ -120,8 +120,9 @@ export function useComplianceUrlState(simEmbed = false, initialTab?: string, ini
 
   // The industry/region compliance hint used to pick the opening tab. The
   // register replaced that job (see the default below), so the computation is
-  // gone from here — `INDUSTRY_COMPLIANCE_HINT` / `REGION_COMPLIANCE_HINT`
-  // remain in use in ComplianceView, which renders them as copy.
+  // gone from here. The old hint data (`INDUSTRY_COMPLIANCE_HINT` /
+  // `REGION_COMPLIANCE_HINT` in the now-deleted compliancePersonaHints.ts)
+  // had no remaining consumers anywhere — removed 2026-09-01.
 
   // ── Tab state ──────────────────────────────────────────────────────────
 

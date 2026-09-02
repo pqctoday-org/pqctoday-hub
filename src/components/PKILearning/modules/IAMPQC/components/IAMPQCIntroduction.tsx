@@ -558,7 +558,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           <ul className="mt-2 space-y-1 text-xs">
             <li>
               <Link
-                to="/library?ref=Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods"
+                to="/library?ref=Post-Quantum-Enhancements-to-TLS-Based-EAP-Methods-WG-draft"
                 className="text-primary hover:underline"
               >
                 Post-Quantum Enhancements to TLS-Based EAP Methods

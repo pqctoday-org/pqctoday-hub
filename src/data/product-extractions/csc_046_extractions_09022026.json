@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Azure Dedicated HSM (Thales Luna 7)",
+    "category": "Cloud Hardware Security Module (HSM)",
+    "product_name": "Marvell LiquidSecurity 2 (LS2)",
+    "product_brief": "Industry’s most advanced HSM adapter for cloud encryption, key management, and authentication with high performance and scalability.",
+    "pqc_support": "Planned",
+    "pqc_capability_description": "The LS2 hardware can be certified and updated in the field to support new algorithms and variants, such as post-quantum cryptography, providing cryptographic agility and future-proofing the HSM against new vulnerabilities.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES, RSA, ECC",
+    "key_management_model": "Hardware-secured storage of up to one million keys; secure key generation and management within a FIPS-certified security boundary.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "PCIe card (HSM adapter)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "LiquidSecurity 2 (LS2)",
+    "release_date": "2022-09-14",
+    "fips_validated": "FIPS 140-2 Level 2 and 3 certified; FIPS 140-3 pending/anticipated certification.",
+    "primary_platforms": "Cloud (HSM-as-a-Service), Data Centers, Network Appliance OEMs",
+    "target_industries": "Payment, Privacy Compliance, General Purpose, Banks, Retailers, Media Companies, Governments",
+    "regulatory_status": "FIPS 140-2 Level 2/3, FIPS 140-3 (pending), Common Criteria (CC), eIDAS, PCI PTS HSM 4.0",
+    "pqc_roadmap_details": "Hardware can be updated in the field to support post-quantum cryptography algorithms and variants.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "www.marvell.com",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Lowest cost per key stored, per partition; lowest total cost of ownership (TCO); pay-as-you-go model.",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-02"
+    }
+  }
+]

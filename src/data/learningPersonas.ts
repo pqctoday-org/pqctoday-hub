@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read; hand-verified every
+// module id, estimatedMinutes sum (all 6 personas), and quiz-category
+// against live code; fixed one stale explanatory comment (researcher path)
 import type { QuizCategory } from '@/components/PKILearning/modules/Quiz/types'
 
 export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious'
@@ -877,11 +880,11 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    // 2745 as of 2026-08-01: +10 min when Financial Services & Payments grew
-    // from 110 to 120 min (new Open Banking & PSD2 SCA section, folded into
-    // the Banking & Settlement path). A learner arriving via an industry path
-    // sees only that path's duration; this figure is the whole-catalogue sum
-    // the persona test asserts.
+    // Corrected 2026-09-01: this is the sum of researcher's OWN recommendedPath
+    // (51 modules + quiz below), not a whole-catalogue sum — the previous
+    // comment's claim was wrong (the persona test only sums a persona's own
+    // path). The true current whole-catalogue sum is ~3285 min (excl. quiz);
+    // researcher's path omits 13 real modules not part of its curriculum.
     estimatedMinutes: 2805,
     essentials: [
       'pqc-101',

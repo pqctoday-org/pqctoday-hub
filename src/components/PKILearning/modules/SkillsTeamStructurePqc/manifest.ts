@@ -23,6 +23,16 @@ const manifest: ModuleManifest = {
     { id: 'team-sizing', label: 'Team Sizing Calculator' },
     { id: 'crypto-champions', label: 'Crypto Champion Roster' },
   ],
+  // reduced 5-tab set (no Tools & Products) — this module is staffing/process
+  // methodology (FTE sizing, Crypto Champion roster), not a product category;
+  // the migrate catalog has no workforce/training category to ever populate it.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'exercises', label: 'Exercises' },
+    { value: 'references', label: 'References' },
+  ],
   embeddable: true,
   load: () => import('./index').then((m) => ({ default: m.SkillsTeamStructureModule })),
 }

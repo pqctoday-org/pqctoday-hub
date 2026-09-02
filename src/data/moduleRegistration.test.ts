@@ -34,11 +34,11 @@ const NOT_A_LEARN_MODULE = new Set(['quiz'])
  * 2026-07-30; recorded so the gap is visible and reviewable rather than
  * invisible. Removing an entry here is the fix; adding one needs a reason.
  */
-const NICE_EXEMPT: Record<string, string> = {
-  'pqc-grc': 'pre-existing gap, never mapped — no work-role decision on record',
-  'skills-team-structure': 'pre-existing gap, never mapped',
-  'soc-implementation-pqc': 'pre-existing gap, never mapped',
-}
+// Empty as of 2026-09-01 (personas-nice content review): pqc-grc,
+// skills-team-structure, and soc-implementation-pqc were the three
+// "pre-existing gap, never mapped" entries this list existed to make
+// visible — all three now have real NICE_MODULE_MAP entries.
+const NICE_EXEMPT: Record<string, string> = {}
 
 /**
  * Modules deliberately absent from every persona's recommendedPath.

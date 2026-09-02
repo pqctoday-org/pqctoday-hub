@@ -72,7 +72,10 @@ export const PERSONA_LENS_REGISTRY: Record<string, PersonaLensEntry> = {
   },
   '/learn': {
     lens: 'per-persona-config',
-    configKeys: ['MODULE_INDUSTRY_RELEVANCE', 'PERSONA_SIM_PRACTICE_PHASES'],
+    configKeys: ['PERSONA_SIM_PRACTICE_PHASES'],
+    note:
+      'MODULE_INDUSTRY_RELEVANCE (an industry-relevance map, unrelated to persona) was removed ' +
+      '2026-09-01 — it had zero consumers and covered only 55 of 65 modules.',
   },
   '/timeline': {
     lens: 'per-persona-config',

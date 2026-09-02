@@ -7851,7 +7851,7 @@
     "productName": "IDeal Citiz 2.17-I embedding ID.me 1.6_i application puce",
     "productCategory": "Certified Product",
     "vendor": "INFINEON",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-44-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-44-rapport.pdf"
@@ -7876,7 +7876,7 @@
     "productName": "Ideal Pass v2 Sac/EAC NT ePassport puce",
     "productCategory": "Certified Product",
     "vendor": "INFINEON",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2014-53-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2014-53-rapport.pdf"
@@ -7900,7 +7900,7 @@
     "productName": "puce",
     "productCategory": "Certified Product",
     "vendor": "Unknown Vendor",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-27-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CC-2018-27-rapport.pdf"
@@ -12030,7 +12030,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Red Hat Enterprise Linux 9 NSS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Red Hat, Inc",
@@ -12044,7 +12044,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Amazon Linux 2023 OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
@@ -12058,7 +12058,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "SSH Communications Security Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "SSH Communications Security, Oyj.",
@@ -12072,7 +12072,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Trellix FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Musarubra US LLC",
@@ -12100,7 +12100,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Riverbed Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Riverbed Technology, LLC",
@@ -12128,7 +12128,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Amazon Linux 2023 GnuTLS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
@@ -12142,7 +12142,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Amazon Linux 2023 NSS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
@@ -12226,7 +12226,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Nuvoton Cryptographic Library 2.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Nuvoton Technology Corporation",
@@ -12240,7 +12240,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "BCM58202B0",
     "productCategory": "Cryptographic Module",
     "vendor": "Broadcom, Inc.",
@@ -12324,7 +12324,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Arista Crypto Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Arista Networks, Inc.",
@@ -12436,7 +12436,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Oracle Linux 9 libgcrypt Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Oracle Corporation",
@@ -12548,7 +12548,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "OpenSSL FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "The OpenSSL Project",
@@ -12590,7 +12590,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Ideem ZSM Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Ideem, Inc.",
@@ -12604,7 +12604,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Covidence FIPS Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "Covidence A/S",
@@ -12618,7 +12618,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Kiteworks Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Kiteworks",
@@ -12632,7 +12632,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cisco Secure Firewall Threat Defense Cryptographic Module (FPR 3100 Series)",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
@@ -12744,7 +12744,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Amazon Linux 2023 Libgcrypt Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services, Inc.",
@@ -12814,7 +12814,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cisco Adaptive Security Appliance Cryptographic Module (FPR 3100 Series)",
     "productCategory": "Cryptographic Module",
     "vendor": "Cisco Systems, Inc.",
@@ -12856,7 +12856,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Edge Security Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Ultra Intelligence and Communications",
@@ -12884,7 +12884,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Juniper Networks PTX10008 and PTX10016 Packet Transport Routers",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
@@ -12898,7 +12898,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Juniper Networks PTX1000 Packet Transport Router",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
@@ -12912,7 +12912,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Juniper Networks EX4300-48MP Ethernet Switch",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
@@ -13150,7 +13150,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "ECDSA",
     "productName": "TuffServ® Encryption Module (TSEM)",
     "productCategory": "Cryptographic Module",
     "vendor": "Ampex Data Systems Corporation",
@@ -13304,7 +13304,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Tanium FIPS OpenSSL 3.0 Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Tanium, Inc.",
@@ -13318,7 +13318,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Sophos Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Sophos Ltd.",
@@ -13332,7 +13332,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Snowflake FIPS Provider",
     "productCategory": "Cryptographic Module",
     "vendor": "Snowflake Inc.",
@@ -13346,7 +13346,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "HID/Mercury FIPS Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "HID",
@@ -13360,7 +13360,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Cohesity FIPS Object Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Cohesity, Inc.",
@@ -13668,7 +13668,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Panzura CloudFS™ FIPS Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Panzura",
@@ -13808,7 +13808,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Riverbed Cryptographic Module 3.0",
     "productCategory": "Cryptographic Module",
     "vendor": "Riverbed Technology, LLC",
@@ -13822,7 +13822,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "AIX FIPS Crypto Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "IBM",
@@ -13836,7 +13836,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Keysight OpenSSL 3 FIPS Provider for Network Visibility",
     "productCategory": "Cryptographic Module",
     "vendor": "Keysight Technologies",
@@ -13850,7 +13850,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Extreme Networks Cryptographic Provider 3",
     "productCategory": "Cryptographic Module",
     "vendor": "Extreme Networks",
@@ -13864,7 +13864,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Gallagher FIPS Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "Gallagher Group Ltd",
@@ -13878,7 +13878,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "ZPE Systems FIPS Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "ZPE Systems",
@@ -13920,7 +13920,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Juniper Networks QFX10002, QFX10008 and QFX10016",
     "productCategory": "Cryptographic Module",
     "vendor": "Juniper Networks, Inc.",
@@ -14424,7 +14424,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "mToken CryptoID",
     "productCategory": "Cryptographic Module",
     "vendor": "Century Longmai Technology Co. Ltd",
@@ -14788,7 +14788,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "AMD Pensando PenTrust Security Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Advanced Micro Devices, Inc. (AMD)",
@@ -14830,7 +14830,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "AWS-LC Cryptographic Module (static)",
     "productCategory": "Cryptographic Module",
     "vendor": "Amazon Web Services Inc.",
@@ -15222,7 +15222,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "Samsung CryptoCore Cryptographic Module",
     "productCategory": "Cryptographic Module",
     "vendor": "Samsung Electronics Co., Ltd.",
@@ -15992,7 +15992,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "KeyPair FIPS Provider for OpenSSL 3",
     "productCategory": "Cryptographic Module",
     "vendor": "KeyPair Consulting Inc.",
@@ -16006,7 +16006,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA",
     "productName": "AMD ASP Cryptographic CoProcessor (\"Phoenix\")",
     "productCategory": "Cryptographic Module",
     "vendor": "Advanced Micro Devices (AMD)",
@@ -16062,7 +16062,7 @@
     "type": "FIPS 140-3",
     "status": "Active",
     "pqcCoverage": "No PQC Mechanisms Detected",
-    "classicalAlgorithms": "",
+    "classicalAlgorithms": "RSA, ECDSA",
     "productName": "wolfCrypt",
     "productCategory": "Cryptographic Module",
     "vendor": "wolfSSL Inc.",
@@ -25237,7 +25237,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3110-2026-2500102-01",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500102-01_en",
     "type": "EUCC",
     "status": "Active",
@@ -25269,7 +25269,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3110-2026-2500103-01",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500103-01_en",
     "type": "EUCC",
     "status": "Active",
@@ -25403,7 +25403,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3110-2026-2500079-01",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500079-01_en",
     "type": "EUCC",
     "status": "Active",
@@ -25436,7 +25436,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3110-2026-2500163-01",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500163-01_en",
     "type": "EUCC",
     "status": "Active",
@@ -25468,7 +25468,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3110-2026-2500100-01",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500100-01_en",
     "type": "EUCC",
     "status": "Active",
@@ -26473,7 +26473,7 @@
     "productName": "Secure Start Hardware Root of Trust, référence NPCE5x6HA0",
     "productCategory": "Certified Product",
     "vendor": "Unknown Vendor",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2017-04-rapport.pdf"
@@ -26495,7 +26495,7 @@
     "productName": "Unknown Product",
     "productCategory": "Certified Product",
     "vendor": "Unknown Vendor",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-rapport.pdf",
     "certificationReportUrls": [
       "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2019-03-rapport.pdf"
@@ -26511,7 +26511,7 @@
   {
     "id": "enisa-eucc-eucc-eucc-3087-2026-000012-i-00",
     "source": "ENISA",
-    "date": "2026-07-31",
+    "date": "2026-09-02",
     "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000012-i-00_en",
     "type": "EUCC",
     "status": "Active",
@@ -45500,5 +45500,2836 @@
         "url": "https://www.commoncriteriaportal.org/files/epfiles/ANSSI-CC-2024_31fr.pdf"
       }
     ]
+  },
+  {
+    "id": "5510",
+    "source": "NIST",
+    "date": "2026-09-01",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5510",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Supermicro FIPS Provider for OpenSSL",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Super Micro Computer, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5509",
+    "source": "NIST",
+    "date": "2026-09-01",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5509",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "HPE Juniper Networking QFX5120-48YM",
+    "productCategory": "Cryptographic Module",
+    "vendor": "HPE Juniper Networking",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5508",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5508",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Ciena Waveserver Ai WCS-2",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Ciena Corporation",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5507",
+    "source": "NIST",
+    "date": "2026-08-27",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5507",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Bitwarden Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Bitwarden, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5506",
+    "source": "NIST",
+    "date": "2026-08-27",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5506",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "BlueCat Networks Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "BlueCat Networks",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5505",
+    "source": "NIST",
+    "date": "2026-08-25",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5505",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "F5OS-A Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "F5, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5504",
+    "source": "NIST",
+    "date": "2026-08-25",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5504",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Qualcomm® Pseudo Random Number Generator",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Qualcomm Technologies, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5503",
+    "source": "NIST",
+    "date": "2026-08-25",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5503",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM, ML-DSA, SLH-DSA",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Sansec HSM Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Sansec Technology Co., Ltd.",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5502",
+    "source": "NIST",
+    "date": "2026-08-25",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5502",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM, ML-DSA",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Marvell LS2 HSM Family",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Marvell Semiconductor, Inc.",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5501",
+    "source": "NIST",
+    "date": "2026-08-24",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5501",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Classified Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Classified",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5500",
+    "source": "NIST",
+    "date": "2026-08-24",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5500",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Palo Alto Networks SD-WAN Virtual Instant-On Network (vION)",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Palo Alto Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5499",
+    "source": "NIST",
+    "date": "2026-08-21",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5499",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Phison PASCARI X and D-series NVMe TCG OPAL SSC Self-Encrypting Enterprise SSD",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Phison Electronics Corporation",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5498",
+    "source": "NIST",
+    "date": "2026-08-19",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5498",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Aviat Networks Eclipse Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Aviat Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5497",
+    "source": "NIST",
+    "date": "2026-08-19",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5497",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM, ML-DSA, SLH-DSA, LMS",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "QASM Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Crypto4A Technologies Inc.",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5496",
+    "source": "NIST",
+    "date": "2026-08-18",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5496",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Rocky Linux 9 GnuTLS Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Ctrl IQ, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5495",
+    "source": "NIST",
+    "date": "2026-08-18",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5495",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Seagate SSG3 TCG Enterprise SSC SED FIPS 140 Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Seagate Technology LLC",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5494",
+    "source": "NIST",
+    "date": "2026-08-18",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5494",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Geotab Extended Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Geotab Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5493",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5493",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "FortiClient Crypto Module v1.0",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Fortinet Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5492",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5492",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Motorola Solutions Advanced Crypto Engine (MACE) HSM - Security Level 2",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Motorola Solutions, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5491",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5491",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Canonical Ltd. Ubuntu 22.04 Kernel Crypto API Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Canonical Ltd.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5490",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5490",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Junos® OS Evolved MACsec Cryptographic Library",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Juniper Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5489",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5489",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Juniper Express 4 MACsec Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Juniper Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5488",
+    "source": "NIST",
+    "date": "2026-08-16",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5488",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "MonoCrypt AES Enhanced Crypto Library",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Focus Systems Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5487",
+    "source": "NIST",
+    "date": "2026-08-14",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5487",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Cryptographic Module for BIG-IP",
+    "productCategory": "Cryptographic Module",
+    "vendor": "F5, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5486",
+    "source": "NIST",
+    "date": "2026-08-14",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5486",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "IBM® Crypto for C",
+    "productCategory": "Cryptographic Module",
+    "vendor": "IBM Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5485",
+    "source": "NIST",
+    "date": "2026-08-14",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5485",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Microsoft HSM Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5484",
+    "source": "NIST",
+    "date": "2026-08-14",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5484",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "GlobalProtect App",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Palo Alto Networks",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5483",
+    "source": "NIST",
+    "date": "2026-08-13",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5483",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Ultrastar DC HC560 TCG Enterprise HDD, SED and Ultrastar DC HC570 TCG Enterprise HDD, SED",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Western Digital Technologies, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5482",
+    "source": "NIST",
+    "date": "2026-08-13",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5482",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "OpenSSL FIPS Provider for AlmaLinux 9",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Cloudlinux Inc., TuxCare division",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5481",
+    "source": "NIST",
+    "date": "2026-08-12",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5481",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "FortiGate 7.2 and 7.4",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Fortinet, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5480",
+    "source": "NIST",
+    "date": "2026-08-12",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5480",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Palo Alto Networks SD-WAN Instant-On Network (ION) Devices ION 1200, ION 1200-S, ION 3200, ION 3200H, ION 5200, and ION 9200",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Palo Alto Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5479",
+    "source": "NIST",
+    "date": "2026-08-12",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5479",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "DB Series SSD Drives",
+    "productCategory": "Cryptographic Module",
+    "vendor": "UD info Corp.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5478",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5478",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Arista MACsec data plane accelerator [on-chip-driver]",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Arista Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5477",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5477",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "VaultIC408 1.2.4 - Level 2",
+    "productCategory": "Cryptographic Module",
+    "vendor": "SEALSQ",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5476",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5476",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Amazon Linux 2023 GnuTLS Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Amazon Web Services, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5475",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5475",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "HP Inc. OpenSSL FIPS Provider based on the OpenSSL FIPS Provider",
+    "productCategory": "Cryptographic Module",
+    "vendor": "HP Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5474",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5474",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Knuckle Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Google, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5473",
+    "source": "NIST",
+    "date": "2026-08-07",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5473",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Ruckus Networks Virtual SmartZone - Data Plane (vSZ-D)",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Ruckus Wireless LLC",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5472",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5472",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Cisco ASA FX-OS on 4K/9K Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Cisco Systems, Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5471",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5471",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Motorola Solutions Advanced Crypto Engine (MACE) HSM - Security Level 3",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Motorola Solutions, Inc.",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5470",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5470",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Junos® OS Evolved Kernel Cryptographic Module version 2.1",
+    "productCategory": "Cryptographic Module",
+    "vendor": "HPE Juniper Networking",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5469",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5469",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Qualcomm® Pseudo Random Number Generator",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Qualcomm Technologies, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5468",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5468",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "WildFire 10.2 WF-500 and WF-500-B",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Palo Alto Networks Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5467",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5467",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Qualcomm® Crypto Engine Core",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Qualcomm Technologies, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5466",
+    "source": "NIST",
+    "date": "2026-08-06",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5466",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Juniper Networks NFX150 and NFX250 Network Services Platform",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Juniper Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5465",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5465",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "ECDSA",
+    "productName": "Port Authority Series",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Communication Devices Inc.",
+    "certificationLevel": "FIPS 140-3 L2"
+  },
+  {
+    "id": "5464",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5464",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "SUSE Linux Enterprise Libica Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "SUSE LLC",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5463",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5463",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "VaultIC408 1.2.4",
+    "productCategory": "Cryptographic Module",
+    "vendor": "SEALSQ",
+    "certificationLevel": "FIPS 140-3 L3"
+  },
+  {
+    "id": "5462",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5462",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Arista MACsec data plane accelerator [on-chip]",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Arista Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5461",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5461",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Red Hat Enterprise Linux 8 Kernel Cryptographic API",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Red Hat, LLC",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5460",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5460",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Virtru Go Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Virtru Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5459",
+    "source": "NIST",
+    "date": "2026-08-04",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5459",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "LMS, HSS",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Forescout FIPS module for Java",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Forescout Technologies",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5458",
+    "source": "NIST",
+    "date": "2026-07-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5458",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Tintri Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Tintri",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5457",
+    "source": "NIST",
+    "date": "2026-07-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5457",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Qualcomm® Inline Crypto Engine (UFS)",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Qualcomm Technologies, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5456",
+    "source": "NIST",
+    "date": "2026-07-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5456",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Cisco Firepower Threat Defense on 4K/9K Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Cisco Systems, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5410",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5410",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Cryptographic Primitives Library",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5409",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5409",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "BitLocker Dump Filter",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5408",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5408",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA, ECDSA",
+    "productName": "Kernel Mode Cryptographic Primitives Library",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5407",
+    "source": "NIST",
+    "date": "2026-08-20",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5407",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Secure Kernel Code Integrity",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5406",
+    "source": "NIST",
+    "date": "2026-08-20",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5406",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Code Integrity",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5405",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5405",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Windows OS Loader",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5404",
+    "source": "NIST",
+    "date": "2026-08-31",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5404",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Boot Manager",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Microsoft Corporation",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "5399",
+    "source": "NIST",
+    "date": "2026-08-14",
+    "link": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5399",
+    "type": "FIPS 140-3",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA",
+    "productName": "Junos® OS Evolved Kernel Cryptographic Module",
+    "productCategory": "Cryptographic Module",
+    "vendor": "Juniper Networks, Inc.",
+    "certificationLevel": "FIPS 140-3 L1"
+  },
+  {
+    "id": "A8890",
+    "source": "NIST",
+    "date": "2026-08-18",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21745",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM, SLH-DSA",
+    "productName": "Android BoringCrypto",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Google LLC"
+  },
+  {
+    "id": "A8892",
+    "source": "NIST",
+    "date": "2026-08-19",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21748",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM",
+    "productName": "Access Point Go Cryptographic Module",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "HPE Juniper Networking"
+  },
+  {
+    "id": "A8840",
+    "source": "NIST",
+    "date": "2026-08-11",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21622",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM",
+    "productName": "PS5028-E28",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Phison Electronics Corporation"
+  },
+  {
+    "id": "A8852",
+    "source": "NIST",
+    "date": "2026-08-12",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21702",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "LMS, ML-DSA, ML-KEM, SLH-DSA",
+    "productName": "Rock-solid HSM IP with PQC",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Rock-solid Microelectronics (Suzhou Shanyuan Microelectronics Co., Ltd.)"
+  },
+  {
+    "id": "A8889",
+    "source": "NIST",
+    "date": "2026-08-17",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21746",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM",
+    "productName": "Samsung Evan FW Crypto Engine",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Samsung Electronics Co.,Ltd."
+  },
+  {
+    "id": "A8900",
+    "source": "NIST",
+    "date": "2026-08-25",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21764",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM",
+    "productName": "Samsung Evan FW Crypto Engine",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Samsung Electronics Co.,Ltd."
+  },
+  {
+    "id": "A8835",
+    "source": "NIST",
+    "date": "2026-08-05",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21689",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM, SLH-DSA",
+    "productName": "SAP SE Garden Linux 1877 OpenSSL Cryptographic Module (PQC)",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "SAP SE"
+  },
+  {
+    "id": "A8857",
+    "source": "NIST",
+    "date": "2026-08-13",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21705",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA, ML-KEM",
+    "productName": "TrustedKMS Cryptographic Module",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Two Six Technologies"
+  },
+  {
+    "id": "A8906",
+    "source": "NIST",
+    "date": "2026-08-27",
+    "link": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=21767",
+    "type": "ACVP",
+    "status": "Active",
+    "pqcCoverage": "ML-DSA",
+    "productName": "Golden Peak ASIC ROM Module",
+    "productCategory": "Algorithm Implementation",
+    "vendor": "Solidigm Inc."
+  },
+  {
+    "id": "cc-s3nsen6---s3nsen6-20260630--eucc-3090-2026-54--5b21c19f",
+    "source": "Common Criteria",
+    "date": "2026-08-28",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-54-cible.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "",
+    "productName": "S3NSEN6 , S3NSEN6_20260630 (EUCC-3090-2026-54)",
+    "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
+    "vendor": "Samsung Electronics Co., Ltd.",
+    "scheme": "FR",
+    "schemeCountry": "FR",
+    "lab": "CEA - LETI",
+    "certificationLevel": "EAL5+,ADV_IMP.2,ADV_INT.3,ADV_TDS.5,ALC_CMC.5,ALC_DVS.2,ALC_FLR.2,ALC_TAT.3,ASE_TSS.2,ATE_COV.3,ATE_FUN.2,AVA_VAN.5",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-54-rapport.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-54-cible.pdf"
+    ]
+  },
+  {
+    "id": "cc-teqs-v1-0-platform--version-1-0---eucc-3090-2026-69--799ae382",
+    "source": "Common Criteria",
+    "date": "2026-08-24",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-69-cible.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (140, 224, 256, 384, 512, 1024, 1280, 1536, 1984, 2048, 2409, 9796), ECDSA, ECDH",
+    "productName": "TEQS V1.0 Platform (version 1.0) (EUCC-3090-2026-69)",
+    "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
+    "vendor": "THALES DIS FRANCE SA",
+    "scheme": "FR",
+    "schemeCountry": "FR",
+    "lab": "Thales",
+    "certificationLevel": "EAL4+,ALC_DVS.2,AVA_VAN.5",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-69-rapport.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3090-2026-69-cible.pdf"
+    ]
+  },
+  {
+    "id": "cc-nxp-nsn4xx2m0-series---secure-element--version-nsn4xx2m0-se-b1-1-000-j6-1ea1bd0b",
+    "source": "Common Criteria",
+    "date": "2026-08-12",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3110-2026-2500173-01 Security Target.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "",
+    "productName": "NXP NSN4XX2M0 Series - Secure Element, version NSN4XX2M0_SE B1.1.000 J6",
+    "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
+    "vendor": "NXP Semiconductors Netherlands N.V.",
+    "scheme": "NL",
+    "schemeCountry": "NL",
+    "lab": "Ke",
+    "certificationLevel": "EAL5,ALC_DVS.2,ALC_FLR.2,ASE_TSS.2,AVA_VAN.5",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3110-2026-2500173-01 Certification Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3110-2026-2500173-01 Security Target.pdf"
+    ]
+  },
+  {
+    "id": "cc-infineon-technologies-security-controller-m9900-a22-c22-d22--m9905-a11--m9906-a11-50dd0171",
+    "source": "Common Criteria",
+    "date": "2026-04-13",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3087-2026-04-0005 Security Target.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA, ECDSA, ECDH",
+    "productName": "Infineon Technologies Security Controller M9900 A22/C22/D22, M9905 A11, M9906 A11",
+    "productCategory": "ICs, Smart Cards and Smart Card-Related Devices and Systems",
+    "vendor": "Infineon Technologies AG",
+    "scheme": "DE",
+    "schemeCountry": "DE",
+    "lab": "ac",
+    "certificationLevel": "EAL5+,ALC_DVS.2,AVA_VAN.5",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3087-2026-04-0005 Certification Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/EUCC-3087-2026-04-0005 Security Target.pdf"
+    ]
+  },
+  {
+    "id": "cc-motorola-mobility-llc-mobile-devices-on-android-15-2f824c82",
+    "source": "Common Criteria",
+    "date": "2026-08-11",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/st_vid11667-st.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (128, 186, 256, 2048, 8306), ECDSA (P-256, P-384, P-521), ECDH",
+    "productName": "Motorola Mobility LLC Mobile Devices on Android 15",
+    "productCategory": "Mobility",
+    "vendor": "Motorola Mobility LLC",
+    "scheme": "US",
+    "schemeCountry": "US",
+    "certificationLevel": "None",
+    "securityTargetUrls": ["https://www.commoncriteriaportal.org/files/epfiles/st_vid11667-st.pdf"]
+  },
+  {
+    "id": "cc-ricoh-im-7010--version-je-1-00-h-e0171f4d",
+    "source": "Common Criteria",
+    "date": "2026-08-26",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/694-LSS ST v1.0.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (128, 186, 256, 2048, 4096), ECDSA (P-256, P-384, P-521), ECDH (P-256, secp256r1)",
+    "productName": "RICOH IM 7010, version JE-1.00-H",
+    "productCategory": "Multi-Function Devices",
+    "vendor": "Ricoh Company, Ltd.",
+    "scheme": "CA",
+    "schemeCountry": "CA",
+    "lab": "es",
+    "certificationLevel": "None",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/694-LSS CR v1.0.pdf"
+    ],
+    "securityTargetUrls": ["https://www.commoncriteriaportal.org/files/epfiles/694-LSS ST v1.0.pdf"]
+  },
+  {
+    "id": "cc-canon-imageforce-8105---8195---8186-with-pdl404-6cbbefd2",
+    "source": "Common Criteria",
+    "date": "2026-05-14",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/c0863_est.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (128, 256, 2048), ECDSA (P-256, P-384, P-521), ECDH (P-256)",
+    "productName": "Canon imageFORCE 8105 / 8195 / 8186 with PDL404",
+    "productCategory": "Multi-Function Devices",
+    "vendor": "Canon Inc.",
+    "scheme": "JP",
+    "schemeCountry": "JP",
+    "certificationLevel": "None",
+    "securityTargetUrls": ["https://www.commoncriteriaportal.org/files/epfiles/c0863_est.pdf"],
+    "additionalDocuments": [
+      {
+        "name": "c0863_erpt.pdf",
+        "url": "https://www.commoncriteriaportal.org/files/epfiles/c0863_erpt.pdf"
+      }
+    ]
+  },
+  {
+    "id": "cc-canon-imageforce-c31950kg---c3150fq---c3150f--c3150-with-fax---pdl404-234e8e5a",
+    "source": "Common Criteria",
+    "date": "2026-05-14",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/c0862_est.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (128, 256, 2048), ECDSA (P-256, P-384, P-521), ECDH (P-256)",
+    "productName": "Canon imageFORCE C31950KG / C3150FQ / C3150F /C3150 with Fax & PDL404",
+    "productCategory": "Multi-Function Devices",
+    "vendor": "Canon Inc.",
+    "scheme": "JP",
+    "schemeCountry": "JP",
+    "certificationLevel": "None",
+    "securityTargetUrls": ["https://www.commoncriteriaportal.org/files/epfiles/c0862_est.pdf"],
+    "additionalDocuments": [
+      {
+        "name": "c0862_erpt.pdf",
+        "url": "https://www.commoncriteriaportal.org/files/epfiles/c0862_erpt.pdf"
+      }
+    ]
+  },
+  {
+    "id": "cc-hewlett-packard-enterprise-s-cx-5420--cx-6200m--cx-6300--cx-6400--cx-8360--and-cx-9300s-switch-series-macsec-running-aos-cx-version-10-16-54a87c99",
+    "source": "Common Criteria",
+    "date": "2026-08-19",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/st_vid11671-st.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (128, 256, 384, 512, 3072), ECDSA (P-256, P-384, P-521, secp256r1, secp384r1, secp521r1), ECDH",
+    "productName": "Hewlett Packard Enterprise’s CX-5420, CX-6200M, CX-6300, CX-6400, CX-8360, and CX-9300s Switch Series MACsec running AOS-CX version 10.16",
+    "productCategory": "Network and Network-Related Devices and Systems",
+    "vendor": "HPE Aruba Networking",
+    "scheme": "US",
+    "schemeCountry": "US",
+    "certificationLevel": "None",
+    "securityTargetUrls": ["https://www.commoncriteriaportal.org/files/epfiles/st_vid11671-st.pdf"]
+  },
+  {
+    "id": "cc-juniper-srx4700--srx4120-and-srx2300-for-junos-os-25-2r1version-1-0--6da0b17c",
+    "source": "Common Criteria",
+    "date": "2026-08-14",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/Juniper SRX4700, SRX4120, SRX2300 for Junos OS 25.2R1 Security Target v1.0.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (256, 2048), ECDSA (P-256, P-384, P-521), ECDH (P-256)",
+    "productName": "Juniper SRX4700, SRX4120 and SRX2300 for Junos OS 25.2R1Version 1.0,",
+    "productCategory": "Network and Network-Related Devices and Systems",
+    "vendor": "HPE Juniper Networking",
+    "scheme": "AU",
+    "schemeCountry": "AU",
+    "lab": "Te",
+    "certificationLevel": "None",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/AISEP-CC-CR-2026-EFT-T065-v1.0.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/Juniper SRX4700, SRX4120, SRX2300 for Junos OS 25.2R1 Security Target v1.0.pdf"
+    ]
+  },
+  {
+    "id": "cc-hpe-aruba-networking-virtual-intranet-access--via--client-version-4-7-475d7cfe",
+    "source": "Common Criteria",
+    "date": "2026-08-20",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/TL_Aruba VIA Client STv1.0.1.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "",
+    "classicalAlgorithms": "RSA (2048), ECDSA (P-256, P-384), ECDH",
+    "productName": "HPE Aruba Networking Virtual Intranet Access (VIA) Client version 4.7",
+    "productCategory": "Other Devices and Systems",
+    "vendor": "Hewlett Packard Enterprise",
+    "scheme": "AU",
+    "schemeCountry": "AU",
+    "lab": "Te",
+    "certificationLevel": "None",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/AISEP-CC-CR-2026-EFT-T050-v1.0.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/TL_Aruba VIA Client STv1.0.1.pdf"
+    ]
+  },
+  {
+    "id": "cc-marvell-ls2-hsm--hardware-version--cn9310410-03-c--firmware-version--marvell-ls2-fw-10-24-0780--bootloader-version--marvell-ls2-uboot-10-24-0702-r01-sb-or-marvell-ls2-uboot-10-24-0702-r02-sb-1b55fe69",
+    "source": "Common Criteria",
+    "date": "2026-08-04",
+    "link": "https://www.commoncriteriaportal.org/files/epfiles/Marvell-HSM-ST-v1.18 20022026.pdf",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "ML-KEM",
+    "classicalAlgorithms": "RSA (256, 2048, 4096), ECDSA (P-256, P-384, P-521), ECDH (P-224)",
+    "productName": "Marvell LS2 HSM, Hardware version: CN9310410-03 C, Firmware version: MARVELL-LS2-FW-10.24-0780, Bootloader version: MARVELL-LS2-UBOOT-10.24-0702-R01-SB or MARVELL-LS2-UBOOT-10.24-0702-R02-SB",
+    "productCategory": "Products for Digital Signatures",
+    "vendor": "Marvell Semiconductor, Inc",
+    "scheme": "SG",
+    "schemeCountry": "SG",
+    "lab": "SG",
+    "certificationLevel": "EAL4+,ALC_FLR.3,AVA_VAN.5",
+    "certificationReportUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/CSA_CC_25004 SCCS Certification Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://www.commoncriteriaportal.org/files/epfiles/Marvell-HSM-ST-v1.18 20022026.pdf"
+    ]
+  },
+  {
+    "id": "anssi-cspn-2026-20",
+    "source": "ANSSI",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "productName": "0 version soumise à évaluation : PRO One ARC Data Shield CEA LETI Matériel et",
+    "productCategory": "logiciel embarqué",
+    "vendor": "ARC Data Shield",
+    "date": "2026-07-27",
+    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-20-rapport.pdf",
+    "certificationReportUrls": [
+      "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-20-rapport.pdf"
+    ],
+    "securityTargetUrls": ["https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-20-cible.pdf"],
+    "lab": "CEA",
+    "additionalDocuments": [
+      {
+        "name": "Certificate",
+        "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-20-certificat.pdf"
+      }
+    ]
+  },
+  {
+    "id": "anssi-cspn-2026-13",
+    "source": "ANSSI",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "productName": "SYCLONE by référence SYCLONE version 2025.2.0",
+    "productCategory": "ACCEIS SCADA",
+    "vendor": "EIFFAGE ENERGIE SYSTEMES - CLEMESSY",
+    "date": "2026-07-27",
+    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-13-rapport.pdf",
+    "certificationReportUrls": [
+      "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-13-rapport.pdf"
+    ],
+    "securityTargetUrls": ["https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-13-cible.pdf"],
+    "lab": "ACCEIS",
+    "additionalDocuments": [
+      {
+        "name": "Certificate",
+        "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-13-certificat.pdf"
+      }
+    ]
+  },
+  {
+    "id": "anssi-cspn-2026-18",
+    "source": "ANSSI",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "productName": "version",
+    "productCategory": "SCILLE OPPIDA Stockage sécurisé",
+    "vendor": "SCILLE PARSEC",
+    "date": "2026-07-27",
+    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-18-rapport.pdf",
+    "certificationReportUrls": [
+      "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-18-rapport.pdf"
+    ],
+    "securityTargetUrls": ["https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-18-cible.pdf"],
+    "lab": "OPPIDA",
+    "additionalDocuments": [
+      {
+        "name": "Certificate",
+        "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-18-certificat.pdf"
+      }
+    ],
+    "classicalAlgorithms": "EdDSA (25519), RSA"
+  },
+  {
+    "id": "anssi-cspn-2026-22",
+    "source": "ANSSI",
+    "type": "Common Criteria",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "productName": "MS France THALES Communication",
+    "productCategory": "sécurisée",
+    "vendor": "LO0788 A3 TIMELINK MICROSYSTE",
+    "date": "2026-08-28",
+    "link": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-22-rapport.pdf",
+    "certificationReportUrls": [
+      "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-22-rapport.pdf"
+    ],
+    "securityTargetUrls": ["https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-22-cible.pdf"],
+    "lab": "THALES",
+    "additionalDocuments": [
+      {
+        "name": "Certificate",
+        "url": "https://messervices.cyber.gouv.fr/visas/ANSSI-CSPN-2026-22-certificat.pdf"
+      }
+    ]
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3110-2026-2500173-01",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-2500173-01_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "NXP NSN4XX2M0 Series - Secure Element",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "NXP Semiconductors Netherlands N.V.",
+    "certificationLevel": "EAL5 augmented with AVA_VAN.5, ALC_DVS.2, ALC_FLR.2 and ASE_TSS.2",
+    "lab": "Keysight Technologies Netherlands Riscure B.V.",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/4e4f8385-ebaf-4346-9b7f-858599955629_en?filename=EUCC-3110-2026-2500173-01%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/2e8d7c51-ca27-495f-9a81-f21545275816_en?filename=EUCC-3110-2026-2500173-01%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/9277c61b-cfbf-4b95-bc6a-b8e10a350bd1_en?filename=EUCC-3110-2026-2500173-01%20Security%20Target.pdf"
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "NSN4XX2M0_SE B1.1.000 J6",
+    "certificationBody": "that issued the certificate TrustCB B.V.",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with AVA_VAN.5, ALC_DVS.2, ALC_FLR.2 and ASE_TSS.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000014-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000014-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (560, 584), ECDSA (P-256, P-384)",
+    "productName": "Conexa 3.0",
+    "productCategory": "Smart Meter Gateway",
+    "vendor": "Theben Smart Energy GmbH",
+    "certificationLevel": "EAL 4",
+    "lab": "TÜV Informationstechnik GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/b6c8a9fa-ac58-4be9-addb-ff1d9efb74fa_en?filename=EUCC-3087-2026-0014%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/46e28319-f177-46bb-82eb-700479883f2f_en?filename=EUCC-3087-2026-0014%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/4cdc19c1-b4fc-40af-9aa2-ceeb7a17e450_en?filename=EUCC-3087-2026-0014%20Security%20Taget.pdf"
+    ],
+    "productType": "Smart Meter Gateway",
+    "productVersion": "Version 1.8",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Protection Profile for the Gateway of a Smart Metering System, Version 1.3, 31 March 2014, BSI-CC-PP-0073-2014",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL 4"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000001-i-00-1_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (1363, 2024, 2048, 4096), ECDSA, ECDH",
+    "productName": "Infineon Technologies AG Smartcard IC IFX_CCI_000011h IFX_CCI_00001Bh IFX_CCI_00001Eh IFX_CCI_000025h G12",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "Infineon Technologies AG",
+    "certificationLevel": "Global Assurance: EAL 5 augmented with ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, ALC_TAT.3, ATE_FUN.2, ATE_COV.3, AVA_VAN.5 sub-TSF",
+    "lab": "TÜV Informationstechnik GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/d23ed3e0-a664-4ce0-b5b4-e0750d1d39b2_en?filename=EUCC-3087-2026-04-0004%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/7258fc7b-e2f5-41c8-9abd-99cdbac6d614_en?filename=EUCC-3087-2026-04-0004%20Certificate%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/bf03c706-514b-42d9-ad2f-3324b50ff7b0_en?filename=EUCC-3087-2026-04-0004%20Security.pdf"
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "See table 1 of Security Target for TOE version.",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "Global Assurance: EAL 5 augmented with ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.3, ALC_TAT.3, ATE_FUN.2, ATE_COV.3, AVA_VAN.5 sub-TSF"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000067-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000067-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5A and ST33K1M5M B04",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/8008d465-ab73-430a-bb5c-e9792f18711a_en?filename=EUCC-3090-2026-67-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/33541574-be92-40df-a362-67435e9fab19_en?filename=EUCC-3090-2026-67-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/469baab6-1e4b-4f65-86fa-f0359690cc0b_en?filename=EUCC-3090-2026-67-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "B01",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000066-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000066-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Cryptographic Library NesLib-PQML 2.1 on ST33K1M5C and ST33K1M5T C03",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/02a87ac2-a9c4-4d3b-8ce0-22108fd27d6e_en?filename=EUCC-3090-2026-66-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/fb497c94-6378-40b4-88d3-112620e675c7_en?filename=EUCC-3090-2026-66-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/fe36ddbe-a3e3-4c11-94f6-1d82f70316ad_en?filename=EUCC-3090-2026-66-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "A01",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000068-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000068-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ST33TPHF2XSPI & ST33TPHF2XI2C",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL4 augmented with ALC_DVS.2, ALC_FLR.2, AVA_VAN.5",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/7baef40a-0c18-40d5-aed4-b8b710275511_en?filename=EUCC-3090-2026-68-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/c3e59a82-0786-4058-a4f6-b6328474bd08_en?filename=EUCC-3090-2026-68-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/b6930a60-f6aa-4946-967a-2e815b45e71b_en?filename=EUCC-3090-2026-68-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ST33TPHF2XSPI : FW v.1.771;ST33TPHF2XI2C : FW v.2.771",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Protection Profile PC Client Specific TPM, PP PCCS TPM F2.0 V2.0, EUCC-3090-2026-26",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "4",
+    "packageInfo": "EAL4 augmented with ALC_DVS.2, ALC_FLR.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000064-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000064-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ST33KTPM2XSPI & ST33KTPM2X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL4 augmented with ALC_DVS.2, ALC_FLR.2, AVA_VAN.5 and Composite product package (COMP)",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/cef5133d-0dab-41f5-9972-01c410e29991_en?filename=EUCC-3090-2026-64-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/f446624e-e7fa-47a5-8af8-010a9cef61a0_en?filename=EUCC-3090-2026-64-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/4cc5db7f-4c06-46e3-a96b-f477572d9cfe_en?filename=EUCC-3090-2026-64-%20cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "TPM FIRMWARE 9.528",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Protection Profile PC Client Specific TPM, PP PCCS TPM F2.0 V2.0, EUCC-3090-2026-26",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "4",
+    "packageInfo": "EAL4 augmented with ALC_DVS.2, ALC_FLR.2, AVA_VAN.5 and Composite product package (COMP)"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3096-2026-0001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3096-2026-0001-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (128, 256, 384, 512, 3072), ECDSA (P-256, p-256, P-384, P-521, p-521, secp256r1, secp384r1, secp521r1), ECDH",
+    "productName": "H3C Wireless Controllers and Access Points",
+    "productCategory": "Routers, modems intended for the connection to the internet, and switches",
+    "vendor": "New H3C Technologies Co., Ltd",
+    "certificationLevel": "EAL1 augmented with ASE_SPD.1",
+    "lab": "LGAI Technological Center, S.A. (Applus+)",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/e7f3eada-f7df-47aa-a8e2-7a704fce89f3_en?filename=EUCC-3096-2026-001%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/5660fd05-f791-42a9-af2a-4ba1e1f128af_en?filename=EUCC-3096-2026-001%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/bc02b32e-897d-46cf-8af2-ca8c3f3a68b7_en?filename=%5BWLAN%5D%5BASE%5D%5BENS%5DH3C%20Wlan%20series%20Security%20target_v3.4-Lite.pdf"
+    ],
+    "productType": "Routers, modems intended for the connection to the internet, and switches",
+    "certificationBody": "that issued the certificate LGAI Technological Center, S.A. (Applus+)",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Collaborative Protection Profile for Network Devices, version 3.0e, 06 December 2023",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "1",
+    "packageInfo": "EAL1 augmented with ASE_SPD.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000039-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000039-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.2 in BAC and CA configuration on ID-ONE Cosmo V9.1",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/85042ab9-68c7-4e85-9ba2-de793892951a_en?filename=EUCC-3090-2026-39-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/46d2ae02-bde8-4f88-a8bd-e3c74ee068a6_en?filename=EUCC-3090-2026-39-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/a942bfe2-7d53-43eb-96da-34e4d159e3d5_en?filename=EUCC-3090-2026-39-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-BAC] : BSI-CC-PP-0055-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3089-2026-001",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3089-2026-001_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Blancco File Eraser",
+    "productCategory": "Generic software and network products",
+    "vendor": "Blancco Technology Group IP Oy",
+    "certificationLevel": "ALC_FLR.2",
+    "lab": "atsec information security AB",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/9d2c40a9-bd6b-40ce-96e5-c95c8d5b99c2_en?filename=EUCC-3089-2026-001-Certificate.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/69118919-8a1e-4ec3-b0b3-8723491ea201_en?filename=File%20Eraser8.7.1_SecurityTarget_v7.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/88b9bcd6-d154-429b-8d32-b35a5655d246_en?filename=EUCC-3089-2026-001-CR.pdf"
+      }
+    ],
+    "productType": "Generic software and network products",
+    "productVersion": "8.7.1",
+    "certificationBody": "that issued the certificate atsec information security AB",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "N/A",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "2",
+    "packageInfo": "ALC_FLR.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000001-i-00-42_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.1 and v2.2 in BAC and CA configuration on ID-ONE Cosmo V9.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/faf9fb95-8eb6-4bd4-a943-9b87861158ce_en?filename=EUCC-3090-2026-44-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/97871d20-b52b-48ee-b3ec-4a9573e40e2e_en?filename=EUCC-3090-2026-44-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/2debd5c5-5162-4cfd-b325-1f41ea65a05d_en?filename=EUCC-3090-2026-44-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. v2.1 : 203523 + CodeOP 096091, ref. v2.2 : 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-BAC] : BSI-CC-PP-0055-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000058-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000058-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ST31R480 with Random Number Generator software library",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/cf52e66e-7804-4555-95ef-f5c94a18bdc0_en?filename=EUCC-3090-2026-58-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/0b53c7d2-4004-43ec-86bf-c9633917676a_en?filename=EUCC-3090-2026-58-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/f123ea07-7e4f-4b40-8cdb-d068631b185c_en?filename=EUCC-3090-2026-58-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "C02",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000056-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000056-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Cryptographic library NESLIB 6.11.3 on ST31R480",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/badff335-a7a5-474b-9f2e-de9fd097fec1_en?filename=EUCC-3090-2026-56-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/ef134784-e8f7-4e0e-977f-a69ff16fb154_en?filename=EUCC-3090-2026-56-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/4b36592c-1de0-43dd-8de1-bb01d10ec6f0_en?filename=EUCC-3090-2026-56-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "A02",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5, Composite product package (COMP)"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000010-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000010-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (288, 289, 290, 291, 293, 294, 295, 296, 297, 298, 299, 300, 306, 2595, 2765, 4140, 4375, 4415, 4455, 4460, 4550, 4605, 5505, 5545, 5985), ECDSA (P-256, P-384, P-521), ECDH",
+    "productName": "CardOS V6.0 ID R1.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "Eviden Germany GmbH",
+    "certificationLevel": "EAL 4 augmented by ALC_DVS.2, ATE_DPT.2, AVA_VAN.5",
+    "lab": "SRC Security Research & Consulting GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/09b0e311-d257-42c8-88a4-b9d4d0fd6538_en?filename=EUCC-3087-2026-0010%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/16c5aa42-2688-4409-b581-61eac671f950_en?filename=EUCC-3087-2026-0010%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/e90c3f2e-3861-4391-bb90-01ad2db897b4_en?filename=EUCC-3087-2026-0010%20Security%20Target.pdf"
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Refer to Table 1 in the Certification Report",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Machine Readable Travel Document using Standard Inspection Procedure with PACE (PACE_PP), Version 1.01, 22 July 2014, BSI-CC-PP-0068-V2-2011-MA-01",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL 4 augmented by ALC_DVS.2, ATE_DPT.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000061-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000061-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "IAS Classic v5.0 with MOC Server v3.0 on MultiApp v4.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "THALES DIS FRANCE SAS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, AVA_VAN.5",
+    "lab": "Serma Safety and Security SAS",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/4f049583-fdeb-4189-9808-9c83a3b6c7b0_en?filename=EUCC-3090-2026-61-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/1e68b85c-d712-4e29-8104-7200d4a1df5f_en?filename=EUCC-3090-2026-61-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/5454c00b-f4a1-41fa-948e-cb820a996914_en?filename=EUCC-3090-2026-61-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "applet version IAS : 5.0.0.A.C, server version MOC : 3.0.1A",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000060-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000060-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Java Card MultiApp V4.2 platform in open configuration on IC IFX_CCI_000010h",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "THALES DIS FRANCE SAS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, AVA_VAN.5",
+    "lab": "Serma Safety and Security SAS",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/9335a0ae-3c7a-4a27-8d98-660718319665_en?filename=EUCC-3090-2026-60-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/883bfe58-c8ea-41d5-94b4-ec868e52ff5e_en?filename=EUCC-3090-2026-60-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/162a9e83-485e-4d91-bee6-c0c644499856_en?filename=EUCC-3090-2026-60-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "4.2.0.1",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Java Card System Protection Profile - Open Configuration, version 3.0.5, BSI-PP-0099-2017.",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000007-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000007-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "TactiGuard PG",
+    "productCategory": "Firewall, Intrusion Detection and Prevention System",
+    "vendor": "Saab Danmark A/S",
+    "certificationLevel": "EAL.4 + ALC_FLR.3",
+    "lab": "SRC Security Research & Consulting GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/8e2f77ae-f132-4588-a8fd-280dc00d1af0_en?filename=EUCC-3087-2026-0007%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/37b03acf-8a27-423b-a299-becf6f435d11_en?filename=EUCC-3087-2026-0007%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/98a5af89-e3eb-4a8a-9192-2cd703ba217e_en?filename=EUCC-3087-2026-0007%20Security%20Target.pdf"
+    ],
+    "productType": "Firewall, Intrusion Detection and Prevention System",
+    "productVersion": "v1.0.1",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "None",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "3",
+    "packageInfo": "EAL.4 + ALC_FLR.3"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000011-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000011-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (234, 341, 345, 359, 440, 441, 442, 2048, 9796), ECDSA, ECDH",
+    "productName": "STARCOS 3.7 COS HBA-SMC",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "Giesecke+Devrient ePayments GmbH",
+    "certificationLevel": "EAL 4 augmented by ALC_DVS.2, ATE_DPT.2, AVA_VAN.5, ALC_FLR.1",
+    "lab": "SRC Security Research & Consulting GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/1816b716-b06c-4989-9b42-0a7c915e2aa4_en?filename=EUCC-3087-2026-0011%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/986b1328-abf8-438f-a553-5805097abdd7_en?filename=EUCC-3087-2026-0011%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/01f49505-5305-448c-924b-09b8904996ec_en?filename=EUCC-3087-2026-0011%20Security%20Target.pdf"
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "47 44 00 B7 04 01 01",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Common Criteria Protection Profile Card Operating System Generation 2 (PP COS G2), Version 2.1, 10 July 2019, BSI-CC-PP-0082-V4-2019, Bundesamt für Sicherheit in der Informationstechnik (BSI)",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL 4 augmented by ALC_DVS.2, ATE_DPT.2, AVA_VAN.5, ALC_FLR.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000065-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000065-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.2 in EAC configuration on ID-ONE Cosmo V9.1",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/0abac069-a3cf-4cea-8a5d-f059cda976ce_en?filename=EUCC-3090-2026-65-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/b39e8474-417d-4da7-a941-06713f40da58_en?filename=EUCC-3090-2026-65-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/07e132ec-79bc-45f3-8c0e-105546ef3134_en?filename=EUCC-3090-2026-65-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EAC] : BSI-CC-PP-0056-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000047-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000047-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v3 in EAC with PACE configuration for French ID on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/74d22d8c-a80d-4631-a9d7-2a974836058c_en?filename=EUCC-3090-2026-47-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/07124fac-619b-461c-a080-395e3b444496_en?filename=EUCC-3090-2026-47-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/7ba717a3-9a11-4137-adc8-f402e8fcbdb6_en?filename=EUCC-3090-2026-47-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Code SAAAAR : 20 37 42 FF",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000046-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000046-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v3 in EAC with PACE configuration on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/e57bcf82-1478-442e-9f48-706fb7a006f5_en?filename=EUCC-3090-2026-46-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/1de86a46-ff39-4f17-ae6b-8596005e1344_en?filename=EUCC-3090-2026-46-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/b0ec9758-2047-4358-854e-eb36095ffd9b_en?filename=EUCC-3090-2026-46-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Code SAAAAR : 20 37 42 FF",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000045-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000045-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v3 in EAC configuration on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/902954e0-0bf6-4078-bb59-0ab8542d53ae_en?filename=EUCC-3090-2026-45-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/b0e850e0-6db7-4c79-93ca-a0822c84b6c5_en?filename=EUCC-3090-2026-45-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/241eefe4-aca6-4458-9496-7daee7587b09_en?filename=EUCC-3090-2026-45-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Code SAAAAR : 20 37 42 FF",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EAC] : BSI-CC-PP-0056-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000048-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000048-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v3 in SSCD configuration on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/cd590d1b-47ad-49a6-b496-a919d0952b05_en?filename=EUCC-3090-2026-48-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/99a965a1-efdb-4ea6-8a63-a45f385fd2ef_en?filename=EUCC-3090-2026-48-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/e804ab35-964f-4c01-9bca-1c3d567f12d2_en?filename=EUCC-3090-2026-48-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Code SAAAAR : 20 37 42 FF",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5, ALC_FLR.1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3087-2026-000006-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3087-2026-000006-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Common Criteria",
+    "productCategory": "Protection Profile (PP)",
+    "vendor": "BSI (Germany)",
+    "certificationLevel": "Trusted Channel between TOE and CSP is applicable. Details of the Certificate Web",
+    "lab": "TÜV Informationstechnik GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/60e6148e-9311-4bd7-9799-baf0fb307857_en?filename=EUCC-3087-2026-0006%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/3a36bb55-5655-411c-9284-a7d939da7be1_en?filename=EUCC-3087-2026-0006%20Certificate%20Report.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/7152848a-8820-436a-b1e5-f04d366f0903_en?filename=EUCC-3087-2026-0006%20Protection%20Profile.pdf"
+      }
+    ],
+    "productType": "Protection Profile (PP)",
+    "productVersion": "3.0.2",
+    "certificationBody": "that issued the certificate BSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security Module Application for Electronic Record-keeping Systems (SMAERS)",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "2",
+    "packageInfo": "Trusted Channel between TOE and CSP is applicable. Details of the Certificate Web"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000049-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000049-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v3 in BAC and CA configuration on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/92611a26-e9f1-4031-aea3-5acd5caeb82f_en?filename=EUCC-3090-2026-49-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/79694d61-a83e-4233-8d87-7e8da9c3e9b2_en?filename=EUCC-3090-2026-49-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/043b5582-e62e-4fbc-b3b5-f01010323620_en?filename=EUCC-3090-2026-49-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Code SAAAAR : 20 37 42 FF",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-BAC] : BSI-CC-PP-0055-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL4 augmented with ALC_DVS.2, ADV_FSP.5, ADV_INT.2, ADV_TDS.4, ALC_CMS.5, ALC_TAT.2, ATE_DPT.3"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000037-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000037-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.2 in EAC with PACE configuration for French ID on ID-ONE Cosmo V9.1",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/99545c96-77e6-4095-9143-a5f270b217a9_en?filename=EUCC-3090-2026-37-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/05f45645-9ed4-414f-a466-5127e886d0d2_en?filename=EUCC-3090-2026-37-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/69d4a9b9-1ad1-425e-ad87-fc9385e91517_en?filename=EUCC-3090-2026-37-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000036-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000036-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.2 in EAC with PACE configuration on ID-ONE Cosmo V9.1",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/493fa0a9-9af7-4e39-a129-39b0fb0a5d91_en?filename=EUCC-3090-2026-36-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/531973d4-9b82-4730-8183-55b50a19fab8_en?filename=EUCC-3090-2026-36-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/62301456-5239-49d1-be4b-484ab8dd398b_en?filename=EUCC-3090-2026-36-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000038-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000038-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.2 in SSCD configuration on ID-ONE Cosmo V9.1",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/2a75008c-e38d-494c-adcd-f988ba6c033a_en?filename=EUCC-3090-2026-38-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/754f6652-de08-49a9-b65e-b83b6f32c623_en?filename=EUCC-3090-2026-38-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/f5fc21ed-770d-4a43-a166-8fb85c7b6baf_en?filename=EUCC-3090-2026-38-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "ref. 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Compliant with [PP-SSCD-Part2] : BSI-CC-PP-0059-2009-MA-02, [PP-SSCD-Part3] : BSI-CC-PP-0075-2012-MA-01, [PP-SSCD-Part4] : BSI-CC-PP-0071-2012-MA-01",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000040-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000040-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.1 and v2.2 in EAC configuration on ID-ONE Cosmo V9.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/07733b61-20dc-44d6-948f-1f168a9ec0f9_en?filename=EUCC-3090-2026-40-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/c3f8d2cc-1a61-4427-ba26-dc89e0622927_en?filename=EUCC-3090-2026-40-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/dfa650e2-7630-45a6-8442-b9cfdf971913_en?filename=EUCC-3090-2026-40-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "v2.1 : 203523 + Codop 096091, v2.2 : 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EAC] : BSI-CC-PP-0056-2009",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000042-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000042-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.1 and v2.2 in EAC with PACE configuration for French ID on ID-ONE Cosmo V9.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/fbb977f5-ba9b-41ff-b5c0-111f5de58d4d_en?filename=EUCC-3090-2026-42-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/10c3c582-8d8c-4107-8cb2-ae38bd12f9cf_en?filename=EUCC-3090-2026-42-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/1ff5c8ee-f72c-4745-866d-20fbd61c57b2_en?filename=EUCC-3090-2026-42-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "v2.1 : 203523 + CodOp 096091, v2.2 : 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000041-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000041-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "CombICAO Applet v2.1 and v2.2 in EAC with PACE configuration on ID-ONE Cosmo V9.2",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/378cecaa-f554-4cdd-b449-fc781c8acfb9_en?filename=EUCC-3090-2026-41-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/c8a50a6d-8ced-4b97-bee9-bd1a975ce55d_en?filename=EUCC-3090-2026-41-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/f5808be6-1275-4f31-824a-4f29073b8300_en?filename=EUCC-3090-2026-41-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "v2.1 : 203523 + CodOp 096091, v2.2 : 203731",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "[PP-EACwPACE] : BSI-CC-PP0056-V2-2012-MA-02",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3110-2026-000001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3110-2026-000001-i-00-2_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "RSA (224, 256, 384, 512, 1024), ECDSA (P-256, P-384, P-521), EdDSA (448, 25519), ECDH",
+    "productName": "NXP JCOP 8.9 on SN300 Secure Element",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "NXP Semiconductors Germany GmbH",
+    "certificationLevel": "EAL5 augmented with AVA_VAN.5, ALC_DVS.2, ALC_FLR.2 and ASE_TSS.2",
+    "lab": "TÜV Informationstechnik GmbH",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/823cb206-7bbc-4d5f-8594-14b7ec3580ea_en?filename=EUCC-3110-2026-2500078-01%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/6fb836fc-3a25-459d-9a52-2ef787cab03d_en?filename=EUCC-3110-2026-2500078-01%20Certification%20Report.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/ce30ea68-39c5-41ef-b331-0ed6253f766a_en?filename=EUCC-3110-2026-2500078-01%20Security%20Target.pdf"
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "JCOP-eSE 8.9 R1, JCOP-eSE 8.9 R1-01, JCOP-eSE 8.9 R6-02",
+    "certificationBody": "that issued the certificate TrustCB B.V.",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": ", version 3.2, July 2024 registered under the reference BSI-CC-PP-0099-V3-2024 Protection Profile “Cryptographic Service Provider (CSP)”, version 0.9.8, 19.02.2019, registered under the reference BSI-CC-PP-0104-2019",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with AVA_VAN.5, ALC_DVS.2, ALC_FLR.2 and ASE_TSS.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000030-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000030-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ST31R480 with Random Number Generator software library",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/1955c9fe-ee92-4bba-89b2-43b37bcb482c_en?filename=EUCC-3090-2026-30-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/92d7073d-ee30-46cb-b322-330b4e866ffa_en?filename=EUCC-3090-2026-30-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/21f8742c-1439-40ac-a48e-d84265d2a222_en?filename=ANSSI-3090-2026-30-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "B02",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000029-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000029-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ST31R480",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/9e981f57-092f-4373-8eb7-cd037fab89f6_en?filename=EUCC-3090-2026-29-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/e1876cda-84e4-4e8f-94df-c88344e92ef0_en?filename=EUCC-3090-2026-29-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/c2c7a703-1c83-4991-a5c1-c186ae28c1cd_en?filename=EUCC-3090-2026-29-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "A02",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_FLR.2, ALC_TAT.3, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5. EAL6 augmented by ALC_FLR.2, ASE_TSS.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000031-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000031-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Nokia 1830 Photonic Service Switch",
+    "productCategory": "Network Management System",
+    "vendor": "NOKIA NETWORKS FRANCE",
+    "certificationLevel": "EAL3 augmented by ALC_FLR.3, AVA_VAN.3",
+    "lab": "Amossys SAS",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/00286053-4302-44c2-ae9b-3548468d11f9_en?filename=EUCC-3090-2026-31-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/e1e8089c-0aca-45ac-b2a8-ded2c973dfb4_en?filename=EUCC-3090-2026-31-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/239710fd-8c2a-41af-8689-caf7f558ef77_en?filename=EUCC-3090-2026-31-cible.pdf"
+      }
+    ],
+    "productType": "Network Management System",
+    "productVersion": "Version R13.1.4",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "None",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "3",
+    "packageInfo": "EAL3 augmented by ALC_FLR.3, AVA_VAN.3"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000025-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000025-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Cryptographic library NesLib 6.11.3 on ST31N600 A04",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "STMICROELECTRONICS",
+    "certificationLevel": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5",
+    "lab": "Thales SIX GTS France SAS - THALES / CNES",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/bb82d75a-72a6-4e3e-8670-ec32991c4436_en?filename=EUCC-3090-2026-25-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/ca298e94-3e60-4beb-becb-7632cfacd505_en?filename=EUCC-3090-2026-25-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/dcf48cbd-c50a-48d0-b5b3-8ab0ea4789b0_en?filename=EUCC-3090-2026-25-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "6.11.3",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ALC_DVS.2, ALC_FLR.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000024-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000024-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ID-A v1.0 on ID-One Cosmo X",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "IN Smart Identity",
+    "certificationLevel": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/b2419f8c-f298-4c33-b7a5-5f3f3c506c42_en?filename=EUCC-3090-2026-24-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/aa80aafe-9b65-43b0-bcab-1cfffc1d9046_en?filename=EUCC-3090-2026-24-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/26aabb58-fa63-4a4d-af07-4532d656f76e_en?filename=EUCC-3090-2026-24-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "Codes SAAAAR : 417692 et 417693",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "ccVersion": "CC 3.1 Revision 5",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented with ALC_DVS.2, AVA_VAN.5"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3095-2026-000001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3095-2026-000001-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "Waste container identification and data integrity solution",
+    "productCategory": "Waste container identification and data integrity solution",
+    "vendor": "Distromel S.A.",
+    "certificationLevel": "EAL1",
+    "lab": "DEKRA TESTING AND CERTIFICATION S.A.U.",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/e0ca8b90-bb66-4e5f-85ec-87bd47ad2cfe_en?filename=FCS505_04%20DISTROMEL%20EUCC-3095-2026-01%20Certificate%20v1.0.pdf",
+      "https://certification.enisa.europa.eu/document/download/1b2b383d-e7b1-40d3-a745-af90679c4dca_en?filename=FCS506_02%20%20EUCC%20%20Distromel_WCIS%20Certification%20Report%20v1.0.pdf"
+    ],
+    "securityTargetUrls": [
+      "https://certification.enisa.europa.eu/document/download/c00a3b8e-fbcd-4d3e-ad74-5cd4162b19bb_en?filename=Security%20Target%20-%20Distromel%20waste%20container%20identification%20system%20v1.0%20-%20version%201.8.pdf"
+    ],
+    "productType": "Waste container identification and data integrity solution",
+    "productVersion": "Distromel waste container identification system Version 1.0.0",
+    "certificationBody": "that issued the certificate DEKRA TESTING AND CERTIFICATION S.A.U.",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "None",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "1",
+    "packageInfo": "EAL1"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3135-2026-000001-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3135-2026-000001-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "ArcMC and SmartConnectors",
+    "productCategory": "Waste container identification and data integrity solution",
+    "vendor": "OpenText, Inc",
+    "certificationLevel": "Substantial (AVA_VAN.2)",
+    "lab": "Combitech AB",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/3a17cc4d-750b-4c5e-852d-03b8423f4a46_en?filename=Certificate%20OpenText%20ArcMC%20and%20Connectors%20v11%20Signed%20Certificate.pdf",
+      "https://certification.enisa.europa.eu/document/download/0b96c262-9e5d-4141-b792-88cadd6eac2e_en?filename=CR%20OpenText%20ArcMC%20and%20Connectors%20v11%20Certification%20Report.pdf",
+      "https://certification.enisa.europa.eu/document/download/836c1a38-735d-46d6-967b-b8a1eb82b171_en?filename=Certificate%20OpenText%20ArcMC%20and%20Connectors%20v11%20Signed%20Certificate_0.pdf"
+    ],
+    "productType": "Waste container identification and data integrity solution",
+    "productVersion": "ArcSight Management Center 3.2.5 and SmartConnectors 8.5.1",
+    "certificationBody": "that issued the certificate Combitech AB",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000027-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000027-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "S3FT9MF/S3FT9MT/S3FT9MS",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "SAMSUNG ELECTRONICS CO. LTD",
+    "certificationLevel": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_TAT.3, ALC_FLR.2, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5 EAL6 augmented by ASE_TSS.2, ALC_FLR.2",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/b9ee9439-b071-40fc-bf13-1c0e3415bca6_en?filename=EUCC-3090-2026-27-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/9eccb7d4-3a18-479f-9d85-6311f983b4b3_en?filename=EUCC-3090-2026-27-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/eaa9097c-fb3d-45b3-b023-1ed6290c67ec_en?filename=EUCC-3090-2026-27-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "S3FT9MF_20251219",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_TAT.3, ALC_FLR.2, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5 EAL6 augmented by ASE_TSS.2, ALC_FLR.2"
+  },
+  {
+    "id": "enisa-eucc-eucc-eucc-3090-2026-000028-i-00",
+    "source": "ENISA",
+    "date": "2026-09-02",
+    "link": "https://certification.enisa.europa.eu/certificates/eucc-3090-2026-000028-i-00_en",
+    "type": "EUCC",
+    "status": "Active",
+    "pqcCoverage": "No PQC Mechanisms Detected",
+    "classicalAlgorithms": "",
+    "productName": "S3FT9MH/S3FT9MV/S3FT9MG",
+    "productCategory": "Smartcards and similar devices",
+    "vendor": "SAMSUNG ELECTRONICS CO. LTD",
+    "certificationLevel": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_TAT.3, ALC_FLR.2, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5 EAL6 augmented by ASE_TSS.2, ALC_FLR.2",
+    "lab": "CEA-LETI",
+    "certificationReportUrls": [
+      "https://certification.enisa.europa.eu/document/download/621d7bdb-92ab-4d85-89a2-ae911820d72e_en?filename=EUCC-3090-2026-28-certificat.pdf"
+    ],
+    "additionalDocuments": [
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/eccf1285-b5bd-45a2-b2eb-ab9229ca51ce_en?filename=EUCC-3090-2026-28-rapport.pdf"
+      },
+      {
+        "name": "download",
+        "url": "https://certification.enisa.europa.eu/document/download/e2dcc6d6-cd3a-49f2-9c27-d95403027aff_en?filename=EUCC-3090-2026-28-cible.pdf"
+      }
+    ],
+    "productType": "Smartcards and similar devices",
+    "productVersion": "S3FT9MH_20250713",
+    "certificationBody": "that issued the certificate ANSSI",
+    "scheme": "EUCC",
+    "schemeCountry": "EU",
+    "schemeRegulation": "(UE) 2024/482 - EUCC",
+    "protectionProfile": "Security IC Platform Protection Profile with Augmentation",
+    "ccVersion": "CC:2022 Revision 1",
+    "avaVanLevel": "5",
+    "packageInfo": "EAL5 augmented by ADV_IMP.2, ADV_INT.3, ADV_TDS.5, ALC_CMC.5, ALC_DVS.2, ALC_TAT.3, ALC_FLR.2, ASE_TSS.2, ATE_COV.3, ATE_FUN.2, AVA_VAN.5 EAL6 augmented by ASE_TSS.2, ALC_FLR.2"
   }
 ]

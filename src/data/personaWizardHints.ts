@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read + cross-check against the
+// live wizard's 13 real steps; removed the orphaned 'vendors' step block
+// (Step12VendorDependency.tsx deleted, was imported nowhere)
 import type { PersonaId } from './learningPersonas'
 import type { ExperienceLevel } from '../store/usePersonaStore'
 
@@ -150,8 +153,6 @@ export const WIZARD_STEP_RATIONALE: Record<string, string> = {
     'Crypto agility — whether your code abstracts algorithms behind an interface — is the single biggest predictor of how fast you can migrate.',
   infra:
     'Infrastructure layers (cloud, hardware, libraries, HSMs) decide which PQC implementations you can actually pick from today.',
-  vendors:
-    'Vendor mix tells us how much of your migration depends on third-party roadmaps vs. in-house code.',
   timeline:
     'Timeline pressure (within 1y / 2-3y / no deadline) bands the report into "act now" vs. "plan it" vs. "monitor it" recommendations.',
 }
@@ -215,9 +216,6 @@ export const STEP_CONTEXT_INFO: Record<string, StepContextInfo> = {
   infra: {
     proficiencyEffect:
       'Beginners and intermediate users see "I don\'t know" pre-selected. Hints adapt to technical depth.',
-  },
-  vendors: {
-    proficiencyEffect: 'Beginners see "I don\'t know" pre-selected.',
   },
   timeline: {
     countryEffect:
@@ -339,21 +337,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       descriptionBeginner:
         'HSMs and legacy systems are expensive to upgrade. If you\'re not sure, select "I don\'t know".',
     },
-    vendors: {
-      hint: 'Consider your major technology vendors (cloud, SaaS, payment processors). Heavy vendor dependency means migration is partly out of your control.',
-      hintBeginner:
-        'Do you rely on outside technology companies for your encryption? Cloud providers, payment processors, and SaaS vendors all count.',
-      title: 'How dependent is your organization on external technology providers?',
-      description:
-        'Heavy vendor dependency means migration timelines are partly out of your control.',
-      optionDescriptions: {
-        'heavy-vendor':
-          'We rely heavily on external vendors for encryption — their timelines constrain ours.',
-        mixed: 'We use a mix of vendor-managed and in-house encryption across the organization.',
-        'open-source': 'We primarily use open-source encryption libraries that our team manages.',
-        'in-house': 'We manage our own encryption infrastructure and can control migration pace.',
-      },
-    },
     timeline: {
       hint: 'Select the deadline that applies to your organization based on regulatory requirements or internal planning.',
       hintBeginner:
@@ -445,13 +428,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       title: 'What crypto infrastructure does your code interact with?',
       description:
         'Include cloud KMS, HSMs, and certificate authorities you call programmatically.',
-    },
-    vendors: {
-      hint: 'Consider crypto libraries (OpenSSL, BoringSSL, libsodium), cloud SDKs, and SaaS APIs that handle encryption.',
-      hintBeginner:
-        'What crypto libraries does your code depend on? OpenSSL, BoringSSL, Node crypto, or cloud SDKs all count as vendor dependencies.',
-      hintExpert:
-        'Map all crypto providers: TLS libraries, cloud KMS SDKs, HSM PKCS#11 drivers, certificate management APIs, and any SaaS encryption endpoints.',
     },
     timeline: {
       hint: 'If your organization has a PQC migration deadline, select it. Otherwise, consider the deadline of your most pressing compliance framework.',
@@ -546,11 +522,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       title: 'Map your full crypto dependency graph',
       description: 'HSMs in your trust root, cloud KMS, legacy systems, and embedded devices.',
     },
-    vendors: {
-      hint: 'Map which crypto operations are vendor-controlled vs. in-house. Vendor timelines constrain your migration schedule.',
-      hintBeginner:
-        'Which parts of your encryption are managed by external vendors vs. your own team? Vendor-controlled components migrate on their schedule, not yours.',
-    },
     timeline: {
       hint: 'Align your timeline with the most constrained component in your architecture — the slowest subsystem sets the pace.',
       hintBeginner:
@@ -621,11 +592,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       hint: 'Infrastructure items have individual complexity scores (HSM=15, Legacy=14, Embedded=13, On-prem PKI=12). Sum is capped at 30.',
       hintExpert:
         'Per-item scores: HSM=15, Legacy=14, Embedded=13, On-prem PKI=12, Cloud KMS=8, Cloud HSM=10, Network crypto=11. Total capped at 30, normalized to 0-1 range.',
-    },
-    vendors: {
-      hint: 'Vendor dependency weight ranges from 3 (in-house) to 20 (heavy-vendor). Affects both migration complexity and organizational readiness.',
-      hintExpert:
-        'Vendor scores: in-house=3, open-source=7, mixed=12, heavy-vendor=20. Feeds both migration_complexity (30% weight) and org_readiness (external dependency factor).',
     },
     timeline: {
       hint: 'Timeline pressure is a multiplier (1.0-1.3) applied to the regulatory pressure score. Country-specific deadlines from the timeline CSV are shown.',
@@ -717,11 +683,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       description:
         'Load balancers, HSMs, cloud KMS, internal CAs, config management, container registries.',
     },
-    vendors: {
-      hint: 'Consider infrastructure vendors: cloud providers, CDN, DNS, load balancer vendors, HSM manufacturers, and certificate authorities.',
-      hintBeginner:
-        'Which vendors provide your encryption infrastructure? Cloud providers (AWS, Azure, GCP), CDN providers, and certificate authorities all count.',
-    },
     timeline: {
       hint: 'If your organization has a compliance deadline, select it. Otherwise, align with industry peers — check the timeline view for your sector.',
       hintBeginner:
@@ -790,11 +751,6 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       suggestUnknown: true,
       title: 'Is there special encryption hardware?',
       description: 'This is technical — select "I don\'t know" if you\'re not sure.',
-    },
-    vendors: {
-      hint: 'Do you use outside companies for your technology? Cloud services like AWS, Google Cloud, or Microsoft Azure all count.',
-      title: 'Do you rely on outside technology companies?',
-      description: 'Cloud services, payment processors, and software vendors all count.',
     },
     timeline: {
       hint: 'When does the encryption need to be upgraded? If there\'s no deadline yet, select "I don\'t know" — most organizations are still figuring this out.',
