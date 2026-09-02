@@ -23,12 +23,20 @@ const CKD_NULL = 0x00000001 // raw Z, no KDF
 
 type KaCurve = 'P-256' | 'P-384' | 'P-521' | 'X25519' | 'X448'
 
-const KDF_OPTIONS = [
-  { label: 'CKD_NULL (raw Z)', value: CKD_NULL },
-  { label: 'CKD_SHA256_KDF (X9.63)', value: CKD_SHA256_KDF },
-  { label: 'CKD_SHA384_KDF (X9.63)', value: CKD_SHA384_KDF },
-  { label: 'CKD_SHA512_KDF (X9.63)', value: CKD_SHA512_KDF },
-] as const
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture CKD_SHA*_KDF as `undefined` (they're only
+// assigned once that chunk's own top-level await resolves, which happens
+// AFTER this module's top-level runs). Dev/vitest don't use that plugin, so
+// this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const kdfOptions = () =>
+  [
+    { label: 'CKD_NULL (raw Z)', value: CKD_NULL },
+    { label: 'CKD_SHA256_KDF (X9.63)', value: CKD_SHA256_KDF },
+    { label: 'CKD_SHA384_KDF (X9.63)', value: CKD_SHA384_KDF },
+    { label: 'CKD_SHA512_KDF (X9.63)', value: CKD_SHA512_KDF },
+  ] as const
 
 // ── Component ────────────────────────────────────────────────────────────────
 
@@ -170,7 +178,7 @@ export const HsmKeyAgreementPanel = ({
       setSecretsMatch(match)
     })
 
-  const kdfLabel = KDF_OPTIONS.find((o) => o.value === kdf)?.label ?? 'CKD_NULL'
+  const kdfLabel = kdfOptions().find((o) => o.value === kdf)?.label ?? 'CKD_NULL'
   const mechCode = cofactorMode ? '0x1051' : '0x1050'
   const mechName = cofactorMode ? 'CKM_ECDH1_COFACTOR_DERIVE' : 'CKM_ECDH1_DERIVE'
 
@@ -217,7 +225,7 @@ export const HsmKeyAgreementPanel = ({
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">KDF</p>
             <FilterDropdown
-              items={KDF_OPTIONS.map((o) => ({ id: String(o.value), label: o.label }))}
+              items={kdfOptions().map((o) => ({ id: String(o.value), label: o.label }))}
               selectedId={String(kdf)}
               onSelect={(id) => {
                 setKdf(parseInt(id, 10))

@@ -186,7 +186,14 @@ const requireOutputWritten = (
 
 // ── Baseline Provider — Profiles v3.2 §5.1 ─────────────────────────────────
 
-const BASELINE_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+// Lazy functions, not top-level literals: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so top-level probe
+// tables like these would capture every CKA_*/CKM_* constant they reference as
+// `undefined` (assigned only once that chunk's own top-level await resolves,
+// which happens AFTER this module's top-level runs). Dev/vitest don't use that
+// plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const baselineProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   // Condition 5 — the 16 mandatory functions
   {
     id: 'bl-fn-getfunctionlist',
@@ -440,7 +447,7 @@ const BASELINE_PROBES: Omit<ConditionProbe, 'profile'>[] = [
 
 // ── Extended Provider — Profiles v3.2 §5.3 (builds on Baseline) ───────────
 
-const EXTENDED_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+const extendedProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   {
     id: 'ext-fn-getmechanismlist',
     category: 'function',
@@ -537,7 +544,7 @@ const EXTENDED_PROBES: Omit<ConditionProbe, 'profile'>[] = [
 
 // ── Authentication Token — Profiles v3.2 §5.4 ──────────────────────────────
 
-const AUTH_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+const authProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   {
     id: 'auth-obj-privatekey',
     category: 'object',
@@ -700,7 +707,7 @@ const AUTH_PROBES: Omit<ConditionProbe, 'profile'>[] = [
 
 // ── Public Certificates Token — Profiles v3.2 §5.5 ─────────────────────────
 
-const CERT_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+const certProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   {
     id: 'cert-obj-certificate',
     category: 'object',
@@ -984,7 +991,7 @@ const hkdfTlsPInfo = (label: string, outLen: number): Uint8Array => {
 
 const HKDF_TLS_OUT_LEN = 12 // a plausible AEAD-IV length; the spec fixes L1/L2 to whatever length is requested, not to 12 specifically
 
-const HKDF_TLS_PROBES: Omit<ConditionProbe, 'profile'>[] = [
+const hkdfTlsProbes = (): Omit<ConditionProbe, 'profile'>[] => [
   {
     id: 'hkdf-obj-profile',
     category: 'object',
@@ -1136,10 +1143,10 @@ export const runProfileConditionProbes = (
   }
 
   if (claims.has('baseline')) {
-    for (const p of BASELINE_PROBES) run(p, 'baseline')
+    for (const p of baselineProbes()) run(p, 'baseline')
   }
   if (claims.has('extended') && claims.has('baseline')) {
-    for (const p of EXTENDED_PROBES) run(p, 'extended')
+    for (const p of extendedProbes()) run(p, 'extended')
   }
   // CERT_PROBES before AUTH_PROBES: CERT_PROBES also reuses authKeys
   // (cert-loc-id-match/cert-loc-key-by-id read its CKA_ID), and
@@ -1147,14 +1154,14 @@ export const runProfileConditionProbes = (
   if (claims.has('certificates') && claims.has('baseline')) {
     ctx.authKeys = createProbeAuthKeyPair(M, hSession)
     ctx.certHandle = createProbeCertificate(M, hSession, ctx.authKeys.idBytes)
-    for (const p of CERT_PROBES) run(p, 'certificates')
+    for (const p of certProbes()) run(p, 'certificates')
   }
   if (claims.has('authentication') && claims.has('baseline')) {
     if (!ctx.authKeys) ctx.authKeys = createProbeAuthKeyPair(M, hSession)
-    for (const p of AUTH_PROBES) run(p, 'authentication')
+    for (const p of authProbes()) run(p, 'authentication')
   }
   if (claims.has('hkdf_tls') && claims.has('baseline')) {
-    for (const p of HKDF_TLS_PROBES) run(p, 'hkdf_tls')
+    for (const p of hkdfTlsProbes()) run(p, 'hkdf_tls')
   }
   const authKeys = ctx.authKeys
   const certHandle = ctx.certHandle

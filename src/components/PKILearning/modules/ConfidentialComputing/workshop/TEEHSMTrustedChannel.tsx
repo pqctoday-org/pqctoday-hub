@@ -86,16 +86,6 @@ const TEE_LIVE_OPERATIONS = [
   'C_CreateObject',
 ]
 
-/** Unwrap template for the recovered AES-256 provisioning key.
- *  NOTE: CKA_VALUE_LEN must NOT be included — length is derived from the unwrapped bytes. */
-const AES_UNWRAP_TEMPLATE: AttrDef[] = [
-  { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-  { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
-  { type: CKA_TOKEN, boolVal: false },
-  { type: CKA_ENCRYPT, boolVal: true },
-  { type: CKA_DECRYPT, boolVal: true },
-]
-
 interface ProvisioningResult {
   step: number
   purpose: HsmKeyPurpose
@@ -239,6 +229,26 @@ function buildProvisioningSteps(
 // ── Component ────────────────────────────────────────────────────────────
 
 export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  // Computed inside the component (not as a module-level literal): the production
+  // build wraps this module's softhsm import in vite-plugin-top-level-await, so a
+  // top-level literal here would capture CKA_*/CKK_AES/CKO_SECRET_KEY as `undefined`
+  // (assigned only after that chunk's own top-level await resolves, which happens
+  // AFTER this module's top-level runs). Dev/vitest don't use that plugin, so this
+  // bug is invisible outside a real production build. See
+  // pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+  /** Unwrap template for the recovered AES-256 provisioning key.
+   *  NOTE: CKA_VALUE_LEN must NOT be included — length is derived from the unwrapped bytes. */
+  const AES_UNWRAP_TEMPLATE = useMemo<AttrDef[]>(
+    () => [
+      { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+      { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+      { type: CKA_TOKEN, boolVal: false },
+      { type: CKA_ENCRYPT, boolVal: true },
+      { type: CKA_DECRYPT, boolVal: true },
+    ],
+    []
+  )
+
   const [selectedTeeVendor, setSelectedTeeVendor] = useState<string>('All')
   const [selectedHsmVendor, setSelectedHsmVendor] = useState<string>('All')
   const [pqcMode, setPqcMode] = useState(false)
@@ -699,7 +709,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
     } finally {
       setLiveRunning(false)
     }
-  }, [hsm, pqcMode])
+  }, [hsm, pqcMode, AES_UNWRAP_TEMPLATE])
 
   const bothSelected = selectedTeeVendor !== 'All' && selectedHsmVendor !== 'All'
 

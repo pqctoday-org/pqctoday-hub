@@ -42,7 +42,14 @@ interface FamilyMeta {
   keyFamily: 'xmss' | 'lms'
 }
 
-export const STATEFUL_FAMILIES: Record<StatefulFamily, FamilyMeta> = {
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture CKM_XMSS/CKM_LMS as `undefined` (they're only
+// assigned once that chunk's own top-level await resolves, which happens
+// AFTER this module's top-level runs). Dev/vitest don't use that plugin, so
+// this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+export const statefulFamilies = (): Record<StatefulFamily, FamilyMeta> => ({
   xmss: {
     label: 'XMSS',
     spec: 'PKCS#11 v3.2 — CKM_XMSS / CKK_XMSS · RFC 8391 · SP 800-208',
@@ -59,7 +66,7 @@ export const STATEFUL_FAMILIES: Record<StatefulFamily, FamilyMeta> = {
     defaultMessage: 'Hello from LMS!',
     keyFamily: 'lms',
   },
-}
+})
 
 /** Advisory threshold: below this many remaining leaves the warning turns red. */
 const LOW_REMAINING = 2
@@ -70,7 +77,7 @@ const LOW_REMAINING = 2
  * the previous import surface (`XmssPanel`, `LmsPanel`).
  */
 export const StatefulSignPanel = ({ family }: { family: StatefulFamily }) => {
-  const meta = STATEFUL_FAMILIES[family]
+  const meta = statefulFamilies()[family]
   const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState(meta.defaultMessage)

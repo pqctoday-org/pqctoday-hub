@@ -49,13 +49,21 @@ const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   { id: 'rng', label: 'RNG', desc: 'C_GenerateRandom / C_SeedRandom — hardware RNG' },
 ]
 
-const HMAC_ALGOS = [
-  { label: 'HMAC-SHA-256', mech: CKM_SHA256_HMAC, outBytes: 32 },
-  { label: 'HMAC-SHA-384', mech: CKM_SHA384_HMAC, outBytes: 48 },
-  { label: 'HMAC-SHA-512', mech: CKM_SHA512_HMAC, outBytes: 64 },
-  { label: 'HMAC-SHA3-256', mech: CKM_SHA3_256_HMAC, outBytes: 32 },
-  { label: 'HMAC-SHA3-512', mech: CKM_SHA3_512_HMAC, outBytes: 64 },
-] as const
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture the CKM_*_HMAC mechanisms as `undefined` (they're
+// only assigned once that chunk's own top-level await resolves, which happens
+// AFTER this module's top-level runs). Dev/vitest don't use that plugin, so
+// this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const hmacAlgos = () =>
+  [
+    { label: 'HMAC-SHA-256', mech: CKM_SHA256_HMAC, outBytes: 32 },
+    { label: 'HMAC-SHA-384', mech: CKM_SHA384_HMAC, outBytes: 48 },
+    { label: 'HMAC-SHA-512', mech: CKM_SHA512_HMAC, outBytes: 64 },
+    { label: 'HMAC-SHA3-256', mech: CKM_SHA3_256_HMAC, outBytes: 32 },
+    { label: 'HMAC-SHA3-512', mech: CKM_SHA3_512_HMAC, outBytes: 64 },
+  ] as const
 
 // ── AES sub-panel ───────────────────────────────────────────────────────────────
 
@@ -335,7 +343,7 @@ const HmacPanel = () => {
   const [error, setError] = useState<string | null>(null)
 
   const anyLoading = loadingOp !== null
-  const selectedAlgo = HMAC_ALGOS.find((a) => a.mech === selectedMech) ?? HMAC_ALGOS[0]
+  const selectedAlgo = hmacAlgos().find((a) => a.mech === selectedMech) ?? hmacAlgos()[0]
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -388,7 +396,7 @@ const HmacPanel = () => {
           Algorithm & Key
         </p>
         <div data-tour="pkcs-op-sym-hmac-algo" className="flex flex-wrap gap-2 items-center">
-          {HMAC_ALGOS.map((a) => (
+          {hmacAlgos().map((a) => (
             <Button
               key={a.mech}
               variant="ghost"

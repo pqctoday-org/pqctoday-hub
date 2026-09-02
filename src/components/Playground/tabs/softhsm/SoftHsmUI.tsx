@@ -47,62 +47,106 @@ export const PREHASH_OPTIONS = [
 
 // SLH-DSA parameter sets (FIPS 205 / PKCS#11 v3.2 CKP_SLH_DSA_*)
 // sk = 4n bytes (SK.seed + SK.prf + PK.seed + PK.root, each n bytes; FIPS 205 §6)
-export const SLH_DSA_PARAM_SET_OPTIONS = [
-  { id: 'sha2-128s', label: 'SHA2-128s', ckp: CKP_SLH_DSA_SHA2_128S, pub: 32, sk: 64, sig: 7856 },
-  {
-    id: 'shake-128s',
-    label: 'SHAKE-128s',
-    ckp: CKP_SLH_DSA_SHAKE_128S,
-    pub: 32,
-    sk: 64,
-    sig: 7856,
-  },
-  { id: 'sha2-128f', label: 'SHA2-128f', ckp: CKP_SLH_DSA_SHA2_128F, pub: 32, sk: 64, sig: 17088 },
-  {
-    id: 'shake-128f',
-    label: 'SHAKE-128f',
-    ckp: CKP_SLH_DSA_SHAKE_128F,
-    pub: 32,
-    sk: 64,
-    sig: 17088,
-  },
-  { id: 'sha2-192s', label: 'SHA2-192s', ckp: CKP_SLH_DSA_SHA2_192S, pub: 48, sk: 96, sig: 16224 },
-  {
-    id: 'shake-192s',
-    label: 'SHAKE-192s',
-    ckp: CKP_SLH_DSA_SHAKE_192S,
-    pub: 48,
-    sk: 96,
-    sig: 16224,
-  },
-  { id: 'sha2-192f', label: 'SHA2-192f', ckp: CKP_SLH_DSA_SHA2_192F, pub: 48, sk: 96, sig: 35664 },
-  {
-    id: 'shake-192f',
-    label: 'SHAKE-192f',
-    ckp: CKP_SLH_DSA_SHAKE_192F,
-    pub: 48,
-    sk: 96,
-    sig: 35664,
-  },
-  { id: 'sha2-256s', label: 'SHA2-256s', ckp: CKP_SLH_DSA_SHA2_256S, pub: 64, sk: 128, sig: 29792 },
-  {
-    id: 'shake-256s',
-    label: 'SHAKE-256s',
-    ckp: CKP_SLH_DSA_SHAKE_256S,
-    pub: 64,
-    sk: 128,
-    sig: 29792,
-  },
-  { id: 'sha2-256f', label: 'SHA2-256f', ckp: CKP_SLH_DSA_SHA2_256F, pub: 64, sk: 128, sig: 49856 },
-  {
-    id: 'shake-256f',
-    label: 'SHAKE-256f',
-    ckp: CKP_SLH_DSA_SHAKE_256F,
-    pub: 64,
-    sk: 128,
-    sig: 49856,
-  },
-] as const
+//
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture every CKP_SLH_DSA_* parameter set as `undefined`
+// (assigned only once that chunk's own top-level await resolves, which
+// happens AFTER this module's top-level runs). Dev/vitest don't use that
+// plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+export const slhDsaParamSetOptions = () =>
+  [
+    { id: 'sha2-128s', label: 'SHA2-128s', ckp: CKP_SLH_DSA_SHA2_128S, pub: 32, sk: 64, sig: 7856 },
+    {
+      id: 'shake-128s',
+      label: 'SHAKE-128s',
+      ckp: CKP_SLH_DSA_SHAKE_128S,
+      pub: 32,
+      sk: 64,
+      sig: 7856,
+    },
+    {
+      id: 'sha2-128f',
+      label: 'SHA2-128f',
+      ckp: CKP_SLH_DSA_SHA2_128F,
+      pub: 32,
+      sk: 64,
+      sig: 17088,
+    },
+    {
+      id: 'shake-128f',
+      label: 'SHAKE-128f',
+      ckp: CKP_SLH_DSA_SHAKE_128F,
+      pub: 32,
+      sk: 64,
+      sig: 17088,
+    },
+    {
+      id: 'sha2-192s',
+      label: 'SHA2-192s',
+      ckp: CKP_SLH_DSA_SHA2_192S,
+      pub: 48,
+      sk: 96,
+      sig: 16224,
+    },
+    {
+      id: 'shake-192s',
+      label: 'SHAKE-192s',
+      ckp: CKP_SLH_DSA_SHAKE_192S,
+      pub: 48,
+      sk: 96,
+      sig: 16224,
+    },
+    {
+      id: 'sha2-192f',
+      label: 'SHA2-192f',
+      ckp: CKP_SLH_DSA_SHA2_192F,
+      pub: 48,
+      sk: 96,
+      sig: 35664,
+    },
+    {
+      id: 'shake-192f',
+      label: 'SHAKE-192f',
+      ckp: CKP_SLH_DSA_SHAKE_192F,
+      pub: 48,
+      sk: 96,
+      sig: 35664,
+    },
+    {
+      id: 'sha2-256s',
+      label: 'SHA2-256s',
+      ckp: CKP_SLH_DSA_SHA2_256S,
+      pub: 64,
+      sk: 128,
+      sig: 29792,
+    },
+    {
+      id: 'shake-256s',
+      label: 'SHAKE-256s',
+      ckp: CKP_SLH_DSA_SHAKE_256S,
+      pub: 64,
+      sk: 128,
+      sig: 29792,
+    },
+    {
+      id: 'sha2-256f',
+      label: 'SHA2-256f',
+      ckp: CKP_SLH_DSA_SHA2_256F,
+      pub: 64,
+      sk: 128,
+      sig: 49856,
+    },
+    {
+      id: 'shake-256f',
+      label: 'SHAKE-256f',
+      ckp: CKP_SLH_DSA_SHAKE_256F,
+      pub: 64,
+      sk: 128,
+      sig: 49856,
+    },
+  ] as const
 
 // FIPS 205 §6 Table 1 — internal parameters for each parameter set
 // n=hash output bytes, h=total tree height, d=hypertree layers,

@@ -64,13 +64,21 @@ const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pq
     },
   ]
 
-const PBKDF2_PRFS = [
+// Lazy functions, not top-level literals: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal (including a computed-key object like PRF_SEED_BYTES) would capture
+// the CKP_/CKM_ constants as `undefined` (they're only assigned once that
+// chunk's own top-level await resolves, which happens AFTER this module's
+// top-level runs). Dev/vitest don't use that plugin, so this bug is invisible
+// outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const pbkdf2Prfs = () => [
   { label: 'HMAC-SHA-256', value: CKP_PKCS5_PBKD2_HMAC_SHA256 },
   { label: 'HMAC-SHA-384', value: CKP_PKCS5_PBKD2_HMAC_SHA384 },
   { label: 'HMAC-SHA-512', value: CKP_PKCS5_PBKD2_HMAC_SHA512 },
 ]
 
-const HKDF_PRFS = [
+const hkdfPrfs = () => [
   { label: 'SHA-256', value: CKM_SHA256 },
   { label: 'SHA-384', value: CKM_SHA384 },
   { label: 'SHA-512', value: CKM_SHA512 },
@@ -81,7 +89,7 @@ const HKDF_PRFS = [
 // prfType for SP 800-108 KDF params is the *hash* mechanism (CKM_SHA256 etc.),
 // not the HMAC mechanism — SoftHSM3's ckmToDigestName() maps SHA→"SHA2-256" etc.
 // and internally constructs HMAC using that hash. AES-CMAC is the exception.
-const KBKDF_PRFS = [
+const kbkdfPrfs = () => [
   { label: 'HMAC-SHA-256', value: CKM_SHA256 },
   { label: 'HMAC-SHA-384', value: CKM_SHA384 },
   { label: 'HMAC-SHA-512', value: CKM_SHA512 },
@@ -90,12 +98,12 @@ const KBKDF_PRFS = [
 
 // OpenSSL KBKDF requires the feedback IV to be exactly h bytes (MAC output size).
 // PROV_R_INVALID_SEED_LENGTH is raised if iv_len != 0 && iv_len != h.
-const PRF_SEED_BYTES: Record<number, number> = {
+const prfSeedBytes = (): Record<number, number> => ({
   [CKM_SHA256]: 32,
   [CKM_SHA384]: 48,
   [CKM_SHA512]: 64,
   [CKM_AES_CMAC]: 16,
-}
+})
 
 const OUTPUT_LENS = [16, 24, 32] as const
 
@@ -193,7 +201,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
     }
   }
 
-  const prfLabel = PBKDF2_PRFS.find((p) => p.value === prf)?.label ?? ''
+  const prfLabel = pbkdf2Prfs().find((p) => p.value === prf)?.label ?? ''
   const saltByteLen = hexByteLen(salt)
   const saltPreview = salt.slice(0, 32)
 
@@ -257,7 +265,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
             <FilterDropdown
-              items={PBKDF2_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              items={pbkdf2Prfs().map((p) => ({ id: String(p.value), label: p.label }))}
               selectedId={String(prf)}
               onSelect={(id) => setPrf(parseInt(id, 10))}
               noContainer
@@ -449,7 +457,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
     }
   }
 
-  const prfLabel = HKDF_PRFS.find((p) => p.value === prf)?.label ?? ''
+  const prfLabel = hkdfPrfs().find((p) => p.value === prf)?.label ?? ''
   const modeLabel =
     bExtract && bExpand
       ? 'Extract+Expand'
@@ -552,7 +560,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF Hash</p>
             <FilterDropdown
-              items={HKDF_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              items={hkdfPrfs().map((p) => ({ id: String(p.value), label: p.label }))}
               selectedId={String(prf)}
               onSelect={(id) => setPrf(parseInt(id, 10))}
               noContainer
@@ -634,11 +642,11 @@ const KbkdfPanel = ({
   const [label, setLabel] = useState('pqc-key-derivation')
   const [context, setContext] = useState(() => randomHex(8))
   // IV must be exactly h bytes (MAC output size) or absent — OpenSSL enforces this
-  const [iv, setIv] = useState(() => randomHex(PRF_SEED_BYTES[CKM_SHA256] ?? 32))
+  const [iv, setIv] = useState(() => randomHex(prfSeedBytes()[CKM_SHA256] ?? 32))
 
   // Keep IV length in sync with selected PRF
   useEffect(() => {
-    if (feedback) setIv(randomHex(PRF_SEED_BYTES[prf] ?? 32))
+    if (feedback) setIv(randomHex(prfSeedBytes()[prf] ?? 32))
   }, [prf, feedback])
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
   const [baseKeyHandle, setBaseKeyHandle] = useState<number | null>(null)
@@ -773,7 +781,7 @@ const KbkdfPanel = ({
     }
   }
 
-  const prfLabel = KBKDF_PRFS.find((p) => p.value === prf)?.label ?? ''
+  const prfLabel = kbkdfPrfs().find((p) => p.value === prf)?.label ?? ''
 
   return (
     <div className="space-y-4">
@@ -833,21 +841,21 @@ const KbkdfPanel = ({
                 value={iv}
                 onChange={(e) => setIv(e.target.value)}
                 placeholder="leave blank for no IV"
-                className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${iv && hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32) ? 'border-status-error' : 'border-border'}`}
+                className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${iv && hexByteLen(iv) !== (prfSeedBytes()[prf] ?? 32) ? 'border-status-error' : 'border-border'}`}
               />
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIv(randomHex(PRF_SEED_BYTES[prf] ?? 32))}
+                onClick={() => setIv(randomHex(prfSeedBytes()[prf] ?? 32))}
               >
                 Random
               </Button>
             </div>
             {iv && (
               <p
-                className={`text-[10px] font-mono ${hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32) ? 'text-status-error' : 'text-muted-foreground'}`}
+                className={`text-[10px] font-mono ${hexByteLen(iv) !== (prfSeedBytes()[prf] ?? 32) ? 'text-status-error' : 'text-muted-foreground'}`}
               >
-                {hexByteLen(iv)}/{PRF_SEED_BYTES[prf] ?? 32}B — IV must equal PRF output size
+                {hexByteLen(iv)}/{prfSeedBytes()[prf] ?? 32}B — IV must equal PRF output size
                 (OpenSSL PROV_R_INVALID_SEED_LENGTH)
               </p>
             )}
@@ -858,7 +866,7 @@ const KbkdfPanel = ({
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
             <FilterDropdown
-              items={KBKDF_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              items={kbkdfPrfs().map((p) => ({ id: String(p.value), label: p.label }))}
               selectedId={String(prf)}
               onSelect={(id) => setPrf(parseInt(id, 10))}
               noContainer
@@ -899,7 +907,7 @@ const KbkdfPanel = ({
           loading ||
           !baseKeyHandle ||
           !isValidHex(context) ||
-          (feedback && !!iv && hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32))
+          (feedback && !!iv && hexByteLen(iv) !== (prfSeedBytes()[prf] ?? 32))
         }
       >
         {loading && baseKeyHandle ? <Loader2 size={14} className="animate-spin mr-1" /> : null}

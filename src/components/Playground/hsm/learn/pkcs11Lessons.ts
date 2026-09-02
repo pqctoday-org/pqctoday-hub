@@ -28,7 +28,7 @@ import {
   hsm_ecdhDerive,
   hsm_extractECPoint,
   hsm_hkdf,
-  CKM_SHA256_HMAC,
+  CKM_SHA256,
   CKA_CLASS,
   CKA_TOKEN,
   CKA_ENCRYPT,
@@ -700,14 +700,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const secretHandle = Number((results[1]?.detail.match(/aliceSecret=(\d+)/) ?? [])[1])
-          const derived = hsm_hkdf(
-            M,
-            hsm.hSessionRef.current,
-            secretHandle,
-            CKM_SHA256_HMAC,
-            true,
-            true
-          )
+          const derived = hsm_hkdf(M, hsm.hSessionRef.current, secretHandle, CKM_SHA256, true, true)
           return { detail: `HKDF output: ${derived.length} bytes — ready to use as an AES key.` }
         },
       },

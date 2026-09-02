@@ -78,7 +78,14 @@ interface ParamSet {
   category: 's' | 'f'
 }
 
-const PARAM_SETS: ParamSet[] = [
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture every CKP_SLH_DSA_* parameter set as `undefined`
+// (assigned only once that chunk's own top-level await resolves, which
+// happens AFTER this module's top-level runs). Dev/vitest don't use that
+// plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const paramSets = (): ParamSet[] => [
   {
     id: 'sha2-128s',
     label: 'SHA2-128s',
@@ -207,7 +214,7 @@ const PREHASH_OPTIONS = PREHASH_OPTIONS_BASE.map((o) => ({
   label: o.fips205Slh ? o.label : `${o.label} (Non-FIPS 205)`,
 }))
 
-const DROPDOWN_ITEMS = PARAM_SETS.map((p) => ({ id: p.id, label: p.label }))
+const dropdownItems = () => paramSets().map((p) => ({ id: p.id, label: p.label }))
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -268,7 +275,7 @@ export const SLHDSALiveDemo: React.FC = () => {
   const signPreHashRef = useRef<string>('')
   const [signedPreHash, setSignedPreHash] = useState<string>('')
 
-  const selectedParam = PARAM_SETS.find((p) => p.id === paramSetId) ?? PARAM_SETS[0]
+  const selectedParam = paramSets().find((p) => p.id === paramSetId) ?? paramSets()[0]
 
   const resetResults = useCallback(() => {
     setKeyHandles(null)
@@ -427,7 +434,7 @@ export const SLHDSALiveDemo: React.FC = () => {
                 Parameter Set (12 FIPS 205 variants)
               </p>
               <FilterDropdown
-                items={DROPDOWN_ITEMS}
+                items={dropdownItems()}
                 selectedId={paramSetId}
                 onSelect={handleParamSetChange}
                 defaultLabel="Select parameter set"
