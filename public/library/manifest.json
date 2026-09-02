@@ -4623,12 +4623,12 @@
     {
       "refId": "ref-joseph-transitioning",
       "title": "Transitioning organizations to post-quantum cryptography",
-      "url": "https://www.nature.com/articles/s41586-022-04623-2.pdf",
+      "url": "https://cdn.prod.website-files.com/63376791eb98a8e2edf9d2c8/69a867ee3495099f5be3bdb1_2022-05-11_Nature_Transitioning%20organizations%20to%20post-quantum%20cryptography%20(1).pdf",
       "status": "downloaded",
       "filename": "ref-joseph-transitioning.pdf",
-      "sizeBytes": 234835,
+      "sizeBytes": 1454645,
       "contentType": "application/pdf",
-      "sha256": "28dc07e6ef236b7de19945c006abcf28192e6a5d2e5a78d97a921098fbe6e591"
+      "sha256": "1e3b5f0fec193bd7b10ee5e674b5872c1d3decf83ef4c9c41bd5c691c024c2af"
     },
     {
       "refId": "RFC 9142",
