@@ -27,6 +27,15 @@ const manifest: ModuleManifest = {
     { id: 'mandate-explorer', label: 'Federal Mandate Explorer' },
     { id: 'fpki-profile-pair', label: 'Federal PKI Profile Pair' },
   ],
+  // reduced 5-tab set (no Exercises) — no exercises component is wired for
+  // this module; the default STANDARD_TABS set was rendering an empty tab.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   // Not sim-embeddable: SIM_LEARN_MODULES is a curated set and the conformance
   // test asserts `embeddable` matches it exactly. Adding this module to the
   // simulation is a separate decision, not a side effect of authoring it.

@@ -27,6 +27,15 @@ const manifest: ModuleManifest = {
     { id: 'supersession-explorer', label: 'Standards Supersession Explorer' },
     { id: 'hybrid-suite-picker', label: 'Hybrid Suite Picker' },
   ],
+  // reduced 5-tab set (no Exercises) — no exercises component is wired for
+  // this module; the default STANDARD_TABS set was rendering an empty tab.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
+  ],
   embeddable: false,
   load: () => import('./index').then((m) => ({ default: m.TrustServicesPQCModule })),
 }
