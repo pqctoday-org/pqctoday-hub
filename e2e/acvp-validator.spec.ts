@@ -37,7 +37,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     await acvpTab.click()
 
     // Make sure the component is loaded before dispatching events
-    await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 30000 })
+    await page.waitForSelector('text="ACVP Known-Answer Tests"', { timeout: 30000 })
 
     // Advance HSM phase to 'session_open' via the e2e hook in HsmContext.
     // The runTests() guard at HsmAcvpTesting.tsx returns early unless the
@@ -181,7 +181,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     const acvpTab = page.getByRole('tab', { name: 'ACVP' })
     await acvpTab.waitFor({ state: 'visible', timeout: 30000 })
     await acvpTab.click()
-    await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 30000 })
+    await page.waitForSelector('text="ACVP Known-Answer Tests"', { timeout: 30000 })
 
     await page.waitForFunction(
       () =>

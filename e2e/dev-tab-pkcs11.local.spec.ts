@@ -454,16 +454,24 @@ test("the real PKCS#11 call log and key table show this tab's own run activity",
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
-  await page.getByText('Session activity').click()
-  // Inspector-style tab bar — Log and Keys are separate tabs now, not
-  // stacked, so each has to be selected before asserting its content.
-  await expect(page.getByRole('button', { name: /^Log \(\d+\)$/ })).toBeVisible()
+  // 2026-09-02 redesign (design_handoff_kmip_pkcs11_playground D3c): the
+  // Build tab no longer embeds its own log/key copies — ONE shared call log
+  // and key inventory live on the Inspect tab, and the "N calls · K keys —
+  // Inspect" chip on Build links straight there. Same regression guard,
+  // through the real path a visitor takes.
+  await page.locator('[data-tour="pkcs-inspect-chip"]').click()
+  await expect(page.getByRole('tab', { name: 'Inspect', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
   await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
+  // Origin filter — only the calls the Build suite made.
+  await page.getByRole('button', { name: 'Build', exact: true }).click()
   // A real function name from the default template's own generate/encrypt
   // steps — not just the panel chrome.
   await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
 
   // The key(s) the run just created, via the devSlot discovery scan.
-  await page.getByRole('button', { name: /^Keys \(\d+\)$/ }).click()
+  await page.getByRole('tab', { name: 'Keys', exact: true }).click()
   await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
 })
