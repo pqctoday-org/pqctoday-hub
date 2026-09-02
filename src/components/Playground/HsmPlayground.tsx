@@ -19,6 +19,7 @@ import {
   Search,
   KeyRound,
   ScrollText,
+  Crosshair,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
@@ -60,6 +61,8 @@ import {
 } from './learnkit/TourEngine'
 import { WorkshopShell, type WorkshopTab } from './learnkit/WorkshopShell'
 import { InspectChip } from './learnkit/InspectChip'
+import { isRailId, type RailId } from './hsm/railIds'
+import type { Pkcs11LessonStep } from './hsm/learn/pkcs11Lessons'
 
 /**
  * Four modes (design handoff design_handoff_kmip_pkcs11_playground,
@@ -70,8 +73,7 @@ import { InspectChip } from './learnkit/InspectChip'
  */
 export type HsmTab = 'learn' | 'operate' | 'build' | 'inspect'
 
-/** Operate's primitive rail. Ids are the `?rail=` URL values. */
-export type RailId = 'kem' | 'sym' | 'wrap' | 'hash' | 'sign' | 'agree' | 'kdf'
+export type { RailId } from './hsm/railIds'
 
 /** Inspect's sub-views. Ids are the `?itab=` URL values. */
 export type InspectView = 'mechanisms' | 'log' | 'keys'
@@ -117,8 +119,6 @@ const LEGACY_TABS: Record<string, HsmLocation> = {
 
 const isHsmTab = (v: string | null): v is HsmTab =>
   v === 'learn' || v === 'operate' || v === 'build' || v === 'inspect'
-const RAIL_IDS: RailId[] = ['kem', 'sym', 'wrap', 'hash', 'sign', 'agree', 'kdf']
-const isRailId = (v: string | null): v is RailId => RAIL_IDS.includes(v as RailId)
 const isInspectView = (v: string | null): v is InspectView =>
   v === 'mechanisms' || v === 'log' || v === 'keys'
 
@@ -228,6 +228,13 @@ export const HsmPlayground = () => {
 
   // Current algo string — updated by panels via onAlgoChange, written to ?algo=
   const [algoParam, setAlgoParam] = useState<string | undefined>(initialAlgo.current)
+  // Bumped to remount the active Operate panel when a Learn spotlight needs
+  // it to (re)initialise on a specific algorithm — panels read `initialAlgo`
+  // only in their state initialisers, so a same-rail spotlight would
+  // otherwise land on whatever the panel already showed.
+  const [panelKey, setPanelKey] = useState(0)
+  // The one-step "Show me on Operate" lesson a Learn step asked for (D7).
+  const [spotLesson, setSpotLesson] = useState<Lesson<HsmTab> | null>(null)
 
   /** Generate a sensible default key for the target primitive after deep-link auto-init. */
   const generateDefaultKeyForRail = (target: RailId, algo?: string, engine?: EngineMode) => {
@@ -488,7 +495,8 @@ export const HsmPlayground = () => {
       ],
     },
   ]
-  const tour = useLessonsTour<HsmTab>(devLessons, (p) => {
+  const tourLessons = spotLesson ? [...devLessons, spotLesson] : devLessons
+  const tour = useLessonsTour<HsmTab>(tourLessons, (p) => {
     handleTabChange(p)
     // The tour's data-tour="pkcs-dev-*" selectors only exist while the
     // Standard suite is mounted (TabsContent unmounts inactive panels) —
@@ -496,6 +504,51 @@ export const HsmPlayground = () => {
     // suite doesn't leave every selector finding nothing.
     if (p === 'build') setDevSubTab('standard')
   })
+  const { startLesson: tourStart } = tour
+  // Start the spotlight once its lesson is registered with the hook (the
+  // hook's `lessons` list is captured per render, so start on the next one).
+  useEffect(() => {
+    if (spotLesson) tourStart(spotLesson.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spotLesson])
+
+  /** "Show me on Operate" — spotlight the real control a Learn step used:
+   *  switch rail, preselect the algorithm, remount the panel, then run a
+   *  one-step tour whose Back/Done returns to the lesson (Learn stays
+   *  mounted, see WorkshopShell keepMounted). */
+  const spotlightStep = (step: Pkcs11LessonStep) => {
+    const spot = step.spot
+    if (!spot) return
+    setRail(spot.rail)
+    if (spot.algo) {
+      initialAlgo.current = spot.algo
+      setAlgoParam(spot.algo)
+    }
+    setPanelKey((k) => k + 1)
+    logEvent('HSM Playground', 'Learn Spotlight', `${spot.rail}:${step.op}`)
+    setSpotLesson({
+      id: `spot-${spot.rail}-${Date.now()}`,
+      title: step.op,
+      icon: Crosshair,
+      plane: 'operate',
+      blurb: step.label,
+      steps: [
+        {
+          title: step.op,
+          body:
+            spot.body ??
+            `${step.label} — this is the real control on the Operate tab. Try it yourself, then use Back to return to the lesson.`,
+          target: spot.target,
+        },
+      ],
+    })
+  }
+  const spotActive = !!spotLesson && tour.activeLesson?.id === spotLesson.id
+  const endSpotlight = () => {
+    tour.endTour()
+    setSpotLesson(null)
+    handleTabChange('learn')
+  }
 
   // Total logged calls minus the synthetic step-header rows the Learn tab
   // and (post-redesign) every Operate button emit for grouping.
@@ -543,7 +596,15 @@ export const HsmPlayground = () => {
       label: 'Learn',
       icon: BookOpen,
       tourId: 'pkcs-tab-learn',
-      content: <HsmLearnView onTryInWorkbench={(tab) => goTo(resolveHsmLocation({ tab }))} />,
+      // Kept mounted so a lesson's step progress survives a spotlight detour
+      // to Operate (and a peek at Inspect) — see WorkshopShell keepMounted.
+      keepMounted: true,
+      content: (
+        <HsmLearnView
+          onTryInWorkbench={(tab) => goTo(resolveHsmLocation({ tab }))}
+          onSpotlight={spotlightStep}
+        />
+      ),
     },
     {
       id: 'operate',
@@ -609,7 +670,9 @@ export const HsmPlayground = () => {
               </h4>
               {inspectChip}
             </div>
-            <div data-tour={`pkcs-op-${rail}`}>{operatePanel}</div>
+            <div key={panelKey} data-tour={`pkcs-op-${rail}`}>
+              {operatePanel}
+            </div>
           </div>
         </div>
       ),
@@ -826,9 +889,9 @@ export const HsmPlayground = () => {
           stepIndex={tour.tourStep}
           stepCount={tour.activeLesson.steps.length}
           rect={tour.tourRect}
-          onNext={tour.nextStep}
-          onBack={tour.backStep}
-          onEnd={tour.endTour}
+          onNext={spotActive ? endSpotlight : tour.nextStep}
+          onBack={spotActive ? endSpotlight : tour.backStep}
+          onEnd={spotActive ? endSpotlight : tour.endTour}
         />
       )}
 

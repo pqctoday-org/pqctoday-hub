@@ -18,7 +18,42 @@
 import type { ReactNode } from 'react'
 import type { LucideIcon } from 'lucide-react'
 import clsx from 'clsx'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  useTabsContext,
+  tabPanelId,
+  tabTriggerId,
+} from '@/components/ui/tabs'
+
+/** A `TabsContent` that hides instead of unmounting — same ids/ARIA as the
+ *  real one (read from the enclosing `<Tabs>` context) so the trigger's
+ *  `aria-controls` still resolves. */
+function KeepMountedPanel({
+  value,
+  className,
+  children,
+}: {
+  value: string
+  className?: string
+  children: ReactNode
+}) {
+  const ctx = useTabsContext()
+  const active = ctx?.value === value
+  return (
+    <div
+      role="tabpanel"
+      id={ctx ? tabPanelId(ctx.baseId, value) : undefined}
+      aria-labelledby={ctx ? tabTriggerId(ctx.baseId, value) : undefined}
+      hidden={!active}
+      className={className}
+    >
+      {children}
+    </div>
+  )
+}
 
 export interface WorkshopTab<TId extends string> {
   id: TId
@@ -31,6 +66,13 @@ export interface WorkshopTab<TId extends string> {
   content: ReactNode
   /** Hidden tabs render neither trigger nor content (persona gating). */
   hidden?: boolean
+  /**
+   * Keep this tab's content mounted (visually hidden) while another tab is
+   * active — for surfaces whose in-progress state must survive a detour
+   * (a Learn lesson mid-way through its steps while the spotlight jumps
+   * to Operate and back). Default false = unmount on switch.
+   */
+  keepMounted?: boolean
 }
 
 interface WorkshopShellProps<TId extends string> {
@@ -107,18 +149,24 @@ export function WorkshopShell<TId extends string>({
         })}
       </TabsList>
 
-      {visible.map((t) => (
-        <TabsContent
-          key={t.id}
-          value={t.id}
-          className={clsx(
-            'mt-0 flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative',
-            contentClassName
-          )}
-        >
-          {t.content}
-        </TabsContent>
-      ))}
+      {visible.map((t) => {
+        const panelClass = clsx(
+          'mt-0 flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative',
+          contentClassName
+        )
+        if (t.keepMounted) {
+          return (
+            <KeepMountedPanel key={t.id} value={t.id} className={panelClass}>
+              {t.content}
+            </KeepMountedPanel>
+          )
+        }
+        return (
+          <TabsContent key={t.id} value={t.id} className={panelClass}>
+            {t.content}
+          </TabsContent>
+        )
+      })}
     </Tabs>
   )
 }

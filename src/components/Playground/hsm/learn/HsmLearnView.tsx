@@ -15,6 +15,7 @@ import {
   Loader2,
   PlayCircle,
   XCircle,
+  Crosshair,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -85,13 +86,16 @@ function StepRow({
   state,
   onRun,
   disabled,
+  onSpotlight,
 }: {
   step: Pkcs11LessonStep
   index: number
   state: StepRunState
   onRun: () => void
   disabled: boolean
+  onSpotlight?: (step: Pkcs11LessonStep) => void
 }) {
+  const done = state.status === 'ok' || state.status === 'refused-ok'
   return (
     <li className="rounded-lg border border-border bg-background/40 p-3">
       <div className="flex items-start justify-between gap-2">
@@ -124,6 +128,18 @@ function StepRow({
             </span>
           )}
           {state.status === 'failed' && <XCircle size={15} className="text-destructive" />}
+          {done && step.spot && onSpotlight && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onSpotlight(step)}
+              className="h-7 gap-1 px-2 text-[11px]"
+              title="Jump to the Operate tab and highlight the control this step exercised"
+              data-tour="pkcs-learn-spotlight"
+            >
+              <Crosshair size={12} /> Show me on Operate
+            </Button>
+          )}
         </div>
       </div>
       {state.detail && (
@@ -149,6 +165,7 @@ function LessonRunner({
   namespace,
   analyticsCategory,
   onTryInWorkbench,
+  onSpotlight,
 }: {
   lessons: LinearLessonBase<Pkcs11LessonStep>[]
   /** Nav badge prefix, e.g. "A" for A1/A2/… or "B" for B1/B2/… */
@@ -157,6 +174,7 @@ function LessonRunner({
   namespace: string
   analyticsCategory: string
   onTryInWorkbench: (tab: string) => void
+  onSpotlight?: (step: Pkcs11LessonStep) => void
 }) {
   const hsm = useHsmContext()
   const [lessonIdx, setLessonIdx] = useState(0)
@@ -297,6 +315,7 @@ function LessonRunner({
                 state={stepStates[i]}
                 onRun={() => runStep(i)}
                 disabled={stepStates[i].status === 'running' || !prevDone}
+                onSpotlight={onSpotlight}
               />
             )
           })}
@@ -409,7 +428,14 @@ function LessonRunner({
   )
 }
 
-export function HsmLearnView({ onTryInWorkbench }: { onTryInWorkbench: (tab: string) => void }) {
+export function HsmLearnView({
+  onTryInWorkbench,
+  onSpotlight,
+}: {
+  onTryInWorkbench: (tab: string) => void
+  /** "Show me on Operate" — the shell spotlights the step's real control. */
+  onSpotlight?: (step: Pkcs11LessonStep) => void
+}) {
   const [track, setTrack] = useState<Track>('foundations')
 
   return (
@@ -448,6 +474,7 @@ export function HsmLearnView({ onTryInWorkbench }: { onTryInWorkbench: (tab: str
               namespace="hsm-pkcs11"
               analyticsCategory="PKCS11 Foundations"
               onTryInWorkbench={onTryInWorkbench}
+              onSpotlight={onSpotlight}
             />
           )}
           {track === 'v32' && (
@@ -457,6 +484,7 @@ export function HsmLearnView({ onTryInWorkbench }: { onTryInWorkbench: (tab: str
               namespace="hsm-pkcs11-v32"
               analyticsCategory="PKCS11 v3.2"
               onTryInWorkbench={onTryInWorkbench}
+              onSpotlight={onSpotlight}
             />
           )}
         </div>
