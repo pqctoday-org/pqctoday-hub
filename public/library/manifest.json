@@ -986,24 +986,24 @@
     {
       "refId": "BIP-39",
       "title": "BIP-39: Mnemonic Code for Generating Deterministic Keys",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039.mediawiki",
       "status": "downloaded",
       "filename": "BIP-39.html",
-      "sizeBytes": 315621,
-      "contentType": "text/html",
-      "sha256": "29adca74e748f00bc8394b81ffddad806333bed12ab28bb8c025fec308a1c76d",
+      "sizeBytes": 6842,
+      "contentType": "text/plain",
+      "sha256": "afcbcbed36fe9eb734bd607398a8c124683ded2a75c3830e1b16c47b043a9134",
       "previousSha256": "bafd11adf0e2c8628042fd10099ff3cce742cf1c373a4dbabff22b756720bdd9",
       "rehashedAt": "2026-08-22"
     },
     {
       "refId": "BIP-44",
       "title": "BIP-44: Multi-Account Hierarchy for Deterministic Wallets",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki",
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0044.mediawiki",
       "status": "downloaded",
       "filename": "BIP-44.html",
-      "sizeBytes": 324574,
-      "contentType": "text/html",
-      "sha256": "542adad0dee49249be524c674133979fd625011689c03a47494568604e579a19",
+      "sizeBytes": 6710,
+      "contentType": "text/plain",
+      "sha256": "6a541c79f94077ac529941a8cbd373ce077a5d6e97b6dd8209b45ac10f737eaf",
       "previousSha256": "806ebe7ef11160b62ceec3cf80362b8ff610fa7fd2c78c1c469b4bf38af452bb",
       "rehashedAt": "2026-08-22"
     },
@@ -1361,12 +1361,12 @@
     {
       "refId": "NIST-SP-800-22-R1A",
       "title": "SP 800-22 Rev. 1a: A Statistical Test Suite for Random and Pseudorandom Number Generators for Cryptographic Applications",
-      "url": "https://csrc.nist.gov/publications/detail/sp/800-22/rev-1a/final",
+      "url": "http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-22r1a.pdf",
       "status": "downloaded",
-      "filename": "NIST-SP-800-22-R1A.html",
-      "sizeBytes": 49208,
-      "contentType": "text/html",
-      "sha256": "7969b0c6015fa95fb4815128436520728f827e3f323a4e6dd0bbba6a42e51e28",
+      "filename": "NIST-SP-800-22-R1A.pdf",
+      "sizeBytes": 7583475,
+      "contentType": "application/pdf",
+      "sha256": "38aba1b34a7fa52c440790d6e0cabf498e4b525177b3b6cebb399ab8ccf031d2",
       "previousSha256": "b39a056667cabe13e57e3c08974626d758dc7ee6eb754025633006047b056c6d",
       "rehashedAt": "2026-08-22"
     },
@@ -4120,12 +4120,12 @@
     {
       "refId": "OWASP-CycloneDX-CBOM-Guide",
       "title": "OWASP CycloneDX: CBOM Authoritative Guide",
-      "url": "https://cyclonedx.org/capabilities/cbom/",
+      "url": "https://owasp.org/blog/2023/10/03/CycloneDX-Cryptography-CBOM",
       "status": "downloaded",
       "filename": "OWASP-CycloneDX-CBOM-Guide.html",
-      "sizeBytes": 35229,
+      "sizeBytes": 38336,
       "contentType": "text/html",
-      "sha256": "e0b9d50407aab2525d1bbddd16f7aeb01adf84fcf7140eb688a266f3744804a3"
+      "sha256": "28299e129ee03877d4b013e8a7d25d1ec8b01dec5c98d299f40fcf6b463029f5"
     },
     {
       "refId": "IETF-RFC-8555",
