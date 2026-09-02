@@ -1200,7 +1200,7 @@
       "sizeBytes": 822099
     },
     {
-      "label": "Germany:BSI — Hybrid TLS Required for Classified Communications",
+      "label": "Germany:BSI — BSI Signals Future Hybrid PQC Key Exchange for TLS",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.pdf",
       "status": "downloaded",
       "reason": "upgraded Wayback->live (resilient fetch)",

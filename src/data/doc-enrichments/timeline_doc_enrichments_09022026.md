@@ -1,24 +1,27 @@
 ---
 generated: 2026-09-02
 collection: timeline
-documents_processed: 0
+documents_processed: 1
 enrichment_method: mlx-mlx-community/Qwen3.6-27B-8bit
 notes: >-
   3 candidates were selected this run (US FAR Council EO 14412 proposed rule,
-  US White House EO 14413, Germany:BSI hybrid TLS signal). All 3 were
-  dropped from this file after review: the first two were false-positive
-  candidates — a label-generation bug in enrich-docs.py's local_file-fallback
-  candidate path (the same bug class fixed in 43de37e4e for existing
-  manifest entries, recurring for freshly-selected candidates) produced a
-  malformed heading that duplicated an already-enriched row still present in
-  the 299 carried-forward entries below. The third (Germany:BSI) had no
-  extractable PDF text; the LLM extrapolated from the CSV description alone,
-  and its own verify pass flagged 2 fields as quoting evidence not actually
-  present in the source — a likely fabrication, not committed. This file
-  therefore carries forward the prior 299 entries (plus DS05p3's normal
-  9-orphan drop) with zero new enrichment this cycle. Germany:BSI remains a
-  genuine, still-open gap needing either better source evidence or manual
-  enrichment.
+  US White House EO 14413, Germany:BSI hybrid TLS signal). The first two were
+  false-positive candidates and dropped — a label-generation bug in
+  enrich-docs.py's local_file-fallback candidate path (the same bug class
+  fixed in 43de37e4e for existing manifest entries, recurring for
+  freshly-selected candidates) produced a malformed heading that duplicated
+  an already-enriched row still present in the carried-forward entries below.
+  The third (Germany:BSI) initially failed the same way: its manifest.json
+  label was stale (never updated after the row's Title was corrected on
+  2026-07-16), so candidate resolution couldn't find its real cached PDF and
+  fell back to description-only text, producing a likely-fabricated extraction
+  (2 fields flagged by verify_evidence.py quoting text not in the source —
+  not committed). Root-caused and fixed: the manifest label was corrected to
+  match the current CSV Title, and the row was re-enriched from the real
+  cached PDF (BSI TR-02102-2, 42,420 chars via pdftotext). Re-verified clean:
+  verify_evidence.verify_ref_id → PASS, 0/2 checks failed. This file carries
+  forward the prior 299 entries (plus DS05p3's normal 9-orphan drop) plus
+  this one genuine new enrichment.
 ---
 
 
@@ -19753,6 +19756,74 @@ notes: >-
 - **Country Migration Dates**: Uruguay: 2024 — National Cybersecurity Strategy 2024-2030 commits to identifying PQC needs for critical infrastructure
 - **Timeline Cross-Reference**: Uruguay 2024: CONSISTENT (National Cybersecurity Strategy 2024-2030 Commits )
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## Germany:BSI — BSI Signals Future Hybrid PQC Key Exchange for TLS
+
+- **Reference ID**: Germany:BSI — BSI Signals Future Hybrid PQC Key Exchange for TLS
+- **Title**: BSI Signals Future Hybrid PQC Key Exchange for TLS
+- **Authors**: Bundesamt für Sicherheit in der Informationstechnik
+- **Publication Date**: 2026-01-27
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: BSI Technical Guideline TR-02102-2 provides recommendations for TLS versions, cipher suites, and key lengths, including a timeline for discontinuing classical mechanisms and adopting hybrid quantum-safe key agreement.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: CRQC; Harvest Now Decrypt Later
+- **Migration Timeline Info**: 2029: Discontinuation of DSA and DHE cipher suite recommendations; 2031: Sole use of classic key agreement mechanisms ends; TLS 1.2 recommendations discontinued; 2032+: TLS 1.3 recommended
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: Federal Office for Information Security
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.2; TLS 1.3
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: Federal Office for Information Security
+- **Compliance Frameworks Referenced**: TR-02102-1; TR-02102-2
+- **Classical Algorithms Referenced**: RSA; ECDSA; AES; SHA-256; SHA-384; DH; DHE; ECDHE; DSA; HMAC-SHA-1; CCM; GCM; CBC
+- **Key Takeaways**: BSI recommends hybrid quantum-safe key agreement mechanisms for TLS once suitable standards are adopted; Sole use of classical key agreement is only recommended until the end of 2031; TLS 1.2 is recommended only until the end of 2031 due to lack of standardized quantum-safe key agreement mechanisms for that version; DSA and DHE cipher suites are discontinued from the end of 2029; RSA signatures with PKCS #1 v1.5 padding are discontinued
+- **Security Levels & Parameters**: 120 bits
+- **Hybrid & Transition Approaches**: Hybrid use with recommended classical mechanisms
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.2; TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.2: "Recommendations for TLS 1.2" (§3.3); TLS-1.3: "Recommendations for TLS 1.3" (§3.4)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; Developer
+- **Implementation Prerequisites**: Suitable standards for quantum-safe mechanisms in TLS must be adopted
+- **Relevant PQC Today Features**: Timeline; Compliance; Migrate; hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: Side channels (timing behaviour, power consumption, data rates); Fault attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Migration periods to quantum-safe key agreement mechanisms
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document represents a planning and recommendation phase, outlining future discontinuation dates for classical algorithms and signaling the intent to recommend hybrid PQC mechanisms once standards are available.
+- **Regulatory Mandate Level**: Recommended
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Long-Term (3-5yr, planning horizon)
+- **Phase Transition Narrative**: Moves from classical-only recommendations to a hybrid transition phase, signaling the end of sole classical key agreement usage by 2031.
+- **Historical Significance**: This is a key national guideline from Germany's BSI that sets concrete deadlines for the deprecation of classical TLS mechanisms and establishes the framework for future PQC adoption in TLS.
+- **Implementation Timeline Dates**: 2029: Discontinuation of DSA and DHE cipher suite recommendations; 2031: End of recommendation for sole use of classic key agreement mechanisms; 2031: Discontinuation of TLS 1.2 recommendations; 2032+: TLS 1.3 recommended
+- **Successor Events & Dependencies**: Requires adoption of suitable standards for quantum-safe mechanisms in TLS; Enables recommendation of quantum-safe mechanisms in hybrid use
+- **Source Document Title**: Technical Guideline TR-02102-2 Cryptographic Mechanisms: Recommendations and Key Lengths Part 2 – Use of Transport Layer Security (TLS)
+- **Source Document Publication Date**: 2026-01-27
+- **Country Migration Dates**: Germany: 2029 — Discontinuation of DSA and DHE cipher suite recommendations; Germany: 2031 — Sole use of classic key agreement mechanisms ends; Germany: 2031 — Discontinuation of TLS 1.2 recommendations
+- **Timeline Cross-Reference**: Germany: DATE CHANGE — CSV=2030 (Critical Applications PQC — Hybrid No Longer Required), doc=2029 (2029 — Discontinuation of DSA and DHE cipher suite recommend) → REVIEW; Germany 2031: CONSISTENT (BSI Signals Future Hybrid PQC Key Exchange for TLS); Germany 2031: CONSISTENT (BSI Signals Future Hybrid PQC Key Exchange for TLS)
+- **Source Document**: Germany_BSI_Hybrid_TLS_Required_for_Classified_Communications.pdf (758,922 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-09-02T12:10:11
+- **Generation Model**: mlx-community/Qwen3.6-27B-8bit (mlx)
 
 ---
 
