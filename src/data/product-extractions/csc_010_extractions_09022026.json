@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "strongSwan (pqctoday-hsm PQC fork)",
+    "category": "VPN and IPsec Software",
+    "product_name": "SoftHSMv3 / @pqctoday/softhsm-wasm",
+    "product_brief": "Modernized SoftHSM2 fork with OpenSSL 3.x, PKCS#11 v3.2, and PQC support, compiled to WebAssembly.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), LMS/HSS (SP 800-208), XMSS/XMSS^MT (RFC 8391), FrodoKEM, and Classic McEliece. Includes hybrid KEMs (X25519MLKEM768, etc.). Implemented in C++ (OpenSSL 3.6) and pure Rust engines. Validated against NIST ACVP vectors.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, SLH-DSA, LMS, HSS, XMSS, XMSS^MT, FrodoKEM, Classic McEliece, ECDSA (P-256, P-384, P-521, secp256k1), Ed25519, Ed25519ph, RSA, AES-GCM, ChaCha20-Poly1305, X25519, X448, ECDH",
+    "key_management_model": "HSM-backed (Software HSM via PKCS#11), KMIP 3.0 server for networked key management, crypto-agility policy engine (CACP)",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software HSM (PKCS#11 v3.2), WebAssembly module, KMIP server",
+    "infrastructure_layer": "Security Stack, Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "v0.10.0 (mentioned in CHANGELOG context), v0.4.24 (hardening sweep)",
+    "release_date": "Not stated",
+    "fips_validated": "No (Supports FIPS 203/204/205 algorithms and FIPS 186-5/202 compliance, but no FIPS 140 validation status mentioned)",
+    "primary_platforms": "WebAssembly (Browsers, Node.js), Native (Linux/Unix via OpenSSL 3.6), Rust",
+    "target_industries": "Enterprise, Network Security, Cryptography Infrastructure",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Phases 0-19 completed through April 2026. Includes KMIP 3.0 server, CACP policy engine, hybrid KEMs, and Rust native API.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA, LMS, HSS, XMSS, XMSS^MT, ECDSA, Ed25519, RSA-PSS, RSA-PKCS#1",
+    "authoritative_source_url": "pqctoday-org / pqctoday-hsm (GitHub repository)",
+    "implementation_attack_surface": "Addressed CWE-400 (WASM panics), CWE-120 (buffer overflows), RSA X.509 underflow, AES-CBC IV enforcement, ML-KEM secret zeroization, constant-time comparison for HMAC/KMAC, path traversal rejection.",
+    "cryptographic_discovery_&_inventory": "Not stated",
+    "testing_&_validation_methods": "NIST ACVP conformance (320/320 LMS vectors, ML-KEM/ML-DSA/SLH-DSA vectors), PKCS#11 v3.2 compliance testing (193/0/1 C++, 257/257 Rust), cross-engine parity tests, Playwright E2E tests.",
+    "qkd_protocols_&_quantum_networking": "Not stated",
+    "qrng_&_entropy_sources": "Uses `getrandom` (js feature) for browser-compatible CSPRNG; DRBG testing mentioned.",
+    "constrained_device_&_iot_suitability": "WebAssembly target (~1.4 MB Rust engine), suitable for browser/Node.js environments.",
+    "supply_chain_&_vendor_risk": "Open source; dependencies include RustCrypto crates, OpenSSL 3.6; security audits conducted in March/April 2026.",
+    "deployment_&_migration_complexity": "Drop-in interchangeable engines (C++/Rust); PKCS#11 v3.2 API; requires OpenSSL 3.x for C++ engine.",
+    "financial_&_business_impact": "Not stated",
+    "organizational_readiness": "Not stated",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-02"
+    }
+  }
+]
