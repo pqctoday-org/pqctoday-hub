@@ -543,7 +543,7 @@ export const HsmPlayground = () => {
           title: step.op,
           body:
             spot.body ??
-            `${step.label} — this is the real control on the Operate tab. Try it yourself, then use Back to return to the lesson.`,
+            `${step.label} — this is the real control on the Operate tab. Try it yourself, then press Done to return to the lesson.`,
           target: spot.target,
         },
       ],

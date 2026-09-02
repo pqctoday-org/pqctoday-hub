@@ -219,7 +219,7 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
 
   // Legacy deep link — pre-merge bookmark straight to the old top-level tab.
   await page.goto('/playground/hsm?tab=acvp')
-  await expect(page.getByRole('tab', { name: 'Developer' })).toBeVisible({ timeout: 30000 })
+  await expect(page.getByRole('tab', { name: 'Build' })).toBeVisible({ timeout: 30000 })
   await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 

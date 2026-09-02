@@ -110,7 +110,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         spot: {
           rail: 'kem',
           target: '[data-tour="pkcs-op-setup"]',
-          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Use Back to return to the lesson.',
+          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Done returns you to the lesson.',
         },
         run: async (hsm) => {
           if (!hsm.isReady) {
@@ -128,7 +128,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
         spot: {
           rail: 'kem',
           target: '[data-tour="pkcs-op-setup"]',
-          body: 'The setup strip shows the slot, token and session this workshop is talking to — the same C_GetTokenInfo data the lesson just read back. Use Back to return.',
+          body: 'The setup strip shows the slot, token and session this workshop is talking to — the same C_GetTokenInfo data the lesson just read back. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -188,7 +188,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'Generate Key with CKA_EXTRACTABLE left unticked creates the same non-extractable AES-256 key. Use Back to return to the lesson.',
+          body: 'Generate Key with CKA_EXTRACTABLE left unticked creates the same non-extractable AES-256 key. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -564,7 +564,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Use Back to return to the lesson.',
+          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)

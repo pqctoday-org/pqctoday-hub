@@ -98,7 +98,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         spot: {
           rail: 'kem',
           target: '[data-tour="pkcs-op-setup"]',
-          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Use Back to return to the lesson.',
+          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Done returns you to the lesson.',
         },
         run: async (hsm) => {
           if (!hsm.isReady) {
@@ -158,7 +158,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sign',
           target: '[data-tour="pkcs-op-sign-classical-rsa-sign"]',
           algo: 'RSA-3072',
-          body: 'C_Sign on the Classical › RSA panel — pick the RSA-3072 chip and Generate Key Pair first. Use Back to return to the lesson.',
+          body: 'C_Sign on the Classical › RSA panel — pick the RSA-3072 chip and Generate Key Pair first. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -451,7 +451,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sign',
           target: '[data-tour="pkcs-op-sign-mldsa-hedging"]',
           algo: 'ML-DSA-65',
-          body: 'Hedging: Preferred or Required makes every Sign draw fresh randomness — sign twice and compare the signatures. Use Back to return to the lesson.',
+          body: 'Hedging: Preferred or Required makes every Sign draw fresh randomness — sign twice and compare the signatures. Done returns you to the lesson.',
         },
         run: (hsm, results) => {
           const M = requireModule(hsm)
@@ -478,7 +478,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sign',
           target: '[data-tour="pkcs-op-sign-mldsa-hedging"]',
           algo: 'ML-DSA-65',
-          body: 'Hedging: Deterministic makes Sign reproduce the same signature for the same message — sign twice and compare. Use Back to return to the lesson.',
+          body: 'Hedging: Deterministic makes Sign reproduce the same signature for the same message — sign twice and compare. Done returns you to the lesson.',
         },
         run: (hsm, results) => {
           const M = requireModule(hsm)
@@ -525,7 +525,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Use Back to return to the lesson.',
+          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -643,7 +643,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Use Back to return.',
+          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -727,7 +727,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Use Back to return.',
+          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -897,7 +897,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'sym',
           target: '[data-tour="pkcs-op-sym-keygen"]',
           algo: 'AES-GCM-256',
-          body: 'Generate Key runs the same C_GenerateKey — the CKA_WRAP_WITH_TRUSTED pin on the target key only happens in this lesson; the panel exposes the plain CKA_* usage flags. Use Back to return.',
+          body: 'Generate Key runs the same C_GenerateKey — the CKA_WRAP_WITH_TRUSTED pin on the target key only happens in this lesson; the panel exposes the plain CKA_* usage flags. Done returns you to the lesson.',
         },
         run: (hsm) => {
           const M = requireModule(hsm)
@@ -961,7 +961,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
           rail: 'wrap',
           target: '[data-tour="pkcs-op-wrap-wrap"]',
           algo: 'AES-KW',
-          body: 'Wrap Key is the same C_WrapKey (AES-KW) — but the Operate panel has no SO login, so its wrapping keys are never CKA_TRUSTED and a pinned target would still be refused here. Use Back to return.',
+          body: 'Wrap Key is the same C_WrapKey (AES-KW) — but the Operate panel has no SO login, so its wrapping keys are never CKA_TRUSTED and a pinned target would still be refused here. Done returns you to the lesson.',
         },
         run: (hsm, results) => {
           const M = requireModule(hsm)
