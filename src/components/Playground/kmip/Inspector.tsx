@@ -22,7 +22,8 @@ import { CKO_TABLE, CKK_TABLE } from '@/wasm/pkcs11Inspect'
 import { WireTreeView } from './WireTreeView'
 import { AuditTrailPanel } from './AuditTrailPanel'
 
-type Tab = 'keystore' | 'wire' | 'audit'
+export type InspectorView = 'keystore' | 'wire' | 'audit'
+type Tab = InspectorView
 
 /** A-grade review item #7 — download the session as a single JSON takeaway:
  * the active policy (name + source YAML), everything the engine populated
@@ -62,6 +63,8 @@ export function Inspector({
   expert,
   onClearAudit,
   engine,
+  view,
+  onViewChange,
 }: {
   objects: KmipObject[]
   audit: AuditEvent[]
@@ -75,8 +78,16 @@ export function Inspector({
    * engine-side PKCS#11 attributes. Optional — a caller with no engine in
    * scope simply gets no Inspect action, not a crash. */
   engine?: KmipEngine
+  /** Controlled sub-view (the shell URL-syncs it as `?view=`); omit for local state. */
+  view?: InspectorView
+  onViewChange?: (v: InspectorView) => void
 }) {
-  const [tab, setTab] = useState<Tab>('keystore')
+  const [tabState, setTabState] = useState<Tab>(view ?? 'keystore')
+  const tab = view ?? tabState
+  const setTab = (t: Tab) => {
+    setTabState(t)
+    onViewChange?.(t)
+  }
   // Guided mode has no Wire tab — fall back to Keystore without needing to sync
   // state when the mode toggles.
   const active: Tab = !expert && tab === 'wire' ? 'keystore' : tab

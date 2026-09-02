@@ -37,7 +37,7 @@ test('classical estate: label-only generation, real crypto, tamper detection', a
   await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30_000,
   })
-  await page.getByRole('tab', { name: 'Migration', exact: true }).click()
+  await page.getByRole('tab', { name: 'Migration Estate', exact: true }).click()
 
   // Engine boots with the classical estate policy active.
   const rail = page.getByTestId('migration-policy-migration-classical')

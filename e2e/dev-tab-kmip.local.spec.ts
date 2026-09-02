@@ -40,8 +40,10 @@ test.beforeEach(async ({ page }) => {
  * the KMIP3.0 plane and clicks into Dev instead.
  */
 async function gotoKmipDevTab(page: Page) {
-  await page.goto('/playground/cacp?plane=kmip3')
-  await page.getByRole('tab', { name: 'Dev' }).click()
+  // 2026-09-02 redesign: Dev is a top-level tab, deep-linkable as ?tab=dev
+  // (the legacy ?plane=kmip3 alias still resolves, to Learn).
+  await page.goto('/playground/cacp?tab=dev')
+  await expect(page.getByRole('tab', { name: 'Dev', exact: true })).toBeVisible({ timeout: 30000 })
 }
 
 test('deep-links to the KMIP3.0 plane, opens Dev, and loads the default template', async ({
@@ -115,11 +117,13 @@ test('save → reload the page → load the saved pipeline → run green', async
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText(`Saved "${uniqueName}"`)).toBeVisible()
 
-  // Reload preserves ?plane=kmip3 (URL-synced), but Kmip3View's own inner
-  // sub-tab isn't — it remounts fresh on 'learn', same as any first visit.
+  // Reload preserves ?tab=dev (URL-synced) — Dev is a top-level tab now.
   await page.reload()
-  await expect(page.getByRole('tab', { name: 'Dev' })).toBeVisible({ timeout: 30000 })
-  await page.getByRole('tab', { name: 'Dev' }).click()
+  await expect(page.getByRole('tab', { name: 'Dev', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true',
+    { timeout: 30000 }
+  )
   await page.getByRole('button', { name: uniqueName, exact: true }).click()
   await expect(page.getByLabel('Pipeline name')).toHaveValue(uniqueName)
 

@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 test('boots the in-browser engine and runs a real Create → Activate → Sign → Verify', async ({
   page,
 }) => {
-  await page.goto('/playground/cacp')
+  await page.goto('/playground/cacp?tab=operate')
 
   // Engine boot: the "Booting…" loader is replaced by the control-plane header.
   // wasm instantiate + engine init can take a moment, so allow generous time.
@@ -90,7 +90,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   // creating a NEW classical key. So the legacy key has to be made under a
   // DIFFERENT, more permissive policy (Classical) first, then carried over —
   // that hand-off, not a same-policy flip, is the actual "no flag day" story.
-  await page.goto('/playground/cacp')
+  await page.goto('/playground/cacp?tab=operate')
   await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
@@ -129,7 +129,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
   // count + blurb), so match on the label as a substring, not exactly.
   await page.getByRole('button', { name: /^Auto-migrate on use\b/ }).click()
   await expect(page.getByRole('heading', { name: 'Auto-migrate on use' })).toBeVisible()
-  await page.getByRole('tab', { name: 'Agility & Workbench', exact: true }).click()
+  await page.getByRole('tab', { name: 'Operate', exact: true }).click()
 
   // The moment you Sign, the policy rekeys the legacy key to its PQC
   // equivalent and signs with the new key — the "migrated" claim's actual
@@ -140,7 +140,7 @@ test('rekey-on-use policy migrates a classical key to PQC on first Sign, and the
 })
 
 test('switching policy resolves a decision on the agility plane', async ({ page }) => {
-  await page.goto('/playground/cacp')
+  await page.goto('/playground/cacp?tab=operate')
   await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
@@ -178,12 +178,13 @@ test('switching policy resolves a decision on the agility plane', async ({ page 
 // about the raw UI-click path, not about whether the fix works.
 test.describe('Certificate Services (Commands tab)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/playground/cacp')
+    await page.goto('/playground/cacp?tab=operate')
     await expect(page.getByRole('heading', { name: /KMIP Control Plane/i }).first()).toBeVisible({
       timeout: 30000,
     })
-    await page.getByRole('tab', { name: 'KMIP3.0', exact: true }).click()
-    await page.locator('[data-tour="kmip3-subtabs"] button', { hasText: 'Commands' }).click()
+    // 2026-09-02 redesign: Commands lives on Operate › Single Request.
+    await page.getByRole('tab', { name: 'Operate', exact: true }).click()
+    await expect(page.locator('[data-tour="kmip-commands"]')).toBeVisible({ timeout: 15000 })
   })
 
   test('Set up demo CA mints a real self-signed cert that Validates Valid', async ({ page }) => {
