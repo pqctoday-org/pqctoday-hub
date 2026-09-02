@@ -42,6 +42,28 @@ const KMIP_BUILDER = 'src/components/Playground/dev/kmipPipeline/KmipPipelineBui
 const KMIP_DEV_TAB = 'src/components/Playground/kmip/KmipDevTab.tsx'
 const PKCS_VIEW = 'src/components/Playground/HsmPlayground.tsx'
 const PKCS_BUILDER = 'src/components/Playground/dev/pipeline/PkcsDevWorkbench.tsx'
+// WP P7 (pkcs11-workshop-redesign): a Learn step's `spot` points at the real
+// Operate-tab control that performs the same C_* call. The anchor can live in
+// the shell (rail buttons, setup strip, per-rail wrapper) or in any of the
+// seven rail panels and their sub-panels.
+const PKCS_LESSONS = [
+  'src/components/Playground/hsm/learn/pkcs11Lessons.ts',
+  'src/components/Playground/hsm/learn/pkcs11LessonsV32.ts',
+]
+const PKCS_OPERATE_PANELS = [
+  PKCS_VIEW,
+  'src/components/Playground/hsm/HsmKemPanel.tsx',
+  'src/components/Playground/hsm/HsmSymmetricPanel.tsx',
+  'src/components/Playground/hsm/symmetric/KeyWrapPanel.tsx',
+  'src/components/Playground/hsm/HsmHashingPanel.tsx',
+  'src/components/Playground/tabs/SignVerifyTab.tsx',
+  'src/components/Playground/hsm/HsmClassicalSignPanel.tsx',
+  'src/components/Playground/hsm/StatefulHashSignPanels.tsx',
+  'src/components/Playground/hsm/HsmKeyAgreementPanel.tsx',
+  'src/components/Playground/hsm/HsmKdfPanel.tsx',
+  'src/components/Playground/components/TokenSetupPanel.tsx',
+]
+const PKCS_RAIL_IDS = 'src/components/Playground/hsm/railIds.ts'
 
 /** Every `target: '[data-tour="…"]…'` a lesson step references, filtered to
  *  this lane's own G5 anchor namespace (both files' OLDER lessons target
@@ -78,6 +100,21 @@ function extractAnchors(src: string): Set<string> {
   return out
 }
 
+/** Every `spot: { … }` block a PKCS#11 Learn step declares, as its raw
+ *  `rail` / `target` anchor pair. Spot blocks are single-object literals
+ *  with no nested braces, so a non-greedy `\{[^}]*\}` is enough. */
+function extractSpots(src: string): { rail: string; target: string }[] {
+  const out: { rail: string; target: string }[] = []
+  const re = /spot:\s*\{([^}]*)\}/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(src))) {
+    const rail = /rail:\s*'(\w+)'/.exec(m[1])?.[1] ?? ''
+    const target = /target:\s*'\[data-tour="([\w-]+)"\]'/.exec(m[1])?.[1] ?? ''
+    out.push({ rail, target })
+  }
+  return out
+}
+
 describe('G5 guided-lesson anchor driftguard', () => {
   it('every KMIP Developer-tab lesson target exists in KmipPipelineBuilder', () => {
     const targets = extractTargets(read(KMIP_VIEW), 'kmip-dev-')
@@ -95,6 +132,28 @@ describe('G5 guided-lesson anchor driftguard', () => {
     expect(targets.size).toBeGreaterThan(0)
     const anchors = extractAnchors(read(PKCS_BUILDER))
     const missing = [...targets].filter((t) => !anchors.has(t))
+    expect(missing).toEqual([])
+  })
+
+  it('every PKCS#11 Learn-step spot targets a live Operate anchor on a real rail', () => {
+    const spots = PKCS_LESSONS.flatMap((f) => extractSpots(read(f)))
+    expect(spots.length).toBeGreaterThan(0)
+    // Each spot must parse cleanly — a typo in `rail:` or `target:` would
+    // otherwise degrade to '' and silently pass the membership checks below.
+    expect(spots.filter((s) => !s.rail || !s.target)).toEqual([])
+
+    const railIdsSrc = read(PKCS_RAIL_IDS)
+    const railIds = new Set(
+      [.../RAIL_IDS[^=]*=\s*\[([^\]]*)\]/.exec(railIdsSrc)![1].matchAll(/'(\w+)'/g)].map(
+        (x) => x[1]
+      )
+    )
+    expect(railIds.size).toBe(7)
+    const badRails = spots.filter((s) => !railIds.has(s.rail)).map((s) => s.rail)
+    expect(badRails).toEqual([])
+
+    const anchors = new Set(PKCS_OPERATE_PANELS.flatMap((f) => [...extractAnchors(read(f))]))
+    const missing = [...new Set(spots.map((s) => s.target))].filter((t) => !anchors.has(t))
     expect(missing).toEqual([])
   })
 })

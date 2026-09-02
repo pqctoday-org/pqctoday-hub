@@ -182,7 +182,7 @@ const AesPanel = ({
       {/* Key generation */}
       <div className="glass-panel p-4 space-y-3">
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Key</p>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div data-tour="pkcs-op-sym-keybits" className="flex items-center gap-2 flex-wrap">
           {([128, 192, 256] as const).map((b) => (
             <Button
               key={b}
@@ -207,6 +207,7 @@ const AesPanel = ({
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sym-keygen"
             variant="outline"
             size="sm"
             disabled={anyLoading}
@@ -269,6 +270,7 @@ const AesPanel = ({
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          data-tour="pkcs-op-sym-encrypt"
           variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
@@ -279,6 +281,7 @@ const AesPanel = ({
           Encrypt
         </Button>
         <Button
+          data-tour="pkcs-op-sym-decrypt"
           variant="outline"
           onClick={doDecrypt}
           disabled={ciphertext === null || anyLoading}
@@ -384,7 +387,7 @@ const HmacPanel = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
           Algorithm & Key
         </p>
-        <div className="flex flex-wrap gap-2 items-center">
+        <div data-tour="pkcs-op-sym-hmac-algo" className="flex flex-wrap gap-2 items-center">
           {HMAC_ALGOS.map((a) => (
             <Button
               key={a.mech}
@@ -406,6 +409,7 @@ const HmacPanel = () => {
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sym-hmac-keygen"
             variant="outline"
             size="sm"
             disabled={anyLoading}
@@ -443,6 +447,7 @@ const HmacPanel = () => {
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          data-tour="pkcs-op-sym-hmac-mac"
           variant="ghost"
           onClick={doComputeHmac}
           disabled={keyHandle === null || anyLoading || !input.length}
@@ -452,6 +457,7 @@ const HmacPanel = () => {
           Compute HMAC
         </Button>
         <Button
+          data-tour="pkcs-op-sym-hmac-verify"
           variant="outline"
           onClick={doVerifyHmac}
           disabled={mac === null || anyLoading}
@@ -641,6 +647,7 @@ const AesCtrPanel = ({
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sym-ctr-keygen"
             variant="outline"
             size="sm"
             disabled={anyLoading}
@@ -700,6 +707,7 @@ const AesCtrPanel = ({
 
       <div className="flex gap-2">
         <Button
+          data-tour="pkcs-op-sym-ctr-encrypt"
           variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
@@ -709,6 +717,7 @@ const AesCtrPanel = ({
           <Lock size={14} className="mr-2" /> Encrypt
         </Button>
         <Button
+          data-tour="pkcs-op-sym-ctr-decrypt"
           variant="outline"
           onClick={doDecrypt}
           disabled={ciphertext === null || anyLoading}
@@ -876,6 +885,7 @@ const AesCmacPanel = ({
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sym-cmac-keygen"
             variant="outline"
             size="sm"
             disabled={anyLoading}
@@ -935,6 +945,7 @@ const AesCmacPanel = ({
 
       <div className="flex gap-2">
         <Button
+          data-tour="pkcs-op-sym-cmac-mac"
           variant="ghost"
           onClick={doComputeMac}
           disabled={keyHandle === null || anyLoading || !input.length}
@@ -944,6 +955,7 @@ const AesCmacPanel = ({
           Compute CMAC
         </Button>
         <Button
+          data-tour="pkcs-op-sym-cmac-verify"
           variant="outline"
           onClick={doVerify}
           disabled={mac === null || anyLoading}
@@ -1033,7 +1045,7 @@ const RngPanel = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
           Generate Random Bytes
         </p>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div data-tour="pkcs-op-sym-rng-length" className="flex items-center gap-2 flex-wrap">
           {[16, 32, 48, 64, 128].map((n) => (
             <Button
               key={n}
@@ -1054,6 +1066,7 @@ const RngPanel = () => {
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sym-rng-generate"
             variant="outline"
             size="sm"
             onClick={doGenerate}
@@ -1098,6 +1111,7 @@ const RngPanel = () => {
             className="flex-1 text-xs rounded-lg px-3 py-1.5 bg-muted border border-input text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-ring"
           />
           <Button
+            data-tour="pkcs-op-sym-rng-seed"
             variant="outline"
             size="sm"
             onClick={doSeed}
@@ -1205,6 +1219,7 @@ const ChaCha20Panel = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Key</p>
         <div className="flex items-center gap-2">
           <Button
+            data-tour="pkcs-op-sym-chacha-keygen"
             variant="outline"
             size="sm"
             disabled={anyLoading}
@@ -1267,6 +1282,7 @@ const ChaCha20Panel = () => {
       {/* Buttons */}
       <div className="flex gap-2">
         <Button
+          data-tour="pkcs-op-sym-chacha-encrypt"
           variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length || nonceHex.length !== 24}
@@ -1276,6 +1292,7 @@ const ChaCha20Panel = () => {
           <Lock size={14} className="mr-2" /> Encrypt (AEAD)
         </Button>
         <Button
+          data-tour="pkcs-op-sym-chacha-decrypt"
           variant="outline"
           onClick={doDecrypt}
           disabled={ciphertext === null || anyLoading || nonceHex.length !== 24}
@@ -1343,7 +1360,7 @@ export const HsmSymmetricPanel = ({
         </div>
 
         {/* Mode selector */}
-        <div className="flex flex-wrap gap-2">
+        <div data-tour="pkcs-op-sym-mode" className="flex flex-wrap gap-2">
           {SYM_MODES.map((m) => (
             <Button
               key={m.id}

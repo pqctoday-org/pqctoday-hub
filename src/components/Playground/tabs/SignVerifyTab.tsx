@@ -326,7 +326,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
       <div className="glass-panel p-4 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h3 className="font-semibold text-sm">ML-DSA Sign &amp; Verify (FIPS 204)</h3>
-          <div className="flex gap-1">
+          <div data-tour="pkcs-op-sign-mldsa-set" className="flex gap-1">
             {([44, 65, 87] as const).map((v) => (
               <Button
                 key={v}
@@ -370,7 +370,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
 
         {/* Options */}
         <div className="flex flex-wrap gap-3 text-xs">
-          <div className="flex items-center gap-1.5">
+          <div data-tour="pkcs-op-sign-mldsa-hedging" className="flex items-center gap-1.5">
             <span className="text-muted-foreground">Hedging:</span>
             <FilterDropdown
               selectedId={hedging}
@@ -424,7 +424,13 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
         </div>
 
         <div className="flex flex-wrap gap-2 items-center">
-          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+          <Button
+            data-tour="pkcs-op-sign-mldsa-keygen"
+            variant="outline"
+            size="sm"
+            disabled={anyLoading}
+            onClick={doGenKeyPair}
+          >
             {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             {handles ? '✓ Key Pair' : 'Generate Key Pair'}
           </Button>
@@ -438,6 +444,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
             CKA_EXTRACTABLE
           </label>
           <Button
+            data-tour="pkcs-op-sign-mldsa-sign"
             variant="outline"
             size="sm"
             disabled={
@@ -449,6 +456,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
             Sign
           </Button>
           <Button
+            data-tour="pkcs-op-sign-mldsa-verify"
             variant="outline"
             size="sm"
             disabled={
@@ -695,7 +703,10 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           </span>
           <span className="text-sm font-semibold">Parameter Set</span>
         </div>
-        <div className="flex items-center justify-between flex-wrap gap-2">
+        <div
+          data-tour="pkcs-op-sign-slhdsa-set"
+          className="flex items-center justify-between flex-wrap gap-2"
+        >
           <FilterDropdown
             selectedId={paramSetId}
             onSelect={(id) => {
@@ -808,7 +819,13 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+          <Button
+            data-tour="pkcs-op-sign-slhdsa-keygen"
+            variant="outline"
+            size="sm"
+            disabled={anyLoading}
+            onClick={doGenKeyPair}
+          >
             {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             {handles ? '✓ Key Pair Generated' : 'Generate Key Pair'}
           </Button>
@@ -983,7 +1000,13 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           />
         </div>
 
-        <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+        <Button
+          data-tour="pkcs-op-sign-slhdsa-sign"
+          variant="outline"
+          size="sm"
+          disabled={!handles || anyLoading}
+          onClick={doSign}
+        >
           {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
           Sign
         </Button>
@@ -1054,7 +1077,13 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           <span className="text-sm font-semibold">Verify</span>
         </div>
 
-        <Button variant="outline" size="sm" disabled={!signature || anyLoading} onClick={doVerify}>
+        <Button
+          data-tour="pkcs-op-sign-slhdsa-verify"
+          variant="outline"
+          size="sm"
+          disabled={!signature || anyLoading}
+          onClick={doVerify}
+        >
           {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
           Verify Signature
         </Button>

@@ -198,6 +198,7 @@ const RsaPanel = () => {
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sign-classical-rsa-keygen"
             variant="gradient"
             size="sm"
             onClick={handleGenKeys}
@@ -314,6 +315,7 @@ const RsaPanel = () => {
             )}
             <div className="flex gap-2">
               <Button
+                data-tour="pkcs-op-sign-classical-rsa-sign"
                 variant="gradient"
                 size="sm"
                 onClick={handleSign}
@@ -323,6 +325,7 @@ const RsaPanel = () => {
                 {multiPartSign ? 'C_SignUpdate' : 'C_Sign'}
               </Button>
               <Button
+                data-tour="pkcs-op-sign-classical-rsa-verify"
                 variant="outline"
                 size="sm"
                 onClick={handleVerify}
@@ -366,6 +369,7 @@ const RsaPanel = () => {
             />
             <div className="flex gap-2">
               <Button
+                data-tour="pkcs-op-sign-classical-rsa-encrypt"
                 variant="gradient"
                 size="sm"
                 onClick={handleEncrypt}
@@ -375,6 +379,7 @@ const RsaPanel = () => {
                 C_Encrypt
               </Button>
               <Button
+                data-tour="pkcs-op-sign-classical-rsa-decrypt"
                 variant="outline"
                 size="sm"
                 onClick={handleDecrypt}
@@ -518,6 +523,7 @@ const EcdsaPanel = () => {
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sign-classical-ecdsa-keygen"
             variant="gradient"
             size="sm"
             onClick={handleGenKeys}
@@ -631,11 +637,18 @@ const EcdsaPanel = () => {
             />
           )}
           <div className="flex gap-2">
-            <Button variant="gradient" size="sm" onClick={handleSign} disabled={loadingOp !== null}>
+            <Button
+              data-tour="pkcs-op-sign-classical-ecdsa-sign"
+              variant="gradient"
+              size="sm"
+              onClick={handleSign}
+              disabled={loadingOp !== null}
+            >
               {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />}
               {multiPartSign ? 'C_SignUpdate' : 'C_Sign'}
             </Button>
             <Button
+              data-tour="pkcs-op-sign-classical-ecdsa-verify"
               variant="outline"
               size="sm"
               onClick={handleVerify}
@@ -771,6 +784,7 @@ const EddsaPanel = () => {
             </Button>
           ))}
           <Button
+            data-tour="pkcs-op-sign-classical-eddsa-keygen"
             variant="gradient"
             size="sm"
             onClick={handleGenKeys}
@@ -827,10 +841,17 @@ const EddsaPanel = () => {
             className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
           />
           <div className="flex gap-2">
-            <Button variant="gradient" size="sm" onClick={handleSign} disabled={loadingOp !== null}>
+            <Button
+              data-tour="pkcs-op-sign-classical-eddsa-sign"
+              variant="gradient"
+              size="sm"
+              onClick={handleSign}
+              disabled={loadingOp !== null}
+            >
               {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />} C_Sign
             </Button>
             <Button
+              data-tour="pkcs-op-sign-classical-eddsa-verify"
               variant="outline"
               size="sm"
               onClick={handleVerify}
@@ -883,7 +904,7 @@ export const HsmClassicalSignPanel = () => {
         </div>
 
         {/* Mode tabs */}
-        <div className="flex gap-1 bg-muted p-1 rounded-xl">
+        <div data-tour="pkcs-op-sign-classical-mode" className="flex gap-1 bg-muted p-1 rounded-xl">
           {CLASSIC_MODES.map((m) => (
             <Button
               variant="ghost"

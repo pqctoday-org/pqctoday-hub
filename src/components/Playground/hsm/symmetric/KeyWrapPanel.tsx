@@ -1215,7 +1215,7 @@ export const KeyWrapPanel = ({
                 </Button>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div data-tour="pkcs-op-wrap-mode" className="flex flex-wrap gap-2">
               {(
                 [
                   {
@@ -1274,7 +1274,7 @@ export const KeyWrapPanel = ({
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
                 Mechanism
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div data-tour="pkcs-op-wrap-mech" className="flex flex-wrap gap-2">
                 {(
                   [
                     { id: 'aes-kw' as const, label: 'AES-KW', desc: 'RFC 3394' },
@@ -1560,6 +1560,7 @@ export const KeyWrapPanel = ({
             )}
 
             <Button
+              data-tour="pkcs-op-wrap-wrap"
               variant="ghost"
               onClick={doWrap}
               disabled={!canWrap || anyLoading}
@@ -1905,6 +1906,7 @@ export const KeyWrapPanel = ({
             )}
 
             <Button
+              data-tour="pkcs-op-wrap-unwrap"
               variant="outline"
               onClick={doUnwrap}
               disabled={!canUnwrap || anyLoading}

@@ -133,7 +133,7 @@ export const HsmHashingPanel = ({
               Multi-part
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div data-tour="pkcs-op-hash-algo" className="flex flex-wrap gap-2">
             {HASH_ALGOS.map((a) => (
               <Button
                 key={a.mech}
@@ -219,6 +219,7 @@ export const HsmHashingPanel = ({
 
         {/* Digest button */}
         <Button
+          data-tour="pkcs-op-hash-digest"
           variant="ghost"
           onClick={doDigest}
           disabled={loading || (multiPart ? chunks.every((c) => !c) : !input.length)}
