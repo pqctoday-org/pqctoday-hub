@@ -9,6 +9,7 @@
 import type { AssessmentInput, AssessmentResult } from '../hooks/assessmentTypes'
 import {
   NICE_COMPETENCY_AREAS,
+  NICE_COMPONENTS_VERSION,
   NICE_WORK_ROLES,
   getWorkRolesForCompetencyArea,
   type NiceCompetencyAreaId,
@@ -441,7 +442,7 @@ export function generateNiceGapReport(
   // Build export-safe copy (same shape, just plain object)
   report.exportData = {
     generatedAt: report.generatedAt,
-    niceFrameworkVersion: 'NICE Framework Components v2.2.0 (2025)',
+    niceFrameworkVersion: `NICE Framework Components v${NICE_COMPONENTS_VERSION} (2025)`,
     platform: 'pqctoday.org',
     assessmentProfile: {
       industry: input.industry,

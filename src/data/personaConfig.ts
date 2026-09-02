@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read + cross-check against live
+// routes/modules/tests; fixed 2 stale citations, removed orphaned
+// MODULE_INDUSTRY_RELEVANCE (zero consumers, contradicted personaLensRegistry.ts)
 import type { PersonaId } from './learningPersonas'
 import { PERSONAS } from './learningPersonas'
 import type { Region } from '../store/usePersonaStore'
@@ -573,146 +576,6 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   global: ['Global', 'International', 'G7', 'NATO', 'BIS', 'GSMA'],
 }
 
-/**
- * Module ID → industries where this module is particularly relevant.
- * null means relevant to all industries.
- */
-export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
-  'pqc-101': null,
-  'quantum-threats': null,
-  'pqc-candidates': null,
-  'hybrid-crypto': ['Finance & Banking', 'Government & Defense', 'Technology'],
-  'crypto-agility': ['Finance & Banking', 'Government & Defense', 'Telecommunications'],
-  'tls-basics': ['Technology', 'Finance & Banking', 'Telecommunications'],
-  'vpn-ssh-pqc': ['Technology', 'Government & Defense', 'Energy & Utilities'],
-  'email-signing': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
-  'pki-workshop': ['Government & Defense', 'Finance & Banking', 'Healthcare'],
-  'kms-pqc': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
-  'hsm-pqc': ['Finance & Banking', 'Government & Defense', 'Healthcare', 'Technology'],
-  'stateful-signatures': ['Government & Defense', 'Aerospace', 'Technology'],
-  'merkle-tree-certs': ['Technology', 'Finance & Banking', 'Government & Defense'],
-  'digital-assets': ['Finance & Banking', 'Retail & E-Commerce', 'Technology'],
-  '5g-security': ['Telecommunications', 'Government & Defense'],
-  'digital-id': ['Government & Defense', 'Healthcare', 'Finance & Banking', 'Retail & E-Commerce'],
-  'entropy-randomness': null,
-  qkd: ['Government & Defense', 'Telecommunications', 'Finance & Banking', 'Energy & Utilities'],
-  'code-signing': ['Technology', 'Government & Defense', 'Finance & Banking'],
-  'api-security-jwt': ['Technology', 'Finance & Banking', 'Healthcare', 'Retail & E-Commerce'],
-  'iot-ot-pqc': [
-    'Energy & Utilities',
-    'Automotive',
-    'Telecommunications',
-    'Government & Defense',
-    'Healthcare',
-  ],
-  'pqc-risk-management': null,
-  'pqc-business-case': null,
-  'pqc-governance': null,
-  'vendor-risk': [
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-    'Technology',
-    'Energy & Utilities',
-  ],
-  'migration-program': null,
-  'compliance-strategy': [
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-    'Telecommunications',
-    'Energy & Utilities',
-  ],
-  'data-asset-sensitivity': [
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-    'Technology',
-    'Telecommunications',
-    'Energy & Utilities',
-    'Retail & E-Commerce',
-  ],
-  'web-gateway-pqc': [
-    'Technology',
-    'Finance & Banking',
-    'Retail & E-Commerce',
-    'Healthcare',
-    'Telecommunications',
-  ],
-  'ai-security-pqc': ['Technology', 'Finance & Banking', 'Government & Defense', 'Healthcare'],
-  'emv-payment-pqc': ['Finance & Banking', 'Retail & E-Commerce'],
-  'energy-utilities-pqc': ['Energy & Utilities', 'Government & Defense'],
-  'healthcare-pqc': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
-  'aerospace-pqc': ['Aerospace', 'Government & Defense'],
-  'automotive-pqc': ['Automotive'],
-  'confidential-computing': [
-    'Technology',
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-  ],
-  'crypto-dev-apis': ['Technology', 'Finance & Banking', 'Government & Defense'],
-  'database-encryption-pqc': [
-    'Finance & Banking',
-    'Healthcare',
-    'Government & Defense',
-    'Technology',
-    'Retail & E-Commerce',
-  ],
-  'secrets-management-pqc': [
-    'Technology',
-    'Finance & Banking',
-    'Healthcare',
-    'Government & Defense',
-  ],
-  'network-security-pqc': [
-    'Technology',
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-    'Telecommunications',
-    'Energy & Utilities',
-  ],
-  'iam-pqc': [
-    'Finance & Banking',
-    'Government & Defense',
-    'Healthcare',
-    'Technology',
-    'Retail & E-Commerce',
-  ],
-  'platform-eng-pqc': ['Technology', 'Finance & Banking', 'Government & Defense'],
-  'secure-boot-pqc': [
-    'Government & Defense',
-    'Technology',
-    'Aerospace',
-    'Automotive',
-    'Energy & Utilities',
-  ],
-  'os-pqc': ['Technology', 'Government & Defense', 'Finance & Banking'],
-  'pqc-testing-validation': [
-    'Technology',
-    'Finance & Banking',
-    'Government & Defense',
-    'Telecommunications',
-    'Healthcare',
-  ],
-  'standards-bodies': null,
-  'exec-quantum-impact': null,
-  'dev-quantum-impact': null,
-  'arch-quantum-impact': null,
-  'ops-quantum-impact': null,
-  'research-quantum-impact': null,
-  'crypto-mgmt-modernization': [
-    'Finance & Banking',
-    'Government & Defense',
-    'Technology',
-    'Healthcare',
-  ],
-  'slh-dsa': ['Government & Defense', 'Finance & Banking', 'Technology'],
-  'government-defense-pqc': ['Government & Defense'],
-  'trust-services-pqc': ['Finance & Banking', 'Government & Defense', 'Technology'],
-}
-
 /** Nav paths that are always shown regardless of persona. */
 export const ALWAYS_VISIBLE_PATHS = [
   '/',
@@ -990,7 +853,7 @@ const DEFAULT_ZONE_EMPHASIS: BCZoneEmphasis = {
   featuredArtifacts: {},
 }
 
-// curious is nav-blocked from /business — see PERSONA_NAV_PATHS line 55
+// curious is nav-blocked from /business — see PERSONA_ABSENT_PATHS.curious['/business'] below
 export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphasis>> = {
   // Executive: open with Governance (board/policy framing).
   executive: {
@@ -1428,8 +1291,8 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     // excluded here while the developer role boards send this persona to FIVE
     // Command Center tools (compliance-checklist, crypto-api-refactor-audit,
     // crypto-cbom-builder, migration-verification, mti-negotiator — see
-    // role_board_content_08092026.csv). Sending someone somewhere they can earn
-    // nothing is the live contradiction the review named; the exclusions are
+    // role_board_content_08232026.csv, the current source). Sending someone
+    // somewhere they can earn nothing is the live contradiction the review named; the exclusions are
     // removed, not the board links. `recordBusinessToolUsage` is wired from
     // BusinessToolRoute.tsx, so these unlock for real.
     // Curious-only (CC-15)
@@ -1723,7 +1586,7 @@ export interface RoleBoardVariant {
   moduleIds: string[]
   /** Playground workshop ids this board links to (`/playground/:toolId`). */
   workshopIds: string[]
-  /** Business tool ids this board links to (`/tools/:toolId`). */
+  /** Business tool ids this board links to (`/business/tools/:toolId`). */
   businessToolIds: string[]
   board: PersonaJourneyBoard
 }

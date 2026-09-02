@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read + scenario-id cross-check
+// against all 24 real SANDBOX_SCENARIOS; removed one dead/miskeyed override
 /**
  * Maps sandbox scenarios (from sandboxScenarios.ts) to NICE Framework metadata.
  * Mirrors src/data/niceModuleMapping.ts but for sandbox tools, which don't have
@@ -83,7 +85,11 @@ const SCENARIO_CA_OVERRIDES: Record<string, NiceCompetencyAreaId[]> = {
   'supply-chain-signing': ['CA-SECPROG', 'CA-GOVCOMP'],
   'firmware-hss': ['CA-SECPROG', 'CA-SYSARCH'],
   'tpm-pqc-migration': ['CA-SYSARCH', 'CA-CRYPTO'],
-  'tpm-playground': ['CA-CRYPTO', 'CA-SYSARCH'],
+  // 'tpm-playground' removed 2026-09-01: not a sandbox scenario id at all — it's
+  // a separate static Playground tool (workshopRegistry.tsx). This key was
+  // unreachable dead code (buildMaps() only indexes by real scenario.id), a
+  // copy/paste mix-up with 'tpm-pqc-migration' above, which already carries
+  // the correct override.
   // Application protocol
   'api-security-jwt': ['CA-SECPROG', 'CA-IDENT'],
   // Quantum-native crypto

@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read; every real WORKSHOP_TOOLS
+// moduleLink traced and confirmed to resolve in NICE_MODULE_MAP; no defects found
 /**
  * Bridges WORKSHOP_TOOLS to NICE Framework metadata.
  *

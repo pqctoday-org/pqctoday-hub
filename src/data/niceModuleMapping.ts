@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read + module-id cross-check
+// against all 65 real manifests; added 3 real modules that were missing
+// entirely (pqc-grc, skills-team-structure, soc-implementation-pqc)
 /**
  * Maps every pqctoday module ID (from learningPersonas.ts) to NICE Framework
  * metadata: Competency Areas, proficiency tier, and relevant Work Roles.
@@ -164,6 +167,22 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     workRoles: ['is-security-manager', 'risk-manager', 'security-architect'],
     isCommonGround: true,
   },
+  {
+    // Added 2026-09-01 — was missing entirely (personas-nice review).
+    moduleId: 'pqc-grc',
+    competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
+    tier: 'awareness',
+    workRoles: ['is-security-manager', 'risk-manager'],
+    isCommonGround: true,
+  },
+  {
+    // Added 2026-09-01 — was missing entirely (personas-nice review).
+    moduleId: 'skills-team-structure',
+    competencyAreas: ['CA-GOVCOMP', 'CA-RISK'],
+    tier: 'awareness',
+    workRoles: ['is-security-manager', 'risk-manager'],
+    isCommonGround: true,
+  },
 
   // -----------------------------------------------------------------------
   // Protocol & Network
@@ -210,6 +229,16 @@ export const NICE_MODULE_MAP: NiceModuleRef[] = [
     competencyAreas: ['CA-CRYPTO', 'CA-SECPROG'],
     tier: 'practitioner',
     workRoles: ['security-developer', 'systems-security-analyst'],
+    isCommonGround: false,
+  },
+  {
+    // Added 2026-09-01 — was missing entirely (personas-nice review). SOC
+    // detection engineering: hybrid downgrade / crypto drift / cert-lifecycle
+    // / signature-integrity / HNDL detection use cases.
+    moduleId: 'soc-implementation-pqc',
+    competencyAreas: ['CA-NETDEF', 'CA-RISK'],
+    tier: 'practitioner',
+    workRoles: ['systems-security-analyst', 'network-security-specialist'],
     isCommonGround: false,
   },
 
