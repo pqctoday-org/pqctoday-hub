@@ -62,12 +62,15 @@ test('boots the in-browser engine and runs a real Create → Activate → Sign �
   await page.getByRole('button', { name: '3 · Sign' }).click()
   await expect(result.getByText('Sign', { exact: true })).toBeVisible({ timeout: 15000 })
 
-  // The KMIP Wire response lives in the Inspector's "KMIP Wire" tab (Expert).
+  // The KMIP Wire response lives in the Inspector's "KMIP Wire" tab (Expert)
+  // — on the Inspect tab since the 2026-09-02 redesign.
+  await page.getByRole('tab', { name: 'Inspect', exact: true }).click()
   await page.getByRole('button', { name: 'KMIP Wire' }).click()
   // Real TTLV came back on the wire (non-zero byte count in the wire panel).
   await expect(page.getByText(/\d+ bytes on the wire/i)).toBeVisible()
   // The raw bytes are actually shown (not just claimed) — the literal hex view.
   await expect(page.getByText(/Raw bytes \(hex\)/i)).toBeVisible()
+  await page.getByRole('tab', { name: 'Operate', exact: true }).click()
 
   // 4 · Verify the signature we just produced.
   const verify = page.getByRole('button', { name: '4 · Verify' })

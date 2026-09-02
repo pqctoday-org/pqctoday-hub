@@ -154,7 +154,7 @@ test('the guided lesson drives the real Dev sub-tab end to end, including a live
   page,
 }) => {
   await page.goto('/playground/cacp')
-  await page.getByRole('button', { name: /Lessons/i }).click()
+  await page.getByRole('button', { name: /Guided Tour/i }).click()
   await page.getByRole('button', { name: /Build a governed KMIP sequence/ }).click()
 
   // Step 1 (tourStep 0): act() clicked the "Dev" sub-tab button — lands on

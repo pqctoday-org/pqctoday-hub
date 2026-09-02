@@ -355,6 +355,13 @@ export function KmipPlaygroundView() {
       { replace: true }
     )
   }, [plane, policyView, operateMode, inspectView, setSearchParams])
+  // A persona switch (or a stale ?tab=dev link) can land a gated persona on
+  // the hidden Dev tab — fall back to Learn rather than an empty shell. Dev
+  // is persona-gated only, never Expert-gated (D5).
+  const devHidden = role === 'curious' || role === 'executive'
+  useEffect(() => {
+    if (devHidden && plane === 'dev') setPlane('learn')
+  }, [devHidden, plane])
   const chooseMode = (m: ViewMode) => {
     setMode(m)
     try {
@@ -1696,7 +1703,7 @@ export function KmipPlaygroundView() {
             icon: Code2,
             tourId: 'kmip-tab-dev',
             // Engineering-workbench surface — persona-gated, NOT Expert-gated (D5).
-            hidden: role === 'curious' || role === 'executive',
+            hidden: devHidden,
             content: <KmipDevTab engine={engine} />,
           },
           {
