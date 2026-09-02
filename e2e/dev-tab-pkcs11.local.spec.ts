@@ -219,7 +219,10 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
 
   // Legacy deep link — pre-merge bookmark straight to the old top-level tab.
   await page.goto('/playground/hsm?tab=acvp')
-  await expect(page.getByRole('tab', { name: 'Build' })).toBeVisible({ timeout: 30000 })
+  // exact: the workbench's own inner 'Builder · N steps' tab would substring-match.
+  await expect(page.getByRole('tab', { name: 'Build', exact: true })).toBeVisible({
+    timeout: 30000,
+  })
   await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 
@@ -464,14 +467,23 @@ test("the real PKCS#11 call log and key table show this tab's own run activity",
     'aria-selected',
     'true'
   )
-  await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
+  // Learn stays mounted (hidden) with its own lesson-mode log — scope to the
+  // visible Inspect panel, not the first DOM match.
+  await expect(page.getByText('PKCS#11 Call Log').locator('visible=true')).toBeVisible()
   // Origin filter — only the calls the Build suite made.
   await page.getByRole('button', { name: 'Build', exact: true }).click()
   // A real function name from the default template's own generate/encrypt
   // steps — not just the panel chrome.
   await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
 
-  // The key(s) the run just created, via the devSlot discovery scan.
+  // The key(s) the run just created, via the devSlot discovery scan — the
+  // registry labels discovered objects by key type (CKK_AES / CKK_ML_DSA).
   await page.getByRole('tab', { name: 'Keys', exact: true }).click()
-  await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
+  await expect(page.getByText('HSM Key Registry').locator('visible=true')).toBeVisible()
+  await expect(
+    page
+      .getByText(/CKK_AES|CKK_ML_DSA|AES-256-GCM key|ML-DSA-65/)
+      .locator('visible=true')
+      .first()
+  ).toBeVisible()
 })

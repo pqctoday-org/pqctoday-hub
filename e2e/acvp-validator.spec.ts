@@ -108,12 +108,12 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     await expect(logSection).toBeVisible({ timeout: 90000 })
 
     // Validate that at least one ML-KEM and ML-DSA passed
-    const mlkemRow = page.locator('tr', { hasText: 'ML-KEM-512' }).first()
+    const mlkemRow = page.getByTestId('acvp-result-row').filter({ hasText: 'ML-KEM-512' }).first()
     if ((await mlkemRow.count()) > 0) {
       await expect(mlkemRow).toContainText('pass')
     }
 
-    const mldsaRow = page.locator('tr', { hasText: 'ML-DSA-44' }).first()
+    const mldsaRow = page.getByTestId('acvp-result-row').filter({ hasText: 'ML-DSA-44' }).first()
     if ((await mldsaRow.count()) > 0) {
       await expect(mldsaRow).toContainText('pass')
     }
@@ -235,7 +235,7 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
     // No unrelated category's algorithm name should appear (proves the
     // category guard skipped that section's code entirely, not merely
     // hid its row from the table).
-    const logText = await page.locator('div.font-mono.text-xs.text-success\\/80').innerText()
+    const logText = await page.getByTestId('acvp-execution-log').innerText()
     expect(logText).toContain('X9.63')
     expect(logText).not.toContain('AES-GCM')
     expect(logText).not.toContain('ECDSA P-256')

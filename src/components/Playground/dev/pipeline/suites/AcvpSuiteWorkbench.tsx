@@ -397,7 +397,10 @@ export const AcvpSuiteWorkbench = () => {
             </Button>
           )}
         </div>
-        <div className="bg-muted/50 border border-border rounded-md p-2 font-mono text-[10.5px] text-status-success/80 overflow-y-auto custom-scrollbar flex-1 min-h-[6rem] max-h-64">
+        <div
+          data-testid="acvp-execution-log"
+          className="bg-muted/50 border border-border rounded-md p-2 font-mono text-[10.5px] text-status-success/80 overflow-y-auto custom-scrollbar flex-1 min-h-[6rem] max-h-64"
+        >
           {logs.length === 0 ? (
             <span className="text-muted-foreground/60 italic">Ready to engage HSM suite…</span>
           ) : (
