@@ -36,6 +36,8 @@ import {
   BookOpen,
   X,
   Code2,
+  Flag,
+  Search,
 } from 'lucide-react'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
@@ -56,11 +58,21 @@ import {
 import { ALGORITHMS, AUTO_ALGO, POLICY_PRESETS, type PolicyPreset } from '@/wasm/kmip/kmipMeta'
 import { arrayBufferToHex, getRandomBytes } from '@/utils/webCrypto'
 import { PolicyControlStrip } from './PolicyControlStrip'
-import { PolicyScenario } from './PolicyScenario'
 import { Inspector } from './Inspector'
 import { PolicyView } from './PolicyView'
-import { Kmip3View } from './Kmip3View'
 import { MigrationView } from './migration/MigrationView'
+import { LearnView } from './kmip3/LearnView'
+import { CommandsView } from './CommandsView'
+import { BatchView } from './BatchView'
+import { KmipDevTab } from './KmipDevTab'
+import { KMIP_GLOSSARY_DATA } from './kmip3/glossary'
+import { GlossaryProvider } from '@/components/Playground/learnkit/GlossaryProvider'
+import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
+import { WorkshopShell } from '@/components/Playground/learnkit/WorkshopShell'
+import { InspectChip } from '@/components/Playground/learnkit/InspectChip'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import type { DetailTab } from './PolicyView'
+import type { InspectorView } from './Inspector'
 import { AgilityStoryPanel } from './AgilityStoryPanel'
 import { loadCacpSession, saveCacpPresetSession, saveCacpDraft } from './cacpSessionStorage'
 import {
@@ -96,7 +108,28 @@ function Term({ t }: { t: keyof typeof GLOSSARY }) {
 }
 
 /** Top-level surface of the CACP playground. */
-type Plane = 'agility' | 'policy' | 'kmip3' | 'migration'
+/**
+ * Six top-level tabs (design handoff design_handoff_kmip_pkcs11_playground,
+ * 2026-09-02): Learn · Policy · Operate · Inspect · Dev · Migration Estate.
+ * The previous four planes map onto them — Agility & Workbench became
+ * Operate (+ Inspect), KMIP3.0's sub-tabs were promoted to the top level.
+ */
+type Plane = 'learn' | 'policy' | 'operate' | 'inspect' | 'dev' | 'migration'
+
+const PLANES: Plane[] = ['learn', 'policy', 'operate', 'inspect', 'dev', 'migration']
+const isPlane = (v: string | null): v is Plane => PLANES.includes(v as Plane)
+
+/** Legacy `?plane=` values (role boards, bookmarks, e2e specs) still resolve —
+ *  accepted on the way in, never produced fresh. */
+const LEGACY_PLANES: Record<string, Plane> = {
+  agility: 'operate',
+  policy: 'policy',
+  kmip3: 'learn',
+  migration: 'migration',
+  developer: 'dev',
+}
+
+type OperateMode = 'single' | 'batch'
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '')
 
@@ -255,16 +288,80 @@ export function KmipPlaygroundView() {
   const expert = mode === 'expert'
   // Supports deep-linking straight to a plane, e.g. the persona board's
   // architect CTA "See the seven-key estate" -> /playground/cacp?plane=migration.
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [plane, setPlane] = useState<Plane>(() => {
-    const requested = searchParams.get('plane')
-    return requested === 'agility' ||
-      requested === 'policy' ||
-      requested === 'kmip3' ||
-      requested === 'migration'
-      ? requested
-      : 'agility'
+    const tab = searchParams.get('tab')
+    if (isPlane(tab)) return tab
+    const legacy = searchParams.get('plane')
+    return (legacy && LEGACY_PLANES[legacy]) || 'learn'
   })
+  // Per-tab sub-views, URL-synced as `?view=` (D3d): Policy's List/Visual/
+  // Compare/Timeline/Scenarios/YAML, Operate's Single Request/Batch & Macros,
+  // Inspect's Keystore/KMIP Wire/Audit. Read once at mount, written back on
+  // every change so a lesson, a role board or a doc can deep-link a sub-view.
+  const initialView = useRef(searchParams.get('view'))
+  const [policyView, setPolicyView] = useState<DetailTab>(() => {
+    const v = initialView.current
+    return v === 'list' ||
+      v === 'visual' ||
+      v === 'compare' ||
+      v === 'timeline' ||
+      v === 'yaml' ||
+      v === 'scenarios'
+      ? v
+      : 'list'
+  })
+  const [operateMode, setOperateMode] = useState<OperateMode>(() =>
+    initialView.current === 'batch' ? 'batch' : 'single'
+  )
+  const [inspectView, setInspectView] = useState<InspectorView>(() => {
+    const v = initialView.current
+    return v === 'wire' || v === 'audit' ? v : 'keystore'
+  })
+  // Learn's "Try it in Reference" hand-off (used to be Kmip3View's pendingOp):
+  // the op to expand on Operate › Single Request. `?op=` deep-links it.
+  const [pendingOp, setPendingOp] = useState<string | null>(() => searchParams.get('op'))
+  const urlSyncReady = useRef(false)
+  useEffect(() => {
+    if (!urlSyncReady.current) {
+      urlSyncReady.current = true
+      return
+    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('plane')
+        next.delete('op')
+        if (plane !== 'learn') next.set('tab', plane)
+        else next.delete('tab')
+        const view =
+          plane === 'policy'
+            ? policyView !== 'list'
+              ? policyView
+              : null
+            : plane === 'operate'
+              ? operateMode !== 'single'
+                ? operateMode
+                : null
+              : plane === 'inspect'
+                ? inspectView !== 'keystore'
+                  ? inspectView
+                  : null
+                : null
+        if (view) next.set('view', view)
+        else next.delete('view')
+        return next
+      },
+      { replace: true }
+    )
+  }, [plane, policyView, operateMode, inspectView, setSearchParams])
+  // A persona switch (or a stale ?tab=dev link) can land a gated persona on
+  // the hidden Dev tab — fall back to Learn rather than an empty shell. Dev
+  // is persona-gated only, never Expert-gated (D5).
+  const devHidden = role === 'curious' || role === 'executive'
+  useEffect(() => {
+    if (devHidden && plane === 'dev') setPlane('learn')
+  }, [devHidden, plane])
   const chooseMode = (m: ViewMode) => {
     setMode(m)
     try {
@@ -625,7 +722,7 @@ export function KmipPlaygroundView() {
   }, [engine])
 
   // ── Guided lessons (A-grade review item #19) ───────────────────────────────
-  // Five cross-tab lessons that drive the REAL controls — every `act` below
+  // Seven cross-tab lessons that drive the REAL controls — every `act` below
   // calls the exact same handler a click would. A `setAlgo`/`setPolicy`-style
   // state update commits on the NEXT render, so a step never both changes a
   // setting AND immediately acts on the new value in one `act` — each is its
@@ -641,7 +738,7 @@ export function KmipPlaygroundView() {
       id: 'flip',
       title: 'The agility flip',
       icon: Sparkles,
-      plane: 'agility',
+      plane: 'operate',
       blurb: 'Same request, two policies, two algorithms — the core idea.',
       steps: [
         {
@@ -688,7 +785,7 @@ export function KmipPlaygroundView() {
       id: 'deny',
       title: 'When a policy says no',
       icon: Ban,
-      plane: 'agility',
+      plane: 'operate',
       blurb: 'A denial names the rule — and how to satisfy it.',
       steps: [
         {
@@ -711,6 +808,7 @@ export function KmipPlaygroundView() {
         },
         {
           title: 'Read the trail',
+          plane: 'inspect',
           target: '[data-tour="insp-audit-tab"]',
           act: () => clickByText('[data-tour="insp-audit-tab"]', 'Activity'),
           body: 'Every step is logged across all three planes — policy decision (P1), KMIP op (P2), PKCS#11 mechanism (P3).',
@@ -721,7 +819,7 @@ export function KmipPlaygroundView() {
       id: 'rekey',
       title: 'Rekey on first use',
       icon: ArrowRight,
-      plane: 'agility',
+      plane: 'operate',
       blurb: 'A legacy key migrates the moment you use it.',
       steps: [
         {
@@ -825,7 +923,7 @@ export function KmipPlaygroundView() {
       id: 'honest',
       title: "What's new: the honest maximum",
       icon: Layers,
-      plane: 'kmip3',
+      plane: 'learn',
       blurb: 'Split keys, async jobs, and an engine that proves every claim.',
       steps: [
         {
@@ -834,35 +932,38 @@ export function KmipPlaygroundView() {
         },
         {
           title: 'Learn it hands-on',
-          target: '[data-tour="kmip3-subtabs"]',
+          target: '[data-tour="kmip-tabs"] button',
+          targetText: 'Learn',
           body: 'Walkthroughs 7–9 in the Learn tab run the new capabilities live: split a key 3-of-5 and watch 2 shares honestly fail to recover it; queue a background job and redeem its correlation value; try to sneak a read-only attribute past the server.',
         },
         {
           title: 'Every operation, honestly labelled',
-          target: '[data-tour="kmip3-subtabs"] button',
-          targetText: 'Commands',
-          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Commands'),
+          plane: 'operate',
+          target: '[data-tour="kmip-operate-mode"] button',
+          targetText: 'Single Request',
+          act: () => clickByText('[data-tour="kmip-operate-mode"] button', 'Single Request'),
           body: '62 of the 66 operations in KMIP 3.0 CSD02 (the current OASIS committee draft) genuinely run here — split keys and the async quartet included, with real parameter forms. The 4 that cannot run say exactly why (Notify and Put are server-to-client by definition; Delegated Login and Re-Provision have no handler) instead of pretending.',
         },
         {
-          title: 'The Dev tab: pipeline builder and corpus replay',
-          target: '[data-tour="kmip3-subtabs"] button',
+          title: 'The Dev tab: build it, or prove it against OASIS',
+          plane: 'dev',
+          target: '[data-tour="kmip-tabs"] button',
           targetText: 'Dev',
-          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
-          body: 'The pipeline builder and the OASIS corpus replay harness both live here — the engineering-workbench surfaces of the KMIP3.0 tab, folded together the same way the PKCS#11 side folds its Pipeline/ACVP/Conformance tools.',
+          body: 'The pipeline builder lives here — and its palette can switch from the standard operation primitives to the official OASIS conformance corpus, replayed byte-exact against the real wire protocol, in the same Builder/Code shell.',
         },
         {
-          title: 'Prove it against the OASIS suite',
-          target: '[data-tour="kmip-dev-subtabs"] button',
-          targetText: 'Corpus Replay',
-          act: () => clickByText('[data-tour="kmip-dev-subtabs"] button', 'Corpus Replay'),
-          body: "Replay the official conformance corpus right in this tab. The engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
+          title: 'Switch the palette to the OASIS corpus',
+          target: '[data-tour="kmip-dev-palette-source"] button',
+          targetText: 'Corpus',
+          act: () => clickByText('[data-tour="kmip-dev-palette-source"] button', 'Corpus (OASIS'),
+          body: "This palette normally holds lifecycle primitives to drag onto the canvas — this toggle swaps it for the 144 real OASIS/PQC conformance tests. Replay the official conformance corpus right in this tab: the engine's CI pins an exact 97-pass baseline on the 102 OASIS tests, and the in-browser run matches it exactly — zero skips, zero failures tolerated.",
         },
         {
           title: 'Rollback that reaches everything',
-          target: '[data-tour="kmip3-subtabs"] button',
+          plane: 'operate',
+          target: '[data-tour="kmip-operate-mode"] button',
           targetText: 'Batch & Macros',
-          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Batch & Macros'),
+          act: () => clickByText('[data-tour="kmip-operate-mode"] button', 'Batch & Macros'),
           body: 'Batch Undo now rolls back even the UID-minting KEM and split-key operations — run the "Rollback reaches Encapsulate" recipe and watch every minted object disappear when a later item fails.',
         },
       ],
@@ -871,15 +972,21 @@ export function KmipPlaygroundView() {
       id: 'developer-lifecycle',
       title: 'Build a governed KMIP sequence',
       icon: Code2,
-      plane: 'kmip3',
+      plane: 'dev',
       blurb: 'The Dev tab: a real pqctoday_kmip.KmipClient script, step by step.',
       steps: [
         {
           title: 'The Dev tab',
-          target: '[data-tour="kmip3-subtabs"] button',
+          target: '[data-tour="kmip-tabs"] button',
           targetText: 'Dev',
-          act: () => clickByText('[data-tour="kmip3-subtabs"] button', 'Dev'),
-          body: "Pipeline is the Dev tab's default sub-tab — the pipeline builder opens straight away.",
+          body: "The pipeline builder opens straight away. Its palette remembers whichever source you left it on — the next two steps make sure it's Standard before continuing.",
+        },
+        {
+          title: 'Palette: back to Standard',
+          target: '[data-tour="kmip-dev-palette-source"] button',
+          targetText: 'Standard',
+          act: () => clickByText('[data-tour="kmip-dev-palette-source"] button', 'Standard'),
+          body: 'Making sure the palette toggle is on Standard — safe to click even if it already was.',
         },
         {
           title: 'Start from a template',
@@ -939,7 +1046,6 @@ export function KmipPlaygroundView() {
           sandbox's agility console via agilityNarration.ts. The three links
           survive inside the panel as an exit AFTER the story rather than as an
           alternative to it. */}
-      {role === 'executive' && <AgilityStoryPanel className="mb-4" />}
       {/* WS-4c (2026-08-28 gaps-remediation plan) — the restored preset's
           fingerprint no longer matched what was active last visit; the
           CURRENT server file is what's loaded, this is just disclosure. */}
@@ -957,530 +1063,645 @@ export function KmipPlaygroundView() {
           </Button>
         </div>
       )}
-      {/* Header */}
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <Cpu size={20} className="text-primary" /> KMIP Control Plane
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
-            compiled to WebAssembly and running{' '}
-            <span className="font-medium text-foreground">entirely in this tab</span> — no server,
-            no Docker. Every operation is a genuine KMIP request answered by the same Rust engine
-            the appliance ships.
-          </p>
-          {/* In-scope chip (A-grade review item #8) — this sandbox proves the
-              control-plane decision + key-management-at-rest path; it does not
-              stand in for a TLS handshake or persistent storage. */}
-          <p className="mt-1.5 text-[11px] text-muted-foreground">
-            <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
-              In scope
-            </span>
-            control plane + key management{' '}
-            <span className="font-medium text-foreground">at rest</span>{' '}
-            <ShieldCheck size={11} className="inline text-status-success" /> ·{' '}
-            <span className="italic">TLS handshake &amp; persistence → full Docker sandbox</span>
-          </p>
-          {/* Spec-status disclosure. "Real KMIP 3.0" is true of the engine but
-              says nothing about the standard's maturity, and KMIP 3.0 is NOT a
-              ratified OASIS Standard — it is committee draft CSD02 (7 May 2026),
-              whose public review closed 13 Aug 2026. Without this line a visitor
-              who never opens the guide reasonably reads "KMIP 3.0" as ratified.
-              These three strings are the complete set to update on ratification:
-              here, the Commands op-count claim, and CorpusReplayView's heading. */}
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
-              Spec status
-            </span>
-            KMIP 3.0 is an{' '}
-            <span className="font-medium text-foreground">OASIS committee draft</span> (CSD02, May
-            2026), not yet a ratified Standard —{' '}
-            <Button
-              variant="link"
-              onClick={openGuide}
-              data-testid="cacp-spec-status-link"
-              className="h-auto p-0 align-baseline text-[11px] font-normal text-muted-foreground underline underline-offset-2 hover:text-foreground"
-            >
-              what that means
-            </Button>
-          </p>
-        </div>
-        {/* VIEW · Guided / Expert progressive-disclosure toggle */}
-        <div className="shrink-0 flex items-center gap-2">
+      {/* ── Shell: header + six top-level tabs (WorkshopShell, shared with the
+          PKCS#11 workshop) ─────────────────────────────────────────────── */}
+      <WorkshopShell<Plane>
+        icon={Cpu}
+        title="KMIP Control Plane"
+        badge={
           <Button
             variant="ghost"
-            size="sm"
             onClick={openGuide}
-            data-testid="cacp-guide-btn"
-            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+            data-testid="cacp-spec-status-chip"
+            className="ml-1 h-auto rounded-full border border-status-warning/40 bg-status-warning/10 px-2 py-0.5 text-[10.5px] font-semibold text-status-warning hover:bg-status-warning/20"
+            title="KMIP 3.0 is an OASIS committee draft (CSD02, May 2026), not yet a ratified Standard — what that means"
           >
-            <BookOpen size={13} /> Guide
+            <Flag size={10} className="mr-1" /> CSD02
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={tour.openHub}
-            className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
-          >
-            <Route size={13} /> Lessons
-          </Button>
-          <span className="hidden sm:inline text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
-            View
-          </span>
-          <div
-            role="group"
-            aria-label="Detail level"
-            className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5"
-          >
-            {(['guided', 'expert'] as const).map((m) => (
-              <Button
-                key={m}
-                size="sm"
-                variant="ghost"
-                aria-pressed={mode === m}
-                onClick={() => chooseMode(m)}
-                className={`min-h-[44px] md:min-h-0 md:h-7 px-3 text-xs capitalize rounded-md ${
-                  mode === m
-                    ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                {m}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Why crypto-agility, not just "post-quantum" (A-grade review E1) ── */}
-      {!whyDismissed && (
-        <div className="mb-4 flex items-start gap-3 rounded-xl border border-status-warning/30 bg-status-warning/10 p-3.5">
-          <Info size={16} className="mt-0.5 shrink-0 text-status-warning" />
-          <div className="min-w-0 flex-1 text-xs text-foreground">
-            <p className="font-semibold">Why crypto-agility, not just "post-quantum"</p>
-            <p className="mt-1 text-muted-foreground">
-              Data encrypted today with classical algorithms can be harvested now and decrypted
-              later, once a cryptographically-relevant quantum computer exists —{' '}
-              <span className="font-medium text-foreground">harvest-now, decrypt-later</span>. The
-              fix isn't swapping in a PQC algorithm once; it's a control plane that can migrate keys
-              again whenever the roadmap changes,{' '}
-              <span className="font-medium text-foreground">
-                with no flag day and no application code change
-              </span>
-              . Everything below is that idea made hands-on — flip the policy strip and watch the
-              same request behave differently.
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={dismissWhy}
-            className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
-          >
-            Got it
-          </Button>
-        </div>
-      )}
-
-      {/* ── Top-level tabs ───────────────────────────────────────────────── */}
-      <div className="overflow-x-auto no-scrollbar mb-4">
-        <div
-          role="tablist"
-          aria-label="KMIP Control Plane surface"
-          className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-1 w-max min-w-full"
-        >
-          {(
-            [
-              { id: 'agility', label: 'Agility & Workbench', icon: Wand2 },
-              { id: 'policy', label: 'Policy', icon: ShieldCheck },
-              { id: 'kmip3', label: 'KMIP3.0', icon: Layers },
-              { id: 'migration', label: 'Migration', icon: ArrowRight },
-            ] as const
-          ).map((t) => {
-            const on = plane === t.id
-            const Icon = t.icon
-            return (
-              <Button
-                key={t.id}
-                role="tab"
-                aria-selected={on}
-                variant="ghost"
-                size="sm"
-                onClick={() => setPlane(t.id)}
-                className={`h-8 gap-1.5 rounded-md px-3 text-xs ${
-                  on ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
-                }`}
-              >
-                <Icon size={14} /> {t.label}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      {plane === 'agility' && (
-        <>
-          {/* ── Plane 1 · the persistent policy "brain" ─────────────────── */}
-          <PolicyControlStrip
-            engine={engine}
-            policy={policy}
-            policyYaml={policyYaml}
-            busy={busy}
-            expert={expert}
-            onLoadPolicy={onLoadPolicy}
-            onOpenLibrary={() => setPlane('policy')}
-          />
-
-          {/* ── Validated test scenarios tied to the SELECTED policy ── */}
-          <div className="mb-4">
-            <PolicyScenario
-              engine={engine}
-              policyFile={activePreset?.file ?? 'training-permissive.yaml'}
-              policyFingerprint={policy.fingerprint}
-              policyLabel={policyLabel}
-              busy={busy}
-              onBusyChange={setBusy}
-            />
-          </div>
-
-          {/* ── Manual workbench: operate → result → inspect ─────────────────── */}
-          <div className="mt-6 mb-3 flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-              Manual Workbench
-            </span>
-            <span className="text-xs text-muted-foreground">
-              — drive the lifecycle yourself; the active policy still governs every call.
-            </span>
+        }
+        actions={
+          <>
             <Button
               variant="ghost"
               size="sm"
-              onClick={onReset}
-              className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
+              onClick={openGuide}
+              data-testid="cacp-guide-btn"
+              className="h-7 gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
             >
-              <RotateCcw size={13} /> Reset
+              <BookOpen size={13} /> Guide
             </Button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 items-start">
-            {/* ── Left · Operate (Plane 2 — KMIP lifecycle) ─────────────────── */}
-            <section className="rounded-xl border border-border bg-card p-4">
-              <h3 className="font-semibold flex items-center gap-2 text-primary">
-                <KeyRound size={16} /> Plane 2 · KMIP Lifecycle
-              </h3>
-              <p className="text-xs text-muted-foreground mt-1 mb-3">
-                Each button sends a real KMIP 3.0 request.
-              </p>
-
-              <p className="text-xs font-medium text-muted-foreground mb-1">Algorithm</p>
-              <div className="mb-3" data-testid="kmip-algo">
-                <FilterDropdown
-                  items={ALGORITHMS.map((a) => ({
-                    id: a.value,
-                    label: a.auto
-                      ? a.label
-                      : a.runnable === false
-                        ? a.label
-                        : a.pqc
-                          ? `${a.label} · PQC`
-                          : a.label,
-                    icon: a.auto ? <Wand2 size={13} className="text-primary" /> : undefined,
-                  }))}
-                  selectedId={algo}
-                  onSelect={onSelectAlgo}
-                  label="Algorithm"
-                  className="w-full"
-                />
-              </div>
-              {isSpecOnly && (
-                <p className="mb-3 -mt-2 text-[10.5px] text-status-warning">
-                  Spec-only: a real algorithm policies can reference, but this in-browser engine
-                  can't create one — see what happens below.
-                </p>
-              )}
-              {chosen?.sizes && (
-                <div className="mb-3 -mt-2" data-testid="kmip-key-size">
-                  <p className="mb-1 text-[10px] font-medium text-muted-foreground">
-                    {algo === 'RSA' ? 'Key size' : 'Curve'} — a real request parameter, not a label;
-                    policies with a minimum (FIPS-only, BSI, 2030 roadmap) gate on it.
-                  </p>
-                  <div className="flex gap-1.5">
-                    {chosen.sizes.map((s) => (
-                      <Button
-                        key={s.length}
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setKeyLength(s.length)}
-                        className={cn(
-                          'h-auto rounded-full border px-2.5 py-0.5 text-[10.5px] font-medium',
-                          keyLength === s.length
-                            ? 'border-primary/60 bg-primary/10 text-primary'
-                            : 'border-border bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                        )}
-                      >
-                        {s.label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="mb-3" data-testid="kmip-gov-attrs">
-                <p className="mb-1 text-[10px] font-medium text-muted-foreground">
-                  Key tags (governance attributes) — some policies require one at key creation, e.g.
-                  CNSA 2.0 needs{' '}
-                  <code className="font-mono">x-pqctoday-cnsa-classification=Secret</code>
-                </p>
-                <input
-                  type="text"
-                  value={govAttrsText}
-                  onChange={(e) => setGovAttrsText(e.target.value)}
-                  placeholder="name=value, name=value (optional)"
-                  className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={tour.openHub}
+              className="h-7 gap-1.5 px-2.5 text-xs"
+            >
+              <Route size={13} /> Guided Tour
+            </Button>
+            <span className="hidden sm:inline text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">
+              View
+            </span>
+            <div
+              role="group"
+              aria-label="Detail level"
+              className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5"
+            >
+              {(['guided', 'expert'] as const).map((m) => (
                 <Button
-                  disabled={busy}
-                  onClick={onCreate}
-                  data-tour="create-btn"
-                  className="col-span-2 gap-1.5"
+                  key={m}
+                  size="sm"
+                  variant="ghost"
+                  aria-pressed={mode === m}
+                  onClick={() => chooseMode(m)}
+                  className={`min-h-[44px] md:min-h-0 md:h-7 px-3 text-xs capitalize rounded-md ${
+                    mode === m
+                      ? 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground'
+                      : 'text-muted-foreground'
+                  }`}
                 >
-                  <Play size={14} />{' '}
-                  {isSpecOnly
-                    ? '1 · Try to create (not runnable)'
-                    : isSymmetric
-                      ? '1 · Create symmetric key'
-                      : `1 · Create ${isKem ? 'KEM' : 'signing'} key pair`}
+                  {m}
                 </Button>
-                <Button
-                  variant="secondary"
-                  disabled={busy || !priv}
-                  onClick={onActivate}
-                  data-tour="activate-btn"
-                  className="col-span-2"
-                >
-                  2 · Activate
-                </Button>
-                {isKem ? (
-                  <>
-                    <Button variant="secondary" disabled={busy || !pub} onClick={onEncapsulate}>
-                      3 · Encapsulate
-                    </Button>
-                    <Button variant="secondary" disabled={busy || !ctHex} onClick={onDecapsulate}>
-                      4 · Decapsulate
-                    </Button>
-                  </>
-                ) : isSymmetric ? (
-                  <>
-                    <Button variant="secondary" disabled={busy || !priv} onClick={onEncrypt}>
-                      3 · Encrypt
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      disabled={busy || !ctHex || !encIvHex}
-                      onClick={onDecrypt}
-                    >
-                      4 · Decrypt
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="secondary"
-                      disabled={busy || !priv}
-                      onClick={onSign}
-                      data-tour="sign-btn"
-                    >
-                      3 · Sign
-                    </Button>
-                    <Button variant="secondary" disabled={busy || !sigHex} onClick={onVerify}>
-                      4 · Verify
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      disabled={busy || !priv}
-                      onClick={onRevokeThenRetrySign}
-                      className="col-span-2"
-                    >
-                      5 · Revoke, then try to Sign again
-                    </Button>
-                  </>
-                )}
-              </div>
-
-              {!isKem && (
-                <input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="message to sign"
-                  className="w-full mt-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-                />
-              )}
-
-              {expert && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy}
-                    onClick={() => run({ op: 'Query' })}
-                    className="text-xs"
-                  >
-                    Query
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy}
-                    onClick={() => run({ op: 'Locate' })}
-                    className="text-xs"
-                  >
-                    Locate
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy || !priv}
-                    onClick={onGet}
-                    className="text-xs"
-                  >
-                    Get
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy || !priv}
-                    onClick={onRevoke}
-                    className="text-xs"
-                  >
-                    Revoke
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy || !priv}
-                    onClick={() => priv && run({ op: 'Destroy', uid: priv })}
-                    className="text-xs"
-                  >
-                    Destroy
-                  </Button>
-                </div>
-              )}
-            </section>
-
-            {/* ── Right · Result + Inspector ────────────────────────────────── */}
-            <div className="flex flex-col gap-4">
-              <section className="rounded-xl border border-border bg-card p-4">
-                <h3 className="font-semibold flex items-center gap-2 text-foreground">
-                  <ScrollText size={16} /> Result
-                </h3>
-                {!result ? (
-                  <p className="text-xs text-muted-foreground mt-2 italic">
-                    Run a step to see what happened.
+              ))}
+            </div>
+          </>
+        }
+        preamble={
+          <>
+            <p className="text-sm text-muted-foreground -mt-1 mb-2">
+              A real <Term t="KMIP" /> 3.0 control plane + <Term t="PKCS#11" /> <Term t="HSM" />,
+              compiled to WebAssembly and running{' '}
+              <span className="font-medium text-foreground">entirely in this tab</span> — no server,
+              no Docker. Every operation is a genuine KMIP request answered by the same Rust engine
+              the appliance ships.
+            </p>
+            {/* In-scope chip (A-grade review item #8) — this sandbox proves the
+                control-plane decision + key-management-at-rest path; it does not
+                stand in for a TLS handshake or persistent storage. */}
+            <p className="mb-1 text-[11px] text-muted-foreground">
+              <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
+                In scope
+              </span>
+              control plane + key management{' '}
+              <span className="font-medium text-foreground">at rest</span>{' '}
+              <ShieldCheck size={11} className="inline text-status-success" /> ·{' '}
+              <span className="italic">TLS handshake &amp; persistence → full Docker sandbox</span>
+            </p>
+            {/* Spec-status disclosure. "Real KMIP 3.0" is true of the engine but
+                says nothing about the standard's maturity, and KMIP 3.0 is NOT a
+                ratified OASIS Standard — it is committee draft CSD02 (7 May 2026),
+                whose public review closed 13 Aug 2026. These three strings are the
+                complete set to update on ratification: here, the Commands
+                op-count claim, and the corpus palette's disclosure banner
+                (KmipCorpusPalette.tsx's KmipCorpusDisclosure). */}
+            <p className="mb-3 text-[11px] text-muted-foreground">
+              <span className="mr-1.5 rounded bg-muted/60 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-foreground">
+                Spec status
+              </span>
+              KMIP 3.0 is an{' '}
+              <span className="font-medium text-foreground">OASIS committee draft</span> (CSD02, May
+              2026), not yet a ratified Standard —{' '}
+              <Button
+                variant="link"
+                onClick={openGuide}
+                data-testid="cacp-spec-status-link"
+                className="h-auto p-0 align-baseline text-[11px] font-normal text-muted-foreground underline underline-offset-2 hover:text-foreground"
+              >
+                what that means
+              </Button>
+            </p>
+            {/* ── Why crypto-agility, not just "post-quantum" (A-grade review E1) ── */}
+            {!whyDismissed && (
+              <div className="mb-4 flex items-start gap-3 rounded-xl border border-status-warning/30 bg-status-warning/10 p-3.5">
+                <Info size={16} className="mt-0.5 shrink-0 text-status-warning" />
+                <div className="min-w-0 flex-1 text-xs text-foreground">
+                  <p className="font-semibold">Why crypto-agility, not just "post-quantum"</p>
+                  <p className="mt-1 text-muted-foreground">
+                    Data encrypted today with classical algorithms can be harvested now and
+                    decrypted later, once a cryptographically-relevant quantum computer exists —{' '}
+                    <span className="font-medium text-foreground">harvest-now, decrypt-later</span>.
+                    The fix isn&apos;t swapping in a PQC algorithm once; it&apos;s a control plane
+                    that can migrate keys again whenever the roadmap changes,{' '}
+                    <span className="font-medium text-foreground">
+                      with no flag day and no application code change
+                    </span>
+                    . Everything below is that idea made hands-on — flip the policy strip and watch
+                    the same request behave differently.
                   </p>
-                ) : (
-                  <div className="mt-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {result.status === 'Skip' ? (
-                        <SkipForward size={16} className="text-status-warning" />
-                      ) : result.ok ? (
-                        <CheckCircle2 size={16} className="text-status-success" />
-                      ) : (
-                        <XCircle size={16} className="text-destructive" />
-                      )}
-                      <span className="text-sm font-medium">{result.operation}</span>
-                      <span
-                        className={`text-xs ${result.status === 'Skip' ? 'text-status-warning' : result.ok ? 'text-status-success' : 'text-destructive'}`}
-                      >
-                        {result.status}
-                      </span>
-                      {(() => {
-                        const d = decisionOf(result)
-                        if (d.kind === 'Unknown') return null
-                        const tone =
-                          d.kind === 'Allow'
-                            ? 'text-status-success'
-                            : d.kind === 'Rekey'
-                              ? 'text-status-warning'
-                              : 'text-destructive'
-                        return (
-                          <span
-                            className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}
-                          >
-                            policy: {d.kind}
-                            {d.algorithm ? ` → ${d.algorithm}` : ''}
-                          </span>
-                        )
-                      })()}
-                    </div>
-                    <p className="text-sm text-foreground mt-1.5">{narrate(result)}</p>
-                    {!expert &&
-                      (() => {
-                        const wtm = whatThisMeans(result)
-                        return wtm ? (
-                          <p className="mt-2 border-l-2 border-primary/60 bg-muted/30 pl-2.5 py-1.5 text-xs text-muted-foreground">
-                            <span className="font-semibold text-foreground">
-                              What this means ·{' '}
-                            </span>
-                            {wtm}
-                          </p>
-                        ) : null
-                      })()}
-                    {busy && (
-                      <Loader2 size={14} className="animate-spin text-muted-foreground mt-2" />
-                    )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={dismissWhy}
+                  className="h-6 shrink-0 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                >
+                  Got it
+                </Button>
+              </div>
+            )}
+          </>
+        }
+        tabs={[
+          {
+            id: 'learn',
+            label: 'Learn',
+            icon: BookOpen,
+            tourId: 'kmip-tab-learn',
+            content: (
+              <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
+                <div className="flex items-start gap-4 max-lg:overflow-x-hidden">
+                  <div className="min-w-0 flex-1">
+                    {/* Guided-mode intro card (D8): the three-step agility story,
+                        for every persona in Guided mode; Expert hides it. Was
+                        executive-only on the old Agility plane (B+ remediation 4.5). */}
+                    {!expert && <AgilityStoryPanel className="mb-4" />}
+                    <LearnView
+                      engine={engine}
+                      onChanged={() => refresh(engine)}
+                      onTryInReference={(op) => {
+                        setPendingOp(op)
+                        setOperateMode('single')
+                        setPlane('operate')
+                      }}
+                    />
                   </div>
-                )}
-              </section>
-
-              {/* ── Inspector · Keystore / KMIP Wire (Expert) / Audit ─────────── */}
-              <Inspector
-                objects={objects}
-                audit={audit}
-                result={result}
-                lastSpec={lastSpec}
+                  <GlossaryRail />
+                </div>
+              </GlossaryProvider>
+            ),
+          },
+          {
+            id: 'policy',
+            label: 'Policy',
+            icon: ShieldCheck,
+            tourId: 'kmip-tab-policy',
+            content: (
+              <PolicyView
+                engine={engine}
                 policy={policy}
                 policyYaml={policyYaml}
+                busy={busy}
                 expert={expert}
-                onClearAudit={() => {
-                  engine.clearAudit()
-                  setAudit([])
+                onLoadPolicy={onLoadPolicy}
+                onApplyYaml={onApplyYaml}
+                view={policyView}
+                onViewChange={setPolicyView}
+                scenario={{
+                  policyFile: activePreset?.file ?? 'training-permissive.yaml',
+                  policyLabel,
+                  policyFingerprint: policy.fingerprint,
+                  onBusyChange: setBusy,
                 }}
-                engine={engine}
               />
-            </div>
-          </div>
-        </>
-      )}
+            ),
+          },
+          {
+            id: 'operate',
+            label: 'Operate',
+            icon: Wand2,
+            tourId: 'kmip-tab-operate',
+            content: (
+              <GlossaryProvider data={KMIP_GLOSSARY_DATA}>
+                {/* ── Plane 1 · the persistent policy "brain" + quick dry-run ── */}
+                <PolicyControlStrip
+                  engine={engine}
+                  policy={policy}
+                  policyYaml={policyYaml}
+                  busy={busy}
+                  expert={expert}
+                  onLoadPolicy={onLoadPolicy}
+                  onOpenLibrary={() => setPlane('policy')}
+                />
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <Tabs
+                    value={operateMode}
+                    onValueChange={(v) => setOperateMode(v as OperateMode)}
+                    className="w-auto"
+                  >
+                    <TabsList
+                      aria-label="Operate mode"
+                      data-tour="kmip-operate-mode"
+                      className="mb-0"
+                    >
+                      <TabsTrigger value="single">Single Request</TabsTrigger>
+                      <TabsTrigger value="batch">Batch &amp; Macros</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                  <InspectChip
+                    calls={audit.length}
+                    callsLabel="audit events"
+                    keys={objects.length}
+                    keysLabel="objects"
+                    onOpen={() => {
+                      setInspectView('keystore')
+                      setPlane('inspect')
+                    }}
+                    tourId="kmip-inspect-chip"
+                  />
+                </div>
+                <div className="flex items-start gap-4 max-lg:overflow-x-hidden">
+                  <div className="min-w-0 flex-1">
+                    {operateMode === 'single' && (
+                      <>
+                        <div className="mb-3 flex items-center gap-2 flex-wrap">
+                          <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                            Guided lifecycle
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            — drive the lifecycle yourself; the active policy still governs every
+                            call.
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={onReset}
+                            className="ml-auto h-7 gap-1.5 px-2.5 text-[11px] text-muted-foreground hover:text-foreground"
+                          >
+                            <RotateCcw size={13} /> Reset
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-4 items-start">
+                          {/* ── Left · Operate (Plane 2 — KMIP lifecycle) ─────────────────── */}
+                          <section className="rounded-xl border border-border bg-card p-4">
+                            <h3 className="font-semibold flex items-center gap-2 text-primary">
+                              <KeyRound size={16} /> Plane 2 · KMIP Lifecycle
+                            </h3>
+                            <p className="text-xs text-muted-foreground mt-1 mb-3">
+                              Each button sends a real KMIP 3.0 request.
+                            </p>
 
-      {plane === 'policy' && (
-        <PolicyView
-          engine={engine}
-          policy={policy}
-          policyYaml={policyYaml}
-          busy={busy}
-          expert={expert}
-          onLoadPolicy={onLoadPolicy}
-          onApplyYaml={onApplyYaml}
-        />
-      )}
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Algorithm
+                            </p>
+                            <div className="mb-3" data-testid="kmip-algo">
+                              <FilterDropdown
+                                items={ALGORITHMS.map((a) => ({
+                                  id: a.value,
+                                  label: a.auto
+                                    ? a.label
+                                    : a.runnable === false
+                                      ? a.label
+                                      : a.pqc
+                                        ? `${a.label} · PQC`
+                                        : a.label,
+                                  icon: a.auto ? (
+                                    <Wand2 size={13} className="text-primary" />
+                                  ) : undefined,
+                                }))}
+                                selectedId={algo}
+                                onSelect={onSelectAlgo}
+                                label="Algorithm"
+                                className="w-full"
+                              />
+                            </div>
+                            {isSpecOnly && (
+                              <p className="mb-3 -mt-2 text-[10.5px] text-status-warning">
+                                Spec-only: a real algorithm policies can reference, but this
+                                in-browser engine can't create one — see what happens below.
+                              </p>
+                            )}
+                            {chosen?.sizes && (
+                              <div className="mb-3 -mt-2" data-testid="kmip-key-size">
+                                <p className="mb-1 text-[10px] font-medium text-muted-foreground">
+                                  {algo === 'RSA' ? 'Key size' : 'Curve'} — a real request
+                                  parameter, not a label; policies with a minimum (FIPS-only, BSI,
+                                  2030 roadmap) gate on it.
+                                </p>
+                                <div className="flex gap-1.5">
+                                  {chosen.sizes.map((s) => (
+                                    <Button
+                                      key={s.length}
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setKeyLength(s.length)}
+                                      className={cn(
+                                        'h-auto rounded-full border px-2.5 py-0.5 text-[10.5px] font-medium',
+                                        keyLength === s.length
+                                          ? 'border-primary/60 bg-primary/10 text-primary'
+                                          : 'border-border bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                                      )}
+                                    >
+                                      {s.label}
+                                    </Button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
 
-      {plane === 'kmip3' && (
-        <Kmip3View
-          engine={engine}
-          busy={busy}
-          expert={expert}
-          onBusyChange={setBusy}
-          onChanged={() => refresh(engine)}
-        />
-      )}
+                            <div className="mb-3" data-testid="kmip-gov-attrs">
+                              <p className="mb-1 text-[10px] font-medium text-muted-foreground">
+                                Key tags (governance attributes) — some policies require one at key
+                                creation, e.g. CNSA 2.0 needs{' '}
+                                <code className="font-mono">
+                                  x-pqctoday-cnsa-classification=Secret
+                                </code>
+                              </p>
+                              <input
+                                type="text"
+                                value={govAttrsText}
+                                onChange={(e) => setGovAttrsText(e.target.value)}
+                                placeholder="name=value, name=value (optional)"
+                                className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none"
+                              />
+                            </div>
 
-      {/* Migration runs its OWN engine instance on a dedicated slot — the
-          estate keystore is hermetic beside the workbench's slot-0 engine. */}
-      {plane === 'migration' && <MigrationView />}
+                            <div className="grid grid-cols-2 gap-2">
+                              <Button
+                                disabled={busy}
+                                onClick={onCreate}
+                                data-tour="create-btn"
+                                className="col-span-2 gap-1.5"
+                              >
+                                <Play size={14} />{' '}
+                                {isSpecOnly
+                                  ? '1 · Try to create (not runnable)'
+                                  : isSymmetric
+                                    ? '1 · Create symmetric key'
+                                    : `1 · Create ${isKem ? 'KEM' : 'signing'} key pair`}
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                disabled={busy || !priv}
+                                onClick={onActivate}
+                                data-tour="activate-btn"
+                                className="col-span-2"
+                              >
+                                2 · Activate
+                              </Button>
+                              {isKem ? (
+                                <>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !pub}
+                                    onClick={onEncapsulate}
+                                  >
+                                    3 · Encapsulate
+                                  </Button>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !ctHex}
+                                    onClick={onDecapsulate}
+                                  >
+                                    4 · Decapsulate
+                                  </Button>
+                                </>
+                              ) : isSymmetric ? (
+                                <>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !priv}
+                                    onClick={onEncrypt}
+                                  >
+                                    3 · Encrypt
+                                  </Button>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !ctHex || !encIvHex}
+                                    onClick={onDecrypt}
+                                  >
+                                    4 · Decrypt
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !priv}
+                                    onClick={onSign}
+                                    data-tour="sign-btn"
+                                  >
+                                    3 · Sign
+                                  </Button>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !sigHex}
+                                    onClick={onVerify}
+                                  >
+                                    4 · Verify
+                                  </Button>
+                                  <Button
+                                    variant="secondary"
+                                    disabled={busy || !priv}
+                                    onClick={onRevokeThenRetrySign}
+                                    className="col-span-2"
+                                  >
+                                    5 · Revoke, then try to Sign again
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+
+                            {!isKem && (
+                              <input
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="message to sign"
+                                className="w-full mt-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                              />
+                            )}
+
+                            {expert && (
+                              <div className="flex flex-wrap gap-2 mt-3">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={busy}
+                                  onClick={() => run({ op: 'Query' })}
+                                  className="text-xs"
+                                >
+                                  Query
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={busy}
+                                  onClick={() => run({ op: 'Locate' })}
+                                  className="text-xs"
+                                >
+                                  Locate
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={busy || !priv}
+                                  onClick={onGet}
+                                  className="text-xs"
+                                >
+                                  Get
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={busy || !priv}
+                                  onClick={onRevoke}
+                                  className="text-xs"
+                                >
+                                  Revoke
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  disabled={busy || !priv}
+                                  onClick={() => priv && run({ op: 'Destroy', uid: priv })}
+                                  className="text-xs"
+                                >
+                                  Destroy
+                                </Button>
+                              </div>
+                            )}
+                          </section>
+
+                          <div className="flex flex-col gap-4 min-w-0">
+                            <section className="rounded-xl border border-border bg-card p-4">
+                              <h3 className="font-semibold flex items-center gap-2 text-foreground">
+                                <ScrollText size={16} /> Result
+                              </h3>
+                              {!result ? (
+                                <p className="text-xs text-muted-foreground mt-2 italic">
+                                  Run a step to see what happened.
+                                </p>
+                              ) : (
+                                <div className="mt-2">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    {result.status === 'Skip' ? (
+                                      <SkipForward size={16} className="text-status-warning" />
+                                    ) : result.ok ? (
+                                      <CheckCircle2 size={16} className="text-status-success" />
+                                    ) : (
+                                      <XCircle size={16} className="text-destructive" />
+                                    )}
+                                    <span className="text-sm font-medium">{result.operation}</span>
+                                    <span
+                                      className={`text-xs ${result.status === 'Skip' ? 'text-status-warning' : result.ok ? 'text-status-success' : 'text-destructive'}`}
+                                    >
+                                      {result.status}
+                                    </span>
+                                    {(() => {
+                                      const d = decisionOf(result)
+                                      if (d.kind === 'Unknown') return null
+                                      const tone =
+                                        d.kind === 'Allow'
+                                          ? 'text-status-success'
+                                          : d.kind === 'Rekey'
+                                            ? 'text-status-warning'
+                                            : 'text-destructive'
+                                      return (
+                                        <span
+                                          className={`text-[10px] px-1.5 rounded bg-muted font-semibold ${tone}`}
+                                        >
+                                          policy: {d.kind}
+                                          {d.algorithm ? ` → ${d.algorithm}` : ''}
+                                        </span>
+                                      )
+                                    })()}
+                                  </div>
+                                  <p className="text-sm text-foreground mt-1.5">
+                                    {narrate(result)}
+                                  </p>
+                                  {!expert &&
+                                    (() => {
+                                      const wtm = whatThisMeans(result)
+                                      return wtm ? (
+                                        <p className="mt-2 border-l-2 border-primary/60 bg-muted/30 pl-2.5 py-1.5 text-xs text-muted-foreground">
+                                          <span className="font-semibold text-foreground">
+                                            What this means ·{' '}
+                                          </span>
+                                          {wtm}
+                                        </p>
+                                      ) : null
+                                    })()}
+                                  {busy && (
+                                    <Loader2
+                                      size={14}
+                                      className="animate-spin text-muted-foreground mt-2"
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </section>
+                          </div>
+                        </div>
+                        <div className="mt-6" data-tour="kmip-commands">
+                          <CommandsView
+                            engine={engine}
+                            onChanged={() => refresh(engine)}
+                            pendingOp={pendingOp}
+                            onPendingOpHandled={() => setPendingOp(null)}
+                            expert={expert}
+                          />
+                        </div>
+                      </>
+                    )}
+                    {operateMode === 'batch' && (
+                      <BatchView
+                        engine={engine}
+                        busy={busy}
+                        expert={expert}
+                        onBusyChange={setBusy}
+                        onChanged={() => refresh(engine)}
+                      />
+                    )}
+                  </div>
+                  <GlossaryRail />
+                </div>
+              </GlossaryProvider>
+            ),
+          },
+          {
+            id: 'inspect',
+            label: 'Inspect',
+            icon: Search,
+            tourId: 'kmip-tab-inspect',
+            content: (
+              <>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Reads the Agility/KMIP 3.0 shared engine. Migration Estate runs its own separate
+                  engine — its keystore stays on that tab.
+                </p>
+                <Inspector
+                  objects={objects}
+                  audit={audit}
+                  result={result}
+                  lastSpec={lastSpec}
+                  policy={policy}
+                  policyYaml={policyYaml}
+                  expert={expert}
+                  onClearAudit={() => {
+                    engine.clearAudit()
+                    setAudit([])
+                  }}
+                  engine={engine}
+                  view={inspectView}
+                  onViewChange={setInspectView}
+                />
+              </>
+            ),
+          },
+          {
+            id: 'dev',
+            label: 'Dev',
+            icon: Code2,
+            tourId: 'kmip-tab-dev',
+            // Engineering-workbench surface — persona-gated, NOT Expert-gated (D5).
+            hidden: devHidden,
+            content: <KmipDevTab engine={engine} />,
+          },
+          {
+            id: 'migration',
+            label: 'Migration Estate',
+            shortLabel: 'Migration',
+            icon: ArrowRight,
+            tourId: 'kmip-tab-migration',
+            // Runs its OWN engine instance on a dedicated slot — the estate
+            // keystore is hermetic beside the workbench's slot-0 engine.
+            content: <MigrationView />,
+          },
+        ]}
+        value={plane}
+        onValueChange={setPlane}
+        tabListLabel="KMIP Control Plane surface"
+        tabListTourId="kmip-tabs"
+      />
 
       <p className="text-[11px] text-muted-foreground mt-4">
         Want the full-fidelity version with TLS transport and the REST control plane? Run the real{' '}

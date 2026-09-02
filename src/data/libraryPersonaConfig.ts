@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read + cross-check; removed 2
+// unconsumed exports (LIBRARY_PERSONA_SENTENCE, LIBRARY_NO_PERSONA_SENTENCE)
+// and corrected a header comment that overclaimed what's actually rendered
 /**
  * Library redesign — per-persona presentation config for the Role Lens.
  *
- * The Role Lens (`/library` redesign) is the single source of truth that shapes
- * the page for the active persona: it seeds the default sort, the "what this
- * means for you" sentence, and (via PERSONA_LIBRARY_CATEGORIES in personaConfig)
- * the category emphasis + soft narrow. Persona itself lives in `usePersonaStore`.
+ * The Role Lens (`/library` redesign) shapes the page for the active persona:
+ * it seeds the default sort (`libraryDefaultSortForPersona`, consulted at
+ * `LibraryViewRedesign.tsx` when the URL carries no `?sort=`) and, via
+ * `PERSONA_LIBRARY_CATEGORIES` in `personaConfig.ts`, the category emphasis +
+ * soft narrow. Persona itself lives in `usePersonaStore`.
  */
 import type { PersonaId } from './learningPersonas'
 import type { SortOption } from '@/components/Library/SortControl'
@@ -21,14 +25,14 @@ export const LIBRARY_PERSONAS: { id: PersonaId; label: string }[] = [
 ]
 
 /** Persona-aware default sort. Explicit `?sort=` always wins; this only seeds
- *  the initial value when the URL is silent. Mirrors the live LibraryView map. */
-/** Every persona now opens on the document's own publication date.
+ * the initial value when the URL is silent (still live — see the header
+ * comment above).
  *
- * The per-persona defaults below are kept as the documented previous behavior,
- * but are no longer consulted: a reader asking "what is newest here" means the
- * document's publication date, not the catalog's activity date or a reference-ID
- * ordering. Readers can still choose any ordering from the sort control, and
- * that choice (?sort=) always wins. */
+ * Every persona currently maps to the same value, `'published'`: a reader
+ * asking "what is newest here" means the document's own publication date,
+ * not the catalog's activity date or a reference-ID ordering. The per-persona
+ * keys are kept (rather than collapsing to one constant) so a future editorial
+ * decision to differentiate again doesn't have to rebuild this shape. */
 export const LIBRARY_DEFAULT_SORT_BY_PERSONA: Record<PersonaId, SortOption> = {
   executive: 'published',
   developer: 'published',
@@ -42,20 +46,3 @@ export function libraryDefaultSortForPersona(persona: PersonaId | null | undefin
   if (!persona) return 'published'
   return LIBRARY_DEFAULT_SORT_BY_PERSONA[persona] ?? 'published' // eslint-disable-line security/detect-object-injection
 }
-
-/** One-line "what this means for you" sentence shown under the Role Lens. */
-export const LIBRARY_PERSONA_SENTENCE: Record<PersonaId, string> = {
-  executive:
-    'Standards and policy guidance that frame the business case and deadlines for your PQC program — newest first.',
-  developer:
-    "Algorithm specs, protocol RFCs and drafts you'll build against — ordered by reference ID.",
-  architect:
-    'Migration-critical standards plus certificate and protocol guidance — ordered by urgency.',
-  researcher: 'The full corpus, ranked by how often each document is cited — nothing narrowed out.',
-  ops: 'The certification-relevant set — FIPS, CMVP and the standards that govern validations.',
-  curious: 'A gentle starting set — the headline standards and migration guidance, newest first.',
-}
-
-/** Sentence shown when no persona is selected. */
-export const LIBRARY_NO_PERSONA_SENTENCE =
-  'Pick a role to tailor the library — picks, sort order and emphasis adapt to how you use these documents.'

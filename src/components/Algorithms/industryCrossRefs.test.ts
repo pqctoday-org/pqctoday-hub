@@ -68,7 +68,7 @@ describe('sectorCodesFor', () => {
 })
 
 describe('learnModulesForIndustry', () => {
-  it('resolves a module for the 22 industries that declare one', () => {
+  it('resolves a module for the 19 industries that declare one', () => {
     // 2026-08-19: was 20 — Supply Chain / Logistics's learn_module_id was
     // cleared (vendor-risk covers vendor/software supply-chain risk, not the
     // physical maritime/customs/EBL use cases this industry actually lists;
@@ -78,10 +78,17 @@ describe('learnModulesForIndustry', () => {
     // 'Cross-Industry' bucket so each could honestly carry its own module,
     // without forcing the other, genuinely mixed-topic Cross-Industry rows
     // (PKI, email, OpenPGP, DNSSEC) to share it.
+    // 2026-09-01: 22 → 19 — the 3 sub-labels were remapped back to plain
+    // 'Cross-Industry' (they sat outside the threats vocabulary and had no
+    // market-size row). That reinstates the mixed-topic bucket the 08-29
+    // split existed to avoid, so their learn_module_id was cleared to match
+    // the industry's other (module-less) rows — the driftguard requires
+    // every row sharing an industry to agree on one module id, and
+    // 'Cross-Industry' as a whole has no single dedicated module.
     const withModule = getLandscapeIndustries().filter(
       (i) => learnModulesForIndustry(i, useCases).length > 0
     )
-    expect(withModule).toHaveLength(22)
+    expect(withModule).toHaveLength(19)
   })
 
   it('returns nothing for the three industries with no module', () => {

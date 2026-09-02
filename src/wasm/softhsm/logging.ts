@@ -1,21 +1,14 @@
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { buildInspect } from '../pkcs11Inspect'
+// ONE log-entry type for the whole app — the canonical definition lives in
+// ../softhsm.ts (it carries `isStepHeader` and `origin`, which the copy that
+// used to sit here silently lacked). Type-only import, so the softhsm.ts ↔
+// softhsm/logging.ts reference is erased at runtime and cannot cycle.
+import type { Pkcs11LogEntry } from '../softhsm'
+
+export type { Pkcs11LogEntry }
 
 // ── PKCS#11 call log ─────────────────────────────────────────────────────────
-
-export interface Pkcs11LogEntry {
-  id: number
-  timestamp: string // HH:MM:SS
-  fn: string
-  args: string
-  rvHex: string
-  rvName: string
-  ms: number
-  ok: boolean
-  engineName?: string
-  inspect?: import('../pkcs11Inspect').Pkcs11LogInspect
-  hSession?: number
-}
 
 let _logId = 0
 

@@ -47,6 +47,10 @@ export const PALETTE_META: Record<string, PaletteMeta> = {
   // hex has no real PKCS#11 mechanism to report; 0x00 is a placeholder,
   // not CKM_RSA_PKCS_KEY_PAIR_GEN or any other real codepoint.
   'assert-equals': { family: 'Utility', hex: '0x00' },
+  // Same 'Utility'/placeholder-hex treatment as 'assert-equals' above — see
+  // pipelinePrimitives.ts for what distinguishes these two from it.
+  'assert-bytes-equal': { family: 'Utility', hex: '0x00' },
+  'assert-verified': { family: 'Utility', hex: '0x00' },
 }
 
 export interface PaletteEntry {

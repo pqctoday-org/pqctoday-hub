@@ -70,6 +70,7 @@ import { PillarPipeline } from './redesign/PillarPipeline'
 import { ComplianceDetailDrawer } from './redesign/ComplianceDetailDrawer'
 import { CSWP39AgilityExplorer } from './redesign/CSWP39AgilityExplorer'
 import { RecordsGlossaryStrip } from './redesign/RecordsGlossaryStrip'
+import { PqcCertificationTrendChart } from './PqcCertificationTrendChart'
 import { type PillarId, pillarForBodyType } from './redesign/pillarModel'
 import { ObligationsTab } from './obligations/ObligationsTab'
 import { ProgressTab } from './progress/ProgressTab'
@@ -819,6 +820,7 @@ export const ComplianceView = ({
               description="Live certification records from NIST CMVP, NIST CAVP, and Common Criteria Portal — searchable product validations for FIPS 140-3, ACVP algorithm testing, and CC evaluations."
             />
             <RecordsGlossaryStrip />
+            <PqcCertificationTrendChart data={data} asOf={lastUpdated} />
             <ComplianceTable
               data={data}
               onRefresh={refresh}

@@ -45,12 +45,30 @@ import type {
   LessonStepExpect,
   LinearLessonBase,
 } from '@/components/Playground/learnkit/lessonTypes'
+import type { RailId } from '../railIds'
 
 const bytesEqual = (a: Uint8Array, b: Uint8Array): boolean =>
   a.length === b.length && a.every((v, i) => v === b[i])
 
 export interface Pkcs11StepResult {
   detail: string
+}
+
+/**
+ * Where a lesson step's real control lives on the Operate tab — the
+ * "Show me on Operate" spotlight (design handoff
+ * design_handoff_kmip_pkcs11_playground §3.5, D7: one step at a time).
+ * `target` is a CSS selector for a `data-tour` anchor the Operate panels
+ * render (checked by TourEngine.driftguard.test.ts); `algo` is the value the
+ * panel's `initialAlgo` prop understands, so the spotlight lands on the
+ * right mechanism, not just the right tab.
+ */
+export interface LessonSpot {
+  rail: RailId
+  target: string
+  algo?: string
+  /** Optional override for the coachmark body; defaults to the step label. */
+  body?: string
 }
 
 export interface Pkcs11LessonStep {
@@ -63,6 +81,7 @@ export interface Pkcs11LessonStep {
     results: (Pkcs11StepResult | null)[]
   ) => Promise<Pkcs11StepResult> | Pkcs11StepResult
   expect?: LessonStepExpect
+  spot?: LessonSpot
 }
 
 export type Pkcs11Lesson = LinearLessonBase<Pkcs11LessonStep>
@@ -88,6 +107,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_Initialize / C_InitToken / C_OpenSession',
         label: 'Boot the library, format a token, and open an authenticated session',
+        spot: {
+          rail: 'kem',
+          target: '[data-tour="pkcs-op-setup"]',
+          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Done returns you to the lesson.',
+        },
         run: async (hsm) => {
           if (!hsm.isReady) {
             const ok = await hsm.autoInit('rust')
@@ -101,6 +125,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GetTokenInfo',
         label: "Read back the token's identity",
+        spot: {
+          rail: 'kem',
+          target: '[data-tour="pkcs-op-setup"]',
+          body: 'The setup strip shows the slot, token and session this workshop is talking to — the same C_GetTokenInfo data the lesson just read back. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const info = hsm_getTokenInfo(M, hsm.slotRef.current)
@@ -155,6 +184,12 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKey',
         label: 'Generate a non-extractable AES-256 key',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'Generate Key with CKA_EXTRACTABLE left unticked creates the same non-extractable AES-256 key. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const handle = hsm_generateAESKey(
@@ -265,6 +300,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKey',
         label: 'Generate an AES-256 key for this session',
+        spot: { rail: 'sym', target: '[data-tour="pkcs-op-sym-keygen"]', algo: 'AES-GCM-256' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const handle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256)
@@ -274,6 +310,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_EncryptInit / C_Encrypt (AES-GCM)',
         label: 'Encrypt a real message',
+        spot: { rail: 'sym', target: '[data-tour="pkcs-op-sym-encrypt"]', algo: 'AES-GCM-256' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
@@ -293,6 +330,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_DecryptInit / C_Decrypt (AES-GCM)',
         label: 'Decrypt it back',
+        spot: { rail: 'sym', target: '[data-tour="pkcs-op-sym-decrypt"]', algo: 'AES-GCM-256' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle (\d+)/) ?? [])[1])
@@ -364,6 +402,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_DigestInit / C_Digest (SHA-256)',
         label: 'Hash a message',
+        spot: { rail: 'hash', target: '[data-tour="pkcs-op-hash-digest"]', algo: 'SHA-256' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const data = new TextEncoder().encode('hello post-quantum world')
@@ -374,6 +413,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateRandom',
         label: 'Ask the token for 32 random bytes',
+        spot: { rail: 'sym', target: '[data-tour="pkcs-op-sym-rng-generate"]', algo: 'RNG' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const r1 = hsm_generateRandom(M, hsm.hSessionRef.current, 32)
@@ -408,6 +448,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKeyPair (RSA-2048)',
         label: 'Generate an RSA-2048 key pair',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-classical-rsa-keygen"]',
+          algo: 'RSA-2048',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hsm.hSessionRef.current, 2048)
@@ -417,6 +462,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_SignInit / C_Sign',
         label: 'Sign a message with the private key',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-classical-rsa-sign"]',
+          algo: 'RSA-2048',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
@@ -432,6 +482,11 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_VerifyInit / C_Verify',
         label: 'Verify it with the public key',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-classical-rsa-verify"]',
+          algo: 'RSA-2048',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
@@ -505,6 +560,12 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKey ×2',
         label: 'Generate a wrapping key and a non-extractable target key',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const wrapHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256)
@@ -537,6 +598,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKey + C_WrapKey + C_UnwrapKey',
         label: 'Generate an extractable key, wrap it, and unwrap it back',
+        spot: { rail: 'wrap', target: '[data-tour="pkcs-op-wrap-wrap"]', algo: 'AES-KWP' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -585,6 +647,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_GenerateKeyPair (P-256) ×2',
         label: "Generate Alice's and Bob's P-256 key pairs",
+        spot: { rail: 'agree', target: '[data-tour="pkcs-op-agree-keygen"]', algo: 'P-256' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const alice = hsm_generateECKeyPair(M, hsm.hSessionRef.current, 'P-256')
@@ -597,6 +660,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_DeriveKey (ECDH, both directions)',
         label: 'Derive the shared secret from both sides and compare',
+        spot: { rail: 'agree', target: '[data-tour="pkcs-op-agree-derive"]', algo: 'P-256' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const d = results[0]?.detail ?? ''
@@ -632,6 +696,7 @@ export const FOUNDATIONS_LESSONS: Pkcs11Lesson[] = [
       {
         op: 'C_DeriveKey (HKDF)',
         label: 'Run the shared secret through HKDF to get a well-formed key',
+        spot: { rail: 'kdf', target: '[data-tour="pkcs-op-kdf-derive"]', algo: 'HKDF' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const secretHandle = Number((results[1]?.detail.match(/aliceSecret=(\d+)/) ?? [])[1])

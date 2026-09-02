@@ -19,7 +19,10 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('scenario picker: filters by active policy and validates verdicts', async ({ page }) => {
-  await page.goto('/playground/cacp')
+  // 2026-09-02 redesign: the scenarios are Policy's 6th sub-view (D4),
+  // deep-linkable as ?tab=policy&view=scenarios; the policy is picked from
+  // the catalog on the same tab.
+  await page.goto('/playground/cacp?tab=policy&view=scenarios')
   await expect(page.getByRole('heading', { name: /KMIP Control Plane/i })).toBeVisible({
     timeout: 30000,
   })
@@ -33,7 +36,9 @@ test('scenario picker: filters by active policy and validates verdicts', async (
   console.log('default: perm scenario shown, pqc hidden ✓')
 
   // Pick the PQC policy chip → list swaps to the PQC scenarios only.
-  await page.getByRole('button', { name: 'PQC (the "after")' }).click()
+  // The catalog button's accessible name is the whole card (label + rule
+  // count + blurb) — match on the label as a prefix.
+  await page.getByRole('button', { name: /^PQC \(the "after"\)/ }).click()
   await expect(page.getByTestId('scenario-pqc-rekey-ecdsa')).toBeVisible({ timeout: 10000 })
   await expect(page.getByTestId('scenario-perm-sign-mldsa')).toHaveCount(0)
   console.log('after picking PQC: pqc scenarios shown, perm hidden ✓ (filtering works)')

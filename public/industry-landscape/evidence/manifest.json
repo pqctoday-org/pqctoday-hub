@@ -20,6 +20,16 @@
       "contentType": "application/pdf",
       "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2",
       "acquisition": "manual"
+    },
+    {
+      "refId": "Controller-Pilot-Data-Link-Communications-CPDLC",
+      "title": "Controller-Pilot Data Link Communications (CPDLC)",
+      "url": "https://www.iata.org/en/iata-repository/pressroom/fact-sheets/fact-sheet-cyber-security/",
+      "status": "downloaded",
+      "filename": "Controller-Pilot-Data-Link-Communications-CPDLC.pdf",
+      "sizeBytes": 96176,
+      "contentType": "application/pdf",
+      "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f"
     }
   ]
 }

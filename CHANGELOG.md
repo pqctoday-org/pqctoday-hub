@@ -29,6 +29,53 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.75.0] - 2026-09-02
+
+The PKCS#11 and KMIP workshops were reorganized around how people actually use them — Learn, Operate/Build, and Inspect are now top-level, not buried two tabs deep — plus a compliance chart and a broad library/timeline/compliance data refresh.
+
+### Added
+
+- **The PKCS#11 HSM workshop is now four tabs — Learn, Operate, Build, Inspect — instead of twelve** [view:/playground] [persona:developer] [persona:researcher]: every crypto primitive (KEM, symmetric, wrap, hashing, sign & verify, key agreement, KDF) lives behind one left-hand rail on Operate, so switching primitives no longer means hunting across a crowded tab bar. Token setup sits above whichever primitive you're using instead of on its own tab.
+- **One shared call log and key inventory for the whole PKCS#11 workshop** [view:/playground] [persona:developer]: every operation you run, on any tab, now shows up in a single Inspect view instead of a dozen separate mini-logs scattered across panels — filterable by which part of the workshop made the call.
+- **PKCS#11 lessons can now jump you straight to the real control that just ran** [view:/playground] [persona:developer] [persona:researcher]: after finishing a lesson step, a "Show me on Operate" button switches to the live workshop with the right primitive and algorithm already selected and highlighted.
+- **Stateful signature keys (XMSS/LMS) now show their real remaining-signature count** [view:/playground] [persona:developer] [persona:researcher]: the leaf index advances on screen with every signature, alongside a standing warning about the catastrophic risk of reusing one.
+- **Sign & Verify is now a clean 4-way switch — ML-DSA, SLH-DSA, Classical, Stateful** [view:/playground] [persona:developer]: stateful XMSS/LMS previously showed up in two different places at once.
+- **ACVP known-answer tests and PKCS#11 v3.2 conformance checks now live inside the Build tab's workbench**, with the same Builder/Code split as the sequence builder [view:/playground] [persona:developer] [persona:researcher]: pick test categories or conformance cases, run them, and see (or download and run) the equivalent Python — the checks themselves are unchanged, only where you run them from.
+- **The KMIP control plane is now six tabs — Learn, Policy, Operate, Inspect, Dev, Migration Estate — instead of four, with the busiest ones no longer nested two levels deep** [view:/playground] [persona:developer] [persona:researcher]: Commands, Batch & Macros, and the pipeline builder are top-level now, and every tab and sub-view is directly linkable.
+- **KMIP's policy engine gained a Scenarios view** [view:/playground] [persona:developer]: the 13 pre-built, engine-verified test scenarios for the active policy now live as their own view inside Policy instead of mixed into the workbench.
+- **Compliance now shows a monthly PQC certification adoption trend chart** [view:/compliance] [persona:executive] [persona:ops]: track how fast validated products are appearing over time, not just the current snapshot.
+
+### Changed
+
+- **KMIP's raw YAML view and the "not yet implemented" operations list are now Expert-mode only** [view:/playground] [persona:developer]: Guided mode stays focused on what's runnable.
+- **The KMIP workshop's crypto-agility explainer now appears on the Learn tab for every visitor in Guided mode**, not only executives [view:/playground] [persona:curious] [persona:developer] [persona:executive].
+
+### Fixed
+
+- **A wrong HIPAA citation in the Learn library was misattributed to the wrong CFR subsection** [view:/library] [persona:researcher] [persona:ops]: corrected against the real regulation text.
+- **9 Learn-module citations pointed at library rows that had been incorrectly deprecated** [view:/learn] [persona:researcher]: un-deprecated with real, extractable evidence restored.
+- **Two vendor PQC roadmap rows carried a mixed-up URL and an undetected duplicate** [view:/migrate] [persona:researcher]: the swap was reverted and the duplicate marked deprecated.
+- **A stale timeline manifest label was silently blocking Germany/BSI milestone evidence from resolving** [view:/timeline] [persona:researcher].
+- **Two Learn modules had a Tools & Products tab that looked broken (empty findings) and one had an unwired Exercises tab** [view:/learn] [persona:developer] [persona:researcher]: both resolved with real content or removed.
+
+### Data
+
+- **Broad evidence refresh across Library, Timeline, and Compliance Landscape**: 46 timeline rows got precise dates from real evidence, 24 compliance-landscape documents were re-enriched, 172 compliance rows had their industry labels normalized to one canonical vocabulary, and 8 dangling timeline-to-library references were resolved (3 new documents, 4 casing fixes) [view:/library] [view:/timeline] [view:/compliance] [persona:researcher].
+- **Vendor roadmaps, migrate catalog, and trusted sources enrichment**: 14 migrate-catalog products and several vendor roadmap documents re-enriched, 4 new organizations registered as trusted sources with 9 previously-orphaned library references relinked [view:/migrate] [view:/library] [persona:researcher].
+- **CVE data refreshed** from the NVD feed, and the **search index rebuilt** (17,131 chunks) so it stays in sync with all of the above [persona:researcher] [persona:developer].
+- **3 IETF protocol-matrix corrections**: two real staging advances (SSH hybrid signatures, IKE/IPsec pure signatures) and a repeated stage-reading error fixed across 6 cells [view:/algorithms] [persona:researcher].
+
+## [4.74.0] - 2026-09-01
+
+### Added
+
+- **The PKCS#11 pipeline builder now runs 3 more real NIST ACVP known-answer tests as editable, runnable pipeline steps** [view:/playground] [persona:developer] [persona:researcher]: an ML-DSA-44 signature-verification test and SHA-256/SHA3-256 digest tests join the existing ML-KEM one, each built from real NIST ACVP-Server sample vectors and run against the actual engine — not a flat pass/fail table.
+- **The KMIP 3.0 Corpus Replay tab folded into the pipeline builder's own palette** [view:/playground] [persona:developer]: switch the palette between the standard operation primitives and the OASIS KMIP 3.0 conformance corpus (144 tests), all in the same Builder/Code shell — pick a corpus test to run it and see its response, or its decoded request in Code mode. The corpus still replays real TTLV wire bytes, byte-exact against the native CI baseline; only where it's shown moved.
+
+### Changed
+
+- **The PKCS#11 Developer tab's "Pipeline" sub-tab is now called "Standard"**, the first step in unifying it with the ACVP and Conformance tools into one Test Suite switcher [view:/playground] [persona:developer].
+
 ## [4.73.0] - 2026-09-01
 
 ### Added

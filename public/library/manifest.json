@@ -12089,6 +12089,46 @@
       "sha256": "c27c123b7e11633302f3deeeb16b345dfce4b719b40ea5d69152188f6237c55b"
     },
     {
+      "refId": "Summary-of-NATO-s-Quantum-Technologies-Strategy",
+      "title": "Summary of NATO's Quantum Technologies Strategy",
+      "url": "https://www.nato.int/en/about-us/official-texts-and-resources/official-texts/2024/01/16/summary-of-natos-quantum-technologies-strategy",
+      "status": "downloaded",
+      "filename": "Summary-of-NATO-s-Quantum-Technologies-Strategy.html",
+      "sizeBytes": 329395,
+      "contentType": "text/html",
+      "sha256": "cfe9d87b462874001049466faad34ae67e4a25c5dabb0ddf0e7747f110d6d5b2"
+    },
+    {
+      "refId": "Singapore-Financial-Sector-QKD-Sandbox-Technical-Report",
+      "title": "Singapore Financial Sector QKD Sandbox \u2014 Technical Report",
+      "url": "https://www.mas.gov.sg/-/media/mas/news/media-releases/2025/singapore-financial-sector-qkd-sandbox-report.pdf",
+      "status": "downloaded",
+      "filename": "Singapore-Financial-Sector-QKD-Sandbox-Technical-Report.pdf",
+      "sizeBytes": 4713851,
+      "contentType": "application/pdf",
+      "sha256": "4b22bbbd9787841abcd8eb22ce0be7fed760baef2009565f8c6ded5a9c7f9e89"
+    },
+    {
+      "refId": "PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua",
+      "title": "PKI Consortium Post-Quantum Cryptography Conference 2025 \u2014 Kuala Lumpur",
+      "url": "https://pkic.org/events/2025/pqc-conference-kuala-lumpur-my/",
+      "status": "downloaded",
+      "filename": "PKI-Consortium-Post-Quantum-Cryptography-Conference-2025-Kua.html",
+      "sizeBytes": 1207150,
+      "contentType": "text/html",
+      "sha256": "e740b295b210b235826a179c0bded3f5cb7006e35ddce95a4df9f042270119e0"
+    },
+    {
+      "refId": "Singapore-National-Quantum-Safe-Network-Plus-NQSN",
+      "title": "Singapore National Quantum-Safe Network Plus (NQSN+)",
+      "url": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/national-quantum-safe-network-plus",
+      "status": "downloaded",
+      "filename": "Singapore-National-Quantum-Safe-Network-Plus-NQSN.html",
+      "sizeBytes": 86995,
+      "contentType": "text/html",
+      "sha256": "937d2f4e5841ee957e8f03f5b5cc5eaecc454b085bb3bcea10c60f04448c9e1f"
+    },
+    {
       "refId": "Post-quantum-Hybrid-ECDHE-SCloud-Key-Exchange-for-TLS-1-3",
       "title": "Post-quantum Hybrid ECDHE-SCloud+ Key Exchange for TLS 1.3",
       "url": "https://datatracker.ietf.org/doc/draft-wang-tls-hybrid-ecdh-scloud/",

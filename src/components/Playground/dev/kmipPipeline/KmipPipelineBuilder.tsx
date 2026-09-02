@@ -40,6 +40,13 @@ import type { KmipEngine, AuditEvent, KmipObject } from '../../../../wasm/kmip/k
 import { describe as describeAuditEvent } from '../../kmip/AuditTrailPanel'
 import { KeystoreTable } from '../../kmip/Inspector'
 import { POLICY_PRESETS, PLANE_INFO } from '../../../../wasm/kmip/kmipMeta'
+import { useKmipCorpus } from '../../kmip/useKmipCorpus'
+import {
+  KmipCorpusPaletteList,
+  KmipCorpusDetail,
+  KmipCorpusSummaryCard,
+  KmipCorpusDisclosure,
+} from './KmipCorpusPalette'
 import { createKmipBridge } from '../../../../services/python/pyodide/kmipBridge'
 import { getCodepointTable } from '../../../../wasm/kmip/ttlv/codepointTable'
 import { bootPyRuntime, runPython, getInterruptMode } from '../../../../services/python/pyRuntime'
@@ -80,6 +87,7 @@ import {
 
 const STORE_KEY = 'pqctoday-hub-kmip-pipelines-v1'
 const EXPORT_SCHEMA = 'pqctoday-hub-kmip-pipeline-v1'
+const PALETTE_SOURCE_KEY = 'pqctoday-hub-kmip-palette-source-v1'
 
 const STATUS_STYLE: Record<KmipStepStatus, { cls: string; label: string } | null> = {
   idle: null,
@@ -200,6 +208,32 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
 
   // Change 1: which pane of the Builder/Code switch is showing.
   const [activeView, setActiveView] = useState<'builder' | 'code'>('builder')
+  // Palette source: 'standard' drag-and-drop primitives (the pipeline this
+  // component was built around) vs 'corpus', the OASIS KMIP 3.0 conformance
+  // corpus folded in as an alternate palette content — same Builder/Code
+  // shell, same layout regions, different data source and execution path
+  // (see KmipCorpusPalette.tsx's header). Persisted so returning to this tab
+  // keeps whichever palette was last active, matching how saved pipelines
+  // already survive reload.
+  const [paletteSource, setPaletteSource] = useState<'standard' | 'corpus'>(() => {
+    try {
+      const stored = localStorage.getItem(PALETTE_SOURCE_KEY)
+      return stored === 'corpus' ? 'corpus' : 'standard'
+    } catch {
+      return 'standard'
+    }
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem(PALETTE_SOURCE_KEY, paletteSource)
+    } catch {
+      // best-effort, matches savePipeline()'s own storage-full handling
+    }
+  }, [paletteSource])
+  // Corpus data/execution only fetches once `enabled` — switching to
+  // 'standard' and back doesn't re-fetch, but never having opened the
+  // corpus palette costs zero network calls.
+  const corpus = useKmipCorpus({ enabled: paletteSource === 'corpus' })
   // Change 2: the Code tab's editor opens read-only whenever it's showing
   // generated (synced) code — independent of `detached`, which only becomes
   // true once real edited text diverges.
@@ -468,12 +502,13 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
     const h = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault()
-        void runAll()
+        if (paletteSource === 'corpus') void corpus.runAll()
+        else void runAll()
       }
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
-  }, [runAll])
+  }, [runAll, paletteSource, corpus])
 
   const downloadFile = (content: string, filename: string, type: string) => {
     const blob = new Blob([content], { type })
@@ -545,6 +580,22 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
   const readOnlyRef = useRef(readOnly)
   readOnlyRef.current = readOnly
 
+  // The header Run button (and ⌘/Ctrl+Enter) means "run the pipeline" in
+  // standard mode and "run every corpus test" in corpus mode — one button,
+  // dual meaning, per kmip3-corpus-palette-plan-09012026.md §5.
+  const headerRunHandler = () => {
+    if (paletteSource === 'corpus') void corpus.runAll()
+    else void runAll()
+  }
+  const headerRunIsRunning = paletteSource === 'corpus' ? corpus.running === '__all__' : running
+  const headerRunDisabled = paletteSource === 'corpus' ? !corpus.table || !!corpus.running : running
+  const headerRunTitle =
+    paletteSource === 'corpus'
+      ? 'Run every corpus test (⌘/Ctrl+Enter)'
+      : !detached && blocking.length
+        ? `${blocking.length} problem(s) to fix first`
+        : 'Run (⌘/Ctrl+Enter)'
+
   return (
     <Tabs
       value={activeView}
@@ -561,55 +612,55 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="application/json"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0]
-              if (f) void importJson(f)
-              e.target.value = ''
-            }}
-          />
-          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="h-3.5 w-3.5 mr-1" /> Import
-          </Button>
-          <Button variant="outline" size="sm" onClick={exportJson}>
-            <Download className="h-3.5 w-3.5 mr-1" /> Export JSON
-          </Button>
-          <Button variant="outline" size="sm" onClick={exportPy}>
-            <Download className="h-3.5 w-3.5 mr-1" /> Export .py
-          </Button>
-          <Button variant="outline" size="sm" onClick={savePipeline}>
-            <Save className="h-3.5 w-3.5 mr-1" /> Save
-          </Button>
+          {paletteSource === 'standard' && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0]
+                  if (f) void importJson(f)
+                  e.target.value = ''
+                }}
+              />
+              <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="h-3.5 w-3.5 mr-1" /> Import
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportJson}>
+                <Download className="h-3.5 w-3.5 mr-1" /> Export JSON
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportPy}>
+                <Download className="h-3.5 w-3.5 mr-1" /> Export .py
+              </Button>
+              <Button variant="outline" size="sm" onClick={savePipeline}>
+                <Save className="h-3.5 w-3.5 mr-1" /> Save
+              </Button>
+            </>
+          )}
           <Button
             data-tour="kmip-dev-run"
             size="sm"
-            disabled={running}
-            onClick={() => {
-              void runAll()
-            }}
-            title={
-              !detached && blocking.length
-                ? `${blocking.length} problem(s) to fix first`
-                : 'Run (⌘/Ctrl+Enter)'
-            }
+            disabled={headerRunDisabled}
+            onClick={headerRunHandler}
+            title={headerRunTitle}
           >
-            {running ? (
+            {headerRunIsRunning ? (
               <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
             ) : (
               <Play className="h-3.5 w-3.5 mr-1" />
             )}
-            {running ? 'Running…' : 'Run'}
+            {headerRunIsRunning ? 'Running…' : 'Run'}
           </Button>
-          <KmipSyncStatusChip detached={!!detached} />
+          {paletteSource === 'standard' && <KmipSyncStatusChip detached={!!detached} />}
           {/* data-tour scopes a guided-lesson `clickByText` to THIS tablist,
               distinct from any other `role="tab"` bar on the page. */}
           <TabsList data-tour="kmip-dev-view-tabs">
             <TabsTrigger value="builder">
-              Builder · {steps.length} step{steps.length === 1 ? '' : 's'}
+              {paletteSource === 'corpus'
+                ? 'Builder'
+                : `Builder · ${steps.length} step${steps.length === 1 ? '' : 's'}`}
             </TabsTrigger>
             <TabsTrigger value="code">Code</TabsTrigger>
           </TabsList>
@@ -637,333 +688,383 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           renders it, one row per request with CACP (Plane 1 · Agility),
           KMIP (Plane 2), and PKCS#11 (Plane 3) side by side, since
           `engine` is the same per-tab singleton either plane uses. Visible
-          from both Builder and Code tabs. */}
-      <div className="border-b">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowActivity((v) => !v)}
-          className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
-        >
-          {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-          Session activity — keystore, CACP &amp; KMIP audit trail
-          {audit.length > 0 && !showActivity && (
-            <span className="ml-1 text-[10.5px]">({audit.length})</span>
-          )}
-        </Button>
-        {showActivity && (
-          <div className="border-t">
-            {/* Inspector-style tab bar — same pattern as the manual
+          from both Builder and Code tabs. Corpus mode never touches this
+          shared `engine` (each corpus test boots its own hermetic engine
+          instance — see useKmipCorpus.ts), so this section would only ever
+          show stale/empty state there — hidden rather than shown-but-wrong. */}
+      {paletteSource === 'standard' && (
+        <div className="border-b">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowActivity((v) => !v)}
+            className="w-full justify-start gap-1.5 px-4 py-2 h-auto rounded-none text-xs font-mono text-muted-foreground hover:text-foreground"
+          >
+            {showActivity ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+            Session activity — keystore, CACP &amp; KMIP audit trail
+            {audit.length > 0 && !showActivity && (
+              <span className="ml-1 text-[10.5px]">({audit.length})</span>
+            )}
+          </Button>
+          {showActivity && (
+            <div className="border-t">
+              {/* Inspector-style tab bar — same pattern as the manual
                 workbench's own Keystore/Wire/Audit tabs, one plane's
                 events as its own flat list per tab instead of
                 AuditTrailPanel's request-grouped swimlanes. */}
-            <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
-              {(
-                [
-                  { id: 'keystore', label: `Keystore (${keystoreObjects.length})` },
-                  { id: 'p1', label: PLANE_INFO.p1?.label ?? 'CACP' },
-                  { id: 'p2', label: PLANE_INFO.p2?.label ?? 'KMIP' },
-                  { id: 'p3', label: PLANE_INFO.p3?.label ?? 'PKCS#11' },
-                ] as const
-              ).map((t) => (
-                <Button
-                  key={t.id}
-                  variant="ghost"
-                  size="sm"
-                  aria-pressed={activityTab === t.id}
-                  onClick={() => setActivityTab(t.id)}
-                  className={`h-7 rounded-md px-2.5 text-[11px] ${
-                    activityTab === t.id
-                      ? 'bg-card text-foreground'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t.label}
-                </Button>
-              ))}
-              {activityTab !== 'keystore' && audit.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    engine?.clearAudit()
-                    setAudit([])
-                  }}
-                  className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground ml-auto"
-                >
-                  Clear
-                </Button>
-              )}
-            </div>
-            {/* Same fix as the PKCS#11 twin: the Tabs root is a fixed
+              <div className="flex items-center gap-1 px-2 py-1.5 border-b bg-muted/20">
+                {(
+                  [
+                    { id: 'keystore', label: `Keystore (${keystoreObjects.length})` },
+                    { id: 'p1', label: PLANE_INFO.p1?.label ?? 'CACP' },
+                    { id: 'p2', label: PLANE_INFO.p2?.label ?? 'KMIP' },
+                    { id: 'p3', label: PLANE_INFO.p3?.label ?? 'PKCS#11' },
+                  ] as const
+                ).map((t) => (
+                  <Button
+                    key={t.id}
+                    variant="ghost"
+                    size="sm"
+                    aria-pressed={activityTab === t.id}
+                    onClick={() => setActivityTab(t.id)}
+                    className={`h-7 rounded-md px-2.5 text-[11px] ${
+                      activityTab === t.id
+                        ? 'bg-card text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {t.label}
+                  </Button>
+                ))}
+                {activityTab !== 'keystore' && audit.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      engine?.clearAudit()
+                      setAudit([])
+                    }}
+                    className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground ml-auto"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+              {/* Same fix as the PKCS#11 twin: the Tabs root is a fixed
                 h-[70vh] with overflow-hidden, so this section needs its
                 own bound and scroll rather than risk silently clipping
                 past the container edge as it grows. */}
-            <div className="px-4 py-3 max-h-64 overflow-y-auto">
-              {activityTab === 'keystore' && (
-                <KeystoreTable objects={keystoreObjects} expert engine={engine ?? undefined} />
-              )}
-              {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
-              {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
-              {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}
+              <div className="px-4 py-3 max-h-64 overflow-y-auto">
+                {activityTab === 'keystore' && (
+                  <KeystoreTable objects={keystoreObjects} expert engine={engine ?? undefined} />
+                )}
+                {activityTab === 'p1' && <PlaneEventList events={audit} plane="p1" />}
+                {activityTab === 'p2' && <PlaneEventList events={audit} plane="p2" />}
+                {activityTab === 'p3' && <PlaneEventList events={audit} plane="p3" />}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+      {paletteSource === 'corpus' && <KmipCorpusDisclosure corpus={corpus} />}
 
       {/* ── BUILDER TAB: palette | canvas | run panel — unchanged from before Change 1 ── */}
       <TabsContent value="builder" className="mt-0 flex-1 min-h-0">
         <div className="grid grid-cols-[280px_1fr_340px] gap-0 h-full overflow-hidden">
-          {/* LEFT: palette + templates + saved */}
+          {/* LEFT: palette source switch + (standard: templates/saved | corpus: category tree) */}
           <aside
             className="border-r p-3 overflow-auto flex flex-col gap-4"
             data-tour="kmip-dev-palette"
           >
             <div>
-              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1">
+              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
                 Palette
               </div>
-              <div className="text-xs text-muted-foreground">Drag onto the canvas →</div>
-            </div>
-            <div>
-              <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
-                Lifecycle primitives
-              </div>
-              <div className="flex flex-col gap-1">
-                {KMIP_PRIM_IDS.map((id) => (
-                  <KmipPaletteRow
-                    key={id}
-                    primId={id}
-                    onDragStart={(e) => onPalettePrimDragStart(e, id)}
-                  />
-                ))}
-              </div>
-            </div>
-            <div>
-              <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
-                Policy &amp; governance
-              </div>
-              <div className="flex flex-col gap-1">
-                {SPECIAL_STEP_KINDS.map(({ kind, label }) => (
-                  <KmipSpecialPaletteRow
-                    key={kind}
-                    label={label}
-                    onDragStart={(e) => onPaletteSpecialDragStart(e, kind)}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="mt-auto pt-3 border-t" data-tour="kmip-dev-templates">
-              <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
-                Start from
-              </div>
-              <div className="flex flex-col gap-1">
-                {KMIP_TEMPLATE_NAMES.map((t) => (
-                  <Button
-                    key={t}
-                    variant={t === pipelineName ? 'secondary' : 'outline'}
-                    size="sm"
-                    onClick={() => applyTemplate(t)}
-                    className="justify-start font-normal"
-                  >
-                    {t}
-                  </Button>
-                ))}
-              </div>
-              {savedKmipNames.length > 0 && (
-                <>
-                  <div className="text-xs font-semibold uppercase text-muted-foreground mt-3 mb-1.5">
-                    Saved
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    {savedKmipNames.map((name) => (
-                      <div key={name} className="flex gap-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => loadPipeline(name)}
-                          className="flex-1 min-w-0 truncate justify-start font-normal"
-                        >
-                          {name}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteSaved(name)}
-                          className="px-1.5 text-status-error hover:opacity-80"
-                          aria-label={`Delete saved pipeline ${name}`}
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </>
+              <Tabs
+                value={paletteSource}
+                onValueChange={(v) => setPaletteSource(v as 'standard' | 'corpus')}
+              >
+                <TabsList
+                  aria-label="Palette source"
+                  data-tour="kmip-dev-palette-source"
+                  className="w-full"
+                >
+                  <TabsTrigger value="standard" className="flex-1">
+                    Standard
+                  </TabsTrigger>
+                  <TabsTrigger value="corpus" className="flex-1">
+                    Corpus (OASIS conformance)
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+              {paletteSource === 'standard' && (
+                <div className="text-xs text-muted-foreground mt-1">Drag onto the canvas →</div>
               )}
             </div>
+            {paletteSource === 'standard' ? (
+              <>
+                <div>
+                  <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
+                    Lifecycle primitives
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {KMIP_PRIM_IDS.map((id) => (
+                      <KmipPaletteRow
+                        key={id}
+                        primId={id}
+                        onDragStart={(e) => onPalettePrimDragStart(e, id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10.5px] font-semibold uppercase text-muted-foreground mb-1.5 px-1">
+                    Policy &amp; governance
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {SPECIAL_STEP_KINDS.map(({ kind, label }) => (
+                      <KmipSpecialPaletteRow
+                        key={kind}
+                        label={label}
+                        onDragStart={(e) => onPaletteSpecialDragStart(e, kind)}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-auto pt-3 border-t" data-tour="kmip-dev-templates">
+                  <div className="text-xs font-semibold uppercase text-muted-foreground mb-1.5">
+                    Start from
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {KMIP_TEMPLATE_NAMES.map((t) => (
+                      <Button
+                        key={t}
+                        variant={t === pipelineName ? 'secondary' : 'outline'}
+                        size="sm"
+                        onClick={() => applyTemplate(t)}
+                        className="justify-start font-normal"
+                      >
+                        {t}
+                      </Button>
+                    ))}
+                  </div>
+                  {savedKmipNames.length > 0 && (
+                    <>
+                      <div className="text-xs font-semibold uppercase text-muted-foreground mt-3 mb-1.5">
+                        Saved
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        {savedKmipNames.map((name) => (
+                          <div key={name} className="flex gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => loadPipeline(name)}
+                              className="flex-1 min-w-0 truncate justify-start font-normal"
+                            >
+                              {name}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteSaved(name)}
+                              className="px-1.5 text-status-error hover:opacity-80"
+                              aria-label={`Delete saved pipeline ${name}`}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <KmipCorpusPaletteList corpus={corpus} />
+            )}
           </aside>
 
           {/* CENTER: canvas */}
           <main className="flex flex-col overflow-auto">
-            <DevSandboxDiffNote
-              points={[
-                'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
-                'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
-                "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
-                "The Sign step's message can be text or hex (toggle below the input) — hex mode emits a genuinely binary Python bytes literal, not text encoded as hex. Encrypt/Decrypt steps aren't in this builder's vocabulary yet, so that half of the same capability isn't reachable here.",
-              ]}
-            />
-
-            <div className="p-4 border-b">
-              <div className="flex items-center justify-between mb-1">
-                <div className="text-xs font-semibold uppercase text-muted-foreground">
-                  Message to sign
-                </div>
-                <div className="flex gap-1">
-                  {(['text', 'hex'] as const).map((m) => (
-                    <Button
-                      key={m}
-                      variant={messageMode === m ? 'secondary' : 'outline'}
-                      size="sm"
-                      className="h-6 px-2 text-[10px] uppercase"
-                      onClick={() => {
-                        setMessageMode(m)
-                        setMessage('')
-                      }}
-                    >
-                      {m}
-                    </Button>
-                  ))}
-                </div>
+            {paletteSource === 'corpus' ? (
+              <div className="p-4">
+                <KmipCorpusDetail
+                  corpus={corpus}
+                  field="responseTree"
+                  emptyHint="Pick a test from the palette to run it and see its response."
+                />
               </div>
-              <input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                aria-label="Message to sign"
-                placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
-                className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-destructive/60' : ''}`}
-              />
-              {messageError && (
-                <p className="mt-1 text-[10.5px] text-status-error font-mono">{messageError}</p>
-              )}
-              {messageMode === 'hex' && !messageError && (
-                <p className="mt-1 text-[10.5px] text-muted-foreground">
-                  Sign steps below emit <code>bytes.fromhex(...)</code> — a genuinely binary
-                  payload, not text encoded as hex.
-                </p>
-              )}
-            </div>
+            ) : (
+              <>
+                <DevSandboxDiffNote
+                  points={[
+                    'KmipClient calls run in-page against the same wasm engine the rest of this KMIP/CACP playground uses — not a real TLS connection to a pqc-kmip server. Every operation still crosses the real crypto-agility policy plane; there is no network hop.',
+                    'load_policy()/dry_run()/policy_status() are hub-only convenience methods, not part of the real KmipClient. On the real system, policy load/dry-run is a separate REST/mTLS AdminClient, a different connection entirely.',
+                    "get_attributes() reads the engine's metadata view (algorithm/length/state/name/usageMask) rather than the real distinct GetAttributes wire operation — deliberately, after Get itself was found to correctly refuse a non-extractable private key's material.",
+                    "The Sign step's message can be text or hex (toggle below the input) — hex mode emits a genuinely binary Python bytes literal, not text encoded as hex. Encrypt/Decrypt steps aren't in this builder's vocabulary yet, so that half of the same capability isn't reachable here.",
+                  ]}
+                />
 
-            <div
-              className={`p-4 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
-              data-tour="kmip-dev-steps"
-            >
-              <div className="max-w-2xl mx-auto flex flex-col items-center gap-0">
-                {steps.length === 0 && (
-                  <KmipDropZone
-                    active={dragOverIndex === 0}
-                    label="Drop a primitive or step here"
-                    onDragOver={(e) => onDragOver(e, 0)}
-                    onDrop={(e) => dropAt(e, 0)}
+                <div className="p-4 border-b">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="text-xs font-semibold uppercase text-muted-foreground">
+                      Message to sign
+                    </div>
+                    <div className="flex gap-1">
+                      {(['text', 'hex'] as const).map((m) => (
+                        <Button
+                          key={m}
+                          variant={messageMode === m ? 'secondary' : 'outline'}
+                          size="sm"
+                          className="h-6 px-2 text-[10px] uppercase"
+                          onClick={() => {
+                            setMessageMode(m)
+                            setMessage('')
+                          }}
+                        >
+                          {m}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <input
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    aria-label="Message to sign"
+                    placeholder={messageMode === 'hex' ? 'hex bytes, e.g. deadbeef00' : undefined}
+                    className={`w-full font-mono text-xs bg-muted/40 border rounded px-2 py-1 outline-none ${messageError ? 'border-destructive/60' : ''}`}
                   />
-                )}
-                {steps.map((step, i) => (
-                  <div
-                    key={step.id}
-                    className="w-full flex flex-col items-center"
-                    onDragOver={(e) => onDragOver(e, i)}
-                    onDrop={(e) => dropAt(e, i)}
-                  >
-                    {dragOverIndex === i && <KmipInsertBar />}
-                    <KmipStepCard
-                      step={step}
-                      index={i}
-                      steps={steps}
-                      stepState={stepState[step.id]}
-                      findings={findings.filter((f) => f.stepIndex === i)}
-                      onDelete={() => deleteStep(step.id)}
-                      onDragStart={(e) => onStepDragStart(e, i)}
-                      onOpChange={(op) => setStepOp(step.id, op)}
-                      onParam={(name, v) => setParam(step.id, name, v)}
-                      onPolicyFile={(f) => setPolicyFile(step.id, f)}
-                      onDryRunOp={(op) => setDryRunOp(step.id, op)}
-                      onDryRunAlgorithm={(a) => setDryRunAlgorithm(step.id, a)}
-                      onDenyTarget={(t) => setDenyTarget(step.id, t)}
-                    />
+                  {messageError && (
+                    <p className="mt-1 text-[10.5px] text-status-error font-mono">{messageError}</p>
+                  )}
+                  {messageMode === 'hex' && !messageError && (
+                    <p className="mt-1 text-[10.5px] text-muted-foreground">
+                      Sign steps below emit <code>bytes.fromhex(...)</code> — a genuinely binary
+                      payload, not text encoded as hex.
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  className={`p-4 flex-1 overflow-auto ${detached ? 'opacity-40 pointer-events-none' : ''}`}
+                  data-tour="kmip-dev-steps"
+                >
+                  <div className="max-w-2xl mx-auto flex flex-col items-center gap-0">
+                    {steps.length === 0 && (
+                      <KmipDropZone
+                        active={dragOverIndex === 0}
+                        label="Drop a primitive or step here"
+                        onDragOver={(e) => onDragOver(e, 0)}
+                        onDrop={(e) => dropAt(e, 0)}
+                      />
+                    )}
+                    {steps.map((step, i) => (
+                      <div
+                        key={step.id}
+                        className="w-full flex flex-col items-center"
+                        onDragOver={(e) => onDragOver(e, i)}
+                        onDrop={(e) => dropAt(e, i)}
+                      >
+                        {dragOverIndex === i && <KmipInsertBar />}
+                        <KmipStepCard
+                          step={step}
+                          index={i}
+                          steps={steps}
+                          stepState={stepState[step.id]}
+                          findings={findings.filter((f) => f.stepIndex === i)}
+                          onDelete={() => deleteStep(step.id)}
+                          onDragStart={(e) => onStepDragStart(e, i)}
+                          onOpChange={(op) => setStepOp(step.id, op)}
+                          onParam={(name, v) => setParam(step.id, name, v)}
+                          onPolicyFile={(f) => setPolicyFile(step.id, f)}
+                          onDryRunOp={(op) => setDryRunOp(step.id, op)}
+                          onDryRunAlgorithm={(a) => setDryRunAlgorithm(step.id, a)}
+                          onDenyTarget={(t) => setDenyTarget(step.id, t)}
+                        />
+                      </div>
+                    ))}
+                    {steps.length > 0 && (
+                      <div
+                        className="w-full flex flex-col items-center"
+                        onDragOver={(e) => onDragOver(e, steps.length)}
+                        onDrop={(e) => dropAt(e, steps.length)}
+                      >
+                        {dragOverIndex === steps.length && <KmipInsertBar />}
+                        <KmipDropZone
+                          active={dragOverIndex === steps.length}
+                          label="Drop here to append"
+                          subtle
+                        />
+                      </div>
+                    )}
                   </div>
-                ))}
-                {steps.length > 0 && (
-                  <div
-                    className="w-full flex flex-col items-center"
-                    onDragOver={(e) => onDragOver(e, steps.length)}
-                    onDrop={(e) => dropAt(e, steps.length)}
-                  >
-                    {dragOverIndex === steps.length && <KmipInsertBar />}
-                    <KmipDropZone
-                      active={dragOverIndex === steps.length}
-                      label="Drop here to append"
-                      subtle
-                    />
-                  </div>
-                )}
-              </div>
-              {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
-                <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
-                  <span className="text-status-success">What this proved: </span>
-                  {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
-                </p>
-              )}
-            </div>
+                  {elapsedMs != null && KMIP_TEMPLATE_OUTCOMES[pipelineName] && (
+                    <p className="max-w-2xl mx-auto mt-4 text-xs leading-relaxed text-muted-foreground">
+                      <span className="text-status-success">What this proved: </span>
+                      {KMIP_TEMPLATE_OUTCOMES[pipelineName]}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </main>
 
-          {/* RIGHT: run panel — summary + validation only, the editor lives in Code now */}
-          <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
-            <Card className="p-3.5">
-              <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-                Pipeline summary
-              </div>
-              <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Steps</span>
-                  <span className="font-mono">{steps.length}</span>
+          {/* RIGHT: corpus mode gets its own summary card; standard mode keeps
+              the pipeline summary + validation cards below. */}
+          {paletteSource === 'corpus' ? (
+            <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
+              <KmipCorpusSummaryCard corpus={corpus} />
+            </aside>
+          ) : (
+            <aside className="border-l p-4 flex flex-col gap-3 overflow-auto">
+              <Card className="p-3.5">
+                <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                  Pipeline summary
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Language</span>
-                  <span className="font-mono">Python · pqctoday_kmip</span>
+                <div className="flex flex-col gap-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Steps</span>
+                    <span className="font-mono">{steps.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Language</span>
+                    <span className="font-mono">Python · pqctoday_kmip</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Last run</span>
+                    <span className="font-mono">
+                      {elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Engine</span>
+                    <span className="font-mono">
+                      {engine ? 'KMIP/CACP (browser)' : 'initializing…'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Timeout</span>
+                    <span className="font-mono">{TIMEOUT_LABEL[getInterruptMode()]}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Last run</span>
-                  <span className="font-mono">
-                    {elapsedMs != null ? `${(elapsedMs / 1000).toFixed(2)}s` : 'not run yet'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Engine</span>
-                  <span className="font-mono">
-                    {engine ? 'KMIP/CACP (browser)' : 'initializing…'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Timeout</span>
-                  <span className="font-mono">{TIMEOUT_LABEL[getInterruptMode()]}</span>
-                </div>
-              </div>
-            </Card>
+              </Card>
 
-            <Card className="p-3.5">
-              <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
-                Validation
-              </div>
-              <div className="flex flex-col gap-1.5 text-xs">
-                {!detached && findings.length === 0 && (
-                  <KmipValRow ok text="Every step input is bound" />
-                )}
-                {!detached &&
-                  findings.map((f, i) => <KmipValRow key={i} ok={false} text={f.text} />)}
-                {detached && <KmipValRow ok text="Custom script — builder validation skipped" />}
-              </div>
-            </Card>
-          </aside>
+              <Card className="p-3.5">
+                <div className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                  Validation
+                </div>
+                <div className="flex flex-col gap-1.5 text-xs">
+                  {!detached && findings.length === 0 && (
+                    <KmipValRow ok text="Every step input is bound" />
+                  )}
+                  {!detached &&
+                    findings.map((f, i) => <KmipValRow key={i} ok={false} text={f.text} />)}
+                  {detached && <KmipValRow ok text="Custom script — builder validation skipped" />}
+                </div>
+              </Card>
+            </aside>
+          )}
         </div>
       </TabsContent>
 
@@ -971,79 +1072,96 @@ export const KmipPipelineBuilder: React.FC<KmipPipelineBuilderProps> = ({ engine
           the sync-status chip live in the persistent header above (visible from
           both tabs) since Change 1 — see the file-scope note there. ── */}
       <TabsContent value="code" className="mt-0 flex-1 min-h-0 flex flex-col">
-        {/* Change 2: explicit "edit as custom script" gate — shown only while the
-            editor is read-only-and-synced. */}
-        {readOnly && (
-          <div className="px-4 py-2 text-xs border-b flex items-center justify-between gap-3 flex-wrap">
-            <span className="text-muted-foreground">
-              Read-only — this is the code generated from the Builder.
-            </span>
-            <Button variant="outline" size="sm" onClick={() => setEditUnlocked(true)}>
-              <Pencil className="h-3.5 w-3.5 mr-1" /> Edit as custom script
-            </Button>
+        {paletteSource === 'corpus' ? (
+          <div className="flex-1 min-h-0 grid grid-cols-[280px_1fr] gap-0 overflow-hidden">
+            <aside className="border-r p-3 overflow-auto" data-tour="kmip-dev-palette-code">
+              <KmipCorpusPaletteList corpus={corpus} />
+            </aside>
+            <main className="p-4 overflow-auto">
+              <KmipCorpusDetail
+                corpus={corpus}
+                field="requestTree"
+                emptyHint="Pick a test on the left to see the decoded KMIP request it actually sends — the real script this corpus replays, not just a pass/fail verdict."
+              />
+            </main>
           </div>
-        )}
+        ) : (
+          <>
+            {/* Change 2: explicit "edit as custom script" gate — shown only while the
+                editor is read-only-and-synced. */}
+            {readOnly && (
+              <div className="px-4 py-2 text-xs border-b flex items-center justify-between gap-3 flex-wrap">
+                <span className="text-muted-foreground">
+                  Read-only — this is the code generated from the Builder.
+                </span>
+                <Button variant="outline" size="sm" onClick={() => setEditUnlocked(true)}>
+                  <Pencil className="h-3.5 w-3.5 mr-1" /> Edit as custom script
+                </Button>
+              </div>
+            )}
 
-        {/* Change 2 (banner) + Change 3 (the "Try to apply" action) */}
-        {detached && (
-          <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex flex-col gap-2">
-            <span className="text-status-warning">
-              ⚠ Custom script — edits won't appear in the Builder until resolved.
-            </span>
-            <div className="flex items-center gap-2 flex-wrap">
-              <Button variant="outline" size="sm" onClick={resyncToGenerated}>
-                Discard edits, resync
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleTryApply}>
-                Try to apply to Builder
+            {/* Change 2 (banner) + Change 3 (the "Try to apply" action) */}
+            {detached && (
+              <div className="px-4 py-2.5 text-xs bg-status-warning/5 border-b border-warning/25 flex flex-col gap-2">
+                <span className="text-status-warning">
+                  ⚠ Custom script — edits won't appear in the Builder until resolved.
+                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button variant="outline" size="sm" onClick={resyncToGenerated}>
+                    Discard edits, resync
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleTryApply}>
+                    Try to apply to Builder
+                  </Button>
+                </div>
+                {applyMsg && (
+                  <div
+                    className={`font-mono text-[11px] ${applyMsg.kind === 'ok' ? 'text-status-success' : 'text-status-error'}`}
+                  >
+                    {applyMsg.kind === 'ok' ? '✓ ' : '✗ '}
+                    {applyMsg.text}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex-1 min-h-0 p-4">
+              <div className="h-full border rounded overflow-hidden">
+                {monacoReady ? (
+                  <Editor
+                    height="100%"
+                    language="python"
+                    value={activeCode}
+                    theme="vs-dark"
+                    onChange={(val) => {
+                      // Never trust a change reported while read-only — see
+                      // readOnlyRef's comment above for why this must be a ref.
+                      if (readOnlyRef.current) return
+                      setApplyMsg(null)
+                      if (val !== generatedPy) setDetached(val ?? '')
+                      else setDetached(null)
+                    }}
+                    options={{
+                      fontSize: 12,
+                      minimap: { enabled: false },
+                      scrollBeyondLastLine: false,
+                      readOnly,
+                    }}
+                  />
+                ) : (
+                  <div className="h-full grid place-items-center text-xs text-muted-foreground font-mono">
+                    Loading editor…
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="p-3 border-t">
+              <Button variant="outline" size="sm" className="w-full" onClick={exportPy}>
+                <Download className="h-3.5 w-3.5 mr-1" /> Download as .py
               </Button>
             </div>
-            {applyMsg && (
-              <div
-                className={`font-mono text-[11px] ${applyMsg.kind === 'ok' ? 'text-status-success' : 'text-status-error'}`}
-              >
-                {applyMsg.kind === 'ok' ? '✓ ' : '✗ '}
-                {applyMsg.text}
-              </div>
-            )}
-          </div>
+          </>
         )}
-
-        <div className="flex-1 min-h-0 p-4">
-          <div className="h-full border rounded overflow-hidden">
-            {monacoReady ? (
-              <Editor
-                height="100%"
-                language="python"
-                value={activeCode}
-                theme="vs-dark"
-                onChange={(val) => {
-                  // Never trust a change reported while read-only — see
-                  // readOnlyRef's comment above for why this must be a ref.
-                  if (readOnlyRef.current) return
-                  setApplyMsg(null)
-                  if (val !== generatedPy) setDetached(val ?? '')
-                  else setDetached(null)
-                }}
-                options={{
-                  fontSize: 12,
-                  minimap: { enabled: false },
-                  scrollBeyondLastLine: false,
-                  readOnly,
-                }}
-              />
-            ) : (
-              <div className="h-full grid place-items-center text-xs text-muted-foreground font-mono">
-                Loading editor…
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="p-3 border-t">
-          <Button variant="outline" size="sm" className="w-full" onClick={exportPy}>
-            <Download className="h-3.5 w-3.5 mr-1" /> Download as .py
-          </Button>
-        </div>
       </TabsContent>
     </Tabs>
   )

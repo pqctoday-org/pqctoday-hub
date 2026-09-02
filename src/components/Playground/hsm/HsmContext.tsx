@@ -163,6 +163,15 @@ export interface HsmContextValue {
   clearHsmLog: () => void
   /** Inject a visual step-separator entry into the log (isStepHeader: true). Call BEFORE the step's ops. */
   addHsmStepLog: (label: string) => void
+  /**
+   * Declare which workshop surface is active (`operate:kem`, `build:acvp`,
+   * `learn`, …) with a human label ("Operate · KEM"). Every call logged from
+   * then on is stamped `origin`, and the first call after a change gets a
+   * step-header row carrying the label — so the ONE shared Inspect log
+   * groups by user action without every panel threading its own header.
+   * Called by the playground shell on tab/rail changes; panels never call it.
+   */
+  setLogOrigin: (origin: string, label: string) => void
 
   // ── Auto-init (deep-link / programmatic) ─────────────────────────────────
   /**
@@ -261,14 +270,51 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [hsmKeys]
   )
 
+  // Active-surface origin stamp (see `setLogOrigin` in the interface).
+  // `pendingHeader` is the label of an origin change no call has been logged
+  // under yet — emitted lazily as a step-header row right before the first
+  // real call, so merely visiting a tab never clutters the log.
+  const logOriginRef = useRef<{ origin: string; label: string; pendingHeader: boolean }>({
+    origin: 'setup',
+    label: 'Setup',
+    pendingHeader: false,
+  })
+
   const addHsmLog = useCallback((e: Pkcs11LogEntry) => {
-    const next = [e, ...hsmLogRef.current]
+    const o = logOriginRef.current
+    let head = hsmLogRef.current
+    if (!e.isStepHeader && o.pendingHeader) {
+      o.pendingHeader = false
+      head = [
+        {
+          id: Math.random(),
+          timestamp: e.timestamp,
+          fn: o.label,
+          args: '',
+          rvHex: '',
+          rvName: '',
+          ms: 0,
+          ok: true,
+          isStepHeader: true,
+          origin: o.origin,
+        },
+        ...head,
+      ]
+    }
+    const stamped: Pkcs11LogEntry = e.origin ? e : { ...e, origin: o.origin }
+    const next = [stamped, ...head]
     // 1000, not 500: a full run through both Learn-tab tracks in one
     // sitting (17 lessons) plus workbench-tab use in the same session
     // can approach the old cap, silently dropping early lessons' rows.
     const capped = next.length > 1000 ? next.slice(0, 1000) : next
     hsmLogRef.current = capped
     setHsmLog(capped)
+  }, [])
+
+  const setLogOrigin = useCallback((origin: string, label: string) => {
+    const o = logOriginRef.current
+    if (o.origin === origin) return
+    logOriginRef.current = { origin, label, pendingHeader: true }
   }, [])
 
   const clearHsmLog = useCallback(() => {
@@ -405,6 +451,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addHsmLog,
       clearHsmLog,
       addHsmStepLog,
+      setLogOrigin,
       autoInit,
     }),
     [
@@ -422,6 +469,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addHsmLog,
       clearHsmLog,
       addHsmStepLog,
+      setLogOrigin,
       autoInit,
     ]
   )

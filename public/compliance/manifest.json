@@ -1,1833 +1,1857 @@
 {
- "generated": "2026-07-31T23:12:59.239427+00:00",
- "entries": [
-  {
-   "refId": "NIST",
-   "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
-   "status": "downloaded",
-   "filename": "NIST.html",
-   "sizeBytes": 62101,
-   "contentType": "text/html",
-   "sha256": "dc1bbdd0bc4a034f93f25de72a01b806b1bf2d5b9bb4304a724dc31edc235693"
-  },
-  {
-   "refId": "ISO-IEC",
-   "url": "https://www.iso.org/committee/45306.html",
-   "status": "downloaded",
-   "filename": "ISO-IEC.html",
-   "sizeBytes": 138193,
-   "contentType": "text/html",
-   "sha256": "6d9e07d0bb79aa9e81d43516f0381fedfc8a362450232e11b98f51ac2f3b6de0"
-  },
-  {
-   "refId": "IETF",
-   "url": "https://datatracker.ietf.org/wg/pquip/about/",
-   "status": "downloaded",
-   "filename": "IETF.html",
-   "sizeBytes": 38979,
-   "contentType": "text/html",
-   "sha256": "6a616f09c3dd5f231dfe8039a7a5df34545eb7e2ae5445c534b16601ad1d807b"
-  },
-  {
-   "refId": "FIPS-140-3",
-   "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
-   "status": "downloaded",
-   "filename": "FIPS-140-3.html",
-   "sizeBytes": 66175,
-   "contentType": "text/html",
-   "sha256": "74a9e62a69b816df5c0fb9a16fe310161e3e3ff1b57597bb8a7719c7681bd346"
-  },
-  {
-   "refId": "COMMON-CRITERIA",
-   "url": "https://www.commoncriteriaportal.org",
-   "status": "downloaded",
-   "filename": "COMMON-CRITERIA.html",
-   "sizeBytes": 13516,
-   "contentType": "text/html",
-   "sha256": "015b2c064a1ce30aa71d902ac17159f0b10b12e5d2bc2768af3cda116bc1c865"
-  },
-  {
-   "refId": "ANSSI",
-   "url": "https://www.ssi.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
-   "status": "downloaded",
-   "filename": "ANSSI.html",
-   "sizeBytes": 50604,
-   "contentType": "text/html",
-   "sha256": "966701ee485e960aaa85e212fb9c41d12c47030e541104e8466f07d69db646c8"
-  },
-  {
-   "refId": "CNSA-2",
-   "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-   "status": "downloaded",
-   "filename": "CNSA-2.pdf",
-   "sizeBytes": 586858,
-   "contentType": "application/pdf",
-   "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
-  },
-  {
-   "refId": "EIDAS",
-   "url": "https://digital-strategy.ec.europa.eu/en/policies/eidas-regulation",
-   "status": "downloaded",
-   "filename": "EIDAS.html",
-   "sizeBytes": 57368,
-   "contentType": "text/html",
-   "sha256": "e2eecdf9d56a38d9239b4954069edb3208986a3449764906df582d4f7f69d9a5"
-  },
-  {
-   "refId": "PCI-DSS",
-   "url": "https://www.pcisecuritystandards.org",
-   "status": "downloaded",
-   "filename": "PCI-DSS.html",
-   "sizeBytes": 795809,
-   "contentType": "text/html",
-   "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c"
-  },
-  {
-   "refId": "HIPAA",
-   "url": "https://www.hhs.gov/hipaa/for-professionals/index.html",
-   "status": "downloaded",
-   "filename": "HIPAA.html",
-   "sizeBytes": 201991,
-   "contentType": "text/html",
-   "sha256": "e1190b0d5177f594f3847895765c9b8758c976df7cb93863c66735cf4444c20b"
-  },
-  {
-   "refId": "GSMA-NG116",
-   "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
-   "status": "downloaded",
-   "filename": "GSMA-NG116.pdf",
-   "sizeBytes": 3260451,
-   "contentType": "application/pdf",
-   "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
-  },
-  {
-   "refId": "ETSI-TS103744",
-   "url": "https://www.etsi.org/committee/cyber",
-   "status": "downloaded",
-   "filename": "ETSI-TS103744.html",
-   "sizeBytes": 165306,
-   "contentType": "text/html",
-   "sha256": "c20dac6644cca0733c61bbd30e6da907acbfb7854edb14eac4f73f016a28e8d4"
-  },
-  {
-   "refId": "DORA",
-   "url": "https://www.eiopa.europa.eu/digital-operational-resilience-act-dora_en",
-   "status": "downloaded",
-   "filename": "DORA.html",
-   "sizeBytes": 105542,
-   "contentType": "text/html",
-   "sha256": "483e1f7c7f361b1f4865b3554e3b277200b5b7b5af42af37325e951334918660"
-  },
-  {
-   "refId": "SWIFT-CSP",
-   "url": "https://www.swift.com/myswift/customer-security-programme",
-   "status": "downloaded",
-   "filename": "SWIFT-CSP.html",
-   "sizeBytes": 191147,
-   "contentType": "text/html",
-   "sha256": "277302ccbec261d478129e99013935fe360c671d9a23cedf9683318557ace524"
-  },
-  {
-   "refId": "ISO-27001",
-   "url": "https://www.iso.org/standard/27001",
-   "status": "downloaded",
-   "filename": "ISO-27001.html",
-   "sizeBytes": 129733,
-   "contentType": "text/html",
-   "sha256": "437b4b20dbe09292d198b3c2b3987a0d96ee0510a69b6005a859c5e4492f3904"
-  },
-  {
-   "refId": "SOC-2",
-   "url": "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services",
-   "status": "downloaded",
-   "filename": "SOC-2.html",
-   "sizeBytes": 407811,
-   "contentType": "text/html",
-   "sha256": "bef2b1c18aea9a02b0f41f25eb2c2545ec9e3c6040fd227df5e470d8cf725ab8"
-  },
-  {
-   "refId": "GDPR",
-   "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
-   "status": "downloaded",
-   "filename": "GDPR.html",
-   "sizeBytes": 1069868,
-   "contentType": "text/html",
-   "sha256": "de39fdb58fce093351178c22529c285b2f2a0c0ac3cec17f2d65afa243e6f33f"
-  },
-  {
-   "refId": "HITECH",
-   "url": "https://www.hhs.gov/hipaa/for-professionals/special-topics/hitech-act-enforcement-interim-final-rule/index.html",
-   "status": "downloaded",
-   "filename": "HITECH.html",
-   "sizeBytes": 201468,
-   "contentType": "text/html",
-   "sha256": "3ee47f11832f3fbb2d53aaaa6927bff7516883f7e65d02584705de9067629e68"
-  },
-  {
-   "refId": "FDA-21CFR11",
-   "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/part-11-electronic-records-electronic-signatures-scope-and-application",
-   "status": "downloaded",
-   "filename": "FDA-21CFR11.html",
-   "sizeBytes": 74732,
-   "contentType": "text/html",
-   "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9"
-  },
-  {
-   "refId": "FEDRAMP",
-   "url": "https://www.fedramp.gov",
-   "status": "downloaded",
-   "filename": "FEDRAMP.html",
-   "sizeBytes": 4338020,
-   "contentType": "text/html",
-   "sha256": "08259f62a6aaff888214eea9bb7a00c5b21cb3ea8200f39ae5338173c4f5715c"
-  },
-  {
-   "refId": "NATO-4774",
-   "url": "https://www.nato.int/cps/en/natohq/topics_78170.htm",
-   "status": "downloaded",
-   "filename": "NATO-4774.html",
-   "sizeBytes": 384504,
-   "contentType": "text/html",
-   "sha256": "5299f2ad011fa77f273f3516d19d39c4370a5358408a25df46e5832492ed1137"
-  },
-  {
-   "refId": "ISO-SAE-21434",
-   "url": "https://www.iso.org/standard/70918.html",
-   "status": "downloaded",
-   "filename": "ISO-SAE-21434.html",
-   "sizeBytes": 90868,
-   "contentType": "text/html",
-   "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503"
-  },
-  {
-   "refId": "FERPA",
-   "url": "https://studentprivacy.ed.gov/ferpa",
-   "status": "downloaded",
-   "filename": "FERPA.html",
-   "sizeBytes": 133108,
-   "contentType": "text/html",
-   "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
-  },
-  {
-   "refId": "COPPA",
-   "url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
-   "status": "downloaded",
-   "filename": "COPPA.html",
-   "sizeBytes": 1011796,
-   "contentType": "text/html",
-   "sha256": "7e63a881e2914f4fbd67d0b590b33eb1c19132013ee22c6ca43676232af9bf7e"
-  },
-  {
-   "refId": "TISAX",
-   "url": "https://portal.enx.com/en-US/TISAX/",
-   "status": "downloaded",
-   "filename": "TISAX.html",
-   "sizeBytes": 38915,
-   "contentType": "text/html",
-   "sha256": "75a961b27923214b35a21cadaba4eae07875e47892eeae4a440d70517fe4a5aa"
-  },
-  {
-   "refId": "MICA",
-   "url": "https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica",
-   "status": "downloaded",
-   "filename": "MICA.html",
-   "sizeBytes": 87897,
-   "contentType": "text/html",
-   "sha256": "7276605f14565e4cf326a9f25f8da5786d8ae1b5cee6d2554df921d40e48b131"
-  },
-  {
-   "refId": "TSA-PIPELINE",
-   "url": "https://www.tsa.gov/sd-and-ea",
-   "status": "downloaded",
-   "filename": "TSA-PIPELINE.html",
-   "sizeBytes": 72043,
-   "contentType": "text/html",
-   "sha256": "8c50f71650dfec2dde006157a64c607c5bd4c7ccd98a73ca855760e2bb65ad0d"
-  },
-  {
-   "refId": "NIST-IR-8547",
-   "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
-   "status": "downloaded",
-   "filename": "NIST-IR-8547.html",
-   "sizeBytes": 45146,
-   "contentType": "text/html",
-   "sha256": "6a485a33f4ffa3809b2faa955d002382570090d77e740ea034372e628ca3b3f2"
-  },
-  {
-   "refId": "ASD-ISM",
-   "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
-   "status": "downloaded",
-   "filename": "ASD-ISM.html",
-   "sizeBytes": 362237,
-   "contentType": "text/html",
-   "sha256": "7a8963c83d5c58dc75ae955ca2e5a81d28c63c10cdcbbed140b821dfa73e64fa"
-  },
-  {
-   "refId": "CCCS-ITSM",
-   "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
-   "status": "downloaded",
-   "filename": "CCCS-ITSM.html",
-   "sizeBytes": 145788,
-   "contentType": "text/html",
-   "sha256": "82eef746d6bfad1e28914baa90631f0656b774ffd8a36661015f524be73b13c8"
-  },
-  {
-   "refId": "EU-REC-2024-1101",
-   "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024H1101",
-   "status": "downloaded",
-   "filename": "EU-REC-2024-1101.html",
-   "sizeBytes": 280322,
-   "contentType": "text/html",
-   "sha256": "2f729e3e354002c44b2e0c85aded90bd5701b86313670e9856dc1b6fb8683c9d"
-  },
-  {
-   "refId": "BSI-TR-02102",
-   "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html",
-   "status": "downloaded",
-   "filename": "BSI-TR-02102.html",
-   "sizeBytes": 58509,
-   "contentType": "text/html",
-   "sha256": "ade25b413fb81a367ee12e76ebcf081370efac9036931438d65dc6cafa11a79f"
-  },
-  {
-   "refId": "UK-NCSC",
-   "url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
-   "status": "downloaded",
-   "filename": "UK-NCSC.html",
-   "sizeBytes": 173339,
-   "contentType": "text/html",
-   "sha256": "018ae9f0044d2d10d6dbd8b999136d9695a114b5a28896012a38bcefd7720754"
-  },
-  {
-   "refId": "CRYPTREC",
-   "url": "https://www.cryptrec.go.jp/report/cryptrec-gl-2007-2024.pdf",
-   "status": "downloaded",
-   "filename": "CRYPTREC.pdf",
-   "sizeBytes": 1312893,
-   "contentType": "application/pdf",
-   "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d"
-  },
-  {
-   "refId": "KPQC-STD",
-   "url": "https://kpqc.or.kr/contents/01_company/sub01.html",
-   "status": "downloaded",
-   "filename": "KPQC-STD.html",
-   "sizeBytes": 11354,
-   "contentType": "text/html",
-   "sha256": "ea21507578bbf431256e0b36ab9a058aae622c932fbb4198c2ad1dd096b86aa6"
-  },
-  {
-   "refId": "OSCCA-NGCC",
-   "url": "https://www.niccs.org.cn/niccs/Notice/pc/content/content_1937428197396713472.html",
-   "status": "downloaded",
-   "filename": "OSCCA-NGCC.html",
-   "sizeBytes": 14790,
-   "contentType": "text/html",
-   "sha256": "09d6f3cba5c7554d26620881dce329e269d1e9ff6f40b2aef1976a9c814aa476"
-  },
-  {
-   "refId": "NCSC-CH",
-   "url": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/einschaetzung_bacs_pqc-en.pdf.download.pdf/einschaetzung_bacs_pqc-en.pdf",
-   "status": "downloaded",
-   "filename": "NCSC-CH.pdf",
-   "sizeBytes": 79841,
-   "contentType": "application/pdf",
-   "sha256": "1240e120b0e9b5e2205caf9a739d9c249f05372bddd747a9f7f480ec3711303c"
-  },
-  {
-   "refId": "NCSC-NL",
-   "url": "https://www.ncsc.nl/api/media/sites/default/files/Make_your_organization_quantum_secure.pdf",
-   "status": "downloaded",
-   "filename": "NCSC-NL.pdf",
-   "sizeBytes": 249724,
-   "contentType": "application/pdf",
-   "sha256": "c7717942eba52ede8fca8ccda727ba73cadaeb48dc480d2808da653d586bb380"
-  },
-  {
-   "refId": "CRYPTREC-BODY",
-   "url": "https://www.cryptrec.go.jp/about.html",
-   "status": "downloaded",
-   "filename": "CRYPTREC-BODY.html",
-   "sizeBytes": 11428,
-   "contentType": "text/html",
-   "sha256": "a06a4e0744dd132de975cb862c2152e9540c8244871e07e453a831a4c24f93ad"
-  },
-  {
-   "refId": "KISA-BODY",
-   "url": "https://www.kisa.or.kr/EN/402",
-   "status": "downloaded",
-   "filename": "KISA-BODY.html",
-   "sizeBytes": 30602,
-   "contentType": "text/html",
-   "sha256": "d2dcea6c93d8993a99d263be5d1b235471963541795368c62be700ad9146f737"
-  },
-  {
-   "refId": "OSCCA-BODY",
-   "url": "https://www.sca.gov.cn/sca/jggk/index.shtml",
-   "status": "downloaded",
-   "filename": "OSCCA-BODY.html",
-   "sizeBytes": 31771,
-   "contentType": "text/html",
-   "sha256": "77636d8bb49241707363c4b86bfc9053189f90497e50060d61d255bcca5e24b1"
-  },
-  {
-   "refId": "ETSI",
-   "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
-   "status": "downloaded",
-   "filename": "ETSI.html",
-   "sizeBytes": 170253,
-   "contentType": "text/html",
-   "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c"
-  },
-  {
-   "refId": "NSA",
-   "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
-   "status": "downloaded",
-   "filename": "NSA.pdf",
-   "sizeBytes": 586858,
-   "contentType": "application/pdf",
-   "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
-  },
-  {
-   "refId": "CMMC",
-   "url": "https://dodcio.defense.gov/CMMC/About/",
-   "status": "downloaded",
-   "filename": "CMMC.html",
-   "sizeBytes": 44667,
-   "contentType": "text/html",
-   "sha256": "79c02a3c508f02038323576c855a3cb838000d25b5fdce8f9de60f2275e83a07"
-  },
-  {
-   "refId": "FISMA",
-   "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories/federal-information-security-modernization-act",
-   "status": "downloaded",
-   "filename": "FISMA.html",
-   "sizeBytes": 68850,
-   "contentType": "text/html",
-   "sha256": "a377b38d05cdff0547a3c94a85c6a16b03a21d9612738c3bfb4d432699ff6395"
-  },
-  {
-   "refId": "EU-CRA",
-   "url": "https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act",
-   "status": "downloaded",
-   "filename": "EU-CRA.html",
-   "sizeBytes": 59376,
-   "contentType": "text/html",
-   "sha256": "e7701ead8ee69dc6de0ab0cfbcac64334138210992d02d2cc4198cfc9f2910e6"
-  },
-  {
-   "refId": "INDIA-DST-PQC",
-   "url": "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
-   "status": "downloaded",
-   "filename": "INDIA-DST-PQC.pdf",
-   "sizeBytes": 1982388,
-   "contentType": "application/pdf",
-   "sha256": "461d8b42aea3847a3f9083e369065eff7985b03f8e4b1e9974f236ce93d99f31"
-  },
-  {
-   "refId": "HKMA-PQC",
-   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/07/20260727-3/",
-   "status": "downloaded",
-   "filename": "HKMA-PQC.html",
-   "sizeBytes": 81675,
-   "contentType": "text/html",
-   "sha256": "01b063da3ec1dd467dde754a3941ee014c7970edeeca426bac7f530310b925c1"
-  },
-  {
-   "refId": "CISA-PQC-PROCUREMENT",
-   "url": "https://www.cisa.gov/quantum",
-   "status": "downloaded",
-   "filename": "CISA-PQC-PROCUREMENT.html",
-   "sizeBytes": 71066,
-   "contentType": "text/html",
-   "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
-  },
-  {
-   "refId": "G7-CEG-PQC",
-   "url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
-   "status": "downloaded",
-   "filename": "G7-CEG-PQC.pdf",
-   "sizeBytes": 283430,
-   "contentType": "application/pdf",
-   "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
-  },
-  {
-   "refId": "CAB-FORUM-SMC013",
-   "url": "https://cabforum.org/",
-   "status": "downloaded",
-   "filename": "CAB-FORUM-SMC013.html",
-   "sizeBytes": 20006,
-   "contentType": "text/html",
-   "sha256": "b122e2fd62eae06c058277d81f77803a75620024dd7d36a267c01aa19059a3ca"
-  },
-  {
-   "refId": "ACVP",
-   "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program",
-   "status": "downloaded",
-   "filename": "ACVP.html",
-   "sizeBytes": 64417,
-   "contentType": "text/html",
-   "sha256": "4e0d23a9120ae00f52d44810767f8871866d8d6760829c4f77b6c090444ea944"
-  },
-  {
-   "refId": "TAIWAN-MODA-PQC",
-   "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
-   "status": "downloaded",
-   "filename": "TAIWAN-MODA-PQC.html",
-   "sizeBytes": 78989,
-   "contentType": "text/html",
-   "sha256": "9b549744caffffaae7cb0ab6dcc41d7d91ca44c919e92de75d93d0a8ce54e466"
-  },
-  {
-   "refId": "MALAYSIA-NACSA-PQC",
-   "url": "https://www.nacsa.gov.my/",
-   "status": "downloaded",
-   "filename": "MALAYSIA-NACSA-PQC.html",
-   "sizeBytes": 31865,
-   "contentType": "text/html",
-   "sha256": "3bb61b903c81b617df5c231c84d72e2522cc88eb3fad3b346a0f46e537495b54"
-  },
-  {
-   "refId": "SAUDI-NCA-PQC",
-   "url": "https://nca.gov.sa/en/",
-   "status": "downloaded",
-   "filename": "SAUDI-NCA-PQC.html",
-   "sizeBytes": 615083,
-   "contentType": "text/html",
-   "sha256": "3a2bd64738593cde6d4a2520d9a7b06ed4b5dd9f5747b76d650916d3d50831b9"
-  },
-  {
-   "refId": "BIS-158-PQC",
-   "url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
-   "status": "downloaded",
-   "filename": "BIS-158-PQC.pdf",
-   "sizeBytes": 2159075,
-   "contentType": "application/pdf",
-   "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c"
-  },
-  {
-   "refId": "3GPP-PQC",
-   "url": "https://www.3gpp.org/",
-   "status": "downloaded",
-   "filename": "3GPP-PQC.html",
-   "sizeBytes": 410394,
-   "contentType": "text/html",
-   "sha256": "b229691fc9785f7425b11a1c2f89121f694b648bbad23d4dc639b89d3610e1a2"
-  },
-  {
-   "refId": "TCG-TPM-PQC",
-   "url": "https://trustedcomputinggroup.org/",
-   "status": "downloaded",
-   "filename": "TCG-TPM-PQC.html",
-   "sizeBytes": 162561,
-   "contentType": "text/html",
-   "sha256": "e9de5f26e1362a25aa5457aaaf8d9af6a796bafbd88c78e5e1cb07793e621c14"
-  },
-  {
-   "refId": "NIST-NCCOE-PQC",
-   "url": "https://www.nccoe.nist.gov/applied-cryptography/migration-to-pqc",
-   "status": "downloaded",
-   "filename": "NIST-NCCOE-PQC.html",
-   "sizeBytes": 114095,
-   "contentType": "text/html",
-   "sha256": "2a575345d0b1aca54327cd564f482a0820d89f38e9718446a07156e998563699"
-  },
-  {
-   "refId": "NIST-SP800-131A",
-   "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
-   "status": "downloaded",
-   "filename": "NIST-SP800-131A.html",
-   "sizeBytes": 46624,
-   "contentType": "text/html",
-   "sha256": "a18e43e605ebdf95d8729290929776d3bb8164f8de6cad7673285ae8f742b10c"
-  },
-  {
-   "refId": "ITALY-ACN-PQC",
-   "url": "https://www.acn.gov.it/",
-   "status": "downloaded",
-   "filename": "ITALY-ACN-PQC.html",
-   "sizeBytes": 218028,
-   "contentType": "text/html",
-   "sha256": "9e206fd081291c4a5033ca6a411dbab3e2f2974c39a1b968a08bef5957e56666"
-  },
-  {
-   "refId": "BAHRAIN-NCSC-PQC",
-   "url": "https://www.ncsc.gov.bh/en/index.html",
-   "status": "downloaded",
-   "filename": "BAHRAIN-NCSC-PQC.html",
-   "sizeBytes": 31873,
-   "contentType": "text/html",
-   "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3"
-  },
-  {
-   "refId": "UK-CMORG-PQC",
-   "url": "https://www.cmorg.org.uk/",
-   "status": "downloaded",
-   "filename": "UK-CMORG-PQC.html",
-   "sizeBytes": 34765,
-   "contentType": "text/html",
-   "sha256": "4d7a334a92b46fa61965bc981f1fc2069bacc15992b7e1843000648024c54643"
-  },
-  {
-   "refId": "PQCC-ROADMAP",
-   "url": "https://pqcc.org/",
-   "status": "downloaded",
-   "filename": "PQCC-ROADMAP.html",
-   "sizeBytes": 227763,
-   "contentType": "text/html",
-   "sha256": "5e81e1befff28698e210f5e8e6a0aa97a4d68f1dbb171eb3a198fea15ffd42af"
-  },
-  {
-   "refId": "IEEE-1609-PQC",
-   "url": "https://standards.ieee.org/",
-   "status": "downloaded",
-   "filename": "IEEE-1609-PQC.html",
-   "sizeBytes": 116047,
-   "contentType": "text/html",
-   "sha256": "2294382b352e00d04705e9d4bf378391754e5019d7ebd528e06da9ce82af420e"
-  },
-  {
-   "refId": "OASIS-PKCS11",
-   "url": "https://www.oasis-open.org/committees/pkcs11/",
-   "status": "downloaded",
-   "filename": "OASIS-PKCS11.html",
-   "sizeBytes": 44418,
-   "contentType": "text/html",
-   "sha256": "e51a4097a92f0b44958c6726d2513c02aeca46789481cb9ac96d9ee6bcb99d27"
-  },
-  {
-   "refId": "3GPP-SA3",
-   "url": "https://www.3gpp.org/specifications-groups/sa-plenary/sa3-security",
-   "status": "downloaded",
-   "filename": "3GPP-SA3.html",
-   "sizeBytes": 136856,
-   "contentType": "text/html",
-   "sha256": "e79c23c24d6109a4212fe6bc506ae1800d0e79aecbb534c3001f523a6f4010e0"
-  },
-  {
-   "refId": "FSISAC-PQC",
-   "url": "https://www.fsisac.com/",
-   "status": "downloaded",
-   "filename": "FSISAC-PQC.html",
-   "sizeBytes": 45573,
-   "contentType": "text/html",
-   "sha256": "02fa8b52a517b968d18e6d2884cb2a5ab37729797202218d200885f9dfb600f8"
-  },
-  {
-   "refId": "ASC-X9",
-   "url": "https://x9.org/pki-home/",
-   "status": "downloaded",
-   "filename": "ASC-X9.html",
-   "sizeBytes": 200837,
-   "contentType": "text/html",
-   "sha256": "d4c9c67369c46247f3c7e66edb1a382418ebd58e310c548ede65d3b5d111634c"
-  },
-  {
-   "refId": "PKI-CONSORTIUM",
-   "url": "https://pkic.org/",
-   "status": "downloaded",
-   "filename": "PKI-CONSORTIUM.html",
-   "sizeBytes": 97139,
-   "contentType": "text/html",
-   "sha256": "b38db2251f99e1ec7a1acf1fb96dc822a8f50519f3ea52192e5f115607c09f66"
-  },
-  {
-   "refId": "CSA-QSC",
-   "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
-   "status": "downloaded",
-   "filename": "CSA-QSC.html",
-   "sizeBytes": 85365,
-   "contentType": "text/html",
-   "sha256": "8bab6b8b94b7ccc60d320212a7625b8d1f63f02db73bddebb466af4a07f41a6c"
-  },
-  {
-   "refId": "ITU-T-SG17",
-   "url": "https://www.itu.int/en/ITU-T/studygroups/2022-2024/17/Pages/default.aspx",
-   "status": "downloaded",
-   "filename": "ITU-T-SG17.html",
-   "sizeBytes": 97936,
-   "contentType": "text/html",
-   "sha256": "700e446145d65c5ed67cf4c4082bb02cc100678428926dead08a4a2ab2133490"
-  },
-  {
-   "refId": "NIST-SP800-208",
-   "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf",
-   "status": "downloaded",
-   "filename": "NIST-SP800-208.pdf",
-   "sizeBytes": 872986,
-   "contentType": "application/pdf",
-   "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f"
-  },
-  {
-   "refId": "ISO-19790",
-   "url": "https://www.iso.org/standard/82423.html",
-   "status": "downloaded",
-   "filename": "ISO-19790.html",
-   "sizeBytes": 83963,
-   "contentType": "text/html",
-   "sha256": "3c7470af9642cc11b9b4d7d460e3a8010df4897cdbb86ac6b1b9b9155041a517"
-  },
-  {
-   "refId": "ETSI-QKD-SERIES",
-   "url": "https://www.etsi.org/committee/1430-qkd",
-   "status": "downloaded",
-   "filename": "ETSI-QKD-SERIES.html",
-   "sizeBytes": 154833,
-   "contentType": "text/html",
-   "sha256": "18b18b12963b795708a2417fb69fc1a571157df0278cc07ea398d095976b06bf"
-  },
-  {
-   "refId": "ANSSI-CERT",
-   "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/",
-   "status": "downloaded",
-   "filename": "ANSSI-CERT.html",
-   "sizeBytes": 25497,
-   "contentType": "text/html",
-   "sha256": "c9f981ac4fc1d1c3877eab72842c08c6368f27df9c8b3976bb5f11dd2a311b3d"
-  },
-  {
-   "refId": "JCMVP",
-   "url": "https://www.ipa.go.jp/en/security/jcmvp/index.html",
-   "status": "downloaded",
-   "filename": "JCMVP.html",
-   "sizeBytes": 61208,
-   "contentType": "text/html",
-   "sha256": "e83e2235942f418a0b84a1deefa79a1b6af6c3c60c9813bacac66f95e39bd686"
-  },
-  {
-   "refId": "SG-CSA-QUANTUM",
-   "url": "https://www.csa.gov.sg/",
-   "status": "downloaded",
-   "filename": "SG-CSA-QUANTUM.html",
-   "sizeBytes": 462280,
-   "contentType": "text/html",
-   "sha256": "31d2240c45000ca4debba52537514fb4fa11cf757019b2213cd946913c9f1e25"
-  },
-  {
-   "refId": "BRAZIL-ANPD-PQC",
-   "url": "https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-vf.pdf",
-   "status": "downloaded",
-   "filename": "BRAZIL-ANPD-PQC.pdf",
-   "sizeBytes": 366201,
-   "contentType": "application/pdf",
-   "sha256": "b720ea49fc3c99400b8156515dab17a82a63806b6c21da34f9fb868ac70e4f04"
-  },
-  {
-   "refId": "DENMARK-CFCS-PQC",
-   "url": "https://cfcs.dk/",
-   "status": "downloaded",
-   "filename": "DENMARK-CFCS-PQC.html",
-   "sizeBytes": 69368,
-   "contentType": "text/html",
-   "sha256": "2202423c2479969fa9f86cd817905825ec0d221ca6df215596414f83afe8906a"
-  },
-  {
-   "refId": "DFS-NYCRR-500",
-   "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
-   "status": "downloaded",
-   "filename": "DFS-NYCRR-500.html",
-   "sizeBytes": 205519,
-   "contentType": "text/html",
-   "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50"
-  },
-  {
-   "refId": "PQCA",
-   "url": "https://www.linuxfoundation.org/press/announcing-the-post-quantum-cryptography-alliance-pqca",
-   "status": "downloaded",
-   "filename": "PQCA.html",
-   "sizeBytes": 96915,
-   "contentType": "text/html",
-   "sha256": "c55aee4b0c000da8ea861538032e3690f9c814fc7c5b1e0dc9229712b0852e5c"
-  },
-  {
-   "refId": "PQC-COALITION",
-   "url": "https://pqc-coalition.org",
-   "status": "downloaded",
-   "filename": "PQC-COALITION.html",
-   "sizeBytes": 227763,
-   "contentType": "text/html",
-   "sha256": "800cb160597c35b058463228be4ea21fba4d849ba991df3dd517823c95e9c68b"
-  },
-  {
-   "refId": "ACSC-ESSENTIAL-EIGHT",
-   "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
-   "status": "downloaded",
-   "filename": "ACSC-ESSENTIAL-EIGHT.html",
-   "sizeBytes": 435584,
-   "contentType": "text/html",
-   "sha256": "aa03f4809c88029be96dae66c6f63363cdb290069404374e9294c4df9a15b9e5"
-  },
-  {
-   "refId": "AU-PRIVACY-ACT",
-   "url": "https://www.oaic.gov.au/privacy/australian-privacy-principles/read-the-australian-privacy-principles",
-   "status": "downloaded",
-   "filename": "AU-PRIVACY-ACT.html",
-   "sizeBytes": 98778,
-   "contentType": "text/html",
-   "sha256": "9e81ed292bf46b1e300de0e5f2c4b4a4812180634554ab94a05936d82574a0c6"
-  },
-  {
-   "refId": "AUSTRAC-AML-CTF",
-   "url": "https://www.austrac.gov.au/amlctf-reform",
-   "status": "downloaded",
-   "filename": "AUSTRAC-AML-CTF.html",
-   "sizeBytes": 137131,
-   "contentType": "text/html",
-   "sha256": "7b39cbaccfc86c30f89ac4bc00871262efebb7ad94368a372034df97893fd514"
-  },
-  {
-   "refId": "OSFI-B13-PQC",
-   "url": "https://www.osfi-bsif.gc.ca/en/risks/technology-cyber-risk-management",
-   "status": "downloaded",
-   "filename": "OSFI-B13-PQC.html",
-   "sizeBytes": 163390,
-   "contentType": "text/html",
-   "sha256": "cdc5da1ddfe5e25ed867261c6f76ec8af284d8046b27834d09065aa0e5db6564"
-  },
-  {
-   "refId": "CFDIR-QR-2023",
-   "url": "https://ised-isde.canada.ca",
-   "status": "downloaded",
-   "filename": "CFDIR-QR-2023.html",
-   "sizeBytes": 10623,
-   "contentType": "text/html",
-   "sha256": "7ce3ab2f385247fc2b77e713280eccf5d520013f85a2715bfedd8ff1a2cef760"
-  },
-  {
-   "refId": "UK-DSIT-CNI-PQC",
-   "url": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
-   "status": "downloaded",
-   "filename": "UK-DSIT-CNI-PQC.pdf",
-   "sizeBytes": 2292209,
-   "contentType": "application/pdf",
-   "sha256": "7b0f7f4eb4f48efaac7311c8c6841787a2bf8aed3e3f11a4b76e49f0c913ad25"
-  },
-  {
-   "refId": "ACPR",
-   "url": "https://acpr.banque-france.fr",
-   "status": "downloaded",
-   "filename": "ACPR.html",
-   "sizeBytes": 222657,
-   "contentType": "text/html",
-   "sha256": "cb7cfaa9c970195948e1f90219873b421b867767182c4d189b2fc3b5514d1f92"
-  },
-  {
-   "refId": "AMF-FR",
-   "url": "https://www.amf-france.org",
-   "status": "downloaded",
-   "filename": "AMF-FR.html",
-   "sizeBytes": 72104,
-   "contentType": "text/html",
-   "sha256": "2a9dee436aababbc79c26a83ce7eb8c01ca8a058aa62b7ed8d0039ecc89ef7a6"
-  },
-  {
-   "refId": "DSPF-PQC",
-   "url": "https://www.defence.gov.au/business-industry/industry-governance/defence-security-principles-framework",
-   "status": "downloaded",
-   "filename": "DSPF-PQC.html",
-   "sizeBytes": 17251,
-   "contentType": "text/html",
-   "sha256": "4db7c334ecdcd827c038160d563fe7ec598379f4c8be6177f53627dbdbabb43c"
-  },
-  {
-   "refId": "ZA-POPIA",
-   "url": "https://www.justice.gov.za/legislation/acts/2013-004.pdf",
-   "status": "downloaded",
-   "filename": "ZA-POPIA.pdf",
-   "sizeBytes": 237928,
-   "contentType": "application/pdf",
-   "sha256": "e29efca4eb14eb7f3fbfe779e972b90d8803016d8073648fd98084a2990e46fb"
-  },
-  {
-   "refId": "NG-NDPR",
-   "url": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
-   "status": "downloaded",
-   "filename": "NG-NDPR.pdf",
-   "sizeBytes": 1518494,
-   "contentType": "application/pdf",
-   "sha256": "38e4ac47630589f94ad0a654800dff58a51d87d95456bc01d239e9172e020e92"
-  },
-  {
-   "refId": "EG-PDPL",
-   "url": "https://mcit.gov.eg",
-   "status": "downloaded",
-   "filename": "EG-PDPL.html",
-   "sizeBytes": 62829,
-   "contentType": "text/html",
-   "sha256": "ee590d26ca103e1faaed9f850408049db82ac39aa16f502717868c3a76606ecf"
-  },
-  {
-   "refId": "AU-MALABO",
-   "url": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
-   "status": "downloaded",
-   "filename": "AU-MALABO.pdf",
-   "sizeBytes": 13794400,
-   "contentType": "application/pdf",
-   "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485"
-  },
-  {
-   "refId": "EUCC-V2",
-   "url": "https://certification.enisa.europa.eu/certification-library/eucc-certification-scheme_en",
-   "status": "downloaded",
-   "filename": "EUCC-V2.html",
-   "sizeBytes": 92813,
-   "contentType": "text/html",
-   "sha256": "e560f35a6d31911c5e22ad689e17550a588b93ea41a738d07eae205969dfb44a"
-  },
-  {
-   "refId": "BSI-PQC-ADVISORY",
-   "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html",
-   "status": "downloaded",
-   "filename": "BSI-PQC-ADVISORY.html",
-   "sizeBytes": 60988,
-   "contentType": "text/html",
-   "sha256": "94dba659ea627f07b4641dc7eb03de43d18f00cd959db1a2f3fa51ac67f1a7b2"
-  },
-  {
-   "refId": "PRA-SS2-21",
-   "url": "https://www.bankofengland.co.uk/-/media/boe/files/prudential-regulation/supervisory-statement/2021/ss121-march-22.pdf",
-   "status": "downloaded",
-   "filename": "PRA-SS2-21.pdf",
-   "sizeBytes": 1032802,
-   "contentType": "application/pdf",
-   "sha256": "a56b506c3a04b58afd4a984beb46e916a23288a7efda90054254f6ef29352577"
-  },
-  {
-   "refId": "ICO-UK-ENC",
-   "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/security/encryption/",
-   "status": "downloaded",
-   "filename": "ICO-UK-ENC.html",
-   "sizeBytes": 56678,
-   "contentType": "text/html",
-   "sha256": "d69fca84043f6be8bca28afd85ae88af6214dc656389781c6183cb0022286ca3"
-  },
-  {
-   "refId": "NSM-NO-GP",
-   "url": "https://nsm.no/getfile.php/1313975-1717589722/NSM/Filer/Dokumenter/Veiledere/NSMs%20Grunnprinsipper%20for%20IKT-sikkerhet%20v2.1.pdf",
-   "status": "downloaded",
-   "filename": "NSM-NO-GP.pdf",
-   "sizeBytes": 2276347,
-   "contentType": "application/pdf",
-   "sha256": "1ad86834616bb467076fe0ae1ac9c959e40b244dde90658cd46ecac11f0d01d3"
-  },
-  {
-   "refId": "ARGENTINA-ONTI",
-   "url": "https://www.argentina.gob.ar/jefatura/innovacion-publica",
-   "status": "downloaded",
-   "filename": "ARGENTINA-ONTI.html",
-   "sizeBytes": 46130,
-   "contentType": "text/html",
-   "sha256": "40091f57ed53e58c3d16b9119bb23b16a3fb981b8098e94c2ea7c34776a22384"
-  },
-  {
-   "refId": "PH-DPA",
-   "url": "https://www.privacy.gov.ph",
-   "status": "downloaded",
-   "filename": "PH-DPA.html",
-   "sizeBytes": 271566,
-   "contentType": "text/html",
-   "sha256": "b083682fd2d75425f998483fd2942df0bbd598c1eb65180357318439399b1521"
-  },
-  {
-   "refId": "EE-CSA",
-   "url": "https://www.riigiteataja.ee/en/eli/ee/523052018003/consolide/current",
-   "status": "downloaded",
-   "filename": "EE-CSA.html",
-   "sizeBytes": 531785,
-   "contentType": "text/html",
-   "sha256": "a2e9a1d6b7b09d44801d183fa3cccdeac4db6c299c2542667aed60962b38ad41"
-  },
-  {
-   "refId": "IE-NCSC",
-   "url": "https://www.gov.ie/en/department-of-justice-home-affairs-and-migration/publications/general-scheme-of-the-national-cyber-security-bill-2024/",
-   "status": "downloaded",
-   "filename": "IE-NCSC.html",
-   "sizeBytes": 334412,
-   "contentType": "text/html",
-   "sha256": "0e094352bed87915bcfd3c6dc914c55c5d6484bc9053c9db67b3fcb9365c88f8"
-  },
-  {
-   "refId": "BE-NIS2",
-   "url": "https://ccb.belgium.be",
-   "status": "downloaded",
-   "filename": "BE-NIS2.html",
-   "sizeBytes": 104749,
-   "contentType": "text/html",
-   "sha256": "c413c264d57fcb425765d37d94fd942419fc699f3dc41db3d031f56669c661a7"
-  },
-  {
-   "refId": "AT-NIS2",
-   "url": "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20010536",
-   "status": "downloaded",
-   "filename": "AT-NIS2.html",
-   "sizeBytes": 203570,
-   "contentType": "text/html",
-   "sha256": "78ab4d74b4caa79c75d4659ba5d0146f7fa9021092ab0a4139f418f363f85002"
-  },
-  {
-   "refId": "PL-NCSC",
-   "url": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20180001560/O/D20181560.pdf",
-   "status": "downloaded",
-   "filename": "PL-NCSC.pdf",
-   "sizeBytes": 386485,
-   "contentType": "application/pdf",
-   "sha256": "1993ad70607dcdb2f9690c1bcac12308718d8372efb039b1f53d30e070332a14"
-  },
-  {
-   "refId": "CO-LEY1581",
-   "url": "https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981",
-   "status": "downloaded",
-   "filename": "CO-LEY1581.html",
-   "sizeBytes": 72931,
-   "contentType": "text/html",
-   "sha256": "926ae19c2b949ae37850331a7e6055863b7032e2881496992d19d38950fafbb9"
-  },
-  {
-   "refId": "PE-LDP",
-   "url": "https://cdn.www.gob.pe/uploads/document/file/2011398/Ley%20N%C2%BA%2029733%20-%20Ley%20de%20protecci%C3%B3n%20de%20datos%20personales.pdf.pdf",
-   "status": "downloaded",
-   "filename": "PE-LDP.pdf",
-   "sizeBytes": 258188,
-   "contentType": "application/pdf",
-   "sha256": "f45d432b337aa7965fdf38497b3f5c12dcd62a1107b3b13ff86687f0be15125d"
-  },
-  {
-   "refId": "UY-LPDP",
-   "url": "https://www.impo.com.uy/bases/leyes/18331-2008",
-   "status": "downloaded",
-   "filename": "UY-LPDP.html",
-   "sizeBytes": 82896,
-   "contentType": "text/html",
-   "sha256": "edd9f8f6dafc5d8da6e9f99e44dc7e9f69a9c076c54193a8596cc0a1e96b4671"
-  },
-  {
-   "refId": "TR-KVKK",
-   "url": "https://www.kvkk.gov.tr/Icerik/6649/Personal-Data-Protection-Law",
-   "status": "downloaded",
-   "filename": "TR-KVKK.html",
-   "sizeBytes": 351217,
-   "contentType": "text/html",
-   "sha256": "9d7e58a14819da510bfb596fff69cf1e13aff30b202accf86cad37a020d7b0cf"
-  },
-  {
-   "refId": "faa-ac-119-1-ansp",
-   "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_119-1.pdf",
-   "status": "downloaded",
-   "filename": "faa-ac-119-1-ansp.pdf",
-   "sizeBytes": 293414,
-   "contentType": "application/pdf",
-   "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14"
-  },
-  {
-   "refId": "common-criteria-v3.1r5-part1",
-   "url": "https://www.commoncriteriaportal.org/files/ccfiles/CCPART1V3.1R5.pdf",
-   "status": "downloaded",
-   "filename": "common-criteria-v3.1r5-part1.pdf",
-   "sizeBytes": 1327388,
-   "contentType": "application/pdf",
-   "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326"
-  },
-  {
-   "refId": "cisa-pqc-initiative",
-   "url": "https://www.cisa.gov/quantum",
-   "status": "downloaded",
-   "filename": "cisa-pqc-initiative.html",
-   "sizeBytes": 71066,
-   "contentType": "text/html",
-   "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
-  },
-  {
-   "refId": "oscca-cryptographic-regulations-cn",
-   "url": "http://www.oscca.gov.cn/",
-   "status": "downloaded",
-   "filename": "oscca-cryptographic-regulations-cn.html",
-   "sizeBytes": 41773,
-   "contentType": "text/html",
-   "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
-  },
-  {
-   "refId": "bsi-cc-certification",
-   "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
-   "status": "downloaded",
-   "filename": "bsi-cc-certification.html",
-   "sizeBytes": 63437,
-   "contentType": "text/html",
-   "sha256": "f19b4cf9480c1fc27b6af7da9f792b8e35002d0f98eec6eb906a3843b90052cd"
-  },
-  {
-   "refId": "etsi-ts-104-015-qsc-hybrid-key-exchange",
-   "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
-   "status": "downloaded",
-   "filename": "etsi-ts-104-015-qsc-hybrid-key-exchange.pdf",
-   "sizeBytes": 257923,
-   "contentType": "application/pdf",
-   "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288"
-  },
-  {
-   "refId": "fca-operational-resilience-uk",
-   "url": "https://www.fca.org.uk/firms/operational-resilience",
-   "status": "downloaded",
-   "filename": "fca-operational-resilience-uk.html",
-   "sizeBytes": 198901,
-   "contentType": "text/html",
-   "sha256": "da67befaee2ceb529dd64b373cf635b999d8762e1ab252897046d7a95e6f8994"
-  },
-  {
-   "refId": "cert-in-directions-70b-2022",
-   "url": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
-   "status": "downloaded",
-   "filename": "cert-in-directions-70b-2022.pdf",
-   "sizeBytes": 434961,
-   "contentType": "application/pdf",
-   "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f"
-  },
-  {
-   "refId": "mas-technology-risk-management-guidelines",
-   "url": "https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines",
-   "status": "downloaded",
-   "filename": "mas-technology-risk-management-guidelines.html",
-   "sizeBytes": 330607,
-   "contentType": "text/html",
-   "sha256": "c1d0f1453de633ec91648eef7c8b6ec7d6e4f0ad44e9668b77a6df28d7b7493b"
-  },
-  {
-   "refId": "rbi-cyber-security-framework-2016",
-   "url": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=10435",
-   "status": "downloaded",
-   "filename": "rbi-cyber-security-framework-2016.html",
-   "sizeBytes": 117956,
-   "contentType": "text/html",
-   "sha256": "54fd39586938a4672c3e1b0243954086b06a040dee7fc3cb46e510de3100feb6"
-  },
-  {
-   "refId": "gsma-pq-01",
-   "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-telco-network-impact-assessment-whitepaper-pq-01/",
-   "status": "downloaded",
-   "filename": "gsma-pq-01.html",
-   "sizeBytes": 84732,
-   "contentType": "text/html",
-   "sha256": "16a9e39f035605d330b6ec865a8aa42a8c493dd4da7220c9d935b71a6b8326b7"
-  },
-  {
-   "refId": "gsma-pq-02",
-   "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/guidelines-for-quantum-risk-management-for-telco-pq-02/",
-   "status": "downloaded",
-   "filename": "gsma-pq-02.html",
-   "sizeBytes": 84929,
-   "contentType": "text/html",
-   "sha256": "3893e59000677f4eb1bf2ed2351a2f445ac4ab56453105280d6285af8a5a83d8"
-  },
-  {
-   "refId": "gsma-pq-03",
-   "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
-   "status": "downloaded",
-   "filename": "gsma-pq-03.pdf",
-   "sizeBytes": 3260451,
-   "contentType": "application/pdf",
-   "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
-  },
-  {
-   "refId": "3gpp-rel19-pqc-study",
-   "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
-   "status": "downloaded",
-   "filename": "3gpp-rel19-pqc-study.docx",
-   "sizeBytes": 134945,
-   "contentType": "application/octet-stream",
-   "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525"
-  },
-  {
-   "refId": "3gpp-rel20-pqc",
-   "url": "https://www.3gpp.org/specifications-technologies/releases/release-20",
-   "status": "downloaded",
-   "filename": "3gpp-rel20-pqc.html",
-   "sizeBytes": 117687,
-   "contentType": "text/html",
-   "sha256": "b3d3c3d35e1e341aa5d8440658738a34028f76a08c1206e18c5aaaaa07343dfc"
-  },
-  {
-   "refId": "FIPS-203",
-   "url": "https://csrc.nist.gov/pubs/fips/203/final",
-   "status": "downloaded",
-   "filename": "FIPS-203.html",
-   "sizeBytes": 46211,
-   "contentType": "text/html",
-   "sha256": "fdb0914694769939459963932e70b4d1d0bcf3ca92a97fe5369ffe93ce5deea4"
-  },
-  {
-   "refId": "FIPS-204",
-   "url": "https://csrc.nist.gov/pubs/fips/204/final",
-   "status": "downloaded",
-   "filename": "FIPS-204.html",
-   "sizeBytes": 44928,
-   "contentType": "text/html",
-   "sha256": "3afb69357f6c4e4a8fc9f47f5621f6fd6ba42a66eefe617d8b2e263243e5d75d"
-  },
-  {
-   "refId": "FIPS-205",
-   "url": "https://csrc.nist.gov/pubs/fips/205/final",
-   "status": "downloaded",
-   "filename": "FIPS-205.html",
-   "sizeBytes": 44036,
-   "contentType": "text/html",
-   "sha256": "a51e7899de5b7a166f6356fbc40edaee76087ffbb1a980592734abdd18acc9be"
-  },
-  {
-   "refId": "OMB-M-23-02",
-   "url": "https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf",
-   "status": "downloaded",
-   "filename": "OMB-M-23-02.pdf",
-   "sizeBytes": 255063,
-   "contentType": "application/pdf",
-   "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6"
-  },
-  {
-   "refId": "NSM-10",
-   "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/",
-   "status": "downloaded",
-   "filename": "NSM-10.html",
-   "sizeBytes": 164080,
-   "contentType": "text/html",
-   "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9"
-  },
-  {
-   "refId": "EO-14412",
-   "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
-   "status": "downloaded",
-   "filename": "EO-14412.html",
-   "sizeBytes": 287561,
-   "contentType": "text/html",
-   "sha256": "70cfcfb251956c29a275e5645f4e50e07c9663271b57434692b63fdc7cc8c7c9"
-  },
-  {
-   "refId": "US-QCCPA",
-   "url": "https://www.congress.gov/bill/117th-congress/house-bill/7535/text",
-   "status": "downloaded",
-   "filename": "US-QCCPA.html",
-   "sizeBytes": 361335,
-   "contentType": "text/html",
-   "sha256": "074e4c3370e8127528c4ae6a9240203145133e5d8ac2ad9ca0cbf4e0778422fb"
-  },
-  {
-   "refId": "IETF-TLS-MLKEM",
-   "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
-   "status": "downloaded",
-   "filename": "IETF-TLS-MLKEM.html",
-   "sizeBytes": 73957,
-   "contentType": "text/html",
-   "sha256": "ce647e83d41a100acee8ab2014ba5a5411fb6370ac6eeccaefcfb4b12c6349b6"
-  },
-  {
-   "refId": "OMB-M-26-15",
-   "url": "https://www.whitehouse.gov/wp-content/uploads/2026/06/M-26-15-Execution-of-the-Migration-to-Post-Quantum-Cryptography.pdf",
-   "status": "downloaded",
-   "filename": "OMB-M-26-15.pdf",
-   "sizeBytes": 283167,
-   "contentType": "application/pdf",
-   "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c"
-  },
-  {
-   "refId": "PKCS11-V32",
-   "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
-   "status": "downloaded",
-   "filename": "PKCS11-V32.html",
-   "sizeBytes": 5478477,
-   "contentType": "text/html",
-   "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb"
-  },
-  {
-   "refId": "NERC-CIP",
-   "url": "https://www.nerc.com/globalassets/standards/reliability-standards/cip/cip-005-7.pdf",
-   "status": "downloaded",
-   "filename": "NERC-CIP.pdf",
-   "sizeBytes": 325620,
-   "contentType": "application/pdf",
-   "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425"
-  },
-  {
-   "refId": "DO-326A",
-   "url": "https://www.rtca.org/products/do-326a-electronic/",
-   "status": "downloaded",
-   "filename": "DO-326A.html",
-   "sizeBytes": 116253,
-   "contentType": "text/html",
-   "sha256": "dd22f2e34f05d4bedba48d78e17a3c16fcf34092e993f19dc317d0c09a36c88b"
-  },
-  {
-   "refId": "RTCA-DO-355A",
-   "url": "https://www.rtca.org/products/do-355a-electronic/",
-   "status": "downloaded",
-   "filename": "RTCA-DO-355A.html",
-   "sizeBytes": 116254,
-   "contentType": "text/html",
-   "sha256": "93078509a41b989e2d7eb4226a4c7f23d9f913e0ece96090c8eea4c300f0660a"
-  },
-  {
-   "refId": "MAS-CIRCULAR",
-   "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
-   "status": "downloaded",
-   "filename": "MAS-CIRCULAR.pdf",
-   "sizeBytes": 138500,
-   "contentType": "application/pdf",
-   "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f"
-  },
-  {
-   "refId": "INCD-PQC",
-   "url": "https://www.gov.il/BlobFolder/generalpage/quantum_computing/he/Best%20Practices%20-%20Organizational%20Cyber%20Readiness%20to%20the%20Post-Quantum%20Age%20v.1.85.pdf",
-   "status": "downloaded",
-   "filename": "INCD-PQC.pdf",
-   "sizeBytes": 985301,
-   "contentType": "application/pdf",
-   "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853"
-  },
-  {
-   "refId": "BOI-PQC",
-   "url": "https://boi.org.il/media/sm4f1ssu/202501en.pdf",
-   "status": "downloaded",
-   "filename": "BOI-PQC.pdf",
-   "sizeBytes": 325353,
-   "contentType": "application/pdf",
-   "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
-  },
-  {
-   "refId": "QED-C",
-   "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
-   "status": "downloaded",
-   "filename": "QED-C.html",
-   "sizeBytes": 96775,
-   "contentType": "text/html",
-   "sha256": "2cbec5b920239af4af24e119f7be815e8426c9833791dd2bac85af444bd70892"
-  },
-  {
-   "refId": "MSB-SE-CYB",
-   "url": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
-   "status": "downloaded",
-   "filename": "MSB-SE-CYB.pdf",
-   "sizeBytes": 1064410,
-   "contentType": "application/pdf",
-   "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325"
-  },
-  {
-   "refId": "NCSC-FI-PQC",
-   "url": "https://www.kyberturvallisuuskeskus.fi/fi/kvanttiturvalliset-algoritmit-ja-niihin-siirtyminen",
-   "status": "downloaded",
-   "filename": "NCSC-FI-PQC.html",
-   "sizeBytes": 176987,
-   "contentType": "text/html",
-   "sha256": "7812c4ecb879b2ab3f8a2fa180a95adf726958b72ba257b19abed0eaf4591a61"
-  },
-  {
-   "refId": "RU-TC26",
-   "url": "https://tc26.ru/standarts/natsionalnye-standarty/",
-   "status": "downloaded",
-   "filename": "RU-TC26.html",
-   "sizeBytes": 50136,
-   "contentType": "text/html",
-   "sha256": "ed427c44b55521fa8463b16fd6fc916e0b2a639ef7fa11176de5af6ed23a0931"
-  },
-  {
-   "refId": "MICA-EU-MARKETS-IN-CRYPTO-ASSE",
-   "url": "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
-   "status": "downloaded",
-   "filename": "MICA-EU-MARKETS-IN-CRYPTO-ASSE.html",
-   "sizeBytes": 1968471,
-   "contentType": "text/html",
-   "sha256": "39c056ee8cd4be30620cde7c462e668eed30d2bb603316d0f6cc5648e69f1eb4"
-  },
-  {
-   "refId": "E-ITS-ESTONIAN-INFORMATION-SEC",
-   "url": "https://www.ria.ee/en/cyber-security/management-state-information-security-measures",
-   "status": "downloaded",
-   "filename": "E-ITS-ESTONIAN-INFORMATION-SEC.html",
-   "sizeBytes": 108556,
-   "contentType": "text/html",
-   "sha256": "b11ad18287b155925a9893af0feec562473c3269c6867fe21641de7efa1b6319"
-  },
-  {
-   "refId": "CRI-PROFILE-CYBER-RISK-INSTITU",
-   "url": "https://cyberriskinstitute.org/wp-content/uploads/2024/02/Final-CRI-Profile-v2.0-Guidebook-Public.-Date-2024.02.29-1.pdf",
-   "status": "downloaded",
-   "filename": "CRI-PROFILE-CYBER-RISK-INSTITU.pdf",
-   "sizeBytes": 3118318,
-   "contentType": "application/pdf",
-   "sha256": "9103a435aefb37c97bd363123e1cd2419a41bacca54a385d8d0338e0c65c4c72"
-  },
-  {
-   "refId": "CYBERSAKERHETSLAG-SWEDEN-CYBER",
-   "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/cybersakerhetslag-20251506_sfs-2025-1506/",
-   "status": "downloaded",
-   "filename": "CYBERSAKERHETSLAG-SWEDEN-CYBER.html",
-   "sizeBytes": 342641,
-   "contentType": "text/html",
-   "sha256": "35e7e2dc7b4337bf02b6f88bf9482b2e45d69828572ea95c15741aee727cdb24"
-  },
-  {
-   "refId": "OMB-MEMORANDUM-M-19-03",
-   "url": "https://www.whitehouse.gov/wp-content/uploads/2018/12/M-19-03.pdf",
-   "status": "downloaded",
-   "filename": "OMB-MEMORANDUM-M-19-03.pdf",
-   "sizeBytes": 355599,
-   "contentType": "application/pdf",
-   "sha256": "0a9a5232558f41c4f772db4b6894bc9d47aea627faccd0bfa428637d6280ca32"
-  },
-  {
-   "refId": "NATIONAL-SECURITY-MEMORANDUM-2",
-   "url": "https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2024/04/30/national-security-memorandum-on-critical-infrastructure-security-and-resilience/",
-   "status": "downloaded",
-   "filename": "NATIONAL-SECURITY-MEMORANDUM-2.html",
-   "sizeBytes": 216777,
-   "contentType": "text/html",
-   "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68"
-  },
-  {
-   "refId": "DISA-STIG",
-   "url": "https://public.cyber.mil/stigs/downloads/",
-   "status": "downloaded",
-   "filename": "DISA-STIG.html",
-   "sizeBytes": 765723,
-   "contentType": "text/html",
-   "sha256": "82099822cbeae14e18ec7d37f5c872e6c2c238de37f7e97c9ff60f564b53ab66"
-  },
-  {
-   "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
-   "url": "https://nukib.gov.cz/download/publications_en/Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
-   "status": "downloaded",
-   "filename": "CZ-NUKIB-MIN-CRYPTO-REQS.pdf",
-   "sizeBytes": 382269,
-   "contentType": "application/pdf",
-   "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944"
-  },
-  {
-   "refId": "IL-BOI-DIRECTIVE-364-QUANTUM",
-   "url": "https://www.boi.org.il/media/sm4f1ssu/202501en.pdf",
-   "status": "downloaded",
-   "filename": "IL-BOI-DIRECTIVE-364-QUANTUM.pdf",
-   "sizeBytes": 325353,
-   "contentType": "application/pdf",
-   "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
-  },
-  {
-   "refId": "US-CISA-PQC-PRODUCT-CATEGORIES",
-   "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
-   "status": "downloaded",
-   "filename": "US-CISA-PQC-PRODUCT-CATEGORIES.html",
-   "sizeBytes": 73281,
-   "contentType": "text/html",
-   "sha256": "12ddab7bf998f601612d618c28dc06c0a65652ae011973ae994cbf9fbd86266e"
-  },
-  {
-   "refId": "EUROPOL-QSFF",
-   "url": "https://www.europol.europa.eu/cms/sites/default/files/documents/Post-quantum-cryptography-report.pdf",
-   "status": "downloaded",
-   "filename": "EUROPOL-QSFF.pdf",
-   "sizeBytes": 425443,
-   "contentType": "application/pdf",
-   "sha256": "4f043ff0cb0cec81506304dca0cbf44a44caf6af2db9749fe1e39b90b91bff20"
-  },
-  {
-   "refId": "EUCC",
-   "url": "https://certification.enisa.europa.eu",
-   "status": "downloaded",
-   "filename": "EUCC.pdf",
-   "sizeBytes": 677521,
-   "contentType": "application/pdf",
-   "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
-   "acquisition": "manual",
-   "acquiredAt": "2026-07-30"
-  },
-  {
-   "refId": "SPAIN-CCN-PQC",
-   "url": "https://www.ccn-cert.cni.es/",
-   "status": "downloaded",
-   "filename": "SPAIN-CCN-PQC.html",
-   "sizeBytes": 372059,
-   "contentType": "text/html",
-   "sha256": "11ace239491049812b8d2357ba1e9704e21753c18622d28ad4a070e2ffb6f3e5"
-  },
-  {
-   "refId": "KE-DPA",
-   "url": "https://new.kenyalaw.org/akn/ke/act/2019/24/eng@2022-12-31",
-   "status": "downloaded",
-   "filename": "KE-DPA.html",
-   "sizeBytes": 308213,
-   "contentType": "text/html",
-   "sha256": "d75dbbecbbbc0fde22f8efc72178d2dca702c59192cb02651873b1aa52b4e52a"
-  },
-  {
-   "refId": "MEXICO-CNBV-CUB",
-   "url": "https://www.cnbv.gob.mx/Normatividad/Disposiciones%20de%20car%C3%A1cter%20general%20aplicables%20a%20las%20instituciones%20de%20cr%C3%A9dito.pdf",
-   "status": "downloaded",
-   "filename": "MEXICO-CNBV-CUB.pdf",
-   "sizeBytes": 6144432,
-   "contentType": "application/pdf",
-   "sha256": "c41084b31061b6601af9f41cd6f08db5a8a98a8f44ecbdbd2bd601746f7def48"
-  },
-  {
-   "refId": "ID-PDP",
-   "url": "https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf",
-   "status": "downloaded",
-   "filename": "ID-PDP.pdf",
-   "sizeBytes": 2977828,
-   "contentType": "application/pdf",
-   "sha256": "ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6"
-  },
-  {
-   "refId": "AISEP-AUSTRALIAN-INFORMATION-S",
-   "url": "https://www.cyber.gov.au/business-government/protecting-devices-systems/assessment-evaluation-programs/australian-information-security-evaluation-program",
-   "status": "downloaded",
-   "filename": "AISEP-AUSTRALIAN-INFORMATION-S.html",
-   "sizeBytes": 329252,
-   "contentType": "text/html",
-   "sha256": "21d32d23011fecbc8c572cfb8b10907b7d8fe284001bb062be3c007e0e561475"
-  },
-  {
-   "refId": "CANADIAN-COMMON-CRITERIA-SCHEM",
-   "url": "https://www.cyber.gc.ca/en/tools-services/common-criteria",
-   "status": "downloaded",
-   "filename": "CANADIAN-COMMON-CRITERIA-SCHEM.html",
-   "sizeBytes": 119293,
-   "contentType": "text/html",
-   "sha256": "5e653b5dd4f3cab7247664c7a61cb3775381fc425215c6d8a90690e7da1d6101"
-  },
-  {
-   "refId": "BSI-COMMON-CRITERIA-CERTIFICAT",
-   "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
-   "status": "downloaded",
-   "filename": "BSI-COMMON-CRITERIA-CERTIFICAT.html",
-   "sizeBytes": 63437,
-   "contentType": "text/html",
-   "sha256": "83ea8572e02652aa70a90757c51bc0a8839688961cb5bb334193e45f7d70e8fe"
-  },
-  {
-   "refId": "ORGANISMO-DE-CERTIFICACION-OC-",
-   "url": "https://oc.ccn.cni.es/en/",
-   "status": "downloaded",
-   "filename": "ORGANISMO-DE-CERTIFICACION-OC-.html",
-   "sizeBytes": 204664,
-   "contentType": "text/html",
-   "sha256": "72c89b9b6cbf32b6c0ccb44adf268a5254f9f4440a17b7af4be545c6c8dfb015"
-  },
-  {
-   "refId": "IC3S-INDIAN-COMMON-CRITERIA-CE",
-   "url": "https://commoncriteria-india.gov.in/indian-common-criteria-certification-scheme-ic3s-overview",
-   "status": "downloaded",
-   "filename": "IC3S-INDIAN-COMMON-CRITERIA-CE.html",
-   "sizeBytes": 31475,
-   "contentType": "text/html",
-   "sha256": "4c02a2179f8d2572ab4648c8a295cd59bdc1d18215d8f3ffb8231164eb6176e3"
-  },
-  {
-   "refId": "OCSI-ORGANISMO-DI-CERTIFICAZIO",
-   "url": "https://www.ocsi.gov.it/index.php/organismo/lo-schema.html",
-   "status": "downloaded",
-   "filename": "OCSI-ORGANISMO-DI-CERTIFICAZIO.html",
-   "sizeBytes": 141398,
-   "contentType": "text/html",
-   "sha256": "2a2465624cd50659b6fd259a1f419ec920eba5798e2482bf1e50f9804a6c38f1"
-  },
-  {
-   "refId": "JISEC-JAPAN-IT-SECURITY-EVALUA",
-   "url": "https://www.ipa.go.jp/en/security/jisec/index.html",
-   "status": "downloaded",
-   "filename": "JISEC-JAPAN-IT-SECURITY-EVALUA.html",
-   "sizeBytes": 64573,
-   "contentType": "text/html",
-   "sha256": "d62cb8954254c9316d20ace397e1eb9ff575d99f6942e7ad5f1d43e603013c97"
-  },
-  {
-   "refId": "ITSCC-IT-SECURITY-CERTIFICATIO",
-   "url": "https://www.itscc.kr/main.do",
-   "status": "downloaded",
-   "filename": "ITSCC-IT-SECURITY-CERTIFICATIO.html",
-   "sizeBytes": 28896,
-   "contentType": "text/html",
-   "sha256": "217733a55a2e4207440fffb2d87693b7a876a8d590c92a470834c18c667f3075"
-  },
-  {
-   "refId": "MYCC-MALAYSIAN-COMMON-CRITERIA",
-   "url": "https://www.cybersecurity.my/portal-main/services/malaysian-common-criteria-scheme-overview",
-   "status": "downloaded",
-   "filename": "MYCC-MALAYSIAN-COMMON-CRITERIA.html",
-   "sizeBytes": 176542,
-   "contentType": "text/html",
-   "sha256": "2c10573a6b45c337d1589279f23b37e40930e4b7a1d486a89bb30d32cd3dc999"
-  },
-  {
-   "refId": "NSCIB-NETHERLANDS-SCHEME-FOR-C",
-   "url": "https://trustcb.com/common-criteria/nscib/",
-   "status": "downloaded",
-   "filename": "NSCIB-NETHERLANDS-SCHEME-FOR-C.html",
-   "sizeBytes": 1335284,
-   "contentType": "text/html",
-   "sha256": "70eeebd90f115cadd5acf6d1d717108d897cd652aa33d1ddb17bd32ac2d146fa"
-  },
-  {
-   "refId": "SERTIT-NORWEGIAN-CERTIFICATION",
-   "url": "https://sertit.no/the-norwegian-certification-scheme/about-the-certification-scheme/",
-   "status": "downloaded",
-   "filename": "SERTIT-NORWEGIAN-CERTIFICATION.html",
-   "sizeBytes": 44882,
-   "contentType": "text/html",
-   "sha256": "d0ee00de0eaf5c2f7417fb3acba7ceb2b0db12f4fb23663570b999d21b45600f"
-  },
-  {
-   "refId": "NASK-COMMON-CRITERIA-CERTIFICA",
-   "url": "https://certyfikacja.nask.pl/en/en-common-criteria/",
-   "status": "downloaded",
-   "filename": "NASK-COMMON-CRITERIA-CERTIFICA.html",
-   "sizeBytes": 213221,
-   "contentType": "text/html",
-   "sha256": "6f3f7c1e6d428ee6d1a54aad19f730d0775129c8d775582aab065b297127ef50"
-  },
-  {
-   "refId": "CSEC-SWEDISH-CERTIFICATION-BOD",
-   "url": "https://www.fmv.se/english/supplier-information/csec/",
-   "status": "downloaded",
-   "filename": "CSEC-SWEDISH-CERTIFICATION-BOD.html",
-   "sizeBytes": 79997,
-   "contentType": "text/html",
-   "sha256": "410de4d0d79025331206e9a9ff6ad8e359a321c45269c07150ba5127a1cf5b3a"
-  },
-  {
-   "refId": "SCCS-SINGAPORE-COMMON-CRITERIA",
-   "url": "https://www.csa.gov.sg/our-programmes/certification-and-labelling-schemes/singapore-common-criteria-scheme",
-   "status": "downloaded",
-   "filename": "SCCS-SINGAPORE-COMMON-CRITERIA.html",
-   "sizeBytes": 482780,
-   "contentType": "text/html",
-   "sha256": "3c42b7f370d2fd72827cc6862d656a294cf4a74b696ab325d4ea8b9b6a59a153"
-  },
-  {
-   "refId": "TSE-COMMON-CRITERIA-CERTIFICAT",
-   "url": "https://www.tse.org.tr/",
-   "status": "downloaded",
-   "filename": "TSE-COMMON-CRITERIA-CERTIFICAT.html",
-   "sizeBytes": 436763,
-   "contentType": "text/html",
-   "sha256": "bb4185b20950539fe31c697c29b880644a8340cfa7233764be56fff1951a66c1"
-  },
-  {
-   "refId": "NIAP-NATIONAL-INFORMATION-ASSU",
-   "url": "https://www.niap-ccevs.org/protectionprofiles",
-   "status": "downloaded",
-   "filename": "NIAP-NATIONAL-INFORMATION-ASSU.html",
-   "sizeBytes": 256646,
-   "contentType": "text/html",
-   "sha256": "1a5fb7a37f01507aa728c2586ca0527c8612ff58621c80d1f1424a09cf57087a"
-  },
-  {
-   "refId": "ANSSI-COMMON-CRITERIA-CERTIFIC",
-   "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/comprendre-levaluation-de-securite/certification-de-produits/comprendre-la-certification/",
-   "status": "downloaded",
-   "filename": "ANSSI-COMMON-CRITERIA-CERTIFIC.html",
-   "sizeBytes": 28733,
-   "contentType": "text/html",
-   "sha256": "3a343269cc78d6532228dca0a3f8cdd254b0e26ef0d15274bbf7523da0c90036"
-  },
-  {
-   "refId": "FFIEC-IT-EXAMINATION-HANDBOOK-",
-   "url": "https://ithandbook.ffiec.gov/it-booklets/information-security",
-   "status": "downloaded",
-   "filename": "FFIEC-IT-EXAMINATION-HANDBOOK-.html",
-   "sizeBytes": 58546,
-   "contentType": "text/html",
-   "sha256": "a4a041bbeb112f874d0ebcc858dc447b568e8e413441d194b8cb4dc9453304d7"
-  },
-  {
-   "refId": "CJIS-SECURITY-POLICY-FBI",
-   "url": "https://le.fbi.gov/file-repository/cjis_security_policy_v6-1_20260625.pdf",
-   "status": "downloaded",
-   "filename": "CJIS-SECURITY-POLICY-FBI.pdf",
-   "sizeBytes": 4443912,
-   "contentType": "application/pdf",
-   "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8"
-  },
-  {
-   "refId": "PSD2-REVISED-PAYMENT-SERVICES-",
-   "url": "https://eur-lex.europa.eu/eli/dir/2015/2366/oj/eng",
-   "status": "downloaded",
-   "filename": "PSD2-REVISED-PAYMENT-SERVICES-.html",
-   "sizeBytes": 1122118,
-   "contentType": "text/html",
-   "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30"
-  },
-  {
-   "refId": "CCCS-ITSP-40-111-CRYPTOGRAPHIC",
-   "url": "https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111",
-   "status": "downloaded",
-   "filename": "CCCS-ITSP-40-111-CRYPTOGRAPHIC.html",
-   "sizeBytes": 264573,
-   "contentType": "text/html",
-   "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83"
-  },
-  {
-   "refId": "INDIA-DPDP-ACT-2023",
-   "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
-   "status": "downloaded",
-   "filename": "INDIA-DPDP-ACT-2023.pdf",
-   "sizeBytes": 182082,
-   "contentType": "application/pdf",
-   "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15"
-  },
-  {
-   "refId": "SFC-CIRCULAR-EXTERNA-007-2018-",
-   "url": "https://normativa.colpensiones.gov.co/colpensiones/docs/circular_superfinanciera_0007_2018.htm",
-   "status": "downloaded",
-   "filename": "SFC-CIRCULAR-EXTERNA-007-2018-.html",
-   "sizeBytes": 37457,
-   "contentType": "text/html",
-   "sha256": "3788941484c720647342decc8de0a9cf0a2598c3ef3d28e5fa5e7232006f10c6"
-  },
-  {
-   "refId": "OJK-POJK-11-2022-IT-IMPLEMENTA",
-   "url": "https://ojk.go.id/id/regulasi/Documents/Pages/Penyelenggaraan-Teknologi-Informasi-Oleh-Bank-Umum/POJK%2011%20-%2003%20-%202022.pdf",
-   "status": "downloaded",
-   "filename": "OJK-POJK-11-2022-IT-IMPLEMENTA.pdf",
-   "sizeBytes": 241982,
-   "contentType": "application/pdf",
-   "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733"
-  },
-  {
-   "refId": "SBS-RESOLUCION-504-2021-INFORM",
-   "url": "https://busquedas.elperuano.pe/normaslegales/aprueban-el-reglamento-para-la-gestion-de-la-seguridad-de-la-resolucion-no-504-2021-1929393-1/",
-   "status": "downloaded",
-   "filename": "SBS-RESOLUCION-504-2021-INFORM.html",
-   "sizeBytes": 282275,
-   "contentType": "text/html",
-   "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139"
-  },
-  {
-   "refId": "SAMA-CYBER-SECURITY-FRAMEWORK-",
-   "url": "https://rulebook.sama.gov.sa/en/cyber-security-framework-2",
-   "status": "downloaded",
-   "filename": "SAMA-CYBER-SECURITY-FRAMEWORK-.html",
-   "sizeBytes": 327048,
-   "contentType": "text/html",
-   "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb"
-  },
-  {
-   "refId": "BNM-RMIT-RISK-MANAGEMENT-IN-TE",
-   "url": "https://www.bnm.gov.my/documents/20124/938039/pd-rmit-nov25.pdf",
-   "status": "downloaded",
-   "filename": "BNM-RMIT-RISK-MANAGEMENT-IN-TE.pdf",
-   "sizeBytes": 762759,
-   "contentType": "application/pdf",
-   "sha256": "064ffdd45fa2c3fae16847ed87b9fcae3efaecb465d47046c33a5740f155076c",
-   "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my."
-  },
-  {
-   "refId": "NCSA-QATAR-COMMON-CRITERIA-SCH",
-   "url": "https://assurance.ncsa.gov.qa/en/certification/qccs",
-   "status": "downloaded",
-   "filename": "NCSA-QATAR-COMMON-CRITERIA-SCH.html",
-   "sizeBytes": 1490886,
-   "contentType": "text/html",
-   "sha256": "52a419bc48e1f354f4464d4227c4a4b1796d20dae23de45c611b922a4c40c57c",
-   "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains."
-  },
-  {
-   "refId": "ANSSI-BODY",
-   "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
-   "status": "downloaded",
-   "filename": "ANSSI-BODY.html",
-   "sizeBytes": 50394,
-   "contentType": "text/html",
-   "sha256": "34468a09f983f242225a589214e45b59bb22d615b1bcf603520af5dd3cc1f173"
-  },
-  {
-   "refId": "ENISA",
-   "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
-   "status": "downloaded",
-   "filename": "ENISA.html",
-   "sizeBytes": 53760,
-   "contentType": "text/html",
-   "sha256": "e2ad30c1ad3b897ad7fcf177dde8a6779687a9521b072da23d41961d2b2d09a2"
-  },
-  {
-   "refId": "BSI",
-   "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
-   "status": "downloaded",
-   "filename": "BSI.pdf",
-   "sizeBytes": 568388,
-   "contentType": "application/pdf",
-   "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
-   "note": "Same document already cached for library row BSI-TR-02102-1 -- copied rather than re-fetched, per user pointer."
+  "generated": "2026-09-02T16:01:25.854178+00:00",
+  "entries": [
+    {
+      "refId": "NIST",
+      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
+      "status": "downloaded",
+      "filename": "NIST.html",
+      "sizeBytes": 62101,
+      "contentType": "text/html",
+      "sha256": "dc1bbdd0bc4a034f93f25de72a01b806b1bf2d5b9bb4304a724dc31edc235693"
+    },
+    {
+      "refId": "ISO-IEC",
+      "url": "https://www.iso.org/committee/45306.html",
+      "status": "downloaded",
+      "filename": "ISO-IEC.html",
+      "sizeBytes": 138193,
+      "contentType": "text/html",
+      "sha256": "6d9e07d0bb79aa9e81d43516f0381fedfc8a362450232e11b98f51ac2f3b6de0"
+    },
+    {
+      "refId": "IETF",
+      "url": "https://datatracker.ietf.org/wg/pquip/about/",
+      "status": "downloaded",
+      "filename": "IETF.html",
+      "sizeBytes": 38979,
+      "contentType": "text/html",
+      "sha256": "6a616f09c3dd5f231dfe8039a7a5df34545eb7e2ae5445c534b16601ad1d807b"
+    },
+    {
+      "refId": "FIPS-140-3",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
+      "status": "downloaded",
+      "filename": "FIPS-140-3.html",
+      "sizeBytes": 66175,
+      "contentType": "text/html",
+      "sha256": "74a9e62a69b816df5c0fb9a16fe310161e3e3ff1b57597bb8a7719c7681bd346"
+    },
+    {
+      "refId": "COMMON-CRITERIA",
+      "url": "https://www.commoncriteriaportal.org",
+      "status": "downloaded",
+      "filename": "COMMON-CRITERIA.html",
+      "sizeBytes": 13516,
+      "contentType": "text/html",
+      "sha256": "015b2c064a1ce30aa71d902ac17159f0b10b12e5d2bc2768af3cda116bc1c865"
+    },
+    {
+      "refId": "ANSSI",
+      "url": "https://www.ssi.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
+      "status": "downloaded",
+      "filename": "ANSSI.html",
+      "sizeBytes": 50604,
+      "contentType": "text/html",
+      "sha256": "966701ee485e960aaa85e212fb9c41d12c47030e541104e8466f07d69db646c8"
+    },
+    {
+      "refId": "CNSA-2",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+      "status": "downloaded",
+      "filename": "CNSA-2.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    },
+    {
+      "refId": "EIDAS",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/eidas-regulation",
+      "status": "downloaded",
+      "filename": "EIDAS.html",
+      "sizeBytes": 57368,
+      "contentType": "text/html",
+      "sha256": "e2eecdf9d56a38d9239b4954069edb3208986a3449764906df582d4f7f69d9a5"
+    },
+    {
+      "refId": "PCI-DSS",
+      "url": "https://www.pcisecuritystandards.org",
+      "status": "downloaded",
+      "filename": "PCI-DSS.html",
+      "sizeBytes": 795809,
+      "contentType": "text/html",
+      "sha256": "1cfe795fafc4a6723201334f630dec0bac375c941f8c595f7d11534431523a7c"
+    },
+    {
+      "refId": "HIPAA",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/index.html",
+      "status": "downloaded",
+      "filename": "HIPAA.html",
+      "sizeBytes": 201991,
+      "contentType": "text/html",
+      "sha256": "e1190b0d5177f594f3847895765c9b8758c976df7cb93863c66735cf4444c20b"
+    },
+    {
+      "refId": "GSMA-NG116",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
+      "status": "downloaded",
+      "filename": "GSMA-NG116.pdf",
+      "sizeBytes": 3260451,
+      "contentType": "application/pdf",
+      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
+    },
+    {
+      "refId": "ETSI-TS103744",
+      "url": "https://www.etsi.org/committee/cyber",
+      "status": "downloaded",
+      "filename": "ETSI-TS103744.html",
+      "sizeBytes": 165306,
+      "contentType": "text/html",
+      "sha256": "c20dac6644cca0733c61bbd30e6da907acbfb7854edb14eac4f73f016a28e8d4"
+    },
+    {
+      "refId": "DORA",
+      "url": "https://www.eiopa.europa.eu/digital-operational-resilience-act-dora_en",
+      "status": "downloaded",
+      "filename": "DORA.html",
+      "sizeBytes": 105542,
+      "contentType": "text/html",
+      "sha256": "483e1f7c7f361b1f4865b3554e3b277200b5b7b5af42af37325e951334918660"
+    },
+    {
+      "refId": "SWIFT-CSP",
+      "url": "https://www.swift.com/myswift/customer-security-programme",
+      "status": "downloaded",
+      "filename": "SWIFT-CSP.html",
+      "sizeBytes": 191147,
+      "contentType": "text/html",
+      "sha256": "277302ccbec261d478129e99013935fe360c671d9a23cedf9683318557ace524"
+    },
+    {
+      "refId": "ISO-27001",
+      "url": "https://www.iso.org/standard/27001",
+      "status": "downloaded",
+      "filename": "ISO-27001.html",
+      "sizeBytes": 129733,
+      "contentType": "text/html",
+      "sha256": "437b4b20dbe09292d198b3c2b3987a0d96ee0510a69b6005a859c5e4492f3904"
+    },
+    {
+      "refId": "SOC-2",
+      "url": "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services",
+      "status": "downloaded",
+      "filename": "SOC-2.html",
+      "sizeBytes": 407811,
+      "contentType": "text/html",
+      "sha256": "bef2b1c18aea9a02b0f41f25eb2c2545ec9e3c6040fd227df5e470d8cf725ab8"
+    },
+    {
+      "refId": "GDPR",
+      "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+      "status": "downloaded",
+      "filename": "GDPR.html",
+      "sizeBytes": 1069868,
+      "contentType": "text/html",
+      "sha256": "de39fdb58fce093351178c22529c285b2f2a0c0ac3cec17f2d65afa243e6f33f"
+    },
+    {
+      "refId": "HITECH",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/special-topics/hitech-act-enforcement-interim-final-rule/index.html",
+      "status": "downloaded",
+      "filename": "HITECH.html",
+      "sizeBytes": 201468,
+      "contentType": "text/html",
+      "sha256": "3ee47f11832f3fbb2d53aaaa6927bff7516883f7e65d02584705de9067629e68"
+    },
+    {
+      "refId": "FDA-21CFR11",
+      "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/part-11-electronic-records-electronic-signatures-scope-and-application",
+      "status": "downloaded",
+      "filename": "FDA-21CFR11.html",
+      "sizeBytes": 74732,
+      "contentType": "text/html",
+      "sha256": "ea0398969b47eb281b07ff8fa353c8a2227937138fe24f45a4be4779fe25f7b9"
+    },
+    {
+      "refId": "FEDRAMP",
+      "url": "https://www.fedramp.gov",
+      "status": "downloaded",
+      "filename": "FEDRAMP.html",
+      "sizeBytes": 4338020,
+      "contentType": "text/html",
+      "sha256": "08259f62a6aaff888214eea9bb7a00c5b21cb3ea8200f39ae5338173c4f5715c"
+    },
+    {
+      "refId": "NATO-4774",
+      "url": "https://www.nato.int/cps/en/natohq/topics_78170.htm",
+      "status": "downloaded",
+      "filename": "NATO-4774.html",
+      "sizeBytes": 384504,
+      "contentType": "text/html",
+      "sha256": "5299f2ad011fa77f273f3516d19d39c4370a5358408a25df46e5832492ed1137"
+    },
+    {
+      "refId": "ISO-SAE-21434",
+      "url": "https://www.iso.org/standard/70918.html",
+      "status": "downloaded",
+      "filename": "ISO-SAE-21434.html",
+      "sizeBytes": 90868,
+      "contentType": "text/html",
+      "sha256": "56401ea6a9f8fd5b012096e9ab8e90765ba9f66d6cb9d0ff91c9feaa1d24a503"
+    },
+    {
+      "refId": "FERPA",
+      "url": "https://studentprivacy.ed.gov/ferpa",
+      "status": "downloaded",
+      "filename": "FERPA.html",
+      "sizeBytes": 133108,
+      "contentType": "text/html",
+      "sha256": "8218616e2e7bd4e92f1f7ad9ddd9f0f2b26e6cae1691f20239e5e9ff33792df5"
+    },
+    {
+      "refId": "COPPA",
+      "url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
+      "status": "downloaded",
+      "filename": "COPPA.html",
+      "sizeBytes": 1011796,
+      "contentType": "text/html",
+      "sha256": "7e63a881e2914f4fbd67d0b590b33eb1c19132013ee22c6ca43676232af9bf7e"
+    },
+    {
+      "refId": "TISAX",
+      "url": "https://portal.enx.com/en-US/TISAX/",
+      "status": "downloaded",
+      "filename": "TISAX.html",
+      "sizeBytes": 38915,
+      "contentType": "text/html",
+      "sha256": "75a961b27923214b35a21cadaba4eae07875e47892eeae4a440d70517fe4a5aa"
+    },
+    {
+      "refId": "MICA",
+      "url": "https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica",
+      "status": "downloaded",
+      "filename": "MICA.html",
+      "sizeBytes": 87897,
+      "contentType": "text/html",
+      "sha256": "7276605f14565e4cf326a9f25f8da5786d8ae1b5cee6d2554df921d40e48b131"
+    },
+    {
+      "refId": "TSA-PIPELINE",
+      "url": "https://www.tsa.gov/sd-and-ea",
+      "status": "downloaded",
+      "filename": "TSA-PIPELINE.html",
+      "sizeBytes": 72043,
+      "contentType": "text/html",
+      "sha256": "8c50f71650dfec2dde006157a64c607c5bd4c7ccd98a73ca855760e2bb65ad0d"
+    },
+    {
+      "refId": "NIST-IR-8547",
+      "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
+      "status": "downloaded",
+      "filename": "NIST-IR-8547.html",
+      "sizeBytes": 45146,
+      "contentType": "text/html",
+      "sha256": "6a485a33f4ffa3809b2faa955d002382570090d77e740ea034372e628ca3b3f2"
+    },
+    {
+      "refId": "ASD-ISM",
+      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
+      "status": "downloaded",
+      "filename": "ASD-ISM.html",
+      "sizeBytes": 362237,
+      "contentType": "text/html",
+      "sha256": "7a8963c83d5c58dc75ae955ca2e5a81d28c63c10cdcbbed140b821dfa73e64fa"
+    },
+    {
+      "refId": "CCCS-ITSM",
+      "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
+      "status": "downloaded",
+      "filename": "CCCS-ITSM.html",
+      "sizeBytes": 145788,
+      "contentType": "text/html",
+      "sha256": "82eef746d6bfad1e28914baa90631f0656b774ffd8a36661015f524be73b13c8"
+    },
+    {
+      "refId": "EU-REC-2024-1101",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024H1101",
+      "status": "downloaded",
+      "filename": "EU-REC-2024-1101.html",
+      "sizeBytes": 280322,
+      "contentType": "text/html",
+      "sha256": "2f729e3e354002c44b2e0c85aded90bd5701b86313670e9856dc1b6fb8683c9d"
+    },
+    {
+      "refId": "BSI-TR-02102",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html",
+      "status": "downloaded",
+      "filename": "BSI-TR-02102.html",
+      "sizeBytes": 58509,
+      "contentType": "text/html",
+      "sha256": "ade25b413fb81a367ee12e76ebcf081370efac9036931438d65dc6cafa11a79f"
+    },
+    {
+      "refId": "UK-NCSC",
+      "url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
+      "status": "downloaded",
+      "filename": "UK-NCSC.html",
+      "sizeBytes": 173339,
+      "contentType": "text/html",
+      "sha256": "018ae9f0044d2d10d6dbd8b999136d9695a114b5a28896012a38bcefd7720754"
+    },
+    {
+      "refId": "CRYPTREC",
+      "url": "https://www.cryptrec.go.jp/report/cryptrec-gl-2007-2024.pdf",
+      "status": "downloaded",
+      "filename": "CRYPTREC.pdf",
+      "sizeBytes": 1312893,
+      "contentType": "application/pdf",
+      "sha256": "8e1d578e4547cb4ceac704b7226fe42e04b3e3d819813024100b677df4d4c23d"
+    },
+    {
+      "refId": "KPQC-STD",
+      "url": "https://kpqc.or.kr/contents/01_company/sub01.html",
+      "status": "downloaded",
+      "filename": "KPQC-STD.html",
+      "sizeBytes": 11354,
+      "contentType": "text/html",
+      "sha256": "ea21507578bbf431256e0b36ab9a058aae622c932fbb4198c2ad1dd096b86aa6"
+    },
+    {
+      "refId": "OSCCA-NGCC",
+      "url": "https://www.niccs.org.cn/niccs/Notice/pc/content/content_1937428197396713472.html",
+      "status": "downloaded",
+      "filename": "OSCCA-NGCC.html",
+      "sizeBytes": 14790,
+      "contentType": "text/html",
+      "sha256": "09d6f3cba5c7554d26620881dce329e269d1e9ff6f40b2aef1976a9c814aa476"
+    },
+    {
+      "refId": "NCSC-CH",
+      "url": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/einschaetzung_bacs_pqc-en.pdf.download.pdf/einschaetzung_bacs_pqc-en.pdf",
+      "status": "downloaded",
+      "filename": "NCSC-CH.pdf",
+      "sizeBytes": 79841,
+      "contentType": "application/pdf",
+      "sha256": "1240e120b0e9b5e2205caf9a739d9c249f05372bddd747a9f7f480ec3711303c"
+    },
+    {
+      "refId": "NCSC-NL",
+      "url": "https://www.ncsc.nl/api/media/sites/default/files/Make_your_organization_quantum_secure.pdf",
+      "status": "downloaded",
+      "filename": "NCSC-NL.pdf",
+      "sizeBytes": 249724,
+      "contentType": "application/pdf",
+      "sha256": "c7717942eba52ede8fca8ccda727ba73cadaeb48dc480d2808da653d586bb380"
+    },
+    {
+      "refId": "CRYPTREC-BODY",
+      "url": "https://www.cryptrec.go.jp/about.html",
+      "status": "downloaded",
+      "filename": "CRYPTREC-BODY.html",
+      "sizeBytes": 11428,
+      "contentType": "text/html",
+      "sha256": "a06a4e0744dd132de975cb862c2152e9540c8244871e07e453a831a4c24f93ad"
+    },
+    {
+      "refId": "KISA-BODY",
+      "url": "https://www.kisa.or.kr/EN/402",
+      "status": "downloaded",
+      "filename": "KISA-BODY.html",
+      "sizeBytes": 30602,
+      "contentType": "text/html",
+      "sha256": "d2dcea6c93d8993a99d263be5d1b235471963541795368c62be700ad9146f737"
+    },
+    {
+      "refId": "OSCCA-BODY",
+      "url": "https://www.sca.gov.cn/sca/jggk/index.shtml",
+      "status": "downloaded",
+      "filename": "OSCCA-BODY.html",
+      "sizeBytes": 31771,
+      "contentType": "text/html",
+      "sha256": "77636d8bb49241707363c4b86bfc9053189f90497e50060d61d255bcca5e24b1"
+    },
+    {
+      "refId": "ETSI",
+      "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
+      "status": "downloaded",
+      "filename": "ETSI.html",
+      "sizeBytes": 170253,
+      "contentType": "text/html",
+      "sha256": "fc8a5d360f9c642917a0c1d0aa4973647a57a5d671b05c2c0a791b7599d37b2c"
+    },
+    {
+      "refId": "NSA",
+      "url": "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF",
+      "status": "downloaded",
+      "filename": "NSA.pdf",
+      "sizeBytes": 586858,
+      "contentType": "application/pdf",
+      "sha256": "5abe0a74a66d146b6e617ffad981ecf35bd608714aa8d1441c8f444e9c322c55"
+    },
+    {
+      "refId": "CMMC",
+      "url": "https://dodcio.defense.gov/CMMC/About/",
+      "status": "downloaded",
+      "filename": "CMMC.html",
+      "sizeBytes": 44667,
+      "contentType": "text/html",
+      "sha256": "79c02a3c508f02038323576c855a3cb838000d25b5fdce8f9de60f2275e83a07"
+    },
+    {
+      "refId": "FISMA",
+      "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories/federal-information-security-modernization-act",
+      "status": "downloaded",
+      "filename": "FISMA.html",
+      "sizeBytes": 68850,
+      "contentType": "text/html",
+      "sha256": "a377b38d05cdff0547a3c94a85c6a16b03a21d9612738c3bfb4d432699ff6395"
+    },
+    {
+      "refId": "EU-CRA",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/cyber-resilience-act",
+      "status": "downloaded",
+      "filename": "EU-CRA.html",
+      "sizeBytes": 59376,
+      "contentType": "text/html",
+      "sha256": "e7701ead8ee69dc6de0ab0cfbcac64334138210992d02d2cc4198cfc9f2910e6"
+    },
+    {
+      "refId": "INDIA-DST-PQC",
+      "url": "https://dst.gov.in/sites/default/files/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
+      "status": "downloaded",
+      "filename": "INDIA-DST-PQC.pdf",
+      "sizeBytes": 1982388,
+      "contentType": "application/pdf",
+      "sha256": "461d8b42aea3847a3f9083e369065eff7985b03f8e4b1e9974f236ce93d99f31"
+    },
+    {
+      "refId": "HKMA-PQC",
+      "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/07/20260727-3/",
+      "status": "downloaded",
+      "filename": "HKMA-PQC.html",
+      "sizeBytes": 81675,
+      "contentType": "text/html",
+      "sha256": "01b063da3ec1dd467dde754a3941ee014c7970edeeca426bac7f530310b925c1"
+    },
+    {
+      "refId": "CISA-PQC-PROCUREMENT",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "downloaded",
+      "filename": "CISA-PQC-PROCUREMENT.html",
+      "sizeBytes": 71066,
+      "contentType": "text/html",
+      "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
+    },
+    {
+      "refId": "G7-CEG-PQC",
+      "url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
+      "status": "downloaded",
+      "filename": "G7-CEG-PQC.pdf",
+      "sizeBytes": 283430,
+      "contentType": "application/pdf",
+      "sha256": "f58565d3ec8bd55ea23aa067b2373f783eb3421808d1f8827993857de1b91575"
+    },
+    {
+      "refId": "CAB-FORUM-SMC013",
+      "url": "https://cabforum.org/",
+      "status": "downloaded",
+      "filename": "CAB-FORUM-SMC013.html",
+      "sizeBytes": 20006,
+      "contentType": "text/html",
+      "sha256": "b122e2fd62eae06c058277d81f77803a75620024dd7d36a267c01aa19059a3ca"
+    },
+    {
+      "refId": "ACVP",
+      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program",
+      "status": "downloaded",
+      "filename": "ACVP.html",
+      "sizeBytes": 64417,
+      "contentType": "text/html",
+      "sha256": "4e0d23a9120ae00f52d44810767f8871866d8d6760829c4f77b6c090444ea944"
+    },
+    {
+      "refId": "TAIWAN-MODA-PQC",
+      "url": "https://moda.gov.tw/ADI/news/latest-news/16090",
+      "status": "downloaded",
+      "filename": "TAIWAN-MODA-PQC.html",
+      "sizeBytes": 78989,
+      "contentType": "text/html",
+      "sha256": "9b549744caffffaae7cb0ab6dcc41d7d91ca44c919e92de75d93d0a8ce54e466"
+    },
+    {
+      "refId": "MALAYSIA-NACSA-PQC",
+      "url": "https://www.nacsa.gov.my/",
+      "status": "downloaded",
+      "filename": "MALAYSIA-NACSA-PQC.html",
+      "sizeBytes": 31865,
+      "contentType": "text/html",
+      "sha256": "3bb61b903c81b617df5c231c84d72e2522cc88eb3fad3b346a0f46e537495b54"
+    },
+    {
+      "refId": "SAUDI-NCA-PQC",
+      "url": "https://nca.gov.sa/en/",
+      "status": "downloaded",
+      "filename": "SAUDI-NCA-PQC.html",
+      "sizeBytes": 615083,
+      "contentType": "text/html",
+      "sha256": "3a2bd64738593cde6d4a2520d9a7b06ed4b5dd9f5747b76d650916d3d50831b9"
+    },
+    {
+      "refId": "BIS-158-PQC",
+      "url": "https://www.bis.org/publ/bppdf/bispap158.pdf",
+      "status": "downloaded",
+      "filename": "BIS-158-PQC.pdf",
+      "sizeBytes": 2159075,
+      "contentType": "application/pdf",
+      "sha256": "d38bca6b63b84d8aaa4a8455349d05a5140e712699cc7f9293fb5e494b03d46c"
+    },
+    {
+      "refId": "3GPP-PQC",
+      "url": "https://www.3gpp.org/",
+      "status": "downloaded",
+      "filename": "3GPP-PQC.html",
+      "sizeBytes": 410394,
+      "contentType": "text/html",
+      "sha256": "b229691fc9785f7425b11a1c2f89121f694b648bbad23d4dc639b89d3610e1a2"
+    },
+    {
+      "refId": "TCG-TPM-PQC",
+      "url": "https://trustedcomputinggroup.org/",
+      "status": "downloaded",
+      "filename": "TCG-TPM-PQC.html",
+      "sizeBytes": 162561,
+      "contentType": "text/html",
+      "sha256": "e9de5f26e1362a25aa5457aaaf8d9af6a796bafbd88c78e5e1cb07793e621c14"
+    },
+    {
+      "refId": "NIST-NCCOE-PQC",
+      "url": "https://www.nccoe.nist.gov/applied-cryptography/migration-to-pqc",
+      "status": "downloaded",
+      "filename": "NIST-NCCOE-PQC.html",
+      "sizeBytes": 114095,
+      "contentType": "text/html",
+      "sha256": "2a575345d0b1aca54327cd564f482a0820d89f38e9718446a07156e998563699"
+    },
+    {
+      "refId": "NIST-SP800-131A",
+      "url": "https://csrc.nist.gov/pubs/sp/800/131/a/r3/ipd",
+      "status": "downloaded",
+      "filename": "NIST-SP800-131A.html",
+      "sizeBytes": 46624,
+      "contentType": "text/html",
+      "sha256": "a18e43e605ebdf95d8729290929776d3bb8164f8de6cad7673285ae8f742b10c"
+    },
+    {
+      "refId": "ITALY-ACN-PQC",
+      "url": "https://www.acn.gov.it/",
+      "status": "downloaded",
+      "filename": "ITALY-ACN-PQC.html",
+      "sizeBytes": 218028,
+      "contentType": "text/html",
+      "sha256": "9e206fd081291c4a5033ca6a411dbab3e2f2974c39a1b968a08bef5957e56666"
+    },
+    {
+      "refId": "BAHRAIN-NCSC-PQC",
+      "url": "https://www.ncsc.gov.bh/en/index.html",
+      "status": "downloaded",
+      "filename": "BAHRAIN-NCSC-PQC.html",
+      "sizeBytes": 31873,
+      "contentType": "text/html",
+      "sha256": "41f5a63970d37bfb2bad70e0387f6c4951f9818c70ad11928c3ffad6af2048a3"
+    },
+    {
+      "refId": "UK-CMORG-PQC",
+      "url": "https://www.cmorg.org.uk/",
+      "status": "downloaded",
+      "filename": "UK-CMORG-PQC.html",
+      "sizeBytes": 34765,
+      "contentType": "text/html",
+      "sha256": "4d7a334a92b46fa61965bc981f1fc2069bacc15992b7e1843000648024c54643"
+    },
+    {
+      "refId": "PQCC-ROADMAP",
+      "url": "https://pqcc.org/",
+      "status": "downloaded",
+      "filename": "PQCC-ROADMAP.html",
+      "sizeBytes": 227763,
+      "contentType": "text/html",
+      "sha256": "5e81e1befff28698e210f5e8e6a0aa97a4d68f1dbb171eb3a198fea15ffd42af"
+    },
+    {
+      "refId": "IEEE-1609-PQC",
+      "url": "https://standards.ieee.org/",
+      "status": "downloaded",
+      "filename": "IEEE-1609-PQC.html",
+      "sizeBytes": 116047,
+      "contentType": "text/html",
+      "sha256": "2294382b352e00d04705e9d4bf378391754e5019d7ebd528e06da9ce82af420e"
+    },
+    {
+      "refId": "OASIS-PKCS11",
+      "url": "https://www.oasis-open.org/committees/pkcs11/",
+      "status": "downloaded",
+      "filename": "OASIS-PKCS11.html",
+      "sizeBytes": 44418,
+      "contentType": "text/html",
+      "sha256": "e51a4097a92f0b44958c6726d2513c02aeca46789481cb9ac96d9ee6bcb99d27"
+    },
+    {
+      "refId": "3GPP-SA3",
+      "url": "https://www.3gpp.org/specifications-groups/sa-plenary/sa3-security",
+      "status": "downloaded",
+      "filename": "3GPP-SA3.html",
+      "sizeBytes": 136856,
+      "contentType": "text/html",
+      "sha256": "e79c23c24d6109a4212fe6bc506ae1800d0e79aecbb534c3001f523a6f4010e0"
+    },
+    {
+      "refId": "FSISAC-PQC",
+      "url": "https://www.fsisac.com/",
+      "status": "downloaded",
+      "filename": "FSISAC-PQC.html",
+      "sizeBytes": 45573,
+      "contentType": "text/html",
+      "sha256": "02fa8b52a517b968d18e6d2884cb2a5ab37729797202218d200885f9dfb600f8"
+    },
+    {
+      "refId": "ASC-X9",
+      "url": "https://x9.org/pki-home/",
+      "status": "downloaded",
+      "filename": "ASC-X9.html",
+      "sizeBytes": 200837,
+      "contentType": "text/html",
+      "sha256": "d4c9c67369c46247f3c7e66edb1a382418ebd58e310c548ede65d3b5d111634c"
+    },
+    {
+      "refId": "PKI-CONSORTIUM",
+      "url": "https://pkic.org/",
+      "status": "downloaded",
+      "filename": "PKI-CONSORTIUM.html",
+      "sizeBytes": 97139,
+      "contentType": "text/html",
+      "sha256": "b38db2251f99e1ec7a1acf1fb96dc822a8f50519f3ea52192e5f115607c09f66"
+    },
+    {
+      "refId": "CSA-QSC",
+      "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
+      "status": "downloaded",
+      "filename": "CSA-QSC.html",
+      "sizeBytes": 85365,
+      "contentType": "text/html",
+      "sha256": "8bab6b8b94b7ccc60d320212a7625b8d1f63f02db73bddebb466af4a07f41a6c"
+    },
+    {
+      "refId": "ITU-T-SG17",
+      "url": "https://www.itu.int/en/ITU-T/studygroups/2022-2024/17/Pages/default.aspx",
+      "status": "downloaded",
+      "filename": "ITU-T-SG17.html",
+      "sizeBytes": 97936,
+      "contentType": "text/html",
+      "sha256": "700e446145d65c5ed67cf4c4082bb02cc100678428926dead08a4a2ab2133490"
+    },
+    {
+      "refId": "NIST-SP800-208",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf",
+      "status": "downloaded",
+      "filename": "NIST-SP800-208.pdf",
+      "sizeBytes": 872986,
+      "contentType": "application/pdf",
+      "sha256": "9ac6bee3da878e883874847b40f80d2265d6268385d8201f866581437533465f"
+    },
+    {
+      "refId": "ISO-19790",
+      "url": "https://www.iso.org/standard/82423.html",
+      "status": "downloaded",
+      "filename": "ISO-19790.html",
+      "sizeBytes": 83963,
+      "contentType": "text/html",
+      "sha256": "3c7470af9642cc11b9b4d7d460e3a8010df4897cdbb86ac6b1b9b9155041a517"
+    },
+    {
+      "refId": "ETSI-QKD-SERIES",
+      "url": "https://www.etsi.org/committee/1430-qkd",
+      "status": "downloaded",
+      "filename": "ETSI-QKD-SERIES.html",
+      "sizeBytes": 154833,
+      "contentType": "text/html",
+      "sha256": "18b18b12963b795708a2417fb69fc1a571157df0278cc07ea398d095976b06bf"
+    },
+    {
+      "refId": "ANSSI-CERT",
+      "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/",
+      "status": "downloaded",
+      "filename": "ANSSI-CERT.html",
+      "sizeBytes": 25497,
+      "contentType": "text/html",
+      "sha256": "c9f981ac4fc1d1c3877eab72842c08c6368f27df9c8b3976bb5f11dd2a311b3d"
+    },
+    {
+      "refId": "JCMVP",
+      "url": "https://www.ipa.go.jp/en/security/jcmvp/index.html",
+      "status": "downloaded",
+      "filename": "JCMVP.html",
+      "sizeBytes": 61208,
+      "contentType": "text/html",
+      "sha256": "e83e2235942f418a0b84a1deefa79a1b6af6c3c60c9813bacac66f95e39bd686"
+    },
+    {
+      "refId": "SG-CSA-QUANTUM",
+      "url": "https://www.csa.gov.sg/",
+      "status": "downloaded",
+      "filename": "SG-CSA-QUANTUM.html",
+      "sizeBytes": 462280,
+      "contentType": "text/html",
+      "sha256": "31d2240c45000ca4debba52537514fb4fa11cf757019b2213cd946913c9f1e25"
+    },
+    {
+      "refId": "BRAZIL-ANPD-PQC",
+      "url": "https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia-vf.pdf",
+      "status": "downloaded",
+      "filename": "BRAZIL-ANPD-PQC.pdf",
+      "sizeBytes": 366201,
+      "contentType": "application/pdf",
+      "sha256": "b720ea49fc3c99400b8156515dab17a82a63806b6c21da34f9fb868ac70e4f04"
+    },
+    {
+      "refId": "DENMARK-CFCS-PQC",
+      "url": "https://cfcs.dk/",
+      "status": "downloaded",
+      "filename": "DENMARK-CFCS-PQC.html",
+      "sizeBytes": 69368,
+      "contentType": "text/html",
+      "sha256": "2202423c2479969fa9f86cd817905825ec0d221ca6df215596414f83afe8906a"
+    },
+    {
+      "refId": "DFS-NYCRR-500",
+      "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
+      "status": "downloaded",
+      "filename": "DFS-NYCRR-500.html",
+      "sizeBytes": 205519,
+      "contentType": "text/html",
+      "sha256": "0e58d866f970849edb153dfc389bc8f2645341e52d9910541435ad099638ae50"
+    },
+    {
+      "refId": "PQCA",
+      "url": "https://www.linuxfoundation.org/press/announcing-the-post-quantum-cryptography-alliance-pqca",
+      "status": "downloaded",
+      "filename": "PQCA.html",
+      "sizeBytes": 96915,
+      "contentType": "text/html",
+      "sha256": "c55aee4b0c000da8ea861538032e3690f9c814fc7c5b1e0dc9229712b0852e5c"
+    },
+    {
+      "refId": "PQC-COALITION",
+      "url": "https://pqc-coalition.org",
+      "status": "downloaded",
+      "filename": "PQC-COALITION.html",
+      "sizeBytes": 227763,
+      "contentType": "text/html",
+      "sha256": "800cb160597c35b058463228be4ea21fba4d849ba991df3dd517823c95e9c68b"
+    },
+    {
+      "refId": "ACSC-ESSENTIAL-EIGHT",
+      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/essential-eight/essential-eight-maturity-model",
+      "status": "downloaded",
+      "filename": "ACSC-ESSENTIAL-EIGHT.html",
+      "sizeBytes": 435584,
+      "contentType": "text/html",
+      "sha256": "aa03f4809c88029be96dae66c6f63363cdb290069404374e9294c4df9a15b9e5"
+    },
+    {
+      "refId": "AU-PRIVACY-ACT",
+      "url": "https://www.oaic.gov.au/privacy/australian-privacy-principles/read-the-australian-privacy-principles",
+      "status": "downloaded",
+      "filename": "AU-PRIVACY-ACT.html",
+      "sizeBytes": 98778,
+      "contentType": "text/html",
+      "sha256": "9e81ed292bf46b1e300de0e5f2c4b4a4812180634554ab94a05936d82574a0c6"
+    },
+    {
+      "refId": "AUSTRAC-AML-CTF",
+      "url": "https://www.austrac.gov.au/amlctf-reform",
+      "status": "downloaded",
+      "filename": "AUSTRAC-AML-CTF.html",
+      "sizeBytes": 137131,
+      "contentType": "text/html",
+      "sha256": "7b39cbaccfc86c30f89ac4bc00871262efebb7ad94368a372034df97893fd514"
+    },
+    {
+      "refId": "OSFI-B13-PQC",
+      "url": "https://www.osfi-bsif.gc.ca/en/risks/technology-cyber-risk-management",
+      "status": "downloaded",
+      "filename": "OSFI-B13-PQC.html",
+      "sizeBytes": 163390,
+      "contentType": "text/html",
+      "sha256": "cdc5da1ddfe5e25ed867261c6f76ec8af284d8046b27834d09065aa0e5db6564"
+    },
+    {
+      "refId": "CFDIR-QR-2023",
+      "url": "https://ised-isde.canada.ca",
+      "status": "downloaded",
+      "filename": "CFDIR-QR-2023.html",
+      "sizeBytes": 10623,
+      "contentType": "text/html",
+      "sha256": "7ce3ab2f385247fc2b77e713280eccf5d520013f85a2715bfedd8ff1a2cef760"
+    },
+    {
+      "refId": "UK-DSIT-CNI-PQC",
+      "url": "https://www.gov.uk/government/publications/perspectives-on-the-plan-for-pqc-transition",
+      "status": "downloaded",
+      "filename": "UK-DSIT-CNI-PQC.pdf",
+      "sizeBytes": 2292209,
+      "contentType": "application/pdf",
+      "sha256": "7b0f7f4eb4f48efaac7311c8c6841787a2bf8aed3e3f11a4b76e49f0c913ad25"
+    },
+    {
+      "refId": "ACPR",
+      "url": "https://acpr.banque-france.fr",
+      "status": "downloaded",
+      "filename": "ACPR.html",
+      "sizeBytes": 222657,
+      "contentType": "text/html",
+      "sha256": "cb7cfaa9c970195948e1f90219873b421b867767182c4d189b2fc3b5514d1f92"
+    },
+    {
+      "refId": "AMF-FR",
+      "url": "https://www.amf-france.org",
+      "status": "downloaded",
+      "filename": "AMF-FR.html",
+      "sizeBytes": 72104,
+      "contentType": "text/html",
+      "sha256": "2a9dee436aababbc79c26a83ce7eb8c01ca8a058aa62b7ed8d0039ecc89ef7a6"
+    },
+    {
+      "refId": "DSPF-PQC",
+      "url": "https://www.defence.gov.au/business-industry/industry-governance/defence-security-principles-framework",
+      "status": "downloaded",
+      "filename": "DSPF-PQC.html",
+      "sizeBytes": 17251,
+      "contentType": "text/html",
+      "sha256": "4db7c334ecdcd827c038160d563fe7ec598379f4c8be6177f53627dbdbabb43c"
+    },
+    {
+      "refId": "ZA-POPIA",
+      "url": "https://www.justice.gov.za/legislation/acts/2013-004.pdf",
+      "status": "downloaded",
+      "filename": "ZA-POPIA.pdf",
+      "sizeBytes": 237928,
+      "contentType": "application/pdf",
+      "sha256": "e29efca4eb14eb7f3fbfe779e972b90d8803016d8073648fd98084a2990e46fb"
+    },
+    {
+      "refId": "NG-NDPR",
+      "url": "https://placng.org/i/wp-content/uploads/2023/06/Nigeria-Data-Protection-Act-2023.pdf",
+      "status": "downloaded",
+      "filename": "NG-NDPR.pdf",
+      "sizeBytes": 1518494,
+      "contentType": "application/pdf",
+      "sha256": "38e4ac47630589f94ad0a654800dff58a51d87d95456bc01d239e9172e020e92"
+    },
+    {
+      "refId": "EG-PDPL",
+      "url": "https://mcit.gov.eg",
+      "status": "downloaded",
+      "filename": "EG-PDPL.html",
+      "sizeBytes": 62829,
+      "contentType": "text/html",
+      "sha256": "ee590d26ca103e1faaed9f850408049db82ac39aa16f502717868c3a76606ecf"
+    },
+    {
+      "refId": "AU-MALABO",
+      "url": "https://au.int/sites/default/files/treaties/29560-treaty-0048_-_african_union_convention_on_cyber_security_and_personal_data_protection_e.pdf",
+      "status": "downloaded",
+      "filename": "AU-MALABO.pdf",
+      "sizeBytes": 13794400,
+      "contentType": "application/pdf",
+      "sha256": "4564c7ee68658754590953f653b6aa43582d63fdd16f8614ecd0b4cf89c96485"
+    },
+    {
+      "refId": "EUCC-V2",
+      "url": "https://certification.enisa.europa.eu/certification-library/eucc-certification-scheme_en",
+      "status": "downloaded",
+      "filename": "EUCC-V2.html",
+      "sizeBytes": 92813,
+      "contentType": "text/html",
+      "sha256": "e560f35a6d31911c5e22ad689e17550a588b93ea41a738d07eae205969dfb44a"
+    },
+    {
+      "refId": "BSI-PQC-ADVISORY",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html",
+      "status": "downloaded",
+      "filename": "BSI-PQC-ADVISORY.html",
+      "sizeBytes": 60988,
+      "contentType": "text/html",
+      "sha256": "94dba659ea627f07b4641dc7eb03de43d18f00cd959db1a2f3fa51ac67f1a7b2"
+    },
+    {
+      "refId": "PRA-SS2-21",
+      "url": "https://www.bankofengland.co.uk/-/media/boe/files/prudential-regulation/supervisory-statement/2021/ss121-march-22.pdf",
+      "status": "downloaded",
+      "filename": "PRA-SS2-21.pdf",
+      "sizeBytes": 1032802,
+      "contentType": "application/pdf",
+      "sha256": "a56b506c3a04b58afd4a984beb46e916a23288a7efda90054254f6ef29352577"
+    },
+    {
+      "refId": "ICO-UK-ENC",
+      "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/security/encryption/",
+      "status": "downloaded",
+      "filename": "ICO-UK-ENC.html",
+      "sizeBytes": 56678,
+      "contentType": "text/html",
+      "sha256": "d69fca84043f6be8bca28afd85ae88af6214dc656389781c6183cb0022286ca3"
+    },
+    {
+      "refId": "NSM-NO-GP",
+      "url": "https://nsm.no/getfile.php/1313975-1717589722/NSM/Filer/Dokumenter/Veiledere/NSMs%20Grunnprinsipper%20for%20IKT-sikkerhet%20v2.1.pdf",
+      "status": "downloaded",
+      "filename": "NSM-NO-GP.pdf",
+      "sizeBytes": 2276347,
+      "contentType": "application/pdf",
+      "sha256": "1ad86834616bb467076fe0ae1ac9c959e40b244dde90658cd46ecac11f0d01d3"
+    },
+    {
+      "refId": "ARGENTINA-ONTI",
+      "url": "https://www.argentina.gob.ar/jefatura/innovacion-publica",
+      "status": "downloaded",
+      "filename": "ARGENTINA-ONTI.html",
+      "sizeBytes": 46130,
+      "contentType": "text/html",
+      "sha256": "40091f57ed53e58c3d16b9119bb23b16a3fb981b8098e94c2ea7c34776a22384"
+    },
+    {
+      "refId": "PH-DPA",
+      "url": "https://www.privacy.gov.ph",
+      "status": "downloaded",
+      "filename": "PH-DPA.html",
+      "sizeBytes": 271566,
+      "contentType": "text/html",
+      "sha256": "b083682fd2d75425f998483fd2942df0bbd598c1eb65180357318439399b1521"
+    },
+    {
+      "refId": "EE-CSA",
+      "url": "https://www.riigiteataja.ee/en/eli/ee/523052018003/consolide/current",
+      "status": "downloaded",
+      "filename": "EE-CSA.html",
+      "sizeBytes": 531785,
+      "contentType": "text/html",
+      "sha256": "a2e9a1d6b7b09d44801d183fa3cccdeac4db6c299c2542667aed60962b38ad41"
+    },
+    {
+      "refId": "IE-NCSC",
+      "url": "https://www.gov.ie/en/department-of-justice-home-affairs-and-migration/publications/general-scheme-of-the-national-cyber-security-bill-2024/",
+      "status": "downloaded",
+      "filename": "IE-NCSC.html",
+      "sizeBytes": 334412,
+      "contentType": "text/html",
+      "sha256": "0e094352bed87915bcfd3c6dc914c55c5d6484bc9053c9db67b3fcb9365c88f8"
+    },
+    {
+      "refId": "BE-NIS2",
+      "url": "https://ccb.belgium.be",
+      "status": "downloaded",
+      "filename": "BE-NIS2.html",
+      "sizeBytes": 104749,
+      "contentType": "text/html",
+      "sha256": "c413c264d57fcb425765d37d94fd942419fc699f3dc41db3d031f56669c661a7"
+    },
+    {
+      "refId": "AT-NIS2",
+      "url": "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20010536",
+      "status": "downloaded",
+      "filename": "AT-NIS2.html",
+      "sizeBytes": 203570,
+      "contentType": "text/html",
+      "sha256": "78ab4d74b4caa79c75d4659ba5d0146f7fa9021092ab0a4139f418f363f85002"
+    },
+    {
+      "refId": "PL-NCSC",
+      "url": "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20180001560/O/D20181560.pdf",
+      "status": "downloaded",
+      "filename": "PL-NCSC.pdf",
+      "sizeBytes": 386485,
+      "contentType": "application/pdf",
+      "sha256": "1993ad70607dcdb2f9690c1bcac12308718d8372efb039b1f53d30e070332a14"
+    },
+    {
+      "refId": "CO-LEY1581",
+      "url": "https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981",
+      "status": "downloaded",
+      "filename": "CO-LEY1581.html",
+      "sizeBytes": 72931,
+      "contentType": "text/html",
+      "sha256": "926ae19c2b949ae37850331a7e6055863b7032e2881496992d19d38950fafbb9"
+    },
+    {
+      "refId": "PE-LDP",
+      "url": "https://cdn.www.gob.pe/uploads/document/file/2011398/Ley%20N%C2%BA%2029733%20-%20Ley%20de%20protecci%C3%B3n%20de%20datos%20personales.pdf.pdf",
+      "status": "downloaded",
+      "filename": "PE-LDP.pdf",
+      "sizeBytes": 258188,
+      "contentType": "application/pdf",
+      "sha256": "f45d432b337aa7965fdf38497b3f5c12dcd62a1107b3b13ff86687f0be15125d"
+    },
+    {
+      "refId": "UY-LPDP",
+      "url": "https://www.impo.com.uy/bases/leyes/18331-2008",
+      "status": "downloaded",
+      "filename": "UY-LPDP.html",
+      "sizeBytes": 82896,
+      "contentType": "text/html",
+      "sha256": "edd9f8f6dafc5d8da6e9f99e44dc7e9f69a9c076c54193a8596cc0a1e96b4671"
+    },
+    {
+      "refId": "TR-KVKK",
+      "url": "https://www.kvkk.gov.tr/Icerik/6649/Personal-Data-Protection-Law",
+      "status": "downloaded",
+      "filename": "TR-KVKK.html",
+      "sizeBytes": 351217,
+      "contentType": "text/html",
+      "sha256": "9d7e58a14819da510bfb596fff69cf1e13aff30b202accf86cad37a020d7b0cf"
+    },
+    {
+      "refId": "faa-ac-119-1-ansp",
+      "url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_119-1.pdf",
+      "status": "downloaded",
+      "filename": "faa-ac-119-1-ansp.pdf",
+      "sizeBytes": 293414,
+      "contentType": "application/pdf",
+      "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14"
+    },
+    {
+      "refId": "common-criteria-v3.1r5-part1",
+      "url": "https://www.commoncriteriaportal.org/files/ccfiles/CCPART1V3.1R5.pdf",
+      "status": "downloaded",
+      "filename": "common-criteria-v3.1r5-part1.pdf",
+      "sizeBytes": 1327388,
+      "contentType": "application/pdf",
+      "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326"
+    },
+    {
+      "refId": "cisa-pqc-initiative",
+      "url": "https://www.cisa.gov/quantum",
+      "status": "downloaded",
+      "filename": "cisa-pqc-initiative.html",
+      "sizeBytes": 71066,
+      "contentType": "text/html",
+      "sha256": "1b3a1c4349442f76954347ce09a0b5c4a4388808ccbfa95037014fdebc8bdfee"
+    },
+    {
+      "refId": "oscca-cryptographic-regulations-cn",
+      "url": "http://www.oscca.gov.cn/",
+      "status": "downloaded",
+      "filename": "oscca-cryptographic-regulations-cn.html",
+      "sizeBytes": 41773,
+      "contentType": "text/html",
+      "sha256": "06e9eb085c91308ea0db5eb4929315c7004ef473d3dd07db8f4d2ce853813c36"
+    },
+    {
+      "refId": "bsi-cc-certification",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
+      "status": "downloaded",
+      "filename": "bsi-cc-certification.html",
+      "sizeBytes": 63437,
+      "contentType": "text/html",
+      "sha256": "f19b4cf9480c1fc27b6af7da9f792b8e35002d0f98eec6eb906a3843b90052cd"
+    },
+    {
+      "refId": "etsi-ts-104-015-qsc-hybrid-key-exchange",
+      "url": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
+      "status": "downloaded",
+      "filename": "etsi-ts-104-015-qsc-hybrid-key-exchange.pdf",
+      "sizeBytes": 257923,
+      "contentType": "application/pdf",
+      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288"
+    },
+    {
+      "refId": "fca-operational-resilience-uk",
+      "url": "https://www.fca.org.uk/firms/operational-resilience",
+      "status": "downloaded",
+      "filename": "fca-operational-resilience-uk.html",
+      "sizeBytes": 198901,
+      "contentType": "text/html",
+      "sha256": "da67befaee2ceb529dd64b373cf635b999d8762e1ab252897046d7a95e6f8994"
+    },
+    {
+      "refId": "cert-in-directions-70b-2022",
+      "url": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
+      "status": "downloaded",
+      "filename": "cert-in-directions-70b-2022.pdf",
+      "sizeBytes": 434961,
+      "contentType": "application/pdf",
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f"
+    },
+    {
+      "refId": "mas-technology-risk-management-guidelines",
+      "url": "https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines",
+      "status": "downloaded",
+      "filename": "mas-technology-risk-management-guidelines.html",
+      "sizeBytes": 330607,
+      "contentType": "text/html",
+      "sha256": "c1d0f1453de633ec91648eef7c8b6ec7d6e4f0ad44e9668b77a6df28d7b7493b"
+    },
+    {
+      "refId": "rbi-cyber-security-framework-2016",
+      "url": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=10435",
+      "status": "downloaded",
+      "filename": "rbi-cyber-security-framework-2016.html",
+      "sizeBytes": 117956,
+      "contentType": "text/html",
+      "sha256": "54fd39586938a4672c3e1b0243954086b06a040dee7fc3cb46e510de3100feb6"
+    },
+    {
+      "refId": "gsma-pq-01",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/post-quantum-telco-network-impact-assessment-whitepaper-pq-01/",
+      "status": "downloaded",
+      "filename": "gsma-pq-01.html",
+      "sizeBytes": 84732,
+      "contentType": "text/html",
+      "sha256": "16a9e39f035605d330b6ec865a8aa42a8c493dd4da7220c9d935b71a6b8326b7"
+    },
+    {
+      "refId": "gsma-pq-02",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/gsma_resources/guidelines-for-quantum-risk-management-for-telco-pq-02/",
+      "status": "downloaded",
+      "filename": "gsma-pq-02.html",
+      "sizeBytes": 84929,
+      "contentType": "text/html",
+      "sha256": "3893e59000677f4eb1bf2ed2351a2f445ac4ab56453105280d6285af8a5a83d8"
+    },
+    {
+      "refId": "gsma-pq-03",
+      "url": "https://www.gsma.com/newsroom/wp-content/uploads//PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
+      "status": "downloaded",
+      "filename": "gsma-pq-03.pdf",
+      "sizeBytes": 3260451,
+      "contentType": "application/pdf",
+      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea"
+    },
+    {
+      "refId": "3gpp-rel19-pqc-study",
+      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
+      "status": "downloaded",
+      "filename": "3gpp-rel19-pqc-study.docx",
+      "sizeBytes": 134945,
+      "contentType": "application/octet-stream",
+      "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525"
+    },
+    {
+      "refId": "3gpp-rel20-pqc",
+      "url": "https://www.3gpp.org/specifications-technologies/releases/release-20",
+      "status": "downloaded",
+      "filename": "3gpp-rel20-pqc.html",
+      "sizeBytes": 117687,
+      "contentType": "text/html",
+      "sha256": "b3d3c3d35e1e341aa5d8440658738a34028f76a08c1206e18c5aaaaa07343dfc"
+    },
+    {
+      "refId": "FIPS-203",
+      "url": "https://csrc.nist.gov/pubs/fips/203/final",
+      "status": "downloaded",
+      "filename": "FIPS-203.html",
+      "sizeBytes": 46211,
+      "contentType": "text/html",
+      "sha256": "fdb0914694769939459963932e70b4d1d0bcf3ca92a97fe5369ffe93ce5deea4"
+    },
+    {
+      "refId": "FIPS-204",
+      "url": "https://csrc.nist.gov/pubs/fips/204/final",
+      "status": "downloaded",
+      "filename": "FIPS-204.html",
+      "sizeBytes": 44928,
+      "contentType": "text/html",
+      "sha256": "3afb69357f6c4e4a8fc9f47f5621f6fd6ba42a66eefe617d8b2e263243e5d75d"
+    },
+    {
+      "refId": "FIPS-205",
+      "url": "https://csrc.nist.gov/pubs/fips/205/final",
+      "status": "downloaded",
+      "filename": "FIPS-205.html",
+      "sizeBytes": 44036,
+      "contentType": "text/html",
+      "sha256": "a51e7899de5b7a166f6356fbc40edaee76087ffbb1a980592734abdd18acc9be"
+    },
+    {
+      "refId": "OMB-M-23-02",
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2022/11/M-23-02-M-Memo-on-Migrating-to-Post-Quantum-Cryptography.pdf",
+      "status": "downloaded",
+      "filename": "OMB-M-23-02.pdf",
+      "sizeBytes": 255063,
+      "contentType": "application/pdf",
+      "sha256": "02e7a4ee3289e3dfcc81bdb43d2e21645b68e6f364a9889dda222b785ecfe6e6"
+    },
+    {
+      "refId": "NSM-10",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2022/05/04/national-security-memorandum-on-promoting-united-states-leadership-in-quantum-computing-while-mitigating-risks-to-vulnerable-cryptographic-systems/",
+      "status": "downloaded",
+      "filename": "NSM-10.html",
+      "sizeBytes": 164080,
+      "contentType": "text/html",
+      "sha256": "cefb2ade2fc154dc1f20a05ca9a8b1b208de3194680a81decac991c2d81a72d9"
+    },
+    {
+      "refId": "EO-14412",
+      "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
+      "status": "downloaded",
+      "filename": "EO-14412.html",
+      "sizeBytes": 287561,
+      "contentType": "text/html",
+      "sha256": "70cfcfb251956c29a275e5645f4e50e07c9663271b57434692b63fdc7cc8c7c9"
+    },
+    {
+      "refId": "US-QCCPA",
+      "url": "https://www.congress.gov/bill/117th-congress/house-bill/7535/text",
+      "status": "downloaded",
+      "filename": "US-QCCPA.html",
+      "sizeBytes": 361335,
+      "contentType": "text/html",
+      "sha256": "074e4c3370e8127528c4ae6a9240203145133e5d8ac2ad9ca0cbf4e0778422fb"
+    },
+    {
+      "refId": "IETF-TLS-MLKEM",
+      "url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
+      "status": "downloaded",
+      "filename": "IETF-TLS-MLKEM.html",
+      "sizeBytes": 73957,
+      "contentType": "text/html",
+      "sha256": "ce647e83d41a100acee8ab2014ba5a5411fb6370ac6eeccaefcfb4b12c6349b6"
+    },
+    {
+      "refId": "OMB-M-26-15",
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2026/06/M-26-15-Execution-of-the-Migration-to-Post-Quantum-Cryptography.pdf",
+      "status": "downloaded",
+      "filename": "OMB-M-26-15.pdf",
+      "sizeBytes": 283167,
+      "contentType": "application/pdf",
+      "sha256": "515af70472d3a4a2107c61a1bc5f8014523d99feab9b2cf92a95e4bcc790da2c"
+    },
+    {
+      "refId": "PKCS11-V32",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html",
+      "status": "downloaded",
+      "filename": "PKCS11-V32.html",
+      "sizeBytes": 5478477,
+      "contentType": "text/html",
+      "sha256": "924c2d8d397387cf91639d9a6c71c20a4c5e24e20a7b04cc1feedfbc2e48c0cb"
+    },
+    {
+      "refId": "NERC-CIP",
+      "url": "https://www.nerc.com/globalassets/standards/reliability-standards/cip/cip-005-7.pdf",
+      "status": "downloaded",
+      "filename": "NERC-CIP.pdf",
+      "sizeBytes": 325620,
+      "contentType": "application/pdf",
+      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425"
+    },
+    {
+      "refId": "DO-326A",
+      "url": "https://www.rtca.org/products/do-326a-electronic/",
+      "status": "downloaded",
+      "filename": "DO-326A.html",
+      "sizeBytes": 116253,
+      "contentType": "text/html",
+      "sha256": "dd22f2e34f05d4bedba48d78e17a3c16fcf34092e993f19dc317d0c09a36c88b"
+    },
+    {
+      "refId": "RTCA-DO-355A",
+      "url": "https://www.rtca.org/products/do-355a-electronic/",
+      "status": "downloaded",
+      "filename": "RTCA-DO-355A.html",
+      "sizeBytes": 116254,
+      "contentType": "text/html",
+      "sha256": "93078509a41b989e2d7eb4226a4c7f23d9f913e0ece96090c8eea4c300f0660a"
+    },
+    {
+      "refId": "MAS-CIRCULAR",
+      "url": "https://www.mas.gov.sg/-/media/mas-media-library/regulation/circulars/trpd/mas-quantum-advisory/mas-quantum-advisory.pdf",
+      "status": "downloaded",
+      "filename": "MAS-CIRCULAR.pdf",
+      "sizeBytes": 138500,
+      "contentType": "application/pdf",
+      "sha256": "820631b855f7ed03d4183931fe93415c44f0db46811fafc473b7b4a208a2a02f"
+    },
+    {
+      "refId": "INCD-PQC",
+      "url": "https://www.gov.il/BlobFolder/generalpage/quantum_computing/he/Best%20Practices%20-%20Organizational%20Cyber%20Readiness%20to%20the%20Post-Quantum%20Age%20v.1.85.pdf",
+      "status": "downloaded",
+      "filename": "INCD-PQC.pdf",
+      "sizeBytes": 985301,
+      "contentType": "application/pdf",
+      "sha256": "ff42111be495c7c8bab64b80ceaeb78db4881033bc42abd375554a4828f7a853"
+    },
+    {
+      "refId": "BOI-PQC",
+      "url": "https://boi.org.il/media/sm4f1ssu/202501en.pdf",
+      "status": "downloaded",
+      "filename": "BOI-PQC.pdf",
+      "sizeBytes": 325353,
+      "contentType": "application/pdf",
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
+    },
+    {
+      "refId": "QED-C",
+      "url": "https://quantumconsortium.org/publication/a-guide-to-a-quantum-safe-organization/",
+      "status": "downloaded",
+      "filename": "QED-C.html",
+      "sizeBytes": 96775,
+      "contentType": "text/html",
+      "sha256": "2cbec5b920239af4af24e119f7be815e8426c9833791dd2bac85af444bd70892"
+    },
+    {
+      "refId": "MSB-SE-CYB",
+      "url": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
+      "status": "downloaded",
+      "filename": "MSB-SE-CYB.pdf",
+      "sizeBytes": 1064410,
+      "contentType": "application/pdf",
+      "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325"
+    },
+    {
+      "refId": "NCSC-FI-PQC",
+      "url": "https://www.kyberturvallisuuskeskus.fi/fi/kvanttiturvalliset-algoritmit-ja-niihin-siirtyminen",
+      "status": "downloaded",
+      "filename": "NCSC-FI-PQC.html",
+      "sizeBytes": 176987,
+      "contentType": "text/html",
+      "sha256": "7812c4ecb879b2ab3f8a2fa180a95adf726958b72ba257b19abed0eaf4591a61"
+    },
+    {
+      "refId": "RU-TC26",
+      "url": "https://tc26.ru/standarts/natsionalnye-standarty/",
+      "status": "downloaded",
+      "filename": "RU-TC26.html",
+      "sizeBytes": 50136,
+      "contentType": "text/html",
+      "sha256": "ed427c44b55521fa8463b16fd6fc916e0b2a639ef7fa11176de5af6ed23a0931"
+    },
+    {
+      "refId": "MICA-EU-MARKETS-IN-CRYPTO-ASSE",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/1114/oj/eng",
+      "status": "downloaded",
+      "filename": "MICA-EU-MARKETS-IN-CRYPTO-ASSE.html",
+      "sizeBytes": 1968471,
+      "contentType": "text/html",
+      "sha256": "39c056ee8cd4be30620cde7c462e668eed30d2bb603316d0f6cc5648e69f1eb4"
+    },
+    {
+      "refId": "E-ITS-ESTONIAN-INFORMATION-SEC",
+      "url": "https://www.ria.ee/en/cyber-security/management-state-information-security-measures",
+      "status": "downloaded",
+      "filename": "E-ITS-ESTONIAN-INFORMATION-SEC.html",
+      "sizeBytes": 108556,
+      "contentType": "text/html",
+      "sha256": "b11ad18287b155925a9893af0feec562473c3269c6867fe21641de7efa1b6319"
+    },
+    {
+      "refId": "CRI-PROFILE-CYBER-RISK-INSTITU",
+      "url": "https://cyberriskinstitute.org/wp-content/uploads/2024/02/Final-CRI-Profile-v2.0-Guidebook-Public.-Date-2024.02.29-1.pdf",
+      "status": "downloaded",
+      "filename": "CRI-PROFILE-CYBER-RISK-INSTITU.pdf",
+      "sizeBytes": 3118318,
+      "contentType": "application/pdf",
+      "sha256": "9103a435aefb37c97bd363123e1cd2419a41bacca54a385d8d0338e0c65c4c72"
+    },
+    {
+      "refId": "CYBERSAKERHETSLAG-SWEDEN-CYBER",
+      "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/cybersakerhetslag-20251506_sfs-2025-1506/",
+      "status": "downloaded",
+      "filename": "CYBERSAKERHETSLAG-SWEDEN-CYBER.html",
+      "sizeBytes": 342641,
+      "contentType": "text/html",
+      "sha256": "35e7e2dc7b4337bf02b6f88bf9482b2e45d69828572ea95c15741aee727cdb24"
+    },
+    {
+      "refId": "OMB-MEMORANDUM-M-19-03",
+      "url": "https://www.whitehouse.gov/wp-content/uploads/2018/12/M-19-03.pdf",
+      "status": "downloaded",
+      "filename": "OMB-MEMORANDUM-M-19-03.pdf",
+      "sizeBytes": 355599,
+      "contentType": "application/pdf",
+      "sha256": "0a9a5232558f41c4f772db4b6894bc9d47aea627faccd0bfa428637d6280ca32"
+    },
+    {
+      "refId": "NATIONAL-SECURITY-MEMORANDUM-2",
+      "url": "https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2024/04/30/national-security-memorandum-on-critical-infrastructure-security-and-resilience/",
+      "status": "downloaded",
+      "filename": "NATIONAL-SECURITY-MEMORANDUM-2.html",
+      "sizeBytes": 216777,
+      "contentType": "text/html",
+      "sha256": "c6cf5096704d3963157180a1b93e007a0e52a9c1d63e49d87aaa0ece0f1eeb68"
+    },
+    {
+      "refId": "DISA-STIG",
+      "url": "https://public.cyber.mil/stigs/downloads/",
+      "status": "downloaded",
+      "filename": "DISA-STIG.html",
+      "sizeBytes": 765723,
+      "contentType": "text/html",
+      "sha256": "82099822cbeae14e18ec7d37f5c872e6c2c238de37f7e97c9ff60f564b53ab66"
+    },
+    {
+      "refId": "CZ-NUKIB-MIN-CRYPTO-REQS",
+      "url": "https://nukib.gov.cz/download/publications_en/Minimum%20Requirements%20for%20Cryptographic%20Algorithms.pdf",
+      "status": "downloaded",
+      "filename": "CZ-NUKIB-MIN-CRYPTO-REQS.pdf",
+      "sizeBytes": 382269,
+      "contentType": "application/pdf",
+      "sha256": "f0de9ce55b2761a7213e1b18fab026b3d57025f657a6c5435780def313ea0944"
+    },
+    {
+      "refId": "IL-BOI-DIRECTIVE-364-QUANTUM",
+      "url": "https://www.boi.org.il/media/sm4f1ssu/202501en.pdf",
+      "status": "downloaded",
+      "filename": "IL-BOI-DIRECTIVE-364-QUANTUM.pdf",
+      "sizeBytes": 325353,
+      "contentType": "application/pdf",
+      "sha256": "8f388d10f06ffb1e90020ed4b1990013ccd8b9df77aef4a5f400e659e93554f5"
+    },
+    {
+      "refId": "US-CISA-PQC-PRODUCT-CATEGORIES",
+      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
+      "status": "downloaded",
+      "filename": "US-CISA-PQC-PRODUCT-CATEGORIES.html",
+      "sizeBytes": 73281,
+      "contentType": "text/html",
+      "sha256": "12ddab7bf998f601612d618c28dc06c0a65652ae011973ae994cbf9fbd86266e"
+    },
+    {
+      "refId": "EUROPOL-QSFF",
+      "url": "https://www.europol.europa.eu/cms/sites/default/files/documents/Post-quantum-cryptography-report.pdf",
+      "status": "downloaded",
+      "filename": "EUROPOL-QSFF.pdf",
+      "sizeBytes": 425443,
+      "contentType": "application/pdf",
+      "sha256": "4f043ff0cb0cec81506304dca0cbf44a44caf6af2db9749fe1e39b90b91bff20"
+    },
+    {
+      "refId": "EUCC",
+      "url": "https://certification.enisa.europa.eu",
+      "status": "downloaded",
+      "filename": "EUCC.pdf",
+      "sizeBytes": 677521,
+      "contentType": "application/pdf",
+      "sha256": "074a5e09b5686e75f1186b0a9ff25a1649a63ee5f605b1b766bc0b95156757a0",
+      "acquisition": "manual",
+      "acquiredAt": "2026-07-30"
+    },
+    {
+      "refId": "SPAIN-CCN-PQC",
+      "url": "https://www.ccn-cert.cni.es/",
+      "status": "downloaded",
+      "filename": "SPAIN-CCN-PQC.html",
+      "sizeBytes": 372059,
+      "contentType": "text/html",
+      "sha256": "11ace239491049812b8d2357ba1e9704e21753c18622d28ad4a070e2ffb6f3e5"
+    },
+    {
+      "refId": "KE-DPA",
+      "url": "https://new.kenyalaw.org/akn/ke/act/2019/24/eng@2022-12-31",
+      "status": "downloaded",
+      "filename": "KE-DPA.html",
+      "sizeBytes": 308213,
+      "contentType": "text/html",
+      "sha256": "d75dbbecbbbc0fde22f8efc72178d2dca702c59192cb02651873b1aa52b4e52a"
+    },
+    {
+      "refId": "MEXICO-CNBV-CUB",
+      "url": "https://www.cnbv.gob.mx/Normatividad/Disposiciones%20de%20car%C3%A1cter%20general%20aplicables%20a%20las%20instituciones%20de%20cr%C3%A9dito.pdf",
+      "status": "downloaded",
+      "filename": "MEXICO-CNBV-CUB.pdf",
+      "sizeBytes": 6144432,
+      "contentType": "application/pdf",
+      "sha256": "c41084b31061b6601af9f41cd6f08db5a8a98a8f44ecbdbd2bd601746f7def48"
+    },
+    {
+      "refId": "ID-PDP",
+      "url": "https://peraturan.bpk.go.id/Download/224884/UU%20Nomor%2027%20Tahun%202022.pdf",
+      "status": "downloaded",
+      "filename": "ID-PDP.pdf",
+      "sizeBytes": 2977828,
+      "contentType": "application/pdf",
+      "sha256": "ed952dea04b87d14ecf037f9f324a65d50b396ddd34fc28ddf9ff014391971f6"
+    },
+    {
+      "refId": "AISEP-AUSTRALIAN-INFORMATION-S",
+      "url": "https://www.cyber.gov.au/business-government/protecting-devices-systems/assessment-evaluation-programs/australian-information-security-evaluation-program",
+      "status": "downloaded",
+      "filename": "AISEP-AUSTRALIAN-INFORMATION-S.html",
+      "sizeBytes": 329252,
+      "contentType": "text/html",
+      "sha256": "21d32d23011fecbc8c572cfb8b10907b7d8fe284001bb062be3c007e0e561475"
+    },
+    {
+      "refId": "CANADIAN-COMMON-CRITERIA-SCHEM",
+      "url": "https://www.cyber.gc.ca/en/tools-services/common-criteria",
+      "status": "downloaded",
+      "filename": "CANADIAN-COMMON-CRITERIA-SCHEM.html",
+      "sizeBytes": 119293,
+      "contentType": "text/html",
+      "sha256": "5e653b5dd4f3cab7247664c7a61cb3775381fc425215c6d8a90690e7da1d6101"
+    },
+    {
+      "refId": "BSI-COMMON-CRITERIA-CERTIFICAT",
+      "url": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
+      "status": "downloaded",
+      "filename": "BSI-COMMON-CRITERIA-CERTIFICAT.html",
+      "sizeBytes": 63437,
+      "contentType": "text/html",
+      "sha256": "83ea8572e02652aa70a90757c51bc0a8839688961cb5bb334193e45f7d70e8fe"
+    },
+    {
+      "refId": "ORGANISMO-DE-CERTIFICACION-OC-",
+      "url": "https://oc.ccn.cni.es/en/",
+      "status": "downloaded",
+      "filename": "ORGANISMO-DE-CERTIFICACION-OC-.html",
+      "sizeBytes": 204664,
+      "contentType": "text/html",
+      "sha256": "72c89b9b6cbf32b6c0ccb44adf268a5254f9f4440a17b7af4be545c6c8dfb015"
+    },
+    {
+      "refId": "IC3S-INDIAN-COMMON-CRITERIA-CE",
+      "url": "https://commoncriteria-india.gov.in/indian-common-criteria-certification-scheme-ic3s-overview",
+      "status": "downloaded",
+      "filename": "IC3S-INDIAN-COMMON-CRITERIA-CE.html",
+      "sizeBytes": 31475,
+      "contentType": "text/html",
+      "sha256": "4c02a2179f8d2572ab4648c8a295cd59bdc1d18215d8f3ffb8231164eb6176e3"
+    },
+    {
+      "refId": "OCSI-ORGANISMO-DI-CERTIFICAZIO",
+      "url": "https://www.ocsi.gov.it/index.php/organismo/lo-schema.html",
+      "status": "downloaded",
+      "filename": "OCSI-ORGANISMO-DI-CERTIFICAZIO.html",
+      "sizeBytes": 141398,
+      "contentType": "text/html",
+      "sha256": "2a2465624cd50659b6fd259a1f419ec920eba5798e2482bf1e50f9804a6c38f1"
+    },
+    {
+      "refId": "JISEC-JAPAN-IT-SECURITY-EVALUA",
+      "url": "https://www.ipa.go.jp/en/security/jisec/index.html",
+      "status": "downloaded",
+      "filename": "JISEC-JAPAN-IT-SECURITY-EVALUA.html",
+      "sizeBytes": 64573,
+      "contentType": "text/html",
+      "sha256": "d62cb8954254c9316d20ace397e1eb9ff575d99f6942e7ad5f1d43e603013c97"
+    },
+    {
+      "refId": "ITSCC-IT-SECURITY-CERTIFICATIO",
+      "url": "https://www.itscc.kr/main.do",
+      "status": "downloaded",
+      "filename": "ITSCC-IT-SECURITY-CERTIFICATIO.html",
+      "sizeBytes": 28896,
+      "contentType": "text/html",
+      "sha256": "217733a55a2e4207440fffb2d87693b7a876a8d590c92a470834c18c667f3075"
+    },
+    {
+      "refId": "MYCC-MALAYSIAN-COMMON-CRITERIA",
+      "url": "https://www.cybersecurity.my/portal-main/services/malaysian-common-criteria-scheme-overview",
+      "status": "downloaded",
+      "filename": "MYCC-MALAYSIAN-COMMON-CRITERIA.html",
+      "sizeBytes": 176542,
+      "contentType": "text/html",
+      "sha256": "2c10573a6b45c337d1589279f23b37e40930e4b7a1d486a89bb30d32cd3dc999"
+    },
+    {
+      "refId": "NSCIB-NETHERLANDS-SCHEME-FOR-C",
+      "url": "https://trustcb.com/common-criteria/nscib/",
+      "status": "downloaded",
+      "filename": "NSCIB-NETHERLANDS-SCHEME-FOR-C.html",
+      "sizeBytes": 1335284,
+      "contentType": "text/html",
+      "sha256": "70eeebd90f115cadd5acf6d1d717108d897cd652aa33d1ddb17bd32ac2d146fa"
+    },
+    {
+      "refId": "SERTIT-NORWEGIAN-CERTIFICATION",
+      "url": "https://sertit.no/the-norwegian-certification-scheme/about-the-certification-scheme/",
+      "status": "downloaded",
+      "filename": "SERTIT-NORWEGIAN-CERTIFICATION.html",
+      "sizeBytes": 44882,
+      "contentType": "text/html",
+      "sha256": "d0ee00de0eaf5c2f7417fb3acba7ceb2b0db12f4fb23663570b999d21b45600f"
+    },
+    {
+      "refId": "NASK-COMMON-CRITERIA-CERTIFICA",
+      "url": "https://certyfikacja.nask.pl/en/en-common-criteria/",
+      "status": "downloaded",
+      "filename": "NASK-COMMON-CRITERIA-CERTIFICA.html",
+      "sizeBytes": 213221,
+      "contentType": "text/html",
+      "sha256": "6f3f7c1e6d428ee6d1a54aad19f730d0775129c8d775582aab065b297127ef50"
+    },
+    {
+      "refId": "CSEC-SWEDISH-CERTIFICATION-BOD",
+      "url": "https://www.fmv.se/english/supplier-information/csec/",
+      "status": "downloaded",
+      "filename": "CSEC-SWEDISH-CERTIFICATION-BOD.html",
+      "sizeBytes": 79997,
+      "contentType": "text/html",
+      "sha256": "410de4d0d79025331206e9a9ff6ad8e359a321c45269c07150ba5127a1cf5b3a"
+    },
+    {
+      "refId": "SCCS-SINGAPORE-COMMON-CRITERIA",
+      "url": "https://www.csa.gov.sg/our-programmes/certification-and-labelling-schemes/singapore-common-criteria-scheme",
+      "status": "downloaded",
+      "filename": "SCCS-SINGAPORE-COMMON-CRITERIA.html",
+      "sizeBytes": 482780,
+      "contentType": "text/html",
+      "sha256": "3c42b7f370d2fd72827cc6862d656a294cf4a74b696ab325d4ea8b9b6a59a153"
+    },
+    {
+      "refId": "TSE-COMMON-CRITERIA-CERTIFICAT",
+      "url": "https://www.tse.org.tr/",
+      "status": "downloaded",
+      "filename": "TSE-COMMON-CRITERIA-CERTIFICAT.html",
+      "sizeBytes": 436763,
+      "contentType": "text/html",
+      "sha256": "bb4185b20950539fe31c697c29b880644a8340cfa7233764be56fff1951a66c1"
+    },
+    {
+      "refId": "NIAP-NATIONAL-INFORMATION-ASSU",
+      "url": "https://www.niap-ccevs.org/protectionprofiles",
+      "status": "downloaded",
+      "filename": "NIAP-NATIONAL-INFORMATION-ASSU.html",
+      "sizeBytes": 256646,
+      "contentType": "text/html",
+      "sha256": "1a5fb7a37f01507aa728c2586ca0527c8612ff58621c80d1f1424a09cf57087a"
+    },
+    {
+      "refId": "ANSSI-COMMON-CRITERIA-CERTIFIC",
+      "url": "https://cyber.gouv.fr/offre-de-service/solutions-certifiees-et-qualifiees/comprendre-levaluation-de-securite/certification-de-produits/comprendre-la-certification/",
+      "status": "downloaded",
+      "filename": "ANSSI-COMMON-CRITERIA-CERTIFIC.html",
+      "sizeBytes": 28733,
+      "contentType": "text/html",
+      "sha256": "3a343269cc78d6532228dca0a3f8cdd254b0e26ef0d15274bbf7523da0c90036"
+    },
+    {
+      "refId": "FFIEC-IT-EXAMINATION-HANDBOOK-",
+      "url": "https://ithandbook.ffiec.gov/it-booklets/information-security",
+      "status": "downloaded",
+      "filename": "FFIEC-IT-EXAMINATION-HANDBOOK-.html",
+      "sizeBytes": 58546,
+      "contentType": "text/html",
+      "sha256": "a4a041bbeb112f874d0ebcc858dc447b568e8e413441d194b8cb4dc9453304d7"
+    },
+    {
+      "refId": "CJIS-SECURITY-POLICY-FBI",
+      "url": "https://le.fbi.gov/file-repository/cjis_security_policy_v6-1_20260625.pdf",
+      "status": "downloaded",
+      "filename": "CJIS-SECURITY-POLICY-FBI.pdf",
+      "sizeBytes": 4443912,
+      "contentType": "application/pdf",
+      "sha256": "0e0f0f53db17f2b6408b2ce486fafb84acb0f628f68a794372ef4eb0c87ff4f8"
+    },
+    {
+      "refId": "PSD2-REVISED-PAYMENT-SERVICES-",
+      "url": "https://eur-lex.europa.eu/eli/dir/2015/2366/oj/eng",
+      "status": "downloaded",
+      "filename": "PSD2-REVISED-PAYMENT-SERVICES-.html",
+      "sizeBytes": 1122118,
+      "contentType": "text/html",
+      "sha256": "1109cd435d9aa729aff87d6476913c45ad999ac14bedf5152633b98a8cbf5e30"
+    },
+    {
+      "refId": "CCCS-ITSP-40-111-CRYPTOGRAPHIC",
+      "url": "https://www.cyber.gc.ca/en/guidance/cryptographic-algorithms-unclassified-protected-protected-b-information-itsp40111",
+      "status": "downloaded",
+      "filename": "CCCS-ITSP-40-111-CRYPTOGRAPHIC.html",
+      "sizeBytes": 264573,
+      "contentType": "text/html",
+      "sha256": "0481832765cba7bbff393bcac176c1322ac0ccbf42264803eba6c878a8283a83"
+    },
+    {
+      "refId": "INDIA-DPDP-ACT-2023",
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "status": "downloaded",
+      "filename": "INDIA-DPDP-ACT-2023.pdf",
+      "sizeBytes": 182082,
+      "contentType": "application/pdf",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15"
+    },
+    {
+      "refId": "SFC-CIRCULAR-EXTERNA-007-2018-",
+      "url": "https://normativa.colpensiones.gov.co/colpensiones/docs/circular_superfinanciera_0007_2018.htm",
+      "status": "downloaded",
+      "filename": "SFC-CIRCULAR-EXTERNA-007-2018-.html",
+      "sizeBytes": 37457,
+      "contentType": "text/html",
+      "sha256": "3788941484c720647342decc8de0a9cf0a2598c3ef3d28e5fa5e7232006f10c6"
+    },
+    {
+      "refId": "OJK-POJK-11-2022-IT-IMPLEMENTA",
+      "url": "https://ojk.go.id/id/regulasi/Documents/Pages/Penyelenggaraan-Teknologi-Informasi-Oleh-Bank-Umum/POJK%2011%20-%2003%20-%202022.pdf",
+      "status": "downloaded",
+      "filename": "OJK-POJK-11-2022-IT-IMPLEMENTA.pdf",
+      "sizeBytes": 241982,
+      "contentType": "application/pdf",
+      "sha256": "d4e8d59915bdecdbdc1ae61388b858b8c898bc349d23cbb64326f43a48b5b733"
+    },
+    {
+      "refId": "SBS-RESOLUCION-504-2021-INFORM",
+      "url": "https://busquedas.elperuano.pe/normaslegales/aprueban-el-reglamento-para-la-gestion-de-la-seguridad-de-la-resolucion-no-504-2021-1929393-1/",
+      "status": "downloaded",
+      "filename": "SBS-RESOLUCION-504-2021-INFORM.html",
+      "sizeBytes": 282275,
+      "contentType": "text/html",
+      "sha256": "1d57db6677ed4ddb4898985885ab179bee12584977088b318daab4fd4bbe8139"
+    },
+    {
+      "refId": "SAMA-CYBER-SECURITY-FRAMEWORK-",
+      "url": "https://rulebook.sama.gov.sa/en/cyber-security-framework-2",
+      "status": "downloaded",
+      "filename": "SAMA-CYBER-SECURITY-FRAMEWORK-.html",
+      "sizeBytes": 327048,
+      "contentType": "text/html",
+      "sha256": "649b2a00224eecacbe3683540dec0638e298f48d89dd4b02319981226780b7fb"
+    },
+    {
+      "refId": "BNM-RMIT-RISK-MANAGEMENT-IN-TE",
+      "url": "https://www.bnm.gov.my/documents/20124/938039/pd-rmit-nov25.pdf",
+      "status": "downloaded",
+      "filename": "BNM-RMIT-RISK-MANAGEMENT-IN-TE.pdf",
+      "sizeBytes": 762759,
+      "contentType": "application/pdf",
+      "sha256": "064ffdd45fa2c3fae16847ed87b9fcae3efaecb465d47046c33a5740f155076c",
+      "note": "Fetched manually by the user 2026-07-31 -- all automated fetch tiers (curl_cffi, playwright-stealth, crawl4ai) were blocked by bnm.gov.my."
+    },
+    {
+      "refId": "NCSA-QATAR-COMMON-CRITERIA-SCH",
+      "url": "https://assurance.ncsa.gov.qa/en/certification/qccs",
+      "status": "downloaded",
+      "filename": "NCSA-QATAR-COMMON-CRITERIA-SCH.html",
+      "sizeBytes": 1490886,
+      "contentType": "text/html",
+      "sha256": "52a419bc48e1f354f4464d4227c4a4b1796d20dae23de45c611b922a4c40c57c",
+      "note": "Fetched manually by the user 2026-07-31 (saved webpage) -- every automated fetch tier returned an 8-character JS shell for this URL on both its own domains."
+    },
+    {
+      "refId": "ANSSI-BODY",
+      "url": "https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/",
+      "status": "downloaded",
+      "filename": "ANSSI-BODY.html",
+      "sizeBytes": 50394,
+      "contentType": "text/html",
+      "sha256": "34468a09f983f242225a589214e45b59bb22d615b1bcf603520af5dd3cc1f173"
+    },
+    {
+      "refId": "ENISA",
+      "url": "https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation",
+      "status": "downloaded",
+      "filename": "ENISA.html",
+      "sizeBytes": 53760,
+      "contentType": "text/html",
+      "sha256": "e2ad30c1ad3b897ad7fcf177dde8a6779687a9521b072da23d41961d2b2d09a2"
+    },
+    {
+      "refId": "BSI",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
+      "status": "downloaded",
+      "filename": "BSI.pdf",
+      "sizeBytes": 568388,
+      "contentType": "application/pdf",
+      "sha256": "f601cdf25c000b431573a307a3c125f3c51d301897089e7e63dde0449367a62a",
+      "note": "Same document already cached for library row BSI-TR-02102-1 -- copied rather than re-fetched, per user pointer."
+    },
+    {
+      "refId": "INDIA-CERTIN-CBOM",
+      "url": "https://www.cert-in.org.in/PDF/TechnicalGuidelines-on-SBOM,QBOM&CBOM,AIBOM_and_HBOM_ver2.0.pdf",
+      "status": "downloaded",
+      "filename": "INDIA-CERTIN-CBOM.pdf",
+      "sizeBytes": 1654189,
+      "contentType": "application/pdf",
+      "sha256": "28aa48f329114d665f8e4f8c4d2f33baf4981e29168a318e6e719c11a5ff5151"
+    },
+    {
+      "refId": "JORDAN-CBJ-PQC",
+      "url": "https://www.petra.gov.jo/Include/InnerPage.jsp?ID=79851&lang=en&name=en_news",
+      "status": "downloaded",
+      "filename": "JORDAN-CBJ-PQC.html",
+      "sizeBytes": 93800,
+      "contentType": "text/html",
+      "sha256": "2596fa573e2b58416860bed0e4df9308f3cd265ceab75d54b1dda27d75ce28b2"
+    },
+    {
+      "refId": "ETSI-EN-303645",
+      "url": "https://www.etsi.org/deliver/etsi_en/303600_303699/303645/03.01.03_60/en_303645v030103p.pdf",
+      "status": "downloaded",
+      "filename": "ETSI-EN-303645.pdf",
+      "sizeBytes": 975604,
+      "contentType": "application/pdf",
+      "sha256": "ce3efec89e392064ad0f8c16082d49e219a5f0641e417fec8cb1da4f1765855c"
+    },
+    {
+      "refId": "APRA-CPS-234",
+      "url": "https://www.apra.gov.au/sites/default/files/cps_234_july_2019_for_public_release.pdf",
+      "status": "downloaded",
+      "filename": "APRA-CPS-234.pdf",
+      "sizeBytes": 274706,
+      "contentType": "application/pdf",
+      "sha256": "ddcef7b1f5780c26a7e79ecfb35ce41bee8b65f78a8cdb605c7508c2f604bee5"
+    },
+    {
+      "refId": "CHILE-ANCI",
+      "url": "https://www.bcn.cl/leychile/navegar?i=1202434",
+      "status": "downloaded",
+      "filename": "CHILE-ANCI.html",
+      "sizeBytes": 156776,
+      "contentType": "text/html",
+      "sha256": "23ddba8d304a3b91bb679d1c07f13bf19d14437f44069217c144777a29162b29"
+    },
+    {
+      "refId": "VN-CYBER",
+      "url": "https://english.luatvietnam.vn/decree-no-13-2023-nd-cp-dated-april-17-2023-of-the-government-on-personal-data-protection-249791-doc1.html",
+      "status": "downloaded",
+      "filename": "VN-CYBER.html",
+      "sizeBytes": 285290,
+      "contentType": "text/html",
+      "sha256": "7726d610973f588801c15f298b29eb22062f3310b7abee43e1eed0e00b52242a"
+    }
+  ],
+  "blocked": {
+    "UN-ECE-WP29": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-09-02T15:59:33.864660+00:00",
+      "attempts": 7
+    },
+    "IEC-62443": {
+      "reason": "hard-blocked: rejected at all 3 fetch_resilient tiers",
+      "blocked_at": "2026-07-14T02:16:08.133645+00:00",
+      "attempts": 5
+    },
+    "NIS2": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-09-02T15:59:33.864660+00:00",
+      "attempts": 7
+    },
+    "KCMVP": {
+      "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 6
+    },
+    "NZISM": {
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 6
+    },
+    "UAE-CSC-PQC": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
+    },
+    "TH-PDPA": {
+      "reason": "status=err, tier=crawl4ai",
+      "blocked_at": "2026-07-31T22:02:59.774776+00:00",
+      "attempts": 2
+    },
+    "occ-bulletin-2024-23-pqc": {
+      "reason": "status=200, tier=crawl4ai",
+      "blocked_at": "2026-07-29T21:51:27.259243+00:00",
+      "attempts": 2
+    },
+    "BRAZIL-BACEN-4893": {
+      "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
+      "blocked_at": "2026-09-02T15:59:33.864660+00:00",
+      "attempts": 2
+    }
   }
- ],
- "blocked": {
-  "UN-ECE-WP29": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 6
-  },
-  "IEC-62443": {
-   "reason": "hard-blocked: rejected at all 3 fetch_resilient tiers",
-   "blocked_at": "2026-07-14T02:16:08.133645+00:00",
-   "attempts": 5
-  },
-  "NIS2": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 6
-  },
-  "KCMVP": {
-   "reason": "unusable content: only 13 chars of visible text (floor 200) \u2014 a shell, not a document",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 6
-  },
-  "NZISM": {
-   "reason": "status=200, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 6
-  },
-  "UAE-CSC-PQC": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "INDIA-CERTIN-CBOM": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "JORDAN-CBJ-PQC": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "ETSI-EN-303645": {
-   "reason": "status=200, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 2
-  },
-  "APRA-CPS-234": {
-   "reason": "status=200, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 2
-  },
-  "CHILE-ANCI": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "TH-PDPA": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "VN-CYBER": {
-   "reason": "status=err, tier=crawl4ai",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 2
-  },
-  "occ-bulletin-2024-23-pqc": {
-   "reason": "status=200, tier=crawl4ai",
-   "blocked_at": "2026-07-29T21:51:27.259243+00:00",
-   "attempts": 2
-  },
-  "BRAZIL-BACEN-4893": {
-   "reason": "unusable content: only 23 chars of visible text (floor 200) \u2014 a shell, not a document",
-   "blocked_at": "2026-07-31T22:02:59.774776+00:00",
-   "attempts": 1
-  }
- }
 }

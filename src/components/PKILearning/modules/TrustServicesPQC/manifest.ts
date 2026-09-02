@@ -3,7 +3,7 @@ import type { ModuleManifest } from '@/components/PKILearning/manifest/types'
 
 const manifest: ModuleManifest = {
   id: 'trust-services-pqc',
-  contentVersion: 2,
+  contentVersion: 3,
   lm_id: 'LM-063',
   title: 'Trust Services & Long-Term Signatures',
   description:
@@ -26,6 +26,15 @@ const manifest: ModuleManifest = {
     { id: 'longevity-calculator', label: 'Signature Longevity Calculator' },
     { id: 'supersession-explorer', label: 'Standards Supersession Explorer' },
     { id: 'hybrid-suite-picker', label: 'Hybrid Suite Picker' },
+  ],
+  // reduced 5-tab set (no Exercises) — no exercises component is wired for
+  // this module; the default STANDARD_TABS set was rendering an empty tab.
+  tabs: [
+    { value: 'learn', label: 'Learn' },
+    { value: 'visual', label: 'Visual' },
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'references', label: 'References' },
+    { value: 'tools', label: 'Tools & Products' },
   ],
   embeddable: false,
   load: () => import('./index').then((m) => ({ default: m.TrustServicesPQCModule })),

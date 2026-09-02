@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "4.73.0",
+  "version": "4.75.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -29,6 +29,7 @@
     "sync:pyodide-shims": "mkdir -p public/pyodide-shims/p11 public/pyodide-shims/pqctoday_kmip && cp src/services/python/pyodide/shims/p11/__init__.py src/services/python/pyodide/shims/p11/_constants.py public/pyodide-shims/p11/ && cp src/services/python/pyodide/shims/pqctoday_kmip/__init__.py public/pyodide-shims/pqctoday_kmip/",
     "sync:pyodide-runtime": "mkdir -p public/pyodide && cp node_modules/pyodide/ffi.d.ts node_modules/pyodide/pyodide-lock.json node_modules/pyodide/pyodide.asm.js node_modules/pyodide/pyodide.asm.wasm node_modules/pyodide/pyodide.d.ts node_modules/pyodide/pyodide.mjs node_modules/pyodide/python_stdlib.zip public/pyodide/",
     "lint": "eslint --no-error-on-unmatched-pattern src e2e *.ts *.js *.cjs",
+    "gate:pkcs11": "npm run test -- src/components/Playground/hsm src/components/Playground/tabs src/components/Playground/dev src/components/Playground/learnkit src/components/Playground/HsmPlayground.test.tsx src/wasm/softhsm && npm run test:local -- src/components/Playground/hsm src/components/Playground/dev",
     "gate:cacp": "npm run test -- src/components/Playground/kmip src/wasm/kmip && npm run test:local:cacp && npm run sync:wasm:check:cacp-kmip",
     "preview": "vite preview",
     "test": "vitest run",

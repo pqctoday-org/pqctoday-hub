@@ -25,7 +25,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types & constants ────────────────────────────────────────────────────────
 
@@ -290,6 +289,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
       </div>
 
       <Button
+        data-tour="pkcs-op-kdf-derive"
         variant="gradient"
         size="sm"
         className="w-full"
@@ -465,6 +465,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <Button
+            data-tour="pkcs-op-kdf-hkdf-ikm"
             variant={ikmHandle ? 'outline' : 'gradient'}
             size="sm"
             onClick={handleGenIkm}
@@ -583,6 +584,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
       </div>
 
       <Button
+        data-tour="pkcs-op-kdf-derive"
         variant="gradient"
         size="sm"
         className="w-full"
@@ -778,6 +780,7 @@ const KbkdfPanel = ({
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <Button
+            data-tour="pkcs-op-kdf-kbkdf-base"
             variant={baseKeyHandle ? 'outline' : 'gradient'}
             size="sm"
             onClick={handleGenBase}
@@ -887,6 +890,7 @@ const KbkdfPanel = ({
       </div>
 
       <Button
+        data-tour="pkcs-op-kdf-derive"
         variant="gradient"
         size="sm"
         className="w-full"
@@ -972,7 +976,7 @@ export const HsmKdfPanel = ({
         </div>
 
         {/* Mode tabs */}
-        <div className="flex gap-1 bg-muted p-1 rounded-xl">
+        <div data-tour="pkcs-op-kdf-algo" className="flex gap-1 bg-muted p-1 rounded-xl">
           {KDF_MODES.map((m) => (
             <Button
               variant="ghost"
@@ -1015,7 +1019,6 @@ export const HsmKdfPanel = ({
         {mode === 'kbkdf-feedback' && <KbkdfPanel feedback={true} onAlgoChange={onAlgoChange} />}
 
         {/* Unified PKCS#11 call log — below all sub-panels */}
-        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

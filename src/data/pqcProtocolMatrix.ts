@@ -506,11 +506,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-11',
       },
       {
-        id: 'draft-miller-sshm-composite-sigs',
+        id: 'draft-ietf-sshm-composite-sigs',
         title:
-          'draft-miller-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft, which replaced the ML-DSA-65 one)',
-        url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
-        date: '2026-07-24',
+          'draft-ietf-sshm-composite-sigs — Post-Quantum Composite Signatures in SSH (WG-adopted; was draft-miller-sshm-composite-sigs)',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
+        date: '2026-08-21',
       },
       {
         id: 'draft-becker-cnsa2-ssh-profile-05',
@@ -582,17 +582,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'individual-draft',
-        stageNote: 'Internet-Draft (individual)',
+        stage: 'wg-document',
+        stageNote:
+          'Verified live 2026-09-01: the individual submission was adopted by the SSHM working group and replaced by draft-ietf-sshm-composite-sigs (WG document, IESG state "I-D Exists"). Was individual-draft.',
         note: 'Composite ML-DSA+Ed25519 host-key authentication track; the CNSA 2.0 SSH profile (Independent Submission) also touches composite-sig host-key semantics. OpenSSH 10.4 (2026-07-06) shipped the first implementation — experimental, opt-in support for mldsa44-ed25519 host keys and user auth (ssh-keygen -t mldsa44-ed25519; not enabled by default).',
         refs: [
           {
             kind: 'draft',
-            id: 'draft-miller-sshm-composite-sigs',
+            id: 'draft-ietf-sshm-composite-sigs',
             title:
-              'Post-Quantum Composite Signatures in SSH (replaces the ML-DSA-44+Ed25519 draft)',
-            url: 'https://datatracker.ietf.org/doc/draft-miller-sshm-composite-sigs/',
-            publishedOn: '2026-07-24',
+              'Post-Quantum Composite Signatures in SSH (WG document; was draft-miller-sshm-composite-sigs)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-sshm-composite-sigs/',
+            publishedOn: '2026-08-21',
           },
         ],
       },
@@ -782,9 +783,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. draft-ietf-tls-mlkem-09 entered Last Call 2026-07-30 (ends 2026-08-13).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-13 (SECDIR review 2026-08-12 'Ready', GENART review 2026-08-07 'Ready w/nits'); draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass'. Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -1062,9 +1063,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "Re-verified 2026-08-17 against the datatracker: draft-ietf-lamps-pq-composite-kem-19 (posted 2026-08-14) moved to IESG Evaluation on 2026-08-13 and is on the 2026-09-03 IESG telechat agenda. This scale has no 'iesg-evaluation' member, so the stage stays at the last COMPLETED milestone (IETF Last Call, level 6); the ballot is open but not concluded.",
+          "Corrects the 2026-08-17 note, which claimed 'this scale has no iesg-evaluation member' — it does: iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition (see the type doc comment above). draft-ietf-lamps-pq-composite-kem-19 has been in IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat agenda. Re-verified live 2026-09-01.",
         note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1276,7 +1277,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'draft',
         stage: 'ietf-last-call',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. draft-ietf-lamps-cms-composite-kem-01 entered Last Call 2026-08-04 (ends 2026-08-18).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-18 (SECDIR review 2026-08-18 'Ready'); IESG state is 'Waiting for AD Go-Ahead', no ballot open, no telechat scheduled. Stage correctly stays at ietf-last-call — the last completed milestone — since IESG evaluation has not actually started yet (contrast the TLS 1.3/X.509/EST-CMP rows' composite-kem refs, which ARE on an active 2026-09-03 telechat and correctly read iesg-submitted). Corrects this note's prior premise, which wrongly described iesg-submitted as a pre-Last-Call state; iesg-submitted is step 5, AFTER ietf-last-call, per this file's own DraftStage definition.",
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1741,9 +1742,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "Re-verified 2026-08-17. Inherits draft-ietf-lamps-pq-composite-kem-19: IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat. Stage held at the last completed milestone (IETF Last Call, level 6) because this scale has no 'iesg-evaluation' member.",
+          "Corrects the 2026-08-17 note, which claimed 'this scale has no iesg-evaluation member' — it does: iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition. Inherits draft-ietf-lamps-pq-composite-kem-19: IESG Evaluation since 2026-08-13, on the 2026-09-03 telechat agenda. Re-verified live 2026-09-01.",
         note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
         refs: [
           {
@@ -2293,9 +2294,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          'Verified live 2026-08-22: draft-ietf-ipsecme-ikev2-pqc-auth is now at -12, last updated 2026-08-20, WG state "Submitted to IESG for Publication", with OPSDIR and SECDIR Last Call reviews of -10 on record. Supersedes the 2026-08-09 reading, which said -11 was on the 2026-08-20 telechat agenda — that date has passed.',
+          'Verified live 2026-09-01: draft-ietf-ipsecme-ikev2-pqc-auth has cleared IESG evaluation and is now in the RFC Editor queue, "Awaiting Editor Assignment" (revision -12, last updated 2026-08-31; OPSDIR review of -10 on 2026-08-04, SECDIR review of -10 on 2026-07-26, both clean). Supersedes the 2026-08-22 reading of "Submitted to IESG for Publication".',
         refs: [
           {
             kind: 'draft',
@@ -3029,9 +3030,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3138,9 +3139,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3225,9 +3226,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "IETF Last Call, verified live 2026-08-09 against the datatracker's IESG state. Was 'iesg-submitted', derived from the WG-stream string 'Submitted to IESG for Publication' — that is the WG handoff, which happens BEFORE Last Call, not the IESG-review step this scale's level 6 means. Inherits draft-ietf-tls-mlkem-09 (Last Call 2026-07-30, ends 2026-08-13).",
+          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {

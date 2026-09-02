@@ -295,6 +295,7 @@ export function CommandsView({
   onChanged,
   pendingOp,
   onPendingOpHandled,
+  expert = true,
 }: {
   engine: KmipEngine
   onChanged: () => void
@@ -302,6 +303,9 @@ export function CommandsView({
    * that op's row into view, then clear. */
   pendingOp?: string | null
   onPendingOpHandled?: () => void
+  /** Expert mode reveals the "Not implemented in this build" disclosure
+   *  (design handoff design_handoff_kmip_pkcs11_playground, D5). */
+  expert?: boolean
 }) {
   const [table, setTable] = useState<CodepointTable | null>(null)
   const [tableError, setTableError] = useState<string | null>(null)
@@ -456,7 +460,7 @@ export function CommandsView({
             )
           })}
 
-          {!q && (
+          {!q && expert && (
             <CategorySection
               title={`Not implemented in this build (${hiddenCount})`}
               count={hiddenCount}

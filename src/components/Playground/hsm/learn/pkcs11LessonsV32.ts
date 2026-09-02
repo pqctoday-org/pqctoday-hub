@@ -95,6 +95,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_Initialize / C_InitToken / C_OpenSession',
         label: 'Boot the engine if it is not already running',
+        spot: {
+          rail: 'kem',
+          target: '[data-tour="pkcs-op-setup"]',
+          body: 'The token-setup strip above every primitive runs C_Initialize, C_InitToken and C_OpenSession + C_Login — the same boot this step just did. Done returns you to the lesson.',
+        },
         run: async (hsm) => {
           if (!hsm.isReady) {
             const ok = await hsm.autoInit('rust')
@@ -149,6 +154,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (RSA-3072) + C_Sign',
         label: 'Classical: sign with RSA-3072',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-classical-rsa-sign"]',
+          algo: 'RSA-3072',
+          body: 'C_Sign on the Classical › RSA panel — pick the RSA-3072 chip and Generate Key Pair first. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { privHandle } = hsm_generateRSAKeyPair(M, hsm.hSessionRef.current, 3072)
@@ -164,6 +175,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (ML-DSA-65) + C_Sign',
         label: 'Post-quantum: sign the SAME message with ML-DSA-65',
+        spot: { rail: 'sign', target: '[data-tour="pkcs-op-sign-mldsa-sign"]', algo: 'ML-DSA-65' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const { privHandle } = hsm_generateMLDSAKeyPair(M, hsm.hSessionRef.current, 65)
@@ -216,6 +228,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (ML-KEM-768)',
         label: 'Generate an ML-KEM-768 key pair',
+        spot: { rail: 'kem', target: '[data-tour="pkcs-op-kem-keygen"]', algo: 'ML-KEM-768' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
@@ -229,6 +242,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_EncapsulateKey',
         label: 'Encapsulate against the PUBLIC key — get a ciphertext AND a secret handle',
+        spot: { rail: 'kem', target: '[data-tour="pkcs-op-kem-encap"]', algo: 'ML-KEM-768' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
@@ -249,6 +263,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_DecapsulateKey',
         label: 'Decapsulate with the PRIVATE key and confirm the secrets match',
+        spot: { rail: 'kem', target: '[data-tour="pkcs-op-kem-decap"]', algo: 'ML-KEM-768' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
@@ -321,6 +336,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (SLH-DSA-SHA2-128s)',
         label: 'Generate an SLH-DSA key pair',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-slhdsa-keygen"]',
+          algo: 'SLH-DSA-sha2-128s',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hsm.hSessionRef.current)
@@ -330,6 +350,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_SignInit / C_Sign',
         label: 'Sign a message',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-slhdsa-sign"]',
+          algo: 'SLH-DSA-sha2-128s',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
@@ -347,6 +372,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_VerifyInit / C_Verify',
         label: 'Verify it, then corrupt and verify again',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-slhdsa-verify"]',
+          algo: 'SLH-DSA-sha2-128s',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const pubHandle = Number((results[0]?.detail.match(/pub=(\d+)/) ?? [])[1])
@@ -403,6 +433,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (ML-DSA-65)',
         label: 'Generate a key pair to sign with',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-mldsa-keygen"]',
+          algo: 'ML-DSA-65',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { privHandle } = hsm_generateMLDSAKeyPair(M, hsm.hSessionRef.current, 65)
@@ -412,6 +447,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_Sign (hedging: preferred) ×2',
         label: 'Sign the same message twice with hedging',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-mldsa-hedging"]',
+          algo: 'ML-DSA-65',
+          body: 'Hedging: Preferred or Required makes every Sign draw fresh randomness — sign twice and compare the signatures. Done returns you to the lesson.',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
@@ -433,6 +474,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_Sign (deterministic) ×2',
         label: 'Sign the same message twice, deterministically',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-mldsa-hedging"]',
+          algo: 'ML-DSA-65',
+          body: 'Hedging: Deterministic makes Sign reproduce the same signature for the same message — sign twice and compare. Done returns you to the lesson.',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const privHandle = Number((results[0]?.detail.match(/priv=(\d+)/) ?? [])[1])
@@ -474,6 +521,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKey ×2',
         label: 'Generate a wrapping key and an extractable target key',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'The Key Wrap panel wraps AES keys made here — generate one with CKA_WRAP as the wrapping key and one with CKA_EXTRACTABLE as the target. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const wrapHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256)
@@ -484,6 +537,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_WrapKeyAuthenticated (AES-GCM)',
         label: 'Wrap the target key with a real IV and auth tag',
+        spot: { rail: 'wrap', target: '[data-tour="pkcs-op-wrap-wrap"]', algo: 'AES-GCM' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -503,6 +557,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_UnwrapKeyAuthenticated',
         label: 'Unwrap it back with the matching IV',
+        spot: { rail: 'wrap', target: '[data-tour="pkcs-op-wrap-unwrap"]', algo: 'AES-GCM' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const wrapHandle = Number((results[0]?.detail.match(/wrap=(\d+)/) ?? [])[1])
@@ -584,6 +639,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKey (CKA_ALLOWED_MECHANISMS=[CKM_AES_GCM])',
         label: 'Generate an AES key pinned to GCM only',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const handle = hsm_generateAESKeyPinnedTo(M, hsm.hSessionRef.current, 256, CKM_AES_GCM)
@@ -595,6 +656,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_EncryptInit (CKM_AES_GCM — allowed)',
         label: 'Use it with the allowed mechanism',
+        spot: { rail: 'sym', target: '[data-tour="pkcs-op-sym-encrypt"]', algo: 'AES-GCM-256' },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const handle = Number((results[0]?.detail.match(/handle=(\d+)/) ?? [])[1])
@@ -661,6 +723,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKey (CKA_ALLOWED_MECHANISMS=[CKM_AES_GCM])',
         label: 'Generate a pinned key to inspect',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'Generate Key runs the same C_GenerateKey — the Operate panel exposes the CKA_* usage flags but not a CKA_ALLOWED_MECHANISMS template, so the pin itself only happens in this lesson. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const handle = hsm_generateAESKeyPinnedTo(M, hsm.hSessionRef.current, 256, CKM_AES_GCM)
@@ -747,6 +815,11 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (RSA-2048) — the "legacy" key',
         label: 'Provision a legacy classical signing key',
+        spot: {
+          rail: 'sign',
+          target: '[data-tour="pkcs-op-sign-classical-rsa-keygen"]',
+          algo: 'RSA-2048',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hsm.hSessionRef.current, 2048)
@@ -759,6 +832,7 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKeyPair (ML-DSA-65) — the successor',
         label: 'Provision the PQC successor and re-sign the SAME artifact',
+        spot: { rail: 'sign', target: '[data-tour="pkcs-op-sign-mldsa-sign"]', algo: 'ML-DSA-65' },
         run: (hsm) => {
           const M = requireModule(hsm)
           const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hsm.hSessionRef.current, 65)
@@ -819,6 +893,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_GenerateKey ×2',
         label: 'Generate an ordinary wrapping key and a policy-pinned target key',
+        spot: {
+          rail: 'sym',
+          target: '[data-tour="pkcs-op-sym-keygen"]',
+          algo: 'AES-GCM-256',
+          body: 'Generate Key runs the same C_GenerateKey — the CKA_WRAP_WITH_TRUSTED pin on the target key only happens in this lesson; the panel exposes the plain CKA_* usage flags. Done returns you to the lesson.',
+        },
         run: (hsm) => {
           const M = requireModule(hsm)
           const wrapHandle = hsm_generateAESKey(M, hsm.hSessionRef.current, 256)
@@ -877,6 +957,12 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
       {
         op: 'C_WrapKey (SO-blessed trusted key)',
         label: 'Wrap the pinned key with the SO-blessed trusted wrapping key',
+        spot: {
+          rail: 'wrap',
+          target: '[data-tour="pkcs-op-wrap-wrap"]',
+          algo: 'AES-KW',
+          body: 'Wrap Key is the same C_WrapKey (AES-KW) — but the Operate panel has no SO login, so its wrapping keys are never CKA_TRUSTED and a pinned target would still be refused here. Done returns you to the lesson.',
+        },
         run: (hsm, results) => {
           const M = requireModule(hsm)
           const targetHandle = Number((results[0]?.detail.match(/target=(\d+)/) ?? [])[1])

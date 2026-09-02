@@ -5,7 +5,6 @@ import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_encapsulate,
@@ -189,7 +188,7 @@ export const HsmKemPanel = () => {
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
             KEM Algorithm
           </p>
-          <div className="flex flex-wrap gap-2 items-center">
+          <div data-tour="pkcs-op-kem-family" className="flex flex-wrap gap-2 items-center">
             {(
               [
                 { id: 'ml-kem' as const, label: 'ML-KEM' },
@@ -236,7 +235,7 @@ export const HsmKemPanel = () => {
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
               ML-KEM Parameters
             </p>
-            <div className="flex flex-wrap gap-2 items-center">
+            <div data-tour="pkcs-op-kem-set" className="flex flex-wrap gap-2 items-center">
               {([512, 768, 1024] as const).map((v) => (
                 <Button
                   key={v}
@@ -263,6 +262,7 @@ export const HsmKemPanel = () => {
         <div className="glass-panel p-4 space-y-3">
           <div className="flex flex-wrap gap-2 items-center">
             <Button
+              data-tour="pkcs-op-kem-keygen"
               variant="outline"
               size="sm"
               disabled={checkLoading || vendorKemUnavailable}
@@ -281,6 +281,7 @@ export const HsmKemPanel = () => {
         {/* Action Buttons */}
         <div className="flex gap-2">
           <Button
+            data-tour="pkcs-op-kem-encap"
             variant="ghost"
             onClick={doEncap}
             disabled={pubHandle === null || checkLoading || vendorKemUnavailable}
@@ -290,6 +291,7 @@ export const HsmKemPanel = () => {
             <ArrowRight size={14} className="mr-2" /> Encapsulate
           </Button>
           <Button
+            data-tour="pkcs-op-kem-decap"
             variant="outline"
             onClick={doDecap}
             disabled={
@@ -335,8 +337,6 @@ export const HsmKemPanel = () => {
             )}
           </div>
         )}
-
-        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

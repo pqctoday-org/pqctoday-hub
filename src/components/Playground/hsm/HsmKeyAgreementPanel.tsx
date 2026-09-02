@@ -16,7 +16,6 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
-import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -192,7 +191,7 @@ export const HsmKeyAgreementPanel = ({
           {/* Curve */}
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Curve</p>
-            <div className="flex gap-1">
+            <div data-tour="pkcs-op-agree-curve" className="flex gap-1">
               {(['P-256', 'P-384', 'P-521', 'X25519', 'X448'] as KaCurve[]).map((c) => (
                 <Button
                   variant="ghost"
@@ -269,7 +268,7 @@ export const HsmKeyAgreementPanel = ({
         </div>
 
         {/* Key generation buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div data-tour="pkcs-op-agree-keygen" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-2">
             <p className="text-xs font-medium text-foreground">Alice</p>
             <Button
@@ -315,6 +314,7 @@ export const HsmKeyAgreementPanel = ({
 
         {/* Derive button */}
         <Button
+          data-tour="pkcs-op-agree-derive"
           variant="gradient"
           size="sm"
           className="w-full"
@@ -363,7 +363,6 @@ export const HsmKeyAgreementPanel = ({
           </div>
         )}
 
-        <MiniPkcsLog />
         {error && <ErrorAlert message={error} />}
 
         {/* Educational note */}

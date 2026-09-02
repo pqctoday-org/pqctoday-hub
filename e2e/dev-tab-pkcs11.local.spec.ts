@@ -157,15 +157,15 @@ test('the guided lesson drives the real Developer tab end to end, including a li
   await expect(page.getByText('Take it to the sandbox')).not.toBeVisible()
 })
 
-test('the guided lesson still works when started from the ACVP sub-tab, not just the default Pipeline one', async ({
+test('the guided lesson still works when started from the ACVP sub-tab, not just the default Standard one', async ({
   page,
 }) => {
   // Regression guard for the 2026-08-31 merge's devSubTab reset: the lesson
-  // callback does `handleTabChange('developer')` then `setDevSubTab('pipeline')`.
+  // callback does `handleTabChange('developer')` then `setDevSubTab('standard')`.
   // The test above always starts from a fresh page (devSubTab already
-  // defaults to 'pipeline'), so it can't catch a regression here — the fix
+  // defaults to 'standard'), so it can't catch a regression here — the fix
   // only matters when the user is actually on ACVP/Conformance when they
-  // open Lessons, since TabsContent unmounts the Pipeline builder (and its
+  // open Lessons, since TabsContent unmounts the Standard workbench (and its
   // data-tour="pkcs-dev-*" targets) while a different sub-tab is active.
   await page.goto('/playground/hsm?tab=developer&dtab=acvp')
   await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveAttribute('aria-selected', 'true', {
@@ -176,9 +176,9 @@ test('the guided lesson still works when started from the ACVP sub-tab, not just
   await page.getByRole('button', { name: /Build a PKCS#11 v3\.2 sequence/ }).click()
 
   // If the reset didn't happen, the palette selector would never resolve
-  // (Pipeline unmounted) and this would time out instead of finding it.
+  // (Standard unmounted) and this would time out instead of finding it.
   await expect(page.getByText('The palette')).toBeVisible({ timeout: 30000 })
-  await expect(page.getByRole('tab', { name: 'Pipeline' })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tab', { name: 'Standard' })).toHaveAttribute('aria-selected', 'true')
 
   await page.getByRole('button', { name: /^Next/ }).click()
   await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
@@ -219,12 +219,15 @@ test('Curious/Executive personas never see the ACVP/Conformance sub-tabs, even v
 
   // Legacy deep link — pre-merge bookmark straight to the old top-level tab.
   await page.goto('/playground/hsm?tab=acvp')
-  await expect(page.getByRole('tab', { name: 'Developer' })).toBeVisible({ timeout: 30000 })
+  // exact: the workbench's own inner 'Builder · N steps' tab would substring-match.
+  await expect(page.getByRole('tab', { name: 'Build', exact: true })).toBeVisible({
+    timeout: 30000,
+  })
   await expect(page.getByRole('tab', { name: 'ACVP' })).toHaveCount(0)
   await expect(page.getByRole('tab', { name: 'Conformance' })).toHaveCount(0)
 
   // Land on Developer directly with the new sub-tab param — must fall back
-  // to Pipeline rather than honoring the gated sub-tab.
+  // to Standard rather than honoring the gated sub-tab.
   await page.goto('/playground/hsm?tab=developer&dtab=acvp')
   await expect(page.getByRole('button', { name: 'Encrypt + sign (PQ)' })).toBeVisible({
     timeout: 30000,
@@ -454,16 +457,33 @@ test("the real PKCS#11 call log and key table show this tab's own run activity",
   await page.getByRole('button', { name: /^Run$/ }).click()
   await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
 
-  await page.getByText('Session activity').click()
-  // Inspector-style tab bar — Log and Keys are separate tabs now, not
-  // stacked, so each has to be selected before asserting its content.
-  await expect(page.getByRole('button', { name: /^Log \(\d+\)$/ })).toBeVisible()
-  await expect(page.getByText('PKCS#11 Call Log')).toBeVisible()
+  // 2026-09-02 redesign (design_handoff_kmip_pkcs11_playground D3c): the
+  // Build tab no longer embeds its own log/key copies — ONE shared call log
+  // and key inventory live on the Inspect tab, and the "N calls · K keys —
+  // Inspect" chip on Build links straight there. Same regression guard,
+  // through the real path a visitor takes.
+  await page.locator('[data-tour="pkcs-inspect-chip"]').click()
+  await expect(page.getByRole('tab', { name: 'Inspect', exact: true })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+  // Learn stays mounted (hidden) with its own lesson-mode log — scope to the
+  // visible Inspect panel, not the first DOM match.
+  await expect(page.getByText('PKCS#11 Call Log').locator('visible=true')).toBeVisible()
+  // Origin filter — only the calls the Build suite made.
+  await page.getByRole('button', { name: 'Build', exact: true }).click()
   // A real function name from the default template's own generate/encrypt
   // steps — not just the panel chrome.
   await expect(page.getByText(/C_GenerateKey|C_EncryptInit|C_SignInit/).first()).toBeVisible()
 
-  // The key(s) the run just created, via the devSlot discovery scan.
-  await page.getByRole('button', { name: /^Keys \(\d+\)$/ }).click()
-  await expect(page.getByText(/AES-256-GCM key|ML-DSA-65/).first()).toBeVisible()
+  // The key(s) the run just created, via the devSlot discovery scan — the
+  // registry labels discovered objects by key type (CKK_AES / CKK_ML_DSA).
+  await page.getByRole('tab', { name: 'Keys', exact: true }).click()
+  await expect(page.getByText('HSM Key Registry').locator('visible=true')).toBeVisible()
+  await expect(
+    page
+      .getByText(/CKK_AES|CKK_ML_DSA|AES-256-GCM key|ML-DSA-65/)
+      .locator('visible=true')
+      .first()
+  ).toBeVisible()
 })

@@ -26,13 +26,18 @@ import {
 export type { LessonStep }
 export { TourOverlay, clickByText, dragRangeToMax }
 
-export type Plane = 'agility' | 'policy' | 'kmip3'
+/** The six top-level tabs (2026-09-02 redesign) — must stay in sync with
+ *  KmipPlaygroundView.tsx's own `Plane` union. */
+export type Plane = 'learn' | 'policy' | 'operate' | 'inspect' | 'dev' | 'migration'
 export type Lesson = LessonGeneric<Plane>
 
 const PLANE_BADGE: Record<Plane, PlaneBadge> = {
-  agility: { label: 'Workbench', className: 'bg-status-warning/10 text-status-warning' },
+  learn: { label: 'Learn', className: 'bg-status-info/10 text-status-info' },
   policy: { label: 'Policy', className: 'bg-primary/10 text-primary' },
-  kmip3: { label: 'KMIP3.0', className: 'bg-status-info/10 text-status-info' },
+  operate: { label: 'Operate', className: 'bg-status-warning/10 text-status-warning' },
+  inspect: { label: 'Inspect', className: 'bg-muted text-muted-foreground' },
+  dev: { label: 'Dev', className: 'bg-accent/10 text-accent' },
+  migration: { label: 'Migration Estate', className: 'bg-status-success/10 text-status-success' },
 }
 
 export function useLessonsTour(lessons: Lesson[], onLessonPlane: (p: Plane) => void) {

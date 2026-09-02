@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "pqctoday-kmip",
+    "category": "Key Management Systems (KMS)",
+    "product_name": "pqctoday-kmip",
+    "product_brief": "A post-quantum KMIP 3.0 key-management server built on softhsmrustv3 with a CACP crypto-agility policy engine.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-KEM, ML-DSA, SLH-DSA, and hybrid KEMs (X25519MLKEM768, SecP256r1MLKEM768). Implements a \"quantum-safe\" TLS profile enforcing hybrid ECDHE-ML-KEM key agreement. Built on softhsmrustv3 engine with durable or in-memory key stores.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, SLH-DSA, AES, HMAC, X25519, SecP256r1, SecP384r1, SHA-256, SHA-384, ChaCha20-Poly1305",
+    "key_management_model": "Three-plane architecture (policy / KMIP / PKCS#11); durable SQLite or volatile in-memory key store; admin-mTLS for control plane; TLS for data plane.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Server-based (SaaS/On-prem capable via binary); three-plane architecture (policy, KMIP, PKCS#11); agentless client interaction via KMIP protocol.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Linux (implied by Rust/Cargo build), WebAssembly (in-browser control plane)",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA",
+    "authoritative_source_url": "pqctoday-org / pqctoday-hsm (GitHub repository context)",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Rust integration suite, OASIS KMIP 3.0 replay harness, Known-answer-test (KAT) vectors, hybrid KEM end-to-end tests, TLS e2e tests.",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Supports sandbox (in-memory) and production (SQLite) deployments; provides demo scripts and policy engines for migration testing.",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-02"
+    }
+  }
+]

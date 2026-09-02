@@ -47,6 +47,7 @@ import { Pkcs11BypassDemo } from './Pkcs11BypassDemo'
 import { Pkcs11CertificateDemo } from './Pkcs11CertificateDemo'
 import { PolicyRulesDisplay, PolicyRulesLegend } from './PolicyRulesDisplay'
 import { PolicyTimeline } from './PolicyTimeline'
+import { PolicyScenario } from './PolicyScenario'
 import { PolicyGraphView } from './visual/PolicyGraphView'
 
 /** Tone → dot colour for catalog chips. */
@@ -224,7 +225,7 @@ function DefaultPill({ label, algo }: { label: string; algo: string | null }) {
   )
 }
 
-type DetailTab = 'list' | 'visual' | 'compare' | 'timeline' | 'yaml'
+export type DetailTab = 'list' | 'visual' | 'compare' | 'timeline' | 'yaml' | 'scenarios'
 
 export function PolicyView({
   engine,
@@ -234,6 +235,9 @@ export function PolicyView({
   expert,
   onLoadPolicy,
   onApplyYaml,
+  view,
+  onViewChange,
+  scenario,
 }: {
   engine: KmipEngine
   policy: PolicyStatus
@@ -242,10 +246,28 @@ export function PolicyView({
   expert: boolean
   onLoadPolicy: (preset: PolicyPreset) => void
   onApplyYaml: (yaml: string) => { ok: boolean; warnings?: string[]; error?: string } | undefined
+  /** Controlled sub-view (the shell URL-syncs it as `?view=`); omit for local state. */
+  view?: DetailTab
+  onViewChange?: (v: DetailTab) => void
+  /** Hosts the 13 engine-verified policy scenarios as the 6th sub-view
+   *  (design handoff design_handoff_kmip_pkcs11_playground, D4). */
+  scenario?: {
+    policyFile: string
+    policyLabel: string
+    policyFingerprint?: string
+    onBusyChange: (b: boolean) => void
+  }
 }) {
   const [models, setModels] = useState<Record<string, PolicyModel>>({})
   const [rawYaml, setRawYaml] = useState<Record<string, string>>({})
-  const [detailTab, setDetailTab] = useState<DetailTab>('list')
+  const [detailTabState, setDetailTabState] = useState<DetailTab>(view ?? 'list')
+  const requestedTab = view ?? detailTabState
+  // YAML is Expert-only (D5): fall back to List without syncing state.
+  const detailTab: DetailTab = !expert && requestedTab === 'yaml' ? 'list' : requestedTab
+  const setDetailTab = (t: DetailTab) => {
+    setDetailTabState(t)
+    onViewChange?.(t)
+  }
   // Shared "as-of" date (A-grade review item #15) — one slider the matrix,
   // Compare, and Timeline all evaluate at, so a temporal cutoff (e.g. the
   // 2030 classical-Sign ban) visibly flips as you scrub instead of only
@@ -409,7 +431,8 @@ export function PolicyView({
     { id: 'visual', label: 'Visual', icon: Workflow },
     { id: 'compare', label: 'Compare', icon: GitCompare },
     { id: 'timeline', label: 'Timeline', icon: CalendarClock },
-    { id: 'yaml', label: 'YAML', icon: Code2 },
+    ...(scenario ? [{ id: 'scenarios' as const, label: 'Scenarios', icon: FlaskConical }] : []),
+    ...(expert ? [{ id: 'yaml' as const, label: 'YAML', icon: Code2 }] : []),
   ]
 
   return (
@@ -943,6 +966,19 @@ export function PolicyView({
         )}
 
         {/* ── YAML ──────────────────────────────────────────────────────── */}
+        {detailTab === 'scenarios' && scenario && (
+          <div data-tour="policy-scenarios">
+            <PolicyScenario
+              engine={engine}
+              policyFile={scenario.policyFile}
+              policyLabel={scenario.policyLabel}
+              policyFingerprint={scenario.policyFingerprint}
+              busy={busy}
+              onBusyChange={scenario.onBusyChange}
+            />
+          </div>
+        )}
+
         {detailTab === 'yaml' && (
           <section className="rounded-xl border border-border bg-card p-4">
             <h4 className="flex items-center gap-2 text-xs font-semibold text-foreground">

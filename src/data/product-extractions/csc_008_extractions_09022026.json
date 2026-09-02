@@ -1,0 +1,43 @@
+[
+  {
+    "platform_name": "Zoom Post-Quantum End-to-End Encryption (Zoom Meetings, part of Zoom Workplace)",
+    "category": "Email Encryption & Collaboration",
+    "product_name": "Zoom Workplace (specifically Zoom Meetings)",
+    "product_brief": "Zoom Workplace platform offering post-quantum end-to-end encryption for video conferencing.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Post-quantum end-to-end encryption (E2EE) is globally available for Zoom Meetings. It uses Kyber 768 (ML-KEM, FIPS 203) to defend against \"harvest now, decrypt later\" attacks. Zoom Phone and Zoom Rooms support is coming soon.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Kyber 768 (ML-KEM)",
+    "key_management_model": "End-to-end encryption where only participants have access to encryption keys; servers do not have decryption keys.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "End-to-end encryption",
+    "infrastructure_layer": "AppServers",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2024-05-21",
+    "fips_validated": "No (mentions algorithm is being standardized in FIPS 203, but does not state the product itself is FIPS validated)",
+    "primary_platforms": "Zoom Workplace, Zoom Meetings, Zoom Phone, Zoom Rooms",
+    "target_industries": "Enterprise (UCaaS provider)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Zoom Phone and Zoom Rooms support for post-quantum E2EE is coming soon.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "zoom-compliance-2026-08405e35.html",
+    "implementation_attack_surface": "Unknown",
+    "cryptographic_discovery_&_inventory": "Unknown",
+    "testing_&_validation_methods": "Unknown",
+    "qkd_protocols_&_quantum_networking": "Unknown",
+    "qrng_&_entropy_sources": "Unknown",
+    "constrained_device_&_iot_suitability": "Unknown",
+    "supply_chain_&_vendor_risk": "Unknown",
+    "deployment_&_migration_complexity": "Unknown",
+    "financial_&_business_impact": "Unknown",
+    "organizational_readiness": "Unknown",
+    "_generation": {
+      "model": "mlx-community/Qwen3.6-27B-8bit",
+      "backend": "mlx",
+      "generated_at": "2026-09-02"
+    }
+  }
+]

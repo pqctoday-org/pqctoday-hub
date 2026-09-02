@@ -332,6 +332,14 @@ export interface Pkcs11LogEntry {
   /** When true, renders as a visual step-separator in the log panel (not a real PKCS#11 call) */
   isStepHeader?: true
   hSession?: number
+  /**
+   * Which workshop surface produced the call — `operate:<rail>`,
+   * `build:<suite>`, `learn`, `inspect`, `setup`, `parity` — stamped by
+   * HsmContext's `addHsmLog` from the surface currently active, so the ONE
+   * shared Inspect log can be filtered by origin (design handoff
+   * design_handoff_kmip_pkcs11_playground §3.4). Never set by callers.
+   */
+  origin?: string
 }
 
 let _logId = 0

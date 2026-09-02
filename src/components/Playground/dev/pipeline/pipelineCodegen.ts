@@ -294,13 +294,22 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
     }
 
     case 'import': {
-      // ACVP known-answer test: import the vector's own fixed private key
-      // via real C_CreateObject (PKCS#11 v3.2 §4.1.1), not C_GenerateKeyPair
-      // — the only way a KAT's expected output is even reachable, since a
-      // freshly generated key is random. requires.keyMaterial's kind is
-      // 'label' at the type level (see pipelinePrimitives.ts's comment);
-      // the codegen here is what actually treats the value as hex.
-      const priv = privVar(step.id)
+      // ACVP known-answer test: import the vector's own fixed key material
+      // via real C_CreateObject (PKCS#11 v3.2 §4.1.1), not
+      // C_GenerateKeyPair — the only way a KAT's expected output is even
+      // reachable, since a freshly generated key is random. requires.
+      // keyMaterial's kind is 'label' at the type level (see
+      // pipelinePrimitives.ts's comment); the codegen here is what actually
+      // treats the value as hex.
+      //
+      // `keyPart` ('pub' | 'priv', default 'priv') picks which half of the
+      // keypair this step imports — a decapsulate-direction KAT (ML-KEM)
+      // needs the vector's private key, a verify-direction KAT (ML-DSA
+      // sigVer) needs its public key instead. Deliberately NOT part of
+      // OpSpec.requires (pipelinePrimitives.ts): every existing/future
+      // caller that doesn't set it keeps importing a private key exactly as
+      // before, with zero UI/validation footprint for this one internal
+      // switch.
       const material = render(p.keyMaterial)
       const kg = spec.keygen
       if (!kg || (kg.kind !== 'ml-kem' && kg.kind !== 'ml-dsa')) {
@@ -309,6 +318,24 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
         ]
       }
       const ckkName = kg.kind === 'ml-kem' ? 'CKK_ML_KEM' : 'CKK_ML_DSA'
+      const keyPart = p.keyPart?.bind === 'literal' && p.keyPart.value === 'pub' ? 'pub' : 'priv'
+
+      if (keyPart === 'pub') {
+        const pub = pubVar(step.id)
+        return [
+          `pub_template_${sym(step.id)} = [`,
+          `    (p11.CKA_CLASS, p11.CKO_PUBLIC_KEY),`,
+          `    (p11.CKA_KEY_TYPE, p11.${ckkName}),`,
+          `    (p11.CKA_VERIFY, True),`,
+          `    (p11.CKA_PARAMETER_SET, p11.${kg.paramSetName}),`,
+          `    (p11.CKA_VALUE, ${material}),`,
+          `    (p11.CKA_TOKEN, True),`,
+          `]`,
+          `${pub} = s.create_object(pub_template_${sym(step.id)})`,
+          `print('%s imported (public) · pub=%d' % (${L}, ${pub}))`,
+        ]
+      }
+      const priv = privVar(step.id)
       const usageAttr = kg.kind === 'ml-kem' ? 'CKA_DECAPSULATE' : 'CKA_SIGN'
       return [
         `priv_template_${sym(step.id)} = [`,
@@ -325,9 +352,32 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
     }
 
     case 'assert': {
+      const label = p.label?.bind === 'literal' ? p.label.value : 'ACVP known-answer check'
+      // 'assert-verified' (pipelinePrimitives.ts): the vector's own
+      // signature must verify by construction — no expected byte string to
+      // compare, just the prior `verify` step's boolean result.
+      if (p.verified) {
+        return [
+          `if not ${render(p.verified)}: raise RuntimeError(${pyStr(`ACVP KAT MISMATCH — ${label}: verify returned False`)})`,
+          `print(${pyStr(`  ACVP KAT MATCH: ${label}`)})`,
+        ]
+      }
+      // 'assert-bytes-equal': `actual` is already plain bytes (a digest or
+      // decrypt result) — compared directly, no s.value() key-handle read.
+      if (p.actual) {
+        const actual = render(p.actual)
+        const expected = p.expected?.bind === 'hex' ? p.expected.value.toLowerCase() : ''
+        return [
+          `_actual = (${actual}).hex()`,
+          `_expected = ${pyStr(expected)}`,
+          `if _actual != _expected: raise RuntimeError(f'ACVP KAT MISMATCH — expected {_expected[:32]}..., got {_actual[:32]}...')`,
+          `print(${pyStr(`  ACVP KAT MATCH: ${label}`)})`,
+        ]
+      }
+      // 'assert-equals': `secret` is a key handle (ML-KEM decapsulate's own
+      // shared-secret object) — read via s.value() first.
       const secret = render(p.secret)
       const expected = p.expected?.bind === 'hex' ? p.expected.value.toLowerCase() : ''
-      const label = p.label?.bind === 'literal' ? p.label.value : 'ACVP known-answer check'
       return [
         `_actual = s.value(${secret}).hex()`,
         `_expected = ${pyStr(expected)}`,

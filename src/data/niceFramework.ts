@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+// @reviewed 2026-09-01 by eram2207usa — full read; every work-role/competency-
+// area label spot-checked verbatim against the vendored v2.2.0 JSON, all match
 /**
  * NICE Framework data layer for pqctoday.
  *
