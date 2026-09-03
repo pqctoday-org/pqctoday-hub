@@ -321,6 +321,12 @@ export const PKCS11 = {
   CKM_AES_KEY_WRAP_KWP: 0x0000210b,
   CKM_PKCS5_PBKD2: 0x000003b0,
   CKM_GENERIC_SECRET_KEY_GEN: 0x00000350,
+  // Hand-synced 2026-09-02 (gaps-closeout WP-2): present in pqctoday-hsm's
+  // constants.js source of truth but missing here — scripts/check-hsm-
+  // constants-drift.mjs, the regen script this file's header names, does
+  // not exist in this checkout, so it could not be re-run. Value copied
+  // verbatim from the hsm source.
+  CKM_SP800_108_COUNTER_KDF: 0x000003ac,
   CKM_ML_DSA_KEY_PAIR_GEN: 0x0000001c,
   CKM_ML_DSA: 0x0000001d,
   CKM_HASH_ML_DSA: 0x0000001f,

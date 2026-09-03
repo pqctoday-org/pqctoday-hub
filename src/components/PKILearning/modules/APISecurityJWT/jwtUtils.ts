@@ -255,14 +255,22 @@ const SLH_DSA_SUITES: Record<
 }
 
 // PKCS#11 v3.2 CKP_SLH_DSA_* parameter-set IDs for the SoftHSM3 keygen path.
-const SLH_DSA_PARAM_SET: Record<
+//
+// A lazy function, not a top-level literal: the production build wraps the
+// softhsm import in vite-plugin-top-level-await, so a top-level literal here
+// would capture the CKP_SLH_DSA_* constants as `undefined` (assigned only
+// once that chunk's own top-level await resolves, which happens AFTER this
+// module's top-level runs). Dev/vitest don't use that plugin, so this bug is
+// invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const slhDsaParamSet = (): Record<
   'SLH-DSA-SHA2-128s' | 'SLH-DSA-SHA2-192s' | 'SLH-DSA-SHA2-256s',
   number
-> = {
+> => ({
   'SLH-DSA-SHA2-128s': CKP_SLH_DSA_SHA2_128S,
   'SLH-DSA-SHA2-192s': CKP_SLH_DSA_SHA2_192S,
   'SLH-DSA-SHA2-256s': CKP_SLH_DSA_SHA2_256S,
-}
+})
 
 // ── Composite-sig wire format (draft-ietf-jose-pq-composite-sigs-03) ────────
 //
@@ -522,7 +530,7 @@ export async function generateJwsKeyPair(opts: {
 
   if (backend === 'softhsmv3' && isSlhDsa(alg)) {
     if (!hsm) throw new Error('softhsmv3 backend requires HSM context')
-    const paramSet = SLH_DSA_PARAM_SET[alg]
+    const paramSet = slhDsaParamSet()[alg]
     const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
       hsm.M,
       hsm.session,
@@ -714,7 +722,7 @@ export async function verifyJWS(opts: {
       }
     } else if (backend === 'softhsmv3' && isSlhDsa(alg)) {
       if (!hsm) throw new Error('softhsmv3 backend requires HSM context')
-      const paramSet = SLH_DSA_PARAM_SET[alg]
+      const paramSet = slhDsaParamSet()[alg]
       // Import the public key, verify, destroy — same pattern as ML-DSA
       // (prevents pubHandle accumulation in a long-running session).
       const pubHandle = hsm_importSLHDSAPublicKey(hsm.M, hsm.session, paramSet, publicKey)

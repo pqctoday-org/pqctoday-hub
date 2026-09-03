@@ -69,7 +69,14 @@ type HashAlgo = 'SHA-256' | 'SHA-384' | 'SHA-512'
 // Algorithm config lookup tables
 // ---------------------------------------------------------------------------
 
-const CLASSICAL_MECH: Record<ClassicalAlgo, Record<HashAlgo, number>> = {
+// A lazy function, not a top-level object literal: the production build wraps
+// this module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture the CKM_*_RSA_PKCS/CKM_ECDSA_SHA* mechanisms as
+// `undefined` (they're only assigned once that chunk's own top-level await
+// resolves, which happens AFTER this module's top-level runs). Dev/vitest don't
+// use that plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const classicalMech = (): Record<ClassicalAlgo, Record<HashAlgo, number>> => ({
   'RSA-2048': {
     'SHA-256': CKM_SHA256_RSA_PKCS,
     'SHA-384': CKM_SHA384_RSA_PKCS,
@@ -90,7 +97,7 @@ const CLASSICAL_MECH: Record<ClassicalAlgo, Record<HashAlgo, number>> = {
     'SHA-384': CKM_ECDSA_SHA384,
     'SHA-512': CKM_ECDSA_SHA512,
   },
-}
+})
 
 const MLDSA_VARIANT: Record<string, number> = { 'ML-DSA-44': 44, 'ML-DSA-65': 65, 'ML-DSA-87': 87 }
 
@@ -719,7 +726,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       const contentBytes = new TextEncoder().encode(content)
 
       // --- Classical sign ---
-      const mechType = CLASSICAL_MECH[classicalAlgo][hashAlgo]
+      const mechType = classicalMech()[classicalAlgo][hashAlgo]
       let classicalSig: Uint8Array
       if (classicalAlgo.startsWith('RSA')) {
         classicalSig = hsm_rsaSign(
@@ -823,7 +830,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       const content = buildManifestString(fileBytes)
 
       // Classical verify
-      const mechType = CLASSICAL_MECH[classicalAlgo][hashAlgo]
+      const mechType = classicalMech()[classicalAlgo][hashAlgo]
       let cvResult: boolean
       if (classicalAlgo.startsWith('RSA')) {
         cvResult = hsm_rsaVerify(

@@ -29,6 +29,26 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.76.0] - 2026-09-02
+
+A same-day follow-up to the PKCS#11/KMIP workshop redesign: a live production bug fixed, all five vendored HSM engines refreshed, four new real known-answer-test templates, and a handful of small workshop fixes.
+
+### Fixed
+
+- **A real bug in production: some HSM workshop lessons could fail with a cryptic PKCS#11 error** [view:/learn] [view:/playground] [persona:developer] [persona:researcher]: a build-tooling issue meant a handful of cryptographic constants could silently read as missing on the live site (never in local testing), causing calls like HKDF key derivation to fail. Found, root-caused, and fixed across every affected lesson, with an automated check added so it can't come back unnoticed.
+- **The PKCS#11 workshop's KEM panel now honors a lesson's requested algorithm** [view:/playground] [persona:developer]: jumping from a Learn step into Operate now correctly pre-selects ML-KEM-512/1024 or the vendor KEMs, instead of always landing on ML-KEM-768 regardless of what the lesson asked for.
+
+### Added
+
+- **Four new real, standards-verified test templates in the PKCS#11 Developer tab** [view:/playground] [persona:developer] [persona:researcher]: AES-256-CBC, HKDF-SHA256, ECDSA-P384, and SLH-DSA-SHA2-128s (the last one exercising a real non-empty signing context) — each replays a published NIST or RFC known-answer vector against the real in-browser engine and checks the result byte-for-byte, runnable unchanged in the standalone dev sandbox.
+- **The PKCS#11 shim gained new standards-accurate building blocks** [view:/playground] [persona:developer]: P-384/P-521/Ed448 key generation, AES key wrap/unwrap, and explicit HKDF/SP800-108/PBKDF2 parameter builders — each one mirrors the real PKCS#11 v3.2 struct layout directly rather than hiding it behind a shortcut, so a generated script still teaches the real call shape.
+- **KMIP's Batch view can now pin a step to a specific stored key** [view:/playground] [persona:developer]: every batch item that references a key can be toggled between "chained" (follows whatever the previous step created) and "direct" (always the same object you pick from the keystore), instead of only ever chaining.
+- **All five vendored HSM engine bundles (SoftHSM C++, Rust, KMIP, OpenSSL-PKCS#11, StrongSwan) refreshed to their latest source** [view:/playground] [persona:developer]: brings 25 additional PKCS#11 mechanisms into scope that the engines already supported but the workshop didn't yet recognize by name.
+
+### Changed
+
+- **`KmipPlaygroundView` split into smaller, focused components** [persona:developer]: the guided key-lifecycle flow and its algorithm/key-size configuration are now separate files under `kmip/operate/` — no behavior change, verified end to end including the guided-tour lessons that drive it directly.
+
 ## [4.75.0] - 2026-09-02
 
 The PKCS#11 and KMIP workshops were reorganized around how people actually use them — Learn, Operate/Build, and Inspect are now top-level, not buried two tabs deep — plus a compliance chart and a broad library/timeline/compliance data refresh.

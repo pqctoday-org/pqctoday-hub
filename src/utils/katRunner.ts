@@ -258,7 +258,14 @@ function getMldsaGroup(variant: 44 | 65 | 87, testIndex = 0) {
   return { group, test }
 }
 
-const SLH_DSA_CKP_MAP: Record<SlhDsaVariant, number> = {
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture every CKP_SLH_DSA_* parameter set as `undefined`
+// (assigned only once that chunk's own top-level await resolves, which
+// happens AFTER this module's top-level runs). Dev/vitest don't use that
+// plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const slhDsaCkpMap = (): Record<SlhDsaVariant, number> => ({
   'SHA2-128s': CKP_SLH_DSA_SHA2_128S,
   'SHA2-128f': CKP_SLH_DSA_SHA2_128F,
   'SHA2-192s': CKP_SLH_DSA_SHA2_192S,
@@ -271,7 +278,7 @@ const SLH_DSA_CKP_MAP: Record<SlhDsaVariant, number> = {
   'SHAKE-192f': CKP_SLH_DSA_SHAKE_192F,
   'SHAKE-256s': CKP_SLH_DSA_SHAKE_256S,
   'SHAKE-256f': CKP_SLH_DSA_SHAKE_256F,
-}
+})
 
 // ── KAT implementations ───────────────────────────────────────────────────────
 
@@ -411,7 +418,7 @@ async function runSLHDSAFunctionalKAT(
   variant: SlhDsaVariant,
   customMessage?: string
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
-  const ckp = SLH_DSA_CKP_MAP[variant]
+  const ckp = slhDsaCkpMap()[variant]
   const message =
     customMessage ?? `NIST PQC KAT validation — SLH-DSA-${variant} functional round-trip`
   const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, ckp)

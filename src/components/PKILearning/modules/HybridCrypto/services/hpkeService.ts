@@ -274,11 +274,18 @@ const KEM_TABLE: Record<number, KemInfo> = {
   },
 }
 
-const KDF_TABLE: Record<number, { Nh: number; mech: number; hmacMech: number }> = {
+// A lazy function, not a top-level object literal: the production build wraps
+// this module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture CKM_SHA256/384/512 as `undefined` (they're only
+// assigned once that chunk's own top-level await resolves, which happens
+// AFTER this module's top-level runs). Dev/vitest don't use that plugin, so
+// this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const kdfTable = (): Record<number, { Nh: number; mech: number; hmacMech: number }> => ({
   [HPKE_KDF.HKDF_SHA256]: { Nh: 32, mech: CKM_SHA256, hmacMech: CKM_SHA256_HMAC },
   [HPKE_KDF.HKDF_SHA384]: { Nh: 48, mech: CKM_SHA384, hmacMech: CKM_SHA384_HMAC },
   [HPKE_KDF.HKDF_SHA512]: { Nh: 64, mech: CKM_SHA512, hmacMech: CKM_SHA512_HMAC },
-}
+})
 
 const AEAD_TABLE: Record<number, { Nk: number; Nn: number; Nt: number; family: 'gcm' | 'chacha' }> =
   {
@@ -293,7 +300,7 @@ export function kemInfo(kemId: number): KemInfo {
   return info
 }
 export function kdfInfo(kdfId: number) {
-  const info = KDF_TABLE[kdfId]
+  const info = kdfTable()[kdfId]
   if (!info) throw new Error(`Unknown HPKE kdf_id: ${kdfId}`)
   return info
 }

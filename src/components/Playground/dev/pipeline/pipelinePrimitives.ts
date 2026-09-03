@@ -37,8 +37,11 @@ const {
   CKM_HSS,
   CKM_EDDSA,
   CKM_ECDSA_SHA256,
+  CKM_ECDSA_SHA384,
   CKM_ECDH1_DERIVE,
   CKM_AES_GCM,
+  CKM_AES_CBC,
+  CKM_HKDF_DERIVE,
   CKM_RSA_PKCS_OAEP,
   CKM_SHA256_RSA_PKCS,
   CKM_SHA256_RSA_PKCS_PSS,
@@ -107,6 +110,7 @@ export type KeygenSpec =
   | { kind: 'hss'; lmsType: number; lmotsType: number; lmsName: string; lmotsName: string }
   | { kind: 'rsa'; bits: number }
   | { kind: 'ec-p256' }
+  | { kind: 'ec-p384' }
   | { kind: 'ed25519' }
   | { kind: 'aes256' }
 
@@ -211,7 +215,11 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
       paramSet: CKP_SLH_DSA_SHA2_128S,
       paramSetName: 'CKP_SLH_DSA_SHA2_128S',
     },
-    ops: signOps(CKM_SLH_DSA),
+    // import: true (gaps-closeout WP-2) — needed for the SLH-DSA sigVer ACVP
+    // KAT below: a NIST-generated (message, context, signature) triple must
+    // verify against the VECTOR'S OWN public key, which C_GenerateKeyPair
+    // can never reproduce (see 'ml-dsa-*''s identical reasoning above).
+    ops: signOps(CKM_SLH_DSA, { import: true }),
   },
 
   // ── HSS/LMS: stateful. Height H ⇒ 2^H signatures, then the key is spent ───
@@ -278,6 +286,18 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
     ops: signOps(CKM_ECDSA_SHA256),
   },
   ed25519: { label: 'Ed25519', keygen: { kind: 'ed25519' }, ops: signOps(CKM_EDDSA) },
+  // CKM_ECDSA_SHA384 (hash-and-sign in one call, same shape as ecdsa-p256's
+  // CKM_ECDSA_SHA256 above) — its own primitive, not a P-256/P-384 picker on
+  // one entry, matching every other multi-variant family in this file.
+  'ecdsa-p384': {
+    label: 'ECDSA P-384',
+    keygen: { kind: 'ec-p384' },
+    // import: true — the Classical-category ACVP sigVer KAT below imports
+    // the vector's own PUBLIC key (CKA_EC_POINT from qx/qy), not a freshly
+    // generated one; see emitOp's 'import' case for the EC-specific branch
+    // (CKA_EC_PARAMS/CKA_EC_POINT, not CKA_PARAMETER_SET).
+    ops: signOps(CKM_ECDSA_SHA384, { import: true }),
+  },
 
   // ── RSA-OAEP is asymmetric ENCRYPTION, not a KEM. No encapsulate here. ────────
   'rsa-oaep': {
@@ -327,6 +347,51 @@ export const PRIMITIVES: Record<string, PrimSpec> = {
         requires: { key: 'secretKey', input: 'ciphertext' },
         produces: 'bytes',
         mech: CKM_AES_GCM,
+      },
+    },
+  },
+
+  // AES-CBC (raw block cipher, no padding — CKM_AES_CBC, not CKM_AES_CBC_PAD):
+  // what NIST's ACVP-AES-CBC algorithm actually tests. `import` is enabled
+  // for the Symmetric/AEAD ACVP KAT below, which decrypts the vector's own
+  // fixed ciphertext under the vector's own fixed key — a freshly generated
+  // key can never reproduce a fixed vector's expected plaintext.
+  'aes-256-cbc': {
+    label: 'AES-256-CBC',
+    keygen: { kind: 'aes256' },
+    ops: {
+      generate: { requires: { keyLabel: 'label' }, produces: 'secretKey' },
+      import: { requires: { keyMaterial: 'label' }, produces: 'secretKey' },
+      encrypt: {
+        requires: { key: 'secretKey', input: 'bytes' },
+        produces: 'ciphertext',
+        mech: CKM_AES_CBC,
+      },
+      decrypt: {
+        requires: { key: 'secretKey', input: 'ciphertext', iv: 'bytes' },
+        produces: 'bytes',
+        mech: CKM_AES_CBC,
+      },
+    },
+  },
+
+  // ── KDF ────────────────────────────────────────────────────────────────────
+  // HKDF (CKM_HKDF_DERIVE, PKCS#11 v3.2 §6.62) — no keygen of its own: the
+  // base key (IKM) is imported from raw bytes via `import`, matching how a
+  // real HKDF base key usually arrives (an ECDH/KEM shared secret, or here
+  // an ACVP vector's own fixed IKM), then `derive` calls
+  // s.hkdf_params(...) + s.derive_key(..., parameter=...) explicitly — see
+  // pipelineCodegen.ts's 'derive' case for why this is NOT folded into one
+  // opaque convenience call: the generated script is meant to show the real
+  // CK_HKDF_PARAMS construction, not hide it.
+  hkdf: {
+    label: 'HKDF',
+    ops: {
+      import: { requires: { keyMaterial: 'label' }, produces: 'secretKey' },
+      derive: {
+        requires: { baseKey: 'secretKey', salt: 'bytes', info: 'bytes' },
+        produces: 'secretKey',
+        mech: CKM_HKDF_DERIVE,
       },
     },
   },

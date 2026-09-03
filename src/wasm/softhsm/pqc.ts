@@ -721,7 +721,14 @@ export interface MLDSASignOptions {
 }
 
 // Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 204 HashML-DSA)
-const PREHASH_MECH: Record<string, number> = {
+// Lazy functions, not top-level literals: the production build wraps this
+// module's own softhsm-constants import in vite-plugin-top-level-await, so a
+// top-level literal here would capture every CKM_HASH_*_DSA_* mechanism as
+// `undefined` (assigned only once that chunk's own top-level await resolves,
+// which happens AFTER this module's top-level runs). Dev/vitest don't use
+// that plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const prehashMech = (): Record<string, number> => ({
   sha224: CKM_HASH_ML_DSA_SHA224,
   sha256: CKM_HASH_ML_DSA_SHA256,
   sha384: CKM_HASH_ML_DSA_SHA384,
@@ -732,7 +739,7 @@ const PREHASH_MECH: Record<string, number> = {
   'sha3-512': CKM_HASH_ML_DSA_SHA3_512,
   shake128: CKM_HASH_ML_DSA_SHAKE128,
   shake256: CKM_HASH_ML_DSA_SHAKE256,
-}
+})
 
 export type SLHDSAPreHash =
   | 'sha224'
@@ -750,8 +757,9 @@ export interface SLHDSASignOptions {
   preHash?: SLHDSAPreHash // all PKCS#11 v3.2 CKM_HASH_SLH_DSA_* variants
 }
 
-// Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 205 HashSLH-DSA)
-const SLH_DSA_PREHASH_MECH: Record<string, number> = {
+// Map preHash option to CKM mechanism constant (PKCS#11 v3.2 §6.x, FIPS 205 HashSLH-DSA).
+// Lazy for the same reason as prehashMech() above.
+const slhDsaPrehashMech = (): Record<string, number> => ({
   sha224: CKM_HASH_SLH_DSA_SHA224,
   sha256: CKM_HASH_SLH_DSA_SHA256,
   sha384: CKM_HASH_SLH_DSA_SHA384,
@@ -762,7 +770,7 @@ const SLH_DSA_PREHASH_MECH: Record<string, number> = {
   'sha3-512': CKM_HASH_SLH_DSA_SHA3_512,
   shake128: CKM_HASH_SLH_DSA_SHAKE128,
   shake256: CKM_HASH_SLH_DSA_SHAKE256,
-}
+})
 
 /**
  * Allocate CK_SIGN_ADDITIONAL_CONTEXT in WASM memory.
@@ -813,7 +821,7 @@ export const hsm_sign = (
   opts?: MLDSASignOptions
 ): Uint8Array => {
   // Determine mechanism: pure ML-DSA or pre-hash variant
-  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+  const mechType = opts?.preHash ? (prehashMech()[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
 
   // Build CK_SIGN_ADDITIONAL_CONTEXT if hedging or context specified
   const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
@@ -872,7 +880,7 @@ export const hsm_signBytesMLDSA = (
   data: Uint8Array,
   opts?: MLDSASignOptions
 ): Uint8Array => {
-  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+  const mechType = opts?.preHash ? (prehashMech()[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
 
   const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
   const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
@@ -989,7 +997,7 @@ export const hsm_verify = (
   opts?: MLDSASignOptions
 ): boolean => {
   // Determine mechanism: must match the mechanism used during signing
-  const mechType = opts?.preHash ? (PREHASH_MECH[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
+  const mechType = opts?.preHash ? (prehashMech()[opts.preHash] ?? CKM_ML_DSA) : CKM_ML_DSA
 
   const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
   const ctxAlloc = hasParams ? buildSignContext(M, opts) : null
@@ -1238,7 +1246,7 @@ export const hsm_slhdsaSign = (
   message: string,
   opts?: SLHDSASignOptions
 ): Uint8Array => {
-  const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
+  const mechType = opts?.preHash ? (slhDsaPrehashMech()[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
   const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
@@ -1279,7 +1287,7 @@ export const hsm_slhdsaVerify = (
   sigBytes: Uint8Array,
   opts?: SLHDSASignOptions
 ): boolean => {
-  const mechType = opts?.preHash ? (SLH_DSA_PREHASH_MECH[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
+  const mechType = opts?.preHash ? (slhDsaPrehashMech()[opts.preHash] ?? CKM_SLH_DSA) : CKM_SLH_DSA
   const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)

@@ -45,7 +45,15 @@ const CLASSIC_MODES: { id: ClassicMode; label: string; spec: string }[] = [
 // (StatefulHashSignPanels.tsx, 2026-09-02 redesign) — they were reachable
 // from two switchers at once, here and under PQC.
 
-const RSA_SIGN_MECHS = [
+// Lazy functions, not top-level literals: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture the CKM_*_RSA_PKCS*/CKM_ECDSA_SHA* mechanisms as
+// `undefined` (they're only assigned once that chunk's own top-level await
+// resolves, which happens AFTER this module's top-level runs). Dev/vitest
+// don't use that plugin, so this bug is invisible outside a real production
+// build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const rsaSignMechs = () => [
   { label: 'SHA256-RSA-PKCS', value: CKM_SHA256_RSA_PKCS },
   { label: 'SHA384-RSA-PKCS', value: CKM_SHA384_RSA_PKCS },
   { label: 'SHA512-RSA-PKCS', value: CKM_SHA512_RSA_PKCS },
@@ -54,7 +62,7 @@ const RSA_SIGN_MECHS = [
   { label: 'SHA512-RSA-PKCS-PSS', value: CKM_SHA512_RSA_PKCS_PSS },
 ]
 
-const ECDSA_MECHS = [
+const ecdsaMechs = () => [
   { label: 'ECDSA-SHA256', value: CKM_ECDSA_SHA256 },
   { label: 'ECDSA-SHA384', value: CKM_ECDSA_SHA384 },
   { label: 'ECDSA-SHA512', value: CKM_ECDSA_SHA512 },
@@ -249,7 +257,7 @@ const RsaPanel = () => {
               </Button>
             </div>
             <FilterDropdown
-              items={RSA_SIGN_MECHS.map((m) => ({ id: String(m.value), label: m.label }))}
+              items={rsaSignMechs().map((m) => ({ id: String(m.value), label: m.label }))}
               selectedId={String(signMech)}
               onSelect={(id) => {
                 setSignMech(parseInt(id, 10))
@@ -572,7 +580,7 @@ const EcdsaPanel = () => {
             </Button>
           </div>
           <FilterDropdown
-            items={ECDSA_MECHS.map((m2) => ({ id: String(m2.value), label: m2.label }))}
+            items={ecdsaMechs().map((m2) => ({ id: String(m2.value), label: m2.label }))}
             selectedId={String(mech)}
             onSelect={(id) => {
               setMech(parseInt(id, 10))

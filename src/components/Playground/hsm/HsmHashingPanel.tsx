@@ -17,13 +17,21 @@ import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
 
 // ── Algorithm table ────────────────────────────────────────────────────────────
 
-const HASH_ALGOS = [
-  { label: 'SHA-256', mech: CKM_SHA256, outBytes: 32 },
-  { label: 'SHA-384', mech: CKM_SHA384, outBytes: 48 },
-  { label: 'SHA-512', mech: CKM_SHA512, outBytes: 64 },
-  { label: 'SHA3-256', mech: CKM_SHA3_256, outBytes: 32 },
-  { label: 'SHA3-512', mech: CKM_SHA3_512, outBytes: 64 },
-] as const
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture the CKM_SHA*/CKM_SHA3_* mechanisms as `undefined`
+// (they're only assigned once that chunk's own top-level await resolves,
+// which happens AFTER this module's top-level runs). Dev/vitest don't use
+// that plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+const hashAlgos = () =>
+  [
+    { label: 'SHA-256', mech: CKM_SHA256, outBytes: 32 },
+    { label: 'SHA-384', mech: CKM_SHA384, outBytes: 48 },
+    { label: 'SHA-512', mech: CKM_SHA512, outBytes: 64 },
+    { label: 'SHA3-256', mech: CKM_SHA3_256, outBytes: 32 },
+    { label: 'SHA3-512', mech: CKM_SHA3_512, outBytes: 64 },
+  ] as const
 
 // ── Panel ──────────────────────────────────────────────────────────────────────
 
@@ -33,7 +41,7 @@ export const HsmHashingPanel = ({
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, isReady } = useHsmContext()
   const [selectedMech, setSelectedMech] = useState<number>(
-    () => HASH_ALGOS.find((a) => a.label === initialAlgo)?.mech ?? CKM_SHA256
+    () => hashAlgos().find((a) => a.label === initialAlgo)?.mech ?? CKM_SHA256
   )
   const [input, setInput] = useState('Hello, PQC World!')
   const [digest, setDigest] = useState<Uint8Array | null>(null)
@@ -45,7 +53,7 @@ export const HsmHashingPanel = ({
   const [chunks, setChunks] = useState<string[]>(['Hello, ', 'PQC World!'])
   const [matchResult, setMatchResult] = useState<boolean | null>(null)
 
-  const selectedAlgo = HASH_ALGOS.find((a) => a.mech === selectedMech) ?? HASH_ALGOS[0]
+  const selectedAlgo = hashAlgos().find((a) => a.mech === selectedMech) ?? hashAlgos()[0]
 
   // Emit initial algo on mount so URL reflects current selection immediately
   useEffect(() => {
@@ -134,7 +142,7 @@ export const HsmHashingPanel = ({
             </Button>
           </div>
           <div data-tour="pkcs-op-hash-algo" className="flex flex-wrap gap-2">
-            {HASH_ALGOS.map((a) => (
+            {hashAlgos().map((a) => (
               <Button
                 key={a.mech}
                 variant="ghost"

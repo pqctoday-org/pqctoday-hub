@@ -594,6 +594,12 @@ CONSTANTS = {
     'CKM_KIP_DERIVE': 0x510,
     'CKM_KIP_MAC': 0x512,
     'CKM_KIP_WRAP': 0x511,
+    # Vendor extension (NIST SP 800-185), not in the canonical pkcs11t.h this
+    # file is generated from -- hand-added, matching softhsm.ts's own CKM_KMAC_*
+    # constants (src/wasm/softhsm.ts). Dispatched through plain C_Sign/C_Verify,
+    # same as HMAC; no new PKCS#11 codepoint category needed.
+    'CKM_KMAC_128': 0x80000100,
+    'CKM_KMAC_256': 0x80000101,
     'CKM_MD2': 0x200,
     'CKM_MD2_HMAC': 0x201,
     'CKM_MD2_HMAC_GENERAL': 0x202,
@@ -986,5 +992,12 @@ CONSTANTS = {
     'CKU_USER': 0x1,
     'CKZ_DATA_SPECIFIED': 0x1,
     'CKZ_SALT_SPECIFIED': 0x1,
+    # CK_PRF_DATA_TYPE values for CK_PRF_DATA_PARAM.type (PKCS#11 v3.2 §6.42,
+    # NIST SP 800-108). Real canonical constants -- present in pkcs11t.h --
+    # but named `CK_SP800_108_*` (no CKx_ two-letter family prefix), which
+    # the generator's extraction regex doesn't match; hand-added, matching
+    # softhsm.ts's own copy (src/wasm/softhsm.ts:2731-2732).
+    'CK_SP800_108_ITERATION_VARIABLE': 0x1,
+    'CK_SP800_108_BYTE_ARRAY': 0x4,
 }
 # total: 985 constants

@@ -24,6 +24,18 @@ not just here — see the Developer tab's info panel):
     bridge exposes the SAME classic single-part functions
     (C_SignInit/C_Sign/C_VerifyInit/C_Verify/...) at the SAME PKCS#11 v3.2
     semantics — this is a transport swap, not a different API.
+  - KNOWN, DELIBERATE DRIFT (gaps-closeout WP-2, 2026-09-02): generate_ec_p384,
+    generate_ec_p521, generate_ed448, wrap_key, unwrap_key, hkdf_params,
+    sp800_108_counter_kdf_params and pbkdf2_params exist here but NOT (yet)
+    in the real sandbox package — scoped hub-only for this change (a script
+    using them will NOT also run unmodified in the dev sandbox, breaking the
+    contract above for just these names). Each one still maps 1:1 onto a
+    real PKCS#11 v3.2 struct/call, matching every existing method's style —
+    the drift is that the sandbox mirror hasn't been extended yet, not that
+    these are non-standard. p11Parity.driftguard.test.ts's manifest is
+    extracted from the sandbox package and intentionally does NOT list these
+    names, so it won't flag them; that test also can't catch the reverse
+    (hub ahead of sandbox), which is exactly this situation.
 
 CK_ULONG packing: this module is built for a 64-bit target (matches the
 `struct.pack('<Q', n)` convention the real samples use for CK_ULONG), so
@@ -67,6 +79,9 @@ CKR_NAMES = {v: k for k, v in CONSTANTS.items() if k.startswith('CKR_')}
 # EC OIDs — same DER bytes the real package embeds (RFC 5480 / RFC 8032).
 EC_P256_OID = bytes.fromhex('06082a8648ce3d030107')
 ED25519_OID = bytes.fromhex('06032b6570')
+EC_P384_OID = bytes.fromhex('06052b81040022')
+EC_P521_OID = bytes.fromhex('06052b81040023')
+ED448_OID = bytes.fromhex('06032b6571')
 
 
 class PKCS11Error(Exception):
@@ -322,6 +337,35 @@ class Session:
                 (C['CKA_SIGN'], True), (C['CKA_SENSITIVE'], True), (C['CKA_TOKEN'], token)]
         return self.generate_keypair(C['CKM_EC_EDWARDS_KEY_PAIR_GEN'], pub, priv)
 
+    def generate_ec_p384(self, token=False):
+        C = CONSTANTS
+        pub = [(C['CKA_CLASS'], C['CKO_PUBLIC_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC']),
+               (C['CKA_EC_PARAMS'], EC_P384_OID), (C['CKA_VERIFY'], True),
+               (C['CKA_DERIVE'], True), (C['CKA_TOKEN'], token)]
+        priv = [(C['CKA_CLASS'], C['CKO_PRIVATE_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC']),
+                (C['CKA_SIGN'], True), (C['CKA_DERIVE'], True),
+                (C['CKA_SENSITIVE'], True), (C['CKA_TOKEN'], token)]
+        return self.generate_keypair(C['CKM_EC_KEY_PAIR_GEN'], pub, priv)
+
+    def generate_ec_p521(self, token=False):
+        C = CONSTANTS
+        pub = [(C['CKA_CLASS'], C['CKO_PUBLIC_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC']),
+               (C['CKA_EC_PARAMS'], EC_P521_OID), (C['CKA_VERIFY'], True),
+               (C['CKA_DERIVE'], True), (C['CKA_TOKEN'], token)]
+        priv = [(C['CKA_CLASS'], C['CKO_PRIVATE_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC']),
+                (C['CKA_SIGN'], True), (C['CKA_DERIVE'], True),
+                (C['CKA_SENSITIVE'], True), (C['CKA_TOKEN'], token)]
+        return self.generate_keypair(C['CKM_EC_KEY_PAIR_GEN'], pub, priv)
+
+    def generate_ed448(self, token=False):
+        C = CONSTANTS
+        pub = [(C['CKA_CLASS'], C['CKO_PUBLIC_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC_EDWARDS']),
+               (C['CKA_EC_PARAMS'], ED448_OID), (C['CKA_VERIFY'], True),
+               (C['CKA_TOKEN'], token)]
+        priv = [(C['CKA_CLASS'], C['CKO_PRIVATE_KEY']), (C['CKA_KEY_TYPE'], C['CKK_EC_EDWARDS']),
+                (C['CKA_SIGN'], True), (C['CKA_SENSITIVE'], True), (C['CKA_TOKEN'], token)]
+        return self.generate_keypair(C['CKM_EC_EDWARDS_KEY_PAIR_GEN'], pub, priv)
+
     def generate_hss(self, lms_type=CKP_LMS_SHA256_M32_H5,
                       lmots_type=CKP_LMOTS_SHA256_N32_W8, levels=1, token=False):
         """HSS/LMS keypair. STATEFUL: the key holds 2^height one-time
@@ -382,6 +426,98 @@ class Session:
         m = C['CKG_MGF1_SHA256'] if mgf is None else mgf
         # CK_RSA_PKCS_PSS_PARAMS on WASM32: hashAlg u32, mgf u32, sLen u32.
         return struct.pack('<III', h, m, salt_len)
+
+    # oaep_params/pss_params above are @staticmethod: every field is a plain
+    # integer, so a pure struct.pack needs no WASM memory. hkdf_params,
+    # sp800_108_counter_kdf_params and pbkdf2_params below are real PKCS#11
+    # v3.2 structs with CK_BYTE_PTR fields (pSalt/pInfo/pPassword/etc.) — an
+    # actual WASM pointer has to be allocated and embedded, so these are
+    # instance methods (need bridge access via self._m._b) and return a
+    # struct whose pointers must stay valid for the LATER derive_key() call
+    # the generated script makes with it. Every other bridge call in this
+    # file frees its allocation in the same call's `finally` because the
+    # pointer is consumed synchronously within that call; these three are
+    # deliberately different — the allocation is intentionally NOT freed
+    # here (freed when the pyodide module resets between pipeline runs).
+    # Each generated script calls one of these a handful of times, never in
+    # a loop, so this is a bounded, accepted leak, not an oversight.
+    def hkdf_params(self, prf, b_extract=True, b_expand=True, salt=None, info=None):
+        """Builds CK_HKDF_PARAMS for a later derive_key(CKM_HKDF_DERIVE, ...) call
+        (PKCS#11 v3.2 §6.62). WASM32 layout (32 bytes): bExtract u8 + bExpand u8 +
+        pad(2) + prfHashMechanism u32 + ulSaltType u32 + pSalt ptr32 + ulSaltLen u32
+        + hSaltKey u32 + pInfo ptr32 + ulInfoLen u32."""
+        C = CONSTANTS
+        b = self._m._b
+        alloc = _Alloc(b)
+        salt_type = C['CKF_HKDF_SALT_NULL']
+        salt_ptr, salt_len = 0, 0
+        if salt:
+            salt_ptr, salt_len = alloc.bytes(salt)
+            salt_type = C['CKF_HKDF_SALT_DATA']
+        info_ptr, info_len = alloc.bytes(info) if info else (0, 0)
+        return struct.pack('<BBH7I', 1 if b_extract else 0, 1 if b_expand else 0, 0,
+                            prf, salt_type, salt_ptr, salt_len, 0, info_ptr, info_len)
+
+    def sp800_108_counter_kdf_params(self, prf_type, fixed_input=None):
+        """Builds CK_SP800_108_KDF_PARAMS for derive_key(CKM_SP800_108_COUNTER_KDF, ...)
+        (PKCS#11 v3.2 §6.42, NIST SP 800-108 Counter Mode). Nested WASM32 layout:
+          CK_SP800_108_COUNTER_FORMAT (8B): bLittleEndian u8 + pad(3) + ulWidthInBits u32(=32)
+          CK_PRF_DATA_PARAM[] (12B each): type u32 + pValue ptr32 + ulValueLen u32
+            [0] CK_SP800_108_ITERATION_VARIABLE -> the counter format above
+            [1] CK_SP800_108_BYTE_ARRAY -> fixed_input bytes (optional label/context), if given
+          CK_SP800_108_KDF_PARAMS (20B): prfType u32 + ulNumberOfDataParams u32
+            + pDataParams ptr32 + ulAdditionalDerivedKeys u32(=0) + pAdditionalDerivedKeys ptr32(=0)
+        """
+        C = CONSTANTS
+        b = self._m._b
+        alloc = _Alloc(b)
+        counter_fmt_ptr = alloc.malloc(8)
+        b.writeU32(counter_fmt_ptr, 0)  # bLittleEndian=CK_FALSE (big-endian), packed with 3 pad bytes
+        b.writeU32(counter_fmt_ptr + 4, 32)  # ulWidthInBits
+        num_params = 2 if fixed_input else 1
+        data_params_ptr = alloc.malloc(num_params * 12)
+        b.writeU32(data_params_ptr + 0, C['CK_SP800_108_ITERATION_VARIABLE'])
+        b.writeU32(data_params_ptr + 4, counter_fmt_ptr)
+        b.writeU32(data_params_ptr + 8, 8)
+        if fixed_input:
+            fixed_ptr, fixed_len = alloc.bytes(fixed_input)
+            b.writeU32(data_params_ptr + 12, C['CK_SP800_108_BYTE_ARRAY'])
+            b.writeU32(data_params_ptr + 16, fixed_ptr)
+            b.writeU32(data_params_ptr + 20, fixed_len)
+        return struct.pack('<IIIII', prf_type, num_params, data_params_ptr, 0, 0)
+
+    def pbkdf2_params(self, password, salt, iterations, prf=None):
+        """Builds CK_PKCS5_PBKD2_PARAMS2 for derive_key(CKM_PKCS5_PBKD2, ...)
+        (PKCS#11 v3.2 §5.7.3.1). WASM32 layout (36 bytes): saltSource u32(=CKZ_SALT_SPECIFIED)
+        + pSaltSourceData ptr32 + ulSaltSourceDataLen u32 + iterations u32 + prf u32
+        + pPrfData ptr32(=0) + ulPrfDataLen u32(=0) + pPassword ptr32 + ulPasswordLen u32.
+        prf defaults to CKP_PKCS5_PBKD2_HMAC_SHA512. Pass base_handle=0 to derive_key —
+        PBKDF2 has no PKCS#11 base key, the password IS the key material."""
+        C = CONSTANTS
+        prf = C['CKP_PKCS5_PBKD2_HMAC_SHA512'] if prf is None else prf
+        pw = password.encode('utf-8') if isinstance(password, str) else password
+        b = self._m._b
+        alloc = _Alloc(b)
+        salt_ptr, salt_len = alloc.bytes(salt)
+        pass_ptr, pass_len = alloc.bytes(pw)
+        return struct.pack('<IIIIIIIII', C['CKZ_SALT_SPECIFIED'], salt_ptr, salt_len,
+                            iterations, prf, 0, 0, pass_ptr, pass_len)
+
+    def sign_context_params(self, context=None, deterministic=False):
+        """Builds CK_SIGN_ADDITIONAL_CONTEXT for a later sign()/verify() call using
+        a context-string signature scheme (e.g. CKM_SLH_DSA — PKCS#11 v3.2 §6.mumble
+        negotiated context-aware signing). WASM32 layout (12 bytes): hedgeVariant u32
+        + pContext ptr32 + ulContextLen u32. hedgeVariant is CKH_DETERMINISTIC_REQUIRED
+        when deterministic=True, else CKH_HEDGE_PREFERRED — verify() ignores this field
+        (hedging only affects how a signature was generated, not how it is checked) but
+        the struct still carries it. See hkdf_params' note on pointer lifetime — same
+        deliberate no-free here."""
+        C = CONSTANTS
+        hedge = C['CKH_DETERMINISTIC_REQUIRED'] if deterministic else C['CKH_HEDGE_PREFERRED']
+        b = self._m._b
+        alloc = _Alloc(b)
+        ctx_ptr, ctx_len = alloc.bytes(context) if context else (0, 0)
+        return struct.pack('<III', hedge, ctx_ptr, ctx_len)
 
     # ── sign / verify ────────────────────────────────────────────────────────
     def sign(self, priv_handle, data, mechanism, parameter=None):
@@ -558,6 +694,44 @@ class Session:
             # CK_GCM_PARAMS on WASM32 (see encrypt_gcm's identical note): 6 x u32 = 24 bytes.
             params = struct.pack('<IIIIII', iv_ptr, iv_len, iv_len * 8, aad_ptr, aad_len, tag_bits)
             return self.decrypt(key_handle, C['CKM_AES_GCM'], ciphertext, params)
+        finally:
+            alloc.free_all()
+
+    # ── wrap / unwrap ────────────────────────────────────────────────────────
+    def wrap_key(self, wrapping_handle, key_handle, mechanism, parameter=None):
+        """C_WrapKey (PKCS#11 v3.2 §5.14) — wraps key_handle under wrapping_handle
+        (e.g. mechanism=CKM_AES_KEY_WRAP). Returns the wrapped-key bytes."""
+        b = self._m._b
+        alloc = _Alloc(b)
+        try:
+            mech = _mech(alloc, mechanism, parameter)
+            n_p = alloc.u32(0)
+            _check(b.call('C_WrapKey', [self.h, mech, wrapping_handle, key_handle, 0, n_p]),
+                   'C_WrapKey(size)')
+            n = int(b.readU32(n_p))
+            out_p = alloc.malloc(max(n, 1))
+            b.writeU32(n_p, n)
+            _check(b.call('C_WrapKey', [self.h, mech, wrapping_handle, key_handle, out_p, n_p]),
+                   'C_WrapKey')
+            return bytes(b.readBytes(out_p, int(b.readU32(n_p))))
+        finally:
+            alloc.free_all()
+
+    def unwrap_key(self, unwrapping_handle, wrapped, mechanism, template, parameter=None):
+        """C_UnwrapKey (PKCS#11 v3.2 §5.14) — unwraps `wrapped` bytes under
+        unwrapping_handle into a new key object matching `template`. Returns the
+        new key handle."""
+        b = self._m._b
+        alloc = _Alloc(b)
+        try:
+            mech = _mech(alloc, mechanism, parameter)
+            wptr, wlen = alloc.bytes(wrapped)
+            ta = _attrs(alloc, template)
+            h_p = alloc.u32(0)
+            _check(b.call('C_UnwrapKey', [
+                self.h, mech, unwrapping_handle, wptr, wlen, ta, len(template), h_p,
+            ]), 'C_UnwrapKey')
+            return int(b.readU32(h_p))
         finally:
             alloc.free_all()
 

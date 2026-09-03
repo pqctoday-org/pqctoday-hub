@@ -33,10 +33,13 @@ export const PALETTE_META: Record<string, PaletteMeta> = {
   'rsa-2048': { family: 'Signature', pq: false, hex: '0x40' },
   'rsa-pss': { family: 'Signature', pq: false, hex: '0x43' },
   'ecdsa-p256': { family: 'Signature', pq: false, hex: '0x1044' },
+  'ecdsa-p384': { family: 'Signature', pq: false, hex: '0x1045' },
   ed25519: { family: 'Signature', pq: false, hex: '0x1057' },
   'rsa-oaep': { family: 'KEM', pq: false, hex: '0x09' },
   'ecdh-p256': { family: 'KEM', pq: false, hex: '0x1050' },
   'aes-256-gcm': { family: 'Symmetric', hex: '0x1087' },
+  'aes-256-cbc': { family: 'Symmetric', hex: '0x1082' },
+  hkdf: { family: 'Symmetric', hex: '0x402a' },
   'sha3-256': { family: 'Hash', hex: '0x2b0' },
   'sha-256': { family: 'Hash', hex: '0x250' },
   // Not a crypto primitive — an ACVP known-answer comparison step. Family

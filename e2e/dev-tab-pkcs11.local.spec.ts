@@ -487,3 +487,29 @@ test("the real PKCS#11 call log and key table show this tab's own run activity",
       .first()
   ).toBeVisible()
 })
+
+// gaps-closeout WP-2 (2026-09-02): the 4 new portable ACVP templates, one
+// per previously-uncovered category (Symmetric/AEAD, KDF, Classical,
+// SLH-DSA & Stateful) — real fixed vectors, real p11 shim additions
+// (aes-256-cbc, hkdf's derive()+hkdf_params(), ecdsa-p384, and slh-dsa's
+// CK_SIGN_ADDITIONAL_CONTEXT via sign_context_params()). Each is 3 steps
+// (import/decrypt-or-derive-or-verify/assert); a real run against the WASM
+// engine is the only thing that proves the shim additions and the codegen
+// they drive actually agree with each other end to end.
+for (const [name, steps] of [
+  ['ACVP AES-256-CBC known-answer test', 3],
+  ['ACVP HKDF-SHA256 known-answer test', 3],
+  ['ACVP ECDSA-P384 known-answer test', 3],
+  ['ACVP SLH-DSA-SHA2-128s known-answer test (with context)', 3],
+] as const) {
+  test(`${name} runs green end to end`, async ({ page }) => {
+    await page.goto('/playground/hsm?tab=developer')
+    await expect(page.getByText(/DevSequences · slot \d+/)).toBeVisible({ timeout: 30000 })
+    await page.getByRole('button', { name, exact: true }).click()
+
+    await page.getByRole('button', { name: /^Run$/ }).click()
+    await expect(page.getByText(/ran in \d+\.\d\ds/)).toBeVisible({ timeout: 20000 })
+    await expect(page.getByText('✓ ran')).toHaveCount(steps)
+    await expect(page.locator('.bg-status-error\\/5').filter({ hasText: '✗' })).toHaveCount(0)
+  })
+}

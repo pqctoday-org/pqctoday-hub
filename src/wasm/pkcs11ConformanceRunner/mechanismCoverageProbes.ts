@@ -914,7 +914,14 @@ const aesKeyWrapPadProbe = (ctx: MechanismProbeContext): string => {
   return `CKM_AES_KEY_WRAP_PAD wrap/unwrap round-trip on a non-8-byte-aligned ${targetBytes.length}B secret (wrapped=${wrapped.length}B) recovered the exact original`
 }
 
-export const MECHANISM_PROBES: MechanismProbe[] = [
+// A lazy function, not a top-level literal: the production build wraps this
+// module's softhsm import in vite-plugin-top-level-await, so a top-level
+// literal here would capture every CKM_* mechanism it references as
+// `undefined` (assigned only once that chunk's own top-level await resolves,
+// which happens AFTER this module's top-level runs). Dev/vitest don't use
+// that plugin, so this bug is invisible outside a real production build. See
+// pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+export const mechanismProbes = (): MechanismProbe[] => [
   {
     id: 'pqc-seed-mldsa',
     mechanism: CKM_ML_DSA_KEY_PAIR_GEN,
@@ -1043,7 +1050,7 @@ export const runMechanismCoverageProbes = (
 ): MechanismProbeResult[] => {
   const ctx: MechanismProbeContext = { M, hSession, slotId, mechs }
   const results: MechanismProbeResult[] = []
-  for (const probe of MECHANISM_PROBES) {
+  for (const probe of mechanismProbes()) {
     if (!mechs.has(probe.mechanism)) {
       results.push({
         ...probe,

@@ -29,7 +29,7 @@ import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
 import { XmssPanel, LmsPanel } from '../hsm/StatefulHashSignPanels'
 import { HsmReadyGuard } from '../hsm/shared'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
-import { SLH_DSA_PARAM_SET_OPTIONS, SLH_DSA_INTERNAL_PARAMS } from './softhsm/SoftHsmUI'
+import { slhDsaParamSetOptions, SLH_DSA_INTERNAL_PARAMS } from './softhsm/SoftHsmUI'
 
 // FIPS 205 §11 HashSLH-DSA approved hash functions only
 const FIPS205_SLH_PREHASH_OPTIONS = [
@@ -547,7 +547,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   const anyLoading = loadingOp !== null
 
   const getParamSet = () =>
-    SLH_DSA_PARAM_SET_OPTIONS.find((o) => o.id === paramSetId) ?? SLH_DSA_PARAM_SET_OPTIONS[0]
+    slhDsaParamSetOptions().find((o) => o.id === paramSetId) ?? slhDsaParamSetOptions()[0]
 
   const getParamSetCkp = () => getParamSet().ckp ?? CKP_SLH_DSA_SHA2_128S
 
@@ -712,7 +712,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
             onSelect={(id) => {
               if (id !== 'All') changeParamSet(id)
             }}
-            items={SLH_DSA_PARAM_SET_OPTIONS.map((o) => ({ id: o.id, label: o.label }))}
+            items={slhDsaParamSetOptions().map((o) => ({ id: o.id, label: o.label }))}
             defaultLabel="SHA2-128s"
             noContainer
           />

@@ -64,16 +64,6 @@ type WrapMechanism = 'aes-kw' | 'aes-kwp' | 'aes-gcm'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const WRAP_MECH_META: Record<WrapMechanism, { label: string; standard: string; ckm?: number }> = {
-  'aes-kw': { label: 'AES-KW', standard: 'RFC 3394 · NIST SP 800-38F §6.2', ckm: CKM_AES_KEY_WRAP },
-  'aes-kwp': {
-    label: 'AES-KWP',
-    standard: 'RFC 5649 · NIST SP 800-38F §6.3',
-    ckm: CKM_AES_KEY_WRAP_KWP,
-  },
-  'aes-gcm': { label: 'AES-GCM', standard: 'NIST SP 800-38D' },
-}
-
 const RSA_OAEP_STANDARD = 'PKCS #1 v2.2 §7.1 · RFC 8017'
 
 /** Fixed 32-byte HKDF salt for the KMS envelope encryption protocol.
@@ -84,19 +74,6 @@ const ENVELOPE_HKDF_SALT: Uint8Array = (() => {
   new TextEncoder().encodeInto('kms-envelope-salt-v1', buf)
   return buf
 })()
-
-/** Unwrap template for the recovered AES-256 DEK (sensitive=false so KCV is always readable).
- *  NOTE: CKA_VALUE_LEN must NOT be included — P11AttrValueLen::updateAttr rejects OBJECT_OP_UNWRAP
- *  (only OBJECT_OP_GENERATE/DERIVE allowed); the length is derived from the unwrapped bytes. */
-const AES_UNWRAP_TEMPLATE: AttrDef[] = [
-  { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-  { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
-  { type: CKA_TOKEN, boolVal: false },
-  { type: CKA_ENCRYPT, boolVal: true },
-  { type: CKA_DECRYPT, boolVal: true },
-  { type: CKA_SENSITIVE, boolVal: false },
-  { type: CKA_EXTRACTABLE, boolVal: true },
-]
 
 const KMS_KAT_SPECS: KatTestSpec[] = [
   {
@@ -219,6 +196,47 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  // Computed inside the component (not as a module-level literal): the production
+  // build wraps this module's softhsm import in vite-plugin-top-level-await, so a
+  // top-level object literal here would capture CKM_AES_KEY_WRAP*/CKA_* as
+  // `undefined` (they're assigned only after that chunk's own top-level await
+  // resolves, which happens AFTER this module's top-level runs). Dev/vitest don't
+  // use that plugin, so this bug is invisible outside a real production build. See
+  // pqctoday-priv/design/design_handoff_kmip_pkcs11_playground/GAPS-CLOSEOUT-PLAN-2026-09-02.md §2.1.
+  const WRAP_MECH_META = React.useMemo<
+    Record<WrapMechanism, { label: string; standard: string; ckm?: number }>
+  >(
+    () => ({
+      'aes-kw': {
+        label: 'AES-KW',
+        standard: 'RFC 3394 · NIST SP 800-38F §6.2',
+        ckm: CKM_AES_KEY_WRAP,
+      },
+      'aes-kwp': {
+        label: 'AES-KWP',
+        standard: 'RFC 5649 · NIST SP 800-38F §6.3',
+        ckm: CKM_AES_KEY_WRAP_KWP,
+      },
+      'aes-gcm': { label: 'AES-GCM', standard: 'NIST SP 800-38D' },
+    }),
+    []
+  )
+  /** Unwrap template for the recovered AES-256 DEK (sensitive=false so KCV is always readable).
+   *  NOTE: CKA_VALUE_LEN must NOT be included — P11AttrValueLen::updateAttr rejects OBJECT_OP_UNWRAP
+   *  (only OBJECT_OP_GENERATE/DERIVE allowed); the length is derived from the unwrapped bytes. */
+  const AES_UNWRAP_TEMPLATE = React.useMemo<AttrDef[]>(
+    () => [
+      { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+      { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+      { type: CKA_TOKEN, boolVal: false },
+      { type: CKA_ENCRYPT, boolVal: true },
+      { type: CKA_DECRYPT, boolVal: true },
+      { type: CKA_SENSITIVE, boolVal: false },
+      { type: CKA_EXTRACTABLE, boolVal: true },
+    ],
+    []
+  )
+
   const [currentStep, setCurrentStep] = useState(initialStep)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   const [executedSteps, setExecutedSteps] = useState<Set<number>>(new Set())
