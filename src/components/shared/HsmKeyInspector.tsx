@@ -6,7 +6,7 @@
  * this component accepts keys and module refs as props so it can be embedded
  * in any module that uses the useHSM hook (e.g. TEEHSMTrustedChannel).
  */
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { Eye, Key as KeyIcon, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { HsmKey, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
@@ -74,6 +74,27 @@ export const HsmKeyInspector = ({
   // Batch-query key sizes via an effect so ref access stays out of render
   const [keySizeMap, setKeySizeMap] = useState<Map<number, number | null>>(new Map())
   const keyTracker = useMemo(() => keys.map((k) => k.handle).join(','), [keys])
+
+  // `attrsResolver` and `onRemoveKey` are held in refs, NOT effect deps.
+  //
+  // Most callers pass them inline — e.g. `onRemoveKey={(key) =>
+  // hsm.removeKey(key.handle)}` — so their identity changes on every render.
+  // With them in the dep array this effect re-ran every render, and each run
+  // calls resolveKeyHandle -> hsm_findAllObjects -> the logging proxy, which
+  // appends a log entry via setState. That re-render re-ran the effect, and
+  // so on: a genuine infinite loop that React reported as "Maximum update
+  // depth exceeded" (8-15 per keygen) and that could leave the page
+  // unresponsive to clicks for a minute at a time.
+  //
+  // Fixing it here rather than asking ~25 call sites to memoize: a caller
+  // forgetting useCallback should not be able to wedge the app.
+  const attrsResolverRef = useRef(attrsResolver)
+  const onRemoveKeyRef = useRef(onRemoveKey)
+  useEffect(() => {
+    attrsResolverRef.current = attrsResolver
+    onRemoveKeyRef.current = onRemoveKey
+  })
+
   useEffect(() => {
     let cancelled = false
     const run = async () => {
@@ -82,9 +103,10 @@ export const HsmKeyInspector = ({
       const map = new Map<number, number | null>()
       for (const k of keys) {
         let a: KeyAttributeSet | null = null
-        if (attrsResolver) {
+        const resolver = attrsResolverRef.current
+        if (resolver) {
           try {
-            a = await attrsResolver(k)
+            a = await resolver(k)
           } catch {
             a = null
           }
@@ -94,19 +116,27 @@ export const HsmKeyInspector = ({
             a = liveHandle !== null ? hsm_getKeyAttributes(M, hSession, liveHandle) : null
           } catch (err) {
             a = null
-            if (isSessionGoneError(err)) onRemoveKey?.(k)
+            if (isSessionGoneError(err)) onRemoveKeyRef.current?.(k)
           }
         }
         map.set(k.handle, a ? estimateKeySize(a) : null)
       }
-      if (!cancelled) setKeySizeMap(map)
+      // Only publish a genuinely different map. `new Map()` is a fresh object
+      // every run, so setting it unconditionally was itself enough to keep
+      // the render/effect cycle alive even once the deps were stable.
+      if (!cancelled) {
+        setKeySizeMap((prev) => {
+          if (prev.size === map.size && [...map].every(([h, v]) => prev.get(h) === v)) return prev
+          return map
+        })
+      }
     }
     void run()
     return () => {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyTracker, attrsResolver, onRemoveKey]) // moduleRef and hSessionRef are stable refs — intentionally omitted
+  }, [keyTracker]) // refs above are intentionally not deps; moduleRef/hSessionRef are stable
 
   const totalBytes = useMemo(() => {
     let sum = 0
