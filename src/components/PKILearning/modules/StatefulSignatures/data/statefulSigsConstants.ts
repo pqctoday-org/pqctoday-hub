@@ -1,7 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import {
+  CKP_LMS_SHA256_M32_H5,
+  CKP_LMS_SHA256_M32_H10,
+  CKP_LMS_SHA256_M32_H15,
+  CKP_LMS_SHA256_M32_H20,
+  CKP_LMS_SHA256_M32_H25,
+  CKP_LMOTS_SHA256_N32_W1,
+  CKP_LMOTS_SHA256_N32_W2,
+  CKP_LMOTS_SHA256_N32_W4,
+  CKP_LMOTS_SHA256_N32_W8,
+} from '@/wasm/softhsm/constants'
+
 export interface LMSParameterSet {
   id: string
   name: string
+  /** Total height across all levels. For multi-tree this is the SUM of
+   *  `levelHeights` — it is NOT a single tree's height, and must never be
+   *  mapped back to one LMS ordinal (doing so collapsed L2(2x h10) into a
+   *  single h20 tree, ~1000x the keygen work — fixed 2026-09-03). */
   treeHeight: number
   winternitzParam: number
   signatureSize: number
@@ -11,6 +27,24 @@ export interface LMSParameterSet {
   securityLevel: string
   hashFunction: string
   variant?: 'single-tree' | 'multi-tree'
+  /**
+   * Per-level heights, innermost-to-outermost. Length IS the HSS level
+   * count. Stored explicitly rather than derived from `treeHeight` so a
+   * hierarchy can never be silently flattened into one tall tree.
+   */
+  levelHeights: number[]
+  /**
+   * The exact CKP_LMS_* ordinal per level, sent as-is to the engine. Kept
+   * here rather than re-derived at the call site: deriving it from height
+   * is what produced the collapse bug. Values are IANA-registered
+   * (RFC 8554 / RFC 9858) — SP 800-208 itself marks these "TBD".
+   */
+  lmsParams: number[]
+  /** The exact CKP_LMOTS_* ordinal per level. Same length as `lmsParams` —
+   *  the Rust engine rejects the call unless both match the level count. */
+  lmotsParams: number[]
+  /** Which document defines this set, for the UI's provenance label. */
+  provenance: 'RFC 8554' | 'RFC 9858'
 }
 
 export interface XMSSParameterSet {
@@ -58,6 +92,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [5],
+    lmsParams: [CKP_LMS_SHA256_M32_H5],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W1],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h5-w2',
@@ -70,6 +108,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [5],
+    lmsParams: [CKP_LMS_SHA256_M32_H5],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W2],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h5-w4',
@@ -82,6 +124,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [5],
+    lmsParams: [CKP_LMS_SHA256_M32_H5],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h5-w8',
@@ -94,6 +140,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [5],
+    lmsParams: [CKP_LMS_SHA256_M32_H5],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W8],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h10-w2',
@@ -106,6 +156,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 1024,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [10],
+    lmsParams: [CKP_LMS_SHA256_M32_H10],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W2],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h10-w4',
@@ -118,6 +172,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 1024,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [10],
+    lmsParams: [CKP_LMS_SHA256_M32_H10],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h10-w8',
@@ -130,6 +188,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 1024,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [10],
+    lmsParams: [CKP_LMS_SHA256_M32_H10],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W8],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h15-w2',
@@ -142,6 +204,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32768,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [15],
+    lmsParams: [CKP_LMS_SHA256_M32_H15],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W2],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h15-w4',
@@ -154,6 +220,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 32768,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [15],
+    lmsParams: [CKP_LMS_SHA256_M32_H15],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h20-w2',
@@ -166,6 +236,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [20],
+    lmsParams: [CKP_LMS_SHA256_M32_H20],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W2],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h20-w4',
@@ -178,6 +252,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [20],
+    lmsParams: [CKP_LMS_SHA256_M32_H20],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h25-w1',
@@ -190,6 +268,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 33554432,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [25],
+    lmsParams: [CKP_LMS_SHA256_M32_H25],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W1],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h25-w2',
@@ -202,6 +284,10 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 33554432,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [25],
+    lmsParams: [CKP_LMS_SHA256_M32_H25],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W2],
+    provenance: 'RFC 8554',
   },
   {
     id: 'lms-h25-w4',
@@ -214,32 +300,44 @@ export const LMS_PARAMETER_SETS: LMSParameterSet[] = [
     maxSignatures: 33554432,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
+    levelHeights: [25],
+    lmsParams: [CKP_LMS_SHA256_M32_H25],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'hss-l2-h20-w4',
     name: 'HSS-L2 (H10x2) / W4',
     treeHeight: 20,
     winternitzParam: 4,
-    signatureSize: 5084,
+    signatureSize: 5076,
     publicKeySize: 60,
     privateKeySize: 128,
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
     variant: 'multi-tree',
+    levelHeights: [10, 10],
+    lmsParams: [CKP_LMS_SHA256_M32_H10, CKP_LMS_SHA256_M32_H10],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W4, CKP_LMOTS_SHA256_N32_W4],
+    provenance: 'RFC 8554',
   },
   {
     id: 'hss-l2-h20-w8',
     name: 'HSS-L2 (H10x2) / W8',
     treeHeight: 20,
     winternitzParam: 8,
-    signatureSize: 2972,
+    signatureSize: 2964,
     publicKeySize: 60,
     privateKeySize: 128,
     maxSignatures: 1048576,
     securityLevel: 'NIST Level 1',
     hashFunction: 'SHA-256',
     variant: 'multi-tree',
+    levelHeights: [10, 10],
+    lmsParams: [CKP_LMS_SHA256_M32_H10, CKP_LMS_SHA256_M32_H10],
+    lmotsParams: [CKP_LMOTS_SHA256_N32_W8, CKP_LMOTS_SHA256_N32_W8],
+    provenance: 'RFC 8554',
   },
 ]
 
