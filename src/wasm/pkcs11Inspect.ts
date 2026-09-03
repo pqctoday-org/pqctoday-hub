@@ -70,8 +70,17 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000000: { name: 'CKA_CLASS', description: 'Object class (CKO_*)' },
   0x00000001: { name: 'CKA_TOKEN', description: 'Persistent token object vs session object' },
   0x00000002: { name: 'CKA_PRIVATE', description: 'Access requires authentication' },
+  0x00000003: { name: 'CKA_LABEL', description: 'Human-readable object label' },
+  0x00000004: {
+    name: 'CKA_UNIQUE_ID',
+    description: 'Durable object identity, valid across sessions (v3.2 §3.2)',
+  },
   0x00000011: { name: 'CKA_VALUE', description: 'Raw key bytes' },
   0x00000100: { name: 'CKA_KEY_TYPE', description: 'Key type (CKK_*)' },
+  0x00000102: {
+    name: 'CKA_ID',
+    description: 'Key identifier for pairing/lookup (application-defined)',
+  },
   0x00000103: { name: 'CKA_SENSITIVE', description: 'Key cannot be extracted in plaintext' },
   0x00000104: { name: 'CKA_ENCRYPT', description: 'Key can be used for encryption' },
   0x00000105: { name: 'CKA_DECRYPT', description: 'Key can be used for decryption' },
@@ -80,12 +89,45 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000108: { name: 'CKA_SIGN', description: 'Key can be used to create signatures' },
   0x0000010a: { name: 'CKA_VERIFY', description: 'Key can be used to verify signatures' },
   0x0000010c: { name: 'CKA_DERIVE', description: 'Key can be used for key derivation' },
+  0x00000110: { name: 'CKA_START_DATE', description: 'Date the key becomes valid' },
+  0x00000111: { name: 'CKA_END_DATE', description: 'Date the key expires' },
+  0x00000120: { name: 'CKA_MODULUS', description: 'RSA public modulus' },
   0x00000121: { name: 'CKA_MODULUS_BITS', description: 'RSA modulus length in bits' },
   0x00000122: { name: 'CKA_PUBLIC_EXPONENT', description: 'RSA public exponent (usually 65537)' },
+  0x00000129: { name: 'CKA_PUBLIC_KEY_INFO', description: 'DER-encoded SubjectPublicKeyInfo' },
   0x00000161: { name: 'CKA_VALUE_LEN', description: 'Key length in bytes' },
   0x00000162: { name: 'CKA_EXTRACTABLE', description: 'Key can be wrapped and extracted' },
+  0x00000163: {
+    name: 'CKA_LOCAL',
+    description: 'True if the key was generated locally, not imported',
+  },
+  0x00000164: {
+    name: 'CKA_NEVER_EXTRACTABLE',
+    description: 'True if the key has never been extractable',
+  },
+  0x00000165: {
+    name: 'CKA_ALWAYS_SENSITIVE',
+    description: 'True if the key has always been sensitive',
+  },
+  0x00000166: {
+    name: 'CKA_KEY_GEN_MECHANISM',
+    description: 'Mechanism used to generate the key (CKM_*)',
+  },
+  0x00000170: {
+    name: 'CKA_MODIFIABLE',
+    description: 'Object attributes can be changed after creation',
+  },
+  0x00000171: { name: 'CKA_COPYABLE', description: 'Object can be duplicated via C_CopyObject' },
+  0x00000172: {
+    name: 'CKA_DESTROYABLE',
+    description: 'Object can be destroyed via C_DestroyObject',
+  },
   0x00000180: { name: 'CKA_EC_PARAMS', description: 'DER-encoded EC domain parameters (OID)' },
   0x00000181: { name: 'CKA_EC_POINT', description: 'DER-encoded EC public key point' },
+  0x00000202: {
+    name: 'CKA_ALWAYS_AUTHENTICATE',
+    description: 'Requires C_Login re-authentication before each use (v3.2 §4.4)',
+  },
   0x0000061d: { name: 'CKA_PARAMETER_SET', description: 'PQC parameter set (CKP_*)' },
   0x00000633: {
     name: 'CKA_ENCAPSULATE',
