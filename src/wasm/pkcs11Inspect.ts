@@ -67,7 +67,7 @@ export interface ConstEntry {
 }
 
 // CKA_ attribute types
-const CKA_TABLE: Record<number, ConstEntry> = {
+export const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000000: { name: 'CKA_CLASS', description: 'Object class (CKO_*)' },
   0x00000001: { name: 'CKA_TOKEN', description: 'Persistent token object vs session object' },
   0x00000002: { name: 'CKA_PRIVATE', description: 'Access requires authentication' },
