@@ -290,9 +290,6 @@ export const CKP_XMSS: Record<number, ConstEntry> = {
   0x1: { name: 'CKP_XMSS_SHA2_10_256', description: 'Height 10 — 1024 signatures, SHA2-256' },
   0x2: { name: 'CKP_XMSS_SHA2_16_256', description: 'Height 16 — 65536 signatures, SHA2-256' },
   0x3: { name: 'CKP_XMSS_SHA2_20_256', description: 'Height 20 — ~1M signatures, SHA2-256' },
-  0x4: { name: 'CKP_XMSS_SHA2_10_512', description: 'Height 10 — 1024 signatures, SHA2-512' },
-  0x5: { name: 'CKP_XMSS_SHA2_16_512', description: 'Height 16 — 65536 signatures, SHA2-512' },
-  0x6: { name: 'CKP_XMSS_SHA2_20_512', description: 'Height 20 — ~1M signatures, SHA2-512' },
   0x7: { name: 'CKP_XMSS_SHAKE_10_256', description: 'Height 10 — 1024 signatures, SHAKE128' },
   0x8: { name: 'CKP_XMSS_SHAKE_16_256', description: 'Height 16 — 65536 signatures, SHAKE128' },
   0x9: { name: 'CKP_XMSS_SHAKE_20_256', description: 'Height 20 — ~1M signatures, SHAKE128' },
@@ -301,9 +298,6 @@ export const CKP_XMSS: Record<number, ConstEntry> = {
   // SHAKE128. Mislabelling these as SHAKE128 is easy and was wrong here until
   // 2026-09-03; confirmed against the RFC 8391 reference implementation, which
   // maps 0xa-0xc to XMSS_SHAKE256 alongside SP 800-208's 0x10-0x15.
-  0xa: { name: 'CKP_XMSS_SHAKE_10_512', description: 'Height 10 — 1024 signatures, SHAKE256/512' },
-  0xb: { name: 'CKP_XMSS_SHAKE_16_512', description: 'Height 16 — 65536 signatures, SHAKE256/512' },
-  0xc: { name: 'CKP_XMSS_SHAKE_20_512', description: 'Height 20 — ~1M signatures, SHAKE256/512' },
   // SP 800-208 Tables 14/16 — the SHAKE256 sets, the only SHAKE sets NIST
   // approves (the SHAKE128 sets above are RFC 8391 only).
   0x10: {

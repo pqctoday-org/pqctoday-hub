@@ -246,9 +246,6 @@ export const CKP_LMOTS_SHAKE_N24_W8 = 0x10
 export const CKP_XMSS_SHA2_10_256 = 0x00000001
 export const CKP_XMSS_SHA2_16_256 = 0x00000002
 export const CKP_XMSS_SHA2_20_256 = 0x00000003
-export const CKP_XMSS_SHA2_10_512 = 0x00000004
-export const CKP_XMSS_SHA2_16_512 = 0x00000005
-export const CKP_XMSS_SHA2_20_512 = 0x00000006
 // RFC 8391 §5.3 registered OIDs for the SHAKE128 (XMSS-SHAKE_h_256) sets.
 // These were 0x11/0x12/0x13 until 2026-09-03, on the premise that Rust's
 // constants.rs used those values. It does not: in BOTH engines 0x11/0x12/0x13
@@ -262,9 +259,6 @@ export const CKP_XMSS_SHA2_20_512 = 0x00000006
 export const CKP_XMSS_SHAKE_10_256 = 0x00000007
 export const CKP_XMSS_SHAKE_16_256 = 0x00000008
 export const CKP_XMSS_SHAKE_20_256 = 0x00000009
-export const CKP_XMSS_SHAKE_10_512 = 0x0000000a
-export const CKP_XMSS_SHAKE_16_512 = 0x0000000b
-export const CKP_XMSS_SHAKE_20_512 = 0x0000000c
 
 // SP 800-208 Tables 14/16 — the SHAKE256 XMSS sets, values read from the
 // standard itself (docs library: NIST_SP_800-208.pdf) and confirmed identical

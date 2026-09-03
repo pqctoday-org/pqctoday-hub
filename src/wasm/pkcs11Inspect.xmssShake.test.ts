@@ -8,12 +8,16 @@
 // reference implementation (xmss-reference/params.c) AND the Rust engine's
 // constants.rs, which independently agree on these 6 values.
 //
-// Live browser verification of this exact path was not possible: the
-// Learn module's only live SHAKE-128 XMSS demo sends parameter-set 0x11
-// (per softhsm/constants.ts's own migration comment), which is a genuinely
-// different, unrelated parameter set on the real engine — a separate,
-// pre-existing bug reported alongside this commit, out of scope to fix
-// here. This test drives the real dispatch function directly instead.
+// The RFC 8391 "_512" sets (0x04-0x06, 0x0a-0x0c) were deliberately removed
+// on 2026-09-03: SP 800-208 footnote 5 does not approve them, the default
+// Rust engine does not implement them, and nothing in the hub generated them.
+//
+// When this test was written the Learn module's SHAKE-128 demo still sent
+// parameter-set 0x11 — a different set entirely — so the path could not be
+// verified live. That bug is now fixed: the demo sends 0x07 and the engine
+// reports 1,023 remaining signatures (height 10), matching its label. This
+// test remains as the fast unit-level guard on the dispatch function; the
+// cross-file ordinal check lives in ckpConstantAgreement.test.ts.
 import { describe, it, expect } from 'vitest'
 import { describeParameterSetByKeyType } from './pkcs11Inspect'
 
@@ -24,9 +28,6 @@ describe('CKP_XMSS SHAKE parameter-set names (Commit 7)', () => {
     [0x7, 'CKP_XMSS_SHAKE_10_256'],
     [0x8, 'CKP_XMSS_SHAKE_16_256'],
     [0x9, 'CKP_XMSS_SHAKE_20_256'],
-    [0xa, 'CKP_XMSS_SHAKE_10_512'],
-    [0xb, 'CKP_XMSS_SHAKE_16_512'],
-    [0xc, 'CKP_XMSS_SHAKE_20_512'],
   ]
 
   it.each(cases)('0x%s resolves to %s, not raw hex', (paramSet, expectedName) => {
