@@ -523,7 +523,7 @@ export function SshSimulationPanel() {
             moduleRef={moduleRef}
             hSessionRef={hSessionRef}
             onRemoveKey={removeHsmKey}
-            onClear={clearHsmKeys}
+            onClear={() => clearHsmKeys({ sessionHandle: hSessionRef.current })}
             title="SSH Simulator — HSM Key Registry"
           />
         </TabsContent>

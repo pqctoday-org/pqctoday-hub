@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import { Key, PenLine, CheckCircle, Loader2, Copy, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CODE_SIGNING_ALGORITHMS } from '../constants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
@@ -157,14 +157,14 @@ export const BinarySigning: React.FC = () => {
           .map((b) => b.toString(16).padStart(2, '0'))
           .join('')
 
-        hsm.addKey({
+        hsm.registerKey(M, hsm.hSessionRef.current, {
           handle: pubHandle,
           family: 'ml-dsa',
           role: 'public',
           label: `${selectedAlgorithm} Public`,
           generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hsm.hSessionRef.current, {
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
@@ -649,7 +649,7 @@ export const BinarySigning: React.FC = () => {
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

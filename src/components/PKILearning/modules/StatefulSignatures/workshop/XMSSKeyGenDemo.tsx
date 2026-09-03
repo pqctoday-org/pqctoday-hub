@@ -21,7 +21,7 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ErrorAlert } from '@/components/ui/error-alert'
-import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
+import { useHSM, type UseHSMResult, type HsmKey } from '@/hooks/useHSM'
 import {
   XMSS_PARAMETER_SETS,
   LMS_PARAMETER_SETS,
@@ -199,29 +199,27 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       // will continue even while the synchronous WASM call blocks JS).
       await new Promise((r) => setTimeout(r, 100))
 
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
       const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
-        hsm.moduleRef.current,
-        hsm.hSessionRef.current,
+        M,
+        hSession,
         CKM_XMSS_KEY_PAIR_GEN,
         CKK_XMSS,
         ckpParam
       )
-      const pubBytes = hsm_extractKeyValue(
-        hsm.moduleRef.current!,
-        hsm.hSessionRef.current,
-        pubHandle
-      )
+      const pubBytes = hsm_extractKeyValue(M!, hSession, pubHandle)
 
       setActiveKeyHandle(privHandle)
       setKeygenPhase('done')
-      hsm.addKey({
+      hsm.registerKey(M!, hSession, {
         handle: privHandle,
         family: 'xmss',
         role: 'private',
         label: `XMSS Key (${selected.name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M!, hSession, {
         handle: pubHandle,
         family: 'xmss',
         role: 'public',
@@ -959,7 +957,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

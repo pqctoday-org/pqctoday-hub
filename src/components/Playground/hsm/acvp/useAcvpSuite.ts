@@ -258,7 +258,7 @@ export function useAcvpSuite() {
     phase,
     autoInit,
     addHsmLog,
-    addHsmKey,
+    registerKey,
     clearHsmKeys,
     addHsmStepLog,
   } = useHsmContext()
@@ -322,7 +322,11 @@ export function useAcvpSuite() {
     setResults([])
     setLogs([])
     setProgress({ done: 0, current: 'Starting…' })
-    clearHsmKeys()
+    // Genuinely global reset: a fresh ACVP run starts with an empty
+    // inventory regardless of which slot/engine any leftover key came
+    // from — the one deliberate use of the 'all' escape hatch outside
+    // Finalize.
+    clearHsmKeys('all')
     // Deliberately NOT clearHsmLog(): the Logs tab is the playground's
     // cross-tab inspection surface, and wiping it at run start silently
     // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
@@ -436,8 +440,8 @@ export function useAcvpSuite() {
         const hSession = engine.hSession
         const engineId = eName === 'C++' ? ('cpp' as const) : ('rust' as const)
 
-        const regKey = (key: Omit<HsmKey, 'generatedAt'>) =>
-          addHsmKey({ ...key, generatedAt: ts() })
+        const regKey = (key: Omit<HsmKey, 'generatedAt' | 'uniqueId' | 'slotId'>) =>
+          registerKey(M, hSession, { ...key, generatedAt: ts() })
 
         // Record a visible 'skip' row when a mechanism this engine doesn't
         // advertise would otherwise silently drop a whole test category from

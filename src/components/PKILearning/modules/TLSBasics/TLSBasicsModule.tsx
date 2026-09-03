@@ -16,7 +16,7 @@ import { TLSDowngradeScenario } from './components/TLSDowngradeScenario'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from './utils/configGenerator'
 
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -288,14 +288,14 @@ export const TLSBasicsModule: React.FC = () => {
       // Step 1: Generate server key pair (ML-DSA-65) in HSM
       const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
 
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
         label: `TLS Server Public Key (ML-DSA-65)`,
         generatedAt: new Date().toISOString(),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
@@ -543,7 +543,7 @@ export const TLSBasicsModule: React.FC = () => {
                   keys={hsm.keys}
                   moduleRef={hsm.moduleRef}
                   hSessionRef={hsm.hSessionRef}
-                  onRemoveKey={hsm.removeKey}
+                  onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
                 />
               )}
             </div>

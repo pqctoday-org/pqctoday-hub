@@ -44,6 +44,7 @@ export const TokenSetupPanel = () => {
     engineMode,
     phase,
     setPhase,
+    forgetSlot,
     tokenCreated,
     setTokenCreated,
     addHsmLog,
@@ -119,6 +120,7 @@ export const TokenSetupPanel = () => {
         const M = moduleRef.current
         const slot0 = hsm_getFirstSlot(M)
         const newSlot = hsm_initToken(M, slot0, '12345678', 'SoftHSM3')
+        forgetSlot(newSlot)
         slotRef.current = newSlot
         setTokenCreated(true)
       } catch (e) {

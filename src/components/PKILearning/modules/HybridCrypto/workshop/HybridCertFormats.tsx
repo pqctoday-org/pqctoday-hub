@@ -20,7 +20,7 @@ import {
   STRUCTURE_LINE_COLOR_CLASSES,
   type HybridFormatId,
 } from '../constants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -124,7 +124,9 @@ export const HybridCertFormats: React.FC = () => {
 
   const onKeyTracked = useCallback(
     (handle: number, family: HsmFamily, label: string, role: HsmKeyRole = 'private') => {
-      hsm.addKey({
+      const M = hsm.moduleRef.current!
+      const hSession = hsm.hSessionRef.current!
+      hsm.registerKey(M, hSession, {
         handle,
         family,
         role,
@@ -951,7 +953,7 @@ export const HybridCertFormats: React.FC = () => {
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
           />
         )}
       </div>

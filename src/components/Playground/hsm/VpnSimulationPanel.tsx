@@ -25,6 +25,7 @@ import { VpnLearnSection } from './VpnLearnSection'
 import { VpnComparisonPanel } from './VpnComparisonPanel'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
+import { resolveKeyHandle } from '../keystore/resolveKeyHandle'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
@@ -734,9 +735,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     addHsmLog,
     hsmLog,
     addHsmKey,
+    registerKey,
     hsmKeys,
     clearHsmKeys,
     removeHsmKey,
+    forgetSession,
+    forgetSlot,
   } = useHsmContext()
   const hsmKeysRef = React.useRef(hsmKeys)
   React.useEffect(() => {
@@ -919,28 +923,26 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       if (!key.wasmContext || key.wasmContext === 'main') {
         const M = moduleRef.current
         if (!M) return emptyAttrs
-        // Build a fallback chain of session handles to try. Stale handles from
-        // a previous Generate Certs run yield CKR_SESSION_HANDLE_INVALID; the
-        // live refs may point to a fresher session opened by the daemon flow.
-        const candidates: number[] = []
-        const liveSlotSession = key.slotId === 1 ? serverSessionRef.current : hSessionRef.current
-        if (liveSlotSession) candidates.push(liveSlotSession)
-        if (key.sessionHandle && !candidates.includes(key.sessionHandle))
-          candidates.push(key.sessionHandle)
-        const otherLive = key.slotId === 1 ? hSessionRef.current : serverSessionRef.current
-        if (otherLive && !candidates.includes(otherLive)) candidates.push(otherLive)
-        for (const hSession of candidates) {
-          try {
-            const a = hsm_getKeyAttributes(M, hSession, key.handle)
-            if (!isAllNull(a)) return a
-          } catch {
-            // try next candidate
-          }
+        // The key's own slotId says which session actually owns it — no more
+        // guessing across a candidate list of sessions and hoping one of them
+        // happens to still recognize the raw handle (a handle is only ever
+        // valid on the session that returned it, PKCS#11 v3.2 §3.2, and
+        // trying it blind on other sessions risked matching a DIFFERENT
+        // object that reused the same handle number on that other session).
+        // resolveKeyHandle re-resolves the CURRENT handle via CKA_UNIQUE_ID
+        // on the one right session instead.
+        const hSession = key.slotId === 1 ? serverSessionRef.current : hSessionRef.current
+        if (!hSession) return emptyAttrs
+        try {
+          const liveHandle = resolveKeyHandle(M, hSession, key)
+          if (liveHandle === null) return emptyAttrs
+          const a = hsm_getKeyAttributes(M, hSession, liveHandle)
+          return isAllNull(a) ? emptyAttrs : a
+        } catch {
+          // No attributes available — surface the modal anyway with all-null
+          // fields so the user sees a clear state instead of a silent no-op.
+          return emptyAttrs
         }
-        // No candidate produced data — surface the modal anyway with all-null
-        // fields so the user sees a clear "no attributes available" state
-        // instead of a silent no-op.
-        return emptyAttrs
       }
       const role = key.wasmContext === 'worker-init' ? 'initiator' : 'responder'
       const hSess = key.sessionHandle
@@ -1355,6 +1357,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // full session reset (handleKemSizeChange), so it always matches
       // whatever keys these trace events actually belong to.
       const kemVariant = `ML-KEM-${kemSizeRef.current}`
+      // These keys live inside the strongSwan worker's own softhsmv3, not the
+      // panel's M — there is no WASM module handle here to read a real
+      // CKA_UNIQUE_ID from (the worker RPC has no find-by-UID today; noted
+      // as an out-of-scope follow-up in the panes remediation plan). Synthesize
+      // an identity from the trace event's own (session, handle) pair instead —
+      // stable enough for dedup/removal within one worker's lifetime, but NOT a
+      // real durable UID and NOT re-resolvable the way a panel-WASM key is.
       if (ev.op === 'C_GenerateKeyPair' && ev.mech === 0x0f) {
         addHsmKey({
           handle: ev.outA,
@@ -1367,6 +1376,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           slotId: slotIdForRole,
           sessionHandle: ev.sess,
           wasmContext: wasmCtx,
+          uniqueId: `worker:${wasmCtx}:${ev.sess}:${ev.outA}`,
         })
         addHsmKey({
           handle: ev.outB,
@@ -1379,6 +1389,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           slotId: slotIdForRole,
           sessionHandle: ev.sess,
           wasmContext: wasmCtx,
+          uniqueId: `worker:${wasmCtx}:${ev.sess}:${ev.outB}`,
         })
       } else if (ev.op === 'C_EncapsulateKey' && ev.mech === 0x17 && ev.outB) {
         addHsmKey({
@@ -1392,6 +1403,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           slotId: slotIdForRole,
           sessionHandle: ev.sess,
           wasmContext: wasmCtx,
+          uniqueId: `worker:${wasmCtx}:${ev.sess}:${ev.outB}`,
         })
       } else if (ev.op === 'C_DecapsulateKey' && ev.mech === 0x17) {
         addHsmKey({
@@ -1405,6 +1417,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           slotId: slotIdForRole,
           sessionHandle: ev.sess,
           wasmContext: wasmCtx,
+          uniqueId: `worker:${wasmCtx}:${ev.sess}:${ev.outA}`,
         })
       }
     }
@@ -1935,7 +1948,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               const ts = new Date().toISOString()
               const keySlotId = workerRole === 'initiator' ? 0 : 1
               const keySession = keySlotId === 0 ? hSessionRef.current : serverSessionRef.current
-              addHsmKey({
+              registerKey(M, keySession, {
                 handle: p[0],
                 family,
                 role: 'public',
@@ -1943,10 +1956,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 variant,
                 engine: 'rust',
                 generatedAt: ts,
-                slotId: keySlotId,
                 sessionHandle: keySession,
               })
-              addHsmKey({
+              registerKey(M, keySession, {
                 handle: p[1],
                 family,
                 role: 'private',
@@ -1954,7 +1966,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 variant,
                 engine: 'rust',
                 generatedAt: ts,
-                slotId: keySlotId,
                 sessionHandle: keySession,
               })
             }
@@ -2353,7 +2364,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   responder: { hex: secretHex92, kcv: fp92 },
                 }))
                 const keySlotId92 = workerRole === 'initiator' ? 0 : 1
-                addHsmKey({
+                const keySession92 =
+                  keySlotId92 === 0 ? hSessionRef.current : serverSessionRef.current
+                // Look up CKA_UNIQUE_ID on hSess92 — the session the key was
+                // just created/read on, proven valid above — but store the
+                // panel's own tracked session (keySession92) as sessionHandle,
+                // matching what HsmKeyTable/HsmKeyInspector re-resolve against.
+                registerKey(M, hSess92, {
                   handle: p[1],
                   family: 'ml-kem',
                   role: 'secret',
@@ -2361,8 +2378,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   variant: `ML-KEM-${kemSizeRef.current}`,
                   engine: 'rust',
                   generatedAt: new Date().toISOString(),
-                  slotId: keySlotId92,
-                  sessionHandle: keySlotId92 === 0 ? hSessionRef.current : serverSessionRef.current,
+                  sessionHandle: keySession92,
                 })
                 strongSwanEngine.dispatchLog({
                   level: 'info',
@@ -2440,7 +2456,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 initiator: { hex: secretHex93, kcv: fp93 },
               }))
               const keySlotId93 = workerRole === 'initiator' ? 0 : 1
-              addHsmKey({
+              const keySession93 =
+                keySlotId93 === 0 ? hSessionRef.current : serverSessionRef.current
+              // See the case-92 handler above: look up on hSess93 (proven
+              // valid, just used), store keySession93 as sessionHandle.
+              registerKey(M, hSess93, {
                 handle: p[0],
                 family: 'ml-kem',
                 role: 'secret',
@@ -2448,8 +2468,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 variant: `ML-KEM-${kemSizeRef.current}`,
                 engine: 'rust',
                 generatedAt: new Date().toISOString(),
-                slotId: keySlotId93,
-                sessionHandle: keySlotId93 === 0 ? hSessionRef.current : serverSessionRef.current,
+                sessionHandle: keySession93,
               })
               strongSwanEngine.dispatchLog({
                 level: 'info',
@@ -2723,15 +2742,24 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           } catch {
             // Best-effort: a stale handle from a previous run is expected here.
           }
+          // Drop any key registered against this session — otherwise it
+          // lingers in the registry pointing at a session that no longer
+          // exists (the orphan-after-Reset gap the panes remediation plan
+          // called out).
+          forgetSession(hSess)
         }
       } catch {
         // Module never loaded (Reset before any run) — nothing to close.
       }
     })()
+    // The two panel-level sessions may carry registered keys even if they
+    // aren't (or aren't yet) members of vpnStateRef's own session map.
+    forgetSession(hSessionRef.current)
+    forgetSession(serverSessionRef.current)
     vpnStateRef.current.sessions.clear()
     vpnSlotsRef.current = { init: 0, resp: 1 }
     // Don't re-init here — user must click "Start Daemon" to pass configs.
-  }, [vpnRpcInitRef, vpnSlotsRef])
+  }, [vpnRpcInitRef, vpnSlotsRef, forgetSession, hSessionRef, serverSessionRef])
 
   // Provision RSA-3072 key pairs into softhsmv3 and build self-signed X.509 certs.
   // The private key is generated on the HSM and never exported — cert is signed via
@@ -2799,6 +2827,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         const slots0 = getRawSlots(rawM)
         const sharedSlot = slots0[slots0.length - 1]
         hsm_initToken(rawM, sharedSlot, '1234', 'PQC VPN Tokens')
+        forgetSlot(sharedSlot)
         const realInitSlot = sharedSlot
         const realRespSlot = sharedSlot
         const hSessInit = hsm_openUserSession(rawM, sharedSlot, '1234', 'user1234')
@@ -2909,13 +2938,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         })
       }
 
-      const registerKey = (
-        keys: typeof initKeys,
-        slotId: 0 | 1,
-        hSess: number,
-        role: 'public' | 'private'
-      ) => {
-        addHsmKey({
+      // Named distinctly from HsmContext's registerKey (in scope via the
+      // destructure above) — this is a local convenience wrapper around it,
+      // not a redefinition.
+      const regVpnKey = (keys: typeof initKeys, hSess: number, role: 'public' | 'private') => {
+        registerKey(M, hSess, {
           handle: role === 'public' ? keys.pubHandle : keys.privHandle,
           family: keys.family,
           role,
@@ -2923,14 +2950,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           variant: keys.variant,
           engine: 'rust',
           generatedAt: ts,
-          slotId,
           sessionHandle: hSess,
         })
       }
-      registerKey(initKeys, 0, hSessInit, 'public')
-      registerKey(initKeys, 0, hSessInit, 'private')
-      registerKey(respKeys, 1, hSessResp, 'public')
-      registerKey(respKeys, 1, hSessResp, 'private')
+      regVpnKey(initKeys, hSessInit, 'public')
+      regVpnKey(initKeys, hSessInit, 'private')
+      regVpnKey(respKeys, hSessResp, 'public')
+      regVpnKey(respKeys, hSessResp, 'private')
 
       strongSwanEngine.dispatchLog({
         level: 'info',
@@ -3192,8 +3218,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           ckaId
         )
 
-        // Surface keys in the HSM panel for visibility.
+        // Surface keys in the HSM panel for visibility. These are worker-RPC
+        // keys (strongSwanEngine.pkcs11 dispatch, no panel M in scope) — same
+        // out-of-scope-for-UID-resolution case as the trace-event handler
+        // above; synthesize an identity from (session, handle) instead.
         const ts = new Date().toISOString()
+        const workerSlotId = role === 'initiator' ? 0 : 1
         addHsmKey({
           handle: hPub,
           family: 'ml-dsa',
@@ -3202,8 +3232,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           variant: `ML-DSA-${variant}` as 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87',
           engine: 'rust',
           generatedAt: ts,
-          slotId: role === 'initiator' ? 0 : 1,
+          slotId: workerSlotId,
           sessionHandle: hSess,
+          uniqueId: `worker:${role}:${hSess}:${hPub}`,
         })
         addHsmKey({
           handle: hPri,
@@ -3213,8 +3244,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           variant: `ML-DSA-${variant}` as 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87',
           engine: 'rust',
           generatedAt: ts,
-          slotId: role === 'initiator' ? 0 : 1,
+          slotId: workerSlotId,
           sessionHandle: hSess,
+          uniqueId: `worker:${role}:${hSess}:${hPri}`,
         })
 
         return { certPem, ckaId }
@@ -3391,11 +3423,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // would be used for pure-PQC mode, causing wrong session mapping.
       vpnRpcInitRef.current = false
       vpnSlotsRef.current = { init: 0, resp: 1 }
+      for (const hSess of vpnStateRef.current.sessions.keys()) forgetSession(hSess)
+      forgetSession(hSessionRef.current)
+      forgetSession(serverSessionRef.current)
       vpnStateRef.current.sessions.clear()
       setCertData(null)
       setKemSecrets({})
     },
-    [vpnRpcInitRef, vpnSlotsRef]
+    [vpnRpcInitRef, vpnSlotsRef, forgetSession, hSessionRef, serverSessionRef]
   )
 
   // Same full reset as handleModeChange — a KEM size change is a proposal
@@ -3410,11 +3445,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       setCharonFailed(false)
       vpnRpcInitRef.current = false
       vpnSlotsRef.current = { init: 0, resp: 1 }
+      for (const hSess of vpnStateRef.current.sessions.keys()) forgetSession(hSess)
+      forgetSession(hSessionRef.current)
+      forgetSession(serverSessionRef.current)
       vpnStateRef.current.sessions.clear()
       setCertData(null)
       setKemSecrets({})
     },
-    [vpnRpcInitRef, vpnSlotsRef]
+    [vpnRpcInitRef, vpnSlotsRef, forgetSession, hSessionRef, serverSessionRef]
   )
 
   // E2E autostart: click Start Daemon automatically when ?vpnAutostart=1
@@ -4508,6 +4546,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         const slots0 = getRawSlots(rawM)
                         const sharedSlot = slots0[slots0.length - 1]
                         hsm_initToken(rawM, sharedSlot, '1234', 'PQC VPN Tokens')
+                        forgetSlot(sharedSlot)
                         const realInitSlot = sharedSlot
                         const realRespSlot = sharedSlot
 
@@ -5201,7 +5240,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       moduleRef={moduleRef}
                       hSessionRef={hSessionRef}
                       onRemoveKey={removeHsmKey}
-                      onClear={clearHsmKeys}
+                      onClear={() => clearHsmKeys({ slotId: 0 })}
                       title="Client Token (Slot 1)"
                       attrsResolver={vpnAttrsResolver}
                     />
@@ -5314,7 +5353,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       moduleRef={moduleRef}
                       hSessionRef={serverSessionRef}
                       onRemoveKey={removeHsmKey}
-                      onClear={clearHsmKeys}
+                      onClear={() => clearHsmKeys({ slotId: 1 })}
                       title="Server Token (Slot 2)"
                       attrsResolver={vpnAttrsResolver}
                     />

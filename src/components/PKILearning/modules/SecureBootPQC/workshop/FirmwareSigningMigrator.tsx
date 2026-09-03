@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import {
@@ -634,14 +634,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       }
       setClassicalKeysReady(true)
 
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: classicalKeyRef.current.pubHandle,
         family: classicalFamily as HsmFamily,
         role: 'public',
         label: `${classicalLabelSuffix} Public`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: classicalKeyRef.current.privHandle,
         family: classicalFamily as HsmFamily,
         role: 'private',
@@ -677,14 +677,14 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
       }
       setPqcKeysReady(true)
 
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pqcKeyRef.current.pubHandle,
         family: pqcFamily as HsmFamily,
         role: 'public',
         label: `${pqcLabelSuffix} Public`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pqcKeyRef.current.privHandle,
         family: pqcFamily as HsmFamily,
         role: 'private',
@@ -2094,7 +2094,7 @@ export const FirmwareSigningMigrator: React.FC<{ initialStep?: number }> = ({
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
               title="Generated Keys — PKCS#11 Objects"
             />
           )}

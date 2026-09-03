@@ -13,7 +13,7 @@ import { InfoTooltip } from '../components/InfoTooltip'
 import { hsm_generateECKeyPair, hsm_ecdsaSign, hsm_ecdsaVerify } from '@/wasm/softhsm/classical'
 import { CKM_ECDSA } from '@/wasm/softhsm/constants'
 import { hsm_getPublicKeyInfo } from '@/wasm/softhsm/objects'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -438,14 +438,14 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
       )
       hsmHandlesRef.current.srcPrivHandle = privHandle
       hsmHandlesRef.current.srcPubHandle = pubHandle
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pubHandle,
         label: 'Bitcoin Sender (secp256k1)',
         family: 'ecdsa',
         role: 'public',
         generatedAt: new Date().toISOString(),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         label: 'Bitcoin Sender (secp256k1)',
         family: 'ecdsa',
@@ -488,14 +488,14 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
       )
       hsmHandlesRef.current.dstPrivHandle = privHandle
       hsmHandlesRef.current.dstPubHandle = pubHandle
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pubHandle,
         label: 'Bitcoin Recipient (secp256k1)',
         family: 'ecdsa',
         role: 'public',
         generatedAt: new Date().toISOString(),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         label: 'Bitcoin Recipient (secp256k1)',
         family: 'ecdsa',
@@ -664,7 +664,7 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
           keys={hsm.keys}
           moduleRef={hsm.moduleRef}
           hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
+          onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
     </div>

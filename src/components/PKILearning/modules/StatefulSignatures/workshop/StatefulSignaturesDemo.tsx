@@ -10,7 +10,7 @@ import {
   WorkshopOperationLog,
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -111,6 +111,7 @@ export function StatefulSignaturesDemo() {
 
     const M_cpp = hsmCpp.moduleRef.current
     if (!M_cpp) return
+    const hSession_cpp = hsmCpp.hSessionRef.current
 
     const key = hsm.keys.find((k) => k.handle === selectedPubHandle)
     if (!key?.rawBytes) {
@@ -122,12 +123,12 @@ export function StatefulSignaturesDemo() {
       const keyType = key.family === 'xmss' ? CKK_XMSS : CKK_HSS
       const cppHandle = hsm_importStatefulPublicKey(
         M_cpp,
-        hsmCpp.hSessionRef.current,
+        hSession_cpp,
         keyType,
         key.rawBytes,
         key.paramSet
       )
-      hsmCpp.addKey({
+      hsmCpp.registerKey(M_cpp, hSession_cpp, {
         handle: cppHandle,
         family: key.family,
         role: 'public',
@@ -175,7 +176,7 @@ export function StatefulSignaturesDemo() {
         type: 'header',
       })
       const pubHandle = hsm_importStatefulPublicKey(M, session, CKK_HSS, pubKeyBytes)
-      hsm.addKey({
+      hsm.registerKey(M, session, {
         handle: pubHandle,
         family: 'hss',
         role: 'public',
@@ -272,7 +273,7 @@ export function StatefulSignaturesDemo() {
         CKK_XMSS,
         CKP_XMSS_SHA2_10_256
       )
-      hsm.addKey({
+      hsm.registerKey(M, session, {
         handle: privHandle,
         family: 'xmss',
         role: 'private',
@@ -740,13 +741,13 @@ export function StatefulSignaturesDemo() {
                         keys={hsm.keys}
                         moduleRef={hsm.moduleRef}
                         hSessionRef={hsm.hSessionRef}
-                        onRemoveKey={hsm.removeKey}
+                        onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
                       />
                       <HsmKeyInspector
                         keys={hsmCpp.keys}
                         moduleRef={hsmCpp.moduleRef}
                         hSessionRef={hsmCpp.hSessionRef}
-                        onRemoveKey={hsmCpp.removeKey}
+                        onRemoveKey={(key: HsmKey) => hsmCpp.removeKey(key.handle)}
                       />
                     </div>
                   )}
@@ -999,13 +1000,13 @@ export function StatefulSignaturesDemo() {
                         keys={hsm.keys}
                         moduleRef={hsm.moduleRef}
                         hSessionRef={hsm.hSessionRef}
-                        onRemoveKey={hsm.removeKey}
+                        onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
                       />
                       <HsmKeyInspector
                         keys={hsmCpp.keys}
                         moduleRef={hsmCpp.moduleRef}
                         hSessionRef={hsmCpp.hSessionRef}
-                        onRemoveKey={hsmCpp.removeKey}
+                        onRemoveKey={(key: HsmKey) => hsmCpp.removeKey(key.handle)}
                       />
                     </div>
                   )}
@@ -1473,7 +1474,7 @@ export function StatefulSignaturesDemo() {
                     keys={hsm.keys}
                     moduleRef={hsm.moduleRef}
                     hSessionRef={hsm.hSessionRef}
-                    onRemoveKey={hsm.removeKey}
+                    onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
                   />
                 )}
               </div>

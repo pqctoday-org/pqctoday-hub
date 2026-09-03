@@ -33,7 +33,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_signBytesMLDSA,
@@ -1162,7 +1162,7 @@ export const CTLogSimulator: React.FC = () => {
     setCAKeyHandles({ pubHandle, privHandle })
     setCAPubKeyBytes(pubBytes)
     const generatedAt = new Date().toISOString()
-    hsm.addKey({
+    hsm.registerKey(M, hSession, {
       handle: pubHandle,
       family: 'ml-dsa',
       role: 'public',
@@ -1177,7 +1177,7 @@ export const CTLogSimulator: React.FC = () => {
     // attributes (CKA_SENSITIVE, CKA_EXTRACTABLE, CKA_NEVER_EXTRACTABLE)
     // inspectable, which is the point of the panel on a page about who can
     // forge a log entry.
-    hsm.addKey({
+    hsm.registerKey(M, hSession, {
       handle: privHandle,
       family: 'ml-dsa',
       role: 'private',
@@ -1415,7 +1415,7 @@ export const CTLogSimulator: React.FC = () => {
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
           />
         </div>
       )}

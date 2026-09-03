@@ -9,7 +9,7 @@ import {
   type LogEntry,
 } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { CodeBlock } from '@/components/ui/code-block'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -344,14 +344,14 @@ export const SLHDSALiveDemo: React.FC = () => {
         const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, selectedParam.ckp)
         setKeyHandles({ pub: pubHandle, priv: privHandle })
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           family: 'slh-dsa',
           role: 'public',
           label: `SLH-DSA Public Key (${selectedParam.label})`,
           generatedAt: new Date().toISOString(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           family: 'slh-dsa',
           role: 'private',
@@ -750,7 +750,7 @@ export const SLHDSALiveDemo: React.FC = () => {
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

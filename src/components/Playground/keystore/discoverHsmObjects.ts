@@ -6,7 +6,7 @@
 // registration, so a PKCS#11 key never needs its own classification logic
 // written twice.
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import { hsm_findAllObjects, hsm_getKeyAttributes } from '../../../wasm/softhsm'
+import { hsm_findAllObjects, hsm_getKeyAttributes, hsm_getSessionInfo } from '../../../wasm/softhsm'
 import type { HsmContextValue, HsmFamily, HsmKey, HsmKeyRole } from '../hsm/HsmContext'
 
 export const CKK_NAMES: Record<number, string> = {
@@ -72,10 +72,19 @@ function discoverObjectsOnSession(
   M: SoftHSMModule,
   hSession: number,
   known: { handles: ReadonlySet<number>; uniqueIds: ReadonlySet<string> },
-  addKey: (key: HsmKey) => void,
-  extra?: { sessionHandle?: number; slotId?: number }
+  addKey: (key: HsmKey) => void
 ): number {
   const handles = hsm_findAllObjects(M, hSession, [])
+  // Derive the real slot from the session being scanned — once per call,
+  // not per caller-supplied guess. A caller (e.g. the Developer tab) used
+  // to pass its own slotId in; deriving it here instead means a discovered
+  // key's slotId is always the slot it was actually found on.
+  let slotId = -1
+  try {
+    slotId = hsm_getSessionInfo(M, hSession).slotID
+  } catch (err) {
+    console.error('discoverObjectsOnSession: could not read slotID for session', hSession, err)
+  }
   let added = 0
   for (const h of handles) {
     try {
@@ -110,9 +119,9 @@ function discoverObjectsOnSession(
         role,
         label,
         generatedAt: new Date().toLocaleTimeString(),
-        uniqueId: a.ckUniqueId ?? undefined,
-        sessionHandle: extra?.sessionHandle,
-        slotId: extra?.slotId,
+        uniqueId: a.ckUniqueId ?? '',
+        sessionHandle: hSession,
+        slotId,
       })
       added++
     } catch {
@@ -159,7 +168,8 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
  * specifically for the Developer tab's separately-labeled/PIN'd slot
  * (`devSlot.ts`), which is deliberately isolated from `HsmContext.hSessionRef`
  * so a Developer-tab script can never log the rest of the HSM playground out
- * from under it. Stamps `sessionHandle` on every registered key so
+ * from under it. Stamps `sessionHandle` and the real `slotId` (derived via
+ * `C_GetSessionInfo`, not caller-supplied) on every registered key so
  * `HsmKeyTable`'s later live queries route to the right session automatically
  * — no slot-picker UI needed, the routing is per-key data. Caller owns the
  * session's lifecycle; this function only scans and registers.
@@ -167,11 +177,7 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
 export const discoverHsmObjectsOnSession = (
   M: SoftHSMModule,
   hSession: number,
-  slotId: number,
   hsm: Pick<HsmContextValue, 'hsmKeysRef' | 'addHsmKey'>
 ): number => {
-  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey, {
-    sessionHandle: hSession,
-    slotId,
-  })
+  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey)
 }

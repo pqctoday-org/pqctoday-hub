@@ -19,7 +19,11 @@ import {
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
+  hsm_getKeyAttributes,
+  hsm_getSessionInfo,
+  hsm_getAllSlots,
 } from '../../../wasm/softhsm'
+import { keyIdentity } from '../keystore/keyIdentity'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -65,8 +69,13 @@ export interface HsmKey {
   generatedAt: string
   /** Semantic role in a provisioning workflow (optional, defaults to 'general') */
   purpose?: HsmKeyPurpose
-  /** Which crypto token slot this key belongs to (e.g., Slot 1 = Client, Slot 2 = Server) */
-  slotId?: number
+  /**
+   * Which crypto token slot this key belongs to (e.g., Slot 1 = Client,
+   * Slot 2 = Server). Required — derived at registration time via
+   * `C_GetSessionInfo`, never left to a caller to guess or omit. Part of
+   * `keyIdentity()`, and the unit every remove/clear operation scopes to.
+   */
+  slotId: number
   /** Raw public key bytes (CKA_VALUE), cached at generation time for cross-engine transport */
   rawBytes?: Uint8Array
   /** CKA_PARAMETER_SET value (e.g. CKP_XMSS_*), required for C_CreateObject on XMSS public keys */
@@ -84,8 +93,11 @@ export interface HsmKey {
    * failed with CKR_OBJECT_HANDLE_INVALID. When present, callers must
    * re-resolve the current handle via a CKA_UNIQUE_ID find before reading
    * attributes — never trust a stored `handle` across a session boundary.
+   *
+   * Required — derived at registration time via `registerKey`, never left
+   * unset. The durable half of `keyIdentity()`.
    */
-  uniqueId?: string
+  uniqueId: string
   /**
    * Which WASM instance owns this key. Defaults to 'main' (panel softhsm). VPN sim uses
    * 'worker-init' / 'worker-resp' for keys that live inside a strongSwan worker's local
@@ -93,6 +105,28 @@ export interface HsmKey {
    */
   wasmContext?: 'main' | 'worker-init' | 'worker-resp'
 }
+
+/**
+ * A key identity, for `removeHsmKey` — either a precomputed `keyIdentity()`
+ * string, or any object carrying the three identity fields (a full `HsmKey`
+ * satisfies this).
+ */
+export type KeyIdentityInput = string | Pick<HsmKey, 'wasmContext' | 'slotId' | 'uniqueId'>
+
+/**
+ * The unit `clearHsmKeys` operates on. Scope is required — no bare "clear
+ * everything" — because a shared registry has more than one logical owner
+ * (e.g. the VPN sim's client and server panes) and an unscoped clear from
+ * one pane silently wiped the other's keys too (the cross-slot-clear bug
+ * this type exists to make impossible). `'all'` is a rare, explicit
+ * escape hatch for genuinely-global resets (e.g. the ACVP suite wiping the
+ * whole inventory at the start of a fresh run) — never a default.
+ */
+export type ClearKeysScope =
+  | { slotId: number }
+  | { sessionHandle: number }
+  | { wasmContext: HsmKey['wasmContext'] }
+  | 'all'
 
 export interface HsmContextValue {
   // ── WASM handles ──────────────────────────────────────────────────────────
@@ -133,14 +167,62 @@ export interface HsmContextValue {
    */
   hsmKeysRef: React.MutableRefObject<HsmKey[]>
   /**
-   * Register a key after generation. Returns the registered key for
-   * convenience (same object that was passed in).
+   * Internal registry write — the caller must already know the key's full
+   * identity (`uniqueId`, `slotId`). Used by `registerKey` and by
+   * discovery (`discoverHsmObjects.ts`), which derives identity itself
+   * while enumerating live objects. Every other caller should use
+   * `registerKey` instead, so identity is never skipped.
    */
   addHsmKey: (key: HsmKey) => HsmKey
-  /** Remove a single key by handle (e.g. after explicit C_DestroyObject) */
-  removeHsmKey: (handle: number) => void
-  /** Wipe the registry — call when session closes or HSM is finalized */
-  clearHsmKeys: () => void
+  /**
+   * Register a key right after generation/import. Derives `uniqueId`
+   * (CKA_UNIQUE_ID, read on `M`/`hSession` — the same module/session the
+   * key was just created on) and `slotId` (`C_GetSessionInfo(hSession)
+   * .slotID`), stamps them on, then writes the row via `addHsmKey`. This
+   * is the ONLY way panel code should register a key — never call
+   * `addHsmKey` directly with a hand-built identity.
+   */
+  registerKey: (
+    M: SoftHSMModule,
+    hSession: number,
+    partial: Omit<HsmKey, 'uniqueId' | 'slotId'>
+  ) => HsmKey
+  /**
+   * Remove a single key by identity (e.g. after explicit C_DestroyObject).
+   * Takes a `keyIdentity()` string or any object carrying the identity
+   * fields (a full `HsmKey` works) — never a bare handle, which is
+   * session-scoped and can collide across slots.
+   */
+  removeHsmKey: (identity: KeyIdentityInput) => void
+  /**
+   * Remove every key matching `scope` — slot, session, or wasm context.
+   * Scope is required; `'all'` is the explicit, rare "really clear
+   * everything" case (see `ClearKeysScope`).
+   */
+  clearHsmKeys: (scope: ClearKeysScope) => void
+  /**
+   * Teardown hook — call when a session closes (VPN Reset, a mode/KEM-size
+   * change that reopens sessions, the Developer tab's dev-slot unmount)
+   * so keys registered on it don't linger as orphans. Equivalent to
+   * `clearHsmKeys({ sessionHandle })`, named for the teardown call site's
+   * own clarity.
+   */
+  forgetSession: (hSession: number) => void
+  /**
+   * Teardown hook — call when a slot is re-formatted (`C_InitToken` on an
+   * already-initialized slot) so keys from the PREVIOUS token on that slot
+   * don't linger as orphans pointing at objects that no longer exist.
+   * Equivalent to `clearHsmKeys({ slotId })`.
+   */
+  forgetSlot: (slotId: number) => void
+  /**
+   * Drop every registered key whose `slotId` no longer appears in
+   * `C_GetSlotList` on `M` — e.g. a slot removed/re-enumerated by an
+   * engine restart. Cheap (one C_GetSlotList call); safe to call on every
+   * key table mount. Silently does nothing if the slot list can't be read
+   * (leaves the registry alone rather than guess).
+   */
+  pruneDeadSlots: (M: SoftHSMModule) => void
   /**
    * Look up the most recently generated key for a given family + role.
    * Returns undefined if none have been generated yet.
@@ -248,14 +330,66 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return key
   }, [])
 
-  const removeHsmKey = useCallback((handle: number) => {
-    hsmKeysRef.current = hsmKeysRef.current.filter((k) => k.handle !== handle)
+  const registerKey = useCallback(
+    (M: SoftHSMModule, hSession: number, partial: Omit<HsmKey, 'uniqueId' | 'slotId'>): HsmKey => {
+      let uniqueId = ''
+      try {
+        uniqueId = hsm_getKeyAttributes(M, hSession, partial.handle).ckUniqueId ?? ''
+      } catch (err) {
+        console.error('registerKey: could not read CKA_UNIQUE_ID for handle', partial.handle, err)
+      }
+      let slotId = -1
+      try {
+        slotId = hsm_getSessionInfo(M, hSession).slotID
+      } catch (err) {
+        console.error('registerKey: could not read slotID for session', hSession, err)
+      }
+      return addHsmKey({ ...partial, uniqueId, slotId })
+    },
+    [addHsmKey]
+  )
+
+  const removeHsmKey = useCallback((identity: KeyIdentityInput) => {
+    const id = typeof identity === 'string' ? identity : keyIdentity(identity)
+    hsmKeysRef.current = hsmKeysRef.current.filter((k) => keyIdentity(k) !== id)
     setHsmKeys(hsmKeysRef.current)
   }, [])
 
-  const clearHsmKeys = useCallback(() => {
-    hsmKeysRef.current = []
-    setHsmKeys([])
+  const clearHsmKeys = useCallback((scope: ClearKeysScope) => {
+    if (scope === 'all') {
+      hsmKeysRef.current = []
+      setHsmKeys([])
+      return
+    }
+    hsmKeysRef.current = hsmKeysRef.current.filter((k) => {
+      if ('slotId' in scope) return k.slotId !== scope.slotId
+      if ('sessionHandle' in scope) return k.sessionHandle !== scope.sessionHandle
+      return (k.wasmContext ?? 'main') !== scope.wasmContext
+    })
+    setHsmKeys(hsmKeysRef.current)
+  }, [])
+
+  const forgetSession = useCallback(
+    (hSession: number) => clearHsmKeys({ sessionHandle: hSession }),
+    [clearHsmKeys]
+  )
+
+  const forgetSlot = useCallback((slotId: number) => clearHsmKeys({ slotId }), [clearHsmKeys])
+
+  const pruneDeadSlots = useCallback((M: SoftHSMModule) => {
+    let liveSlots: Set<number>
+    try {
+      liveSlots = new Set(hsm_getAllSlots(M))
+    } catch (err) {
+      console.error('pruneDeadSlots: could not read C_GetSlotList — leaving registry as-is', err)
+      return
+    }
+    const deadSlotIds = new Set(
+      hsmKeysRef.current.map((k) => k.slotId).filter((slotId) => !liveSlots.has(slotId))
+    )
+    if (deadSlotIds.size === 0) return
+    hsmKeysRef.current = hsmKeysRef.current.filter((k) => !deadSlotIds.has(k.slotId))
+    setHsmKeys(hsmKeysRef.current)
   }, [])
 
   const latestKey = useCallback(
@@ -382,6 +516,10 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Step 2: init token
         const slot0 = hsm_getFirstSlot(proxy)
         const newSlot = hsm_initToken(proxy, slot0, '12345678', 'SoftHSM3')
+        // A re-format of an already-used slot invalidates whatever was
+        // registered against it; unconditional and cheap when there's
+        // nothing to forget.
+        forgetSlot(newSlot)
         slotRef.current = newSlot
         setTokenCreated(true)
 
@@ -398,7 +536,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return false
       }
     },
-    [engineMode, addHsmLog]
+    [engineMode, addHsmLog, forgetSlot]
   )
 
   const autoInit = useCallback(
@@ -442,8 +580,12 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hsmKeys,
       hsmKeysRef,
       addHsmKey,
+      registerKey,
       removeHsmKey,
       clearHsmKeys,
+      forgetSession,
+      forgetSlot,
+      pruneDeadSlots,
       latestKey,
       keysForFamily,
       hsmLog,
@@ -461,8 +603,12 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isReady,
       hsmKeys,
       addHsmKey,
+      registerKey,
       removeHsmKey,
       clearHsmKeys,
+      forgetSession,
+      forgetSlot,
+      pruneDeadSlots,
       latestKey,
       keysForFamily,
       hsmLog,

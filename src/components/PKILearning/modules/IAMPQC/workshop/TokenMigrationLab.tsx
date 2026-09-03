@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { SIGNATURE_SIZE_DATA, type SigningAlgorithm } from '../data/iamConstants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -309,14 +309,14 @@ export const TokenMigrationLab: React.FC = () => {
         labelSuffix = 'ML-DSA-87'
       }
 
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: result.pubHandle,
         family,
         role: 'public',
         label: `${labelSuffix} Token Pub`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: result.privHandle,
         family,
         role: 'private',
@@ -889,7 +889,7 @@ export const TokenMigrationLab: React.FC = () => {
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
           />
         </div>
       )}

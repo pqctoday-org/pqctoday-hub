@@ -21,7 +21,7 @@ import {
   CKP_LMS_SHA256_M32_H25,
 } from '@/wasm/softhsm/constants'
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import {
   WorkshopOperationLog,
@@ -100,16 +100,18 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
       }
       const paramCode = heightToIANA[selected.treeHeight] ?? CKP_LMS_SHA256_M32_H5
 
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
       const { privHandle } = hsm_generateStatefulKeyPair(
-        hsm.moduleRef.current,
-        hsm.hSessionRef.current,
+        M,
+        hSession,
         CKM_HSS_KEY_PAIR_GEN,
         CKK_HSS,
         paramCode
       )
 
       setActiveKeyHandle(privHandle)
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         family: 'hss',
         role: 'private',
@@ -572,7 +574,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

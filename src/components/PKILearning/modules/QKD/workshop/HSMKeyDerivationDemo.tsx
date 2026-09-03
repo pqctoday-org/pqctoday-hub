@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap, RotateCcw } from 'lucide-react'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { WasmModeIndicator } from '@/components/shared/WasmModeIndicator'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -145,11 +145,12 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
     if (hsm.isReady && hsm.moduleRef.current && state.qkdSecret) {
       try {
         const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
         const ikm = new Uint8Array(32)
         for (let i = 0; i < 32; i++)
           ikm[i] = parseInt((state.qkdSecret ?? '').slice(i * 2, i * 2 + 2), 16)
-        const handle = hsm_importGenericSecret(M, hsm.hSessionRef.current, ikm)
-        hsm.addKey({
+        const handle = hsm_importGenericSecret(M, hSession, ikm)
+        hsm.registerKey(M, hSession, {
           handle,
           label: 'QKD Imported Master Secret',
           family: 'ml-kem',
@@ -174,17 +175,11 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
     let sessionKey = ''
     if (hsm.isReady && hsm.moduleRef.current) {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
       if (state.importedHandle !== undefined) {
         // Reuse the handle already imported in step 2 — run derive-only
         const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
-        const derived = hsm_kbkdf(
-          M,
-          hsm.hSessionRef.current,
-          state.importedHandle,
-          0x00000251,
-          fixedInput,
-          32
-        )
+        const derived = hsm_kbkdf(M, hSession, state.importedHandle, 0x00000251, fixedInput, 32)
         sessionKey = Array.from(derived)
           .map((b) => b.toString(16).padStart(2, '0'))
           .join('')
@@ -192,14 +187,14 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
         // Step 2 was illustrative — do combined import+derive now
         const { derivedKeyHex, baseKeyHandle } = sp800108CounterKDF(
           M,
-          hsm.hSessionRef.current,
+          hSession,
           state.qkdSecret,
           'session-key-v1',
           sessionId,
           32
         )
         sessionKey = derivedKeyHex
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: baseKeyHandle,
           label: 'QKD Imported Master Secret',
           family: 'ml-kem',
@@ -786,7 +781,7 @@ export const HSMKeyDerivationDemo: React.FC<{ initialStep?: number }> = ({ initi
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
               title="QKD Imported Secrets"
             />
           )}

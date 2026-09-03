@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -462,14 +462,14 @@ export const HpkeWorkshop: React.FC = () => {
           const kp = hsm_generateHpkeKeyPair(M, hSession, kemId)
           st.hpkeRecipientPubHandle = kp.pubHandle
           st.hpkeRecipientPrivHandle = kp.privHandle
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: kp.pubHandle,
             label: 'Recipient HPKE pubkey',
             family: 'hpke',
             role: 'public',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: kp.privHandle,
             label: 'Recipient HPKE privkey',
             family: 'hpke',
@@ -496,21 +496,21 @@ export const HpkeWorkshop: React.FC = () => {
           st.ekH = ekH
           st.dkPQHandle = mlkem.privHandle
           st.dkTHandle = ec.privHandle
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: mlkem.pubHandle,
             label: 'Recipient ek_PQ',
             family: 'ml-kem',
             role: 'public',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: mlkem.privHandle,
             label: 'Recipient dk_PQ',
             family: 'ml-kem',
             role: 'private',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: ec.privHandle,
             label: 'Recipient dk_T',
             family: 'ecdh',
@@ -525,14 +525,14 @@ export const HpkeWorkshop: React.FC = () => {
         const pkR = extractRawPoint(M, hSession, kp.pubHandle, curve)
         st.ekH = pkR
         st.skRHandle = kp.privHandle
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kp.pubHandle,
           label: 'Recipient pkR',
           family: 'ecdh',
           role: 'public',
           generatedAt: new Date().toISOString(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kp.privHandle,
           label: 'Recipient skR',
           family: 'ecdh',
@@ -551,14 +551,14 @@ export const HpkeWorkshop: React.FC = () => {
             st.hpkeSenderPubHandle = kp.pubHandle
             st.hpkeSenderPrivHandle = kp.privHandle
             st.hpkeSenderPkBytes = hsm_extractKeyValue(M, hSession, kp.pubHandle)
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kp.pubHandle,
               label: 'Sender HPKE pubkey (static)',
               family: 'hpke',
               role: 'public',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kp.privHandle,
               label: 'Sender HPKE privkey (static)',
               family: 'hpke',
@@ -571,14 +571,14 @@ export const HpkeWorkshop: React.FC = () => {
             const pkS = extractRawPoint(M, hSession, kp.pubHandle, curve)
             st.skSHandle = kp.privHandle
             st.pkSBytes = pkS
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kp.pubHandle,
               label: 'Sender pkS (static)',
               family: 'ecdh',
               role: 'public',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kp.privHandle,
               label: 'Sender skS (static)',
               family: 'ecdh',
@@ -594,7 +594,7 @@ export const HpkeWorkshop: React.FC = () => {
           st.psk = psk
           st.pskId = DEMO_PSK_ID
           st.hpkePskHandle = pskHandle
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: pskHandle,
             label: 'PSK (out-of-band)',
             family: 'hmac',
@@ -627,7 +627,7 @@ export const HpkeWorkshop: React.FC = () => {
           st.candidateKeyHandle = result.keyHandle ?? undefined
           st.candidateBaseNonce = result.baseNonce ?? undefined
           if (result.keyHandle != null) {
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: result.keyHandle,
               label: 'AEAD key (from CKM_HPKE Encap)',
               family: aeadId === HPKE_AEAD.CHACHA20POLY1305 ? 'chacha20' : 'aes',
@@ -1099,7 +1099,7 @@ export const HpkeWorkshop: React.FC = () => {
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             title="Key Registry — HPKE Session"
           />
         </div>

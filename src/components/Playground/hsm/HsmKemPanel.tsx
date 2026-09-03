@@ -37,7 +37,7 @@ export const HsmKemPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, addHsmKey, engineMode, isReady } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, engineMode, isReady } = useHsmContext()
   const [family, setFamily] = useState<KemFamily>(() => {
     if (initialAlgo?.startsWith('FrodoKEM')) return 'frodo-kem'
     if (initialAlgo?.startsWith('Classic-McEliece')) return 'classic-mceliece'
@@ -100,7 +100,7 @@ export const HsmKemPanel = ({
 
       const ts = new Date().toLocaleTimeString([], { hour12: false })
       const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family,
         role: 'public',
@@ -109,7 +109,7 @@ export const HsmKemPanel = ({
         engine: engineLabel,
         generatedAt: ts,
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family,
         role: 'private',

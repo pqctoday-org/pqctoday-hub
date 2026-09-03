@@ -13,6 +13,11 @@ import type { HsmFamily, HsmKey, HsmKeyRole } from '@/components/Playground/hsm/
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { hsm_destroyObject, hsm_getKeyAttributes, type KeyAttributeSet } from '@/wasm/softhsm'
 import { formatBytes } from '@/components/Playground/keystore/keySizeUtils'
+import {
+  resolveKeyHandle,
+  isSessionGoneError,
+} from '@/components/Playground/keystore/resolveKeyHandle'
+import { keyIdentity } from '@/components/Playground/keystore/keyIdentity'
 import { estimateKeySize, KeyAttrModal, PurposeBadge } from '@/components/shared/hsmKeyAttrDisplay'
 
 // ── Role styling ──────────────────────────────────────────────────────────────
@@ -57,7 +62,9 @@ export interface HsmKeyInspectorProps {
   keys: HsmKey[]
   moduleRef: React.MutableRefObject<SoftHSMModule | null>
   hSessionRef: React.MutableRefObject<number>
-  onRemoveKey?: (handle: number) => void
+  /** Takes the full key, not a bare handle — the parent binds identity/scope. */
+  onRemoveKey?: (key: HsmKey) => void
+  /** Parent supplies the already-scoped clear (e.g. `() => clearHsmKeys({ slotId })`). */
   onClear?: () => void
   /** Optional title override (default: "HSM Key Registry") */
   title?: string
@@ -104,9 +111,11 @@ export const HsmKeyInspector = ({
           }
         } else if (M && hSession) {
           try {
-            a = hsm_getKeyAttributes(M, hSession, k.handle)
-          } catch {
+            const liveHandle = resolveKeyHandle(M, hSession, k)
+            a = liveHandle !== null ? hsm_getKeyAttributes(M, hSession, liveHandle) : null
+          } catch (err) {
             a = null
+            if (isSessionGoneError(err)) onRemoveKey?.(k)
           }
         }
         map.set(k.handle, a ? estimateKeySize(a) : null)
@@ -118,7 +127,7 @@ export const HsmKeyInspector = ({
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyTracker, attrsResolver]) // moduleRef and hSessionRef are stable refs — intentionally omitted
+  }, [keyTracker, attrsResolver, onRemoveKey]) // moduleRef and hSessionRef are stable refs — intentionally omitted
 
   const totalBytes = useMemo(() => {
     let sum = 0
@@ -146,14 +155,16 @@ export const HsmKeyInspector = ({
       const hSession = hSessionRef.current
       if (!M || !hSession) return
       try {
-        const a = hsm_getKeyAttributes(M, hSession, key.handle)
+        const liveHandle = resolveKeyHandle(M, hSession, key)
+        const a = hsm_getKeyAttributes(M, hSession, liveHandle ?? 0)
         setAttrs(a)
         setInspectedKey(key)
-      } catch {
-        // key may be invalid or destroyed — fail silently
+      } catch (err) {
+        if (isSessionGoneError(err)) onRemoveKey?.(key)
+        // otherwise: key may be invalid or destroyed — fail silently
       }
     },
-    [moduleRef, hSessionRef, attrsResolver]
+    [moduleRef, hSessionRef, attrsResolver, onRemoveKey]
   )
 
   const destroyKey = useCallback(
@@ -162,10 +173,13 @@ export const HsmKeyInspector = ({
       const hSession = hSessionRef.current
       if (!M || !hSession) return
       try {
-        hsm_destroyObject(M, hSession, key.handle)
-        onRemoveKey?.(key.handle)
-      } catch {
-        // key may already be destroyed
+        const liveHandle = resolveKeyHandle(M, hSession, key)
+        if (liveHandle !== null) hsm_destroyObject(M, hSession, liveHandle)
+        onRemoveKey?.(key)
+      } catch (err) {
+        // key may already be destroyed — but if the SESSION is gone,
+        // remove the row too, or Destroy would be stuck failing on it.
+        if (isSessionGoneError(err)) onRemoveKey?.(key)
       }
       setConfirmHandle(null)
     },
@@ -183,7 +197,9 @@ export const HsmKeyInspector = ({
         if (k.family !== 'aes' || k.role !== 'secret') return k
         if (!M || !hSession) return k
         try {
-          const a = hsm_getKeyAttributes(M, hSession, k.handle)
+          const liveHandle = resolveKeyHandle(M, hSession, k)
+          if (liveHandle === null) return k
+          const a = hsm_getKeyAttributes(M, hSession, liveHandle)
           return {
             ...k,
             family: a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? k.family) : k.family,
@@ -261,7 +277,7 @@ export const HsmKeyInspector = ({
             </thead>
             <tbody className="font-mono">
               {resolvedKeys.map((k) => (
-                <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
+                <tr key={keyIdentity(k)} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
                     <Button
                       variant="ghost"

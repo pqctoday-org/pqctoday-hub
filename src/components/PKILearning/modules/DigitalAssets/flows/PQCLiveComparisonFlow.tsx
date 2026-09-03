@@ -5,7 +5,7 @@ import { StepWizard } from '../components/StepWizard'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -342,28 +342,28 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
             mlSig: null,
           }
 
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: ec.pubHandle,
             family: 'ecdsa',
             role: 'public',
             label: 'secp256k1 Public Key',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: ec.privHandle,
             family: 'ecdsa',
             role: 'private',
             label: 'secp256k1 Private Key',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: ml.pubHandle,
             family: 'ml-dsa',
             role: 'public',
             label: 'ML-DSA-65 Public Key',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: ml.privHandle,
             family: 'ml-dsa',
             role: 'private',
@@ -619,7 +619,7 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

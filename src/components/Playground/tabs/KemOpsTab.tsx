@@ -41,8 +41,15 @@ const arraysEqual = (a: Uint8Array, b: Uint8Array) => {
 }
 
 export const HsmKemPanel: React.FC = () => {
-  const { moduleRef, crossCheckModuleRef, hSessionRef, isReady, addHsmKey, engineMode, addHsmLog } =
-    useHsmContext()
+  const {
+    moduleRef,
+    crossCheckModuleRef,
+    hSessionRef,
+    isReady,
+    registerKey,
+    engineMode,
+    addHsmLog,
+  } = useHsmContext()
 
   const [variant, setVariant] = useState<512 | 768 | 1024>(768)
   const [extractable, setExtractable] = useState(false)
@@ -82,9 +89,10 @@ export const HsmKemPanel: React.FC = () => {
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const hSession = hSessionRef.current
         const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
           M,
-          hSessionRef.current,
+          hSession,
           variant,
           extractable
         )
@@ -95,7 +103,7 @@ export const HsmKemPanel: React.FC = () => {
           minute: '2-digit',
           second: '2-digit',
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-kem',
           role: 'public',
@@ -103,7 +111,7 @@ export const HsmKemPanel: React.FC = () => {
           variant: String(variant),
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: privHandle,
           family: 'ml-kem',
           role: 'private',

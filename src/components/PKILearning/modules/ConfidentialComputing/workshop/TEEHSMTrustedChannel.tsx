@@ -35,7 +35,7 @@ import {
 } from '../data/attestationData'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
 import type { TEEVendor } from '../data/ccConstants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -330,7 +330,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
         // Step 1: Attestation key (ML-DSA-65)
         const dsaKeys = hsm_generateMLDSAKeyPair(M, hSession, 65)
         const dsaPubBytes = hsm_extractKeyValue(M, hSession, dsaKeys.pubHandle)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dsaKeys.pubHandle,
           family: 'ml-dsa',
           role: 'public',
@@ -338,7 +338,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'attestation',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dsaKeys.privHandle,
           family: 'ml-dsa',
           role: 'private',
@@ -358,7 +358,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
         // Step 2: TLS transport via ML-KEM-768
         const kemKeys = hsm_generateMLKEMKeyPair(M, hSession, 768)
         const kemPubBytes = hsm_extractKeyValue(M, hSession, kemKeys.pubHandle)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kemKeys.pubHandle,
           family: 'ml-kem',
           role: 'public',
@@ -366,7 +366,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'tls',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kemKeys.privHandle,
           family: 'ml-kem',
           role: 'private',
@@ -431,7 +431,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           true
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: wrapKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -439,7 +439,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'kek',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: provKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -510,7 +510,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           wrappedKey,
           AES_UNWRAP_TEMPLATE
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: recoveredProvHandle,
           family: 'aes',
           role: 'secret',
@@ -532,7 +532,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
         // Step 1: Attestation key (ECDSA P-256)
         const dsaKeys = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dsaKeys.pubHandle,
           family: 'ecdsa',
           role: 'public',
@@ -540,7 +540,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'attestation',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dsaKeys.privHandle,
           family: 'ecdsa',
           role: 'private',
@@ -559,7 +559,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
 
         // Step 2: TLS transport via ECDH P-256
         const kemKeys = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kemKeys.pubHandle,
           family: 'ecdh',
           role: 'public',
@@ -567,7 +567,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'tls',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: kemKeys.privHandle,
           family: 'ecdh',
           role: 'private',
@@ -611,7 +611,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           false,
           true
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: wrapKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -619,7 +619,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           purpose: 'kek',
           generatedAt: now(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: provKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -659,7 +659,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
           wrappedKey,
           AES_UNWRAP_TEMPLATE
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: recoveredProvHandle,
           family: 'aes',
           role: 'secret',
@@ -1469,7 +1469,7 @@ export const TEEHSMTrustedChannel: React.FC<{ initialStep?: number }> = ({ initi
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
               title="Generated Keys — TEE-HSM Provisioning"
             />
           )}
