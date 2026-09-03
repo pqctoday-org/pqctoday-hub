@@ -15,6 +15,7 @@
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { MECH_TABLE } from './softhsm/mechanismTable'
 
 // ── Exported types ────────────────────────────────────────────────────────────
 
@@ -163,199 +164,6 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   0x40000600: {
     name: 'CKA_ALLOWED_MECHANISMS',
     description: 'Pins a key to a fixed set of mechanisms (v3.2 §4.8 Table 13)',
-  },
-}
-
-// CKM_ mechanism types
-const CKM_TABLE: Record<number, ConstEntry> = {
-  // RSA (PKCS#11 §6.1)
-  0x00000000: { name: 'CKM_RSA_PKCS_KEY_PAIR_GEN', description: 'RSA key pair generation' },
-  0x00000009: {
-    name: 'CKM_RSA_PKCS_OAEP',
-    description: 'RSA-OAEP encryption/decryption (PKCS#1 v2.x)',
-  },
-  0x00000040: {
-    name: 'CKM_SHA256_RSA_PKCS',
-    description: 'SHA-256 with RSA PKCS#1 v1.5 signature',
-  },
-  0x00000041: { name: 'CKM_SHA384_RSA_PKCS', description: 'SHA-384 with RSA PKCS#1 v1.5' },
-  0x00000042: { name: 'CKM_SHA512_RSA_PKCS', description: 'SHA-512 with RSA PKCS#1 v1.5' },
-  0x00000043: { name: 'CKM_SHA256_RSA_PKCS_PSS', description: 'SHA-256 with RSA-PSS signature' },
-  0x00000044: { name: 'CKM_SHA384_RSA_PKCS_PSS', description: 'SHA-384 with RSA-PSS' },
-  0x00000045: { name: 'CKM_SHA512_RSA_PKCS_PSS', description: 'SHA-512 with RSA-PSS' },
-  // ML-KEM — FIPS 203
-  0x0000000f: {
-    name: 'CKM_ML_KEM_KEY_PAIR_GEN',
-    description: 'ML-KEM key pair generation (FIPS 203 Algorithm 15/16)',
-  },
-  0x00000017: {
-    name: 'CKM_ML_KEM',
-    description: 'ML-KEM encapsulation / decapsulation (FIPS 203 Algorithm 17/18)',
-  },
-  // ML-DSA — FIPS 204
-  0x0000001c: {
-    name: 'CKM_ML_DSA_KEY_PAIR_GEN',
-    description: 'ML-DSA key pair generation (FIPS 204 Algorithm 6/7)',
-  },
-  0x0000001d: {
-    name: 'CKM_ML_DSA',
-    description: 'ML-DSA pure signing / verification (FIPS 204 Algorithm 2/3)',
-  },
-  0x0000001f: {
-    name: 'CKM_HASH_ML_DSA',
-    description: 'HashML-DSA generic pre-hash (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000023: {
-    name: 'CKM_HASH_ML_DSA_SHA224',
-    description: 'HashML-DSA with SHA-224 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000024: {
-    name: 'CKM_HASH_ML_DSA_SHA256',
-    description: 'HashML-DSA with SHA-256 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000025: {
-    name: 'CKM_HASH_ML_DSA_SHA384',
-    description: 'HashML-DSA with SHA-384 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000026: {
-    name: 'CKM_HASH_ML_DSA_SHA512',
-    description: 'HashML-DSA with SHA-512 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000027: {
-    name: 'CKM_HASH_ML_DSA_SHA3_224',
-    description: 'HashML-DSA with SHA3-224 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000028: {
-    name: 'CKM_HASH_ML_DSA_SHA3_256',
-    description: 'HashML-DSA with SHA3-256 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000029: {
-    name: 'CKM_HASH_ML_DSA_SHA3_384',
-    description: 'HashML-DSA with SHA3-384 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002a: {
-    name: 'CKM_HASH_ML_DSA_SHA3_512',
-    description: 'HashML-DSA with SHA3-512 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002b: {
-    name: 'CKM_HASH_ML_DSA_SHAKE128',
-    description: 'HashML-DSA with SHAKE128 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002c: {
-    name: 'CKM_HASH_ML_DSA_SHAKE256',
-    description: 'HashML-DSA with SHAKE256 (FIPS 204 Algorithm 4/5)',
-  },
-  // SLH-DSA — FIPS 205
-  0x0000002d: {
-    name: 'CKM_SLH_DSA_KEY_PAIR_GEN',
-    description: 'SLH-DSA key pair generation (FIPS 205)',
-  },
-  0x0000002e: {
-    name: 'CKM_SLH_DSA',
-    description: 'SLH-DSA pure signing / verification (FIPS 205)',
-  },
-  0x00000034: {
-    name: 'CKM_HASH_SLH_DSA',
-    description: 'HashSLH-DSA generic pre-hash (FIPS 205)',
-  },
-  0x00000036: { name: 'CKM_HASH_SLH_DSA_SHA224', description: 'HashSLH-DSA with SHA-224' },
-  0x00000037: { name: 'CKM_HASH_SLH_DSA_SHA256', description: 'HashSLH-DSA with SHA-256' },
-  0x00000038: { name: 'CKM_HASH_SLH_DSA_SHA384', description: 'HashSLH-DSA with SHA-384' },
-  0x00000039: { name: 'CKM_HASH_SLH_DSA_SHA512', description: 'HashSLH-DSA with SHA-512' },
-  0x0000003a: { name: 'CKM_HASH_SLH_DSA_SHA3_224', description: 'HashSLH-DSA with SHA3-224' },
-  0x0000003b: { name: 'CKM_HASH_SLH_DSA_SHA3_256', description: 'HashSLH-DSA with SHA3-256' },
-  0x0000003c: { name: 'CKM_HASH_SLH_DSA_SHA3_384', description: 'HashSLH-DSA with SHA3-384' },
-  0x0000003d: { name: 'CKM_HASH_SLH_DSA_SHA3_512', description: 'HashSLH-DSA with SHA3-512' },
-  0x0000003e: { name: 'CKM_HASH_SLH_DSA_SHAKE128', description: 'HashSLH-DSA with SHAKE128' },
-  0x0000003f: { name: 'CKM_HASH_SLH_DSA_SHAKE256', description: 'HashSLH-DSA with SHAKE256' },
-  // Hash / Digest (PKCS#11 v3.2 §6.20–6.27)
-  0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest' },
-  0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256' },
-  0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest' },
-  0x00000261: { name: 'CKM_SHA384_HMAC', description: 'HMAC-SHA-384' },
-  0x00000270: { name: 'CKM_SHA512', description: 'SHA-512 digest' },
-  0x00000271: { name: 'CKM_SHA512_HMAC', description: 'HMAC-SHA-512' },
-  0x000002b0: { name: 'CKM_SHA3_256', description: 'SHA3-256 digest' },
-  0x000002b1: { name: 'CKM_SHA3_256_HMAC', description: 'HMAC-SHA3-256' },
-  0x000002d0: { name: 'CKM_SHA3_512', description: 'SHA3-512 digest' },
-  0x000002d1: { name: 'CKM_SHA3_512_HMAC', description: 'HMAC-SHA3-512' },
-  // Symmetric / Key Gen
-  0x00000350: { name: 'CKM_GENERIC_SECRET_KEY_GEN', description: 'Generic secret key generation' },
-  0x000003ac: {
-    name: 'CKM_SP800_108_COUNTER_KDF',
-    description: 'NIST SP 800-108 Counter mode KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003ad: {
-    name: 'CKM_SP800_108_FEEDBACK_KDF',
-    description: 'NIST SP 800-108 Feedback mode KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003ae: {
-    name: 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
-    description: 'NIST SP 800-108 Double-Pipeline KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003b0: { name: 'CKM_PKCS5_PBKD2', description: 'PBKDF2 key derivation (RFC 8018)' },
-  // EC (§2.3)
-  0x00001040: {
-    name: 'CKM_EC_KEY_PAIR_GEN',
-    description: 'EC key pair generation (P-256/P-384/P-521)',
-  },
-  0x00001044: { name: 'CKM_ECDSA_SHA256', description: 'ECDSA with SHA-256' },
-  0x00001045: { name: 'CKM_ECDSA_SHA384', description: 'ECDSA with SHA-384' },
-  0x00001046: { name: 'CKM_ECDSA_SHA512', description: 'ECDSA with SHA-512' },
-  0x00001047: { name: 'CKM_ECDSA_SHA3_224', description: 'ECDSA with SHA3-224 (v3.2)' },
-  0x00001048: { name: 'CKM_ECDSA_SHA3_256', description: 'ECDSA with SHA3-256 (v3.2)' },
-  0x00001049: { name: 'CKM_ECDSA_SHA3_384', description: 'ECDSA with SHA3-384 (v3.2)' },
-  0x0000104a: { name: 'CKM_ECDSA_SHA3_512', description: 'ECDSA with SHA3-512 (v3.2)' },
-  0x00001050: { name: 'CKM_ECDH1_DERIVE', description: 'ECDH key agreement (ANSI X9.63)' },
-  0x00001051: {
-    name: 'CKM_ECDH1_COFACTOR_DERIVE',
-    description: 'ECDH cofactor key agreement (§2.3.2)',
-  },
-  0x00001055: {
-    name: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
-    description: 'Ed25519/Ed448 key pair generation',
-  },
-  0x00001056: {
-    name: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN',
-    description: 'Montgomery curve key pair generation (X25519/X448)',
-  },
-  0x00001057: { name: 'CKM_EDDSA', description: 'EdDSA signature (Ed25519/Ed448)' },
-  0x80001057: {
-    name: 'CKM_EDDSA_PH',
-    description: 'EdDSA pre-hashed signature (Ed25519ph/Ed448ph) [VENDOR]',
-  },
-  // AES (§2.14)
-  0x00001080: { name: 'CKM_AES_KEY_GEN', description: 'AES key generation' },
-  0x00001081: { name: 'CKM_AES_ECB', description: 'AES-ECB (no padding)' },
-  0x00001085: { name: 'CKM_AES_CBC_PAD', description: 'AES-CBC with PKCS#7 padding' },
-  0x00001086: { name: 'CKM_AES_CTR', description: 'AES-CTR counter mode (§2.14.3)' },
-  0x00001087: { name: 'CKM_AES_GCM', description: 'AES-GCM authenticated encryption' },
-  0x0000108a: { name: 'CKM_AES_CMAC', description: 'AES-CMAC (NIST SP 800-38B)' },
-  0x00002109: { name: 'CKM_AES_KEY_WRAP', description: 'AES Key Wrap (RFC 3394)' },
-  0x0000210a: {
-    name: 'CKM_AES_KEY_WRAP_KWP',
-    description: 'AES Key Wrap with Padding (NIST SP 800-38F §6.3)',
-  },
-  // HKDF (PKCS#11 §6.62)
-  0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
-  // KMAC (§2.x) — PKCS#11 v3.2 / vendor codes
-  0x80000100: { name: 'CKM_KMAC_128', description: 'KMAC128 (NIST SP 800-185) [VENDOR]' },
-  0x80000101: { name: 'CKM_KMAC_256', description: 'KMAC256 (NIST SP 800-185) [VENDOR]' },
-  // AEAD and Stateful Signatures
-  0x00001225: { name: 'CKM_CHACHA20_KEY_GEN', description: 'ChaCha20 key generation' },
-  0x00004021: { name: 'CKM_CHACHA20_POLY1305', description: 'ChaCha20-Poly1305 AEAD' },
-  0x00004034: {
-    name: 'CKM_XMSS_KEY_PAIR_GEN',
-    description: 'XMSS key pair generation (SP 800-208)',
-  },
-  0x00004035: { name: 'CKM_XMSS', description: 'XMSS stateful signature (SP 800-208)' },
-  0x00004032: {
-    name: 'CKM_HSS_KEY_PAIR_GEN',
-    description: 'HSS/LMS key pair generation (PKCS#11 v3.2 §6.14, SP 800-208)',
-  },
-  0x00004033: {
-    name: 'CKM_HSS',
-    description: 'HSS/LMS stateful signature (PKCS#11 v3.2 §6.14, SP 800-208)',
   },
 }
 
@@ -935,7 +743,7 @@ const readMechanism = (M: SoftHSMModule, ptr: number): DecodedMechanism | null =
     if (mechType === null) return null
 
     const mechHex = `0x${mechType.toString(16).padStart(8, '0')}`
-    const entry = CKM_TABLE[mechType]
+    const entry = MECH_TABLE[mechType]
     const result: DecodedMechanism = {
       typeHex: mechHex,
       name: entry?.name ?? mechHex,
@@ -2081,7 +1889,7 @@ const decodeGetMechanismList = (M: SoftHSMModule, args: number[], rv: number): P
         for (let i = 0; i < count && i < 16; i++) {
           const ckm = safeRead32(M, pList + i * 4)
           if (ckm !== null) {
-            const entry = CKM_TABLE[ckm >>> 0]
+            const entry = MECH_TABLE[ckm >>> 0]
             named.push(entry ? entry.name : `0x${(ckm >>> 0).toString(16)}`)
           }
         }
@@ -2105,7 +1913,7 @@ const decodeGetMechanismList = (M: SoftHSMModule, args: number[], rv: number): P
 const decodeGetMechanismInfo = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
   const slotID = args[0] ?? 0
   const ckmType = args[1] ?? 0
-  const entry = CKM_TABLE[ckmType >>> 0]
+  const entry = MECH_TABLE[ckmType >>> 0]
   return {
     inputs: [
       {
