@@ -21,8 +21,11 @@ import {
   ArrowUp,
   ArrowDown,
   CornerDownRight,
+  Link2,
+  Unlink2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { cn } from '@/lib/utils'
 import {
@@ -135,6 +138,21 @@ function placeholderProducer(items: OpSpec[], i: number): OpSpec | undefined {
   return undefined
 }
 
+/** The rewrite BatchView's per-item "chained"/"direct" toggle applies to
+ *  `items[i]`: $IDPlaceholder ("chained" — follows whatever the previous
+ *  item minted/matched) flips to a literal UID ("direct" — always the same
+ *  object), seeded from the first live keystore UID (or '' if the store is
+ *  empty, requiring a manual pick); a literal UID flips back to the
+ *  placeholder. Items with no `uid` field at all (Query, etc.) are left
+ *  untouched — there's nothing to chain. Exported so this behavior is
+ *  unit-testable without mounting the component or a real KmipEngine. */
+export function toggleItemChaining(items: OpSpec[], i: number, keystoreUids: string[]): OpSpec[] {
+  return items.map((s, k) => {
+    if (k !== i || s.uid === undefined) return s
+    return { ...s, uid: s.uid === ID_PLACEHOLDER ? (keystoreUids[0] ?? '') : ID_PLACEHOLDER }
+  })
+}
+
 /** One-line label for an item in the sequence. */
 function itemLabel(spec: OpSpec): string {
   const bits: string[] = [spec.op]
@@ -173,6 +191,12 @@ export function BatchView({
   const [error, setError] = useState<string | null>(null)
   const [running, setRunning] = useState(false)
 
+  // Live keystore UIDs for the per-item "chained"/"direct" toggle's UID
+  // picker — same source CommandsView's own uid ParamField uses
+  // (engine.listObjects()), recomputed on every render so a UID minted by
+  // an earlier batch run shows up without a manual refresh.
+  const keystoreUids = engine.listObjects().map((o) => o.uid)
+
   const loadRecipe = (r: Recipe) => {
     setItems(r.items.map((i) => ({ ...i })))
     setCont(r.cont)
@@ -186,6 +210,15 @@ export function BatchView({
     setActiveRecipe(null)
   }
   const removeAt = (i: number) => mutate((xs) => xs.filter((_, k) => k !== i))
+  /** Toggle item `i` between $IDPlaceholder ("chained" to whatever the
+   * previous item minted/matched) and a literal UID picked from the live
+   * keystore ("direct" — always the same object, no matter what runs
+   * before it). Switching TO direct seeds the first keystore UID (or ''
+   * if the store is empty) rather than leaving the placeholder in place,
+   * so the item never silently keeps chained behaviour under a "direct"
+   * label. */
+  const setItemUid = (i: number, uid: string) =>
+    mutate((xs) => xs.map((s, k) => (k === i ? { ...s, uid } : s)))
   const move = (i: number, dir: -1 | 1) =>
     mutate((xs) => {
       const j = i + dir
@@ -321,7 +354,7 @@ export function BatchView({
                 {i + 1}
               </span>
               <span className="text-xs font-medium text-foreground">{itemLabel(spec)}</span>
-              {spec.uid === ID_PLACEHOLDER && (
+              {spec.uid !== undefined && spec.uid === ID_PLACEHOLDER && (
                 <span
                   className="inline-flex items-center gap-0.5 rounded bg-status-warning/15 px-1.5 py-0.5 text-[9px] font-semibold text-status-warning"
                   title={
@@ -333,6 +366,44 @@ export function BatchView({
                   <CornerDownRight size={9} /> prev key
                   {placeholderProducer(items, i)?.op === 'Locate' && ' (needs 1 match)'}
                 </span>
+              )}
+              {spec.uid !== undefined && spec.uid !== ID_PLACEHOLDER && (
+                <Input
+                  value={spec.uid}
+                  onChange={(e) => setItemUid(i, e.target.value)}
+                  disabled={busy}
+                  placeholder="paste or pick a UID"
+                  list={keystoreUids.length ? `batch-uids-${i}` : undefined}
+                  className="h-6 w-32 font-mono text-[10px]"
+                  aria-label={`Item ${i + 1} UID`}
+                />
+              )}
+              {keystoreUids.length > 0 && spec.uid !== undefined && spec.uid !== ID_PLACEHOLDER && (
+                <datalist id={`batch-uids-${i}`}>
+                  {keystoreUids.map((uid) => (
+                    <option key={uid} value={uid} />
+                  ))}
+                </datalist>
+              )}
+              {spec.uid !== undefined && (
+                <Button
+                  variant="ghost"
+                  onClick={() => mutate((xs) => toggleItemChaining(xs, i, keystoreUids))}
+                  disabled={busy}
+                  className="h-auto w-auto p-1 text-muted-foreground hover:text-foreground"
+                  aria-label={
+                    spec.uid === ID_PLACEHOLDER
+                      ? 'Switch to a direct (literal) UID'
+                      : 'Switch to chained ($IDPlaceholder)'
+                  }
+                  title={
+                    spec.uid === ID_PLACEHOLDER
+                      ? 'Chained — follows whatever the previous item minted/matched. Click to pin a literal UID instead.'
+                      : 'Direct — always this literal UID, regardless of what runs before it. Click to chain to the previous item instead.'
+                  }
+                >
+                  {spec.uid === ID_PLACEHOLDER ? <Link2 size={11} /> : <Unlink2 size={11} />}
+                </Button>
               )}
               <div className="ml-auto flex items-center gap-0.5">
                 <Button
