@@ -37,6 +37,7 @@ const StepBadge = ({ done, label }: { done: boolean; label: string }) => (
 export const TokenSetupPanel = () => {
   const {
     moduleRef,
+    rawModuleRef,
     crossCheckModuleRef,
     hSessionRef,
     slotRef,
@@ -82,6 +83,7 @@ export const TokenSetupPanel = () => {
         }
 
         const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
+        rawModuleRef.current = M
         const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
         moduleRef.current = proxy
         // The underlying WASM engine is a page-lifetime singleton (especially the
@@ -104,6 +106,7 @@ export const TokenSetupPanel = () => {
       } catch (e) {
         setTokenError(String(e))
         moduleRef.current = null
+        rawModuleRef.current = null
         crossCheckModuleRef.current = null
       }
     })

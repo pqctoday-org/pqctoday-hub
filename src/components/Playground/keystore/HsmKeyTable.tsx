@@ -239,76 +239,90 @@ export const HsmKeyTable = () => {
               </tr>
             </thead>
             <tbody className="font-mono">
-              {hsmKeys.map((k) => (
-                <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
-                  <td className="py-1 pr-3">
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => openInspect(k)}
-                      className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
-                      aria-label={`Inspect key ${k.handle}`}
-                    >
-                      <Eye size={12} />
-                    </Button>
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
-                    {k.handle}
-                  </td>
-                  <td className="py-1.5 pr-4 text-foreground">{k.label}</td>
-                  <td className={`py-1.5 pr-4 font-sans ${ROLE_COLORS[k.role] ?? ''}`}>
-                    {ROLE_LABELS[k.role] ?? k.role}
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground text-right tabular-nums">
-                    {(() => {
-                      const size = keySizeMap.get(k.handle)
-                      return size != null ? formatBytes(size) : '—'
-                    })()}
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground hidden md:table-cell">
-                    {k.generatedAt}
-                  </td>
-                  <td className="py-1 pl-1">
-                    {confirmHandle === k.handle ? (
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => destroyKey(k)}
-                          className="text-status-error text-[10px] font-sans font-medium hover:underline"
-                          aria-label={`Confirm destroy key ${k.handle}`}
-                        >
-                          destroy?
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => setConfirmHandle(null)}
-                          className="text-muted-foreground text-[10px] font-sans hover:underline"
-                        >
-                          cancel
-                        </Button>
-                      </div>
-                    ) : (
+              {hsmKeys.map((k) => {
+                const a = attrCache.current.get(k.handle) ?? null
+                const destroyable = a?.ckDestroyable !== false
+                return (
+                  <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
+                    <td className="py-1 pr-3">
                       <Button
                         variant="ghost"
                         type="button"
-                        onClick={() => setConfirmHandle(k.handle)}
-                        className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
-                        aria-label={`Delete key ${k.handle}`}
+                        onClick={() => openInspect(k)}
+                        className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
+                        aria-label={`Inspect key ${k.handle}`}
                       >
-                        <Trash2 size={12} />
+                        <Eye size={12} />
                       </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
+                      {k.handle}
+                    </td>
+                    <td className="py-1.5 pr-4 text-foreground">{k.label}</td>
+                    <td className={`py-1.5 pr-4 font-sans ${ROLE_COLORS[k.role] ?? ''}`}>
+                      {ROLE_LABELS[k.role] ?? k.role}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground text-right tabular-nums">
+                      {(() => {
+                        const size = keySizeMap.get(k.handle)
+                        return size != null ? formatBytes(size) : '—'
+                      })()}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground hidden md:table-cell">
+                      {k.generatedAt}
+                    </td>
+                    <td className="py-1 pl-1">
+                      {confirmHandle === k.handle ? (
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => destroyKey(k)}
+                            className="text-status-error text-[10px] font-sans font-medium hover:underline"
+                            aria-label={`Confirm destroy key ${k.handle}`}
+                          >
+                            destroy?
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => setConfirmHandle(null)}
+                            className="text-muted-foreground text-[10px] font-sans hover:underline"
+                          >
+                            cancel
+                          </Button>
+                        </div>
+                      ) : destroyable ? (
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => setConfirmHandle(k.handle)}
+                          className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
+                          aria-label={`Delete key ${k.handle}`}
+                        >
+                          <Trash2 size={12} />
+                        </Button>
+                      ) : (
+                        <span
+                          className="text-muted-foreground/50 p-0.5 inline-flex"
+                          title="CKA_DESTROYABLE=FALSE — this object cannot be destroyed"
+                          aria-label={`Key ${k.handle} is not destroyable`}
+                        >
+                          <Lock size={12} />
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Session objects — not persisted to token. Handles are valid until session closes.
+          {hsmKeys.some((k) => attrCache.current.get(k.handle)?.ckToken === true)
+            ? 'Handles are valid only within the session that returned them (PKCS#11 v3.2 §3.2); token objects also persist across sessions.'
+            : 'Session objects — not persisted to token. Handles are valid until session closes.'}
         </p>
       </div>
 

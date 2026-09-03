@@ -88,8 +88,16 @@ function discoverObjectsOnSession(
       // objects with no UID.
       const alreadyKnown = a.ckUniqueId ? known.uniqueIds.has(a.ckUniqueId) : known.handles.has(h)
       if (alreadyKnown) continue
+      // Only genuine key classes (public/private/secret) are keys. Everything
+      // else the token publishes — CKO_PROFILE (0x09) conformance markers,
+      // CKO_DATA, CKO_CERTIFICATE, CKO_DOMAIN_PARAMETERS, CKO_HW_FEATURE — is
+      // not a key and must not be filed as one. This used to fall through
+      // `?? 'secret'` below and show up as an "Unknown (discovered)" phantom
+      // key with no CKA_KEY_TYPE (the CKO_PROFILE objects every token
+      // publishes at init per PKCS#11 v3.2 Profiles §3).
+      if (a.ckClass === null || !(a.ckClass in CKO_TO_ROLE)) continue
       const family: HsmFamily = a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
-      const role: HsmKeyRole = a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
+      const role: HsmKeyRole = CKO_TO_ROLE[a.ckClass]
       const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
       // Prefer the object's real CKA_LABEL — set by most generators, and now
       // by hsm_generateECKeyPair too (previously silently dropped). Fall back
