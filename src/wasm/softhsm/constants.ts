@@ -130,8 +130,14 @@ export const CKM_EDDSA = 0x1057
 // BIP32 codepoints live in PKCS#11 vendor space (pkcs11t.h §BIP32):
 // CKM_BIP32_* = CKM_VENDOR_DEFINED(0x80000000) | 0x105B/0x105C
 // CKA_BIP32_* = CKA_VENDOR_DEFINED(0x80000000) | 0x1021/0x1022
-// (the bare 0x105B/0x105C/0x1021/0x1022 forms are OASIS-unassigned; the engine
-//  accepts them only as deprecated aliases — the hub uses the canonical values.)
+//
+// Only the two CKM_ values are actually used. The real BIP32 derivation
+// builds its own raw mechanism-parameter struct, so CKA_BIP32_CHAIN_CODE,
+// CKA_BIP32_CHILD_INDEX and CKF_BIP32_HARDENED have zero call sites in the
+// hub — they are kept as documentation of the codepoints, not because
+// anything puts them on the wire. An earlier comment here described the
+// bare 0x105B/0x1021 forms as "deprecated aliases the engine accepts",
+// which overstated it: nothing in the hub sends either form.
 export const CKM_BIP32_MASTER_DERIVE = 0x8000105b
 export const CKM_BIP32_CHILD_DERIVE = 0x8000105c
 export const CKF_BIP32_HARDENED = 0x80000000
