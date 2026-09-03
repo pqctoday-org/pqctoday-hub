@@ -83,6 +83,8 @@ const EXPORT_NAMES = [
   'C_DigestInit',
   'C_Digest',
   'C_DeriveKey',
+  'C_WrapKey',
+  'C_UnwrapKey',
   'C_EncapsulateKey',
   'C_DecapsulateKey',
   'C_FindObjectsInit',

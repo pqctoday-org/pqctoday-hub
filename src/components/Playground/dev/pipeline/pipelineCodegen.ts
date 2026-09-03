@@ -175,6 +175,11 @@ function emitGenerate(step: PipelineStep, spec: PrimSpec): string[] {
         `${pub}, ${priv} = s.generate_ec_p256(token=True)`,
         `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
       ]
+    case 'ec-p384':
+      return [
+        `${pub}, ${priv} = s.generate_ec_p384(token=True)`,
+        `print('%s keypair · pub=%d priv=%d' % (${L}, ${pub}, ${priv}))`,
+      ]
     case 'ed25519':
       return [
         `${pub}, ${priv} = s.generate_ed25519(token=True)`,
@@ -201,7 +206,15 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
   const out = resultVar(step.id)
   const mech = spec.ops[step.op]?.mech
   const m = mech === undefined ? 'None' : mechConst(mech)
-  const extra = mechParam(step.primId, step.op)
+  // Context-string signature schemes (CKM_SLH_DSA — PKCS#11 v3.2's
+  // CK_SIGN_ADDITIONAL_CONTEXT) build their parameter the same explicit,
+  // named-struct-builder way HKDF's derive() does above, rather than through
+  // mechParam()'s fixed-default snippets (pss_params()/oaep_params() below):
+  // the context bytes are per-step vector data, not a static default. `p.context`
+  // is deliberately NOT part of OpSpec.requires (pipelinePrimitives.ts) — no
+  // visual-builder UI slot exists for it yet, only ACVP templates set it.
+  const contextExtra = p.context ? `, s.sign_context_params(context=${render(p.context)})` : ''
+  const extra = contextExtra || mechParam(step.primId, step.op)
 
   switch (step.op) {
     case 'generate':
@@ -257,19 +270,58 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
       return lines
     }
 
-    case 'derive':
+    case 'derive': {
+      // HKDF (PKCS#11 v3.2 §6.62): the parameter struct is built as its own
+      // statement via s.hkdf_params(...), then passed into the SAME generic
+      // derive_key() every other 'derive'/keygen-adjacent call in this file
+      // uses — deliberately not one opaque s.hkdf(...) convenience call, so
+      // the generated script shows the real CK_HKDF_PARAMS construction a
+      // PKCS#11 v3.2 caller actually has to do (see hkdf_params' own
+      // docstring for the byte layout this mirrors).
+      if (step.primId === 'hkdf') {
+        // okmLen is template/config, not user-escaped text — read the raw
+        // literal value directly (same pattern emitOp's 'import' case
+        // already uses for keyPart below), not through render()/pyStr().
+        const okmLen = p.length?.bind === 'literal' ? parseInt(p.length.value, 10) || 32 : 32
+        const paramVar = `hkdf_params_${sym(step.id)}`
+        const tplVar = `derive_tpl_${sym(step.id)}`
+        const key = secretVar(step.id)
+        return [
+          `# CKM_SHA256 as the HKDF PRF (PKCS#11 v3.2 §6.62's own hashAlg field)`,
+          `${paramVar} = s.hkdf_params(p11.CKM_SHA256, salt=${render(p.salt, 'None')}, info=${render(p.info, 'None')})`,
+          `${tplVar} = [`,
+          `    (p11.CKA_CLASS, p11.CKO_SECRET_KEY),`,
+          `    (p11.CKA_KEY_TYPE, p11.CKK_GENERIC_SECRET),`,
+          `    (p11.CKA_TOKEN, False),`,
+          `    (p11.CKA_SENSITIVE, False),`,
+          `    (p11.CKA_EXTRACTABLE, True),`,
+          `    (p11.CKA_VALUE_LEN, ${okmLen}),`,
+          `]`,
+          `${key} = s.derive_key(${render(p.baseKey)}, ${m}, ${tplVar}, parameter=${paramVar})`,
+          `${out} = s.value(${key})`,
+          `print('%s derive · secret=%d B' % (${L}, len(${out})))`,
+        ]
+      }
       return [
         `# ${mechName(mech ?? 0)} with CKD_NULL — key agreement, not encapsulation`,
         `${secretVar(step.id)} = s.ecdh_derive(${render(p.privKey)}, s.ec_point(${render(p.peer)}))`,
         `${out} = s.value(${secretVar(step.id)})`,
         `print('%s derive · secret=%d B' % (${L}, len(${out})))`,
       ]
+    }
 
     case 'encrypt': {
       if (step.primId === 'aes-256-gcm') {
         return [
           `iv_${sym(step.id)} = os.urandom(12)`,
           `${out} = s.encrypt_gcm(${render(p.key)}, ${render(p.input, 'pipeline_input')}, iv_${sym(step.id)})`,
+          `print('%s ciphertext · %d B' % (${L}, len(${out})))`,
+        ]
+      }
+      if (step.primId === 'aes-256-cbc') {
+        return [
+          `iv_${sym(step.id)} = os.urandom(16)`,
+          `${out} = s.encrypt(${render(p.key)}, ${m}, ${render(p.input, 'pipeline_input')}, iv_${sym(step.id)})`,
           `print('%s ciphertext · %d B' % (${L}, len(${out})))`,
         ]
       }
@@ -285,6 +337,17 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
         return [
           `${out} = s.decrypt_gcm(${render(p.key)}, ${render(p.input)}, iv_${src ? sym(src) : 'MISSING'})`,
           `print('%s plaintext · %d B match=%s' % (${L}, len(${out}), ${out} == pipeline_input))`,
+        ]
+      }
+      if (step.primId === 'aes-256-cbc') {
+        // A fixed (hex-bound) IV — an ACVP vector's own, not a prior
+        // encrypt step's — has no earlier iv_<id> variable to reference
+        // (same reasoning as decapsulate's hex-ciphertext case above), so
+        // it's its own bound param instead of inheriting a sibling step's IV.
+        const iv = p.iv?.bind === 'ref' ? `iv_${sym(src ?? '')}` : render(p.iv)
+        return [
+          `${out} = s.decrypt(${render(p.key)}, ${m}, ${render(p.input)}, ${iv})`,
+          `print('%s plaintext · %d B' % (${L}, len(${out})))`,
         ]
       }
       return [
@@ -311,13 +374,74 @@ function emitOp(step: PipelineStep, spec: PrimSpec): string[] {
       // before, with zero UI/validation footprint for this one internal
       // switch.
       const material = render(p.keyMaterial)
-      const kg = spec.keygen
-      if (!kg || (kg.kind !== 'ml-kem' && kg.kind !== 'ml-dsa')) {
+
+      // AES secret-key import (CKK_AES) — the Symmetric/AEAD ACVP KAT below
+      // decrypts a fixed ciphertext under the vector's own fixed key, which
+      // C_GenerateKeyPair/C_GenerateKey can never reproduce (a fresh key is
+      // always random). No PARAMETER_SET, no keypair — a single secret key.
+      if (step.primId === 'aes-256-cbc' || step.primId === 'aes-256-gcm') {
+        const key = secretVar(step.id)
         return [
-          `raise RuntimeError(${pyStr(`${spec.label} import is only wired for ML-KEM/ML-DSA`)})`,
+          `secret_template_${sym(step.id)} = [`,
+          `    (p11.CKA_CLASS, p11.CKO_SECRET_KEY),`,
+          `    (p11.CKA_KEY_TYPE, p11.CKK_AES),`,
+          `    (p11.CKA_VALUE, ${material}),`,
+          `    (p11.CKA_ENCRYPT, True),`,
+          `    (p11.CKA_DECRYPT, True),`,
+          `    (p11.CKA_TOKEN, True),`,
+          `]`,
+          `${key} = s.create_object(secret_template_${sym(step.id)})`,
+          `print('%s imported · key=%d' % (${L}, ${key}))`,
         ]
       }
-      const ckkName = kg.kind === 'ml-kem' ? 'CKK_ML_KEM' : 'CKK_ML_DSA'
+
+      // HKDF base key (IKM) import — CKK_GENERIC_SECRET, CKA_DERIVE only
+      // (no CKA_SIGN/CKA_ENCRYPT — this key's only legal use is C_DeriveKey).
+      if (step.primId === 'hkdf') {
+        const key = secretVar(step.id)
+        return [
+          `secret_template_${sym(step.id)} = [`,
+          `    (p11.CKA_CLASS, p11.CKO_SECRET_KEY),`,
+          `    (p11.CKA_KEY_TYPE, p11.CKK_GENERIC_SECRET),`,
+          `    (p11.CKA_VALUE, ${material}),`,
+          `    (p11.CKA_DERIVE, True),`,
+          `    (p11.CKA_TOKEN, True),`,
+          `]`,
+          `${key} = s.create_object(secret_template_${sym(step.id)})`,
+          `print('%s imported (IKM) · key=%d' % (${L}, ${key}))`,
+        ]
+      }
+
+      const kg = spec.keygen
+
+      // EC public-key import (P-384 sigVer KAT) — CKA_EC_PARAMS + CKA_EC_POINT,
+      // not CKA_PARAMETER_SET (that shape is ML-DSA/ML-KEM/SLH-DSA's, below).
+      // `material` is the vector's qx/qy, already DER-OCTET-STRING-wrapped by
+      // the template (see pipelineTemplates.ts) — building that DER wrapping
+      // here would need a general DER-length encoder for a single call site.
+      if (kg && kg.kind === 'ec-p384') {
+        const pub = pubVar(step.id)
+        return [
+          `pub_template_${sym(step.id)} = [`,
+          `    (p11.CKA_CLASS, p11.CKO_PUBLIC_KEY),`,
+          `    (p11.CKA_KEY_TYPE, p11.CKK_EC),`,
+          `    (p11.CKA_EC_PARAMS, p11.EC_P384_OID),`,
+          `    (p11.CKA_VERIFY, True),`,
+          `    (p11.CKA_EC_POINT, ${material}),`,
+          `    (p11.CKA_TOKEN, True),`,
+          `]`,
+          `${pub} = s.create_object(pub_template_${sym(step.id)})`,
+          `print('%s imported (public) · pub=%d' % (${L}, ${pub}))`,
+        ]
+      }
+
+      if (!kg || (kg.kind !== 'ml-kem' && kg.kind !== 'ml-dsa' && kg.kind !== 'slh-dsa')) {
+        return [
+          `raise RuntimeError(${pyStr(`${spec.label} import is only wired for ML-KEM/ML-DSA/SLH-DSA/AES/HKDF/EC-P384`)})`,
+        ]
+      }
+      const ckkName =
+        kg.kind === 'ml-kem' ? 'CKK_ML_KEM' : kg.kind === 'ml-dsa' ? 'CKK_ML_DSA' : 'CKK_SLH_DSA'
       const keyPart = p.keyPart?.bind === 'literal' && p.keyPart.value === 'pub' ? 'pub' : 'priv'
 
       if (keyPart === 'pub') {

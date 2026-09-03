@@ -40,17 +40,31 @@ describe('pipelineCatalogMeta driftguard', () => {
 
 // Same class of check, one level deeper: not "does every primitive have a
 // palette entry" but "does every op a primitive DECLARES actually have real
-// codegen support" — pipelineCodegen.ts's emitOp 'import' case guards to
-// ml-kem/ml-dsa keygen kinds only; a primitive offering import without one
-// of those would show a working-looking tile that always crashes at
-// runtime (the exact bug this test pins, found via the 2026-08-30 palette
-// audit — RSA/ECDSA/Ed25519/SLH-DSA/HSS-LMS all had this before signOps()'s
-// import became opt-in).
+// codegen support" — pipelineCodegen.ts's emitOp 'import' case guards to a
+// fixed set of keygen kinds (plus a few ids special-cased directly, for
+// primitives with no keypair-shaped keygen at all); a primitive offering
+// import without one of those would show a working-looking tile that always
+// crashes at runtime (the exact bug this test pins, found via the
+// 2026-08-30 palette audit — RSA/ECDSA/Ed25519/SLH-DSA/HSS-LMS all had this
+// before signOps()'s import became opt-in).
+//
+// KEYGEN_KIND_IMPORT_SUPPORT and PRIMID_IMPORT_SUPPORT must be kept in sync
+// with pipelineCodegen.ts's emitOp 'import' case by hand — same trade-off
+// this file's own header note makes for PALETTE_META vs PRIMITIVES.
 describe('PRIMITIVES op/keygen consistency', () => {
+  const KEYGEN_KIND_IMPORT_SUPPORT = new Set(['ml-kem', 'ml-dsa', 'slh-dsa', 'ec-p384'])
+  // aes-256-cbc/aes-256-gcm (secret-key import, CKK_AES) and hkdf (base-key
+  // import, CKK_GENERIC_SECRET — no keypair keygen at all) are matched by
+  // step.primId directly in emitOp, not by spec.keygen.kind.
+  const PRIMID_IMPORT_SUPPORT = new Set(['aes-256-cbc', 'aes-256-gcm', 'hkdf'])
+
   it('every primitive offering import has keygen support emitOp actually implements', () => {
     const badImports = Object.entries(PRIMITIVES)
       .filter(([, spec]) => spec.ops.import)
-      .filter(([, spec]) => spec.keygen?.kind !== 'ml-kem' && spec.keygen?.kind !== 'ml-dsa')
+      .filter(([id, spec]) => {
+        if (PRIMID_IMPORT_SUPPORT.has(id)) return false
+        return !spec.keygen || !KEYGEN_KIND_IMPORT_SUPPORT.has(spec.keygen.kind)
+      })
       .map(([id]) => id)
     expect(badImports).toEqual([])
   })
