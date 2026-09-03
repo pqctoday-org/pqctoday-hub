@@ -42,6 +42,8 @@ import {
   CKP_SLH_DSA,
   CKP_XMSS,
   CKP_XMSSMT,
+  CKP_FRODOKEM,
+  CKP_CLASSIC_MCELIECE,
   type ConstEntry,
 } from '@/wasm/pkcs11Inspect'
 import { bytesToHex } from '@/utils/dataInputUtils'
@@ -71,6 +73,8 @@ const PARAMETER_SET_NAMES_BY_KEY_TYPE: Record<number, Record<number, string>> = 
   0x4b: namesOf(CKP_SLH_DSA), // CKK_SLH_DSA
   0x47: namesOf(CKP_XMSS), // CKK_XMSS
   0x48: namesOf(CKP_XMSSMT), // CKK_XMSSMT
+  0x80000001: namesOf(CKP_FRODOKEM), // CKK_PQCTODAY_FRODOKEM
+  0x80000002: namesOf(CKP_CLASSIC_MCELIECE), // CKK_PQCTODAY_CLASSIC_MCELIECE
 }
 
 export const CKM_KEYGEN_NAMES: Record<number, string> = {

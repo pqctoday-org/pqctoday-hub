@@ -482,6 +482,22 @@ export const CKP_XMSSMT: Record<number, ConstEntry> = {
   },
 }
 
+// CKP_ FrodoKEM / Classic McEliece parameter sets — vendor-defined (neither
+// family has a v3.2 CKK_*/CKP_* assignment). Reusing small ordinals here is
+// consistent with how the spec's own ML-KEM/ML-DSA/SLH-DSA families already
+// share the same 0x1-0xC range, disambiguated only by CKA_KEY_TYPE — see
+// `describeParameterSetByKeyType` below, which is exactly that dispatch.
+export const CKP_FRODOKEM: Record<number, ConstEntry> = {
+  0x5: { name: 'CKP_FRODOKEM_1344_AES', description: 'NIST Level 5 — FrodoKEM-1344-AES' },
+}
+
+export const CKP_CLASSIC_MCELIECE: Record<number, ConstEntry> = {
+  0x1: {
+    name: 'CKP_CLASSIC_MCELIECE_6688128',
+    description: 'NIST Level 5 — Classic McEliece 6688128',
+  },
+}
+
 /**
  * Resolve a CKA_PARAMETER_SET value given the object's CKA_KEY_TYPE — the
  * signal HsmKeyAttrDisplay's modal has on hand directly (unlike the log
@@ -505,7 +521,11 @@ export const describeParameterSetByKeyType = (
             ? CKP_XMSS
             : ckKeyType === 0x48 // CKK_XMSSMT
               ? CKP_XMSSMT
-              : null
+              : ckKeyType === 0x80000001 // CKK_PQCTODAY_FRODOKEM
+                ? CKP_FRODOKEM
+                : ckKeyType === 0x80000002 // CKK_PQCTODAY_CLASSIC_MCELIECE
+                  ? CKP_CLASSIC_MCELIECE
+                  : null
   return table?.[paramSet] ?? null
 }
 

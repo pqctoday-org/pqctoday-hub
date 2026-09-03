@@ -22,6 +22,9 @@ export const CKK_NAMES: Record<number, string> = {
   0x49: 'CKK_ML_KEM',
   0x4a: 'CKK_ML_DSA',
   0x4b: 'CKK_SLH_DSA',
+  // Vendor-defined (no v3.2 CKK_* assignment exists for these families).
+  0x80000001: 'CKK_PQCTODAY_FRODOKEM',
+  0x80000002: 'CKK_PQCTODAY_CLASSIC_MCELIECE',
 }
 
 const CKK_TO_FAMILY: Record<number, HsmFamily> = {
@@ -41,6 +44,9 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x46: 'hss',
   0x47: 'xmss',
   0x48: 'xmss',
+  // Vendor-defined KEM families (no v3.2 CKK_* assignment exists for these).
+  0x80000001: 'frodo-kem',
+  0x80000002: 'classic-mceliece',
 }
 
 const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
