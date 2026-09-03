@@ -1121,15 +1121,20 @@ export function useAcvpSuite() {
                   details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
                 })
                 addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
+                // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
+                // shared secret just doesn't match NIST's expected value.
+                // That's a data-comparison failure, not a failed PKCS#11
+                // call, so the log shows the real return code; the mismatch
+                // is flagged in args instead of fabricating a CKR_* error.
                 addHsmLog({
                   id: Date.now(),
                   timestamp: new Date().toLocaleTimeString(),
                   fn: `[${eName}] C_DecapsulateKey(${algo})`,
-                  args: 'ACVP KAT Validation',
-                  rvHex: '0x00000005',
-                  rvName: 'CKR_GENERAL_ERROR (ACVP SS MISMATCH)',
+                  args: 'ACVP KAT Validation — SS MISMATCH',
+                  rvHex: '0x00000000',
+                  rvName: 'CKR_OK',
                   ms: 0,
-                  ok: false,
+                  ok: true,
                 })
               }
             } catch (err: unknown) {
