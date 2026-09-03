@@ -268,8 +268,14 @@ export const CKP_XMSS_SHAKE_20_512 = 0x0000000c
 
 // SP 800-208 Tables 14/16 — the SHAKE256 XMSS sets, values read from the
 // standard itself (docs library: NIST_SP_800-208.pdf) and confirmed identical
-// in both engines. These are the ONLY SHAKE sets NIST approves: the RFC 8391
-// XMSS-SHAKE_* sets above are SHAKE128 and appear nowhere in SP 800-208.
+// in both engines. These are the only SHAKE-based XMSS parameter sets NIST
+// approves. SP 800-208 footnote 5 is explicit about the rest: "The parameter
+// sets specified in RFC 8391 that use SHAKE128, SHAKE256, and SHA-512 are not
+// approved for use by this Special Publication" — so ALL the RFC 8391 sets
+// above (0x04-0x0c) are unapproved, not just the SHAKE128 ones. Note this is
+// a statement about parameter sets, not hash functions: SHAKE128 itself is
+// FIPS 202. SP 800-208's own SHAKE256 sets differ from RFC 8391's by using
+// n=32/24 rather than n=64.
 // Rust-engine support is PARTIAL — it implements 0x11/0x12/0x13 only, so
 // 0x10/0x14/0x15 are C++-engine-only. Check before wiring a UI control.
 export const CKP_XMSS_SHAKE256_10_256 = 0x00000010 // C++ engine only

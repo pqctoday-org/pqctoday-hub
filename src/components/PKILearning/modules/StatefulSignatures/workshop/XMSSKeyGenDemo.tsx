@@ -52,15 +52,22 @@ type XMSSHash = 'SHA-256' | 'SHAKE-128' | 'SHAKE256'
 type XMSSHeight = 10 | 16 | 20
 
 /**
- * Which standard each hash family's parameter sets come from, and whether NIST
- * approves them. SP 800-208 (Tables 14/16) approves ONLY the SHAKE256 sets —
- * RFC 8391's XMSS-SHAKE_* sets are SHAKE128 and appear nowhere in SP 800-208.
- * Shown in the UI so the choice is never silently misread as NIST-approved.
+ * Approval status of the XMSS PARAMETER SETS built on each hash function —
+ * not of the hash function itself. The distinction matters: SHAKE128 is a
+ * perfectly approved hash (FIPS 202); what SP 800-208 declines is RFC 8391's
+ * XMSS parameter sets that use it. Footnote 5: "The parameter sets specified
+ * in RFC 8391 that use SHAKE128, SHAKE256, and SHA-512 are not approved for
+ * use by this Special Publication." SP 800-208 then defines its OWN SHAKE256
+ * sets (Tables 14/16, n=32/24 rather than RFC 8391's n=64) and approves those.
+ *
+ * The signature scheme here is XMSS; these are the hash functions it is
+ * parameterised by (SP 800-208 §1 profiles LMS, HSS, XMSS and XMSSMT — those
+ * are the schemes, and CKM_XMSS is the PKCS#11 signing mechanism).
  */
-const XMSS_HASH_PROVENANCE: Record<XMSSHash, { standard: string; approved: boolean }> = {
-  'SHA-256': { standard: 'RFC 8391 + SP 800-208', approved: true },
-  'SHAKE-128': { standard: 'RFC 8391 only', approved: false },
-  SHAKE256: { standard: 'SP 800-208', approved: true },
+const XMSS_PARAM_SET_APPROVAL: Record<XMSSHash, { note: string; approved: boolean }> = {
+  'SHA-256': { note: 'SP 800-208 approved', approved: true },
+  'SHAKE-128': { note: 'RFC 8391 sets — not SP 800-208 approved', approved: false },
+  SHAKE256: { note: 'SP 800-208 approved', approved: true },
 }
 
 /**
@@ -355,10 +362,11 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">XMSS Key Generation</h3>
         <p className="text-sm text-muted-foreground">
-          Select an XMSS parameter set to explore tree structure and compare with LMS at equivalent
-          security levels. XMSS adds bitmask-based tree hashing for stronger multi-target attack
-          resistance. NIST SP 800-208 approves the SHA-256 and SHAKE256 sets; RFC 8391&apos;s
-          SHAKE-128 sets are shown for comparison but are not NIST-approved.
+          XMSS is the signature scheme; the hash function below is one of its parameters. Pick a
+          parameter set to explore tree structure and compare with LMS at equivalent security
+          levels. XMSS adds bitmask-based tree hashing for stronger multi-target attack resistance.
+          SP 800-208 approves the SHA-256 and its own SHAKE256 parameter sets; RFC 8391&apos;s
+          SHAKE-128 sets are shown for comparison but are not approved for federal use.
         </p>
       </div>
 
@@ -373,9 +381,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
-                title={`${XMSS_HASH_PROVENANCE[h].standard}${
-                  XMSS_HASH_PROVENANCE[h].approved ? '' : ' — not NIST-approved'
-                }`}
+                title={`XMSS parameter sets using ${h}: ${XMSS_PARAM_SET_APPROVAL[h].note}`}
                 className={`flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   xmssHash === h
                     ? 'bg-secondary/20 text-secondary border border-secondary/50'
@@ -385,10 +391,12 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 <span>{h}</span>
                 <span
                   className={`text-[9px] font-normal ${
-                    XMSS_HASH_PROVENANCE[h].approved ? 'opacity-60' : 'text-warning'
+                    XMSS_PARAM_SET_APPROVAL[h].approved ? 'opacity-60' : 'text-warning'
                   }`}
                 >
-                  {XMSS_HASH_PROVENANCE[h].approved ? 'SP 800-208' : 'RFC 8391 only'}
+                  {XMSS_PARAM_SET_APPROVAL[h].approved
+                    ? 'param sets: SP 800-208'
+                    : 'param sets: RFC 8391 only'}
                 </span>
               </Button>
             ))}
