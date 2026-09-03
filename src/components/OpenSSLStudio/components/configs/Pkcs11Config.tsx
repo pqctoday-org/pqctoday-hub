@@ -7,6 +7,7 @@ import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { PqcVersionNote } from '../PqcVersionNote'
+import { CKO_TABLE } from '@/wasm/pkcs11Inspect'
 
 /** A keypair generated inside the softhsmrustv3 token this session. Private
  *  key material never leaves the token — `uri` is the only handle to it. */
@@ -52,16 +53,11 @@ const OPS_FOR_KIND: Record<Pkcs11Key['kind'], Array<{ id: Pkcs11Operation; label
   ],
 }
 
-/** PKCS#11 v3.2 §4 object classes and §6 key types, for rendering a real
- *  C_FindObjects sweep. Values from pkcs11t.h, not inferred. */
-const CKO_NAMES: Record<number, string> = {
-  0x00000000: 'CKO_DATA',
-  0x00000001: 'CKO_CERTIFICATE',
-  0x00000002: 'CKO_PUBLIC_KEY',
-  0x00000003: 'CKO_PRIVATE_KEY',
-  0x00000004: 'CKO_SECRET_KEY',
-}
-
+/** PKCS#11 v3.2 §6 key types, for rendering a real C_FindObjects sweep.
+ *  Values from pkcs11t.h, not inferred. Object classes come from the
+ *  canonical CKO_TABLE (wasm/pkcs11Inspect.ts) instead of a local copy —
+ *  a third independent copy here previously lacked CKO_PROFILE (0x09),
+ *  the same gap Commit 1 of this plan already fixed twice elsewhere. */
 const CKK_NAMES_P11: Record<number, string> = {
   0x00000000: 'RSA',
   0x00000003: 'EC',
@@ -382,7 +378,7 @@ export const Pkcs11Config: React.FC<Pkcs11ConfigProps> = ({
                       {o.label || <span className="text-muted-foreground italic">(no label)</span>}
                     </span>
                     <span className="shrink-0 text-muted-foreground">
-                      {CKO_NAMES[o.cls] ?? `class 0x${o.cls.toString(16)}`}
+                      {CKO_TABLE[o.cls]?.name ?? `class 0x${o.cls.toString(16)}`}
                       {o.keyType >= 0 &&
                         ` · ${CKK_NAMES_P11[o.keyType] ?? `0x${o.keyType.toString(16)}`}`}
                       {` · h=${o.handle}`}
