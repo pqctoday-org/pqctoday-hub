@@ -229,6 +229,13 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   {isProductionOnly && (
                     <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                   )}
+                  {/* Which document defines this set. RFC 8554 is the original
+                      LMS/HSS; RFC 9858 added the 192-bit and SHAKE256 families
+                      in 2025. SP 800-208 approves both but assigns numeric
+                      identifiers to neither — those come from IANA. */}
+                  <span className="ml-1.5 text-[9px] font-normal opacity-50">
+                    {param.provenance}
+                  </span>
                 </Button>
                 {isProductionOnly && (
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">

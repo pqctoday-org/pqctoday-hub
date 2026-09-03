@@ -708,10 +708,19 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                       xmssWins: selected.publicKeySize <= comparableLMS.publicKeySize,
                     },
                     {
+                      // LMS private-key size is an implementation-defined state
+                      // blob and is only recorded for the sets where it was
+                      // actually measured, so this row degrades to "—" rather
+                      // than comparing against a value nobody verified.
                       label: 'Private Key',
                       xmss: formatBytes(selected.privateKeySize),
-                      lms: formatBytes(comparableLMS.privateKeySize),
-                      xmssWins: selected.privateKeySize < comparableLMS.privateKeySize,
+                      lms:
+                        comparableLMS.privateKeySize === undefined
+                          ? '—'
+                          : formatBytes(comparableLMS.privateKeySize),
+                      xmssWins:
+                        comparableLMS.privateKeySize !== undefined &&
+                        selected.privateKeySize < comparableLMS.privateKeySize,
                     },
                     {
                       label: 'Max Signatures',
