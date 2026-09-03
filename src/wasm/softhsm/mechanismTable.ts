@@ -157,6 +157,17 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'ML-DSA pure signing / verification (FIPS 204 §5.2/5.3)',
     family: 'pqc',
   },
+  0x0000403b: {
+    name: 'CKM_ML_DSA_EXTERNAL_MU_GEN',
+    description: 'ML-DSA external-mu generation (vendor extension, src/lib/vendor_mechanisms.h)',
+    family: 'pqc',
+  },
+  0x0000403c: {
+    name: 'CKM_ML_DSA_EXTERNAL_MU',
+    description:
+      'ML-DSA signing/verification from a precomputed external mu (vendor extension, src/lib/vendor_mechanisms.h)',
+    family: 'pqc',
+  },
   0x0000001f: {
     name: 'CKM_HASH_ML_DSA',
     description: 'HashML-DSA generic pre-hash (FIPS 204 §5.4/5.5)',
@@ -281,14 +292,64 @@ export const MECH_TABLE: Record<number, MechEntry> = {
   // ── SHA hash & HMAC ──────────────────────────────────────────────────────
   0x00000220: { name: 'CKM_SHA_1', description: 'SHA-1 digest (FIPS 180-4)', family: 'hash' },
   0x00000221: { name: 'CKM_SHA_1_HMAC', description: 'HMAC-SHA-1 (RFC 2104)', family: 'hash' },
+  0x00000222: {
+    name: 'CKM_SHA_1_HMAC_GENERAL',
+    description: 'HMAC-SHA-1 with truncated output length',
+    family: 'hash',
+  },
   0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest (FIPS 180-4)', family: 'hash' },
   0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256 (RFC 2104)', family: 'hash' },
   0x00000255: { name: 'CKM_SHA224', description: 'SHA-224 digest (FIPS 180-4)', family: 'hash' },
   0x00000256: { name: 'CKM_SHA224_HMAC', description: 'HMAC-SHA-224 (RFC 2104)', family: 'hash' },
+  0x00000257: {
+    name: 'CKM_SHA224_HMAC_GENERAL',
+    description: 'HMAC-SHA-224 with truncated output length',
+    family: 'hash',
+  },
   0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest (FIPS 180-4)', family: 'hash' },
   0x00000261: { name: 'CKM_SHA384_HMAC', description: 'HMAC-SHA-384 (RFC 2104)', family: 'hash' },
   0x00000270: { name: 'CKM_SHA512', description: 'SHA-512 digest (FIPS 180-4)', family: 'hash' },
   0x00000271: { name: 'CKM_SHA512_HMAC', description: 'HMAC-SHA-512 (RFC 2104)', family: 'hash' },
+  0x00000048: {
+    name: 'CKM_SHA512_224',
+    description: 'SHA-512/224 digest (FIPS 180-4)',
+    family: 'hash',
+  },
+  0x00000049: {
+    name: 'CKM_SHA512_224_HMAC',
+    description: 'HMAC-SHA-512/224 (RFC 2104)',
+    family: 'hash',
+  },
+  0x0000004a: {
+    name: 'CKM_SHA512_224_HMAC_GENERAL',
+    description: 'HMAC-SHA-512/224 with truncated output length',
+    family: 'hash',
+  },
+  0x0000004b: {
+    name: 'CKM_SHA512_224_KEY_DERIVATION',
+    description: 'Key derivation from a SHA-512/224 digest',
+    family: 'kdf',
+  },
+  0x0000004c: {
+    name: 'CKM_SHA512_256',
+    description: 'SHA-512/256 digest (FIPS 180-4)',
+    family: 'hash',
+  },
+  0x0000004d: {
+    name: 'CKM_SHA512_256_HMAC',
+    description: 'HMAC-SHA-512/256 (RFC 2104)',
+    family: 'hash',
+  },
+  0x0000004e: {
+    name: 'CKM_SHA512_256_HMAC_GENERAL',
+    description: 'HMAC-SHA-512/256 with truncated output length',
+    family: 'hash',
+  },
+  0x0000004f: {
+    name: 'CKM_SHA512_256_KEY_DERIVATION',
+    description: 'Key derivation from a SHA-512/256 digest',
+    family: 'kdf',
+  },
   0x000002b0: { name: 'CKM_SHA3_256', description: 'SHA3-256 digest (FIPS 202)', family: 'hash' },
   0x000002b1: {
     name: 'CKM_SHA3_256_HMAC',
@@ -301,10 +362,20 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HMAC-SHA3-224 (RFC 2104 + FIPS 202)',
     family: 'hash',
   },
+  0x000002b7: {
+    name: 'CKM_SHA3_224_HMAC_GENERAL',
+    description: 'HMAC-SHA3-224 with truncated output length',
+    family: 'hash',
+  },
   0x000002c0: { name: 'CKM_SHA3_384', description: 'SHA3-384 digest (FIPS 202)', family: 'hash' },
   0x000002c1: {
     name: 'CKM_SHA3_384_HMAC',
     description: 'HMAC-SHA3-384 (RFC 2104 + FIPS 202)',
+    family: 'hash',
+  },
+  0x000002c2: {
+    name: 'CKM_SHA3_384_HMAC_GENERAL',
+    description: 'HMAC-SHA3-384 with truncated output length',
     family: 'hash',
   },
   0x000002d0: { name: 'CKM_SHA3_512', description: 'SHA3-512 digest (FIPS 202)', family: 'hash' },
@@ -345,9 +416,49 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'AES-GCM authenticated encryption (NIST SP 800-38D)',
     family: 'symmetric',
   },
+  0x00001071: {
+    name: 'CKM_AES_XTS',
+    description: 'AES-XTS encryption / decryption (IEEE 1619)',
+    family: 'symmetric',
+  },
+  0x00001072: {
+    name: 'CKM_AES_XTS_KEY_GEN',
+    description: 'AES-XTS key generation (IEEE 1619)',
+    family: 'symmetric',
+  },
+  0x00001088: {
+    name: 'CKM_AES_CCM',
+    description: 'AES-CCM authenticated encryption (NIST SP 800-38C)',
+    family: 'symmetric',
+  },
+  0x0000108e: {
+    name: 'CKM_AES_GMAC',
+    description: 'AES-GMAC message authentication (NIST SP 800-38D)',
+    family: 'symmetric',
+  },
   0x0000108a: {
     name: 'CKM_AES_CMAC',
     description: 'AES-CMAC message authentication (NIST SP 800-38B)',
+    family: 'symmetric',
+  },
+  0x00002104: {
+    name: 'CKM_AES_OFB',
+    description: 'AES-OFB stream cipher mode (NIST SP 800-38A)',
+    family: 'symmetric',
+  },
+  0x00002106: {
+    name: 'CKM_AES_CFB8',
+    description: 'AES-CFB, 8-bit feedback (NIST SP 800-38A)',
+    family: 'symmetric',
+  },
+  0x00002107: {
+    name: 'CKM_AES_CFB128',
+    description: 'AES-CFB, 128-bit feedback (NIST SP 800-38A)',
+    family: 'symmetric',
+  },
+  0x00002108: {
+    name: 'CKM_AES_CFB1',
+    description: 'AES-CFB, 1-bit feedback (NIST SP 800-38A)',
     family: 'symmetric',
   },
   0x00002109: {
@@ -421,10 +532,20 @@ export const MECH_TABLE: Record<number, MechEntry> = {
     description: 'HKDF key derivation (RFC 5869)',
     family: 'kdf',
   },
+  0x0000402b: {
+    name: 'CKM_HKDF_DATA',
+    description: 'HKDF applied to raw data rather than a key object (PKCS#11 v3.2 §6.62)',
+    family: 'kdf',
+  },
   // ── EC / ECDSA / EdDSA ────────────────────────────────────────────────────
   0x00001040: {
     name: 'CKM_EC_KEY_PAIR_GEN',
     description: 'EC key pair generation (FIPS 186-5)',
+    family: 'asymmetric',
+  },
+  0x0000140b: {
+    name: 'CKM_EC_KEY_PAIR_GEN_W_EXTRA_BITS',
+    description: 'EC key pair generation with extra random bits (PKCS#11 v3.2 §6.3.3)',
     family: 'asymmetric',
   },
   0x00001041: {
@@ -537,6 +658,11 @@ export const MECH_TABLE: Record<number, MechEntry> = {
   0x00000211: {
     name: 'CKM_MD5_HMAC',
     description: 'HMAC with MD5 (historical)',
+    family: 'hash',
+  },
+  0x00000212: {
+    name: 'CKM_MD5_HMAC_GENERAL',
+    description: 'HMAC with MD5, truncated output length (historical)',
     family: 'hash',
   },
   0x00000240: {
