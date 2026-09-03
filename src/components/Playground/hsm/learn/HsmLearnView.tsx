@@ -25,7 +25,7 @@ import { GlossaryRail } from '@/components/Playground/learnkit/GlossaryRail'
 import { QuizCard } from '@/components/Playground/learnkit/QuizCard'
 import { useHsmContext } from '../HsmContext'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
-import { lookupCkr } from '@/wasm/pkcs11Inspect'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { classifyStepOutcome } from './lessonRunner'
 import { FOUNDATIONS_LESSONS, type Pkcs11LessonStep, type Pkcs11StepResult } from './pkcs11Lessons'
 import { V32_LESSONS } from './pkcs11LessonsV32'
@@ -48,35 +48,27 @@ interface StepRunState {
 }
 
 /** The actual PKCS#11 calls a single step made — inline, right under that
- * step, instead of only in the shared log panel below the whole lesson. */
+ * step, instead of only in the shared log panel below the whole lesson.
+ * Delegates to the shared Pkcs11LogPanel (same decode drawer, Inspect and
+ * Beginner-mode affordances the full lesson log below already has) rather
+ * than hand-rolling a second, lower-fidelity row renderer — the same
+ * filtered-log-into-shared-panel pattern VpnSimulationPanel already uses
+ * for its per-peer views.
+ *
+ * `entries` is chronological (oldest-first, see stepEntries() below) but
+ * Pkcs11LogPanel expects newest-first input (it reverses internally to
+ * derive chronological display order) — un-reverse here so the visible
+ * order stays exactly what it was before this delegation. */
 function InlineStepLog({ entries }: { entries: Pkcs11LogEntry[] }) {
   if (entries.length === 0) return null
   return (
-    <div className="mt-2 space-y-1 rounded-md border border-border/60 bg-background/60 p-2">
-      {entries.map((e) => {
-        const ckr = !e.ok ? lookupCkr(parseInt(e.rvHex, 16) || 0) : null
-        return (
-          <div key={e.id} className="text-[10.5px] leading-snug">
-            <div className="grid grid-cols-[7.5rem_1fr_6.5rem_3rem] items-baseline gap-x-2 font-mono">
-              <span className="truncate font-semibold text-primary" title={e.fn}>
-                {e.fn}
-              </span>
-              <span className="truncate text-muted-foreground/80" title={e.args}>
-                {e.args || '—'}
-              </span>
-              <span className={e.ok ? 'text-status-success' : 'text-status-error'}>{e.rvName}</span>
-              <span className="text-right text-muted-foreground">{e.ms}ms</span>
-            </div>
-            {ckr && (
-              <p className="mt-0.5 pl-1 text-[10px] text-status-error">
-                {ckr.description}
-                {ckr.hint && <span className="text-muted-foreground"> — {ckr.hint}</span>}
-              </p>
-            )}
-          </div>
-        )
-      })}
-    </div>
+    <Pkcs11LogPanel
+      log={[...entries].reverse()}
+      lessonMode
+      defaultOpen
+      title="This step's calls"
+      className="mt-2"
+    />
   )
 }
 
