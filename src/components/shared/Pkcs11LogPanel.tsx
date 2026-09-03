@@ -155,6 +155,12 @@ const CRYPTO_OPS = new Set([
   // KEM extensions (CKM_ML_KEM)
   'C_EncapsulateKey',
   'C_DecapsulateKey',
+  // Random generation and authenticated (AEAD) wrap/unwrap — real crypto
+  // operations with their own dedicated decoders, previously hidden behind
+  // the default Crypto-Only filter.
+  'C_GenerateRandom',
+  'C_WrapKeyAuthenticated',
+  'C_UnwrapKeyAuthenticated',
   // Object introspection — a real, deliberate action (inspecting or locating
   // a key), not administrative noise; previously gated on the Inspect
   // toggle instead of Crypto Only, which meant toggling parameter decode

@@ -580,6 +580,16 @@ export const CKR_TABLE: Record<number, { name: string; description: string; hint
     description: 'C_Initialize was already called',
   },
   0x200: { name: 'CKR_FUNCTION_REJECTED', description: 'Function was rejected by policy' },
+  0x201: {
+    name: 'CKR_TOKEN_RESOURCE_EXCEEDED',
+    description: 'Token lacks the resources to perform the requested action',
+    hint: 'Free session objects or reduce concurrent operations and retry',
+  },
+  0x203: {
+    name: 'CKR_KEY_EXHAUSTED',
+    description: "Stateful key's remaining-signatures budget is depleted (v3.2 §6.14, SP 800-208)",
+    hint: 'HSS/XMSS/XMSS-MT keys are single-use-budgeted — generate a new key pair',
+  },
 }
 
 /** Look up a CKR_* return value. Returns name, description, and optional remediation hint. */
