@@ -16,7 +16,6 @@ import {
   Cpu,
   KeyRound,
   ScrollText,
-  Play,
   Loader2,
   AlertTriangle,
   CheckCircle2,
@@ -42,9 +41,7 @@ import {
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { Button } from '@/components/ui/button'
 import { usePageActionsStore } from '@/store/usePageActionsStore'
-import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { cn } from '@/lib/utils'
 import {
   getKmipEngine,
   decisionOf,
@@ -83,6 +80,9 @@ import {
   dragRangeToMax,
   type Lesson,
 } from './LessonsTour'
+import { KeyConfigPanel } from './operate/KeyConfigPanel'
+import { GuidedLifecyclePanel } from './operate/GuidedLifecyclePanel'
+import type { OperateContext } from './operate/types'
 
 /** Jargon glossary (A-grade review item #8) — hover/focus definitions for the
  * three protocol acronyms a first-time visitor hits in the very first
@@ -1015,6 +1015,44 @@ export function KmipPlaygroundView() {
   ]
   const tour = useLessonsTour(lessons, setPlane)
 
+  // Bundled for KeyConfigPanel/GuidedLifecyclePanel (K4b, gaps-closeout
+  // WP-4.2) — every field here is still owned by this component; the
+  // `lessons` array above calls onCreate/onSelectAlgo/onActivate/onSign
+  // directly, so none of this state can move into the child components.
+  const operate: OperateContext = {
+    algo,
+    onSelectAlgo,
+    chosen,
+    isSpecOnly,
+    isKem,
+    isSymmetric,
+    keyLength,
+    setKeyLength,
+    govAttrsText,
+    setGovAttrsText,
+    busy,
+    priv,
+    pub,
+    sigHex,
+    ctHex,
+    encIvHex,
+    message,
+    setMessage,
+    expert,
+    onCreate,
+    onActivate,
+    onSign,
+    onVerify,
+    onEncapsulate,
+    onDecapsulate,
+    onEncrypt,
+    onDecrypt,
+    onGet,
+    onRevoke,
+    onRevokeThenRetrySign,
+    run,
+  }
+
   if (bootError) {
     return (
       <div className="p-6">
@@ -1329,226 +1367,8 @@ export function KmipPlaygroundView() {
                               Each button sends a real KMIP 3.0 request.
                             </p>
 
-                            <p className="text-xs font-medium text-muted-foreground mb-1">
-                              Algorithm
-                            </p>
-                            <div className="mb-3" data-testid="kmip-algo">
-                              <FilterDropdown
-                                items={ALGORITHMS.map((a) => ({
-                                  id: a.value,
-                                  label: a.auto
-                                    ? a.label
-                                    : a.runnable === false
-                                      ? a.label
-                                      : a.pqc
-                                        ? `${a.label} · PQC`
-                                        : a.label,
-                                  icon: a.auto ? (
-                                    <Wand2 size={13} className="text-primary" />
-                                  ) : undefined,
-                                }))}
-                                selectedId={algo}
-                                onSelect={onSelectAlgo}
-                                label="Algorithm"
-                                className="w-full"
-                              />
-                            </div>
-                            {isSpecOnly && (
-                              <p className="mb-3 -mt-2 text-[10.5px] text-status-warning">
-                                Spec-only: a real algorithm policies can reference, but this
-                                in-browser engine can't create one — see what happens below.
-                              </p>
-                            )}
-                            {chosen?.sizes && (
-                              <div className="mb-3 -mt-2" data-testid="kmip-key-size">
-                                <p className="mb-1 text-[10px] font-medium text-muted-foreground">
-                                  {algo === 'RSA' ? 'Key size' : 'Curve'} — a real request
-                                  parameter, not a label; policies with a minimum (FIPS-only, BSI,
-                                  2030 roadmap) gate on it.
-                                </p>
-                                <div className="flex gap-1.5">
-                                  {chosen.sizes.map((s) => (
-                                    <Button
-                                      key={s.length}
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setKeyLength(s.length)}
-                                      className={cn(
-                                        'h-auto rounded-full border px-2.5 py-0.5 text-[10.5px] font-medium',
-                                        keyLength === s.length
-                                          ? 'border-primary/60 bg-primary/10 text-primary'
-                                          : 'border-border bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                                      )}
-                                    >
-                                      {s.label}
-                                    </Button>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="mb-3" data-testid="kmip-gov-attrs">
-                              <p className="mb-1 text-[10px] font-medium text-muted-foreground">
-                                Key tags (governance attributes) — some policies require one at key
-                                creation, e.g. CNSA 2.0 needs{' '}
-                                <code className="font-mono">
-                                  x-pqctoday-cnsa-classification=Secret
-                                </code>
-                              </p>
-                              <input
-                                type="text"
-                                value={govAttrsText}
-                                onChange={(e) => setGovAttrsText(e.target.value)}
-                                placeholder="name=value, name=value (optional)"
-                                className="w-full rounded-md border border-border bg-background/60 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                              <Button
-                                disabled={busy}
-                                onClick={onCreate}
-                                data-tour="create-btn"
-                                className="col-span-2 gap-1.5"
-                              >
-                                <Play size={14} />{' '}
-                                {isSpecOnly
-                                  ? '1 · Try to create (not runnable)'
-                                  : isSymmetric
-                                    ? '1 · Create symmetric key'
-                                    : `1 · Create ${isKem ? 'KEM' : 'signing'} key pair`}
-                              </Button>
-                              <Button
-                                variant="secondary"
-                                disabled={busy || !priv}
-                                onClick={onActivate}
-                                data-tour="activate-btn"
-                                className="col-span-2"
-                              >
-                                2 · Activate
-                              </Button>
-                              {isKem ? (
-                                <>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !pub}
-                                    onClick={onEncapsulate}
-                                  >
-                                    3 · Encapsulate
-                                  </Button>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !ctHex}
-                                    onClick={onDecapsulate}
-                                  >
-                                    4 · Decapsulate
-                                  </Button>
-                                </>
-                              ) : isSymmetric ? (
-                                <>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !priv}
-                                    onClick={onEncrypt}
-                                  >
-                                    3 · Encrypt
-                                  </Button>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !ctHex || !encIvHex}
-                                    onClick={onDecrypt}
-                                  >
-                                    4 · Decrypt
-                                  </Button>
-                                </>
-                              ) : (
-                                <>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !priv}
-                                    onClick={onSign}
-                                    data-tour="sign-btn"
-                                  >
-                                    3 · Sign
-                                  </Button>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !sigHex}
-                                    onClick={onVerify}
-                                  >
-                                    4 · Verify
-                                  </Button>
-                                  <Button
-                                    variant="secondary"
-                                    disabled={busy || !priv}
-                                    onClick={onRevokeThenRetrySign}
-                                    className="col-span-2"
-                                  >
-                                    5 · Revoke, then try to Sign again
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-
-                            {!isKem && (
-                              <input
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="message to sign"
-                                className="w-full mt-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs"
-                              />
-                            )}
-
-                            {expert && (
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  disabled={busy}
-                                  onClick={() => run({ op: 'Query' })}
-                                  className="text-xs"
-                                >
-                                  Query
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  disabled={busy}
-                                  onClick={() => run({ op: 'Locate' })}
-                                  className="text-xs"
-                                >
-                                  Locate
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  disabled={busy || !priv}
-                                  onClick={onGet}
-                                  className="text-xs"
-                                >
-                                  Get
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  disabled={busy || !priv}
-                                  onClick={onRevoke}
-                                  className="text-xs"
-                                >
-                                  Revoke
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  disabled={busy || !priv}
-                                  onClick={() => priv && run({ op: 'Destroy', uid: priv })}
-                                  className="text-xs"
-                                >
-                                  Destroy
-                                </Button>
-                              </div>
-                            )}
+                            <KeyConfigPanel operate={operate} />
+                            <GuidedLifecyclePanel operate={operate} />
                           </section>
 
                           <div className="flex flex-col gap-4 min-w-0">
