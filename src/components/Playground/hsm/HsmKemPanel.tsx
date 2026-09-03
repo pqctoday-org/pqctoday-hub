@@ -26,10 +26,28 @@ import { useEffect } from 'react'
  * implemented in the C++ engine at all. */
 type KemFamily = 'ml-kem' | 'frodo-kem' | 'classic-mceliece'
 
-export const HsmKemPanel = () => {
+const labelFor = (fam: KemFamily, v: 512 | 768 | 1024): string =>
+  fam === 'ml-kem'
+    ? `ML-KEM-${v}`
+    : fam === 'frodo-kem'
+      ? 'FrodoKEM-1344-AES'
+      : 'Classic-McEliece-6688128'
+
+export const HsmKemPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, addHsmKey, engineMode, isReady } = useHsmContext()
-  const [family, setFamily] = useState<KemFamily>('ml-kem')
-  const [variant, setVariant] = useState<512 | 768 | 1024>(768)
+  const [family, setFamily] = useState<KemFamily>(() => {
+    if (initialAlgo?.startsWith('FrodoKEM')) return 'frodo-kem'
+    if (initialAlgo?.startsWith('Classic-McEliece')) return 'classic-mceliece'
+    return 'ml-kem'
+  })
+  const [variant, setVariant] = useState<512 | 768 | 1024>(() => {
+    if (initialAlgo === 'ML-KEM-512') return 512
+    if (initialAlgo === 'ML-KEM-1024') return 1024
+    return 768
+  })
   const [pubHandle, setPubHandle] = useState<number | null>(null)
   const [privHandle, setPrivHandle] = useState<number | null>(null)
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
@@ -61,12 +79,7 @@ export const HsmKemPanel = () => {
     }
   }
 
-  const familyLabel =
-    family === 'ml-kem'
-      ? `ML-KEM-${variant}`
-      : family === 'frodo-kem'
-        ? 'FrodoKEM-1344-AES'
-        : 'Classic-McEliece-6688128'
+  const familyLabel = labelFor(family, variant)
 
   const doGenKey = () =>
     withLoading('gen', () => {
@@ -204,6 +217,7 @@ export const HsmKemPanel = () => {
                 onClick={() => {
                   setFamily(f.id)
                   resetResults()
+                  onAlgoChange?.(labelFor(f.id, variant))
                 }}
                 title={f.id !== 'ml-kem' ? 'BSI TR-02102-1 — Rust engine only' : undefined}
                 className={
@@ -245,6 +259,7 @@ export const HsmKemPanel = () => {
                   onClick={() => {
                     setVariant(v)
                     resetResults()
+                    onAlgoChange?.(labelFor('ml-kem', v))
                   }}
                   className={
                     variant === v

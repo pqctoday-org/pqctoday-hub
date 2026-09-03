@@ -574,7 +574,7 @@ export const HsmPlayground = () => {
   const operatePanel = (() => {
     switch (rail) {
       case 'kem':
-        return <HsmKemPanel />
+        return <HsmKemPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
       case 'sym':
         return <HsmSymmetricPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
       case 'wrap':
