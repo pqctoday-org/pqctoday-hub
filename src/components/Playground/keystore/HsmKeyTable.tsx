@@ -36,8 +36,16 @@ const ROLE_COLORS: Record<string, string> = {
 
 export const HsmKeyTable = () => {
   const hsmCtx = useHsmContext()
-  const { hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, removeHsmKey, pruneDeadSlots } =
-    hsmCtx
+  const {
+    hsmKeys,
+    moduleRef,
+    crossCheckModuleRef,
+    hSessionRef,
+    slotRef,
+    removeHsmKey,
+    clearHsmKeys,
+    pruneDeadSlots,
+  } = hsmCtx
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
   const [confirmHandle, setConfirmHandle] = useState<number | null>(null)
@@ -211,6 +219,14 @@ export const HsmKeyTable = () => {
             >
               <RefreshCw size={12} className={discovering ? 'animate-spin mr-1.5' : 'mr-1.5'} />
               Discover
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => clearHsmKeys({ slotId: slotRef.current })}
+              className="text-[10px] px-2 py-0.5 rounded border border-border hover:bg-muted text-muted-foreground transition-colors"
+              title="Clear all key objects from this slot's registry"
+            >
+              Clear Keys
             </Button>
           </div>
         </div>

@@ -335,11 +335,16 @@ export const CKK_TABLE: Record<number, ConstEntry> = {
   0x1f: { name: 'CKK_AES', description: 'AES symmetric key' },
   0x33: { name: 'CKK_CHACHA20', description: 'ChaCha20 symmetric key' },
   0x40: { name: 'CKK_EC_EDWARDS', description: 'Edwards-curve key (Ed25519/Ed448)' },
+  0x41: { name: 'CKK_EC_MONTGOMERY', description: 'Montgomery-curve key (X25519/X448)' },
+  0x46: { name: 'CKK_HSS', description: 'HSS / LMS stateful signature key (RFC 8554, SP 800-208)' },
+  0x47: { name: 'CKK_XMSS', description: 'XMSS stateful signature key (RFC 8391, SP 800-208)' },
+  0x48: {
+    name: 'CKK_XMSSMT',
+    description: 'XMSS^MT multi-tree stateful signature key (RFC 8391, SP 800-208)',
+  },
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
   0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
-  0x4c: { name: 'CKK_XMSS', description: 'XMSS stateful signature key (SP 800-208)' },
-  0x4e: { name: 'CKK_HSS', description: 'HSS / LMS stateful signature key (SP 800-208)' },
 }
 
 // CKH_ hedging variants
@@ -366,7 +371,7 @@ const CKU_TABLE: Record<number, ConstEntry> = {
 }
 
 // CKP_ ML-KEM parameter sets (FIPS 203 Table 3: ct, ek, dk sizes)
-const CKP_ML_KEM: Record<number, ConstEntry> = {
+export const CKP_ML_KEM: Record<number, ConstEntry> = {
   0x1: {
     name: 'CKP_ML_KEM_512',
     description: 'NIST Level 1 — 768-byte ct, 800-byte ek, 1632-byte dk',
@@ -382,14 +387,14 @@ const CKP_ML_KEM: Record<number, ConstEntry> = {
 }
 
 // CKP_ ML-DSA parameter sets
-const CKP_ML_DSA: Record<number, ConstEntry> = {
+export const CKP_ML_DSA: Record<number, ConstEntry> = {
   0x1: { name: 'CKP_ML_DSA_44', description: 'NIST Level 2 — 2420-byte signature' },
   0x2: { name: 'CKP_ML_DSA_65', description: 'NIST Level 3 — 3309-byte signature' },
   0x3: { name: 'CKP_ML_DSA_87', description: 'NIST Level 5 — 4627-byte signature' },
 }
 
 // CKP_ SLH-DSA parameter sets (pkcs11t.h ordering: interleaved SHA2/SHAKE per security level)
-const CKP_SLH_DSA: Record<number, ConstEntry> = {
+export const CKP_SLH_DSA: Record<number, ConstEntry> = {
   0x1: { name: 'CKP_SLH_DSA_SHA2_128S', description: 'NIST Level 1 — 7856-byte signature, SHA2' },
   0x2: { name: 'CKP_SLH_DSA_SHAKE_128S', description: 'NIST Level 1 — 7856-byte signature, SHAKE' },
   0x3: {
@@ -426,6 +431,82 @@ const CKP_SLH_DSA: Record<number, ConstEntry> = {
     name: 'CKP_SLH_DSA_SHAKE_256F',
     description: 'NIST Level 5 — 49856-byte signature, SHAKE (fast)',
   },
+}
+
+// CKP_ XMSS parameter sets (RFC 8391 / SP 800-208) — single-tree.
+// Name encodes tree height and hash output size; 2^height one-time
+// signatures are available before the key is exhausted.
+export const CKP_XMSS: Record<number, ConstEntry> = {
+  0x1: { name: 'CKP_XMSS_SHA2_10_256', description: 'Height 10 — 1024 signatures, SHA2-256' },
+  0x2: { name: 'CKP_XMSS_SHA2_16_256', description: 'Height 16 — 65536 signatures, SHA2-256' },
+  0x3: { name: 'CKP_XMSS_SHA2_20_256', description: 'Height 20 — ~1M signatures, SHA2-256' },
+  0x4: { name: 'CKP_XMSS_SHA2_10_512', description: 'Height 10 — 1024 signatures, SHA2-512' },
+  0x5: { name: 'CKP_XMSS_SHA2_16_512', description: 'Height 16 — 65536 signatures, SHA2-512' },
+  0x6: { name: 'CKP_XMSS_SHA2_20_512', description: 'Height 20 — ~1M signatures, SHA2-512' },
+}
+
+// CKP_ XMSS^MT parameter sets (RFC 8391 / SP 800-208) — multi-tree.
+// Name encodes total height, layer count, and hash output size.
+export const CKP_XMSSMT: Record<number, ConstEntry> = {
+  0x1: {
+    name: 'CKP_XMSSMT_SHA2_20_2_256',
+    description: 'Height 20, 2 layers — ~1M signatures, SHA2-256',
+  },
+  0x2: {
+    name: 'CKP_XMSSMT_SHA2_20_4_256',
+    description: 'Height 20, 4 layers — ~1M signatures, SHA2-256',
+  },
+  0x3: {
+    name: 'CKP_XMSSMT_SHA2_40_2_256',
+    description: 'Height 40, 2 layers — ~1T signatures, SHA2-256',
+  },
+  0x4: {
+    name: 'CKP_XMSSMT_SHA2_40_4_256',
+    description: 'Height 40, 4 layers — ~1T signatures, SHA2-256',
+  },
+  0x5: {
+    name: 'CKP_XMSSMT_SHA2_40_8_256',
+    description: 'Height 40, 8 layers — ~1T signatures, SHA2-256',
+  },
+  0x6: {
+    name: 'CKP_XMSSMT_SHA2_60_3_256',
+    description: 'Height 60, 3 layers — ~1P signatures, SHA2-256',
+  },
+  0x7: {
+    name: 'CKP_XMSSMT_SHA2_60_6_256',
+    description: 'Height 60, 6 layers — ~1P signatures, SHA2-256',
+  },
+  0x8: {
+    name: 'CKP_XMSSMT_SHA2_60_12_256',
+    description: 'Height 60, 12 layers — ~1P signatures, SHA2-256',
+  },
+}
+
+/**
+ * Resolve a CKA_PARAMETER_SET value given the object's CKA_KEY_TYPE — the
+ * signal HsmKeyAttrDisplay's modal has on hand directly (unlike the log
+ * decoder below, which only sees the mechanism used, tracked separately).
+ * Returns null for a key type that doesn't carry a named parameter set
+ * (e.g. HSS, whose LMS/LMOTS shape travels in the mechanism parameter, not
+ * CKA_PARAMETER_SET) or an unrecognized value.
+ */
+export const describeParameterSetByKeyType = (
+  ckKeyType: number,
+  paramSet: number
+): ConstEntry | null => {
+  const table =
+    ckKeyType === 0x49 // CKK_ML_KEM
+      ? CKP_ML_KEM
+      : ckKeyType === 0x4a // CKK_ML_DSA
+        ? CKP_ML_DSA
+        : ckKeyType === 0x4b // CKK_SLH_DSA
+          ? CKP_SLH_DSA
+          : ckKeyType === 0x47 // CKK_XMSS
+            ? CKP_XMSS
+            : ckKeyType === 0x48 // CKK_XMSSMT
+              ? CKP_XMSSMT
+              : null
+  return table?.[paramSet] ?? null
 }
 
 // CKF_ session flags bitmask (CK_FLAGS)
@@ -676,12 +757,14 @@ const decodeFlagsBitmask = (flags: number): string => {
 }
 
 /** Determine algo context from mechanism type (for CKP_ dispatch). */
-type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | undefined
+type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | 'xmss' | 'xmssmt' | undefined
 
 const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType === 0x0000000f || mechType === 0x00000017) return 'ml-kem'
   if (mechType >= 0x0000001c && mechType <= 0x0000002c) return 'ml-dsa'
   if (mechType >= 0x0000002d && mechType <= 0x0000003f) return 'slh-dsa'
+  if (mechType === 0x00004034) return 'xmss' // CKM_XMSS_KEY_PAIR_GEN
+  if (mechType === 0x00004035) return 'xmssmt' // CKM_XMSSMT_KEY_PAIR_GEN
   return undefined
 }
 
@@ -718,7 +801,11 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
           ? CKP_ML_DSA
           : algo === 'slh-dsa'
             ? CKP_SLH_DSA
-            : null
+            : algo === 'xmss'
+              ? CKP_XMSS
+              : algo === 'xmssmt'
+                ? CKP_XMSSMT
+                : null
     const entry = table ? table[v] : null
     return entry
       ? { kind: 'constant', display: `${entry.name} (${hex})`, description: entry.description }

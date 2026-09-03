@@ -49,6 +49,19 @@ const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
   0x04: 'secret',
 }
 
+// Canonical CKA_CLASS name table — the one place this mapping is written,
+// re-exported (not copied) by hsmKeyAttrDisplay.tsx. Matches
+// wasm/pkcs11Inspect.ts's CKO_TABLE (kept in sync manually; that one carries
+// descriptions for the log's decode drawer, this one just names).
+export const CKO_NAMES: Record<number, string> = {
+  0x00: 'CKO_DATA',
+  0x01: 'CKO_CERTIFICATE',
+  0x02: 'CKO_PUBLIC_KEY',
+  0x03: 'CKO_PRIVATE_KEY',
+  0x04: 'CKO_SECRET_KEY',
+  0x09: 'CKO_PROFILE',
+}
+
 /**
  * Finds every object on the given session's token and registers any handle
  * not already in `knownHandles` via `addKey`. Returns the number of newly

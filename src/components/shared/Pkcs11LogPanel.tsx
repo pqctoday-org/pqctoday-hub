@@ -155,6 +155,12 @@ const CRYPTO_OPS = new Set([
   // KEM extensions (CKM_ML_KEM)
   'C_EncapsulateKey',
   'C_DecapsulateKey',
+  // Object introspection — a real, deliberate action (inspecting or locating
+  // a key), not administrative noise; previously gated on the Inspect
+  // toggle instead of Crypto Only, which meant toggling parameter decode
+  // also silently changed how many rows were visible.
+  'C_GetAttributeValue',
+  'C_FindObjects',
   // PKCS#11 v3.2 Message API (ML-DSA, SLH-DSA multi-message sign/verify)
   'C_MessageSignInit',
   'C_SignMessage',
@@ -278,11 +284,8 @@ export const Pkcs11LogPanel = ({
     // Crypto-only filter: hide everything that isn't a core crypto operation.
     // Doesn't apply in lesson context — every call a step makes is the point.
     if (!lessonMode && hideAdminOps && !CRYPTO_OPS.has(e.fn)) return false
-    if (!inspectMode && e.fn === 'C_GetAttributeValue') return false
-    if (!inspectMode && e.fn === 'C_FindObjects') return false
     if (CRYPTO_OPS.has(e.fn)) return true
     if (filterFns && filterFns.length > 0) {
-      if (inspectMode) return true // Show all operations in inspect mode to aid diagnosis
       return filterFns.includes(e.fn)
     }
     return true
