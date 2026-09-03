@@ -57,11 +57,11 @@ export const StatefulSigsExercises: React.FC<StatefulSigsExercisesProps> = ({
       id: 'multi-tree-scaling',
       title: '3. Multi-Tree Scaling (HSS / XMSS^MT)',
       description:
-        'Explore the XMSS^MT multi-tree variants. See how chaining sub-trees enables effectively unlimited signing capacity while keeping individual trees manageable.',
+        'In the XMSS step, switch Structure to XMSS^MT and pick 60/6. See how chaining sub-trees enables effectively unlimited signing capacity while keeping individual trees manageable — and note the keygen time.',
       badge: 'Multi-Tree',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. This is suitable for long-lived timestamping authorities that sign millions of times per year.',
+        'XMSS^MT-SHA2_60/6 provides 2^60 signatures (over 10^18) by chaining 6 layers of 10-level trees. Keygen still finishes in seconds — the same as the 20/2 set — because only one tree per layer is built up front, not a single tree of height 60. That is the whole point of multi-tree, and it is suitable for long-lived timestamping authorities that sign millions of times per year.',
       config: { step: 1, paramId: 'xmssmt-sha2-60-6' },
     },
     {

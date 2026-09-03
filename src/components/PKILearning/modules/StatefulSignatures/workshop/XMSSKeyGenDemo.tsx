@@ -40,6 +40,12 @@ import {
   CKP_XMSS_SHAKE_20_256,
   CKP_XMSS_SHAKE256_16_256,
   CKP_XMSS_SHAKE256_20_256,
+  CKM_XMSSMT_KEY_PAIR_GEN,
+  CKK_XMSSMT,
+  CKM_XMSSMT,
+  CKP_XMSSMT_SHA2_20_2_256,
+  CKP_XMSSMT_SHA2_40_4_256,
+  CKP_XMSSMT_SHA2_60_6_256,
 } from '@/wasm/softhsm/constants'
 import {
   hsm_generateStatefulKeyPair,
@@ -50,6 +56,24 @@ import { hsm_extractKeyValue } from '@/wasm/softhsm'
 
 type XMSSHash = 'SHA-256' | 'SHAKE-128' | 'SHAKE256'
 type XMSSHeight = 10 | 16 | 20
+
+/** Single-tree XMSS vs multi-tree XMSS^MT — different PKCS#11 key type and
+ *  mechanism, so this is not just a parameter-set change. */
+type XMSSStructure = 'single' | 'multi'
+
+/**
+ * XMSS^MT parameter sets, by total height / layer count. Multi-tree is the
+ * whole reason these are interesting: a total height of 60 gives 2^60
+ * signatures, but keygen only builds the top tree plus one subtree per
+ * layer (d trees of height h/d), so it stays fast where a single tree of
+ * height 60 would be impossible. Ordinals are RFC 8391 §5.4, matching both
+ * engines; the Rust engine implements all 56 XMSS^MT sets.
+ */
+const XMSSMT_SETS: Array<{ id: string; label: string; ckp: number; layers: number }> = [
+  { id: 'xmssmt-sha2-20-2', label: '20/2', ckp: CKP_XMSSMT_SHA2_20_2_256, layers: 2 },
+  { id: 'xmssmt-sha2-40-4', label: '40/4', ckp: CKP_XMSSMT_SHA2_40_4_256, layers: 4 },
+  { id: 'xmssmt-sha2-60-6', label: '60/6', ckp: CKP_XMSSMT_SHA2_60_6_256, layers: 6 },
+]
 
 /**
  * Approval status of the XMSS PARAMETER SETS built on each hash function —
@@ -149,6 +173,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
   const ownHsm = useHSM('rust')
   const hsm = hsmProp ?? ownHsm
   const isEmbedded = !!hsmProp
+  const [structure, setStructure] = useState<XMSSStructure>('single')
+  const [mtSetId, setMtSetId] = useState<string>(XMSSMT_SETS[0].id)
   const [xmssHash, setXmssHash] = useState<XMSSHash>('SHA-256')
   const [xmssHeight, setXmssHeight] = useState<XMSSHeight>(10)
   const [showAlgoInfo, setShowAlgoInfo] = useState(false)
@@ -172,12 +198,16 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
 
   const keygenDurationMs = XMSS_KEYGEN_MS[xmssHeight]
 
-  const paramId = XMSS_PARAM_ID[xmssHash][xmssHeight]
+  const isMulti = structure === 'multi'
+  const mtSet = XMSSMT_SETS.find((m) => m.id === mtSetId) ?? XMSSMT_SETS[0]
+  const paramId = isMulti ? mtSet.id : XMSS_PARAM_ID[xmssHash][xmssHeight]
   const selected = XMSS_PARAMETER_SETS.find((p) => p.id === paramId) || XMSS_PARAMETER_SETS[0]
-  const ckpParam = XMSS_CKP[xmssHash][xmssHeight]
-  const sigSize = XMSS_SIG_SIZE[xmssHeight]
-  const maxSigs = Math.pow(2, xmssHeight)
-  const isH20 = xmssHeight === 20
+  const ckpParam = isMulti ? mtSet.ckp : XMSS_CKP[xmssHash][xmssHeight]
+  const sigSize = isMulti ? selected.signatureSize : XMSS_SIG_SIZE[xmssHeight]
+  // Multi-tree capacity is the TOTAL height across all layers (60/6 = 2^60),
+  // which the single-tree height selector knows nothing about.
+  const maxSigs = isMulti ? selected.maxSignatures : Math.pow(2, xmssHeight)
+  const isH20 = !isMulti && xmssHeight === 20
 
   // Find comparable LMS parameter set (same tree height, W=4 as default comparison)
   const comparableLMS = useMemo(() => {
@@ -252,8 +282,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
         M,
         hSession,
-        CKM_XMSS_KEY_PAIR_GEN,
-        CKK_XMSS,
+        isMulti ? CKM_XMSSMT_KEY_PAIR_GEN : CKM_XMSS_KEY_PAIR_GEN,
+        isMulti ? CKK_XMSSMT : CKK_XMSS,
         ckpParam
       )
       const pubBytes = hsm_extractKeyValue(M!, hSession, pubHandle)
@@ -320,14 +350,25 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       const sig = hsm_statefulSignBytes(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
-        CKM_XMSS,
+        isMulti ? CKM_XMSSMT : CKM_XMSS,
         activeKeyHandle,
         msgBytes
       )
       const computeTimeMs = performance.now() - t0
 
-      const remainingAfter =
+      // CKA_*_KEYS_REMAINING is a CK_ULONG, which is 4 bytes on 32-bit WASM,
+      // so the engine's count saturates at 2^32-1. That is fine for every
+      // single-tree set (max 2^20) but not for the large XMSS^MT ones: a
+      // 60/6 key holds 2^60 signatures and the attribute reported
+      // 4,294,967,295 — understating capacity by nine orders of magnitude.
+      // Where the parameter set's capacity exceeds what a CK_ULONG can hold,
+      // derive the remaining count from the known capacity instead of
+      // printing a number the platform cannot represent.
+      const CK_ULONG_MAX = 0xffffffff
+      const engineRemaining =
         hsm_getKeysRemaining(hsm.moduleRef.current, hsm.hSessionRef.current, activeKeyHandle) ?? 0
+      const remainingAfter =
+        maxSigs > CK_ULONG_MAX ? Math.max(0, maxSigs - (sigCounter + 1)) : engineRemaining
 
       const msgLabel = messageToSign.length > 32 ? messageToSign.slice(0, 32) + '…' : messageToSign
       const newEntry: XMSSLogEntry = {
@@ -372,8 +413,70 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
 
       {/* SP 800-208 cascading parameter selector */}
       <div className="space-y-3 bg-muted/30 rounded-lg p-4 border border-border">
-        {/* Hash family */}
+        {/* Structure: single-tree XMSS vs multi-tree XMSS^MT */}
         <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground w-14 shrink-0">Structure</span>
+          <div className="flex gap-2">
+            {(
+              [
+                ['single', 'XMSS', 'Single tree'],
+                ['multi', 'XMSS^MT', 'Multi-tree'],
+              ] as Array<[XMSSStructure, string, string]>
+            ).map(([s, label, sub]) => (
+              <Button
+                variant="ghost"
+                key={s}
+                onClick={() => {
+                  setStructure(s)
+                  resetSigning()
+                }}
+                title={
+                  s === 'multi'
+                    ? 'CKM_XMSSMT — d trees of height h/d, so a total height of 60 stays generatable'
+                    : 'CKM_XMSS — one tree of the selected height'
+                }
+                className={`flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                  structure === s
+                    ? 'bg-secondary/20 text-secondary border border-secondary/50'
+                    : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
+                }`}
+              >
+                <span>{label}</span>
+                <span className="text-[9px] font-normal opacity-60">{sub}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Multi-tree parameter sets (total height / layers) */}
+        {isMulti && (
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground w-14 shrink-0">h/d</span>
+            <div className="flex gap-2">
+              {XMSSMT_SETS.map((m) => (
+                <Button
+                  variant="ghost"
+                  key={m.id}
+                  onClick={() => {
+                    setMtSetId(m.id)
+                    resetSigning()
+                  }}
+                  title={`Total height ${m.label.split('/')[0]} across ${m.layers} layers — 2^${m.label.split('/')[0]} signatures`}
+                  className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                    mtSetId === m.id
+                      ? 'bg-primary/20 text-primary border border-primary/50'
+                      : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
+                  }`}
+                >
+                  {m.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Hash family — single-tree only; the XMSS^MT sets offered here are all SHA-256 */}
+        <div className={`flex items-center gap-3 ${isMulti ? 'hidden' : ''}`}>
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
           <div className="flex gap-2">
             {(['SHA-256', 'SHAKE-128', 'SHAKE256'] as XMSSHash[]).map((h) => (
@@ -403,8 +506,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
           </div>
         </div>
 
-        {/* Tree height */}
-        <div className="flex items-center gap-3">
+        {/* Tree height — single-tree only; multi-tree height comes from h/d above */}
+        <div className={`flex items-center gap-3 ${isMulti ? 'hidden' : ''}`}>
           <span className="text-xs text-muted-foreground w-14 shrink-0">Height</span>
           <div className="flex gap-2">
             {XMSS_HEIGHTS_FOR[xmssHash].map((h) => {
