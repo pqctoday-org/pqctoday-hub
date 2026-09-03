@@ -38,6 +38,8 @@ import {
   CKP_XMSS_SHAKE_10_256,
   CKP_XMSS_SHAKE_16_256,
   CKP_XMSS_SHAKE_20_256,
+  CKP_XMSS_SHAKE256_16_256,
+  CKP_XMSS_SHAKE256_20_256,
 } from '@/wasm/softhsm/constants'
 import {
   hsm_generateStatefulKeyPair,
@@ -46,10 +48,32 @@ import {
 } from '@/wasm/softhsm/pqc'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
 
-type XMSSHash = 'SHA-256' | 'SHAKE-128'
+type XMSSHash = 'SHA-256' | 'SHAKE-128' | 'SHAKE256'
 type XMSSHeight = 10 | 16 | 20
 
-const XMSS_HEIGHTS: XMSSHeight[] = [10, 16, 20]
+/**
+ * Which standard each hash family's parameter sets come from, and whether NIST
+ * approves them. SP 800-208 (Tables 14/16) approves ONLY the SHAKE256 sets —
+ * RFC 8391's XMSS-SHAKE_* sets are SHAKE128 and appear nowhere in SP 800-208.
+ * Shown in the UI so the choice is never silently misread as NIST-approved.
+ */
+const XMSS_HASH_PROVENANCE: Record<XMSSHash, { standard: string; approved: boolean }> = {
+  'SHA-256': { standard: 'RFC 8391 + SP 800-208', approved: true },
+  'SHAKE-128': { standard: 'RFC 8391 only', approved: false },
+  SHAKE256: { standard: 'SP 800-208', approved: true },
+}
+
+/**
+ * Heights available per family. SHAKE256 is limited to 16 and 20 because the
+ * Rust engine (the default) implements only XMSS-SHAKE256_16_256 (0x11) and
+ * _20_256 (0x12); XMSS-SHAKE256_10_256 (0x10) is C++-engine-only, so offering
+ * height 10 here would fail at keygen rather than teach anything.
+ */
+const XMSS_HEIGHTS_FOR: Record<XMSSHash, XMSSHeight[]> = {
+  'SHA-256': [10, 16, 20],
+  'SHAKE-128': [10, 16, 20],
+  SHAKE256: [16, 20],
+}
 
 // SP 800-208 §5 — n=32 fixed; w=16 fixed (67 WOTS+ chains); sig = 4 + 32*(1+67+h)
 const XMSS_SIG_SIZE: Record<XMSSHeight, number> = { 10: 2500, 16: 2692, 20: 2820 }
@@ -57,16 +81,22 @@ const XMSS_SIG_SIZE: Record<XMSSHeight, number> = { 10: 2500, 16: 2692, 20: 2820
 // Estimated keygen time (ms) — used to pace the CSS animation during WASM blocking
 const XMSS_KEYGEN_MS: Record<XMSSHeight, number> = { 10: 5000, 16: 20000, 20: 600000 }
 
-// Map (hash, height) → CKP constant
-const XMSS_CKP: Record<XMSSHash, Record<XMSSHeight, number>> = {
+// Map (hash, height) → CKP constant. This mapping IS the parameter set: per
+// v3.2 §6.66.6 the mechanism takes no parameter and CKA_PARAMETER_SET alone
+// selects hash family and tree height, so a wrong entry here silently
+// generates a different key than every label on this page claims — which is
+// exactly what happened before 2026-09-03 (see constants.ts).
+const XMSS_CKP: Record<XMSSHash, Partial<Record<XMSSHeight, number>>> = {
   'SHA-256': { 10: CKP_XMSS_SHA2_10_256, 16: CKP_XMSS_SHA2_16_256, 20: CKP_XMSS_SHA2_20_256 },
   'SHAKE-128': { 10: CKP_XMSS_SHAKE_10_256, 16: CKP_XMSS_SHAKE_16_256, 20: CKP_XMSS_SHAKE_20_256 },
+  SHAKE256: { 16: CKP_XMSS_SHAKE256_16_256, 20: CKP_XMSS_SHAKE256_20_256 },
 }
 
 // Map (hash, height) → XMSS_PARAMETER_SETS id (for tree visualization & LMS comparison)
-const XMSS_PARAM_ID: Record<XMSSHash, Record<XMSSHeight, string>> = {
+const XMSS_PARAM_ID: Record<XMSSHash, Partial<Record<XMSSHeight, string>>> = {
   'SHA-256': { 10: 'xmss-sha2-10', 16: 'xmss-sha2-16', 20: 'xmss-sha2-20' },
   'SHAKE-128': { 10: 'xmss-shake-10', 16: 'xmss-shake-16', 20: 'xmss-shake-20' },
+  SHAKE256: { 16: 'xmss-shake256-16', 20: 'xmss-shake256-20' },
 }
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
@@ -164,6 +194,12 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
   const handleHashChange = useCallback(
     (h: XMSSHash) => {
       setXmssHash(h)
+      // Not every family offers every height (SHAKE256 has no engine-supported
+      // height 10), so land on a valid one rather than leaving the selector
+      // pointing at a combination that has no parameter set behind it.
+      setXmssHeight((current) =>
+        XMSS_HEIGHTS_FOR[h].includes(current) ? current : XMSS_HEIGHTS_FOR[h][0]
+      )
       resetSigning()
     },
     [resetSigning]
@@ -201,6 +237,11 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
 
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
+      if (ckpParam === undefined) {
+        throw new Error(
+          `No XMSS parameter set for ${xmssHash} at height ${xmssHeight} — this combination is not supported by the active engine.`
+        )
+      }
       const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
         M,
         hSession,
@@ -314,9 +355,10 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">XMSS Key Generation</h3>
         <p className="text-sm text-muted-foreground">
-          Select an RFC 8391 XMSS parameter set (the SHA-256 sets are also SP 800-208 approved) to
-          explore tree structure and compare with LMS at equivalent security levels. XMSS adds
-          bitmask-based tree hashing for stronger multi-target attack resistance.
+          Select an XMSS parameter set to explore tree structure and compare with LMS at equivalent
+          security levels. XMSS adds bitmask-based tree hashing for stronger multi-target attack
+          resistance. NIST SP 800-208 approves the SHA-256 and SHAKE256 sets; RFC 8391&apos;s
+          SHAKE-128 sets are shown for comparison but are not NIST-approved.
         </p>
       </div>
 
@@ -326,18 +368,28 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
           <div className="flex gap-2">
-            {(['SHA-256', 'SHAKE-128'] as XMSSHash[]).map((h) => (
+            {(['SHA-256', 'SHAKE-128', 'SHAKE256'] as XMSSHash[]).map((h) => (
               <Button
                 variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
-                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                title={`${XMSS_HASH_PROVENANCE[h].standard}${
+                  XMSS_HASH_PROVENANCE[h].approved ? '' : ' — not NIST-approved'
+                }`}
+                className={`flex flex-col items-start gap-0.5 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   xmssHash === h
                     ? 'bg-secondary/20 text-secondary border border-secondary/50'
                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-secondary/30'
                 }`}
               >
-                {h}
+                <span>{h}</span>
+                <span
+                  className={`text-[9px] font-normal ${
+                    XMSS_HASH_PROVENANCE[h].approved ? 'opacity-60' : 'text-warning'
+                  }`}
+                >
+                  {XMSS_HASH_PROVENANCE[h].approved ? 'SP 800-208' : 'RFC 8391 only'}
+                </span>
               </Button>
             ))}
           </div>
@@ -347,7 +399,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-14 shrink-0">Height</span>
           <div className="flex gap-2">
-            {XMSS_HEIGHTS.map((h) => {
+            {XMSS_HEIGHTS_FOR[xmssHash].map((h) => {
               const isProductionOnly = h > 15
               return (
                 <div key={h} className="relative group">

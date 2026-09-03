@@ -249,12 +249,35 @@ export const CKP_XMSS_SHA2_20_256 = 0x00000003
 export const CKP_XMSS_SHA2_10_512 = 0x00000004
 export const CKP_XMSS_SHA2_16_512 = 0x00000005
 export const CKP_XMSS_SHA2_20_512 = 0x00000006
-export const CKP_XMSS_SHAKE_10_256 = 0x00000011 // was 0x07 — must match Rust constants.rs 0x11
-export const CKP_XMSS_SHAKE_16_256 = 0x00000012 // was 0x08 — must match Rust constants.rs 0x12
-export const CKP_XMSS_SHAKE_20_256 = 0x00000013 // was 0x09 — must match Rust constants.rs 0x13
+// RFC 8391 §5.3 registered OIDs for the SHAKE128 (XMSS-SHAKE_h_256) sets.
+// These were 0x11/0x12/0x13 until 2026-09-03, on the premise that Rust's
+// constants.rs used those values. It does not: in BOTH engines 0x11/0x12/0x13
+// are the SP 800-208 SHAKE256 sets. The bug was an off-by-one INTO that table:
+// h10→0x11, h16→0x12, h20→0x13 is SP 800-208 Table 14 started one row late
+// (0x10 is XMSS-SHAKE256_10_256, not _16_256). The engine builds whatever the
+// ordinal names — the Rust dispatch ends in `_ => Err(())`, no fallback — and
+// CKA_PARAMETER_SET is the ONLY selector (v3.2 §6.66.6; height is never passed
+// separately), so "SHAKE-128 height 10" generated a height-16 SHAKE256 key:
+// the engine reported 65,535 remaining signatures where the UI claimed 1,024.
+export const CKP_XMSS_SHAKE_10_256 = 0x00000007
+export const CKP_XMSS_SHAKE_16_256 = 0x00000008
+export const CKP_XMSS_SHAKE_20_256 = 0x00000009
 export const CKP_XMSS_SHAKE_10_512 = 0x0000000a
 export const CKP_XMSS_SHAKE_16_512 = 0x0000000b
 export const CKP_XMSS_SHAKE_20_512 = 0x0000000c
+
+// SP 800-208 Tables 14/16 — the SHAKE256 XMSS sets, values read from the
+// standard itself (docs library: NIST_SP_800-208.pdf) and confirmed identical
+// in both engines. These are the ONLY SHAKE sets NIST approves: the RFC 8391
+// XMSS-SHAKE_* sets above are SHAKE128 and appear nowhere in SP 800-208.
+// Rust-engine support is PARTIAL — it implements 0x11/0x12/0x13 only, so
+// 0x10/0x14/0x15 are C++-engine-only. Check before wiring a UI control.
+export const CKP_XMSS_SHAKE256_10_256 = 0x00000010 // C++ engine only
+export const CKP_XMSS_SHAKE256_16_256 = 0x00000011
+export const CKP_XMSS_SHAKE256_20_256 = 0x00000012
+export const CKP_XMSS_SHAKE256_10_192 = 0x00000013
+export const CKP_XMSS_SHAKE256_16_192 = 0x00000014 // C++ engine only
+export const CKP_XMSS_SHAKE256_20_192 = 0x00000015 // C++ engine only
 
 // XMSS-MT parameter set values (RFC 8391 §5.4 — OID-derived integers)
 export const CKP_XMSSMT_SHA2_20_2_256 = 0x00000001

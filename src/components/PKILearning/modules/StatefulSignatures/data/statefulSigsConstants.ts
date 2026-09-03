@@ -316,6 +316,34 @@ export const XMSS_PARAMETER_SETS: XMSSParameterSet[] = [
     hashFunction: 'SHAKE-128',
     variant: 'single-tree',
   },
+  // SP 800-208 Tables 14/16 SHAKE256 sets — the only SHAKE parameter sets NIST
+  // approves. Same n=32 / w=16 shape as the SHA-256 sets, so the sizes match
+  // those rows exactly. Only the heights the Rust engine implements are listed
+  // (it supports 0x11/0x12; XMSS-SHAKE256_10_256 = 0x10 is C++-engine-only).
+  {
+    id: 'xmss-shake256-16',
+    name: 'XMSS-SHAKE256_16_256',
+    treeHeight: 16,
+    signatureSize: 2692,
+    publicKeySize: 68,
+    privateKeySize: 2093,
+    maxSignatures: 65536,
+    securityLevel: 'NIST Level 1',
+    hashFunction: 'SHAKE256',
+    variant: 'single-tree',
+  },
+  {
+    id: 'xmss-shake256-20',
+    name: 'XMSS-SHAKE256_20_256',
+    treeHeight: 20,
+    signatureSize: 2820,
+    publicKeySize: 68,
+    privateKeySize: 2573,
+    maxSignatures: 1048576,
+    securityLevel: 'NIST Level 1',
+    hashFunction: 'SHAKE256',
+    variant: 'single-tree',
+  },
   {
     id: 'xmssmt-sha2-20-2',
     name: 'XMSS^MT-SHA2_20/2_256',

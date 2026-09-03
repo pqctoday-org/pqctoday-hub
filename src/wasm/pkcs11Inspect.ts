@@ -296,9 +296,40 @@ export const CKP_XMSS: Record<number, ConstEntry> = {
   0x7: { name: 'CKP_XMSS_SHAKE_10_256', description: 'Height 10 — 1024 signatures, SHAKE128' },
   0x8: { name: 'CKP_XMSS_SHAKE_16_256', description: 'Height 16 — 65536 signatures, SHAKE128' },
   0x9: { name: 'CKP_XMSS_SHAKE_20_256', description: 'Height 20 — ~1M signatures, SHAKE128' },
-  0xa: { name: 'CKP_XMSS_SHAKE_10_512', description: 'Height 10 — 1024 signatures, SHAKE128' },
-  0xb: { name: 'CKP_XMSS_SHAKE_16_512', description: 'Height 16 — 65536 signatures, SHAKE128' },
-  0xc: { name: 'CKP_XMSS_SHAKE_20_512', description: 'Height 20 — ~1M signatures, SHAKE128' },
+  // RFC 8391's "_512" SHAKE sets use SHAKE256 with n=64 — the name suffix is
+  // the digest size, NOT the XOF. Only the "_256" sets above (0x7-0x9) are
+  // SHAKE128. Mislabelling these as SHAKE128 is easy and was wrong here until
+  // 2026-09-03; confirmed against the RFC 8391 reference implementation, which
+  // maps 0xa-0xc to XMSS_SHAKE256 alongside SP 800-208's 0x10-0x15.
+  0xa: { name: 'CKP_XMSS_SHAKE_10_512', description: 'Height 10 — 1024 signatures, SHAKE256/512' },
+  0xb: { name: 'CKP_XMSS_SHAKE_16_512', description: 'Height 16 — 65536 signatures, SHAKE256/512' },
+  0xc: { name: 'CKP_XMSS_SHAKE_20_512', description: 'Height 20 — ~1M signatures, SHAKE256/512' },
+  // SP 800-208 Tables 14/16 — the SHAKE256 sets, the only SHAKE sets NIST
+  // approves (the SHAKE128 sets above are RFC 8391 only).
+  0x10: {
+    name: 'CKP_XMSS_SHAKE256_10_256',
+    description: 'Height 10 — 1024 signatures, SHAKE256 (SP 800-208)',
+  },
+  0x11: {
+    name: 'CKP_XMSS_SHAKE256_16_256',
+    description: 'Height 16 — 65536 signatures, SHAKE256 (SP 800-208)',
+  },
+  0x12: {
+    name: 'CKP_XMSS_SHAKE256_20_256',
+    description: 'Height 20 — ~1M signatures, SHAKE256 (SP 800-208)',
+  },
+  0x13: {
+    name: 'CKP_XMSS_SHAKE256_10_192',
+    description: 'Height 10 — 1024 signatures, SHAKE256/192 (SP 800-208)',
+  },
+  0x14: {
+    name: 'CKP_XMSS_SHAKE256_16_192',
+    description: 'Height 16 — 65536 signatures, SHAKE256/192 (SP 800-208)',
+  },
+  0x15: {
+    name: 'CKP_XMSS_SHAKE256_20_192',
+    description: 'Height 20 — ~1M signatures, SHAKE256/192 (SP 800-208)',
+  },
 }
 
 // CKP_ XMSS^MT parameter sets (RFC 8391 / SP 800-208) — multi-tree.
