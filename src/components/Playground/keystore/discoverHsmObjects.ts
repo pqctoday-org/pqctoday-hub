@@ -14,6 +14,7 @@ export const CKK_NAMES: Record<number, string> = {
   0x03: 'CKK_EC',
   0x10: 'CKK_GENERIC_SECRET',
   0x1f: 'CKK_AES',
+  0x33: 'CKK_CHACHA20',
   0x40: 'CKK_EC_EDWARDS',
   0x41: 'CKK_EC_MONTGOMERY',
   0x46: 'CKK_HSS',
@@ -27,11 +28,17 @@ export const CKK_NAMES: Record<number, string> = {
   0x80000002: 'CKK_PQCTODAY_CLASSIC_MCELIECE',
 }
 
-const CKK_TO_FAMILY: Record<number, HsmFamily> = {
+// Exported (not copied) — HsmKeyInspector.tsx re-exports these instead of
+// holding its own stale copy. A stale second copy is exactly how the
+// CKK_EC_MONTGOMERY fix above once existed here but not there: an X25519 key
+// classified correctly through this file's own callers, but still rendered
+// as a mislabeled AES key through any consumer of the other copy.
+export const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x00: 'rsa',
   0x03: 'ecdsa',
   0x10: 'hmac',
   0x1f: 'aes',
+  0x33: 'chacha20',
   0x40: 'eddsa',
   // 0x41 CKK_EC_MONTGOMERY (X25519/X448) is key agreement, not signing — it must
   // map to 'ecdh' to match what HsmKeyAgreementPanel registers directly. Without
@@ -49,7 +56,7 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x80000002: 'classic-mceliece',
 }
 
-const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
+export const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
   0x02: 'public',
   0x03: 'private',
   0x04: 'secret',

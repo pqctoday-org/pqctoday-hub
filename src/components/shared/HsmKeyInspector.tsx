@@ -9,7 +9,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Eye, Key as KeyIcon, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { HsmFamily, HsmKey, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
+import type { HsmKey, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { hsm_destroyObject, hsm_getKeyAttributes, type KeyAttributeSet } from '@/wasm/softhsm'
 import { formatBytes } from '@/components/Playground/keystore/keySizeUtils'
@@ -19,6 +19,7 @@ import {
 } from '@/components/Playground/keystore/resolveKeyHandle'
 import { keyIdentity } from '@/components/Playground/keystore/keyIdentity'
 import { estimateKeySize, KeyAttrModal, PurposeBadge } from '@/components/shared/hsmKeyAttrDisplay'
+import { CKK_TO_FAMILY, CKO_TO_ROLE } from '@/components/Playground/keystore/discoverHsmObjects'
 
 // ── Role styling ──────────────────────────────────────────────────────────────
 
@@ -32,28 +33,6 @@ const ROLE_COLORS: Record<HsmKeyRole, string> = {
   public: 'text-status-success',
   private: 'text-status-warning',
   secret: 'text-status-info',
-}
-
-// ── Auto-detect family/role from PKCS#11 attributes ──────────────────────────
-
-const CKK_TO_FAMILY: Record<number, HsmFamily> = {
-  0x00: 'rsa',
-  0x03: 'ecdsa',
-  0x10: 'hmac',
-  0x1f: 'aes',
-  0x40: 'eddsa',
-  0x49: 'ml-kem',
-  0x4a: 'ml-dsa',
-  0x4b: 'slh-dsa',
-  0x46: 'hss',
-  0x47: 'xmss',
-  0x48: 'xmss',
-}
-
-const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
-  0x02: 'public',
-  0x03: 'private',
-  0x04: 'secret',
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
