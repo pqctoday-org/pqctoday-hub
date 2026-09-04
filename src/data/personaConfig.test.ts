@@ -195,12 +195,21 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
    * Scanning every variant keeps the guard honest wherever the copy moves,
    * which is the point of a drift guard: it must follow the claim.
    */
-  it('researcher: the TCG V1.85 runner claim cites its real check count, on whichever board makes it', () => {
-    const bodies = PERSONA_JOURNEY_BOARD_VARIANTS.researcher.flatMap((v) =>
-      v.board.gridCards.map((c) => c.body)
+  it('any "N-check TCG V1.85 runner" claim, on any board, cites the real check count', () => {
+    // Relaxed 2026-09-03: no longer requires the claim to exist on
+    // researcher specifically. The 2026-09-03 accuracy review found it
+    // asserted on researcher/reproduce, whose own workshops (slh-dsa,
+    // entropy-test) never reach the TPM runner — that workshop belongs to
+    // architect/defend's `workshop_ids`, which itself has no board href
+    // pointing at it either (a separate, tracked gap). Removed the false
+    // claim from researcher/reproduce rather than relocate it to a board
+    // that also can't back it. This guard now just polices count accuracy
+    // WHEREVER (if anywhere) the claim is next made, across every role.
+    const allRoles = Object.values(PERSONA_JOURNEY_BOARD_VARIANTS)
+    const bodies = allRoles.flatMap((variants) =>
+      variants.flatMap((v) => v.board.gridCards.map((c) => c.body))
     )
     const claims = bodies.filter((b) => /TCG V1\.85 runner/.test(b))
-    expect(claims, 'no researcher board mentions the TCG V1.85 runner').not.toHaveLength(0)
     for (const body of claims) {
       const match = /(\d+)-check TCG V1\.85 runner/.exec(body)
       expect(match, `expected an "N-check TCG V1.85 runner" phrase in: ${body}`).not.toBeNull()
@@ -208,12 +217,20 @@ describe('PERSONA_JOURNEY_BOARD drift guards (HOME-PAGE-DYNAMIC-DATA-REMEDIATION
     }
   })
 
-  it("ops: the CSWP.39 §4.6 citation matches the mitigation zone's own reference", () => {
+  it("the mitigation zone's own §4.6 reference stays what it actually covers", () => {
+    // Relaxed 2026-09-03: no longer requires an ops board to cite it.
+    // ops/capacity's card used to pair a refresh-cycle-timing argument with
+    // "Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6" —
+    // fetched CSWP 39-upd1 §4.6 directly for the 2026-09-03 accuracy review
+    // and the word "sunset" does not appear in it; the section describes
+    // the crypto-gateway/bump-in-the-wire architecture only. Removed the
+    // fabricated 'Mandatory sunset date' item from
+    // CSWP39_ZONE_DETAILS.mitigation.contains[] (cswp39ZoneData.ts) and the
+    // board sentence that repeated it, rather than keep a citation whose
+    // only textual anchor was the false claim. The zone's own `cswpRef`
+    // still correctly points at §4.6 for what that section actually says.
     expect(CSWP39_ZONE_DETAILS.mitigation.cswpRef).toContain('§4.6')
-    const bodies = PERSONA_JOURNEY_BOARD_VARIANTS.ops.flatMap((v) =>
-      v.board.gridCards.map((c) => c.body)
-    )
-    expect(bodies.filter((b) => b.includes('CSWP.39 §4.6'))).not.toHaveLength(0)
+    expect(CSWP39_ZONE_DETAILS.mitigation.contains).not.toContain('Mandatory sunset date')
   })
 })
 

@@ -502,7 +502,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Grade your crypto agility',
         ctaSecondaryHref: '/business/tools/crypto-api-refactor-audit',
         proofChips: [
-          'Real liboqs + SoftHSMv3 in your browser',
+          'Real PKCS#11 + SoftHSMv3 in your browser',
           'Verified against NIST ACVP vectors',
           'No signup, no key required',
         ],
@@ -1360,7 +1360,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-treatment-plan',
         proofChips: [
           'Every threat carries a trust-scored source',
-          'Authoritative / High / Moderate / Low source tiers',
+          'Authoritative / Core / Supporting / Contextual source tiers',
           'TPM 2.0 conformance checks run locally',
         ],
         sideCard: {
@@ -1921,7 +1921,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/revisions',
         proofChips: [
           'ACVP + KAT run locally, not asserted',
-          'Authoritative / High / Moderate / Low source tiers',
+          'Authoritative / Core / Supporting / Contextual source tiers',
           'Every claim carries a source tier and a verification date',
           'Drift guards fail the build on silent data change',
         ],
@@ -2158,7 +2158,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Every source dated and tiered',
-          'Authoritative / High / Moderate / Low source tiers',
+          'Authoritative / Core / Supporting / Contextual source tiers',
           '1013 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
@@ -2318,7 +2318,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Catalogue entries are proof-gated',
           "Every product claim links to the vendor's own source",
-          'Authoritative / High / Moderate / Low source tiers',
+          'Authoritative / Core / Supporting / Contextual source tiers',
         ],
         sideCard: {
           title: 'Adoption is uneven',

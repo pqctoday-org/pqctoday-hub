@@ -92,7 +92,7 @@ developer,pilot,cta_primary_label,,Run ML-KEM + X25519 now,active,,,2026-08-02,2
 developer,pilot,cta_primary_href,,/playground/hybrid-encrypt,active,,,2026-08-02,2026-08-02 priority ruling: curious takes the TLS simulator (the clearest 'watch it break' tool); developer keeps priority on developer-specific resources and moves to the hybrid KEM pipeline.
 developer,pilot,cta_secondary_label,,Grade your crypto agility,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 developer,pilot,cta_secondary_href,,/business/tools/crypto-api-refactor-audit,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
-developer,pilot,proof_chip,0,Real liboqs + SoftHSMv3 in your browser,active,,,2026-08-02,
+developer,pilot,proof_chip,0,Real PKCS#11 + SoftHSMv3 in your browser,active,,,2026-09-03,2026-09-03: was 'Real liboqs + SoftHSMv3 in your browser' — HybridEncryptionDemo.tsx's ML-KEM keygen/encapsulation/decapsulation all route through hsm_* PKCS#11 calls (SoftHSMv3); no liboqs import anywhere in the workshop.
 developer,pilot,proof_chip,1,Verified against NIST ACVP vectors,active,,,2026-08-02,
 developer,pilot,proof_chip,2,"No signup, no key required",active,,,2026-08-02,
 developer,pilot,side_card_title,,What this breaks in your code,active,,,2026-08-02,
@@ -175,7 +175,7 @@ researcher,provenance,cta_primary_href,,/library,active,,,2026-08-02,"Best-fit p
 researcher,provenance,cta_secondary_label,,Read the revision log,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,provenance,cta_secondary_href,,/revisions,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,provenance,proof_chip,0,"ACVP + KAT run locally, not asserted",active,,,2026-08-02,
-researcher,provenance,proof_chip,1,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-02,
+researcher,provenance,proof_chip,1,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual (same fix already applied to executive/evidence).
 researcher,provenance,proof_chip,2,Every claim carries a source tier and a verification date,active,,,2026-09-03,2026-09-03: was 'Counter-claims dataset · CVE snapshots' — the counter-claims dataset has one row and no consumer component; dropped rather than left as a dead promise.
 researcher,provenance,proof_chip,3,Drift guards fail the build on silent data change,active,,,2026-08-02,
 researcher,provenance,side_card_title,,Changed in your fields,active,,,2026-08-02,"ResearcherFieldWatchCard renders the ROWS live from the library corpus, but takes this title and the punchline/footnote/empty-state below from here. Was 'Changed in your fields since your last visit' until 2026-08-02: the card compared document publication dates against browsing time, so every field read 0 forever."
@@ -545,7 +545,7 @@ researcher,threatmodel,cta_primary_href,,/business/tools/crqc-scenario,active,,,
 researcher,threatmodel,cta_secondary_label,,Read the threat economics,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,cta_secondary_href,,/threats,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,proof_chip,0,Every source dated and tiered,active,,,2026-09-03,2026-09-03: was 'Counter-claims dataset · CVE snapshots' — see provenance's note.
-researcher,threatmodel,proof_chip,1,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-02,
+researcher,threatmodel,proof_chip,1,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual (same fix already applied to executive/evidence).
 researcher,threatmodel,proof_chip,2,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: see executive/evidence's proof_chip,0 note."
 researcher,threatmodel,proof_chip,3,Drift guards fail the build on silent data change,active,,,2026-08-02,
 researcher,threatmodel,side_card_title,,The CRQC consensus,active,,,2026-08-02,
@@ -919,7 +919,7 @@ architect,defend,cta_primary_href,,/threats,active,,,2026-08-09,
 architect,defend,cta_secondary_label,,Build the treatment plan,active,,,2026-08-09,
 architect,defend,cta_secondary_href,,/business/tools/risk-treatment-plan,active,,,2026-08-09,
 architect,defend,proof_chip,0,Every threat carries a trust-scored source,active,,,2026-09-03,"2026-09-03: was 'Counter-claims dataset · CVE snapshots' — the counter-claims dataset has one row and no rendering component; CVE snapshots are real (VendorRisk, crypto-vulnerability-watch) but unreachable from this board's own destinations (/threats, risk-treatment-plan). Reworded to what /threats itself demonstrates."
-architect,defend,proof_chip,1,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-09,
+architect,defend,proof_chip,1,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual (same fix already applied to executive/evidence).
 architect,defend,proof_chip,2,TPM 2.0 conformance checks run locally,active,,,2026-08-09,
 architect,defend,side_card_title,,What a reviewer will push on,active,,,2026-08-09,
 architect,defend,side_card_tone,,warn,active,,,2026-08-09,
@@ -1125,7 +1125,7 @@ researcher,field,cta_secondary_label,,Map the supply chain,active,,,2026-08-09,
 researcher,field,cta_secondary_href,,/business/tools/supply-chain-matrix,active,,,2026-08-09,
 researcher,field,proof_chip,0,Catalogue entries are proof-gated,active,,,2026-08-09,
 researcher,field,proof_chip,1,Every product claim links to the vendor's own source,active,,,2026-08-09,
-researcher,field,proof_chip,2,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-09,
+researcher,field,proof_chip,2,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual (same fix already applied to executive/evidence).
 researcher,field,side_card_title,,Adoption is uneven,active,,,2026-08-09,
 researcher,field,side_card_tone,,info,active,,,2026-08-09,
 researcher,field,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
