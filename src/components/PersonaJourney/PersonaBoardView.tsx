@@ -370,6 +370,7 @@ export function PersonaBoardView({
           </h2>
           <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
             {active.workshopIds.map((id) => {
+              // eslint-disable-next-line security/detect-object-injection -- id comes from active.workshopIds, CSV-derived repo data, not user input
               const name = WORKSHOP_NAME_BY_ID[id]
               if (!name) return null
               return (

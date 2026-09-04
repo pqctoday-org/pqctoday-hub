@@ -1757,8 +1757,17 @@ export const CRQC_WINDOW_ROW = `${CRQC.qdayLow}–${CRQC.qdayHigh}`
  * per NSM-10, is 2035 (`CNSA_2_0.fullEnforcement`). The two are different
  * claims and this token exists so a board can never conflate them again.
  */
-export function cnsa2Year(field: keyof typeof CNSA_2_0): string {
-  return String(CNSA_2_0[field])
+export function cnsa2Year(field: string): string {
+  // Runtime-checked, not just compile-time typed: the generator calls this
+  // through an untyped SSR-loaded module (PersonaConfigModule = Record<string,
+  // any>), so a typo'd field name in a CSV token — {cnsa2_year:networkingRequird}
+  // — would otherwise silently resolve to `undefined` on the live board
+  // instead of failing the generate step, the one place "the generator is the
+  // validator" guarantee this whole token system relies on actually holds.
+  if (!(field in CNSA_2_0)) {
+    throw new Error(`cnsa2Year: "${field}" is not a CNSA_2_0 field`)
+  }
+  return String(CNSA_2_0[field as keyof typeof CNSA_2_0])
 }
 
 /**
