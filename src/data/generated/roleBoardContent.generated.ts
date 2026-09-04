@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * GENERATED — do not edit by hand.
- * Source: src/data/role_board_content_08232026.csv
+ * Source: src/data/role_board_content_09032026.csv
  * Regenerate: npm run generate:role-board-content
  */
 import type { PersonaJourneyBoard, RoleBoardVariant } from '../personaConfig'
@@ -23,7 +23,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · the decision that unlocks budget and names an owner',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Answer the board in an afternoon, not a quarter.',
@@ -35,7 +35,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every regulatory date links to its source',
           '1013 sources, trust-tiered',
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
           'How we verify',
         ],
         sideCard: {
@@ -55,9 +55,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Your own answers, not a sample estate',
         gridCards: [
           {
-            title: 'Six questions, one risk position',
-            body: 'The assessment turns 8 answers about your estate into a defensible risk position, with the regulatory dates that already bind you attached to it.',
-            href: '/assess',
+            title: 'Not sure this is the board you need?',
+            body: 'Every topic on this site, organised for someone who has not decided where to start.',
+            href: '/explore',
           },
           {
             title: 'A drafted mandate',
@@ -101,7 +101,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · the dates you did not choose',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'The dates were set without you.',
@@ -112,7 +112,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/threats',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
           'The CRQC estimate carries its dissent',
         ],
         sideCard: {
@@ -120,11 +120,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'CNSA 2.0 full transition', value: '2033' },
+            { label: 'CNSA 2.0 exclusive use (web, cloud, OS)', value: '2033' },
             { label: 'CRQC consensus', value: '2033 (2030–2036)' },
             { label: 'Your migration takes', value: '5 yrs' },
+            { label: 'All national-security systems', value: '2035' },
           ],
-          punchline: 'Two of these three are not yours to move.',
+          punchline: 'Three of these four are not yours to move.',
           footnote:
             'Mandate dates are read from the published timeline; the CRQC window is the consensus estimate with its range shown, not a point forecast.',
         },
@@ -177,7 +178,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · risk position · the dates that already bind you',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Know what you are actually exposed to.',
@@ -188,7 +189,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
           '1013 sources, trust-tiered',
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
         ],
@@ -197,7 +198,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Questions you answer', value: '8' },
+            { label: 'Questions you answer', value: '6' },
             { label: 'Report sections generated', value: '17' },
             { label: 'Governance artifacts attached', value: 'four' },
           ],
@@ -206,7 +207,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             'Illustrative until you answer the six questions — the score, the sections and the artifacts are generated from your own answers, not from a sample estate.',
         },
         gridTitle: 'What the score gives you',
-        gridSub: 'Generated from your 8 answers',
+        gridSub: 'Generated from your six answers',
         gridCards: [
           {
             title: 'A finished report, before you start',
@@ -254,18 +255,18 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · sequenced plan · owners · KPIs',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Show a plan your regulator will accept.',
-        sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same eight answers, so your plan and your risk position cannot quietly disagree.',
+        sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same six answers, so your plan and your risk position cannot quietly disagree.',
         ctaPrimary: 'Build the roadmap',
         ctaPrimaryHref: '/business/tools/roadmap-builder',
         ctaSecondary: 'Check what already binds you',
         ctaSecondaryHref: '/compliance',
         proofChips: [
           'Deadlines derived from the published timeline',
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
         ],
@@ -331,7 +332,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · the question your CFO will ask',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Where did these numbers come from?',
@@ -351,12 +352,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Source tier', value: 'Authoritative to Low, always shown' },
-            { label: 'Verification date', value: 'on every record' },
+            {
+              label: 'Verification date',
+              value: 'on every timeline row, and on 9 of 10 library records',
+            },
             { label: 'Retractions', value: 'logged, never deleted' },
           ],
           punchline: 'A claim without a date is an opinion.',
           footnote:
-            'Tiers and verification dates come from the trusted-sources registry every record on this site is joined against.',
+            'Tiers and verification dates come from the trusted-sources registry; every timeline record and 87% of library records are joined to it.',
         },
         gridTitle: 'Where to check us',
         gridSub: 'Provenance you can hand to an auditor',
@@ -409,11 +413,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       board: {
         heroEyebrow: 'Executive / GRC · due diligence · nothing taken on trust',
         heroBadge: {
-          text: 'Default: Americas · Finance & Banking — scenario shown: EU',
+          text: 'Americas · Finance & Banking',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'See the whole programme before you fund it.',
-        sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. Eleven minutes to know what you are being asked to sign off on.',
+        sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. One sitting to know what you are being asked to sign off on.',
         ctaPrimary: 'Play the executive walkthrough',
         ctaPrimaryHref: '/simulation?run=exec',
         ctaSecondary: 'Open the Command Center',
@@ -424,12 +428,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
-          title: 'What eleven minutes shows you',
+          title: 'What the walkthrough shows you',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Phases played', value: 'nine' },
-            { label: 'Decisions you make', value: 'one at each gate' },
+            { label: 'Gates shown', value: 'one per phase, worded from the framework' },
             { label: 'What a dry run costs', value: 'nothing' },
           ],
           punchline: 'A dry run is cheaper than a steering committee.',
@@ -447,12 +451,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The command line, in a browser',
             body: 'The same OpenSSL commands your engineers would run, with nothing to install.',
-            href: '/explore',
+            href: '/playground/openssl-studio',
           },
           {
             title: 'Nobody has to take our word for it',
             body: 'Every number on this board is either a published figure or a run you can repeat yourself. That is the point of the walkthrough, not the polish.',
-            href: '/playground/openssl-studio',
+            href: '/simulation?run=exec',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -567,7 +571,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Pick the parameter set on purpose.',
         sub: 'ML-KEM-768 or 1024 — 512 exists but almost nobody should pick it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
         ctaPrimary: 'Compare the algorithms',
-        ctaPrimaryHref: '/algorithms?tab=detailed&mode=compare',
+        ctaPrimaryHref:
+          '/algorithms?tab=detailed&mode=compare&compare=ML-DSA-44,ML-DSA-65,ML-DSA-87',
         ctaSecondary: 'Negotiate the mandatory suite',
         ctaSecondaryHref: '/business/tools/mti-negotiator',
         proofChips: [
@@ -871,11 +876,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Someone already decided your deadline.',
         sub: 'Not every PQC “requirement” is one. Here is which standards are final, which mandates carry dates that reach your service, and what you would actually have to replace.',
         ctaPrimary: 'See what already binds you',
-        ctaPrimaryHref: '/compliance?tab=technical',
+        ctaPrimaryHref: '/compliance?tab=compliance',
         ctaSecondary: 'Work the compliance checklist',
         ctaSecondaryHref: '/business/tools/compliance-checklist',
         proofChips: [
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
           'Draft and final are labelled, never merged',
           'Every requirement links to its source',
         ],
@@ -1040,7 +1045,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Layers in the catalogue', value: 'four' },
+            { label: "Layers this role's Migrate view opens on", value: 'four' },
             { label: 'Agility tracked per', value: 'asset, not per algorithm' },
             { label: 'Ownership recorded via', value: 'RACI' },
           ],
@@ -1266,14 +1271,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
         headline: 'The order is the architecture.',
-        sub: 'Certificates before the services that present them, key stores before the certificates, and roots before any of it. Sequence it against real refresh windows rather than against the calendar year.',
+        sub: 'Two tracks, not one queue. Key exchange first where the traffic is exposed, signatures and PKI on their own track, and data at rest last and longest. Sequence against real refresh windows, not the calendar year.',
         ctaPrimary: 'Sequence the catalogue',
         ctaPrimaryHref: '/migrate?tab=plan',
         ctaSecondary: 'Decide the data-at-rest strategy',
         ctaSecondaryHref: '/business/tools/data-at-rest-strategy',
         proofChips: [
           'Catalogue entries are proof-gated',
-          'Deadlines derived from the published timeline',
+          'Sequenced against CNSA 2.0 deadline years',
           'Organised around the NIST CSWP.39 zones',
         ],
         sideCard: {
@@ -1281,8 +1286,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Roots and issuing CAs', value: 'before anything they sign' },
-            { label: 'Key stores', value: 'before the keys grow' },
+            { label: 'Track A — key exchange', value: 'external-facing traffic first' },
+            { label: 'Track B — signatures & PKI', value: 'runs in parallel, gated on your CA' },
             { label: 'Data at rest', value: 'last, and longest' },
           ],
           punchline: 'Sequencing errors are the expensive kind — you pay twice.',
@@ -1304,7 +1309,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Sequencing errors are the expensive kind',
-            body: 'Move a certificate before the key store behind it and you pay for the same work twice. The order is not a preference, it is the dependency graph.',
+            body: 'The two tracks are not a preference. Track A stops new harvest-now-decrypt-later exposure the day it lands; Track B cannot outrun your CA and your vendors.',
             href: '/timeline',
           },
         ] as [
@@ -1351,7 +1356,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the treatment plan',
         ctaSecondaryHref: '/business/tools/risk-treatment-plan',
         proofChips: [
-          'Counter-claims dataset · CVE snapshots',
+          'Every threat carries a trust-scored source',
           'Authoritative / High / Moderate / Low source tiers',
           'TPM 2.0 conformance checks run locally',
         ],
@@ -1455,9 +1460,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'A sizing verdict, not a guess',
         gridCards: [
           {
-            title: 'Your HSM fleet, sized',
-            body: 'Ten enterprise use cases compared classical against PQC, with per-algorithm tuning — storage, bandwidth and CPU per workflow.',
-            href: '/playground/hsm-capacity',
+            title: 'The people behind the PKCS#11 stack',
+            body: 'SoftHSMv3 and the open-source engines a fleet like this may already run on are maintained by named people, not a vendor black box.',
+            href: '/leaders',
           },
           {
             title: 'Sizing turned into a schedule',
@@ -1516,7 +1521,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Your own answers, not a sample estate',
           'Organised around the NIST CSWP.39 zones',
-          'Regulatory data verified 16 Jul 2026',
+          'Regulatory data verified 29 Aug 2026',
         ],
         sideCard: {
           title: 'What the score is built on',
@@ -1545,8 +1550,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/explore',
           },
           {
-            title: 'A rough number beats no number',
-            body: 'Three minutes of your own answers is more defensible than a quarter spent waiting for a perfect inventory that nobody has ever finished.',
+            title: 'Your score is only as current as the data behind it',
+            body: 'The frameworks and deadlines your score is measured against get corrected as sources update. See what changed, and when.',
+            href: '/revisions',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1624,8 +1630,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'A date means nothing without enrollment',
-            body: 'If a supplier cannot enrol a PQC certificate, their roadmap date is a press release. This board lets you check both.',
-            href: '/patents',
+            body: 'A roadmap date is a claim. An EST or CMP enrollment that mints a real ML-DSA certificate is a demonstration.',
+            href: '/playground/pki-enrollment',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1704,7 +1710,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Finding the config line is the work',
-            body: 'The change itself is one named group in one protocol version. Knowing which one, on which build, across which fleet, is the part that takes a quarter.',
+            body: 'The change itself is one named group in one protocol version. Try the exact invocation yourself before you put it in a change ticket.',
+            href: '/playground/openssl-studio',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1750,8 +1757,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Write the playbook',
         ctaSecondaryHref: '/business/tools/deployment-playbook',
         proofChips: [
-          'Real TLS 1.3 handshake, in your browser',
-          'Hybrid groups X25519MLKEM768 and friends',
+          'Real IKEv2 handshake — strongSwan in WASM',
+          'ML-KEM key exchange, IKE methods 35/36/37',
           'Log exportable',
         ],
         sideCard: {
@@ -1759,7 +1766,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Protocols exercised', value: 'TLS 1.3, IPsec, SSH' },
+            { label: 'Protocols exercised', value: 'IPsec (IKEv2), with SSH one board over' },
             { label: 'What fails first', value: 'MTU and fragmentation' },
             { label: 'Rollback', value: 'classical suites stay negotiable' },
           ],
@@ -1783,7 +1790,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'Two protocols, not one',
             body: 'The cutover rarely fails in the protocol you rehearsed — which is why this board carries both.',
-            href: '/revisions',
+            href: '/learn/vpn-ssh-pqc',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1826,10 +1833,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a closure report you can attach to the change ticket.',
         ctaPrimary: 'See a finished closure report',
         ctaPrimaryHref: '/report?example=1',
-        ctaSecondary: 'Audit your management tooling',
-        ctaSecondaryHref: '/business/tools/management-tools-audit',
+        ctaSecondary: 'Record the closure evidence',
+        ctaSecondaryHref: '/business/tools/migration-verification',
         proofChips: [
-          'Real TLS 1.3 and SSH handshakes, in your browser',
+          'Real SSH handshake — OpenSSH 10.x in WASM',
           'Log exportable',
           'Every claim links to its own source',
         ],
@@ -1855,14 +1862,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/simulation?phase=verify-close',
           },
           {
-            title: 'The commands behind the check',
-            body: 'The same OpenSSL invocations, running in a browser tab.',
-            href: '/playground/openssl-studio',
+            title: 'The SSH handshake behind the check',
+            body: 'mlkem768x25519-sha256 key exchange and ssh-mldsa-65 host auth, negotiated in a browser tab.',
+            href: '/playground/pqc-ssh-sim',
           },
           {
             title: 'If monitoring cannot see a downgrade, you did not migrate',
             body: 'A cutover you cannot observe is a cutover you cannot defend. Closure is the evidence, not the change window.',
-            href: '/leaders',
+            href: '/learn/soc-implementation-pqc',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1904,7 +1911,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Check our work.',
-        sub: 'Every claim on this site carries a source tier, a verification date, and where one exists, the strongest published argument against it. Run the known-answer tests yourself in this tab.',
+        sub: 'Every claim on this site carries a source tier and a verification date, and the corrections are public.',
         ctaPrimary: 'Open the evidence workspace',
         ctaPrimaryHref: '/library',
         ctaSecondary: 'Read the revision log',
@@ -1912,7 +1919,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'ACVP + KAT run locally, not asserted',
           'Authoritative / High / Moderate / Low source tiers',
-          'Counter-claims dataset · CVE snapshots',
+          'Every claim carries a source tier and a verification date',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
@@ -1930,7 +1937,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'The corpus, unfiltered',
-            body: 'Source tier, verification date and the counter-claim where one is on file. Nothing is filtered out for this role — the corpus arrives whole.',
+            body: 'Source tier and verification date, on every claim. Nothing is filtered out for this role — the corpus arrives whole.',
             href: '/library',
           },
           {
@@ -1988,7 +1995,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every status links to its NIST publication',
           'Draft and final are labelled, never merged',
-          'Counter-claims dataset · CVE snapshots',
+          'Every claim carries a source tier and a verification date',
         ],
         sideCard: {
           title: 'Status is not a binary',
@@ -2060,14 +2067,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Run the tests yourself.',
-        sub: 'ACVP vectors, known-answer tests and the 25-check TCG V1.85 runner all execute locally in this tab. Export the log. Do not take our word for any of it.',
+        sub: 'Known-answer tests against pinned NIST ACVP vectors and an SP 800-90B health-test suite, each in the tab that owns it. Copy the log.',
         ctaPrimary: 'Run SLH-DSA sign and verify',
         ctaPrimaryHref: '/playground/slh-dsa',
         ctaSecondary: 'Run the SP 800-90B entropy suite',
         ctaSecondaryHref: '/playground/entropy-test',
         proofChips: [
           'ACVP + KAT run locally, not asserted',
-          'Real liboqs + SoftHSMv3 compiled to WASM',
+          'Real SoftHSMv3, compiled to WASM',
           'Log exportable',
           'Drift guards fail the build on silent data change',
         ],
@@ -2082,7 +2089,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'Nothing here asks you to trust it.',
           footnote:
-            'The named workshops run real implementations locally — liboqs and SoftHSMv3 compiled to WebAssembly — not recorded output replayed back at you.',
+            "The named workshops run real implementations locally — SoftHSMv3 compiled to WebAssembly for SLH-DSA, your browser's own RNG for entropy — not recorded output replayed back at you.",
         },
         gridTitle: 'What the workspace gives you',
         gridSub: 'Instruments, not assertions',
@@ -2098,9 +2105,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/entropy-test',
           },
           {
-            title: 'Nothing here is recorded output',
-            body: 'Both workshops run real implementations compiled to WebAssembly, alongside the 25-check TCG V1.85 runner. The log is exportable, so the claim is yours to check.',
-            href: '/assess?mode=comprehensive',
+            title: 'Where the vectors themselves run',
+            body: 'Pinned NIST ACVP vectors, run live in this tab — the same standard both workshops above draw their own known-answer tests from.',
+            href: '/algorithms?tab=validation&section=kat',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2134,19 +2141,19 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: [],
       businessToolIds: ['crqc-scenario'],
       board: {
-        heroEyebrow: 'Researcher / Academic · the estimate, its sources, and its objections',
+        heroEyebrow: 'Researcher / Academic · the estimate and its sources',
         heroBadge: {
           text: 'All regions · unfiltered',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Argue with the threat model.',
-        sub: 'CRQC arrival is a distribution, not a date. The consensus window, every source behind it, and the strongest published objections are all on file and all dated.',
+        sub: 'CRQC arrival is a distribution, not a date. The consensus window and every source behind it are on file and dated.',
         ctaPrimary: 'Plan a CRQC scenario',
         ctaPrimaryHref: '/business/tools/crqc-scenario',
         ctaSecondary: 'Read the threat economics',
         ctaSecondaryHref: '/threats',
         proofChips: [
-          'Counter-claims dataset · CVE snapshots',
+          'Every source dated and tiered',
           'Authoritative / High / Moderate / Low source tiers',
           '1013 sources, trust-tiered',
           'Drift guards fail the build on silent data change',
@@ -2179,7 +2186,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'An estimate, not a date',
-            body: 'The consensus is a median across tracked sources, each with its own date, tier and link — and the published objections are on file too.',
+            body: 'The consensus is a median across tracked sources, each with its own date, tier and link.',
             href: '/patents',
           },
         ] as [
@@ -2220,14 +2227,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Do not stop at our buttons.',
-        sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — same vectors, same primitives, your own invocation. Nothing to install, and the transcript exports.',
+        sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — the same primitives, on a real prompt, your own invocation. Nothing to install.',
         ctaPrimary: 'Open OpenSSL Studio',
         ctaPrimaryHref: '/playground/openssl-studio',
         ctaSecondary: 'See what a generated report contains',
         ctaSecondaryHref: '/report?example=1',
         proofChips: [
-          'ACVP + KAT run locally, not asserted',
-          'Real liboqs + SoftHSMv3 compiled to WASM',
+          "OpenSSL 3.6.3's own primitives, not asserted",
+          'Real PKCS#11 and Rust HSM, compiled to WASM',
           'Log exportable',
           'Drift guards fail the build on silent data change',
         ],
@@ -2236,7 +2243,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'accent' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Vectors', value: 'NIST ACVP, unmodified' },
+            { label: 'Primitives', value: "OpenSSL 3.6.3's own ML-KEM and ML-DSA" },
             { label: 'Invocation', value: 'yours, not ours' },
             { label: 'Output', value: 'exportable, diffable' },
           ],
@@ -2258,8 +2265,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/explore',
           },
           {
-            title: 'If it only reproduces behind a button, it does not reproduce',
-            body: 'An in-tab lab is a convenience, not a result. The claim only holds once you have run it with your own invocation and kept the log.',
+            title: 'How this site scores a position',
+            body: 'The same question model this site runs on itself, in full — read the scoring logic, not just the score it produces.',
+            href: '/assess?mode=comprehensive',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2411,7 +2419,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What waiting actually costs',
-            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them. The console itself opens after your first assessment — it works from your own answers.',
+            body: 'The Cost of Inaction Analyzer models the discounted cost of delaying — breach exposure and harvest-now-decrypt-later residual among them. It opens with worked defaults, and gets sharper once you have answered the assessment.',
             href: '/business/tools/cost-of-inaction',
           },
           {
@@ -2488,7 +2496,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'What it would actually cost',
-            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss. The console itself opens after your first assessment — it works from your own answers.',
+            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss. It opens with worked defaults, and gets sharper once you have answered the assessment.',
             href: '/business/tools/breach-simulator',
           },
           {
@@ -2716,9 +2724,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/compliance?tab=foryou',
           },
           {
-            title: 'Who is building it, not just talking',
-            body: 'Patent filings across the field. Research only, not legal advice.',
-            href: '/patents',
+            title: 'Who is actually doing it, not just talking',
+            body: 'A running count of which vendors have actually shipped, drawn from the same proof-gated catalogue as everything else on this site — not their press releases.',
+            href: '/migrate',
           },
           {
             title: 'The fix exists. Fitting it everywhere is the slow part',
@@ -2753,15 +2761,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: [],
       businessToolIds: ['initial-scoping'],
       board: {
-        heroEyebrow: 'No background needed · about 11 minutes · nothing to install',
+        heroEyebrow: 'No background needed · a guided run · nothing to install',
         heroBadge: {
           text: 'Americas · unfiltered',
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Watch someone actually do it.',
-        sub: 'Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Eleven minutes, and you will know why people say this takes years.',
+        sub: 'Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Watch it once and you will know why people say this takes years.',
         ctaPrimary: 'Watch a migration happen',
-        ctaPrimaryHref: '/simulation?run=climb',
+        ctaPrimaryHref: '/simulation?run=exec',
         ctaSecondary: 'See where you would start',
         ctaSecondaryHref: '/business/tools/initial-scoping',
         proofChips: [
@@ -2792,8 +2800,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'The tools people use to do it',
-            body: 'The working artifacts a real migration produces. The console itself opens after your first assessment — it works from your own answers.',
-            href: '/business',
+            body: 'Thirty-seven working tools, one per job in a real migration — open any of them and see what it actually produces.',
+            href: '/business/tools',
           },
           {
             title: 'The hard problem is inventory, not cryptography',

@@ -270,6 +270,20 @@ const RESOLVERS: Record<string, Resolver> = {
     requireArgs('exec_mosca_footnote', args, 0)
     return mod.EXEC_MOSCA_FOOTNOTE
   },
+  // Added 2026-09-03 (home-scenarios remediation) — see personaConfig.ts for
+  // each export's own rationale.
+  cnsa2_year: (mod, args) => {
+    requireArgs('cnsa2_year', args, 1)
+    return mod.cnsa2Year(args[0])
+  },
+  crqc_window_row: (mod, args) => {
+    requireArgs('crqc_window_row', args, 0)
+    return mod.CRQC_WINDOW_ROW
+  },
+  report_sections_visible: (mod, args) => {
+    requireArgs('report_sections_visible', args, 1)
+    return String(mod.reportSectionsVisibleCount(args[0]))
+  },
 }
 
 export const KNOWN_TOKEN_NAMES: readonly string[] = Object.keys(RESOLVERS)
