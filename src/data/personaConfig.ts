@@ -591,6 +591,23 @@ export const ALWAYS_VISIBLE_PATHS = [
 ]
 
 /**
+ * Whether `pathname` is covered by one of `visiblePaths` — the path itself,
+ * or any sub-path of it ('/playground/tls-simulator' is covered by
+ * '/playground'). Added 2026-09-03: `ALWAYS_VISIBLE_PATHS` and
+ * `PERSONA_NAV_PATHS` list top-level routes only, but a visitor reaches
+ * concrete sub-paths ('/learn/tls-basics', '/playground/tls-simulator')
+ * from real links, not just the bare parent. A plain `.includes(pathname)`
+ * check treats every sub-path as unlisted, which is what let
+ * MainLayout's curious preview banner fire on pages the rail already
+ * offers that persona — see its own call site for the specific bug.
+ * '/' is special-cased to match only itself, or every path would count as
+ * covered by it.
+ */
+export function isPersonaVisiblePath(pathname: string, visiblePaths: readonly string[]): boolean {
+  return visiblePaths.some((p) => pathname === p || (p !== '/' && pathname.startsWith(`${p}/`)))
+}
+
+/**
  * Maps AVAILABLE_INDUSTRIES names (used in Assessment + store) to the
  * exact industry strings used in the threats CSV data.
  * Empty array = no matching threat category.

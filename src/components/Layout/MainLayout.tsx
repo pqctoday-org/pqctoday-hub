@@ -101,6 +101,7 @@ import { useHistoryStore } from '../../store/useHistoryStore'
 import {
   PERSONA_NAV_PATHS,
   ALWAYS_VISIBLE_PATHS,
+  isPersonaVisiblePath,
   NAV_PATH_LABELS,
   PERSONA_MARKED_NAV_PATHS,
   PERSONA_TIMELINE_REGION,
@@ -1435,12 +1436,22 @@ export const MainLayout = () => {
                 {/* Migration planning workflow progress banner */}
                 <WorkflowBanner />
 
-                {/* Preview mode banner — curious persona browsing advanced routes */}
+                {/* Preview mode banner — curious persona browsing advanced routes.
+                    Prefix-matched, not exact (2026-09-03): ALWAYS_VISIBLE_PATHS and
+                    PERSONA_NAV_PATHS list top-level routes like '/playground' or
+                    '/learn', but a visitor following a specific home-board CTA lands
+                    on a sub-path ('/playground/tls-simulator', '/learn/tls-basics').
+                    Exact-match treated every one of those as "not nav-listed" and
+                    showed a locked-preview banner over a page the rail already
+                    offers this persona — the opposite of what "none of it locked"
+                    promises on the boards that link there. 'suggestion', not the
+                    default 'gated': nothing this reaches is actually locked for
+                    curious, so the banner should read as an offer, not a wall. */}
                 {selectedPersona === 'curious' &&
                   viewAccess === 'preview' &&
-                  !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
-                  !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && (
-                    <PreviewBanner />
+                  !isPersonaVisiblePath(location.pathname, ALWAYS_VISIBLE_PATHS) &&
+                  !isPersonaVisiblePath(location.pathname, PERSONA_NAV_PATHS.curious ?? []) && (
+                    <PreviewBanner variant="suggestion" />
                   )}
 
                 {/* Suspense boundary for route-level code splitting */}
