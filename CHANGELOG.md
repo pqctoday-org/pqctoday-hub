@@ -29,6 +29,23 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.77.0] - 2026-09-03
+
+A global accuracy and consistency pass across all six role-based home boards, closing out the 2026-09-03 review with over 50 individual fixes plus two new pieces of user-visible behavior.
+
+### Fixed
+
+- **Dozens of factual and overstated claims corrected across all six role-home boards** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: wrong CNSA 2.0 transition-year framing, source-tier names that don't exist on the site (real tiers are Authoritative/Core/Supporting/Contextual), a fabricated "mandatory sunset date" requirement attributed to NIST CSWP 39, capability claims like "every status links to its NIST publication" or "liboqs-powered" that weren't true for every board that made them, and a non-existent assessment gate shown on three boards.
+- **Dead-end and mismatched links on role-home boards now go where their own text says they go** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: proof chips and argument cards across every role were re-pointed at the destination they actually describe — including curious's "watch it break" card, which now links the site's real connection-failure demo instead of repeating a successful-handshake demo.
+- **A role-home board's hero badge now shows your actual selected region and industry** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: it previously showed a hardcoded default on desktop regardless of what you'd chosen, while mobile already showed the real selection.
+- **The curious persona's "preview locked" notice no longer appears on pages it already has access to** [view:/] [view:/playground] [view:/learn] [persona:curious]: following a home-board link into a specific Playground or Learn page no longer falsely tells you the content is locked behind a role switch.
+- **The example report now renders under your own role** [view:/] [persona:executive] [persona:ops]: "See a finished example report" (executive) and "See a finished closure report" (ops) previously always showed the simplified public/curious version regardless of who clicked; they now show the fuller report your own role actually produces.
+
+### Added
+
+- **Role-home boards that reference a specific workshop now show a real link to it** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: a "Related on this site" chip appears wherever a board names a workshop, instead of that reference being invisible, unclickable metadata.
+- **Chip and CTA clicks on role-home boards are now tracked** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: which scenario chip you pick and which button you follow off a board now feed analytics, closing a usage-visibility gap that only ever saw the page view itself.
+
 ## [4.76.0] - 2026-09-02
 
 A same-day follow-up to the PKCS#11/KMIP workshop redesign: a live production bug fixed, all five vendored HSM engines refreshed, four new real known-answer-test templates, and a handful of small workshop fixes.
