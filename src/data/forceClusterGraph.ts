@@ -30,6 +30,7 @@ import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { patentsData } from './patentsData'
 import { leadersData } from './leadersData'
 import { expandAlgorithmAliases } from './algorithmNameAliases'
+import { vendors } from './vendorData'
 
 export type ForceClusterNodeType =
   | 'certbody'
@@ -43,6 +44,7 @@ export type ForceClusterNodeType =
   | 'protocol'
   | 'patent'
   | 'leader'
+  | 'vendor'
 
 export interface ForceClusterNode {
   id: string
@@ -96,6 +98,7 @@ const CAPPED_TYPES: ReadonlySet<ForceClusterNodeType> = new Set([
   'product',
   'patent',
   'leader',
+  'vendor',
 ])
 
 function norm(s: string | undefined | null): string {
@@ -350,6 +353,24 @@ function buildNodes(
     })
   }
 
+  for (const v of vendors) {
+    const id = `vnd-${slug(v.vendorId)}`
+    nodes.set(id, {
+      id,
+      label: v.vendorDisplayName || v.vendorName,
+      type: 'vendor',
+      sub: v.entityCategory || v.vendorType,
+      description:
+        [v.hqCountry, v.pqcCommitment && `PQC commitment: ${v.pqcCommitment}`]
+          .filter(Boolean)
+          .join(' — ') || v.vendorName,
+      degree: 0,
+      // No dedicated vendor route in the hub yet — same fallback pattern as
+      // certbody nodes (line ~150), which link out to the source's own site.
+      href: v.website || undefined,
+    })
+  }
+
   return nodes
 }
 
@@ -387,6 +408,15 @@ function certbodyNodeIdFor(
 ): string | null {
   if (!sourceId) return null
   const id = `cb-${slug(sourceId)}`
+  return nodes.has(id) ? id : null
+}
+
+function vendorNodeIdFor(
+  vendorId: string | undefined | null,
+  nodes: Map<string, ForceClusterNode>
+): string | null {
+  if (!vendorId) return null
+  const id = `vnd-${slug(vendorId)}`
   return nodes.has(id) ? id : null
 }
 
@@ -634,6 +664,25 @@ function buildEdges(
     for (const xref of getSourcesForRecord('leaders', leader.name)) {
       add(certbodyNodeIdFor(xref.sourceId, nodes), ldrId, 'references')
     }
+  }
+
+  // vendor -> certbody, via the registry's own trusted_source_id (evidence
+  // backing the vendor's PQC status) — same shape as compliance/usecase's
+  // certbody edges above, and 100%-populated across the active registry.
+  for (const v of vendors) {
+    add(
+      vendorNodeIdFor(v.vendorId, nodes),
+      certbodyNodeIdFor(v.trustedSourceId, nodes),
+      'references'
+    )
+  }
+
+  // vendor -> product, via the product catalog's own vendor_id (a clean FK,
+  // audited for collisions/dangling refs by scripts/audit-vendor-refs.ts).
+  // algoProductXrefs-origin product nodes carry no vendor_id of their own —
+  // same reason the certbody->product edge above only iterates softwareData.
+  for (const sw of softwareData) {
+    add(vendorNodeIdFor(sw.vendorId, nodes), productNodeIdFor(sw.productId, nodes), 'sells')
   }
 
   return edges
