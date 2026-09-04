@@ -523,9 +523,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'A handshake you have actually run',
         gridCards: [
           {
-            title: 'A real hybrid KEM pipeline',
-            body: "ML-KEM encapsulation combined with an X25519 ECDH share and run through HKDF — the exact construction a hybrid handshake negotiates, with each step's bytes shown.",
-            href: '/playground/hybrid-encrypt',
+            title: 'The same handshake, inside a real migration',
+            body: "Phase 5 of the simulation runs this exact hybrid pattern across a whole organisation's estate, not just one pipeline.",
+            href: '/simulation?phase=p5',
           },
           {
             title: 'Everything else, arranged by topic',
@@ -535,7 +535,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The construction, not the diagram',
             body: 'This is the primitive underneath every hybrid key exchange you will ship. Getting it right here is what makes the protocol-level work uneventful.',
-            href: '/simulation?phase=p5',
+            href: '/learn/hybrid-crypto',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -612,7 +612,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'The parameter set is a budget, not a badge',
             body: 'Picking 87 because it sounds safer costs you bytes on every message for the life of the key. Choose it against a threat model, not a preference.',
-            href: '/patents',
+            href: '/learn/pqc-candidates',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -675,19 +675,19 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'An inventory you can act on',
         gridCards: [
           {
-            title: 'A full OpenSSL environment',
-            body: 'OpenSSL Studio is OpenSSL 3.6.3 compiled to WASM — keygen, certificates, CSR, KEM, signing, KDF and encryption — with 11 guided lessons.',
-            href: '/playground/openssl-studio',
+            title: 'Score what a CBOM finds',
+            body: 'The same crypto inventory a CBOM builds is what the quick assessment scores — six questions, from your own answers.',
+            href: '/assess?mode=quick',
           },
           {
-            title: 'The CBOM itself',
-            body: 'The CBOM Builder assembles a Crypto Bill of Materials from an SBOM, library posture or HSM inventory — the artifact an inventory pass is supposed to produce.',
-            href: '/business/tools/crypto-cbom-builder',
+            title: "Where the CBOM lives once it's built",
+            body: 'The Assets zone tracks what a CBOM found against the rest of the migration programme — not a one-off document that goes stale.',
+            href: '/business?zone=assets',
           },
           {
             title: 'Inspect before you inventory',
             body: 'Studio is where you read what a key or certificate really contains — the step before a CBOM is worth writing.',
-            href: '/assess?mode=quick',
+            href: '/playground/openssl-studio',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -753,19 +753,19 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Numbers you can put in a ticket',
         gridCards: [
           {
-            title: 'A signed token you can measure',
-            body: 'The JWT workshop signs with ML-DSA-44/65/87, SLH-DSA and composite ML-DSA-65+Ed25519, so you can weigh each payload against your own header budget.',
-            href: '/playground/api-security-jwt',
+            title: "What's patented in the sizes you're choosing",
+            body: "Picking ML-DSA-87 over -65 is also a choice about whose patents you might touch — worth knowing before it's a legal question, not just a byte one.",
+            href: '/patents',
           },
           {
-            title: 'The same question, at PKI scale',
-            body: 'The Cert Capacity Calculator models storage, bandwidth and CPU for migrating a PKI to ML-DSA, with adjustable certificate counts and renewal cadence.',
-            href: '/playground/cert-capacity',
+            title: 'The catalogue behind these numbers',
+            body: 'Every product these sizing figures assume is listed in the catalogue, with its actual PQC support checked — verify before you build a plan on an assumption.',
+            href: '/migrate?tab=replace',
           },
           {
             title: 'Where the bytes land',
-            body: 'Token payloads, certificate chains and TLS records — the three places the new sizes surface in a service first.',
-            href: '/business?zone=mitigation',
+            body: 'Certificates and tokens are what you see. HSM signing throughput is where the new sizes actually cost you — the same calculator IT Ops uses for a fleet applies to a single service too.',
+            href: '/playground/hsm-capacity',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -841,7 +841,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A test that cannot fail proves nothing',
             body: 'Closure is only worth recording if a failing service would have shown up. Coverage per service, not per fleet, is what makes it a control.',
-            href: '/migrate?tab=replace',
+            href: '/learn/pqc-testing-validation',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -986,14 +986,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/cacp?tab=migration',
           },
           {
-            title: 'A transition decision, per asset class',
-            body: 'The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC, pure PQC — or a crypto-gateway fallback for what cannot move yet.',
-            href: '/business/tools/hybrid-transition-planner',
+            title: 'Score the estate this control plane will manage',
+            body: 'The comprehensive assessment is the closest thing to a pre-flight check before you commit an estate to a policy-driven control plane.',
+            href: '/assess?mode=comprehensive',
           },
           {
             title: 'Agility as a control, not a slogan',
             body: 'The control plane is the workshop this board rests on: the policy line you change is a real one, and the estate rekeys against it.',
-            href: '/assess?mode=comprehensive',
+            href: '/playground/cacp?tab=migration',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1065,14 +1065,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business/tools/crypto-architecture-diagram',
           },
           {
-            title: 'A chain you built yourself',
-            body: 'The PKI workshop walks CSR, root CA, issuance, parsing and CRL by hand, so what you are documenting is something you have actually constructed.',
-            href: '/playground/pki-workshop',
+            title: 'Verify a certificate by hand, not just by diagram',
+            body: 'OpenSSL Studio is where you inspect what a CA actually issues at the command line — the same chain the diagram and the workshop both describe.',
+            href: '/playground/openssl-studio',
           },
           {
             title: 'Documented, then verified',
             body: 'The diagram is the deliverable; the chain workshop is how you check that what you drew is what your CAs actually issue.',
-            href: '/playground/openssl-studio',
+            href: '/playground/pki-workshop',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1152,7 +1152,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'You migrate at the speed of your slowest protocol',
             body: 'A design that treats TLS, enrollment and messaging as one migration stalls on whichever is furthest behind — so name their stages separately.',
-            href: '/patents',
+            href: '/algorithms?tab=support&matrixView=heatmap',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -1222,9 +1222,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridSub: 'Decisions with numbers attached',
         gridCards: [
           {
-            title: 'Envelope encryption, end to end',
-            body: 'ML-KEM plus AES key wrap in the KMS envelope pattern — the shape most key stores will adopt, run before you commit to it.',
-            href: '/playground/envelope-encrypt',
+            title: "What's patented in the KMS envelope pattern",
+            body: 'ML-KEM key-wrap patterns are still an active patent landscape — worth checking before you standardise your own envelope format on one implementation.',
+            href: '/patents',
           },
           {
             title: 'The parts list, not the route',
@@ -1232,8 +1232,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/explore',
           },
           {
-            title: 'Where the keys live',
-            body: 'The envelope workshop is what this board rests on: it is the difference between a key policy you wrote and one you have executed.',
+            title: "The people who wrote the specs you're designing against",
+            body: "KMIP and PKCS#11 aren't anonymous standards — the engineers who wrote them are named, and worth knowing when your control plane has to interoperate with someone else's implementation.",
             href: '/leaders',
           },
         ] as [
@@ -1311,8 +1311,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/business?zone=migration',
           },
           {
-            title: 'Sequencing errors are the expensive kind',
-            body: 'The two tracks are not a preference. Track A stops new harvest-now-decrypt-later exposure the day it lands; Track B cannot outrun your CA and your vendors.',
+            title: 'The two tracks race against fixed dates, not each other',
+            body: "CNSA 2.0's years and every national mandate are what make sequencing urgent — Track A and Track B both answer to the same calendar, just on different clocks.",
             href: '/timeline',
           },
         ] as [
@@ -2189,8 +2189,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/threats',
           },
           {
-            title: 'An estimate, not a date',
-            body: 'The consensus is a median across tracked sources, each with its own date, tier and link.',
+            title: 'Patents are evidence of work, not of talk',
+            body: 'A patent filing predates the press release — checking who has actually filed is one more way to tell real progress from marketing, on a topic full of both.',
             href: '/patents',
           },
         ] as [
@@ -2495,14 +2495,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/tls-simulator',
           },
           {
-            title: 'What it would actually cost',
-            body: 'The Breach Scenario Simulator compares classical against quantum-enabled breach cost, per event and as annual expected loss. It opens with worked defaults, and gets sharper once you have answered the assessment.',
-            href: '/business/tools/breach-simulator',
+            title: 'Try the actual command line',
+            body: 'Nothing to install — the same OpenSSL your browser padlock depends on, running in a tab, if you want to go past what the simulator shows.',
+            href: '/playground/openssl-studio',
           },
           {
-            title: 'Why a handshake, of all things',
-            body: 'The handshake is where the keys are agreed. It is the one moment worth understanding if you only ever understand one, and it takes about a minute to watch.',
-            href: '/playground/openssl-studio',
+            title: 'Watch it actually fail, not just succeed',
+            body: 'The simulator above shows a handshake succeeding. This is the other half — an attacker forcing a downgrade to classical crypto, and what your connection does about it.',
+            href: '/learn/tls-basics?tab=visual',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -2647,14 +2647,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             href: '/playground/digital-id',
           },
           {
-            title: 'The money',
-            body: 'Build a Bitcoin payment step by step and see the classical math underneath it — the same kind of math everything else on this site is replacing.',
-            href: '/playground/bitcoin-flow',
+            title: 'Where the health-records case comes from',
+            body: 'The plain-language shelf behind every claim on this board — including why medical records specifically cannot wait.',
+            href: '/library?purpose=education',
           },
           {
-            title: 'Why these two',
-            body: 'Medical records outlive the lock protecting them by decades, which is why they cannot wait. Identity and money are where you can watch the change happen today.',
-            href: '/library?purpose=education',
+            title: 'The one that cannot wait',
+            body: 'Medical records outlive the lock protecting them by decades — the clearest case for encrypting today. Identity and money are where you can watch the change happen right now, in the two doors on the left.',
+            href: '/learn/healthcare-pqc',
           },
         ] as [
           { title: string; body: string; href?: string },
