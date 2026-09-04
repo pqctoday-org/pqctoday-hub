@@ -282,7 +282,7 @@ function LibraryRow({ lib, tone }: { lib: OssLibrary; tone: 'oss' | 'commercial'
       : 'border-accent/20 hover:border-accent/40 bg-accent/5 hover:bg-accent/10'
   return (
     <Link
-      to={`/migrate?software=${encodeURIComponent(lib.productId)}`}
+      to={`/migrate?productIds=${encodeURIComponent(lib.productId)}`}
       className={`group flex items-center justify-between gap-2 rounded-md border px-3 py-2 transition-colors ${toneClass}`}
     >
       <div className="flex flex-col min-w-0">
