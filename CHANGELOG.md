@@ -42,7 +42,7 @@ first time (don't ship dev-speak and reformat later):
 
 ### Data
 
-- **PQC Community leaders page refreshed**: 27 rows corrected or reclassified after a full authorship/citation review (spotcheck, peer-review, and patent-inventor passes), plus a name correction and a duplicate-entry cleanup.
+- **PQC Community leaders page refreshed** [view:/leaders] [persona:executive] [persona:developer] [persona:researcher] [persona:curious]: 27 rows corrected or reclassified after a full authorship/citation review (spotcheck, peer-review, and patent-inventor passes), plus a name correction and a duplicate-entry cleanup.
 
 ## [4.77.0] - 2026-09-04
 
