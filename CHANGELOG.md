@@ -29,6 +29,12 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.79.0] - 2026-09-04
+
+### Changed
+
+- **The Navigate graph's filter panel now stays out of the way until you need it** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: it opens as a small "Filters" button instead of a large always-open panel, expands on click, and collapses again after a few seconds of no interaction — giving the graph the full screen by default. The experimental "Auto-adapt density" option is temporarily hidden while it's tuned further; the percentage slider and filter chips are unaffected.
+
 ## [4.78.0] - 2026-09-04
 
 ### Added

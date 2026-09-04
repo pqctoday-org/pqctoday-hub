@@ -14,6 +14,7 @@
  * directly instead.
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Filter } from 'lucide-react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
@@ -114,6 +115,15 @@ function tierAppearance(
 // prototype ever showed by default. The percent slider (0-100%, ranked by
 // connection count) reveals more; 100% still shows everything.
 const DEFAULT_VISIBLE_PERCENT = 14
+
+// How long the filter panel stays expanded after the last filter-changing
+// interaction before it collapses back to a pill, freeing up screen space.
+const PANEL_IDLE_COLLAPSE_MS = 3000
+
+// Auto-adapt's binary search over resolveAutoDensityPercent doesn't yet
+// converge on a result that looks right for every filter combination and
+// needs more tuning — hidden from the UI (not removed) until that's done.
+const AUTO_ADAPT_DENSITY_ENABLED = false
 
 // Ported directly from the design handoff's real reference implementation
 // (design_handoff_force_cluster/reference/ForceCluster3D.dc.html,
@@ -905,6 +915,20 @@ export function ForceClusterView() {
     () => new Set(NODE_TYPES)
   )
   const [listOpen, setListOpen] = useState(false)
+  // Starts collapsed to a small pill so the graph gets the full screen by
+  // default; expanding is a deliberate click, and PANEL_IDLE_COLLAPSE_MS
+  // below re-collapses it once the user stops touching the filter controls.
+  const [panelOpen, setPanelOpen] = useState(false)
+  useEffect(() => {
+    // listOpen guards against collapsing out from under a keyboard user
+    // actively reading the visible-node list — every other dependency here
+    // is a real filter-changing interaction, so touching any of them resets
+    // the idle clock the same way the mouse/keyboard activity that produced
+    // them did.
+    if (!panelOpen || listOpen) return
+    const timer = setTimeout(() => setPanelOpen(false), PANEL_IDLE_COLLAPSE_MS)
+    return () => clearTimeout(timer)
+  }, [panelOpen, listOpen, enabledTypes, visiblePercent, autoAdapt])
   const applyFiltersRef = useRef<
     ((enabledTypes: ReadonlySet<ForceClusterNodeType>, percent: number) => LayoutSnapshot) | null
   >(null)
@@ -1777,8 +1801,24 @@ export function ForceClusterView() {
           onClose={() => setSelectedNodeId(null)}
         />
       )}
-      {!loading && !error && (
-        <div className="glass-panel absolute bottom-4 left-4 max-w-[360px] space-y-3 p-3">
+      {!loading && !error && !panelOpen && (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="glass-panel absolute bottom-4 left-4 h-auto gap-1.5 rounded-full px-3 py-1.5 text-xs"
+          aria-expanded={false}
+          aria-controls="navigate-filter-panel"
+          onClick={() => setPanelOpen(true)}
+        >
+          <Filter className="h-3.5 w-3.5" aria-hidden="true" />
+          Filters
+        </Button>
+      )}
+      {!loading && !error && panelOpen && (
+        <div
+          id="navigate-filter-panel"
+          className="glass-panel absolute bottom-4 left-4 max-w-[360px] space-y-3 p-3"
+        >
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground">Filter</span>
             <Button
@@ -1821,15 +1861,17 @@ export function ForceClusterView() {
               )
             })}
           </div>
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={autoAdapt}
-              onChange={toggleAutoAdapt}
-              className="accent-primary"
-            />
-            <span>Auto-adapt density (no overlap)</span>
-          </label>
+          {AUTO_ADAPT_DENSITY_ENABLED && (
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={autoAdapt}
+                onChange={toggleAutoAdapt}
+                className="accent-primary"
+              />
+              <span>Auto-adapt density (no overlap)</span>
+            </label>
+          )}
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="whitespace-nowrap">
               {autoAdapt ? `Auto: ${visiblePercent}%` : `Showing ${visiblePercent}%`}
