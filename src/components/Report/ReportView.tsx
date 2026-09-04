@@ -378,7 +378,18 @@ export const ReportView: React.FC<{ simEmbed?: boolean }> = ({ simEmbed = false 
       logReportShareLinkOpened()
       setSharedView({
         result: EXAMPLE_REPORT_RESULT,
-        persona: toValidPersona(EXAMPLE_REPORT_PERSONA),
+        // 2026-09-03 (home-scenarios remediation WS7.3): renders under the
+        // VIEWER's own persona when one is set, not always the example's
+        // authored 'curious' — a real change, not just a fallback tweak.
+        // Executive and ops home boards both link "See a finished (closure)
+        // report" here and got the curious persona's simplified public view
+        // (algorithmMigration/hndlHnfl hidden, roadmap capped at 3 steps)
+        // instead of their own. The underlying score/sections are identical
+        // either way (EXAMPLE_REPORT_RESULT never changes); only which
+        // PERSONA_REPORT_CONFIG applies does. Falls back to the example's
+        // own authored persona for a first-time visitor with none selected
+        // yet, same as before this change.
+        persona: livePersona ?? toValidPersona(EXAMPLE_REPORT_PERSONA),
         approximate: false,
       })
       return

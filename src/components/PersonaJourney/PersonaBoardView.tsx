@@ -10,6 +10,10 @@ import {
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { REGION_LABELS } from '@/data/regionIndustryOptions'
+import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -89,6 +93,20 @@ export const PROVENANCE_LABEL: Record<SideCardProvenance, string> = {
   guidance: 'GUIDANCE — OUR RULE OF THUMB',
 }
 
+/**
+ * workshopId -> display name, for the "Related on this site" row below.
+ *
+ * Added 2026-09-03 (home-scenarios remediation, WS7.1). Every
+ * `RoleBoardVariant.workshopIds` entry was compiled into the generated file
+ * and read by nothing — several boards' own proof chips named a workshop
+ * that lived only in this unrendered metadata (e.g. "Real SSH handshake"
+ * with no link to the SSH workshop anywhere on the board). This map is what
+ * makes those ids renderable as real links instead of dead metadata.
+ */
+export const WORKSHOP_NAME_BY_ID: Record<string, string> = Object.fromEntries(
+  WORKSHOP_TOOLS.map((w) => [w.id, w.name])
+)
+
 const PROVENANCE_CLASS: Record<SideCardProvenance, string> = {
   sourced: 'border-accent/30 bg-accent/10 text-accent',
   illustrative: 'border-border bg-muted/40 text-muted-foreground',
@@ -122,6 +140,21 @@ export function PersonaBoardView({
   const board = active.board
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
 
+  // Live region/industry badge (2026-09-03, home-scenarios remediation
+  // WS7.2). `board.heroBadge.text` used to be static per-board copy —
+  // e.g. every executive board read "Americas · Finance & Banking"
+  // regardless of what the visitor actually selected, while
+  // MobileHomeBoard.tsx already computed and rendered the real
+  // selectedRegion/selectedIndustries (see that file's own note on why
+  // desktop and mobile disagreed). This mirrors that computation so both
+  // shells show the same thing. Tone is always 'illustrative' now — the
+  // badge is the visitor's own stored input, not a repo-sourced fact, which
+  // is exactly what that provenance label means ("THIS USER'S INPUTS").
+  const { selectedRegion, selectedIndustries } = usePersonaStore()
+  const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
+  const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
+  const liveBadgeText = [regionLabel, industryLabel].filter(Boolean).join(' · ')
+
   return (
     <div className="w-full">
       {/* Board option switcher — the role's top three use cases in a PQC
@@ -146,7 +179,10 @@ export function PersonaBoardView({
               aria-checked={selected}
               title={v.chipDescription}
               data-testid={`board-variant-chip-${v.id}`}
-              onClick={() => onSelectVariant?.(v.id)}
+              onClick={() => {
+                logRoleBoardVariantSelected(personaId, v.id)
+                onSelectVariant?.(v.id)
+              }}
               className={cn(
                 'h-auto rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
                 selected
@@ -168,9 +204,9 @@ export function PersonaBoardView({
             {board.heroEyebrow}
           </p>
 
-          {board.heroBadge && (
+          {liveBadgeText && (
             <div className="mt-2">
-              <ProvenanceChip provenance={board.heroBadge.tone} label={board.heroBadge.text} />
+              <ProvenanceChip provenance="illustrative" label={liveBadgeText} />
             </div>
           )}
 
@@ -183,10 +219,27 @@ export function PersonaBoardView({
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="gradient" onClick={() => navigate(board.ctaPrimaryHref)}>
+            <Button
+              variant="gradient"
+              onClick={() => {
+                logRoleBoardCtaClick(personaId, active.id, 'cta_primary_href', board.ctaPrimaryHref)
+                navigate(board.ctaPrimaryHref)
+              }}
+            >
               {board.ctaPrimary}
             </Button>
-            <Button variant="outline" onClick={() => navigate(board.ctaSecondaryHref)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                logRoleBoardCtaClick(
+                  personaId,
+                  active.id,
+                  'cta_secondary_href',
+                  board.ctaSecondaryHref
+                )
+                navigate(board.ctaSecondaryHref)
+              }}
+            >
               {board.ctaSecondary}
             </Button>
           </div>
@@ -286,6 +339,9 @@ export function PersonaBoardView({
                 data-testid={`grid-card-${i}`}
                 data-highlighted={highlighted}
                 className={className}
+                onClick={() =>
+                  logRoleBoardCtaClick(personaId, active.id, `grid_card_href:${i}`, card.href!)
+                }
               >
                 {body}
               </Link>
@@ -302,6 +358,35 @@ export function PersonaBoardView({
           })}
         </div>
       </div>
+
+      {/* Related workshops — see WORKSHOP_NAME_BY_ID's own comment for why
+          this exists: a board's proof chips can name a workshop that lives
+          only in `active.workshopIds`' unrendered metadata unless this row
+          gives it an actual link. Hidden entirely when a board names none. */}
+      {active.workshopIds.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Related on this site
+          </h2>
+          <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
+            {active.workshopIds.map((id) => {
+              // eslint-disable-next-line security/detect-object-injection -- id comes from active.workshopIds, CSV-derived repo data, not user input
+              const name = WORKSHOP_NAME_BY_ID[id]
+              if (!name) return null
+              return (
+                <li key={id}>
+                  <Link
+                    to={`/playground/${id}`}
+                    className="inline-flex items-center rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                  >
+                    {name}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* Track strip */}
       <div className="mt-8 border-t border-border pt-6">

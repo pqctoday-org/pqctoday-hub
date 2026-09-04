@@ -22,6 +22,7 @@ import {
   getCrqcConsensus,
   CRQC_ESTIMATES,
 } from '../components/PKILearning/modules/QuantumThreats/data/quantumConstants'
+import { CNSA_2_0 } from './regulatoryTimelines'
 
 /**
  * Persona-aware "Practice in the Simulation" CTA — which migration phases each
@@ -588,6 +589,23 @@ export const ALWAYS_VISIBLE_PATHS = [
   '/faq',
   '/terms',
 ]
+
+/**
+ * Whether `pathname` is covered by one of `visiblePaths` — the path itself,
+ * or any sub-path of it ('/playground/tls-simulator' is covered by
+ * '/playground'). Added 2026-09-03: `ALWAYS_VISIBLE_PATHS` and
+ * `PERSONA_NAV_PATHS` list top-level routes only, but a visitor reaches
+ * concrete sub-paths ('/learn/tls-basics', '/playground/tls-simulator')
+ * from real links, not just the bare parent. A plain `.includes(pathname)`
+ * check treats every sub-path as unlisted, which is what let
+ * MainLayout's curious preview banner fire on pages the rail already
+ * offers that persona — see its own call site for the specific bug.
+ * '/' is special-cased to match only itself, or every path would count as
+ * covered by it.
+ */
+export function isPersonaVisiblePath(pathname: string, visiblePaths: readonly string[]): boolean {
+  return visiblePaths.some((p) => pathname === p || (p !== '/' && pathname.startsWith(`${p}/`)))
+}
 
 /**
  * Maps AVAILABLE_INDUSTRIES names (used in Assessment + store) to the
@@ -1720,6 +1738,39 @@ export const EXEC_SECRECY_ROW = `${EXEC_EXPOSURE.secrecyYears} yrs`
 export const EXEC_MIGRATION_ROW = `${EXEC_EXPOSURE.migrationYears} yrs`
 
 /**
+ * e.g. "2030–2036" — the consensus window alone, no midpoint. Added
+ * 2026-09-03 for the one CRQC figure the 2026-08-23 literal-drift pass left
+ * untokenised (curious/howbad's "a range, 2030-2036"): its sibling row on
+ * curious/break was tokenised the same day via `EXEC_CRQC_ESTIMATE_ROW`, but
+ * that string carries the midpoint too ("2033 (2030-2036)"), which this
+ * board's copy does not want.
+ */
+export const CRQC_WINDOW_ROW = `${CRQC.qdayLow}–${CRQC.qdayHigh}`
+
+/**
+ * A CNSA 2.0 milestone year, by field name on `CNSA_2_0`
+ * (`regulatoryTimelines.ts`) — added 2026-09-03 after a home board asserted
+ * "CNSA 2.0 full transition = 2033" as a literal. Verified against NSA's own
+ * CNSA 2.0 Suite table (PP-22-1338, Sept 2022): 2033 is the exclusive-use
+ * year for web browsers/servers/cloud services and for operating systems
+ * specifically (`CNSA_2_0.networkingExclusive`); the full NSS transition,
+ * per NSM-10, is 2035 (`CNSA_2_0.fullEnforcement`). The two are different
+ * claims and this token exists so a board can never conflate them again.
+ */
+export function cnsa2Year(field: string): string {
+  // Runtime-checked, not just compile-time typed: the generator calls this
+  // through an untyped SSR-loaded module (PersonaConfigModule = Record<string,
+  // any>), so a typo'd field name in a CSV token — {cnsa2_year:networkingRequird}
+  // — would otherwise silently resolve to `undefined` on the live board
+  // instead of failing the generate step, the one place "the generator is the
+  // validator" guarantee this whole token system relies on actually holds.
+  if (!(field in CNSA_2_0)) {
+    throw new Error(`cnsa2Year: "${field}" is not a CNSA_2_0 field`)
+  }
+  return String(CNSA_2_0[field as keyof typeof CNSA_2_0])
+}
+
+/**
  * Question count and time estimate for the /assess quick track — the one every
  * "Start — N questions, about M minutes" home-board CTA actually lands on
  * (executive's persona-recommended mode, and every explicit ?mode=quick link).
@@ -1868,6 +1919,17 @@ export function reportSectionsByState(
 
 export const REPORT_SECTION_TOTAL_COUNT = Object.keys(REPORT_SECTION_DEFAULTS).length
 export const DEVELOPER_REPORT_OVERRIDE_COUNT = Object.keys(PERSONA_REPORT_CONFIG.developer).length
+
+/**
+ * How many of the report's sections a given persona actually sees — total
+ * minus whatever that persona's `PERSONA_REPORT_CONFIG` hides. Added
+ * 2026-09-03: the executive board counted "Report sections generated = 17"
+ * (`REPORT_SECTION_TOTAL_COUNT`) while `PERSONA_REPORT_CONFIG.executive`
+ * hides `algorithmMigration`, so the executive's own report renders 16.
+ */
+export function reportSectionsVisibleCount(personaId: PersonaId): number {
+  return REPORT_SECTION_TOTAL_COUNT - reportSectionsByState(personaId, 'hidden').length
+}
 
 /**
  * One real milestone label per distinct insertion point in a persona's path

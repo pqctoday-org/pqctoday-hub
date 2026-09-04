@@ -10,7 +10,8 @@ import {
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
 import { Button } from '@/components/ui/button'
-import { PROVENANCE_LABEL } from '@/components/PersonaJourney/PersonaBoardView'
+import { PROVENANCE_LABEL, WORKSHOP_NAME_BY_ID } from '@/components/PersonaJourney/PersonaBoardView'
+import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
 import { cn } from '@/lib/utils'
@@ -142,7 +143,10 @@ export function MobileHomeBoard({
               role="radio"
               aria-checked={selected}
               title={v.chipDescription}
-              onClick={() => onSelectVariant?.(v.id)}
+              onClick={() => {
+                logRoleBoardVariantSelected(persona, v.id)
+                onSelectVariant?.(v.id)
+              }}
               className={cn(
                 'h-11 shrink-0 snap-start rounded-full border px-4 text-[11.5px] font-semibold',
                 selected
@@ -167,7 +171,10 @@ export function MobileHomeBoard({
       <div className="mt-4 flex flex-col gap-2.5">
         <Button
           type="button"
-          onClick={() => navigate(board.ctaPrimaryHref)}
+          onClick={() => {
+            logRoleBoardCtaClick(persona, active.id, 'cta_primary_href', board.ctaPrimaryHref)
+            navigate(board.ctaPrimaryHref)
+          }}
           className="h-11 w-full rounded-[10px] bg-primary text-[13.5px] font-bold text-primary-foreground"
         >
           {board.ctaPrimary}
@@ -175,7 +182,10 @@ export function MobileHomeBoard({
         <Button
           type="button"
           variant="outline"
-          onClick={() => navigate(board.ctaSecondaryHref)}
+          onClick={() => {
+            logRoleBoardCtaClick(persona, active.id, 'cta_secondary_href', board.ctaSecondaryHref)
+            navigate(board.ctaSecondaryHref)
+          }}
           className="h-11 w-full rounded-[10px] border-border text-[13.5px] font-bold text-foreground"
         >
           {board.ctaSecondary}
@@ -268,7 +278,10 @@ export function MobileHomeBoard({
                   key={card.title}
                   type="button"
                   variant="ghost"
-                  onClick={() => navigate(card.href as string)}
+                  onClick={() => {
+                    logRoleBoardCtaClick(persona, active.id, `grid_card_href:${i}`, card.href!)
+                    navigate(card.href as string)
+                  }}
                   className={cn(
                     'h-auto w-full flex-col items-start whitespace-normal rounded-[11px] border p-3 text-left',
                     i === 2 ? 'border-accent/50 bg-accent/5' : 'border-border bg-card'
@@ -291,6 +304,34 @@ export function MobileHomeBoard({
           </div>
         )}
       </div>
+
+      {/* Related workshops — desktop parity, see PersonaBoardView.tsx's
+          WORKSHOP_NAME_BY_ID comment. Hidden when a board names none. */}
+      {active.workshopIds.length > 0 && (
+        <div className="mt-4">
+          <h2 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+            Related on this site
+          </h2>
+          <div className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
+            {active.workshopIds.map((id) => {
+              // eslint-disable-next-line security/detect-object-injection -- id comes from active.workshopIds, CSV-derived repo data, not user input
+              const name = WORKSHOP_NAME_BY_ID[id]
+              if (!name) return null
+              return (
+                <Button
+                  key={id}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => navigate(`/playground/${id}`)}
+                  className="h-auto rounded-full border border-border bg-muted/30 px-3 py-1 text-[11px] text-muted-foreground"
+                >
+                  {name}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Track strip */}
       <div className="mt-5 border-t border-border pt-4">

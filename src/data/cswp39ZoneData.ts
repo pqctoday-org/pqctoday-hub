@@ -110,12 +110,17 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
   },
   mitigation: {
     title: 'Mitigation',
-    what: 'Deploy a crypto gateway ("bump-in-the-wire") for systems that cannot be migrated now — buys time, not permanence. Pairs with a sunset plan.',
+    // 'Mandatory sunset date' was dropped 2026-09-03: fetched NIST CSWP
+    // 39-upd1 §4.6 directly and the word "sunset" does not appear in it —
+    // the section describes the gateway architecture and says it "can help
+    // provide crypto agility... if direct modifications... are not
+    // feasible," nothing about a mandated decommissioning date. This item
+    // was asserting a NIST requirement the cited publication does not make.
+    what: 'Deploy a crypto gateway ("bump-in-the-wire") for systems that cannot be migrated now — buys time, not permanence.',
     contains: [
       'Crypto gateway / bump-in-the-wire',
       'Cipher-suite proxy',
       'Network-layer re-encryption',
-      'Mandatory sunset date',
     ],
     cpmPillar: 'Lifecycle pillar — remediation track; gateway itself must be tracked in CBOM',
     cswpRef: 'NIST CSWP.39 §4.6 (Crypto Gateway for Legacy Systems)',

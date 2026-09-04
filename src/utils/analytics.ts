@@ -409,6 +409,35 @@ export const logPreviewBannerDismissed = (route: string) => {
   logEvent('Preview Banner', 'Dismissed', personaLabel(route))
 }
 
+// --- Role-home board tracking ---
+//
+// Added 2026-09-03 (home-scenarios remediation WS7.5/D10). Nothing recorded
+// which of a role's six scenario chips a visitor picked, or which CTA they
+// followed from a board — the only signal available for the 2026-09-03
+// review was the `/?variant=` pageview itself (326 in 90 days, across all 30
+// non-default boards, none over 8 users), with no way to tell which CTA a
+// visitor took from which board. These two events are the minimum needed to
+// answer that: whether the current 36-board shape earns its keep.
+
+/** A visitor picked a different option from a role's chip row. */
+export const logRoleBoardVariantSelected = (personaId: string, variantId: string) => {
+  logEvent('Role Board', 'Variant Selected', personaLabel(`${personaId}/${variantId}`))
+}
+
+/**
+ * A visitor followed a CTA or grid-card link off a role-home board.
+ * `slot` is the CSV slot name (e.g. 'cta_primary_href', 'grid_card_href:2')
+ * so a GA4 report can tell a primary CTA click from an argument-card click.
+ */
+export const logRoleBoardCtaClick = (
+  personaId: string,
+  variantId: string,
+  slot: string,
+  href: string
+) => {
+  logEvent('Role Board', 'CTA Click', personaLabel(`${personaId}/${variantId}/${slot} -> ${href}`))
+}
+
 export const logRegionSelected = (region: string) => {
   logEvent('Persona', 'Region', region)
 }

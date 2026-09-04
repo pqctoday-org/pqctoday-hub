@@ -17,7 +17,8 @@
  * generator can import the rest of it directly.
  */
 import { libraryData } from './libraryData'
-import { authoritativeSources } from './authoritativeSourcesData'
+import { complianceFrameworks } from './complianceData'
+import { timelineData } from './timelineData'
 
 /**
  * Live active-row count for the library corpus, read from the same loader
@@ -42,20 +43,27 @@ export function formatVerifiedDate(isoDate: string): string {
 
 /**
  * Live "regulatory data last verified" date for the executive board's proof
- * chip — the most recent `lastVerifiedDate` among authoritative sources that
- * actually feed the compliance CSV (`complianceCsv === true`), read from
- * `authoritativeSourcesData.ts`. There is no single existing "compliance data
- * verified as of" field anywhere else in the codebase, so this derives the
- * closest real equivalent from data that already exists rather than
- * hardcoding a date. `undefined` only if the authoritative-sources CSV
- * somehow has zero compliance-tagged rows with a verified date, which is not
- * expected in practice.
+ * chip — the most recent `last_verified` across the regulatory data itself
+ * (`compliance_*.csv` frameworks and `timeline_*.csv` events), not the
+ * registry of authoritative sources that merely cite it.
+ *
+ * Changed 2026-09-03: this used to take the latest `lastVerifiedDate` among
+ * authoritative sources flagged `complianceCsv === true` — 55 registry rows,
+ * max 2026-07-16 — while the compliance rows themselves were verified to
+ * 2026-08-16 and the timeline rows to 2026-08-29. The chip understated the
+ * data's real freshness by four to six weeks, and two boards carried the
+ * phrase as a hand-typed literal that could only drift further from it. This
+ * reads the dates the "regulatory data verified" claim is actually about.
  */
 export const REGULATORY_DATA_VERIFIED_DATE: string | undefined = (() => {
-  const dates = authoritativeSources
-    .filter((s) => s.complianceCsv && s.lastVerifiedDate)
-    .map((s) => s.lastVerifiedDate)
-    .sort()
-  const latest = dates[dates.length - 1]
+  const complianceDates = complianceFrameworks
+    .map((f) => f.lastVerified)
+    .filter((d): d is string => Boolean(d))
+  const timelineDates = timelineData.flatMap((country) =>
+    country.bodies.flatMap((body) =>
+      body.events.map((event) => event.lastVerified).filter((d): d is string => Boolean(d))
+    )
+  )
+  const latest = [...complianceDates, ...timelineDates].sort().at(-1)
   return latest ? formatVerifiedDate(latest) : undefined
 })()

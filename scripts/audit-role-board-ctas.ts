@@ -40,7 +40,7 @@
  *   npm run audit:role-board-ctas -- --json
  */
 
-import { readFileSync, existsSync } from 'fs'
+import { readFileSync, existsSync, readdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import Papa from 'papaparse'
@@ -233,6 +233,34 @@ export function extractPlaygroundToolIds(registrySrc: string): Set<string> {
 }
 
 /**
+ * Learn module ids, which resolve through App.tsx's `path="learn/*"` wildcard
+ * route (LearnRouter's own `:moduleId` matching, not a static React Router
+ * segment — `extractAppRoutes` only keeps the literal `learn` segment from a
+ * `path="learn/*"` declaration, same as it drops any other `:param`/`*`).
+ *
+ * Added 2026-09-03, the first time a role board linked `/learn/<moduleId>`
+ * from a CTA or grid-card slot (previously only the track chips did, and
+ * those are outside `HREF_SLOTS`). Reads the manifest directory names
+ * directly — the same convention `MODULE_IDS` in
+ * `PKILearning/manifest/contentVersion.ts` derives via `import.meta.glob`,
+ * which this plain-tsx script cannot use (see that file's own registry.ts
+ * for why: a Vite-only build-time macro).
+ */
+export function extractLearnModuleIds(modulesDir: string): Set<string> {
+  const ids = new Set<string>()
+  if (!existsSync(modulesDir)) return ids
+  for (const entry of readdirSync(modulesDir, { withFileTypes: true })) {
+    const manifestPath = join(modulesDir, entry.name, 'manifest.ts')
+    if (!entry.isDirectory() || !existsSync(manifestPath)) continue
+    // The id field, not the directory name — they diverge at least once
+    // (modules/Quiz/manifest.ts declares id: 'quiz').
+    const m = /^\s*id:\s*'([a-z0-9-]+)',?$/m.exec(readFileSync(manifestPath, 'utf8'))
+    if (m) ids.add(m[1])
+  }
+  return ids
+}
+
+/**
  * Whether every segment of an href corresponds to something the app declares —
  * a route segment or a playground tool id. See `extractAppRoutes` for why this
  * is containment rather than true resolution.
@@ -361,6 +389,7 @@ function main() {
     ...extractBusinessToolIds(
       readFileSync(join(ROOT, 'src/components/BusinessCenter/businessToolsRegistry.tsx'), 'utf8')
     ),
+    ...extractLearnModuleIds(join(ROOT, 'src/components/PKILearning/modules')),
   ])
 
   const businessToolIds = extractBusinessToolIds(

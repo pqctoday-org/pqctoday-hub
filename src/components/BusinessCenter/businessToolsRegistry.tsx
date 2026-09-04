@@ -815,10 +815,13 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
       'strategy',
     ],
     cswp39Zone: 'mitigation',
-    // Weak fit (2026-08-02) — none of mitigation's contains[] items name
-    // data-at-rest directly; 'Mandatory sunset date' picked since
-    // crypto-shred/delete decisions here pair with a retention deadline.
-    cswp39ZoneSubElement: 'Mandatory sunset date',
+    // No cswp39ZoneSubElement (2026-09-03): the previous anchor,
+    // 'Mandatory sunset date', was removed from mitigation's contains[] —
+    // it asserted a NIST CSWP 39 §4.6 requirement the published text does
+    // not make (fetched the source directly; the word "sunset" does not
+    // appear in that section). It was already a weak, forced fit for this
+    // tool (see the removed comment); left ungrouped rather than forced
+    // onto a different contains[] item that fits no better.
     cswp39SectionRef: '§5',
     cswp39SubSection: 'Data-at-rest strategy',
     frameworkPhase: 'p5',
