@@ -1606,7 +1606,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'draft',
             id: 'draft-ietf-jose-hpke-encrypt',
             title:
-              'Use of Hybrid Public Key Encryption (HPKE) with JOSE (algorithm-agnostic plumbing; supporting ref, not PQ-specific)',
+              'Use of Hybrid Public Key Encryption (HPKE) with JOSE (dependency: algorithm-agnostic plumbing, not PQ-specific)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
             publishedOn: '2026-06-15',
           },
@@ -1944,7 +1944,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9882',
-            title: "Use of ML-DSA in CMS (PKINIT's PA-PK-AS-REQ/REP payloads are CMS SignedData)",
+            title:
+              "Use of ML-DSA in CMS (dependency: PKINIT's PA-PK-AS-REQ/REP payloads are CMS SignedData, but no PKINIT-specific spec exists)",
             url: 'https://datatracker.ietf.org/doc/html/rfc9882',
             publishedOn: '2025-10',
           },
@@ -2915,14 +2916,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 5280',
-            title: 'Internet X.509 PKI Certificate and CRL Profile (RPKI cert base format)',
+            title:
+              'Internet X.509 PKI Certificate and CRL Profile (dependency: RPKI cert base format, generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc5280',
             publishedOn: '2008-05',
           },
           {
             kind: 'rfc',
             id: 'RFC 6488',
-            title: 'Signed Object Template for the RPKI (CMS profile for ROAs/manifests)',
+            title:
+              'Signed Object Template for the RPKI (dependency: CMS profile for ROAs/manifests, generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc6488',
             publishedOn: '2012-02',
           },
@@ -3188,7 +3191,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9964',
-            title: 'ML-DSA for JOSE and COSE (inherited via WebAuthn COSE alg IDs)',
+            title:
+              'ML-DSA for JOSE and COSE (dependency: algorithm IDs inherited via WebAuthn COSE alg IDs, no FIDO Alliance profile exists)',
             url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
             publishedOn: '2026-05',
           },
