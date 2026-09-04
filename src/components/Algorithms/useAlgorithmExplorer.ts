@@ -224,9 +224,13 @@ export function useAlgorithmExplorer(
   // Family/Function/Status dropdowns (not reverse-derived from them, which is
   // what let these two presets silently drift out of sync with their own
   // labels — see isFipsValidated()/isNistPick() below). Synced to ?quickview=.
+  // Defaults to 'nist-picks' (the three FIPS 203/204/205 standardized
+  // algorithms) rather than 'none' — that's the set almost every visitor
+  // actually wants first; ?quickview=fips-validated or an explicit click on
+  // "Everything" still override it for the rest of the session.
   const [quickView, setQuickView] = useState<'none' | 'nist-picks' | 'fips-validated'>(() => {
     const qv = searchParams.get('quickview')
-    return qv === 'nist-picks' || qv === 'fips-validated' ? qv : 'none'
+    return qv === 'nist-picks' || qv === 'fips-validated' ? qv : 'nist-picks'
   })
 
   // --- Comparison state (synced to URL) ---
