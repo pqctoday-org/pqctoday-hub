@@ -29,7 +29,7 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.79.0] - 2026-09-04
+## [4.80.0] - 2026-09-04
 
 A global accuracy and consistency pass across all six role-based home boards, closing out the 2026-09-03 review with over 50 individual fixes plus two new pieces of user-visible behavior — plus a smaller Algorithms page default-filter change.
 
@@ -46,6 +46,12 @@ A global accuracy and consistency pass across all six role-based home boards, cl
 - **Role-home boards that reference a specific workshop now show a real link to it** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: a "Related on this site" chip appears wherever a board names a workshop, instead of that reference being invisible, unclickable metadata.
 - **Chip and CTA clicks on role-home boards are now tracked** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: which scenario chip you pick and which button you follow off a board now feed analytics, closing a usage-visibility gap that only ever saw the page view itself.
 - **The Algorithms page now opens on "NIST picks" by default** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:executive] [persona:curious]: the three FIPS 203/204/205 standardized algorithms (ML-KEM, ML-DSA, SLH-DSA) are pre-filtered on arrival instead of showing all 193 rows unfiltered; "FIPS-validated" and "Everything" remain one click away.
+
+## [4.79.0] - 2026-09-04
+
+### Changed
+
+- **The Navigate graph's filter panel now stays out of the way until you need it** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: it opens as a small "Filters" button instead of a large always-open panel, expands on click, and collapses again after a few seconds of no interaction — giving the graph the full screen by default. The experimental "Auto-adapt density" option is temporarily hidden while it's tuned further; the percentage slider and filter chips are unaffected.
 
 ## [4.78.0] - 2026-09-04
 
