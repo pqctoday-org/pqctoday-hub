@@ -105,7 +105,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'The dates were set without you.',
-        sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
+        sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems, though not PQC-specific ones. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
         ctaPrimary: 'See the mandate timeline',
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Read the threat economics',
@@ -188,7 +188,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the risk register',
         ctaSecondaryHref: '/business/tools/risk-register',
         proofChips: [
-          '1013 sources, trust-tiered',
+          '1013 documents, trust-tiered',
           'Regulatory data verified 29 Aug 2026',
           'Organised around the NIST CSWP.39 zones',
           'How we verify',
@@ -199,7 +199,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Questions you answer', value: '6' },
-            { label: 'Report sections generated', value: '17' },
+            { label: 'Report sections generated', value: '16' },
             { label: 'Governance artifacts attached', value: 'four' },
           ],
           punchline: 'A number you can put in front of an auditor.',
@@ -276,12 +276,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Governance artifacts', value: 'four' },
-            { label: 'Report sections', value: '17' },
+            { label: 'Report sections', value: '16' },
             { label: 'Teaching modules on your path', value: '24' },
           ],
           punchline: 'A plan, not a slide.',
           footnote:
-            "Illustrative until you answer the six questions. The artifact and section counts are real — they are what this role's report and Command Center actually generate.",
+            "Illustrative until you answer the six questions. The artifact count is real; the section count is what this role's own report renders, hidden sections excluded.",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'A plan someone can be held to',
@@ -342,21 +342,24 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'See who is behind the standards',
         ctaSecondaryHref: '/leaders',
         proofChips: [
-          '1013 sources, trust-tiered',
+          '1013 documents, trust-tiered',
           'Every correction logged and dated',
-          'Authoritative / High / Moderate / Low source tiers',
+          'Authoritative / Core / Supporting / Contextual source tiers',
         ],
         sideCard: {
           title: 'What backs a claim here',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Source tier', value: 'Authoritative to Low, always shown' },
+            {
+              label: 'Source tier',
+              value: 'Authoritative to Contextual, wherever a tier is on file',
+            },
             {
               label: 'Verification date',
               value: 'on every timeline row, and on 9 of 10 library records',
             },
-            { label: 'Retractions', value: 'logged, never deleted' },
+            { label: 'Superseded records', value: 'kept, marked deprecated, never deleted' },
           ],
           punchline: 'A claim without a date is an opinion.',
           footnote:
@@ -367,7 +370,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'Everything we have corrected',
-            body: 'The full revision log — what changed, when, and which record it touched.',
+            body: 'What changed, when, and which record it touched — 96% of entries carry no PR link, so treat this as an edit log, not a review trail.',
             href: '/revisions',
           },
           {
@@ -569,15 +572,15 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         heroEyebrow: 'Developer / Engineer · parameter sets · sizes · who owns them',
         heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
         headline: 'Pick the parameter set on purpose.',
-        sub: 'ML-KEM-768 or 1024 — 512 exists but almost nobody should pick it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
+        sub: 'ML-KEM-768 is what TLS hybrids and OpenSSL negotiate by default; 1024 where CNSA 2.0 applies; 512 is standardised but no protocol profile in our matrix uses it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
         ctaPrimary: 'Compare the algorithms',
         ctaPrimaryHref:
           '/algorithms?tab=detailed&mode=compare&compare=ML-DSA-44,ML-DSA-65,ML-DSA-87',
-        ctaSecondary: 'Negotiate the mandatory suite',
-        ctaSecondaryHref: '/business/tools/mti-negotiator',
+        ctaSecondary: 'Sign the same token three ways',
+        ctaSecondaryHref: '/playground/token-migration',
         proofChips: [
           'Sizes from FIPS 203/204/205, not estimates',
-          'Every status links to its NIST publication',
+          'Every status links to its publisher — NIST, IETF, BSI, ANSSI, KpqC and others',
           'No signup, no key required',
         ],
         sideCard: {
@@ -651,14 +654,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondary: 'Build the CBOM',
         ctaSecondaryHref: '/business/tools/crypto-cbom-builder',
         proofChips: [
-          'Real liboqs + SoftHSMv3 in your browser',
+          'Real OpenSSL 3.6.3 WASM in your browser',
           'Catalogue entries are proof-gated',
           'No signup, no key required',
         ],
         sideCard: {
           title: 'What a CBOM has to name',
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
+          provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Algorithms in use', value: 'every suite you negotiate' },
             { label: 'Where they came from', value: 'library defaults, not just your code' },
@@ -801,7 +804,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'A green test, not a green slide.',
         sub: 'Known-answer tests against the published NIST vectors, a closure record that says which services actually moved, and the dated audit trail behind every data claim you are about to inherit.',
         ctaPrimary: 'Run the validation vectors',
-        ctaPrimaryHref: '/algorithms?tab=validation',
+        ctaPrimaryHref: '/algorithms?tab=validation&section=kat',
         ctaSecondary: 'Close out the migration',
         ctaSecondaryHref: '/business/tools/migration-verification',
         proofChips: [
@@ -889,7 +892,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'A published FIPS', value: 'binding' },
+            { label: 'A published FIPS', value: 'final — binding where a mandate cites it' },
             { label: 'An IETF draft', value: 'not yet' },
             { label: 'A vendor roadmap', value: 'a press release' },
           ],
@@ -912,7 +915,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Draft is not the same as done',
-            body: 'A published FIPS binds you. An IETF draft does not, however far along it looks — and a vendor roadmap never did.',
+            body: 'A published FIPS is final; it binds you once a mandate — FISMA, CNSA 2.0, your regulator — cites it. An IETF draft does not, however far along it looks, and a vendor roadmap never did.',
           },
         ] as [
           { title: string; body: string; href?: string },
@@ -947,7 +950,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       workshopIds: ['cacp-kmip'],
       businessToolIds: ['hybrid-transition-planner'],
       board: {
-        heroEyebrow: 'Security architect · Multi-region PKI · 40k certificates',
+        heroEyebrow: 'Security Architect · policy-driven control plane',
         heroBadge: {
           text: 'Global · Technology, Telecommunications',
           tone: 'sourced' as 'sourced' | 'illustrative',
@@ -955,7 +958,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Change one policy line. Watch the estate rekey.',
         sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
         ctaPrimary: 'Open the KMIP control plane',
-        ctaPrimaryHref: '/playground/cacp',
+        ctaPrimaryHref: '/playground/cacp?tab=migration',
         ctaSecondary: 'Choose your transition mode',
         ctaSecondaryHref: '/business/tools/hybrid-transition-planner',
         proofChips: [
@@ -968,9 +971,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'info' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'Algorithms you will migrate to', value: '3' },
+            { label: 'Algorithms you will migrate to', value: '3 (more coming)' },
             { label: 'Times you will migrate again', value: '≥ 2' },
-            { label: 'Cost of the second migration', value: 'near zero' },
+            { label: 'Cost of the second migration', value: 'a policy change, not a project' },
           ],
           punchline: 'Agility is the deliverable. PQC is the first test of it.',
         },
@@ -980,11 +983,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           {
             title: 'A policy-driven KMIP control plane',
             body: 'KMIP 3.0 plus a SoftHSM Rust v3 HSM, both in WebAssembly. Load a crypto-agility policy and watch requests get allowed, denied or auto-rekeyed.',
-            href: '/playground/cacp',
+            href: '/playground/cacp?tab=migration',
           },
           {
             title: 'A transition decision, per asset class',
-            body: 'The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC and pure PQC.',
+            body: 'The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC, pure PQC — or a crypto-gateway fallback for what cannot move yet.',
             href: '/business/tools/hybrid-transition-planner',
           },
           {
@@ -1051,7 +1054,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'An inventory nobody owns is a document, not a control.',
           footnote:
-            "Illustrative framing. The catalogue's layer taxonomy and PQC-readiness data are real; the ownership model is the one this role's Command Center zone already assumes.",
+            "The catalogue's layer taxonomy and PQC-readiness data are real; the ownership model is the one this role's Command Center zone already assumes (RACI).",
         },
         gridTitle: 'What you walk out with',
         gridSub: 'The evidence under the diagram',
@@ -1109,12 +1112,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           text: 'Global · Technology, Telecommunications',
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
-        headline: 'Most of the protocols you depend on are still drafts.',
+        headline: 'Most of the protocol cases you depend on are still drafts.',
         sub: 'TLS 1.3 has hybrid groups today. Your VPN, your enrollment protocol and your messaging layer are at different stages, and a design that treats them as one migration will stall on the slowest.',
         ctaPrimary: 'Check protocol readiness',
         ctaPrimaryHref: '/algorithms?tab=support&matrixView=heatmap',
-        ctaSecondary: 'Split responsibility with your cloud',
-        ctaSecondaryHref: '/business/tools/cloud-responsibility-matrix',
+        ctaSecondary: 'Mint the composite certificate',
+        ctaSecondaryHref: '/playground/hybrid-certs',
         proofChips: [
           'Every protocol linked to its own spec',
           'Draft and RFC are never merged',
@@ -1126,8 +1129,8 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'TLS 1.3', value: 'hybrid groups shipping' },
-            { label: 'Enrollment', value: 'drafts, moving' },
-            { label: 'Messaging', value: 'earlier than you think' },
+            { label: 'Enrollment', value: 'pure PQC = RFC · composite = drafts, moving' },
+            { label: 'Messaging', value: 'MLS in WG last call; Signal shipped outside the IETF' },
           ],
           punchline: 'You migrate at the speed of your slowest protocol.',
           footnote:
@@ -1438,7 +1441,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Sizing from real FIPS 203/204 key sizes',
           'Sizing model with its sources published',
-          'CNSA 2.0 mandate dates built in',
+          'Sizes from FIPS 204, not vendor estimates',
         ],
         sideCard: {
           title: 'What changes on renewal day',
@@ -1471,7 +1474,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           },
           {
             title: 'Sizing that lands in a plan',
-            body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
+            body: 'A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds — sizing against a funded refresh window, not a wish.',
             href: '/library?purpose=reference',
           },
         ] as [
@@ -1500,7 +1503,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       order: 2,
       chipLabel: 'Find out where you stand',
       chipDescription:
-        'Ten minutes to a scored position and the checklist an auditor will ask for.',
+        'About three minutes to a scored position and the checklist an auditor will ask for.',
       phaseId: 'p1',
       cswp39Zone: 'assets',
       moduleIds: ['cbom', 'crypto-registry'],
@@ -1513,10 +1516,10 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
         headline: 'Get to a number before someone asks you for one.',
-        sub: 'Six questions about the estate you actually run — certificates, key stores, tunnels, vendors. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
+        sub: 'Six questions — your sector, jurisdiction, the crypto families you run (or import a CBOM), how long data must stay secret, the frameworks that bind you, and where the migration stands. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
         ctaPrimary: 'Score your estate',
         ctaPrimaryHref: '/assess?mode=quick',
-        ctaSecondary: 'Work the audit checklist',
+        ctaSecondary: 'Export the audit checklist',
         ctaSecondaryHref: '/business/tools/audit-checklist',
         proofChips: [
           'Your own answers, not a sample estate',
@@ -1687,9 +1690,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'warn' as 'bad' | 'warn' | 'info' | 'accent',
           provenance: 'guidance' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
-            { label: 'TLS', value: 'a named group, per version' },
-            { label: 'SSH', value: 'a named KEX algorithm' },
-            { label: 'IPsec', value: 'a proposal, plus fragmentation' },
+            { label: 'TLS', value: 'X25519MLKEM768 (IANA group 4588), per version' },
+            { label: 'SSH', value: 'mlkem768x25519-sha256 or sntrup761x25519-sha512' },
+            { label: 'IPsec', value: 'ML-KEM-768 KE method 36, plus RFC 7383 fragmentation' },
           ],
           punchline: 'The config line is small. Finding which one is the work.',
           footnote:
@@ -1738,7 +1741,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       id: 'cutover',
       order: 5,
       chipLabel: 'Rehearse the cutover',
-      chipDescription: 'Hybrid tunnels and certificates on a real renewal window.',
+      chipDescription: 'A hybrid IKEv2 tunnel and an ML-DSA certificate on a real renewal window.',
       phaseId: 'p5',
       cswp39Zone: 'migration',
       moduleIds: ['vpn-ssh-pqc', 'tls-basics'],
@@ -1751,7 +1754,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'sourced' as 'sourced' | 'illustrative',
         },
         headline: 'Rehearse the cutover before renewal day.',
-        sub: 'Hybrid tunnels and hybrid certificates, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
+        sub: 'A hybrid IKEv2 tunnel and an ML-DSA certificate, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
         ctaPrimary: 'Run an IKEv2 hybrid handshake',
         ctaPrimaryHref: '/playground/vpn-sim',
         ctaSecondary: 'Write the playbook',
@@ -1989,9 +1992,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         headline: 'Everything here has a status and a date.',
         sub: 'FIPS 203, 204 and 205 are published. 206 is not. HQC is selected but unstandardised. Each of those is a different claim with a different citation, and this page never flattens them into “PQC is ready”.',
         ctaPrimary: 'See algorithm and FIPS status',
-        ctaPrimaryHref: '/algorithms?tab=validation',
-        ctaSecondary: 'Watch the vulnerability feed',
-        ctaSecondaryHref: '/business/tools/crypto-vulnerability-watch',
+        ctaPrimaryHref: '/algorithms?tab=transition',
+        ctaSecondary: 'See what changed, and when',
+        ctaSecondaryHref: '/timeline',
         proofChips: [
           'Every status links to its NIST publication',
           'Draft and final are labelled, never merged',
@@ -2005,8 +2008,9 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
             { label: 'Published FIPS', value: '203, 204, 205' },
             { label: 'Selected, not standardised', value: 'HQC' },
             {
-              label: 'Announced, not drafted',
-              value: 'FIPS 206 (FN-DSA) expected; LAMPS composites already in IETF draft',
+              label: 'Where each stands',
+              value:
+                'FIPS 206 (FN-DSA) — announced, not yet drafted; LAMPS composites — past Last Call, with the IESG',
             },
           ],
           punchline: '“Standardised” is four different states wearing one word.',
@@ -2161,11 +2165,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sideCard: {
           title: 'The CRQC consensus',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
-          provenance: 'sourced' as 'sourced' | 'illustrative' | 'guidance',
+          provenance: 'illustrative' as 'sourced' | 'illustrative' | 'guidance',
           rows: [
             { label: 'Consensus estimate', value: '2033 (2030–2036)' },
-            { label: 'Data must stay secret', value: '12 yrs' },
-            { label: 'A migration takes', value: '5 yrs' },
+            { label: 'Assumed secrecy need', value: '12 yrs' },
+            { label: 'Assumed migration time', value: '5 yrs' },
           ],
           punchline: 'Your start-by year was 2016 — you are ten years past it.',
           footnote:
@@ -2391,11 +2395,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaPrimaryHref: '/learn',
         ctaSecondary: 'The cost of waiting',
         ctaSecondaryHref: '/business/tools/cost-of-inaction',
-        proofChips: [
-          'Plain English by default',
-          'Every term explained on hover',
-          'Nothing to install',
-        ],
+        proofChips: ['Plain English by default', 'Plain English by default', 'Nothing to install'],
         sideCard: {
           title: 'The one idea',
           tone: 'bad' as 'bad' | 'warn' | 'info' | 'accent',
@@ -2471,7 +2471,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Real cryptography, running here',
           'Plain English by default',
-          'Every term explained on hover',
+          'Plain English by default',
         ],
         sideCard: {
           title: 'The bit that surprises people',
@@ -2623,7 +2623,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Real cryptography, running here',
           'Plain English by default',
-          'Every term explained on hover',
+          'Plain English by default',
         ],
         sideCard: {
           title: 'Three things it touches',
@@ -2643,12 +2643,12 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         gridCards: [
           {
             title: 'The ID in your phone',
-            body: 'The full EUDI wallet lifecycle: wallet, PID issuance, attestation, relying-party verification and the QES provider.',
+            body: 'Set up a digital ID in your phone — issuance, proving who you are to a stranger app, and the wallet that holds it.',
             href: '/playground/digital-id',
           },
           {
             title: 'The money',
-            body: 'A Bitcoin transaction end to end — secp256k1 keypair, SHA-256 and RIPEMD-160, transaction signing. Classical crypto, shown as what is being migrated away from.',
+            body: 'Build a Bitcoin payment step by step and see the classical math underneath it — the same kind of math everything else on this site is replacing.',
             href: '/playground/bitcoin-flow',
           },
           {
@@ -2692,14 +2692,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           tone: 'illustrative' as 'sourced' | 'illustrative',
         },
         headline: 'Somebody is already on this.',
-        sub: 'This is not a warning nobody acted on. Governments have signed dates into law, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.',
+        sub: 'This is not a warning nobody acted on. Governments have put dates in writing, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.',
         ctaPrimary: 'See what governments have committed to',
         ctaPrimaryHref: '/timeline',
         ctaSecondary: 'Meet the people doing the work',
         ctaSecondaryHref: '/leaders',
         proofChips: [
           'Plain English by default',
-          'Every term explained on hover',
+          'Plain English by default',
           'Every claim links to its own source',
         ],
         sideCard: {
@@ -2713,14 +2713,14 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           ],
           punchline: 'The fix exists. Fitting it everywhere is the slow part.',
           footnote:
-            'Every person listed is proof-gated against a published source — a talk, a paper, or a standard they authored.',
+            "Most people listed are tied to a paper, standard or patent in this site's own library; the rest link to a public record of their work.",
         },
         gridTitle: 'Where you can go next',
         gridSub: 'Optional, none of it locked',
         gridCards: [
           {
             title: 'The rules countries have written',
-            body: 'What your country and industry have actually committed to.',
+            body: 'Who writes the rules, and when the first deadlines land.',
             href: '/compliance?tab=foryou',
           },
           {
@@ -2770,7 +2770,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         sub: 'Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Watch it once and you will know why people say this takes years.',
         ctaPrimary: 'Watch a migration happen',
         ctaPrimaryHref: '/simulation?run=exec',
-        ctaSecondary: 'See where you would start',
+        ctaSecondary: 'See the kind of plan a real migration starts with',
         ctaSecondaryHref: '/business/tools/initial-scoping',
         proofChips: [
           'Deterministic run — same seed, same outcome',

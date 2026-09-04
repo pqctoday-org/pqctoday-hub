@@ -10,7 +10,7 @@ ops,capacity,cta_secondary_label,,Align to funded refreshes,active,,,2026-08-02,
 ops,capacity,cta_secondary_href,,/business/tools/refresh-cycle-alignment,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 ops,capacity,proof_chip,0,Sizing from real FIPS 203/204 key sizes,active,,,2026-08-02,
 ops,capacity,proof_chip,1,Sizing model with its sources published,active,,,2026-08-23,"Reworded 2026-08-23: 'Benchmarked through a real PKCS#11 engine' is true of the workshops, not of the 150 ops/s figure it sits beside on this board (see side_card_row_label,1's note) — hsmCapacityDefaults.ts documents it as a software estimate, not a PKCS#11 benchmark."
-ops,capacity,proof_chip,2,CNSA 2.0 mandate dates built in,active,,,2026-08-02,
+ops,capacity,proof_chip,2,"Sizes from FIPS 204, not vendor estimates",active,,,2026-09-03,2026-09-03: was 'CNSA 2.0 mandate dates built in' — no CNSA year appears anywhere in HsmCapacityDefaults.ts or the calculator; CNSA 2.0 years do appear on /migrate?tab=plan (a different destination). Reworded to what this board's own calculator actually sources.
 ops,capacity,side_card_title,,What changes on renewal day,active,,,2026-08-02,
 ops,capacity,side_card_tone,,warn,active,,,2026-08-02,
 ops,capacity,side_card_provenance,,sourced,active,,,2026-08-02,
@@ -29,7 +29,7 @@ ops,capacity,grid_card_body,0,"SoftHSMv3 and the open-source engines a fleet lik
 ops,capacity,grid_card_title,1,Sizing turned into a schedule,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 ops,capacity,grid_card_body,1,Refresh-Cycle Alignment maps PQC migration tasks onto infrastructure refresh cycles you have already funded.,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 ops,capacity,grid_card_title,2,Sizing that lands in a plan,active,,,2026-08-02,Item 3 rewritten after the best-fit re-pairing — it referenced a tool this board no longer links to.
-ops,capacity,grid_card_body,2,"A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.",active,,,2026-08-02,Item 3 rewritten after the best-fit re-pairing — it referenced a tool this board no longer links to.
+ops,capacity,grid_card_body,2,"A capacity number only matters once it has a date attached, which is what the refresh-cycle alignment adds — sizing against a funded refresh window, not a wish.",active,,,2026-09-03,"2026-09-03: dropped 'Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6' — fetched NIST CSWP 39-upd1 directly; §4.6 says nothing about a sunset date, mandatory or otherwise (it describes the crypto-gateway architecture only). The site's own cswp39ZoneData.ts carried the same fabricated claim, fixed in the same pass."
 ops,capacity,track_title,,"Then, the background: {essentials_vs_full:ops}.",active,,,2026-08-02,
 ops,capacity,track_chip,0,PQC 101,active,,,2026-08-02,
 ops,capacity,track_chip,1,Ops quantum impact,active,,,2026-08-02,
@@ -124,13 +124,13 @@ developer,pilot,track_chip,5,Crypto agility,active,,,2026-08-02,
 developer,pilot,track_chip,6,PKI workshop,active,,,2026-08-02,
 developer,pilot,track_chip,7,Crypto dev APIs,active,,,2026-08-02,
 developer,pilot,capstone_chip_label,,Pilot-Ready,active,,,2026-08-07,
-architect,controlplane,hero_eyebrow,,Security architect · Multi-region PKI · 40k certificates,active,,,2026-08-02,
+architect,controlplane,hero_eyebrow,,Security Architect · policy-driven control plane,active,,,2026-09-03,"2026-09-03: was '...Multi-region PKI · 40k certificates' — no 40,000 or 40k figure exists anywhere in the repo for this context; every other architect board eyebrow follows 'Security Architect · <topic>'."
 architect,controlplane,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-02,
 architect,controlplane,hero_badge_tone,,sourced,active,,,2026-08-02,
 architect,controlplane,headline,,Change one policy line. Watch the estate rekey.,active,,,2026-08-02,
 architect,controlplane,sub,,"A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.",active,,,2026-08-02,
 architect,controlplane,cta_primary_label,,Open the KMIP control plane,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
-architect,controlplane,cta_primary_href,,/playground/cacp,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
+architect,controlplane,cta_primary_href,,/playground/cacp?tab=migration,active,,,2026-09-03,"2026-09-03: was bare '/playground/cacp', which lands on the Learn plane; 'business label' and 'Classical → Hybrid → Full PQC' are the Migration plane's own presets (migration/MigrationView.tsx). Deep-linked directly to what the sub already promises."
 architect,controlplane,cta_secondary_label,,Choose your transition mode,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 architect,controlplane,cta_secondary_href,,/business/tools/hybrid-transition-planner,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 architect,controlplane,proof_chip,0,"Real ML-KEM / ML-DSA / SLH-DSA, no server",active,,,2026-08-02,
@@ -140,18 +140,18 @@ architect,controlplane,side_card_title,,"Why agility, not just algorithms",activ
 architect,controlplane,side_card_tone,,info,active,,,2026-08-02,
 architect,controlplane,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 architect,controlplane,side_card_row_label,0,Algorithms you will migrate to,active,,,2026-08-02,
-architect,controlplane,side_card_row_value,0,3,active,,,2026-08-02,
+architect,controlplane,side_card_row_value,0,3 (more coming),active,,,2026-09-03,"2026-09-03: was a bare '3' — the site's own Hybrid Transition Planner recommends a 4th (ML-KEM-768 + HQC-128) and FN-DSA/FIPS 206 is pending, so 'so far' is the honest frame."
 architect,controlplane,side_card_row_label,1,Times you will migrate again,active,,,2026-08-02,
 architect,controlplane,side_card_row_value,1,≥ 2,active,,,2026-08-02,
 architect,controlplane,side_card_row_label,2,Cost of the second migration,active,,,2026-08-02,
-architect,controlplane,side_card_row_value,2,near zero,active,,,2026-08-02,
+architect,controlplane,side_card_row_value,2,"a policy change, not a project",active,,,2026-09-03,"2026-09-03: was 'near zero', an unsourced claim. Reworded to what is actually true and checkable — re-keying under an existing agility control plane is a config change, not a re-architecture."
 architect,controlplane,side_card_punchline,,Agility is the deliverable. PQC is the first test of it.,active,,,2026-08-02,
 architect,controlplane,grid_title,,What you walk out with,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,grid_sub,,A control plane you have driven,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,grid_card_title,0,A policy-driven KMIP control plane,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,grid_card_body,0,"KMIP 3.0 plus a SoftHSM Rust v3 HSM, both in WebAssembly. Load a crypto-agility policy and watch requests get allowed, denied or auto-rekeyed.",active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,grid_card_title,1,"A transition decision, per asset class",active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
-architect,controlplane,grid_card_body,1,"The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC and pure PQC.",active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
+architect,controlplane,grid_card_body,1,"The Hybrid Transition Planner (CSWP.39 §3.2.4) walks the decision tree between traditional+PQC, PQC+PQC, pure PQC — or a crypto-gateway fallback for what cannot move yet.",active,,,2026-09-03,"2026-09-03: was missing the tool's 4th outcome (HybridTransitionPlanner.tsx:23-26,101-102 crypto-gateway; businessToolsRegistry.tsx confirms it)."
 architect,controlplane,grid_card_title,2,"Agility as a control, not a slogan",active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,grid_card_body,2,"The control plane is the workshop this board rests on: the policy line you change is a real one, and the estate rekeys against it.",active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,controlplane,track_title,,"Then, the background: {essentials_vs_full:architect}.",active,,,2026-08-02,
@@ -214,7 +214,7 @@ curious,break,cta_secondary_label,,See what a breach costs,active,,,2026-08-02,S
 curious,break,cta_secondary_href,,/business/tools/breach-simulator,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,break,proof_chip,0,"Real cryptography, running here",active,,,2026-08-02,
 curious,break,proof_chip,1,Plain English by default,active,,,2026-08-02,
-curious,break,proof_chip,2,Every term explained on hover,active,,,2026-08-02,
+curious,break,proof_chip,2,Plain English by default,active,,,2026-09-03,"2026-09-03: was 'Every term explained on hover' — PersonaBoardView.tsx renders proof chips, rows and card bodies as plain strings; no hover/glossary mechanism exists on the board itself. Reworded to a claim the board can back (its own headlines/subs are written in plain language)."
 curious,break,side_card_title,,The bit that surprises people,active,,,2026-08-02,
 curious,break,side_card_tone,,bad,active,,,2026-08-02,
 curious,break,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
@@ -252,7 +252,7 @@ executive,risk,cta_primary_label,,See a finished example report,active,,,2026-08
 executive,risk,cta_primary_href,,/report?example=1,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 executive,risk,cta_secondary_label,,Build the risk register,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 executive,risk,cta_secondary_href,,/business/tools/risk-register,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
-executive,risk,proof_chip,0,"{library_active_count} sources, trust-tiered",active,,,2026-08-02,
+executive,risk,proof_chip,0,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: see executive/evidence's proof_chip,0 note."
 executive,risk,proof_chip,1,{regulatory_verified_phrase},active,,,2026-08-02,
 executive,risk,proof_chip,2,Organised around the NIST CSWP.39 zones,active,,,2026-08-02,
 executive,risk,proof_chip,3,How we verify,active,,,2026-08-02,
@@ -262,7 +262,7 @@ executive,risk,side_card_provenance,,illustrative,active,,,2026-08-02,
 executive,risk,side_card_row_label,0,Questions you answer,active,,,2026-08-02,
 executive,risk,side_card_row_value,0,{assess_quick_question_count_digit},active,,,2026-09-03,2026-09-03: literal '8' contradicted the tokenised '6 questions' rendered elsewhere on this same board. Tokenised.
 executive,risk,side_card_row_label,1,Report sections generated,active,,,2026-08-02,
-executive,risk,side_card_row_value,1,{report_section_total},active,,,2026-08-02,
+executive,risk,side_card_row_value,1,{report_sections_visible:executive},active,,,2026-09-03,"2026-09-03: was '{report_section_total}' = 17, the full report's section count; the executive's own report hides algorithmMigration (PERSONA_REPORT_CONFIG.executive), so it renders 16. Tokenised to the persona-aware count."
 executive,risk,side_card_row_label,2,Governance artifacts attached,active,,,2026-08-02,
 executive,risk,side_card_row_value,2,{artifacts_count:executive:governance},active,,,2026-08-02,
 executive,risk,side_card_punchline,,A number you can put in front of an auditor.,active,,,2026-08-02,
@@ -295,11 +295,11 @@ executive,roadmap,side_card_provenance,,illustrative,active,,,2026-08-02,
 executive,roadmap,side_card_row_label,0,Governance artifacts,active,,,2026-08-02,
 executive,roadmap,side_card_row_value,0,{artifacts_count:executive:governance},active,,,2026-08-02,
 executive,roadmap,side_card_row_label,1,Report sections,active,,,2026-08-02,
-executive,roadmap,side_card_row_value,1,{report_section_total},active,,,2026-08-02,
+executive,roadmap,side_card_row_value,1,{report_sections_visible:executive},active,,,2026-09-03,"2026-09-03: see executive/risk's side_card_row_value,1 note."
 executive,roadmap,side_card_row_label,2,Teaching modules on your path,active,,,2026-08-23,Reworded 2026-08-23: same fix as executive/mandate track_note — labels the count as teaching-only rather than leaving it to silently disagree with the '(24 modules)' label ScoreCard renders elsewhere on the same page.
 executive,roadmap,side_card_row_value,2,{recommended_path_no_quiz_count:executive},active,,,2026-08-02,
 executive,roadmap,side_card_punchline,,"A plan, not a slide.",active,,,2026-08-02,
-executive,roadmap,side_card_footnote,,Illustrative until you answer the {assess_quick_question_count} questions. The artifact and section counts are real — they are what this role's report and Command Center actually generate.,active,,,2026-08-23,"Fixed 2026-08-23: the D-3 duration investigation traced every '/assess'-bound board CTA to the live flow it actually lands on — assessFlowModel.ts's RENDER_ORDER_QUICK (6 steps) and TRACK_INFO.quick (3 minutes), the track every one of these CTAs resolves to (executive's PERSONA_RECOMMENDED_MODE is 'quick'; ops/standing and curious/howbad link ?mode=quick explicitly). Every board guessed 'eight questions' at a duration somewhere between 6 and 11 minutes — the question count itself was wrong, not just the duration. Tokenised against personaConfig.ts's new ASSESS_QUICK_QUESTION_COUNT / ASSESS_QUICK_MINUTES (re-exports of assessFlowModel.ts's own TRACK_INFO.quick) so this can't re-drift if the quick track's step count or estimate ever changes."
+executive,roadmap,side_card_footnote,,"Illustrative until you answer the {assess_quick_question_count} questions. The artifact count is real; the section count is what this role's own report renders, hidden sections excluded.",active,,,2026-09-03,2026-09-03: reworded to match the persona-aware section count above.
 executive,roadmap,grid_title,,What you walk out with,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 executive,roadmap,grid_sub,,A plan someone can be held to,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 executive,roadmap,grid_card_title,0,A two-track roadmap,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
@@ -318,12 +318,12 @@ developer,inventory,cta_primary_label,,Open OpenSSL Studio,active,,,2026-08-02,D
 developer,inventory,cta_primary_href,,/playground/openssl-studio,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 developer,inventory,cta_secondary_label,,Build the CBOM,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 developer,inventory,cta_secondary_href,,/business/tools/crypto-cbom-builder,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
-developer,inventory,proof_chip,0,Real liboqs + SoftHSMv3 in your browser,active,,,2026-08-02,
+developer,inventory,proof_chip,0,Real OpenSSL 3.6.3 WASM in your browser,active,,,2026-09-03,"2026-09-03: was 'Real liboqs + SoftHSMv3 in your browser' — this board's destinations (OpenSSL Studio, CBOM Builder) use neither; OpenSSL Studio runs PQC natively in OpenSSL's own default provider since 3.5 (opensslLessons.ts:60)."
 developer,inventory,proof_chip,1,Catalogue entries are proof-gated,active,,,2026-08-02,
 developer,inventory,proof_chip,2,"No signup, no key required",active,,,2026-08-02,
 developer,inventory,side_card_title,,What a CBOM has to name,active,,,2026-08-02,
 developer,inventory,side_card_tone,,info,active,,,2026-08-02,
-developer,inventory,side_card_provenance,,illustrative,active,,,2026-08-02,
+developer,inventory,side_card_provenance,,guidance,active,,,2026-09-03,"2026-09-03: was 'illustrative' ('THIS USER'S INPUTS'), but the card ('What a CBOM has to name') states a general rule, never the visitor's own data — the same reclassification closure and binds already got on 2026-08-09."
 developer,inventory,side_card_row_label,0,Algorithms in use,active,,,2026-08-02,
 developer,inventory,side_card_row_value,0,every suite you negotiate,active,,,2026-08-02,
 developer,inventory,side_card_row_label,1,Where they came from,active,,,2026-08-02,
@@ -395,7 +395,7 @@ architect,inventory,side_card_row_value,1,"asset, not per algorithm",active,,,20
 architect,inventory,side_card_row_label,2,Ownership recorded via,active,,,2026-08-02,
 architect,inventory,side_card_row_value,2,RACI,active,,,2026-08-02,
 architect,inventory,side_card_punchline,,"An inventory nobody owns is a document, not a control.",active,,,2026-08-02,
-architect,inventory,side_card_footnote,,Illustrative framing. The catalogue's layer taxonomy and PQC-readiness data are real; the ownership model is the one this role's Command Center zone already assumes.,active,,,2026-08-02,
+architect,inventory,side_card_footnote,,The catalogue's layer taxonomy and PQC-readiness data are real; the ownership model is the one this role's Command Center zone already assumes (RACI).,active,,,2026-09-03,2026-09-03: dropped the leading 'Illustrative framing.' — the card was reclassified to provenance=sourced on 2026-08-09 but this footnote's opening line was never updated to match.
 architect,inventory,grid_title,,What you walk out with,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,inventory,grid_sub,,The evidence under the diagram,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 architect,inventory,grid_card_title,0,"The as-is, written down",active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
@@ -441,7 +441,7 @@ ops,cutover,hero_eyebrow,,IT Ops · rehearse before the change window,active,,,2
 ops,cutover,hero_badge_text,,"Americas · Energy & Utilities, Telecommunications",active,,,2026-08-02,"Region/industry context — same for every variant of this role, it describes the visitor not the option."
 ops,cutover,hero_badge_tone,,sourced,active,,,2026-08-02,
 ops,cutover,headline,,Rehearse the cutover before renewal day.,active,,,2026-08-02,
-ops,cutover,sub,,"Hybrid tunnels and hybrid certificates, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.",active,,,2026-08-02,
+ops,cutover,sub,,"A hybrid IKEv2 tunnel and an ML-DSA certificate, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.",active,,,2026-09-03,"2026-09-03: was 'Hybrid tunnels and hybrid certificates' — vpn-sim's certificate auth is RSA-3072 or pure ML-DSA-44/65/87 self-signed (VpnSimulationPanel.tsx:813,2656-2672); no hybrid/composite certificate is issued anywhere the workshop reaches."
 ops,cutover,cta_primary_label,,Run an IKEv2 hybrid handshake,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,cutover,cta_primary_href,,/playground/vpn-sim,active,,,2026-08-02,De-duplicated 2026-08-02: every board now points at its own destination — tls-simulator was on 6 boards and /migrate on 5.
 ops,cutover,cta_secondary_label,,Write the playbook,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
@@ -550,12 +550,12 @@ researcher,threatmodel,proof_chip,2,"{library_active_count} sources, trust-tiere
 researcher,threatmodel,proof_chip,3,Drift guards fail the build on silent data change,active,,,2026-08-02,
 researcher,threatmodel,side_card_title,,The CRQC consensus,active,,,2026-08-02,
 researcher,threatmodel,side_card_tone,,bad,active,,,2026-08-02,
-researcher,threatmodel,side_card_provenance,,sourced,active,,,2026-08-02,
+researcher,threatmodel,side_card_provenance,,illustrative,active,,,2026-09-03,"2026-09-03: was 'sourced' — rows 1-2 (EXEC_EXPOSURE.secrecyYears/migrationYears) are the executive board's own illustrative planning assumptions, not data the researcher board sourced; only row 0 (CRQC consensus) is genuinely sourced."
 researcher,threatmodel,side_card_row_label,0,Consensus estimate,active,,,2026-08-02,
 researcher,threatmodel,side_card_row_value,0,{exec_crqc_estimate_row},active,,,2026-08-02,
-researcher,threatmodel,side_card_row_label,1,Data must stay secret,active,,,2026-08-02,
+researcher,threatmodel,side_card_row_label,1,Assumed secrecy need,active,,,2026-09-03,2026-09-03: was 'Data must stay secret' stated as fact; see provenance's note.
 researcher,threatmodel,side_card_row_value,1,{exec_secrecy_row},active,,,2026-08-02,
-researcher,threatmodel,side_card_row_label,2,A migration takes,active,,,2026-08-02,
+researcher,threatmodel,side_card_row_label,2,Assumed migration time,active,,,2026-09-03,2026-09-03: was 'A migration takes' stated as fact; see provenance's note.
 researcher,threatmodel,side_card_row_value,2,{exec_migration_row},active,,,2026-08-02,
 researcher,threatmodel,side_card_punchline,,{exec_mosca_punchline},active,,,2026-08-02,
 researcher,threatmodel,side_card_footnote,,{exec_mosca_footnote},active,,,2026-08-02,
@@ -579,7 +579,7 @@ curious,short,cta_primary_href,,/learn,active,,,2026-08-02,De-duplicated 2026-08
 curious,short,cta_secondary_label,,The cost of waiting,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 curious,short,cta_secondary_href,,/business/tools/cost-of-inaction,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 curious,short,proof_chip,0,Plain English by default,active,,,2026-08-02,
-curious,short,proof_chip,1,Every term explained on hover,active,,,2026-08-02,
+curious,short,proof_chip,1,Plain English by default,active,,,2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
 curious,short,proof_chip,2,Nothing to install,active,,,2026-08-02,
 curious,short,side_card_title,,The one idea,active,,,2026-08-02,
 curious,short,side_card_tone,,bad,active,,,2026-08-02,
@@ -613,7 +613,7 @@ curious,mylife,cta_secondary_label,,Follow a Bitcoin transaction,active,,,2026-0
 curious,mylife,cta_secondary_href,,/playground/bitcoin-flow,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 curious,mylife,proof_chip,0,"Real cryptography, running here",active,,,2026-08-02,
 curious,mylife,proof_chip,1,Plain English by default,active,,,2026-08-02,
-curious,mylife,proof_chip,2,Every term explained on hover,active,,,2026-08-02,
+curious,mylife,proof_chip,2,Plain English by default,active,,,2026-09-03,"2026-09-03: see curious/break's proof_chip,2 note."
 curious,mylife,side_card_title,,Three things it touches,active,,,2026-08-02,
 curious,mylife,side_card_tone,,info,active,,,2026-08-02,
 curious,mylife,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
@@ -628,9 +628,9 @@ curious,mylife,side_card_footnote,,Illustrative examples chosen because their da
 curious,mylife,grid_title,,Where you can go next,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 curious,mylife,grid_sub,,"Three doors, all optional",active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 curious,mylife,grid_card_title,0,The ID in your phone,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
-curious,mylife,grid_card_body,0,"The full EUDI wallet lifecycle: wallet, PID issuance, attestation, relying-party verification and the QES provider.",active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
+curious,mylife,grid_card_body,0,"Set up a digital ID in your phone — issuance, proving who you are to a stranger app, and the wallet that holds it.",active,,,2026-09-03,"2026-09-03: was the registry description verbatim ('the full EUDI wallet lifecycle: wallet, PID issuance, attestation, relying-party verification and the QES provider') — EUDI, PID, attestation, relying-party and QES are all unexplained jargon on a 'no background needed' board."
 curious,mylife,grid_card_title,1,The money,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
-curious,mylife,grid_card_body,1,"A Bitcoin transaction end to end — secp256k1 keypair, SHA-256 and RIPEMD-160, transaction signing. Classical crypto, shown as what is being migrated away from.",active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
+curious,mylife,grid_card_body,1,Build a Bitcoin payment step by step and see the classical math underneath it — the same kind of math everything else on this site is replacing.,active,,,2026-09-03,2026-09-03: was the registry description verbatim (secp256k1/SHA-256/RIPEMD-160/'transaction signing') — unexplained jargon on a beginner board.
 curious,mylife,grid_card_title,2,Why these two,active,,,2026-08-02,"Rewritten 2026-08-02: the three items now map 1:1 onto THIS board's own destinations (1=primary CTA, 2=secondary CTA, 3=the workshop it rests on). They previously described tools the board did not link to."
 curious,mylife,grid_card_body,2,"Medical records outlive the lock protecting them by decades, which is why they cannot wait. Identity and money are where you can watch the change happen today.",active,,,2026-08-23,Fixed 2026-08-23 (D-4): this card asserted 'identity and money' as the cannot-wait case while the side card two inches away names health records ('kept for decades') and its own punchline says 'Long-lived data is the part that cannot wait' — the board answered its own sub's question two different ways. Now agrees with the side card instead of overwriting it; identity and money keep their role as the two live demos.
 curious,mylife,track_title,,Start anywhere. Nothing is locked.,active,,,2026-08-02,
@@ -641,7 +641,7 @@ executive,deadlines,hero_eyebrow,,Executive / GRC · the dates you did not choos
 executive,deadlines,hero_badge_text,,Americas · Finance & Banking,active,,,2026-09-03,2026-09-03: see mandate's note.
 executive,deadlines,hero_badge_tone,,illustrative,active,,,2026-08-09,
 executive,deadlines,headline,,The dates were set without you.,active,,,2026-08-09,
-executive,deadlines,sub,,"CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems. Which of them reach your estate, in what order, and what the threat data says about the year after that.",active,,,2026-08-23,Fixed 2026-08-23: grouping CNSA 2.0 with NIS2 and DORA as all carrying 'fixed years' implied all three set post-quantum deadlines. Only CNSA 2.0 does — NIS2 (transposition Oct 2024) and DORA (applies Jan 2025) carry compliance dates that are not PQC dates.
+executive,deadlines,sub,,"CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems, though not PQC-specific ones. Which of them reach your estate, in what order, and what the threat data says about the year after that.",active,,,2026-09-03,2026-09-03: NIS2 (transposition Oct 2024) and DORA (effective Jan 2025) carry real compliance dates but neither sets a post-quantum deadline; grouping them with CNSA 2.0 read as though all three did. Clarified without dropping the mandates.
 executive,deadlines,cta_primary_label,,See the mandate timeline,active,,,2026-08-09,
 executive,deadlines,cta_primary_href,,/timeline,active,,,2026-08-09,
 executive,deadlines,cta_secondary_label,,Read the threat economics,active,,,2026-08-09,
@@ -680,24 +680,24 @@ executive,evidence,cta_primary_label,,Open the evidence corpus,active,,,2026-08-
 executive,evidence,cta_primary_href,,/library?purpose=planning,active,,,2026-08-09,
 executive,evidence,cta_secondary_label,,See who is behind the standards,active,,,2026-08-09,
 executive,evidence,cta_secondary_href,,/leaders,active,,,2026-08-09,
-executive,evidence,proof_chip,0,"{library_active_count} sources, trust-tiered",active,,,2026-08-09,
+executive,evidence,proof_chip,0,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: 'sources' overstated what LIBRARY_ACTIVE_SOURCE_COUNT actually counts (active library documents, personaBoardLiveMetrics.ts:29) — the trusted_sources registry itself has 1030 active rows, a different count."
 executive,evidence,proof_chip,1,Every correction logged and dated,active,,,2026-08-09,
-executive,evidence,proof_chip,2,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-09,
+executive,evidence,proof_chip,2,Authoritative / Core / Supporting / Contextual source tiers,active,,,2026-09-03,2026-09-03: 'High/Moderate/Low' is not this site's vocabulary — trustedSourcesData.ts's real tiers are Authoritative/Core/Supporting/Contextual.
 executive,evidence,side_card_title,,What backs a claim here,active,,,2026-08-09,
 executive,evidence,side_card_tone,,info,active,,,2026-08-09,
 executive,evidence,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 executive,evidence,side_card_row_label,0,Source tier,active,,,2026-08-09,
-executive,evidence,side_card_row_value,0,"Authoritative to Low, always shown",active,,,2026-08-09,
+executive,evidence,side_card_row_value,0,"Authoritative to Contextual, wherever a tier is on file",active,,,2026-09-03,"2026-09-03: was 'Authoritative to Low, always shown' — wrong tier names (see proof_chip,2), and 133 of 1,013 active library rows carry no trusted_source_id, so a tier is not always shown."
 executive,evidence,side_card_row_label,1,Verification date,active,,,2026-08-09,
 executive,evidence,side_card_row_value,1,"on every timeline row, and on 9 of 10 library records",active,,,2026-09-03,"2026-09-03: was 'on every record' — library_09022026.csv has 115 of 1,013 active rows with no last_verified (133 with no trusted_source_id); compliance_09022026_r1.csv has 88 of 183 active rows with no last_verified. Timeline is clean (0 of 261). Restated to what the data actually supports."
-executive,evidence,side_card_row_label,2,Retractions,active,,,2026-08-09,
-executive,evidence,side_card_row_value,2,"logged, never deleted",active,,,2026-08-09,
+executive,evidence,side_card_row_label,2,Superseded records,active,,,2026-09-03,"2026-09-03: was 'Retractions' — no retraction concept exists in the codebase (only the researcher field-watch card uses the word, for the same deprecated-status data). What the site actually does is mark a record status=deprecated with a reason, never delete it."
+executive,evidence,side_card_row_value,2,"kept, marked deprecated, never deleted",active,,,2026-09-03,"2026-09-03: was 'logged, never deleted' — see label's note. 256 deprecated rows in library_09022026.csv are the real mechanism this describes."
 executive,evidence,side_card_punchline,,A claim without a date is an opinion.,active,,,2026-08-09,
 executive,evidence,side_card_footnote,,Tiers and verification dates come from the trusted-sources registry; every timeline record and 87% of library records are joined to it.,active,,,2026-09-03,2026-09-03: was 'every record on this site is joined against' — same overstatement as the row above.
 executive,evidence,grid_title,,Where to check us,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
 executive,evidence,grid_sub,,Provenance you can hand to an auditor,active,,,2026-08-09,
 executive,evidence,grid_card_title,0,Everything we have corrected,active,,,2026-08-09,
-executive,evidence,grid_card_body,0,"The full revision log — what changed, when, and which record it touched.",active,,,2026-08-09,
+executive,evidence,grid_card_body,0,"What changed, when, and which record it touched — 96% of entries carry no PR link, so treat this as an edit log, not a review trail.",active,,,2026-09-03,"2026-09-03: was '...The full revision log...' — public/data/revisions.jsonl: 222 entries, 214 with pr_number=0/merge_sha='pending' (no PR link renders, GlobalRevisionsFeed.tsx:188-195), 195 authored_by_llm=true."
 executive,evidence,grid_card_href,0,/revisions,active,,,2026-08-09,
 executive,evidence,grid_card_title,1,"Who is filing, not just announcing",active,,,2026-08-09,
 executive,evidence,grid_card_body,1,"Cryptographic patents relevant to migration. Research only, explicitly not legal advice.",active,,,2026-08-09,
@@ -743,13 +743,13 @@ developer,algorithm,hero_eyebrow,,Developer / Engineer · parameter sets · size
 developer,algorithm,hero_badge_text,,Americas · Technology,active,,,2026-08-09,
 developer,algorithm,hero_badge_tone,,sourced,active,,,2026-08-09,
 developer,algorithm,headline,,Pick the parameter set on purpose.,active,,,2026-08-09,
-developer,algorithm,sub,,"ML-KEM-768 or 1024 — 512 exists but almost nobody should pick it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.",active,,,2026-08-23,Fixed 2026-08-23: FIPS 203 defines three ML-KEM parameter sets; listing only two on a board headlined 'Pick the parameter set on purpose' read as an omission rather than a deliberate choice. Named the exclusion instead of silently making it.
+developer,algorithm,sub,,"ML-KEM-768 is what TLS hybrids and OpenSSL negotiate by default; 1024 where CNSA 2.0 applies; 512 is standardised but no protocol profile in our matrix uses it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.",active,,,2026-09-03,2026-09-03: 'almost nobody should pick it' was an editorial judgement contradicted by this site's own algorithm reference (ML-KEM-512 use_case_notes: 'Good for most applications'). Replaced with the checkable fact — no protocol profile in pqcProtocolMatrix.ts uses ML-KEM-512 — per the 2026-09-03 decision to fix the board copy rather than the reference data.
 developer,algorithm,cta_primary_label,,Compare the algorithms,active,,,2026-08-09,
 developer,algorithm,cta_primary_href,,"/algorithms?tab=detailed&mode=compare&compare=ML-DSA-44,ML-DSA-65,ML-DSA-87",active,,,2026-09-03,"2026-09-03: was missing '&compare=', so useAlgorithmExplorer.ts initialises an empty comparison set and AlgorithmDetailedComparison.tsx renders 'Pick algorithms to compare' — the primary CTA landed on an empty panel. Now pre-selects the three ML-DSA parameter sets the board's own side card discusses."
-developer,algorithm,cta_secondary_label,,Negotiate the mandatory suite,active,,,2026-08-09,
-developer,algorithm,cta_secondary_href,,/business/tools/mti-negotiator,active,,,2026-08-09,
+developer,algorithm,cta_secondary_label,,Sign the same token three ways,active,,,2026-09-03,2026-09-03: MTI Negotiator is a protocol-designer/architect tool (businessToolsRegistry.tsx audience:'architect'; MTINegotiator.tsx: 'Protocol-designer and architect-facing tool') wearing the developer eyebrow. Repointed to a workshop that puts this card's own byte-budget claim on screen.
+developer,algorithm,cta_secondary_href,,/playground/token-migration,active,,,2026-09-03,2026-09-03: was '/business/tools/mti-negotiator'. See label's note — token-migration is on the developer recommendedPersonas list and was unused by any board.
 developer,algorithm,proof_chip,0,"Sizes from FIPS 203/204/205, not estimates",active,,,2026-08-09,
-developer,algorithm,proof_chip,1,Every status links to its NIST publication,active,,,2026-08-09,
+developer,algorithm,proof_chip,1,"Every status links to its publisher — NIST, IETF, BSI, ANSSI, KpqC and others",active,,,2026-09-03,"2026-09-03: was 'Every status links to its NIST publication' — algorithms_transitions_07282026.csv has 102 of 193 rows linking a non-NIST publisher (IETF 18, KR 12, BSI 11, ASD 11, CCN 9, ECCG 8, ETSI 6, others) and 9 rows with no status_url at all."
 developer,algorithm,proof_chip,2,"No signup, no key required",active,,,2026-08-09,
 developer,algorithm,side_card_title,,What the choice costs you,active,,,2026-08-09,
 developer,algorithm,side_card_tone,,warn,active,,,2026-08-09,
@@ -779,7 +779,7 @@ developer,closure,hero_badge_tone,,sourced,active,,,2026-08-09,
 developer,closure,headline,,"A green test, not a green slide.",active,,,2026-08-09,
 developer,closure,sub,,"Known-answer tests against the published NIST vectors, a closure record that says which services actually moved, and the dated audit trail behind every data claim you are about to inherit.",active,,,2026-08-09,
 developer,closure,cta_primary_label,,Run the validation vectors,active,,,2026-08-09,
-developer,closure,cta_primary_href,,/algorithms?tab=validation,active,,,2026-08-09,
+developer,closure,cta_primary_href,,/algorithms?tab=validation&section=kat,active,,,2026-09-03,"2026-09-03: was '?tab=validation' with no section param — ALGORITHM_PERSONA_DEFAULTS.developer.openSections=[] (personaConfig.ts), so a developer landed on two collapsed accordions with the KAT runner unlabelled as the target. section=kat deep-links directly to it."
 developer,closure,cta_secondary_label,,Close out the migration,active,,,2026-08-09,
 developer,closure,cta_secondary_href,,/business/tools/migration-verification,active,,,2026-08-09,
 developer,closure,proof_chip,0,"ACVP + KAT run locally, not asserted",active,,,2026-08-09,
@@ -822,8 +822,8 @@ developer,binds,proof_chip,2,Every requirement links to its source,active,,,2026
 developer,binds,side_card_title,,What counts as binding,active,,,2026-08-09,
 developer,binds,side_card_tone,,warn,active,,,2026-08-09,
 developer,binds,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
-developer,binds,side_card_row_label,0,A published FIPS,active,,,2026-08-09,
-developer,binds,side_card_row_value,0,binding,active,,,2026-08-09,
+developer,binds,side_card_row_label,0,A published FIPS,active,,,2026-09-03,"2026-09-03: unchanged label, see value's note."
+developer,binds,side_card_row_value,0,final — binding where a mandate cites it,active,,,2026-09-03,"2026-09-03: was 'binding' unconditionally. FISMA (via FIPS 199/200, OMB A-130) makes a FIPS binding for US federal agencies and their contractors; CNSA 2.0 does the same for national-security systems. Neither applies universally, and this board's own eyebrow addresses 'Node + Go services', not a federal contractor."
 developer,binds,side_card_row_label,1,An IETF draft,active,,,2026-08-09,
 developer,binds,side_card_row_value,1,not yet,active,,,2026-08-09,
 developer,binds,side_card_row_label,2,A vendor roadmap,active,,,2026-08-09,
@@ -839,17 +839,17 @@ developer,binds,grid_card_title,1,What the attack actually costs,active,,,2026-0
 developer,binds,grid_card_body,1,"Threat economics and the CRQC horizon, with the dissent shown.",active,,,2026-08-09,
 developer,binds,grid_card_href,1,/threats,active,,,2026-08-09,
 developer,binds,grid_card_title,2,Draft is not the same as done,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
-developer,binds,grid_card_body,2,"A published FIPS binds you. An IETF draft does not, however far along it looks — and a vendor roadmap never did.",active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+developer,binds,grid_card_body,2,"A published FIPS is final; it binds you once a mandate — FISMA, CNSA 2.0, your regulator — cites it. An IETF draft does not, however far along it looks, and a vendor roadmap never did.",active,,,2026-09-03,"2026-09-03: was 'A published FIPS binds you.' — see side_card_row_value,0's note."
 developer,binds,track_title,,"Then, the background: {essentials_vs_full:developer}.",active,,,2026-08-09,
 architect,protocols,hero_eyebrow,,"Security Architect · protocol readiness · ready, draft, or absent",active,,,2026-08-09,
 architect,protocols,hero_badge_text,,"Global · Technology, Telecommunications",active,,,2026-08-09,
 architect,protocols,hero_badge_tone,,sourced,active,,,2026-08-09,
-architect,protocols,headline,,Most of the protocols you depend on are still drafts.,active,,,2026-08-09,"Reworded 2026-08-09 editorial pass: read ""Half the protocols"", a quantity nothing on the board backs. The matrix carries 17 rfc-published stages against 53 still in flight, so ""half"" was both unsourced and an understatement."
+architect,protocols,headline,,Most of the protocol cases you depend on are still drafts.,active,,,2026-09-03,2026-09-03: was 'Most of the protocols...' — true per matrix cell (21 rfc-published of many more in-flight) but false per protocol (15 of 27 live rows already have at least one RFC-published cell). Reworded to the per-cell framing the underlying data actually supports.
 architect,protocols,sub,,"TLS 1.3 has hybrid groups today. Your VPN, your enrollment protocol and your messaging layer are at different stages, and a design that treats them as one migration will stall on the slowest.",active,,,2026-08-09,
 architect,protocols,cta_primary_label,,Check protocol readiness,active,,,2026-08-09,
 architect,protocols,cta_primary_href,,/algorithms?tab=support&matrixView=heatmap,active,,,2026-08-09,
-architect,protocols,cta_secondary_label,,Split responsibility with your cloud,active,,,2026-08-09,
-architect,protocols,cta_secondary_href,,/business/tools/cloud-responsibility-matrix,active,,,2026-08-09,
+architect,protocols,cta_secondary_label,,Mint the composite certificate,active,,,2026-09-03,"2026-09-03: Cloud Responsibility Matrix (CSWP.39 §6.4, IaaS/PaaS/SaaS governance split) concerns nothing about protocol lifecycle stages; this board's own workshop (hybrid-certs, variant metadata) was orphaned. Business Tools coverage for architect survives on four other boards' tools; swapped to the board's own workshop."
+architect,protocols,cta_secondary_href,,/playground/hybrid-certs,active,,,2026-09-03,2026-09-03: was '/business/tools/cloud-responsibility-matrix'. See label's note.
 architect,protocols,proof_chip,0,Every protocol linked to its own spec,active,,,2026-08-09,
 architect,protocols,proof_chip,1,Draft and RFC are never merged,active,,,2026-08-09,
 architect,protocols,proof_chip,2,Hybrid groups X25519MLKEM768 and friends,active,,,2026-08-09,
@@ -859,9 +859,9 @@ architect,protocols,side_card_provenance,,sourced,active,,,2026-08-09,"Reclassif
 architect,protocols,side_card_row_label,0,TLS 1.3,active,,,2026-08-09,
 architect,protocols,side_card_row_value,0,hybrid groups shipping,active,,,2026-08-09,
 architect,protocols,side_card_row_label,1,Enrollment,active,,,2026-08-09,
-architect,protocols,side_card_row_value,1,"drafts, moving",active,,,2026-08-09,
+architect,protocols,side_card_row_value,1,"pure PQC = RFC · composite = drafts, moving",active,,,2026-09-03,"2026-09-03: was 'drafts, moving' alone — pqcProtocolMatrix.ts's EST/CMP row has pureKem and pureSig both rfc-published (RFC 9810/9935, RFC 7030/9881); only the hybrid/composite cells are drafts."
 architect,protocols,side_card_row_label,2,Messaging,active,,,2026-08-09,
-architect,protocols,side_card_row_value,2,earlier than you think,active,,,2026-08-09,
+architect,protocols,side_card_row_value,2,MLS in WG last call; Signal shipped outside the IETF,active,,,2026-09-03,"2026-09-03: was 'earlier than you think', ambiguous — MLS's cells are all wg-last-call (pqcProtocolMatrix.ts), while Signal's PQXDH has been in production since 2023 despite being non-IETF. 'Earlier' as 'less mature' was wrong for Signal; the punchline ('you migrate at the speed of your slowest protocol') needed both facts stated, not one adjective."
 architect,protocols,side_card_punchline,,You migrate at the speed of your slowest protocol.,active,,,2026-08-09,
 architect,protocols,side_card_footnote,,"Readiness per protocol is read from the protocol matrix, where every cell cites the document behind it.",active,,,2026-08-09,
 architect,protocols,grid_title,,Where to check each claim,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
@@ -947,10 +947,10 @@ ops,standing,hero_eyebrow,,IT Ops · before anyone asks · about {assess_quick_m
 ops,standing,hero_badge_text,,"Americas · Energy & Utilities, Telecommunications",active,,,2026-08-09,
 ops,standing,hero_badge_tone,,sourced,active,,,2026-08-09,
 ops,standing,headline,,Get to a number before someone asks you for one.,active,,,2026-08-09,
-ops,standing,sub,,"{Assess_quick_question_count} questions about the estate you actually run — certificates, key stores, tunnels, vendors. A scored position, the gaps in priority order, and the checklist that turns them into tickets.",active,,,2026-08-23,"Fixed 2026-08-23: the D-3 duration investigation traced every '/assess'-bound board CTA to the live flow it actually lands on — assessFlowModel.ts's RENDER_ORDER_QUICK (6 steps) and TRACK_INFO.quick (3 minutes), the track every one of these CTAs resolves to (executive's PERSONA_RECOMMENDED_MODE is 'quick'; ops/standing and curious/howbad link ?mode=quick explicitly). Every board guessed 'eight questions' at a duration somewhere between 6 and 11 minutes — the question count itself was wrong, not just the duration. Tokenised against personaConfig.ts's new ASSESS_QUICK_QUESTION_COUNT / ASSESS_QUICK_MINUTES (re-exports of assessFlowModel.ts's own TRACK_INFO.quick) so this can't re-drift if the quick track's step count or estimate ever changes."
+ops,standing,sub,,"{Assess_quick_question_count} questions — your sector, jurisdiction, the crypto families you run (or import a CBOM), how long data must stay secret, the frameworks that bind you, and where the migration stands. A scored position, the gaps in priority order, and the checklist that turns them into tickets.",active,,,2026-09-03,"2026-09-03: was '...certificates, key stores, tunnels, vendors...', describing an estate inventory the quick track does not ask about. RENDER_ORDER_QUICK's real steps: sector, jurisdiction, crypto families (with a CBOM-upload option), data sensitivity, frameworks, migration status."
 ops,standing,cta_primary_label,,Score your estate,active,,,2026-08-09,
 ops,standing,cta_primary_href,,/assess?mode=quick,active,,,2026-08-09,
-ops,standing,cta_secondary_label,,Work the audit checklist,active,,,2026-08-09,
+ops,standing,cta_secondary_label,,Export the audit checklist,active,,,2026-09-03,"2026-09-03: was 'Work the audit checklist' — only two of the checklist's items pre-tick from a completed assessment (AuditReadinessChecklist.tsx:284,356); the honest promise is the CSV export, which the tool does deliver in full."
 ops,standing,cta_secondary_href,,/business/tools/audit-checklist,active,,,2026-08-09,
 ops,standing,proof_chip,0,"Your own answers, not a sample estate",active,,,2026-08-09,
 ops,standing,proof_chip,1,Organised around the NIST CSWP.39 zones,active,,,2026-08-09,
@@ -993,11 +993,11 @@ ops,suites,side_card_title,,What you actually configure,active,,,2026-08-09,
 ops,suites,side_card_tone,,warn,active,,,2026-08-09,
 ops,suites,side_card_provenance,,guidance,active,,,2026-08-09,"Reclassified 2026-08-09 tile review. The chip renders provenance literally, and 'illustrative' says ""THIS USER'S INPUTS"" — false for a card asserting a general rule, which never becomes the user's data. See PersonaJourneyBoard.sideCard.provenance."
 ops,suites,side_card_row_label,0,TLS,active,,,2026-08-09,
-ops,suites,side_card_row_value,0,"a named group, per version",active,,,2026-08-09,
+ops,suites,side_card_row_value,0,"X25519MLKEM768 (IANA group 4588), per version",active,,,2026-09-03,"2026-09-03: was 'a named group, per version' — the footnote claims names are 'quoted from the protocol specifications, not paraphrased', but no row named one. pqcProtocolMatrix.ts:807."
 ops,suites,side_card_row_label,1,SSH,active,,,2026-08-09,
-ops,suites,side_card_row_value,1,a named KEX algorithm,active,,,2026-08-09,
+ops,suites,side_card_row_value,1,mlkem768x25519-sha256 or sntrup761x25519-sha512,active,,,2026-09-03,"2026-09-03: was 'a named KEX algorithm' — OpenSSH 10.0's KexAlgorithms names, from pqcProtocolMatrix.ts."
 ops,suites,side_card_row_label,2,IPsec,active,,,2026-08-09,
-ops,suites,side_card_row_value,2,"a proposal, plus fragmentation",active,,,2026-08-09,
+ops,suites,side_card_row_value,2,"ML-KEM-768 KE method 36, plus RFC 7383 fragmentation",active,,,2026-09-03,"2026-09-03: was 'a proposal, plus fragmentation' — the real IKEv2 KE method id, from VpnComparisonPanel.tsx / VpnSimulationPanel.tsx."
 ops,suites,side_card_punchline,,The config line is small. Finding which one is the work.,active,,,2026-08-09,
 ops,suites,side_card_footnote,,"Suite and group names are quoted from the protocol specifications, not paraphrased.",active,,,2026-08-09,
 ops,suites,grid_title,,Where to look it up,active,,,2026-08-09,"Retitled 2026-08-09 tile review: ""What you walk out with"" promises a deliverable, and every card on this board is a signpost to another page. The three role families already have distinct grid titles; this board had defaulted to the wrong one."
@@ -1051,9 +1051,9 @@ researcher,standards,hero_badge_tone,,illustrative,active,,,2026-08-09,
 researcher,standards,headline,,Everything here has a status and a date.,active,,,2026-08-09,
 researcher,standards,sub,,"FIPS 203, 204 and 205 are published. 206 is not. HQC is selected but unstandardised. Each of those is a different claim with a different citation, and this page never flattens them into “PQC is ready”.",active,,,2026-08-09,
 researcher,standards,cta_primary_label,,See algorithm and FIPS status,active,,,2026-08-09,
-researcher,standards,cta_primary_href,,/algorithms?tab=validation,active,,,2026-08-09,
-researcher,standards,cta_secondary_label,,Watch the vulnerability feed,active,,,2026-08-09,
-researcher,standards,cta_secondary_href,,/business/tools/crypto-vulnerability-watch,active,,,2026-08-09,
+researcher,standards,cta_primary_href,,/algorithms?tab=transition,active,,,2026-09-03,"2026-09-03: was '?tab=validation', which houses KAT/attack-surface testing, not a status column. Status/statusUrl/standardizationDate render under ?tab=transition (AlgorithmComparison.tsx)."
+researcher,standards,cta_secondary_label,,"See what changed, and when",active,,,2026-09-03,"2026-09-03: was 'Watch the vulnerability feed' → crypto-vulnerability-watch, which is empty without a prior /migrate product selection (CryptoVulnerabilityWatch.tsx: useSelectedProductIds) and is a product-CVE digest, not a standards-status feed. Repointed to /timeline, already this board's own card 0."
+researcher,standards,cta_secondary_href,,/timeline,active,,,2026-09-03,2026-09-03: was '/business/tools/crypto-vulnerability-watch'. See label's note.
 researcher,standards,proof_chip,0,Every status links to its NIST publication,active,,,2026-08-09,
 researcher,standards,proof_chip,1,"Draft and final are labelled, never merged",active,,,2026-08-09,
 researcher,standards,proof_chip,2,Every claim carries a source tier and a verification date,active,,,2026-09-03,"2026-09-03: see researcher/provenance's proof_chip,2 note."
@@ -1064,8 +1064,8 @@ researcher,standards,side_card_row_label,0,Published FIPS,active,,,2026-08-09,
 researcher,standards,side_card_row_value,0,"203, 204, 205",active,,,2026-08-09,
 researcher,standards,side_card_row_label,1,"Selected, not standardised",active,,,2026-08-09,
 researcher,standards,side_card_row_value,1,HQC,active,,,2026-08-09,
-researcher,standards,side_card_row_label,2,"Announced, not drafted",active,,,2026-08-23,"Fixed 2026-08-23 (D-6, verified live against csrc.nist.gov): FIPS 206 does not exist in any form yet — confirmed both by a 404 at csrc.nist.gov/pubs/fips/206/ipd (the standard NIST draft-publication URL pattern) and by NIST's own FIPS 200-210 publications listing, which shows only 200/201-3/202/203/204/205 as published, no 206 in any status. This repo's own algorithmStatusTier.ts:18 already documents this precisely ('FN-DSA/FIPS 206 announced — no public draft published yet'); the board's 'Draft' label overstated what its own codebase's type comment already knew. NIST's HQC selection announcement (nist.gov, March 2025) separately said a draft was planned 'in about a year' with final in 2027 — that window has passed with no 2026 CSRC news of a published draft for either candidate."
-researcher,standards,side_card_row_value,2,FIPS 206 (FN-DSA) expected; LAMPS composites already in IETF draft,active,,,2026-08-23,"Fixed 2026-08-23: separates two genuinely different maturity states this row's old value ran together — FIPS 206 is an expected NIST number with nothing published against it yet (per this row's own label fix), while the LAMPS composite signature/KEM Internet-Drafts (draft-ietf-lamps-pq-composite-sigs/kem) are real, actively-tracked IETF drafts (see pqcProtocolMatrix.ts:1822-1824). The 'FN-DSA' attribution for 206 follows this codebase's own convention (algorithmStatusTier.ts:18, pqcAlgorithmsData.ts:154-155) — NIST's own public pages did not confirm a FIPS number for either HQC or FN-DSA in this check."
+researcher,standards,side_card_row_label,2,Where each stands,active,,,2026-09-03,"2026-09-03: was 'Announced, not drafted', applied to a value that also named the LAMPS composites. Split the value into two explicit stages instead of one label covering both."
+researcher,standards,side_card_row_value,2,"FIPS 206 (FN-DSA) — announced, not yet drafted; LAMPS composites — past Last Call, with the IESG",active,,,2026-09-03,"2026-09-03: verified directly 2026-09-03 against csrc.nist.gov ('FALCON was also selected and will be published in FIPS 206 (in development)' — no public draft) and the IETF datatracker (draft-ietf-lamps-pq-composite-sigs and -kem both 'Submitted to IESG for Publication', composite-kem on the 2026-09-03 IESG telechat agenda) — past 'already in IETF draft', which understated their progress."
 researcher,standards,side_card_punchline,,“Standardised” is four different states wearing one word.,active,,,2026-08-09,
 researcher,standards,side_card_footnote,,"Each status is read from the algorithm registry, which carries the publication or draft that set it.",active,,,2026-08-09,
 researcher,standards,grid_title,,What the workspace gives you,active,,,2026-08-09,
@@ -1186,13 +1186,13 @@ curious,anyone,hero_eyebrow,,No background needed · about 5 minutes · nothing 
 curious,anyone,hero_badge_text,,Americas · unfiltered,active,,,2026-08-09,
 curious,anyone,hero_badge_tone,,illustrative,active,,,2026-08-09,
 curious,anyone,headline,,Somebody is already on this.,active,,,2026-08-09,
-curious,anyone,sub,,"This is not a warning nobody acted on. Governments have signed dates into law, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.",active,,,2026-08-09,
+curious,anyone,sub,,"This is not a warning nobody acted on. Governments have put dates in writing, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.",active,,,2026-09-03,"2026-09-03: was 'signed dates into law', contradicting the side-card row two inches below (fixed 2026-08-23 to 'binding policy in several countries'). timeline_09012026_r1.csv's 13 Regulation-category rows set no PQC date; the instruments that do (CNSA 2.0, NSM-10, OMB M-23-02/M-26-15) are policy, not statute."
 curious,anyone,cta_primary_label,,See what governments have committed to,active,,,2026-08-09,
 curious,anyone,cta_primary_href,,/timeline,active,,,2026-08-09,
 curious,anyone,cta_secondary_label,,Meet the people doing the work,active,,,2026-08-09,
 curious,anyone,cta_secondary_href,,/leaders,active,,,2026-08-09,
 curious,anyone,proof_chip,0,Plain English by default,active,,,2026-08-09,
-curious,anyone,proof_chip,1,Every term explained on hover,active,,,2026-08-09,
+curious,anyone,proof_chip,1,Plain English by default,active,,,2026-09-03,2026-09-03: was 'Every term explained on hover' — see curious/break's proof_chip note.
 curious,anyone,proof_chip,2,Every claim links to its own source,active,,,2026-08-09,
 curious,anyone,side_card_title,,Where it already stands,active,,,2026-08-09,
 curious,anyone,side_card_tone,,info,active,,,2026-08-09,
@@ -1204,11 +1204,11 @@ curious,anyone,side_card_row_value,1,binding policy in several countries,active,
 curious,anyone,side_card_row_label,2,People working on it,active,,,2026-08-09,
 curious,anyone,side_card_row_value,2,"named, with their work",active,,,2026-08-09,
 curious,anyone,side_card_punchline,,The fix exists. Fitting it everywhere is the slow part.,active,,,2026-08-09,
-curious,anyone,side_card_footnote,,"Every person listed is proof-gated against a published source — a talk, a paper, or a standard they authored.",active,,,2026-08-09,
+curious,anyone,side_card_footnote,,"Most people listed are tied to a paper, standard or patent in this site's own library; the rest link to a public record of their work.",active,,,2026-09-03,"2026-09-03: was 'Every person listed is proof-gated... a talk, a paper, or a standard they authored' — 65 of 378 active leaders rows carry none of the three proof anchors (KeyResourceRefs/PatentRefs/MigrateCatalogRefs) the intake gate checks, only a KeyResourceUrl; the intake script's own header calls it 'a REPORTING gate, not a hard CI gate'."
 curious,anyone,grid_title,,Where you can go next,active,,,2026-08-09,
 curious,anyone,grid_sub,,"Optional, none of it locked",active,,,2026-08-09,
 curious,anyone,grid_card_title,0,The rules countries have written,active,,,2026-08-09,
-curious,anyone,grid_card_body,0,What your country and industry have actually committed to.,active,,,2026-08-09,
+curious,anyone,grid_card_body,0,"Who writes the rules, and when the first deadlines land.",active,,,2026-09-03,"2026-09-03: was 'What your country and industry have actually committed to' — for curious, ?tab=foryou renders CuriousOrientationView, which asks nothing about country or industry (registry's own claim: 'the curious view needs neither')."
 curious,anyone,grid_card_href,0,/compliance?tab=foryou,active,,,2026-08-09,
 curious,anyone,grid_card_title,1,"Who is actually doing it, not just talking",active,,,2026-09-03,"2026-09-03: was 'Who is building it, not just talking' → /patents, which PERSONA_ABSENT_PATHS.curious withholds on the rail ('Patent law is a specialist read'). Repointed to WhoHasMovedPanel on /migrate, built for exactly this question and already curious-only (MigrationWorkbench.tsx: '!embedded && persona === ""curious""')."
 curious,anyone,grid_card_body,1,"A running count of which vendors have actually shipped, drawn from the same proof-gated catalogue as everything else on this site — not their press releases.",active,,,2026-09-03,2026-09-03: see title's note.
@@ -1223,7 +1223,7 @@ curious,whattake,headline,,Watch someone actually do it.,active,,,2026-08-09,
 curious,whattake,sub,,"Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Watch it once and you will know why people say this takes years.",active,,,2026-09-03,"2026-09-03: dropped 'Eleven minutes, and...' — see hero_eyebrow's note."
 curious,whattake,cta_primary_label,,Watch a migration happen,active,,,2026-08-09,
 curious,whattake,cta_primary_href,,/simulation?run=exec,active,,,2026-09-03,"2026-09-03: was '/simulation?run=climb' — the scored, ~90-110-minute Full Migration Journey (SimPlayChoiceModal.tsx 'Full Migration Journey'); SimulationView.tsx itself defaults curious to the plain-language walkthrough and its own seat notice steers curious away from the climb. Repointed to run=exec (the walkthrough), already a registered CTA row, previously unused."
-curious,whattake,cta_secondary_label,,See where you would start,active,,,2026-08-09,
+curious,whattake,cta_secondary_label,,See the kind of plan a real migration starts with,active,,,2026-09-03,"2026-09-03: was 'See where you would start' — Initial Scoping Assessment is a Phase-0 estate-scoping form (top-20 systems, top-10 vendors) that opens empty for a visitor with no organisation to scope. Relabelled to set the right expectation rather than promise personal relevance it cannot deliver."
 curious,whattake,cta_secondary_href,,/business/tools/initial-scoping,active,,,2026-08-09,
 curious,whattake,proof_chip,0,"Deterministic run — same seed, same outcome",active,,,2026-08-09,
 curious,whattake,proof_chip,1,Plain English by default,active,,,2026-08-09,
@@ -1262,7 +1262,7 @@ developer,inventory,grid_card_href,0,/playground/openssl-studio,active,,,2026-08
 developer,inventory,grid_card_href,1,/business/tools/crypto-cbom-builder,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 developer,sizing,grid_card_href,0,/playground/api-security-jwt,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 developer,sizing,grid_card_href,1,/playground/cert-capacity,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
-architect,controlplane,grid_card_href,0,/playground/cacp,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
+architect,controlplane,grid_card_href,0,/playground/cacp?tab=migration,active,,,2026-09-03,2026-09-03: see cta_primary_href's note — this card duplicates the primary CTA.
 architect,controlplane,grid_card_href,1,/business/tools/hybrid-transition-planner,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 architect,inventory,grid_card_href,1,/playground/pki-workshop,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
 architect,keystores,grid_card_href,0,/playground/envelope-encrypt,active,,,2026-08-09,"Restructured 2026-08-09 tile review: cards 1-2 are destinations and carry the link; card 3 is the argument the renderer highlights and carries none, because its text is a claim rather than a place. Card-3 links had text describing an argument and an href going somewhere unrelated."
