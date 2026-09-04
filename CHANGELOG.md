@@ -29,6 +29,21 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.78.0] - 2026-09-04
+
+### Added
+
+- **Navigate's force graph now includes vendor nodes, with an auto-adapt density mode** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: vendors are now first-class nodes in the graph instead of being absent, and the graph automatically thins out labels/detail as it gets denser so it stays readable.
+
+### Fixed
+
+- **A node's detail panel no longer overflows with very long connection lists** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: link and connection lists are now capped with a "show more" affordance instead of stretching the panel indefinitely.
+- **Protocol Matrix library chips now link to the right place in the Migrate Catalog** [view:/algorithms] [persona:developer] [persona:architect]: chips previously pointed at a query parameter the Migrate Catalog doesn't read, so clicking through led to an unfiltered catalog instead of the specific library.
+
+### Data
+
+- **PQC Community leaders page refreshed**: 27 rows corrected or reclassified after a full authorship/citation review (spotcheck, peer-review, and patent-inventor passes), plus a name correction and a duplicate-entry cleanup.
+
 ## [4.77.0] - 2026-09-04
 
 Two correctness fixes in the in-browser HSM engine, found and fixed on the
