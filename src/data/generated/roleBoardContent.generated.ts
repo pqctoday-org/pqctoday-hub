@@ -22,10 +22,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['program-charter'],
       board: {
         heroEyebrow: 'Executive / GRC · the decision that unlocks budget and names an owner',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Answer the board in an afternoon, not a quarter.',
         sub: 'Six questions about your estate. You get a defensible risk position, the regulatory dates that already bind you, and a board pack you can present on Thursday.',
         ctaPrimary: 'Start — 6 questions, about 3 minutes',
@@ -36,7 +33,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Every regulatory date links to its source',
           '1013 documents, trust-tiered',
           'Regulatory data verified 29 Aug 2026',
-          'How we verify',
         ],
         sideCard: {
           title: 'Your exposure window',
@@ -100,10 +96,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['compliance-timeline'],
       board: {
         heroEyebrow: 'Executive / GRC · the dates you did not choose',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'The dates were set without you.',
         sub: 'CNSA 2.0 carries fixed PQC years; NIS2 and DORA carry compliance dates that reach the same systems, though not PQC-specific ones. Which of them reach your estate, in what order, and what the threat data says about the year after that.',
         ctaPrimary: 'See the mandate timeline',
@@ -177,10 +170,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['risk-register'],
       board: {
         heroEyebrow: 'Executive / GRC · risk position · the dates that already bind you',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Know what you are actually exposed to.',
         sub: 'The same six questions, scored. You get a risk position you can defend line by line, with each regulatory deadline attached to the finding it threatens rather than filed in an appendix.',
         ctaPrimary: 'See a finished example report',
@@ -191,7 +181,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           '1013 documents, trust-tiered',
           'Regulatory data verified 29 Aug 2026',
           'Organised around the NIST CSWP.39 zones',
-          'How we verify',
         ],
         sideCard: {
           title: 'What the score is built from',
@@ -254,10 +243,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['roadmap-builder'],
       board: {
         heroEyebrow: 'Executive / GRC · sequenced plan · owners · KPIs',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Show a plan your regulator will accept.',
         sub: 'A sequenced roadmap with named owners, measurable KPIs and a policy draft — built from the same six answers, so your plan and your risk position cannot quietly disagree.',
         ctaPrimary: 'Build the roadmap',
@@ -268,7 +254,6 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
           'Deadlines derived from the published timeline',
           'Regulatory data verified 29 Aug 2026',
           'Organised around the NIST CSWP.39 zones',
-          'How we verify',
         ],
         sideCard: {
           title: 'What the plan contains',
@@ -331,10 +316,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['stakeholder-comms'],
       board: {
         heroEyebrow: 'Executive / GRC · the question your CFO will ask',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Where did these numbers come from?',
         sub: 'Every figure in your board pack traces to a dated, tiered source. The corrections are public, the people behind the standards are named, and the patent filings show who is actually building this rather than announcing it.',
         ctaPrimary: 'Open the evidence corpus',
@@ -415,10 +397,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['board-pitch'],
       board: {
         heroEyebrow: 'Executive / GRC · due diligence · nothing taken on trust',
-        heroBadge: {
-          text: 'Americas · Finance & Banking',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'See the whole programme before you fund it.',
         sub: 'Nine phases played through end to end — discovery, CBOM, risk scoring, roadmap, pilots, closure. One sitting to know what you are being asked to sign off on.',
         ctaPrimary: 'Play the executive walkthrough',
@@ -494,7 +473,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['crypto-api-refactor-audit'],
       board: {
         heroEyebrow: 'Developer · Node + Go services · TLS termination at the edge',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'Five minutes to a real ML-KEM handshake.',
         sub: 'Not a diagram. ML-KEM and X25519 combined through a real HKDF pipeline in this tab, every intermediate value inspectable. Then we tell you what to change in your stack.',
         ctaPrimary: 'Run ML-KEM + X25519 now',
@@ -570,7 +549,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['mti-negotiator'],
       board: {
         heroEyebrow: 'Developer / Engineer · parameter sets · sizes · who owns them',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'Pick the parameter set on purpose.',
         sub: 'ML-KEM-768 is what TLS hybrids and OpenSSL negotiate by default; 1024 where CNSA 2.0 applies; 512 is standardised but no protocol profile in our matrix uses it. ML-DSA-44, 65 or 87. SLH-DSA if you cannot hold state. The trade is bytes against speed against how long the key has to survive — compare them side by side rather than copying a blog post.',
         ctaPrimary: 'Compare the algorithms',
@@ -646,7 +625,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['crypto-cbom-builder'],
       board: {
         heroEyebrow: 'Developer / Engineer · CBOM before code changes',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'Find the crypto before you change it.',
         sub: 'Most of your cryptography was chosen by a library default, not by you. A CBOM names what your services actually negotiate — start from the catalogue rather than from a grep.',
         ctaPrimary: 'Open OpenSSL Studio',
@@ -721,7 +700,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'Developer / Engineer · sizes, budgets, and what overflows',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'The new sizes break your schema first.',
         sub: 'An ML-DSA-65 signature is roughly fifty times an ECDSA one. Your token budget, your database column and your MTU all notice long before your cryptography does.',
         ctaPrimary: 'Sign a JWT with ML-DSA',
@@ -800,7 +779,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['migration-verification'],
       board: {
         heroEyebrow: 'Developer / Engineer · tested · recorded · reviewable',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'A green test, not a green slide.',
         sub: 'Known-answer tests against the published NIST vectors, a closure record that says which services actually moved, and the dated audit trail behind every data claim you are about to inherit.',
         ctaPrimary: 'Run the validation vectors',
@@ -875,7 +854,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['compliance-checklist'],
       board: {
         heroEyebrow: 'Developer / Engineer · what is actually mandatory, and by when',
-        heroBadge: { text: 'Americas · Technology', tone: 'sourced' as 'sourced' | 'illustrative' },
+
         headline: 'Someone already decided your deadline.',
         sub: 'Not every PQC “requirement” is one. Here is which standards are final, which mandates carry dates that reach your service, and what you would actually have to replace.',
         ctaPrimary: 'See what already binds you',
@@ -951,10 +930,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['hybrid-transition-planner'],
       board: {
         heroEyebrow: 'Security Architect · policy-driven control plane',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Change one policy line. Watch the estate rekey.',
         sub: 'A KMIP 3.0 control plane and a real PKCS#11 HSM, both in this tab. Create keys by business label, flip Classical → Hybrid → Full PQC, and watch the same request get allowed, denied, or auto-rekeyed.',
         ctaPrimary: 'Open the KMIP control plane',
@@ -1028,10 +1004,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['crypto-architecture-diagram'],
       board: {
         heroEyebrow: 'Security Architect · as-is before to-be',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'You cannot draw the to-be without the as-is.',
         sub: 'Every library, HSM, protocol and CA in the estate, inventoried before the target architecture exists. A CBOM is what makes the diagram arguable rather than aspirational.',
         ctaPrimary: 'Document the architecture',
@@ -1108,10 +1081,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['cloud-responsibility-matrix'],
       board: {
         heroEyebrow: 'Security Architect · protocol readiness · ready, draft, or absent',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Most of the protocol cases you depend on are still drafts.',
         sub: 'TLS 1.3 has hybrid groups today. Your VPN, your enrollment protocol and your messaging layer are at different stages, and a design that treats them as one migration will stall on the slowest.',
         ctaPrimary: 'Check protocol readiness',
@@ -1187,10 +1157,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['infra-modernization-planner'],
       board: {
         heroEyebrow: 'Security Architect · where the keys live',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Decide where the keys live.',
         sub: "HSM partitions, KMS policy and TPM-backed device identity all behave differently under ML-DSA. Size them before you commit to a date in someone else's plan.",
         ctaPrimary: 'Wrap a key, KMS-style',
@@ -1213,6 +1180,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
               value: '150 ops/s · ~133× slower than ECDSA',
             },
             { label: 'Keys in the sample estate', value: 'seven' },
+            { label: 'ML-DSA-65 public key', value: '1,952 B · was 64' },
           ],
           punchline: 'Capacity is an architecture decision, not an ops surprise.',
           footnote:
@@ -1269,10 +1237,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['data-at-rest-strategy'],
       board: {
         heroEyebrow: 'Security Architect · order of operations · dependencies first',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'The order is the architecture.',
         sub: 'Two tracks, not one queue. Key exchange first where the traffic is exposed, signatures and PKI on their own track, and data at rest last and longest. Sequence against real refresh windows, not the calendar year.',
         ctaPrimary: 'Sequence the catalogue',
@@ -1348,10 +1313,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['risk-treatment-plan'],
       board: {
         heroEyebrow: 'Security Architect · the review, and what survives it',
-        heroBadge: {
-          text: 'Global · Technology, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Your design will be argued with. Bring sources.',
         sub: '“Why hybrid and not pure ML-KEM?” “Why this parameter set?” “Why is data-at-rest last?” Each of those has a published answer, a dated source, and where one exists, the strongest argument against it.',
         ctaPrimary: 'Read the threat model',
@@ -1428,10 +1390,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['refresh-cycle-alignment'],
       board: {
         heroEyebrow: 'IT Ops · 12k certs · 4 HSM partitions · next renewal window in 90 days',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Size your fleet before renewal day.',
         sub: 'Ten enterprise workflows, sized side by side: RSA-3072 and ECDSA P-256 today against ML-DSA-44/65/87. Storage, bandwidth, and CPU cores per workflow, with a totals row.',
         ctaPrimary: 'Size your HSM fleet',
@@ -1511,10 +1470,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['audit-checklist'],
       board: {
         heroEyebrow: 'IT Ops · before anyone asks · about 3 minutes',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Get to a number before someone asks you for one.',
         sub: 'Six questions — your sector, jurisdiction, the crypto families you run (or import a CBOM), how long data must stay secret, the frameworks that bind you, and where the migration stands. A scored position, the gaps in priority order, and the checklist that turns them into tickets.',
         ctaPrimary: 'Score your estate',
@@ -1590,10 +1546,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['vendor-scorecard'],
       board: {
         heroEyebrow: 'IT Ops · your renewals depend on their roadmaps',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: "Your renewals commit you to someone else's timeline.",
         sub: "Every certificate you renew this year ties you to a vendor's PQC schedule for its whole lifetime. Check theirs against yours before you sign, not after.",
         ctaPrimary: 'Check vendor roadmaps',
@@ -1670,10 +1623,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['kpi-tracker'],
       board: {
         heroEyebrow: 'IT Ops · named suites · not “enable PQC”',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Nobody ships a config line called “enable PQC”.',
         sub: 'You turn on a named group in a named protocol version, on a build that supports it. Which suites exist, which of your protocols carry them, and how far the rollout has actually got.',
         ctaPrimary: 'Check protocol support',
@@ -1749,10 +1699,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['deployment-playbook'],
       board: {
         heroEyebrow: 'IT Ops · rehearse before the change window',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Rehearse the cutover before renewal day.',
         sub: 'A hybrid IKEv2 tunnel and an ML-DSA certificate, end to end in this tab, so the first time you meet a fragmentation bug is not at 2am inside a change window.',
         ctaPrimary: 'Run an IKEv2 hybrid handshake',
@@ -1828,10 +1775,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['management-tools-audit'],
       board: {
         heroEyebrow: 'IT Ops · after the change window · what you can show',
-        heroBadge: {
-          text: 'Americas · Energy & Utilities, Telecommunications',
-          tone: 'sourced' as 'sourced' | 'illustrative',
-        },
+
         headline: '“It looks fine” is not a closure record.',
         sub: 'Negotiated suites verified per endpoint, monitoring that would notice a silent downgrade, and a closure report you can attach to the change ticket.',
         ctaPrimary: 'See a finished closure report',
@@ -1909,10 +1853,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'Researcher · unfiltered corpus · strict chronological · no gating',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Check our work.',
         sub: 'Every claim on this site carries a source tier and a verification date, and the corrections are public.',
         ctaPrimary: 'Open the evidence workspace',
@@ -1985,10 +1926,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['crypto-vulnerability-watch'],
       board: {
         heroEyebrow: 'Researcher · status, provenance, and what moved',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Everything here has a status and a date.',
         sub: 'FIPS 203, 204 and 205 are published. 206 is not. HQC is selected but unstandardised. Each of those is a different claim with a different citation, and this page never flattens them into “PQC is ready”.',
         ctaPrimary: 'See algorithm and FIPS status',
@@ -2066,10 +2004,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'Researcher / Academic · run it yourself · export the log',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Run the tests yourself.',
         sub: 'Known-answer tests against pinned NIST ACVP vectors and an SP 800-90B health-test suite, each in the tab that owns it. Copy the log.',
         ctaPrimary: 'Run SLH-DSA sign and verify',
@@ -2146,10 +2081,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['crqc-scenario'],
       board: {
         heroEyebrow: 'Researcher / Academic · the estimate and its sources',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Argue with the threat model.',
         sub: 'CRQC arrival is a distribution, not a date. The consensus window and every source behind it are on file and dated.',
         ctaPrimary: 'Plan a CRQC scenario',
@@ -2226,10 +2158,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'Researcher · a real prompt · keep the log',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Do not stop at our buttons.',
         sub: 'Everything the in-tab labs do is also reachable from a real OpenSSL command line — the same primitives, on a real prompt, your own invocation. Nothing to install.',
         ctaPrimary: 'Open OpenSSL Studio',
@@ -2305,10 +2234,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['supply-chain-matrix'],
       board: {
         heroEyebrow: 'Researcher · from the paper to the product',
-        heroBadge: {
-          text: 'All regions · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Follow the algorithm out of the paper.',
         sub: 'ML-KEM adopted in online checkout and digital banking channels, ML-DSA and SLH-DSA adopted across HSM and KMIP interfaces, and nothing at all in EMV card authentication — three sectors, three different stages. Which has adopted what, in which product and under which regulation, with the evidence attached rather than the announcement.',
         ctaPrimary: 'See what has actually shipped',
@@ -2385,10 +2311,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['cost-of-inaction'],
       board: {
         heroEyebrow: 'No background needed · about 30 seconds · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Thirty seconds, then decide.',
         sub: 'Someone can record encrypted traffic today and open it years later, once the right computer exists. That is the whole argument. Everything else is detail.',
         ctaPrimary: 'Take the guided path',
@@ -2458,10 +2381,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['breach-simulator'],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'What actually breaks, and when.',
         sub: 'The padlock in your browser relies on maths a quantum computer would undo. Watch it happen to a real connection in this tab, then decide how much further you want to go.',
         ctaPrimary: 'Watch a real handshake',
@@ -2531,14 +2451,11 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       phaseId: '',
       cswp39Zone: '',
       moduleIds: ['quantum-threats', 'pqc-candidates'],
-      workshopIds: ['rng-demo'],
+      workshopIds: [],
       businessToolIds: [],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Nobody knows the year. Here is what they do know.',
         sub: 'The honest answer to “when” is a range, not a date, and people who study this disagree with each other in public. The replacements, though, are already published — that part is not in doubt.',
         ctaPrimary: "See what we know and what we don't",
@@ -2610,10 +2527,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'No background needed · about 6 minutes · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Where this actually touches you.',
         sub: 'The money you move, the ID in your phone and your medical records all lean on the same maths. Here is what changes for each, and which one cannot wait.',
         ctaPrimary: 'Walk through a digital ID wallet',
@@ -2687,10 +2601,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: [],
       board: {
         heroEyebrow: 'No background needed · about 5 minutes · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Somebody is already on this.',
         sub: 'This is not a warning nobody acted on. Governments have put dates in writing, standards bodies have published the replacements, and there are named people who spent a decade building them. Here they are.',
         ctaPrimary: 'See what governments have committed to',
@@ -2762,10 +2673,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
       businessToolIds: ['initial-scoping'],
       board: {
         heroEyebrow: 'No background needed · a guided run · nothing to install',
-        heroBadge: {
-          text: 'Americas · unfiltered',
-          tone: 'illustrative' as 'sourced' | 'illustrative',
-        },
+
         headline: 'Watch someone actually do it.',
         sub: 'Not the theory — an organisation working through it, from “the board asked a question” to “we can prove it is done”. Watch it once and you will know why people say this takes years.',
         ctaPrimary: 'Watch a migration happen',
