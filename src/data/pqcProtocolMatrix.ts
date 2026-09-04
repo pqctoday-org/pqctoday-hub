@@ -916,7 +916,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         provider: 'Google Chrome',
         what: 'X25519MLKEM768 default for TLS 1.3 and QUIC in Chrome 131 (Chrome 124, Apr 2024, shipped the earlier X25519Kyber768Draft00 pre-standard group, not ML-KEM)',
         since: '2024-11',
-        referenceUrl: 'https://blog.cloudflare.com/pq-2025/',
+        referenceUrl: 'https://chromestatus.com/feature/5257822742249472',
       },
       {
         provider: 'AWS',
@@ -924,6 +924,27 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         since: '2025-04',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/',
+      },
+      {
+        provider: 'AWS Application/Network Load Balancer',
+        what: 'Opt-in PQ-TLS security policies (SecP256r1MLKEM768, SecP384r1MLKEM1024, X25519MLKEM768) for ALB/NLB listeners — the actual internet-facing TLS termination products, distinct from the KMS/ACM/Secrets Manager entry above',
+        since: '2025-11',
+        referenceUrl:
+          'https://aws.amazon.com/about-aws/whats-new/2025/11/network-load-balancers-post-quantum-key-exchange-tls/',
+      },
+      {
+        provider: 'Akamai',
+        what: 'Hybrid ML-KEM + X25519 key exchange for browser-to-edge connections on Ion / Dynamic Site Accelerator (Enhanced TLS), limited availability opt-in',
+        since: '2025-09',
+        referenceUrl:
+          'https://www.akamai.com/blog/security/akamai-enables-post-quantum-cryptography-edge',
+      },
+      {
+        provider: 'Fastly',
+        what: 'ML-KEM post-quantum key exchange rolling out across the global CDN fleet',
+        since: '2025-04',
+        referenceUrl:
+          'https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats',
       },
       {
         provider: 'Apple iOS / macOS',
@@ -1178,7 +1199,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         what: 'ML-DSA certificate issuance GA on Windows Server 2025 Active Directory Certificate Services',
         since: '2026-05',
         referenceUrl:
-          'https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093',
+          'https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/ml-dsa-overview',
       },
       {
         provider: 'Cloudflare',
@@ -1994,7 +2015,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: '3GPP-TR-33.938',
         title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
-        url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+        url: 'https://www.3gpp.org/dynareport/33938.htm',
         date: '2026-01',
         localFile: '/library/3GPP-PQC-Study-2025.html',
       },
@@ -2008,7 +2029,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: '3GPP TR 33.938',
             title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+            url: 'https://www.3gpp.org/dynareport/33938.htm',
             publishedOn: '2026-01',
           },
         ],
@@ -2021,7 +2042,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: '3GPP TR 33.938',
             title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+            url: 'https://www.3gpp.org/dynareport/33938.htm',
             publishedOn: '2026-01',
           },
         ],
@@ -3218,7 +3239,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: 'IEEE-802.1AE-2018',
         title: 'IEEE 802.1AE-2018 — MAC Security',
-        url: 'https://standards.ieee.org/ieee/802.1AE/6905/',
+        url: 'https://standards.ieee.org/ieee/802.1AE/7154/',
         date: '2018-12',
       },
     ],
@@ -3456,7 +3477,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         id: 'UEFI-2.11',
         title:
           'UEFI Specification 2.11 (Nov 2024) — adds no PQC content; PQ readiness tracks X.509 OIDs only',
-        url: 'https://uefi.org/specifications',
+        url: 'https://uefi.org/specs/UEFI/2.11/',
         date: '2024-11',
       },
     ],
@@ -3496,7 +3517,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: 'UEFI 2.11',
             title: 'UEFI Specification 2.11 (PE/COFF Authenticode chain consumes X.509 PQ OIDs)',
-            url: 'https://uefi.org/specifications',
+            url: 'https://uefi.org/specs/UEFI/2.11/',
             publishedOn: '2024-11',
           },
         ],
