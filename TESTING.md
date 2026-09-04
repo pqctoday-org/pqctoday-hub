@@ -1,6 +1,6 @@
 # Testing Guide
 
-This document describes the testing strategy and how to run tests for the PQC Timeline App.
+This document describes the testing strategy and how to run tests for PQC Today Hub.
 
 ## Local gate (run before every push)
 
@@ -47,6 +47,23 @@ sibling directories** for `gate:cacp` to do its real job. Without that
 sibling checkout, the guard fails loudly (by design — see its own error
 message) rather than silently skipping.
 
+### `gate:pkcs11` — the HSM Playground gate
+
+```bash
+npm run gate:pkcs11   # src/components/Playground/{hsm,tabs,dev,learnkit},
+                       # HsmPlayground.test.tsx, src/wasm/softhsm: CI-visible
+                       # suite + the matching *.local.test.ts suites
+```
+
+Same shape as `gate:cacp` above (a CI-visible leg via `npm run test --` plus a
+`test:local --` leg scoped to the same directories) but for the PKCS#11 HSM
+Playground rather than the KMIP/CACP one. **Unlike `gate:cacp`, this is not
+wired into `.husky/pre-push` or any CI workflow** — it exists in
+`package.json` for a developer to run by hand before/after touching HSM
+Playground code. `gate:local`'s plain `npm run test` already covers its
+CI-visible half; running `gate:pkcs11` directly also pulls in the scoped
+local-only suite without needing the repo-wide `test:local`.
+
 ## Test Structure
 
 The project uses a comprehensive testing approach with three layers:
@@ -55,7 +72,9 @@ The project uses a comprehensive testing approach with three layers:
 
 **Location**: `src/**/*.test.{ts,tsx}`
 
-**Coverage**: 74+ test files covering:
+**Coverage**: ~735 `*.test.{ts,tsx}` files under `src/` (~684 run in CI via `npm run test`;
+~51 are `*.local.test.{ts,tsx}` — local-gate-only, run via `npm run test:local` — see
+"Local gate" above), covering:
 
 - React components (Playground, PKI Learning, Compliance, Assessment, Migrate, Timeline, Leaders)
 - Utility functions (crypto, CSV parsing, analytics, input validation)
@@ -79,18 +98,23 @@ npm run test:ui
 npm run coverage
 ```
 
-**Coverage Thresholds**:
+**Coverage Thresholds** (`vite.config.ts`'s `test.coverage.thresholds` — v8 provider):
 
-- Lines: 70%
-- Functions: 70%
-- Branches: 60%
-- Statements: 70%
+- Lines: 59%
+- Functions: 50%
+- Branches: 47%
+- Statements: 59%
+
+These are floors that ratchet up as coverage improves, not a target — check
+`vite.config.ts` for the current numbers rather than trusting this table, since
+they move.
 
 ### 2. End-to-End Tests (Playwright)
 
 **Location**: `e2e/*.spec.ts`
 
-**Coverage**: 53 E2E test files covering:
+**Coverage**: ~63 `*.spec.ts` files (plus ~19 `*.local.spec.ts` files that never run in
+CI — see below) covering:
 
 - Timeline visualization
 - Algorithm comparison
@@ -139,17 +163,18 @@ test('should not have accessibility violations', async ({ page }) => {
 
 ### Mock Data
 
-The application supports mock data for stable testing:
+The application supports mock data for stable testing (`src/data/libraryData.ts`
+and `src/data/timelineData.ts` both check the same flag):
 
 ```typescript
 // src/data/timelineData.ts
-if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+if (import.meta.env.VITE_MOCK_DATA === 'true') {
   console.log('Using mock timeline data for testing')
-  return mockTimelineData
+  return { current: { content: MOCK_CSV_CONTENT, filename: 'MOCK_DATA', date: new Date() }, previous: null }
 }
 ```
 
-Set `VITE_USE_MOCK_DATA=true` in your `.env` file for consistent test data.
+Set `VITE_MOCK_DATA=true` in your `.env` file for consistent test data.
 
 ### Test Vectors
 
