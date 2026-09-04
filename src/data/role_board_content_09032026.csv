@@ -51,7 +51,7 @@ executive,mandate,cta_primary_href,,/assess,active,,,2026-08-02,De-duplicated 20
 executive,mandate,cta_secondary_label,,Draft the program charter,active,,,2026-08-02,Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops.
 executive,mandate,cta_secondary_href,,/business/tools/program-charter,active,,,2026-08-02,"Path corrected 2026-08-02: business tools are nested under /business (/business/tools/:toolId). /tools/<id> fell through to the catch-all route and silently rendered the HOME BOARD — the destination resolved, so nothing failed, it just showed the wrong page. Secondary CTA and item 2 are now this board's own BUSINESS tool (/tools/*). Before 2026-08-02 the boards leaned entirely on playground workshops."
 executive,mandate,proof_chip,0,Every regulatory date links to its source,active,,,2026-08-23,"Fixed 2026-08-23: 'Verified in your browser against NIST ACVP vectors' vouches for something unreachable from this board — its two CTAs are the 8-question assessment and the charter tool, neither of which runs a vector. The chip stays correctly placed on developer/pilot (proof_chip,1), where the CTA does run one."
-executive,mandate,proof_chip,1,"{library_active_count} sources, trust-tiered",active,,,2026-08-02,
+executive,mandate,proof_chip,1,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: 'sources' overstated LIBRARY_ACTIVE_SOURCE_COUNT (active library documents); see executive/evidence's proof_chip,0 note."
 executive,mandate,proof_chip,2,{regulatory_verified_phrase},active,,,2026-08-02,
 executive,mandate,proof_chip,3,How we verify,active,,,2026-08-02,
 executive,mandate,side_card_title,,Your exposure window,active,,,2026-08-02,
@@ -546,7 +546,7 @@ researcher,threatmodel,cta_secondary_label,,Read the threat economics,active,,,2
 researcher,threatmodel,cta_secondary_href,,/threats,active,,,2026-08-02,"Best-fit pairing, 2026-08-02: business tool or playground workshop chosen per use case and role rather than one of each by rule. No destination is used twice."
 researcher,threatmodel,proof_chip,0,Every source dated and tiered,active,,,2026-09-03,2026-09-03: was 'Counter-claims dataset · CVE snapshots' — see provenance's note.
 researcher,threatmodel,proof_chip,1,Authoritative / High / Moderate / Low source tiers,active,,,2026-08-02,
-researcher,threatmodel,proof_chip,2,"{library_active_count} sources, trust-tiered",active,,,2026-08-02,
+researcher,threatmodel,proof_chip,2,"{library_active_count} documents, trust-tiered",active,,,2026-09-03,"2026-09-03: see executive/evidence's proof_chip,0 note."
 researcher,threatmodel,proof_chip,3,Drift guards fail the build on silent data change,active,,,2026-08-02,
 researcher,threatmodel,side_card_title,,The CRQC consensus,active,,,2026-08-02,
 researcher,threatmodel,side_card_tone,,bad,active,,,2026-08-02,

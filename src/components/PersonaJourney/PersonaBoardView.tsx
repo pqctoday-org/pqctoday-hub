@@ -11,6 +11,8 @@ import {
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { REGION_LABELS } from '@/data/regionIndustryOptions'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -137,6 +139,21 @@ export function PersonaBoardView({
   const board = active.board
   const useCustomSideCard = personaId === 'researcher' && customSideCard !== undefined
 
+  // Live region/industry badge (2026-09-03, home-scenarios remediation
+  // WS7.2). `board.heroBadge.text` used to be static per-board copy —
+  // e.g. every executive board read "Americas · Finance & Banking"
+  // regardless of what the visitor actually selected, while
+  // MobileHomeBoard.tsx already computed and rendered the real
+  // selectedRegion/selectedIndustries (see that file's own note on why
+  // desktop and mobile disagreed). This mirrors that computation so both
+  // shells show the same thing. Tone is always 'illustrative' now — the
+  // badge is the visitor's own stored input, not a repo-sourced fact, which
+  // is exactly what that provenance label means ("THIS USER'S INPUTS").
+  const { selectedRegion, selectedIndustries } = usePersonaStore()
+  const regionLabel = selectedRegion ? REGION_LABELS[selectedRegion] : null
+  const industryLabel = selectedIndustries.length > 0 ? selectedIndustries.join(', ') : null
+  const liveBadgeText = [regionLabel, industryLabel].filter(Boolean).join(' · ')
+
   return (
     <div className="w-full">
       {/* Board option switcher — the role's top three use cases in a PQC
@@ -183,9 +200,9 @@ export function PersonaBoardView({
             {board.heroEyebrow}
           </p>
 
-          {board.heroBadge && (
+          {liveBadgeText && (
             <div className="mt-2">
-              <ProvenanceChip provenance={board.heroBadge.tone} label={board.heroBadge.text} />
+              <ProvenanceChip provenance="illustrative" label={liveBadgeText} />
             </div>
           )}
 

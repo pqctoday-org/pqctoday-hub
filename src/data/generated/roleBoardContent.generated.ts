@@ -34,7 +34,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         ctaSecondaryHref: '/business/tools/program-charter',
         proofChips: [
           'Every regulatory date links to its source',
-          '1013 sources, trust-tiered',
+          '1013 documents, trust-tiered',
           'Regulatory data verified 29 Aug 2026',
           'How we verify',
         ],
@@ -2159,7 +2159,7 @@ export const PERSONA_JOURNEY_BOARD_VARIANTS: Record<PersonaId, RoleBoardVariant[
         proofChips: [
           'Every source dated and tiered',
           'Authoritative / High / Moderate / Low source tiers',
-          '1013 sources, trust-tiered',
+          '1013 documents, trust-tiered',
           'Drift guards fail the build on silent data change',
         ],
         sideCard: {
