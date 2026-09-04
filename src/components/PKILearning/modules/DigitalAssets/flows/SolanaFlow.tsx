@@ -14,7 +14,7 @@ import { useKeyGeneration } from '../hooks/useKeyGeneration'
 import { useArtifactManagement } from '../hooks/useArtifactManagement'
 import { hsm_generateEdDSAKeyPair, hsm_eddsaSign, hsm_eddsaVerify } from '@/wasm/softhsm/classical'
 import { hsm_getPublicKeyInfo } from '@/wasm/softhsm/objects'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -553,14 +553,14 @@ const isValid = hsm_eddsaVerify(
           hsmHandlesRef.current.srcPrivHandle = privHandle
           hsmHandlesRef.current.srcPubHandle = pubHandle
 
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: pubHandle,
             label: 'Solana Source Key (Ed25519)',
             family: 'eddsa',
             role: 'public',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: privHandle,
             label: 'Solana Source Key (Ed25519)',
             family: 'eddsa',
@@ -631,14 +631,14 @@ Note: Address derived from the HSM Ed25519 public key.`
           hsmHandlesRef.current.dstPrivHandle = privHandle
           hsmHandlesRef.current.dstPubHandle = pubHandle
 
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: pubHandle,
             label: 'Solana Recipient Key (Ed25519)',
             family: 'eddsa',
             role: 'public',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: privHandle,
             label: 'Solana Recipient Key (Ed25519)',
             family: 'eddsa',
@@ -877,7 +877,7 @@ Note: Address derived from the HSM Ed25519 public key.`
           keys={hsm.keys}
           moduleRef={hsm.moduleRef}
           hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
+          onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
     </div>

@@ -1033,6 +1033,9 @@ const writeStr = (M: SoftHSMModule, s: string): number => {
  * conformance runner asserting a specific expected CKR_*) can now read
  * `.rv`/`.fn` instead of re-parsing the message string.
  */
+/** A handle from a session that's gone — the one CKR_* value K6-style pruning acts on directly. */
+export const CKR_SESSION_HANDLE_INVALID = 0x000000b3
+
 export class Pkcs11Error extends Error {
   readonly rv: number
   readonly fn: string
@@ -1237,6 +1240,28 @@ export const hsm_getFirstSlot = (M: SoftHSMModule): number => {
     try {
       checkRV(M._C_GetSlotList(0, slotListPtr, countPtr), 'C_GetSlotList')
       return readUlong(M, slotListPtr)
+    } finally {
+      M._free(slotListPtr)
+    }
+  } finally {
+    M._free(countPtr)
+  }
+}
+
+/** C_GetSlotList(token_present=0) → every slot id the engine currently reports. */
+export const hsm_getAllSlots = (M: SoftHSMModule): number[] => {
+  const countPtr = allocUlong(M)
+  try {
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(all,count)')
+    const count = readUlong(M, countPtr)
+    if (count === 0) return []
+    const slotListPtr = M._malloc(count * 4)
+    writeUlong(M, countPtr, count)
+    try {
+      checkRV(M._C_GetSlotList(0, slotListPtr, countPtr), 'C_GetSlotList(all)')
+      const slots: number[] = []
+      for (let i = 0; i < count; i++) slots.push(readUlong(M, slotListPtr + i * 4))
+      return slots
     } finally {
       M._free(slotListPtr)
     }

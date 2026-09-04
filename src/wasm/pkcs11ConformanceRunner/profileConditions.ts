@@ -13,6 +13,7 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
+  CKM_SHA256_RSA_PKCS,
   buildTemplate,
   freeTemplate,
   buildMech,
@@ -60,7 +61,6 @@ import {
 
 const CKO_DATA = 0x00000000
 const CKF_SERIAL_SESSION = 0x00000004
-const CKM_SHA256_RSA_PKCS = 0x00000040
 const CKR_FUNCTION_NOT_SUPPORTED = 0x00000054
 
 export type ProfileClaim =

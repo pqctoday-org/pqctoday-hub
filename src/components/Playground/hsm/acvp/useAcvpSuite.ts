@@ -258,7 +258,7 @@ export function useAcvpSuite() {
     phase,
     autoInit,
     addHsmLog,
-    addHsmKey,
+    registerKey,
     clearHsmKeys,
     addHsmStepLog,
   } = useHsmContext()
@@ -322,7 +322,11 @@ export function useAcvpSuite() {
     setResults([])
     setLogs([])
     setProgress({ done: 0, current: 'Starting…' })
-    clearHsmKeys()
+    // Genuinely global reset: a fresh ACVP run starts with an empty
+    // inventory regardless of which slot/engine any leftover key came
+    // from — the one deliberate use of the 'all' escape hatch outside
+    // Finalize.
+    clearHsmKeys('all')
     // Deliberately NOT clearHsmLog(): the Logs tab is the playground's
     // cross-tab inspection surface, and wiping it at run start silently
     // destroyed the visitor's whole session trace (2026-08-13 audit, N14).
@@ -436,8 +440,8 @@ export function useAcvpSuite() {
         const hSession = engine.hSession
         const engineId = eName === 'C++' ? ('cpp' as const) : ('rust' as const)
 
-        const regKey = (key: Omit<HsmKey, 'generatedAt'>) =>
-          addHsmKey({ ...key, generatedAt: ts() })
+        const regKey = (key: Omit<HsmKey, 'generatedAt' | 'uniqueId' | 'slotId'>) =>
+          registerKey(M, hSession, { ...key, generatedAt: ts() })
 
         // Record a visible 'skip' row when a mechanism this engine doesn't
         // advertise would otherwise silently drop a whole test category from
@@ -1117,15 +1121,20 @@ export function useAcvpSuite() {
                   details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
                 })
                 addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
+                // The PKCS#11 call itself succeeded (CKR_OK) — the recovered
+                // shared secret just doesn't match NIST's expected value.
+                // That's a data-comparison failure, not a failed PKCS#11
+                // call, so the log shows the real return code; the mismatch
+                // is flagged in args instead of fabricating a CKR_* error.
                 addHsmLog({
                   id: Date.now(),
                   timestamp: new Date().toLocaleTimeString(),
                   fn: `[${eName}] C_DecapsulateKey(${algo})`,
-                  args: 'ACVP KAT Validation',
-                  rvHex: '0x00000005',
-                  rvName: 'CKR_GENERAL_ERROR (ACVP SS MISMATCH)',
+                  args: 'ACVP KAT Validation — SS MISMATCH',
+                  rvHex: '0x00000000',
+                  rvName: 'CKR_OK',
                   ms: 0,
-                  ok: false,
+                  ok: true,
                 })
               }
             } catch (err: unknown) {

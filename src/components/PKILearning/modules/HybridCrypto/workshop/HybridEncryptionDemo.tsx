@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useRef } from 'react'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -257,14 +257,14 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         )
         stateRef.current.alicePubHandle = pubHandle
         stateRef.current.alicePrivHandle = privHandle
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           label: 'Alice X25519 Pub',
           family: 'ecdh',
           role: 'public',
           generatedAt: new Date().toISOString(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           label: 'Alice X25519 Priv',
           family: 'ecdh',
@@ -292,14 +292,14 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         )
         stateRef.current.bobPubHandle = pubHandle
         stateRef.current.bobPrivHandle = privHandle
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           label: 'Bob X25519 Pub',
           family: 'ecdh',
           role: 'public',
           generatedAt: new Date().toISOString(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           label: 'Bob X25519 Priv',
           family: 'ecdh',
@@ -357,7 +357,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         stateRef.current.ecdhSSHandle = ssAHandle
         stateRef.current.ecdhSSBytes = ssABytes
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: ssAHandle,
           label: 'ECDH Shared Secret',
           family: 'aes',
@@ -385,14 +385,14 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         )
         stateRef.current.kemPubHandle = pubHandle
         stateRef.current.kemPrivHandle = privHandle
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           label: 'ML-KEM-768 Pub',
           family: 'ml-kem',
           role: 'public',
           generatedAt: new Date().toISOString(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           label: 'ML-KEM-768 Priv',
           family: 'ml-kem',
@@ -423,7 +423,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         stateRef.current.ciphertextBytes = ciphertextBytes
         stateRef.current.kemSSBytes = kemSSBytes
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: secretHandle,
           label: 'ML-KEM Encap Secret',
           family: 'aes',
@@ -463,7 +463,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         const decapSSBytes = hsm_extractKeyValue(M, hSession, decapSSHandle)
         const kemMatch = toHex(stateRef.current.kemSSBytes) === toHex(decapSSBytes)
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: decapSSHandle,
           label: 'ML-KEM Decap Secret',
           family: 'aes',
@@ -479,7 +479,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
           stateRef.current.ecdhSSBytes
         )
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: ecdhDerivableHandle,
           label: 'ECDH SS (Derivable)',
           family: 'aes',
@@ -505,7 +505,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
         )
         stateRef.current.hybridKey = hybridKey
 
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: hybridKeyOut.current,
           label: 'Hybrid Session Key',
           family: 'aes',
@@ -619,7 +619,7 @@ export const HybridEncryptionDemo: React.FC<{ initialStep?: number }> = ({ initi
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             title="Key Registry — Hybrid KEM Session"
           />
         </div>

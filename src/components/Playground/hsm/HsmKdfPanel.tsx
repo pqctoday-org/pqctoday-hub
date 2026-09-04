@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
@@ -23,7 +23,7 @@ import {
   hsm_kbkdf,
   hsm_kbkdfFeedback,
 } from '../../../wasm/softhsm'
-import { useHsmContext } from './HsmContext'
+import { useHsmContext, type HsmKey } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
 
 // ── Types & constants ────────────────────────────────────────────────────────
@@ -131,7 +131,7 @@ const hexToBytes = (hex: string): Uint8Array => {
 // ── PBKDF2 sub-panel ─────────────────────────────────────────────────────────
 
 const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, removeHsmKey } = useHsmContext()
   const [password, setPassword] = useState('correct-horse-battery-staple')
   const [salt, setSalt] = useState(() => randomHex(16))
   const [iterations, setIterations] = useState(100000)
@@ -139,6 +139,9 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
   const [derived, setDerived] = useState<Uint8Array | null>(null)
   const [derivedHandle, setDerivedHandle] = useState<number | null>(null)
+  // Registered key for `derivedHandle`, kept alongside it purely so removal
+  // can identify the row (uniqueId/slotId), never a bare stale handle.
+  const derivedKeyRef = useRef<HsmKey | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -162,7 +165,8 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(derivedHandle)
+              if (derivedKeyRef.current) removeHsmKey(derivedKeyRef.current)
+              derivedKeyRef.current = null
               setDerivedHandle(null)
             }
             const passBytes = new TextEncoder().encode(password)
@@ -180,7 +184,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
             )
             setDerived(key)
             if (handleOut.current) {
-              addHsmKey({
+              derivedKeyRef.current = registerKey(M, hSession, {
                 handle: handleOut.current,
                 label: `PBKDF2 (${outLen * 8}-bit)`,
                 family: 'kdf',
@@ -334,7 +338,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
 // ── HKDF sub-panel ───────────────────────────────────────────────────────────
 
 const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, removeHsmKey } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [salt, setSalt] = useState(() => randomHex(16))
   const [info, setInfo] = useState('HKDF-example-context')
@@ -344,6 +348,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
   const [derived, setDerived] = useState<Uint8Array | null>(null)
   const [ikmHandle, setIkmHandle] = useState<number | null>(null)
   const [derivedHandle, setDerivedHandle] = useState<number | null>(null)
+  const ikmKeyRef = useRef<HsmKey | null>(null)
+  const derivedKeyRef = useRef<HsmKey | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -367,7 +373,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(ikmHandle)
+              if (ikmKeyRef.current) removeHsmKey(ikmKeyRef.current)
+              ikmKeyRef.current = null
             }
             if (derivedHandle !== null) {
               try {
@@ -375,11 +382,12 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(derivedHandle)
+              if (derivedKeyRef.current) removeHsmKey(derivedKeyRef.current)
+              derivedKeyRef.current = null
               setDerivedHandle(null)
             }
             const h = hsm_generateAESKey(M, hSession, 256, false, false, false, false, true, false)
-            addHsmKey({
+            ikmKeyRef.current = registerKey(M, hSession, {
               handle: h,
               label: 'IKM (AES-256)',
               family: 'aes',
@@ -416,7 +424,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(derivedHandle)
+              if (derivedKeyRef.current) removeHsmKey(derivedKeyRef.current)
+              derivedKeyRef.current = null
               setDerivedHandle(null)
             }
             const saltBytes = salt ? hexToBytes(salt) : undefined
@@ -436,7 +445,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
             )
             setDerived(key)
             if (handleOut.current) {
-              addHsmKey({
+              derivedKeyRef.current = registerKey(M, hSession, {
                 handle: handleOut.current,
                 label: 'OKM (HKDF-derived)',
                 family: 'kdf',
@@ -637,7 +646,7 @@ const KbkdfPanel = ({
   feedback: boolean
   onAlgoChange?: (algo: string) => void
 }) => {
-  const { moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, removeHsmKey } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [label, setLabel] = useState('pqc-key-derivation')
   const [context, setContext] = useState(() => randomHex(8))
@@ -651,6 +660,8 @@ const KbkdfPanel = ({
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
   const [baseKeyHandle, setBaseKeyHandle] = useState<number | null>(null)
   const [derivedHandle, setDerivedHandle] = useState<number | null>(null)
+  const baseKeyRef = useRef<HsmKey | null>(null)
+  const derivedKeyRef = useRef<HsmKey | null>(null)
   const [derived, setDerived] = useState<Uint8Array | null>(null)
   const [fixedInputHex, setFixedInputHex] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -679,7 +690,8 @@ const KbkdfPanel = ({
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(baseKeyHandle)
+              if (baseKeyRef.current) removeHsmKey(baseKeyRef.current)
+              baseKeyRef.current = null
             }
             if (derivedHandle !== null) {
               try {
@@ -687,11 +699,12 @@ const KbkdfPanel = ({
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(derivedHandle)
+              if (derivedKeyRef.current) removeHsmKey(derivedKeyRef.current)
+              derivedKeyRef.current = null
               setDerivedHandle(null)
             }
             const h = hsm_generateAESKey(M, hSession, 256, false, false, false, false, true, false)
-            addHsmKey({
+            baseKeyRef.current = registerKey(M, hSession, {
               handle: h,
               label: 'Ki (AES-256 base key)',
               family: 'aes',
@@ -729,7 +742,8 @@ const KbkdfPanel = ({
               } catch {
                 /* key may already be gone */
               }
-              removeHsmKey(derivedHandle)
+              if (derivedKeyRef.current) removeHsmKey(derivedKeyRef.current)
+              derivedKeyRef.current = null
               setDerivedHandle(null)
             }
             const labelBytes = new TextEncoder().encode(label)
@@ -760,7 +774,7 @@ const KbkdfPanel = ({
             }
             setDerived(key)
             if (handleOut.current) {
-              addHsmKey({
+              derivedKeyRef.current = registerKey(M, hSession, {
                 handle: handleOut.current,
                 label: 'Ko (SP 800-108-derived)',
                 family: 'kdf',

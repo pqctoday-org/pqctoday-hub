@@ -35,7 +35,17 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { HsmKey, HsmKeyPurpose } from '@/components/Playground/hsm/HsmContext'
-import { CKK_NAMES } from '@/components/Playground/keystore/discoverHsmObjects'
+import { CKK_NAMES, CKO_NAMES } from '@/components/Playground/keystore/discoverHsmObjects'
+import {
+  CKP_ML_KEM,
+  CKP_ML_DSA,
+  CKP_SLH_DSA,
+  CKP_XMSS,
+  CKP_XMSSMT,
+  CKP_FRODOKEM,
+  CKP_CLASSIC_MCELIECE,
+  type ConstEntry,
+} from '@/wasm/pkcs11Inspect'
 import { bytesToHex } from '@/utils/dataInputUtils'
 import {
   CKK_EC,
@@ -48,14 +58,23 @@ import {
   type KeyAttributeSet,
 } from '@/wasm/softhsm'
 
-export { CKK_NAMES }
+export { CKK_NAMES, CKO_NAMES }
 
-export const CKO_NAMES: Record<number, string> = {
-  0x00: 'CKO_DATA',
-  0x01: 'CKO_CERTIFICATE',
-  0x02: 'CKO_PUBLIC_KEY',
-  0x03: 'CKO_PRIVATE_KEY',
-  0x04: 'CKO_SECRET_KEY',
+// CKA_PARAMETER_SET is only meaningful together with CKA_KEY_TYPE — the
+// same PQC/pkcs11Inspect.ts tables the log decoder uses for this attribute,
+// flattened to plain names for UlongRow. CKK_HSS isn't here: HSS's LMS/LMOTS
+// shape travels in the mechanism parameter, not CKA_PARAMETER_SET.
+const namesOf = (table: Record<number, ConstEntry>): Record<number, string> =>
+  Object.fromEntries(Object.entries(table).map(([k, v]) => [k, v.name]))
+
+const PARAMETER_SET_NAMES_BY_KEY_TYPE: Record<number, Record<number, string>> = {
+  0x49: namesOf(CKP_ML_KEM), // CKK_ML_KEM
+  0x4a: namesOf(CKP_ML_DSA), // CKK_ML_DSA
+  0x4b: namesOf(CKP_SLH_DSA), // CKK_SLH_DSA
+  0x47: namesOf(CKP_XMSS), // CKK_XMSS
+  0x48: namesOf(CKP_XMSSMT), // CKK_XMSSMT
+  0x80000001: namesOf(CKP_FRODOKEM), // CKK_PQCTODAY_FRODOKEM
+  0x80000002: namesOf(CKP_CLASSIC_MCELIECE), // CKK_PQCTODAY_CLASSIC_MCELIECE
 }
 
 export const CKM_KEYGEN_NAMES: Record<number, string> = {
@@ -68,6 +87,10 @@ export const CKM_KEYGEN_NAMES: Record<number, string> = {
   0x00001056: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN',
   0x00001080: 'CKM_AES_KEY_GEN',
   0x00000350: 'CKM_GENERIC_SECRET_KEY_GEN',
+  0x00001225: 'CKM_CHACHA20_KEY_GEN',
+  0x00004032: 'CKM_HSS_KEY_PAIR_GEN',
+  0x00004034: 'CKM_XMSS_KEY_PAIR_GEN',
+  0x00004035: 'CKM_XMSSMT_KEY_PAIR_GEN',
 }
 
 // ── PQC key material sizes (bytes) by CKA_KEY_TYPE + CKA_PARAMETER_SET ──────
@@ -599,9 +622,16 @@ export const KeyAttrModal = ({
                 />
               )}
               {attrs.ckParameterSet !== null && (
-                <Row label="CKA_PARAMETER_SET">
-                  {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
-                </Row>
+                <UlongRow
+                  label="CKA_PARAMETER_SET"
+                  attrs={attrs}
+                  field="ckParameterSet"
+                  names={
+                    attrs.ckKeyType !== null
+                      ? PARAMETER_SET_NAMES_BY_KEY_TYPE[attrs.ckKeyType]
+                      : undefined
+                  }
+                />
               )}
               {attrs.ckValueLen !== null && (
                 <Row label="CKA_VALUE_LEN">{attrs.ckValueLen} bytes</Row>

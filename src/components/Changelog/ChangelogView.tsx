@@ -753,12 +753,7 @@ export const ChangelogView = () => {
                           <span className={clsx('text-sm font-semibold', config.textClass)}>
                             {config.label}
                           </span>
-                          <span
-                            className={clsx(
-                              'text-xs ml-auto tabular-nums opacity-70',
-                              config.textClass
-                            )}
-                          >
+                          <span className="text-xs ml-auto tabular-nums text-muted-foreground">
                             {section.entries.length}
                           </span>
                         </div>

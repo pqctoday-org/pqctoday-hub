@@ -130,7 +130,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
   initialAlgo,
   onAlgoChange,
 }) => {
-  const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
+  const { moduleRef, crossCheckModuleRef, hSessionRef, registerKey, engineMode, addHsmLog } =
     useHsmContext()
 
   const [variant, setVariant] = useState<44 | 65 | 87>(() => {
@@ -185,9 +185,10 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const hSession = hSessionRef.current
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
           M,
-          hSessionRef.current,
+          hSession,
           variant,
           extractable
         )
@@ -198,7 +199,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
           minute: '2-digit',
           second: '2-digit',
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-dsa',
           role: 'public',
@@ -206,7 +207,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
           variant: String(variant),
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
@@ -523,7 +524,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     moduleRef,
     crossCheckModuleRef,
     hSessionRef,
-    addHsmKey,
+    registerKey,
     engineMode,
     addHsmLog,
     keysForFamily,
@@ -588,9 +589,10 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const hSession = hSessionRef.current
         const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
           M,
-          hSessionRef.current,
+          hSession,
           getParamSetCkp(),
           extractable
         )
@@ -601,7 +603,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           minute: '2-digit',
           second: '2-digit',
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: pubHandle,
           family: 'slh-dsa',
           role: 'public',
@@ -609,7 +611,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           variant: paramSetId,
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: privHandle,
           family: 'slh-dsa',
           role: 'private',

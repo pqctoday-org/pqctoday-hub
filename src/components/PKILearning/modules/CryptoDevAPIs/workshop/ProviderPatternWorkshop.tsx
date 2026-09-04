@@ -4,7 +4,7 @@ import { Code2, Loader2 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CODE_EXAMPLES, OPERATION_LABELS, type CryptoOperation } from '../data/codeExamplesData'
 import { CRYPTO_APIS } from '../data/apiData'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -100,14 +100,14 @@ export const ProviderPatternWorkshop: React.FC = () => {
       const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
       const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
 
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
         label: 'ML-DSA-65 Provider Root (Pub)',
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
@@ -295,7 +295,7 @@ export const ProviderPatternWorkshop: React.FC = () => {
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

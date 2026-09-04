@@ -22,7 +22,7 @@ import { HARDENED_DERIVATION } from '../utils/cryptoConstants'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import {
   hsm_importGenericSecret,
   hsm_extractKeyValue,
@@ -519,7 +519,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         // Import seed as generic secret
         hsm.addStepLog('Step 4a — Import Seed')
         const seedHandle = hsm_importGenericSecret(M, hSession, seed)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: seedHandle,
           family: 'sha',
           role: 'secret',
@@ -536,7 +536,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           'secp256k1',
           true
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: secp256k1MasterHandle,
           family: 'ecdsa',
           role: 'private',
@@ -554,7 +554,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           btcPath,
           'secp256k1'
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: btcLeafHandle,
           family: 'ecdsa',
           role: 'private',
@@ -581,7 +581,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           ethPath,
           'secp256k1'
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: ethLeafHandle,
           family: 'ecdsa',
           role: 'private',
@@ -601,7 +601,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         hsm.addStepLog('Step 4e — SLIP-0010 Master (Ed25519) + Path → Solana')
         const solPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA
         const solMasterHandle = hsm_bip32MasterDerive(M, hSession, seedHandle, 'ed25519', true)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: solMasterHandle,
           family: 'eddsa',
           role: 'private',
@@ -609,7 +609,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
         const solLeafHandle = derivePathWasm(M, hSession, solMasterHandle, solPath, 'ed25519')
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: solLeafHandle,
           family: 'eddsa',
           role: 'private',
@@ -792,7 +792,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           keys={hsm.keys}
           moduleRef={hsm.moduleRef}
           hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
+          onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
     </div>

@@ -181,9 +181,11 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       // begins — the compositor thread continues the animation while WASM blocks JS.
       await new Promise((r) => setTimeout(r, 100))
       const { hsm_generateStatefulKeyPair } = await import('@/wasm/softhsm/pqc')
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
       const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
-        hsm.moduleRef.current,
-        hsm.hSessionRef.current,
+        M,
+        hSession,
         CKM_HSS_KEY_PAIR_GEN,
         CKK_HSS,
         lmsParamsAll[0],
@@ -191,20 +193,16 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         lmsParamsAll,
         lmotsParamsAll
       )
-      const pubBytes = hsm_extractKeyValue(
-        hsm.moduleRef.current!,
-        hsm.hSessionRef.current,
-        pubHandle
-      )
+      const pubBytes = hsm_extractKeyValue(M!, hSession, pubHandle)
       setKeygenPhase('done')
-      hsm.addKey({
+      hsm.registerKey(M!, hSession, {
         handle: privHandle,
         family: 'hss',
         role: 'private',
         label: `HSS Key (${pkcs11Name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-      hsm.addKey({
+      hsm.registerKey(M!, hSession, {
         handle: pubHandle,
         family: 'hss',
         role: 'public',

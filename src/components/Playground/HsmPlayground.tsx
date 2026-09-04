@@ -192,7 +192,7 @@ export const HsmPlayground = () => {
     autoInit,
     moduleRef,
     hSessionRef,
-    addHsmKey,
+    registerKey,
     hsmLog,
     clearHsmLog,
     hsmKeys,
@@ -251,7 +251,7 @@ export const HsmPlayground = () => {
       case 'sign': {
         const variant: 44 | 65 | 87 = algo === 'ML-DSA-44' ? 44 : algo === 'ML-DSA-87' ? 87 : 65
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, variant)
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-dsa',
           role: 'public',
@@ -260,7 +260,7 @@ export const HsmPlayground = () => {
           engine: engineLabel,
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
@@ -276,7 +276,7 @@ export const HsmPlayground = () => {
           ? (algo as 'P-256' | 'P-384' | 'P-521')
           : 'P-256'
         const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'sign')
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ecdh',
           role: 'public',
@@ -284,7 +284,7 @@ export const HsmPlayground = () => {
           engine: engineLabel,
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: privHandle,
           family: 'ecdh',
           role: 'private',
@@ -299,7 +299,7 @@ export const HsmPlayground = () => {
       case 'kdf': {
         const bits: 128 | 192 | 256 = algo === 'AES-128' ? 128 : algo === 'AES-192' ? 192 : 256
         const handle = hsm_generateAESKey(M, hSession, bits)
-        addHsmKey({
+        registerKey(M, hSession, {
           handle,
           family: 'aes',
           role: 'secret',

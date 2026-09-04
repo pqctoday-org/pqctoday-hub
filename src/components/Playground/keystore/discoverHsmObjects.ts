@@ -6,7 +6,7 @@
 // registration, so a PKCS#11 key never needs its own classification logic
 // written twice.
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import { hsm_findAllObjects, hsm_getKeyAttributes } from '../../../wasm/softhsm'
+import { hsm_findAllObjects, hsm_getKeyAttributes, hsm_getSessionInfo } from '../../../wasm/softhsm'
 import type { HsmContextValue, HsmFamily, HsmKey, HsmKeyRole } from '../hsm/HsmContext'
 
 export const CKK_NAMES: Record<number, string> = {
@@ -14,6 +14,7 @@ export const CKK_NAMES: Record<number, string> = {
   0x03: 'CKK_EC',
   0x10: 'CKK_GENERIC_SECRET',
   0x1f: 'CKK_AES',
+  0x33: 'CKK_CHACHA20',
   0x40: 'CKK_EC_EDWARDS',
   0x41: 'CKK_EC_MONTGOMERY',
   0x46: 'CKK_HSS',
@@ -22,13 +23,22 @@ export const CKK_NAMES: Record<number, string> = {
   0x49: 'CKK_ML_KEM',
   0x4a: 'CKK_ML_DSA',
   0x4b: 'CKK_SLH_DSA',
+  // Vendor-defined (no v3.2 CKK_* assignment exists for these families).
+  0x80000001: 'CKK_PQCTODAY_FRODOKEM',
+  0x80000002: 'CKK_PQCTODAY_CLASSIC_MCELIECE',
 }
 
-const CKK_TO_FAMILY: Record<number, HsmFamily> = {
+// Exported (not copied) — HsmKeyInspector.tsx re-exports these instead of
+// holding its own stale copy. A stale second copy is exactly how the
+// CKK_EC_MONTGOMERY fix above once existed here but not there: an X25519 key
+// classified correctly through this file's own callers, but still rendered
+// as a mislabeled AES key through any consumer of the other copy.
+export const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x00: 'rsa',
   0x03: 'ecdsa',
   0x10: 'hmac',
   0x1f: 'aes',
+  0x33: 'chacha20',
   0x40: 'eddsa',
   // 0x41 CKK_EC_MONTGOMERY (X25519/X448) is key agreement, not signing — it must
   // map to 'ecdh' to match what HsmKeyAgreementPanel registers directly. Without
@@ -41,12 +51,28 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x46: 'hss',
   0x47: 'xmss',
   0x48: 'xmss',
+  // Vendor-defined KEM families (no v3.2 CKK_* assignment exists for these).
+  0x80000001: 'frodo-kem',
+  0x80000002: 'classic-mceliece',
 }
 
-const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
+export const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
   0x02: 'public',
   0x03: 'private',
   0x04: 'secret',
+}
+
+// Canonical CKA_CLASS name table — the one place this mapping is written,
+// re-exported (not copied) by hsmKeyAttrDisplay.tsx. Matches
+// wasm/pkcs11Inspect.ts's CKO_TABLE (kept in sync manually; that one carries
+// descriptions for the log's decode drawer, this one just names).
+export const CKO_NAMES: Record<number, string> = {
+  0x00: 'CKO_DATA',
+  0x01: 'CKO_CERTIFICATE',
+  0x02: 'CKO_PUBLIC_KEY',
+  0x03: 'CKO_PRIVATE_KEY',
+  0x04: 'CKO_SECRET_KEY',
+  0x09: 'CKO_PROFILE',
 }
 
 /**
@@ -72,10 +98,19 @@ function discoverObjectsOnSession(
   M: SoftHSMModule,
   hSession: number,
   known: { handles: ReadonlySet<number>; uniqueIds: ReadonlySet<string> },
-  addKey: (key: HsmKey) => void,
-  extra?: { sessionHandle?: number; slotId?: number }
+  addKey: (key: HsmKey) => void
 ): number {
   const handles = hsm_findAllObjects(M, hSession, [])
+  // Derive the real slot from the session being scanned — once per call,
+  // not per caller-supplied guess. A caller (e.g. the Developer tab) used
+  // to pass its own slotId in; deriving it here instead means a discovered
+  // key's slotId is always the slot it was actually found on.
+  let slotId = -1
+  try {
+    slotId = hsm_getSessionInfo(M, hSession).slotID
+  } catch (err) {
+    console.error('discoverObjectsOnSession: could not read slotID for session', hSession, err)
+  }
   let added = 0
   for (const h of handles) {
     try {
@@ -88,8 +123,16 @@ function discoverObjectsOnSession(
       // objects with no UID.
       const alreadyKnown = a.ckUniqueId ? known.uniqueIds.has(a.ckUniqueId) : known.handles.has(h)
       if (alreadyKnown) continue
+      // Only genuine key classes (public/private/secret) are keys. Everything
+      // else the token publishes — CKO_PROFILE (0x09) conformance markers,
+      // CKO_DATA, CKO_CERTIFICATE, CKO_DOMAIN_PARAMETERS, CKO_HW_FEATURE — is
+      // not a key and must not be filed as one. This used to fall through
+      // `?? 'secret'` below and show up as an "Unknown (discovered)" phantom
+      // key with no CKA_KEY_TYPE (the CKO_PROFILE objects every token
+      // publishes at init per PKCS#11 v3.2 Profiles §3).
+      if (a.ckClass === null || !(a.ckClass in CKO_TO_ROLE)) continue
       const family: HsmFamily = a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? 'aes') : 'aes'
-      const role: HsmKeyRole = a.ckClass !== null ? (CKO_TO_ROLE[a.ckClass] ?? 'secret') : 'secret'
+      const role: HsmKeyRole = CKO_TO_ROLE[a.ckClass]
       const typeName = a.ckKeyType !== null ? (CKK_NAMES[a.ckKeyType] ?? 'Unknown') : 'Unknown'
       // Prefer the object's real CKA_LABEL — set by most generators, and now
       // by hsm_generateECKeyPair too (previously silently dropped). Fall back
@@ -102,9 +145,9 @@ function discoverObjectsOnSession(
         role,
         label,
         generatedAt: new Date().toLocaleTimeString(),
-        uniqueId: a.ckUniqueId ?? undefined,
-        sessionHandle: extra?.sessionHandle,
-        slotId: extra?.slotId,
+        uniqueId: a.ckUniqueId ?? '',
+        sessionHandle: hSession,
+        slotId,
       })
       added++
     } catch {
@@ -151,7 +194,8 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
  * specifically for the Developer tab's separately-labeled/PIN'd slot
  * (`devSlot.ts`), which is deliberately isolated from `HsmContext.hSessionRef`
  * so a Developer-tab script can never log the rest of the HSM playground out
- * from under it. Stamps `sessionHandle` on every registered key so
+ * from under it. Stamps `sessionHandle` and the real `slotId` (derived via
+ * `C_GetSessionInfo`, not caller-supplied) on every registered key so
  * `HsmKeyTable`'s later live queries route to the right session automatically
  * — no slot-picker UI needed, the routing is per-key data. Caller owns the
  * session's lifecycle; this function only scans and registers.
@@ -159,11 +203,7 @@ export const discoverHsmObjects = (hsm: HsmContextValue): number => {
 export const discoverHsmObjectsOnSession = (
   M: SoftHSMModule,
   hSession: number,
-  slotId: number,
   hsm: Pick<HsmContextValue, 'hsmKeysRef' | 'addHsmKey'>
 ): number => {
-  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey, {
-    sessionHandle: hSession,
-    slotId,
-  })
+  return discoverObjectsOnSession(M, hSession, knownFromRegistry(hsm.hsmKeysRef), hsm.addHsmKey)
 }

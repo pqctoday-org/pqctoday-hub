@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import {
@@ -310,7 +310,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           true,
           'AES-256 DEK'
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dekHandle,
           family: 'aes',
           role: 'secret',
@@ -323,14 +323,14 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // Step 2: Generate RSA key pair (KEK)
         setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(M, hSession, bits)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           family: 'rsa',
           role: 'public',
           label: `RSA-${bits} KEK (Public)`,
           generatedAt: ts(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           family: 'rsa',
           role: 'private',
@@ -363,7 +363,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           wrappedDek,
           AES_UNWRAP_TEMPLATE
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: recoveredDekHandle,
           family: 'aes',
           role: 'secret',
@@ -421,7 +421,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           true,
           'AES-256 DEK'
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: dekHandle,
           family: 'aes',
           role: 'secret',
@@ -434,14 +434,14 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // Step 2: Generate ML-KEM key pair (KEK)
         setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, variant)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: pubHandle,
           family: 'ml-kem',
           role: 'public',
           label: `ML-KEM-${variant} KEK (Public)`,
           generatedAt: ts(),
         })
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: privHandle,
           family: 'ml-kem',
           role: 'private',
@@ -457,7 +457,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
         // Step 3: KEM Encapsulate → shared secret + ciphertext
         setProgressLabel('Encapsulating shared secret...')
         const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, pubHandle, variant)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: secretHandle,
           family: 'kdf',
           role: 'secret',
@@ -472,7 +472,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
 
         // Step 4: HKDF-SHA256 → 32-byte wrapping key (SP 800-56C Rev 2 §4.1)
         const derivableHandle = hsm_importGenericSecret(M, hSession, secretBytes)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: derivableHandle,
           family: 'kdf',
           role: 'secret',
@@ -495,7 +495,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           32,
           rawWrapHandleOut
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: rawWrapHandleOut.current,
           family: 'kdf',
           role: 'secret',
@@ -523,7 +523,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           false,
           false
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: wrapKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -566,7 +566,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           ciphertextBytes,
           variant
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: recoveredSecretHandle,
           family: 'kdf',
           role: 'secret',
@@ -583,7 +583,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
 
         // Re-derive the same wrapping key from the recovered secret (same salt — SP 800-56C Rev 2 §4.1)
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: derivableHandle2,
           family: 'kdf',
           role: 'secret',
@@ -604,7 +604,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           32,
           rawUnwrapHandleOut
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: rawUnwrapHandleOut.current,
           family: 'kdf',
           role: 'secret',
@@ -622,7 +622,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
           false,
           false
         )
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: unwrapKeyHandle,
           family: 'aes',
           role: 'secret',
@@ -651,7 +651,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
             AES_UNWRAP_TEMPLATE
           )
         }
-        hsm.addKey({
+        hsm.registerKey(M, hSession, {
           handle: recoveredDekHandle,
           family: 'aes',
           role: 'secret',
@@ -1439,7 +1439,7 @@ export const EnvelopeEncryptionDemo: React.FC<{ initialStep?: number }> = ({ ini
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             onClear={hsm.clearKeys}
           />
         </div>

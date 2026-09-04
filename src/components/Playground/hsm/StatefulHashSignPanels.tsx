@@ -78,7 +78,7 @@ const LOW_REMAINING = 2
  */
 export const StatefulSignPanel = ({ family }: { family: StatefulFamily }) => {
   const meta = statefulFamilies()[family]
-  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, engineMode } = useHsmContext()
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState(meta.defaultMessage)
   const [sig, setSig] = useState<Uint8Array | null>(null)
@@ -130,7 +130,7 @@ export const StatefulSignPanel = ({ family }: { family: StatefulFamily }) => {
           : // LMS_SHA256_M32_H5 (0x05) + LMOTS_SHA256_N32_W1 (0x01)
             hsm_generateLMSKeyPair(M, hSession)
       const engine = engineMode === 'rust' ? 'rust' : 'cpp'
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: meta.keyFamily,
         role: 'public',
@@ -138,7 +138,7 @@ export const StatefulSignPanel = ({ family }: { family: StatefulFamily }) => {
         engine,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: meta.keyFamily,
         role: 'private',

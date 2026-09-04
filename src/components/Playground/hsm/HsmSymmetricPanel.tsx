@@ -76,7 +76,7 @@ const AesPanel = ({
   initialAlgo?: string
   onAlgoChange?: (algo: string) => void
 }) => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
     const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
     return bits === 128 || bits === 192 || bits === 256 ? bits : 256
@@ -145,7 +145,7 @@ const AesPanel = ({
       if (!ckaDecrypt) attrs.push('no-dec')
       if (!ckaWrap) attrs.push('no-wrap')
       if (!ckaUnwrap) attrs.push('no-unwrap')
-      addHsmKey({
+      registerKey(M, hSessionRef.current, {
         handle,
         family: 'aes',
         role: 'secret',
@@ -333,7 +333,7 @@ const AesPanel = ({
 // ── HMAC sub-panel ──────────────────────────────────────────────────────────────
 
 const HmacPanel = () => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   const [selectedMech, setSelectedMech] = useState(CKM_SHA256_HMAC)
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [input, setInput] = useState('Hello, PQC World!')
@@ -368,7 +368,13 @@ const HmacPanel = () => {
         minute: '2-digit',
         second: '2-digit',
       })
-      addHsmKey({ handle, family: 'hmac', role: 'secret', label: 'HMAC-256 Key', generatedAt: ts })
+      registerKey(M, hSessionRef.current, {
+        handle,
+        family: 'hmac',
+        role: 'secret',
+        label: 'HMAC-256 Key',
+        generatedAt: ts,
+      })
     })
 
   const doComputeHmac = () =>
@@ -519,7 +525,7 @@ const AesCtrPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
     const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
     return bits === 128 || bits === 192 || bits === 256 ? bits : 128
@@ -587,7 +593,7 @@ const AesCtrPanel = ({
       if (!ckaDecrypt) attrs.push('no-dec')
       if (!ckaWrap) attrs.push('no-wrap')
       if (!ckaUnwrap) attrs.push('no-unwrap')
-      addHsmKey({
+      registerKey(M, hSessionRef.current, {
         handle,
         family: 'aes',
         role: 'secret',
@@ -770,7 +776,7 @@ const AesCmacPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
     const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
     return bits === 128 || bits === 192 || bits === 256 ? bits : 128
@@ -838,7 +844,7 @@ const AesCmacPanel = ({
       if (!ckaDecrypt) attrs.push('no-dec')
       if (!ckaWrap) attrs.push('no-wrap')
       if (!ckaUnwrap) attrs.push('no-unwrap')
-      addHsmKey({
+      registerKey(M, hSessionRef.current, {
         handle,
         family: 'aes',
         role: 'secret',
@@ -1142,7 +1148,7 @@ const RngPanel = () => {
 }
 
 const ChaCha20Panel = () => {
-  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey, engineMode } = useHsmContext()
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [plaintext, setPlaintext] = useState('Hello from ChaCha20-Poly1305!')
   const [aadHex, setAadHex] = useState('01020304')
@@ -1177,7 +1183,7 @@ const ChaCha20Panel = () => {
       setCiphertext(null)
       setDecrypted(null)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      registerKey(M, hSessionRef.current, {
         handle,
         family: 'chacha20',
         role: 'secret',

@@ -134,6 +134,7 @@ export type PkcsDevWorkbenchProps = Record<string, never>
 
 export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
   const hsmCtx = useHsmContext()
+  const { forgetSession } = hsmCtx
   const { moduleRef, rawModuleRef, isReady, autoInit, engineMode } = hsmCtx
 
   // A session on the Developer slot, kept open for the UI's own use —
@@ -151,9 +152,12 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
         } catch {
           // tab is unmounting — nothing left to report this to
         }
+        // Keys registered on this session are unreachable once it's closed —
+        // drop them so they don't linger as orphans in the shared registry.
+        forgetSession(devSlotSessionRef.current)
       }
     },
-    [rawModuleRef]
+    [rawModuleRef, forgetSession]
   )
 
   // G7: called from a `useEffect` (not module top level — see
@@ -453,12 +457,7 @@ export const PkcsDevWorkbench: React.FC<PkcsDevWorkbenchProps> = () => {
             } else {
               reloginDevSlotSession(rawModuleRef.current, devSlotSessionRef.current)
             }
-            discoverHsmObjectsOnSession(
-              rawModuleRef.current,
-              devSlotSessionRef.current,
-              devSlot,
-              hsmCtx
-            )
+            discoverHsmObjectsOnSession(rawModuleRef.current, devSlotSessionRef.current, hsmCtx)
           } catch {
             // best-effort — a registration failure isn't a run failure
           }

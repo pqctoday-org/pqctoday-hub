@@ -10,18 +10,9 @@ import {
   formatBytes,
   type LMSParameterSet,
 } from '../data/statefulSigsConstants'
-import {
-  CKM_HSS_KEY_PAIR_GEN,
-  CKK_HSS,
-  CKM_HSS,
-  CKP_LMS_SHA256_M32_H5,
-  CKP_LMS_SHA256_M32_H10,
-  CKP_LMS_SHA256_M32_H15,
-  CKP_LMS_SHA256_M32_H20,
-  CKP_LMS_SHA256_M32_H25,
-} from '@/wasm/softhsm/constants'
+import { CKM_HSS_KEY_PAIR_GEN, CKK_HSS, CKM_HSS } from '@/wasm/softhsm/constants'
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import {
   WorkshopOperationLog,
@@ -90,26 +81,28 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
       // Defer execution slightly to allow UI to show "Generating..."
       await new Promise((r) => setTimeout(r, 100))
 
-      // Map tree height to IANA LMS type ID (RFC 8554 + SP 800-208)
-      const heightToIANA: Record<number, number> = {
-        5: CKP_LMS_SHA256_M32_H5,
-        10: CKP_LMS_SHA256_M32_H10,
-        15: CKP_LMS_SHA256_M32_H15,
-        20: CKP_LMS_SHA256_M32_H20,
-        25: CKP_LMS_SHA256_M32_H25,
-      }
-      const paramCode = heightToIANA[selected.treeHeight] ?? CKP_LMS_SHA256_M32_H5
-
+      // The parameter set carries its own per-level ordinals — do NOT derive
+      // them from treeHeight here. That derivation is exactly what collapsed
+      // HSS-L2 (H10x2) into a single height-20 tree: 2^20 leaves instead of
+      // 2^10, ~1000x the work, while the UI drew "L=2". Both arrays must be
+      // passed and must match the level count, or rust/src/crypto/lms.rs
+      // rejects the call (it requires lms_params.len() == levels ==
+      // lmots_params.len()).
+      const M = hsm.moduleRef.current
+      const hSession = hsm.hSessionRef.current
       const { privHandle } = hsm_generateStatefulKeyPair(
-        hsm.moduleRef.current,
-        hsm.hSessionRef.current,
+        M,
+        hSession,
         CKM_HSS_KEY_PAIR_GEN,
         CKK_HSS,
-        paramCode
+        selected.lmsParams[0],
+        selected.lmotsParams[0],
+        selected.lmsParams,
+        selected.lmotsParams
       )
 
       setActiveKeyHandle(privHandle)
-      hsm.addKey({
+      hsm.registerKey(M, hSession, {
         handle: privHandle,
         family: 'hss',
         role: 'private',
@@ -159,7 +152,10 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         // Mocked breakdown parsing for structural exploration
         setSignatureBreakdown({
           totalSize: sig.length,
-          levels: selected.variant === 'multi-tree' ? 2 : 1,
+          // Real level count from the parameter set's own hierarchy — this
+          // used to be inferred from the `variant` label, which is how it
+          // kept reading "2" while the engine was building a 1-level key.
+          levels: selected.levelHeights.length,
           lmsPayload: hex.substring(0, 100) + '...',
           authPath: hex.substring(100, 200) + '...',
         })
@@ -233,6 +229,13 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   {isProductionOnly && (
                     <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                   )}
+                  {/* Which document defines this set. RFC 8554 is the original
+                      LMS/HSS; RFC 9858 added the 192-bit and SHAKE256 families
+                      in 2025. SP 800-208 approves both but assigns numeric
+                      identifiers to neither — those come from IANA. */}
+                  <span className="ml-1.5 text-[9px] font-normal opacity-50">
+                    {param.provenance}
+                  </span>
                 </Button>
                 {isProductionOnly && (
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
@@ -572,7 +575,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

@@ -414,7 +414,7 @@ export const KeyWrapPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, isReady, hsmKeys, addHsmKey, addHsmLog, removeHsmKey } =
+  const { moduleRef, hSessionRef, isReady, hsmKeys, registerKey, addHsmLog, removeHsmKey } =
     useHsmContext()
 
   const [showInfo, setShowInfo] = useState(false)
@@ -794,7 +794,7 @@ export const KeyWrapPanel = ({
       }
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -842,7 +842,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -912,7 +912,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -1040,15 +1040,12 @@ export const KeyWrapPanel = ({
   const genRSAWrapPair = () =>
     withLoading('gen-rsa', async () => {
       const M = moduleRef.current!
-      const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(
-        M,
-        hSessionRef.current,
-        rsaKeyBits
-      )
+      const hSession = hSessionRef.current
+      const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(M, hSession, rsaKeyBits)
       setRsaPubHandle(pubHandle)
       setRsaPrivHandle(privHandle)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'rsa',
         role: 'public',
@@ -1056,7 +1053,7 @@ export const KeyWrapPanel = ({
         variant: String(rsaKeyBits),
         generatedAt: ts,
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'rsa',
         role: 'private',
@@ -1080,7 +1077,7 @@ export const KeyWrapPanel = ({
       )
       setMlkemPubHandle(mkPub)
       setMlkemPrivHandle(mkPriv)
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: mkPub,
         family: 'ml-kem',
         role: 'public',
@@ -1088,7 +1085,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: mkPriv,
         family: 'ml-kem',
         role: 'private',
@@ -1108,7 +1105,7 @@ export const KeyWrapPanel = ({
         )
         setEcPubHandle(ecPub)
         setEcPrivHandle(ecPriv)
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: ecPub,
           family: 'ecdh',
           role: 'public',
@@ -1116,7 +1113,7 @@ export const KeyWrapPanel = ({
           variant: 'P-256',
           generatedAt: ts,
         })
-        addHsmKey({
+        registerKey(M, hSession, {
           handle: ecPriv,
           family: 'ecdh',
           role: 'private',
@@ -1136,14 +1133,10 @@ export const KeyWrapPanel = ({
   const genWrappableMLKEM = () =>
     withLoading('gen-wkem', async () => {
       const M = moduleRef.current!
-      const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
-        M,
-        hSessionRef.current,
-        mlkemVariant,
-        true
-      )
+      const hSession = hSessionRef.current
+      const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, mlkemVariant, true)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ml-kem',
         role: 'public',
@@ -1151,7 +1144,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'ml-kem',
         role: 'private',
@@ -1164,15 +1157,11 @@ export const KeyWrapPanel = ({
   const genWrappableMLDSA = () =>
     withLoading('gen-wdsa', async () => {
       const M = moduleRef.current!
+      const hSession = hSessionRef.current
       const variant = 65 as const // default to ML-DSA-65 (NIST L3)
-      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
-        M,
-        hSessionRef.current,
-        variant,
-        true
-      )
+      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, variant, true)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
@@ -1180,7 +1169,7 @@ export const KeyWrapPanel = ({
         variant: String(variant),
         generatedAt: ts,
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',

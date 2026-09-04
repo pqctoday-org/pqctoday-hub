@@ -12,7 +12,7 @@ import { useCertProfile } from '@/hooks/useCertProfile'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -323,14 +323,14 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
                   ? 'rsa'
                   : 'ecdsa'
 
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: handles.pubHandle,
               family: algoFamily,
               role: 'public',
               label: `${algo.name} Root Public`,
               generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: handles.privHandle,
               family: algoFamily,
               role: 'private',
@@ -1073,7 +1073,7 @@ x509_extensions = v3_ca
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

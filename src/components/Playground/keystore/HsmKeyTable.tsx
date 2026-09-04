@@ -4,47 +4,19 @@
  * All keys are session objects (non-persistent) — no export/download.
  */
 import { useState, useMemo, useRef, useEffect } from 'react'
-import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Eye, Key as KeyIcon, Lock, RefreshCw, Trash2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { useHsmContext, type HsmKey } from '../hsm/HsmContext'
 import {
   hsm_getKeyAttributes,
   hsm_destroyObject,
-  hsm_findAllObjects,
-  CKA_UNIQUE_ID,
   type KeyAttributeSet,
 } from '../../../wasm/softhsm'
 import { formatBytes } from './keySizeUtils'
 import { discoverHsmObjects } from './discoverHsmObjects'
+import { resolveKeyHandle, isSessionGoneError } from './resolveKeyHandle'
+import { keyIdentity } from './keyIdentity'
 import { estimateKeySize, KeyAttrModal } from '@/components/shared/hsmKeyAttrDisplay'
-
-/**
- * A `handle` is only ever valid within the session that returned it
- * (PKCS#11 v3.2 §3.2) — real bug found live 2026-08-30: a handle printed
- * by one session was registered and later queried through a DIFFERENT
- * session, which knew the same object under a different number, so every
- * attribute read failed with CKR_OBJECT_HANDLE_INVALID. `CKA_UNIQUE_ID` is
- * the durable identity; when a key carries one, re-resolve its CURRENT
- * handle on `hSession` before every live query instead of trusting the
- * cached `handle`. No fallback to the stale handle on a miss — a UID that
- * finds nothing means the object is genuinely gone (e.g. destroyed), and
- * that's the honest thing to report, not a read through a dead handle.
- */
-function resolveCurrentHandle(M: SoftHSMModule, hSession: number, key: HsmKey): number | null {
-  if (!key.uniqueId) return key.handle
-  const bytes = new TextEncoder().encode(key.uniqueId)
-  const ptr = M._malloc(Math.max(bytes.length, 1))
-  M.HEAPU8.set(bytes, ptr)
-  try {
-    const found = hsm_findAllObjects(M, hSession, [
-      { type: CKA_UNIQUE_ID, bytesPtr: ptr, bytesLen: bytes.length },
-    ])
-    return found.length > 0 ? found[0] : null
-  } finally {
-    M._free(ptr)
-  }
-}
 
 // ── Role styling ──────────────────────────────────────────────────────────────
 
@@ -64,7 +36,16 @@ const ROLE_COLORS: Record<string, string> = {
 
 export const HsmKeyTable = () => {
   const hsmCtx = useHsmContext()
-  const { hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, removeHsmKey } = hsmCtx
+  const {
+    hsmKeys,
+    moduleRef,
+    crossCheckModuleRef,
+    hSessionRef,
+    slotRef,
+    removeHsmKey,
+    clearHsmKeys,
+    pruneDeadSlots,
+  } = hsmCtx
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
   const [confirmHandle, setConfirmHandle] = useState<number | null>(null)
@@ -74,6 +55,13 @@ export const HsmKeyTable = () => {
   // Cache PKCS#11 attribute reads per handle to avoid re-querying on every render.
   // Only new handles (not yet in cache) trigger C_GetAttributeValue calls.
   const attrCache = useRef(new Map<number, KeyAttributeSet | null>())
+
+  // Drop any registered key whose slot no longer exists (e.g. an engine
+  // restart re-enumerated slots) — once per mount, cheap.
+  useEffect(() => {
+    if (moduleRef.current) pruneDeadSlots(moduleRef.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Batch-query key sizes from PKCS#11 attributes (synchronous WASM calls
   // that log through the shared HsmContext call log — done in an effect,
@@ -95,13 +83,14 @@ export const HsmKeyTable = () => {
           attrCache.current.set(k.handle, null)
         } else {
           try {
-            const liveHandle = resolveCurrentHandle(M, hSession, k)
+            const liveHandle = resolveKeyHandle(M, hSession, k)
             attrCache.current.set(
               k.handle,
               liveHandle !== null ? hsm_getKeyAttributes(M, hSession, liveHandle) : null
             )
-          } catch {
+          } catch (err) {
             attrCache.current.set(k.handle, null)
+            if (isSessionGoneError(err)) removeHsmKey(k)
           }
         }
       }
@@ -109,7 +98,7 @@ export const HsmKeyTable = () => {
       map.set(k.handle, a ? estimateKeySize(a) : null)
     }
     setKeySizeMap(map)
-  }, [hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef])
+  }, [hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, removeHsmKey])
 
   const totalBytes = useMemo(() => {
     let sum = 0
@@ -126,7 +115,7 @@ export const HsmKeyTable = () => {
     const hSession = key.sessionHandle ?? hSessionRef.current
     if (!M || !hSession) return
     try {
-      const liveHandle = resolveCurrentHandle(M, hSession, key)
+      const liveHandle = resolveKeyHandle(M, hSession, key)
       // CK_INVALID_HANDLE (0) is never a real object — hsm_getKeyAttributes
       // reads every field against it and every read fails, producing the
       // SAME all-null/all-'error' KeyAttributeSet + the modal's own
@@ -135,13 +124,22 @@ export const HsmKeyTable = () => {
       const a = hsm_getKeyAttributes(M, hSession, liveHandle ?? 0)
       setAttrs(a)
       setInspectedKey(key)
-    } catch {
-      // handle invalid / destroyed keys silently
+    } catch (err) {
+      if (isSessionGoneError(err)) removeHsmKey(key)
+      // otherwise: handle invalid / destroyed key — fail silently
     }
   }
 
   const destroyKey = (key: HsmKey) => {
-    const M = key.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
+    // Real bug found live 2026-09-03: missing the `?? moduleRef.current`
+    // fallback that openInspect already has, above. In single-engine
+    // "Rust" mode (not Dual Parity), crossCheckModuleRef is never
+    // populated — moduleRef IS the Rust engine directly — so this always
+    // resolved M to null for any key tagged engine:'rust', silently
+    // returning before setConfirmHandle(null) ever ran. Delete would get
+    // permanently stuck showing "destroy?"/"cancel" with no error.
+    const M =
+      key.engine === 'rust' ? (crossCheckModuleRef.current ?? moduleRef.current) : moduleRef.current
     // Real gap found alongside the inspect-modal bug: this always used
     // hSessionRef.current, never key.sessionHandle — for a key registered
     // on a different session (e.g. the Developer tab's own kept-open dev-
@@ -149,12 +147,14 @@ export const HsmKeyTable = () => {
     const hSession = key.sessionHandle ?? hSessionRef.current
     if (!M || !hSession) return
     try {
-      const liveHandle = resolveCurrentHandle(M, hSession, key)
+      const liveHandle = resolveKeyHandle(M, hSession, key)
       if (liveHandle !== null) hsm_destroyObject(M, hSession, liveHandle)
-      removeHsmKey(key.handle)
+      removeHsmKey(key)
       attrCache.current.delete(key.handle)
-    } catch {
-      // key may already be destroyed
+    } catch (err) {
+      // key may already be destroyed — but if the SESSION is gone, remove
+      // the row too, or Destroy would be stuck failing on it forever.
+      if (isSessionGoneError(err)) removeHsmKey(key)
     }
     setConfirmHandle(null)
   }
@@ -220,6 +220,14 @@ export const HsmKeyTable = () => {
               <RefreshCw size={12} className={discovering ? 'animate-spin mr-1.5' : 'mr-1.5'} />
               Discover
             </Button>
+            <Button
+              variant="ghost"
+              onClick={() => clearHsmKeys({ slotId: slotRef.current })}
+              className="text-[10px] px-2 py-0.5 rounded border border-border hover:bg-muted text-muted-foreground transition-colors"
+              title="Clear all key objects from this slot's registry"
+            >
+              Clear Keys
+            </Button>
           </div>
         </div>
 
@@ -239,76 +247,90 @@ export const HsmKeyTable = () => {
               </tr>
             </thead>
             <tbody className="font-mono">
-              {hsmKeys.map((k) => (
-                <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
-                  <td className="py-1 pr-3">
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => openInspect(k)}
-                      className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
-                      aria-label={`Inspect key ${k.handle}`}
-                    >
-                      <Eye size={12} />
-                    </Button>
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
-                    {k.handle}
-                  </td>
-                  <td className="py-1.5 pr-4 text-foreground">{k.label}</td>
-                  <td className={`py-1.5 pr-4 font-sans ${ROLE_COLORS[k.role] ?? ''}`}>
-                    {ROLE_LABELS[k.role] ?? k.role}
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground text-right tabular-nums">
-                    {(() => {
-                      const size = keySizeMap.get(k.handle)
-                      return size != null ? formatBytes(size) : '—'
-                    })()}
-                  </td>
-                  <td className="py-1.5 pr-4 text-muted-foreground hidden md:table-cell">
-                    {k.generatedAt}
-                  </td>
-                  <td className="py-1 pl-1">
-                    {confirmHandle === k.handle ? (
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => destroyKey(k)}
-                          className="text-status-error text-[10px] font-sans font-medium hover:underline"
-                          aria-label={`Confirm destroy key ${k.handle}`}
-                        >
-                          destroy?
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => setConfirmHandle(null)}
-                          className="text-muted-foreground text-[10px] font-sans hover:underline"
-                        >
-                          cancel
-                        </Button>
-                      </div>
-                    ) : (
+              {hsmKeys.map((k) => {
+                const a = attrCache.current.get(k.handle) ?? null
+                const destroyable = a?.ckDestroyable !== false
+                return (
+                  <tr key={keyIdentity(k)} className="border-b border-border/40 hover:bg-muted/30">
+                    <td className="py-1 pr-3">
                       <Button
                         variant="ghost"
                         type="button"
-                        onClick={() => setConfirmHandle(k.handle)}
-                        className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
-                        aria-label={`Delete key ${k.handle}`}
+                        onClick={() => openInspect(k)}
+                        className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
+                        aria-label={`Inspect key ${k.handle}`}
                       >
-                        <Trash2 size={12} />
+                        <Eye size={12} />
                       </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
+                      {k.handle}
+                    </td>
+                    <td className="py-1.5 pr-4 text-foreground">{k.label}</td>
+                    <td className={`py-1.5 pr-4 font-sans ${ROLE_COLORS[k.role] ?? ''}`}>
+                      {ROLE_LABELS[k.role] ?? k.role}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground text-right tabular-nums">
+                      {(() => {
+                        const size = keySizeMap.get(k.handle)
+                        return size != null ? formatBytes(size) : '—'
+                      })()}
+                    </td>
+                    <td className="py-1.5 pr-4 text-muted-foreground hidden md:table-cell">
+                      {k.generatedAt}
+                    </td>
+                    <td className="py-1 pl-1">
+                      {confirmHandle === k.handle ? (
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => destroyKey(k)}
+                            className="text-status-error text-[10px] font-sans font-medium hover:underline"
+                            aria-label={`Confirm destroy key ${k.handle}`}
+                          >
+                            destroy?
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => setConfirmHandle(null)}
+                            className="text-muted-foreground text-[10px] font-sans hover:underline"
+                          >
+                            cancel
+                          </Button>
+                        </div>
+                      ) : destroyable ? (
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => setConfirmHandle(k.handle)}
+                          className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
+                          aria-label={`Delete key ${k.handle}`}
+                        >
+                          <Trash2 size={12} />
+                        </Button>
+                      ) : (
+                        <span
+                          className="text-muted-foreground/50 p-0.5 inline-flex"
+                          title="CKA_DESTROYABLE=FALSE — this object cannot be destroyed"
+                          aria-label={`Key ${k.handle} is not destroyable`}
+                        >
+                          <Lock size={12} />
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Session objects — not persisted to token. Handles are valid until session closes.
+          {hsmKeys.some((k) => attrCache.current.get(k.handle)?.ckToken === true)
+            ? 'Handles are valid only within the session that returned them (PKCS#11 v3.2 §3.2); token objects also persist across sessions.'
+            : 'Session objects — not persisted to token. Handles are valid until session closes.'}
         </p>
       </div>
 
