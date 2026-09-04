@@ -71,7 +71,7 @@ const ecdsaMechs = () => [
 // ── RSA sub-panel ─────────────────────────────────────────────────────────────
 
 const RsaPanel = () => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   const [keyBits, setKeyBits] = useState<2048 | 3072 | 4096>(2048)
   const [extractable, setExtractable] = useState(false)
   const [signMech, setSignMech] = useState(CKM_SHA256_RSA_PKCS)
@@ -123,14 +123,14 @@ const RsaPanel = () => {
         extractable,
         'sign'
       )
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'rsa',
         role: 'public',
         label: `RSA-${keyBits} Public Key`,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'rsa',
         role: 'private',
@@ -415,7 +415,7 @@ const RsaPanel = () => {
 // ── ECDSA sub-panel ──────────────────────────────────────────────────────────
 
 const EcdsaPanel = () => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   type EcCurve = 'P-256' | 'P-384' | 'P-521'
   const [curve, setCurve] = useState<EcCurve>('P-256')
   const [extractable, setExtractable] = useState(false)
@@ -462,7 +462,7 @@ const EcdsaPanel = () => {
         extractable,
         'sign'
       )
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ecdsa',
         role: 'public',
@@ -470,7 +470,7 @@ const EcdsaPanel = () => {
         variant: curve,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'ecdsa',
         role: 'private',
@@ -693,7 +693,7 @@ const EcdsaPanel = () => {
 // ── EdDSA sub-panel ──────────────────────────────────────────────────────────
 
 const EddsaPanel = () => {
-  const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, registerKey } = useHsmContext()
   type EdCurve = 'Ed25519' | 'Ed448'
   const [curve, setCurve] = useState<EdCurve>('Ed25519')
   const [extractable, setExtractable] = useState(false)
@@ -730,7 +730,7 @@ const EddsaPanel = () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, curve, extractable)
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'eddsa',
         role: 'public',
@@ -738,7 +738,7 @@ const EddsaPanel = () => {
         variant: curve,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'eddsa',
         role: 'private',

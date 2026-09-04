@@ -6,14 +6,20 @@
  * this component accepts keys and module refs as props so it can be embedded
  * in any module that uses the useHSM hook (e.g. TEEHSMTrustedChannel).
  */
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { Eye, Key as KeyIcon, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { HsmFamily, HsmKey, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
+import type { HsmKey, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { hsm_destroyObject, hsm_getKeyAttributes, type KeyAttributeSet } from '@/wasm/softhsm'
 import { formatBytes } from '@/components/Playground/keystore/keySizeUtils'
+import {
+  resolveKeyHandle,
+  isSessionGoneError,
+} from '@/components/Playground/keystore/resolveKeyHandle'
+import { keyIdentity } from '@/components/Playground/keystore/keyIdentity'
 import { estimateKeySize, KeyAttrModal, PurposeBadge } from '@/components/shared/hsmKeyAttrDisplay'
+import { CKK_TO_FAMILY, CKO_TO_ROLE } from '@/components/Playground/keystore/discoverHsmObjects'
 
 // ── Role styling ──────────────────────────────────────────────────────────────
 
@@ -29,35 +35,15 @@ const ROLE_COLORS: Record<HsmKeyRole, string> = {
   secret: 'text-status-info',
 }
 
-// ── Auto-detect family/role from PKCS#11 attributes ──────────────────────────
-
-const CKK_TO_FAMILY: Record<number, HsmFamily> = {
-  0x00: 'rsa',
-  0x03: 'ecdsa',
-  0x10: 'hmac',
-  0x1f: 'aes',
-  0x40: 'eddsa',
-  0x49: 'ml-kem',
-  0x4a: 'ml-dsa',
-  0x4b: 'slh-dsa',
-  0x46: 'hss',
-  0x47: 'xmss',
-  0x48: 'xmss',
-}
-
-const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
-  0x02: 'public',
-  0x03: 'private',
-  0x04: 'secret',
-}
-
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 export interface HsmKeyInspectorProps {
   keys: HsmKey[]
   moduleRef: React.MutableRefObject<SoftHSMModule | null>
   hSessionRef: React.MutableRefObject<number>
-  onRemoveKey?: (handle: number) => void
+  /** Takes the full key, not a bare handle — the parent binds identity/scope. */
+  onRemoveKey?: (key: HsmKey) => void
+  /** Parent supplies the already-scoped clear (e.g. `() => clearHsmKeys({ slotId })`). */
   onClear?: () => void
   /** Optional title override (default: "HSM Key Registry") */
   title?: string
@@ -88,6 +74,27 @@ export const HsmKeyInspector = ({
   // Batch-query key sizes via an effect so ref access stays out of render
   const [keySizeMap, setKeySizeMap] = useState<Map<number, number | null>>(new Map())
   const keyTracker = useMemo(() => keys.map((k) => k.handle).join(','), [keys])
+
+  // `attrsResolver` and `onRemoveKey` are held in refs, NOT effect deps.
+  //
+  // Most callers pass them inline — e.g. `onRemoveKey={(key) =>
+  // hsm.removeKey(key.handle)}` — so their identity changes on every render.
+  // With them in the dep array this effect re-ran every render, and each run
+  // calls resolveKeyHandle -> hsm_findAllObjects -> the logging proxy, which
+  // appends a log entry via setState. That re-render re-ran the effect, and
+  // so on: a genuine infinite loop that React reported as "Maximum update
+  // depth exceeded" (8-15 per keygen) and that could leave the page
+  // unresponsive to clicks for a minute at a time.
+  //
+  // Fixing it here rather than asking ~25 call sites to memoize: a caller
+  // forgetting useCallback should not be able to wedge the app.
+  const attrsResolverRef = useRef(attrsResolver)
+  const onRemoveKeyRef = useRef(onRemoveKey)
+  useEffect(() => {
+    attrsResolverRef.current = attrsResolver
+    onRemoveKeyRef.current = onRemoveKey
+  })
+
   useEffect(() => {
     let cancelled = false
     const run = async () => {
@@ -96,29 +103,40 @@ export const HsmKeyInspector = ({
       const map = new Map<number, number | null>()
       for (const k of keys) {
         let a: KeyAttributeSet | null = null
-        if (attrsResolver) {
+        const resolver = attrsResolverRef.current
+        if (resolver) {
           try {
-            a = await attrsResolver(k)
+            a = await resolver(k)
           } catch {
             a = null
           }
         } else if (M && hSession) {
           try {
-            a = hsm_getKeyAttributes(M, hSession, k.handle)
-          } catch {
+            const liveHandle = resolveKeyHandle(M, hSession, k)
+            a = liveHandle !== null ? hsm_getKeyAttributes(M, hSession, liveHandle) : null
+          } catch (err) {
             a = null
+            if (isSessionGoneError(err)) onRemoveKeyRef.current?.(k)
           }
         }
         map.set(k.handle, a ? estimateKeySize(a) : null)
       }
-      if (!cancelled) setKeySizeMap(map)
+      // Only publish a genuinely different map. `new Map()` is a fresh object
+      // every run, so setting it unconditionally was itself enough to keep
+      // the render/effect cycle alive even once the deps were stable.
+      if (!cancelled) {
+        setKeySizeMap((prev) => {
+          if (prev.size === map.size && [...map].every(([h, v]) => prev.get(h) === v)) return prev
+          return map
+        })
+      }
     }
     void run()
     return () => {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyTracker, attrsResolver]) // moduleRef and hSessionRef are stable refs — intentionally omitted
+  }, [keyTracker]) // refs above are intentionally not deps; moduleRef/hSessionRef are stable
 
   const totalBytes = useMemo(() => {
     let sum = 0
@@ -146,14 +164,16 @@ export const HsmKeyInspector = ({
       const hSession = hSessionRef.current
       if (!M || !hSession) return
       try {
-        const a = hsm_getKeyAttributes(M, hSession, key.handle)
+        const liveHandle = resolveKeyHandle(M, hSession, key)
+        const a = hsm_getKeyAttributes(M, hSession, liveHandle ?? 0)
         setAttrs(a)
         setInspectedKey(key)
-      } catch {
-        // key may be invalid or destroyed — fail silently
+      } catch (err) {
+        if (isSessionGoneError(err)) onRemoveKey?.(key)
+        // otherwise: key may be invalid or destroyed — fail silently
       }
     },
-    [moduleRef, hSessionRef, attrsResolver]
+    [moduleRef, hSessionRef, attrsResolver, onRemoveKey]
   )
 
   const destroyKey = useCallback(
@@ -162,10 +182,13 @@ export const HsmKeyInspector = ({
       const hSession = hSessionRef.current
       if (!M || !hSession) return
       try {
-        hsm_destroyObject(M, hSession, key.handle)
-        onRemoveKey?.(key.handle)
-      } catch {
-        // key may already be destroyed
+        const liveHandle = resolveKeyHandle(M, hSession, key)
+        if (liveHandle !== null) hsm_destroyObject(M, hSession, liveHandle)
+        onRemoveKey?.(key)
+      } catch (err) {
+        // key may already be destroyed — but if the SESSION is gone,
+        // remove the row too, or Destroy would be stuck failing on it.
+        if (isSessionGoneError(err)) onRemoveKey?.(key)
       }
       setConfirmHandle(null)
     },
@@ -183,7 +206,9 @@ export const HsmKeyInspector = ({
         if (k.family !== 'aes' || k.role !== 'secret') return k
         if (!M || !hSession) return k
         try {
-          const a = hsm_getKeyAttributes(M, hSession, k.handle)
+          const liveHandle = resolveKeyHandle(M, hSession, k)
+          if (liveHandle === null) return k
+          const a = hsm_getKeyAttributes(M, hSession, liveHandle)
           return {
             ...k,
             family: a.ckKeyType !== null ? (CKK_TO_FAMILY[a.ckKeyType] ?? k.family) : k.family,
@@ -261,7 +286,7 @@ export const HsmKeyInspector = ({
             </thead>
             <tbody className="font-mono">
               {resolvedKeys.map((k) => (
-                <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
+                <tr key={keyIdentity(k)} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
                     <Button
                       variant="ghost"

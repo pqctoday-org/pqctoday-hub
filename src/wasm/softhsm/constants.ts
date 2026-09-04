@@ -130,8 +130,14 @@ export const CKM_EDDSA = 0x1057
 // BIP32 codepoints live in PKCS#11 vendor space (pkcs11t.h §BIP32):
 // CKM_BIP32_* = CKM_VENDOR_DEFINED(0x80000000) | 0x105B/0x105C
 // CKA_BIP32_* = CKA_VENDOR_DEFINED(0x80000000) | 0x1021/0x1022
-// (the bare 0x105B/0x105C/0x1021/0x1022 forms are OASIS-unassigned; the engine
-//  accepts them only as deprecated aliases — the hub uses the canonical values.)
+//
+// Only the two CKM_ values are actually used. The real BIP32 derivation
+// builds its own raw mechanism-parameter struct, so CKA_BIP32_CHAIN_CODE,
+// CKA_BIP32_CHILD_INDEX and CKF_BIP32_HARDENED have zero call sites in the
+// hub — they are kept as documentation of the codepoints, not because
+// anything puts them on the wire. An earlier comment here described the
+// bare 0x105B/0x1021 forms as "deprecated aliases the engine accepts",
+// which overstated it: nothing in the hub sends either form.
 export const CKM_BIP32_MASTER_DERIVE = 0x8000105b
 export const CKM_BIP32_CHILD_DERIVE = 0x8000105c
 export const CKF_BIP32_HARDENED = 0x80000000
@@ -246,15 +252,38 @@ export const CKP_LMOTS_SHAKE_N24_W8 = 0x10
 export const CKP_XMSS_SHA2_10_256 = 0x00000001
 export const CKP_XMSS_SHA2_16_256 = 0x00000002
 export const CKP_XMSS_SHA2_20_256 = 0x00000003
-export const CKP_XMSS_SHA2_10_512 = 0x00000004
-export const CKP_XMSS_SHA2_16_512 = 0x00000005
-export const CKP_XMSS_SHA2_20_512 = 0x00000006
-export const CKP_XMSS_SHAKE_10_256 = 0x00000011 // was 0x07 — must match Rust constants.rs 0x11
-export const CKP_XMSS_SHAKE_16_256 = 0x00000012 // was 0x08 — must match Rust constants.rs 0x12
-export const CKP_XMSS_SHAKE_20_256 = 0x00000013 // was 0x09 — must match Rust constants.rs 0x13
-export const CKP_XMSS_SHAKE_10_512 = 0x0000000a
-export const CKP_XMSS_SHAKE_16_512 = 0x0000000b
-export const CKP_XMSS_SHAKE_20_512 = 0x0000000c
+// RFC 8391 §5.3 registered OIDs for the SHAKE128 (XMSS-SHAKE_h_256) sets.
+// These were 0x11/0x12/0x13 until 2026-09-03, on the premise that Rust's
+// constants.rs used those values. It does not: in BOTH engines 0x11/0x12/0x13
+// are the SP 800-208 SHAKE256 sets. The bug was an off-by-one INTO that table:
+// h10→0x11, h16→0x12, h20→0x13 is SP 800-208 Table 14 started one row late
+// (0x10 is XMSS-SHAKE256_10_256, not _16_256). The engine builds whatever the
+// ordinal names — the Rust dispatch ends in `_ => Err(())`, no fallback — and
+// CKA_PARAMETER_SET is the ONLY selector (v3.2 §6.66.6; height is never passed
+// separately), so "SHAKE-128 height 10" generated a height-16 SHAKE256 key:
+// the engine reported 65,535 remaining signatures where the UI claimed 1,024.
+export const CKP_XMSS_SHAKE_10_256 = 0x00000007
+export const CKP_XMSS_SHAKE_16_256 = 0x00000008
+export const CKP_XMSS_SHAKE_20_256 = 0x00000009
+
+// SP 800-208 Tables 14/16 — the SHAKE256 XMSS sets, values read from the
+// standard itself (docs library: NIST_SP_800-208.pdf) and confirmed identical
+// in both engines. These are the only SHAKE-based XMSS parameter sets NIST
+// approves. SP 800-208 footnote 5 is explicit about the rest: "The parameter
+// sets specified in RFC 8391 that use SHAKE128, SHAKE256, and SHA-512 are not
+// approved for use by this Special Publication" — so ALL the RFC 8391 sets
+// above (0x04-0x0c) are unapproved, not just the SHAKE128 ones. Note this is
+// a statement about parameter sets, not hash functions: SHAKE128 itself is
+// FIPS 202. SP 800-208's own SHAKE256 sets differ from RFC 8391's by using
+// n=32/24 rather than n=64.
+// Rust-engine support is PARTIAL — it implements 0x11/0x12/0x13 only, so
+// 0x10/0x14/0x15 are C++-engine-only. Check before wiring a UI control.
+export const CKP_XMSS_SHAKE256_10_256 = 0x00000010 // C++ engine only
+export const CKP_XMSS_SHAKE256_16_256 = 0x00000011
+export const CKP_XMSS_SHAKE256_20_256 = 0x00000012
+export const CKP_XMSS_SHAKE256_10_192 = 0x00000013
+export const CKP_XMSS_SHAKE256_16_192 = 0x00000014 // C++ engine only
+export const CKP_XMSS_SHAKE256_20_192 = 0x00000015 // C++ engine only
 
 // XMSS-MT parameter set values (RFC 8391 §5.4 — OID-derived integers)
 export const CKP_XMSSMT_SHA2_20_2_256 = 0x00000001

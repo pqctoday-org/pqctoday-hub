@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
-import type { UseHSMResult } from '@/hooks/useHSM'
+import type { UseHSMResult, HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -380,7 +380,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({
             keys={hsm.keys}
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
-            onRemoveKey={hsm.removeKey}
+            onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
           />
         )}
       </CardContent>

@@ -24,6 +24,8 @@ import {
   hsm_getFirstInitializedSlot,
   hsm_initToken,
   hsm_openUserSession,
+  hsm_getKeyAttributes,
+  hsm_getSessionInfo,
 } from '../wasm/softhsm'
 import type { SoftHSMModule, Pkcs11LogEntry } from '../wasm/softhsm'
 import type { HsmFamily, HsmKey, HsmKeyRole } from '../components/Playground/hsm/HsmContext'
@@ -67,7 +69,18 @@ export interface UseHSMResult {
 
   // ── Key registry ──────────────────────────────────────────────────────────
   keys: HsmKey[]
+  /** Internal registry write — the caller must already have full identity. Use `registerKey` instead. */
   addKey: (key: HsmKey) => HsmKey
+  /**
+   * Register a key right after generation/import. Derives `uniqueId`
+   * (CKA_UNIQUE_ID) and `slotId` (`C_GetSessionInfo(hSession).slotID`) on
+   * `M`/`hSession`, then writes the row via `addKey`.
+   */
+  registerKey: (
+    M: SoftHSMModule,
+    hSession: number,
+    partial: Omit<HsmKey, 'uniqueId' | 'slotId'>
+  ) => HsmKey
   removeKey: (handle: number) => void
   clearKeys: () => void
   /** Most recently generated key for the given family+role */
@@ -127,6 +140,29 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
     setKeys((prev) => [key, ...prev])
     return key
   }, [])
+
+  const registerKey = useCallback(
+    (M: SoftHSMModule, hSession: number, partial: Omit<HsmKey, 'uniqueId' | 'slotId'>): HsmKey => {
+      let uniqueId = ''
+      try {
+        uniqueId = hsm_getKeyAttributes(M, hSession, partial.handle).ckUniqueId ?? ''
+      } catch (err) {
+        console.error(
+          'useHSM.registerKey: could not read CKA_UNIQUE_ID for handle',
+          partial.handle,
+          err
+        )
+      }
+      let slotId = -1
+      try {
+        slotId = hsm_getSessionInfo(M, hSession).slotID
+      } catch (err) {
+        console.error('useHSM.registerKey: could not read slotID for session', hSession, err)
+      }
+      return addKey({ ...partial, uniqueId, slotId })
+    },
+    [addKey]
+  )
 
   const removeKey = useCallback((handle: number) => {
     setKeys((prev) => prev.filter((k) => k.handle !== handle))
@@ -226,6 +262,7 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
     addStepLog,
     keys,
     addKey,
+    registerKey,
     removeKey,
     clearKeys,
     latestKey,

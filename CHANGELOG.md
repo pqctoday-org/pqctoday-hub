@@ -29,9 +29,9 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
-## [4.77.0] - 2026-09-03
+## [4.79.0] - 2026-09-04
 
-A global accuracy and consistency pass across all six role-based home boards, closing out the 2026-09-03 review with over 50 individual fixes plus two new pieces of user-visible behavior.
+A global accuracy and consistency pass across all six role-based home boards, closing out the 2026-09-03 review with over 50 individual fixes plus two new pieces of user-visible behavior — plus a smaller Algorithms page default-filter change.
 
 ### Fixed
 
@@ -45,6 +45,33 @@ A global accuracy and consistency pass across all six role-based home boards, cl
 
 - **Role-home boards that reference a specific workshop now show a real link to it** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: a "Related on this site" chip appears wherever a board names a workshop, instead of that reference being invisible, unclickable metadata.
 - **Chip and CTA clicks on role-home boards are now tracked** [view:/] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:curious]: which scenario chip you pick and which button you follow off a board now feed analytics, closing a usage-visibility gap that only ever saw the page view itself.
+- **The Algorithms page now opens on "NIST picks" by default** [view:/algorithms] [persona:developer] [persona:architect] [persona:researcher] [persona:ops] [persona:executive] [persona:curious]: the three FIPS 203/204/205 standardized algorithms (ML-KEM, ML-DSA, SLH-DSA) are pre-filtered on arrival instead of showing all 193 rows unfiltered; "FIPS-validated" and "Everything" remain one click away.
+
+## [4.78.0] - 2026-09-04
+
+### Added
+
+- **Navigate's force graph now includes vendor nodes, with an auto-adapt density mode** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: vendors are now first-class nodes in the graph instead of being absent, and the graph automatically thins out labels/detail as it gets denser so it stays readable.
+
+### Fixed
+
+- **A node's detail panel no longer overflows with very long connection lists** [view:/navigate] [persona:executive] [persona:developer] [persona:architect] [persona:researcher] [persona:curious]: link and connection lists are now capped with a "show more" affordance instead of stretching the panel indefinitely.
+- **Protocol Matrix library chips now link to the right place in the Migrate Catalog** [view:/algorithms] [persona:developer] [persona:architect]: chips previously pointed at a query parameter the Migrate Catalog doesn't read, so clicking through led to an unfiltered catalog instead of the specific library.
+
+### Data
+
+- **PQC Community leaders page refreshed** [view:/leaders] [persona:executive] [persona:developer] [persona:researcher] [persona:curious]: 27 rows corrected or reclassified after a full authorship/citation review (spotcheck, peer-review, and patent-inventor passes), plus a name correction and a duplicate-entry cleanup.
+
+## [4.77.0] - 2026-09-04
+
+Two correctness fixes in the in-browser HSM engine, found and fixed on the
+Rust engine used across the PKCS#11 workshop, HPKE demos, and CACP policy
+sandbox.
+
+### Fixed
+
+- **A rare but real failure in HPKE/ECDH key-derivation demos is fixed** [view:/playground] [persona:developer] [persona:researcher]: about 1 in every 256 legitimate elliptic-curve key exchanges (P-256, P-384, P-521) could fail with a cryptic error, because the engine misread part of a valid key as corrupted data under a specific, unlucky byte pattern. Retrying with a fresh key used to work around it; it no longer happens at all.
+- **Nine XMSS stateful-signature parameter sets in the PKCS#11 workshop now actually work** [view:/playground] [persona:developer] [persona:researcher]: several SHA-256/192 and SHAKE256 variants of the XMSS algorithm were either missing from the workshop entirely or silently failed key generation. All nine now generate keys, sign, and verify correctly.
 
 ## [4.76.0] - 2026-09-02
 

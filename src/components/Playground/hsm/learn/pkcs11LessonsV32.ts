@@ -102,7 +102,10 @@ export const V32_LESSONS: Pkcs11LessonV32[] = [
         },
         run: async (hsm) => {
           if (!hsm.isReady) {
-            const ok = await hsm.autoInit('rust')
+            // No engine argument — respects whatever the Engine selector
+            // (C++ / Rust / Dual Parity) is currently set to, rather than
+            // silently overriding a learner's choice back to Rust.
+            const ok = await hsm.autoInit()
             if (!ok) throw new Error('Engine boot failed.')
           }
           return { detail: `Session ${hsm.hSessionRef.current} ready.` }

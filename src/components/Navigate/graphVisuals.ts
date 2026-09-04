@@ -14,6 +14,7 @@ export const NODE_TYPES: ForceClusterNodeType[] = [
   'protocol',
   'patent',
   'leader',
+  'vendor',
 ]
 
 export const GRAPH_TOKEN: Record<ForceClusterNodeType, { varName: string; fallback: string }> = {
@@ -28,6 +29,7 @@ export const GRAPH_TOKEN: Record<ForceClusterNodeType, { varName: string; fallba
   protocol: { varName: '--graph-protocol', fallback: '#8a2a70' },
   patent: { varName: '--graph-patent', fallback: '#3e4aa8' },
   leader: { varName: '--graph-leader', fallback: '#94402e' },
+  vendor: { varName: '--graph-vendor', fallback: '#1f7a7a' },
 }
 
 export const TYPE_LABEL: Record<ForceClusterNodeType, string> = {
@@ -42,4 +44,5 @@ export const TYPE_LABEL: Record<ForceClusterNodeType, string> = {
   protocol: 'Protocol',
   patent: 'Patent',
   leader: 'Community',
+  vendor: 'Vendor',
 }

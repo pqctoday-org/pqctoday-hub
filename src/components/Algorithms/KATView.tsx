@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { runKAT } from '@/utils/katRunner'
 import type { KatTestSpec, KATResult, SlhDsaVariant } from '@/utils/katRunner'
 import type { UseHSMResult } from '@/hooks/useHSM'
@@ -1038,7 +1038,7 @@ export const KATView: React.FC = () => {
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
               onClear={hsm.clearKeys}
               title="HSM Key Registry — KAT Session"
             />

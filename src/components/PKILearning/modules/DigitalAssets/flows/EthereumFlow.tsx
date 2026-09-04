@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { StepWizard } from '../components/StepWizard'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -140,7 +140,7 @@ export const EthereumFlow: React.FC<EthereumFlowProps> = ({ onBack }) => {
           keys={hsm.keys}
           moduleRef={hsm.moduleRef}
           hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
+          onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
         />
       )}
     </div>

@@ -15,6 +15,7 @@
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { MECH_TABLE } from './softhsm/mechanismTable'
 
 // ── Exported types ────────────────────────────────────────────────────────────
 
@@ -66,12 +67,21 @@ export interface ConstEntry {
 }
 
 // CKA_ attribute types
-const CKA_TABLE: Record<number, ConstEntry> = {
+export const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000000: { name: 'CKA_CLASS', description: 'Object class (CKO_*)' },
   0x00000001: { name: 'CKA_TOKEN', description: 'Persistent token object vs session object' },
   0x00000002: { name: 'CKA_PRIVATE', description: 'Access requires authentication' },
+  0x00000003: { name: 'CKA_LABEL', description: 'Human-readable object label' },
+  0x00000004: {
+    name: 'CKA_UNIQUE_ID',
+    description: 'Durable object identity, valid across sessions (v3.2 §3.2)',
+  },
   0x00000011: { name: 'CKA_VALUE', description: 'Raw key bytes' },
   0x00000100: { name: 'CKA_KEY_TYPE', description: 'Key type (CKK_*)' },
+  0x00000102: {
+    name: 'CKA_ID',
+    description: 'Key identifier for pairing/lookup (application-defined)',
+  },
   0x00000103: { name: 'CKA_SENSITIVE', description: 'Key cannot be extracted in plaintext' },
   0x00000104: { name: 'CKA_ENCRYPT', description: 'Key can be used for encryption' },
   0x00000105: { name: 'CKA_DECRYPT', description: 'Key can be used for decryption' },
@@ -80,12 +90,45 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   0x00000108: { name: 'CKA_SIGN', description: 'Key can be used to create signatures' },
   0x0000010a: { name: 'CKA_VERIFY', description: 'Key can be used to verify signatures' },
   0x0000010c: { name: 'CKA_DERIVE', description: 'Key can be used for key derivation' },
+  0x00000110: { name: 'CKA_START_DATE', description: 'Date the key becomes valid' },
+  0x00000111: { name: 'CKA_END_DATE', description: 'Date the key expires' },
+  0x00000120: { name: 'CKA_MODULUS', description: 'RSA public modulus' },
   0x00000121: { name: 'CKA_MODULUS_BITS', description: 'RSA modulus length in bits' },
   0x00000122: { name: 'CKA_PUBLIC_EXPONENT', description: 'RSA public exponent (usually 65537)' },
+  0x00000129: { name: 'CKA_PUBLIC_KEY_INFO', description: 'DER-encoded SubjectPublicKeyInfo' },
   0x00000161: { name: 'CKA_VALUE_LEN', description: 'Key length in bytes' },
   0x00000162: { name: 'CKA_EXTRACTABLE', description: 'Key can be wrapped and extracted' },
+  0x00000163: {
+    name: 'CKA_LOCAL',
+    description: 'True if the key was generated locally, not imported',
+  },
+  0x00000164: {
+    name: 'CKA_NEVER_EXTRACTABLE',
+    description: 'True if the key has never been extractable',
+  },
+  0x00000165: {
+    name: 'CKA_ALWAYS_SENSITIVE',
+    description: 'True if the key has always been sensitive',
+  },
+  0x00000166: {
+    name: 'CKA_KEY_GEN_MECHANISM',
+    description: 'Mechanism used to generate the key (CKM_*)',
+  },
+  0x00000170: {
+    name: 'CKA_MODIFIABLE',
+    description: 'Object attributes can be changed after creation',
+  },
+  0x00000171: { name: 'CKA_COPYABLE', description: 'Object can be duplicated via C_CopyObject' },
+  0x00000172: {
+    name: 'CKA_DESTROYABLE',
+    description: 'Object can be destroyed via C_DestroyObject',
+  },
   0x00000180: { name: 'CKA_EC_PARAMS', description: 'DER-encoded EC domain parameters (OID)' },
   0x00000181: { name: 'CKA_EC_POINT', description: 'DER-encoded EC public key point' },
+  0x00000202: {
+    name: 'CKA_ALWAYS_AUTHENTICATE',
+    description: 'Requires C_Login re-authentication before each use (v3.2 §4.4)',
+  },
   0x0000061d: { name: 'CKA_PARAMETER_SET', description: 'PQC parameter set (CKP_*)' },
   0x00000633: {
     name: 'CKA_ENCAPSULATE',
@@ -124,199 +167,6 @@ const CKA_TABLE: Record<number, ConstEntry> = {
   },
 }
 
-// CKM_ mechanism types
-const CKM_TABLE: Record<number, ConstEntry> = {
-  // RSA (PKCS#11 §6.1)
-  0x00000000: { name: 'CKM_RSA_PKCS_KEY_PAIR_GEN', description: 'RSA key pair generation' },
-  0x00000009: {
-    name: 'CKM_RSA_PKCS_OAEP',
-    description: 'RSA-OAEP encryption/decryption (PKCS#1 v2.x)',
-  },
-  0x00000040: {
-    name: 'CKM_SHA256_RSA_PKCS',
-    description: 'SHA-256 with RSA PKCS#1 v1.5 signature',
-  },
-  0x00000041: { name: 'CKM_SHA384_RSA_PKCS', description: 'SHA-384 with RSA PKCS#1 v1.5' },
-  0x00000042: { name: 'CKM_SHA512_RSA_PKCS', description: 'SHA-512 with RSA PKCS#1 v1.5' },
-  0x00000043: { name: 'CKM_SHA256_RSA_PKCS_PSS', description: 'SHA-256 with RSA-PSS signature' },
-  0x00000044: { name: 'CKM_SHA384_RSA_PKCS_PSS', description: 'SHA-384 with RSA-PSS' },
-  0x00000045: { name: 'CKM_SHA512_RSA_PKCS_PSS', description: 'SHA-512 with RSA-PSS' },
-  // ML-KEM — FIPS 203
-  0x0000000f: {
-    name: 'CKM_ML_KEM_KEY_PAIR_GEN',
-    description: 'ML-KEM key pair generation (FIPS 203 Algorithm 15/16)',
-  },
-  0x00000017: {
-    name: 'CKM_ML_KEM',
-    description: 'ML-KEM encapsulation / decapsulation (FIPS 203 Algorithm 17/18)',
-  },
-  // ML-DSA — FIPS 204
-  0x0000001c: {
-    name: 'CKM_ML_DSA_KEY_PAIR_GEN',
-    description: 'ML-DSA key pair generation (FIPS 204 Algorithm 6/7)',
-  },
-  0x0000001d: {
-    name: 'CKM_ML_DSA',
-    description: 'ML-DSA pure signing / verification (FIPS 204 Algorithm 2/3)',
-  },
-  0x0000001f: {
-    name: 'CKM_HASH_ML_DSA',
-    description: 'HashML-DSA generic pre-hash (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000023: {
-    name: 'CKM_HASH_ML_DSA_SHA224',
-    description: 'HashML-DSA with SHA-224 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000024: {
-    name: 'CKM_HASH_ML_DSA_SHA256',
-    description: 'HashML-DSA with SHA-256 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000025: {
-    name: 'CKM_HASH_ML_DSA_SHA384',
-    description: 'HashML-DSA with SHA-384 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000026: {
-    name: 'CKM_HASH_ML_DSA_SHA512',
-    description: 'HashML-DSA with SHA-512 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000027: {
-    name: 'CKM_HASH_ML_DSA_SHA3_224',
-    description: 'HashML-DSA with SHA3-224 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000028: {
-    name: 'CKM_HASH_ML_DSA_SHA3_256',
-    description: 'HashML-DSA with SHA3-256 (FIPS 204 Algorithm 4/5)',
-  },
-  0x00000029: {
-    name: 'CKM_HASH_ML_DSA_SHA3_384',
-    description: 'HashML-DSA with SHA3-384 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002a: {
-    name: 'CKM_HASH_ML_DSA_SHA3_512',
-    description: 'HashML-DSA with SHA3-512 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002b: {
-    name: 'CKM_HASH_ML_DSA_SHAKE128',
-    description: 'HashML-DSA with SHAKE128 (FIPS 204 Algorithm 4/5)',
-  },
-  0x0000002c: {
-    name: 'CKM_HASH_ML_DSA_SHAKE256',
-    description: 'HashML-DSA with SHAKE256 (FIPS 204 Algorithm 4/5)',
-  },
-  // SLH-DSA — FIPS 205
-  0x0000002d: {
-    name: 'CKM_SLH_DSA_KEY_PAIR_GEN',
-    description: 'SLH-DSA key pair generation (FIPS 205)',
-  },
-  0x0000002e: {
-    name: 'CKM_SLH_DSA',
-    description: 'SLH-DSA pure signing / verification (FIPS 205)',
-  },
-  0x00000034: {
-    name: 'CKM_HASH_SLH_DSA',
-    description: 'HashSLH-DSA generic pre-hash (FIPS 205)',
-  },
-  0x00000036: { name: 'CKM_HASH_SLH_DSA_SHA224', description: 'HashSLH-DSA with SHA-224' },
-  0x00000037: { name: 'CKM_HASH_SLH_DSA_SHA256', description: 'HashSLH-DSA with SHA-256' },
-  0x00000038: { name: 'CKM_HASH_SLH_DSA_SHA384', description: 'HashSLH-DSA with SHA-384' },
-  0x00000039: { name: 'CKM_HASH_SLH_DSA_SHA512', description: 'HashSLH-DSA with SHA-512' },
-  0x0000003a: { name: 'CKM_HASH_SLH_DSA_SHA3_224', description: 'HashSLH-DSA with SHA3-224' },
-  0x0000003b: { name: 'CKM_HASH_SLH_DSA_SHA3_256', description: 'HashSLH-DSA with SHA3-256' },
-  0x0000003c: { name: 'CKM_HASH_SLH_DSA_SHA3_384', description: 'HashSLH-DSA with SHA3-384' },
-  0x0000003d: { name: 'CKM_HASH_SLH_DSA_SHA3_512', description: 'HashSLH-DSA with SHA3-512' },
-  0x0000003e: { name: 'CKM_HASH_SLH_DSA_SHAKE128', description: 'HashSLH-DSA with SHAKE128' },
-  0x0000003f: { name: 'CKM_HASH_SLH_DSA_SHAKE256', description: 'HashSLH-DSA with SHAKE256' },
-  // Hash / Digest (PKCS#11 v3.2 §6.20–6.27)
-  0x00000250: { name: 'CKM_SHA256', description: 'SHA-256 digest' },
-  0x00000251: { name: 'CKM_SHA256_HMAC', description: 'HMAC-SHA-256' },
-  0x00000260: { name: 'CKM_SHA384', description: 'SHA-384 digest' },
-  0x00000261: { name: 'CKM_SHA384_HMAC', description: 'HMAC-SHA-384' },
-  0x00000270: { name: 'CKM_SHA512', description: 'SHA-512 digest' },
-  0x00000271: { name: 'CKM_SHA512_HMAC', description: 'HMAC-SHA-512' },
-  0x000002b0: { name: 'CKM_SHA3_256', description: 'SHA3-256 digest' },
-  0x000002b1: { name: 'CKM_SHA3_256_HMAC', description: 'HMAC-SHA3-256' },
-  0x000002d0: { name: 'CKM_SHA3_512', description: 'SHA3-512 digest' },
-  0x000002d1: { name: 'CKM_SHA3_512_HMAC', description: 'HMAC-SHA3-512' },
-  // Symmetric / Key Gen
-  0x00000350: { name: 'CKM_GENERIC_SECRET_KEY_GEN', description: 'Generic secret key generation' },
-  0x000003ac: {
-    name: 'CKM_SP800_108_COUNTER_KDF',
-    description: 'NIST SP 800-108 Counter mode KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003ad: {
-    name: 'CKM_SP800_108_FEEDBACK_KDF',
-    description: 'NIST SP 800-108 Feedback mode KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003ae: {
-    name: 'CKM_SP800_108_DOUBLE_PIPELINE_KDF',
-    description: 'NIST SP 800-108 Double-Pipeline KBKDF (PKCS#11 §6.42)',
-  },
-  0x000003b0: { name: 'CKM_PKCS5_PBKD2', description: 'PBKDF2 key derivation (RFC 8018)' },
-  // EC (§2.3)
-  0x00001040: {
-    name: 'CKM_EC_KEY_PAIR_GEN',
-    description: 'EC key pair generation (P-256/P-384/P-521)',
-  },
-  0x00001044: { name: 'CKM_ECDSA_SHA256', description: 'ECDSA with SHA-256' },
-  0x00001045: { name: 'CKM_ECDSA_SHA384', description: 'ECDSA with SHA-384' },
-  0x00001046: { name: 'CKM_ECDSA_SHA512', description: 'ECDSA with SHA-512' },
-  0x00001047: { name: 'CKM_ECDSA_SHA3_224', description: 'ECDSA with SHA3-224 (v3.2)' },
-  0x00001048: { name: 'CKM_ECDSA_SHA3_256', description: 'ECDSA with SHA3-256 (v3.2)' },
-  0x00001049: { name: 'CKM_ECDSA_SHA3_384', description: 'ECDSA with SHA3-384 (v3.2)' },
-  0x0000104a: { name: 'CKM_ECDSA_SHA3_512', description: 'ECDSA with SHA3-512 (v3.2)' },
-  0x00001050: { name: 'CKM_ECDH1_DERIVE', description: 'ECDH key agreement (ANSI X9.63)' },
-  0x00001051: {
-    name: 'CKM_ECDH1_COFACTOR_DERIVE',
-    description: 'ECDH cofactor key agreement (§2.3.2)',
-  },
-  0x00001055: {
-    name: 'CKM_EC_EDWARDS_KEY_PAIR_GEN',
-    description: 'Ed25519/Ed448 key pair generation',
-  },
-  0x00001056: {
-    name: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN',
-    description: 'Montgomery curve key pair generation (X25519/X448)',
-  },
-  0x00001057: { name: 'CKM_EDDSA', description: 'EdDSA signature (Ed25519/Ed448)' },
-  0x80001057: {
-    name: 'CKM_EDDSA_PH',
-    description: 'EdDSA pre-hashed signature (Ed25519ph/Ed448ph) [VENDOR]',
-  },
-  // AES (§2.14)
-  0x00001080: { name: 'CKM_AES_KEY_GEN', description: 'AES key generation' },
-  0x00001081: { name: 'CKM_AES_ECB', description: 'AES-ECB (no padding)' },
-  0x00001085: { name: 'CKM_AES_CBC_PAD', description: 'AES-CBC with PKCS#7 padding' },
-  0x00001086: { name: 'CKM_AES_CTR', description: 'AES-CTR counter mode (§2.14.3)' },
-  0x00001087: { name: 'CKM_AES_GCM', description: 'AES-GCM authenticated encryption' },
-  0x0000108a: { name: 'CKM_AES_CMAC', description: 'AES-CMAC (NIST SP 800-38B)' },
-  0x00002109: { name: 'CKM_AES_KEY_WRAP', description: 'AES Key Wrap (RFC 3394)' },
-  0x0000210a: {
-    name: 'CKM_AES_KEY_WRAP_KWP',
-    description: 'AES Key Wrap with Padding (NIST SP 800-38F §6.3)',
-  },
-  // HKDF (PKCS#11 §6.62)
-  0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
-  // KMAC (§2.x) — PKCS#11 v3.2 / vendor codes
-  0x80000100: { name: 'CKM_KMAC_128', description: 'KMAC128 (NIST SP 800-185) [VENDOR]' },
-  0x80000101: { name: 'CKM_KMAC_256', description: 'KMAC256 (NIST SP 800-185) [VENDOR]' },
-  // AEAD and Stateful Signatures
-  0x00001225: { name: 'CKM_CHACHA20_KEY_GEN', description: 'ChaCha20 key generation' },
-  0x00004021: { name: 'CKM_CHACHA20_POLY1305', description: 'ChaCha20-Poly1305 AEAD' },
-  0x00004034: {
-    name: 'CKM_XMSS_KEY_PAIR_GEN',
-    description: 'XMSS key pair generation (SP 800-208)',
-  },
-  0x00004035: { name: 'CKM_XMSS', description: 'XMSS stateful signature (SP 800-208)' },
-  0x00004032: {
-    name: 'CKM_HSS_KEY_PAIR_GEN',
-    description: 'HSS/LMS key pair generation (PKCS#11 v3.2 §6.14, SP 800-208)',
-  },
-  0x00004033: {
-    name: 'CKM_HSS',
-    description: 'HSS/LMS stateful signature (PKCS#11 v3.2 §6.14, SP 800-208)',
-  },
-}
-
 // CKO_ object classes
 export const CKO_TABLE: Record<number, ConstEntry> = {
   0x00: { name: 'CKO_DATA', description: 'Opaque data object' },
@@ -335,11 +185,16 @@ export const CKK_TABLE: Record<number, ConstEntry> = {
   0x1f: { name: 'CKK_AES', description: 'AES symmetric key' },
   0x33: { name: 'CKK_CHACHA20', description: 'ChaCha20 symmetric key' },
   0x40: { name: 'CKK_EC_EDWARDS', description: 'Edwards-curve key (Ed25519/Ed448)' },
+  0x41: { name: 'CKK_EC_MONTGOMERY', description: 'Montgomery-curve key (X25519/X448)' },
+  0x46: { name: 'CKK_HSS', description: 'HSS / LMS stateful signature key (RFC 8554, SP 800-208)' },
+  0x47: { name: 'CKK_XMSS', description: 'XMSS stateful signature key (RFC 8391, SP 800-208)' },
+  0x48: {
+    name: 'CKK_XMSSMT',
+    description: 'XMSS^MT multi-tree stateful signature key (RFC 8391, SP 800-208)',
+  },
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
   0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
-  0x4c: { name: 'CKK_XMSS', description: 'XMSS stateful signature key (SP 800-208)' },
-  0x4e: { name: 'CKK_HSS', description: 'HSS / LMS stateful signature key (SP 800-208)' },
 }
 
 // CKH_ hedging variants
@@ -366,7 +221,7 @@ const CKU_TABLE: Record<number, ConstEntry> = {
 }
 
 // CKP_ ML-KEM parameter sets (FIPS 203 Table 3: ct, ek, dk sizes)
-const CKP_ML_KEM: Record<number, ConstEntry> = {
+export const CKP_ML_KEM: Record<number, ConstEntry> = {
   0x1: {
     name: 'CKP_ML_KEM_512',
     description: 'NIST Level 1 — 768-byte ct, 800-byte ek, 1632-byte dk',
@@ -382,14 +237,14 @@ const CKP_ML_KEM: Record<number, ConstEntry> = {
 }
 
 // CKP_ ML-DSA parameter sets
-const CKP_ML_DSA: Record<number, ConstEntry> = {
+export const CKP_ML_DSA: Record<number, ConstEntry> = {
   0x1: { name: 'CKP_ML_DSA_44', description: 'NIST Level 2 — 2420-byte signature' },
   0x2: { name: 'CKP_ML_DSA_65', description: 'NIST Level 3 — 3309-byte signature' },
   0x3: { name: 'CKP_ML_DSA_87', description: 'NIST Level 5 — 4627-byte signature' },
 }
 
 // CKP_ SLH-DSA parameter sets (pkcs11t.h ordering: interleaved SHA2/SHAKE per security level)
-const CKP_SLH_DSA: Record<number, ConstEntry> = {
+export const CKP_SLH_DSA: Record<number, ConstEntry> = {
   0x1: { name: 'CKP_SLH_DSA_SHA2_128S', description: 'NIST Level 1 — 7856-byte signature, SHA2' },
   0x2: { name: 'CKP_SLH_DSA_SHAKE_128S', description: 'NIST Level 1 — 7856-byte signature, SHAKE' },
   0x3: {
@@ -426,6 +281,133 @@ const CKP_SLH_DSA: Record<number, ConstEntry> = {
     name: 'CKP_SLH_DSA_SHAKE_256F',
     description: 'NIST Level 5 — 49856-byte signature, SHAKE (fast)',
   },
+}
+
+// CKP_ XMSS parameter sets (RFC 8391 / SP 800-208) — single-tree.
+// Name encodes tree height and hash output size; 2^height one-time
+// signatures are available before the key is exhausted.
+export const CKP_XMSS: Record<number, ConstEntry> = {
+  0x1: { name: 'CKP_XMSS_SHA2_10_256', description: 'Height 10 — 1024 signatures, SHA2-256' },
+  0x2: { name: 'CKP_XMSS_SHA2_16_256', description: 'Height 16 — 65536 signatures, SHA2-256' },
+  0x3: { name: 'CKP_XMSS_SHA2_20_256', description: 'Height 20 — ~1M signatures, SHA2-256' },
+  0x7: { name: 'CKP_XMSS_SHAKE_10_256', description: 'Height 10 — 1024 signatures, SHAKE128' },
+  0x8: { name: 'CKP_XMSS_SHAKE_16_256', description: 'Height 16 — 65536 signatures, SHAKE128' },
+  0x9: { name: 'CKP_XMSS_SHAKE_20_256', description: 'Height 20 — ~1M signatures, SHAKE128' },
+  // RFC 8391's "_512" SHAKE sets use SHAKE256 with n=64 — the name suffix is
+  // the digest size, NOT the XOF. Only the "_256" sets above (0x7-0x9) are
+  // SHAKE128. Mislabelling these as SHAKE128 is easy and was wrong here until
+  // 2026-09-03; confirmed against the RFC 8391 reference implementation, which
+  // maps 0xa-0xc to XMSS_SHAKE256 alongside SP 800-208's 0x10-0x15.
+  // SP 800-208 Tables 14/16 — the SHAKE256 sets, the only SHAKE sets NIST
+  // approves (the SHAKE128 sets above are RFC 8391 only).
+  0x10: {
+    name: 'CKP_XMSS_SHAKE256_10_256',
+    description: 'Height 10 — 1024 signatures, SHAKE256 (SP 800-208)',
+  },
+  0x11: {
+    name: 'CKP_XMSS_SHAKE256_16_256',
+    description: 'Height 16 — 65536 signatures, SHAKE256 (SP 800-208)',
+  },
+  0x12: {
+    name: 'CKP_XMSS_SHAKE256_20_256',
+    description: 'Height 20 — ~1M signatures, SHAKE256 (SP 800-208)',
+  },
+  0x13: {
+    name: 'CKP_XMSS_SHAKE256_10_192',
+    description: 'Height 10 — 1024 signatures, SHAKE256/192 (SP 800-208)',
+  },
+  0x14: {
+    name: 'CKP_XMSS_SHAKE256_16_192',
+    description: 'Height 16 — 65536 signatures, SHAKE256/192 (SP 800-208)',
+  },
+  0x15: {
+    name: 'CKP_XMSS_SHAKE256_20_192',
+    description: 'Height 20 — ~1M signatures, SHAKE256/192 (SP 800-208)',
+  },
+}
+
+// CKP_ XMSS^MT parameter sets (RFC 8391 / SP 800-208) — multi-tree.
+// Name encodes total height, layer count, and hash output size.
+export const CKP_XMSSMT: Record<number, ConstEntry> = {
+  0x1: {
+    name: 'CKP_XMSSMT_SHA2_20_2_256',
+    description: 'Height 20, 2 layers — ~1M signatures, SHA2-256',
+  },
+  0x2: {
+    name: 'CKP_XMSSMT_SHA2_20_4_256',
+    description: 'Height 20, 4 layers — ~1M signatures, SHA2-256',
+  },
+  0x3: {
+    name: 'CKP_XMSSMT_SHA2_40_2_256',
+    description: 'Height 40, 2 layers — ~1T signatures, SHA2-256',
+  },
+  0x4: {
+    name: 'CKP_XMSSMT_SHA2_40_4_256',
+    description: 'Height 40, 4 layers — ~1T signatures, SHA2-256',
+  },
+  0x5: {
+    name: 'CKP_XMSSMT_SHA2_40_8_256',
+    description: 'Height 40, 8 layers — ~1T signatures, SHA2-256',
+  },
+  0x6: {
+    name: 'CKP_XMSSMT_SHA2_60_3_256',
+    description: 'Height 60, 3 layers — ~1P signatures, SHA2-256',
+  },
+  0x7: {
+    name: 'CKP_XMSSMT_SHA2_60_6_256',
+    description: 'Height 60, 6 layers — ~1P signatures, SHA2-256',
+  },
+  0x8: {
+    name: 'CKP_XMSSMT_SHA2_60_12_256',
+    description: 'Height 60, 12 layers — ~1P signatures, SHA2-256',
+  },
+}
+
+// CKP_ FrodoKEM / Classic McEliece parameter sets — vendor-defined (neither
+// family has a v3.2 CKK_*/CKP_* assignment). Reusing small ordinals here is
+// consistent with how the spec's own ML-KEM/ML-DSA/SLH-DSA families already
+// share the same 0x1-0xC range, disambiguated only by CKA_KEY_TYPE — see
+// `describeParameterSetByKeyType` below, which is exactly that dispatch.
+export const CKP_FRODOKEM: Record<number, ConstEntry> = {
+  0x5: { name: 'CKP_FRODOKEM_1344_AES', description: 'NIST Level 5 — FrodoKEM-1344-AES' },
+}
+
+export const CKP_CLASSIC_MCELIECE: Record<number, ConstEntry> = {
+  0x1: {
+    name: 'CKP_CLASSIC_MCELIECE_6688128',
+    description: 'NIST Level 5 — Classic McEliece 6688128',
+  },
+}
+
+/**
+ * Resolve a CKA_PARAMETER_SET value given the object's CKA_KEY_TYPE — the
+ * signal HsmKeyAttrDisplay's modal has on hand directly (unlike the log
+ * decoder below, which only sees the mechanism used, tracked separately).
+ * Returns null for a key type that doesn't carry a named parameter set
+ * (e.g. HSS, whose LMS/LMOTS shape travels in the mechanism parameter, not
+ * CKA_PARAMETER_SET) or an unrecognized value.
+ */
+export const describeParameterSetByKeyType = (
+  ckKeyType: number,
+  paramSet: number
+): ConstEntry | null => {
+  const table =
+    ckKeyType === 0x49 // CKK_ML_KEM
+      ? CKP_ML_KEM
+      : ckKeyType === 0x4a // CKK_ML_DSA
+        ? CKP_ML_DSA
+        : ckKeyType === 0x4b // CKK_SLH_DSA
+          ? CKP_SLH_DSA
+          : ckKeyType === 0x47 // CKK_XMSS
+            ? CKP_XMSS
+            : ckKeyType === 0x48 // CKK_XMSSMT
+              ? CKP_XMSSMT
+              : ckKeyType === 0x80000001 // CKK_PQCTODAY_FRODOKEM
+                ? CKP_FRODOKEM
+                : ckKeyType === 0x80000002 // CKK_PQCTODAY_CLASSIC_MCELIECE
+                  ? CKP_CLASSIC_MCELIECE
+                  : null
+  return table?.[paramSet] ?? null
 }
 
 // CKF_ session flags bitmask (CK_FLAGS)
@@ -629,6 +611,16 @@ export const CKR_TABLE: Record<number, { name: string; description: string; hint
     description: 'C_Initialize was already called',
   },
   0x200: { name: 'CKR_FUNCTION_REJECTED', description: 'Function was rejected by policy' },
+  0x201: {
+    name: 'CKR_TOKEN_RESOURCE_EXCEEDED',
+    description: 'Token lacks the resources to perform the requested action',
+    hint: 'Free session objects or reduce concurrent operations and retry',
+  },
+  0x203: {
+    name: 'CKR_KEY_EXHAUSTED',
+    description: "Stateful key's remaining-signatures budget is depleted (v3.2 §6.14, SP 800-208)",
+    hint: 'HSS/XMSS/XMSS-MT keys are single-use-budgeted — generate a new key pair',
+  },
 }
 
 /** Look up a CKR_* return value. Returns name, description, and optional remediation hint. */
@@ -676,12 +668,14 @@ const decodeFlagsBitmask = (flags: number): string => {
 }
 
 /** Determine algo context from mechanism type (for CKP_ dispatch). */
-type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | undefined
+type AlgoContext = 'ml-kem' | 'ml-dsa' | 'slh-dsa' | 'xmss' | 'xmssmt' | undefined
 
 const algoFromMechType = (mechType: number): AlgoContext => {
   if (mechType === 0x0000000f || mechType === 0x00000017) return 'ml-kem'
   if (mechType >= 0x0000001c && mechType <= 0x0000002c) return 'ml-dsa'
   if (mechType >= 0x0000002d && mechType <= 0x0000003f) return 'slh-dsa'
+  if (mechType === 0x00004034) return 'xmss' // CKM_XMSS_KEY_PAIR_GEN
+  if (mechType === 0x00004035) return 'xmssmt' // CKM_XMSSMT_KEY_PAIR_GEN
   return undefined
 }
 
@@ -718,7 +712,11 @@ const decodeUlongAttr = (attrType: number, v: number, algo: AlgoContext): Decode
           ? CKP_ML_DSA
           : algo === 'slh-dsa'
             ? CKP_SLH_DSA
-            : null
+            : algo === 'xmss'
+              ? CKP_XMSS
+              : algo === 'xmssmt'
+                ? CKP_XMSSMT
+                : null
     const entry = table ? table[v] : null
     return entry
       ? { kind: 'constant', display: `${entry.name} (${hex})`, description: entry.description }
@@ -786,7 +784,7 @@ const readMechanism = (M: SoftHSMModule, ptr: number): DecodedMechanism | null =
     if (mechType === null) return null
 
     const mechHex = `0x${mechType.toString(16).padStart(8, '0')}`
-    const entry = CKM_TABLE[mechType]
+    const entry = MECH_TABLE[mechType]
     const result: DecodedMechanism = {
       typeHex: mechHex,
       name: entry?.name ?? mechHex,
@@ -1932,7 +1930,7 @@ const decodeGetMechanismList = (M: SoftHSMModule, args: number[], rv: number): P
         for (let i = 0; i < count && i < 16; i++) {
           const ckm = safeRead32(M, pList + i * 4)
           if (ckm !== null) {
-            const entry = CKM_TABLE[ckm >>> 0]
+            const entry = MECH_TABLE[ckm >>> 0]
             named.push(entry ? entry.name : `0x${(ckm >>> 0).toString(16)}`)
           }
         }
@@ -1956,7 +1954,7 @@ const decodeGetMechanismList = (M: SoftHSMModule, args: number[], rv: number): P
 const decodeGetMechanismInfo = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
   const slotID = args[0] ?? 0
   const ckmType = args[1] ?? 0
-  const entry = CKM_TABLE[ckmType >>> 0]
+  const entry = MECH_TABLE[ckmType >>> 0]
   return {
     inputs: [
       {

@@ -140,7 +140,17 @@ interface GraphLayout {
   subCenters: Map<string, THREE.Vector3>
 }
 
-function computeLayout(graph: ForceClusterGraph): GraphLayout {
+// computeLayout's spring forces settle toward but never exactly reach their
+// target separation within a fixed iteration count (verified empirically:
+// even a lightly-populated sub-cluster's minimum pairwise distance lands a
+// few percent short of REPULSION_MIN_SEP at the default 60 iterations). The
+// interactive render path keeps 60 — it re-runs on every slider drag, so it
+// has to stay cheap — but resolveAutoDensityPercent's overlap search only
+// runs once per checkbox/filter change and can afford to run the same
+// relaxation longer for a materially tighter result.
+const AUTO_DENSITY_RELAX_ITERATIONS = 200
+
+function computeLayout(graph: ForceClusterGraph, iterations = RELAX_ITERATIONS): GraphLayout {
   const typeCenters = new Map<ForceClusterNodeType, THREE.Vector3>(
     fibonacciSphere(NODE_TYPES.length, TYPE_SPHERE_RADIUS).map((p, i) => [
       // eslint-disable-next-line security/detect-object-injection -- i is a numeric loop index into a same-length array, not user input
@@ -205,7 +215,7 @@ function computeLayout(graph: ForceClusterGraph): GraphLayout {
   const cellKey = (p: THREE.Vector3) =>
     `${Math.floor(p.x / cellSize)}_${Math.floor(p.y / cellSize)}_${Math.floor(p.z / cellSize)}`
 
-  for (let iter = 0; iter < RELAX_ITERATIONS; iter++) {
+  for (let iter = 0; iter < iterations; iter++) {
     for (const [, nodes] of byType) {
       const grid = new Map<string, ForceClusterNode[]>()
       for (const node of nodes) {
@@ -274,6 +284,132 @@ function computeLayout(graph: ForceClusterGraph): GraphLayout {
   }
 
   return { position, typeCenters, subCenters }
+}
+
+/** Ranks type-filtered nodes by degree and keeps the top `percent`% — shared by applyFilters (the real render path, below) and resolveAutoDensityPercent (which needs to test the exact same candidate subgraphs without touching the scene). */
+function buildVisibleSubgraph(
+  graph: ForceClusterGraph,
+  enabledTypes: ReadonlySet<ForceClusterNodeType>,
+  percent: number
+): ForceClusterGraph {
+  const clamped = Math.min(100, Math.max(0, percent))
+  const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
+  const sortedDegreesDesc = typeFiltered.map((n) => n.degree).sort((a, b) => b - a)
+  const keepCount = Math.max(1, Math.ceil((clamped / 100) * sortedDegreesDesc.length))
+  const threshold =
+    clamped >= 100
+      ? -Infinity
+      : (sortedDegreesDesc[Math.min(keepCount - 1, sortedDegreesDesc.length - 1)] ?? -Infinity)
+  const visibleNodes = typeFiltered.filter((n) => n.degree >= threshold)
+  const visibleIds = new Set(visibleNodes.map((n) => n.id))
+  const visibleEdges = graph.edges.filter((e) => visibleIds.has(e.from) && visibleIds.has(e.to))
+  return { nodes: visibleNodes, edges: visibleEdges }
+}
+
+// computeLayout's repulsion is a soft spring, not a hard constraint solver —
+// verified empirically, even a lightly-populated, genuinely-uncrowded
+// sub-cluster settles a few percent short of two spheres' exact touching
+// distance (2*NODE_RADIUS) at any iteration budget this feature can afford,
+// because the per-iteration restore-to-home force never fully stops pulling
+// nodes back together. Checking against the exact geometric threshold would
+// make "no overlap" nearly unreachable for any cluster with more than a
+// couple of nodes, defeating the point of the feature. 90% of exact touching
+// is the tolerance that separates "genuinely crowded" (the higher-percent
+// cases this feature is supposed to reject) from "converged as far as the
+// simulation goes" (what it should accept).
+const OVERLAP_TOLERANCE = 0.9
+
+/**
+ * True if any two same-type nodes end up with their (equal-radius, constant
+ * NODE_RADIUS) spheres interpenetrating past OVERLAP_TOLERANCE. World-space,
+ * camera-independent: it reflects the layout computeLayout() actually
+ * produced, not what the current camera happens to project on screen.
+ * Cross-type pairs are never checked — computeLayout's own repulsion is
+ * scoped per-type for the same reason (type anchors sit >=19 units apart
+ * while nodes never move remotely that far from their subcategory home), so
+ * a cross-type overlap can't occur in practice. Reuses the same spatial-grid
+ * technique as that repulsion loop, and exits on the first violation found —
+ * this only needs a yes/no answer, not every offending pair.
+ */
+function hasOverlap(graph: ForceClusterGraph, position: Map<string, THREE.Vector3>): boolean {
+  const minSep = NODE_RADIUS * 2 * OVERLAP_TOLERANCE
+  const byType = new Map<ForceClusterNodeType, ForceClusterNode[]>()
+  for (const node of graph.nodes) byType.set(node.type, [...(byType.get(node.type) ?? []), node])
+
+  for (const [, nodes] of byType) {
+    const grid = new Map<string, ForceClusterNode[]>()
+    for (const node of nodes) {
+      const p = position.get(node.id)
+      if (!p) continue
+      const key = `${Math.floor(p.x / minSep)}_${Math.floor(p.y / minSep)}_${Math.floor(p.z / minSep)}`
+      const bucket = grid.get(key)
+      if (bucket) bucket.push(node)
+      else grid.set(key, [node])
+    }
+    for (const node of nodes) {
+      const a = position.get(node.id)
+      if (!a) continue
+      const cx = Math.floor(a.x / minSep)
+      const cy = Math.floor(a.y / minSep)
+      const cz = Math.floor(a.z / minSep)
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dz = -1; dz <= 1; dz++) {
+            const neighbors = grid.get(`${cx + dx}_${cy + dy}_${cz + dz}`)
+            if (!neighbors) continue
+            for (const other of neighbors) {
+              if (other.id === node.id) continue
+              const b = position.get(other.id)
+              if (b && a.distanceTo(b) < minSep) return true
+            }
+          }
+        }
+      }
+    }
+  }
+  return false
+}
+
+/**
+ * Binary-searches the largest `percent` (1-100) whose resulting layout has
+ * no overlapping node spheres — the auto-adapt-density checkbox's
+ * implementation. Assumes fewer nodes kept means no more crowding than more
+ * nodes kept for the same type/degree ranking — true in practice (a smaller
+ * keepCount is always a strict subset of a larger one's node set, per
+ * buildVisibleSubgraph's own degree-rank truncation) even though it isn't a
+ * strict mathematical guarantee once edge-attraction is in the mix, so this
+ * is a reasonable working assumption, not a proof.
+ */
+function resolveAutoDensityPercent(
+  graph: ForceClusterGraph,
+  enabledTypes: ReadonlySet<ForceClusterNodeType>
+): number {
+  const feasible = (percent: number) => {
+    const subgraph = buildVisibleSubgraph(graph, enabledTypes, percent)
+    if (subgraph.nodes.length <= 1) return true
+    const { position } = computeLayout(subgraph, AUTO_DENSITY_RELAX_ITERATIONS)
+    return !hasOverlap(subgraph, position)
+  }
+  let lo = 1
+  let hi = 100
+  // 1% (the slider's own floor — buildVisibleSubgraph never returns fewer
+  // than 1 node) is the fallback if NOTHING in [1,100] tests feasible: a
+  // dense filter selection (e.g. every category enabled, where a handful of
+  // highly-connected mechanism nodes alone outrank everything else) can mean
+  // even the smallest selectable set still has a marginal overlap the
+  // relaxation can't fully resolve. 1% is still the least-crowded option the
+  // slider can express, so showing it beats showing nothing.
+  let best = 1
+  while (lo <= hi) {
+    const mid = Math.floor((lo + hi) / 2)
+    if (feasible(mid)) {
+      best = mid
+      lo = mid + 1
+    } else {
+      hi = mid - 1
+    }
+  }
+  return best
 }
 
 async function createRenderer(canvas: HTMLCanvasElement): Promise<THREE.WebGLRenderer> {
@@ -480,19 +616,9 @@ function buildScene(graph: ForceClusterGraph, handlers: SceneHandlers): BuiltSce
       }
     }
 
-    const clamped = Math.min(100, Math.max(0, percent))
-    const typeFiltered = graph.nodes.filter((n) => enabledTypes.has(n.type))
-    const sortedDegreesDesc = typeFiltered.map((n) => n.degree).sort((a, b) => b - a)
-    const keepCount = Math.max(1, Math.ceil((clamped / 100) * sortedDegreesDesc.length))
-    const threshold =
-      clamped >= 100
-        ? -Infinity
-        : (sortedDegreesDesc[Math.min(keepCount - 1, sortedDegreesDesc.length - 1)] ?? -Infinity)
-    const visibleNodes = typeFiltered.filter((n) => n.degree >= threshold)
-    const visibleIds = new Set(visibleNodes.map((n) => n.id))
+    const subgraph = buildVisibleSubgraph(graph, enabledTypes, percent)
+    const { nodes: visibleNodes, edges: visibleEdges } = subgraph
     const nodesById = new Map(visibleNodes.map((n) => [n.id, n]))
-    const visibleEdges = graph.edges.filter((e) => visibleIds.has(e.from) && visibleIds.has(e.to))
-    const subgraph: ForceClusterGraph = { nodes: visibleNodes, edges: visibleEdges }
 
     const { position: positionById, typeCenters, subCenters } = computeLayout(subgraph)
 
@@ -770,6 +896,11 @@ export function ForceClusterView() {
   }, [clusterSelection])
 
   const [visiblePercent, setVisiblePercent] = useState(DEFAULT_VISIBLE_PERCENT)
+  // When on, visiblePercent is resolved automatically (see
+  // resolveAutoDensityPercent) instead of read from the slider — the slider
+  // itself is disabled while this is active, since its value would be
+  // ignored.
+  const [autoAdapt, setAutoAdapt] = useState(false)
   const [enabledTypes, setEnabledTypes] = useState<ReadonlySet<ForceClusterNodeType>>(
     () => new Set(NODE_TYPES)
   )
@@ -868,6 +999,25 @@ export function ForceClusterView() {
   // handlers below rather than a useEffect watching [enabledTypes,
   // visiblePercent] — calling setState synchronously inside an effect body
   // is a real anti-pattern (cascading renders), not just a lint nit.
+  // The one place all three triggers that can change what's on screen (a
+  // type toggle, dragging the percent slider, checking auto-adapt) resolve
+  // and apply a layout, so they can never disagree on what "the current
+  // view" is. When auto-adapt is on, manualPercent is ignored in favor of
+  // resolveAutoDensityPercent's answer, and visiblePercent is updated to
+  // match it (so the slider's own label and the keyboard-accessible
+  // visibleNodeList below both reflect the resolved value, not a stale one).
+  const applyLayout = (
+    nextEnabledTypes: ReadonlySet<ForceClusterNodeType>,
+    auto: boolean,
+    manualPercent: number
+  ) => {
+    const percent =
+      auto && graph ? resolveAutoDensityPercent(graph, nextEnabledTypes) : manualPercent
+    if (auto) setVisiblePercent(percent)
+    const snapshot = applyFiltersRef.current?.(nextEnabledTypes, percent) ?? null
+    layoutSnapshotRef.current = snapshot
+  }
+
   const toggleType = (type: ForceClusterNodeType) => {
     const next = new Set(enabledTypes)
     if (next.has(type)) next.delete(type)
@@ -875,8 +1025,7 @@ export function ForceClusterView() {
     setEnabledTypes(next)
     setSelectedNodeId(null) // a relayout invalidates the previously selected node's on-screen position
     setClusterSelection(null) // ...and the meshes/edges a spotlight was tracking
-    const snapshot = applyFiltersRef.current?.(next, visiblePercent) ?? null
-    layoutSnapshotRef.current = snapshot
+    applyLayout(next, autoAdapt, visiblePercent)
     // A filter change invalidates every position the tour's itinerary holds
     // (navigate-motion-modes-plan-08292026.md §4.7) — rebuild it against the
     // fresh layout, resuming at the start of whichever category was active.
@@ -889,8 +1038,18 @@ export function ForceClusterView() {
     setVisiblePercent(percent)
     setSelectedNodeId(null)
     setClusterSelection(null)
-    const snapshot = applyFiltersRef.current?.(enabledTypes, percent) ?? null
-    layoutSnapshotRef.current = snapshot
+    applyLayout(enabledTypes, false, percent)
+    if (motionModeRef.current === 'tour') {
+      tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
+    }
+  }
+
+  const toggleAutoAdapt = () => {
+    const next = !autoAdapt
+    setAutoAdapt(next)
+    setSelectedNodeId(null)
+    setClusterSelection(null)
+    applyLayout(enabledTypes, next, visiblePercent)
     if (motionModeRef.current === 'tour') {
       tourControlRef.current?.rebuild(enabledTypes, currentTourStopTypeRef.current)
     }
@@ -1663,14 +1822,26 @@ export function ForceClusterView() {
             })}
           </div>
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="whitespace-nowrap">Showing {visiblePercent}%</span>
+            <input
+              type="checkbox"
+              checked={autoAdapt}
+              onChange={toggleAutoAdapt}
+              className="accent-primary"
+            />
+            <span>Auto-adapt density (no overlap)</span>
+          </label>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="whitespace-nowrap">
+              {autoAdapt ? `Auto: ${visiblePercent}%` : `Showing ${visiblePercent}%`}
+            </span>
             <input
               type="range"
               min={1}
               max={100}
               value={visiblePercent}
               onChange={(e) => changeVisiblePercent(Number(e.target.value))}
-              className="w-full accent-primary"
+              disabled={autoAdapt}
+              className="w-full accent-primary disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Percentage of nodes shown, ranked by connection count"
             />
           </label>

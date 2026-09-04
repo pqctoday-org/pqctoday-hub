@@ -44,7 +44,7 @@ export const HsmKeyAgreementPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, isReady, registerKey } = useHsmContext()
   const [curve, setCurve] = useState<KaCurve>(() => {
     if (initialAlgo === 'P-384') return 'P-384'
     if (initialAlgo === 'P-521') return 'P-521'
@@ -105,14 +105,14 @@ export const HsmKeyAgreementPanel = ({
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'derive')
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ecdh',
         role: 'public',
         label: `${curve} Public Key (Alice)`,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'ecdh',
         role: 'private',
@@ -131,14 +131,14 @@ export const HsmKeyAgreementPanel = ({
       const M = moduleRef.current!
       const hSession = hSessionRef.current
       const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'derive')
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: pubHandle,
         family: 'ecdh',
         role: 'public',
         label: `${curve} Public Key (Bob)`,
         generatedAt: new Date().toISOString(),
       })
-      addHsmKey({
+      registerKey(M, hSession, {
         handle: privHandle,
         family: 'ecdh',
         role: 'private',

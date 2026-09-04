@@ -15,7 +15,7 @@ import { getSuciStepMeta, SUCI_PHASE_LABELS } from './suciUxMeta'
 import { fiveGService } from './services/FiveGService'
 import { Shield, Radio, Info, ShieldCheck } from 'lucide-react'
 import clsx from 'clsx'
-import { useHSM } from '@/hooks/useHSM'
+import { useHSM, type HsmKey } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -385,14 +385,14 @@ const Z = zKemBytes`,
             )
             hsmHandlesRef.current.hnPubHandle = pubHandle
             hsmHandlesRef.current.hnPrivHandle = privHandle
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: pubHandle,
               label: 'HN Key (ML-KEM-768)',
               family: 'ml-kem',
               role: 'public',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: privHandle,
               label: 'HN Key (ML-KEM-768)',
               family: 'ml-kem',
@@ -413,14 +413,14 @@ const Z = zKemBytes`,
               )
               hsmHandlesRef.current.hnEccPubHandle = eccResult.pubHandle
               hsmHandlesRef.current.hnEccPrivHandle = eccResult.privHandle
-              hsm.addKey({
+              hsm.registerKey(M, hSession, {
                 handle: eccResult.pubHandle,
                 label: 'HN ECC Key (X25519)',
                 family: 'ecdh',
                 role: 'public',
                 generatedAt: new Date().toISOString(),
               })
-              hsm.addKey({
+              hsm.registerKey(M, hSession, {
                 handle: eccResult.privHandle,
                 label: 'HN ECC Key (X25519)',
                 family: 'ecdh',
@@ -443,14 +443,14 @@ const Z = zKemBytes`,
             )
             hsmHandlesRef.current.hnPubHandle = pubHandle
             hsmHandlesRef.current.hnPrivHandle = privHandle
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: pubHandle,
               label: `HN Key (${curve})`,
               family: 'ecdh',
               role: 'public',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: privHandle,
               label: `HN Key (${curve})`,
               family: 'ecdh',
@@ -496,7 +496,7 @@ const Z = zKemBytes`,
             false,
             true
           )
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: aesHandle,
             label: `MSIN Enc Key (AES-${keyBits})`,
             family: 'aes',
@@ -563,7 +563,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           const kMacRaw = hsmHandlesRef.current.kMacBytes
           const macKeyBytes = kMacRaw ?? crypto.getRandomValues(new Uint8Array(32))
           const hmacHandle = hsm_importHMACKey(M, hSession, macKeyBytes)
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: hmacHandle,
             label: profile === 'C' ? 'MAC Key (HMAC-SHA3-256)' : 'MAC Key (HMAC-SHA256)',
             family: 'hmac',
@@ -662,7 +662,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           )
           hsmHandlesRef.current.ephPubHandle = pubHandle
           hsmHandlesRef.current.ephPrivHandle = privHandle
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: pubHandle,
             label: `Eph Key (${curve})`,
             family: 'ecdh',
@@ -670,7 +670,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             purpose: 'tls',
             generatedAt: new Date().toISOString(),
           })
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: privHandle,
             label: `Eph Key (${curve})`,
             family: 'ecdh',
@@ -724,7 +724,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             )
             hsmHandlesRef.current.sharedSecretHandle = secretHandle
             hsmHandlesRef.current.kemCiphertext = ciphertextBytes
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: secretHandle,
               label: 'Z_kem (ML-KEM-768)',
               family: 'aes',
@@ -803,7 +803,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
               { keyLen: 32, derive: true, extractable: true }
             )
             hsmHandlesRef.current.sharedSecretHandle = derivedHandle
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: derivedHandle,
               label: 'Shared Secret (Z)',
               family: 'aes',
@@ -919,7 +919,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
             kMac = concatU8(block1.slice(16), block2.slice(0, 16))
             const kEncHandle = hsm_importAESKey(M, hSession, kEnc)
             const kMacHandle = hsm_importHMACKey(M, hSession, kMac)
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kEncHandle,
               label: 'K_enc (AES-128)',
               family: 'aes',
@@ -927,7 +927,7 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
               purpose: 'application',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kMacHandle,
               label: 'K_mac (HMAC-SHA256)',
               family: 'hmac',
@@ -1014,7 +1014,7 @@ Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PK
             kMac = block2C
             const kEncHandleC = hsm_importAESKey(M, hSession, kEnc)
             const kMacHandleC = hsm_importHMACKey(M, hSession, kMac)
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kEncHandleC,
               label: 'K_enc (AES-256, Profile C)',
               family: 'aes',
@@ -1022,7 +1022,7 @@ Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PK
               purpose: 'application',
               generatedAt: new Date().toISOString(),
             })
-            hsm.addKey({
+            hsm.registerKey(M, hSession, {
               handle: kMacHandleC,
               label: 'K_mac (HMAC-SHA3-256)',
               family: 'hmac',
@@ -1112,7 +1112,7 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
             hsmHandlesRef.current.kemCiphertext!,
             'ML-KEM-768'
           )
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: secretHandle,
             label: 'Z_kem (Decapsulated)',
             family: 'aes',
@@ -1280,7 +1280,7 @@ ML-KEM Decapsulation executed via SoftHSM3 WASM.`
             undefined,
             { keyLen: 32, derive: true, extractable: true }
           )
-          hsm.addKey({
+          hsm.registerKey(M, hSession, {
             handle: sidfSecretHandle,
             label: 'SIDF Z (ECDH)',
             family: 'aes',
@@ -1748,7 +1748,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               keys={hsm.keys}
               moduleRef={hsm.moduleRef}
               hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
+              onRemoveKey={(key: HsmKey) => hsm.removeKey(key.handle)}
             />
           )}
         </div>

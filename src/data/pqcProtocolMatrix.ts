@@ -783,9 +783,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-01: Last Call closed 2026-08-13 (SECDIR review 2026-08-12 'Ready', GENART review 2026-08-07 'Ready w/nits'); draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass'. Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
+          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note.",
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
@@ -916,7 +916,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         provider: 'Google Chrome',
         what: 'X25519MLKEM768 default for TLS 1.3 and QUIC in Chrome 131 (Chrome 124, Apr 2024, shipped the earlier X25519Kyber768Draft00 pre-standard group, not ML-KEM)',
         since: '2024-11',
-        referenceUrl: 'https://blog.cloudflare.com/pq-2025/',
+        referenceUrl: 'https://chromestatus.com/feature/5257822742249472',
       },
       {
         provider: 'AWS',
@@ -924,6 +924,27 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         since: '2025-04',
         referenceUrl:
           'https://aws.amazon.com/blogs/security/ml-kem-post-quantum-tls-now-supported-in-aws-kms-acm-and-secrets-manager/',
+      },
+      {
+        provider: 'AWS Application/Network Load Balancer',
+        what: 'Opt-in PQ-TLS security policies (SecP256r1MLKEM768, SecP384r1MLKEM1024, X25519MLKEM768) for ALB/NLB listeners — the actual internet-facing TLS termination products, distinct from the KMS/ACM/Secrets Manager entry above',
+        since: '2025-11',
+        referenceUrl:
+          'https://aws.amazon.com/about-aws/whats-new/2025/11/network-load-balancers-post-quantum-key-exchange-tls/',
+      },
+      {
+        provider: 'Akamai',
+        what: 'Hybrid ML-KEM + X25519 key exchange for browser-to-edge connections on Ion / Dynamic Site Accelerator (Enhanced TLS), limited availability opt-in',
+        since: '2025-09',
+        referenceUrl:
+          'https://www.akamai.com/blog/security/akamai-enables-post-quantum-cryptography-edge',
+      },
+      {
+        provider: 'Fastly',
+        what: 'ML-KEM post-quantum key exchange rolling out across the global CDN fleet',
+        since: '2025-04',
+        referenceUrl:
+          'https://www.fastly.com/blog/future-proofing-tls-encryption-against-quantum-threats',
       },
       {
         provider: 'Apple iOS / macOS',
@@ -1178,7 +1199,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         what: 'ML-DSA certificate issuance GA on Windows Server 2025 Active Directory Certificate Services',
         since: '2026-05',
         referenceUrl:
-          'https://techcommunity.microsoft.com/blog/microsoft-security-blog/post-quantum-cryptography-apis-now-generally-available-on-microsoft-platforms/4469093',
+          'https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/ml-dsa-overview',
       },
       {
         provider: 'Cloudflare',
@@ -1275,9 +1296,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'iesg-submitted',
         stageNote:
-          "Verified live 2026-09-01: Last Call closed 2026-08-18 (SECDIR review 2026-08-18 'Ready'); IESG state is 'Waiting for AD Go-Ahead', no ballot open, no telechat scheduled. Stage correctly stays at ietf-last-call — the last completed milestone — since IESG evaluation has not actually started yet (contrast the TLS 1.3/X.509/EST-CMP rows' composite-kem refs, which ARE on an active 2026-09-03 telechat and correctly read iesg-submitted). Corrects this note's prior premise, which wrongly described iesg-submitted as a pre-Last-Call state; iesg-submitted is step 5, AFTER ietf-last-call, per this file's own DraftStage definition.",
+          "Verified live 2026-09-03: draft-ietf-lamps-cms-composite-kem-01 is now 'Submitted to IESG for Publication', with a telechat scheduled 2026-09-17 (9 more positions needed) — real progress past IETF Last Call, which closed 2026-08-18. This draft defines the CMS KEMRecipientInfo composite-ML-KEM structure S/MIME itself uses, not a borrowed dependency, so the advance is legitimate.",
         note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
         refs: [
           {
@@ -1404,48 +1425,34 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'wg-last-call',
+        stage: 'wg-document',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. draft-ietf-cose-hpke-26 is in 'AD Evaluation' — with the IESG but before IETF Last Call. This scale has no rung for that, so wg-last-call is the closest honest label below ietf-last-call.",
+          "Corrected 2026-09-03: both previously-cited refs were the wrong document. draft-ietf-cose-hpke defines generic HPKE-COSE plumbing with no PQ algorithm registrations at all. draft-ietf-jose-hpke-pq-pqt is JOSE-only (confirmed by its own text, 'not COSE'). The actual COSE-specific PQ/PQ-T algorithm-registration document is draft-ietf-cose-hpke-pq-pqt, currently at 'I-D Exists' — pre-WG-Last-Call, so wg-document.",
         refs: [
           {
             kind: 'draft',
-            id: 'draft-ietf-cose-hpke',
-            title: 'Use of Hybrid Public-Key Encryption (HPKE) with COSE',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
-            publishedOn: '2026-04-07',
-          },
-          {
-            kind: 'draft',
-            id: 'draft-ietf-jose-hpke-pq-pqt',
+            id: 'draft-ietf-cose-hpke-pq-pqt',
             title:
-              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-            publishedOn: '2026-07-06',
+              'COSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-hpke-pq-pqt)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke-pq-pqt/',
+            publishedOn: '2026-07-21',
           },
         ],
       },
       hybridKem: {
         value: 'draft',
-        stage: 'wg-last-call',
+        stage: 'wg-document',
         stageNote:
-          "Re-derived 2026-08-09 from the datatracker's IESG state. The encoded 'iesg-submitted' came from a state that occurs BEFORE IETF Last Call, which this scale defines as level 6 / after Last Call — enrich-protocol-matrix.py's state map has been corrected so this class cannot recur. Same document as pure KEM: draft-ietf-cose-hpke-26 in 'AD Evaluation', pre-Last-Call.",
+          "Corrected 2026-09-03, same fix as pure KEM: draft-ietf-cose-hpke has no PQ registrations, draft-ietf-jose-hpke-pq-pqt is JOSE-only. draft-ietf-cose-hpke-pq-pqt is the real COSE-specific document, at 'I-D Exists' — pre-WG-Last-Call, so wg-document.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
           {
             kind: 'draft',
-            id: 'draft-ietf-cose-hpke',
-            title: 'Use of Hybrid Public-Key Encryption (HPKE) with COSE',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/',
-            publishedOn: '2026-04-07',
-          },
-          {
-            kind: 'draft',
-            id: 'draft-ietf-jose-hpke-pq-pqt',
+            id: 'draft-ietf-cose-hpke-pq-pqt',
             title:
-              'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
-            publishedOn: '2026-07-06',
+              'COSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-hpke-pq-pqt)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-hpke-pq-pqt/',
+            publishedOn: '2026-07-21',
           },
         ],
       },
@@ -1582,18 +1589,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
+        stage: 'wg-document',
         stageNote:
-          'UPDATED 2026-07-27, verified live: draft-ietf-jose-hpke-encrypt is genuinely "In Last Call (ends 2026-08-03)" — a real regression from the earlier AD-Followup state (revised text triggered a fresh Last Call), not a bad datatracker match. Concrete hybrid KEM algorithm profile (draft-reddy: MLKEM768+P256/X25519, MLKEM1024+P384) remains an individual draft with no IETF standing.',
+          "Corrected 2026-09-03: draft-ietf-jose-hpke-encrypt is real and now 'Waiting for AD Go-Ahead' (past Last Call), but it's algorithm-agnostic HPKE-JOSE plumbing, not PQ-specific — it doesn't register ML-KEM identifiers. draft-ietf-jose-hpke-pq-pqt is the document that actually does, and it remains at 'I-D Exists' — pre-WG-Last-Call. Real PQC support needs both documents, so this cell tracks the lagging, algorithm-defining one rather than the more-advanced plumbing draft.",
         note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
         refs: [
-          {
-            kind: 'draft',
-            id: 'draft-ietf-jose-hpke-encrypt',
-            title: 'Use of Hybrid Public Key Encryption (HPKE) with JOSE',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
-            publishedOn: '2026-06-15',
-          },
           {
             kind: 'draft',
             id: 'draft-ietf-jose-hpke-pq-pqt',
@@ -1601,6 +1601,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
               'JOSE HPKE PQ & PQ/T Algorithm Registrations (WG document; adopted from draft-reddy-cose-jose-pqc-hybrid-hpke)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-pq-pqt/',
             publishedOn: '2026-07-06',
+          },
+          {
+            kind: 'draft',
+            id: 'draft-ietf-jose-hpke-encrypt',
+            title:
+              'Use of Hybrid Public Key Encryption (HPKE) with JOSE (dependency: algorithm-agnostic plumbing, not PQ-specific)',
+            url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/',
+            publishedOn: '2026-06-15',
           },
         ],
       },
@@ -1936,7 +1944,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9882',
-            title: "Use of ML-DSA in CMS (PKINIT's PA-PK-AS-REQ/REP payloads are CMS SignedData)",
+            title:
+              "Use of ML-DSA in CMS (dependency: PKINIT's PA-PK-AS-REQ/REP payloads are CMS SignedData, but no PKINIT-specific spec exists)",
             url: 'https://datatracker.ietf.org/doc/html/rfc9882',
             publishedOn: '2025-10',
           },
@@ -1994,7 +2003,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: '3GPP-TR-33.938',
         title: '3GPP TR 33.938 — 3GPP Cryptographic Inventory',
-        url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+        url: 'https://www.3gpp.org/dynareport/33938.htm',
         date: '2026-01',
         localFile: '/library/3GPP-PQC-Study-2025.html',
       },
@@ -2008,7 +2017,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: '3GPP TR 33.938',
             title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+            url: 'https://www.3gpp.org/dynareport/33938.htm',
             publishedOn: '2026-01',
           },
         ],
@@ -2021,7 +2030,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: '3GPP TR 33.938',
             title: '3GPP Cryptographic Inventory (does not define PQC SUCI concealment)',
-            url: 'https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/',
+            url: 'https://www.3gpp.org/dynareport/33938.htm',
             publishedOn: '2026-01',
           },
         ],
@@ -2907,14 +2916,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 5280',
-            title: 'Internet X.509 PKI Certificate and CRL Profile (RPKI cert base format)',
+            title:
+              'Internet X.509 PKI Certificate and CRL Profile (dependency: RPKI cert base format, generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc5280',
             publishedOn: '2008-05',
           },
           {
             kind: 'rfc',
             id: 'RFC 6488',
-            title: 'Signed Object Template for the RPKI (CMS profile for ROAs/manifests)',
+            title:
+              'Signed Object Template for the RPKI (dependency: CMS profile for ROAs/manifests, generically reusable, not RPKI-specific)',
             url: 'https://datatracker.ietf.org/doc/html/rfc6488',
             publishedOn: '2012-02',
           },
@@ -3030,9 +3041,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
+          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3139,9 +3150,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
+          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
         note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
         refs: [
           {
@@ -3180,7 +3191,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           {
             kind: 'rfc',
             id: 'RFC 9964',
-            title: 'ML-DSA for JOSE and COSE (inherited via WebAuthn COSE alg IDs)',
+            title:
+              'ML-DSA for JOSE and COSE (dependency: algorithm IDs inherited via WebAuthn COSE alg IDs, no FIDO Alliance profile exists)',
             url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
             publishedOn: '2026-05',
           },
@@ -3218,7 +3230,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         id: 'IEEE-802.1AE-2018',
         title: 'IEEE 802.1AE-2018 — MAC Security',
-        url: 'https://standards.ieee.org/ieee/802.1AE/6905/',
+        url: 'https://standards.ieee.org/ieee/802.1AE/7154/',
         date: '2018-12',
       },
     ],
@@ -3226,9 +3238,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        stage: 'iesg-submitted',
+        stage: 'rfc-editor-queue',
         stageNote:
-          "Verified live 2026-09-01: Last Call closed 2026-08-13; draft-ietf-tls-mlkem-09 is now in IESG Evaluation, on the 2026-09-03 telechat agenda, 'has enough positions to pass' (inherited from the TLS 1.3 row). Corrects the 2026-08-09 note's premise — iesg-submitted is step 5 (AFTER ietf-last-call) per this file's own DraftStage definition, not a pre-Last-Call WG handoff state.",
+          "Verified live 2026-09-03: draft-ietf-tls-mlkem-10 (2026-09-02) now shows IESG state 'Approved-announcement sent' — it passed the 2026-09-03 telechat referenced in the prior note (inherited from the TLS 1.3 row).",
         note: 'Inherits TLS 1.3 (EAP-TLS bootstrap) — pure ML-KEM via TLS 1.3 KEX.',
         refs: [
           {
@@ -3456,7 +3468,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         id: 'UEFI-2.11',
         title:
           'UEFI Specification 2.11 (Nov 2024) — adds no PQC content; PQ readiness tracks X.509 OIDs only',
-        url: 'https://uefi.org/specifications',
+        url: 'https://uefi.org/specs/UEFI/2.11/',
         date: '2024-11',
       },
     ],
@@ -3496,7 +3508,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
             kind: 'spec',
             id: 'UEFI 2.11',
             title: 'UEFI Specification 2.11 (PE/COFF Authenticode chain consumes X.509 PQ OIDs)',
-            url: 'https://uefi.org/specifications',
+            url: 'https://uefi.org/specs/UEFI/2.11/',
             publishedOn: '2024-11',
           },
         ],
@@ -3607,11 +3619,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     },
     ossLibraries: [
       {
-        productId: 'softhsm',
+        productId: 'pqctoday-hsm-softhsmv3',
         name: 'SoftHSM v3 (pqctoday)',
         versionNote: 'Our fork — PKCS#11 v3.2 ML-KEM + ML-DSA on an OpenSSL 3.5 backend',
       },
-      { productId: 'opensc', name: 'OpenSC', versionNote: 'PKCS#11 client tooling' },
       {
         productId: 'openssl',
         name: 'OpenSSL pkcs11-provider',
@@ -3742,11 +3753,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote:
           'Our Rust KMIP 3.0 server (MIT) on softhsmrustv3 — full ML-KEM + ML-DSA + crypto-agility policy',
       },
-      {
-        productId: 'pykmip',
-        name: 'PyKMIP',
-        versionNote: 'Classical KMIP client — no PQC objects',
-      },
     ],
     commercialLibraries: [],
     playgrounds: [
@@ -3815,7 +3821,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     },
     ossLibraries: [
       {
-        productId: 'libsignal',
+        productId: 'signal',
         name: 'libsignal',
         versionNote: 'Signal’s client library — ships PQXDH',
       },
@@ -3872,15 +3878,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         note: 'No composite/hybrid signing track in Sigstore yet.',
       },
     },
-    ossLibraries: [
-      {
-        productId: 'cosign',
-        name: 'cosign (pqctoday fork)',
-        versionNote: 'Our fork — ML-DSA, HSM-backed artifact signing',
-      },
-      { productId: 'fulcio', name: 'Fulcio', versionNote: 'keyless signing CA (classical today)' },
-      { productId: 'rekor', name: 'Rekor', versionNote: 'transparency log' },
-    ],
+    ossLibraries: [],
     commercialLibraries: [],
     playgrounds: [],
     liveDeployments: [],
