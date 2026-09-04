@@ -3607,7 +3607,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     },
     ossLibraries: [
       {
-        productId: 'softhsm',
+        productId: 'pqctoday-hsm-softhsmv3',
         name: 'SoftHSM v3 (pqctoday)',
         versionNote: 'Our fork — PKCS#11 v3.2 ML-KEM + ML-DSA on an OpenSSL 3.5 backend',
       },
