@@ -13,6 +13,7 @@ import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { REGION_LABELS } from '@/data/regionIndustryOptions'
+import { logRoleBoardVariantSelected, logRoleBoardCtaClick } from '@/utils/analytics'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -178,7 +179,10 @@ export function PersonaBoardView({
               aria-checked={selected}
               title={v.chipDescription}
               data-testid={`board-variant-chip-${v.id}`}
-              onClick={() => onSelectVariant?.(v.id)}
+              onClick={() => {
+                logRoleBoardVariantSelected(personaId, v.id)
+                onSelectVariant?.(v.id)
+              }}
               className={cn(
                 'h-auto rounded-full border px-4 py-1.5 text-xs font-semibold transition-colors',
                 selected
@@ -215,10 +219,27 @@ export function PersonaBoardView({
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button variant="gradient" onClick={() => navigate(board.ctaPrimaryHref)}>
+            <Button
+              variant="gradient"
+              onClick={() => {
+                logRoleBoardCtaClick(personaId, active.id, 'cta_primary_href', board.ctaPrimaryHref)
+                navigate(board.ctaPrimaryHref)
+              }}
+            >
               {board.ctaPrimary}
             </Button>
-            <Button variant="outline" onClick={() => navigate(board.ctaSecondaryHref)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                logRoleBoardCtaClick(
+                  personaId,
+                  active.id,
+                  'cta_secondary_href',
+                  board.ctaSecondaryHref
+                )
+                navigate(board.ctaSecondaryHref)
+              }}
+            >
               {board.ctaSecondary}
             </Button>
           </div>
@@ -318,6 +339,9 @@ export function PersonaBoardView({
                 data-testid={`grid-card-${i}`}
                 data-highlighted={highlighted}
                 className={className}
+                onClick={() =>
+                  logRoleBoardCtaClick(personaId, active.id, `grid_card_href:${i}`, card.href!)
+                }
               >
                 {body}
               </Link>
