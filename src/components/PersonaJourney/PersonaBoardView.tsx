@@ -10,6 +10,7 @@ import {
   type PersonaJourneyBoard,
 } from '@/data/personaConfig'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 
 /**
  * PersonaBoardView — shared, persona-agnostic board skeleton for the
@@ -88,6 +89,20 @@ export const PROVENANCE_LABEL: Record<SideCardProvenance, string> = {
   illustrative: "ILLUSTRATIVE — THIS USER'S INPUTS",
   guidance: 'GUIDANCE — OUR RULE OF THUMB',
 }
+
+/**
+ * workshopId -> display name, for the "Related on this site" row below.
+ *
+ * Added 2026-09-03 (home-scenarios remediation, WS7.1). Every
+ * `RoleBoardVariant.workshopIds` entry was compiled into the generated file
+ * and read by nothing — several boards' own proof chips named a workshop
+ * that lived only in this unrendered metadata (e.g. "Real SSH handshake"
+ * with no link to the SSH workshop anywhere on the board). This map is what
+ * makes those ids renderable as real links instead of dead metadata.
+ */
+export const WORKSHOP_NAME_BY_ID: Record<string, string> = Object.fromEntries(
+  WORKSHOP_TOOLS.map((w) => [w.id, w.name])
+)
 
 const PROVENANCE_CLASS: Record<SideCardProvenance, string> = {
   sourced: 'border-accent/30 bg-accent/10 text-accent',
@@ -302,6 +317,34 @@ export function PersonaBoardView({
           })}
         </div>
       </div>
+
+      {/* Related workshops — see WORKSHOP_NAME_BY_ID's own comment for why
+          this exists: a board's proof chips can name a workshop that lives
+          only in `active.workshopIds`' unrendered metadata unless this row
+          gives it an actual link. Hidden entirely when a board names none. */}
+      {active.workshopIds.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+            Related on this site
+          </h2>
+          <ul className="mt-2 flex flex-wrap gap-2" aria-label="Related workshops">
+            {active.workshopIds.map((id) => {
+              const name = WORKSHOP_NAME_BY_ID[id]
+              if (!name) return null
+              return (
+                <li key={id}>
+                  <Link
+                    to={`/playground/${id}`}
+                    className="inline-flex items-center rounded-full border border-border bg-muted/30 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                  >
+                    {name}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* Track strip */}
       <div className="mt-8 border-t border-border pt-6">
