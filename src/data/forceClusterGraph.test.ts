@@ -31,6 +31,7 @@ describe('buildForceClusterGraph', () => {
       protocol: 0,
       patent: 0,
       leader: 0,
+      vendor: 0,
     }
     for (const n of graph.nodes) byType[n.type] += 1
     console.log('node counts by type:', byType)
@@ -40,7 +41,7 @@ describe('buildForceClusterGraph', () => {
     for (const e of graph.edges) relCounts.set(e.rel, (relCounts.get(e.rel) ?? 0) + 1)
     console.log('edge counts by rel:', Object.fromEntries(relCounts))
 
-    // Every one of the 11 categories should have at least one surviving node.
+    // Every one of the 12 categories should have at least one surviving node.
     const types = Object.keys(byType) as ForceClusterNodeType[]
     for (const type of types) {
       // eslint-disable-next-line security/detect-object-injection -- type is drawn from the typed ForceClusterNodeType union, not user input
@@ -55,5 +56,6 @@ describe('buildForceClusterGraph', () => {
     expect(rels.has('intersects_with')).toBe(true) // concept_xwalk
     expect(rels.has('subset_of')).toBe(true) // concept_xwalk
     expect(rels.has('migrating-to')).toBe(true) // algorithms_transitions
+    expect(rels.has('sells')).toBe(true) // vendor -> product, via vendor_id
   })
 })
