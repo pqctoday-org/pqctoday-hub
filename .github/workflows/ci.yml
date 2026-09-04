@@ -589,11 +589,22 @@ jobs:
       # $GITHUB_WORKSPACE ("Repository path ... is not under ...") — found
       # 2026-08-29, the first version of this fix used `path: ../pqctoday-hsm`
       # and failed before even running the gate. A plain `git clone` has no
-      # such restriction. Sparse + shallow: this job only ever reads
-      # kmip/src/policy/rule.rs and kmip/policies/*.yaml.
+      # such restriction. Sparse checkout: the *.local.test.ts drift guards
+      # above only ever read kmip/src/policy/rule.rs and kmip/policies/*.yaml.
+      #
+      # NOT shallow, though: sync:wasm:check:cacp-kmip (below) also runs
+      # against this same checkout, and it needs real commit ancestry —
+      # `git rev-list --count <recordedCommit>..<baseline>` to detect wasm
+      # drift. A `--depth 1` clone truncates history to just the tip commit,
+      # which made that rev-list miscount (observed 2026-09-04: a shallow
+      # clone reported "1 commit behind" for a range a full clone correctly
+      # resolved as 0, hard-failing the gate on every hsm main commit
+      # regardless of whether kmip/wasm sources actually moved). `--filter=
+      # blob:none` still keeps this cheap — only commit/tree objects are
+      # fetched eagerly, blobs stay lazy.
       - name: Checkout sibling pqctoday-hsm (sparse — drift-guard sources only)
         run: |
-          git clone --depth 1 --filter=blob:none --sparse \
+          git clone --filter=blob:none --sparse \
             https://github.com/pqctoday-org/pqctoday-hsm.git ../pqctoday-hsm
           git -C ../pqctoday-hsm sparse-checkout set kmip/src/policy kmip/policies
 
