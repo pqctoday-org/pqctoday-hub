@@ -55,7 +55,6 @@ import {
   type StrongSwanState,
   type Pkcs11TraceEvent,
 } from '@/wasm/strongswan/bridge'
-import { runV2Selftest, runV2KemTwoWorker, type V2Event } from '@/wasm/strongswan-v2/bridge-v2'
 import {
   TBSCertificate as X509TBS,
   AlgorithmIdentifier as X509AlgId,
@@ -74,7 +73,6 @@ import { AsnSerializer, OctetString } from '@peculiar/asn1-schema'
 import { useHsmContext, type HsmKey } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
-import { ErrorAlert } from '@/components/ui/error-alert'
 import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { derCat, derTLV, derBitString, encodeRsaPublicKeyDER } from '../derCodec'
@@ -550,184 +548,6 @@ const IKE_PHASE_CLASS: Record<IkePhase, string> = {
   IKE_AUTH: 'bg-accent/20 text-accent-foreground',
 }
 
-/** Compact "v2 selftest" card. Drives strongswan-v2.wasm through the stepwise
- * API (wasm_vpn_ml_dsa_selftest + wasm_vpn_ml_kem_selftest) and displays the
- * real HSM-produced byte counts. Lives alongside the legacy StrongSwanEngine
- * flow and takes no action unless the button is clicked. The "experimental"
- * label on the card manages user expectations; the gate is intentionally
- * always-on so the deployed pqctoday.com matches the local dev experience. */
-const V2SelftestCard: React.FC = () => {
-  const enabled = true
-  const { supported: browserSupported } = useChromiumGate()
-  const [running, setRunning] = useState(false)
-  const [result, setResult] = useState<{
-    mlDsaSigLen: number
-    mlKemPub: number
-    mlKemCt: number
-    mlKemSecret: number
-    mlKemMatch: boolean
-  } | null>(null)
-  const [events, setEvents] = useState<V2Event[]>([])
-  const [err, setErr] = useState<string | null>(null)
-  const [twoWorker, setTwoWorker] = useState<{
-    alicePub: number
-    bobCt: number
-    secretLen: number
-    match: boolean
-    aliceSecretHex: string
-  } | null>(null)
-
-  if (!enabled) return null
-
-  const onRun = async () => {
-    setRunning(true)
-    setErr(null)
-    setEvents([])
-    try {
-      const r = await runV2Selftest((e) => setEvents((prev) => [...prev, e]))
-      setResult(r)
-    } catch (e) {
-      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
-    } finally {
-      setRunning(false)
-    }
-  }
-
-  const onRunTwoWorker = async () => {
-    setRunning(true)
-    setErr(null)
-    setEvents([])
-    try {
-      const r = await runV2KemTwoWorker((e) => setEvents((prev) => [...prev, e]))
-      const hex = Array.from(r.aliceSecret.slice(0, 16))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
-      setTwoWorker({
-        alicePub: r.alicePub,
-        bobCt: r.bobCt,
-        secretLen: r.aliceSecret.length,
-        match: r.secretsMatch,
-        aliceSecretHex: hex,
-      })
-    } catch (e) {
-      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
-    } finally {
-      setRunning(false)
-    }
-  }
-
-  return (
-    <div className="rounded-xl border border-primary/40 bg-primary/5 p-4 space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <FlaskConical className="h-4 w-4 text-primary" />
-          <span className="font-semibold text-sm">
-            strongSwan v2 WASM — softhsmv3 PKCS#11 selftest
-          </span>
-          <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/20 text-primary">
-            experimental
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRun}
-            disabled={running || !browserSupported}
-            className="text-xs font-mono"
-          >
-            {running ? 'Running…' : 'Run ML-DSA + ML-KEM selftest'}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRunTwoWorker}
-            disabled={running || !browserSupported}
-            className="text-xs font-mono"
-          >
-            {running ? 'Running…' : 'Cross-Worker KEM handshake'}
-          </Button>
-        </div>
-      </div>
-
-      {err && <ErrorAlert message={err} />}
-
-      {result && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
-          <Stat
-            label="ML-DSA-65 sig"
-            value={`${result.mlDsaSigLen} B`}
-            ok={result.mlDsaSigLen > 3000}
-          />
-          <Stat label="ML-KEM pub" value={`${result.mlKemPub} B`} ok={result.mlKemPub === 1184} />
-          <Stat label="ML-KEM ct" value={`${result.mlKemCt} B`} ok={result.mlKemCt === 1088} />
-          <Stat
-            label="Shared secret"
-            value={`${result.mlKemSecret} B`}
-            ok={result.mlKemSecret === 32}
-          />
-          <Stat
-            label="Secrets match"
-            value={result.mlKemMatch ? 'YES' : 'NO'}
-            ok={result.mlKemMatch}
-          />
-        </div>
-      )}
-
-      {twoWorker && (
-        <div className="pt-2 border-t border-primary/20 space-y-2">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-            Cross-Worker result — main thread (alice) ↔ Web Worker (bob)
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
-            <Stat
-              label="Alice pub"
-              value={`${twoWorker.alicePub} B`}
-              ok={twoWorker.alicePub === 1184}
-            />
-            <Stat label="Bob ct" value={`${twoWorker.bobCt} B`} ok={twoWorker.bobCt === 1088} />
-            <Stat
-              label="Secret length"
-              value={`${twoWorker.secretLen} B`}
-              ok={twoWorker.secretLen === 32}
-            />
-            <Stat
-              label="Secrets match"
-              value={twoWorker.match ? 'YES' : 'NO'}
-              ok={twoWorker.match}
-            />
-            <Stat
-              label="Alice secret[0..16]"
-              value={twoWorker.aliceSecretHex}
-              ok={twoWorker.match}
-            />
-          </div>
-        </div>
-      )}
-
-      {events.length > 0 && (
-        <details className="text-xs font-mono">
-          <summary className="cursor-pointer text-muted-foreground">
-            v2 event log ({events.length})
-          </summary>
-          <pre className="mt-2 max-h-40 overflow-auto bg-muted/50 p-2 rounded border border-border">
-            {events.map((e) => `[${e.type}] ${e.payload}`).join('\n')}
-          </pre>
-        </details>
-      )}
-    </div>
-  )
-}
-
-const Stat: React.FC<{ label: string; value: string; ok: boolean }> = ({ label, value, ok }) => (
-  <div
-    className={`p-2 rounded border ${ok ? 'border-primary/40 bg-primary/5' : 'border-status-error/40 bg-status-error/5'}`}
-  >
-    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    <div className={ok ? 'text-primary' : 'text-status-error'}>{value}</div>
-  </div>
-)
-
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {
   const {
     moduleRef,
@@ -1021,13 +841,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   } | null>(null)
   const [certGenLoading, setCertGenLoading] = useState(false)
   const [savedSessionBanner, setSavedSessionBanner] = useState<string | null>(null)
-  const [charonValidation, setCharonValidation] = useState<{
-    proposal?: { valid: boolean; hasMlKem?: boolean; error?: string }
-    cert?: { valid: boolean; keyType?: string; isMlDsa?: boolean; error?: string }
-    keMap?: Record<string, number>
-    running: boolean
-    error?: string
-  }>({ running: false })
   const [sessionHistoryOpen, setSessionHistoryOpen] = useState(false)
   const [sessionHistory, setSessionHistory] = useState<
     Array<{
@@ -3523,7 +3336,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               REAL
             </span>
             Charon library: proposal parser (ML-KEM transforms 35/36/37), cert loader (RFC 9881
-            ML-DSA OIDs). See &ldquo;Validate WASM charon&rdquo; below.
+            ML-DSA OIDs) — proven by every real negotiation this panel runs below.
           </div>
           <div>
             <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
@@ -3649,7 +3462,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           </div>
         </div>
       )}
-      <V2SelftestCard />
       <Tabs defaultValue="ui" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="ui">UI Controls</TabsTrigger>
@@ -3808,10 +3620,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <p className="text-[10px] text-muted-foreground italic mt-1">
                   ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) parse
                   successfully against charon&apos;s proposal engine in the WASM binary (ML-KEM
-                  transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized) — use
-                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The daemon
-                  negotiates the proposal for real; note the running config comes from the WASM
-                  backend&apos;s proposal mode, so edits to this text are display-only.
+                  transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized). The
+                  daemon negotiates the proposal for real; note the running config comes from the
+                  WASM backend&apos;s proposal mode, so edits to this text are display-only.
                 </p>
               )}
             </div>
@@ -3978,102 +3789,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     ))}
                   </tbody>
                 </table>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-3 p-3 border border-border rounded-lg bg-muted/30">
-            <div className="flex items-center justify-between gap-3 mb-2">
-              <div className="text-xs text-muted-foreground">
-                Validate WASM charon — exercises real library calls inside the v2 WASM build: parses
-                the current IKE proposal via{' '}
-                <code className="text-[10px]">proposal_create_from_string()</code> (confirms ML-KEM
-                transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem) and loads the active cert
-                via <code className="text-[10px]">lib-&gt;creds-&gt;create()</code> (confirms RFC
-                9881 ML-DSA OIDs are recognized).
-              </div>
-              <Button
-                variant="outline"
-                className="text-xs whitespace-nowrap"
-                disabled={charonValidation.running || !browserSupport.supported}
-                onClick={async () => {
-                  setCharonValidation({ running: true })
-                  try {
-                    const { validateProposal, validateCert, listKeyExchanges } =
-                      await import('@/wasm/strongswan-v2/bridge-v2')
-                    const keMap = await listKeyExchanges()
-                    const props = activeInitIpsec.match(/ike\s*=\s*([^\s]+)/)
-                    const proposalStr = props?.[1] ?? 'aes256-sha256-mlkem768'
-                    const prop = await validateProposal(proposalStr)
-                    const cert = certData?.initCert
-                      ? await validateCert(certData.initCert)
-                      : undefined
-                    setCharonValidation({
-                      running: false,
-                      proposal: prop,
-                      cert,
-                      keMap: {
-                        ML_KEM_512: keMap.mlKem512,
-                        ML_KEM_768: keMap.mlKem768,
-                        ML_KEM_1024: keMap.mlKem1024,
-                        CURVE_25519: keMap.curve25519,
-                        ECP_256_BIT: keMap.ecp256,
-                        ECP_384_BIT: keMap.ecp384,
-                      },
-                    })
-                  } catch (err: unknown) {
-                    setCharonValidation({
-                      running: false,
-                      error: translateCryptoError(err instanceof Error ? err.message : String(err)),
-                    })
-                  }
-                }}
-              >
-                {charonValidation.running ? 'Validating…' : 'Validate WASM charon'}
-              </Button>
-            </div>
-            {charonValidation.error && (
-              <div className="text-[11px] text-status-error">Error: {charonValidation.error}</div>
-            )}
-            {charonValidation.keMap && (
-              <div className="space-y-1 text-[11px]">
-                <div className="text-muted-foreground">
-                  <strong className="text-foreground">Key-exchange transforms recognized:</strong>{' '}
-                  {Object.entries(charonValidation.keMap).map(([k, v]) => (
-                    <span key={k} className="mr-3">
-                      <code className="text-[10px]">{k}</code>=<strong>{v}</strong>
-                    </span>
-                  ))}
-                </div>
-                {charonValidation.proposal && (
-                  <div className="text-muted-foreground">
-                    <strong className="text-foreground">Proposal parse:</strong>{' '}
-                    {charonValidation.proposal.valid ? (
-                      <span className="text-status-success">
-                        valid · has ML-KEM: {charonValidation.proposal.hasMlKem ? 'yes' : 'no'}
-                      </span>
-                    ) : (
-                      <span className="text-status-error">
-                        invalid — {charonValidation.proposal.error ?? 'unknown'}
-                      </span>
-                    )}
-                  </div>
-                )}
-                {charonValidation.cert && (
-                  <div className="text-muted-foreground">
-                    <strong className="text-foreground">Initiator cert:</strong>{' '}
-                    {charonValidation.cert.valid ? (
-                      <span className="text-status-success">
-                        key type <code>{charonValidation.cert.keyType}</code>
-                        {charonValidation.cert.isMlDsa && ' · ML-DSA OID recognized'}
-                      </span>
-                    ) : (
-                      <span className="text-status-error">
-                        invalid — {charonValidation.cert.error ?? 'unknown'}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
             )}
           </div>

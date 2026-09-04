@@ -65,24 +65,6 @@ vi.mock('@/wasm/strongswan/bridge', () => ({
   },
 }))
 
-// Mock the v2 strongSwan WASM bridge (selftest card).
-vi.mock('@/wasm/strongswan-v2/bridge-v2', () => ({
-  runV2Selftest: vi.fn().mockResolvedValue({
-    mlDsaSigLen: 0,
-    mlKemPub: 0,
-    mlKemCt: 0,
-    mlKemSecret: 0,
-    mlKemMatch: false,
-  }),
-  runV2KemTwoWorker: vi.fn().mockResolvedValue({
-    alicePub: 0,
-    bobCt: 0,
-    secretLen: 0,
-    match: false,
-    aliceSecretHex: '',
-  }),
-}))
-
 // Mock the OpenSSL worker service (cert pretty-printing).
 vi.mock('@/services/crypto/OpenSSLService', () => ({
   openSSLService: {
