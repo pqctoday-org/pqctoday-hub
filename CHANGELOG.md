@@ -29,6 +29,17 @@ first time (don't ship dev-speak and reformat later):
 - **One entry = one user-visible change.** If it has no user-visible effect,
   it probably doesn't need a changelog entry.
 
+## [4.77.0] - 2026-09-04
+
+Two correctness fixes in the in-browser HSM engine, found and fixed on the
+Rust engine used across the PKCS#11 workshop, HPKE demos, and CACP policy
+sandbox.
+
+### Fixed
+
+- **A rare but real failure in HPKE/ECDH key-derivation demos is fixed** [view:/playground] [persona:developer] [persona:researcher]: about 1 in every 256 legitimate elliptic-curve key exchanges (P-256, P-384, P-521) could fail with a cryptic error, because the engine misread part of a valid key as corrupted data under a specific, unlucky byte pattern. Retrying with a fresh key used to work around it; it no longer happens at all.
+- **Nine XMSS stateful-signature parameter sets in the PKCS#11 workshop now actually work** [view:/playground] [persona:developer] [persona:researcher]: several SHA-256/192 and SHAKE256 variants of the XMSS algorithm were either missing from the workshop entirely or silently failed key generation. All nine now generate keys, sign, and verify correctly.
+
 ## [4.76.0] - 2026-09-02
 
 A same-day follow-up to the PKCS#11/KMIP workshop redesign: a live production bug fixed, all five vendored HSM engines refreshed, four new real known-answer-test templates, and a handful of small workshop fixes.
