@@ -59,7 +59,9 @@ Open a [Feature Request](https://github.com/pqctoday-org/pqctoday-hub/issues/new
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js **22.22.0+** (see `.node-version`; `fnm`/`nvm` users get this automatically
+  via `fnm use` / `nvm use` in the repo root — several build/gate scripts fail with
+  confusing errors on an older default `node` on your PATH)
 - npm
 
 ### Setup
@@ -85,9 +87,15 @@ npm run format       # auto-fix
 ### Testing
 
 ```bash
-npm run test         # unit tests
-npm run test:e2e     # end-to-end tests
+npm run test         # unit tests (Vitest)
+npm run test:e2e     # end-to-end tests (Playwright, full suite)
+npm run gate:local   # format + lint + data-integrity gates + unit tests —
+                      # what the pre-push hook runs; closest thing to "will CI pass"
 ```
+
+See [TESTING.md](TESTING.md) for the full test layout, the local-only data-integrity
+gates the pre-push hook runs (that CI deliberately does not), and how the CACP/KMIP
+gate works.
 
 #### The CACP / KMIP playground gate
 
