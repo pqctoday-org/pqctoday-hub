@@ -3611,7 +3611,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         name: 'SoftHSM v3 (pqctoday)',
         versionNote: 'Our fork — PKCS#11 v3.2 ML-KEM + ML-DSA on an OpenSSL 3.5 backend',
       },
-      { productId: 'opensc', name: 'OpenSC', versionNote: 'PKCS#11 client tooling' },
       {
         productId: 'openssl',
         name: 'OpenSSL pkcs11-provider',
@@ -3742,11 +3741,6 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote:
           'Our Rust KMIP 3.0 server (MIT) on softhsmrustv3 — full ML-KEM + ML-DSA + crypto-agility policy',
       },
-      {
-        productId: 'pykmip',
-        name: 'PyKMIP',
-        versionNote: 'Classical KMIP client — no PQC objects',
-      },
     ],
     commercialLibraries: [],
     playgrounds: [
@@ -3815,7 +3809,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     },
     ossLibraries: [
       {
-        productId: 'libsignal',
+        productId: 'signal',
         name: 'libsignal',
         versionNote: 'Signal’s client library — ships PQXDH',
       },
@@ -3872,15 +3866,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         note: 'No composite/hybrid signing track in Sigstore yet.',
       },
     },
-    ossLibraries: [
-      {
-        productId: 'cosign',
-        name: 'cosign (pqctoday fork)',
-        versionNote: 'Our fork — ML-DSA, HSM-backed artifact signing',
-      },
-      { productId: 'fulcio', name: 'Fulcio', versionNote: 'keyless signing CA (classical today)' },
-      { productId: 'rekor', name: 'Rekor', versionNote: 'transparency log' },
-    ],
+    ossLibraries: [],
     commercialLibraries: [],
     playgrounds: [],
     liveDeployments: [],
