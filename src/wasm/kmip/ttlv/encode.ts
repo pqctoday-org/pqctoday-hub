@@ -184,6 +184,11 @@ export function toWireTree(node: KmipNode, table: CodepointTable): TtlvNode {
       return { tag, type: 'BigInteger', value: String(v).toLowerCase() }
     case 'DateTimeExtended':
       return { tag, type: 'DateTimeExtended', value: Number(v) }
+    // §11.25 — UTF-8 strings like TextString; the type byte carries the meaning.
+    case 'Identifier':
+    case 'Reference':
+    case 'NameReference':
+      return { tag, type: node.type, value: String(v) }
     default:
       throw new EncodeError(`unsupported TTLV type '${node.type as string}' on '${node.tag}'`)
   }

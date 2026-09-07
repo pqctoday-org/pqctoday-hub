@@ -83,7 +83,8 @@ def _get_bridge():
 # ── Real KMIP 3.0 request grammar (dev-tabs Python-grammar-realignment plan,
 # Phase 1) — leaf()/struct() build a real KMIP request payload: real
 # Attribute names (KMIP 3.0 Sec.3/Sec.4, e.g. 'CryptographicAlgorithm') and
-# real Item Types (Sec.9.1.1 — 'Enumeration', 'Integer', 'TextString', ...),
+# real Item Types (Sec.11.25 — 'Enumeration', 'Integer', 'TextString',
+# 'Identifier', ...),
 # the same shape pqctoday-hsm/kmip/python-client/src/pqctoday_kmip/_ttlv.py's
 # own leaf()/struct() build requests with (that module is the real client's
 # own request-building layer, not invented here). `struct` names a KMIP
@@ -92,9 +93,14 @@ def _get_bridge():
 # named field with one value.
 def leaf(tag, ttlv_type, value):
     """One request field: `tag` (a real KMIP Attribute/field name, e.g.
-    'CryptographicAlgorithm'), `ttlv_type` (one of the 11 KMIP 3.0 Sec.9.1.1
+    'CryptographicAlgorithm'), `ttlv_type` (one of the 14 KMIP 3.0 Sec.11.25
     item types — 'Enumeration', 'Integer', 'TextString', 'ByteString',
-    'Boolean', ...), `value`."""
+    'Boolean', 'Identifier', ...), `value`.
+
+    Note (2026-09-06): a Unique Identifier rides as the `Identifier` type
+    (0x0C) and a Link as `Reference`/`NameReference` (KMIP 3.0 Sec.11.25).
+    The engine refuses a Text String there, so passing 'TextString' for a
+    UID now fails instead of being quietly accepted."""
     return {'tag': tag, 'type': ttlv_type, 'value': value}
 
 
