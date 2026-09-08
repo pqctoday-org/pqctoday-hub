@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-06",
+  "generated": "2026-09-08T23:53:57.356820+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "vendor-roadmaps",
   "csv": "migrate_vendor_roadmap_09022026.csv",
@@ -86,15 +86,16 @@
     {
       "vendorId": "VND-027",
       "refId": "VND-027",
-      "label": "Microsoft Corporation",
-      "url": "https://www.microsoft.com/en-us/security/blog/2026/06/30/microsoft-advances-quantum-safe-security-as-the-risk-timeline-shifts/",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-027_Microsoft_Corporation.html",
-      "filename": "VND-027_Microsoft_Corporation.html",
-      "sizeBytes": 168247,
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/07/10/securing-our-future-july-2026-progress-report-on-microsofts-secure-future-initiative/",
+      "status": "recaptured",
+      "file": "vendor/VND-027.html",
+      "filename": "VND-027.html",
+      "sizeBytes": 281592,
       "contentType": "text/html",
-      "sha256": "4d3f92ee942918a1eb42bdc3964d3a5cd520f74044bd437d2059e94329ec7bbb",
-      "verifiedAt": "2026-09-06"
+      "sha256": "9f9d8d03b001550430ffa875fcb7c30690a63fccd768bff14b379fc8129b926f",
+      "recaptured_at": "2026-09-08T23:53:57.356668+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-028",

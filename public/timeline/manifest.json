@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07",
+  "generated": "2026-09-08T23:54:45.638054+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
   "csv": "timeline_09072026.csv",
@@ -247,7 +247,7 @@
     },
     {
       "refId": "australia-asd-acsc-annual-cyber-threat-report-2024-25-pqc-as-a-national-priority",
-      "label": "ACSC Annual Cyber Threat Report 2024\u201325 \u2014 PQC as a National Priority",
+      "label": "ACSC Annual Cyber Threat Report 2024–25 — PQC as a National Priority",
       "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
       "status": "downloaded",
       "file": "timeline/Australia_ASD_ACSC_Annual_Cyber_Threat_Report_2024_25_PQC_as_a_National_Priority.html",
@@ -799,7 +799,7 @@
     },
     {
       "refId": "germany-bsi-critical-applications-pqc-hybrid-no-longer-required",
-      "label": "Critical Applications PQC \u2014 Hybrid No Longer Required",
+      "label": "Critical Applications PQC — Hybrid No Longer Required",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile",
       "status": "downloaded",
       "file": "timeline/Germany_BSI_TR-02102-1_Cryptographic_Mechanisms.pdf",
@@ -1951,7 +1951,7 @@
     },
     {
       "refId": "germany-bsi-full-pqc-transition-standalone-algorithms-required",
-      "label": "Full PQC Transition \u2014 Standalone Algorithms Required",
+      "label": "Full PQC Transition — Standalone Algorithms Required",
       "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
       "status": "downloaded",
       "file": "timeline/Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf",
@@ -2311,7 +2311,7 @@
     },
     {
       "refId": "united-states-cisa-cisa-pqc-product-category-list-eo-14306-deadline",
-      "label": "CISA PQC Product Category List \u2014 EO 14306 Deadline",
+      "label": "CISA PQC Product Category List — EO 14306 Deadline",
       "url": "https://www.cisa.gov/quantum",
       "status": "downloaded",
       "file": "timeline/United_States_CISA_CISA_PQC_Product_Category_List_EO_14306_Deadline.html",
@@ -2419,15 +2419,16 @@
     },
     {
       "refId": "saudi-arabia-nca-saudi-national-cryptographic-standards",
-      "label": "Saudi National Cryptographic Standards",
-      "url": "https://nca.gov.sa/en/regulatory-documents/frameworks-and-standard-list/ncs/",
-      "status": "downloaded",
+      "url": "https://cdn.nca.gov.sa/api/files/public/upload/22ec7618-3d9a-4f04-994e-9ff77f5d1146_NCS-2-ar---Copy.pdf",
+      "status": "recaptured",
       "file": "timeline/saudi-arabia-nca-saudi-national-cryptographic-standards.pdf",
       "filename": "saudi-arabia-nca-saudi-national-cryptographic-standards.pdf",
-      "sizeBytes": 1120163,
+      "sizeBytes": 1470540,
       "contentType": "application/pdf",
-      "sha256": "c800087578e91a1b72a75ee493ace6a7ebd5ea83595bb3442ba01804a3c097b5",
-      "verifiedAt": "2026-09-07"
+      "sha256": "c023f99a862359a65cc47cd54a7906e6fe9150768a966539ff3ead4632982f77",
+      "recaptured_at": "2026-09-08T23:54:45.637807+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/timeline/saudi-arabia-nca-saudi-national-cryptographic-standards.pdf"
     },
     {
       "refId": "united-arab-emirates-uae-csc-uae-crypto-discovery-tool-and-pqc-index",
@@ -2755,7 +2756,7 @@
     },
     {
       "refId": "australia-asd-legacy-asymmetric-crypto-disallowed-full-pqc-transition",
-      "label": "Legacy Asymmetric Crypto Disallowed \u2014 Full PQC Transition",
+      "label": "Legacy Asymmetric Crypto Disallowed — Full PQC Transition",
       "url": "https://www.cyber.gov.au/resources-business-and-government/maintaining-devices-and-systems/cryptography/guidelines-for-cryptography",
       "status": "downloaded",
       "file": "timeline/Australia_ASD_ISM_June_2025_Cryptography_Guidelines_Update.pdf",
@@ -2791,7 +2792,7 @@
     },
     {
       "refId": "united-states-far-council-far-council-proposed-rule-contractor-pqc-fips-complian",
-      "label": "FAR Council Proposed Rule \u2014 Contractor PQC/FIPS Compliance (EO 14412)",
+      "label": "FAR Council Proposed Rule — Contractor PQC/FIPS Compliance (EO 14412)",
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/",
       "status": "downloaded",
       "file": "timeline/United_States_FAR_Council_Proposed_Rule_Contractor_PQC_FIPS_Compliance.html",
@@ -2815,7 +2816,7 @@
     },
     {
       "refId": "united-states-white-house-executive-order-14413-issued-quantum-innovation-qc-add",
-      "label": "Executive Order 14413 Issued \u2014 Quantum Innovation / QC-ADDS",
+      "label": "Executive Order 14413 Issued — Quantum Innovation / QC-ADDS",
       "url": "https://www.whitehouse.gov/presidential-actions/2026/06/ushering-in-the-next-frontier-of-quantum-innovation/",
       "status": "downloaded",
       "file": "timeline/United_States_White_House_Executive_Order_14413_Issued_Quantum_Innovation_QC-ADDS.html",
@@ -2923,7 +2924,7 @@
     },
     {
       "refId": "switzerland-ncsc-quantum-computers-and-post-quantum-cryptogr",
-      "label": "Quantum Computers and Post-Quantum Cryptography \u2014 Technology Brief",
+      "label": "Quantum Computers and Post-Quantum Cryptography — Technology Brief",
       "url": "https://www.ncsc.admin.ch/dam/ncsc/en/dokumente/dokumentation/technologiebetrachtungen/technologiebetrachtung-qcpqc-en.pdf.download.pdf/technologiebetrachtung-qcpqc-en.pdf",
       "status": "downloaded",
       "file": "timeline/Switzerland-NCSC-Quantum-Computers-and-Post-Quantum-Cryptogr.pdf",
@@ -2947,7 +2948,7 @@
     },
     {
       "refId": "canada-osfi-guideline-b-13-technology-and-cyber-risk-managem",
-      "label": "Guideline B-13 \u2014 Technology and Cyber Risk Management",
+      "label": "Guideline B-13 — Technology and Cyber Risk Management",
       "url": "https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/osfi-releases-final-guideline-b-13-technology-cyber-risk-management-letter-2022",
       "status": "downloaded",
       "file": "timeline/Canada-OSFI-Guideline-B-13-Technology-and-Cyber-Risk-Managem.html",
@@ -3019,7 +3020,7 @@
     },
     {
       "refId": "indonesia-bssn-national-pqc-migration-roadmap-task-force",
-      "label": "National PQC Migration Roadmap Task Force \u2014 Inaugural Meeting",
+      "label": "National PQC Migration Roadmap Task Force — Inaugural Meeting",
       "url": "https://www.komite.id/2026/06/30/bssn-pembentukan-task-force-roadmap-pqc-migration-better-late-than-never-oleh-dr-rudi-rusdiah-anggota-taskforce-national-pqc-migration-road-map/",
       "status": "downloaded",
       "file": "timeline/Indonesia-BSSN-National-PQC-Migration-Roadmap-Task-Force.html",
@@ -3144,7 +3145,8 @@
       "file": "timeline/DHS-Post-Quantum-Cryptography.html",
       "sizeBytes": 129355,
       "contentType": "text/html",
-      "sha256": "809206f2400550b457e9ee8a31704ef494db22db6e031bf9c4723d4323252167"
+      "sha256": "809206f2400550b457e9ee8a31704ef494db22db6e031bf9c4723d4323252167",
+      "refId": "dhs-post-quantum-cryptography"
     },
     {
       "label": "NCCoE-Migration-to-Post-Quantum-Cryptography",
@@ -3153,7 +3155,8 @@
       "file": "timeline/NCCoE-Migration-to-Post-Quantum-Cryptography.html",
       "sizeBytes": 114544,
       "contentType": "text/html",
-      "sha256": "6b8a80dd788f5daabcd4d61fc481c48533a6b5e7df7e53be25f32f797a716df1"
+      "sha256": "6b8a80dd788f5daabcd4d61fc481c48533a6b5e7df7e53be25f32f797a716df1",
+      "refId": "nccoe-migration-to-post-quantum-cryptography"
     },
     {
       "label": "NSA-Post-Quantum-Cybersecurity-Resources",
@@ -3162,7 +3165,8 @@
       "file": "timeline/NSA-Post-Quantum-Cybersecurity-Resources.html",
       "sizeBytes": 99212,
       "contentType": "text/html",
-      "sha256": "8f08665da214512be422c7f44eb4774bb276bbec4564dcc1603547c897b44ba6"
+      "sha256": "8f08665da214512be422c7f44eb4774bb276bbec4564dcc1603547c897b44ba6",
+      "refId": "nsa-post-quantum-cybersecurity-resources"
     }
   ],
   "archivedEntries": [
@@ -3275,6 +3279,6 @@
       "verifiedAt": "2026-09-06"
     }
   ],
-  "archivedNote": "Entries no active row cites \u2014 superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
+  "archivedNote": "Entries no active row cites — superseded captures and rows since deprecated. Kept as download history; no consumer reads this key.",
   "rebuiltAt": "2026-09-07T05:38:17.047535+00:00"
 }
