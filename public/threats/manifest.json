@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07",
+  "generated": "2026-09-08T22:07:38.428612+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "threats",
   "csv": "quantum_threats_hsm_industries_09072026.csv",
@@ -567,15 +567,16 @@
     {
       "threatId": "IT-003",
       "refId": "IT-003",
-      "label": "NIST FIPS 203/204/205 standardization milestone: First official PQC standards published August 2024. FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA) provide the foundation for all PQC migration. CMVP validation of implementations is ongoing with first validated modules expected 2025-2026.",
-      "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
-      "status": "downloaded",
+      "url": "https://www.nist.gov/news-events/news/2024/08/nist-releases-first-3-finalized-post-quantum-encryption-standards",
+      "status": "recaptured",
       "file": "threats/IT-003.html",
       "filename": "IT-003.html",
-      "sizeBytes": 61055,
+      "sizeBytes": 101434,
       "contentType": "text/html",
-      "sha256": "f8b327f585629673d40d4d9c8b3d86509edb8d108869841ab53d7a2d75f73f52",
-      "verifiedAt": "2026-09-07"
+      "sha256": "ee1262cd9e8a2f08ea3478068926d94b1529c087bc3cc3f3fd582acff4ff3e41",
+      "recaptured_at": "2026-09-08T22:07:35.526478+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/threats/IT-003.html"
     },
     {
       "threatId": "IT-004",
@@ -814,15 +815,16 @@
     {
       "threatId": "TELCO-005",
       "refId": "TELCO-005",
-      "label": "6G quantum-safe by design: 3GPP Release 19 includes an active Study Item (FS_PQC_5G in SA3) exploring PQC integration; normative requirements are expected in Release 20 or later — Release 19 has not adopted binding PQC mandates. ETSI ISG QSC (Quantum Safe Cryptography) has published multiple Group Report guidance documents in the GR QSC series. 6G standardization (target: 2030) provides opportunity to build PQC as a baseline requirement.",
       "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2019/03/PQ.05-Post-Quantum-Cryptography-for-5G-Roaming-use-case-1.pdf",
-      "status": "downloaded",
+      "status": "recaptured",
       "file": "threats/TELCO-005.pdf",
       "filename": "TELCO-005.pdf",
-      "sizeBytes": 142762,
+      "sizeBytes": 546730,
       "contentType": "application/pdf",
-      "sha256": "0d088f1d5235566b47cc66f03df61526f32655e08e426b9a84d3a4c2c8555eaf",
-      "verifiedAt": "2026-09-07"
+      "sha256": "87543ef079c822f132caff42c4b7ad8b717ff4c56d86f705fa9238d02dfadfbe",
+      "recaptured_at": "2026-09-08T22:07:35.705019+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/threats/TELCO-005.pdf"
     },
     {
       "threatId": "WATER-001",
@@ -1061,15 +1063,16 @@
     {
       "threatId": "CROSS-014",
       "refId": "CROSS-014",
-      "label": "NIST IR 8547 establishes the deprecation trajectory for quantum-vulnerable public-key algorithms, with RSA-2048 and ECDSA/ECDH-P-256 expected to be disallowed for US federal use post-2030 or 2035. This timeline is distinct from NIST SP 800-131A Rev 2, which governs key-length transitions for currently approved algorithms. Organizations must complete post-quantum cryptography migration before these classical algorithms are prohibited.",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r6.ipd.pdf",
-      "status": "downloaded",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf",
+      "status": "recaptured",
       "file": "threats/CROSS-014.pdf",
       "filename": "CROSS-014.pdf",
-      "sizeBytes": 2637856,
+      "sizeBytes": 722379,
       "contentType": "application/pdf",
-      "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc",
-      "verifiedAt": "2026-09-07"
+      "sha256": "6b551b4ff9858a19c1ab48d7deef2ee52d615066b7d187aaf992cb50c5ca0ed6",
+      "recaptured_at": "2026-09-08T22:07:37.536695+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/threats/CROSS-014.pdf"
     },
     {
       "threatId": "CROSS-015",
@@ -1139,15 +1142,16 @@
     {
       "threatId": "IOT-005",
       "refId": "IOT-005",
-      "label": "NIST SP 800-213 and NISTIR 8259A/B establish the cybersecurity feature catalog and core cryptographic capabilities for IoT devices. However, current IoT guidance does not mandate post-quantum cryptography, creating a migration gap. Consequently, NIST IR 8547 serves as the applicable cross-cutting reference for planning IoT cryptographic transitions to address this vulnerability.",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-232.pdf",
-      "status": "downloaded",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2020/NIST.IR.8259A.pdf",
+      "status": "recaptured",
       "file": "threats/IOT-005.pdf",
       "filename": "IOT-005.pdf",
-      "sizeBytes": 1194488,
+      "sizeBytes": 977531,
       "contentType": "application/pdf",
-      "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27",
-      "verifiedAt": "2026-09-07"
+      "sha256": "b3b54b00b5ac3f3582a3e3fd17d3f25b18f848a51f113000b6489adbcce374b4",
+      "recaptured_at": "2026-09-08T22:07:38.428531+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/threats/IOT-005.pdf"
     },
     {
       "threatId": "AUS-TEL-001",

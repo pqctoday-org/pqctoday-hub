@@ -2,7 +2,7 @@
   "entries": [
     {
       "refId": "ins-munichre-cyber-trends-2025",
-      "title": "Munich Re \u2014 Cyber Insurance: Risks and Trends 2025 (quantum section)",
+      "title": "Munich Re — Cyber Insurance: Risks and Trends 2025 (quantum section)",
       "url": "https://www.munichre.com/en/insights/cyber/cyber-insurance-risks-and-trends-2025.html",
       "status": "downloaded",
       "filename": "ins-munichre-cyber-trends-2025.html",
@@ -30,6 +30,72 @@
       "sizeBytes": 96176,
       "contentType": "application/pdf",
       "sha256": "1151c3f67d28c797890910f34291d15108b405fec38a9b2c09e4e4143ca2ee6f"
+    },
+    {
+      "refId": "fin-hsm",
+      "url": "https://www.pcisecuritystandards.org/documents/PCI-P2PE-v3_1-Standard.pdf",
+      "status": "recaptured",
+      "file": "industry/fin-hsm.pdf",
+      "filename": "fin-hsm.pdf",
+      "sizeBytes": 2000479,
+      "contentType": "application/pdf",
+      "sha256": "8ca9ee948b53c395a638bb1205b11470687fc0427d04389b6ea999b5f91a57bf",
+      "recaptured_at": "2026-09-08T22:08:09.390045+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "pci-terminals",
+      "url": "https://listings.pcisecuritystandards.org/documents/PCI_PIN_v3.1_ROC_Reporting_Template.pdf?agreement=true&time=1647993600253",
+      "status": "recaptured",
+      "file": "industry/pci-terminals.pdf",
+      "filename": "pci-terminals.pdf",
+      "sizeBytes": 2986027,
+      "contentType": "application/pdf",
+      "sha256": "efb109b980b10ca728cce8462f18eaedb587537e71a155c6b1db614966b2c0a6",
+      "recaptured_at": "2026-09-08T22:08:09.881327+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "rail-frmcs",
+      "url": "https://www.etsi.org/deliver/etsi_ts/103700_103799/103764/01.01.00_30/ts_103764v010100va.pdf",
+      "status": "recaptured",
+      "file": "industry/rail-frmcs.pdf",
+      "filename": "rail-frmcs.pdf",
+      "sizeBytes": 765637,
+      "contentType": "application/pdf",
+      "sha256": "51c9182eb7c729b2fcd9c87a4c47f744f9a84e7ef6499b8b6b0a70de17a688d5",
+      "recaptured_at": "2026-09-08T22:08:10.078711+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "iot-esim-provisioning",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/security/wp-content/uploads/2025/02/PQ.04-Post-Quantum-Cryptography-in-IoT-Ecosystem-v1.0.pdf",
+      "status": "recaptured",
+      "file": "industry/iot-esim-provisioning.pdf",
+      "filename": "iot-esim-provisioning.pdf",
+      "sizeBytes": 646713,
+      "contentType": "application/pdf",
+      "sha256": "1f1de2d4ab20572682e9045a559dc5c8e14fc0cd19f8e52e2d1e911f97a9782c",
+      "recaptured_at": "2026-09-08T22:08:10.257276+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "iot-provisioning",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2020/NIST.IR.8259A.pdf",
+      "status": "recaptured",
+      "file": "industry/iot-provisioning.pdf",
+      "filename": "iot-provisioning.pdf",
+      "sizeBytes": 977531,
+      "contentType": "application/pdf",
+      "sha256": "b3b54b00b5ac3f3582a3e3fd17d3f25b18f848a51f113000b6489adbcce374b4",
+      "recaptured_at": "2026-09-08T22:08:10.556512+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     }
-  ]
+  ],
+  "generated": "2026-09-08T22:08:10.556532+00:00"
 }
