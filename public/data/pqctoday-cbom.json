@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.7",
-  "serialNumber": "urn:uuid:0367ad7b-a359-47e3-b3ca-b76f3fda5401",
+  "serialNumber": "urn:uuid:eb742f61-e205-4118-b52f-3dcbde4df388",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-02T00:00:00.000Z",
+    "timestamp": "2026-09-08T00:00:00.000Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -9426,7 +9426,7 @@
         },
         {
           "type": "website",
-          "url": "https://kubernetes.io"
+          "url": "https://kubernetes.io/blog/2025/07/18/pqc-in-k8s/"
         }
       ],
       "properties": [
@@ -23380,7 +23380,7 @@
         },
         {
           "type": "website",
-          "url": "https://www.kpqc.or.kr"
+          "url": "https://kpqc.cryptolab.co.kr/smaug-t"
         }
       ],
       "properties": [
@@ -35546,6 +35546,508 @@
         {
           "name": "pqctoday:confidence_score",
           "value": "60"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "4148ebe17f742fd4",
+      "name": "libcrux - crates.io: Rust Package Registry",
+      "version": "0.0.5",
+      "manufacturer": {
+        "name": "Cryspen"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Supports ML-KEM (CRYSTALS-Kyber) via `libcrux-ml-kem` and ML-DSA (CRYSTALS-Dilithium) via `libcrux-ml-dsa`. Also includes hybrid KEMs like X25519MlKem768Draft00 and XWing. The library is in pre-release (version < 0.1) and users are advised to contact maintainers before production use.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "libcrux-crates-io-Rust-Package-Registry"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d8723cbed8b154b4",
+      "name": "Dashboard - PQProbe",
+      "manufacturer": {
+        "name": "Ottenheimer GmbH"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Dashboard-PQProbe"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "3c337ba015d7e9c3",
+      "name": "PQ-SORT: Post-Quantum Signatures On-Ramp Tests",
+      "manufacturer": {
+        "name": "Technology Innovation Institute (TII)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA, SLH-DSA, Falcon",
+          "primitive": "signature"
+        }
+      },
+      "description": "Provides benchmarking and performance analysis for PQC signature schemes submitted to NIST PQC standardization process round 2. Measures Key Generation, Signature Generation, Signature Verification, Public Key Size, and Signature Size. Specifically benchmarks ML-DSA, FALCON, and SPHINCS+ using code from PQClean.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PQ-SORT-Post-Quantum-Signatures-On-Ramp"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Discovery Platforms"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9ce0006705a9c1ef",
+      "name": "PQConnect: Intro",
+      "version": "1.2.3",
+      "manufacturer": {
+        "name": "PQConnect Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Automatically applies post-quantum cryptography from end to end between computers running PQConnect. Adds cryptographic protection to unencrypted applications and works in concert with existing pre-quantum applications. Transparently encrypts traffic to servers that support PQConnect.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PQConnect-Intro"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "VPN and IPsec Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "4715d449da3b0a73",
+      "name": "Cryptography (std.crypto) - Zig",
+      "manufacturer": {
+        "name": "Zig Software Foundation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "kem"
+        }
+      },
+      "description": "Supports ML-DSA (Post-Quantum) digital signatures (MlDsa44, MlDsa65, MlDsa87) and ML-KEM (Kyber) Key Encapsulation (MlKem512, MlKem768, MlKem1024).",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Cryptography-std-crypto-Zig"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "d3baf724dd8f0646",
+      "name": "What is Post-Quantum Encryption - And How to Enable It on ESA - Alibaba Cloud Community",
+      "manufacturer": {
+        "name": "Alibaba Cloud"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Native integration of X25519MLKEM768 hybrid key exchange (X25519 + ML-KEM-768) across global edge network. Enabled by default for TLS 1.3 and QUIC. No configuration required. Protects against Harvest Now, Decrypt Later attacks.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "What-is-Post-Quantum-Encryption-And-How"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "CDN & Edge Security"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "475d54072bf0b2fa",
+      "name": "SMAUG-T & HAETAE - HAETAE",
+      "version": "1.2.0",
+      "manufacturer": {
+        "name": "NIST PQC Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "HAETAE is a module lattice-based signature scheme guaranteeing quantum security in the QROM. It uses the Fiat-Shamir with Aborts paradigm, bimodal distribution for rejection sampling, and hyperball uniform sampling. It aims for reduced signature and verification key sizes.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "SMAUG-T-HAETAE-HAETAE"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Post-Quantum Cryptography Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "0e6bd83e3294de0e",
+      "name": "Dilithium – Software",
+      "manufacturer": {
+        "name": "NIST PQC Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "ML-DSA"
+        }
+      },
+      "description": "Provides software implementations of the CRYSTALS Dilithium post-quantum signature scheme. Includes reference (ref) and AVX2-optimized builds. Supports parameter sets 2, 3, 5, and their AES variants (2aes, 3aes, 5aes). Includes KAT generation, test vectors, and verification tests.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Dilithium-Software"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "23c58e09766e7bdc",
+      "name": "Kyber – Software",
+      "manufacturer": {
+        "name": "NIST PQC Project"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "kem",
+          "algorithmFamily": "ML-KEM"
+        }
+      },
+      "description": "Provides software implementations of the CRYSTALS-Kyber Key Encapsulation Mechanism (KEM). Supports parameter sets Kyber-512, Kyber-512-90s, Kyber-768, Kyber-768-90s, Kyber-1024, and Kyber-1024-90s. Includes reference (ref) and AVX2 optimized builds. Integrated into liboqs, PQClean, Botan, and Bouncy Castle.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Kyber-Software"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "35514c12f4e759fb",
+      "name": "SPHINCS+ – Software",
+      "manufacturer": {
+        "name": "SPHINCS+ Team"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "SLH-DSA",
+          "primitive": "signature",
+          "algorithmFamily": "SLH-DSA"
+        }
+      },
+      "description": "Provides SPHINCS+ stateless hash-based signatures. Includes software for building binaries for all submitted parameter sets and benchmarking. Offers a parameter exploration SAGE script. Integrated into Botan C++ crypto library (release 3.0) and Bouncy Castle BCPQC provider. Includes Go, Java, and Low-RAM implementations. Supports hybrid scheme with LMS.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "SPHINCS-Software"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b74a9ec2f273a5cf",
+      "name": "PQC InfoHub - Tencent Post-Quantum Cryptography Information Center",
+      "manufacturer": {
+        "name": "Tencent"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Tencent Cloud has initiated preliminary research and planning for post-quantum migration since the end of 2024. The platform provides intelligence support, tracks standards, offers performance evaluation, and provides migration guidance.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "PQC-InfoHub-Tencent-Post-Quantum-Cryptog"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "PQC Programs & Research Initiatives"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ce3f0588a05d3a38",
+      "name": "Lean Consensus Roadmap",
+      "manufacturer": {
+        "name": "Ethereum Foundation"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "Implements \"Lean Cryptography\" using hash-based signatures (XMSS) for post-quantum security. Includes leanSig (signature scheme) and leanMultisig (aggregation scheme). Devnets pq-devnet-0 through pq-devnet-4 have integrated leanSig/leanMultisig. Research tracks include hash-based multi-signatures replacing BLS and zkVM-optimized aggregation.",
+      "externalReferences": [],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "Lean-Consensus-Roadmap"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Blockchain & DLT Protocols"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": ""
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "0"
         }
       ]
     }

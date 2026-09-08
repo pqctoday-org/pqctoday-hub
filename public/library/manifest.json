@@ -3599,13 +3599,16 @@
     },
     {
       "refId": "CoT-Decrypting-Future-PQC-Timelines-2026",
-      "title": "Decrypting the Future: Global Timelines for Post-Quantum Cryptography and Why They Matter",
-      "url": "https://www.charteroftrust.com/wp-content/uploads/2026/04/20260115_PQC-Decrypting-the-Future_FINAL-1.pdf",
-      "status": "downloaded",
-      "filename": "CoT-Decrypting-Future-PQC-Timelines-2026.pdf",
-      "sizeBytes": 1193348,
-      "contentType": "application/pdf",
-      "sha256": "85676468cf14b33d39b11432a569bbff438d9fb04de9a8a509baa6be9c050adc"
+      "url": "https://www.charteroftrust.com/news/decrypting-the-future-global-timelines-for-postquantum-cryptography-and-why-they-matter/",
+      "status": "recaptured",
+      "file": "library/CoT-Decrypting-Future-PQC-Timelines-2026.html",
+      "filename": "CoT-Decrypting-Future-PQC-Timelines-2026.html",
+      "sizeBytes": 99668,
+      "contentType": "text/html",
+      "sha256": "f592a0eee9eab045bfa825eff5648a7fde08068ca02882595579a367ea1e462f",
+      "recaptured_at": "2026-09-08T22:26:54.964132+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ANSSI-PG-083-v3-2026",
@@ -6458,15 +6461,16 @@
     },
     {
       "refId": "ANSSI-PQC-Position-2022",
-      "title": "ANSSI Views on Post-Quantum Cryptography Transition",
-      "url": "https://cyber.gouv.fr/en/publications/anssi-views-post-quantum-cryptography-transition",
-      "status": "downloaded",
-      "filename": "ANSSI-PQC-Position-2022.html",
-      "sizeBytes": 67511,
-      "contentType": "text/html",
-      "sha256": "a6a01f195c3640b4d181e01fd3cd2994b2ac37e19ade989dd72572a138bad60b",
-      "previousSha256": "d4147fc34c6b5ecc087cbb3d4081591a9b29fed152aa6051253279d704b7dff3",
-      "rehashedAt": "2026-08-22"
+      "url": "https://messervices.cyber.gouv.fr/documents-guides/EN_Position.pdf",
+      "status": "recaptured",
+      "file": "library/ANSSI-PQC-Position-2022.pdf",
+      "filename": "ANSSI-PQC-Position-2022.pdf",
+      "sizeBytes": 187943,
+      "contentType": "application/pdf",
+      "sha256": "d636d816f488696c5c9d3e6f6f7f6218e42d41669552656faff022a821bda7b9",
+      "recaptured_at": "2026-09-08T22:26:55.832285+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST SP 800-53",
@@ -10216,13 +10220,16 @@
     },
     {
       "refId": "BSI-CC-PP-0114-V2X-HSM",
-      "title": "BSI-CC-PP-0114-V2X-HSM",
-      "url": "https://www.commoncriteriaportal.org/files/ppfiles/pp0114a_pdf.pdf",
-      "status": "downloaded",
+      "url": "https://www.commoncriteriaportal.org/nfs/ccpfiles/files/ppfiles/pp0114b_pdf.pdf",
+      "status": "recaptured",
+      "file": "library/BSI-CC-PP-0114-V2X-HSM.pdf",
       "filename": "BSI-CC-PP-0114-V2X-HSM.pdf",
-      "sizeBytes": 432577,
+      "sizeBytes": 1131633,
       "contentType": "application/pdf",
-      "sha256": "277fb087fc41984bc1a30945107023ab7d824257b0d6143b7a5f6ca289f23c77"
+      "sha256": "08b1790a0846e59e88c66c235c32bcece0ecd92a80905ef59ece189b0911df64",
+      "recaptured_at": "2026-09-08T22:26:56.558368+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/library/BSI-CC-PP-0114-V2X-HSM.pdf"
     },
     {
       "refId": "SCMS-Manager-EE-Requirements-v1-00",
@@ -12348,7 +12355,7 @@
       "recoveredBy": "codex url research + lineage gates"
     }
   ],
-  "generated": "2026-07-30T00:36:07.104551+00:00",
+  "generated": "2026-09-08T22:26:56.558489+00:00",
   "rehashNote": "2026-08-22: a bulk re-cache on 2026-07-29 rewrote captures without updating this manifest, so their recorded hashes had proven nothing for three weeks. Entries carrying rehashedAt were re-verified as still being the document the row claims (title screen, plus an edition-token check for rows naming a specific year or version) and their hash re-recorded from disk. previousSha256 keeps what was there before. Entries WITHOUT rehashedAt were not re-verified.",
   "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects — a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }
