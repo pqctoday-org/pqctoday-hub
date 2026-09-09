@@ -1,0 +1,270 @@
+---
+generated: 2026-09-09
+collection: timeline
+documents_processed: 4
+enrichment_method: example-echo cleanup (priv 3d3ae9f0) — no model was run. Only values byte-identical to the prompt's own illustrative examples were replaced with "None detected"; every other field is carried through verbatim from timeline_doc_enrichments_09072026.md. Where a document id appears more than once in the source, the LAST occurrence is carried forward, matching mergeEnrichmentFiles()'s own last-wins resolution.
+---
+
+## Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released
+
+- **Reference ID**: Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released
+- **Title**: Quantum-Safe Handbook and Quantum Readiness Index Released
+- **Authors**: Cyber Security Agency / GovTech / IMDA
+- **Publication Date**: 2025-10-23
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: A draft handbook providing a four-pillar framework for Critical Information Infrastructure owners to prepare for quantum-safe migration.
+- **PQC Algorithms Covered**: SLH-DSA; XMSS; LMS
+- **Quantum Threats Addressed**: Cryptanalytically Relevant Quantum Computer (CRQC), Shor's algorithm, Grover's algorithm, Q-day
+- **Migration Timeline Info**: Expert estimates place the horizon for Q-day within the next 5-10 years; migration is a multi-year endeavour executed in phases.
+- **Applicable Regions / Bodies**: Regions: Singapore; Bodies: CSA, GovTech, IMDA
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, SSH, IPSEC, S/MIME
+- **Infrastructure Layers**: Key establishment, identity management, access control, electronic signatures, ICS, SCADA
+- **Standardization Bodies**: NIST, ISO, ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, ECDH, DSA, DH, ECDSA, AES, SHA-1, SHA-2, SHA-3
+- **Key Takeaways**: Organizations should start preparation immediately as Q-day is a matter of when not if; migration requires significant resources and time so rushing implementation may cause first-mover disadvantages; focus on no-regrets actions while monitoring evolving solutions; quantum threats affect confidentiality, integrity, and availability of systems and data.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker, Critical Information Infrastructure owners
+- **Implementation Prerequisites**: Cryptographic asset discovery; risk prioritisation; phased migration planning; post-migration monitoring; multi-year roadmap development
+- **Relevant PQC Today Features**: Threats, Migrate, Assess, Algorithms, pqc-governance
+- **Implementation Attack Surface**: side-channel attacks
+- **Cryptographic Discovery & Inventory**: cryptographic asset discovery, risk prioritisation
+- **Testing & Validation Methods**: NIST Cryptographic Algorithm Validation Program (CAVP); NIST SP 1800-38C lab-based testing; interoperability testing; performance assessment; penetration testing; plug-fests; functional validations
+- **QKD Protocols & Quantum Networking**: point-to-point networks; trusted node-based networks; satellite-based networks; ISO/IEC 23837; ETSI Industry Specification Group QKD
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: network/ resource-constrained environments
+- **Supply Chain & Vendor Risk**: third-party websites, industry partners, private and public-sector organisations
+- **Deployment & Migration Complexity**: phased migration, post-migration monitoring, multi-year endeavour, migration of systems is likely to be executed in phases
+- **Financial & Business Impact**: loss of profits, business, goodwill, or reputation, special, incidental, or consequential damages, financial loss, resources, funding and time to complete, unintended costs or abortive efforts
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: The document releases a draft handbook and readiness index specifically for public consultation, indicating a guidance phase where frameworks are being established before formal mandates.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: Critical Infrastructure; Government
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from initial awareness to structured planning by providing a four-pillar migration framework and self-assessment tool.
+- **Historical Significance**: Represents a coordinated effort by CSA, GovTech, and IMDA to formalize PQC readiness for Critical Information Infrastructure owners in Singapore.
+- **Implementation Timeline Dates**: Oct 23 2025; Dec 31 2025
+- **Successor Events & Dependencies**: Finalization of Quantum-Safe Handbook; Adoption of QRI by CII owners; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: Singapore: 2025 — Public consultation period for draft handbook and index
+- **Timeline Cross-Reference**: Singapore 2025: CONSISTENT (Quantum-Safe Handbook and Quantum Readiness Index )
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NIST — FIPS 206 (FN-DSA) Draft Submitted
+
+- **Reference ID**: United States:NIST — FIPS 206 (FN-DSA) Draft Submitted
+- **Title**: FIPS 206 (FN-DSA) Draft Submitted
+- **Authors**: National Institute of Standards and Technology
+- **Publication Date**: 2025-08-28
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: The document is a generic NIST CSRC website error page indicating a missing resource, with no substantive content regarding FIPS 206 or FN-DSA.
+- **PQC Algorithms Covered**: ML-DSA; SLH-DSA; FN-DSA; Falcon
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2025, 2026, 2027
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: Shane Kelly (Author); Jason Sabin (Author of related stories); Jeremy Rowley (Author of related stories)
+- **PQC Products Mentioned**: DigiCert ONE
+- **Protocols Covered**: TLS, HTTPS, S/MIME
+- **Infrastructure Layers**: PKI, Code Signing, IoT, Cloud, Email
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: eIDAS 2.0
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The provided text is a 404 error page; No technical PQC information is available; The document does not describe FIPS 206 or FN-DSA; Users are redirected to the main NIST CSRC site; Contact csrc-inquiry@nist.gov for support
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: crypto-agility
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: smaller signature sizes; reduced overall size of certificate chains
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: Wait for final standard before production implementation; Explore draft algorithms via DigiCert Labs
+- **Relevant PQC Today Features**: Timeline; Algorithms; Migrate; crypto-agility; pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: crypto-agility
+- **Testing & Validation Methods**: experimentation; testing implementations
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: planning for integration; build the crypto-agility needed to adapt as standards finalize; won’t implement FN-DSA in production products until the standard is finalized
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Preparation needs to start now; exploring draft algorithms; planning for integration
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Phase Classification Rationale**: The document is a website error page ("Page Not Found") and contains no substantive content to classify as a specific phase event; the title suggests a draft submission, but the text provides no evidence.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Moves from algorithm selection and refinement to draft standardization, enabling public review and eventual final adoption for implementation planning.
+- **Historical Significance**: Represents the formal submission of FN-DSA (FALCON) as a NIST draft standard, completing the trio of post-quantum signature schemes alongside ML-DSA and SLH-DSA.
+- **Implementation Timeline Dates**: August 28, 2025: Draft standard submitted; Q4 2025: Initial Public Draft expected; late September 2025: Potential release at NIST PQC Standardization Conference; late 2026: Final standard expected; early 2027: Final standard expected
+- **Successor Events & Dependencies**: Requires publication of the Initial Public Draft (IPD); Enables public review period of approximately one year; Precedes final standard approval in late 2026/early 2027.
+- **Source Document Title**: Quantum-Ready FN-DSA (FIPS 206) Nears Draft Approval from NIST
+- **Source Document Publication Date**: 09-05-2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:NIST — IR 8547 Public Comments Published
+
+- **Reference ID**: United States:NIST — IR 8547 Public Comments Published
+- **Title**: IR 8547 Public Comments Published
+- **Authors**: National Institute of Standards and Technology
+- **Publication Date**: 2024-11-12
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Public comments and feedback on the NIST IR 8547 Initial Public Draft regarding the transition to Post-Quantum Cryptography Standards.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; Ascon
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: 2030: Algorithms acceptable between 2030 and 2035; 2035: Disallowance of RSA/ECC and quantum-vulnerable digital signature algorithms
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, FIPS, CTIA, CSCC, 3GPP, IETF, ITU-T
+- **Leaders Contributions Mentioned**: Sonmez Turan (Ascon team representative); Martin Schläffer (Ascon team); Steve Babbage (atsec info. sec. corp.); Bartelt Andreas (Bosch); Deirdre Connolly; Wilson Figueroa (Deputy Chief Information Security Officer, Government Systems); Marco Hippler; Paul Hoffman; Luk Bettale (IDEMIA); Krystian Matusiewicz (Intel); Kaiduan Xie (University of Waterloo)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; Wi-Fi; VoLTE; 5G
+- **Infrastructure Layers**: PKI; Key Management; HSM; Embedded Systems; ECU
+- **Standardization Bodies**: NIST; 3GPP; IETF; ITU-T; CSCC
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; SP 800-56A; SP 800-56B; SP 800-186; SP 800-208; SP 800-232; FIPS 140-3
+- **Classical Algorithms Referenced**: RSA; ECDSA; AES; SHA-2; DH; X25519; DSA; 3DES; Diffie Hellman; Menezes-Qu-Vanstone
+- **Key Takeaways**: NIST guidance is mandatory for federal systems but voluntary for non-federal organizations; Hybrid key establishment and signature mechanisms require clarification on binding and generation requirements; Migration timelines should differentiate between confidentiality (urgent) and integrity (longer timeline) use cases; Legacy devices with long lifetimes (e.g., automotive, SCADA) need clear guidance on deprecated algorithm usage post-2035; Ascon family algorithms should be included in NIST standards for IoT/IIoT applications.
+- **Security Levels & Parameters**: NIST L1; NIST L2; NIST L3; NIST L5; 128 bits; 192 bits; 256 bits; ML-DSA-44; ML-DSA-65; ML-DSA-768; ML-DSA-1024; ML-KEM-768; ML-KEM-1024; Ascon-AEAD128; Ascon-Hash256; Ascon-XOF128; Ascon-CXOF128; Ascon-80pq
+- **Hybrid & Transition Approaches**: Hybrid key establishment; Hybrid signature mechanisms; Deprecated state; Disallowed state; Legacy use
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Section 3.2 talks extensively about hybrid protocols"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "Clarification on the requirements for the hybrid signature mechanism in paragraph 3.2.2"
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: Larger key sizes; larger signature sizes
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Developer
+- **Implementation Prerequisites**: Cryptographic inventory; PKI upgrade; Hardware replacement for embedded systems; Coordination with standards bodies
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms; hybrid-crypto; crypto-agility; iot-ot-pqc; pqc-governance
+- **Implementation Attack Surface**: Side-channel; Fault injection; Nonce reuse; Memory safety failures; Cache-timing attacks
+- **Cryptographic Discovery & Inventory**: Crypto-agility scanning; Algorithm enumeration; Deprecated cipher detection; Certificate inventory; Key material audit
+- **Testing & Validation Methods**: Conformance testing; Interoperability testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: RBG (Random Bit Generator); Entropy
+- **Constrained Device & IoT Suitability**: Embedded viability; IoT/IIoT; D2D devices; Automotive ECU; SCADA systems
+- **Supply Chain & Vendor Risk**: Vendor PQC roadmap maturity; Third-party library trust; Open-source vs proprietary
+- **Deployment & Migration Complexity**: Migration phase; Backward compatibility; Phased rollout; Legacy device support
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; Change management scope; Planning horizon
+- **Math Family**: Lattice; Symmetric; Hash-based
+- **PQC Round**: Draft
+- **Phase Classification Rationale**: The document is an Initial Public Draft (IPD) of NIST IR 8547, soliciting public comments on the transition to Post-Quantum Cryptography Standards.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government; Telecommunications; Technology; Critical Infrastructure; Transportation; Energy
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: Moves from Standardization to Transition Planning — signals the beginning of formal migration guidance and timelines for federal systems.
+- **Historical Significance**: This is the first public draft of NIST's comprehensive transition plan, establishing timelines for deprecating and disallowing classical algorithms in federal systems.
+- **Implementation Timeline Dates**: 2024-11-12: NIST IR 8547 IPD published; 2025-01-10: Comment period ends; 2030: Algorithms acceptable between 2030 and 2035; 2035: Disallowance of RSA/ECC and quantum-vulnerable digital signature algorithms
+- **Successor Events & Dependencies**: Requires finalization of NIST IR 8547; Enables implementation of hybrid and pure PQC algorithms in federal systems; Depends on updates to TLS, Wi-Fi, VoLTE, and 5G standards.
+- **Source Document Title**: Public Comments on NIST IR 8547 (ipd)
+- **Source Document Publication Date**: November 12, 2024
+- **Country Migration Dates**: United States: 2030 — Algorithms acceptable between 2030 and 2035; United States: 2035 — Disallowance of RSA/ECC and quantum-vulnerable digital signature algorithms
+- **Timeline Cross-Reference**: United States 2030: CONSISTENT (112-bit Security Deprecated); United States 2035: CONSISTENT (112-bit Security Algorithms Fully Disallowed)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
+## United States:White House — PQC Report to Congress
+
+- **Reference ID**: United States:White House — PQC Report to Congress
+- **Title**: PQC Report to Congress
+- **Authors**: Executive Office of the President
+- **Publication Date**: 2024-07
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: White House report outlining the Federal Government's strategy, funding estimates, and NIST-led standardization efforts for migrating to post-quantum cryptography by 2035.
+- **PQC Algorithms Covered**: Falcon
+- **Quantum Threats Addressed**: Cryptanalytically relevant quantum computer (CRQC); record-now-decrypt-later attacks
+- **Migration Timeline Info**: Migration progress expected during 2024 and beyond; budget projections through 2035; data expected to remain mission-sensitive in 2035 prioritized for migration
+- **Applicable Regions / Bodies**: United States; Office of Management and Budget (OMB); National Institute of Standards and Technology (NIST); Department of Homeland Security Cybersecurity and Infrastructure Security Agency (CISA); Senate Committee on Homeland Security and Governmental Affairs; House Committee on Oversight and Accountability
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: pqcrypto
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Public-key cryptography; digital signature schemes; automated cryptographic inventory solutions; zero trust architecture
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: Quantum Computing Cybersecurity Preparedness Act, Public Law No: 117-260; National Security Memorandum 10 (NSM-10); OMB Memorandum M-23-02; Executive Order 14028; OMB Memorandum M-22-09
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Agencies must maintain a comprehensive and ongoing cryptographic inventory to baseline migration efforts; Migration must begin immediately due to the threat of record-now-decrypt-later attacks before CRQCs exist; Agencies must prioritize high impact systems and data expected to remain sensitive in 2035 for early migration; Interoperability failures may occur if systems are not migrated simultaneously, requiring careful planning
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: None detected
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: None detected
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: None detected
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: None detected
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None detected
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Compliance Officer; Security Architect; CISO
+- **Implementation Prerequisites**: Comprehensive cryptographic inventory; automated inventory capability evolution; annual manual inventory of hardware and software; identification of systems unable to support PQC algorithms
+- **Relevant PQC Today Features**: Threats, Migrate, Assess, Compliance, Timeline, migration-program, pqc-risk-management, data-asset-sensitivity
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: cataloging key attributes; iterative and ongoing process; automated and manual methodologies; cryptographic discovery tools; functional test plan that exercises the cryptographic discovery tools
+- **Testing & Validation Methods**: Cryptographic Module Validation Program (CMVP); independent test; benchmarked the performance of the candidate algorithms; interoperability testing; resolution of compatibility issues in a controlled, nonproduction environment
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: systems that will not be able to support PQC algorithms must be identified as early as possible
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch); prioritized migration plan; phased rollout; early identification of systems that may not be able to migrate to PQC; replacing hardware, software, and digital systems that are not PQC-compatible
+- **Financial & Business Impact**: $7.1 billion in 2024 dollars; total government-wide cost required to perform a migration of prioritized information systems to PQC between 2025 and 2035
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Phase Classification Rationale**: This document is a formal report to Congress mandated by the Quantum Computing Cybersecurity Preparedness Act, outlining the Federal Government's strategy and funding estimates for PQC migration. It establishes the policy framework and regulatory requirements for federal agencies rather than defining technical specifications.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government; Defense
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from strategic planning and inventory assessment to the development of prioritized migration plans and funding allocation for federal agencies.
+- **Historical Significance**: Represents the first comprehensive government-wide cost estimate ($7.1B) and strategic roadmap for PQC migration in the United States, fulfilling statutory requirements under Public Law 117-260.
+- **Implementation Timeline Dates**: 2024: Publication of Final first three PQC FIPS; 2025-2035: Estimated period for government-wide migration of prioritized information systems; within one year of adoption of first set of NIST standards: OMB to release guidance directing agencies to develop prioritized migration plan
+- **Successor Events & Dependencies**: OMB release of migration guidance; development of prioritized migration plans by agencies; NIST standardization of FALCON Digital Standard; separate funding estimates for National Security Systems by DoD, ODNI, and National Manager for NSS
+- **Source Document Title**: REPORT ON POST-QUANTUM CRYPTOGRAPHY
+- **Source Document Publication Date**: July 2024
+- **Country Migration Dates**: United States: 2024 — Publication of Final first three PQC FIPS; United States: 2025-2035 — Estimated period for government-wide migration of prioritized information systems; United States: within one year of adoption of first set of NIST standards — OMB to release guidance directing agencies to develop prioritized migration plan
+- **Timeline Cross-Reference**: United States 2024: CONSISTENT (FIPS 203, 204, 205 Published); United States 2025: CONSISTENT (CSWP 48 PQC Migration Mappings Draft | also: Large PKI Systems Migration)
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
