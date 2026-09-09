@@ -248,6 +248,22 @@ export function hasSubstantiveEnrichment(e: LibraryEnrichment): boolean {
  * Merge all enrichment markdown files from a glob result into a single lookup.
  * Files are sorted oldest → newest so later dates overwrite duplicates.
  * Shared by all collection loaders — do not duplicate this logic.
+ *
+ * LAST WINS, AND THAT IS LOAD-BEARING — both across files here and WITHIN a
+ * file in parseEnrichmentMarkdown, which assigns lookup[refId] walking sections
+ * in file order. A document id repeated inside one sidecar is normal, not a
+ * defect: `enrich-docs.py --append` is the documented way to enrich in chunks,
+ * so re-enriching a document appends a second record instead of replacing the
+ * first. catalog_doc_enrichments_06062026.md carries 122 such pairs, where a
+ * June re-run supersedes a thinner original (avg 29.4 populated fields against
+ * 19.6) purely by sitting later in the file.
+ *
+ * Anything that reads these sidecars directly must resolve duplicates the same
+ * way. Taking the FIRST occurrence silently swaps those 122 catalog documents
+ * to the worse record, and the result looks entirely plausible — 122 complete,
+ * well-formed, superseded entries. That mistake was made and caught during the
+ * 2026-09-09 enrichment cleanup; docEnrichments.duplicateIds.test.ts now pins
+ * the invariant (last occurrence is the newest) across every generation.
  */
 export function mergeEnrichmentFiles(modules: Record<string, string>): EnrichmentLookup {
   const paths = Object.keys(modules)
