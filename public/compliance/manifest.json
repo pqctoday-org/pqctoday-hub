@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07T02:48:24.369841+00:00",
+  "generated": "2026-09-09T01:24:52.533944+00:00",
   "entries": [
     {
       "refId": "NIST",
@@ -576,12 +576,16 @@
     },
     {
       "refId": "3GPP-PQC",
-      "url": "https://www.3gpp.org/",
-      "status": "downloaded",
+      "url": "https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=4422",
+      "status": "recaptured",
+      "file": "compliance/3GPP-PQC.html",
       "filename": "3GPP-PQC.html",
-      "sizeBytes": 410394,
+      "sizeBytes": 202572,
       "contentType": "text/html",
-      "sha256": "b229691fc9785f7425b11a1c2f89121f694b648bbad23d4dc639b89d3610e1a2"
+      "sha256": "86caab88c9cbf6c369c42445f4f1c0682571d7cfce584686b1cc4229492e17fa",
+      "recaptured_at": "2026-09-09T01:24:45.064051+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/compliance/3GPP-PQC.html"
     },
     {
       "refId": "TCG-TPM-PQC",
@@ -1437,12 +1441,16 @@
     },
     {
       "refId": "MSB-SE-CYB",
-      "url": "https://www.ncsc.se/siteassets/publikationer/nationella-rekommendationer-for-overgangen-till-kvantsaker-kryptografi-2026_tga.pdf",
-      "status": "downloaded",
+      "url": "https://metodstod-informationssakerhet.msb.se/globalassets/metodstod-for-systematiskt-informationssakerhetsarbete---en-oversikt.pdf",
+      "status": "recaptured",
+      "file": "compliance/MSB-SE-CYB.pdf",
       "filename": "MSB-SE-CYB.pdf",
-      "sizeBytes": 1064410,
+      "sizeBytes": 5085384,
       "contentType": "application/pdf",
-      "sha256": "ac5c299f4726eb63303c8d3840ceaa4e8bc88121c14d6944acba2da8006b5325"
+      "sha256": "707a164ec0d3cc8a5e62f8cc2358e67978affb6179edb1ca9afc87507876640c",
+      "recaptured_at": "2026-09-09T01:24:52.533871+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/compliance/MSB-SE-CYB.pdf"
     },
     {
       "refId": "NCSC-FI-PQC",

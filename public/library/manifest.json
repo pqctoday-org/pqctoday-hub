@@ -145,13 +145,16 @@
     },
     {
       "refId": "NIST IR 8545",
-      "title": "Status Report on the Fourth Round of the NIST PQC Standardization Process",
-      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2025/NIST.IR.8545.pdf",
-      "status": "downloaded",
-      "filename": "NIST_IR_8545.pdf",
-      "sizeBytes": 588999,
-      "contentType": "application/pdf",
-      "sha256": "d802f4849a52d18001533cef86e0950f31350643cc06881ee62b2382e1ea0e9d"
+      "url": "https://csrc.nist.gov/pubs/ir/8545/final",
+      "status": "recaptured",
+      "file": "library/NIST IR 8545.html",
+      "filename": "NIST IR 8545.html",
+      "sizeBytes": 49580,
+      "contentType": "text/html",
+      "sha256": "d2ce50512978e9e0d8b0937d39dce7288f2916fc0de28dff650a392a3ab8b1ce",
+      "recaptured_at": "2026-09-09T01:28:40.432922+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "HQC Specification",
@@ -507,23 +510,29 @@
     },
     {
       "refId": "EUCC v2.0 ACM",
-      "title": "EU Cybersecurity Certification Agreed Cryptographic Mechanisms v2.0",
-      "url": "https://certification.enisa.europa.eu/document/download/f4657490-9757-4a97-8deb-fd4d6a1358ee_en?filename=EUCC_guidelines_Agreed+Cryptographic+Mechanisms+v2.pdf",
-      "status": "downloaded",
-      "filename": "EUCC_v2.0_ACM.pdf",
-      "sizeBytes": 346171,
+      "url": "https://certification.enisa.europa.eu/document/download/a845662b-aee0-484e-9191-890c4cfa7aaa_en?filename=ECCG+Agreed+Cryptographic+Mechanisms+version+2.pdf",
+      "status": "recaptured",
+      "file": "library/EUCC v2.0 ACM.pdf",
+      "filename": "EUCC v2.0 ACM.pdf",
+      "sizeBytes": 406924,
       "contentType": "application/pdf",
-      "sha256": "622d513335857267ec09a684c1132fe00d923ccb41c2ffc23a23cb8d035e0a86"
+      "sha256": "43ee6507b8c488a8e9a6bc9886fa67bf64d8c040cc5368192a913706352e6d3d",
+      "recaptured_at": "2026-09-09T01:28:41.461156+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "UK NCSC PQC Guidance",
-      "title": "Preparing for Quantum-Safe Cryptography",
-      "url": "https://www.ncsc.gov.uk/whitepaper/quantum-safe-cryptography",
-      "status": "downloaded",
-      "filename": "preparing-for-quantum-safe-cryptography.pdf",
-      "sizeBytes": 88951,
-      "contentType": "application/pdf",
-      "sha256": "dbe408bf3837a31a26b82d0a670a7def221f2a32600e0cdca18b2d2c35e0a26f"
+      "url": "https://www.ncsc.gov.uk/paper/preparing-for-quantum-safe-cryptography",
+      "status": "recaptured",
+      "file": "library/UK NCSC PQC Guidance.html",
+      "filename": "UK NCSC PQC Guidance.html",
+      "sizeBytes": 142074,
+      "contentType": "text/html",
+      "sha256": "ecbe2af1c7b3427a95432c69c0441b2943e63380df332e6406a0458eef5a2e4e",
+      "recaptured_at": "2026-09-09T01:28:42.186188+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST NCCoE SP 1800-38C",
@@ -973,15 +982,16 @@
     },
     {
       "refId": "BIP-32",
-      "title": "BIP-32: Hierarchical Deterministic Wallets",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki",
-      "status": "downloaded",
-      "filename": "BIP-32.html",
-      "sizeBytes": 453659,
-      "contentType": "text/html",
-      "sha256": "927cdd6f665bb4f30fdf8b0e9aad81420fc0ab3eae2f51ace282dff0e43b5920",
-      "previousSha256": "4272486cf75461003bd9a8d8bcc3fd17f6095c0f751c6d9c84ceff5846750150",
-      "rehashedAt": "2026-08-22"
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0032.mediawiki",
+      "status": "recaptured",
+      "file": "library/BIP-32.md",
+      "filename": "BIP-32.md",
+      "sizeBytes": 28032,
+      "contentType": "text/markdown",
+      "sha256": "e5e00a8289db2f681052cf24a745320afc225e66b25d1e489a7c884d2fc7f11f",
+      "recaptured_at": "2026-09-09T01:28:42.502099+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "BIP-39",
@@ -1093,39 +1103,42 @@
     },
     {
       "refId": "BIP-141",
-      "title": "BIP-141: Segregated Witness (Consensus Layer)",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki",
-      "status": "downloaded",
-      "filename": "BIP-141.html",
-      "sizeBytes": 440614,
-      "contentType": "text/html",
-      "sha256": "8795286ecdac31e9a98dfa997bdbbf0e26a1c3be39b9fad39f486883547be157",
-      "previousSha256": "30c41f62aac5f9dd8a28dbed1df23f1a147edd8c7f1b6b9a24830e2dc87fc037",
-      "rehashedAt": "2026-08-22"
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0141.mediawiki",
+      "status": "recaptured",
+      "file": "library/BIP-141.md",
+      "filename": "BIP-141.md",
+      "sizeBytes": 26314,
+      "contentType": "text/markdown",
+      "sha256": "d72409335872a32494f75e7547589abf4b3b23b6beebe6bc6999c7a84b135e2c",
+      "recaptured_at": "2026-09-09T01:28:42.740414+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "BIP-340",
-      "title": "BIP-340: Schnorr Signatures for secp256k1",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki",
-      "status": "downloaded",
-      "filename": "BIP-340.html",
-      "sizeBytes": 480325,
-      "contentType": "text/html",
-      "sha256": "27fd9d5caf8808845f023c09a0af7bee97d992b4f62d000f1c155be4de4d6b1f",
-      "previousSha256": "c76d527f87a3db2e391dcb86a5064cf2b740b90dafd2885131a6d47600a03192",
-      "rehashedAt": "2026-08-22"
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0340.mediawiki",
+      "status": "recaptured",
+      "file": "library/BIP-340.md",
+      "filename": "BIP-340.md",
+      "sizeBytes": 39995,
+      "contentType": "text/markdown",
+      "sha256": "17d64d6dc6bc97f4ecf178697bf810b92aa2a9e41ef13db809c25bc44a9b8109",
+      "recaptured_at": "2026-09-09T01:28:42.878765+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "BIP-341",
-      "title": "BIP-341: Taproot: SegWit Version 1 Spending Rules",
-      "url": "https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki",
-      "status": "downloaded",
-      "filename": "BIP-341.html",
-      "sizeBytes": 510221,
-      "contentType": "text/html",
-      "sha256": "77f6ad73042dc1771985b094cd16bc697fbb650a4294bd15042c720c17dc96af",
-      "previousSha256": "e2c5d66eb08bff0d0ac1f6ba4ab83e8233e6575a766df6ea18d99e9cd762540b",
-      "rehashedAt": "2026-08-22"
+      "url": "https://raw.githubusercontent.com/bitcoin/bips/master/bip-0341.mediawiki",
+      "status": "recaptured",
+      "file": "library/BIP-341.md",
+      "filename": "BIP-341.md",
+      "sizeBytes": 44162,
+      "contentType": "text/markdown",
+      "sha256": "463690d4c409587759c0ff6e8b8fc3a2bf6cb2cdda0c06ff193d317e0ed898ec",
+      "recaptured_at": "2026-09-09T01:28:43.038888+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this markdown/plain-text is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Bitcoin-BIP360-P2QRH",
@@ -1444,13 +1457,16 @@
     },
     {
       "refId": "IEEE-802-1AE-2018",
-      "title": "IEEE 802.1AE-2018: MAC Security (MACsec)",
-      "url": "https://standards.ieee.org/ieee/802.1AE/7154/",
-      "status": "downloaded",
+      "url": "https://1.ieee802.org/security/802-1ae-2018/",
+      "status": "recaptured",
+      "file": "library/IEEE-802-1AE-2018.html",
       "filename": "IEEE-802-1AE-2018.html",
-      "sizeBytes": 358606,
+      "sizeBytes": 55119,
       "contentType": "text/html",
-      "sha256": "ffd79861761ade0a17e4c21a353ad27bd8b8719d1a71c2df0a1747e283fe6c77"
+      "sha256": "45e96be4b6576de09b6a4db3f3403cef35ff435a3180bca4f4402023e9280962",
+      "recaptured_at": "2026-09-09T01:28:43.500791+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/IEEE-802-1AE-2018.html"
     },
     {
       "refId": "draft-ietf-jose-pqc-kem",
@@ -1801,13 +1817,16 @@
     },
     {
       "refId": "Singapore-NQSN-Plus",
-      "title": "Singapore National Quantum-Safe Network Plus (NQSN+)",
-      "url": "https://www.imda.gov.sg/about-imda/emerging-technologies-and-research/quantum-safe-technologies",
-      "status": "downloaded",
+      "url": "https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/press-releases/2023/sg-launches-southeast-asias-first-quantum-safe-network-infrastructure",
+      "status": "recaptured",
+      "file": "library/Singapore-NQSN-Plus.html",
       "filename": "Singapore-NQSN-Plus.html",
-      "sizeBytes": 290181,
+      "sizeBytes": 139737,
       "contentType": "text/html",
-      "sha256": "8f2d438e2489a59ba35ee529a68710448ff0584f2fc8f146cd5df6a26b2553dd"
+      "sha256": "8c96a9ddd4c6706ab0d29e9b270d6af214d127abd0716d725e1ca6568045d6ce",
+      "recaptured_at": "2026-09-09T01:28:44.411446+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/Singapore-NQSN-Plus.html"
     },
     {
       "refId": "ANSSI-PQC-FAQ-2025",
@@ -1965,13 +1984,16 @@
     },
     {
       "refId": "Europol-QSFF-Call-to-Action-2025",
-      "title": "Europol Quantum Safe Financial Forum — Call to Action",
-      "url": "https://www.europol.europa.eu/cms/sites/default/files/documents/Quantum-safe-financial-forum-2025.pdf",
-      "status": "downloaded",
-      "filename": "Quantum-safe-financial-forum-2025.pdf",
-      "sizeBytes": 930892,
-      "contentType": "application/pdf",
-      "sha256": "72c93e2fc66508b1ce254db0795e3f3d4901e7f1d1d5723c18885fe9ae0eedf6"
+      "url": "https://www.europol.europa.eu/publications-events/publications/quantum-safe-financial-forum-call-to-action",
+      "status": "recaptured",
+      "file": "library/Europol-QSFF-Call-to-Action-2025.html",
+      "filename": "Europol-QSFF-Call-to-Action-2025.html",
+      "sizeBytes": 40167,
+      "contentType": "text/html",
+      "sha256": "f3e4b2e855492c96b934b41c8ef9e1d5c8afc257543df12acd9c0684b177ff09",
+      "recaptured_at": "2026-09-09T01:28:45.416548+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "IL-INCD-Cybersecurity-Strategy-2025",
@@ -2304,13 +2326,16 @@
     },
     {
       "refId": "NIST NCCoE SP 1800-38A",
-      "title": "Migration to Post-Quantum Cryptography: Preparation for Considering the Implementation and Adoption of Quantum Safe Cryptography",
-      "url": "https://www.nccoe.nist.gov/sites/default/files/2023-04/pqc-migration-nist-sp-1800-38a-preliminary-draft.pdf",
-      "status": "downloaded",
-      "filename": "NIST_NCCoE_SP_1800-38A.pdf",
-      "sizeBytes": 414018,
-      "contentType": "application/pdf",
-      "sha256": "b0654d3a8c8f89d9c25420249bc7e3c2b4741badd40b702607b5d8803344dbe1"
+      "url": "https://csrc.nist.gov/pubs/sp/1800/38/iprd",
+      "status": "recaptured",
+      "file": "library/NIST NCCoE SP 1800-38A.html",
+      "filename": "NIST NCCoE SP 1800-38A.html",
+      "sizeBytes": 41002,
+      "contentType": "text/html",
+      "sha256": "18d6c049f1a140b5ab47e326b3110f4d2b41f7897b9fcfed24588acefbeab748",
+      "recaptured_at": "2026-09-09T01:28:45.696309+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST NCCoE SP 1800-38B",
@@ -2344,13 +2369,16 @@
     },
     {
       "refId": "Europol-FS-ISAC-PQC-Financial-2026",
-      "title": "Prioritising Post-Quantum Cryptography Migration Activities in Financial Services",
-      "url": "https://www.europol.europa.eu/cms/sites/default/files/documents/Post-quantum-cryptography-report.pdf",
-      "status": "downloaded",
-      "filename": "Europol-FS-ISAC-PQC-Financial-2026.pdf",
-      "sizeBytes": 425443,
-      "contentType": "application/pdf",
-      "sha256": "4f043ff0cb0cec81506304dca0cbf44a44caf6af2db9749fe1e39b90b91bff20"
+      "url": "https://op.europa.eu/en/publication-detail/-/publication/5b555b60-7c04-11f1-bf5e-01aa75ed71a1/language-en",
+      "status": "recaptured",
+      "file": "library/Europol-FS-ISAC-PQC-Financial-2026.html",
+      "filename": "Europol-FS-ISAC-PQC-Financial-2026.html",
+      "sizeBytes": 427665,
+      "contentType": "text/html",
+      "sha256": "dac41cbdabca5a444cd1d602eff797803b44a724db7691994c0dce8af0d69909",
+      "recaptured_at": "2026-09-09T01:28:46.883087+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "HSBC-InfoSecGlobal-Thales-CryptographicInventory-2025",
@@ -2364,13 +2392,16 @@
     },
     {
       "refId": "NIST-IR-8528",
-      "title": "Status Report on the First Round of the Additional Digital Signature Schemes for the NIST PQC Standardization Process",
-      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8528.pdf",
-      "status": "downloaded",
-      "filename": "NIST_IR_8528.pdf",
-      "sizeBytes": 499763,
-      "contentType": "application/pdf",
-      "sha256": "3c0480d43da8c7cda80237c0c92481655a23339649828212fe59a0a76a78031f"
+      "url": "https://csrc.nist.gov/pubs/ir/8528/final",
+      "status": "recaptured",
+      "file": "library/NIST-IR-8528.html",
+      "filename": "NIST-IR-8528.html",
+      "sizeBytes": 49703,
+      "contentType": "text/html",
+      "sha256": "704c8f37b8ee8643e2ae4c5c0f654f17a93938c07e7a4e2c09592237ed7edfbb",
+      "recaptured_at": "2026-09-09T01:28:47.158490+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST-SP-800-232",
@@ -2480,13 +2511,16 @@
     },
     {
       "refId": "FIPS 199",
-      "title": "Standards for Security Categorization of Federal Information and Information Systems",
-      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.199.pdf",
-      "status": "downloaded",
-      "filename": "FIPS_199.pdf",
-      "sizeBytes": 80356,
-      "contentType": "application/pdf",
-      "sha256": "73d19f05f71e30f378050f178aa3943c38790bbae56c07f2b5708c5a1a90242f"
+      "url": "https://csrc.nist.gov/pubs/fips/199/final",
+      "status": "recaptured",
+      "file": "library/FIPS 199.html",
+      "filename": "FIPS 199.html",
+      "sizeBytes": 43545,
+      "contentType": "text/html",
+      "sha256": "34b586e1c65f9e59e224d8b966fcf8616c0be03453b63764c985712e7247fc88",
+      "recaptured_at": "2026-09-09T01:28:47.411770+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST SP 800-37",
@@ -3364,13 +3398,16 @@
     },
     {
       "refId": "KpqC-SMAUG-T",
-      "title": "SMAUG-T: KpqC Post-Quantum Key Encapsulation Mechanism",
-      "url": "https://kpqc.cryptolab.co.kr/smaug-t",
-      "status": "downloaded",
-      "filename": "KpqC-SMAUG-T.html",
-      "sizeBytes": 178248,
-      "contentType": "text/html",
-      "sha256": "d84623212dfd6790b9bbfad949ef692dc5b7fdc30166d322a6911cfa9fdfec6b"
+      "url": "https://hmchoe0528.github.io/assets/manuscripts/SMAUG_T_spec_Oct24_v4.0.pdf",
+      "status": "recaptured",
+      "file": "library/KpqC-SMAUG-T.pdf",
+      "filename": "KpqC-SMAUG-T.pdf",
+      "sizeBytes": 583549,
+      "contentType": "application/pdf",
+      "sha256": "272cfaea0bd982da5d60b25dcc0b9689d9b5cd9c7affcb73757f0a0e3c812fa3",
+      "recaptured_at": "2026-09-09T01:28:47.589264+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "KpqC-AIMer",
@@ -3738,13 +3775,16 @@
     },
     {
       "refId": "NIST-SP-800-133r3-ipd",
-      "title": "SP 800-133 Rev. 3 (IPD): Recommendation for Cryptographic Key Generation",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-133r3.ipd.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-133r3-ipd.pdf",
-      "sizeBytes": 512507,
-      "contentType": "application/pdf",
-      "sha256": "3137210663ffa35e84bc9373a398ddc586c2a21f7f2269cea4ca67e6b5ea8838"
+      "url": "https://csrc.nist.gov/pubs/sp/800/133/r3/ipd",
+      "status": "recaptured",
+      "file": "library/NIST-SP-800-133r3-ipd.html",
+      "filename": "NIST-SP-800-133r3-ipd.html",
+      "sizeBytes": 45536,
+      "contentType": "text/html",
+      "sha256": "c6393a664187fe09ec41d129a903f7916b87322b8934bab0b076ccb521e613e9",
+      "recaptured_at": "2026-09-09T01:28:47.917169+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ref-obrien-chrome-hybrid",
@@ -3848,13 +3888,16 @@
     },
     {
       "refId": "ref-pont-downtime",
-      "title": "Downtime required for bitcoin quantum-safety",
-      "url": "https://arxiv.org/pdf/2410.16965.pdf",
-      "status": "downloaded",
-      "filename": "ref-pont-downtime.pdf",
-      "sizeBytes": 141774,
-      "contentType": "application/pdf",
-      "sha256": "5b98b81872b53d126043acea48f57590e32b3f535c86fef5cfd29bbc04712a2e"
+      "url": "https://arxiv.org/abs/2410.16965",
+      "status": "recaptured",
+      "file": "library/ref-pont-downtime.html",
+      "filename": "ref-pont-downtime.html",
+      "sizeBytes": 41286,
+      "contentType": "text/html",
+      "sha256": "d7984d1a176491fab4ee480f548e7e117e1f11ea0b26b5e51cb87128f27a3dc4",
+      "recaptured_at": "2026-09-09T01:28:48.097905+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ref-fukuda-grand-challenge",
@@ -3888,13 +3931,16 @@
     },
     {
       "refId": "ref-drake-hash-multisig",
-      "title": "Hash-based multi-signatures for post-quantum ethereum",
-      "url": "https://eprint.iacr.org/2025/055.pdf",
-      "status": "downloaded",
-      "filename": "ref-drake-hash-multisig.pdf",
-      "sizeBytes": 818432,
-      "contentType": "application/pdf",
-      "sha256": "4963cb3e48d6e445aee58de1abc5989d992fb2b1b4c5eeb1b97f02c4b2bddd47"
+      "url": "https://eprint.iacr.org/2025/055",
+      "status": "recaptured",
+      "file": "library/ref-drake-hash-multisig.html",
+      "filename": "ref-drake-hash-multisig.html",
+      "sizeBytes": 18168,
+      "contentType": "text/html",
+      "sha256": "9cbaf37c8fb5e2e843c03a57d5df4f860fb75eb7d647f923bf5a66788f01e019",
+      "recaptured_at": "2026-09-09T01:28:48.461075+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ref-amy-sha2-preimage",
@@ -4032,13 +4078,16 @@
     },
     {
       "refId": "NIST-ACVP",
-      "title": "NIST Automated Cryptographic Validation Protocol (ACVP)",
-      "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program",
-      "status": "downloaded",
+      "url": "https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html",
+      "status": "recaptured",
+      "file": "library/NIST-ACVP.html",
       "filename": "NIST-ACVP.html",
-      "sizeBytes": 64417,
+      "sizeBytes": 315653,
       "contentType": "text/html",
-      "sha256": "6431cc3567c25fd1878cfb869b19a9386ba2726631390d529957414219d3426c"
+      "sha256": "73e34fc8c2f95450bab3df35d845eeb37afcba39cd54abc03422c31e997880c4",
+      "recaptured_at": "2026-09-09T01:28:48.926385+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/NIST-ACVP.html"
     },
     {
       "refId": "IETF-RFC-7030-EST",
@@ -4082,13 +4131,16 @@
     },
     {
       "refId": "eprint-2025-2059",
-      "title": "Compact, Efficient and Non-Separable Hybrid Signatures (Silithium)",
-      "url": "https://eprint.iacr.org/2025/2059.pdf",
-      "status": "downloaded",
-      "filename": "eprint-2025-2059.pdf",
-      "sizeBytes": 812780,
-      "contentType": "application/pdf",
-      "sha256": "2f3e574ed16a883886bf0486c763aaf3291cd4986dbdfdf03ae72cb9892d0289"
+      "url": "https://eprint.iacr.org/2025/2059",
+      "status": "recaptured",
+      "file": "library/eprint-2025-2059.html",
+      "filename": "eprint-2025-2059.html",
+      "sizeBytes": 16166,
+      "contentType": "text/html",
+      "sha256": "9f973762d587807e888adb1d4c5a3be7ea7b02dff8ed212ea75dd209184929b4",
+      "recaptured_at": "2026-09-09T01:28:49.044538+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "IETF-RFC-8996",
@@ -4332,13 +4384,16 @@
     },
     {
       "refId": "HITECH-PL-111-5",
-      "title": "HITECH Act — Public Law 111-5 (ARRA Title XIII)",
-      "url": "https://www.govinfo.gov/content/pkg/PLAW-111publ5/pdf/PLAW-111publ5.pdf",
-      "status": "downloaded",
-      "filename": "HITECH-PL-111-5.pdf",
-      "sizeBytes": 1189466,
-      "contentType": "application/pdf",
-      "sha256": "ab74a98128b6adec9cafa7d9fbc2a93745ee71f55c2f370b33af28207e2a4ac4"
+      "url": "https://www.govinfo.gov/content/pkg/PLAW-111publ5/html/PLAW-111publ5.htm",
+      "status": "recaptured",
+      "file": "library/HITECH-PL-111-5.html",
+      "filename": "HITECH-PL-111-5.html",
+      "sizeBytes": 1438798,
+      "contentType": "text/html",
+      "sha256": "9d55785fabcd4aef9a025f362e7bfa738724c25d34a71a418a46cb130ebb2679",
+      "recaptured_at": "2026-09-09T01:28:49.483968+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NERC-CIP-REQS",
@@ -4372,13 +4427,16 @@
     },
     {
       "refId": "ZA-POPIA-TEXT",
-      "title": "South Africa Protection of Personal Information Act (POPIA, Act 4 of 2013)",
-      "url": "https://www.justice.gov.za/legislation/acts/2013-004.pdf",
-      "status": "downloaded",
-      "filename": "ZA-POPIA-TEXT.pdf",
-      "sizeBytes": 237928,
-      "contentType": "application/pdf",
-      "sha256": "e29efca4eb14eb7f3fbfe779e972b90d8803016d8073648fd98084a2990e46fb"
+      "url": "https://www.gov.za/documents/protection-personal-information-act",
+      "status": "recaptured",
+      "file": "library/ZA-POPIA-TEXT.html",
+      "filename": "ZA-POPIA-TEXT.html",
+      "sizeBytes": 41229,
+      "contentType": "text/html",
+      "sha256": "7ef0c200dc3700ebf97b60fffaa84da73d6682f71d7253cb380ec360ad4251aa",
+      "recaptured_at": "2026-09-09T01:28:50.861366+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "PCI-DSS-QRG",
@@ -4432,13 +4490,16 @@
     },
     {
       "refId": "DORA-REG-2022-2554",
-      "title": "Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R2554",
-      "status": "downloaded",
-      "filename": "DORA-REG-2022-2554.pdf",
-      "sizeBytes": 1493241,
-      "contentType": "application/pdf",
-      "sha256": "85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c"
+      "url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj/eng",
+      "status": "recaptured",
+      "file": "library/DORA-REG-2022-2554.html",
+      "filename": "DORA-REG-2022-2554.html",
+      "sizeBytes": 1013011,
+      "contentType": "text/html",
+      "sha256": "23b9b8e194b19134d73ad21644011da162809d38c8d1338b95ed8dd197b4b212",
+      "recaptured_at": "2026-09-09T01:28:52.374909+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "GDPR-REG-2016-679",
@@ -4452,13 +4513,16 @@
     },
     {
       "refId": "EIDAS-REG-910-2014",
-      "title": "eIDAS Regulation — Regulation EU 910/2014 (eIDAS 1.0)",
-      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32014R0910",
-      "status": "downloaded",
-      "filename": "EIDAS-REG-910-2014.pdf",
-      "sizeBytes": 1049892,
-      "contentType": "application/pdf",
-      "sha256": "2020744e27f710f756aa541c53c82da84cbfd4474bb7aa81121d1f73073ad763"
+      "url": "https://eur-lex.europa.eu/eli/reg/2014/910/oj/eng",
+      "status": "recaptured",
+      "file": "library/EIDAS-REG-910-2014.html",
+      "filename": "EIDAS-REG-910-2014.html",
+      "sizeBytes": 615452,
+      "contentType": "text/html",
+      "sha256": "4c190a5056150da51be4a4672eba9819d9618da54fe5ff7db9afb1189e28a964",
+      "recaptured_at": "2026-09-09T01:28:53.286416+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "EU-CRA-REG-2024-2847",
@@ -5293,13 +5357,16 @@
     },
     {
       "refId": "RFC 1847",
-      "title": "Security Multiparts for MIME: Multipart/Signed and Multipart/Encrypted",
-      "url": "https://www.rfc-editor.org/rfc/rfc1847.html",
-      "status": "downloaded",
-      "filename": "RFC_1847.html",
-      "sizeBytes": 27407,
+      "url": "https://datatracker.ietf.org/doc/html/rfc1847",
+      "status": "recaptured",
+      "file": "library/RFC 1847.html",
+      "filename": "RFC 1847.html",
+      "sizeBytes": 66801,
       "contentType": "text/html",
-      "sha256": "b63657be7a296f88bb73ef87bc842bdb6ba2fc3ba55d9756b4c557a6c5b6f02a"
+      "sha256": "cf391a7017760c57f87c07fefef40352a3522de9fa82bd15534b6db6dbe42b35",
+      "recaptured_at": "2026-09-09T01:28:53.925878+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "RFC 3370",
@@ -5313,13 +5380,16 @@
     },
     {
       "refId": "RFC 3394",
-      "title": "Advanced Encryption Standard (AES) Key Wrap Algorithm",
-      "url": "https://www.rfc-editor.org/rfc/rfc3394.html",
-      "status": "downloaded",
-      "filename": "RFC_3394.html",
-      "sizeBytes": 82762,
+      "url": "https://datatracker.ietf.org/doc/html/rfc3394",
+      "status": "recaptured",
+      "file": "library/RFC 3394.html",
+      "filename": "RFC 3394.html",
+      "sizeBytes": 119386,
       "contentType": "text/html",
-      "sha256": "a19d2a7d73aab2c3c9b98a5b4cc792f42d247990c7af7c8f79299ff325de4a53"
+      "sha256": "fb808e81f363b5c1f9f56c07c4c0e2c9697cc2090ab19108a62c682681ae7b9d",
+      "recaptured_at": "2026-09-09T01:28:54.086419+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "RFC 3560",
@@ -5899,13 +5969,16 @@
     },
     {
       "refId": "FIPS-197",
-      "title": "FIPS PUB 197",
-      "url": "https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197-upd1.pdf",
-      "status": "downloaded",
-      "filename": "FIPS-197.pdf",
-      "sizeBytes": 1184436,
-      "contentType": "application/pdf",
-      "sha256": "62c86eb567f13edb8f71826e985da870b04ef6381634f303cdb16e84d47becd1"
+      "url": "https://csrc.nist.gov/pubs/fips/197/final",
+      "status": "recaptured",
+      "file": "library/FIPS-197.html",
+      "filename": "FIPS-197.html",
+      "sizeBytes": 43506,
+      "contentType": "text/html",
+      "sha256": "648d72cbcf28329e92dd1868ca9d7b7b9f47fa2c1ad7066aa8ada5d4a5b6f5c5",
+      "recaptured_at": "2026-09-09T01:28:54.316468+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "RFC-8705",
@@ -6409,13 +6482,16 @@
     },
     {
       "refId": "AU-ACSC-Quantum-Tech-Primer-Communications-2026",
-      "title": "Quantum Technology Primer - Communications",
-      "url": "https://www.cyber.gov.au/sites/default/files/2026-03/Quantum%20technology%20primer%20-%20Communications.pdf",
-      "status": "downloaded",
-      "filename": "AU-ACSC-Quantum-Tech-Primer-Communications-2026.pdf",
-      "sizeBytes": 615929,
-      "contentType": "application/pdf",
-      "sha256": "78009b17255e1abb730ad1f85acf8f029f7adb46697bb57cebfe67192667e6c2"
+      "url": "https://www.cyber.gov.au/business-government/secure-design/quantum/quantum-technology-primer-communications",
+      "status": "recaptured",
+      "file": "library/AU-ACSC-Quantum-Tech-Primer-Communications-2026.html",
+      "filename": "AU-ACSC-Quantum-Tech-Primer-Communications-2026.html",
+      "sizeBytes": 320392,
+      "contentType": "text/html",
+      "sha256": "ee0e00f5f218552cda73b829239922fc03e8a86d0f9fa632787c8fe2f529ec89",
+      "recaptured_at": "2026-09-09T01:28:54.773834+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "MDPI-2018-NTRU-SingleTrace-SCA",
@@ -7594,13 +7670,16 @@
     },
     {
       "refId": "Citi-GPS-Quantum-Threat-2026",
-      "title": "Quantum Threat: The Trillion-Dollar Security Race Is On",
-      "url": "https://www.citigroup.com/rcs/citigpa/storage/public/Citi_Institute_Quantum_Threat.pdf",
-      "status": "downloaded",
-      "filename": "Citi-GPS-Quantum-Threat-2026.pdf",
-      "sizeBytes": 1104852,
-      "contentType": "application/pdf",
-      "sha256": "0176a7b58b46afb20f99518ff70087d734254a642ffba7c35be108f13d7bfdc2"
+      "url": "https://www.citigroup.com/global/insights/quantum-threat",
+      "status": "recaptured",
+      "file": "library/Citi-GPS-Quantum-Threat-2026.html",
+      "filename": "Citi-GPS-Quantum-Threat-2026.html",
+      "sizeBytes": 1631863,
+      "contentType": "text/html",
+      "sha256": "ed69183d6504d9e64cfb24c9f9b8d787247369823c896f3bf9c1d2eb257add41",
+      "recaptured_at": "2026-09-09T01:28:55.865493+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "CISA-Quantum-Readiness-Roadmap",
@@ -7799,13 +7878,16 @@
     },
     {
       "refId": "draft-reddy-cose-jose-pqc-hybrid-hpke",
-      "title": "Post-Quantum and Hybrid KEMs for HPKE with JOSE and COSE",
-      "url": "https://www.ietf.org/archive/id/draft-reddy-cose-jose-pqc-hybrid-hpke-11.txt",
-      "status": "downloaded",
-      "filename": "draft-reddy-cose-jose-pqc-hybrid-hpke.txt",
-      "sizeBytes": 40177,
-      "contentType": "text/plain",
-      "sha256": "5f24bc125bc208bef5bde288af4740a3da5051c9d9d575c44d4951dc1552af01"
+      "url": "https://datatracker.ietf.org/doc/html/draft-reddy-cose-jose-pqc-hybrid-hpke-11",
+      "status": "recaptured",
+      "file": "library/draft-reddy-cose-jose-pqc-hybrid-hpke.html",
+      "filename": "draft-reddy-cose-jose-pqc-hybrid-hpke.html",
+      "sizeBytes": 154706,
+      "contentType": "text/html",
+      "sha256": "92ce6aa6eae0b6d9bf8c76e695fb5d46e103d8c98b86011475747733b75305fe",
+      "recaptured_at": "2026-09-09T01:28:56.207886+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "RFC-9941",
@@ -8091,13 +8173,16 @@
     },
     {
       "refId": "SALSA-2022-Lattice-Transformer",
-      "title": "SALSA: Attacking Lattice Cryptography with Transformers",
-      "url": "https://arxiv.org/abs/2207.04785",
-      "status": "downloaded",
-      "filename": "SALSA-2022-Lattice-Transformer.pdf",
-      "sizeBytes": 543169,
-      "contentType": "application/pdf",
-      "sha256": "eaae290751fd9f6abd6a3905530153546b30160552d0eade6953950fb0130f4f"
+      "url": "https://papers.nips.cc/paper_files/paper/2022/hash/e28b3369186459f57c94a9ec9137fac9-Abstract-Conference.html",
+      "status": "recaptured",
+      "file": "library/SALSA-2022-Lattice-Transformer.html",
+      "filename": "SALSA-2022-Lattice-Transformer.html",
+      "sizeBytes": 9237,
+      "contentType": "text/html",
+      "sha256": "7e92859eb55909b88b6e50c281f257da1511d3e488e346b74d1ef2f0cc5a4f5f",
+      "recaptured_at": "2026-09-09T01:28:56.612061+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "KLEPTO-2014-DualEC-Backdoor",
@@ -8151,13 +8236,16 @@
     },
     {
       "refId": "OASIS-CSAF-2.0-VEX",
-      "title": "Common Security Advisory Framework (CSAF) Version 2.0 — VEX Profile",
-      "url": "https://docs.oasis-open.org/csaf/csaf/v2.0/os/csaf-v2.0-os.html",
-      "status": "downloaded",
-      "filename": "OASIS-CSAF-2.0-VEX.html",
-      "sizeBytes": 416523,
-      "contentType": "text/html",
-      "sha256": "a7a28d4b29f26be2241552725f8227f3daa297a898252461a1f18c5e2916827c"
+      "url": "https://docs.oasis-open.org/csaf/csaf/v2.0/os/csaf-v2.0-os.pdf",
+      "status": "recaptured",
+      "file": "library/OASIS-CSAF-2.0-VEX.pdf",
+      "filename": "OASIS-CSAF-2.0-VEX.pdf",
+      "sizeBytes": 735777,
+      "contentType": "application/pdf",
+      "sha256": "57d7956f283890d098eb20737c52e190a3c73ce88a8d04a318426872bd45591f",
+      "recaptured_at": "2026-09-09T01:28:56.970065+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "OMB-M-26-15",
@@ -8201,33 +8289,42 @@
     },
     {
       "refId": "SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model",
-      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 1 – PIV Card Application Namespace, Data Model and Representation",
-      "url": "https://raw.githubusercontent.com/usnistgov/piv-standards/main/800-73pt1/SP800-73pt1.md",
-      "status": "downloaded",
-      "filename": "SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model.md",
-      "sizeBytes": 137908,
-      "contentType": "text/markdown",
-      "sha256": "c83be456abd861383628bac6965aaea121c0e4ed3f018d390fd8226b2fca45c1"
+      "url": "https://csrc.nist.gov/pubs/sp/800/73/pt1/6/iwd",
+      "status": "recaptured",
+      "file": "library/SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model.html",
+      "filename": "SP-800-73-6-Part-1-PIV-Card-Application-Namespace-Data-Model.html",
+      "sizeBytes": 40331,
+      "contentType": "text/html",
+      "sha256": "a5fc0d4f0ef12328b296d46094fa60774f32c547531b1e02f17c529f8dcf5edd",
+      "recaptured_at": "2026-09-09T01:28:57.321632+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa",
-      "title": "NIST SP 800-73-6 (Initial Working Draft), Interfaces for Personal Identity Verification: Part 2 – PIV Card Application Card Command Interface",
-      "url": "https://raw.githubusercontent.com/usnistgov/piv-standards/main/800-73pt2/SP800-73pt2.md",
-      "status": "downloaded",
-      "filename": "SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa.md",
-      "sizeBytes": 156351,
-      "contentType": "text/markdown",
-      "sha256": "65416f1fdf075b992eca021db5965d43c5ebb5d44ec1a1300ed73e0e9dd35315"
+      "url": "https://csrc.nist.gov/pubs/sp/800/73/pt2/6/iwd",
+      "status": "recaptured",
+      "file": "library/SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa.html",
+      "filename": "SP-800-73-6-Part-2-PIV-Card-Application-Card-Command-Interfa.html",
+      "sizeBytes": 40241,
+      "contentType": "text/html",
+      "sha256": "8f32ba5fa5644bc742124e5ff6402d44edd8d5635e7abd88bcdecf7971760f8c",
+      "recaptured_at": "2026-09-09T01:28:57.791322+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV",
-      "title": "NIST SP 800-78-6 (Initial Working Draft), Cryptographic Algorithms and Key Sizes for Personal Identity Verification",
-      "url": "https://github.com/usnistgov/piv-standards/blob/main/800-78/SP800-78.md",
-      "status": "downloaded",
-      "filename": "SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV.md",
-      "sizeBytes": 53545,
-      "contentType": "text/markdown",
-      "sha256": "f6fbf3dc3f2a1a3e36fb0c592a4e7a9a0efd2c37b50a46e36d42d6a4ddda6d0f"
+      "url": "https://csrc.nist.gov/pubs/sp/800/78/6/iwd",
+      "status": "recaptured",
+      "file": "library/SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV.html",
+      "filename": "SP-800-78-6-Cryptographic-Algorithms-and-Key-Sizes-for-PIV.html",
+      "sizeBytes": 40063,
+      "contentType": "text/html",
+      "sha256": "c4402e14b4d8de4dbbfdbcf90dcc406d624587a217bee38a5ed2588f10f1e7a0",
+      "recaptured_at": "2026-09-09T01:28:58.056885+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Post-Quantum-Guidance-for-current-deployments-of-IETF-protoc",
@@ -8425,23 +8522,29 @@
     },
     {
       "refId": "NIST-SP-800-186",
-      "title": "NIST SP 800-186",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-186.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-186.pdf",
-      "sizeBytes": 2983258,
-      "contentType": "application/pdf",
-      "sha256": "53c7cf3340528aaa0a7bbeaef947f2099568192367d4341a7d4abceb55f78432"
+      "url": "https://csrc.nist.gov/pubs/sp/800/186/final",
+      "status": "recaptured",
+      "file": "library/NIST-SP-800-186.html",
+      "filename": "NIST-SP-800-186.html",
+      "sizeBytes": 44998,
+      "contentType": "text/html",
+      "sha256": "6d7abcfce85cf0ab6f43ac2bb8046fda24472e7f9282fc2b52eaa123d01d2b18",
+      "recaptured_at": "2026-09-09T01:28:58.308343+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "NIST-SP-800-185",
-      "title": "NIST SP 800-185",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-185.pdf",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-185.pdf",
-      "sizeBytes": 501608,
-      "contentType": "application/pdf",
-      "sha256": "0ebcdfb5b145bcb6a8a0f49737a201e8fb30dce06951595a07010774d402d7c5"
+      "url": "https://csrc.nist.gov/pubs/sp/800/185/final",
+      "status": "recaptured",
+      "file": "library/NIST-SP-800-185.html",
+      "filename": "NIST-SP-800-185.html",
+      "sizeBytes": 45429,
+      "contentType": "text/html",
+      "sha256": "63d4354b4b515179840fb55aeb411d019e74a270fa4f0a7cc570a578a7401e2c",
+      "recaptured_at": "2026-09-09T01:28:58.569278+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ARINC-Standard-811",
@@ -8965,13 +9068,16 @@
     },
     {
       "refId": "ASD-Australia-Information-Security-Manual-Guidelines-for-Cry",
-      "title": "ASD (Australia) - Information Security Manual, Guidelines for Cryptography (verified current as of June 2026 release)",
-      "url": "https://www.cyber.gov.au/business-government/asds-cyber-security-frameworks/ism/cyber-security-guidelines/guidelines-for-cryptography",
-      "status": "downloaded",
-      "filename": "ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.html",
-      "sizeBytes": 362231,
-      "contentType": "text/html",
-      "sha256": "c5d90383d1d42b9637479497996efa78aa33f693c1cfff4b03f15363155fc62a"
+      "url": "https://www.cyber.gov.au/sites/default/files/2026-06/22.%20ISM%20-%20Guidelines%20for%20cryptography%20(June%202026).pdf",
+      "status": "recaptured",
+      "file": "library/ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.pdf",
+      "filename": "ASD-Australia-Information-Security-Manual-Guidelines-for-Cry.pdf",
+      "sizeBytes": 982987,
+      "contentType": "application/pdf",
+      "sha256": "939e71b104468e905e04c29d3104409c2d9b959104aaed08785cf104d700028d",
+      "recaptured_at": "2026-09-09T01:28:58.792888+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "SLSA-Specification-v1.1",
@@ -9340,13 +9446,16 @@
     },
     {
       "refId": "PSD2-Directive-EU-2015-2366",
-      "title": "Directive (EU) 2015/2366 on payment services in the internal market (PSD2)",
-      "url": "https://www.legislation.gov.uk/eudr/2015/2366/data.htm",
-      "status": "downloaded",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32015L2366",
+      "status": "recaptured",
+      "file": "library/PSD2-Directive-EU-2015-2366.html",
       "filename": "PSD2-Directive-EU-2015-2366.html",
-      "sizeBytes": 609023,
+      "sizeBytes": 1120388,
       "contentType": "text/html",
-      "sha256": "79ed7b5c7aba538fef48bbaf805acc0c331fdd64f4f80ba6b8bc631a540a364d"
+      "sha256": "99062cf7846165d45a7e821b7a65b1cc75b7ec8ebb5b1eca23ec9b9d986eda65",
+      "recaptured_at": "2026-09-09T01:29:00.180298+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/PSD2-Directive-EU-2015-2366.html"
     },
     {
       "refId": "EBA-RTS-SCA-2018-389",
@@ -9530,13 +9639,16 @@
     },
     {
       "refId": "Internet2-InCommon-Federation",
-      "title": "Internet2 InCommon Federation",
-      "url": "https://incommon.org/about",
-      "status": "downloaded",
+      "url": "https://internet2.edu/incommon-federation-service-enhancements/",
+      "status": "recaptured",
+      "file": "library/Internet2-InCommon-Federation.html",
       "filename": "Internet2-InCommon-Federation.html",
-      "sizeBytes": 110628,
+      "sizeBytes": 141326,
       "contentType": "text/html",
-      "sha256": "ddeba98c8aa1130a0e1efc47eda444df5b0bf9ba8b377eb5e124ba4ac873b2ae"
+      "sha256": "2f8eb41347e69e69e186e9d989f3c3a614d49c78419e8dd256b633a54dae7748",
+      "recaptured_at": "2026-09-09T01:29:01.228945+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/Internet2-InCommon-Federation.html"
     },
     {
       "refId": "eIDAS-Regulation-EU-No-910-2014",
@@ -9760,13 +9872,16 @@
     },
     {
       "refId": "Safe-Wallet-Safe-sol-multisig-signature-verification",
-      "title": "Safe{Wallet} — Safe.sol (multisig signature verification)",
-      "url": "https://raw.githubusercontent.com/safe-global/safe-smart-account/main/contracts/Safe.sol",
-      "status": "downloaded",
+      "url": "https://docs.safe.global/reference-smart-account/signatures/checkNSignatures",
+      "status": "recaptured",
+      "file": "library/Safe-Wallet-Safe-sol-multisig-signature-verification.html",
       "filename": "Safe-Wallet-Safe-sol-multisig-signature-verification.html",
-      "sizeBytes": 30014,
+      "sizeBytes": 128962,
       "contentType": "text/html",
-      "sha256": "9f91d9250e18bb0710b7b1f10dcbe2417e9ef8d22eeee98dba2ef48661a060fa"
+      "sha256": "f6f19c0f52b986a9f69448e6056ffa65535970f58145fcf5ceb96c979f9a2814",
+      "recaptured_at": "2026-09-09T01:29:01.794727+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/Safe-Wallet-Safe-sol-multisig-signature-verification.html"
     },
     {
       "refId": "Wormhole-Docs-VAAs-Guardian-signature-scheme",
@@ -9920,13 +10035,16 @@
     },
     {
       "refId": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management",
-      "title": "PCI SSC — Key Blocks 101/104 (AES/TDES key management)",
-      "url": "https://blog.pcisecuritystandards.org/key-blocks-104",
-      "status": "downloaded",
+      "url": "https://blog.pcisecuritystandards.org/key-blocks-101",
+      "status": "recaptured",
+      "file": "library/PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management.html",
       "filename": "PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management.html",
-      "sizeBytes": 83441,
+      "sizeBytes": 84882,
       "contentType": "text/html",
-      "sha256": "0f806492c78dba73e881fc27cf0fc2f2b04534ed5989e93d3d70bc79957886bc"
+      "sha256": "306b1d095d940be97e7c4f3c30b28f24df252c8f483828cc5e1f5eb166e56d1a",
+      "recaptured_at": "2026-09-09T01:29:02.140824+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/PCI-SSC-Key-Blocks-101-104-AES-TDES-key-management.html"
     },
     {
       "refId": "Apple-Pay-Guide-Process-Payment-ECDH-SHA",
@@ -10130,13 +10248,16 @@
     },
     {
       "refId": "NIST-CMVP-140-2-to-140-3-Transition-Timeline",
-      "title": "NIST CMVP — FIPS 140-2 to FIPS 140-3 transition timeline",
-      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program",
-      "status": "downloaded",
+      "url": "https://csrc.nist.gov/Projects/FIPS-140-3-Transition-Effort",
+      "status": "recaptured",
+      "file": "library/NIST-CMVP-140-2-to-140-3-Transition-Timeline.html",
       "filename": "NIST-CMVP-140-2-to-140-3-Transition-Timeline.html",
-      "sizeBytes": 66051,
+      "sizeBytes": 47720,
       "contentType": "text/html",
-      "sha256": "a3fc6d769b48e4955217a7ded079c58232d6a59631c1c263a4fde5c677d79e79"
+      "sha256": "53b77d20e31e905fbaacbfb4010c5ab5328769707041fd73a93a5cde9b34cfb9",
+      "recaptured_at": "2026-09-09T01:29:02.481898+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/NIST-CMVP-140-2-to-140-3-Transition-Timeline.html"
     },
     {
       "refId": "China-Cryptography-Law-2019-NPC",
@@ -10150,33 +10271,42 @@
     },
     {
       "refId": "CABF-TLS-BR-v2-2-9",
-      "title": "CABF-TLS-BR-v2-2-9",
-      "url": "https://raw.githubusercontent.com/cabforum/servercert/main/docs/BR.md",
-      "status": "downloaded",
-      "filename": "CABF-TLS-BR-v2-2-9.md",
-      "sizeBytes": 353070,
-      "contentType": "text/markdown",
-      "sha256": "057b4aad56cbb0f2ebd32b30b68781f4d42617fb65ca2bed9068c71a99be2976"
+      "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/CA-Browser-Forum-TLS-BR-2.2.9.pdf",
+      "status": "recaptured",
+      "file": "library/CABF-TLS-BR-v2-2-9.pdf",
+      "filename": "CABF-TLS-BR-v2-2-9.pdf",
+      "sizeBytes": 2191322,
+      "contentType": "application/pdf",
+      "sha256": "d64ecf55fb21e76a8204aa326b58383b7cddbd02b48514001cadcb09620117d0",
+      "recaptured_at": "2026-09-09T01:29:03.038796+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "CABF-SMIME-BR-v1-0-15",
-      "title": "CABF-SMIME-BR-v1-0-15",
-      "url": "https://raw.githubusercontent.com/cabforum/smime/main/SBR.md",
-      "status": "downloaded",
-      "filename": "CABF-SMIME-BR-v1-0-15.md",
-      "sizeBytes": 218626,
-      "contentType": "text/markdown",
-      "sha256": "f8943e4af05f9e4032ec816a53406f17fbc379cc5e03f6e66f0d8eb9058541a6"
+      "url": "https://cabforum.org/uploads/CA-Browser-Forum-SMIMEBR-1.0.15.pdf",
+      "status": "recaptured",
+      "file": "library/CABF-SMIME-BR-v1-0-15.pdf",
+      "filename": "CABF-SMIME-BR-v1-0-15.pdf",
+      "sizeBytes": 314157,
+      "contentType": "application/pdf",
+      "sha256": "52e9a8b008b0926193180cf0f520500e655345d399072f59c2409a7c71126531",
+      "recaptured_at": "2026-09-09T01:29:03.240036+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "CABF-Code-Signing-BR-v3-11",
-      "title": "CABF-Code-Signing-BR-v3-11",
-      "url": "https://raw.githubusercontent.com/cabforum/code-signing/main/docs/CSBR.md",
-      "status": "downloaded",
-      "filename": "CABF-Code-Signing-BR-v3-11.md",
-      "sizeBytes": 296528,
-      "contentType": "text/markdown",
-      "sha256": "92b7860709c9b92719e4ed73d43f3230d5b437b78ab382423b84e6b0f6d74ac7"
+      "url": "https://cabforum.org/uploads/CA-Browser-Forum-CSCBR-3.11.0.pdf",
+      "status": "recaptured",
+      "file": "library/CABF-Code-Signing-BR-v3-11.pdf",
+      "filename": "CABF-Code-Signing-BR-v3-11.pdf",
+      "sizeBytes": 360141,
+      "contentType": "application/pdf",
+      "sha256": "db30d7fea5143612fa5779c948fc5695ff29428a6f8e9cdacf6da62f40461079",
+      "recaptured_at": "2026-09-09T01:29:03.438367+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ICANN-Root-Zone-KSK-DPS-8th-Edition",
@@ -10603,14 +10733,16 @@
     },
     {
       "refId": "3GPP-PQC-Study-2025",
-      "title": "3GPP TR 33.938 V19.2.0 — 3GPP Cryptographic Inventory (Release 19)",
-      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.938/33938-j20.zip",
-      "status": "downloaded",
-      "filename": "3GPP-PQC-Study-2025.docx",
-      "sizeBytes": 134945,
-      "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "sha256": "b53ed0f327bc072cbbb83d74703f1c962b823e148c54498f0cf18bd4d4741525",
-      "backfilledAt": "2026-08-21"
+      "url": "https://www.etsi.org/deliver/etsi_tr/133900_133999/133938/19.02.00_60/tr_133938v190200p.pdf",
+      "status": "recaptured",
+      "file": "library/3GPP-PQC-Study-2025.pdf",
+      "filename": "3GPP-PQC-Study-2025.pdf",
+      "sizeBytes": 153488,
+      "contentType": "application/pdf",
+      "sha256": "1cc0b95fc5345927db2dd90583b47542876151a13eea2965f3d9ce1f1db376c4",
+      "recaptured_at": "2026-09-09T01:28:39.129067+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ENISA PQC Guidelines",
@@ -10636,14 +10768,16 @@
     },
     {
       "refId": "NIST-SP-800-90A-R1",
-      "title": "SP 800-90A Rev. 1: Recommendation for Random Number Generation Using Deterministic Random Bit Generators",
-      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
-      "status": "downloaded",
-      "filename": "NIST-SP-800-90A-R1.pdf",
-      "sizeBytes": 2417007,
-      "contentType": "application/pdf",
-      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
-      "backfilledAt": "2026-08-21"
+      "url": "https://www.nist.gov/publications/recommendation-random-number-generation-using-deterministic-random-bit-generators-2",
+      "status": "recaptured",
+      "file": "library/NIST-SP-800-90A-R1.html",
+      "filename": "NIST-SP-800-90A-R1.html",
+      "sizeBytes": 82789,
+      "contentType": "text/html",
+      "sha256": "cbab3c1978efeea69466780752f641df3bde04a730936a2644dba047fd52d795",
+      "recaptured_at": "2026-09-09T01:28:42.346043+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "CSC-API-v2-Spec",
@@ -10768,14 +10902,16 @@
     },
     {
       "refId": "NIAP",
-      "title": "NIAP — National Information Assurance Partnership",
-      "url": "https://www.niap-ccevs.org/",
-      "status": "downloaded",
-      "filename": "NIAP.pdf",
-      "sizeBytes": 3756170,
-      "contentType": "application/pdf",
-      "sha256": "852fec7215dc19ba06f33240a35c15edc1bc41a389740e7197e849997eddaeea",
-      "backfilledAt": "2026-08-21"
+      "url": "https://www.nist.gov/news-events/news/1997/08/new-partnership-enhance-quality-information-security",
+      "status": "recaptured",
+      "file": "library/NIAP.html",
+      "filename": "NIAP.html",
+      "sizeBytes": 84104,
+      "contentType": "text/html",
+      "sha256": "d5a32ba40263a299dc4a3fa95f595f63e36dea79f668dc7fa29bad2a504c0b72",
+      "recaptured_at": "2026-09-09T01:28:53.559651+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "FIPS-198",
@@ -10900,14 +11036,16 @@
     },
     {
       "refId": "CMMC-SPRS-Guidance",
-      "title": "DoD Guidance on CMMC and SPRS",
-      "url": "https://dodcio.defense.gov/Portals/0/Documents/CMMC/CMMC-SPRS.pdf",
-      "status": "downloaded",
+      "url": "https://www.sprs.csd.disa.mil/pdf/CMMCQuickEntryGuide.pdf",
+      "status": "recaptured",
+      "file": "library/CMMC-SPRS-Guidance.pdf",
       "filename": "CMMC-SPRS-Guidance.pdf",
-      "sizeBytes": 4020383,
+      "sizeBytes": 520927,
       "contentType": "application/pdf",
-      "sha256": "1f0ac2037037d367db141f2d49741975bb0e30ea336aad6fd0ce7d0bcdcaea14",
-      "backfilledAt": "2026-08-21"
+      "sha256": "99876f9d3cb41fca6cb614cb1831d74a2f0b52c294d6acdb47effde812560e35",
+      "recaptured_at": "2026-09-09T01:29:00.953690+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/library/CMMC-SPRS-Guidance.pdf"
     },
     {
       "refId": "DoD-OT-Control-Systems-SRG",
@@ -11147,13 +11285,16 @@
     },
     {
       "refId": "RFC-2986-PKCS-10-Certification-Request-Syntax-Specification",
-      "title": "RFC 2986 — PKCS #10: Certification Request Syntax Specification Version 1.7",
-      "url": "https://www.rfc-editor.org/rfc/rfc2986.html",
-      "status": "downloaded",
+      "url": "https://datatracker.ietf.org/doc/html/rfc2986",
+      "status": "recaptured",
+      "file": "library/RFC-2986-PKCS-10-Certification-Request-Syntax-Specification.html",
       "filename": "RFC-2986-PKCS-10-Certification-Request-Syntax-Specification.html",
-      "sizeBytes": 33081,
+      "sizeBytes": 69205,
       "contentType": "text/html",
-      "sha256": "6cdb5d404d14c68ac82a50f6f0500ab2c1d371b85b679c401db984912abcee72"
+      "sha256": "ef92fb40229db0a469a5ffbc2bd70fb66ae3b753a3f2f2ca5d26efeab059ad58",
+      "recaptured_at": "2026-09-09T01:29:03.746526+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/library/RFC-2986-PKCS-10-Certification-Request-Syntax-Specification.html"
     },
     {
       "refId": "RFC-3526-More-Modular-Exponential-MODP-Diffie-Hellman-groups",
@@ -11407,23 +11548,29 @@
     },
     {
       "refId": "Integrated-Methodology-for-Information-Security-Risk-Managem",
-      "title": "Integrated Methodology for Information Security Risk Management using ISO 27005:2018 and NIST SP 800-30 for Insurance Sector",
-      "url": "https://thesai.org/Downloads/Volume14No4/Paper_68-Integrated_Methodology_for_Information_Security_Risk_Management.pdf",
-      "status": "downloaded",
-      "filename": "Integrated-Methodology-for-Information-Security-Risk-Managem.pdf",
-      "sizeBytes": 1195704,
-      "contentType": "application/pdf",
-      "sha256": "3f384b6df1e9dc70a589fc2eee78a4d0d7c9277b1a51ff29048714754a748928"
+      "url": "https://thesai.org/Publications/ViewPaper?Code=IJACSA&Issue=4&SerialNo=68&Volume=14",
+      "status": "recaptured",
+      "file": "library/Integrated-Methodology-for-Information-Security-Risk-Managem.html",
+      "filename": "Integrated-Methodology-for-Information-Security-Risk-Managem.html",
+      "sizeBytes": 108900,
+      "contentType": "text/html",
+      "sha256": "30465f77d7d3999f8568dd7d105e96cdc6737581c763d7070b6b10ab72e6e3e0",
+      "recaptured_at": "2026-09-09T01:29:04.108955+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics",
-      "title": "Agile, Post-Quantum Secure Cryptography in Avionics",
-      "url": "https://eprint.iacr.org/2024/667.pdf",
-      "status": "downloaded",
-      "filename": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics.pdf",
-      "sizeBytes": 379083,
-      "contentType": "application/pdf",
-      "sha256": "568f194a0048a70afca254586c43fae32667b9f3d04b7c06c18be9172cc2db9f"
+      "url": "https://eprint.iacr.org/2024/667",
+      "status": "recaptured",
+      "file": "library/Agile-Post-Quantum-Secure-Cryptography-in-Avionics.html",
+      "filename": "Agile-Post-Quantum-Secure-Cryptography-in-Avionics.html",
+      "sizeBytes": 18081,
+      "contentType": "text/html",
+      "sha256": "fb292940d4b085f317824e9bcb55a114733b7a0cb1500a76af563e6e057d6b0d",
+      "recaptured_at": "2026-09-09T01:29:04.436815+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "DO-178C-Costs-vs-Benefits-Analysis",
@@ -11517,23 +11664,29 @@
     },
     {
       "refId": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa",
-      "title": "Template and CPA Side Channel Attacks on the Kyber/ML-KEM Pair-Pointwise Multiplication",
-      "url": "https://eprint.iacr.org/2025/1577.pdf",
-      "status": "downloaded",
-      "filename": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa.pdf",
-      "sizeBytes": 1117495,
-      "contentType": "application/pdf",
-      "sha256": "75708519473798e9dbd1f2b694f19812d33005008e5bf19adb0fb862a3884d59"
+      "url": "https://eprint.iacr.org/2025/1577",
+      "status": "recaptured",
+      "file": "library/Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa.html",
+      "filename": "Template-and-CPA-Side-Channel-Attacks-on-the-Kyber-ML-KEM-Pa.html",
+      "sizeBytes": 16313,
+      "contentType": "text/html",
+      "sha256": "13cfaa8e10ff057977205c5132ad4cea5e449e2fa129adf9d812f2a4d29fd07e",
+      "recaptured_at": "2026-09-09T01:29:04.705186+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA",
-      "title": "Migration to Post-Quantum Cryptography: From ECDSA to ML-DSA",
-      "url": "https://eprint.iacr.org/2025/2025.pdf",
-      "status": "downloaded",
-      "filename": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA.pdf",
-      "sizeBytes": 599782,
-      "contentType": "application/pdf",
-      "sha256": "9a33708dfa8e322a8c1d3d08fa3bbae61c434f3de171c6ed92d2ff74e4dd5aac"
+      "url": "https://eprint.iacr.org/2025/2025",
+      "status": "recaptured",
+      "file": "library/Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA.html",
+      "filename": "Migration-to-Post-Quantum-Cryptography-From-ECDSA-to-ML-DSA.html",
+      "sizeBytes": 15495,
+      "contentType": "text/html",
+      "sha256": "3b2502fccbfa799fbd4512f6281659814093fbdf334cb339ec8654b56080e59c",
+      "recaptured_at": "2026-09-09T01:29:04.940567+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Quantum-cryptography-Public-key-distribution-and-coin-tossin",
@@ -11547,13 +11700,16 @@
     },
     {
       "refId": "Micius-quantum-experiments-in-space",
-      "title": "Micius quantum experiments in space",
-      "url": "https://arxiv.org/pdf/2208.10236",
-      "status": "downloaded",
-      "filename": "Micius-quantum-experiments-in-space.pdf",
-      "sizeBytes": 38589334,
-      "contentType": "application/pdf",
-      "sha256": "eaafb9f4afe53e6b5dbe05bb056bd899765928ed411f9bd58bbfecb079d5fecc"
+      "url": "https://arxiv.org/abs/2208.10236",
+      "status": "recaptured",
+      "file": "library/Micius-quantum-experiments-in-space.html",
+      "filename": "Micius-quantum-experiments-in-space.html",
+      "sizeBytes": 43673,
+      "contentType": "text/html",
+      "sha256": "c33c61baf6eee7bb88dc01405a227d1568cc14d8ef000278446549839124b52d",
+      "recaptured_at": "2026-09-09T01:29:05.027658+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Simple-Proof-of-Security-of-the-BB84-Quantum-Key-Distributio",
@@ -11567,13 +11723,16 @@
     },
     {
       "refId": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr",
-      "title": "Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer",
-      "url": "https://arxiv.org/pdf/quant-ph/9508027",
-      "status": "downloaded",
-      "filename": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr.pdf",
-      "sizeBytes": 315663,
-      "contentType": "application/pdf",
-      "sha256": "96ba03bbfa27ea6a9ab5f1795cb62166948a6de4d8da84f9f43044bb5ab58838"
+      "url": "https://arxiv.org/abs/quant-ph/9508027",
+      "status": "recaptured",
+      "file": "library/Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr.html",
+      "filename": "Polynomial-Time-Algorithms-for-Prime-Factorization-and-Discr.html",
+      "sizeBytes": 42273,
+      "contentType": "text/html",
+      "sha256": "9616bd798c4b15bea5acff76ef4e239725238f10f2230885cc2b8934425c9890",
+      "recaptured_at": "2026-09-09T01:29:05.112408+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "A-fast-quantum-mechanical-algorithm-for-database-search",
@@ -11637,33 +11796,42 @@
     },
     {
       "refId": "Integrating-Remote-Attestation-with-Transport-Layer-Security",
-      "title": "Integrating Remote Attestation with Transport Layer Security",
-      "url": "https://arxiv.org/pdf/1801.05863",
-      "status": "downloaded",
-      "filename": "Integrating-Remote-Attestation-with-Transport-Layer-Security.pdf",
-      "sizeBytes": 342101,
-      "contentType": "application/pdf",
-      "sha256": "b5044df2cc816e5ec3232f9da327c4437bc2d5ee2b007aa14676f5219584800d"
+      "url": "https://arxiv.org/abs/1801.05863",
+      "status": "recaptured",
+      "file": "library/Integrating-Remote-Attestation-with-Transport-Layer-Security.html",
+      "filename": "Integrating-Remote-Attestation-with-Transport-Layer-Security.html",
+      "sizeBytes": 41409,
+      "contentType": "text/html",
+      "sha256": "833b18adfdbc8adc22bbed5109a49e2b12aad5445c78b9d600b135c1182e9e62",
+      "recaptured_at": "2026-09-09T01:29:05.210035+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Intel-SGX-Explained",
-      "title": "Intel SGX Explained",
-      "url": "https://eprint.iacr.org/2016/086.pdf",
-      "status": "downloaded",
-      "filename": "Intel-SGX-Explained.pdf",
-      "sizeBytes": 2385053,
-      "contentType": "application/pdf",
-      "sha256": "8ff63fe160a9028832064470af991a6d8e4865070af0fe53451a6a2a41d6e4da"
+      "url": "https://eprint.iacr.org/2016/086",
+      "status": "recaptured",
+      "file": "library/Intel-SGX-Explained.html",
+      "filename": "Intel-SGX-Explained.html",
+      "sizeBytes": 13797,
+      "contentType": "text/html",
+      "sha256": "0d8da0914c4a3b34005a191d2c4c5e8439b930da6ff9bfbc49e153b4f94dad9f",
+      "recaptured_at": "2026-09-09T01:29:05.356789+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "SoK-Hardware-supported-Trusted-Execution-Environments",
-      "title": "SoK: Hardware-supported Trusted Execution Environments",
-      "url": "https://arxiv.org/pdf/2205.12742",
-      "status": "downloaded",
-      "filename": "SoK-Hardware-supported-Trusted-Execution-Environments.pdf",
-      "sizeBytes": 786065,
-      "contentType": "application/pdf",
-      "sha256": "9143d951a39dbbe9770bcfe4572753941dc8297057e066b2b627de99f0d611fc"
+      "url": "https://arxiv.org/abs/2205.12742",
+      "status": "recaptured",
+      "file": "library/SoK-Hardware-supported-Trusted-Execution-Environments.html",
+      "filename": "SoK-Hardware-supported-Trusted-Execution-Environments.html",
+      "sizeBytes": 41381,
+      "contentType": "text/html",
+      "sha256": "93b2e343f59752bc6829114d02fa8d9a91d2d89a128b0ddb572dfb6d6a4ece90",
+      "recaptured_at": "2026-09-09T01:29:05.446922+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "The-Security-Design-of-the-AWS-Nitro-System",
@@ -11707,13 +11875,16 @@
     },
     {
       "refId": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme",
-      "title": "Signature Correction Attack on Dilithium Signature Scheme",
-      "url": "https://arxiv.org/pdf/2203.00637",
-      "status": "downloaded",
-      "filename": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme.pdf",
-      "sizeBytes": 684276,
-      "contentType": "application/pdf",
-      "sha256": "d27d072fa0c6ddb2eb6a4fb8e35c38a084400a8a09bf97eb3a5449149ce838b8"
+      "url": "https://arxiv.org/abs/2203.00637",
+      "status": "recaptured",
+      "file": "library/Signature-Correction-Attack-on-Dilithium-Signature-Scheme.html",
+      "filename": "Signature-Correction-Attack-on-Dilithium-Signature-Scheme.html",
+      "sizeBytes": 43376,
+      "contentType": "text/html",
+      "sha256": "7520407a4e76a7bcc57228a3d924d24a3860cba304bc1de0a17d839cda8f368c",
+      "recaptured_at": "2026-09-09T01:29:05.548097+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "RAD750",
@@ -11727,13 +11898,16 @@
     },
     {
       "refId": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf",
-      "title": "Potential Data Link Candidates for Civilian Unmanned Aircraft Systems: A Survey",
-      "url": "https://arxiv.org/pdf/1912.13379",
-      "status": "downloaded",
-      "filename": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf.pdf",
-      "sizeBytes": 1646617,
-      "contentType": "application/pdf",
-      "sha256": "b5692f7de21f355ac968b2060ff3c63d65b3f6dd0b1dad26aaddb8c3fb90f4a7"
+      "url": "https://arxiv.org/abs/1912.13379",
+      "status": "recaptured",
+      "file": "library/Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf.html",
+      "filename": "Potential-Data-Link-Candidates-for-Civilian-Unmanned-Aircraf.html",
+      "sizeBytes": 44129,
+      "contentType": "text/html",
+      "sha256": "7d4077736810951b22fe96142c253644d28d11b9f6d2d5b584ecb71d0c072f69",
+      "recaptured_at": "2026-09-09T01:29:05.638721+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Advanced-Physical-Layer-Technologies-in-VHF-Data-Link-for-Ae",
@@ -11927,13 +12101,16 @@
     },
     {
       "refId": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub",
-      "title": "Evaluation of Time-Critical Communications for IEC 61850-Substation Network Architecture",
-      "url": "https://arxiv.org/pdf/1512.07004",
-      "status": "downloaded",
-      "filename": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.pdf",
-      "sizeBytes": 295610,
-      "contentType": "application/pdf",
-      "sha256": "7f415afa991497ab13023014bfe894198b3830b6c0dcdc39129074578e786d2b"
+      "url": "https://arxiv.org/abs/1512.07004",
+      "status": "recaptured",
+      "file": "library/Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.html",
+      "filename": "Evaluation-of-Time-Critical-Communications-for-IEC-61850-Sub.html",
+      "sizeBytes": 42679,
+      "contentType": "text/html",
+      "sha256": "68b4677ff1157b953eed4171472a93cfd95d141def7db920c88901dbff584ebe",
+      "recaptured_at": "2026-09-09T01:29:05.734932+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "IEC-61850-Meets-IEC-62351-Securing-GOOSE-Power-Grid-Weakness",
@@ -12067,13 +12244,16 @@
     },
     {
       "refId": "LoRaWAN-Regional-Parameters",
-      "title": "LoRaWAN Regional Parameters",
-      "url": "https://lora-alliance.org/wp-content/uploads/2020/11/lorawan_regional_parameters_v1.0.3reva_0.pdf",
-      "status": "downloaded",
-      "filename": "LoRaWAN-Regional-Parameters.pdf",
-      "sizeBytes": 1443984,
-      "contentType": "application/pdf",
-      "sha256": "e558a2cfc9b93f38a06dc52a40fdd003ced6e649c3e357c1285f5604444a3d61"
+      "url": "https://resources.lora-alliance.org/technical-specifications/rp002-1-0-5-lorawan-regional-parameters",
+      "status": "recaptured",
+      "file": "library/LoRaWAN-Regional-Parameters.html",
+      "filename": "LoRaWAN-Regional-Parameters.html",
+      "sizeBytes": 104034,
+      "contentType": "text/html",
+      "sha256": "b9c3cf052dbb3d0c467c610ea70354218d1bfde116bb8e822ab439e31ba8d5b0",
+      "recaptured_at": "2026-09-09T01:29:06.777980+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "Post-Quantum-Algorithms-Luna-HSM",
@@ -12355,7 +12535,7 @@
       "recoveredBy": "codex url research + lineage gates"
     }
   ],
-  "generated": "2026-09-08T22:26:56.558489+00:00",
+  "generated": "2026-09-09T01:29:06.778007+00:00",
   "rehashNote": "2026-08-22: a bulk re-cache on 2026-07-29 rewrote captures without updating this manifest, so their recorded hashes had proven nothing for three weeks. Entries carrying rehashedAt were re-verified as still being the document the row claims (title screen, plus an edition-token check for rows naming a specific year or version) and their hash re-recorded from disk. previousSha256 keeps what was there before. Entries WITHOUT rehashedAt were not re-verified.",
   "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects — a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }
