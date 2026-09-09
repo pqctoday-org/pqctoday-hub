@@ -40,9 +40,9 @@
       "sizeBytes": 2000479,
       "contentType": "application/pdf",
       "sha256": "8ca9ee948b53c395a638bb1205b11470687fc0427d04389b6ea999b5f91a57bf",
-      "recaptured_at": "2026-09-08T22:08:09.390045+00:00",
+      "recaptured_at": "2026-09-09T01:25:17.033014+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": null
+      "superseded_file": "_superseded-20260908/industry/fin-hsm.pdf"
     },
     {
       "refId": "pci-terminals",
@@ -95,7 +95,33 @@
       "recaptured_at": "2026-09-08T22:08:10.556512+00:00",
       "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
       "superseded_file": null
+    },
+    {
+      "refId": "iot-firmware",
+      "url": "https://www.rfc-editor.org/rfc/rfc9019.html",
+      "status": "recaptured",
+      "file": "industry/iot-firmware.html",
+      "filename": "iot-firmware.html",
+      "sizeBytes": 127548,
+      "contentType": "text/html",
+      "sha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
+      "recaptured_at": "2026-09-09T01:25:17.225298+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
+    },
+    {
+      "refId": "retail-pin-keys",
+      "url": "https://blog.pcisecuritystandards.org/key-blocks-101",
+      "status": "recaptured",
+      "file": "industry/retail-pin-keys.html",
+      "filename": "retail-pin-keys.html",
+      "sizeBytes": 84882,
+      "contentType": "text/html",
+      "sha256": "306b1d095d940be97e7c4f3c30b28f24df252c8f483828cc5e1f5eb166e56d1a",
+      "recaptured_at": "2026-09-09T01:25:17.598278+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     }
   ],
-  "generated": "2026-09-08T22:08:10.556532+00:00"
+  "generated": "2026-09-09T01:25:17.598298+00:00"
 }

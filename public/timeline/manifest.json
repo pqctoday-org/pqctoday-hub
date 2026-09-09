@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-08T23:54:45.638054+00:00",
+  "generated": "2026-09-09T01:24:59.812125+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "timeline",
   "csv": "timeline_09072026.csv",
@@ -415,15 +415,16 @@
     },
     {
       "refId": "china-china-telecom-hybrid-quantum-safe-system-launched",
-      "label": "Hybrid Quantum-Safe System Launched",
-      "url": "https://www.chinatelecom.com.cn/ct/news/jczt/2025pt/ttyw/161497.html",
-      "status": "downloaded",
-      "file": "timeline/China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.html",
-      "filename": "China_China_Telecom_Hybrid_Quantum-Safe_System_Launched.html",
-      "sizeBytes": 34722,
-      "contentType": "text/html",
-      "sha256": "ff3f1164d0f8ec251f19642c87b91822e5a437b4daeefc6fc8512e214161b4aa",
-      "verifiedAt": "2026-09-07"
+      "url": "https://www.chinatelecom-h.com/en/ir/report/interim2025.pdf",
+      "status": "recaptured",
+      "file": "timeline/china-china-telecom-hybrid-quantum-safe-system-launched.pdf",
+      "filename": "china-china-telecom-hybrid-quantum-safe-system-launched.pdf",
+      "sizeBytes": 1482116,
+      "contentType": "application/pdf",
+      "sha256": "5d22f07bca32bc8a3f12b1c9f44dfe1e0cae203b5e1f46a485c994d1afe52d85",
+      "recaptured_at": "2026-09-09T01:24:59.603163+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "china-iccs-ngcc-algorithm-evaluation",
@@ -1279,15 +1280,16 @@
     },
     {
       "refId": "united-states-nsa-cnsa-2-0-algorithms-revised",
-      "label": "CNSA 2.0 Algorithms Revised",
-      "url": "https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF",
-      "status": "downloaded",
-      "file": "timeline/United_States_NSA_CNSA_2_0_Algorithms_Revised.pdf",
-      "filename": "United_States_NSA_CNSA_2_0_Algorithms_Revised.pdf",
-      "sizeBytes": 441742,
-      "contentType": "application/pdf",
-      "sha256": "ca447adb27af022f6bcca70873ef3404a7db0758fa0626fe9cd994451d86f5e0",
-      "verifiedAt": "2026-09-07"
+      "url": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/3148990/nsa-releases-future-quantum-resistant-qr-algorithm-requirements-for-national-se/",
+      "status": "recaptured",
+      "file": "timeline/united-states-nsa-cnsa-2-0-algorithms-revised.html",
+      "filename": "united-states-nsa-cnsa-2-0-algorithms-revised.html",
+      "sizeBytes": 102921,
+      "contentType": "text/html",
+      "sha256": "ee89f3e37a39d75fc8c55e8d7f5ed0cc4304e0f3d4dfb837aa9112c81d0f3556",
+      "recaptured_at": "2026-09-09T01:24:59.812103+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "united-states-cisa-automated-pqc-discovery-strategy",

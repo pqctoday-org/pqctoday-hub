@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09T00:07:15.007911+00:00",
+  "generated": "2026-09-09T01:25:11.983800+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "vendor-roadmaps",
   "csv": "migrate_vendor_roadmap_09022026.csv",
@@ -34,15 +34,16 @@
     {
       "vendorId": "VND-018",
       "refId": "VND-018",
-      "label": "Google LLC",
-      "url": "https://cloud.google.com/security/resources/post-quantum-cryptography",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-018_Google_LLC.html",
-      "filename": "VND-018_Google_LLC.html",
-      "sizeBytes": 2175162,
+      "url": "https://cloud.google.com/blog/products/identity-security/pqc-in-plaintext-google-clouds-post-quantum-cryptography-roadmap",
+      "status": "recaptured",
+      "file": "vendor/VND-018.html",
+      "filename": "VND-018.html",
+      "sizeBytes": 346904,
       "contentType": "text/html",
-      "sha256": "ddf3bf2c1ea7b21c8629c2889d55022c544a362b356b3a3f516e8f7a22b43400",
-      "verifiedAt": "2026-09-06"
+      "sha256": "466503ff4806e15f1447bedc63d54679a46b7c44200c2b89942e5d6085404c96",
+      "recaptured_at": "2026-09-09T01:25:09.300453+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-019",
@@ -542,15 +543,16 @@
     {
       "vendorId": "VND-341",
       "refId": "VND-341",
-      "label": "Mastercard Incorporated",
-      "url": "https://www.mastercard.com/global/en/news-and-trends/Insights/2025/post-quantum-cryptography-white-paper.html",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-341_Mastercard_Incorporated.html",
-      "filename": "VND-341_Mastercard_Incorporated.html",
-      "sizeBytes": 150432,
-      "contentType": "text/html",
-      "sha256": "943b32b4c38e09f29cc8dca42236b997db1a60d2e586bd46ac16cd0e16b926e5",
-      "verifiedAt": "2026-09-06"
+      "url": "https://www.mastercard.com/content/dam/mccom/shared/news-and-trends/stories/2025/quantum-explainer-and-white-paper/Migration-to-post-quantum-cryptography-WhitePaper_2025.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-341.pdf",
+      "filename": "VND-341.pdf",
+      "sizeBytes": 2384992,
+      "contentType": "application/pdf",
+      "sha256": "3ac0c7642a00d5ef51dba8d4d7cde3c42643017b26e40aaa339301c622f8e5d2",
+      "recaptured_at": "2026-09-09T01:25:09.663111+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-118",
@@ -856,15 +858,16 @@
     {
       "vendorId": "VND-527",
       "refId": "VND-527",
-      "label": "European Space Agency",
-      "url": "https://connectivity.esa.int/archives/projects/e2eqss",
-      "status": "downloaded",
-      "file": "vendor-roadmaps/VND-527_European_Space_Agency.html",
-      "filename": "VND-527_European_Space_Agency.html",
-      "sizeBytes": 75411,
-      "contentType": "text/html",
-      "sha256": "92576f6868c5134e21c80be92f79037f49a29accdec9450233f362abd054f903",
-      "verifiedAt": "2026-09-06"
+      "url": "https://indico.esa.int/event/571/attachments/7210/13595/End-to-End%20Quantum-Safe%20Security%20for%20Satellite%20Data%20Links%20E2EQSS.pdf",
+      "status": "recaptured",
+      "file": "vendor/VND-527.pdf",
+      "filename": "VND-527.pdf",
+      "sizeBytes": 1743751,
+      "contentType": "application/pdf",
+      "sha256": "bdb87f7af81d2799c1d13b43b87ad742829632cace85d42cac37d166f4bbfbad",
+      "recaptured_at": "2026-09-09T01:25:11.983773+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": null
     },
     {
       "vendorId": "VND-523",

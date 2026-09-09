@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-08T22:07:38.428612+00:00",
+  "generated": "2026-09-09T01:25:46.294515+00:00",
   "generatedBy": "maintenance/lineage/rebuild_manifest.py",
   "source": "threats",
   "csv": "quantum_threats_hsm_industries_09072026.csv",
@@ -138,15 +138,16 @@
     {
       "threatId": "CROSS-004",
       "refId": "CROSS-004",
-      "label": "Global regulators are accelerating post-quantum cryptography migration, with NIST finalizing FIPS 203-205 in August 2024 (FIPS 206 / FN-DSA remains in development, not yet published) and OMB M-23-02 mandating federal PQC inventories. The EU NIS2 Directive requires essential entities to implement state-of-the-art cryptographic controls, a principles-based obligation that may necessitate PQC consideration without explicitly mandating it. Meanwhile, the Global Risk Institute Quantum Threat Timeline Report (2024) estimates a 5–15% probability of cryptographically relevant quantum computers emerging within five years.",
-      "url": "https://globalriskinstitute.org/mp-files/quantum-threat-timeline-report-2024.pdf/",
-      "status": "downloaded",
-      "file": "threats/CROSS-004.pdf",
-      "filename": "CROSS-004.pdf",
-      "sizeBytes": 8451384,
-      "contentType": "application/pdf",
-      "sha256": "7310811601b130562f7e3107eca0bbac80697bbb3618119f19fa582798f5f979",
-      "verifiedAt": "2026-09-07"
+      "url": "https://globalriskinstitute.org/publication/2024-quantum-threat-timeline-report/",
+      "status": "recaptured",
+      "file": "threats/CROSS-004.html",
+      "filename": "CROSS-004.html",
+      "sizeBytes": 254361,
+      "contentType": "text/html",
+      "sha256": "d995ec99296bc13d91358c59e15ebdbe7c97554e8149eb30905f0cd228598eb1",
+      "recaptured_at": "2026-09-09T01:25:42.852569+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "CROSS-006",
@@ -281,15 +282,16 @@
     {
       "threatId": "FIN-001",
       "refId": "FIN-001",
-      "label": "Central bank RTGS systems like Fedwire, CHAPS, and T2 process trillions in daily settlements, creating significant quantum exposure for long-term financial records via HNDL attacks. SWIFT messaging relies on its proprietary SWIFTNet PKI infrastructure, which uses RSA-based certificates issued by SWIFT’s CA and HSMs for message authentication. This classical PKI implementation remains vulnerable to quantum decryption, necessitating a transition to post-quantum cryptography to secure correspondent banking communications.",
-      "url": "https://www.bis.org/publ/othp107.pdf",
-      "status": "downloaded",
-      "file": "threats/FIN-001.pdf",
-      "filename": "FIN-001.pdf",
-      "sizeBytes": 1383045,
-      "contentType": "application/pdf",
-      "sha256": "62153d8bf9cf8d1900f1e4d938f391c169ceed138f1d42512ba89e6b0f8d71fd",
-      "verifiedAt": "2026-09-07"
+      "url": "https://www.bis.org/publications/project-leap-phase-2-quantum-proofing-payment-systems",
+      "status": "recaptured",
+      "file": "threats/FIN-001.html",
+      "filename": "FIN-001.html",
+      "sizeBytes": 121657,
+      "contentType": "text/html",
+      "sha256": "ff99d1ee8c16a799652606da20566e12980a8db8b0564d3e2cdcd3e7a9ba1262",
+      "recaptured_at": "2026-09-09T01:25:43.569398+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "FIN-002",
@@ -528,15 +530,16 @@
     {
       "threatId": "IOT-003",
       "refId": "IOT-003",
-      "label": "The IETF SUIT protocol for IoT firmware updates relies on COSE (RFC 9052) with ECDSA signatures, as defined by RFC 9019 for architecture and RFC 9124 for the manifest information model (the SUIT manifest wire format itself is still an IETF draft, draft-ietf-suit-manifest). Since none of these specifications prescribe post-quantum algorithms, the current implementation remains vulnerable to quantum attacks. This gap necessitates migration planning to ensure long-term security for software update integrity.",
-      "url": "https://www.rfc-editor.org/rfc/rfc9019.txt",
-      "status": "downloaded",
+      "url": "https://www.rfc-editor.org/rfc/rfc9019.html",
+      "status": "recaptured",
       "file": "threats/IOT-003.html",
       "filename": "IOT-003.html",
-      "sizeBytes": 66356,
+      "sizeBytes": 127548,
       "contentType": "text/html",
-      "sha256": "b29e6c39ff2db10cb4c138c0c45bd47a478386a6b053b02129b3704efa1008e6",
-      "verifiedAt": "2026-09-07"
+      "sha256": "c841af39dd2164e0b73fd91ab3df0e817872276521352b741189060b396bac5c",
+      "recaptured_at": "2026-09-09T01:25:43.849645+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": "_superseded-20260908/threats/IOT-003.html"
     },
     {
       "threatId": "IT-001",
@@ -894,15 +897,16 @@
     {
       "threatId": "EDU-005",
       "refId": "EDU-005",
-      "label": "The education sector faces escalating cyber threats, with higher education breaches averaging over $3.7 million and institutions managing thousands of EdTech tools that expand the attack surface. While student records require a minimum six-year retention period under federal guidelines, the long-term sensitivity of this data necessitates protection against future decryption risks. Quantum computing will amplify these vulnerabilities by enabling cryptographic bypass of authentication and encryption, making post-quantum migration critical for securing this highly targeted industry.",
-      "url": "https://blog.checkpoint.com/research/cyber-attacks-surge-against-education-sector-ahead-of-back-to-school-season",
-      "status": "downloaded",
-      "file": "threats/CheckPointResearch-Education-Cyberattacks-2025.html",
-      "filename": "CheckPointResearch-Education-Cyberattacks-2025.html",
-      "sizeBytes": 107031,
+      "url": "https://blog.checkpoint.com/security/from-classrooms-to-code-red-3000-cyber-threats-hit-u-s-schools-and-universities-weekly/",
+      "status": "recaptured",
+      "file": "threats/EDU-005.html",
+      "filename": "EDU-005.html",
+      "sizeBytes": 123998,
       "contentType": "text/html",
-      "sha256": "64dcab3685f817b6454bc541cc5aa3262a73ca9961f58d868944bb5e45c74ccd",
-      "verifiedAt": "2026-09-07"
+      "sha256": "eb456fe022a040b22c410a9e7e3496e927cd1eee637dfffad31ecfc22c4f726b",
+      "recaptured_at": "2026-09-09T01:25:44.741834+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "CROSS-009",
@@ -1011,15 +1015,16 @@
     {
       "threatId": "WATER-003",
       "refId": "WATER-003",
-      "label": "Water quality monitoring IoT sensor quantum exposure: EPA cybersecurity guidance (August 2024) addresses water sector IoT but lacks specific PQC requirements. Real-time water quality sensors monitoring pH turbidity dissolved oxygen and contaminants communicate via IoT protocols with RSA/ECC key bootstrap. Constrained sensors lack crypto-agility for mid-life PQC migration. Quantum-enabled data integrity attacks could inject false sensor readings causing treatment failures and public health emergencies.",
-      "url": "https://www.epa.gov/cyberwater/epa-cybersecurity-water-sector",
-      "status": "downloaded",
+      "url": "https://www.epa.gov/system/files/documents/2024-08/epa-guidance-on-improving-cybersecurity-at-drinking-water-and-wastewater-systems-1.pdf",
+      "status": "recaptured",
       "file": "threats/WATER-003.pdf",
       "filename": "WATER-003.pdf",
-      "sizeBytes": 429283,
+      "sizeBytes": 458249,
       "contentType": "application/pdf",
-      "sha256": "fb89362a152f1c48092d5d97df9bbee247b3baa98b93bb9804f4c1a93cc1d8d1",
-      "verifiedAt": "2026-09-07"
+      "sha256": "a2e9460d901436eb94a7bb8675520e621aabab35c5eb8712f2faaf82f2de5eff",
+      "recaptured_at": "2026-09-09T01:25:45.373615+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
+      "superseded_file": "_superseded-20260908/threats/WATER-003.pdf"
     },
     {
       "threatId": "WATER-004",
@@ -1090,15 +1095,16 @@
     {
       "threatId": "CROSS-016",
       "refId": "CROSS-016",
-      "label": "NIST SP 800-90A Rev 1 (2015) removed Dual_EC_DRBG, leaving CTR_DRBG and HMAC_DRBG as the approved standards. When configured with 256-bit security parameters, these DRBGs retain approximately 128-bit effective quantum security against Grover’s algorithm. This level of resistance exceeds practical CRQC thresholds, meaning the quantum risk for properly parameterized symmetric RNGs is largely mitigated.",
-      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf",
-      "status": "downloaded",
-      "file": "threats/CROSS-016.pdf",
-      "filename": "CROSS-016.pdf",
-      "sizeBytes": 2417007,
-      "contentType": "application/pdf",
-      "sha256": "d58e3dac4aaa5971c9a6a20a9bd5c13e2f1930cd1a199c0c00f768e7327355e2",
-      "verifiedAt": "2026-09-07"
+      "url": "https://csrc.nist.gov/pubs/sp/800/90/a/r1/final",
+      "status": "recaptured",
+      "file": "threats/CROSS-016.html",
+      "filename": "CROSS-016.html",
+      "sizeBytes": 40999,
+      "contentType": "text/html",
+      "sha256": "2da84d2fbb9b65b7add1873807c02e9925c5739bed73a0ee0755d66a7469be35",
+      "recaptured_at": "2026-09-09T01:25:45.884988+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "CROSS-017",
@@ -1142,16 +1148,16 @@
     {
       "threatId": "IOT-005",
       "refId": "IOT-005",
-      "url": "https://nvlpubs.nist.gov/nistpubs/ir/2020/NIST.IR.8259A.pdf",
+      "url": "https://csrc.nist.gov/pubs/sp/800/213/final",
       "status": "recaptured",
-      "file": "threats/IOT-005.pdf",
-      "filename": "IOT-005.pdf",
-      "sizeBytes": 977531,
-      "contentType": "application/pdf",
-      "sha256": "b3b54b00b5ac3f3582a3e3fd17d3f25b18f848a51f113000b6489adbcce374b4",
-      "recaptured_at": "2026-09-08T22:07:38.428531+00:00",
-      "recaptured_reason": "D26: previous capture was a landing/ToC page; this pdf is the linked document",
-      "superseded_file": "_superseded-20260908/threats/IOT-005.pdf"
+      "file": "threats/IOT-005.html",
+      "filename": "IOT-005.html",
+      "sizeBytes": 47809,
+      "contentType": "text/html",
+      "sha256": "c19b089200e85457da5cc584950ae8a6e9145bd421b3c30bd8029c657cdc9201",
+      "recaptured_at": "2026-09-09T01:25:46.294494+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "threatId": "AUS-TEL-001",
