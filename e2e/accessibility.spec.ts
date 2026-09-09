@@ -49,6 +49,7 @@ const ROUTES = [
   { path: '/report', name: 'Report' },
   { path: '/business', name: 'Business Center' },
   { path: '/faq', name: 'FAQ' },
+  { path: '/learn', name: 'Learn' },
 ]
 
 // Navigation content is identical across all routes — the test focuses on
@@ -157,6 +158,70 @@ for (const { path, name } of ROUTES) {
       }
     }
 
+    await checkA11y(page, 'html', A11Y_OPTIONS, false, 'default')
+  })
+}
+
+// Persona-seeded scan (2026-09-08, Executive/GRC split gap-closure audit).
+// Every route above is scanned with NO persona selected, so '/' only ever
+// shows the role picker — the real personalized homeboard (PersonaBoardView)
+// and /learn's path-depth view have never had an axe pass. That gap hid 3
+// real serious color-contrast violations (PersonaBoardView's
+// board-variant-chip and "sourced" proofChip text colors, MainLayout's
+// "featured" nav-row tint, MyPathView's path-depth duration text) until a
+// live scan under a seeded persona was run by hand. 'grc' is used here as a
+// representative persona; the fixed styles are shared by every persona, not
+// grc-specific.
+const PERSONA_ROUTES = [
+  { path: '/', name: 'Landing (persona board)' },
+  { path: '/learn', name: 'Learn (persona path)' },
+]
+
+for (const { path, name } of PERSONA_ROUTES) {
+  test(`${name} (${path}), grc persona seeded — no serious/critical a11y violations`, async ({
+    page,
+  }) => {
+    test.setTimeout(45_000)
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-learning-persona',
+        JSON.stringify({
+          state: {
+            selectedPersona: 'grc',
+            hasAcknowledgedExecutiveGrcSplit: true,
+            hasSeenPersonaPicker: true,
+            selectedRegion: 'global',
+            experienceLevel: 'expert',
+            viewAccess: 'unlocked',
+            suppressSuggestion: true,
+            niceTier: 'awareness',
+            niceTierOverridden: false,
+            curiousGuideDismissed: true,
+          },
+          version: 11,
+        })
+      )
+    })
+
+    await page.goto(path)
+    await page.waitForSelector('h1, h2, [data-testid]', { timeout: 15000 }).catch(() => {})
+    await page.waitForLoadState('networkidle').catch(() => {})
+
+    // Freeze animations before the scan — see the ROUTES loop above for why
+    // (colour-contrast is measured against computed colour, which a
+    // mid-fade frame reports as washed-out even though the settled UI is fine).
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.addStyleTag({
+      content: `*, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+      }`,
+    })
+    await page.waitForTimeout(250)
+
+    await injectAxe(page)
     await checkA11y(page, 'html', A11Y_OPTIONS, false, 'default')
   })
 }

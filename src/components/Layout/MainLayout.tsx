@@ -142,7 +142,7 @@ const COPYRIGHT_YEAR = new Date().getFullYear()
 // Left-border + tint per FOR YOU row treatment. MORE rows never use these —
 // they get a fixed, smaller/muted style regardless of treatment (see RailRow).
 const ROW_TREATMENT_CLASS: Record<RailRowTreatment, string> = {
-  featured: 'border-l-2 border-l-accent bg-accent/10 text-accent hover:bg-accent/15',
+  featured: 'border-l-2 border-l-accent bg-accent/10 text-accent-legible hover:bg-accent/15',
   marked:
     'border-l-2 border-dashed border-l-warning/70 text-muted-foreground hover:text-foreground',
   active: 'border-l-2 border-l-primary bg-primary/10 text-primary',
