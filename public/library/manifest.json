@@ -2850,13 +2850,16 @@
     },
     {
       "refId": "ASC-X9-Financial-PKI",
-      "title": "ASC X9 Financial PKI — Post-Quantum Cryptography Trust Framework for Financial Services",
-      "url": "https://x9.org/signing-ceremony-for-x9-financial-pki-takes-place/",
-      "status": "downloaded",
-      "filename": "ASC-X9-Financial-PKI-Signing-Ceremony.html",
-      "sizeBytes": 219701,
+      "url": "https://www.digicert.com/news/asc-x9-and-digicert-perform-key-ceremony",
+      "status": "recaptured",
+      "file": "library/ASC-X9-Financial-PKI.html",
+      "filename": "ASC-X9-Financial-PKI.html",
+      "sizeBytes": 118684,
       "contentType": "text/html",
-      "sha256": "93880f122d1000a246899e51d0b1641563361f48f46737c1f8be3c14a3ccbe8a"
+      "sha256": "7eeab6ae713b6deeb6a4dda0f5aa7c47799e5106c6eb94399d6c6ff6136ca4ec",
+      "recaptured_at": "2026-09-09T03:10:27.484880+00:00",
+      "recaptured_reason": "D26: previous capture was a landing/ToC page; this html is the linked document",
+      "superseded_file": null
     },
     {
       "refId": "ETSI-GR-QSC-001",
@@ -12535,7 +12538,7 @@
       "recoveredBy": "codex url research + lineage gates"
     }
   ],
-  "generated": "2026-09-09T01:29:06.778007+00:00",
+  "generated": "2026-09-09T03:10:27.485074+00:00",
   "rehashNote": "2026-08-22: a bulk re-cache on 2026-07-29 rewrote captures without updating this manifest, so their recorded hashes had proven nothing for three weeks. Entries carrying rehashedAt were re-verified as still being the document the row claims (title screen, plus an edition-token check for rows naming a specific year or version) and their hash re-recorded from disk. previousSha256 keeps what was there before. Entries WITHOUT rehashedAt were not re-verified.",
   "backfillNote": "2026-08-21: entries carrying backfilledAt had evidence on disk that no manifest entry recorded, or an entry with no sha256 - so no hash-based check could ever verify them. Each was screened against its row title (plus an edition-token check where the title names a year) BEFORE its hash was recorded; 37 captures that failed that screen were deliberately left out. A backfilled hash means \"these are the bytes on disk and they match the row title\", NOT \"a human read this document\". Entries also carrying backfillBasis=\"human-read\" failed the automated screen for reasons that were NOT defects — a non-English original (Italy, Norway, Taiwan, Spain, Japan, Korea, Brazil, France), a scanned image PDF with no extractable text (the African Union Malabo Convention, 13.8 MB from ScandAll PRO), or a PDF poppler cannot decompress (3GPP TS 33.501, confirmed via its PDF metadata instead). Each was read by a person before its hash was recorded."
 }
